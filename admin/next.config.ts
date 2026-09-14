@@ -13,6 +13,15 @@ const nextConfig: NextConfig = {
   redirects: async () => [
     { source: "/seo-overview", destination: "/seo", permanent: true },
     { source: "/seo-overview/:path*", destination: "/seo", permanent: true },
+    // صفحة التأهيل حُذفت (١٢ سبتمبر ٢٠٢٦) ونزل محتواها إلى صفحة كل قسم. واللوحة أقرب
+    // ما يجيب سؤال من يفتح الرابط القديم: ماذا يُنتظر منّي ومن أي قسم.
+    { source: "/playbook/onboarding", destination: "/playbook/roles", permanent: true },
+    { source: "/playbook/job-descriptions", destination: "/playbook/roles", permanent: true },
+    { source: "/playbook/job-descriptions/:slug", destination: "/playbook/roles", permanent: true },
+    // «كيف نتكلّم» وُزّعت: القواعد والكلمات في الهويّة، والمواقف في أقسامها.
+    { source: "/playbook/persona", destination: "/playbook#voice", permanent: true },
+    // صفحات المبيعات السبع طُويت داخل صفحة القسم، وصار لكلٍّ منها مرساة فيها.
+    { source: "/playbook/sales/:slug", destination: "/playbook/sales", permanent: true },
   ],
   headers: async () => [
     {

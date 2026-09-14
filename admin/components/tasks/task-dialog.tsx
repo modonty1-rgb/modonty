@@ -63,7 +63,10 @@ const emptyForm = (status: TaskStatusKey): FormState => ({
   description: "",
   status,
   priority: "NORMAL",
-  dueDate: "",
+  // A new task is normally work for today. Calculate this per dialog reset,
+  // not once at module load, so leaving the dashboard open overnight cannot
+  // create tomorrow's task with yesterday's default.
+  dueDate: toDateInput(new Date()),
   assigneeId: UNASSIGNED,
 });
 

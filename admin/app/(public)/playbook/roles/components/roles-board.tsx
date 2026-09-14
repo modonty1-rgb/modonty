@@ -18,7 +18,7 @@ import {
 
 import { cn } from "@/lib/utils";
 
-import { DUTIES, PEOPLE, STAGES, type Duty } from "../helpers/roles-data";
+import { DUTIES, PEOPLE, STAGES, type Duty } from "../../helpers/roles-data";
 
 const DRAFT_KEY = "modonty-roles-draft-v1";
 const ORPHAN = "__none__";
@@ -81,7 +81,7 @@ function PersonColumn({
       ref={setNodeRef}
       aria-label={name}
       className={cn(
-        "flex flex-col rounded-xl border bg-card p-3 transition-colors",
+        "mb-3 break-inside-avoid rounded-xl border bg-card p-3 transition-colors",
         tone === "orphan" && "border-amber-500/45 bg-amber-500/[0.05]",
         isOver && "border-primary bg-primary/[0.07]",
       )}
@@ -105,7 +105,7 @@ function PersonColumn({
         {duties.length ? (
           duties.map((d) => <DraggableDuty key={d.n} duty={d} />)
         ) : (
-          <p className="rounded-lg border border-dashed py-4 text-center text-[12px] text-muted-foreground">أفلت مهمّة هنا</p>
+          <p className="rounded-lg border border-dashed py-2 text-center text-[11.5px] text-muted-foreground">أفلت مهمّة هنا</p>
         )}
       </div>
     </section>
@@ -126,7 +126,6 @@ export function RolesBoard() {
     }
   }, []);
   const [activeId, setActiveId] = useState<number | null>(null);
-  const [flash, setFlash] = useState("");
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -162,79 +161,21 @@ export function RolesBoard() {
 
   const onDragStart = (e: DragStartEvent) => setActiveId((e.active.data.current?.n as number) ?? null);
 
-  const live = DUTIES.filter((d) => !d.parked);
-  const owned = live.filter((d) => ownerOf(d)).length;
   const orphans = DUTIES.filter((d) => !ownerOf(d));
-  const changed = Object.keys(draft).length;
-
-  const copyDraft = async () => {
-    const lines = ["# إسناد مهام مدونتي — مسوّدة", ""];
-    PEOPLE.forEach((p) => {
-      const mine = DUTIES.filter((d) => ownerOf(d) === p.id);
-      if (!mine.length) return;
-      lines.push(`## ${p.name} (${mine.length})`);
-      mine.forEach((d) => lines.push(`  ${d.n}. ${d.t}`));
-      lines.push("");
-    });
-    if (orphans.length) {
-      lines.push(`## بلا مالك (${orphans.length})`);
-      orphans.forEach((d) => lines.push(`  ${d.n}. ${d.t}`));
-    }
-    const text = lines.join("\n");
-    try {
-      await navigator.clipboard.writeText(text);
-      setFlash("انتسخ — أرسله ليُثبَّت في المصدر");
-    } catch {
-      window.prompt("انسخ من هنا:", text);
-    }
-    setTimeout(() => setFlash(""), 2600);
-  };
-
-  const reset = () => {
-    setDraft({});
-    try {
-      window.localStorage.removeItem(DRAFT_KEY);
-    } catch {
-      /* لا شيء يُمسح */
-    }
-  };
 
   const active = activeId === null ? null : DUTIES.find((d) => d.n === activeId) ?? null;
 
   return (
     <div dir="rtl">
-      <div className="mb-4 flex flex-wrap items-center gap-2.5 rounded-xl border bg-card p-3">
-        <p className="text-[13px] text-muted-foreground">
-          <b className="text-lg text-primary">{owned}</b> من <b>{live.length}</b> مهمّة لها مالك
-        </p>
-        <div className="h-1.5 min-w-[120px] flex-1 overflow-hidden rounded-full bg-muted">
-          <div className="h-full bg-primary" style={{ width: `${Math.round((owned / live.length) * 100)}%` }} />
-        </div>
-        <button type="button" onClick={copyDraft} className="rounded-lg border bg-background px-3 py-1.5 text-[12.5px] hover:border-primary/50">
-          نسخ التوزيع
-        </button>
-        {changed ? (
-          <button
-            type="button"
-            onClick={reset}
-            className="rounded-lg border border-amber-500/45 bg-amber-500/[0.08] px-3 py-1.5 text-[12.5px] font-bold text-amber-700 dark:text-amber-300"
-          >
-            رجوع للمعتمد ({changed})
-          </button>
-        ) : null}
-        {flash ? <span className="text-[12px] font-bold text-primary">{flash}</span> : null}
-      </div>
-
-      {changed ? (
-        <p className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/[0.06] p-2.5 text-[12.5px] leading-6 text-muted-foreground">
-          <b className="text-foreground">أنت في مسوّدة.</b> ما تحرّكه يبقى في متصفّحك وحده ولا يراه الفريق.
-          اضغط «نسخ التوزيع» ليُثبَّت في المصدر.
-        </p>
-      ) : null}
-
       {/* `id` ثابت: بدونه يولّد dnd-kit معرّفاً عشوائياً يختلف بين السيرفر والمتصفّح فيكسر الترطيب. */}
       <DndContext id="roles-board" sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd}>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {/*
+          أعمدة CSS لا شبكة: أطوال البطاقات متفاوتة جدًّا (٢٦ مهمّة عند خالد مقابل ١ عند
+          محمد)، وفي الشبكة يأخذ الصفُّ ارتفاع أطول خلية فيه فتتخلّف فراغات تحت القصيرة.
+          الأعمدة تُسيل البطاقات فتملأ ما تحتها، و`break-inside-avoid` يمنع انقسام البطاقة
+          بين عمودين.
+        */}
+        <div className="columns-1 gap-3 sm:columns-2 xl:columns-3">
           {orphans.length ? (
             <PersonColumn id={ORPHAN} name="بلا مالك" role="عملٌ نفعله بلا اسم يحمله، أو لم نبدأه" duties={orphans} tone="orphan" />
           ) : null}

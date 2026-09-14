@@ -33,8 +33,8 @@ const DIFFERENCES = [
 export default function ClientArticlesGuidelinePage() {
   return (
     <DocLayout
-      parentHref="/playbook/tech"
-      parentLabel="الجانب التقني"
+      parentHref="/playbook/content"
+      parentLabel="قسم المحتوى"
       title="مقالات العملاء"
       description="مقالات نكتبها لتُنشر على موقع الشركة نفسها — لا على مدونتي"
     >

@@ -1,5 +1,7 @@
 import { getBoardTasks } from "./helpers/queries";
 import { TaskBoard } from "./components/task-board";
+import { ArchivedTasksTable } from "./components/archived-tasks-table";
+import { getArchivedTasks } from "./helpers/queries/get-archived-tasks";
 import { auth } from "@/lib/auth";
 
 /**
@@ -11,7 +13,12 @@ export default async function TasksPage() {
   const userId = (session?.user as { id?: string } | undefined)?.id;
   if (!userId) return null;
 
-  const board = await getBoardTasks(userId);
+  const [board, archivedTasks] = await Promise.all([getBoardTasks(userId), getArchivedTasks(userId)]);
 
-  return <TaskBoard initialBoard={board} />;
+  return (
+    <>
+      <TaskBoard initialBoard={board} />
+      <ArchivedTasksTable tasks={archivedTasks} />
+    </>
+  );
 }

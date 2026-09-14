@@ -1,0 +1,18 @@
+import { chromium } from '@playwright/test';
+import { PrismaClient } from '@prisma/client';
+const db = new PrismaClient(); const BASE = 'http://localhost:3001';
+console.log('feats:', JSON.stringify(await db.commercialFeature.findMany({ where: { name: { startsWith: 'ميزة A10' } }, select: { name: true, unitLabel: true, icon: true, isActive: true } })));
+const plan = await db.commercialPlan.findFirst({ where: { name: 'باقة اختبار A10' }, select: { id: true } });
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ storageState: 'C:/tmp/pay-a1-evidence/state.json' });
+const page = await ctx.newPage();
+page.on('pageerror', (e) => console.log('PAGEERROR', e.message.slice(0, 300)));
+page.on('response', async (r) => { if (r.request().method() === 'POST') { const t = await r.text().catch(() => ''); if (!t.includes('unreadCount')) console.log('POST', r.status(), t.slice(0, 160).replace(/\n/g, ' ')); } });
+await page.goto(`${BASE}/commercial-plans/${plan.id}`, { waitUntil: 'load' }); await page.waitForSelector('main');
+console.log('options:', JSON.stringify(await page.locator('select[name=featureId] option').allTextContents()));
+await page.selectOption('select[name=featureId]', { label: 'ميزة A10 أولى (مقال)' });
+await page.fill('form:has(select[name=featureId]) input[name=quantity]', '6');
+await page.locator('button:has-text("إضافة ميزة")').click();
+await page.waitForTimeout(5000);
+console.log('assigned:', JSON.stringify(await db.commercialPlanFeature.findMany({ where: { planId: plan.id }, select: { quantity: true, feature: { select: { name: true } } } })));
+await browser.close(); await db.$disconnect();

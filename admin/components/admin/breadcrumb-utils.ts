@@ -63,6 +63,14 @@ const routeLabels: Record<string, string> = {
   // sales-leads تحت: الكسرة الإنجليزية الوحيدة فوق شاشة عربية بالكامل.
   campaigns: 'الحملات الإعلانية',
   reports: 'التقارير',
+  // شاشات «إدارة الدفع» عربية بالكامل — والبريدكرَمب كان يسقط على التحويل الآلي فيكتب
+  // «Pay-preview» فوق صفحة كل كلمة فيها عربية (خالد ١٣ سبتمبر ٢٠٢٦: «خلّيها عربية»).
+  // نفس منطق `campaigns` فوقها: الاسم يتبع لغة الشاشة لا لغة المسار.
+  'pay-preview': 'معاينة صفحة الدفع',
+  'commercial-plans': 'الباقات والأسعار',
+  'commercial-features': 'مكتبة المزايا',
+  'payment-failures': 'إخفاقات الدفع',
+  orders: 'الطلبات',
 };
 
 const sectionLabels: Record<string, string> = {

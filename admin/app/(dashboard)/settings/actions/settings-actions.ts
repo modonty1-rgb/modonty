@@ -185,6 +185,7 @@ export interface SiteOrgSettings {
   orgCommercialRegistrationNumber: string | null;
   orgCommercialRegistrationStatus: string | null;
   orgUnifiedNationalNumber: string | null;
+  orgVatNumber: string | null;
   orgLegalForm: string | null;
   orgCapitalAmount: string | null;
   orgFoundingDate: Date | null;
@@ -291,6 +292,7 @@ const DEFAULT_SETTINGS: AllSettings = {
   orgCommercialRegistrationNumber: null,
   orgCommercialRegistrationStatus: null,
   orgUnifiedNationalNumber: null,
+  orgVatNumber: null,
   orgLegalForm: null,
   orgCapitalAmount: null,
   orgFoundingDate: null,
@@ -500,6 +502,7 @@ export async function getAllSettings(): Promise<AllSettings> {
         orgCommercialRegistrationNumber: newSettings.orgCommercialRegistrationNumber,
         orgCommercialRegistrationStatus: newSettings.orgCommercialRegistrationStatus,
         orgUnifiedNationalNumber: newSettings.orgUnifiedNationalNumber,
+        orgVatNumber: newSettings.orgVatNumber,
         orgLegalForm: newSettings.orgLegalForm,
         orgCapitalAmount: newSettings.orgCapitalAmount,
         orgFoundingDate: newSettings.orgFoundingDate,
@@ -656,6 +659,7 @@ export async function getAllSettings(): Promise<AllSettings> {
       orgCommercialRegistrationNumber: settings.orgCommercialRegistrationNumber,
       orgCommercialRegistrationStatus: settings.orgCommercialRegistrationStatus,
       orgUnifiedNationalNumber: settings.orgUnifiedNationalNumber,
+      orgVatNumber: settings.orgVatNumber,
       orgLegalForm: settings.orgLegalForm,
       orgCapitalAmount: settings.orgCapitalAmount,
       orgFoundingDate: settings.orgFoundingDate,

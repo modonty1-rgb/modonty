@@ -1,6 +1,15 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  ReactNode,
+} from "react";
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,11 +19,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { ArticleFormData, FormSubmitResult } from '@/lib/types/form-types';
-import { generateSEOTitle, generateSEODescription, generateCanonicalUrl } from '../helpers/seo-helpers';
-import { SITE_NAME_FALLBACK } from '@/lib/constants/site-name';
-import { updateArticle } from '../actions/articles-actions';
+} from "@/components/ui/alert-dialog";
+import { ArticleFormData, FormSubmitResult } from "@/lib/types/form-types";
+import {
+  generateSEOTitle,
+  generateSEODescription,
+  generateCanonicalUrl,
+} from "../helpers/seo-helpers";
+import { SITE_NAME_FALLBACK } from "@/lib/constants/site-name";
+import { updateArticle } from "../actions/articles-actions";
 import {
   applyLinkDecisions,
   auditContentLinks,
@@ -22,10 +35,10 @@ import {
   withDeadLinks,
   type AuditedLink,
   type LinkDecision,
-} from '../helpers/internal-link-audit';
-import { checkLinksAction } from '../actions/check-links';
-import { InternalLinkReviewDialog } from './internal-link-review-dialog';
-import { useToast } from '@/hooks/use-toast';
+} from "../helpers/internal-link-audit";
+import { checkLinksAction } from "../actions/check-links";
+import { InternalLinkReviewDialog } from "./internal-link-review-dialog";
+import { useToast } from "@/hooks/use-toast";
 import {
   FileText,
   Edit,
@@ -34,10 +47,15 @@ import {
   Tag,
   CheckCircle,
   Code,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import { calculateStepValidation, calculateOverallProgress, STEP_CONFIGS, type StepValidation } from '../helpers/step-validation-helpers';
-import { analyzeArticleSEO } from '../analyzer';
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import {
+  calculateStepValidation,
+  calculateOverallProgress,
+  STEP_CONFIGS,
+  type StepValidation,
+} from "../helpers/step-validation-helpers";
+import { analyzeArticleSEO } from "../analyzer";
 
 export interface SectionConfig {
   id: string;
@@ -70,12 +88,15 @@ type ArticleClient = {
 
 interface ArticleFormContextType {
   // Mode ('new' for article creation, 'edit' for editing)
-  mode: 'new' | 'edit';
+  mode: "new" | "edit";
   articleId?: string;
 
   // Form Data
   formData: ArticleFormData;
-  updateField: (field: keyof ArticleFormData, value: ArticleFormData[keyof ArticleFormData]) => void;
+  updateField: (
+    field: keyof ArticleFormData,
+    value: ArticleFormData[keyof ArticleFormData]
+  ) => void;
   updateFields: (fields: Partial<ArticleFormData>) => void;
 
   // Actions
@@ -116,22 +137,38 @@ interface ArticleFormContextType {
   realSeoScore: number;
 
   // DB snapshot for MetaTag & JSON-LD tab (edit only)
-  dbMetaAndJsonLd: { nextjsMetadata: Record<string, unknown> | null; jsonLdStructuredData: string | null };
+  dbMetaAndJsonLd: {
+    nextjsMetadata: Record<string, unknown> | null;
+    jsonLdStructuredData: string | null;
+  };
 
   // Site base URL (from Settings.siteUrl via loadSiteUrl) — passed by server parent.
   // Single source of truth for canonical URL previews + builds inside client steps.
   siteUrl: string;
 }
 
-const ArticleFormContext = createContext<ArticleFormContextType | undefined>(undefined);
+const ArticleFormContext = createContext<ArticleFormContextType | undefined>(
+  undefined
+);
 
 /** Partial form data for SOT-from-Settings fields used in the form (display only; not persisted to Article). */
-export type SettingsArticleDefaults = Partial<Pick<
-  ArticleFormData,
-  | 'inLanguage' | 'metaRobots' | 'ogType' | 'ogLocale' | 'twitterCard' | 'twitterSite' | 'twitterCreator'
-  | 'sitemapPriority' | 'sitemapChangeFreq' | 'license' | 'isAccessibleForFree'
-  | 'contentFormat'
->>;
+export type SettingsArticleDefaults = Partial<
+  Pick<
+    ArticleFormData,
+    | "inLanguage"
+    | "metaRobots"
+    | "ogType"
+    | "ogLocale"
+    | "twitterCard"
+    | "twitterSite"
+    | "twitterCreator"
+    | "sitemapPriority"
+    | "sitemapChangeFreq"
+    | "license"
+    | "isAccessibleForFree"
+    | "contentFormat"
+  >
+>;
 
 interface ArticleFormProviderProps {
   children: ReactNode;
@@ -146,93 +183,96 @@ interface ArticleFormProviderProps {
   articleId?: string;
   /** Real SEO score (shared scorer on the stored article). Omitted for new articles. */
   realSeoScore?: number;
-  dbMetaAndJsonLd?: { nextjsMetadata: Record<string, unknown> | null; jsonLdStructuredData: string | null };
+  dbMetaAndJsonLd?: {
+    nextjsMetadata: Record<string, unknown> | null;
+    jsonLdStructuredData: string | null;
+  };
   /** Site base URL fetched once on the server via loadSiteUrl(). Required — no env fallback. */
   siteUrl: string;
 }
 
 const initialFormData: ArticleFormData = {
   // Basic Content
-  title: '',
-  slug: '',
-  excerpt: '',
-  content: '',
-  contentFormat: 'rich_text',
-  
+  title: "",
+  slug: "",
+  excerpt: "",
+  content: "",
+  contentFormat: "rich_text",
+
   // Relationships
-  clientId: '',
-  categoryId: '',
-  authorId: '',
-  
+  clientId: "",
+  categoryId: "",
+  authorId: "",
+
   // Status & Workflow
-  status: 'WRITING',
+  status: "WRITING",
   featured: false,
   scheduledAt: null,
   // Modonty is the default destination; only the «Client Articles» section flips it,
   // by seeding initialData.
   isClientSiteArticle: false,
-  
+
   // Schema.org Article - Core Fields
   datePublished: null,
   lastReviewed: null,
-  mainEntityOfPage: '',
-  
+  mainEntityOfPage: "",
+
   // Schema.org Article - Extended Fields
   wordCount: undefined,
   readingTimeMinutes: undefined,
-  contentDepth: '',
-  inLanguage: 'ar',
+  contentDepth: "",
+  inLanguage: "ar",
   isAccessibleForFree: true,
   license: "none",
-  
+
   // SEO Meta Tags
-  seoTitle: '',
-  seoDescription: '',
-  metaRobots: 'index, follow',
-  
+  seoTitle: "",
+  seoDescription: "",
+  metaRobots: "index, follow",
+
   // Open Graph (Complete) — OG URL derived from canonicalUrl (SOT)
-  ogTitle: '',
-  ogDescription: '',
-  ogType: 'article',
+  ogTitle: "",
+  ogDescription: "",
+  ogType: "article",
   ogSiteName: SITE_NAME_FALLBACK,
-  ogLocale: 'ar_SA',
-  ogArticleAuthor: '',
+  ogLocale: "ar_SA",
+  ogArticleAuthor: "",
   ogArticlePublishedTime: null,
   ogArticleModifiedTime: null,
-  ogArticleSection: '',
+  ogArticleSection: "",
   ogArticleTag: [],
-  
+
   // Twitter Cards (Complete)
-  twitterCard: 'summary_large_image',
-  twitterTitle: '',
-  twitterDescription: '',
-  twitterSite: '',
-  twitterCreator: '',
-  
+  twitterCard: "summary_large_image",
+  twitterTitle: "",
+  twitterDescription: "",
+  twitterSite: "",
+  twitterCreator: "",
+
   // Technical SEO
-  canonicalUrl: '',
+  canonicalUrl: "",
   sitemapPriority: 0.5,
-  sitemapChangeFreq: 'weekly',
-  
+  sitemapChangeFreq: "weekly",
+
   // Breadcrumb Support
   breadcrumbPath: undefined,
-  
+
   // Featured Media
   featuredImageId: null,
   featuredImageAlt: null,
   gallery: [],
-  
+
   // JSON-LD Structured Data
-  jsonLdStructuredData: '',
+  jsonLdStructuredData: "",
   jsonLdLastGenerated: null,
   jsonLdValidationReport: undefined,
-  
+
   // Content for Structured Data
-  articleBodyText: '',
-  
+  articleBodyText: "",
+
   // Semantic Enhancement
   semanticKeywords: undefined,
-  
+
   // E-E-A-T Enhancement
   citations: [],
 
@@ -242,11 +282,11 @@ const initialFormData: ArticleFormData = {
   // Schema Versioning
   jsonLdVersion: 1,
   jsonLdHistory: undefined,
-  jsonLdDiffSummary: '',
+  jsonLdDiffSummary: "",
   // Tags & FAQs
   tags: [],
   faqs: [],
-  
+
   // Related Articles
   relatedArticles: [],
 };
@@ -265,8 +305,11 @@ export function ArticleFormProvider({
   realSeoScore = 0,
   siteUrl,
 }: ArticleFormProviderProps) {
-  const dbMetaAndJsonLd = dbMetaAndJsonLdProp ?? { nextjsMetadata: null, jsonLdStructuredData: null };
-  const mode: 'new' | 'edit' = articleId ? 'edit' : 'new';
+  const dbMetaAndJsonLd = dbMetaAndJsonLdProp ?? {
+    nextjsMetadata: null,
+    jsonLdStructuredData: null,
+  };
+  const mode: "new" | "edit" = articleId ? "edit" : "new";
   const [formData, setFormData] = useState<ArticleFormData>(() => {
     const initial = {
       ...initialFormData,
@@ -282,16 +325,19 @@ export function ArticleFormProvider({
   /** Internal links the writer has to decide on before the save is allowed through. */
   const [linksToReview, setLinksToReview] = useState<AuditedLink[]>([]);
   /** Keeps the interrupted save() call open until the review dialog is answered. */
-  const pendingSaveResolve = useRef<((result: FormSubmitResult) => void) | null>(null);
+  const pendingSaveResolve = useRef<
+    ((result: FormSubmitResult) => void) | null
+  >(null);
   const [pendingNavHref, setPendingNavHref] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [currentStep, setCurrentStep] = useState<number>(1);
   const { toast } = useToast();
-  
+
   const totalSteps = STEP_CONFIGS.length;
 
   const getStepValidation = useCallback(
-    (stepNumber: number) => calculateStepValidation(stepNumber, formData, errors),
+    (stepNumber: number) =>
+      calculateStepValidation(stepNumber, formData, errors),
     [formData, errors]
   );
 
@@ -311,34 +357,65 @@ export function ArticleFormProvider({
   // Get section href (mode-aware)
   const getSectionHref = useCallback(
     (section: string) => {
-      if (mode === 'edit' && articleId) {
+      if (mode === "edit" && articleId) {
         return `/articles/${articleId}/edit`;
       }
       return `/articles/new`;
     },
-    [mode, articleId],
+    [mode, articleId]
   );
 
   // Sections configuration
   const sections: SectionConfig[] = [
-    { id: 'basic', label: 'Basic Info', icon: FileText, href: getSectionHref('basic') },
-    { id: 'content', label: 'Content', icon: Edit, href: getSectionHref('content') },
-    { id: 'media', label: 'Media', icon: Image, href: getSectionHref('media') },
-    { id: 'tags', label: 'Tags & FAQs', icon: Tag, href: getSectionHref('tags') },
-    { id: 'seo', label: 'Technical SEO', icon: Search, href: getSectionHref('seo') },
-    { id: 'seo-validation', label: 'SEO & Validation', icon: CheckCircle, href: getSectionHref('seo-validation') },
+    {
+      id: "basic",
+      label: "Basic Info",
+      icon: FileText,
+      href: getSectionHref("basic"),
+    },
+    {
+      id: "content",
+      label: "Content",
+      icon: Edit,
+      href: getSectionHref("content"),
+    },
+    { id: "media", label: "Media", icon: Image, href: getSectionHref("media") },
+    {
+      id: "tags",
+      label: "Tags & FAQs",
+      icon: Tag,
+      href: getSectionHref("tags"),
+    },
+    {
+      id: "seo",
+      label: "Technical SEO",
+      icon: Search,
+      href: getSectionHref("seo"),
+    },
+    {
+      id: "seo-validation",
+      label: "SEO & Validation",
+      icon: CheckCircle,
+      href: getSectionHref("seo-validation"),
+    },
   ];
 
-  const updateField = useCallback((field: keyof ArticleFormData, value: ArticleFormData[keyof ArticleFormData]) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setIsDirty(true);
-    isDirtyRef.current = true;
-    setErrors((prev) => {
-      const next = { ...prev };
-      delete next[field];
-      return next;
-    });
-  }, []);
+  const updateField = useCallback(
+    (
+      field: keyof ArticleFormData,
+      value: ArticleFormData[keyof ArticleFormData]
+    ) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+      setIsDirty(true);
+      isDirtyRef.current = true;
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    },
+    []
+  );
 
   const updateFields = useCallback((fields: Partial<ArticleFormData>) => {
     setFormData((prev) => ({ ...prev, ...fields }));
@@ -355,54 +432,67 @@ export function ArticleFormProvider({
     (data: ArticleFormData) => {
       if (!data.isClientSiteArticle) return siteUrl;
       const client = clients.find((c) => c.id === data.clientId);
-      return (client?.articlesBaseUrl ?? '').trim() || siteUrl;
+      return (client?.articlesBaseUrl ?? "").trim() || siteUrl;
     },
-    [clients, siteUrl],
+    [clients, siteUrl]
   );
 
-  const runSave = useCallback(async (data: ArticleFormData) => {
-    setIsSaving(true);
-    isSavingRef.current = true;
-    try {
-      const result = articleId
-        ? await updateArticle(articleId, data)
-        : await onSubmit(data);
-      if (result.success) {
-        setIsDirty(false);
-        isDirtyRef.current = false; // sync immediately — beforeunload reads this ref
-        setErrors({});
-        // The row saved but its stored SEO blob did not rebuild. Every save button goes
-        // through here, so raising it once covers all of them — and a green "saved"
-        // toast alone would be a lie: the public page still shows the old title.
-        if (result.seoWarning) {
-          toast({
-            title: 'الحفظ تمّ — بيانات السيو ما تجدّدت',
-            description: result.seoWarning,
-            variant: 'warning',
-          });
+  const runSave = useCallback(
+    async (data: ArticleFormData) => {
+      setIsSaving(true);
+      isSavingRef.current = true;
+      try {
+        const result = articleId
+          ? await updateArticle(articleId, data)
+          : await onSubmit(data);
+        if (result.success) {
+          setIsDirty(false);
+          isDirtyRef.current = false; // sync immediately — beforeunload reads this ref
+          setErrors({});
+          // The row saved but its stored SEO blob did not rebuild. Every save button goes
+          // through here, so raising it once covers all of them — and a green "saved"
+          // toast alone would be a lie: the public page still shows the old title.
+          if (result.seoWarning) {
+            toast({
+              title: "الحفظ تمّ — بيانات السيو ما تجدّدت",
+              description: result.seoWarning,
+              variant: "warning",
+            });
+          }
+          // Sync userVersion + updatedAt from server — prevents optimistic locking conflict on next save
+          if (
+            result.article?.userVersion != null ||
+            result.article?.updatedAt
+          ) {
+            setFormData((prev) => ({
+              ...prev,
+              ...(result.article!.userVersion != null && {
+                userVersion: result.article!.userVersion,
+              }),
+              ...(result.article!.updatedAt && {
+                updatedAt: result.article!.updatedAt,
+              }),
+            }));
+          }
+        } else {
+          const errorObj: Record<string, string[]> = result.error
+            ? { _general: [result.error] }
+            : {};
+          setErrors(errorObj);
         }
-        // Sync userVersion + updatedAt from server — prevents optimistic locking conflict on next save
-        if (result.article?.userVersion != null || result.article?.updatedAt) {
-          setFormData((prev) => ({
-            ...prev,
-            ...(result.article!.userVersion != null && { userVersion: result.article!.userVersion }),
-            ...(result.article!.updatedAt && { updatedAt: result.article!.updatedAt }),
-          }));
-        }
-      } else {
-        const errorObj: Record<string, string[]> = result.error ? { _general: [result.error] } : {};
-        setErrors(errorObj);
+        return result;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to save article";
+        setErrors({ _general: [errorMessage] });
+        return { success: false, error: errorMessage };
+      } finally {
+        setIsSaving(false);
+        isSavingRef.current = false;
       }
-      return result;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save article';
-      setErrors({ _general: [errorMessage] });
-      return { success: false, error: errorMessage };
-    } finally {
-      setIsSaving(false);
-      isSavingRef.current = false;
-    }
-  }, [onSubmit, articleId, toast]);
+    },
+    [onSubmit, articleId, toast]
+  );
 
   /**
    * A link that points back at our own site while carrying `nofollow` is never a
@@ -416,16 +506,20 @@ export function ArticleFormProvider({
     const audited = auditContentLinks(
       formData.content,
       publishHostUrl(formData),
-      formData.isClientSiteArticle ? siteUrl : null,
+      formData.isClientSiteArticle ? siteUrl : null
     );
 
     // Ask each address whether its page is still there. A probe that cannot answer
     // returns nothing, so a slow network never turns into a false accusation.
     const { dead } = audited.length
-      ? await checkLinksAction(probeableHrefs(audited)).catch(() => ({ dead: [] as string[] }))
+      ? await checkLinksAction(probeableHrefs(audited)).catch(() => ({
+          dead: [] as string[],
+        }))
       : { dead: [] as string[] };
 
-    const needsReview = withDeadLinks(audited, dead).filter((l) => l.issues.length > 0);
+    const needsReview = withDeadLinks(audited, dead).filter(
+      (l) => l.issues.length > 0
+    );
     if (needsReview.length === 0) return runSave(formData);
 
     // Hand the caller's promise to the dialog: whatever the writer decides there
@@ -446,16 +540,16 @@ export function ArticleFormProvider({
     async (decisions: LinkDecision[]) => {
       const content = applyLinkDecisions(formData.content, decisions);
       setLinksToReview([]);
-      updateField('content', content);
+      updateField("content", content);
       setErrors({});
       settlePendingSave(await runSave({ ...formData, content }));
     },
-    [formData, runSave, settlePendingSave, updateField],
+    [formData, runSave, settlePendingSave, updateField]
   );
 
   const cancelLinkReview = useCallback(() => {
     setLinksToReview([]);
-    const message = 'الحفظ متوقف — فيه روابط داخلية محتاجة قرارك.';
+    const message = "الحفظ متوقف — فيه روابط داخلية محتاجة قرارك.";
     setErrors({ _general: [message] });
     settlePendingSave({ success: false, error: message });
   }, [settlePendingSave]);
@@ -466,17 +560,27 @@ export function ArticleFormProvider({
   useEffect(() => {
     const handleLinkClick = (e: MouseEvent) => {
       if (!isDirtyRef.current || isSavingRef.current) return;
-      const anchor = (e.target as Element).closest('a[href]') as HTMLAnchorElement | null;
+      const anchor = (e.target as Element).closest(
+        "a[href]"
+      ) as HTMLAnchorElement | null;
       if (!anchor) return;
-      const href = anchor.getAttribute('href');
-      if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || anchor.target === '_blank') return;
+      const href = anchor.getAttribute("href");
+      if (
+        !href ||
+        href.startsWith("#") ||
+        href.startsWith("mailto:") ||
+        href.startsWith("tel:") ||
+        anchor.target === "_blank"
+      )
+        return;
       e.preventDefault();
       e.stopPropagation();
       setPendingNavHref(href);
       setShowUnsavedDialog(true);
     };
-    document.addEventListener('click', handleLinkClick, { capture: true });
-    return () => document.removeEventListener('click', handleLinkClick, { capture: true });
+    document.addEventListener("click", handleLinkClick, { capture: true });
+    return () =>
+      document.removeEventListener("click", handleLinkClick, { capture: true });
   }, []); // stable — reads from refs only
 
   const handleConfirmLeave = useCallback(() => {
@@ -495,7 +599,7 @@ export function ArticleFormProvider({
   // Auto-save every 30 seconds when dirty (edit mode only).
   // Skips when minimum required fields are missing to avoid persisting invalid drafts.
   useEffect(() => {
-    if (mode !== 'edit' || !isDirty || isSaving) return;
+    if (mode !== "edit" || !isDirty || isSaving) return;
 
     const hasMinimumFields =
       Boolean(formData.title?.trim()) &&
@@ -516,14 +620,25 @@ export function ArticleFormProvider({
         clearTimeout(autoSaveTimerRef.current);
       }
     };
-  }, [mode, isDirty, isSaving, save, formData.title, formData.clientId, formData.content]);
+  }, [
+    mode,
+    isDirty,
+    isSaving,
+    save,
+    formData.title,
+    formData.clientId,
+    formData.content,
+  ]);
 
   // Step navigation methods
-  const goToStep = useCallback((step: number) => {
-    if (step >= 1 && step <= totalSteps) {
-      setCurrentStep(step);
-    }
-  }, [totalSteps]);
+  const goToStep = useCallback(
+    (step: number) => {
+      if (step >= 1 && step <= totalSteps) {
+        setCurrentStep(step);
+      }
+    },
+    [totalSteps]
+  );
 
   const nextStep = useCallback(() => {
     setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
@@ -535,7 +650,7 @@ export function ArticleFormProvider({
 
   const canGoNext = currentStep < totalSteps;
   const canGoPrevious = currentStep > 1;
-  
+
   // Auto-fill SEO title from title (if empty)
   useEffect(() => {
     if (formData.title && !formData.seoTitle) {
@@ -558,17 +673,30 @@ export function ArticleFormProvider({
     }
   }, [formData.excerpt, formData.seoDescription]);
 
-  // Auto-fill canonical URL from slug (if empty)
+  // Canonical is a preview only — create/update rebuild it server-side. Keep this preview
+  // in sync with both the current slug and the real destination so it never carries an
+  // old slug or a Modonty-domain URL for a client-site article.
   useEffect(() => {
-    if (formData.slug && !formData.canonicalUrl) {
-      const selectedClient = clients.find((c) => c.id === formData.clientId);
-      const clientSlug = selectedClient?.slug;
-      const canonicalUrl = generateCanonicalUrl(formData.slug, siteUrl, clientSlug);
-      if (canonicalUrl) {
-        setFormData((prev) => ({ ...prev, canonicalUrl }));
-      }
+    if (!formData.slug) return;
+
+    const selectedClient = clients.find((c) => c.id === formData.clientId);
+    const clientBaseUrl = selectedClient?.articlesBaseUrl?.trim();
+    const canonicalUrl =
+      formData.isClientSiteArticle && clientBaseUrl
+        ? absoluteUrl(`/${formData.slug}`, clientBaseUrl.replace(/\/+$/, ""))
+        : generateCanonicalUrl(formData.slug, siteUrl);
+
+    if (canonicalUrl !== formData.canonicalUrl) {
+      setFormData((prev) => ({ ...prev, canonicalUrl }));
     }
-  }, [formData.slug, formData.canonicalUrl, formData.clientId, clients]);
+  }, [
+    formData.slug,
+    formData.canonicalUrl,
+    formData.clientId,
+    formData.isClientSiteArticle,
+    clients,
+    siteUrl,
+  ]);
 
   // Auto-fill Sitemap Priority from Featured (if empty)
   useEffect(() => {
@@ -583,30 +711,43 @@ export function ArticleFormProvider({
   // Auto-fill OG Article Section from Category (if empty)
   useEffect(() => {
     if (formData.categoryId && !formData.ogArticleSection) {
-      const selectedCategory = categories.find((c) => c.id === formData.categoryId);
+      const selectedCategory = categories.find(
+        (c) => c.id === formData.categoryId
+      );
       if (selectedCategory?.name) {
-        setFormData((prev) => ({ ...prev, ogArticleSection: selectedCategory.name }));
+        setFormData((prev) => ({
+          ...prev,
+          ogArticleSection: selectedCategory.name,
+        }));
       }
     }
   }, [formData.categoryId, formData.ogArticleSection, categories]);
 
   // Auto-fill OG Article Tags from Tags (if empty)
   useEffect(() => {
-    if (formData.tags && formData.tags.length > 0 && (!formData.ogArticleTag || formData.ogArticleTag.length === 0)) {
-      const selectedTags = tags.filter((t) => formData.tags?.includes(t.id)).map((t) => t.name);
+    if (
+      formData.tags &&
+      formData.tags.length > 0 &&
+      (!formData.ogArticleTag || formData.ogArticleTag.length === 0)
+    ) {
+      const selectedTags = tags
+        .filter((t) => formData.tags?.includes(t.id))
+        .map((t) => t.name);
       if (selectedTags.length > 0) {
         setFormData((prev) => ({ ...prev, ogArticleTag: selectedTags }));
       }
     }
   }, [formData.tags, formData.ogArticleTag, tags]);
 
-
   // Auto-fill OG Article Author from Author (if empty)
   useEffect(() => {
     if (formData.authorId && !formData.ogArticleAuthor) {
       const selectedAuthor = authors.find((a) => a.id === formData.authorId);
       if (selectedAuthor?.name) {
-        setFormData((prev) => ({ ...prev, ogArticleAuthor: selectedAuthor.name }));
+        setFormData((prev) => ({
+          ...prev,
+          ogArticleAuthor: selectedAuthor.name,
+        }));
       }
     }
   }, [formData.authorId, formData.ogArticleAuthor, authors]);
@@ -617,13 +758,20 @@ export function ArticleFormProvider({
     if (formData.content) {
       // Extract plain text from HTML content (TipTap outputs HTML via editor.getHTML())
       // Use browser's DOMParser for client-side extraction
-      if (typeof window !== 'undefined') {
-        const tempDiv = document.createElement('div');
+      if (typeof window !== "undefined") {
+        const tempDiv = document.createElement("div");
         tempDiv.innerHTML = formData.content;
-        const plainText = (tempDiv.textContent || tempDiv.innerText || '').trim();
-        
+        const plainText = (
+          tempDiv.textContent ||
+          tempDiv.innerText ||
+          ""
+        ).trim();
+
         // Update articleBodyText with extracted plain text
-        if (plainText && (!formData.articleBodyText || formData.articleBodyText !== plainText)) {
+        if (
+          plainText &&
+          (!formData.articleBodyText || formData.articleBodyText !== plainText)
+        ) {
           setFormData((prev) => ({ ...prev, articleBodyText: plainText }));
         }
       }
@@ -665,7 +813,9 @@ export function ArticleFormProvider({
 
   return (
     <>
-      <ArticleFormContext.Provider value={value}>{children}</ArticleFormContext.Provider>
+      <ArticleFormContext.Provider value={value}>
+        {children}
+      </ArticleFormContext.Provider>
       <AlertDialog open={showUnsavedDialog} onOpenChange={setShowUnsavedDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -698,7 +848,7 @@ export function ArticleFormProvider({
 export function useArticleForm() {
   const context = useContext(ArticleFormContext);
   if (!context) {
-    throw new Error('useArticleForm must be used within ArticleFormProvider');
+    throw new Error("useArticleForm must be used within ArticleFormProvider");
   }
   return context;
 }

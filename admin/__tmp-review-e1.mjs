@@ -1,0 +1,10 @@
+import { chromium } from '@playwright/test';
+const b = await chromium.launch(); const c = await b.newContext({ viewport: { width: 1280, height: 900 }, storageState: 'C:/tmp/pay-a1-evidence/state.json' }); const p = await c.newPage();
+const r = await p.goto('http://localhost:3001/orders', { waitUntil: 'load', timeout: 90000 }); await p.waitForSelector('main'); await p.waitForTimeout(1500);
+console.log('orders HTTP', r.status(), '| rows:', await p.locator('tbody tr').count(), '| scrollW=clientW:', await p.evaluate(() => document.documentElement.scrollWidth === document.documentElement.clientWidth));
+await p.screenshot({ path: 'C:/tmp/review-e1-list.png' });
+const href = await p.locator('tbody tr a').first().getAttribute('href');
+const r2 = await p.goto('http://localhost:3001' + href, { waitUntil: 'load', timeout: 90000 }); await p.waitForSelector('main'); await p.waitForTimeout(1500);
+console.log('detail HTTP', r2.status(), '| h1:', await p.locator('main h1').first().textContent());
+await p.screenshot({ path: 'C:/tmp/review-e1-detail.png', fullPage: true });
+await b.close();

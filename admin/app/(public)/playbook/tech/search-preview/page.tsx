@@ -24,8 +24,8 @@ const glossary = [
 export default function SeoVisualPage() {
   return (
     <DocLayout
-      parentHref="/playbook/tech"
-      parentLabel="الجانب التقني"
+      parentHref="/playbook/content"
+      parentLabel="قسم المحتوى"
       title="معاينة البحث والمشاركة"
       description="كيف يظهر مقالك في نتائج جوجل وعند مشاركته على WhatsApp / X / LinkedIn — تتبّع كل عنصر لمصدره في الأدمن"
     >

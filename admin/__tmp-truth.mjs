@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+// القاعدة المفعَّلة في shared/.env هي modonty_dev — لا نلمس MODONTY_PROD_DATABASE_URL
+const line = fs.readFileSync('../shared/.env', 'utf8').split('\n').find((l) => /^\s*DATABASE_URL\s*=/.test(l));
+process.env.DATABASE_URL = line.split('=').slice(1).join('=').trim().replace(/^["']|["']$/g, '');
+console.log('القاعدة:', (process.env.DATABASE_URL.match(/\/([A-Za-z0-9_-]+)\?/) || [])[1], '\n');
+const { PrismaClient } = await import('@prisma/client');
+const p = new PrismaClient();
+const n = async (label, fn) => { try { console.log(label.padEnd(30), String(await fn()).padStart(6)); } catch (e) { console.log(label.padEnd(30), '  ERR ' + String(e.message).split('\n').filter(Boolean).pop().slice(0, 50)); } };
+await n('شركاء', () => p.client.count());
+await n('مقالات منشورة', () => p.article.count({ where: { published: true } }));
+await n('ArticleMedia', () => p.articleMedia.count());
+await n('Media', () => p.media.count());
+await n('طلبات حجز', () => p.bookingRequest.count());
+await n('مجالات', () => p.industry.count());
+await n('تصنيفات', () => p.category.count());
+await n('كتّاب', () => p.author.count());
+await n('ClientSite', () => p.clientSite.count());
+await n('ClientReview', () => p.clientReview.count());
+await n('ClientFAQ', () => p.clientFAQ.count());
+await p.$disconnect();

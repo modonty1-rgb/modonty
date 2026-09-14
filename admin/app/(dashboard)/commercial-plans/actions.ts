@@ -4,9 +4,11 @@ import { CommercialPlanTheme, SubscriptionTier } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { isFeatureIconName } from "@modonty/shared/lib/commercial/feature-icon-names";
+import { isFeatureUnitLabel } from "@modonty/shared/lib/commercial/feature-unit-labels";
+import { isPayMarkName } from "@modonty/shared/lib/commercial/pay-mark-names";
 import { db } from "@/lib/db";
 import { requireFinanceAdmin } from "@/lib/require-finance-admin";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 function value(form: FormData, key: string): string { return String(form.get(key) ?? "").trim(); }
 
@@ -14,12 +16,18 @@ const optionalText = (max: number) => z.preprocess((v) => (typeof v === "string"
 const featureSchema = z.object({
   name: z.string().trim().min(1, "اسم الميزة مطلوب").max(80, "اسم الميزة طويل جداً"),
   description: optionalText(300),
-  unitLabel: optionalText(20),
-  // "none" is the select's empty sentinel (Radix rejects an empty-string item value).
-  icon: z.preprocess((v) => (typeof v === "string" && v.trim() && v !== "none" ? v.trim() : null), z.string().nullable().refine((v) => v === null || isFeatureIconName(v), "أيقونة غير موجودة في السجلّ")),
+  /**
+   * قائمة مغلقة لا نصّ حرّ (خالد ١٤ سبتمبر ٢٠٢٦). الكتابة اليدوية أنتجت «مقال/شهر»
+   * و«مقال / شهر» لنفس المعنى، وحساب إجمالي المدّة يميّز الشهريّ بلاحقة «/شهر» —
+   * فمسافةٌ زائدة كانت تُسقط الرقم بصمت.
+   */
+  unitLabel: z.preprocess(
+    (v) => (typeof v === "string" && v.trim() ? v.trim() : null),
+    z.string().nullable().refine((v) => v === null || isFeatureUnitLabel(v), "وحدة غير موجودة في القائمة"),
+  ),
 });
 function parseFeature(form: FormData) {
-  const parsed = featureSchema.safeParse({ name: value(form, "name"), description: value(form, "description"), unitLabel: value(form, "unitLabel"), icon: value(form, "icon") });
+  const parsed = featureSchema.safeParse({ name: value(form, "name"), description: value(form, "description"), unitLabel: value(form, "unitLabel") });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقق من بيانات الميزة");
   return parsed.data;
 }
@@ -43,11 +51,38 @@ function moveInList(rows: { id: string; displayOrder: number }[], id: string, di
 
 const updatePlanSchema = z.object({
   name: z.string().trim().min(1, "اسم الباقة مطلوب").max(60, "اسم الباقة طويل جداً"),
-  description: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(300).nullable()),
   badge: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(30).nullable()),
+  hook: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(60, "السطر الخاطف طويل — اجعله جملة واحدة").nullable()),
+  ctaText: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(30, "نصّ الزرّ طويل").nullable()),
+  featuredBadge: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(30).nullable()),
   tier: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.nativeEnum(SubscriptionTier).nullable()),
   theme: z.nativeEnum(CommercialPlanTheme),
+  /**
+   * سطور تسويق حرّة تظهر فوق المزايا (PAY-G12). تُكتب سطراً لكل جملة في مربّع واحد،
+   * فالمحرّر يراها كما تُعرض. الحدود مقصودة: ٦ سطور × ٨٠ حرفاً — بطاقةٌ بعشرين سطر حرّ
+   * تُغرق قائمة المزايا المُهيكلة تحتها، وهي مصدر الحقيقة للكمّيات.
+   */
+  highlights: z.preprocess(
+    (v) => (typeof v === "string" ? v.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).slice(0, 6) : []),
+    z.array(z.string().max(80, "السطر طويل — اجعله جملة قصيرة")),
+  ),
 });
+
+/**
+ * إبطال كاش الكتالوج — نداءٌ واحد يجمع الأدمن ومدونتي (PAY-C1).
+ *
+ * لماذا دالّة لا سطران في كل أكشن: الملفّ فيه واحد وعشرون أكشناً تمسّ الكتالوج، وأكشنٌ
+ * واحد يُنسى = صفحة بيع تعرض سعراً قديماً بلا أن يلاحظ أحد. الدالّة تجعل النسيان مرئياً:
+ * أيّ أكشن لا يستدعيها يظهر في `grep` بسطر واحد.
+ *
+ * ولا تُفشل الأكشن: `revalidateModontyTag` يبتلع أخطاء الشبكة بنفسه — وفشلُ إبطال كاش
+ * لا يبرّر رفض حفظٍ نجح في القاعدة.
+ */
+async function revalidateCatalog(planId?: string) {
+  await revalidateCatalog();
+  if (planId) await revalidateCatalog(planId);
+  await revalidateModontyTag("commercial-catalog");
+}
 
 /**
  * Read-only name lookup for the breadcrumb (see `breadcrumb-actions.ts`), same
@@ -75,15 +110,24 @@ export async function createCommercialPlan(form: FormData) {
     name, slug, articlesPerMonth, highlights: [], displayOrder: await db.commercialPlan.count(),
     prices: { create: [{ market: "SA", currency: "SAR", monthlyBase: sa }, { market: "EG", currency: "EGP", monthlyBase: eg }] },
   }});
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog();
 }
 
 export async function updateCommercialPlan(id: string, form: FormData) {
   await requireFinanceAdmin();
-  const parsed = updatePlanSchema.safeParse({ name: value(form, "name"), description: value(form, "description"), badge: value(form, "badge"), tier: value(form, "tier"), theme: value(form, "theme") });
+  const parsed = updatePlanSchema.safeParse({ name: value(form, "name"), badge: value(form, "badge"), tier: value(form, "tier"), theme: value(form, "theme"), highlights: form.get("highlights"), hook: value(form, "hook"), ctaText: value(form, "ctaText"), featuredBadge: value(form, "featuredBadge") });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقق من بيانات الباقة");
-  await db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, description: parsed.data.description, badge: parsed.data.badge, tier: parsed.data.tier, theme: parsed.data.theme } });
-  revalidatePath("/commercial-plans"); revalidatePath(`/commercial-plans/${id}`);
+  // شارة التمييز على باقة واحدة فقط: بطاقتان «مميَّزتان» ليستا تمييزاً أقوى، بل لا تمييز.
+  // الحارس هنا لا في السكيما — مونجو لا يملك قيداً جزئياً يقول «حقل غير فارغ في صفّ واحد».
+  // نفس مبدأ `setRecommendedCommercialTerm`: المسح والكتابة في معاملة واحدة.
+  const writes = [
+    db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, badge: parsed.data.badge, tier: parsed.data.tier, theme: parsed.data.theme, highlights: parsed.data.highlights, hook: parsed.data.hook, ctaText: parsed.data.ctaText, featuredBadge: parsed.data.featuredBadge } }),
+  ];
+  if (parsed.data.featuredBadge) {
+    writes.unshift(db.commercialPlan.updateMany({ where: { id: { not: id }, featuredBadge: { not: null } }, data: { featuredBadge: null } }));
+  }
+  await db.$transaction(writes);
+  await revalidateCatalog(id);
 }
 
 export async function setCommercialPlanPublished(id: string, isPublished: boolean) {
@@ -95,7 +139,7 @@ export async function setCommercialPlanPublished(id: string, isPublished: boolea
     if (conflict) throw new Error(`الفئة مستعملة في باقة «${conflict.name}» المنشورة`);
   }
   await db.commercialPlan.update({ where: { id }, data: { isPublished } });
-  revalidatePath("/commercial-plans"); revalidatePath(`/commercial-plans/${id}`);
+  await revalidateCatalog(id);
 }
 
 export async function updateCommercialPlanPrice(id: string, form: FormData) {
@@ -103,7 +147,7 @@ export async function updateCommercialPlanPrice(id: string, form: FormData) {
   const amount = Number(form.get("amount"));
   if (!Number.isInteger(amount) || amount < 0) throw new Error("سعر غير صحيح");
   await db.commercialPlanPrice.update({ where: { id }, data: { monthlyBase: amount } });
-  revalidatePath("/commercial-plans"); revalidatePath(`/commercial-plans/${String(form.get("planId"))}`);
+  await revalidateCatalog(String(form.get("planId")));
 }
 
 export async function updateCommercialPlanMarketPrices(planId: string, form: FormData) {
@@ -116,7 +160,60 @@ export async function updateCommercialPlanMarketPrices(planId: string, form: For
     db.commercialPlanPrice.updateMany({ where: { planId, market: "EG" }, data: { monthlyBase: eg } }),
     db.commercialPlan.update({ where: { id: planId }, data: { articlesPerMonth } }),
   ]);
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog();
+}
+
+const MARKETS = ["SA", "EG"] as const;
+
+/** أسماء الشعارات تُكتب مفصولة بفواصل أو مسافات، وتُرفض أي كلمة خارج القائمة المغلقة. */
+const payMarkList = z.preprocess(
+  (v) => (typeof v === "string" ? v.split(/[,\s]+/).map((t) => t.trim()).filter(Boolean) : []),
+  z.array(z.string()).refine((names) => names.every(isPayMarkName), "شعار غير موجود في القائمة المغلقة"),
+);
+
+const paySectionSchema = z.object({
+  announcement: optionalText(120),
+  headline: optionalText(120),
+  subheadline: optionalText(300),
+  vatNote: optionalText(80),
+  installmentLabel: optionalText(40),
+  refundNote: optionalText(120),
+  paymentFootnote: optionalText(160),
+  paymentFootnoteSub: optionalText(80),
+  payMarks: payMarkList,
+  installmentMark: z.preprocess(
+    (v) => (typeof v === "string" && v.trim() ? v.trim() : null),
+    z.string().nullable().refine((v) => v === null || isPayMarkName(v), "شعار غير موجود في القائمة المغلقة"),
+  ),
+  trustItems: z.preprocess(
+    (v) => (typeof v === "string" ? v.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).slice(0, 6) : []),
+    z.array(z.string().max(60, "سطر الثقة طويل — اجعله عبارة قصيرة")),
+  ),
+});
+
+/**
+ * كلام صفحة البيع لسوق واحد (PAY-G13). `upsert` لا `update`: الصفّ لا يوجد حتى أوّل
+ * حفظ، وإجبار خالد على «إنشاء» ثم «تعديل» خطوةٌ بلا معنى — الشاشة تعرض حقولاً فارغة
+ * ويصير الحفظ الأوّل هو الإنشاء.
+ */
+export async function updatePaySectionContent(market: string, form: FormData) {
+  await requireFinanceAdmin();
+  if (!MARKETS.includes(market as (typeof MARKETS)[number])) throw new Error("سوق غير معروف");
+  const parsed = paySectionSchema.safeParse({
+    announcement: value(form, "announcement"), headline: value(form, "headline"),
+    subheadline: value(form, "subheadline"), trustItems: form.get("trustItems"),
+    vatNote: value(form, "vatNote"), installmentLabel: value(form, "installmentLabel"),
+    refundNote: value(form, "refundNote"), paymentFootnote: value(form, "paymentFootnote"),
+    paymentFootnoteSub: value(form, "paymentFootnoteSub"),
+    payMarks: value(form, "payMarks"), installmentMark: value(form, "installmentMark"),
+  });
+  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقق من كلام الصفحة");
+  await db.paySectionContent.upsert({
+    where: { market },
+    create: { market, ...parsed.data },
+    update: parsed.data,
+  });
+  await revalidateCatalog();
 }
 
 /** One duration policy applies to every plan — see PAY-Q3. No planId here on purpose. */
@@ -125,7 +222,7 @@ export async function addCommercialTermPolicy(form: FormData) {
   const paidMonths = Number(form.get("paidMonths")); const bonusServiceMonths = Number(form.get("bonusMonths"));
   if (!Number.isInteger(paidMonths) || paidMonths < 1 || !Number.isInteger(bonusServiceMonths) || bonusServiceMonths < 0) throw new Error("مدة غير صحيحة");
   await db.commercialTermPolicy.create({ data: { paidMonths, bonusServiceMonths, displayOrder: paidMonths } });
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog();
 }
 
 export async function updateCommercialTermPolicy(id: string, form: FormData) {
@@ -133,7 +230,26 @@ export async function updateCommercialTermPolicy(id: string, form: FormData) {
   const paidMonths = Number(form.get("paidMonths")); const bonusServiceMonths = Number(form.get("bonusMonths"));
   if (!Number.isInteger(paidMonths) || paidMonths < 1 || !Number.isInteger(bonusServiceMonths) || bonusServiceMonths < 0) throw new Error("مدة غير صحيحة");
   await db.commercialTermPolicy.update({ where: { id }, data: { paidMonths, bonusServiceMonths, displayOrder: paidMonths } });
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog();
+}
+
+/**
+ * تعيين المدّة الموصى بها — الصفّ الذي تفتح عليه صفحة البيع وتوسمه «الأنسب» (PAY-G8).
+ *
+ * الحارس هنا لا في السكيما: مونجو لا يملك قيداً جزئياً يقول «صفّ واحد فقط بـtrue».
+ * فالمسح ثم التعيين يجريان في معاملة واحدة — لأن توصيتين ليستا إشارة أقوى، بل لا إشارة.
+ */
+export async function setRecommendedCommercialTerm(id: string) {
+  await requireFinanceAdmin();
+  const target = await db.commercialTermPolicy.findUnique({ where: { id }, select: { isActive: true } });
+  if (!target) throw new Error("المدة غير موجودة");
+  // مدّة موقوفة لا تُوصى بها: الصفحة ستفتح على شيء لا يراه الزائر أصلاً.
+  if (!target.isActive) throw new Error("لا يمكن التوصية بمدة موقوفة — فعّلها أولاً");
+  await db.$transaction([
+    db.commercialTermPolicy.updateMany({ where: { isRecommended: true }, data: { isRecommended: false } }),
+    db.commercialTermPolicy.update({ where: { id }, data: { isRecommended: true } }),
+  ]);
+  await revalidateCatalog();
 }
 
 export async function deleteCommercialTermPolicy(id: string) {
@@ -142,7 +258,7 @@ export async function deleteCommercialTermPolicy(id: string) {
   const target = await db.commercialTermPolicy.findUnique({ where: { id }, select: { isActive: true } });
   if (target?.isActive && activeCount <= 1) throw new Error("لا يمكن حذف آخر مدة نشطة — أضِف مدة بديلة أولاً");
   await db.commercialTermPolicy.delete({ where: { id } });
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog();
 }
 
 export async function createCommercialFeature(form: FormData) {
@@ -150,13 +266,14 @@ export async function createCommercialFeature(form: FormData) {
   const data = parseFeature(form);
   await db.commercialFeature.create({ data: { ...data, displayOrder: await db.commercialFeature.count() } });
   revalidatePath("/commercial-features");
+  await revalidateCatalog();
 }
 
 export async function updateCommercialFeature(id: string, form: FormData) {
   await requireFinanceAdmin();
   await db.commercialFeature.update({ where: { id }, data: parseFeature(form) });
   revalidatePath("/commercial-features");
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog();
 }
 
 // ── Ordering (PAY-A7): what the /pay page shows first is decided here, not by creation date.
@@ -165,7 +282,7 @@ export async function moveCommercialPlan(id: string, direction: Direction) {
   const rows = await db.commercialPlan.findMany({ select: { id: true, displayOrder: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] });
   const writes = moveInList(rows, id, direction);
   if (writes.length) await db.$transaction(writes.map((w) => db.commercialPlan.update({ where: { id: w.id }, data: { displayOrder: w.displayOrder } })));
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog();
 }
 
 export async function moveCommercialFeature(id: string, direction: Direction) {
@@ -174,7 +291,7 @@ export async function moveCommercialFeature(id: string, direction: Direction) {
   const writes = moveInList(rows, id, direction);
   if (writes.length) await db.$transaction(writes.map((w) => db.commercialFeature.update({ where: { id: w.id }, data: { displayOrder: w.displayOrder } })));
   revalidatePath("/commercial-features");
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog();
 }
 
 export async function moveCommercialPlanFeature(id: string, planId: string, direction: Direction) {
@@ -182,15 +299,40 @@ export async function moveCommercialPlanFeature(id: string, planId: string, dire
   const rows = await db.commercialPlanFeature.findMany({ where: { planId }, select: { id: true, displayOrder: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] });
   const writes = moveInList(rows, id, direction);
   if (writes.length) await db.$transaction(writes.map((w) => db.commercialPlanFeature.update({ where: { id: w.id }, data: { displayOrder: w.displayOrder } })));
-  revalidatePath(`/commercial-plans/${planId}`);
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog(planId);
+  await revalidateCatalog();
 }
 
 export async function setCommercialFeatureActive(id: string, isActive: boolean) {
   await requireFinanceAdmin();
   await db.commercialFeature.update({ where: { id }, data: { isActive } });
   revalidatePath("/commercial-features");
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog();
+}
+
+/**
+ * هل تنزل هذه الميزة في الفاتورة؟ (خالد ١٣ سبتمبر ٢٠٢٦: «نعمل شيك اللي يطلع في الفاتورة»)
+ *
+ * لا يمسّ الفواتير الصادرة: كل طلب يجمّد التزاماته في `CheckoutOrder.planCommitments`
+ * لحظة الشراء، فتبديل العلامة اليوم يغيّر ما يُطبع في الطلبات **القادمة** وحدها. وهذا
+ * المقصود — مستندٌ صدر لا يُعاد كتابته.
+ */
+export async function setCommercialFeatureBillable(id: string, billable: boolean) {
+  await requireFinanceAdmin();
+  await db.commercialFeature.update({ where: { id }, data: { billable } });
+  revalidatePath("/commercial-features");
+  await revalidateCatalog();
+}
+
+/**
+ * سطرٌ يُطبع عريضاً على البطاقة (خالد ١٤ سبتمبر ٢٠٢٦). الإبراز بالوزن لا باللون: يبقى
+ * مقروءاً في الوضعين ولمن لا يميّز الألوان، ولا ينافس لون العلامة على الزرّ.
+ */
+export async function setCommercialFeatureHighlighted(id: string, isHighlighted: boolean) {
+  await requireFinanceAdmin();
+  await db.commercialFeature.update({ where: { id }, data: { isHighlighted } });
+  revalidatePath("/commercial-features");
+  await revalidateCatalog();
 }
 
 export async function assignCommercialFeature(planId: string, form: FormData) {
@@ -204,7 +346,7 @@ export async function assignCommercialFeature(planId: string, form: FormData) {
     update: { quantity, note: value(form, "note") || null },
     create: { planId, featureId, quantity, note: value(form, "note") || null, displayOrder: await db.commercialPlanFeature.count({ where: { planId } }) },
   });
-  revalidatePath(`/commercial-plans/${planId}`);
+  await revalidateCatalog(planId);
 }
 
 export async function updateCommercialPlanFeature(id: string, planId: string, form: FormData) {
@@ -213,13 +355,13 @@ export async function updateCommercialPlanFeature(id: string, planId: string, fo
   const quantity = quantityText ? Number(quantityText) : null;
   if (quantity !== null && (!Number.isInteger(quantity) || quantity < 0)) throw new Error("كمية غير صحيحة");
   await db.commercialPlanFeature.update({ where: { id }, data: { quantity, note: value(form, "note") || null } });
-  revalidatePath(`/commercial-plans/${planId}`);
+  await revalidateCatalog(planId);
 }
 
 export async function removeCommercialPlanFeature(id: string, planId: string) {
   await requireFinanceAdmin();
   await db.commercialPlanFeature.delete({ where: { id } });
-  revalidatePath(`/commercial-plans/${planId}`);
+  await revalidateCatalog(planId);
 }
 
 /** The feature library owns the simple “included in this plan” assignment. */
@@ -249,13 +391,13 @@ export async function setCommercialFeaturePlanAssignments(featureId: string, for
   });
 
   revalidatePath("/commercial-features");
-  revalidatePath("/commercial-plans");
-  for (const planId of new Set([...assignedPlanIds, ...selectedPlanIds])) revalidatePath(`/commercial-plans/${planId}`);
+  await revalidateCatalog();
+  for (const planId of new Set([...assignedPlanIds, ...selectedPlanIds])) await revalidateCatalog(planId);
 }
 
 export async function deleteCommercialPlan(id: string) {
   await requireFinanceAdmin();
   await db.commercialPlan.delete({ where: { id } });
-  revalidatePath("/commercial-plans");
+  await revalidateCatalog();
   redirect("/commercial-plans");
 }

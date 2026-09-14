@@ -27,7 +27,7 @@ export default async function UploadMediaPage({ searchParams }: UploadMediaPageP
             Pick a role, crop to the locked ratio, then enhance — no wrong-sized images.
           </p>
         </div>
-        <Link href="/guidelines/media" target="_blank">
+        <Link href="/playbook/media" target="_blank">
           <Button variant="outline" size="sm" className="gap-1.5">
             <BookOpen className="h-3.5 w-3.5" />
             Standards

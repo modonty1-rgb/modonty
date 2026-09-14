@@ -1,8 +1,13 @@
+import Link from "next/link";
+import { CheckCircle2, XCircle } from "lucide-react";
+
 import { ModontyMark } from "@modonty/shared/components/icons/modonty-mark";
 
 import { ModontyPhilosophyMap } from "./components/modonty-philosophy-map";
 import { ModontySurfacesMap } from "./components/modonty-surfaces-map";
 import { ModontyValues } from "./components/modonty-values";
+import { oneTest, rules, words } from "./helpers/persona";
+import { CAPABILITIES } from "./what-is-modonty-helpers/capabilities";
 
 export const metadata = { title: "ما هي مدونتي؟" };
 
@@ -204,6 +209,126 @@ export default function PlaybookHomePage() {
           <div className="mt-4 border-t border-border/60">
             <ModontySurfacesMap />
           </div>
+        </div>
+      </section>
+
+      {/*
+        هذا القسم كان مدفونًا في «الجانب التقني» (خالد، ١٢ سبتمبر ٢٠٢٦: «هذه من ضمن القوة
+        في المنظومة»)، وهو في الحقيقة جواب سؤال هذه الصفحة: ما الذي يجعلها منظومةً لا أداة.
+        والفرق بين الاثنين هو هذا بالضبط: الأداة تنتظر أن تطلب، والمنظومة تكون قد فعلت.
+      */}
+      <section className="mt-8 scroll-mt-6" id="capabilities">
+        <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
+          <div className="flex items-center gap-2.5 px-4 pt-4">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+              <ModontyMark className="text-[19px]" />
+            </span>
+            <div>
+              <h2 className="text-[17px] font-bold leading-6">ما تفعله المنظومة وحدها</h2>
+              <p className="text-[12.5px] leading-5 text-muted-foreground">
+                سبعة أعمال تختفي عن كاهل الشريك قبل أن يسأل عنها.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-px border-t border-border/60 bg-border/60 sm:grid-cols-2">
+            {CAPABILITIES.map((item) => {
+              const Icon = item.icon;
+              return (
+                <article key={item.title} className="bg-card p-4">
+                  <div className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 shrink-0 text-primary" />
+                    <h3 className="text-[14.5px] font-bold">{item.title}</h3>
+                  </div>
+                  <p className="mt-2 text-[13px] leading-7 text-muted-foreground">{item.body}</p>
+                </article>
+              );
+            })}
+          </div>
+
+          {/*
+            الحدود الأربعة كانت صفحةً قائمة بذاتها («الجانب التقني»)، وحُذفت حين لم يبق فيها
+            غيرها (خالد، ١٢ سبتمبر ٢٠٢٦). ومكانها هنا لا هناك: من يقرأ ما تفعله المنظومة
+            يجب أن يقرأ حدّها في النفَس نفسه، وإلا وعد بما لا تفعله.
+          */}
+          <div className="border-t border-border/60 px-4 py-4">
+            <h3 className="text-[14.5px] font-bold">وما لا تفعله</h3>
+            <p className="mt-1 text-[12.5px] text-muted-foreground">حدودٌ لا نواقص مؤقّتة. اقرأها قبل أي وعد.</p>
+            <ul className="mt-3 space-y-2 text-[13px] leading-7 text-muted-foreground">
+              {[
+                "لا تصنع ترتيبًا في محرّك البحث. تجعل الصفحة صالحة للفهرسة والفهم، والترتيب قراره هو.",
+                "لا تعوّض خدمة ضعيفة أو عرضًا غير مناسب.",
+                "لا تنشر على موقع الشريك إلا بإذنه وبباقة تتيح ذلك.",
+                "لا تقيس ما لا تلتقطه أنظمة القياس. غياب الرقم يُقال كما هو، لا يُملأ بتقدير.",
+              ].map((line) => (
+                <li key={line} className="flex gap-2">
+                  <span aria-hidden className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400/70" />
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <p className="border-t border-border/60 px-4 py-3.5 text-[13px] leading-6 text-muted-foreground">
+            وهذا هو الفرق بين أداة ومنظومة: الأداة تنتظر أن تطلب منها، والمنظومة تكون قد فعلت.
+          </p>
+        </div>
+      </section>
+
+      {/*
+        النبرة نزلت من `/playbook/persona` المحذوفة (خالد، ١٢ سبتمبر ٢٠٢٦: «ودّي كل واحد
+        لقسمه»). ومواقفها الستّة ذهبت فعلًا إلى المبيعات والعمليات والمحتوى — أمّا القواعد
+        والكلمات فلا قسم تخصّه: تحكم المقال والمنشور والإعلان والمكالمة معًا، ومكانها
+        الهويّة. ومن قال «مدوّنة» أو «نصمّم لك موقع» أخطأ في تعريفنا لا في أسلوبه.
+      */}
+      <section className="mt-8 scroll-mt-6" id="voice">
+        <h2 className="text-[17px] font-bold leading-6">كيف نتكلّم</h2>
+        <p className="mt-1 text-[13px] leading-6 text-muted-foreground">{oneTest}</p>
+
+        <div className="mt-4 space-y-2.5">
+          {rules.map((r, i) => (
+            <article key={r.rule} className="rounded-lg border bg-card p-4">
+              <div className="flex items-center gap-2">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-primary/10 text-[12px] font-bold text-primary">
+                  {i + 1}
+                </span>
+                <h3 className="text-[14.5px] font-bold">{r.rule}</h3>
+              </div>
+              <div className="mt-3 grid gap-2 lg:grid-cols-2">
+                <p className="flex gap-1.5 rounded-md border border-emerald-500/25 bg-emerald-500/[0.06] p-3 text-[13px] leading-6">
+                  <CheckCircle2 className="mt-1 h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                  {r.right}
+                </p>
+                <p className="flex gap-1.5 rounded-md border border-rose-500/25 bg-rose-500/[0.05] p-3 text-[13px] leading-6 text-muted-foreground">
+                  <XCircle className="mt-1 h-3.5 w-3.5 shrink-0 text-rose-500" />
+                  {r.wrong}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-3 grid gap-3 lg:grid-cols-2">
+          <article className="rounded-lg border border-emerald-500/25 bg-emerald-500/[0.06] p-4">
+            <h3 className="text-[15px] font-bold">كلمات نستعملها</h3>
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {words.use.map((w) => (
+                <span key={w} className="rounded-md border bg-background/70 px-2.5 py-1 text-[13px] font-semibold">
+                  {w}
+                </span>
+              ))}
+            </div>
+          </article>
+          <article className="rounded-lg border border-rose-500/25 bg-rose-500/[0.05] p-4">
+            <h3 className="text-[15px] font-bold">كلمات ممنوعة</h3>
+            <div className="mt-2.5 space-y-2">
+              {words.avoid.map((w) => (
+                <p key={w.word} className="text-[13px] leading-6 text-muted-foreground">
+                  <b className="text-foreground">{w.word}</b> — {w.why}
+                </p>
+              ))}
+            </div>
+          </article>
         </div>
       </section>
     </div>

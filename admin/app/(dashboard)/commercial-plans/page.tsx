@@ -2,7 +2,6 @@ import { SubscriptionTier, CommercialPlanTheme } from "@prisma/client";
 import { COMMERCIAL_PLAN_THEMES } from "@modonty/shared/lib/commercial/plan-themes";
 import { ArrowDown, ArrowUp, PackageOpen } from "lucide-react";
 import Link from "next/link";
-import { FeatureIcon } from "../commercial-features/components/feature-icon-select";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,11 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/db";
-import { addCommercialTermPolicy, deleteCommercialPlan, deleteCommercialTermPolicy, moveCommercialPlan, setCommercialPlanPublished, updateCommercialPlan, updateCommercialPlanMarketPrices, updateCommercialTermPolicy } from "./actions";
+import { addCommercialTermPolicy, deleteCommercialPlan, deleteCommercialTermPolicy, moveCommercialPlan, setCommercialPlanPublished, updateCommercialPlan, updateCommercialPlanMarketPrices, updateCommercialTermPolicy, setRecommendedCommercialTerm } from "./actions";
 import { ConfirmDeleteButton } from "./components/confirm-delete-button";
 import { CreateCommercialPlanForm } from "./components/create-commercial-plan-form";
 import { DeleteCommercialPlanButton } from "./components/delete-commercial-plan-button";
 import { PlanPanel } from "./components/plan-panel";
+import { PaySectionContentForm } from "./components/pay-section-content-form";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +24,7 @@ const THEME_VALUES = [CommercialPlanTheme.NEUTRAL, CommercialPlanTheme.PRIMARY, 
 
 /** The whole commercial catalogue stays on one screen: this product has 3–4 plans, not hundreds. */
 export default async function CommercialPlansPage() {
-  const [plans, tierConfigs, termPolicies] = await Promise.all([
+  const [plans, tierConfigs, termPolicies, paySections] = await Promise.all([
     db.commercialPlan.findMany({
       include: {
         prices: { orderBy: { market: "desc" } },
@@ -34,12 +34,27 @@ export default async function CommercialPlansPage() {
     }),
     db.subscriptionTierConfig.findMany({ select: { tier: true, name: true } }),
     db.commercialTermPolicy.findMany({ orderBy: { displayOrder: "asc" } }),
+    db.paySectionContent.findMany(),
   ]);
+  const sectionBy = (market: string) =>
+    paySections.find((row) => row.market === market) ?? {
+      announcement: null, headline: null, subheadline: null, trustItems: [],
+      vatNote: null, installmentLabel: null, refundNote: null,
+      paymentFootnote: null, paymentFootnoteSub: null, payMarks: [], installmentMark: null,
+    };
   const tierLabel = (tier: SubscriptionTier) => tierConfigs.find((config) => config.tier === tier)?.name ?? tier;
 
   return <main className="mx-auto flex max-w-6xl flex-col gap-5 pb-8" dir="rtl">
     <header className="flex flex-wrap items-end justify-between gap-2"><div className="flex flex-col gap-1"><h1 className="text-2xl font-semibold">الباقات والأسعار</h1><p className="text-sm text-muted-foreground">راجع الباقات وانشرها، وافتح التفاصيل عند الحاجة للتعديل.</p></div>{plans.length > 0 ? <p className="text-sm text-muted-foreground">{plans.length} باقات في الكتالوج</p> : null}</header>
     <CreateCommercialPlanForm />
+
+    <section className="rounded-xl border bg-card p-4" aria-label="كلام صفحة البيع">
+      <div className="mb-3"><h2 className="font-semibold">كلام صفحة البيع</h2><p className="text-sm text-muted-foreground">ما حول البطاقات: الإعلان والعنوان وأسطر الثقة. لكل سوق نصّه.</p></div>
+      <div className="grid gap-3 lg:grid-cols-2">
+        <PaySectionContentForm market="SA" label="السعودية" values={sectionBy("SA")} />
+        <PaySectionContentForm market="EG" label="مصر" values={sectionBy("EG")} />
+      </div>
+    </section>
 
     <section className="rounded-xl border bg-card p-4" aria-label="سياسة المدد والهدايا">
       <div className="mb-3"><h2 className="font-semibold">المدد والهدايا — سياسة واحدة لكل الباقات</h2><p className="text-sm text-muted-foreground">تعديلها هنا ينعكس فوراً على كل الباقات؛ لا نسخة منفصلة لكل باقة.</p></div>
@@ -47,7 +62,7 @@ export default async function CommercialPlansPage() {
         <Table>
           <TableHeader><TableRow className="bg-muted/40 hover:bg-muted/40"><TableHead className="h-9 w-24 text-right">المدة</TableHead><TableHead className="h-9 w-24 text-right">الهدية</TableHead><TableHead className="h-9 w-28 text-right">إجراءات</TableHead></TableRow></TableHeader>
           <TableBody>
-            {termPolicies.map((policy) => <TableRow key={policy.id}><TableCell className="py-2"><form id={`policy-${policy.id}`} action={updateCommercialTermPolicy.bind(null, policy.id)}><Input className="h-8 w-16" name="paidMonths" type="number" min="1" defaultValue={policy.paidMonths} required/></form></TableCell><TableCell className="py-2"><Input form={`policy-${policy.id}`} className="h-8 w-16" name="bonusMonths" type="number" min="0" defaultValue={policy.bonusServiceMonths} required/></TableCell><TableCell className="py-2"><div className="flex justify-end gap-1.5"><Button form={`policy-${policy.id}`} className="h-8" type="submit" size="sm" variant="outline">حفظ</Button><ConfirmDeleteButton action={deleteCommercialTermPolicy.bind(null, policy.id)} triggerLabel="حذف" confirmLabel="نعم، احذف المدة" title={`حذف مدة ${policy.paidMonths} أشهر؟`} description="ستختفي هذه المدة من كل الباقات فوراً. لا يمكن التراجع عن هذه العملية." size="sm" className="h-8" /></div></TableCell></TableRow>)}
+            {termPolicies.map((policy) => <TableRow key={policy.id}><TableCell className="py-2"><form id={`policy-${policy.id}`} action={updateCommercialTermPolicy.bind(null, policy.id)}><Input className="h-8 w-16" name="paidMonths" type="number" min="1" defaultValue={policy.paidMonths} required/></form></TableCell><TableCell className="py-2"><Input form={`policy-${policy.id}`} className="h-8 w-16" name="bonusMonths" type="number" min="0" defaultValue={policy.bonusServiceMonths} required/></TableCell><TableCell className="py-2"><div className="flex justify-end gap-1.5"><form action={setRecommendedCommercialTerm.bind(null, policy.id)}><Button className="h-8" type="submit" size="sm" variant={policy.isRecommended ? "default" : "ghost"} title="المدة التي تفتح عليها صفحة البيع وتُوسم «الأنسب»">{policy.isRecommended ? "★ الأنسب" : "اجعلها الأنسب"}</Button></form><Button form={`policy-${policy.id}`} className="h-8" type="submit" size="sm" variant="outline">حفظ</Button><ConfirmDeleteButton action={deleteCommercialTermPolicy.bind(null, policy.id)} triggerLabel="حذف" confirmLabel="نعم، احذف المدة" title={`حذف مدة ${policy.paidMonths} أشهر؟`} description="ستختفي هذه المدة من كل الباقات فوراً. لا يمكن التراجع عن هذه العملية." size="sm" className="h-8" /></div></TableCell></TableRow>)}
             <TableRow className="bg-muted/20 hover:bg-muted/20"><TableCell className="py-2"><form id="add-policy" action={addCommercialTermPolicy}><Input className="h-8 w-16" name="paidMonths" type="number" min="1" placeholder="مدة" required/></form></TableCell><TableCell className="py-2"><Input form="add-policy" className="h-8 w-16" name="bonusMonths" type="number" min="0" placeholder="هدية" required/></TableCell><TableCell className="py-2"><div className="flex justify-end"><Button form="add-policy" className="h-8" type="submit" size="sm" variant="outline">إضافة مدة</Button></div></TableCell></TableRow>
           </TableBody>
         </Table>
@@ -62,9 +77,9 @@ export default async function CommercialPlansPage() {
             <div className="mb-3"><h3 className="text-sm font-semibold">بيانات الباقة</h3><p className="text-xs text-muted-foreground">الاسم والوصف والشارة كما تظهر للزائر.</p></div>
             <form action={updateCommercialPlan.bind(null, plan.id)} className="flex flex-col gap-3">
               <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الاسم<Input className="h-9" name="name" maxLength={60} defaultValue={plan.name} required/></label>
-              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الوصف<Textarea name="description" maxLength={300} defaultValue={plan.description ?? ""} rows={2}/></label>
-              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الشارة<Input className="h-9" name="badge" maxLength={30} placeholder="الأكثر طلباً" defaultValue={plan.badge ?? ""}/></label>
-              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">فئة الاشتراك
+              
+              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">شارة الشريحة <span className="font-normal">— لمن هذه الباقة («للمؤسسات» · «للمتاجر»). ليست وسم شعبية.</span><Input className="h-9" name="badge" maxLength={30} placeholder="للمؤسسات" defaultValue={plan.badge ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">سطور مميّزة <span className="font-normal">— سطر لكل جملة، ٦ سطور كحدّ أقصى. للوعود التي لا رقم لها («إلغاء في أي وقت»). الكمّيات تُكتب في المزايا لا هنا، وإلا تناقضت البطاقة مع نفسها.</span><Textarea name="highlights" rows={4} placeholder={"إلغاء في أي وقت\nدعم مباشر على واتساب"} defaultValue={plan.highlights.join("\n")}/></label>
+              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">السطر الخاطف <span className="font-normal">— جملة واحدة تظهر تحت السعر مباشرة.</span><Input className="h-9" name="hook" maxLength={60} placeholder="٦ شهور مجاناً مع السنة" defaultValue={plan.hook ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">نصّ الزرّ <span className="font-normal">— فارغاً يكتب «اشترك الآن».</span><Input className="h-9" name="ctaText" maxLength={30} placeholder="اشترك الآن" defaultValue={plan.ctaText ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">شارة التمييز <span className="font-normal">— وسم الشعبية («الأكثر طلباً»). على باقة واحدة فقط: كتابتها هنا تمسحها من الباقي تلقائياً.</span><Input className="h-9" name="featuredBadge" maxLength={30} placeholder="الأكثر طلباً" defaultValue={plan.featuredBadge ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">فئة الاشتراك
                 <Select name="tier" defaultValue={plan.tier ?? undefined}>
                   <SelectTrigger className="h-9"><SelectValue placeholder="بلا فئة — لن تُنشر"/></SelectTrigger>
                   <SelectContent>{TIER_VALUES.map((tier) => <SelectItem key={tier} value={tier}>{tierLabel(tier)}</SelectItem>)}</SelectContent>
@@ -104,7 +119,7 @@ export default async function CommercialPlansPage() {
 
           <section className="rounded-lg border p-4">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-semibold">المزايا المتضمنة</h3><Link href={`/commercial-plans/${plan.id}`} className="text-xs text-primary underline-offset-2 hover:underline">إدارة المزايا وتفاصيل الباقة ←</Link></div>
-            {plan.features.length === 0 ? <p className="text-xs text-muted-foreground">لم تُربط مزايا بهذه الباقة بعد.</p> : <ul className="flex flex-wrap gap-1.5">{plan.features.map((item) => <li key={item.id}><Badge variant="secondary" className="gap-1.5"><FeatureIcon name={item.feature.icon} className="size-3.5" />{item.quantity !== null ? <span className="tabular-nums">{item.quantity} {item.feature.unitLabel ?? ""}</span> : null}{item.feature.name}</Badge></li>)}</ul>}
+            {plan.features.length === 0 ? <p className="text-xs text-muted-foreground">لم تُربط مزايا بهذه الباقة بعد.</p> : <ul className="flex flex-wrap gap-1.5">{plan.features.map((item) => <li key={item.id}><Badge variant="secondary" className="gap-1.5">{item.quantity !== null ? <span className="tabular-nums">{item.quantity} {item.feature.unitLabel ?? ""}</span> : null}{item.feature.name}</Badge></li>)}</ul>}
           </section>
 
           <section className="flex flex-wrap items-center justify-between gap-3 border-t pt-4">

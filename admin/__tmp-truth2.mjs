@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+const line = fs.readFileSync('../shared/.env', 'utf8').split('\n').find((l) => /^\s*DATABASE_URL\s*=/.test(l));
+process.env.DATABASE_URL = line.split('=').slice(1).join('=').trim().replace(/^["']|["']$/g, '');
+const { PrismaClient } = await import('@prisma/client');
+const p = new PrismaClient();
+const n = async (l, f) => { try { console.log(l.padEnd(32), String(await f()).padStart(5)); } catch (e) { console.log(l.padEnd(32), 'ERR ' + String(e.message).split('\n').filter(Boolean).pop().slice(0,60)); } };
+await n('مقالات (كل الحالات)', () => p.article.count());
+await n('مقالات PUBLISHED', () => p.article.count({ where: { status: 'PUBLISHED' } }));
+await n('Media نوع VIDEO', () => p.media.count({ where: { type: 'VIDEO' } }));
+await n('Media نوع POST', () => p.media.count({ where: { type: 'POST' } }));
+console.log('\nأنواع الوسائط الموجودة فعلًا:');
+console.log(await p.media.groupBy({ by: ['type'], _count: { _all: true } }));
+console.log('\nحالات المقالات:');
+console.log(await p.article.groupBy({ by: ['status'], _count: { _all: true } }));
+console.log('\nحقول الصوت في Article:');
+await p.$disconnect();

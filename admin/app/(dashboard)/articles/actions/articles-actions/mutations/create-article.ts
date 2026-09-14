@@ -25,8 +25,13 @@ import { sanitizeHtmlContent } from "@/lib/sanitize-html";
 
 export async function createArticle(data: ArticleFormData) {
   try {
-    const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
-    const parsed = articleServerSchema.safeParse(data);
+    const session = await auth();
+    if (!session) return { success: false, error: "غير مصرح" };
+    // Canonical is derived below from the final slug and destination. The form's value is
+    // only a preview and can be stale (and Arabic URL encoding makes its character count
+    // misleading), so it must never be allowed to reject an otherwise valid article.
+    const { canonicalUrl: _formCanonicalUrl, ...articleInput } = data;
+    const parsed = articleServerSchema.safeParse(articleInput);
     if (!parsed.success) {
       // Surface ALL failed fields by name — generic "String must contain at most N character(s)"
       // is useless to the admin when they don't know which field is too long.
@@ -56,7 +61,10 @@ export async function createArticle(data: ArticleFormData) {
       select: { id: true },
     });
     if (existingArticle) {
-      return { success: false, error: "هذا الرابط المختصر مستخدم بالفعل لهذا العميل" };
+      return {
+        success: false,
+        error: "هذا الرابط المختصر مستخدم بالفعل لهذا العميل",
+      };
     }
 
     // No SEO gate here: create always starts non-published (status = WRITING; the edit form
@@ -76,7 +84,12 @@ export async function createArticle(data: ArticleFormData) {
 
     const client = await db.client.findUnique({
       where: { id: data.clientId },
-      select: { name: true, slug: true, canPublishToOwnSite: true, articlesBaseUrl: true },
+      select: {
+        name: true,
+        slug: true,
+        canPublishToOwnSite: true,
+        articlesBaseUrl: true,
+      },
     });
 
     // An article destined for the client's own website can only exist for a client we
@@ -84,10 +97,14 @@ export async function createArticle(data: ArticleFormData) {
     // clients, but that is a UI convenience — this is the rule.
     const isClientSiteArticle = data.isClientSiteArticle === true;
     if (isClientSiteArticle) {
-      if (!client?.canPublishToOwnSite || !(client.articlesBaseUrl ?? "").trim()) {
+      if (
+        !client?.canPublishToOwnSite ||
+        !(client.articlesBaseUrl ?? "").trim()
+      ) {
         return {
           success: false,
-          error: "هذا العميل ما عنده إذن النشر على موقعه أو عنوان مقالاته فاضي.",
+          error:
+            "هذا العميل ما عنده إذن النشر على موقعه أو عنوان مقالاته فاضي.",
         };
       }
 
@@ -107,11 +124,15 @@ export async function createArticle(data: ArticleFormData) {
     // count used to win, and a wrong one rode straight through to the reader, to the
     // JSON-LD, and to the reading-time filter on /articles — one live article stored 14
     // words for a 1,978-word body. No screen lets anyone type these, so nothing is lost.
-    const wordCount = calculateWordCountImproved(data.content, data.inLanguage || "ar");
+    const wordCount = calculateWordCountImproved(
+      data.content,
+      data.inLanguage || "ar"
+    );
     const readingTimeMinutes = calculateReadingTime(wordCount);
     const contentDepth = determineContentDepth(wordCount);
 
-    const seoTitle = data.seoTitle || generateSEOTitle(data.title, client?.name);
+    const seoTitle =
+      data.seoTitle || generateSEOTitle(data.title, client?.name);
     const seoDescription =
       data.seoDescription || generateSEODescription(data.excerpt || "");
 
@@ -142,7 +163,9 @@ export async function createArticle(data: ArticleFormData) {
 
     const metaRobots =
       data.metaRobots ||
-      (data.status === ArticleStatus.PUBLISHED ? "index, follow" : "noindex, follow");
+      (data.status === ArticleStatus.PUBLISHED
+        ? "index, follow"
+        : "noindex, follow");
 
     const sitemapPriority = data.sitemapPriority || (data.featured ? 0.8 : 0.5);
 
@@ -185,10 +208,14 @@ export async function createArticle(data: ArticleFormData) {
         // row's own `dateModified`, which moves only on a real edit.
         ogArticleModifiedTime: null,
         canonicalUrl,
-        breadcrumbPath: JSON.parse(JSON.stringify(breadcrumbPath)) as Prisma.InputJsonValue,
+        breadcrumbPath: JSON.parse(
+          JSON.stringify(breadcrumbPath)
+        ) as Prisma.InputJsonValue,
         semanticKeywords:
           data.semanticKeywords != null
-            ? (JSON.parse(JSON.stringify(data.semanticKeywords)) as Prisma.InputJsonValue)
+            ? (JSON.parse(
+                JSON.stringify(data.semanticKeywords)
+              ) as Prisma.InputJsonValue)
             : undefined,
         citations: data.citations ?? [],
         audioUrl: data.audioUrl || null,
@@ -208,7 +235,7 @@ export async function createArticle(data: ArticleFormData) {
 
       // Filter out incomplete FAQs (missing question OR answer) — prevents partial entries in DB
       const validFaqs = (data.faqs ?? []).filter(
-        (f: FAQItem) => f.question?.trim() && f.answer?.trim(),
+        (f: FAQItem) => f.question?.trim() && f.answer?.trim()
       );
       if (validFaqs.length > 0) {
         await tx.articleFAQ.createMany({
@@ -253,12 +280,16 @@ export async function createArticle(data: ArticleFormData) {
         robots: metaRobots,
       });
       if (!metadataResult.success) {
-        seoFailures.push(`الميتاداتا: ${metadataResult.error || "سبب غير معروف"}`);
+        seoFailures.push(
+          `الميتاداتا: ${metadataResult.error || "سبب غير معروف"}`
+        );
       }
 
       const jsonLdResult = await generateAndSaveJsonLd(article.id);
       if (!jsonLdResult.success) {
-        seoFailures.push(`البيانات المنظّمة: ${jsonLdResult.error || "سبب غير معروف"}`);
+        seoFailures.push(
+          `البيانات المنظّمة: ${jsonLdResult.error || "سبب غير معروف"}`
+        );
       }
     } catch (error) {
       seoFailures.push(error instanceof Error ? error.message : String(error));
@@ -288,13 +319,24 @@ export async function createArticle(data: ArticleFormData) {
     }
 
     // Re-fetch updatedAt after SEO generation
-    const freshArticle = await db.article.findUnique({ where: { id: article.id }, select: { id: true, title: true, slug: true, status: true, updatedAt: true } });
+    const freshArticle = await db.article.findUnique({
+      where: { id: article.id },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        status: true,
+        updatedAt: true,
+      },
+    });
     return {
       success: true,
       article: freshArticle || article,
       seoWarning:
         seoFailures.length > 0
-          ? `المقال انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف العنوان والوصف القديم. (${seoFailures.join(" · ")})`
+          ? `المقال انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف العنوان والوصف القديم. (${seoFailures.join(
+              " · "
+            )})`
           : undefined,
     };
   } catch (error) {
@@ -307,4 +349,3 @@ export async function createArticle(data: ArticleFormData) {
     };
   }
 }
-

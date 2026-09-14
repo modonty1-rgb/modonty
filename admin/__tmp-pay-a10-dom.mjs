@@ -1,0 +1,12 @@
+import { chromium } from '@playwright/test';
+import { PrismaClient } from '@prisma/client';
+const db = new PrismaClient();
+const plan = await db.commercialPlan.findFirst({ where: { name: 'باقة اختبار A10' }, select: { id: true } });
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ storageState: 'C:/tmp/pay-a1-evidence/state.json' });
+const page = await ctx.newPage();
+await page.goto(`http://localhost:3001/commercial-plans/${plan.id}`, { waitUntil: 'load' }); await page.waitForSelector('main');
+await page.waitForTimeout(1500);
+const info = await page.evaluate(() => ({ mains: document.querySelectorAll('main').length, up: [...document.querySelectorAll('button[aria-label^="تقديم"]')].map(b => b.getAttribute('aria-label') + (b.disabled ? ' [disabled]' : '') + ' @' + b.closest('main') ? 'main' : 'outside'), names: [...document.querySelectorAll('main strong')].map(s => s.textContent) }));
+console.log(JSON.stringify(info));
+await browser.close(); await db.$disconnect();

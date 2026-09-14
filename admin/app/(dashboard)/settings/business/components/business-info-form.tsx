@@ -176,6 +176,9 @@ export function BusinessInfoForm({ initialSettings }: Props) {
             <Field label="Unified national number" hint="الرقم الوطني الموحّد — starts with 700.">
               <Input value={settings.orgUnifiedNationalNumber ?? ""} onChange={(e) => set("orgUnifiedNationalNumber", e.target.value)} placeholder="7001234567" />
             </Field>
+            <Field label="VAT number" hint="الرقم الضريبي — 15 digits, from the ZATCA certificate. Printed on tax invoices.">
+              <Input value={settings.orgVatNumber ?? ""} onChange={(e) => set("orgVatNumber", e.target.value)} placeholder="310000000000003" inputMode="numeric" />
+            </Field>
             <Field label="Legal form" hint="نوع الكيان">
               <Input value={settings.orgLegalForm ?? ""} onChange={(e) => set("orgLegalForm", e.target.value)} placeholder="مؤسسة فردية" />
             </Field>

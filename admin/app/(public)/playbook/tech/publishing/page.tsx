@@ -40,8 +40,8 @@ export default function PublishingGuidelinePage() {
 
   return (
     <DocLayout
-      parentHref="/playbook/tech"
-      parentLabel="الجانب التقني"
+      parentHref="/playbook/content"
+      parentLabel="قسم المحتوى"
       title="بوّابة النشر وصحّة المقال"
       description="وش يمنع مقالك من النشر، وكيف تعدّي — ثم وش نفحص فيه بعد ما ينشر"
     >

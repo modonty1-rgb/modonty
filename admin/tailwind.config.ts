@@ -12,6 +12,10 @@ const config: Config = {
     // ~18,700px down the page because `top-[50%]` and the translates were never emitted).
     // modonty and console already carry this line; admin was the last one missing it.
     "../shared/components/**/*.{ts,tsx}",
+    // Same purge bug, new shape: shared/lib/commercial/plan-themes.ts holds Tailwind class
+    // strings as data (PAY-A4), not JSX — so classes used ONLY there (e.g. bg-chart-4) never
+    // appeared anywhere in admin's own scanned files and were silently dropped.
+    "../shared/lib/**/*.{ts,tsx}",
   ],
   theme: {
   	extend: {

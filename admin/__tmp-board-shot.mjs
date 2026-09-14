@@ -1,0 +1,15 @@
+import { chromium } from '@playwright/test';
+const browser = await chromium.launch();
+const page = await (await browser.newContext({ viewport: { width: 1440, height: 1000 } })).newPage();
+await page.goto('file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/tasks/JBRSEO.html');
+await page.click('[data-lane-btn="pay"]');
+await page.waitForTimeout(300);
+const errs = []; page.on('pageerror', e => errs.push(String(e)));
+await page.screenshot({ path: 'C:/tmp/ultra-ui-evidence/jbr-pay-lane.png', fullPage: false });
+const q6 = page.locator('.card[data-id="PAY-Q6"]');
+await q6.scrollIntoViewIfNeeded();
+await q6.locator('summary').click();
+await page.waitForTimeout(200);
+await q6.screenshot({ path: 'C:/tmp/ultra-ui-evidence/jbr-pay-q6.png' });
+console.log('visible pay cards:', await page.locator('[data-lane="pay"] .card:visible').count(), '· page errors:', errs.length);
+await browser.close();

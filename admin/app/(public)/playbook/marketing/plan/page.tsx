@@ -33,7 +33,7 @@ const fiveMessages = [
     num: 2,
     label: "Pricing CTA",
     line: "ادفع 12 شهر، استلم 18 شهر. ROI ≈ 70× في السنة الأولى.",
-    why: "12=18 = ضمان نفسي (مش خصم). «70×» رقم محسوب من ROI Calculator، يثبّت القيمة بأرقام. الـ Anti-Hook «أرخص» تم استبدالها بـ «ROI» (القاعدة 16).",
+    why: "12=18 = ضمان نفسي (مش خصم). «70×» رقم محسوب من حاسبة العائد، يثبّت القيمة بأرقام. الـ Anti-Hook «أرخص» تم استبدالها بـ «ROI» (القاعدة 16).",
     when: "بعد ما ذكرت السعر · في slide pricing · لما العميل يقول «غالي»",
     dont: "«ادفع 99% أقل من الوكالات» (Anti-Hook «أقل» — يدمّر perceived value)",
   },
@@ -48,7 +48,7 @@ const fiveMessages = [
   {
     num: 4,
     label: "AI / Content Quality",
-    line: "8 مقالات شهرياً. كل مقال يجتاز 9 فحوصات. كل مقال E-E-A-T كامل. بدون فريق.",
+    line: "8 مقالات شهرياً. كل مقال يجتاز 9 فحوصات. كل مقال الخبرة والمصداقية كامل. بدون فريق.",
     why: "تثبت القيمة بأرقام (8 مقالات، 9 فحوصات) — مش وعود. «بدون فريق» تخاطب صاحب SMB اللي ما يقدر يدفع رواتب فريق.",
     when: "للعملاء اللي يقارنونك بـ ChatGPT أو فريلانسر · في الـ Discovery لما يذكر «أنا أكتب بنفسي»",
     dont: "«AI-powered content engine» (جوفاء)",
@@ -69,7 +69,7 @@ const channelsSA = [
     rank: 1,
     channel: "Google Search Ads",
     why: "97% من السعوديين يبحثون قبل الشراء. المنتج عن SEO — لازم نظهر في النتائج المدفوعة وقت بناء الـ Authority العضوي.",
-    audience: "كل ICPs الـ 7",
+    audience: "كل العملاء المثاليون الـ 7",
     budget: "5,000 ريال/شهر",
     cpl: "50–80 ريال",
     tactic: "Bid على «منصة محتوى عربية» + «بديل HubSpot» + اسم منافسين عرب",
@@ -77,7 +77,7 @@ const channelsSA = [
   {
     rank: 2,
     channel: "LinkedIn Ads",
-    why: "B2B serious في السعودية. للوكالات (Tier 2) + المحامين/الاستشارات (ICP 4). LinkedIn ينمو بقوة في السعودية.",
+    why: "B2B serious في السعودية. للوكالات (الفئة الثانية) + المحامين/الاستشارات (ICP 4). LinkedIn ينمو بقوة في السعودية.",
     audience: "الوكالات + B2B (محاماة + استشارات + Tech)",
     budget: "3,000 ريال/شهر",
     cpl: "80–150 ريال",
@@ -118,7 +118,7 @@ const channelsEG = [
     rank: 1,
     channel: "Facebook Ads",
     why: "فيسبوك = «الـ Digital Home» المصري بـ 89% penetration. لا أولوية تنافسه.",
-    audience: "كل الـ ICPs المصرية + قطاعات Egypt-Gulf",
+    audience: "كل الـ العملاء المثاليون المصرية + قطاعات Egypt-Gulf",
     budget: "30,000 جنيه/شهر",
     tactic: "Lookalike audiences من sample عملاء + Detailed targeting",
   },
@@ -141,8 +141,8 @@ const channelsEG = [
   {
     rank: 4,
     channel: "LinkedIn (مصر)",
-    why: "للوكالات المصرية (Tier 2 Resellers) + B2B serious. تنامي ولكنه أصغر من السعودية.",
-    audience: "وكالات ديجيتال مصرية + Resellers محتملين",
+    why: "للوكالات المصرية (الفئة الثانية الوكلاء) + B2B serious. تنامي ولكنه أصغر من السعودية.",
+    audience: "وكالات ديجيتال مصرية + الوكلاء محتملين",
     budget: "5,000 جنيه/شهر",
     tactic: "Sponsored InMail + Lead Gen Forms",
   },
@@ -258,15 +258,15 @@ export default function MarketingStrategyPage() {
       parentHref="/playbook"
       parentLabel="دليل الفريق"
       title="استراتيجية التسويق"
-      description="Big Idea + 5 رسائل + قنوات السعودية ومصر + 6 مراحل لرحلة العميل + KPIs + SWOT"
+      description="الفكرة الكبرى + 5 رسائل + قنوات السعودية ومصر + 6 مراحل لرحلة العميل + مؤشّرات الأداء + تحليل القوّة والضعف"
     >
-      {/* ── Hero — Big Idea ─────────────────────────────────────── */}
+      {/* ── Hero — الفكرة الكبرى ─────────────────────────────────────── */}
       <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] via-background to-background">
         <CardContent className="p-6 text-center">
           <div className="inline-flex p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 mb-3">
             <Megaphone className="h-7 w-7 text-amber-500" />
           </div>
-          <p className="text-[10px] font-bold text-amber-500 uppercase tracking-wide mb-2">الـ Big Idea — يبدأ منها كل شي</p>
+          <p className="text-[10px] font-bold text-amber-500 uppercase tracking-wide mb-2">الفكرة الكبرى — يبدأ منها كل شي</p>
           <h2 className="text-3xl font-bold mb-3">«حضور لا وعود»</h2>
           <p className="text-sm text-muted-foreground leading-loose mb-3 max-w-2xl mx-auto">
             كل رسالة في كل حملة تنطلق من هنا. ما نقول «راح نوصلك للصدارة» — نقول «هذا نمو الزوار في
@@ -362,7 +362,7 @@ export default function MarketingStrategyPage() {
 
           <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
             <strong>97% من السعوديين يبحثون قبل الشراء.</strong> هذا يخلي Search Ads + Authority Blog
-            هما القناتين الأهم. القنوات الباقية تخدم ICPs محددة.
+            هما القناتين الأهم. القنوات الباقية تخدم العملاء المثاليون محددة.
           </p>
 
           <div className="space-y-3">
@@ -471,8 +471,8 @@ export default function MarketingStrategyPage() {
               Q3 2026 — خصّص <strong>20% من ميزانية مصر</strong> على هذي القطاعات. حملات Reels +
               YouTube بمحتوى يستهدف الـ keywords السعودية («أفضل منتجع في شرم» + «أفضل عيادة تجميل في
               القاهرة» + «شقة في رأس الحكمة للسعوديين»). راجع{" "}
-              <a href="/playbook/sales/who-we-serve" className="text-cyan-600 font-semibold hover:underline">
-                صفحة ICPs
+              <a href="/playbook/segments" className="text-cyan-600 font-semibold hover:underline">
+                صفحة العملاء المثاليون
               </a>
               {" "}للتفاصيل الكاملة.
             </p>
@@ -581,12 +581,12 @@ export default function MarketingStrategyPage() {
             <div className="p-1.5 rounded-lg bg-primary/15">
               <TrendingUp className="h-4 w-4 text-primary" />
             </div>
-            <h2 className="text-base font-bold">الـ KPIs المستهدفة — السنة الأولى</h2>
+            <h2 className="text-base font-bold">الـ مؤشّرات الأداء المستهدفة — السنة الأولى</h2>
           </div>
 
           <div className="space-y-5">
             <div>
-              <p className="text-xs font-bold text-primary uppercase tracking-wide mb-3">Business KPIs</p>
+              <p className="text-xs font-bold text-primary uppercase tracking-wide mb-3">Business مؤشّرات الأداء</p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
                 {businessKpis.map((k, i) => (
                   <div key={i} className="rounded-lg border border-primary/20 bg-background/60 p-3 text-center">
@@ -617,11 +617,11 @@ export default function MarketingStrategyPage() {
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-4">
             <Globe2 className="h-4 w-4 text-foreground" />
-            <h2 className="text-base font-bold">SWOT الاستراتيجي — الصراحة الكاملة</h2>
+            <h2 className="text-base font-bold">تحليل القوّة والضعف الاستراتيجي — الصراحة الكاملة</h2>
           </div>
 
           <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
-            الموظف اللي يفهم الـ SWOT = يعرف وين يضرب + وين يحذر. <strong>الضعف ما نخفيه — نتعامل
+            الموظف اللي يفهم الـ تحليل القوّة والضعف = يعرف وين يضرب + وين يحذر. <strong>الضعف ما نخفيه — نتعامل
             معه</strong>.
           </p>
 

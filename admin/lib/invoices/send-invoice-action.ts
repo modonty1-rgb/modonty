@@ -69,7 +69,7 @@ export async function sendInvoiceAction(invoiceId: string): Promise<SendInvoiceR
         where: { singletonKey: "global" },
         select: { orgLegalName: true, orgVatNumber: true, orgCommercialRegistrationNumber: true, orgStreetAddress: true, orgAddressNeighborhood: true, orgAddressLocality: true, orgAddressCountry: true },
       }),
-      invoice.orderId ? db.checkoutOrder.findUnique({ where: { id: invoice.orderId }, select: { number: true } }) : Promise.resolve(null),
+      invoice.orderId ? db.checkoutOrder.findUnique({ where: { id: invoice.orderId }, select: { number: true, planCommitments: true } }) : Promise.resolve(null),
     ]);
     const sellerVat = settings?.orgVatNumber?.trim();
     const sellerName = settings?.orgLegalName?.trim();
@@ -90,6 +90,8 @@ export async function sendInvoiceAction(invoiceId: string): Promise<SendInvoiceR
       vatNumber: t(invoice.client.vatID),
       address: [t(invoice.client.addressCountry), t(invoice.client.addressCity), t(invoice.client.addressStreet)].filter(Boolean).join(" — ") || null,
     };
+    // من لقطة الطلب لا من الكتالوج: الباقة تتغيّر، والفاتورة تقول ما اتُّفق عليه يومها.
+    params.commitments = order?.planCommitments ?? [];
     params.qrCid = QR_CID;
     const png = await renderInvoiceQrPng(buildZatcaQrTlvBase64({ sellerName, vatNumber: sellerVat, timestamp: invoice.issuedAt, totalWithVat: total, vatTotal: vat }));
     attachments.push({ filename: `${invoice.number}-qr.png`, content: png.toString("base64"), contentType: "image/png", contentId: QR_CID });

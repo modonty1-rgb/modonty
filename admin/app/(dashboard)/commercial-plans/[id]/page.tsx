@@ -8,7 +8,6 @@ import { db } from "@/lib/db";
 import { assignCommercialFeature, deleteCommercialPlan, moveCommercialPlanFeature, removeCommercialPlanFeature, setCommercialPlanPublished, updateCommercialPlanFeature } from "../actions";
 import { ConfirmDeleteButton } from "../components/confirm-delete-button";
 import { DeleteCommercialPlanButton } from "../components/delete-commercial-plan-button";
-import { FeatureIcon } from "../../commercial-features/components/feature-icon-select";
 
 export default async function CommercialPlanDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -31,7 +30,7 @@ export default async function CommercialPlanDetail({ params }: { params: Promise
             <form action={moveCommercialPlanFeature.bind(null, item.id, plan.id, "up")}><Button type="submit" size="icon" variant="ghost" className="size-8" disabled={index === 0} aria-label={`تقديم «${item.feature.name}»`} title="تقديم"><ArrowUp /></Button></form>
             <form action={moveCommercialPlanFeature.bind(null, item.id, plan.id, "down")}><Button type="submit" size="icon" variant="ghost" className="size-8" disabled={index === last} aria-label={`تأخير «${item.feature.name}»`} title="تأخير"><ArrowDown /></Button></form>
           </div>
-          <div className="self-end"><strong className="flex items-center gap-1.5 text-sm"><FeatureIcon name={item.feature.icon} className="size-4 shrink-0" />{item.feature.name}</strong><p className="text-xs text-muted-foreground">{item.feature.unitLabel ? `الوحدة: ${item.feature.unitLabel}` : "بدون وحدة"}</p></div>
+          <div className="self-end"><strong className="flex items-center gap-1.5 text-sm">{item.feature.name}</strong><p className="text-xs text-muted-foreground">{item.feature.unitLabel ? `الوحدة: ${item.feature.unitLabel}` : "بدون وحدة"}</p></div>
           <form action={updateCommercialPlanFeature.bind(null, item.id, plan.id)} className="contents"><label className="flex flex-col gap-1 text-sm">الكمية<Input name="quantity" type="number" min="0" defaultValue={item.quantity ?? ""}/></label><label className="flex flex-col gap-1 text-sm">ملاحظة<Input name="note" defaultValue={item.note ?? ""}/></label><Button className="self-end" type="submit" variant="outline">حفظ</Button></form>
           <div className="self-end"><ConfirmDeleteButton action={removeCommercialPlanFeature.bind(null, item.id, plan.id)} triggerLabel="إزالة" confirmLabel="نعم، أزل الميزة" title={`إزالة ميزة «${item.feature.name}» من هذه الباقة؟`} description="ستختفي الميزة من هذه الباقة فورًا. يمكنك إعادة إضافتها لاحقًا من قائمة المزايا." /></div>
         </div>)}

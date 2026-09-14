@@ -74,8 +74,8 @@ function OwnerBadge({ owner }: { owner: Owner }) {
 export default function SeoScorePage() {
   return (
     <DocLayout
-      parentHref="/playbook/tech"
-      parentLabel="الجانب التقني"
+      parentHref="/playbook/content"
+      parentLabel="قسم المحتوى"
       title="نتيجة سيو المقال — من وين تجي؟"
       description="الرقم اللي تشوفه جنب كل مقال: من أي معايير يتركّب، وزن كل معيار، ومين مسؤول عنه — أنت ولا النظام"
     >

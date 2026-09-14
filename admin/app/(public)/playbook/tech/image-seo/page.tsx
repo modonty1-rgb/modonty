@@ -45,8 +45,8 @@ const CRITERIA = [
 export default function ImageSeoGuidelinePage() {
   return (
     <DocLayout
-      parentHref="/playbook/tech"
-      parentLabel="الجانب التقني"
+      parentHref="/playbook/content"
+      parentLabel="قسم المحتوى"
       title="سيو الصور"
       description="النص البديل والوصف واسم الملف — من قسم SEO Images، وكيف يتركّب رقم كل صورة"
     >

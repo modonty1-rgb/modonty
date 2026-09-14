@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, XCircle } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { HubSidebar } from "./components/hub-sidebar";
 
 export default function PublicLayout({
@@ -22,14 +22,6 @@ export default function PublicLayout({
             </div>
           </Link>
           <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href="/playbook/prohibitions"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold border border-red-500/40 bg-red-500/[0.08] text-red-400 hover:bg-red-500/[0.15] hover:border-red-500/60 transition-colors"
-              title="المرجع الموحّد لكل ممنوعات Modonty — SEO · Brand · Video"
-            >
-              <XCircle className="h-3.5 w-3.5" />
-              <span>الممنوعات</span>
-            </Link>
             <Link
               href="/login"
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"

@@ -13,15 +13,32 @@ async function getModontyBaseUrl(baseUrl?: string | null): Promise<string | null
   return s.siteUrl?.trim() || null;
 }
 
+/**
+ * وسم الكتالوج لم يعد يعيش في مدونتي — انتقل مع صفحة البيع إلى حزمة `payment`
+ * (PAY-S4، ١٤ سبتمبر ٢٠٢٦). فيُنادى تطبيقُه هو، لا تطبيق المدوّنة.
+ *
+ * ولو نُودي العنوان القديم لرجع ٤٠٠ «Tag must be one of…» لا يقرؤه أحد، وبقيت صفحة
+ * البيع على السعر القديم — وهو أخطر ما يبيت قديماً في هذا المشروع.
+ */
+const PAYMENT_TAGS = new Set<string>(["commercial-catalog"]);
+
+async function getPaymentBaseUrl(): Promise<string | null> {
+  if (process.env.NODE_ENV === "development") {
+    return process.env.PAYMENT_LOCAL_URL?.trim() || "http://localhost:3003";
+  }
+  return process.env.PAYMENT_PUBLIC_URL?.trim() || null;
+}
+
 export async function revalidateModontyTag(
   // Keep in sync with ALLOWED_TAGS in modonty/app/api/revalidate/tag/route.ts — a tag this
   // union allows but that route rejects comes back as a 400 nobody reads, and the page keeps
   // serving stale data. That is exactly what "pages" did until 25 Aug 2026.
-  tag: "articles" | "settings" | "categories" | "clients" | "tags" | "industries" | "faqs" | "authors" | "reels" | "pages" | "ai-prompts",
+  // "commercial-catalog" is the exception: its route lives in payment/, see PAYMENT_TAGS.
+  tag: "articles" | "settings" | "categories" | "clients" | "tags" | "industries" | "faqs" | "authors" | "reels" | "pages" | "ai-prompts" | "commercial-catalog",
   baseUrl?: string | null
 ): Promise<void> {
   try {
-    const url = await getModontyBaseUrl(baseUrl);
+    const url = PAYMENT_TAGS.has(tag) ? await getPaymentBaseUrl() : await getModontyBaseUrl(baseUrl);
     if (!url) return;
     const secret = process.env.REVALIDATE_SECRET;
 

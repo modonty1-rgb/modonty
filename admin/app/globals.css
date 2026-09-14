@@ -1,9 +1,16 @@
+/* توكنات مدونتي محصورة في .pay-stage — شاشة معاينة صفحة الدفع وحدها (PAY-G19).
+   تُستورد قبل tailwind كي تسبق طبقات base في الترتيب المصدري. */
+@import "@modonty/shared/styles/pay-stage.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    /* سماويّ العلامة #00d8d8. نقاط أيقونات مدونتي ترجع إليه، وكانت ترجع إلى
+       --accent وهو رماديّ في الأدمن والكونسول وسماويّ في مدونتي — أيقونة واحدة بلونين. */
+    --modonty-accent: #00d8d8;
     /* LinkedIn's exact warm gray background */
     --background: 45 8% 95%;        /* #f3f2ef - LinkedIn's signature background */
     --foreground: 0 0% 0%;
@@ -21,12 +28,10 @@
     --muted-foreground: 0 0% 40%;    /* #666666 - LinkedIn's gray text */
     --accent: 0 0% 96%;
     --accent-foreground: 0 0% 0%;
-    /* The diamond in `ModontyPartnerMark`. Its own default is `hsl(var(--accent))`, which is
-       the brand teal on modonty — but here `--accent` is a SURFACE (a near-white / near-black
-       fill), so the diamond rendered invisible: measured 1.3:1 against the dark page on
-       24 Aug. Pointing it at `--primary` keeps the mark two-toned in both themes without
-       touching any other colour. Only this component reads the variable. */
-    --modonty-partner-accent: hsl(var(--primary));
+    /* كان هنا تجاوز: `--modonty-partner-accent: hsl(var(--primary))`. أُضيف ٢٤ أغسطس لأن
+       المعيَّن كان يرث `--accent` وهو سطحٌ لا لون، فاختفى بتباين ١٫٣:١ على الصفحة الداكنة.
+       حُذف ١٢ سبتمبر ٢٠٢٦: صار للعلامة توكنها `--modonty-accent` أعلاه، وترجع إليه
+       الأيقونات كلها. وبقاء التجاوز كان يجعل معيَّن الشريك أزرقَ لينكدإن وحده بين إخوته. */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
     /* LinkedIn's subtle border color */

@@ -2,6 +2,10 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { DocLayout } from "@/app/(public)/components/doc-layout";
+import { DeptProhibitions } from "../components/dept-prohibitions";
+import { DeptJobDescriptions } from "../components/dept-job-descriptions";
+import { SegmentsLink } from "../components/segments-link";
+import { DeptRoles } from "../components/dept-roles";
 
 /** صفحة القسم: مدخل واحد لكل ما يخصّه، وأي صفحة جديدة تُضاف هنا لا في جذر الـPlaybook. */
 const pages = [
@@ -39,6 +43,14 @@ export default function MarketingSectionPage() {
           ))}
         </div>
       </section>
+      <SegmentsLink />
+
+      <DeptJobDescriptions deptKey="marketing" />
+
+      <DeptRoles deptKey="marketing" />
+
+      <DeptProhibitions deptKey="marketing" />
+
     </DocLayout>
   );
 }

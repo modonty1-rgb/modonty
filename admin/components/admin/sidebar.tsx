@@ -61,6 +61,8 @@ import {
   Flame,
   HelpCircle,
   Mail,
+  Eye,
+  ShieldAlert,
   Library,
   Newspaper,
   Images,
@@ -231,6 +233,8 @@ const rawMenuGroups: MenuGroup[] = [
     items: [
       { icon: CreditCard, label: "الباقات والأسعار", href: "/commercial-plans" },
       { icon: Library, label: "مكتبة المزايا", href: "/commercial-features" },
+      { icon: Eye, label: "معاينة صفحة الدفع", href: "/pay-preview" },
+      { icon: ShieldAlert, label: "إخفاقات الدفع", href: "/payment-failures" },
       { icon: Receipt, label: "الطلبات", href: "/orders" },
     ],
   },

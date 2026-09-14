@@ -1,0 +1,16 @@
+import { chromium } from '@playwright/test';
+const base = 'http://localhost:3001';
+const browser = await chromium.launch();
+const page = await (await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: 'dark' })).newPage();
+const errs = [];
+page.on('pageerror', (e) => errs.push(String(e).slice(0, 100)));
+await page.goto(`${base}/login`, { waitUntil: 'networkidle' });
+await page.fill('input[type="email"]', 'claude-check@modonty.local');
+await page.fill('input[type="password"]', 'Mdnty-Local-Check-2026!');
+await page.click('button[type="submit"]');
+await page.waitForTimeout(5000);
+const r = await page.goto(base + '/playbook', { waitUntil: 'networkidle' });
+await page.waitForTimeout(1500);
+await page.locator('#philosophy').screenshot({ path: 'C:/Users/w2nad/AppData/Local/Temp/claude/c--Users-w2nad-Desktop-dreamToApp-MODONTY/0cd87a3b-5bf8-4506-a67b-b54e8f6a4fb8/scratchpad/philo.png' });
+console.log('status', r?.status(), 'errs', errs.length);
+await browser.close();

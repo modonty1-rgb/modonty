@@ -27,8 +27,12 @@ import { isValidTransition } from "../../../helpers/article-status-machine";
 
 export async function updateArticle(articleId: string, data: ArticleFormData) {
   try {
-    const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
-    const parsed = articleServerSchema.safeParse(data);
+    const session = await auth();
+    if (!session) return { success: false, error: "غير مصرح" };
+    // The server owns the canonical URL and rebuilds it from the saved destination below.
+    // Do not validate a transient/stale form preview before that happens.
+    const { canonicalUrl: _formCanonicalUrl, ...articleInput } = data;
+    const parsed = articleServerSchema.safeParse(articleInput);
     if (!parsed.success) {
       // Surface ALL failed fields by name — see create-article.ts for rationale.
       const errors = parsed.error.errors
@@ -39,7 +43,23 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     const existingArticle = await db.article.findUnique({
       where: { id: articleId },
-      select: { authorId: true, ogArticlePublishedTime: true, slug: true, clientId: true, datePublished: true, status: true, updatedAt: true, userVersion: true, title: true, content: true, excerpt: true, seoTitle: true, seoDescription: true, isClientSiteArticle: true, client: { select: { articlesBaseUrl: true } } },
+      select: {
+        authorId: true,
+        ogArticlePublishedTime: true,
+        slug: true,
+        clientId: true,
+        datePublished: true,
+        status: true,
+        updatedAt: true,
+        userVersion: true,
+        title: true,
+        content: true,
+        excerpt: true,
+        seoTitle: true,
+        seoDescription: true,
+        isClientSiteArticle: true,
+        client: { select: { articlesBaseUrl: true } },
+      },
     });
 
     if (!existingArticle) {
@@ -55,8 +75,15 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     // Optimistic locking: reject only when ANOTHER USER edited via the form (not SEO/cron/system writes).
     // Uses userVersion (incremented only by this action) instead of updatedAt (which system ops also bump).
-    if (typeof data.userVersion === "number" && existingArticle.userVersion !== data.userVersion) {
-      return { success: false, error: "تم تعديل المقال بواسطة مستخدم آخر — يرجى تحديث الصفحة والمحاولة مجدداً" };
+    if (
+      typeof data.userVersion === "number" &&
+      existingArticle.userVersion !== data.userVersion
+    ) {
+      return {
+        success: false,
+        error:
+          "تم تعديل المقال بواسطة مستخدم آخر — يرجى تحديث الصفحة والمحاولة مجدداً",
+      };
     }
 
     // Snapshot current version before overwriting
@@ -90,11 +117,18 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     if (slug && slug !== existingArticle.slug) {
       const existingSlug = await db.article.findFirst({
-        where: { clientId: data.clientId || existingArticle.clientId, slug, id: { not: articleId } },
+        where: {
+          clientId: data.clientId || existingArticle.clientId,
+          slug,
+          id: { not: articleId },
+        },
         select: { id: true },
       });
       if (existingSlug) {
-        return { success: false, error: "هذا الرابط المختصر مستخدم بالفعل لهذا العميل" };
+        return {
+          success: false,
+          error: "هذا الرابط المختصر مستخدم بالفعل لهذا العميل",
+        };
       }
     }
 
@@ -141,11 +175,15 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     // Same rule as create: the content decides, not the payload. An edit that changed the
     // body while carrying an old count used to keep the old count for good.
-    const wordCount = calculateWordCountImproved(data.content, data.inLanguage || "ar");
+    const wordCount = calculateWordCountImproved(
+      data.content,
+      data.inLanguage || "ar"
+    );
     const readingTimeMinutes = calculateReadingTime(wordCount);
     const contentDepth = determineContentDepth(wordCount);
 
-    const seoTitle = data.seoTitle || generateSEOTitle(data.title, client?.name);
+    const seoTitle =
+      data.seoTitle || generateSEOTitle(data.title, client?.name);
     const seoDescription =
       data.seoDescription || generateSEODescription(data.excerpt || "");
 
@@ -154,8 +192,11 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     // payload would make it something a crafted request could flip — and flipping it
     // rewrites the canonical URL of a page that may already be live on the client's
     // domain.
-    const clientBaseUrl = (existingArticle.client?.articlesBaseUrl ?? "").replace(/\/+$/, "");
-    const bakeOnClientSite = existingArticle.isClientSiteArticle && clientBaseUrl !== "";
+    const clientBaseUrl = (
+      existingArticle.client?.articlesBaseUrl ?? ""
+    ).replace(/\/+$/, "");
+    const bakeOnClientSite =
+      existingArticle.isClientSiteArticle && clientBaseUrl !== "";
 
     const baseUrl = bakeOnClientSite ? clientBaseUrl : await loadSiteUrl();
     // Always regenerate canonical from current slug — never trust DB value
@@ -192,7 +233,9 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     const metaRobots =
       data.metaRobots ||
-      (data.status === ArticleStatus.PUBLISHED ? "index, follow" : "noindex, follow");
+      (data.status === ArticleStatus.PUBLISHED
+        ? "index, follow"
+        : "noindex, follow");
 
     const sitemapPriority = data.sitemapPriority || (data.featured ? 0.8 : 0.5);
 
@@ -202,7 +245,8 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     ) {
       return {
         success: false,
-        error: "قيمة الحالة غير صالحة — يرجى إعادة تحميل الصفحة والمحاولة مجدداً",
+        error:
+          "قيمة الحالة غير صالحة — يرجى إعادة تحميل الصفحة والمحاولة مجدداً",
       };
     }
 
@@ -248,10 +292,14 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         // Otherwise sitemap.ts falls back to datePublished → Google never recrawls after edits.
         dateModified: new Date(),
         canonicalUrl,
-        breadcrumbPath: JSON.parse(JSON.stringify(breadcrumbPath)) as Prisma.InputJsonValue,
+        breadcrumbPath: JSON.parse(
+          JSON.stringify(breadcrumbPath)
+        ) as Prisma.InputJsonValue,
         semanticKeywords:
           data.semanticKeywords != null
-            ? (JSON.parse(JSON.stringify(data.semanticKeywords)) as Prisma.InputJsonValue)
+            ? (JSON.parse(
+                JSON.stringify(data.semanticKeywords)
+              ) as Prisma.InputJsonValue)
             : ([] as Prisma.InputJsonValue),
         citations: data.citations ?? [],
         audioUrl: data.audioUrl || null,
@@ -273,7 +321,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       await tx.articleFAQ.deleteMany({ where: { articleId: article.id } });
       // Filter out incomplete FAQs (missing question OR answer) — prevents partial entries in DB
       const validFaqs = (data.faqs ?? []).filter(
-        (f: FAQItem) => f.question?.trim() && f.answer?.trim(),
+        (f: FAQItem) => f.question?.trim() && f.answer?.trim()
       );
       if (validFaqs.length > 0) {
         await tx.articleFAQ.createMany({
@@ -321,12 +369,16 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         robots: metaRobots,
       });
       if (!metadataResult.success) {
-        seoFailures.push(`الميتاداتا: ${metadataResult.error || "سبب غير معروف"}`);
+        seoFailures.push(
+          `الميتاداتا: ${metadataResult.error || "سبب غير معروف"}`
+        );
       }
 
       const jsonLdResult = await generateAndSaveJsonLd(article.id);
       if (!jsonLdResult.success) {
-        seoFailures.push(`البيانات المنظّمة: ${jsonLdResult.error || "سبب غير معروف"}`);
+        seoFailures.push(
+          `البيانات المنظّمة: ${jsonLdResult.error || "سبب غير معروف"}`
+        );
       }
     } catch (error) {
       seoFailures.push(error instanceof Error ? error.message : String(error));
@@ -361,13 +413,25 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     // Re-fetch userVersion + updatedAt after SEO generation
     // (SEO ops bump updatedAt but NOT userVersion — keep userVersion fresh from this action)
-    const freshArticle = await db.article.findUnique({ where: { id: article.id }, select: { id: true, title: true, slug: true, status: true, userVersion: true, updatedAt: true } });
+    const freshArticle = await db.article.findUnique({
+      where: { id: article.id },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        status: true,
+        userVersion: true,
+        updatedAt: true,
+      },
+    });
     return {
       success: true,
       article: freshArticle || article,
       seoWarning:
         seoFailures.length > 0
-          ? `المقال انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف العنوان والوصف القديم. (${seoFailures.join(" · ")})`
+          ? `المقال انحفظ، لكن بيانات السيو ما تجدّدت — جوجل بيبقى يشوف العنوان والوصف القديم. (${seoFailures.join(
+              " · "
+            )})`
           : undefined,
     };
   } catch (error) {
@@ -380,4 +444,3 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     };
   }
 }
-
