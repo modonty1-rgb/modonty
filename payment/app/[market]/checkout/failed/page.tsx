@@ -57,7 +57,7 @@ export default async function CheckoutFailedPage({
   if (retryPlan) retryQuery.set("plan", retryPlan);
   if (retryMonths) retryQuery.set("months", retryMonths);
   const canRetry = retryQuery.toString().length > 0;
-  const retryHref = canRetry ? `/${slug}/checkout?${retryQuery.toString()}` : `/${slug}`;
+  const retryHref = canRetry ? `/${slug}/checkout?${retryQuery.toString()}` : `/${slug}/plans`;
 
   const waNumber = process.env.NEXT_PUBLIC_SALES_WHATSAPP?.replace(/\D/g, "") ?? "";
   const waText = row ? `مرحباً، عندي مشكلة في دفع الطلب ${row.number}` : "مرحباً، عندي مشكلة في إتمام الدفع";
@@ -65,7 +65,7 @@ export default async function CheckoutFailedPage({
 
   return (
     <>
-      <CheckoutHeader backHref={`/${slug}`} />
+      <CheckoutHeader backHref={`/${slug}/plans`} />
       <main className="mx-auto max-w-xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8" dir="rtl">
         <div className="mb-8 text-center">
           <div className="inline-flex h-20 w-20 items-center justify-center rounded-full border-2 border-destructive/40 bg-destructive/10 shadow-lg shadow-destructive/20">

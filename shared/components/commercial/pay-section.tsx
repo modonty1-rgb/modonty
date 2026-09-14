@@ -65,6 +65,8 @@ export interface PaySectionProps {
   paymentFootnote?: React.ReactNode;
   /** لا شيء منشور — كل تطبيق يقول ذلك بلغته (زائرٌ لا يُقال له «انشر باقة»). */
   emptyState?: ReactNode;
+  /** شريحة الباقة القادمة من جدول المقارنة في الأوفرفيو — تُحاط بحلقة وتُعطى مرساة. */
+  highlightPlanSlug?: string | null;
 }
 
 export function PaySection({
@@ -83,6 +85,7 @@ export function PaySection({
   installmentMark = null,
   paymentFootnote = null,
   emptyState = null,
+  highlightPlanSlug = null,
 }: PaySectionProps) {
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-5">
@@ -180,6 +183,8 @@ export function PaySection({
               refundNote={refundNote}
               payMarks={payMarks}
               installmentMark={installmentMark}
+              anchorId={`plan-${plan.slug}`}
+              highlighted={highlightPlanSlug === plan.slug}
             />
           ))}
         </div>

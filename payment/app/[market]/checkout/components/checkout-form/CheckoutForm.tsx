@@ -78,7 +78,7 @@ type Props = {
   ngeniusOutletRef: string;
 };
 
-type Errors = Partial<Record<"name" | "email" | "phone" | "turnstile" | "card" | "submit", string>>;
+type Errors = Partial<Record<"name" | "email" | "phone" | "terms" | "turnstile" | "card" | "submit", string>>;
 
 export function CheckoutForm({
   market, planSlug, planName, paidMonths, totalDisplay,
@@ -126,6 +126,10 @@ export function CheckoutForm({
     // نفس ما يفرضه `toE164` على السيرفر: جوّال سعودي من تسعة أرقام يبدأ بـ٥.
     const local = phone.replace(/[\s-]/g, "").replace(/^(\+?966|0)/, "");
     if (!/^5\d{8}$/.test(local)) next.phone = "يرجى إدخال رقم جوال سعودي (مثال: 5XXXXXXXX)";
+    // الموافقة حارسٌ لا تلميح: كانت تُحسب في `canSubmit` وتُستعمل لسطر السبب وحده،
+    // فيمرّ الدفع والخانة فارغة (قاسه خالد على المتصفّح). والعقد يُبرَم بالدفع نفسه
+    // (بند ١١ من نموذج العقد)، فدفعةٌ بلا موافقة تُنشئ التزاماً بلا قبول شروطه.
+    if (!termsAccepted) next.terms = "وافق على الشروط والأحكام قبل الدفع";
     return next;
   }
 
@@ -175,6 +179,8 @@ export function CheckoutForm({
         body: JSON.stringify({
           sessionId,
           turnstileToken: turnstileToken ?? "",
+          // تُرسَل ويفرضها السيرفر: حارس المتصفّح وحده يُتجاوَز بطلبٍ مباشر.
+          termsAccepted,
           name,
           email,
           // يُضمّ «+966» هنا: الحقل يعرضه لاصقاً ولا يكتبه المشتري.
@@ -393,6 +399,8 @@ export function CheckoutForm({
       <label className="flex items-start gap-2.5 text-xs leading-relaxed text-muted-foreground">
         <input
           type="checkbox"
+          aria-invalid={!!errors.terms}
+          aria-describedby={errors.terms ? "checkout-terms-error" : undefined}
           checked={termsAccepted}
           onChange={(e) => setTermsAccepted(e.target.checked)}
           // مربّع الموافقة: `size-5` و`shrink-0` معاً. قيس على ٣٩٠px فكان **١٣×١٦** في
@@ -405,9 +413,24 @@ export function CheckoutForm({
         <span>
           أوافق على <a href={modontyUrl("/terms")} target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-2">الشروط والأحكام</a>
           {" و "}
-          <a href={modontyUrl("/refund-policy")} target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-2">سياسة الاسترداد</a>.
+          <a href={modontyUrl("/terms")} target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-2">سياسة الاسترداد والإلغاء</a>.
         </span>
       </label>
+
+      {errors.terms && (
+        <p id="checkout-terms-error" role="alert" className="text-xs font-semibold text-destructive">{errors.terms}</p>
+      )}
+
+      {/* يُسأل عنه قبل الدفع لا بعده: من يتردّد يريد أن يقرأ ما يلتزم به، والعقد
+          مولَّد من هذه الباقة بعينها لا نموذجاً عامّاً. */}
+      <a
+        href={`/${market.toLowerCase()}/contract?plan=${planSlug}&months=${paidMonths}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-1 inline-flex h-11 items-center gap-1.5 text-[13px] font-semibold text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+      >
+        اطّلع على نموذج العقد
+      </a>
 
       {/* لا زرّ إرسالٍ معطَّل صامتاً (قاعدة Baymard): الزرّ يبقى قابلاً للضغط — يُعطَّل أثناء
           المعالجة وحدها — وكل ضغطةٍ تُشغّل التحقّق وتُظهر سبباً محدَّداً. */}
@@ -430,7 +453,11 @@ export function CheckoutForm({
         ) : (
           <>
             <span>ادفع الآن</span>
-            <span dir="ltr">· {totalDisplay}</span>
+            {/* الفاصل عنصرٌ مستقلّ لا جزءٌ من المبلغ، ولا `dir="ltr"` على المبلغ:
+                `Intl` يُخرج «ـ٪٣٢٠ ر.س.ـ» محفوفاً بـRLM من الطرفين، فإقحام «·» داخل نفس
+                المدى المقلوب يرميه إلى طرف الزرّ البعيد بدل أن يفصل (قياس حيّ: «ادفع الآن· ٪٧١٩٤ ر.س.»). */}
+            <span aria-hidden className="opacity-45">·</span>
+            <span>{totalDisplay}</span>
           </>
         )}
       </button>

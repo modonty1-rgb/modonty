@@ -36,6 +36,9 @@ import { payPublicUrl } from "@/lib/pay-public-url";
 
 const Body = z.object({
   turnstileToken: z.string().max(4096).optional().default(""),
+  // نفس حارس `create-payment`: النموذج يتحقّق من الموافقة ولا يرسلها، فطلبٌ مباشر
+  // ينشئ تقسيطاً بلا قبول شروطه.
+  termsAccepted: z.literal(true),
   name: z.string().trim().min(1).max(100),
   email: z.string().trim().email().max(254),
   phone: z.string().trim().min(6).max(20).transform((v, ctx) => {

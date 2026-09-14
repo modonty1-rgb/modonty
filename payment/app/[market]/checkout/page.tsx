@@ -52,7 +52,7 @@ export default async function CheckoutPage({
     await searchParams;
 
   // بلا باقة لا معنى للصفحة — يُعاد إلى حيث تُختار.
-  if (!planParam?.trim()) redirect(`/${slug}`);
+  if (!planParam?.trim()) redirect(`/${slug}/plans`);
 
   /**
    * سياسة إعادة المحاولة في المكان: سببٌ قابلٌ للعلاج يُعرض شريطاً ويُعاد إدخال البطاقة.
@@ -76,7 +76,7 @@ export default async function CheckoutPage({
   const paidMonths = Number.parseInt(monthsParam ?? "", 10);
   const term = catalog.terms.find((t) => t.paidMonths === paidMonths);
   // شريحةٌ أو مدّةٌ لا وجود لها في الكتالوج المنشور ⇒ رجوعٌ إلى الاختيار، لا انهيار.
-  if (!plan || !term) redirect(`/${slug}`);
+  if (!plan || !term) redirect(`/${slug}/plans`);
 
   const snapshot = buildOrderSnapshot({
     plan: { id: plan.id, slug: plan.slug, name: plan.name, tier: plan.tier, articlesPerMonth: plan.articlesPerMonth },
@@ -95,7 +95,7 @@ export default async function CheckoutPage({
 
   return (
     <>
-      <CheckoutHeader backHref={`/${slug}`} />
+      <CheckoutHeader backHref={`/${slug}/plans`} />
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12" dir="rtl">
         <div className="mb-6 text-center sm:mb-8">
           <h1 className="text-2xl font-black text-foreground sm:text-3xl">أكمل اشتراكك</h1>

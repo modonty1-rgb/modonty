@@ -80,6 +80,7 @@ export function TamaraForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           turnstileToken: turnstileToken ?? "",
+          termsAccepted,
           name: name.trim(),
           email: email.trim(),
           phone: composeSaPhone(phone),
@@ -224,7 +225,7 @@ export function TamaraForm({
         <span>
           أوافق على <a href={modontyUrl("/terms")} target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-2">الشروط والأحكام</a>
           {" و "}
-          <a href={modontyUrl("/refund-policy")} target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-2">سياسة الاسترداد</a>،
+          <a href={modontyUrl("/terms")} target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-2">سياسة الاسترداد والإلغاء</a>،
           وعلى شروط تمارا لخطة التقسيط.
         </span>
       </label>

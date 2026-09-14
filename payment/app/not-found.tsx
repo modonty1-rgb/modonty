@@ -27,7 +27,7 @@ export default function PayNotFound() {
         الرابط الذي فتحته لا يشير إلى باقة أو طلب. اختر باقتك من صفحة الأسعار.
       </p>
       <Link
-        href="/sa"
+        href="/"
         className="mt-8 inline-flex h-12 items-center justify-center rounded-xl bg-foreground px-6 text-[15px] font-bold text-background no-underline transition-colors hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         عرض الباقات

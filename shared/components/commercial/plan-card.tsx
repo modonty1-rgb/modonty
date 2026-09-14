@@ -42,6 +42,10 @@ export interface PlanCardProps {
   payMarks?: { src: string; alt: string }[];
   /** شعار التقسيط، حين يكون متاحاً. */
   installmentMark?: { src: string; alt: string } | null;
+  /** مرساةٌ للقفز إليها من جدول المقارنة (`#plan-<slug>`). */
+  anchorId?: string | null;
+  /** الباقة التي جاء منها الزائر — تُحاط بحلقة كي يجدها فوراً. */
+  highlighted?: boolean;
 }
 
 export function PlanCard({
@@ -56,6 +60,8 @@ export function PlanCard({
   refundNote = null,
   payMarks = [],
   installmentMark = null,
+  anchorId = null,
+  highlighted = false,
 }: PlanCardProps) {
   const theme = COMMERCIAL_PLAN_THEMES[plan.theme];
   const featured = Boolean(plan.featuredBadge);
@@ -81,8 +87,15 @@ export function PlanCard({
 
   return (
     <article
+      id={anchorId ?? undefined}
+      /* `scroll-mt` لا زينة: الترويسة لاصقة، فالقفزة إلى `#plan-x` تضع البطاقة تحتها
+         ويظهر نصفها. والهامش يدفعها إلى ما تحت الترويسة بالضبط. */
       className={cx(
-        "relative flex flex-col rounded-[18px] border-2 px-6 py-7",
+        "relative flex flex-col rounded-[18px] border-2 px-6 py-7 scroll-mt-24",
+        /* حلقةٌ حول الباقة القادمة من جدول المقارنة: الزائر ضغط اسمها هناك، فلا يُترك
+           يبحث عنها بين ثلاث بطاقات متشابهة. لونها `primary` لا `featured` كي لا تنازع
+           شارة «الأنسب» — هذه «اللي اخترتها»، وتلك «اللي نرشّحها». */
+        highlighted && "ring-2 ring-primary ring-offset-2 ring-offset-background",
         theme.background,
         featured ? "border-primary ring-2 ring-primary/40" : "border-border",
       )}

@@ -39,7 +39,13 @@ function build(prefix: string, limit: number, windowSec: number) {
     redis,
     limiter: Ratelimit.slidingWindow(limit, `${windowSec} s`),
     analytics: true,
-    prefix: `rl:${prefix}`,
+    /**
+     * `pay:` لا `rl:` — والفرق قيس (١٤ سبتمبر ٢٠٢٦): جبر سيو يستعمل نفس قاعدة
+     * Upstash ونفس الأسماء حرفاً بحرف (`lib/rate-limit.ts:66` — `build("order", 3, 60)`).
+     * فببادئةٍ واحدة يصير `rl:order:<ip>` عدّاداً مشتركاً: زائر جبر سيو يستهلك
+     * سقف مشتري مدونتي من نفس الـIP، فيُردّ مشترٍ صادق بـ٤٢٩ لذنب مشروعٍ آخر.
+     */
+    prefix: `pay:${prefix}`,
   });
   return {
     limit: async (key: string): Promise<LimiterResult> => {

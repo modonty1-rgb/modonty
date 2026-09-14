@@ -5,7 +5,8 @@ import { PaySection } from "@modonty/shared/components/commercial/pay-section";
 import { TERM_PARAM, resolveTermFromParams } from "@modonty/shared/lib/commercial/resolve-term-from-params";
 import { isPayMarkName, payMarkAsset } from "@modonty/shared/lib/commercial/pay-mark-names";
 
-import { getCachedMarketCatalog, getCachedPaySectionContent } from "../data/get-cached-catalog";
+import { getCachedMarketCatalog, getCachedPaySectionContent } from "../../data/get-cached-catalog";
+import { PayHeader } from "../../components/pay-header/PayHeader";
 
 /**
  * صفحة البيع (PAY-C2) — تحلّ محلّ شاشة اختبار التوجيه التي كانت هنا.
@@ -53,7 +54,7 @@ export default async function MarketPayPage({
   searchParams,
 }: {
   params: Promise<{ market: string }>;
-  searchParams: Promise<{ months?: string; duration?: string }>;
+  searchParams: Promise<{ months?: string; duration?: string; plan?: string }>;
 }) {
   const { market: slug } = await params;
   if (!(slug in MARKETS)) notFound();
@@ -67,12 +68,17 @@ export default async function MarketPayPage({
   const selectedTerm = resolveTermFromParams(catalog.terms, search);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10" dir="rtl">
+    <>
+      {/* بلا تذييل هنا (خالد ١٤ سبتمبر ٢٠٢٦: «أي تشتيت في صفحة الباقات ما له داعي»).
+          كل رابطٍ في صفحة قرارٍ هو مخرجٌ قبل الشراء — والروابط كلّها في الأوفرفيو،
+          وهي الصفحة التي جاء منها الزائر أصلاً فلا يفقدها. */}
+      <PayHeader />
+      <main className="mx-auto w-full max-w-6xl px-4 py-10" dir="rtl">
       <PaySection
         catalog={catalog}
         content={content}
         selectedTerm={selectedTerm}
-        termHref={(paidMonths) => `/${slug}?${TERM_PARAM}=${paidMonths}`}
+        termHref={(paidMonths) => `/${slug}/plans?${TERM_PARAM}=${paidMonths}`}
         priceNote={content.vatNote}
         ctaLabel="اشترك الآن"
         // الزرّ صار حيّاً: يفتح صفحة الدفع بالباقة والمدّة المختارتين (PAY-C3 · PAY-D1).
@@ -96,6 +102,9 @@ export default async function MarketPayPage({
             </div>
           ) : null
         }
+        /* الباقة التي ضغطها الزائر في جدول المقارنة — تُحاط بحلقة، والقفزة `#plan-<slug>`
+           تنزله عليها. بلا هذا يهبط على ثلاث بطاقات متشابهة ويبحث عن التي اختارها. */
+        highlightPlanSlug={search.plan?.trim() || null}
         emptyState={
           /* الحالة الفارغة بلغة الزائر لا بلغة الفريق: لا يُقال له «انشر باقة». */
           <div className="rounded-xl border border-dashed p-12 text-center">
@@ -103,7 +112,8 @@ export default async function MarketPayPage({
             <p className="mt-1 text-sm text-muted-foreground">تواصل معنا وسنرسل لك التفاصيل مباشرةً.</p>
           </div>
         }
-      />
-    </main>
+        />
+      </main>
+    </>
   );
 }

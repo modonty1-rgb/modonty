@@ -4205,6 +4205,26 @@
       "b": "jbrseo",
       "area": "jbrseo",
       "file": "pay",
+      "sec": "code",
+      "date": "١٤ سبتمبر ٢٠٢٦",
+      "jlane": "pay",
+      "tab": "open",
+      "jgrp": "pay-work",
+      "psec": "site",
+      "sev": "critical",
+      "app": [
+        "modonty"
+      ],
+      "who": "c",
+      "id": "PAY-POLL",
+      "ord": 23.5,
+      "t": "🟥 مقيس · الاستعلام الاحتياطي يعلّق من Vercel — طلبٌ مدفوع يبقى «بانتظار الدفع»",
+      "d": "<p><b>القياس (١٤ سبتمبر ٢٠٢٦ · دفعة ساندبوكس حيّة على pay.modonty.com):</b></p>\n<pre>ORD-2026-00034 · 1799400 هللة · الريادة\n3DS مرّ · المشتري عاد إلى /sa/checkout/processing\n\nالحقيقة عند المزوّد (استعلامٌ مباشر من جهاز خالد):\n  الحالة: PURCHASED · المبلغ: 1799400 SAR      ⇒ المال خُصم فعلاً\nالحالة عندنا:\n  AWAITING_PAYMENT · paidAt: —                 ⇒ الطلب لا يعرف</pre>\n<h3>أين يقع التعليق — بالضبط</h3>\n<pre>من جهاز خالد (السعودية):   التوكن 1.02s · استعلام الطلب 0.48s   ⇒ يعمل\nمن Vercel (iad1 · فرجينيا): التوكن ينجح · استعلام الطلب يعلّق حتى المهلة\n  \"pollErr\": \"N-Genius findOrder network error: AbortError: This operation was aborted\"\n  زمن الطلب الكامل: 12.65s  (المهلة رُفعت ٦ ← ١٢، فاستهلكها كاملةً)\n  X-Vercel-Id: bom1::iad1::…   ⇒ preferredRegion=\"fra1\" لم يُطبَّق\n\n⚠ والمسافة وحدها لا تفسّره: إنشاء الطلب (POST) نجح من نفس المنطقة قبل دقائق،\nونداء التوكن (POST) ينجح. المعلَّق هو GET /orders/{ref} وحده.</pre>\n<h3>ما لم يُجرَّب بعد</h3>\n<pre>· ترويسة الاستعلام: vnd.ni-payment.v2+json مقابل application/json\n· منطقة تنفيذٍ أقرب (dxb1 متاحة في خطّة Pro) — لم تُغيَّر: قرارُ بنيةٍ وتكلفة عند خالد\n· قائمة IP مسموحة عند المزوّد — تُسأل الشركة يوم التعميد</pre>\n<p><b>ولماذا ليس عاجلاً اليوم:</b> الويبهوك هو المسار الأساسيّ لا الاستعلام — والبنك يُخبرنا بنفسه لحظة الدفع. وهو مؤجَّل حتى تعميد الشركة (<code>SHIP-6</code>). فيبقى هذا البند مفتوحاً بدليله، ويُحسم يوم يُضبط الويبهوك: إن وصل الإشعار فالاستعلام احتياطٌ نادر، وإن لم يصل فهو الوحيد ولا بدّ من إصلاحه.</p>\n<p><b>وطلب الاختبار العالق:</b> <code>ORD-2026-00034</code> — يُترك كما هو دليلاً. لا يُصحَّح يدوياً في القاعدة: الحالة تُكتب من جواب المزوّد لا من يدٍ بشرية.</p>"
+    },
+    {
+      "b": "jbrseo",
+      "area": "jbrseo",
+      "file": "pay",
       "app": [
         "modonty"
       ],
@@ -4929,8 +4949,8 @@
       "date": "١٤ سبتمبر ٢٠٢٦",
       "jlane": "pay",
       "tab": "open",
-      "jgrp": "pay-work",
-      "psec": "ship",
+      "jgrp": "pay-later",
+      "psec": "launch",
       "sev": "critical",
       "app": [
         "modonty",
@@ -4938,11 +4958,11 @@
       ],
       "id": "SHIP-6",
       "ord": 60.6,
-      "who": "c",
+      "who": "k",
       "step": 6,
       "stepOf": 6,
-      "t": "🟦 داتا · ٦/٦ النطاق pay.modonty.com — حيٌّ · وبقي عنوان الويبهوك",
-      "d": "<p><b>الحالة (١٤ سبتمبر ٢٠٢٦): النطاق يعمل. بقي بندٌ واحد عند المزوّدين.</b></p>\n<h3>ما نُفِّذ</h3>\n<pre>لوحة Vercel: pay.modonty.com أُضيف إلى مشروع modonty-payment\nلوحة Namecheap (عبر المتصفّح): سجلّان أُضيفا وحُفظا\n  CNAME   pay       dc0dce6a16ff8a16.vercel-dns-016.com.\n  TXT     _vercel   vc-domain-verify=pay.modonty.com,f3a0dfd2fd17a04535a7\nوالـTXT لازم لأن modonty.com مرتبط بحساب Vercel آخر — يُثبت التملّك.</pre>\n<h3>دليل الإغلاق — القياس من DNS العالمي والطلب الحيّ</h3>\n<pre>nslookup -type=CNAME pay.modonty.com 8.8.8.8\n  pay.modonty.com  canonical name = dc0dce6a16ff8a16.vercel-dns-016.com   (انتشر بعد ٢٠ث)\nnslookup -type=TXT _vercel.modonty.com 8.8.8.8\n  \"vc-domain-verify=pay.modonty.com,f3a0dfd2fd17a04535a7\"\n\nhttps://pay.modonty.com/              307 → /sa\nhttps://pay.modonty.com/?months=12    307 → /sa?months=12   (السلسلة تُحمَل)\nhttps://pay.modonty.com/sa            200\nhttps://pay.modonty.com/eg            307 → /sa (بلا ترويسة بلد من curl)</pre>\n<h3>جرد DNS كامل بطلب خالد — ٣٠ سجلّاً، صفر تعارض</h3>\n<pre>A 1 · CNAME 13 · TXT 13 · MX 3\nالفحوص: تعدّد CNAME على اسم واحد (RFC 1034) ⇒ صفر\n        SPF على الجذر ⇒ سجلّ واحد (اثنان يُسقطان البريد — RFC 7208)\n        _vercel ⇒ ٧ سجلّات، واحدة لكل نطاق فرعي وpay السابع\n        pay ⇒ لا A ولا MX ولا CNAME آخر يصطدم به\n\nملاحظات لا أعطال: TXT @ b048a5848b… تحقّقٌ قديم بلا مالك معروف ·\ntest وv0 نطاقان اختباريان حيّان · DMARC على p=none يراقب ولا يمنع.</pre>\n<h3>⏸ الباقي — عند المزوّدين بحسابك</h3>\n<pre>N-Genius  →  https://pay.modonty.com/api/webhooks/n-genius\nتمارا      →  https://pay.modonty.com/api/webhooks/tamara\nالمسار نفسه لم يتغيّر — النطاق وحده (وهو ما وفّره إلغاء basePath في PAY-S2).\nيُغلق بـ: POST بلا توقيع على العنوان العام ⇒ ٤٠١ (وصل الحارس).</pre>"
+      "t": "⏸ عنوان الويبهوك عند المزوّد — مؤجَّل حتى تعميد الشركة",
+      "d": "<p><b>الحالة (١٤ سبتمبر ٢٠٢٦): النطاق يعمل. بقي بندٌ واحد عند المزوّدين.</b></p>\n<h3>ما نُفِّذ</h3>\n<pre>لوحة Vercel: pay.modonty.com أُضيف إلى مشروع modonty-payment\nلوحة Namecheap (عبر المتصفّح): سجلّان أُضيفا وحُفظا\n  CNAME   pay       dc0dce6a16ff8a16.vercel-dns-016.com.\n  TXT     _vercel   vc-domain-verify=pay.modonty.com,f3a0dfd2fd17a04535a7\nوالـTXT لازم لأن modonty.com مرتبط بحساب Vercel آخر — يُثبت التملّك.</pre>\n<h3>دليل الإغلاق — القياس من DNS العالمي والطلب الحيّ</h3>\n<pre>nslookup -type=CNAME pay.modonty.com 8.8.8.8\n  pay.modonty.com  canonical name = dc0dce6a16ff8a16.vercel-dns-016.com   (انتشر بعد ٢٠ث)\nnslookup -type=TXT _vercel.modonty.com 8.8.8.8\n  \"vc-domain-verify=pay.modonty.com,f3a0dfd2fd17a04535a7\"\n\nhttps://pay.modonty.com/              307 → /sa\nhttps://pay.modonty.com/?months=12    307 → /sa?months=12   (السلسلة تُحمَل)\nhttps://pay.modonty.com/sa            200\nhttps://pay.modonty.com/eg            307 → /sa (بلا ترويسة بلد من curl)</pre>\n<h3>جرد DNS كامل بطلب خالد — ٣٠ سجلّاً، صفر تعارض</h3>\n<pre>A 1 · CNAME 13 · TXT 13 · MX 3\nالفحوص: تعدّد CNAME على اسم واحد (RFC 1034) ⇒ صفر\n        SPF على الجذر ⇒ سجلّ واحد (اثنان يُسقطان البريد — RFC 7208)\n        _vercel ⇒ ٧ سجلّات، واحدة لكل نطاق فرعي وpay السابع\n        pay ⇒ لا A ولا MX ولا CNAME آخر يصطدم به\n\nملاحظات لا أعطال: TXT @ b048a5848b… تحقّقٌ قديم بلا مالك معروف ·\ntest وv0 نطاقان اختباريان حيّان · DMARC على p=none يراقب ولا يمنع.</pre>\n<h3>⏸ مؤجَّل بقرارك (١٤ سبتمبر ٢٠٢٦): «لسّه ما أخذنا التعميد من شركة النتورك»</h3>\n<p>الحساب باسم جبر سيو، ولا يُمسّ عنوان الويبهوك في لوحة المزوّد قبل أن يصل تعميد النقل. والكود جاهز وينتظر العنوان وحده.</p>\n<h3>ما يلزم يوم يصل التعميد</h3>\n<pre>N-Genius  →  https://pay.modonty.com/api/webhooks/n-genius\nتمارا      →  https://pay.modonty.com/api/webhooks/tamara\nالمسار نفسه لم يتغيّر — النطاق وحده (وهو ما وفّره إلغاء basePath في PAY-S2).\nيُغلق بـ: POST بلا توقيع على العنوان العام ⇒ ٤٠١ (وصل الحارس).</pre>"
     },
     {
       "b": "jbrseo",

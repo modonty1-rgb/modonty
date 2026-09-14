@@ -32,7 +32,7 @@ export default async function CheckoutProcessingPage({
   if (!(slug in MARKETS)) notFound();
 
   const { order } = await searchParams;
-  if (!order?.trim()) redirect(`/${slug}`);
+  if (!order?.trim()) redirect(`/${slug}/plans`);
 
   const row = await db.checkoutOrder.findUnique({
     where: { id: order.trim() },
@@ -42,7 +42,7 @@ export default async function CheckoutProcessingPage({
     },
   }).catch(() => null);
 
-  if (!row) redirect(`/${slug}`);
+  if (!row) redirect(`/${slug}/plans`);
 
   if (row.status === "PAID") redirect(`/${slug}/checkout/success?order=${row.id}`);
   // ⚠ لا يُمرَّر `failedReason` في العنوان: هو نصّ المزوّد الخام («NGENIUS_API_KEY is
@@ -50,14 +50,14 @@ export default async function CheckoutProcessingPage({
   // بالمعرّف وتترجمه إلى جملةٍ مفهومة، فالمعرّف وحده يكفي.
   if (row.status === "FAILED" || row.status === "CANCELLED") redirect(`/${slug}/checkout/failed?order=${row.id}`);
   // تحويلٌ بنكيّ أو مستردّ ⇒ لا معنى لشاشة انتظار بوّابة.
-  if (row.status === "AWAITING_TRANSFER" || row.status === "REFUNDED") redirect(`/${slug}`);
+  if (row.status === "AWAITING_TRANSFER" || row.status === "REFUNDED") redirect(`/${slug}/plans`);
 
   // رقم الطلب البشريّ هو ما يقرؤه المشتري لو اتّصل — أوضح من مرجع المزوّد.
   const refShort = row.number || row.transactions[0]?.providerOrderRef || row.id.slice(-8).toUpperCase();
 
   return (
     <>
-      <CheckoutHeader backHref={`/${slug}`} />
+      <CheckoutHeader backHref={`/${slug}/plans`} />
       <WaitScreen marketSlug={slug} order={row.id} refShort={refShort} />
     </>
   );

@@ -104,3 +104,4 @@ __tmp-*
 # وREADME وحده يبقى ليعرف القادم القاعدة.
 scratch/*
 !scratch/README.md
+payment/_*.mjs

@@ -38,7 +38,7 @@ export default async function CheckoutSuccessPage({
   if (!(slug in MARKETS)) notFound();
 
   const { order } = await searchParams;
-  if (!order?.trim()) redirect(`/${slug}`);
+  if (!order?.trim()) redirect(`/${slug}/plans`);
 
   const row = await db.checkoutOrder.findUnique({
     where: { id: order.trim() },
@@ -49,13 +49,13 @@ export default async function CheckoutSuccessPage({
     },
   }).catch(() => null);
 
-  if (!row) redirect(`/${slug}`);
+  if (!row) redirect(`/${slug}/plans`);
   if (row.status === "AWAITING_PAYMENT") redirect(`/${slug}/checkout/processing?order=${row.id}`);
   // ⚠ لا يُمرَّر `failedReason` في العنوان: هو نصّ المزوّد الخام («NGENIUS_API_KEY is
   // not set»)، وتمريره يكتبه في شريط عنوان المشتري. صفحة الفشل تقرؤه من القاعدة
   // بالمعرّف وتترجمه إلى جملةٍ مفهومة، فالمعرّف وحده يكفي.
   if (row.status === "FAILED" || row.status === "CANCELLED") redirect(`/${slug}/checkout/failed?order=${row.id}`);
-  if (row.status !== "PAID") redirect(`/${slug}`);
+  if (row.status !== "PAID") redirect(`/${slug}/plans`);
 
   const content = await getCachedPaySectionContent(row.market);
   const totalDisplay = formatCatalogMoneyMinor(row.totalMinor, row.currency);
@@ -69,7 +69,7 @@ export default async function CheckoutSuccessPage({
 
   return (
     <>
-      <CheckoutHeader backHref={`/${slug}`} />
+      <CheckoutHeader backHref={`/${slug}/plans`} />
       <main className="mx-auto max-w-xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8" dir="rtl">
         <div className="mb-8 text-center">
           <div className="relative inline-flex items-center justify-center">
@@ -150,7 +150,7 @@ export default async function CheckoutSuccessPage({
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          <a href={modontyUrl("/refund-policy")} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">سياسة الاسترداد</a>{" "}
+          <a href={modontyUrl("/terms")} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">سياسة الاسترداد والإلغاء</a>{" "}
           فيها تفاصيل المدّة والاسترجاع.
         </p>
       </main>

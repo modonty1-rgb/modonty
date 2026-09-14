@@ -41,7 +41,7 @@ export default async function TamaraCheckoutPage({
   const market = MARKETS[slug as MarketSlug];
 
   const { plan: planParam, months: monthsParam } = await searchParams;
-  if (!planParam?.trim()) redirect(`/${slug}`);
+  if (!planParam?.trim()) redirect(`/${slug}/plans`);
 
   const [catalog, content] = await Promise.all([
     getCachedMarketCatalog(market),
@@ -51,7 +51,7 @@ export default async function TamaraCheckoutPage({
   const plan = catalog.plans.find((p) => p.slug === planParam.trim().toLowerCase());
   const paidMonths = Number.parseInt(monthsParam ?? "", 10);
   const term = catalog.terms.find((t) => t.paidMonths === paidMonths);
-  if (!plan || !term) redirect(`/${slug}`);
+  if (!plan || !term) redirect(`/${slug}/plans`);
 
   const snapshot = buildOrderSnapshot({
     plan: { id: plan.id, slug: plan.slug, name: plan.name, tier: plan.tier, articlesPerMonth: plan.articlesPerMonth },
@@ -69,7 +69,7 @@ export default async function TamaraCheckoutPage({
     <>
       {/* رجوعٌ إلى الباقات لا إلى صفحة البطاقة: المشتري اختار التقسيط من البطاقة نفسها،
           فهناك يعود إن غيّر رأيه. */}
-      <CheckoutHeader backHref={`/${slug}`} />
+      <CheckoutHeader backHref={`/${slug}/plans`} />
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12" dir="rtl">
         <div className="mb-6 text-center sm:mb-8">
           <h1 className="text-2xl font-black text-foreground sm:text-3xl">قسّط اشتراكك مع تمارا</h1>

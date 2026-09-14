@@ -42,6 +42,11 @@ import { payPublicUrl } from "@/lib/pay-public-url";
 const Body = z.object({
   sessionId: z.string().min(10).max(200),
   turnstileToken: z.string().max(4096).optional().default(""),
+  // الموافقة على الشروط شرطٌ لإنشاء الطلب لا تزيينٌ في الواجهة: العقد يُبرَم
+  // بالدفع نفسه (بند ١١ من نموذج العقد)، فطلبٌ يصل بلا قبولٍ يُنشئ التزاماً
+  // لم يوافق صاحبه على شروطه. و`literal(true)` لا `boolean`: القيمة الوحيدة المقبولة هي
+  // الموافقة، فيُرّد الطلب بـ٤٠٠ قبل أن يلمس البوّابة.
+  termsAccepted: z.literal(true),
   name: z.string().trim().min(1).max(100),
   email: z.string().trim().email().max(254),
   // الجوال يُطبَّع إلى E.164 لا يُقبل كما كُتب: `toE164` يرفض الأرضي والرقمين الملتصقين،
