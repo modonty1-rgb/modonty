@@ -1,0 +1,132 @@
+/**
+ * ⚠ ملفٌّ مولَّد — لا يُحرَّر بيد.
+ * المصدر: modonty/app/globals.css · المولّد: shared/scripts/build-pay-stage-tokens.mjs
+ * لإعادة توليده: node shared/scripts/build-pay-stage-tokens.mjs
+ *
+ * توكنات مدونتي كما هي، كي تكون صفحة الدفع بنفس ألوان المنصّة حرفاً بحرف — لا لوناً
+ * قريباً منها. 51 توكناً في الفاتح و43 في الداكن.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+  --modonty-accent: #00d8d8;
+  --brand-navy: 245.71 87.5% 18.82%;
+  --brand-blue: 240 100% 59.41%;
+  --brand-teal: 180 100% 42.35%;
+  --brand-gray-light: 0 0% 85.88%;
+  --brand-gray: 0 0% 62.75%;
+  --brand-gray-dark: 0 0% 35.69%;
+  --background: 45 8% 95%;
+  --foreground: var(--brand-navy);
+  --card: 0 0% 100%;
+  --card-foreground: var(--brand-navy);
+  --popover: 0 0% 100%;
+  --popover-foreground: var(--brand-navy);
+  --primary: var(--brand-blue);
+  --primary-foreground: 0 0% 100%;
+  --link: var(--brand-blue);
+  --link-accent: 180 100% 23%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: var(--brand-navy);
+  --accent: var(--brand-teal);
+  --accent-foreground: var(--brand-navy);
+  --muted: 0 0% 96%;
+  --muted-foreground: var(--brand-gray-dark);
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 100%;
+  --border: var(--brand-gray-light);
+  --input: var(--brand-gray-light);
+  --ring: var(--brand-blue);
+  --chart-1: var(--brand-blue);
+  --chart-2: var(--brand-teal);
+  --chart-3: var(--brand-navy);
+  --chart-4: 240 80% 70%;
+  --chart-5: 180 80% 60%;
+  --star: 38 91% 55%;
+  --success: 142 71% 45%;
+  --success-foreground: 0 0% 100%;
+  --action-like: var(--brand-blue);
+  --action-like-foreground: 0 0% 100%;
+  --action-save: 38 92% 50%;
+  --action-save-foreground: var(--brand-navy);
+  --action-comment: var(--brand-teal);
+  --action-comment-foreground: var(--brand-navy);
+  --action-share: 262 83% 58%;
+  --action-share-foreground: 0 0% 100%;
+  --action-listen: 158 64% 42%;
+  --action-listen-foreground: 0 0% 100%;
+  --action-audio: 346 77% 50%;
+  --action-audio-foreground: 0 0% 100%;
+  --tab-reels: 186 95% 24%;
+  --tab-reels-foreground: 0 0% 100%;
+  --radius: 0.5rem;
+  }
+
+  .dark {
+  --background: 245 8% 9%;
+  --foreground: 0 0% 98%;
+  --card: 245 7% 13%;
+  --card-foreground: 0 0% 98%;
+  --popover: 245 7% 13%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 240 100% 68%;
+  --primary-foreground: 0 0% 100%;
+  --link: 240 100% 72%;
+  --link-accent: 180 100% 50%;
+  --secondary: 245 8% 24%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 180 100% 50%;
+  --accent-foreground: 245 87% 19%;
+  --muted: 245 7% 16%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --destructive: 0 62.8% 50%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 245 8% 20%;
+  --input: 245 8% 20%;
+  --ring: 240 100% 65%;
+  --chart-1: 240 100% 65%;
+  --chart-2: 180 100% 50%;
+  --chart-3: 245 60% 40%;
+  --chart-4: 240 80% 75%;
+  --chart-5: 180 80% 65%;
+  --star: 38 92% 58%;
+  --success: 142 60% 50%;
+  --success-foreground: 0 0% 100%;
+  --action-like: var(--brand-blue);
+  --action-like-foreground: 0 0% 100%;
+  --action-save: 38 92% 58%;
+  --action-save-foreground: 245 87% 19%;
+  --action-comment: 180 100% 50%;
+  --action-comment-foreground: 245 87% 19%;
+  --action-share: 262 85% 68%;
+  --action-share-foreground: 245 87% 19%;
+  --action-listen: 158 64% 50%;
+  --action-listen-foreground: 245 87% 19%;
+  --action-audio: 346 82% 62%;
+  --action-audio-foreground: 245 87% 19%;
+  --tab-reels: 186 85% 30%;
+  --tab-reels-foreground: 0 0% 100%;
+  }
+
+  /* تباينٌ عالٍ — قارئٌ يخبرنا أنه يفقد الحدود، فتتحرّك نفس التوكنات التي تتحرّك في مدونتي. */
+  @media (prefers-contrast: more) {
+    :root {
+      --border: var(--brand-gray-dark);
+      --input: var(--brand-gray-dark);
+      --muted-foreground: 0 0% 20%;
+    }
+
+    .dark {
+      --border: 245 8% 45%;
+      --input: 245 8% 45%;
+      --muted-foreground: 215 20% 85%;
+    }
+  }
+
+  * {
+    @apply border-border;
+  }
+}

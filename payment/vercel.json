@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm --filter @modonty/payment build",
+  "installCommand": "pnpm install --filter @modonty/payment...",
+  "framework": "nextjs"
+}

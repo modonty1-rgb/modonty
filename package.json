@@ -10,7 +10,7 @@
     "build:admin": "pnpm --filter @modonty/admin build",
     "build:modonty": "pnpm --filter @modonty/modonty build",
     "build:console": "pnpm --filter @modonty/console build",
-    "build:all": "pnpm build:admin && pnpm build:modonty && pnpm build:console",
+    "build:all": "pnpm build:admin && pnpm build:modonty && pnpm build:console && pnpm build:payment",
     "lint": "pnpm --filter \"@modonty/*\" lint",
     "format": "prettier --write .",
     "audit:brand-icons": "node scripts/audit-brand-icons.mjs",
@@ -22,7 +22,9 @@
     "prisma:format": "pnpm --filter @modonty/shared prisma:format",
     "prisma:validate": "pnpm --filter @modonty/shared prisma:validate",
     "seed": "pnpm --filter @modonty/shared seed",
-    "seed:clear": "pnpm --filter @modonty/shared seed:clear"
+    "seed:clear": "pnpm --filter @modonty/shared seed:clear",
+    "dev:payment": "pnpm --filter @modonty/payment dev",
+    "build:payment": "pnpm --filter @modonty/payment build"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
