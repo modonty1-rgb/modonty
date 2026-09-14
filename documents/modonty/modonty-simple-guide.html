@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>مدونتي ببساطة — دليل سريع للفهم</title>
+    <style>
+      :root {
+        --ink: #11213b;
+        --muted: #5d6a7e;
+        --blue: #3030ff;
+        --aqua: #00bfc1;
+        --paper: #f4f7fb;
+        --line: #dce4ee;
+        --white: #fff;
+        --warm: #fff7df;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: Tahoma, Arial, sans-serif;
+        font-size: 17px;
+        line-height: 1.85;
+      }
+      .page {
+        max-width: 1040px;
+        margin: auto;
+        padding: 32px 24px 72px;
+      }
+      .top {
+        color: #fff;
+        background: linear-gradient(135deg, #0e065a, #2536ae);
+        border-radius: 24px;
+        padding: 42px clamp(24px, 6vw, 68px);
+        box-shadow: 0 18px 45px #0e065a2e;
+      }
+      .eyebrow,
+      .ref {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+      .eyebrow {
+        color: #92fcf6;
+      }
+      h1,
+      h2,
+      h3 {
+        line-height: 1.3;
+      }
+      h1 {
+        margin: 10px 0;
+        font-size: clamp(32px, 5vw, 55px);
+      }
+      .top p {
+        max-width: 710px;
+        margin: 0;
+        font-size: clamp(18px, 2.2vw, 23px);
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 22px 0 8px;
+      }
+      nav a {
+        color: var(--ink);
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 6px 15px;
+        text-decoration: none;
+        font-size: 14px;
+      }
+      nav a:hover,
+      nav a:focus-visible {
+        color: #fff;
+        background: var(--blue);
+        outline: 3px solid #00d8d855;
+      }
+      section {
+        margin-top: 54px;
+      }
+      h2 {
+        margin: 0 0 12px;
+        font-size: clamp(25px, 3vw, 34px);
+      }
+      h3 {
+        margin: 0 0 9px;
+        font-size: 20px;
+      }
+      .intro,
+      .note,
+      .closing {
+        border-right: 5px solid var(--aqua);
+        background: var(--white);
+        border-radius: 0 15px 15px 0;
+        padding: 20px 24px;
+      }
+      .intro p,
+      .note p,
+      .closing p {
+        margin: 0;
+      }
+      .three,
+      .roles,
+      .steps,
+      .words {
+        display: grid;
+        gap: 16px;
+      }
+      .three {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .roles {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .steps {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .words {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .card {
+        position: relative;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 17px;
+        padding: 23px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .num {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        margin-bottom: 14px;
+        color: #fff;
+        background: var(--blue);
+        border-radius: 50%;
+        font: 700 15px Arial, sans-serif;
+      }
+      .workflow {
+        margin-top: 20px;
+        padding-right: 14px;
+        border-right: 2px solid var(--line);
+      }
+      .flow-step {
+        position: relative;
+        padding: 0 24px 22px 0;
+      }
+      .flow-step:last-child {
+        padding-bottom: 0;
+      }
+      .flow-step::before {
+        content: "";
+        position: absolute;
+        top: 6px;
+        right: -22px;
+        width: 14px;
+        height: 14px;
+        border: 3px solid var(--white);
+        background: var(--blue);
+        border-radius: 50%;
+        box-shadow: 0 0 0 1px var(--blue);
+      }
+      .flow-step b {
+        display: block;
+        color: var(--blue);
+      }
+      .flow-owner {
+        display: inline-block;
+        margin: 5px 0 4px;
+        padding: 2px 8px;
+        color: #176564;
+        background: #e8fbf9;
+        border-radius: 999px;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 700;
+      }
+      .flow-step span {
+        display: block;
+        color: var(--muted);
+      }
+      .phase {
+        overflow: hidden;
+        margin-top: 20px;
+        border: 1px solid #cbd7ff;
+        border-radius: 22px;
+        background: var(--white);
+        box-shadow: 0 14px 36px #14255f0d;
+      }
+      .phase-head {
+        padding: 28px;
+        color: #fff;
+        background: linear-gradient(135deg, #101b55, #3045c5);
+      }
+      .phase-head p {
+        max-width: 760px;
+        margin: 8px 0 0;
+        color: #e7ebff;
+      }
+      .phase-label,
+      .owner,
+      .handoff {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .phase-label {
+        padding: 4px 10px;
+        color: #152667;
+        background: #92fcf6;
+        letter-spacing: 0.05em;
+      }
+      .owner {
+        margin-right: 8px;
+        padding: 4px 10px;
+        color: #eff2ff;
+        border: 1px solid #ffffff4d;
+      }
+      .phase-body {
+        padding: 24px 28px 28px;
+      }
+      .phase-rail {
+        position: relative;
+        margin: 2px 8px 0 0;
+        padding-right: 23px;
+        border-right: 2px solid #d7e0ff;
+      }
+      .phase-step {
+        position: relative;
+        padding: 0 0 25px;
+      }
+      .phase-step:last-child {
+        padding-bottom: 0;
+      }
+      .phase-step::before {
+        content: "";
+        position: absolute;
+        top: 6px;
+        right: -31px;
+        width: 14px;
+        height: 14px;
+        border: 3px solid var(--white);
+        border-radius: 50%;
+        background: var(--aqua);
+        box-shadow: 0 0 0 1px var(--aqua);
+      }
+      .phase-step h4 {
+        margin: 0 0 4px;
+        color: #172b72;
+        font-size: 18px;
+      }
+      .phase-step > p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .handoff {
+        margin: 9px 0 12px;
+        padding: 4px 9px;
+        color: #1d5a59;
+        background: #e8fbf9;
+      }
+      .data-groups {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 13px;
+      }
+      .data-group {
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: #fbfcff;
+      }
+      .data-group b {
+        display: block;
+        margin-bottom: 3px;
+        color: var(--blue);
+      }
+      .data-group span {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+      .next-departments {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 9px;
+        margin-top: 18px;
+      }
+      .next-departments div {
+        min-height: 82px;
+        padding: 12px;
+        border-right: 3px solid var(--aqua);
+        border-radius: 10px;
+        background: #f1f6ff;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .next-departments b {
+        display: block;
+        color: var(--ink);
+        font-size: 14px;
+      }
+      .ref {
+        color: var(--blue);
+      }
+      .good,
+      .dont {
+        padding: 22px 25px;
+        border-radius: 17px;
+      }
+      .good {
+        background: #eafaf7;
+        border: 1px solid #bce9df;
+      }
+      .dont {
+        background: #fff1f1;
+        border: 1px solid #f2caca;
+      }
+      .good h3,
+      .dont h3 {
+        margin-bottom: 8px;
+      }
+      ul {
+        margin: 0;
+        padding-right: 22px;
+      }
+      li + li {
+        margin-top: 8px;
+      }
+      .word {
+        border-bottom: 1px solid var(--line);
+        padding: 15px 0;
+      }
+      .word:first-child,
+      .word:nth-child(2) {
+        padding-top: 0;
+      }
+      .word b {
+        color: var(--blue);
+      }
+      .word span {
+        color: var(--muted);
+      }
+      .closing {
+        border-right-color: #f0b429;
+        background: var(--warm);
+      }
+      footer {
+        margin-top: 46px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      @media (max-width: 720px) {
+        .page {
+          padding: 18px 15px 50px;
+        }
+        .top {
+          border-radius: 18px;
+          padding: 31px 24px;
+        }
+        .three,
+        .roles,
+        .steps,
+        .words,
+        .data-groups,
+        .next-departments {
+          grid-template-columns: 1fr;
+        }
+        .phase-head,
+        .phase-body {
+          padding: 22px;
+        }
+        body {
+          font-size: 16px;
+        }
+        .word:nth-child(2) {
+          padding-top: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="top">
+        <span class="eyebrow">دليل سريع لكل من يعمل مع مدونتي</span>
+        <h1>مدونتي، ببساطة</h1>
+        <p>
+          نحن نأخذ خبرة النشاط الحقيقية، نحوّلها إلى صفحة ومحتوى واضح، ونجهزها
+          لكي يجدها الناس. ثم نُري العميل ما حدث فعلًا من بيانات حقيقية.
+        </p>
+      </header>
+
+      <nav aria-label="محتويات الدليل">
+        <a href="#idea">الفكرة</a>
+        <a href="#onboarding">تأسيس العميل</a>
+        <a href="#kitchen">مطبخ مدونتي</a>
+        <a href="#surfaces">المنظومة</a>
+        <a href="#journey">كيف نمشي</a>
+        <a href="#client">ما يراه العميل</a>
+        <a href="#trust">الثقة والجودة</a>
+        <a href="#discovery">الظهور والقياس</a>
+        <a href="#roles">ماذا يعني لك</a>
+        <a href="#words">كلمات مهمة</a>
+        <a href="#promise">كيف نتكلم</a>
+      </nav>
+
+      <section id="idea">
+        <h2>الفكرة في ثلاث جمل</h2>
+        <div class="three">
+          <article class="card">
+            <span class="ref">بداية القصة</span>
+            <h3>النشاط يعطي الحقيقة</h3>
+            <p>
+              العميل يعطينا معلوماته ووثائقه وخدماته. لا نخترع معلومات عنه، ولا
+              نكتب كلامًا بلا مصدر واضح.
+            </p>
+          </article>
+          <article class="card">
+            <span class="ref">شغلنا</span>
+            <h3>نحن ننفذ الشغل</h3>
+            <p>
+              الفريق يخطط ويكتب ويصمم ويحسن المحتوى. العميل لا يحتاج أن يجمع
+              كاتبًا ومصممًا وخبير SEO وفريقًا تقنيًا.
+            </p>
+          </article>
+          <article class="card">
+            <span class="ref">النتيجة</span>
+            <h3>العميل يراجع والناس تجد</h3>
+            <p>
+              العميل يعتمد ما يخرج باسمه. بعد النشر يستطيع الجمهور الوصول
+              للمحتوى، ويرى العميل البيانات الفعلية بدل تقرير رأي.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="onboarding">
+        <h2>١. من التوقيع إلى جاهزية العميل</h2>
+        <p>
+          هذه ليست خطوة إدخال بيانات عابرة. هنا نثبت هوية النشاط، نؤسس مساحة
+          العميل في الكونسول، ونجمع الحقيقة التي سيبني عليها التصميم والمحتوى
+          والـSEO. <b>صاحب المرحلة: قسم متابعة العملاء.</b>
+        </p>
+
+        <article class="phase">
+          <div class="phase-head">
+            <span class="phase-label">PHASE-01</span>
+            <span class="owner">القسم المسؤول: متابعة العملاء</span>
+            <h3>التوقيع وتأسيس العميل</h3>
+            <p>
+              لا نبدأ كتابة مقال أو تصميم صفحة قبل أن يكون العميل معروفًا
+              والبيانات الأساسية جاهزة. متابعة العملاء هي نقطة الوصل: تستلم ما
+              تم الاتفاق عليه، تجهّز الكونسول، وتساعد العميل حتى تصبح معلوماته
+              قابلة للاستخدام.
+            </p>
+          </div>
+
+          <div class="phase-body">
+            <div class="phase-rail" aria-label="سير تأسيس العميل">
+              <div class="phase-step">
+                <h4>١. استلام العميل بعد التوقيع</h4>
+                <p>
+                  يستلم قسم متابعة العملاء ملف العميل من المبيعات: بيانات
+                  التواصل، ما تم الاتفاق عليه، والباقة. ثم يطلب من العميل الشعار
+                  ومواد الهوية المتاحة؛ فالمنصة تستخدم الشعار كأصل حقيقي في صفحة
+                  العميل، لا كنص بديل.
+                </p>
+                <span class="handoff">النتيجة: ملف بداية واضح قبل إنشاء الخدمة</span>
+              </div>
+
+              <div class="phase-step">
+                <h4>٢. تأسيس حساب الكونسول</h4>
+                <p>
+                  ينشئ الفريق مساحة العميل في <b>console.modonty.com</b> ويعطيه
+                  دخولًا خاصًا بنشاطه. تظهر فيه بعض البيانات التي تديرها مدونتي
+                  كبيانات موثّقة للقراءة، حتى لا تتغير الهوية أو التصنيف بلا
+                  متابعة.
+                </p>
+                <span class="handoff">مسؤول التنفيذ: متابعة العملاء · صاحب المعلومات: العميل</span>
+              </div>
+
+              <div class="phase-step">
+                <h4>٣. ما الذي يكمله العميل بنفسه في الكونسول؟</h4>
+                <p>
+                  هذه هي الحقول الظاهرة للتعديل في صفحة «بيانات شركتك». تقسيمها
+                  هنا مقصود: الموظف يشرحها بلغة بسيطة، والعميل يعرف لماذا نطلب
+                  كل مجموعة.
+                </p>
+                <div class="data-groups">
+                  <div class="data-group">
+                    <b>هوية النشاط والسجلات</b>
+                    <span>اسم النشاط، الاسم القانوني، الاسم البديل، تاريخ التأسيس، الشعار المختصر، الوصف، رقم السجل التجاري، والرقم الضريبي أو ضريبة القيمة المضافة بحسب البلد.</span>
+                  </div>
+                  <div class="data-group">
+                    <b>عنوان حقيقي يظهر للناس</b>
+                    <span>المدينة، المنطقة، الحي، الشارع، رقم المبنى، الرقم الإضافي في السعودية، والرمز البريدي.</span>
+                  </div>
+                  <div class="data-group">
+                    <b>متى يجدك الزائر؟</b>
+                    <span>وقت الفتح ووقت الإغلاق وأيام العمل. الأيام التي لا يحددها العميل تظهر للزائر «مغلق».</span>
+                  </div>
+                  <div class="data-group">
+                    <b>مواد الهوية</b>
+                    <span>الشعار، وصور الغلاف أو الجاليري عند توفرها. تُحفظ ضمن أصول النشاط ليستخدمها الفريق في الصفحة والتصاميم، بدل طلبها من جديد كل مرة.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="phase-step">
+                <h4>٤. ما الذي تديره مدونتي ولا يغيّره العميل وحده؟</h4>
+                <p>
+                  البريد المعرّف للحساب، رابط النشاط، روابطه الاجتماعية، تصنيف
+                  النشاط، نوع المنظمة، الشكل القانوني، الهاتف، نوع التواصل،
+                  وبلد العنوان تظهر في الكونسول كبيانات موثّقة. إذا احتاج العميل
+                  تعديلًا، يرجع لقسم متابعة العملاء كي تبقى الهوية المعروضة
+                  متسقة مع ملفه.
+                </p>
+                <span class="handoff">قاعدة العمل: العميل يؤكد الحقيقة، ومدونتي تحافظ على اتساقها</span>
+              </div>
+
+              <div class="phase-step">
+                <h4>٥. معلومات المحتوى والـSEO تأتي بعدها، لا بالتخمين</h4>
+                <p>
+                  بعد اكتمال الملف الأساسي، يفتح العميل استبيان SEO: جمهورُه،
+                  هدفه، نبرة الكلام، المنتجات أو الخدمات المهمة، الأسئلة الشائعة
+                  والاعتراضات، المنافسون، الكلمات أو الادعاءات الممنوعة، ورابط
+                  ملفه في Google Business عند وجوده. للأنشطة الحساسة فقط، مثل
+                  الطبية أو القانونية أو المالية، توجد بيانات اعتماد وترخيص
+                  ومراجع مختص يسجلها العميل مع الوثائق.
+                </p>
+                <span class="handoff">النتيجة: مصدر معلومات حقيقي لفريق المحتوى وSEO</span>
+              </div>
+
+              <div class="phase-step">
+                <h4>٦. فحص الجاهزية وتسليم الأقسام التالية</h4>
+                <p>
+                  متابعة العملاء لا تحكم على جودة المقال هنا؛ دورها يتأكد أن
+                  البيانات المطلوبة وصلت، وأن العميل أقرّ بصحتها وملكيته للصور
+                  والوثائق. عندها فقط يصبح الملف جاهزًا لتبدأ الأقسام التالية
+                  من معلومة صحيحة بدل ملاحقة العميل وسط الإنتاج.
+                </p>
+                <span class="handoff">حالة التسليم: جاهز للخطة والمحتوى والتصميم</span>
+              </div>
+            </div>
+
+            <div class="next-departments" aria-label="مسار التكليف بعد التأسيس">
+              <div><b>١. متابعة العملاء</b>تأسيس، جمع، تأكيد، وتسليم.</div>
+              <div><b>٢. خطة المحتوى</b>تحويل معلومات النشاط إلى Brief واضح.</div>
+              <div><b>٣. التصميم والوسائط</b>بناء الصفحة وتجهيز الأصول البصرية.</div>
+              <div><b>٤. المحتوى وSEO</b>كتابة، مراجعة، وفحص الجاهزية.</div>
+              <div><b>٥. النشر والقياس</b>اعتماد، نشر، وقراءة البيانات الفعلية.</div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section id="kitchen">
+        <h2>٢. مطبخ مدونتي — كيف يعمل الفريق؟</h2>
+        <p>
+          هذا هو مركز التشغيل، لا شاشة جانبية. كل مرحلة لها فريق يستلم مخرجًا
+          واضحًا ويسلمه للفريق الذي بعده. بهذه الطريقة يعرف الموظف أين يبدأ،
+          ماذا ينجز، ومتى يسلّم.
+        </p>
+          <article class="card">
+            <span class="ref">SURFACE-01 · admin.modonty.com</span>
+            <h3>Workflow فريق مدونتي</h3>
+            <p>
+              هذه ليست شاشة متابعة فقط. هنا يبني فريق مدونتي حضور العميل من أول
+              ملفه إلى ما يراه الجمهور، ثم يتابع ما تسجله أدوات القياس.
+            </p>
+            <div class="workflow" aria-label="سير عمل فريق مدونتي">
+              <div class="flow-step">
+                <b>١. نستلم ملفًا جاهزًا ونفعل الخدمة</b>
+                <em class="flow-owner">الدور: قسم متابعة العملاء</em>
+                <span
+                  >بعد أن تكمل متابعة العملاء التأسيس، نفعّل ما يحتاجه الفريق في
+                  ملف النشاط. ومن لوحة الإدارة ندير حالة الخدمة والباقة والأسعار
+                  والمزايا، ونتابع المبيعات والحملات والإحالات.</span
+                >
+              </div>
+              <div class="flow-step">
+                <b>٢. نفهم الاحتياج ونبني الخطة</b>
+                <em class="flow-owner">الدور: خطة المحتوى وSEO</em>
+                <span
+                  >نبني الـBrief: ما الموضوع، لمن نكتب، ما السؤال الذي نجيب عنه،
+                  وما الخطوة التي نريد من الزائر أخذها.</span
+                >
+              </div>
+              <div class="flow-step">
+                <b>٣. نصمم الصفحة ونجهز الأصول البصرية</b>
+                <em class="flow-owner">الدور: التصميم والوسائط</em>
+                <span
+                  >نجهز صفحة العميل ومحتواها البصري، وندير الصور والجاليري
+                  والتصاميم، بحيث تصبح الهوية والأصول جاهزة للمحتوى.</span
+                >
+              </div>
+              <div class="flow-step">
+                <b>٤. نكتب المحتوى داخل خط الإنتاج</b>
+                <em class="flow-owner">الدور: فريق المحتوى</em>
+                <span
+                  >نحوّل الخطة إلى مقال أو محتوى مناسب، ونربطه بالخدمة والصفحة
+                  والصور وCTA واضح، ثم نجهزه للمراجعة.</span
+                >
+              </div>
+              <div class="flow-step">
+                <b>٥. يراجع العميل وننفذ التعديل</b>
+                <em class="flow-owner">الدور: متابعة العملاء + العميل</em>
+                <span
+                  >نرسل المخرج للاعتماد في الكونسول. إذا طلب العميل تعديلًا نرجع
+                  للمقال أو التصميم، ثم نعيده للمراجعة.</span
+                >
+              </div>
+              <div class="flow-step">
+                <b>٦. نمر من بوابة الجودة وSEO</b>
+                <em class="flow-owner">الدور: جودة المحتوى وSEO</em>
+                <span
+                  >نفحص جاهزية الصفحة والمحتوى والصور والروابط والبيانات المنظمة
+                  قبل الجدولة أو النشر. تفاصيل الفحص الـ13 موجودة تحت هذا
+                  الـWorkflow.</span
+                >
+              </div>
+              <div class="flow-step">
+                <b>٧. ننشر المحتوى والريلز</b>
+                <em class="flow-owner">الدور: النشر والتشغيل</em>
+                <span
+                  >نجدول أو ننشر المقال. والريل يمر بالمراجعة ثم ينشر أو يرفض أو
+                  يؤرشف؛ الرفع وحده لا يجعله عامًا.</span
+                >
+              </div>
+              <div class="flow-step">
+                <b>٨. نقيس ونحافظ على التشغيل</b>
+                <em class="flow-owner">الدور: القياس ونجاح العملاء</em>
+                <span
+                  >نقرأ الزيارات والتفاعل وبيانات Search Console وBing، نوزع
+                  المهام، ونتابع السجل والأخطاء والصيانة بدل أن نتوقع
+                  النتيجة.</span
+                >
+              </div>
+            </div>
+          </article>
+      </section>
+
+      <section id="surfaces">
+        <h2>٣. المنظومة لها ثلاث واجهات</h2>
+        <p>
+          لا تحاول أن تفهم مدونتي من صفحة واحدة. كل واجهة لها صاحبها ووظيفتها:
+          <b>الفريق ينفذ، العميل يراجع ويقرر، والجمهور يقرأ ويطمئن.</b>
+        </p>
+        <div class="steps">
+          <article class="card">
+            <span class="ref">SURFACE-02 · console.modonty.com</span>
+            <h3>الكونسول — مكان العميل وقراره</h3>
+            <p>
+              العميل يرى ما يخص نشاطه فقط، ويتابع ما ينشر باسمه ويقرر: يعتمد أو
+              يطلب تعديلًا. لا يرى أي شيء يخص عميلًا آخر.
+            </p>
+            <div class="word">
+              <b>شكل الموقع</b
+              ><span
+                >يختار شكل الهيدر والفوتر ولون الموقع، ويرى المعاينة قبل
+                الحفظ.</span
+              >
+            </div>
+            <div class="word">
+              <b>المحتوى وبيانات النشاط</b
+              ><span
+                >يرى ما ينشر باسمه، يعتمد أو يطلب تعديلًا، ويحدّث بيانات
+                نشاطه.</span
+              >
+            </div>
+            <div class="word">
+              <b>الأصول</b><span>يرفع صور الجاليري والريلز من مكان واحد.</span>
+            </div>
+            <div class="word">
+              <b>قبل الظهور</b
+              ><span
+                >فريق مدونتي يراجع المخرج ويحسن بيانات SEO قبل اعتماده
+                للجمهور.</span
+              >
+            </div>
+          </article>
+          <article class="card">
+            <span class="ref">SURFACE-03 · modonty.com</span>
+            <h3>الموقع العام — مكان الجمهور والثقة</h3>
+            <p>
+              الزائر لا يأتي لتصفح منصة فقط؛ يأتي ليأخذ معلومة مطمئنة، يعرف
+              صاحبها، ثم يقرر هل يتواصل معه أم لا.
+            </p>
+            <div class="word">
+              <b>معلومة لها صاحب حقيقي</b
+              ><span
+                >يرى محتوى صادرًا عن نشاط دخل بعد التحقق من أوراقه، وهذا مهم
+                للمعلومة الصحية والمهنية وما يؤثر في قرار الناس.</span
+              >
+            </div>
+            <div class="word">
+              <b>اكتشاف بلا ضجيج</b
+              ><span
+                >يجد مقالات وريلز من عملاء موثوقين، لا مساحة مفتوحة ينشر فيها أي
+                شخص.</span
+              >
+            </div>
+            <div class="word">
+              <b>يفهم قبل أن يطلب</b
+              ><span
+                >المقال والصور والريلز والصفحة المصممة تشرح الخدمة بوضوح، فيعرف
+                الزائر إن كان النشاط مناسبًا له.</span
+              >
+            </div>
+            <div class="word">
+              <b>يتابع ويتصرف</b
+              ><span
+                >يستطيع القراءة والحفظ والمشاركة والتفاعل ومتابعة النشاط أو
+                الاشتراك. وعند تفعيل النشاط لها، يجد تواصلًا أو واتساب أو حجزًا
+                واضحًا.</span
+              >
+            </div>
+            <div class="word">
+              <b>المحتوى مستمر</b
+              ><span
+                >تبقى صفحة العميل ومقالاته المنشورة حتى لو انتهى اشتراكه؛ الذي
+                يتوقف هو إنتاج محتوى جديد.</span
+              >
+            </div>
+          </article>
+        </div>
+        <article class="card" style="margin-top: 16px">
+          <span class="ref">SURFACE-01 · بوابة SEO</span>
+          <h3>١٣ مرحلة يمر عليها المحتوى أو الصفحة</h3>
+          <p>
+            لا نعتبر أي صفحة جاهزة للظهور لمجرد أنها مكتوبة أو جميلة. أول ١١
+            مرحلة فحص مباشر، ثم قياس الأداء وتقرير Google بعد النشر. لا نضع
+            علامة «مكتمل» لشيء لم يُقَس.
+          </p>
+          <ol>
+            <li>الصفحة تفتح، آمنة، ولا تدور في تحويلات.</li>
+            <li>Google مسموح له بقراءتها والرابط الأساسي صحيح.</li>
+            <li>الصفحة مهيأة للجوال والتكبير متاح.</li>
+            <li>لغة الصفحة معلنة بشكل صحيح.</li>
+            <li>عنوان ووصف ولغة وصورة المشاركة جاهزة للبحث والمشاركة.</li>
+            <li>عنوان رئيسي واضح يفهمه القارئ ومحرك البحث.</li>
+            <li>Schema وJSON-LD ومسار الصفحة منظمة.</li>
+            <li>الصور تعمل ولها نص بديل.</li>
+            <li>الروابط الداخلية واضحة وليست مكسورة.</li>
+            <li>الروابط الخارجية تعمل وآمنة عند فتحها.</li>
+            <li>الرابط موجود في Sitemap كي يستطيع Google اكتشافه.</li>
+            <li>Core Web Vitals تقاس من PageSpeed ولا نفترضها.</li>
+            <li>نقرأ لاحقًا ما تقوله Google عن الصفحة بعد ظهورها.</li>
+          </ol>
+        </article>
+        <article class="card" style="margin-top: 16px">
+          <span class="ref">SURFACE-02 · إشارات التفاعل</span>
+          <h3>ما الذي يستطيع العميل فهمه عن الزائر؟</h3>
+          <p>
+            هذه ليست أرقامًا صامتة؛ هي صورة لما فعله الزائر بعد أن وصل إلى
+            المحتوى أو صفحة النشاط. الإشارة لا تعني وحدها بيعًا مكتملًا، لكنها
+            تساعد على فهم قوة الاهتمام.
+          </p>
+          <div class="three">
+            <div class="good">
+              <h3>داخل المقال</h3>
+              <ul>
+                <li>مشاهدة المقال.</li>
+                <li>إعجاب أو عدم إعجاب.</li>
+                <li>حفظ أو مشاركة.</li>
+                <li>نقرة CTA أو رابط.</li>
+                <li>تعليق أو رد، والتفاعل مع التعليقات.</li>
+                <li>تحويل مكتمل.</li>
+                <li>زائر باهتمام عالٍ بعد ارتفاع Lead Score.</li>
+              </ul>
+            </div>
+            <div class="good">
+              <h3>داخل صفحة النشاط</h3>
+              <ul>
+                <li>زيارة الصفحة.</li>
+                <li>متابعة النشاط.</li>
+                <li>مشاركة الصفحة أو حفظها.</li>
+                <li>تعليق أو سؤال على الصفحة.</li>
+                <li>اشتراك مباشر لمتابعة النشاط أو محتواه.</li>
+              </ul>
+            </div>
+            <div class="good">
+              <h3>تواصل مباشر</h3>
+              <ul>
+                <li>رسالة دعم لفريق مدونتي.</li>
+                <li>اهتمام بعرض أو حملة.</li>
+                <li>سؤال مباشر للنشاط.</li>
+                <li>طلب حجز، وهي أقوى إشارة نية.</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section id="journey">
+        <h2>كيف يمشي الشغل من أول معلومة إلى النشر؟</h2>
+        <div class="steps">
+          <article class="card">
+            <span class="num">١</span>
+            <h3>نفهم النشاط</h3>
+            <p>
+              نجمع ما يقدمه العميل، من يخدم، وما الذي يريد أن يفعله الزائر:
+              يتصل، يحجز، أو يطلب خدمة.
+            </p>
+          </article>
+          <article class="card">
+            <span class="num">٢</span>
+            <h3>نتأكد من المعلومات</h3>
+            <p>
+              المعلومة المهمة لا تُكتب بالتخمين. نسأل العميل ونثبت ما يلزم قبل
+              أن ننسب إليه أي كلام.
+            </p>
+          </article>
+          <article class="card">
+            <span class="num">٣</span>
+            <h3>نختار موضوعًا مفيدًا</h3>
+            <p>
+              لا نكتب مقالًا لمجرد أن نكتب. نختار سؤالًا حقيقيًا قد يسأله شخص
+              يحتاج خدمة العميل.
+            </p>
+          </article>
+          <article class="card">
+            <span class="num">٤</span>
+            <h3>ننتج المخرج كاملًا</h3>
+            <p>
+              نكتب المقال، نجهز الصورة والتصميم، ونضبط عنوان البحث والوصف
+              والروابط والعناصر التي تساعد الناس ومحركات البحث على فهمه.
+            </p>
+          </article>
+          <article class="card">
+            <span class="num">٥</span>
+            <h3>العميل له القرار</h3>
+            <p>
+              يرى العميل ما ينشر باسمه من الكونسول. يوافق أو يطلب تعديلًا؛ لا
+              ننشر شيئًا يحتاج موافقته من دون هذه المساحة.
+            </p>
+          </article>
+          <article class="card">
+            <span class="num">٦</span>
+            <h3>ننشر ثم نتابع</h3>
+            <p>
+              بعد النشر نتابع صحة الصفحة والصور والروابط، ونقرأ الظهور والتفاعل
+              من أدوات القياس الحقيقية.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="client">
+        <h2>ما الذي يحصل عليه العميل فعلًا؟</h2>
+        <div class="steps">
+          <article class="card">
+            <h3>صفحة تعرّف به كما يجب</h3>
+            <p>
+              نصمم له صفحة نشاط، ونرتب الخدمات وبيانات التواصل والموقع والصور.
+              ويمكنه اختيار مظهر مناسب لموقعه ورفع الجاليري والمواد التي تخصه.
+            </p>
+          </article>
+          <article class="card">
+            <h3>محتوى لا يفاجئه</h3>
+            <p>
+              يرى المقالات وحالتها: تحت الكتابة، للمراجعة، تحتاج تعديلًا، أو
+              منشورة. لا يضطر إلى سؤال الفريق في كل مرة: الحالة موجودة أمامه.
+            </p>
+          </article>
+          <article class="card">
+            <h3>صورة لما يفعله الزائر</h3>
+            <p>
+              لا يرى رقم زيارات فقط. يمكن للمنظومة تسجيل إشارات مثل قراءة
+              المقال، حفظه، مشاركته، الضغط على CTA أو واتساب أو الحجز، المتابعة
+              والتقييم. هذه إشارات اهتمام، وليست مبيعات مؤكدة.
+            </p>
+          </article>
+          <article class="card">
+            <h3>تواصل وتنبيه عندما يهم الأمر</h3>
+            <p>
+              يظل قريبًا من الشغل عبر الإشعارات والقنوات المتاحة، فيعرف عندما
+              يحتاج أمر إلى مراجعته أو عندما تظهر إشارة تستحق المتابعة.
+            </p>
+          </article>
+        </div>
+        <div class="note">
+          <p>
+            <b>المعنى البسيط:</b> العميل لا يشتري مقالات تُرسل له في ملف؛ يحصل
+            على مساحة يرى فيها ما بُني لنشاطه، ويظل هو صاحب القرار في ما ينشر
+            باسمه.
+          </p>
+        </div>
+      </section>
+
+      <section id="trust">
+        <h2>كيف نحمي الثقة والجودة؟</h2>
+        <div class="three">
+          <article class="card">
+            <span class="ref">قبل الإنتاج</span>
+            <h3>نسأل ولا نخمن</h3>
+            <p>
+              البريف يجمع معلومات النشاط: خدماته، جمهوره، مدينته، ونبرته. إذا
+              كانت معلومة ناقصة، نسأل. وفي الطب والقانون وأي محتوى حساس، لا
+              تتحول المعلومة غير المؤكدة إلى نص منشور.
+            </p>
+          </article>
+          <article class="card">
+            <span class="ref">قبل النشر</span>
+            <h3>المقال يمرّ من بوابة جودة</h3>
+            <p>
+              نراجع العنوان والوصف، الصورة والنص البديل، الروابط، قابلية
+              الفهرسة، والبيانات التي تساعد البحث على فهم المقال. النقص لا يصبح
+              مشكلة بعد أن يصل للجمهور.
+            </p>
+          </article>
+          <article class="card">
+            <span class="ref">بعد النشر</span>
+            <h3>لا نترك الأصل وحده</h3>
+            <p>
+              تستمر المنظومة في فحص أن الصفحة والصور والروابط تعمل، وأن ما يظهر
+              للبحث ما زال يطابق ما يراه الزائر. الجودة متابعة وليست لحظة واحدة.
+            </p>
+          </article>
+        </div>
+        <div class="steps" style="margin-top: 16px">
+          <article class="card">
+            <h3>الريلز ليست مساحة مفتوحة</h3>
+            <p>
+              الريل منسوب لعميل، ويراجع قبل أن يصل إلى الفيد العام. لذلك لا
+              تختلط خبرة النشاط بمحتوى مجهول أو عشوائي.
+            </p>
+          </article>
+          <article class="card">
+            <h3>ما بُني لا يختفي فجأة</h3>
+            <p>
+              عند انتهاء الاشتراك تبقى صفحة العميل ومقالاته المنشورة. الذي يتوقف
+              هو إنتاج مقالات جديدة، لا المعلومة التي وصل إليها الزائر.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="discovery">
+        <h2>كيف يصل المحتوى للناس؟ وكيف نعرف الأثر؟</h2>
+        <div class="steps">
+          <article class="card">
+            <h3>يُجهز للاكتشاف، لا للنشر فقط</h3>
+            <p>
+              المحتوى العام يخرج مع عنوان ووصف وصور وبيانات منظمة وروابط واضحة.
+              هذا يساعد Google وBing ومحركات البحث والقنوات التي تقرأ محتوى
+              الويب على فهم الصفحة عندما تكون مناسبة لسؤال المستخدم.
+            </p>
+          </article>
+          <article class="card">
+            <h3>يظهر في أكثر من مكان عند توفر الإعداد</h3>
+            <p>
+              قد يظهر المقال في الموقع العام، والبحث، وبحث الصور أو الفيديو.
+              وإذا كان ربط موقع العميل مفعّلًا، يستطيع موقعه عرض مقالاته أيضًا
+              عبر الـAPI. كل قناة لها إعدادها وقواعدها؛ لا نعد بظهور مضمون.
+            </p>
+          </article>
+          <article class="card">
+            <h3>نقرأ ظهور البحث من مصدره</h3>
+            <p>
+              Google Search Console يوضح الظهور والنقرات والكلمات والصفحات التي
+              تؤدي في البحث. هذا هو جواب سؤال: «هل بدأ الناس يجدونني؟»
+            </p>
+          </article>
+          <article class="card">
+            <h3>نقرأ ما فعله الزائر من مصدره</h3>
+            <p>
+              Google Analytics يوضح الزيارات ومصدرها والتفاعل والتحويلات. ثم
+              يعرض Looker Studio هذه البيانات في شكل يفهمه الشخص غير التقني.
+            </p>
+          </article>
+        </div>
+        <div class="closing" style="margin-top: 16px">
+          <p>
+            <b>الفرق المهم:</b> لا نقول للعميل «ثق بنا، النتائج جيدة». نقول «هذه
+            بيانات Google عن الظهور، وهذه بيانات الزيارة والتفاعل». النشر ليس
+            وعدًا بالمركز الأول؛ هو بداية حضور يمكن قياسه وتحسينه.
+          </p>
+        </div>
+      </section>
+
+      <section id="roles">
+        <h2>ماذا يعني هذا لي؟</h2>
+        <div class="roles">
+          <article class="card">
+            <span class="ref">للمندوب</span>
+            <h3>لا تبيع وعدًا</h3>
+            <p>
+              قل للعميل: «نحن نبني لك حضورًا ونقيس أثره». لا تقل: «نضمن لك
+              المركز الأول» أو «نضمن لك عدد عملاء».
+            </p>
+          </article>
+          <article class="card">
+            <span class="ref">للطبيب أو صاحب النشاط</span>
+            <h3>أنت صاحب الخبرة</h3>
+            <p>
+              أنت تعطينا المعلومة الصحيحة وتراجع ما يخرج باسمك. الفريق يحول
+              خبرتك إلى محتوى واضح، لكنه لا يخترع معلومة طبية أو قانونية بديلًا
+              عنك.
+            </p>
+          </article>
+          <article class="card">
+            <span class="ref">للموظف الجديد</span>
+            <h3>لا تتوقع ولا تخمّن</h3>
+            <p>
+              إذا كانت معلومة ناقصة، اسأل. إذا كان شيء يحتاج إثباتًا، ثبته.
+              الجودة ليست شكلًا جميلًا فقط؛ الجودة أن يكون الكلام صحيحًا
+              ومفيدًا.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="words">
+        <h2>كلمات ستسمعها كثيرًا</h2>
+        <div class="words">
+          <div class="word">
+            <b>SEO</b>
+            <span
+              >يعني تجهيز الصفحة والمحتوى حتى يفهمهما البحث ويستطيع عرضهما عندما
+              تكون مناسبة.</span
+            >
+          </div>
+          <div class="word">
+            <b>CTA</b>
+            <span
+              >الخطوة التي نريد من الزائر أخذها، مثل واتساب أو حجز أو طلب
+              خدمة.</span
+            >
+          </div>
+          <div class="word">
+            <b>Lead</b>
+            <span>شخص أظهر اهتمامًا بالنشاط؛ ليس بالضرورة عميلًا اشترى.</span>
+          </div>
+          <div class="word">
+            <b>Lead Score</b>
+            <span
+              >درجة تساعدنا نفهم قوة اهتمام الزائر من سلوكه، وليست حكمًا نهائيًا
+              عليه.</span
+            >
+          </div>
+          <div class="word">
+            <b>Console</b>
+            <span>مساحة العميل ليرى ما يخص نشاطه ويعتمد أو يطلب تعديلًا.</span>
+          </div>
+          <div class="word">
+            <b>بيانات Google</b>
+            <span
+              >أرقام فعلية عن الظهور والزيارات والتفاعل، وليست كلامًا تسويقيًا
+              من عندنا.</span
+            >
+          </div>
+          <div class="word">
+            <b>On-page SEO</b>
+            <span
+              >ترتيب ما داخل الصفحة نفسها: العنوان والوصف والصور والروابط
+              والمحتوى.</span
+            >
+          </div>
+          <div class="word">
+            <b>Off-page SEO</b>
+            <span
+              >ما يساعد سمعة الصفحة خارجها، مثل الإشارات والروابط الصحيحة من
+              مواقع أخرى.</span
+            >
+          </div>
+          <div class="word">
+            <b>Technical SEO</b>
+            <span
+              >الأساس التقني الذي يجعل الصفحة سهلة القراءة للبحث: السرعة
+              والفهرسة والروابط والبيانات المنظمة.</span
+            >
+          </div>
+          <div class="word">
+            <b>Schema / JSON-LD</b>
+            <span
+              >بيانات خلف الصفحة لا يقرأها الزائر مباشرة، لكنها تساعد البحث على
+              فهم المقال وصاحبه وصورته وتاريخه.</span
+            >
+          </div>
+          <div class="word">
+            <b>Sitemap</b>
+            <span
+              >خريطة تقول لمحركات البحث ما الصفحات والصور والريلز المنشورة التي
+              يمكن أن تزورها.</span
+            >
+          </div>
+          <div class="word">
+            <b>IndexNow</b>
+            <span
+              >إشعار سريع لبعض محركات البحث عند النشر، ويعمل فقط عندما يكون
+              الربط مفعّلًا.</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <section id="promise">
+        <h2>كيف نتكلم عن مدونتي بشكل صحيح؟</h2>
+        <div class="three">
+          <div class="good">
+            <h3>نقول</h3>
+            <ul>
+              <li>«نحن ننفذ المحتوى والتصميم والـSEO.»</li>
+              <li>«أنت تراجع ما ينشر باسمك.»</li>
+              <li>«نريك ما تقوله Google عن الظهور والزيارات.»</li>
+              <li>«المحتوى أصل يبقى ويكبر مع الوقت.»</li>
+            </ul>
+          </div>
+          <div class="dont">
+            <h3>لا نقول</h3>
+            <ul>
+              <li>«نضمن لك المركز الأول.»</li>
+              <li>«نضمن لك مبيعات أو عدد عملاء.»</li>
+              <li>«كل مقال سيظهر في Google أو AI.»</li>
+              <li>«نكتب أي معلومة عنك بدون أن نتأكد منك.»</li>
+            </ul>
+          </div>
+          <div class="note">
+            <h3>الجملة الجامعة</h3>
+            <p>
+              «مدونتي تبني حضور نشاطك بالمحتوى الصحيح، وتخليك ترى أثر الشغل من
+              بيانات حقيقية.»
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing">
+        <h2>لو نسيت كل شيء، تذكر هذا</h2>
+        <p>
+          العميل يملك الحقيقة والقرار. نحن نملك التنفيذ والانضباط. الجمهور يحصل
+          على معلومة أوضح من مصدر معروف. والنتيجة نقيسها من مصدرها الحقيقي.
+        </p>
+      </section>
+
+      <footer>
+        مرجع مبسط للتعريف بالمنظومة. للتفاصيل التشغيلية الكاملة راجع ملف
+        <code>modonty-team-playbook.html</code> ودليل الفريق داخل الأدمن.
+      </footer>
+    </main>
+  </body>
+</html>

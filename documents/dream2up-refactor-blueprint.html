@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>dreamToapp | خارطة إعادة البناء</title>
+    <style>
+      :root { --bg:#fafaf9; --surface:#f5f5f4; --ink:#1c1917; --muted:#57534e; --line:#d6d3d1; --brand:#c2410c; --brand-dark:#9a3412; --accent:#f59e0b; --ok:#166534; --radius:8px; }
+      * { box-sizing:border-box; }
+      body { margin:0; background:var(--bg); color:var(--ink); font-family:Tahoma, Arial, sans-serif; line-height:1.75; }
+      .wrap { width:min(1120px, calc(100% - 40px)); margin:auto; }
+      header { border-bottom:1px solid var(--line); padding:48px 0 32px; }
+      .eyebrow { color:var(--brand); font-size:13px; font-weight:700; letter-spacing:0; }
+      h1 { font-size:clamp(32px, 5vw, 56px); line-height:1.16; margin:12px 0; max-width:780px; }
+      h2 { font-size:26px; margin:0 0 18px; line-height:1.3; }
+      h3 { font-size:18px; margin:0 0 8px; }
+      p { margin:0; color:var(--muted); }
+      .summary { max-width:780px; font-size:18px; }
+      nav { display:flex; gap:18px; flex-wrap:wrap; margin-top:26px; font-size:14px; }
+      nav a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); }
+      main { padding:48px 0 80px; }
+      section { padding:42px 0; border-bottom:1px solid var(--line); }
+      .principles, .phases { display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; }
+      .item, .phase { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:22px; }
+      .number { color:var(--brand); font-weight:700; font-size:13px; }
+      .phase { position:relative; padding-top:48px; }
+      .phase .number { position:absolute; top:18px; right:22px; }
+      .phase ul, .checklist { margin:12px 0 0; padding:0 19px 0 0; color:var(--muted); }
+      .phase li, .checklist li { margin:5px 0; }
+      .split { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+      .rule { border-right:3px solid var(--brand); padding:12px 18px; background:var(--surface); }
+      .table-wrap { overflow:auto; }
+      table { width:100%; border-collapse:collapse; min-width:640px; }
+      th,td { padding:15px; text-align:right; vertical-align:top; border-bottom:1px solid var(--line); }
+      th { color:var(--brand); font-size:14px; }
+      code { direction:ltr; display:inline-block; background:var(--surface); border:1px solid var(--line); padding:1px 6px; border-radius:4px; color:var(--ink); }
+      .status { color:var(--ok); font-weight:700; }
+      footer { padding:28px 0 48px; color:var(--muted); font-size:13px; }
+      @media (max-width:760px) { .wrap { width:min(100% - 28px, 1120px); } header { padding-top:32px; } .principles,.phases,.split { grid-template-columns:1fr; } section { padding:32px 0; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <div class="eyebrow">DREAMTOAPP / REFACTOR BLUEPRINT</div>
+        <h1>إعادة بناء الموقع على أساس واضح، خفيف، وقابل للنمو.</h1>
+        <p class="summary">هذه ليست عملية تجميل لصفحات قديمة. سنفصل بين ما يخدم العميل ويعمل فعلاً، وما هو تكرار أو زخرفة أو JavaScript غير ضروري، ثم نبني الواجهة على نظام Ember Studio الدافئ والمنضبط.</p>
+        <nav><a href="#vision">الرؤية</a><a href="#system">النظام</a><a href="#phases">المراحل</a><a href="#guardrails">الحدود</a><a href="#definition">تعريف النجاح</a></nav>
+      </div>
+    </header>
+    <main class="wrap">
+      <section id="vision">
+        <h2>1. الاتجاه العام</h2>
+        <div class="rule"><strong>dreamToapp وكالة رقمية عملية وواثقة.</strong> العميل يجب أن يفهم خلال ثوان: من نحن، ماذا نبني، كيف يبدأ، وما الخطوة التالية. لا مؤثرات تعمل بدل الرسالة، ولا واجهة مزدحمة تريد إثبات أنها حديثة.</div>
+      </section>
+      <section id="system">
+        <h2>2. النظام البصري</h2>
+        <div class="principles">
+          <article class="item"><h3>اللون</h3><p>خلفية <code>#FAFAF9</code>، نص <code>#1C1917</code>، Terracotta <code>#C2410C</code> للقرار والـCTA، وأصفر <code>#F59E0B</code> للتأكيد المحدود. لا تدرجات زخرفية.</p></article>
+          <article class="item"><h3>الشكل</h3><p>مساحة بيضاء متعمدة، خطوط فصل هادئة، عناصر التحكم 8px، والكروت 12px فقط حين تكون هناك مجموعة قابلة للمقارنة أو الإجراء.</p></article>
+          <article class="item"><h3>الحركة</h3><p>الحركة تخدم الحالة فقط: فتح قائمة، انتقال صفحة، إرسال نموذج. لا parallax، لا خلفيات متحركة، لا glow أو glass بلا وظيفة.</p></article>
+        </div>
+      </section>
+      <section id="phases">
+        <h2>3. خطة التنفيذ</h2>
+        <div class="phases">
+          <article class="phase"><span class="number">PHASE 00–01</span><h3>الجرد والأساس</h3><ul><li>حصر المسارات والعقود والتبعيات.</li><li>تثبيت tokens المشتركة.</li><li>تحديث Button / Card / Input / Textarea.</li><li>لا حذف قبل إثبات عدم وجود callers.</li></ul><p class="status">تمت المراجعة والتصحيح.</p></article>
+          <article class="phase"><span class="number">PHASE 02</span><h3>الهيكل العام</h3><ul><li>Navbar وMobile Menu وCTA وFooter.</li><li>حفظ اللغات، الروابط، الصلاحيات، وسلوك القائمة.</li><li>إزالة الزخارف من shell أولاً.</li></ul><p>هذه المرحلة التالية.</p></article>
+          <article class="phase"><span class="number">PHASE 03</span><h3>الصفحة الرئيسية</h3><ul><li>رسالة الوكالة وCTA واحد.</li><li>الخدمات، الأعمال، الطريقة، ونقطة البدء.</li><li>نبني قصة واضحة، لا مجموعة كروت تسويقية.</li></ul></article>
+          <article class="phase"><span class="number">PHASE 04</span><h3>المسارات العامة</h3><ul><li>الخدمات والمشاريع والصفحات التعريفية.</li><li>توحيد العناوين، المسافات، الحالات الفارغة.</li><li>مراجعة SEO والـmetadata لكل مسار.</li></ul></article>
+          <article class="phase"><span class="number">PHASE 05</span><h3>بدء المشروع والتواصل</h3><ul><li>تبسيط رحلة العميل للنموذج.</li><li>الحفاظ على validation وAPI والعقود.</li><li>رسائل نجاح وخطأ عملية وواضحة.</li></ul></article>
+          <article class="phase"><span class="number">PHASE 06</span><h3>لوحة العميل والتنظيف</h3><ul><li>واجهة تشغيلية كثيفة وواضحة، لا تسويقية.</li><li>إزالة dead code بعد التحقق.</li><li>قياس bundle وclient components والتحقق النهائي.</li></ul></article>
+        </div>
+      </section>
+      <section id="guardrails">
+        <h2>4. ما لا نلمسه بلا سبب واضح</h2>
+        <div class="split">
+          <div><h3>عقود يجب حفظها</h3><ul class="checklist"><li>المسارات والروابط المحلية <code>next-intl</code>.</li><li>Prisma وMongoDB وCloudinary.</li><li>API actions والنماذج وvalidation.</li><li>الصلاحيات والمصادقة وبيانات Dashboard.</li></ul></div>
+          <div><h3>قواعد العمل مع Copilot</h3><ul class="checklist"><li>مرحلة واحدة ذات نطاق محدد.</li><li>تقرير في <code>.agents/reports/copilot</code> بعد التنفيذ.</li><li>لا dependencies أو migrations أو حذف جماعي.</li><li>مراجعة diff قبل الانتقال للمرحلة التالية.</li></ul></div>
+        </div>
+      </section>
+      <section id="definition">
+        <h2>5. تعريف النجاح</h2>
+        <div class="table-wrap"><table><thead><tr><th>المجال</th><th>المعيار</th><th>الدليل المطلوب</th></tr></thead><tbody>
+          <tr><td>الوضوح</td><td>العميل يعرف عرض الوكالة وخطوة البدء من أول شاشة.</td><td>مراجعة صفحات public على desktop وmobile.</td></tr>
+          <tr><td>الاتساق</td><td>لا قيم لون أو radius أو shadow عشوائية في المكونات الجديدة.</td><td>Tokens ومكونات مشتركة.</td></tr>
+          <tr><td>السلامة</td><td>لا مسار أو نموذج أو صلاحية تنكسر.</td><td>اختبارات/build ومراجعة العقود.</td></tr>
+          <tr><td>الأداء</td><td>تقليل client JS والحركة والطبقات البصرية غير الضرورية.</td><td>تقرير bundle وقياس runtime عند اكتمال المراحل.</td></tr>
+          <tr><td>الصيانة</td><td>كل تغيير صغير مفهوم ويمكن مراجعته أو التراجع عنه.</td><td>تقارير phases وdiffs محددة.</td></tr>
+        </tbody></table></div>
+      </section>
+    </main>
+    <footer class="wrap">مرجع قرار مشترك بين الإشراف والتنفيذ. آخر تحديث: 2026-09-07.</footer>
+  </body>
+</html>

@@ -1522,8 +1522,22 @@ ${COPY_JS}
 // ثلاثة أقسام كتبويبات: الأدمن · مدونتي · المرجع. داخل القسم لا شيء مخفيّ. والبنية واحدة في
 // قسمَي العمل: الجاري ← أُنجز ← المراحل القادمة. والمرجع يحمل ما يُقرأ ولا يُنفَّذ.
 const PAY_SECTIONS = [
-  { k: "admin", n: "🛠️ الأدمن", s: "يؤسّس الباقات ويسعّرها ويؤكّد المال ويُصدر الفاتورة. هنا المرحلة ١ الجارية.", groups: ["pay-work", "pay-done", "pay-plan"] },
+  { k: "admin", n: "🛠️ الأدمن", s: "يؤسّس الباقات ويسعّرها ويؤكّد المال ويُصدر الفاتورة. — مفتاح العناوين: 🟦 داتا = إدخال منك من الشاشة، صفر كود · 🟨 كود = تنفيذ منّي لا ينتظر أحداً · 🟩 كود ثم داتا = أبني الخانة ثم تملؤها · 🟥 قرار = لا يبدأ قبل جوابك.", groups: ["pay-work", "pay-done", "pay-plan"] },
   { k: "site", n: "🌐 مدونتي — صفحة /pay", s: "ما يراه المشتري ويدفع منه. يبدأ بعد أن يُغلق الأدمن مرحلته الأولى.", groups: ["pay-work", "pay-done", "pay-plan"] },
+  // تبويبان بأمر خالد (١٤ سبتمبر ٢٠٢٦): «افصل لي كل واحد في تاب عشان أنا ما ني ناقص توهان…
+  // هذه أهم مرحلة، مرحلة دفع، ما في مجال لأي قرار خاطئ». وسببه مقيس: تبويب «مدونتي» صار
+  // عدّاده ٢٠ بنداً تخلط ثلاثة أشياء لا يوقفها نفس الشيء — بناء الصفحة، وفصل الحزمة،
+  // وانتظار الشركة. فالتبويب صار بحسب **ما يوقف البند**، لا بحسب التطبيق.
+  { k: "split", n: "🔀 فصل الدفع — حزمة payment", s: "نقل الدفع إلى حزمة مستقلّة في المونوريبو: modonty · admin · console · shared · payment. سبع خطوات بترتيب إجباريّ، كلٌّ تُغلق بقياسها، والسابعة تُثبت أن مدونتي لم تتأثّر. لا ينتظر أحداً — يبدأ بكلمتك.", groups: ["pay-work", "pay-done", "pay-plan"] },
+  { k: "launch", n: "🚀 الإطلاق — ينتظر الشركة", s: "كل بند هنا موقوف على شيءٍ خارج الكود: إيميل موافقة نقل الحساب، أو مفاتيح الإنتاج، أو إذنك. لا يُبنى منه شيء قبل ذلك — ولهذا لا يُخلط بما يُعمَل الآن.", groups: ["pay-work", "pay-later", "pay-done", "pay-plan"] },
+  // تبويب النشر بأمر خالد (١٤ سبتمبر ٢٠٢٦): «نخلّص من موضوع الجِت والبوش… وفي عندنا
+  // البيمنت الجديدة نبغى نرتّب نقطة الفرسيل بحيث ناخذ الدومين». وهو غير «الإطلاق»:
+  // ذاك ينتظر الشركة، وهذا يبدأ بكلمتك وحدها.
+  { k: "ship", n: "📦 النشر — الدفع والدومين", s: "ما بين شغلٍ خلص على جهازك وشغلٍ يعمل على الإنترنت: كوميت ودفع، مشروع Vercel لحزمة الدفع، ونطاق pay.modonty.com. بترتيبٍ إجباريّ، وكلٌّ يُغلق بقياس.", groups: ["pay-work", "pay-done"] },
+  // تبويب رابع بأمر خالد (١٣ سبتمبر ٢٠٢٦): «ترفّس سبعة هذايل وأعمل تاب جديد تسميه بعد الإطلاق».
+  // سببه أن المرحلة ٧ (حذف مصادر السعر القديمة) كانت تُعدّ داخل «الأدمن» فتُضخّم رقمه — وهي
+  // لا تُلمس قبل أن يبيع الجديد فعلاً. فصلها يجعل عدّاد الأدمن يقول ما يُعمل الآن وحده.
+  { k: "after", n: "🏁 بعد الإطلاق", s: "لا يُبدأ قبل أن تبيع صفحة /pay فعلاً. حذف المصدر القديم قبل أن يعمل الجديد يوقف البيع — ولهذا وُضعت آخر الخطة لا أوّلها.", groups: ["pay-work", "pay-done", "pay-plan", "pay-later"] },
   { k: "ref", n: "📚 المرجع", s: "ما يُقرأ ولا يُنفَّذ: الحارس · القرارات المحسومة · الخريطة · دراسة جبر سيو.", groups: ["pay-guard", "pay-decide", "pay-plan", "pay-answered", "pay-later", "pay-how", "pay-avoid", "pay-keep", "pay-have"] },
 ];
 const PAY_GROUPS = [
@@ -1548,7 +1562,9 @@ const paySections = PAY_SECTIONS.map(sec => {
     .filter(g => g.items.length);
   // عدّاد قسم العمل = ما بقي مفتوحاً فيه؛ المرجع يعدّ بطاقاته كلّها لأنه ليس شغلاً.
   const open = cards.filter(t => !isDone(t) && (t.jgrp === "pay-work" || t.jgrp === "pay-plan")).length;
-  return { ...sec, groups, count: sec.k === "ref" ? cards.length : open };
+  // «الإطلاق» يعدّ بطاقاته كلّها لا المفتوح منها: بنوده تنتظر خالد أو الشركة، فعدّها
+  // كـ«شغلٍ جارٍ» يكذب على القارئ — وهو بالضبط ما طلب خالد تصفيته (١٤ سبتمبر ٢٠٢٦).
+  return { ...sec, groups, count: sec.k === "ref" || sec.k === "launch" ? cards.length : open };
 });
 
 // السؤال المطلوب الآن = أصغر `ord` بين أسئلة القرار المفتوحة. محسوبٌ لا مكتوب: سؤالٌ
@@ -1593,23 +1609,40 @@ const payHTML = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="u
 .grp[data-grp="pay-answered"]>h2{color:var(--green)}
 .scope{margin:10px 0 0;padding:10px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--mut);font-size:12.5px;line-height:1.8}
 .scope b{color:var(--fg)}
+/* الرأس صار شريطاً واحداً (خالد ١٣ سبتمبر ٢٠٢٦: «الهيرو مزعج، ماني قادر أشوف أي حاجة من
+   التاسكات»). المقيس قبل التعديل على ١٢٨٠×٨٠٠: header.top = 318px لاصقاً — ٤٠٪ من الشاشة
+   محجوزةٌ دائماً، وأوّل بطاقة تبدأ عند 484px، وبطاقتان فقط تظهران كاملتين. الحلّ: العنوان
+   وشريط التقدّم والمرشّح في سطر واحد يبقى لاصقاً، والبطاقة الجارية ونطاق الأرقام نزلا إلى
+   المحتوى فيمرّان مع التمرير. لا يُحذف شيء — يُنقل. */
+.payhead{display:flex;align-items:center;gap:14px}
+.payhead h1{margin:0;font-size:15px;white-space:nowrap}
+.payhead .progress{flex:1;min-width:200px;margin:0}
+.payhead .tools{flex:0 0 auto}
+@media(max-width:900px){.payhead{flex-wrap:wrap}.payhead .progress{order:3;flex-basis:100%}}
+main>.nextq{margin:0 0 10px}
+.scopebox{margin:0 0 14px}
+.scopebox>summary{cursor:pointer;color:var(--dim);font-size:12.5px;padding:3px 0}
+.scopebox .scope{margin-top:6px}
 @media(max-width:900px){.secttl{width:100%;margin:8px 0 0}}</style></head><body>
 <div class="apptabs" role="tablist" aria-label="أقسام لوحة الدفع"><p class="secttl">القسم</p>
-${paySections.map((sec, i) => `<button class="apptab" role="tab" data-sec-btn="${sec.k}" aria-selected="${i === 0}" title="${sec.n}">${sec.n}<b>${sec.count}</b></button>`).join("")}
+${paySections.map((sec, i) => `<button class="apptab" role="tab" data-sec-btn="${sec.k}" aria-selected="${i === 0}" title="${sec.n}">${sec.n}${sec.count ? `<b>${sec.count}</b>` : ""}</button>`).join("")}
 ${paySections.map(sec => `<div data-sec-nav="${sec.k}" class="${sec.k === paySections[0].k ? "" : "hidden"}"><p class="secttl">داخل القسم</p>
 ${sec.groups.map(g => `<a class="apptab" href="#grp-${sec.k}-${g.k}">${g.n.replace(/^[٠-٩★✔🔨🗺️⏸]+\s*·?\s*/, "")}<b>${g.items.length}</b></a>`).join("")}</div>`).join("")}
 <p class="secttl">اللوحات</p>
 <nav class="boards" aria-label="اللوحات الأخرى">
 <a href="TASK.html">📋 لوحة الشغل</a><a href="JBRSEO.html">🔗 جبر سيو</a><a href="SEO.html">🔍 سيو</a>
 </nav></div>
-<header class="top"><div class="wrap">
-<h1>جبر SEO dash by Bay — انتقال الدفع <span style="color:var(--dim);font-weight:500;font-size:13px">· نقل بوابة الدفع والتسعير من جبر سيو إلى مدونتي</span></h1>
+<header class="top"><div class="wrap payhead">
+<h1>انتقال الدفع</h1>
 <div class="progress">
   <div class="bar"><span style="width:${payPercent}%"></span></div>
   <div class="pnums">${decisionsPhase
     ? `<b>${payAnswered}</b> قرار محسوم من <b>${payDecideAll.length}</b> · ${payPercent}%`
-    : `القرارات ${payAnswered}/${payDecideAll.length} محسومة · التنفيذ: <b>${payWorkDone}</b> من <b>${payWorkAll.length}</b> بنداً · ${payPercent}%`}</div>
+    : `القرارات ${payAnswered}/${payDecideAll.length} · التنفيذ <b>${payWorkDone}</b>/<b>${payWorkAll.length}</b> · ${payPercent}%`}</div>
 </div>
+<div class="tools"><button class="chip" data-sev="critical high" aria-pressed="false">الحرج والمهم فقط</button></div>
+</div></header>
+<main class="wrap">
 ${payNext ? `<a class="nextq" href="#${esc(payNext.id)}">
   <span class="lbl">السؤال المطلوب منك الآن</span>
   <span class="qt">${payNext.t}</span>
@@ -1620,10 +1653,9 @@ ${payNext ? `<a class="nextq" href="#${esc(payNext.id)}">
   <span class="qt">${payWorkNext.t}</span>
   <span class="qid">${esc(payWorkNext.id)}</span>
 </a>` : `<p class="elsewhere">المرحلة ١ مغلقة كلّها. التالية: بطاقة <code>PAY-P2</code>.</p>`}
-<p class="scope"><b>نطاق كل رقم هنا:</b> قراءة ملفّات مصدر في <code>JBRSEO/jbrseo.com</code> و<code>MODONTY/</code>، وقراءة <code>modonty_dev</code>. <b>صفر اتصال بقاعدة الإنتاج، وصفر كتابة في أي قاعدة.</b> وما لم يُقَس مكتوبٌ صراحةً في بطاقة <code>PAY-UNKNOWN</code> بدل أن يمرّ كافتراض.</p>
-<div class="tools"><button class="chip" data-sev="critical high" aria-pressed="false">الحرج والمهم فقط</button></div>
-</div></header>
-<main class="wrap">
+<details class="scopebox"><summary>نطاق كل رقم على هذه اللوحة</summary>
+<p class="scope">قراءة ملفّات مصدر في <code>JBRSEO/jbrseo.com</code> و<code>MODONTY/</code>، وقراءة <code>modonty_dev</code>. <b>صفر اتصال بقاعدة الإنتاج، وصفر كتابة في أي قاعدة.</b> وما لم يُقَس مكتوبٌ صراحةً في بطاقة <code>PAY-UNKNOWN</code> بدل أن يمرّ كافتراض.</p>
+</details>
 ${paySections.map((sec, i) => `<div data-sec="${sec.k}" class="${i ? "hidden" : ""}"><h2 class="sech">${sec.n}</h2><p class="secs">${sec.s}</p>
 ${sec.groups.map(g => `<section class="grp" id="grp-${sec.k}-${g.k}" data-grp="${g.k}"><h2>${g.n} <span class="n" data-count>${g.items.length}</span></h2><p>${g.s}</p>${g.k === "pay-done" ? `<details><summary>اعرض ${g.items.length} بنداً مُنجَزاً بأدلّته</summary>` : ""}<div class="grid">${g.items.map(cardHTML).join("\n")}</div>${g.k === "pay-done" ? "</details>" : ""}</section>`).join("\n")}</div>`).join("\n")}
 </main>

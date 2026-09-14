@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>dreamToapp | Design Direction Mockup</title>
+    <style>
+      :root { --paper:#fafaf9; --surface:#f5f5f4; --ink:#1c1917; --muted:#57534e; --line:#d6d3d1; --rust:#c2410c; --rust-dark:#9a3412; --amber:#f59e0b; --radius:8px; }
+      * { box-sizing:border-box; }
+      html { scroll-behavior:smooth; }
+      body { margin:0; background:var(--paper); color:var(--ink); font-family:Tahoma, Arial, sans-serif; line-height:1.55; }
+      a { color:inherit; text-decoration:none; }
+      .shell { width:min(1240px, calc(100% - 48px)); margin:auto; }
+      header { position:sticky; top:0; z-index:5; background:color-mix(in srgb, var(--paper) 94%, transparent); border-bottom:1px solid var(--line); backdrop-filter:blur(8px); }
+      .nav { min-height:72px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+      .logo { display:flex; gap:8px; align-items:center; font-weight:800; letter-spacing:0; font-size:18px; }
+      .mark { width:22px; height:22px; background:var(--rust); display:inline-block; border-radius:4px 12px 4px 4px; }
+      .links { display:flex; align-items:center; gap:22px; color:var(--muted); font-size:14px; }
+      .links a:hover { color:var(--rust); }
+      .button { display:inline-flex; min-height:40px; align-items:center; justify-content:center; padding:0 16px; background:var(--rust); color:white; border:1px solid var(--rust); border-radius:8px; font-weight:700; font-size:14px; }
+      .button:hover { background:var(--rust-dark); border-color:var(--rust-dark); }
+      .button.ghost { background:transparent; color:var(--ink); border-color:var(--line); }
+      .hero { padding:80px 0 50px; border-bottom:1px solid var(--line); }
+      .hero-grid { display:grid; grid-template-columns:1.05fr .95fr; align-items:end; gap:52px; }
+      .kicker { color:var(--rust); font-size:12px; font-weight:800; letter-spacing:0; }
+      h1 { max-width:720px; margin:13px 0 20px; font-size:clamp(42px, 6vw, 82px); line-height:.98; letter-spacing:0; }
+      .hero p { max-width:590px; color:var(--muted); font-size:18px; }
+      .hero-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:28px; }
+      .proof { display:flex; gap:18px; margin-top:45px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
+      .proof strong { display:block; color:var(--ink); font-size:20px; }
+      .hero-art { min-height:460px; position:relative; overflow:hidden; background:var(--surface); border-radius:12px; }
+      .hero-art img { width:100%; height:100%; min-height:460px; object-fit:cover; filter:saturate(.82) contrast(1.04); }
+      .art-tag { position:absolute; left:18px; bottom:18px; background:var(--paper); border:1px solid var(--line); padding:12px 14px; max-width:240px; font-size:13px; }
+      .art-tag b { display:block; margin-bottom:3px; }
+      section { padding:74px 0; border-bottom:1px solid var(--line); }
+      .heading-row { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-bottom:30px; }
+      h2 { margin:0; max-width:700px; font-size:clamp(28px, 4vw, 48px); line-height:1.08; }
+      .heading-row p { margin:0; max-width:350px; color:var(--muted); }
+      .services { display:grid; grid-template-columns:repeat(3, 1fr); border-top:1px solid var(--line); border-right:1px solid var(--line); }
+      .service { min-height:250px; padding:22px; border-left:1px solid var(--line); border-bottom:1px solid var(--line); display:flex; flex-direction:column; justify-content:space-between; }
+      .service:hover { background:var(--surface); }
+      .service span { color:var(--rust); font-size:13px; font-weight:800; }
+      .service h3 { font-size:24px; margin:10px 0; }
+      .service p { color:var(--muted); margin:0; font-size:14px; }
+      .works { display:grid; grid-template-columns:1.35fr .65fr; gap:18px; }
+      .work { min-height:410px; position:relative; overflow:hidden; background:var(--surface); border-radius:12px; }
+      .work.small { min-height:196px; }
+      .work img { width:100%; height:100%; position:absolute; inset:0; object-fit:cover; filter:saturate(.75); }
+      .work-label { position:absolute; inset:auto 14px 14px 14px; background:var(--paper); padding:13px; display:flex; justify-content:space-between; gap:10px; align-items:center; border:1px solid var(--line); font-size:13px; }
+      .work-label b { font-size:15px; }
+      .works-side { display:grid; gap:18px; }
+      .process { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-top:1px solid var(--line); }
+      .step { padding:21px 16px 0 0; border-left:1px solid var(--line); min-height:180px; }
+      .step:last-child { border-left:0; }
+      .step b { color:var(--rust); font-size:13px; }
+      .step h3 { font-size:18px; margin:14px 0 8px; }
+      .step p { color:var(--muted); font-size:14px; margin:0; }
+      .cta-band { background:var(--rust); color:white; border:0; }
+      .cta-band .inside { display:flex; align-items:end; justify-content:space-between; gap:20px; }
+      .cta-band h2 { max-width:760px; }
+      .cta-band p { color:#ffede4; max-width:530px; margin:14px 0 0; }
+      .cta-band .button { background:var(--paper); border-color:var(--paper); color:var(--ink); white-space:nowrap; }
+      footer { padding:34px 0; display:flex; justify-content:space-between; gap:20px; color:var(--muted); font-size:13px; }
+      @media (max-width:800px) { .shell { width:min(100% - 28px, 1240px); } .links { display:none; } .nav { min-height:64px; } .hero { padding:48px 0 32px; } .hero-grid,.works { grid-template-columns:1fr; gap:24px; } .hero-art,.hero-art img { min-height:310px; } section { padding:48px 0; } .heading-row,.cta-band .inside { align-items:start; flex-direction:column; } .services { grid-template-columns:1fr; } .service { min-height:170px; } .process { grid-template-columns:1fr 1fr; } .step:nth-child(2) { border-left:0; } .step { border-bottom:1px solid var(--line); padding-bottom:18px; } .proof { gap:12px; } footer { flex-direction:column; } }
+      @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } * { transition:none !important; } }
+    </style>
+  </head>
+  <body>
+    <header><div class="shell nav"><a class="logo" href="#top"><span class="mark" aria-hidden="true"></span>dreamToapp</a><nav class="links" aria-label="التنقل الرئيسي"><a href="#services">الخدمات</a><a href="#work">أعمالنا</a><a href="#process">كيف نعمل</a><a href="#contact">تواصل</a></nav><a class="button" href="#contact">ابدأ مشروعك</a></div></header>
+    <main id="top">
+      <section class="hero"><div class="shell hero-grid"><div><div class="kicker">DIGITAL STUDIO / JEDDAH</div><h1>نبني حضورًا رقميًا يجعل الخطوة التالية واضحة.</h1><p>dreamToapp شريك تصميم وتطوير للعلامات التي تحتاج موقعًا مرتبًا، سريعًا، ومبنيًا ليخدم عملها الحقيقي.</p><div class="hero-actions"><a class="button" href="#contact">ابدأ محادثة</a><a class="button ghost" href="#work">شاهد أعمالنا</a></div><div class="proof"><span><strong>تصميم</strong>نظام واضح</span><span><strong>تطوير</strong>أداء مقصود</span><span><strong>شراكة</strong>من الفكرة للإطلاق</span></div></div><figure class="hero-art"><img src="https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&w=1200&q=85" alt="فريق يناقش مشروعًا رقميًا"><figcaption class="art-tag"><b>العمل يبدأ بسؤال جيد.</b>نحدد المطلوب قبل اختيار الشكل.</figcaption></figure></div></section>
+      <section id="services"><div class="shell"><div class="heading-row"><h2>نحوّل التعقيد إلى تجربة يستطيع العميل استخدامها.</h2><p>كل خدمة مستقلة، لكنها تعمل ضمن نظام واحد يحمي وضوح المنتج بعد الإطلاق.</p></div><div class="services"><article class="service"><span>01</span><div><h3>الاستراتيجية الرقمية</h3><p>ترتيب الأولويات، الرسالة، ومسار العميل قبل كتابة أول واجهة.</p></div></article><article class="service"><span>02</span><div><h3>تصميم المنتج والموقع</h3><p>أنظمة واجهات قابلة للنمو، لا شاشات جميلة فقط.</p></div></article><article class="service"><span>03</span><div><h3>التطوير والإطلاق</h3><p>بناء نظيف، أداء جيد، وتسليم يمكن للفريق الاعتماد عليه.</p></div></article></div></div></section>
+      <section id="work"><div class="shell"><div class="heading-row"><h2>عمل واضح في الفكرة، ودقيق في التنفيذ.</h2><a class="button ghost" href="#contact">كل المشاريع</a></div><div class="works"><article class="work"><img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=85" alt="مساحة عمل حديثة"><div class="work-label"><span><b>منصة للعمليات</b><br>Product design + development</span><span>2026</span></div></article><div class="works-side"><article class="work small"><img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=900&q=85" alt="فريق في اجتماع"><div class="work-label"><span><b>هوية لخدمة B2B</b><br>Brand system</span></div></article><article class="work small"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=900&q=85" alt="عمل على حاسوب محمول"><div class="work-label"><span><b>موقع سريع وواضح</b><br>Web experience</span></div></article></div></div></div></section>
+      <section id="process"><div class="shell"><div class="heading-row"><h2>طريقة عمل تمنع المفاجآت.</h2><p>القرار في وقته، وتسليمات قابلة للمراجعة، وخطوات لا تخفي ما بعدها.</p></div><div class="process"><article class="step"><b>01 / DISCOVER</b><h3>نفهم</h3><p>الأهداف، العملاء، والعقود التقنية القائمة.</p></article><article class="step"><b>02 / DEFINE</b><h3>نحدد</h3><p>النظام، النطاق، وما لن نبنيه الآن.</p></article><article class="step"><b>03 / BUILD</b><h3>نبني</h3><p>بمراحل قصيرة مع مراجعة واضحة لكل تغيير.</p></article><article class="step"><b>04 / GROW</b><h3>نطلق ونحسن</h3><p>نقيس ثم نطوّر ما يثبت أنه يحتاج تحسينًا.</p></article></div></div></section>
+      <section id="contact" class="cta-band"><div class="shell inside"><div><h2>عندك مشروع يحتاج أساسًا أقوى؟</h2><p>ابدأ بمحادثة قصيرة. سنحدد ما يحتاج قرارًا الآن، وما يمكن تأجيله.</p></div><a class="button" href="mailto:hello@dream2up.com">ابدأ المحادثة</a></div></section>
+    </main>
+    <footer class="shell"><span>dreamToapp. Digital studio.</span><span>Jeddah, Saudi Arabia</span><span>هذا Mockup لاتجاه التصميم، وليس محتوى نهائيًا.</span></footer>
+  </body>
+</html>

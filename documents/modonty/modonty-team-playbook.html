@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<style>
+  #surfaces .g3 {
+    grid-template-columns: 1fr !important;
+  }
+  #surfaces .card:nth-child(2) > div:last-of-type > div > ul {
+    columns: 2;
+    column-gap: 28px;
+  }
+  #surfaces .card:nth-child(2) > div:last-of-type > div > ul li {
+    break-inside: avoid;
+    margin-bottom: 4px;
+  }
+  .team-sections {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .team-section {
+    padding: 13px;
+    border: 1px solid var(--l);
+    border-right: 4px solid var(--b);
+    border-radius: 8px;
+  }
+  .team-section h4 {
+    margin: 0 0 5px;
+    color: var(--n);
+    font-size: 0.95rem;
+  }
+  .team-section p {
+    color: var(--m);
+    font-size: 0.85rem;
+  }
+  .team-section ul,
+  .team-section ol {
+    margin: 8px 0 0;
+    padding-right: 18px;
+    color: var(--m);
+    font-size: 0.84rem;
+  }
+  .team-section li {
+    break-inside: avoid;
+    margin-bottom: 4px;
+  }
+  .team-client {
+    background: #eef8fc;
+    border-right-color: #2799c4;
+  }
+  .team-content {
+    background: #f4f0ff;
+    border-right-color: #7a5bc2;
+  }
+  .team-seo {
+    background: #edf9f2;
+    border-right-color: #238256;
+  }
+  .team-seo ol {
+    columns: 2;
+    column-gap: 28px;
+  }
+  .team-operations {
+    background: #fff7e6;
+    border-right-color: #ba7a16;
+  }
+  .visitor-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .visitor-benefit {
+    padding: 12px;
+    border: 1px solid var(--l);
+    border-radius: 8px;
+  }
+  .visitor-benefit h4 {
+    margin: 0 0 4px;
+    color: var(--n);
+    font-size: 0.91rem;
+  }
+  .visitor-benefit p {
+    font-size: 0.83rem;
+  }
+  .visitor-trust {
+    background: #edf9f2;
+    border-right: 4px solid #238256;
+  }
+  .visitor-discovery {
+    background: #eef8fc;
+    border-right: 4px solid #2799c4;
+  }
+  .visitor-understanding {
+    background: #f4f0ff;
+    border-right: 4px solid #7a5bc2;
+  }
+  .visitor-action {
+    background: #fff7e6;
+    border-right: 4px solid #ba7a16;
+  }
+  .visitor-choice {
+    background: #fff0f5;
+    border-right: 4px solid #c65b85;
+  }
+  .visitor-continuity {
+    background: #f2f6f8;
+    border-right: 4px solid #64748b;
+  }
+  @media (max-width: 880px) {
+    #surfaces .card:nth-child(2) > div:last-of-type > div > ul {
+      columns: 1;
+    }
+    .team-seo ol {
+      columns: 1;
+    }
+    .visitor-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>مدونتي | فهم المنظومة</title>
+    <style>
+      :root {
+        --n: #102f49;
+        --b: #176b9c;
+        --s: #e9f5fa;
+        --i: #1b2b3a;
+        --m: #64748b;
+        --l: #d9e2ec;
+        --p: #fff;
+        --bg: #f4f7f9;
+        --g: #e8f7ef;
+        --w: #fff5df;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--i);
+        font: 16px/1.8 Tahoma, Arial, sans-serif;
+      }
+      .shell {
+        display: grid;
+        grid-template-columns: 276px minmax(0, 1fr);
+        min-height: 100vh;
+        direction: ltr;
+      }
+      .side {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow: auto;
+        background: var(--n);
+        padding: 28px 18px;
+        color: #e9f2fa;
+        direction: rtl;
+      }
+      .brand {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 0 10px 22px;
+        border-bottom: 1px solid #31506c;
+      }
+      .mark {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #55c4df;
+        color: #08243b;
+        font-weight: 900;
+      }
+      .brand span {
+        display: block;
+        font-size: 0.78rem;
+        color: #aac2d4;
+      }
+      .st {
+        display: block;
+        margin: 26px 10px 8px;
+        font-size: 0.72rem;
+        color: #97b1c7;
+        font-weight: bold;
+      }
+      .side a {
+        display: block;
+        padding: 9px 10px;
+        border-radius: 8px;
+        color: #e9f2fa;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+      .side a:hover {
+        background: #214563;
+      }
+      .note {
+        margin: 28px 4px;
+        padding: 12px;
+        background: #173951;
+        border-right: 3px solid #55c4df;
+        border-radius: 6px;
+        font-size: 0.79rem;
+      }
+      .content {
+        direction: rtl;
+        width: min(1120px, 100%);
+        margin: auto;
+        padding: 46px 52px 90px;
+      }
+      .eye {
+        color: var(--b);
+        font-size: 0.78rem;
+        font-weight: bold;
+      }
+      h1,
+      h2,
+      h3 {
+        line-height: 1.35;
+        color: var(--n);
+      }
+      h1 {
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        margin: 5px 0 12px;
+      }
+      h2 {
+        font-size: 1.55rem;
+        margin: 48px 0 12px;
+        padding-top: 10px;
+        border-top: 2px solid var(--n);
+      }
+      h3 {
+        font-size: 1.05rem;
+        margin: 0 0 7px;
+      }
+      .lead {
+        max-width: 790px;
+        font-size: 1.1rem;
+        color: #41566a;
+      }
+      .intro {
+        background: var(--n);
+        color: #f4fbff;
+        margin: 26px 0;
+        padding: 25px 28px;
+        border-radius: 13px;
+      }
+      .intro small {
+        color: #b8d5e5;
+      }
+      .intro p {
+        font-size: 1.09rem;
+        margin: 8px 0;
+      }
+      .quote,
+      .bound {
+        margin: 18px 0;
+        padding: 15px 17px;
+        border-radius: 7px;
+      }
+      .quote {
+        background: var(--g);
+        border-right: 4px solid #238256;
+      }
+      .bound {
+        background: var(--w);
+        border-right: 4px solid #a56a00;
+      }
+      .g3,
+      .g2 {
+        display: grid;
+        gap: 14px;
+        margin: 20px 0;
+      }
+      .g3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .g2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .card {
+        background: var(--p);
+        border: 1px solid var(--l);
+        padding: 17px;
+        border-radius: 10px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--m);
+        font-size: 0.92rem;
+      }
+      .ref {
+        float: left;
+        direction: ltr;
+        color: #77889a;
+        font: 700 0.68rem/1.4 Consolas, monospace;
+      }
+      .tag {
+        display: inline-block;
+        margin-bottom: 8px;
+        font-size: 0.73rem;
+        font-weight: bold;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--s);
+        color: #125176;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 680px;
+      }
+      th,
+      td {
+        text-align: right;
+        vertical-align: top;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--l);
+      }
+      th {
+        background: #eef4f7;
+        color: var(--n);
+        font-size: 0.86rem;
+      }
+      td {
+        font-size: 0.91rem;
+      }
+      .tw {
+        overflow: auto;
+        background: #fff;
+        border: 1px solid var(--l);
+        border-radius: 10px;
+      }
+      .role {
+        border-right: 3px solid var(--b);
+        border-radius: 0;
+      }
+      .foot {
+        margin-top: 52px;
+        padding-top: 18px;
+        border-top: 1px solid var(--l);
+        color: var(--m);
+        font-size: 0.82rem;
+      }
+      code {
+        direction: ltr;
+        display: inline-block;
+        font: 12px Consolas, monospace;
+        background: #eef2f5;
+        padding: 1px 4px;
+      }
+      @media (max-width: 880px) {
+        .shell {
+          display: block;
+        }
+        .side {
+          position: static;
+          height: auto;
+          padding: 14px 16px;
+        }
+        .st,
+        .note {
+          display: none;
+        }
+        .side nav {
+          display: flex;
+          overflow: auto;
+          gap: 5px;
+          padding-top: 10px;
+        }
+        .side a {
+          white-space: nowrap;
+          padding: 7px 9px;
+        }
+        .content {
+          padding: 30px 20px 60px;
+        }
+        .g3,
+        .g2 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="side">
+        <div class="brand">
+          <span class="mark">م</span>
+          <div><b>مدونتي</b><span>ملف فهم المنظومة</span></div>
+        </div>
+        <nav>
+          <span class="st">الصورة الكاملة</span
+          ><a href="#system">ما هي مدونتي؟</a
+          ><a href="#surfaces">الواجهات الثلاثة</a
+          ><a href="#value">لماذا هي مختلفة؟</a
+          ><a href="#discovery">أين يظهر المحتوى؟</a
+          ><span class="st">ما يراه العميل</span
+          ><a href="#service">الخدمة والباقات</a
+          ><a href="#customer-journey">رحلة العميل إلى أول ظهور</a
+          ><a href="#google">النتائج من Google</a
+          ><span class="st">فهم موحد للفريق</span
+          ><a href="#people">كل شخص يفهم ماذا؟</a
+          ><a href="#language">لغة مدونتي</a><a href="#usp-library">مكتبة USP</a
+          ><a href="#review">مواد النسخة النهائية</a>
+        </nav>
+        <p class="note">
+          <b>هدف الملف:</b><br />الفهم قبل الكلام؛ ليس نصًا للحفظ ولا خطوات
+          جامدة.
+        </p>
+      </aside>
+      <main class="content">
+        <header>
+          <span class="eye">مرجع مبسط لكل موظف جديد</span>
+          <h1>مدونتي، ببساطة</h1>
+          <p class="lead">
+            هذا الملف لأي شخص في مدونتي. يشرح ماذا نفعل، لماذا يثق العميل، وكيف
+            نثبت أن للشغل أثرًا.
+          </p>
+          <div class="intro">
+            <small>الافتتاحية</small>
+            <p>
+              «مدونتي تبني حضور النشاط من البداية: نصمم صفحته، ننتج تصاميمه،
+              نكتب محتوى يشرح خبرته، ونحسن ظهوره في البحث. العميل لا يدير مصممًا
+              وكاتبًا وSEO وفريقًا تقنيًا؛ هو يعطينا المعلومة الصحيحة ويعتمد ما
+              يخرج باسمه. ثم يرى نتائج الـSEO الفعلية من Google، لا تقريرًا من
+              كلامنا.»
+            </p>
+          </div>
+        </header>
+        <section id="system">
+          <h2>١. ما هي مدونتي؟</h2>
+          <p>
+            مدونتي منظومة تنفيذ وليست أداة منفصلة. نحول خبرة نشاط حقيقي إلى صفحة
+            موثوقة ومحتوى واضح وحضور قابل للاكتشاف، ثم نربطه بحجز أو واتساب أو
+            تواصل.
+          </p>
+          <div class="quote">
+            <b>المعنى الأهم:</b> لا نبيع مقالًا أو تصميمًا وحده؛ نبيع حضورًا
+            رقميًا متكاملًا يُبنى حول نشاط حقيقي.
+          </div>
+        </section>
+        <section id="surfaces">
+          <h2>٢. المنظومة لها ثلاث واجهات</h2>
+          <div class="g3" style="align-items: start">
+            <article class="card">
+              <span class="ref">SURFACE-01</span
+              ><span class="tag">نحن ننفذ · admin.modonty.com</span>
+              <h3>مطبخ مدونتي</h3>
+              <p>
+                هذه ليست شاشة متابعة فقط؛ هنا يعمل فريق مدونتي على الحضور الكامل
+                للعميل، من أول ملفه إلى ما يراه الجمهور والنتيجة التي يسجلها
+                Google.
+              </p>
+              <div class="team-sections">
+                <section class="team-section team-client">
+                  <h4>ملف العميل والخدمة</h4>
+                  <p>
+                    هنا يبدأ العمل التجاري الصحيح: العميل له ملف واضح، وخدمة
+                    واضحة، ومسؤولية واضحة.
+                  </p>
+                  <ul>
+                    <li>
+                      <b>ملف العميل</b> — نضيف العميل، نفعّل حسابه أو نعلّقه،
+                      وندير بيانات نشاطه وملفه وحسابه.
+                    </li>
+                    <li>
+                      <b>الباقات</b> — نضبط الأسعار والمزايا ومستويات الاشتراك،
+                      حتى يعرف العميل ما الذي يدخل ضمن خدمته.
+                    </li>
+                    <li>
+                      <b>المبيعات والحملات</b> — نتابع العملاء المحتملين
+                      والإحالات والحملات واهتمام الناس بها وتقاريرها.
+                    </li>
+                  </ul>
+                </section>
+                <section class="team-section team-content">
+                  <h4>خطة المحتوى والتنفيذ البصري</h4>
+                  <p>
+                    الفريق لا يسلّم للعميل أدوات؛ يبني المحتوى والتصميم اللذين
+                    يمثلان نشاطه أمام الجمهور.
+                  </p>
+                  <ul>
+                    <li>
+                      <b>خطة المحتوى</b> — نبني الـBrief: ما الموضوع، لمن نكتبه،
+                      وما السؤال الذي يجب أن يجيب عنه.
+                    </li>
+                    <li>
+                      <b>إنتاج المقال</b> — كتابة، مراجعة مسودة، اعتماد العميل،
+                      معالجة التعديل، ثم الجدولة أو النشر.
+                    </li>
+                    <li>
+                      <b>الصفحة والتصميم</b> — نجهّز صفحة العميل ومحتواها
+                      البصري، وندير الصور والجاليري ومواد التصميم.
+                    </li>
+                    <li>
+                      <b>الريلز</b> — نراجع ما ينتظر الموافقة، ثم ننشر أو نرفض
+                      أو نؤرشف؛ الرفع وحده لا يجعله عامًا.
+                    </li>
+                  </ul>
+                </section>
+                <section class="team-section team-seo">
+                  <h4>بوابة SEO: ١٣ مرحلة فحص</h4>
+                  <p>
+                    <b>قاعدة مدونتي:</b> لا نعتبر المحتوى أو الصفحة جاهزة للظهور
+                    حتى تجتاز بوابة الجودة وSEO. أول ١١ مرحلة فحوصات مباشرة، ثم
+                    نتابع الأداء وتقرير Google بعد النشر؛ لا نضع علامة «مكتمل»
+                    لمرحلة لم تُقَس.
+                  </p>
+                  <ol>
+                    <li>الوصول للصفحة: تعمل، آمنة، ولا تدور في تحويلات.</li>
+                    <li>
+                      قابلية الفهرسة: Google مسموح له بقراءتها والرابط الأساسي
+                      صحيح.
+                    </li>
+                    <li>الجوال: الصفحة مهيأة للشاشات الصغيرة والتكبير متاح.</li>
+                    <li>اللغة: لغة الصفحة معلنة بصورة صحيحة.</li>
+                    <li>
+                      بيانات البحث والمشاركة: العنوان والوصف واللغة وصورة
+                      المشاركة.
+                    </li>
+                    <li>
+                      بناء المحتوى: عنوان رئيسي واضح يفهمه القارئ ومحرك البحث.
+                    </li>
+                    <li>
+                      البيانات المنظمة: Schema وJSON-LD للنتائج الغنية ومسار
+                      الصفحة.
+                    </li>
+                    <li>الصور: النص البديل والصور نفسها تعمل.</li>
+                    <li>الروابط الداخلية: وصف واضح ولا روابط داخلية مكسورة.</li>
+                    <li>الروابط الخارجية: تعمل وآمنة عند فتحها.</li>
+                    <li>
+                      خريطة الموقع: الرابط موجود في Sitemap كي تكتشفه Google.
+                    </li>
+                    <li>
+                      الأداء: Core Web Vitals من PageSpeed، ويُقاس ولا يُفترض.
+                    </li>
+                    <li>
+                      تقرير Google: متابعة ما تقوله Google عن الصفحة بعد ظهورها.
+                    </li>
+                  </ol>
+                </section>
+                <section class="team-section team-operations">
+                  <h4>القياس والتشغيل المنظّم</h4>
+                  <p>
+                    بعد النشر لا ينتهي دور الفريق؛ نقرأ الواقع ونحافظ على النظام
+                    قابلًا للمراجعة.
+                  </p>
+                  <ul>
+                    <li>
+                      <b>النتائج الحقيقية</b> — نقرأ الزيارات والتفاعل وبيانات
+                      Search Console وBing، لا نتائج نتوقعها.
+                    </li>
+                    <li>
+                      <b>تشغيل الفريق</b> — نوزع المهام، ندير أعضاء الفريق،
+                      ونتابع سجل العمليات والأخطاء والصيانة.
+                    </li>
+                  </ul>
+                </section>
+              </div>
+            </article>
+            <article class="card">
+              <span class="ref">SURFACE-02</span
+              ><span class="tag">العميل يملك القرار · console.modonty.com</span>
+              <h3>العميل</h3>
+              <ul
+                style="
+                  list-style: none;
+                  margin: 0;
+                  padding: 0;
+                  color: var(--m);
+                  font-size: 0.9rem;
+                "
+              >
+                <li style="padding: 7px 0; border-bottom: 1px solid var(--l)">
+                  <b style="color: var(--b)">الموقع</b> — يختار شكل الهيدر
+                  والفوتر ولون الموقع، ثم يرى المعاينة قبل الحفظ.
+                </li>
+                <li style="padding: 7px 0; border-bottom: 1px solid var(--l)">
+                  <b style="color: var(--b)">المحتوى</b> — يرى ما ينشر باسمه،
+                  يعتمد أو يطلب تعديلًا، ويحدّث بيانات نشاطه.
+                </li>
+                <li style="padding: 7px 0; border-bottom: 1px solid var(--l)">
+                  <b style="color: var(--b)">الأصول</b> — يرفع صور الجاليري
+                  والريلز من مكان واحد.
+                </li>
+                <li style="padding: 7px 0; border-bottom: 1px solid var(--l)">
+                  <b style="color: var(--b)">قبل الظهور</b> — فريق مدونتي يراجع
+                  المخرج ويحسّن بيانات SEO ثم يعتمده للجمهور.
+                </li>
+              </ul>
+              <div
+                style="
+                  margin-top: 13px;
+                  padding-top: 11px;
+                  border-top: 1px solid var(--l);
+                "
+              >
+                <b style="color: var(--n)">٢٣ إشارة يراها العميل</b>
+                <div
+                  style="
+                    margin-top: 10px;
+                    padding: 10px;
+                    border: 1px solid var(--l);
+                    border-radius: 7px;
+                    font-size: 0.82rem;
+                    color: var(--m);
+                  "
+                >
+                  <b style="color: var(--n)">تفاعل المقال</b>
+                  <ul style="margin: 5px 0 0; padding-right: 17px">
+                    <li><b>مشاهدة</b> — وصل زائر إلى المقال.</li>
+                    <li>
+                      <b>إعجاب / عدم إعجاب</b> — هل لاقت المعلومة قبولًا أم
+                      اعتراضًا.
+                    </li>
+                    <li><b>حفظ</b> — يريد الزائر الرجوع للمقال لاحقًا.</li>
+                    <li><b>مشاركة</b> — نقل المحتوى إلى شخص أو قناة أخرى.</li>
+                    <li><b>نقرة CTA</b> — ضغط زرًا مثل احجز أو تواصل.</li>
+                    <li><b>نقرة رابط</b> — انتقل إلى رابط داخلي أو خارجي.</li>
+                    <li>
+                      <b>تعليق / رد</b> — بدأ نقاشًا حول المحتوى أو استمر فيه.
+                    </li>
+                    <li>
+                      <b>إعجاب / عدم إعجاب بتعليق</b> — تفاعل مع فكرة داخل
+                      النقاش.
+                    </li>
+                    <li>
+                      <b>تحويل مكتمل</b> — أكمل الفعل المهم، لا مجرد التصفح.
+                    </li>
+                    <li>
+                      <b>زائر باهتمام عالٍ</b> — سلوكه رفع Lead Score وأصبح أقرب
+                      للمتابعة.
+                    </li>
+                  </ul>
+                </div>
+                <div
+                  style="
+                    margin-top: 9px;
+                    padding: 10px;
+                    border: 1px solid var(--l);
+                    border-radius: 7px;
+                    font-size: 0.82rem;
+                    color: var(--m);
+                  "
+                >
+                  <b style="color: var(--n)">تفاعل صفحة النشاط</b>
+                  <ul style="margin: 5px 0 0; padding-right: 17px">
+                    <li><b>زيارة الصفحة</b> — دخل إلى صفحة النشاط الرسمية.</li>
+                    <li>
+                      <b>متابعة النشاط</b> — اختار البقاء قريبًا من النشاط
+                      ومحتواه.
+                    </li>
+                    <li><b>مشاركة الصفحة</b> — أرسل الصفحة إلى شخص آخر.</li>
+                    <li><b>حفظ الصفحة</b> — احتفظ بها للرجوع إليها لاحقًا.</li>
+                    <li>
+                      <b>تعليق على الصفحة</b> — كتب رأيًا أو سؤالًا على النشاط
+                      نفسه.
+                    </li>
+                    <li>
+                      <b>اشتراك مباشر</b> — اختار تلقي متابعة من النشاط أو
+                      محتواه.
+                    </li>
+                  </ul>
+                </div>
+                <div
+                  style="
+                    margin-top: 9px;
+                    padding: 10px;
+                    border: 1px solid var(--l);
+                    border-radius: 7px;
+                    font-size: 0.82rem;
+                    color: var(--m);
+                  "
+                >
+                  <b style="color: var(--n)">تواصل مباشر</b>
+                  <ul style="margin: 5px 0 0; padding-right: 17px">
+                    <li>
+                      <b>رسالة دعم</b> — العميل طلب مساعدة من فريق مدونتي.
+                    </li>
+                    <li>
+                      <b>اهتمام بحملة</b> — شخص أبدى اهتمامًا بعرض أو حملة.
+                    </li>
+                    <li><b>سؤال مباشر</b> — عميل محتمل سأل النشاط مباشرة.</li>
+                    <li>
+                      <b>طلب حجز</b> — أقوى إشارة نية؛ يصل تلقائيًا حتى قبل ضبط
+                      التفضيلات.
+                    </li>
+                  </ul>
+                </div>
+                <p
+                  style="margin: 10px 0 0; color: var(--m); font-size: 0.84rem"
+                >
+                  هذه ليست أرقامًا صامتة؛ هي الصورة الكاملة لما فعله الزائر بعد
+                  أن وصل للمحتوى.
+                </p>
+              </div>
+            </article>
+            <article class="card">
+              <span class="ref">SURFACE-03</span
+              ><span class="tag">الجمهور يطمئن · modonty.com</span>
+              <h3>الزائر</h3>
+              <p>
+                الزائر لا يأتي ليتصفح منصة فقط؛ يأتي ليأخذ معلومة مطمئنة، يعرف
+                صاحبها، ثم يقرر إن كان يريد التواصل معه.
+              </p>
+              <div class="visitor-grid">
+                <section class="visitor-benefit visitor-trust">
+                  <h4>معلومة لها صاحب حقيقي</h4>
+                  <p>
+                    يشاهد محتوى صادرًا عن نشاط دخل بعد التحقق من أوراقه. هذا مهم
+                    خصوصًا عندما تكون المعلومة صحية أو مهنية أو مؤثرة في قرار
+                    الناس.
+                  </p>
+                </section>
+                <section class="visitor-benefit visitor-discovery">
+                  <h4>اكتشاف بلا ضجيج</h4>
+                  <p>
+                    يجد مقالات وريلز من عملاء موثوقين، لا مساحة مفتوحة ينشر فيها
+                    أي شخص. يصل إلى خبرات حقيقية بدل مطاردة حسابات مجهولة.
+                  </p>
+                </section>
+                <section class="visitor-benefit visitor-understanding">
+                  <h4>يفهم قبل أن يطلب</h4>
+                  <p>
+                    المقال والصور والريلز والصفحة المصممة تشرح الخدمة بوضوح؛
+                    فيعرف الزائر إن كان هذا النشاط مناسبًا له قبل أن يراسل
+                    أحدًا.
+                  </p>
+                </section>
+                <section class="visitor-benefit visitor-choice">
+                  <h4>يتابع ما يفيده</h4>
+                  <p>
+                    يستطيع قراءة المحتوى وحفظه ومشاركته والتفاعل معه، ومتابعة
+                    النشاط أو الاشتراك ليعود إلى ما يحتاجه في الوقت المناسب.
+                  </p>
+                </section>
+                <section class="visitor-benefit visitor-action">
+                  <h4>خطوة واضحة عندما يقرر</h4>
+                  <p>
+                    عندما يكون النشاط قد فعّلها، يجد الزائر زر تواصل أو واتساب
+                    أو نموذج حجز واضحًا بدل أن يبحث عن طريقة للوصول لصاحب
+                    الخدمة.
+                  </p>
+                </section>
+                <section class="visitor-benefit visitor-continuity">
+                  <h4>المحتوى لا يختفي فجأة</h4>
+                  <p>
+                    صفحة العميل ومقالاته المنشورة تبقى موجودة حتى لو انتهى
+                    اشتراكه؛ لذلك لا ينقطع الزائر عن المعلومة التي وصل إليها.
+                  </p>
+                </section>
+              </div>
+            </article>
+          </div>
+        </section>
+        <section id="value">
+          <h2>٣. لماذا تختلف مدونتي؟</h2>
+          <div class="g2">
+            <article class="card">
+              <span class="ref">VALUE-01</span>
+              <h3>نحن ننفذ، لا نسلّم أدوات</h3>
+              <p>
+                تصميم الصفحة والجرافيك، كتابة المقالات، On-page وOff-page
+                وTechnical SEO: ينفذها فريق مدونتي.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">VALUE-02</span>
+              <h3>المعلومة لها صاحب حقيقي</h3>
+              <p>
+                لا يدخل عميل قبل أوراقه والتحقق من هويته؛ المحتوى مرتبط بنشاط
+                معروف، لا بنص مجهول.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">VALUE-03</span>
+              <h3>الريلز اكتشاف موثوق</h3>
+              <p>
+                الذي يظهر هو محتوى العملاء الموثقين فقط. الفيديو والصور تُنتج
+                وتُحسن للـSEO.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">VALUE-04</span>
+              <h3>ما بُني يبقى</h3>
+              <p>
+                تبقى صفحة العميل ومقالاته المنشورة بعد انتهاء اشتراكه؛ الذي
+                يتوقف هو إنتاج مقالات جديدة.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">VALUE-05</span
+              ><span class="tag">بحث Google + إجابات AI</span>
+              <h3>المحتوى مفتوح ليُكتشف بالذكاء الاصطناعي</h3>
+              <p>
+                مدونتي تسمح لمحركات البحث وزواحف الإجابات بالذكاء الاصطناعي
+                بقراءة المحتوى العام؛ لذلك يمكن للمقالات والصفحات أن تدخل في
+                نتائج البحث أو تُستشهد بها عندما تكون مناسبة لسؤال المستخدم.
+                الخصوصية محفوظة: صفحات الإدارة وبيانات المستخدمين لا تُتاح لها.
+              </p>
+              <p>
+                هذا يعني أن مدونتي جاهزة للاكتشاف من AI، وليس وعدًا بأن كل مقال
+                سيظهر في كل إجابة؛ القرار النهائي يبقى لمحرك البحث أو أداة AI.
+              </p>
+            </article>
+          </div>
+        </section>
+        <section id="service">
+          <h2>٤. كيف نفهم الخدمة والباقات؟</h2>
+          <p>
+            الباقة ليست عدّاد مزايا؛ هي مستوى من الحضور والتنفيذ يناسب مرحلة
+            العميل.
+          </p>
+          <div class="tw">
+            <table>
+              <thead>
+                <tr>
+                  <th>ما يحتاجه النشاط</th>
+                  <th>ما تعنيه الخدمة له</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>حضور موثوق</td>
+                  <td>صفحة مصممة وبيانات موثقة وخدمة واضحة.</td>
+                </tr>
+                <tr>
+                  <td>محتوى يجده الناس</td>
+                  <td>
+                    بحث وكتابة ومراجعة وتصميم وSEO حول أسئلة العميل المحتمل.
+                  </td>
+                </tr>
+                <tr>
+                  <td>فهم الاهتمام</td>
+                  <td>
+                    حجز أو واتساب أو CTA وقياس وتنبيهات وLead Scoring عند توفر
+                    التفاعل.
+                  </td>
+                </tr>
+                <tr>
+                  <td>محتوى على موقعه</td>
+                  <td>API حي يعرض المقالات على نطاقه عند تفعيل الربط.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="customer-journey">
+          <h2>٥. رحلة العميل: من أول إعلان إلى أول ظهور</h2>
+          <p>
+            هذه رحلة <b>صاحب النشاط الذي يصبح عميلًا لمدونتي</b>، وليست رحلة
+            قارئ المقال. الهدف أن يفهم كل شخص كيف يتحول الاهتمام الأول إلى حضور
+            منشور وقابل للاكتشاف، ومن المسؤول عن كل لحظة.
+          </p>
+          <div class="g2">
+            <article class="card">
+              <span class="ref">JOURNEY-01</span
+              ><span class="tag">قبل أن يعرفنا</span>
+              <h3>يرى إعلانًا أو محتوى في السوشال ميديا</h3>
+              <p>
+                صاحب النشاط يصل إلى مدونتي من إعلان مدفوع، محتوى سوشال ميديا،
+                إحالة، بحث، أو رابط مباشر. عندما يحمل الرابط UTM تعرف المنظومة
+                أن الدخول جاء من حملة؛ وعندما لا يحملها تقرأ مصدر الإحالة
+                المتاح.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">JOURNEY-02</span
+              ><span class="tag">اهتمام أولي</span>
+              <h3>يفهم العرض ويترك إشارة</h3>
+              <p>
+                يقرأ ما تقدمه مدونتي ثم يضغط تواصلًا، يرسل رسالة، أو يسجل
+                اهتمامًا بحملة. هذه ليست «مبيعات مكتملة»؛ هي إشارة أن شخصًا يريد
+                أن يبدأ حديثًا مع الفريق.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">JOURNEY-03</span
+              ><span class="tag">المبيعات</span>
+              <h3>نحوّل الاهتمام إلى فهم صحيح للاحتياج</h3>
+              <p>
+                لا نبدأ بمقال أو باقة عشوائية. يفهم فريق المبيعات: ما النشاط، من
+                جمهوره، ما الخدمة التي يريد شرحها، وما الخطوة التي يريدها من
+                الزائر لاحقًا: رسالة، واتساب، حجز، أو زيارة الموقع.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">JOURNEY-04</span
+              ><span class="tag">ثقة قبل النشر</span>
+              <h3>تجميع معلومات النشاط ووثائقه</h3>
+              <p>
+                قبل أن يظهر النشاط للجمهور، يقدّم معلوماته الحقيقية ووثائقه
+                المطلوبة. هذه اللحظة هي أساس أن يكون المحتوى منسوبًا إلى جهة
+                معروفة، لا إلى اسم إلكتروني مجهول.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">JOURNEY-05</span
+              ><span class="tag">تأسيس العميل</span>
+              <h3>ينشأ ملفه ومساحة قراره</h3>
+              <p>
+                ينشئ الفريق ملف النشاط وخدمته، ثم يستطيع العميل من
+                <b>console.modonty.com</b> متابعة ما يخرج باسمه، تحديث بياناته،
+                اختيار شكل موقعه عند توفره، واعتماد ما يحتاج موافقته.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">JOURNEY-06</span
+              ><span class="tag">خطة قبل الإنتاج</span>
+              <h3>نختار السؤال الذي يستحق أن يُجاب عنه</h3>
+              <p>
+                يبني فريق مدونتي Brief للمحتوى: الموضوع، الجمهور، الخبرة التي
+                يجب أن تظهر، والـCTA المناسب. هنا يتحول «أبغى SEO» إلى محتوى
+                يخدم سؤالًا حقيقيًا وخطوة عمل واضحة.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">JOURNEY-07</span
+              ><span class="tag">الإنتاج</span>
+              <h3>نصمم الصفحة وننتج المقال والمواد البصرية</h3>
+              <p>
+                يكتب الفريق المقال، يجهز التصميم والصور والجاليري عند الحاجة،
+                ويضبط عناصر الصفحة التي تساعد الزائر على الفهم. لا نرسل للعميل
+                أدوات ليديرها وحده؛ فريق مدونتي هو من ينفذ.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">JOURNEY-08</span
+              ><span class="tag">المراجعة والاعتماد</span>
+              <h3>العميل يراجع ما ينشر باسمه</h3>
+              <p>
+                يطّلع العميل على المخرج ويعتمد أو يطلب تعديلًا. ثم يمر المقال
+                وفنياته عبر بوابة الجودة وSEO: العنوان والوصف، الصور، الروابط،
+                البيانات المنظمة، القابلية للفهرسة، وتجربة الجوال.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">JOURNEY-09</span
+              ><span class="tag">أول ظهور عام</span>
+              <h3>ينشر المقال وتبدأ قابلية الاكتشاف</h3>
+              <p>
+                بعد النشر يصبح المقال عامًا على مدونتي ويظهر في خريطة الموقع
+                وRSS وملف وكلاء AI، مع بيانات صفحة وصور منظمة. وإذا كان الربط
+                مفعّلًا، يستطيع العميل أيضًا عرض المقالات على نطاقه الخاص عبر
+                الـAPI.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">JOURNEY-10</span
+              ><span class="tag">بعد النشر</span>
+              <h3>تقرأه القنوات ويبدأ القياس</h3>
+              <p>
+                Google وBing ومحركات أخرى وأدوات AI المسموح لها تستطيع اكتشاف
+                المحتوى العام. IndexNow يرسل إشعار النشر عندما يكون الربط
+                مفعّلًا. ثم يرى العميل الظهور والزيارات والتفاعل وCTA من
+                البيانات الفعلية.
+              </p>
+            </article>
+          </div>
+          <div class="bound">
+            <b>التمييز المهم للسيلز:</b> النشر هو بداية الظهور القابل للقياس،
+            وليس ضمانًا لنتيجة أو ترتيب في نفس اليوم. قوتنا أننا نبني كل ما قبل
+            هذه اللحظة، ثم نقرأ ما يحدث بعدها من مصادر البيانات الحقيقية.
+          </div>
+        </section>
+        <section id="discovery">
+          <h2>٦. أين يمكن أن يظهر محتوى مدونتي؟</h2>
+          <p>
+            هذه خريطة الظهور الفعلية المبنية في المنظومة. هي تعني أن القنوات
+            تستطيع اكتشاف المحتوى العام وقراءته؛ لا تعني وعدًا بترتيب أو ظهور
+            لكل صفحة في كل قناة.
+          </p>
+          <div class="g3">
+            <article class="card">
+              <span class="ref">DISCOVERY-01</span
+              ><span class="tag">الأساس الذي نرسله للعالم</span>
+              <h3>خرائط موقع للمحتوى والصور والفيديو</h3>
+              <p>
+                <b>sitemap.xml</b> يجمع المقالات المنشورة، صفحات العملاء الجاهزة
+                للفهرسة، المؤلفين، التصنيفات، الوسوم، القطاعات، وصفحات الريلز.
+                كما يحمل الريل بيانات فيديو وصورة عند توفرها.
+              </p>
+              <p>
+                <b>image-sitemap.xml</b> يعرّف Google بكل صور المقال: الصورة
+                الرئيسية، المعرض، والصور داخل المحتوى. فلا يكون ظهورنا نصيًا
+                فقط.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">DISCOVERY-02</span
+              ><span class="tag">محركات البحث التقليدية</span>
+              <h3>٦ محركات مسموح لها بالقراءة</h3>
+              <ul>
+                <li><b>Google</b> — البحث وطبقة Gemini المبنية على Google.</li>
+                <li><b>Bing</b> — بحث Microsoft وطبقة Copilot.</li>
+                <li><b>DuckDuckGo</b> — بحث DuckDuckGo.</li>
+                <li><b>Yandex</b> — Yandex.</li>
+                <li><b>Baidu</b> — Baidu.</li>
+                <li><b>Petal Search</b> — محرك Huawei.</li>
+              </ul>
+            </article>
+            <article class="card">
+              <span class="ref">DISCOVERY-03</span
+              ><span class="tag">إشعار سريع عند النشر</span>
+              <h3>IndexNow يبلّغ ٥ محركات</h3>
+              <p>
+                عند نشر مقال على نطاق مدونتي، المنظومة تحاول إرسال رابطه إلى
+                IndexNow. القنوات المستهدفة هي:
+                <b>Bing، Yandex، Brave/Yep، Seznam، وNaver</b>.
+              </p>
+              <p>
+                يعمل هذا الإشعار عندما يكون مفتاح IndexNow مفعّلًا في بيئة
+                التشغيل. أما مقال موقع العميل على نطاقه هو، فلا نرسله باسم
+                مدونتي؛ ففهرسته تعتمد على خريطة موقع نطاق العميل نفسه.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">DISCOVERY-04</span
+              ><span class="tag">إجابات AI المباشرة</span>
+              <h3>١٨ قارئًا للإجابات والبحث الذكي</h3>
+              <p>
+                <b>OpenAI:</b> ChatGPT/SearchGPT. <b>Claude:</b> Claude Search.
+                <b>Perplexity:</b> بحث Perplexity. <b>Google AI:</b> Vertex AI
+                وGoogle Agent وNotebookLM وGemini Deep Research.
+              </p>
+              <p>
+                <b>وأيضًا:</b> Amazon AI، Meta AI، Mistral Le Chat، DuckAssist،
+                You.com، Phind، وApple/Siri. هذه القنوات مسموح لها بقراءة
+                المحتوى العام عندما يطلب المستخدم بحثًا أو مصدرًا.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">DISCOVERY-05</span
+              ><span class="tag">معرفة نماذج AI مستقبلًا</span>
+              <h3>٢٢ زاحفًا تدريبيًا مسموحًا</h3>
+              <p>
+                تشمل زواحف OpenAI وAnthropic وGoogle Gemini وApple Intelligence
+                وAmazon/Bedrock وMeta وCohere وAI2، إضافة إلى ByteDance/TikTok
+                وHuawei PanGu وDeepSeek وYandex وCommon Crawl.
+              </p>
+              <p>
+                هذه ليست قناة نتائج فورية للمستخدم؛ هي سماح للمحتوى العام بأن
+                يساهم في معرفة النماذج المستقبلية وفق سياسات كل جهة.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">DISCOVERY-06</span
+              ><span class="tag">توزيع واكتشاف إضافي</span>
+              <h3>RSS وملف مخصص لوكلاء AI</h3>
+              <p>
+                <b>feed.xml</b> يقدّم آخر المقالات المنشورة لقارئات RSS
+                والمجمّعات والأتمتة. و<b>llms.txt</b> يقدّم للأدوات التي تقرأه
+                فهرسًا متجددًا للمقالات والتصنيفات والقطاعات والعملاء.
+              </p>
+              <p>
+                Google لا يعتمد llms.txt كإشارة فهرسة؛ لذلك نعتمد معه على خريطة
+                الموقع والصفحة نفسها، بينما يبقى الملف مفيدًا للوكلاء والأدوات
+                التي تدعمه.
+              </p>
+            </article>
+          </div>
+          <div class="quote">
+            <b>الجملة الصحيحة للسيلز:</b> «نحن لا ننشر مقالًا في مكان واحد؛
+            نجهزه لمحركات البحث، بحث الصور والفيديو، وقنوات الإجابات بالذكاء
+            الاصطناعي، ثم نبلغ محركات IndexNow عند تفعيل الربط.» <br /><b
+              >ولا نقول:</b
+            >
+            «نضمن الظهور في Google أو ChatGPT أو المركز الأول.»
+          </div>
+        </section>
+        <section id="google">
+          <h2>٧. النتائج لا تأتي من كلامنا</h2>
+          <p>
+            العميل يرى البيانات التي تسجلها أدوات Google نفسها في تقرير Looker
+            Studio مفهوم.
+          </p>
+          <div class="g3">
+            <article class="card">
+              <span class="ref">GOOGLE-01</span
+              ><span class="tag">Google Search Console</span>
+              <h3>كيف يظهر في البحث</h3>
+              <p>الظهور والنقرات والكلمات والصفحات التي تؤدي في Google.</p>
+            </article>
+            <article class="card">
+              <span class="ref">GOOGLE-02</span
+              ><span class="tag">Google Analytics</span>
+              <h3>ماذا فعل الزائر</h3>
+              <p>الزيارات ومصدرها والتفاعل والتحويلات مثل الحجز أو التواصل.</p>
+            </article>
+            <article class="card">
+              <span class="ref">GOOGLE-03</span
+              ><span class="tag">Looker Studio</span>
+              <h3>البيانات تصبح مفهومة</h3>
+              <p>تقرير واضح يفهمه العميل غير التقني.</p>
+            </article>
+          </div>
+          <div class="quote">
+            <b>الفرق الحقيقي:</b> لا نقول «ثق بنا، النتائج جيدة». نقول «هذا ما
+            تقوله Google عن ظهورك وزوارك.»
+          </div>
+        </section>
+        <section id="people">
+          <h2>٨. ماذا يفهم كل شخص من هذا؟</h2>
+          <div class="g2">
+            <article class="card role">
+              <span class="ref">ROLE-01</span>
+              <h3>المبيعات</h3>
+              <p>
+                العميل يشتري فريقًا يبني حضوره ويترك له قرار الاعتماد والدليل
+                الواضح.
+              </p>
+            </article>
+            <article class="card role">
+              <span class="ref">ROLE-02</span>
+              <h3>الميديا باير</h3>
+              <p>
+                القيمة تنفيذ كامل ومصدر موثوق ومحتوى يبقى ونتائج من Google، لا
+                وعد ترتيب أو عملاء.
+              </p>
+            </article>
+            <article class="card role">
+              <span class="ref">ROLE-03</span>
+              <h3>السوشال ميديا</h3>
+              <p>المحتوى يوضح خبرة العميل الموثق والمعلومة المنسوبة لصاحبها.</p>
+            </article>
+            <article class="card role">
+              <span class="ref">ROLE-04</span>
+              <h3>المحتوى والتصميم</h3>
+              <p>
+                كل مخرج جزء من صفحة العميل وثقته وظهوره وخطوة التحويل التالية.
+              </p>
+            </article>
+            <article class="card role">
+              <span class="ref">ROLE-05</span>
+              <h3>مدير الحساب والعمليات</h3>
+              <p>الوعد الصحيح هو ما ينفذ فعليًا وما يستطيع العميل رؤيته.</p>
+            </article>
+            <article class="card role">
+              <span class="ref">ROLE-06</span>
+              <h3>أي موظف جديد</h3>
+              <p>نحن نبني، والعميل يراجع، والجمهور يجد، وGoogle تُظهر الأثر.</p>
+            </article>
+          </div>
+        </section>
+        <section id="language">
+          <h2>٩. لغة مدونتي</h2>
+          <div class="g2">
+            <div class="quote">
+              <b>نقول</b><br />«نبني حضورك.»<br />«نحوّل خبرتك إلى محتوى
+              واضح.»<br />«المعلومة مرتبطة بجهة موثقة.»<br />«نريك بيانات فعلية
+              من Google.»
+            </div>
+            <div class="bound">
+              <b>لا نقول</b><br />«نضمن المركز الأول.»<br />«نضمن عدد عملاء.»<br />«أي
+              معلومة طبية أو قانونية مضمونة.»<br />«كل ميزة متاحة لكل عميل بلا
+              إعداد.»
+            </div>
+          </div>
+        </section>
+        <section id="usp-library">
+          <h2>١٠. مكتبة USP — ما نبيعه فعليًا</h2>
+          <p>
+            هذه ليست عبارات مزخرفة. كل كرت هنا مستخرج من دليل تشغيل الفريق
+            ومربوط بسلوك موجود في المنظومة. يستخدمه الميديا باير والسيلز لفهم
+            الفرق، ثم يختاران منه العبارة المناسبة للحملة أو المكالمة.
+          </p>
+          <div class="g2">
+            <article class="card">
+              <span class="ref">USP-01</span
+              ><span class="tag">بدل وكالة أو مستقل</span>
+              <h3>لا نضيف لك أداة؛ نزيل عنك فريقًا كاملًا</h3>
+              <p>
+                المقال الواحد لا يمر على كاتب فقط: يبدأ من Brief، ثم كتابة
+                وتحرير، وصورة ونص بديل، وSEO وبيانات منظمة، ثم مراجعة واعتماد.
+                صاحب النشاط لا يحتاج أن يدير هذه التخصصات واحدةً واحدة.
+              </p>
+              <p>
+                <b>صيغة بيع:</b> «بدل أن تجمع فريقًا لتشغيل المحتوى، مدونتي
+                تنفّذ المنظومة عنك.»
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">USP-02</span
+              ><span class="tag">جودة يمكن شرحها</span>
+              <h3>المقال لا يخرج لأنه مكتوب؛ يخرج لأنه جاهز</h3>
+              <p>
+                بوابة النشر تمنع النقص الواضح: تاريخ النشر، بيانات SEO، الصورة
+                الرئيسية ونصها البديل، ودرجة الجودة المطلوبة. وبعد النشر تستمر
+                صحّة المقال في فحص الصفحة والصور والروابط وما أُرسل لمحركات
+                البحث.
+              </p>
+              <p>
+                <b>صيغة بيع:</b> «نحن لا نسلّم ملف Word؛ نُخرج أصلًا رقميًا يمرّ
+                بفحص قبل وبعد النشر.»
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">USP-03</span
+              ><span class="tag">ثقة قبل النقر</span>
+              <h3>المعلومة لها مصدر، والمصدر له صفحة وهوية</h3>
+              <p>
+                لا يبدأ العمل من عنوان عام؛ يبدأ من ملف النشاط وبريفه. وعندما
+                تظهر خبرة فرد أو جهة، تُربط بسيرة ومجال وروابط إثبات عند الحاجة.
+                هذا مهم خصوصًا للمحتوى الصحي والقانوني والحساس.
+              </p>
+              <p>
+                <b>صيغة بيع:</b> «لا ننشر كلامًا بلا صاحب؛ نبني محتوى منسوبًا
+                إلى خبرة ونشاط معروفين.»
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">USP-04</span
+              ><span class="tag">أصل لا ينطفئ</span>
+              <h3>الإعلان يستأجر الانتباه؛ المحتوى يبني حضورًا</h3>
+              <p>
+                المقال والصفحة يصبحان أصلًا قابلًا للاكتشاف في البحث والمشاركة
+                والـAI، ويستمران بعد الإنتاج بدل أن ينتهيا عند إيقاف الحملة.
+                المدفوع قد يسرّع البداية، لكنه ليس بديلًا عن هذا الأصل المتراكم.
+              </p>
+              <p>
+                <b>صيغة بيع:</b> «لا نستبدل الإعلان؛ نضيف لك أصلًا يبقى عندما
+                تتوقف الميزانية اليومية.»
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">USP-05</span
+              ><span class="tag">من الزيارة إلى الإشارة</span>
+              <h3>لا نكتفي بعدّ الزيارات؛ نقرأ معنى الاهتمام</h3>
+              <p>
+                تكرار الزيارة وعمق التصفح والتفاعل والتحويل تدخل في Lead Score
+                من 0 إلى 100. هذا لا يعني أن كل زائر عميل مؤكد؛ يعني أن الفريق
+                يرى إشارة اهتمام أقوى من رقم زيارة مجرد.
+              </p>
+              <p>
+                <b>صيغة بيع:</b> «بدل سؤال: كم زارني؟ نساعدك ترى: من بدأ يقترب
+                فعلًا؟»
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">USP-06</span><span class="tag">عربي ومحلي</span>
+              <h3>منظومة محتوى تتكلم لغة السوق لا لغة أداة عامة</h3>
+              <p>
+                التشغيل والكتابة موجهان للشركات العربية، مع فهم للسعودية ومصر:
+                محتوى عربي، نبرة واضحة، وقرار تجاري مبني على واقع النشاط لا على
+                قالب عالمي فارغ.
+              </p>
+              <p>
+                <b>صيغة بيع:</b> «ليست منصة نترجمها للعربية؛ هي منظومة تفهم
+                العميل العربي من أول البريف.»
+              </p>
+            </article>
+          </div>
+          <div class="bound">
+            <b>حدود استخدام الـUSP:</b> نقول «نبني»، «نجهّز»، «نفحص»، «نقيس»،
+            و«نُظهر الإشارة». لا نقول «نضمن الصدارة»، «نضمن مبيعات»، أو «كل مقال
+            سيظهر في Google أو AI». والأرقام السوقية، وعروض الأسعار، وعدد الريلز
+            لا تدخل في إعلان أو عقد إلا من مصدرها الحالي المعتمد.
+          </div>
+        </section>
+        <section id="review">
+          <h2>١١. مواد النسخة النهائية — ما نحتاج تثبيته</h2>
+          <p>
+            هذا القسم هو مساحة التجميع قبل إصدار النسخة النهائية. ليس نصًا نقرأه
+            للعميل ولا وعدًا نبيعه؛ هو رأي تشغيلي: ما الذي يجعل قصة مدونتي أوضح
+            وأقوى وقابلة للإثبات.
+          </p>
+          <div class="quote">
+            <b>الخلاصة التي يجب أن تحكم النسخة النهائية:</b> مدونتي = نشاط موثّق
+            + فريق ينفذ + محتوى وصفحات تُكتشف + زائر يعبّر عن نيته + نتائج تقاس
+            من مصدرها. أي تفصيل لا يخدم هذه الرحلة لا يأخذ مساحة أكبر من اللازم.
+          </div>
+          <div class="g2">
+            <article class="card">
+              <span class="ref">REVIEW-01</span
+              ><span class="tag">أولوية عالية</span>
+              <h3>رحلة واحدة يراها أي شخص فورًا</h3>
+              <p>
+                نحتاج مرئيًا واحدًا في بداية الملف:
+                <b
+                  >نشاط موثّق ← فريق مدونتي يبني ← البحث وAI والجمهور يكتشفون ←
+                  الزائر يتفاعل ← العميل يرى الأثر</b
+                >. الآن كل هذه الحقيقة موجودة، لكنها موزعة بين أقسام كثيرة.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">REVIEW-02</span
+              ><span class="tag">أولوية عالية</span>
+              <h3>تعريف التوثيق بالدليل لا بالشعار</h3>
+              <p>
+                قبل النسخة النهائية نحدد: ما الأوراق التي نطلبها، من يراجعها،
+                متى تصبح حالة النشاط «موثّق»، وهل يراجع التوثيق لاحقًا. هذا
+                يحوّل عبارة «مصدر حقيقي» من شعار إلى معنى يفهمه العميل والزائر.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">REVIEW-03</span
+              ><span class="tag">قرار تجاري مطلوب</span>
+              <h3>الباقات تُعرّف بمستوى الأثر</h3>
+              <p>
+                نحتاج خريطة تقول لكل باقة: ما مستوى الحضور، وكم التنفيذ التحريري
+                والبصري، وما القياس، وما الذي يحتاج تفعيلًا إضافيًا. لا نعرضها
+                كقائمة عدّادات؛ نعرضها كمرحلة نمو تناسب العميل.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">REVIEW-04</span
+              ><span class="tag">سهل للمبيعات</span>
+              <h3>ثلاث قصص استخدام، لا وعود عامة</h3>
+              <p>
+                نضيف أمثلة بسيطة: خبير أو طبيب يريد أن يثبت خبرته، شركة خدمات
+                تريد عملاء محتملين، ونشاط محلي يريد حجوزات أو تواصلًا. المثال
+                يشرح كيف تخدمه المنظومة من دون أن نعده بعدد نتائج.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">REVIEW-05</span
+              ><span class="tag">دليل وليس رأيًا</span>
+              <h3>مكتبة إثبات للنتائج</h3>
+              <p>
+                نحتاج مكانًا يجمع لقطات أو تقارير حقيقية بعد إخفاء البيانات
+                الحساسة: ظهور Search Console، زيارات Analytics، CTA أو حجز،
+                ومثال قبل/بعد. هذا يجعل السيلز يقول «هذا ما حدث» بدل «هذا ما
+                يمكن أن يحدث».
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">REVIEW-06</span
+              ><span class="tag">فهم الفريق</span>
+              <h3>معجم بسيط للكلمات التي قد تربك</h3>
+              <p>
+                نعرّف، بلغة غير تقنية: CTA، Lead، Lead Scoring، On-page،
+                Off-page، Technical SEO، Console، وIndexNow. الموظف لا يحتاج أن
+                يصبح تقنيًا؛ يحتاج أن يفهم أثر كل كلمة على العميل.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">REVIEW-07</span
+              ><span class="tag">تنظيم القصة</span>
+              <h3>نفصل الرسالة عن المرجع التقني</h3>
+              <p>
+                جرد محركات البحث وAI مهم ومثبت، لكنه ثقيل في قلب قصة المبيعات.
+                النسخة النهائية تبدأ بعبارة بسيطة: «نجهز المحتوى للاكتشاف في
+                البحث والذكاء الاصطناعي»، ثم تجعل الأسماء والقوائم مرجعًا
+                اختياريًا لمن يريد التفصيل.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">REVIEW-08</span
+              ><span class="tag">البيانات والملكية</span>
+              <h3>نحسم من يملك ماذا ويرى ماذا</h3>
+              <p>
+                نحتاج قرارًا مكتوبًا عن وصول العميل إلى التقارير، ملكية بيانات
+                الأداء، وما يبقى له عند انتهاء الاشتراك. هذا يكمل فكرة «العميل
+                يملك القرار» بحدود مفهومة وغير ملتبسة.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">REVIEW-09</span
+              ><span class="tag">تحقق قبل الوعد</span>
+              <h3>نعلّم ما هو مشروط بالإعداد</h3>
+              <p>
+                بعض القدرات تعتمد على إعداد محدد: IndexNow يحتاج مفتاح تشغيل،
+                ربط المقالات بموقع العميل يحتاج تفعيل الربط، وCTA أو الحجز يحتاج
+                أن يفعله النشاط. النسخة النهائية تذكر الشرط بجانب الوعد حتى تبقى
+                دقيقة.
+              </p>
+            </article>
+            <article class="card">
+              <span class="ref">REVIEW-10</span
+              ><span class="tag">تحسين الوثيقة نفسها</span>
+              <h3>نجعل القراءة أسرع وأسهل</h3>
+              <p>
+                نخفف الكروت الطويلة، خصوصًا «مطبخ مدونتي» وقنوات الظهور، ونستخدم
+                مرئيات للرحلة بدل تكرار الشرح. كما ننقل قواعد التنسيق المضافة
+                أعلى الملف إلى داخل <code>head</code> عندما نجهز النسخة النهائية
+                لتبقى الوثيقة مرتبة وسهلة الصيانة.
+              </p>
+            </article>
+          </div>
+          <div class="bound">
+            <b>قاعدة التحرير الأخيرة:</b> لا نضيف ميزة إلى النسخة النهائية إلا
+            إذا عرفنا: ماذا تفعل للعميل أو الزائر، لمن تتاح، ما شرط تشغيلها،
+            وكيف نثبت أنها عملت. بهذه القاعدة يبقى الملف صادقًا مهما كبر.
+          </div>
+        </section>
+        <footer class="foot">
+          هذا ملف فهم موحّد. التفاصيل الدقيقة تبقى في
+          <code>commercial-features-catalog.html</code>.
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

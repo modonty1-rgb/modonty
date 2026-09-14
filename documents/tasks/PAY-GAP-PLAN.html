@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الفجوة بيننا وبين جبر سيو — خطّة تجهيز الأدمن قبل الإطلاق</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0e14;--panel:#111621;--card:#151b28;--line:#242c3d;--fg:#e6e9f0;--mut:#9aa5b8;--dim:#6b7689;
+--amber:#f6ae31;--red:#f4556c;--green:#35d07f;--blue:#5aa9f8;--violet:#a98bf5;--cyan:#3fc9d4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.75 Tajawal,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+h1{font-size:26px;margin:0 0 6px;font-weight:800}
+h2{font-size:19px;margin:34px 0 6px;font-weight:800;display:flex;align-items:center;gap:10px}
+h2 .n{font-size:12px;font-weight:700;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+h3{font-size:15px;margin:20px 0 6px;font-weight:800;color:var(--amber)}
+p{margin:0 0 10px;color:var(--mut)}
+p.lead{color:var(--fg)}
+code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--cyan);direction:ltr;display:inline-block}
+a{color:var(--blue)}
+header.top{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:8px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.meta span{font-size:12px;color:var(--mut);border:1px solid var(--line);border-radius:8px;padding:3px 10px;background:var(--panel)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card);margin:10px 0 4px}
+table{width:100%;border-collapse:collapse;min-width:880px}
+th,td{padding:11px 13px;text-align:start;vertical-align:top;border-bottom:1px solid var(--line);font-size:13.5px;line-height:1.7}
+th{background:var(--panel);color:var(--dim);font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.them{color:var(--fg)}
+td.us{color:var(--mut)}
+.pill{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.p-miss{background:rgba(244,85,108,.16);color:var(--red);border:1px solid rgba(244,85,108,.35)}
+.p-part{background:rgba(246,174,49,.16);color:var(--amber);border:1px solid rgba(246,174,49,.35)}
+.p-ahead{background:rgba(53,208,127,.14);color:var(--green);border:1px solid rgba(53,208,127,.32)}
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));margin:14px 0 6px}
+.stat{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px 16px}
+.stat b{display:block;font-size:28px;font-weight:800;line-height:1.2}
+.stat span{font-size:12.5px;color:var(--mut)}
+.stat.red b{color:var(--red)}.stat.amber b{color:var(--amber)}.stat.green b{color:var(--green)}
+.note{border:1px solid var(--line);border-inline-start:4px solid var(--amber);border-radius:10px;background:var(--panel);padding:12px 15px;margin:12px 0;font-size:13.5px;line-height:1.85}
+.note.green{border-inline-start-color:var(--green)}
+.note.red{border-inline-start-color:var(--red)}
+.note b{color:var(--fg)}
+ol.plan{counter-reset:s;list-style:none;padding:0;margin:12px 0 0}
+ol.plan>li{counter-increment:s;position:relative;border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px 58px 14px 16px;margin-bottom:10px}
+ol.plan>li::before{content:counter(s);position:absolute;inset-inline-start:16px;top:14px;width:28px;height:28px;border-radius:8px;background:var(--panel);border:1px solid var(--line);color:var(--amber);font-weight:800;font-size:13px;display:grid;place-items:center}
+ol.plan>li h4{margin:0 0 4px;font-size:14.5px;font-weight:800}
+ol.plan>li p{margin:0;font-size:13px}
+.tagrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--dim)}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px}
+@media(max-width:640px){.wrap{padding:20px 14px 60px}h1{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>الفجوة بيننا وبين جبر سيو — خطّة تجهيز الأدمن قبل الإطلاق</h1>
+  <p class="lead">جبر سيو يبيع اليوم بصفحة تسعير مكتملة وأدمن يقرأ سبب كل إخفاق. نحن نملك بنية بيانات أمتن منه وصفحة بيع لم تُبنَ بعد. هذا الملف يحصر ما عنده وليس عندنا، ويرتّبه كعمل يُنجَز <b style="color:var(--fg)">في الأدمن</b> قبل أن نفتح البيع للعامّة.</p>
+  <div class="meta">
+    <span>١٣ سبتمبر ٢٠٢٦</span>
+    <span>المصدر: قراءة كود <code>JBRSEO/jbrseo.com</code> و<code>MODONTY/</code></span>
+    <span>صفر اتصال بقاعدة إنتاج · صفر كتابة</span>
+    <span>يكمّل لوحة <a href="JBR-PAY-DASH.html">انتقال الدفع</a> ولا يستبدلها</span>
+  </div>
+</header>
+
+<div class="cards">
+  <div class="stat red"><b>١٤</b><span>فجوة مفقودة تماماً عندنا</span></div>
+  <div class="stat amber"><b>٥</b><span>موجودة ناقصة أو غير معروضة</span></div>
+  <div class="stat green"><b>٤</b><span>نحن متقدّمون فيها — تُحمى ولا تُقلَّد</span></div>
+  <div class="stat"><b>٨ ← ٤</b><span>أقسام أدمن عنده مقابل عندنا</span></div>
+</div>
+
+<div class="note green">
+  <b>اقرأ هذا أوّلاً كي لا تُقلَّد الأخطاء:</b> جبر سيو متقدّم في <b>ما يُعرَض</b>، ومتأخّر في <b>كيف يُخزَّن</b>. مزاياه نصّ حرّ في <code>highlights[]</code> و<code>articlesLabel</code>، وسياسة الهدية مكتوبة في الكود (<code>lib/pricing-durations.ts</code>)، وطلبه صفٌّ واحد يُكتب فوقه (<code>Subscriber</code> بمفتاح <code>[email, plan, billing]</code>). نحن عكسه. فالمطلوب: نأخذ <b>ما يُعرَض</b> ونبقي <b>كيف يُخزَّن</b> كما هو.
+</div>
+
+<h2>أ · محرّك التسعير — ما يظهر على البطاقة نفسها <span class="n">٧ فجوات</span></h2>
+<p>هذه هي الفجوة الأخطر تجارياً: أرقامه تجعل المدّة الطويلة مغرية، وأرقامنا لا تقولها.</p>
+<div class="scroll"><table>
+<thead><tr><th>البند</th><th>عند جبر سيو</th><th>عندنا اليوم</th><th>الأثر</th><th>الحالة</th></tr></thead>
+<tbody>
+<tr>
+  <td><b>السعر الشهري الفعليّ</b></td>
+  <td class="them"><code>effectiveMonthly = total ÷ serviceMonths</code> — يُطبع تحت السعر: «= ٣٩٩ ر.س/شهر فعلياً» (<code>lib/pricing-durations.ts</code> · <code>PricingSection.tsx:511</code>)</td>
+  <td class="us">لا يُحسب ولا يُعرض. بطاقتنا تقول السعر الشهري والإجمالي فقط.</td>
+  <td>مع ١٢ شهراً + ٦ هدية، الفعليّ يهبط ≈ ٣٣٪. بدونه المدّة الطويلة تبدو أغلى لا أوفر.</td>
+  <td><span class="pill p-miss">مفقود</span></td>
+</tr>
+<tr>
+  <td><b>نسبة التوفير</b></td>
+  <td class="them"><code>savingsPct</code> مشتقّة من نفس الدالّة</td>
+  <td class="us">غير موجودة</td>
+  <td>الرقم الذي يُقنع بالقفز من ٦ إلى ١٢ شهراً.</td>
+  <td><span class="pill p-miss">مفقود</span></td>
+</tr>
+<tr>
+  <td><b>أشهر الخدمة الكلّية</b></td>
+  <td class="them"><code>serviceMonths = paid + free</code> — «١٨ شهر خدمة»</td>
+  <td class="us">نخزّن <code>bonusServiceMonths</code> في <code>CommercialTermPolicy</code> ونعرض «+ ٦ هدية» فقط</td>
+  <td>البيانات عندنا، والجمع غير معروض.</td>
+  <td><span class="pill p-part">ناقص عرضاً</span></td>
+</tr>
+<tr>
+  <td><b>إجمالي المقالات خلال المدّة</b></td>
+  <td class="them"><code>totalArticles = perMonth × serviceMonths</code> (<code>PricingSection.tsx:370</code>)</td>
+  <td class="us"><code>articlesPerMonth</code> موجود في السكيما، و<b>قيمته فارغة في الباقات الثلاث</b>، ولا ضرب في المدّة</td>
+  <td>«٢٤ مقالاً» أقوى بيعياً من «٤ مقالات شهرياً».</td>
+  <td><span class="pill p-miss">مفقود</span></td>
+</tr>
+<tr>
+  <td><b>المدّة الموصى بها</b></td>
+  <td class="them"><code>RECOMMENDED_DURATION = 6</code> — تُفتح افتراضياً وتُوسم «الأنسب»</td>
+  <td class="us">نفتح على أوّل مدّة في الترتيب بلا توصية</td>
+  <td>التوصية توجّه ٧٠٪ من الاختيار في صفحات التسعير.</td>
+  <td><span class="pill p-miss">مفقود</span></td>
+</tr>
+<tr>
+  <td><b>الهدية على زرّ المدّة</b></td>
+  <td class="them">الزرّ نفسه يقول «٦ شهور مجاناً» (<code>PricingSection.tsx:303</code>)</td>
+  <td class="us">زرّنا يقول «١٢ أشهر + ٦» — رقم بلا كلمة</td>
+  <td>«مجاناً» كلمة بيع، «+٦» رمز.</td>
+  <td><span class="pill p-part">ناقص صياغةً</span></td>
+</tr>
+<tr>
+  <td><b>رابط عميق للمدّة</b></td>
+  <td class="them"><code>?duration=6</code> يفتح الصفحة على مدّة بعينها (<code>PricingSection.tsx:177</code>)</td>
+  <td class="us">موجود في المعاينة (<code>?months=</code>) وغير مقرَّر لصفحة البيع</td>
+  <td>يلزم لأي حملة إعلانية تستهدف عرضاً محدّداً.</td>
+  <td><span class="pill p-part">جزئي</span></td>
+</tr>
+</tbody>
+</table></div>
+
+<h2>ب · محتوى صفحة البيع — كل ما هو خارج البطاقات <span class="n">٦ فجوات</span></h2>
+<p>عنده صفحة التسعير كلّها تُحرَّر من الأدمن. عندنا لا يوجد جدول واحد لهذا المحتوى — ولا حتى حقل.</p>
+<div class="scroll"><table>
+<thead><tr><th>البند</th><th>عند جبر سيو</th><th>عندنا اليوم</th><th>أين يُبنى</th><th>الحالة</th></tr></thead>
+<tbody>
+<tr><td><b>شريط الإعلان</b></td><td class="them"><code>PriceSectionMeta.announcement</code> لكل دولة</td><td class="us">لا حقل ولا مكان</td><td>موديل جديد + تبويب في «الباقات والأسعار»</td><td><span class="pill p-miss">مفقود</span></td></tr>
+<tr><td><b>عنوان القسم وعنوانه الفرعي</b></td><td class="them"><code>ctaHeadline</code> · <code>ctaSubheadline</code></td><td class="us">لا شيء — سيُكتب في الكود إن لم يُبنَ</td><td>نفس الموديل</td><td><span class="pill p-miss">مفقود</span></td></tr>
+<tr><td><b>شريط الثقة</b></td><td class="them"><code>trustItems</code> (Json) — عناصر «من ائتمنّا»</td><td class="us">لا شيء في مسار الدفع</td><td>نفس الموديل</td><td><span class="pill p-miss">مفقود</span></td></tr>
+<tr><td><b>نصوص الواجهة</b></td><td class="them"><code>uiStrings</code> (Json) — كل كلمة في القسم تُحرَّر بلا نشر</td><td class="us">لا شيء</td><td>نفس الموديل</td><td><span class="pill p-miss">مفقود</span></td></tr>
+<tr><td><b>الجملة الخاطفة للباقة</b></td><td class="them"><code>Plan.hook</code> — «سطر مميّز واحد يظهر قرب السعر»</td><td class="us">لا حقل</td><td>حقل على <code>CommercialPlan</code></td><td><span class="pill p-miss">مفقود</span></td></tr>
+<tr><td><b>نصّ زرّ الباقة وشارتها الثانية</b></td><td class="them"><code>ctaText</code> لكل باقة · <code>featuredBadge</code> شارة ثانية للبطاقة المميَّزة</td><td class="us">نصّ الزرّ مكتوب في الكود («اشترك الآن») · شارة واحدة</td><td>حقلان على <code>CommercialPlan</code></td><td><span class="pill p-miss">مفقود</span></td></tr>
+</tbody>
+</table></div>
+
+<div class="note red">
+  <b>فجوة صامتة اكتُشفت أثناء المسح:</b> حقل <code>highlights: String[]</code> موجود في <code>CommercialPlan</code> عندنا منذ البداية — <b>ولا شاشة تحرّره ولا بطاقة تعرضه</b>. عند جبر سيو هو عمود البطاقة. فإمّا يُفعَّل عندنا أو يُحذف، ولا يُترك حقلاً ميّتاً يوهم أن المحتوى مُدار.
+</div>
+
+<h2>ج · ذكاء الإخفاق والقياس — لماذا لم يُكمِل الزائر <span class="n">٤ فجوات</span></h2>
+<p>هذا ما بناه جبر سيو بعد أن خسر عمليات ولم يعرف لماذا. وهو أرخص ما يُبنى قبل الإطلاق وأغلى ما يُبنى بعده.</p>
+<div class="scroll"><table>
+<thead><tr><th>البند</th><th>عند جبر سيو</th><th>عندنا اليوم</th><th>الأثر</th><th>الحالة</th></tr></thead>
+<tbody>
+<tr>
+  <td><b>سجلّ محاولات الدفع</b></td>
+  <td class="them"><code>PaymentAttempt</code> بـ<b>١٦ حقلاً</b>: <code>stage · outcome · code · message · state · plan · duration · country · cardScheme · cardBin · email · ip · userAgent · subscriberId · paymentRef</code></td>
+  <td class="us"><code>PaymentAttempt</code> بـ<b>٥ حقول</b>: <code>orderId · provider · reasonCode · message · createdAt</code> — ومربوط بطلب قائم</td>
+  <td><code>cardBin</code> وحده يكشف بلد إصدار البطاقة، أي سبب رفض البطاقات الأجنبية. وإخفاقٌ قبل إنشاء الطلب لا يُسجَّل عندنا أصلاً.</td>
+  <td><span class="pill p-part">ناقص جوهرياً</span></td>
+</tr>
+<tr>
+  <td><b>تسجيل الإخفاق من المتصفّح</b></td>
+  <td class="them"><code>/api/checkout/log-failure</code> — البطاقة المصرية/الأجنبية تُرفض عند التوكنة قبل وجود أي طلب، فتُرسل من المتصفّح</td>
+  <td class="us">لا مسار — هذا الإخفاق يختفي بلا أثر</td>
+  <td>أكثر إخفاق متوقَّع في سوقنا، وهو بالضبط الذي لا نراه.</td>
+  <td><span class="pill p-miss">مفقود</span></td>
+</tr>
+<tr>
+  <td><b>شاشة «إخفاقات الدفع»</b></td>
+  <td class="them"><code>admin/(dashboard)/payment-failures</code> — ٨ مراحل معنونة بالعربية (تحقق العميل · توليد الجلسة · إنشاء الطلب · التفويض · تحقق ثنائي · متابعة · webhook · إرسال)</td>
+  <td class="us">لا شاشة — الجدول يُقرأ من قاعدة البيانات يدوياً</td>
+  <td>بلا شاشة، لا أحد ينظر، والبيانات تُجمع ولا تُقرأ.</td>
+  <td><span class="pill p-miss">مفقود</span></td>
+</tr>
+<tr>
+  <td><b>سبب المغادرة</b></td>
+  <td class="them">موديل <code>ExitReason</code> + <code>/api/exit-reason</code> — يسأل الزائر المغادر ويخزّن السبب لكل دولة</td>
+  <td class="us">لا شيء</td>
+  <td>يفرّق بين «السعر غالٍ» و«ما فهمت الباقة» — وهما قراران مختلفان تماماً.</td>
+  <td><span class="pill p-miss">مفقود</span></td>
+</tr>
+</tbody>
+</table></div>
+
+<h2>د · مسار الشراء وأقسام الأدمن <span class="n">٣ فجوات</span></h2>
+<div class="scroll"><table>
+<thead><tr><th>البند</th><th>عند جبر سيو</th><th>عندنا اليوم</th><th>الحالة</th></tr></thead>
+<tbody>
+<tr><td><b>صفحات المسار</b></td><td class="them">خمس صفحات حيّة: <code>checkout</code> · <code>processing</code> · <code>success</code> · <code>failed</code> · <code>tamara</code></td><td class="us">صفر — <code>/pay/[market]</code> ما زالت شاشة اختبار توجيه</td><td><span class="pill p-miss">PAY-C3 · C4 · D5</span></td></tr>
+<tr><td><b>زرّ ثانٍ على البطاقة</b></td><td class="them">تمارا (تقسيط) بجانب زرّ الشراء · وواتساب بدلاً منه لمصر (<code>PricingSection.tsx:557,570</code>)</td><td class="us">زرّ واحد معطَّل في المعاينة</td><td><span class="pill p-miss">PAY-D6 · PAY-Q12</span></td></tr>
+<tr><td><b>أقسام الأدمن</b></td><td class="them">٨: analytics · content · payment-failures · pricing · review · settings · subscribers · ux-insights (تحليلات Clarity بمزامنة يوميّة)</td><td class="us">٤ في «إدارة الدفع»: الباقات والأسعار · مكتبة المزايا · معاينة صفحة الدفع · الطلبات</td><td><span class="pill p-part">جزئي</span></td></tr>
+</tbody>
+</table></div>
+
+<h2>هـ · أين نحن متقدّمون — يُحمى ولا يُقلَّد <span class="n">٤ نقاط</span></h2>
+<div class="scroll"><table>
+<thead><tr><th>البند</th><th>عندنا</th><th>عند جبر سيو</th></tr></thead>
+<tbody>
+<tr><td><b>المزايا</b></td><td class="them">مكتبة مُطبَّعة: <code>CommercialFeature</code> (اسم · وحدة · أيقونة من سجلّ مغلق) + <code>CommercialPlanFeature</code> (كمّية · ملاحظة · ترتيب)</td><td class="us">نصّ حرّ في <code>highlights[]</code> — لا كمّية ولا وحدة ولا إعادة استعمال</td></tr>
+<tr><td><b>سياسة المدد</b></td><td class="them">صفوف في القاعدة (<code>CommercialTermPolicy</code>) تُعدَّل بلا نشر</td><td class="us">ثابت في الكود (<code>FREE_MONTHS</code>) — كل تعديل نشرة</td></tr>
+<tr><td><b>الطلب</b></td><td class="them"><code>CheckoutOrder</code> لقطة ثابتة — تغيير السعر لاحقاً لا يمسّها</td><td class="us"><code>Subscriber</code> بمفتاح <code>[email,plan,billing]</code> — الشراء المكرَّر يكتب فوق السابق</td></tr>
+<tr><td><b>هوية الباقة</b></td><td class="them"><code>theme</code> قائمة مغلقة + سجلّ أيقونات — باقة جديدة تُرسم صحيحة تلقائياً</td><td class="us">تنسيق مرتبط بالاسم/المعرّف — كل باقة جديدة تسقط على الافتراضي</td></tr>
+</tbody>
+</table></div>
+
+<h2>و · خطّة العمل — بالترتيب، وكلّها في الأدمن قبل العام</h2>
+<p>الترتيب مبنيّ على قاعدة واحدة: <b>ما يمنع خسارة مال أو معلومة لا يُؤجَّل</b>، وما يزيد التحويل يليه، وما يُجمَّل يأتي أخيراً.</p>
+
+<ol class="plan">
+<li>
+  <h4>تعبئة الكتالوج الحالي — لا كود، إدخال بيانات</h4>
+  <p>ربط المزايا الستّ والعشرين بالباقات الثلاث بكمّياتها · اختيار أيقونة لكلٍّ منها · تعبئة «مقالات/شهر» · نشر «الزخم» و«الريادة» (كلتاهما مسودة اليوم، فلا يظهر للزائر غير باقة واحدة).</p>
+  <div class="tagrow"><span class="tag">يسبق كل شيء</span><span class="tag">بلا كود</span><span class="tag">يُرى فوراً في /pay-preview</span></div>
+</li>
+<li>
+  <h4>محرّك التسعير المشتقّ — دالّة واحدة نقيّة</h4>
+  <p><code>effectiveMonthly</code> · <code>savingsPct</code> · <code>serviceMonths</code> · <code>totalArticles</code> · علَم «الموصى بها» على صفّ المدّة. تُكتب مرّة في <code>shared</code> وتُعرض في البطاقة المشتركة — فتظهر في المعاينة وفي <code>/pay</code> معاً.</p>
+  <div class="tagrow"><span class="tag">يرفع التحويل</span><span class="tag">يمسّ PAY-C2</span><span class="tag">حقل واحد جديد على سياسة المدد</span></div>
+</li>
+<li>
+  <h4>توسيع <code>PaymentAttempt</code> ومسار التسجيل من المتصفّح</h4>
+  <p>إضافة <code>stage · outcome · state · cardScheme · cardBin · country · plan · duration · ip · userAgent</code>، وجعل <code>orderId</code> اختيارياً فعلياً، ومسار يستقبل إخفاق ما قبل الطلب. <b>يُبنى قبل أول عملية حقيقية</b> — ما لم يُسجَّل ساعتها لا يُسترجَع.</p>
+  <div class="tagrow"><span class="tag">يمنع خسارة معلومة</span><span class="tag">يسبق PAY-D4</span><span class="tag">هجرة سكيما</span></div>
+</li>
+<li>
+  <h4>شاشة «إخفاقات الدفع» في الأدمن</h4>
+  <p>جدول بالمراحل الثماني معنونة بالعربية، ومرشّح بالمرحلة والسبب والسوق. بلا شاشة، الحقول في البند السابق تُملأ ولا يقرؤها أحد.</p>
+  <div class="tagrow"><span class="tag">تحت «إدارة الدفع»</span><span class="tag">قراءة فقط</span></div>
+</li>
+<li>
+  <h4>محتوى صفحة البيع في القاعدة</h4>
+  <p>موديل واحد لكل سوق يحمل: الإعلان · عنوان القسم وفرعيّه · عناصر الثقة · نصوص الواجهة — وشاشة تحريره. وحقول الباقة الثلاثة: <code>hook</code> · <code>ctaText</code> · <code>featuredBadge</code>. وحسم مصير <code>highlights</code>: يُحرَّر ويُعرض أو يُحذف.</p>
+  <div class="tagrow"><span class="tag">يمنع نصّاً في الكود</span><span class="tag">PAY-DYNAMIC</span></div>
+</li>
+<li>
+  <h4>سبب المغادرة</h4>
+  <p>موديل <code>ExitReason</code> وسؤال واحد للزائر المغادر، وعدّاده في نفس شاشة الإخفاقات. أرخص مصدر حقيقة عن السعر والرسالة.</p>
+  <div class="tagrow"><span class="tag">بعد فتح البيع مباشرةً</span><span class="tag">اختياري قبله</span></div>
+</li>
+<li>
+  <h4>ثم مسار الشراء نفسه</h4>
+  <p><code>PAY-C1 → C5</code> ثم <code>D1 → D7</code> كما هي على اللوحة — بعد أن صار للبطاقة محتوى تعرضه وأرقام تقنع بها وسجلٌّ يلتقط إخفاقها.</p>
+  <div class="tagrow"><span class="tag">لا يتغيّر ترتيبها</span><span class="tag">اللوحة هي المرجع</span></div>
+</li>
+</ol>
+
+<div class="note">
+  <b>ما لا تنقله هذه الخطّة عمداً:</b> السعر السنوي (<code>priceYearly</code>) — نموذجنا مدد لا اشتراك سنوي · <code>articlesLabel</code> كنصّ حرّ — عندنا رقم يُحسب ويُضرب في المدّة · تحليلات Clarity (<code>ux-insights</code>) — طبقة مستقلّة عن الدفع، بندٌ خاصّ بها إن طُلبت.
+</div>
+
+<footer>
+  مصدر كل سطر: قراءة ملفّات في <code>JBRSEO/jbrseo.com</code> (<code>prisma/schema.prisma</code> · <code>lib/pricing-durations.ts</code> · <code>app/components/landing/sections/PricingSection.tsx</code> · <code>app/admin/(dashboard)/*</code>) وفي <code>MODONTY/</code> (<code>shared/prisma/schema/schema.prisma</code> · <code>admin/app/(dashboard)/commercial-*</code>) وقراءة <code>modonty_dev</code> عبر شاشات الأدمن الحيّة. صفر اتصال بقاعدة إنتاج وصفر كتابة. ما لم يُقَس مكتوبٌ صراحةً بوصفه غير مقيس.
+</footer>
+
+</div>
+</body>
+</html>

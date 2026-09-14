@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>أرشيف المنجز — 98 بنداً</title>
+<title>أرشيف المنجز — 138 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -132,7 +132,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 .hidden{display:none!important}
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
-<header class="top"><div class="wrap"><h1>أرشيف المنجز — 98 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
+<header class="top"><div class="wrap"><h1>أرشيف المنجز — 138 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
 <div class="tools"><input id="q" type="search" placeholder="ابحث في المنجز…" aria-label="بحث"></div></div></header>
 <main class="wrap"><section class="grp"><div class="grid"><article class="card" data-id="G11" data-sev="normal" data-who="c" data-tab="done" data-board="seo" data-apps="admin modonty" data-n="113" data-audit="pass">
   <div class="hd"><span class="num" title="رقم البند — قل «بند 113» في الشات">113</span><span class="id">G11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند G11">⧉</button></div>
@@ -1802,6 +1802,937 @@ tsx shared/__tmp-pay-b2.ts →
   4 حذف الباقة ← order after plan delete: {"number":"ORD-2026-00001","planId":"6aa4314…","planName":"باقة اختبار B3","totalMinor":239400} | plan rows: 0
   cleanup → orders: 0 | plans: 3</pre></div></details>
 </article>
+<article class="card" data-id="PAY-C1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty admin" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-C1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-C1">⧉</button></div>
+  
+  <div class="t">🟨 كود · قارئ الكتالوج لصفحة /pay + وسم كاش يُبطله الأدمن عند كل تعديل</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 20 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: modonty/app/(pay)/pay/[market]/page.tsx:22 شاشة اختبار نصّية («No pricing… belongs here yet»). آلية إبطال الكاش قائمة: admin/lib/revalidate-modonty-tag.ts:20 اتحاد وسوم مغلق ↔ modonty/app/api/revalidate/tag/route.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> <code>modonty/app/(pay)/pay/[market]/page.tsx:22</code> شاشة اختبار نصّية («No pricing… belongs here yet»). آلية إبطال الكاش قائمة: <code>admin/lib/revalidate-modonty-tag.ts:20</code> اتحاد وسوم مغلق ↔ <code>modonty/app/api/revalidate/tag/route.ts</code> (<code>ALLOWED_TAGS</code>) — وسمٌ غير مضاف هنا يرجع 400 لا يقرؤه أحد (تعليق السطر 17-19).</p>
+<p><b>العمل:</b></p>
+<pre>١  modonty/app/(pay)/pay/helpers/get-market-catalog.ts (دالّة واحدة في ملف — قاعدة المجلّدات):
+   الباقات المنشورة التي لها سعر نشط للسوق · orderBy displayOrder · select محدود:
+   id slug name description badge theme tier articlesPerMonth · السعر (monthlyBase currency)
+   · المزايا: name unitLabel icon quantity note بترتيب displayOrder · + صفوف السياسة النشطة
+٢  الكاش بوسم "commercial-catalog": واجهة الكاش في Next 16 تُتحقّق من Context7 قبل الكتابة
+   (أيّ الواجهتين معتمدة في نسخة المستودع — لا من الذاكرة).
+٣  إضافة "commercial-catalog" إلى اتحاد الوسوم في revalidate-modonty-tag.ts وإلى ALLOWED_TAGS،
+   واستدعاؤها من كل أكشن في commercial-plans/actions.ts (إنشاء · بيانات · أسعار · نشر · سياسة المدد
+   · مزايا · ترتيب) — أكشن واحد منسيّ = صفحة بيع قديمة.</pre>
+<p><b>يُغلق بـ:</b> تعديل سعر من الأدمن ثم <code>curl -s localhost:3000/pay/sa | grep -o "450"</code> يُظهر الرقم الجديد بلا إعادة تشغيل — ناتج خام قبل/بعد.</p>
+
+<p><b>🔄 تصحيح على المقيس — ١٣ سبتمبر ٢٠٢٦:</b> بُني نصف هذا البند أثناء بناء شاشة المعاينة (<code>PAY-PREVIEW</code>).</p>
+<pre>✔ موجود الآن   shared/lib/commercial/get-market-catalog.ts — الباقات المنشورة التي لها سعر
+               نشط للسوق · orderBy displayOrder · select محدود · المزايا بترتيبها
+               + صفوف سياسة المدد. يستقبل عميل Prisma كوسيط (كل تطبيق يمرّر عميله).
+✖ الباقي       وسم الكاش نفسه — وهو قلب البند:
+               grep -c "commercial-catalog" admin/lib/revalidate-modonty-tag.ts      = 0
+               grep -c "commercial-catalog" modonty/app/api/revalidate/tag/route.ts  = 0
+               ولم يُستدعَ من أي أكشن في commercial-plans/actions.ts.</pre>
+<p>القارئ عمداً بلا كاش: شاشة المعاينة يجب أن تقرأ الصفّ الحيّ (تعديلٌ لا يظهر فوراً يفقدها معناها). فالكاش قرار كل تطبيق على حدة، و<code>modonty</code> تغلّف القارئ بوسمها.</p>
+<hr>
+<p><b>✓ أُغلق ١٣ سبتمبر ٢٠٢٦ — بقياس حيّ لا بقراءة كود.</b></p>
+<pre>القارئ   modonty/app/(pay)/pay/helpers/get-cached-catalog.ts
+         getCachedMarketCatalog · getCachedPaySectionContent — كلاهما 'use cache' + cacheTag("commercial-catalog")
+الوسم    admin/lib/revalidate-modonty-tag.ts (اتحاد الوسوم) ↔ modonty/app/api/revalidate/tag/route.ts (ALLOWED_TAGS)
+الأكشنات revalidateCatalog(planId?) في commercial-plans/actions.ts — ٢٥ موضعاً · صفر أكشن يكتب بلا إبطال</pre>
+<p><b>لماذا <code>'use cache'</code> لا <code>unstable_cache</code>:</b> مدونتي تعمل بـ<code>cacheComponents: true</code>
+(<code>modonty/next.config.ts:108</code>)، و<code>unstable_cache</code> موثَّقٌ في صفحة اسمها
+<code>caching-without-cache-components.mdx</code> — أي نموذج ما قبلها.</p>
+<p><b>العطل الذي كشفه القياس (وأُصلح):</b> <code>revalidateTag(tag, "max")</code> دلالته stale-while-revalidate.
+قياسٌ على <code>modonty_dev</code>: بصمة كُتبت في القاعدة ثم أُبطل الوسم، فخُدم <b>طلبان بالقيمة القديمة</b>
+وظهرت الجديدة في الثالث. لسعرٍ هذا غير مقبول — يعدّل خالد الرقم ويفتح الصفحة فيراه قديماً مرّتين.
+الحلّ: وسم الكتالوج وحده يُبطَل بـ<code>revalidateTag(tag, { expire: 0 })</code>
+(<code>route.ts</code> · <code>READ_YOUR_OWN_WRITES</code>) — والشكل مأخوذ من التوقيع نفسه
+(<code>next/dist/server/web/spec-extension/revalidate.d.ts</code>: الوسيط الثاني <code>string | { expire?: number }</code>)،
+لا النداء بوسيطٍ واحد فذاك مهجورٌ ويرفضه <code>tsc</code>. و<code>updateTag</code> — الطريق الرسمي —
+يعمل في Server Action فقط ولا يستطيع الأدمن نداءه عبر HTTP.</p>
+<pre>بعد الإصلاح: كتابة في القاعدة ← إبطال ← <b>الطلب الأول</b> يحمل القيمة الجديدة ✓  (أُرجعت بيانات الاختبار)</pre></div></details>
+</article>
+<article class="card" data-id="PAY-C2" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-C2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-C2">⧉</button></div>
+  
+  <div class="t">🟨 كود · واجهة /pay — نفس مكوّن المعاينة، صفر نصّ بيع في الملفّ، الزرّ معطَّل</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 21 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المرجع: PAY-Q3 (زرّ مدة واحد فوق البطاقات) · PAY-Q5 (مصر: أسعار بالجنيه وزرّ واتساب) · PAY-Q11 (الثيم والأيقونة من الكود) · PAY-Q9 (/pay سطح البيع الوحيد). · العمل: ١ يستبدل شاشة الاختبار في (pay)/pay/[market]/page.tsx.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المرجع:</b> <code>PAY-Q3</code> (زرّ مدة واحد فوق البطاقات) · <code>PAY-Q5</code> (مصر: أسعار بالجنيه وزرّ واتساب) · <code>PAY-Q11</code> (الثيم والأيقونة من الكود) · <code>PAY-Q9</code> (/pay سطح البيع الوحيد).</p>
+<p><b>العمل:</b></p>
+<pre>١  يستبدل شاشة الاختبار في (pay)/pay/[market]/page.tsx. المكوّنات في [market]/components/:
+   duration-switch (عميل) — من صفوف السياسة؛ الافتراضي أوّل صفّ نشط بترتيب displayOrder، لا ثابت «6»
+   plan-card — الثيم من shared/lib/commercial/plan-themes.ts · أيقونة الميزة من السجلّ بالاسم
+              · الميزة تُطبع «{quantity} {unitLabel}» أو الاسم وحده إن لا كمّية · badge إن وُجد
+   plan-grid — الترتيب من displayOrder
+٢  السعر لكل مدة يُحسب على السيرفر (monthlyBase × paidMonths) ويُمرَّر جاهزاً؛ العميل يبدّل العرض فقط.
+   صفر عمليات حسابية على المتصفّح.
+٣  الحالات: loading.tsx سكيلتون بشكل البطاقات · فارغ: «لا باقات متاحة حالياً» + زرّ واتساب
+   · error.tsx · نجاح.
+٤  السعودية: الزرّ ← /pay/sa/checkout?plan={slug}&months={paidMonths}
+   مصر: نفس البطاقات بالجنيه؛ الزرّ ← نفس نموذج C3 بوضع «تحويل».
+٥  translate="no" + ميتا google: notranslate (سابقة جبر سيو checkout/layout.tsx:6 وpage.tsx:24-26)
+   · Tajawal · RTL · robots noindex حتى PAY-F5.
+٦  لا نصّ باقة ولا رقم في الكود (PAY-DYNAMIC). لا hex.</pre>
+<p><b>🎨 واجهة:</b> يُطبَّق <code>PAY-UIUX</code> كاملاً وقائمة فحصه (د) بنواتجها في دليل الإغلاق.</p><p><b>يُغلق بـ:</b> لقطات Playwright على ١٢٨٠ وعلى الجوّال، فاتح وغامق، للسوقين (٨ لقطات)؛ و<code>curl</code> للـHTML الخام يحمل الأسعار (مُصيَّرة على السيرفر).</p>
+<p><b>🔄 عقد بارامتر المدّة — مثبَّت في <code>PAY-G10</code> (١٣ سبتمبر ٢٠٢٦):</b> لا تُعِد كتابة قراءة المدّة هنا. استدعِ <code>resolveTermFromParams</code> من <code>shared/lib/commercial/resolve-term-from-params.ts</code>: الاسم <code>?months=</code> · المرادف المقروء <code>?duration=</code> · وقيمةٌ غير صالحة تسقط على المدّة الموصى بها بلا خطأ. نسخةٌ ثانية من هذا المنطق تعني رابط حملة يعمل في المعاينة ويسقط على الصفحة الحقيقية.</p>
+<hr>
+<p><b>✓ أُغلق ١٣ سبتمبر ٢٠٢٦.</b> <code>modonty/app/(pay)/pay/[market]/page.tsx</code> — حلّت محلّ شاشة اختبار التوجيه.</p>
+<p><b>المكوّن واحد لا شبيه:</b> الصفحة والمعاينة في الأدمن تستدعيان <code>shared/components/commercial/pay-section.tsx</code>
+بنفس البروبس حرفاً بحرف؛ الفرق الوحيد <code>termHref</code> لأن العنوان يختلف. فأي تعديل يراه خالد في
+<code>/pay-preview</code> هو ما سيراه الزائر.</p>
+<p><b>الزرّ معطَّل عمداً:</b> نموذج الطلب <code>PAY-C3</code> والدفع <code>PAY-D1…D7</code> لم يُبنيا. زرٌّ يبدو قابلاً
+للضغط ولا يفعل شيئاً يكسر الثقة من أوّل لمسة. قياس: ٦ أزرار في الصفحة كلّها <code>disabled</code>.</p>
+<p><b>عطلٌ وُجد وأُصلح في الطريق:</b> <code>modonty/proxy.ts</code> كان يبني التحويل من المسار وحده فيمحو
+<code>?months=</code> و<code>?duration=</code> — فكل رابط حملة إلى <code>/pay</code> كان يهبط على المدّة الموصى بها
+لا المُعلَنة، والإعلان والصفحة يختلفان في السعر بلا أثرٍ في أي سجلّ. الآن:
+<code>/pay?months=12 → /pay/sa?months=12 ✓</code></p>
+<p><b><code>instant = false</code>:</b> المدّة مُدخَل وقت-طلب مثل السوق، فلا قوقعة ساكنة عند كل مدخل. الاسم بلا
+بادئة <code>unstable_</code> لأن 16.3.4 ثبّته (<code>app-segment-config.d.ts:1</code>)؛ توثيق 16.2.9 ما زال يسمّيه
+<code>unstable_instant</code>.</p></div></details>
+</article>
+<article class="card" data-id="PAY-C3" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-C3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-C3">⧉</button></div>
+  
+  <div class="t">🟨 كود · دورة الشراء كاملة — نسخة جبر موصولة بجداولنا</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 22 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المرجع: PAY-B2 · PAY-Q12 (المصريّ يُنشئ طلباً بانتظار التحويل). · العمل: ١ (pay)/pay/[market]/checkout/page.tsx + actions.ts — server action createCheckoutOrder: Zod: الاسم · البريد · الجوال (toE164 من shared/lib/phone.ts:26 —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المرجع:</b> <code>PAY-B2</code> · <code>PAY-Q12</code> (المصريّ يُنشئ طلباً بانتظار التحويل).</p>
+<p><b>العمل:</b></p>
+<pre>١  (pay)/pay/[market]/checkout/page.tsx + actions.ts — server action createCheckoutOrder:
+   Zod: الاسم · البريد · الجوال (toE164 من shared/lib/phone.ts:26 — يرفض غير الجوال) · اسم المنشأة (اختياري)
+   · planSlug · paidMonths. الباقة والسعر والسياسة تُقرأ من القاعدة بالـslug والمدة — لا يُصدَّق رقم من النموذج.
+   SA ⇒ status AWAITING_PAYMENT · EG ⇒ AWAITING_TRANSFER. الرقم من next-order-number.
+٢  Turnstile: الحقل والتحقّق خلف  if (process.env.TURNSTILE_SECRET_KEY)  كي لا يُعطَّل التطوير؛ المفاتيح في D1.
+٣  مصر: بعد الإنشاء يُفتح wa.me/{NEXT_PUBLIC_SALES_WHATSAPP} برسالة: رقم الطلب · الباقة · المدة · الإجمالي بالجنيه.
+٤  السعودية: تحويل إلى /pay/sa/checkout/[orderId] — في هذه المرحلة Placeholder
+   (نفس فكرة jbrseo checkout/_components/PaymentPlaceholder.tsx) يستبدله D3.
+٥  الحالات الأربع على النموذج: pending على الزرّ · أخطاء الحقول بالعربي · خطأ سيرفر · نجاح.</pre>
+<p><b>🎨 واجهة:</b> يُطبَّق <code>PAY-UIUX</code> كاملاً وقائمة فحصه (د) بنواتجها في دليل الإغلاق.</p><p><b>يُغلق بـ:</b> طلب سعودي وطلب مصري من المتصفّح ← صفّان في <code>checkout_orders</code> بحالتيهما ولقطتيهما (ناتج خام)، ورقمان متتاليان. محاولة إرسال جوال أرضي ← رفض بالعربي.</p>
+<hr>
+<p><b>١٣ سبتمبر ٢٠٢٦ — خالد:</b> «نفس اللي موجود في جبر اس يو، اعمل نسخة طبق الأصل منه… أنا واقف
+بس على إيميل من الشركة بموافقة النقل، فعشان كذا نبغى نكون جاهزين ٢٠٠٪.» فالنسخ كامل، والاختبار
+على الساندبوكس، والمفاتيح تُركَّب حين تصل.</p>
+<p><b>نزل حتى الآن:</b></p>
+<pre>modonty/lib/ngenius/          get-ngenius-access-token · complete-hosted-session-payment
+                              build-merchant-order-reference · find-ngenius-order
+                              is-payment-succeeded · is-payment-failed · primary-payment · types
+modonty/lib/tamara/           client · checkout · orders · webhook-token   (بلا تعديل — صفر استيراد من كود جبر)
+modonty/lib/security/         verify-turnstile-token · get-turnstile-site-key · rate-limiters
+modonty/app/(pay)/api/checkout/create-payment/route.ts
+حزم أُضيفت: @upstash/redis ^1.38.4 · @upstash/ratelimit ^2.0.8 · @marsidev/react-turnstile ^1.6.1</pre>
+<p><b>قياسٌ حيّ على <code>modonty_dev</code> (بلا مفاتيح مزوّد بعد):</b></p>
+<pre>POST بجسم فارغ                    → 400 invalid-body
+POST بباقة «الانطلاقة» ٦ شهور     → 502 «NGENIUS_API_KEY is not set»  ← المتوقَّع تماماً
+الطلب المُنشأ: ORD-2026-00023
+  الإجمالي 239400 هللة = ٢٬٣٩٤ ر.س   ← نفس ما تعرضه /pay/sa حرفياً
+  subtotal 208174 + vat 31226 = 239400 ✓      ٦ مدفوعة + ١ مجاناً ✓
+  status FAILED · failedReason محفوظ
+PaymentAttempt: stage=session · outcome=error · provider=NGENIUS · مربوط بالطلب ✓
+الجوال: 0112345678 (أرضي) → 400 · 0501234567 و«+966 50 123 4567» → يُقبلان ويُطبَّعان +966…
+العربية تُخزَّن سليمة: buyerName «خالد تجربة» · businessName «عيادة تجربة»</pre>
+<p><b>ثلاثة فروق مقصودة عن جبر — كلٌّ منها يمنع عطلاً:</b></p>
+<pre>١  لا upsert على (البريد+الباقة+المدّة) بل طلبٌ جديد لكل محاولة. عند جبر يُحدَّث الصفّ نفسه،
+   وعندنا لقطة السعر مجمَّدة فيه — فتحديثه بعد تغيير سعر يخلط لقطتين ويطبع فاتورة لا تطابق المدفوع.
+٢  لم يُنقل toMinorUnits: جبر يخزّن الريالات ويضرب ×١٠٠، ونحن نخزّن الهللات. تمريره يضرب ×١٠٠ ثانيةً
+   — فاتورة بمئة ضعفها، عطلٌ لا يظهر إلا على بطاقة مشترٍ حقيقي.
+٣  لا export const dynamic/runtime: يكسران البناء تحت cacheComponents (كسراه فعلاً في log-failure).</pre>
+<p><b>الباقي على هذه البطاقة:</b> صفحة <code>/pay/[market]/checkout</code> ونموذجها ومُركِّب بطاقة
+N-Genius، وشاشات <code>processing</code> و<code>success</code> و<code>failed</code>، ومسار
+<code>status</code>، ومسار تمارا. ومصر تُنشئ طلباً بانتظار التحويل وتفتح واتساب (PAY-Q12).</p>
+<p><b>لا يُنسخ أبداً:</b> مفاتيح جبر — مربوطة بسجلّه التجاري وحسابه البنكي. المطلوب لاحقاً:
+<code>NGENIUS_API_KEY · NGENIUS_OUTLET_ID · NGENIUS_API_BASE · NGENIUS_TOKEN_URL ·
+NEXT_PUBLIC_NGENIUS_HOSTED_SESSION_API_KEY · NEXT_PUBLIC_NGENIUS_SDK_URL · TAMARA_API_TOKEN ·
+TAMARA_API_URL · TURNSTILE_SECRET_KEY · NEXT_PUBLIC_TURNSTILE_SITE_KEY ·
+UPSTASH_REDIS_REST_URL · UPSTASH_REDIS_REST_TOKEN</code>.</p>
+<p><b>⚠ بندٌ لا يُنسى قبل أوّل بيع:</b> بلا مفاتيح Upstash يصير حدّ المعدّل بلا أثر — فالمسار الذي
+يُنشئ طلباً ويحاول دفعةً مفتوحٌ بلا سقف، وهو بالضبط ما يُستغلّ لتجريب البطاقات المسروقة بالجملة.</p>
+<hr>
+<p><b>✓ الدورة كاملة ١٣ سبتمبر ٢٠٢٦ — خالد: «اعمل السايكل كامل… بيست أوف ذا بيست».</b></p>
+<pre>الصفحات   /pay/[market]/checkout            نموذج + ملخّص + لوح البطاقة
+          …/checkout/processing            استعلامٌ كل ٢ث حتى ٩٠ث، لا يعلن فشلاً عند المهلة
+          …/checkout/success               الفاتورة من لقطة الطلب لا من الكتالوج
+          …/checkout/failed                سبب مترجم + إعادة محاولة + واتساب
+          …/checkout/tamara                التقسيط، نموذج منفصل بلا SDK
+المكوّنات  ngenius-mount (٣٠٠+) · checkout-form (٣٥٠+) · checkout-summary · checkout-header · tamara-form
+المسارات  api/checkout/create-payment · /status · /tamara · /log-failure
+المكتبات  lib/ngenius (٨ ملفّات) · lib/tamara (٤) · lib/security (٣) · lib/checkout/resolve-checkout-reason</pre>
+<p><b>قياسٌ حيّ (بلا مفاتيح مزوّد):</b></p>
+<pre>/pay/sa                      ٦ روابط شراء حيّة · صفر زرّ معطَّل
+/checkout?plan&months        ٢٬٣٩٤ ر.س · ٧ شهور · «منها شهر مجاني» · الزرّ يشرح سبب توقّفه
+/checkout بلا باقة           307 → /pay/sa
+/checkout/failed?order       «البطاقة مرفوضة من البنك» + رقم الطلب + مخرجان
+/checkout/success طلبٌ فاشل  307 → failed   (الحالة تحكم لا العنوان)
+/checkout/tamara             ٢٬٣٩٤ ر.س · نفس الملخّص · نموذج بلا SDK
+POST /api/checkout/tamara    503 tamara-not-configured
+POST /api/checkout/create-payment  502 «NGENIUS_API_KEY is not set» + طلبٌ مُنشأ + محاولةٌ مسجَّلة</pre>
+<p><b>عطلٌ وُجد وأُصلح في الطريق:</b> التحويل من <code>processing</code> و<code>success</code> كان يمرّر
+<code>failedReason</code> الخام في العنوان — فيقرأ المشتري «NGENIUS_API_KEY is not set» في شريط
+متصفّحه. الآن يُمرَّر المعرّف وحده وصفحة الفشل تقرأ السبب من القاعدة وتترجمه.</p>
+<p><b>ثلاثة فروق مقصودة عن جبر:</b> طلبٌ جديد لكل محاولة لا <code>upsert</code> (لقطة السعر مجمَّدة) ·
+لم يُنقل <code>toMinorUnits</code> (نخزّن الهللات، فتمريره يضرب ×١٠٠ ثانيةً) · لا
+<code>export const dynamic/runtime</code> (يكسران <code>cacheComponents</code>). ورابعٌ في الواجهة:
+زرّا البطاقة صارا <code>&lt;a&gt;</code> حقيقيَّين حين تُمرَّر وجهة — يُفتحان في تبويب ويُنسخ عنوانهما —
+ويبقيان <code>&lt;button&gt;</code> معطَّلاً في شاشة المعاينة.</p>
+<p><b>يبقى قبل أوّل بيع:</b> مفاتيح المزوّدين و<code>Upstash</code> و<code>Turnstile</code> · ويبهوك
+تمارا (<code>/api/webhooks/tamara</code> مذكورٌ في حمولتها ولم يُبنَ بعد) · ومصر (تحويل بنكي، PAY-Q12).</p></div></details>
+</article>
+<article class="card" data-id="PAY-C4" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-C4</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-C4">⧉</button></div>
+  
+  <div class="t">صفحات النتيجة — تقرأ من الطلب وحده، ولا ثابت نطاق أو بريد</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 23 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١١ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس في جبر سيو: checkout/success/page.tsx:66-76 يعيد حساب الإجمالي من سعر اليوم (PAY-AV-SNAPSHOT) · :21-22 رابط الكونسول وبريد المرسل مكتوبان في الصفحة (PAY-ISOLATE). · العمل: checkout/[orderId]/success · failed ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس في جبر سيو:</b> <code>checkout/success/page.tsx:66-76</code> يعيد حساب الإجمالي من سعر اليوم (<code>PAY-AV-SNAPSHOT</code>) · <code>:21-22</code> رابط الكونسول وبريد المرسل مكتوبان في الصفحة (<code>PAY-ISOLATE</code>).</p>
+<p><b>العمل:</b> <code>checkout/[orderId]/success</code> · <code>failed</code> · <code>processing</code> (نفس أسماء جبر سيو). كلّها تقرأ <code>CheckoutOrder</code> وحده: الرقم · الباقة · المدة والهدية · الإجمالي والضريبة · الحالة. الروابط من <code>NEXT_PUBLIC_SITE_URL</code> وبيانات التواصل من <code>Settings</code>. صفحة النجاح تقول ما يحدث بعدها: «الفاتورة وبيانات الدخول تصلك على بريدك بعد تأكيد الاستلام» (<code>PAY-Q6</code>).</p>
+<p><b>🎨 واجهة:</b> يُطبَّق <code>PAY-UIUX</code> كاملاً وقائمة فحصه (د) بنواتجها في دليل الإغلاق.</p><p><b>يُغلق بـ:</b> في مجلّد <code>checkout/</code>: <code>grep -rn "commercialPlan\.\|console.modonty.com\|@modonty.com"</code> = صفر. لقطة النجاح لطلب من C3.</p>
+<h3>أُغلقت ١٤ سبتمبر ٢٠٢٦ — أربعة أعطال سُدّت</h3>
+<pre>١ روابط مدونتي كانت نسبيّة: /terms · /refund-policy · /
+  بعد الفصل صارت تشير إلى تطبيق الدفع نفسه — فمشترٍ يُطلب منه أن يوافق على
+  الشروط قبل الدفع يهبط على ٤٠٤. ٦ مواضع في ٤ ملفّات ⇒ payment/lib/modonty-url.ts
+  (وقيمة احتياطية مقبولة هنا بخلاف payPublicUrl: رابط محتوىً عامّ لا مال)
+
+٢ console.modonty.com مكتوبٌ في الصفحة  ⇒ حُذف
+٣ modonty@modonty.com مكتوبٌ في الصفحة  ⇒ حُذف
+
+٤ وعدٌ لا يقع: «تم إرسال بريد إلكتروني يحتوي بيانات الدخول» وزرٌّ «افتح حسابك».
+  والحقيقة (PAY-Q6): الحساب يُنشأ بيدٍ بعد تأكيد الاستلام، والفاتورة بضغطة زرّ.
+  فزرٌّ يقود إلى شاشة دخولٍ ترفضه يُنتج شكوى بعد ساعة لا ثقة.
+  صارت: ثلاث خطوات صادقة (وصلَنا المبلغ ← نجهّز خلال ٧٢ ساعة ← تصلك الفاتورة
+  وبيانات الدخول) + زرّ واتساب من البيئة يحمل رقم الطلب.</pre>
+<h3>دليل الإغلاق — بطلبات حقيقية من القاعدة</h3>
+<pre>success    · PAID     ORD-2026-00033   200
+failed     · FAILED   ORD-2026-00032   200
+processing · AWAITING ORD-2026-00030   200
+طلبٌ غير موجود                          307 → /pay/sa
+
+الصفحة      روابط نسبية  مطلقة لمدونتي  console ثابت  إيميل ثابت  واتساب
+النجاح           0             2              0            0         2
+الفشل            0             0              0            0         2
+الانتظار         0             0              0            0         0
+
+ومن HTML النجاح الخام:
+  href="https://www.modonty.com/refund-policy"
+  href="https://wa.me/966541018020?text=…ORD-2026-00033"
+  «الزخم · ٧ أشهر» · «٧٬١٩٤ ر.س.» · «شامل ضريبة القيمة المضافة ١٥٪»
+  — كلّها من صفّ الطلب ومن الإعدادات، لا من الكتالوج ولا من الكود.</pre>
+<p><b>ما لم يُقَس:</b> اللقطات البصرية على ١٢٨٠ والجوّال فاتحاً وغامقاً — تُؤخذ مع مراجعة المرحلة (<code>PAY-P3</code>).</p></div></details>
+</article>
+<article class="card" data-id="PAY-D2" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-D2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-D2">⧉</button></div>
+  
+  <div class="t">🟨 كود · طبقة N-Genius منقولة من جبر</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 26 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: jbrseo.com/lib/ngenius/: auth.ts (٧٢ سطراً) · orders.ts (٦٧) · find-order.ts (٦٥) · types.ts (٧٩). · المرجع: PAY-KEEP — دروس مدفوعة الثمن تُنسخ بأسمائها.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> <code>jbrseo.com/lib/ngenius/</code>: <code>auth.ts</code> (٧٢ سطراً) · <code>orders.ts</code> (٦٧) · <code>find-order.ts</code> (٦٥) · <code>types.ts</code> (٧٩).</p>
+<p><b>المرجع:</b> <code>PAY-KEEP</code> — دروس مدفوعة الثمن تُنسخ بأسمائها.</p>
+<p><b>العمل:</b> نسخ الملفّات الأربعة بنفس الأسماء إلى <code>shared/lib/payments/ngenius/</code>. التغييرات المسموحة ثلاثة فقط: (١) قراءة البيئة من <code>env.ts</code> · (٢) أي إشارة إلى <code>Subscriber</code> تصير <code>CheckoutOrder</code> · (٣) إزالة أي ثابت نطاق أو اسم. لا «تحسين». N-Genius واجهة REST بلا SDK سيرفر — المرجع كود جبر سيو نفسه، وأي اختلاف يُوثَّق في تعليق.</p>
+<p><b>يُغلق بـ:</b> <code>diff</code> بين الأصل والنسخة لكل ملف يُظهر التغييرات الثلاثة فقط — الناتج الخام في البطاقة.</p>
+<hr>
+<p><b>✓ نزلت في <code>modonty/lib/ngenius/</code> لا في <code>shared/</code>:</b> مستهلكوها كلّهم في مدونتي (الأدمن يقرأ نتائجها من القاعدة لا من المزوّد)، وقاعدة المجلّدات تقول إن ما يخدم تطبيقاً واحداً يسكن فيه. تُرفَع إلى <code>shared/</code> يوم يظهر مستهلكٌ ثانٍ.</p>
+<pre>get-ngenius-access-token   رمزٌ مكاش ٣٠ث قبل انتهائه · نداءٌ واحد عند التزاحم
+complete-hosted-session-payment · build-merchant-order-reference
+find-ngenius-order · is-payment-succeeded · is-payment-failed · primary-payment · types</pre>
+<p><b>ما لم يُنقل عمداً:</b> <code>toMinorUnits</code> — جبر يخزّن الريالات ويضرب ×١٠٠، ونحن نخزّن الهللات. تمريره على مبلغنا يضربه ×١٠٠ ثانيةً: فاتورة بمئة ضعفها، لا تظهر إلا على بطاقة مشترٍ حقيقي.</p></div></details>
+</article>
+<article class="card" data-id="PAY-D3" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-D3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-D3">⧉</button></div>
+  
+  <div class="t">🟨 كود · جلسة الدفع وحقل البطاقة — منقولان بحراساتهما</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 27 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: api/checkout/create-payment/route.ts (٢٤١ سطراً · preferredRegion [&quot;fra1&quot;,&quot;bom1&quot;] سطر 18 · الرفض الفوري بلا تمرير للـSDK 191-234) · CheckoutForm.tsx (٥٣٩ · مهلة الجلسة ٨ث:161 · مهلة التحقّق ٥د:229) · NGeniusMount.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> <code>api/checkout/create-payment/route.ts</code> (٢٤١ سطراً · <code>preferredRegion ["fra1","bom1"]</code> سطر 18 · الرفض الفوري بلا تمرير للـSDK 191-234) · <code>CheckoutForm.tsx</code> (٥٣٩ · مهلة الجلسة ٨ث:161 · مهلة التحقّق ٥د:229) · <code>NGeniusMount.tsx</code> (٤٢٦ · ارتفاع الإطار 208-226 · حارس Strict Mode 104,159) · <code>lib/turnstile.ts</code> (٧٥) · <code>lib/rate-limit.ts</code> (٦٩).</p>
+<p><b>العمل:</b></p>
+<pre>١  المسار مع صفحته (قاعدة «route.ts يسكن مع الصفحة التي تخدمه»):
+   (pay)/pay/[market]/checkout/[orderId]/api/create-payment/route.ts · preferredRegion نفسه
+   يقرأ CheckoutOrder (AWAITING_PAYMENT فقط، وإلا 409) · يرسل totalMinor وcurrency وnumber مرجعاً للتاجر
+   · يكتب PaymentTransaction { provider NGENIUS · providerOrderRef } · يرجع مرجع الجلسة للمتصفّح
+٢  turnstile.ts وrate-limit.ts ← shared/lib/payments/ بالقيم المصحَّحة (PAY-KEEP)
+٣  CheckoutForm.tsx وNGeniusMount.tsx ← checkout/[orderId]/components/ حرفياً؛ Subscriber ← order.
+   الأرقام الأربعة (٨ث · ٥د · الارتفاع · الحارس) تبقى كما هي.
+٤  مفاتيح المتصفّح NEXT_PUBLIC_NGENIUS_* من البيئة عبر env.ts.</pre>
+<p><b>🎨 واجهة:</b> يُطبَّق <code>PAY-UIUX</code> كاملاً وقائمة فحصه (د) بنواتجها في دليل الإغلاق.</p><p><b>يُغلق بـ:</b> فتح صفحة الدفع لطلب من C3 على sandbox يعرض إطار البطاقة كاملاً غير مقصوص (لقطة)، وسجلّ create-payment يُظهر 201 مع <code>providerOrderRef</code> (ناتج خام)، وطلب بحالة PAID يرجع 409.</p>
+<hr>
+<p><b>✓ <code>ngenius-mount.tsx</code> و<code>checkout-form.tsx</code>.</b> نُقلت كل حراسة تعلّمها جبر من إخفاق حقيقي:</p>
+<pre>حارس الوضع الصارم      يمنع تكديس إطارين عند التأثير المزدوج في التطوير
+ارتفاع الإطار           الـSDK يثبّته عند ١٥٠px فيسقط صفّ اسم الحامل تحت الحافة — نتجاوزه من الخارج
+firstName لا يُمرَّر      تمريره يقفل خانة اسم حامل البطاقة: صحيحٌ لو كان المشترك هو الحامل،
+                        وخاطئٌ في الحالة الشائعة (بطاقة زوج أو قريب أو جهة عمل)
+نافذة التحقّق الثنائي    مكتوبة بلا Radix: forceMount عنده يقفل الصفحة كلّها ويبقى القفل
+مهلة ٨ث للجلسة          بطاقات أجنبية تجعل الـSDK يعلّق بلا ردّ — تصير إخفاقاً مسجَّلاً لا زرّاً ميّتاً
+مهلة ٥د للتحقّق الثنائي  أبعد من أي OTP حقيقي؛ وعند تجاوزها نسقط إلى processing لا إلى تخمين
+رفضٌ فوريّ               لا يُسلَّم للـSDK: بلا خطوة تحقّق يبقى وعده معلَّقاً إلى الأبد
+الإلغاء لا يُخمَّن         الـSDK يطوي «ألغى المستخدم» في status ERROR، فلا يُقال «بنكك رفض»</pre></div></details>
+</article>
+<article class="card" data-id="PAY-D4" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-D4</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-D4">⧉</button></div>
+  
+  <div class="t">🟨 كود · ويبهوك N-Genius — سرٌّ مشترك ثم سؤال المزوّد</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 28 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: app/api/webhooks/n-genius/route.ts (١٦٨ سطراً · التحقّق المزدوج 94-117) · WebhookEvent @unique providerEventId (سكيما جبر سيو 71-84). sendAdminTelegram في shared/lib/telegram/client.ts:70 (معطَّل خارج الإنتاج — سطر 71). ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> <code>app/api/webhooks/n-genius/route.ts</code> (١٦٨ سطراً · التحقّق المزدوج 94-117) · <code>WebhookEvent @unique providerEventId</code> (سكيما جبر سيو 71-84). <code>sendAdminTelegram</code> في <code>shared/lib/telegram/client.ts:70</code> (معطَّل خارج الإنتاج — سطر 71).</p>
+<p><b>المرجع:</b> <code>PAY-KEEP</code> · <code>PAY-Q6</code> و<code>PAY-Q7</code> (لا عميل ولا فاتورة من الويب هوك).</p>
+<p><b>العمل:</b> <code>modonty/app/api/webhooks/n-genius/route.ts</code> — يبقى تحت <code>app/api</code> لأن المزوّد يحمل عنوانه (قاعدة «من يملك الـURL»). <code>preferredRegion</code> نفسه. الترتيب:</p>
+<pre>١  السرّ المشترك ← وإلا 401
+٢  كتابة PaymentWebhookEvent (providerEventId فريد) ← التكرار يرجع 200 بلا عمل
+٣  findOrder من N-Genius بمرجع الطلب — لا ثقة بجسم الويب هوك
+٤  تحديث مشروط: updateMany({ where: { id, status: "AWAITING_PAYMENT" }, data: { status: "PAID", paidAt } })
+   + PaymentTransaction (status · providerReference · settledAt)؛ الفشل ← FAILED + failedReason
+٥  notify-payment-received (PAY-E7) — لا يعطّل المسار
+٦  processedAt على الحدث؛ أي استثناء يُكتب في error ويرجع 500 كي يعيد المزوّد الإرسال</pre>
+<p><b>يُغلق بـ:</b> إرسال نفس الحدث مرّتين بـ<code>curl</code> بالسرّ ← صفّ واحد في <code>payment_webhook_events</code> والطلب PAID مرّة و<code>paidAt</code> واحد؛ حدث بسرّ خاطئ ← 401. ناتج خام.</p>
+<hr>
+<p><b>✓ <code>modonty/app/(pay)/api/webhooks/n-genius/route.ts</code>.</b> عنوانه <code>/api/webhooks/n-genius</code> (المجموعة لا تظهر) فيبقى عقداً خارجياً صالحاً للضبط في بوّابتهم.</p>
+<p><b>الدليل الحيّ — وهو أهمّ اختبار في المسار كلّه:</b></p>
+<pre>بلا سرّ            ← 401
+بسرٍّ خاطئ          ← 401
+بسرٍّ صحيح وجسمٍ يدّعي CAPTURED لطلبٍ فاشل:
+   الردّ            ← 503 verify-failed
+   حالة الطلب      ← بقيت FAILED (لم تصر PAID)
+   الحدث سُجِّل      ← provider=NGENIUS · error=«NGENIUS_OUTLET_ID is not set» · processedAt فارغ</pre>
+<p>أي أن من يعرف رقم طلبٍ ويسرّب السرّ لا يستطيع أن يجعله مدفوعاً: الجسم لا يُصدَّق، والحقيقة تُطلب من المزوّد. و<code>providerEventId</code> فريد فالإعادة تُعالَج مرّة واحدة.</p>
+<p><b>ملاحظة تقنية تكرّرت:</b> حذف الأحداث بـ<code>{ processedAt: null }</code> أرجع صفراً — Mongo لا يطابق الحقل <b>الغائب</b> بـ<code>null</code>؛ يلزم <code>{ isSet: false }</code> أو الحذف بالمعرّف.</p></div></details>
+</article>
+<article class="card" data-id="PAY-D5" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-D5</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-D5">⧉</button></div>
+  
+  <div class="t">🟨 كود · الاستعلام الاحتياطي وشاشة الانتظار وصفحتا النتيجة</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 29 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: api/checkout/status/route.ts (١٤٨) · log-failure/route.ts (٧٤) · lib/checkout-reasons.ts (٤٠ · ١٠ أسباب عربية · حدّ ٣ محاولات) · checkout/processing/. · العمل: ١ checkout/[orderId]/api/status/route.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> <code>api/checkout/status/route.ts</code> (١٤٨) · <code>log-failure/route.ts</code> (٧٤) · <code>lib/checkout-reasons.ts</code> (٤٠ · ١٠ أسباب عربية · حدّ ٣ محاولات) · <code>checkout/processing/</code>.</p>
+<p><b>العمل:</b></p>
+<pre>١  checkout/[orderId]/api/status/route.ts: يسأل N-Genius (find-order) ويحسم بنفس منطق D4 (نفس الدالّة — لا نسخة ثانية)
+٢  processing/page.tsx تستطلعه حتى ٥ دقائق ثم تحوّل إلى success أو failed
+٣  api/log-failure ← PaymentAttempt (بلا بيانات بطاقة) · checkout-reasons.ts ← shared/lib/payments/
+٤  حدّ ٣ محاولات لكل طلب ثم رسالة «تواصل معنا» بزرّ واتساب</pre>
+<p><b>🎨 واجهة:</b> يُطبَّق <code>PAY-UIUX</code> كاملاً وقائمة فحصه (د) بنواتجها في دليل الإغلاق.</p><p><b>يُغلق بـ:</b> تعطيل الويب هوك مؤقّتاً (سرّ خاطئ في البيئة) وإتمام دفع sandbox ← الاستعلام يحسم الطلب PAID خلال المهلة (سجلّ زمني خام)؛ بطاقة رفض اختبارية ← صفّ <code>PaymentAttempt</code> بسبب عربي.</p>
+<hr>
+<p><b>✓ <code>api/checkout/status</code> · <code>checkout/processing</code> · <code>checkout/success</code> · <code>checkout/failed</code>.</b></p>
+<pre>status      يقرأ القاعدة أوّلاً؛ فإن كان الطلب معلَّقاً سأل المزوّد بالمرجع المحفوظ ووفّق
+            (يستردّ ويبهوكاً ضائعاً بلا أن يفعل المشتري شيئاً)
+processing  كل ٢ث حتى ٩٠ث · وعند المهلة لا يعلن فشلاً: يقول إن التأكيد يطول والإيميل سيصل
+            — إعلان الفشل هنا يدفع من دفع فعلاً إلى الدفع مرّتين
+success     كل رقم من لقطة الطلب لا من الكتالوج: فاتورة مشترٍ قديم لا تتغيّر بتعديل سعر
+failed      سببٌ مترجَم + رقم الطلب + مخرجان (إعادة محاولة بنفس الباقة · واتساب)</pre>
+<p><b>عطلٌ وُجد بالقياس وأُصلح:</b> التحويل كان يمرّر <code>failedReason</code> الخام في العنوان، فيقرأ المشتري «NGENIUS_API_KEY is not set» في شريط متصفّحه. الآن يُمرَّر المعرّف وحده وتقرأ الصفحة السبب من القاعدة وتترجمه.</p>
+<p><b>قياس:</b> <code>success</code> لطلبٍ فاشل ⇐ 307 إلى <code>failed</code> — الحالة تحكم لا العنوان.</p></div></details>
+</article>
+<article class="card" data-id="PAY-D6" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-D6</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-D6">⧉</button></div>
+  
+  <div class="t">🟨 كود · تمارا — أهلية ثم تفويض ثم قبض</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 30 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس: lib/tamara/ (checkout.ts ١٧٣ · client.ts ١٠٠ · orders.ts ٩٥ · webhook-token.ts ٦١) · api/checkout/tamara/route.ts (٢١٣) · checkout/tamara/_components/TamaraForm.tsx. الرفض لمصر بنصّ الردّ (checkout.ts:79) ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس:</b> <code>lib/tamara/</code> (checkout.ts ١٧٣ · client.ts ١٠٠ · orders.ts ٩٥ · webhook-token.ts ٦١) · <code>api/checkout/tamara/route.ts</code> (٢١٣) · <code>checkout/tamara/_components/TamaraForm.tsx</code>. الرفض لمصر بنصّ الردّ (<code>checkout.ts:79</code>) · مدينة «الرياض» مكتوبة في بناء العنوان (<code>checkout.ts:155</code> — <code>PAY-ISOLATE</code>).</p>
+<p><b>العمل:</b> النقل بنفس الأسماء إلى <code>shared/lib/payments/tamara/</code> + المسار مع صفحته + النموذج في <code>checkout/[orderId]/tamara/</code>. الثابت يُزال (المدينة من بيانات المشتري أو حقل اختياري). خيار تمارا يظهر لسوق SA فقط. ويب هوك تمارا بنفس بنية D4 (<code>webhook-token.ts</code>). الأهلية تفشل مفتوحة (٢٠٠ مللي ثانية) كما في الأصل.</p>
+<p><b>🎨 واجهة:</b> يُطبَّق <code>PAY-UIUX</code> كاملاً وقائمة فحصه (د) بنواتجها في دليل الإغلاق.</p><p><b>يُغلق بـ:</b> عملية تمارا sandbox كاملة ← PAID + <code>PaymentTransaction provider TAMARA</code>. <b>⏸</b> إن لم تتوفّر مفاتيح تمارا sandbox في ملف جبر سيو، يُوسم البند «موقوف على مفاتيح» ويُبلَّغ خالد ويُتابع D7.</p>
+<hr>
+<p><b>✓ <code>api/checkout/tamara</code> · <code>checkout/tamara</code> · <code>api/webhooks/tamara</code> · <code>lib/tamara/</code> (٤ ملفّات بلا تعديل — صفر استيراد من كود جبر).</b></p>
+<pre>الأهلية تُسأل قبل إنشاء أي صفّ — مشترٍ سترفضه تمارا لا يُرسَل إليها أصلاً. وتفشل مفتوحةً
+(أي انقطاعٍ يُجيب «مؤهَّل») بحسب إرشادهم هم.
+التفويض من approved فقط والقبض من authorised فقط، ورفضُ «تجاوزت الحالة» (409) يُعامَل
+كأن الخطوة تمّت — لأن إعدادَي التفويض والقبض التلقائيين لا يظهران لنا وقد يتغيّران بلا إخبار.
+tax_amount = 0 ليس لأن الضريبة معدومة بل لأن سعرنا شاملٌ لها (PAY-Q7): إعلانها يجعل تمارا
+تضيفها فوق الإجمالي فيدفع المشتري مرّتين.
+جدول الأقساط لا يُطبع على صفحتنا: تمارا تقرّره من المبلغ ومن حساب المشتري، وصفحتها تذكره
+قبل أي تأكيد. وطبعُ مثالٍ هنا يضع رقماً لا نقف خلفه بجانب رقمٍ نقف خلفه.</pre>
+<p><b>قياس:</b> <code>/checkout/tamara?plan&amp;months</code> ⇐ ٢٬٣٩٤ ر.س ونفس الملخّص · <code>POST /api/checkout/tamara</code> ⇐ 503 <code>tamara-not-configured</code> · الويبهوك بلا رمز وبرمزٍ مزيَّف ⇐ 401.</p></div></details>
+</article>
+<article class="card" data-id="PAY-D7" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-D7</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-D7">⧉</button></div>
+  
+  <div class="t">🟨 كود · المرحلة ٤ مغلقة — دفعة كاملة نجحت على الساندبوكس</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 31 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المرجع: PAY-ISOLATE شرط الاكتمال · PAY-P4. ١ grep -rn &quot;ngenius\|tamara\|modonty.com\|jbrseo&quot; shared/lib/payments modonty/app/(pay) modonty/app/api/webhooks المقبول: أسماء متغيّرات بيئة وتعليقات فقط.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المرجع:</b> <code>PAY-ISOLATE</code> شرط الاكتمال · <code>PAY-P4</code>.</p>
+<pre>١  grep -rn "ngenius\|tamara\|modonty.com\|jbrseo" shared/lib/payments modonty/app/(pay) modonty/app/api/webhooks
+   المقبول: أسماء متغيّرات بيئة وتعليقات فقط. أي ثابت ← يُنقل إلى البيئة قبل الإغلاق.
+٢  عملية دفع كاملة على sandbox: /pay/sa ← طلب ← بطاقة اختبار ← ويب هوك ← PAID ← success
+٣  تبديل NGENIUS_API_BASE وحده في .env.local وإعادة التشغيل — بلا تعديل سطر كود —
+   والصفحة تكلّم البيئة الأخرى (يُثبت من ردّ المزوّد أو رفضه).</pre>
+<p><b>يُغلق بـ:</b> ناتج grep + سجلّ العملية (رقم الطلب · providerReference · paidAt) + <code>git diff --stat</code> = ٠ في الخطوة ٣ + إغلاق <code>PAY-P4</code> في نفس الدور.</p><p><b>⏸ بوّابة المرحلة:</b> بعد إغلاق هذا البند <u>توقّف</u>. لا تفتح بند المرحلة التالية. اكتب لخالد تقرير مراجعة المرحلة (ما بُني · الأدلّة · اللقطات · ما بقي · ما يحتاج قراره) وانتظر «موافق». — خالد: «خلص مرحلة نراجعها».</p>
+<hr>
+<p><b>حال الشرط ١٣ سبتمبر ٢٠٢٦:</b> كل ما يمكن قياسه بلا مفاتيح قيس ومرّ (انظر D2…D6). والباقي — دفعةٌ كاملة على الساندبوكس ثم اختبار العزل بتبديل القيم — محجوزٌ على <code>PAY-D1</code> وحده.</p>
+<hr>
+<p><b>✓ أُغلق ١٣ سبتمبر ٢٠٢٦ — أوّل مبلغ يمرّ المسار كلّه.</b></p>
+<pre>باقات ← دفع ← بطاقة 4111… ← VISA Secure (3DS) ← OTP 1234 ← processing ← success
+
+ORD-2026-00031 · PAID · paidAt 19:59:54
+خالد التجريبي · +966501234567 · عيادة الاختبار · الزخم
+٦ مدفوعة + ١ مجاناً · 625565 + 93835 = 719400 هللة = ٧٬١٩٤ ر.س
+المعاملة: NGENIUS · PURCHASED · 719400 SAR · settled
+  providerOrderRef  f89231ea-…   (مرجع الطلب)
+  providerReference 0baa37b5-…   (مرجع الدفعة)
+حارس المبلغ سمح لأن المزوّد رصد 719400 بالضبط
+محاولات فاشلة على الطلب: صفر · أحداث ويبهوك: صفر (لا عنوان عام — الاستعلام الاحتياطي أتمّها)</pre>
+<p>وأن الاستعلام الاحتياطي هو من أتمّ العملية <b>دليلٌ بنفسه</b> على أن شبكة الأمان تعمل: لو ضاع الويبهوك في الإنتاج، الطلب يُحسم بلا تدخّل.</p>
+<p><b>عطلان وجدتهما التجربة — ولم يكن أيٌّ منهما ليظهر بلا دفعة حقيقية:</b></p>
+<pre>١ الجوال: الحقل يعرض «+966» لاصقاً ويطلب 5XXXXXXXX، وكان يُرسل المحلّي وحده.
+  و`toE164` يرفضه بحقّ — رقمٌ بلا صفر ولا رمز دولة لا يُعرف بلده (منسّقٌ يخدم السوقين).
+  قياس: «501234567» ⇐ 400 · «0501234567» و«+966501234567» ⇐ يمرّان.
+  الحلّ: `checkout/helpers/compose-sa-phone.ts` يضمّ الرمز في النموذجين. ولم يُلمس toE164.
+
+٢ مرجع الطلب — الأخطر: كنت أحفظ `reference` وهو مرجع **الدفعة**، والصحيح `orderReference`
+  وهو مرجع **الطلب**. النتيجة: 404 invalidOrderReference، أي طلبٌ **مدفوع فعلاً** يعلق على
+  «بانتظار الدفع» ولا الاستعلام ولا الويبهوك يجد ما يسأل عنه — فلوس تدخل ولا نعرف.
+  (جبر سيو يقرأ orderReference منذ البداية؛ الخطأ كان في نقلي.)</pre></div></details>
+</article>
+<article class="card" data-id="PAY-MONEY" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty admin" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-MONEY</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-MONEY">⧉</button></div>
+  
+  <div class="t">🟨 كود · تدقيق مسار الفلوس — ثغرة وُجدت وسُدّت</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">خالد: «نتأكد إن الكود اللوجيك ما فيه بق… أهم حاجة الفلوس شغال صحيح ١٠٠٪ من الأدمن لحد الدفع». ١ — الرقم من الأدمن حتى المزوّد: ٩ من ٩ تركيبات ✓ الخطر الأول أن حساب العرض وحساب الخصم في ملفَّين: term-pricing.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>خالد:</b> «نتأكد إن الكود اللوجيك ما فيه بق… أهم حاجة الفلوس شغال صحيح ١٠٠٪ من الأدمن لحد الدفع».</p>
+<p><b>١ — الرقم من الأدمن حتى المزوّد: ٩ من ٩ تركيبات ✓</b></p>
+<p>الخطر الأول أن <b>حساب العرض وحساب الخصم في ملفَّين</b>: <code>term-pricing.ts</code> يرسم البطاقة و<code>build-order-snapshot.ts</code> يبني الطلب. لو انحرفا يرى المشتري رقماً ويُخصم منه آخر. قيسا على كل باقة × كل مدّة من القاعدة الحيّة:</p>
+<pre>الانطلاقة SA   3m  عرض  119700  خصم  119700 ✓    6m  239400 = 239400 ✓   12m  478800 = 478800 ✓
+الزخم     SA   3m       359700       359700 ✓    6m  719400 = 719400 ✓   12m 1438800 = 1438800 ✓
+الريادة   SA   3m       899700       899700 ✓    6m 1799400 = 1799400 ✓  12m 3598800 = 3598800 ✓
+مصر: ترمي عمداً (ضريبتها غير مقيسة) — ومحجوبة أصلاً على المسار بـmarket: z.literal("SA")</pre>
+<p>وفُحص معها في نفس الجولة: التفكيك الضريبي يجمع بالضبط (subtotal+vat=total) · كل المبالغ أعداد صحيحة موجبة · التحويل إلى الوحدة الكبرى لتمارا بلا فقد كسر · العملة تطابق السوق · النسبة المنسوبة ١٥٠٠ نقطة أساس تماماً. <b>صفر إخفاق.</b> ولا سعرين نشطين لنفس (باقة+سوق) — ٦ أسعار نشطة بلا تكرار.</p>
+<p><b>٢ — 🔴 الثغرة: كنّا نصدّق «نجحت الدفعة» بلا أن نسأل «بكم؟»</b></p>
+<pre>قبل: status/route.ts و webhooks/n-genius/route.ts يقرآن الحالة وحدها (CAPTURED)
+     ويقلبان الطلب إلى PAID. صفر مقارنة بين مبلغ المزوّد و order.totalMinor.
+     أي: طلبٌ بـ١٧٬٩٩٤ ريالاً يُوسم مدفوعاً لأن دفعةً ما نجحت — أيّاً كان مقدارها —
+     ثم تُصدَر فاتورةٌ بالمبلغ الكامل ويُسلَّم الاشتراك. والفارق لا يظهر في أي شاشة
+     لأن لا شاشة تقارن.
+     (الثغرة نفسها قائمة عند جبر سيو حتى اليوم — قيست ١٣ سبتمبر ٢٠٢٦.)</pre>
+<p>الطرق التي تُنتج فرقاً حقيقياً: قبضٌ جزئي · جلسةٌ أُعيد استعمالها لطلبٍ آخر · عملةٌ مختلفة يقبلها الحساب · تلاعبٌ في الوسيط. لا واحدةٌ شائعة، وكلّها تُخرج مالاً.</p>
+<p><b>بعد:</b> <code>modonty/lib/ngenius/assert-amount-matches-order.ts</code> يُنادى في <b>الموضعين</b> قبل أي <code>PAID</code>. وعند أي اختلاف <b>لا يُوسم الطلب مدفوعاً ولا فاشلاً</b> — يبقى كما هو، وتُكتب محاولةٌ بـ<code>reasonCode: amount_guard</code> ليقرّر إنسان. تركُ طلبٍ معلَّقاً خطؤه مكالمةٌ مع مشترٍ؛ ووسمُه مدفوعاً بلا مال خطؤه لا يُكتشف.</p>
+<p>والويبهوك يردّ <code>200 amount-mismatch-held</code> لا خطأً: الحدث وصل وسُجِّل، وردُّ الخطأ يجعل المزوّد يعيد الإرسال بلا نهاية على حالةٍ لن تتغيّر.</p>
+<pre>اختبار الحارس — ٨ من ٨:
+  مطابق تماماً            ← يمرّ
+  أقلّ بهللة واحدة        ← يُمنع  amount_mismatch provider=239399 order=239400
+  أقلّ بريال · ريال واحد  ← يُمنع
+  أكثر من المطلوب         ← يُمنع  (الزيادة شذوذٌ أيضاً، لا هديّة)
+  عملة مختلفة بنفس الرقم  ← يُمنع  currency_mismatch provider=EGP order=SAR
+  ردٌّ بلا مبلغ            ← يُمنع  amount_missing_in_provider_response
+  ← «لا أستطيع التأكيد» تُعامَل معاملة «لا يطابق»، لا معاملة «يمرّ».</pre>
+<p><b>٣ — ما فُحص ولم يكن عطلاً</b></p>
+<pre>السعر لا يُقرأ من الطلب أبداً — الجسم يحمل شريحة الباقة وعدد الأشهر فقط
+المدّة تُقبل فقط إن كانت isActive في CommercialTermPolicy
+الباقة تُقبل فقط إن كانت isPublished ولها سعر نشط لهذا السوق
+رقم الطلب من عدّاد ذرّي (Counter upsert) + @unique على number
+قلب الحالة يتمّ داخل db.$transaction مع صفّ المعاملة — لا صفٌّ يتقدّم على أخيه</pre>
+<p><b>٤ — ملاحظة باقية (لا عطل الآن):</b> كل ضغطة «ادفع» ناجحة تُنشئ طلباً جديداً — مقصودٌ كي لا تُخلط لقطتا سعرٍ في صفّ واحد. والنموذج يمنع الضغط المزدوج (<code>disabled={submitting}</code>)، لكن مشترياً يُعيد المحاولة بعد فشلٍ ظاهريّ قد يُنشئ طلبين. يُكتشف بسهولة من شاشة الطلبات (نفس البريد ونفس المبلغ خلال دقائق)، ويُحسم يوم يظهر فعلاً لا قبله.</p></div></details>
+</article>
+<article class="card" data-id="PAY-SPLIT" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty admin" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-SPLIT</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-SPLIT">⧉</button></div>
+  
+  <div class="t">✔ قرار مُنفَّذ · فصل الدفع في حزمة payment — الخطوات الثماني مغلقة</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">خالد (١٤ سبتمبر ٢٠٢٦): «ما في مجال للمخاطرة نهائياً… نطلع البيمنت في ريبو مستقلّ زي مدونتي وأدمن وكونسول». فيصير في المونوريبو خمس حزم: modonty · admin · console · shared · payment. لماذا —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>خالد (١٤ سبتمبر ٢٠٢٦):</b> «ما في مجال للمخاطرة نهائياً… نطلع البيمنت في ريبو مستقلّ زي مدونتي وأدمن وكونسول». فيصير في المونوريبو خمس حزم: <code>modonty</code> · <code>admin</code> · <code>console</code> · <code>shared</code> · <b><code>payment</code></b>.</p>
+<h3>لماذا — المخاطرة وقعت اليوم مرّتين، لا احتمالاً</h3>
+<pre>كودُ المدوّنة أوقف صفحةَ الدفع وهي لا تستورده ولا تعرفه:
+  ١ جرس الإشعارات ← auth() ← ٦ أخطاء JWT لكل طلب على /pay/sa (كوكي تالف)
+  ٢ «Route /pay/[market]: crypto.getRandomValues() while prerendering»
+     الأثر: GlobalNotFound ← TopNav ← MobileNotificationBadge
+
+السبب البنيويّ: app/not-found.tsx يركّب SiteShell، وNext يجهّز ٤٠٤ مع كل مسار —
+فمكوّنات المدوّنة تدخل شجرة مسار الدفع رغم أنه خارج مجموعة (site) تماماً.
+أي أن أيّ تعديل على قائمة المدوّنة يستطيع إيقاف الدفع، بلا أن يقصد أحد.</pre>
+<h3>الفصل رخيص — لأن الترابط صفر (قياس)</h3>
+<pre>مسار الدفع يستورد من كود مدونتي        صفر
+                من @modonty/shared      ١٣ ملفّاً (مشتركة أصلاً، تبقى كما هي)
+                من @/lib                مكتبات كُتبت للدفع وحده (ngenius · tamara · security · checkout)
+مدونتي تستورد من مسار الدفع            صفر
+مدونتي تربط إلى /pay                    صفر
+جداول الدفع الستّة — مستهلكوها:        مدونتي(غير الدفع) ٠ · الأدمن ٣١ · الكونسول ٠
+ما ينتقل: ٤٬١٣٤ سطراً · ٢٢ ملفّ مسار + ٤ مجلّدات مكتبة</pre>
+<p>أي أن الدفع اليوم <b>جزيرةٌ داخل مدونتي</b>: تشاركها الحاوية والمخاطرة، ولا تشاركها سطراً.</p>
+<p><b>نُفِّذ كاملاً في ١٤ سبتمبر ٢٠٢٦.</b> الثماني كلّها مغلقة بأدلّتها، وبقي فعلٌ واحد عند خالد: ربط <code>pay.modonty.com</code> على Vercel (<code>PAY-F3</code>).</p>
+<h3>الخطوات الثماني — كلٌّ أُغلقت بقياسها</h3>
+<pre>PAY-S1  إنشاء الحزمة — تطبيقٌ فارغ يعمل، ومدونتي لا تُمسّ
+PAY-S2  نقل ٤٬١٣٤ سطراً — نقلٌ لا نسخ
+PAY-S3  النطاق — pay.modonty.com مستقلّ، صفر سطر في مدونتي      (يحلّ محلّ PAY-F3)
+PAY-S4  إبطال الكاش — نقطة داخل payment، والوسم يخرج من مدونتي
+PAY-S5  البيئة — عزل مفاتيح البوّابة                            (يعيد كتابة PAY-F4)
+PAY-S6  عناوين المزوّدين — الويبهوك يصل الحارس (٤٠١ لا ٤٠٤)
+PAY-S7  صفر بقايا في مدونتي — ملفّات وحزم وبيئة ووسم كاش تُحذف (بأمرك ١٤ سبتمبر)
+PAY-S8  إثبات أن مدونتي لم تتأثّر — شرط إغلاق الفصل كلّه</pre>
+<p>وترتيبها إجباريّ: كلٌّ منها تفترض ما قبلها. و<code>PAY-C4</code> (صفحات النتيجة) تُنفَّذ <b>بعد</b> <code>PAY-S2</code> لا قبله — ملفّاتها ستنتقل، فتُكتب مرّة واحدة في مكانها الأخير.</p>
+<h3>النمط الرسميّ: Multi-Zones</h3>
+<p>تطبيقات Next منفصلة على نطاقٍ واحد، يوجّهها <code>rewrites</code> (توثيق Next 16 · <code>multi-zones.mdx</code>). فالعنوان يبقى <code>modonty.com/pay/…</code> ولا يرى المشتري فرقاً.</p>
+<h3>ما لا يتغيّر إطلاقاً</h3>
+<pre>قاعدة البيانات      واحدة · لا نسخ ولا مزامنة · الأدمن يقرأ الطلبات كما هو اليوم
+@modonty/shared     الكتالوج · لقطة الطلب · الضريبة · البطاقة — تُستهلك من الحزمتين
+shared/components/commercial  نفس المكوّن لمعاينة الأدمن وصفحة البيع (PAY-C2)
+عنوان المشتري        modonty.com/pay/… كما هو
+الأدمن               ٣١ موضعاً تقرأ جداول الدفع — لا تُمسّ</pre>
+<h3>التوقيت</h3>
+<p><b>الآن، قبل أوّل ريال.</b> الهجرة على مسارٍ حيّ تعني نافذةً يكون فيها عنوانٌ يعمل وآخر لا، وطلباتٍ في الطريق بين التطبيقين. واليوم المسار كلّه مُختبَر على الساندبوكس ولم يمرّ به مشترٍ واحد — فأرخص لحظة لنقله هي هذه.</p>
+<p><b>التقدير:</b> يوم إلى يومين — ثماني بطاقات تُغلق واحدةً واحدةً.</p></div></details>
+</article>
+<article class="card" data-id="PAY-S1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-S1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-S1">⧉</button></div>
+  
+  <div class="t">🟨 كود · ١/٨ إنشاء حزمة payment — تطبيقٌ فارغ يعمل، ومدونتي لا تُمسّ</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 1 من 7</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المرجع: PAY-SPLIT — القرار والخطة كاملةً. · ما أُنشئ: حزمة @modonty/payment — تطبيق Next مستقلّ، بلا أي ملفّ دفعٍ منقولٍ بعد (النقل في PAY-S2). payment/package.json @modonty/payment · &quot;@modonty/shared&quot;: &quot;workspace:*&quot; ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المرجع:</b> <code>PAY-SPLIT</code> — القرار والخطة كاملةً.</p>
+<p><b>ما أُنشئ:</b> حزمة <code>@modonty/payment</code> — تطبيق Next مستقلّ، بلا أي ملفّ دفعٍ منقولٍ بعد (النقل في <code>PAY-S2</code>).</p>
+<pre>payment/package.json        @modonty/payment · "@modonty/shared": "workspace:*" · dev -p 3003
+payment/next.config.ts      assetPrefix: "/pay-static" · cacheComponents: true · ترويسات
+                            ⚠ كانت basePath: "/pay" — رُوجعت في PAY-S2 وأُلغيت
+payment/tailwind.config.ts  presets: [shared/tailwind-preset.ts] — الخريطة في مكانٍ واحد
+payment/app/globals.css     مولَّد — 51 توكناً فاتحاً · 43 داكناً · 3+3 تباين عالٍ
+payment/app/layout.tsx      بلا ترويسة ولا تذييل ولا مصادقة — Tajawal + next-themes
+payment/lib/db.ts           نفس DATABASE_URL ونفس السكيما — قاعدة واحدة
+payment/lib/utils.ts        cn وحدها (الدالّة الوحيدة التي يستوردها مسار الدفع)
+pnpm-workspace.yaml         - 'payment'</pre>
+<h3>🟥 خطأ في هذه البطاقة صُحِّح قبل التنفيذ</h3>
+<p>كانت تقول «<code>cacheComponents</code> مطفأ». والقياس يقول عكسه: قارئ الكتالوج يستعمل <code>'use cache'</code> مع <code>cacheTag</code>، وصفحة الباقات تصدّر <code>export const instant = false</code> — وكلاهما لا يعمل بغير <code>cacheComponents: true</code>. فأُثبتت الراية مفعّلة، ورأى سجلّ الإقلاع <code>Cache Components enabled</code>.</p>
+<h3>قرارات اتُّخذت أثناء التنفيذ</h3>
+<pre>١ التوكنات مولَّدة لا منسوخة — نفس مولّد pay-stage.css أخرج هدفاً ثانياً.
+  و--check صار يفحص الملفّين. سببه أن النسخة اليدوية السابقة حملت ١٤ توكناً من ٤٥.
+٢ خريطة تايلويند نزلت إلى shared/tailwind-preset.ts، وpayment يستهلكها بـpresets.
+  ⚠ مدونتي لم تُمسّ: نسختها داخل ملفّها كما هي. توحيدهما بندٌ في PAY-S7.
+٣ لا X-Frame-Options: DENY هنا (وهي في مدونتي): صفحة الدفع تركّب إطار 3DS،
+  والحظر المطلق يمنع التحقّق من البطاقة.
+٤ ⚠ هذا القرار انقلب في PAY-S2: basePath أُلغي تماماً، وassetPrefix هو المستعمل.
+  السبب هناك — basePath يُضاف في Link/router ولا يُضاف في <a>/fetch.
+٥ الحزم من قياسٍ لا من تخمين: ٤٠ ملفّاً في مسار الدفع تستورد ٩ حزم خارجية فقط.
+٦ tsconfig بلا خرائط @/components/ui و@/lib/icons — مسار الدفع لا يستوردهما
+  (خريطةٌ لمسارٍ لا يُستعمل هي كودٌ ميت).</pre>
+<h3>دليل الإغلاق (١٤ سبتمبر ٢٠٢٦)</h3>
+<pre>$ pnpm --filter @modonty/payment dev
+  ▲ Next.js 16.3.4 (Turbopack) · Local: http://localhost:3003
+  ✓ Ready in 1710ms · Running next.config.ts took 174ms · Cache Components enabled
+
+$ curl localhost:3003/pay        ⇒ HTTP 200 · 14,037 bytes · «حزمة الدفع تعمل»
+$ curl localhost:3003/           ⇒ HTTP 404   (basePath يعمل — لا شيء خارج /pay)
+$ التوكنات في الـCSS المشحون      ⇒ 43 تطابقاً · --background: 45 8% 95% (فاتح)
+                                   و245 8% 9% (داكن) · 3 كتل .dark
+$ node build-pay-stage-tokens.mjs --check
+  ✓ pay-stage.css مطابق  ✓ payment/app/globals.css مطابق
+$ git diff --stat shared/styles/pay-stage.css   ⇒ صفر (معاينة الأدمن لم تتغيّر)
+
+— ومدونتي بعد تثبيت الحزمة الجديدة (localhost:3005):
+  / · /articles · /clients · /reels · /users/register · /pay/sa   ⇒ 200 ستّتها
+  find modonty -newermt "-50 minutes"  ⇒ ٥ ملفّات، آخرها 09:08
+                                          وPAY-S1 بدأت 09:43 — أي صفر ملفّ مسّته.</pre>
+<p><b>ما تغيّر خارج <code>payment/</code>:</b> <code>pnpm-workspace.yaml</code> (سطر) · <code>pnpm-lock.yaml</code> (التثبيت) · <code>shared/tailwind-preset.ts</code> (جديد) · <code>shared/scripts/build-pay-stage-tokens.mjs</code> (هدف ثانٍ). <b>وصفر سطر في <code>modonty/</code>.</b></p></div></details>
+</article>
+<article class="card" data-id="PAY-S2" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-S2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-S2">⧉</button></div>
+  
+  <div class="t">🟨 كود · ٢/٨ نقل ملفّات الدفع — نقلٌ لا نسخ (٤٬١٣٤ سطراً)</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 2 من 7</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">ما انتقل: ٢٢ ملفّ مسار + ١٨ ملفّ مكتبة + ١٨ شعاراً — git mv حيث كان الملفّ متتبَّعاً، وmv حيث لم يكن (ملفّات كُتبت اليوم ولم تُكَمَّت؛ git mv يرفضها بـ«source directory is empty»).</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>ما انتقل:</b> ٢٢ ملفّ مسار + ١٨ ملفّ مكتبة + ١٨ شعاراً — <code>git mv</code> حيث كان الملفّ متتبَّعاً، و<code>mv</code> حيث لم يكن (ملفّات كُتبت اليوم ولم تُكَمَّت؛ <code>git mv</code> يرفضها بـ«source directory is empty»).</p>
+<pre>modonty/app/(pay)/pay/**        → payment/app/pay/**
+modonty/app/(pay)/api/**        → payment/app/api/**
+modonty/app/(pay)/not-found.tsx → payment/app/not-found.tsx
+modonty/lib/{ngenius,tamara,security,checkout} → payment/lib/
+modonty/public/logos (١٨)       → payment/public/pay-static/logos</pre>
+<h3>🟥 قرار انقلب هنا: لا <code>basePath</code></h3>
+<p>كان <code>PAY-S1</code> قد ثبّت <code>basePath: "/pay"</code>. والتوثيق يقول إن <code>basePath</code> يُضاف في <code>&lt;Link&gt;</code> و<code>router.push</code> (<code>add-base-path.ts</code>)، ويُضاف لـ<code>redirect()</code> عند التصيير لا في الدالّة، <b>ولا يُضاف</b> لـ<code>&lt;a&gt;</code> الخام ولا لـ<code>fetch</code>.</p>
+<pre>ومسار الدفع يخلط الأربعة:
+  PlanCard          <a href>            ← لا يُضاف
+  PaySection        <Link href>         ← يُضاف
+  CheckoutForm      fetch("/api/…")     ← لا يُضاف
+                    router.replace(…)   ← يُضاف
+  صفحات النتيجة     redirect(`/pay/…`)  ← يُضاف عند التصيير
+أي أن السلسلة نفسها /pay/sa تصحّ في موضعٍ وتخطئ في آخر — ٣٣ عنواناً داخلياً
+في المسار الذي يمرّ منه المال.</pre>
+<p><b>وبإلغائه:</b> المجلّد <code>app/pay/**</code> يُخدَم على <code>/pay/**</code> حرفياً، فلم يتغيّر عنوانٌ واحد من الثلاثة والثلاثين — <b>ولا عنوان الويبهوك عند المزوّد</b> (<code>/api/webhooks/n-genius</code> كما هو)، وكان تغييره سيلزم يدوياً في لوحتَي N-Genius وتمارا. والثمن الوحيد <code>assetPrefix: "/pay-static"</code>، وNext ١٥+ ينشئ إعادة كتابته داخلياً بنفسه (<code>load-custom-routes.ts</code>).</p>
+<h3>الأصول: <code>public</code> لا تُشارَك بين تطبيقَي Next</h3>
+<pre>الشعارات كانت تُطلب على /logos/… — ولا تحملها قاعدة /pay ولا /pay-static،
+فكانت ستسقط ٤٠٤ خلف نطاق مدونتي. نزلت تحت public/pay-static/ كلّها:
+  payMarkAsset(name, base = "/logos")  ← وسيطٌ جديد في shared؛ الأدمن على الافتراضي
+  صفحة الباقات تمرّر "/pay-static/logos"
+  tamara.svg وmodonty-mark.svg بمساريهما الجديدين
+وmodonty-mark.svg نُسخ لا نُقل: مدونتي تستعمله في ٣ صفحات أخرى.</pre>
+<h3>كوميت ② — معيار <code>modonty-naming</code></h3>
+<pre>pay/helpers/get-cached-catalog.ts → pay/data/           «ما يجيب داتا يعيش في data»
+checkout-form.tsx    → checkout-form/CheckoutForm.tsx
+checkout-header.tsx  → checkout-header/CheckoutHeader.tsx
+checkout-summary.tsx → order-summary/OrderSummary.tsx
+ngenius-mount.tsx    → card-field/CardField.tsx        (اسمٌ يصف تقنية → اسمٌ يُرى)
+processing-client.tsx→ wait-screen/WaitScreen.tsx
+tamara-form.tsx      → tamara-form/TamaraForm.tsx
++ pay/helpers/.gitkeep يشرح ما يدخله · pay/documentation/MAP.md</pre>
+<h3>دليل الإغلاق — كل مسارٍ طُلب حيّاً (١٤ سبتمبر ٢٠٢٦)</h3>
+<pre>/pay                                    307 → /pay/sa
+/pay/sa · /pay/eg                       200 · 200
+/pay/zz                                 404  (صفحة الدفع لا صفحة مدونتي)
+/pay/sa/checkout?plan=…&months=6        200
+/pay/sa/checkout/tamara?plan=…          200
+/pay/sa/checkout/success?order=x        307 → /pay/sa
+/pay/sa/checkout/failed?order=x         200
+/pay/sa/checkout/processing?order=x     307 → /pay/sa
+GET  /api/checkout/status?order=x       404  (طلبٌ غير موجود)
+POST /api/checkout/create-payment {}    400  (الحارس يرفض)
+POST /api/checkout/log-failure          204
+POST /api/checkout/tamara               503  (لا مفاتيح ساندبوكس لتمارا — معلوم)
+POST /api/webhooks/n-genius  بلا توقيع  401
+POST /api/webhooks/tamara    بلا توقيع  401
+
+الأصول: /pay-static/_next/…css 200 · /pay-static/logos/mada.svg 200
+        /pay-static/modonty-mark.svg 200
+ما بقي تحت modonty/app/(pay): صفر ملفّ (مجلّدات فارغة رُفض حذفها بالصلاحيات → PAY-S7)</pre>
+<p><b>عطلٌ وقع وأُصلح:</b> ملفّان (<code>success</code> و<code>tamara/page</code>) كانا يستوردان <code>../../../helpers/get-cached-catalog</code> — لم يشملهما سكربت إعادة التسمية، فردّ المسار كلّه ٥٠٠. كشفه السجلّ (<code>Module not found</code>) ثم أُعيد القياس كاملاً.</p></div></details>
+</article>
+<article class="card" data-id="PAY-S3" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-S3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-S3">⧉</button></div>
+  
+  <div class="t">🟨 كود · ٣/٨ النطاق — pay.modonty.com مستقلّ، وصفر سطر في مدونتي</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 3 من 7</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">خالد (١٤ سبتمبر ٢٠٢٦): «اتفقنا إنه ما في حاجة حتفضل في مدونتي… كل ما يخصّ البيمنت يكون جوّه البيمنت: الـAPI، البروكسي، كل شيء. ابعد عن مدونتي». ما تغيّر عن الخطة الأولى كانت: rewrites في modonty/next.config.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>خالد (١٤ سبتمبر ٢٠٢٦):</b> «اتفقنا إنه ما في حاجة حتفضل في مدونتي… كل ما يخصّ البيمنت يكون جوّه البيمنت: الـAPI، البروكسي، كل شيء. ابعد عن مدونتي».</p>
+<h3>ما تغيّر عن الخطة الأولى</h3>
+<pre>كانت: rewrites في modonty/next.config.ts (خمس قواعد) تُبقي العنوان modonty.com/pay
+صارت: نطاقٌ مستقلّ pay.modonty.com — ومدونتي لا تعرف بوجود الدفع أصلاً.
+
+الثمن: العنوان يتغيّر من modonty.com/pay إلى pay.modonty.com
+وكلفته صفر، مقيسة:
+  روابط مدونتي إلى /pay              صفر
+  الصفحة مفهرسة؟                     لا — robots: index:false حتى PAY-F5
+  عنوان الويبهوك عند المزوّد          يتغيّر مرّة واحدة يدوياً (PAY-S6)
+والمكسب: خمس قواعد إعادة كتابة لا تُكتب أصلاً، فلا شيء في مدونتي يمكن أن يكسر الدفع
+ولا العكس — وهو سبب الفصل من أوّله.</pre>
+<h3>العمل — كلّه داخل payment/</h3>
+<pre>payment/proxy.ts     توجيه السوق بالـGeo-IP (ينتقل من modonty/proxy.ts:148-156)
+                     سعودي ⇒ /pay/sa · مصري ⇒ /pay/eg · وغيرهما ⇒ /pay/sa
+                     ومعه إصلاح اليوم: حفظ ?months= عبر التحويل
+payment على Vercel   مشروع مستقلّ · النطاق pay.modonty.com · جذره / ⇒ /pay
+PAY_PUBLIC_URL       كل رابط عودة وإشعار يُبنى منه — لا نطاق مكتوب في كود</pre>
+<h3>دليل الإغلاق (١٤ سبتمبر ٢٠٢٦)</h3>
+<pre>— البروكسي داخل الحزمة (payment/proxy.ts):
+/pay              307 → /pay/sa
+/pay?months=12    307 → /pay/sa?months=12     ← السلسلة تُحمَل، وهو إصلاح اليوم
+/pay/eg           307 → /pay/sa               (بلا ترويسة بلدٍ محليّاً — سعوديٌّ افتراضاً)
+/pay/sa?months=12 200
+
+— وخروج الدفع من مدونتي:
+$ git diff modonty/proxy.ts
+  1 file changed, 3 insertions(+), 16 deletions(-)
+  - "/pay", "/pay/:market"                       ← من matcher
+  - كتلة توجيه السوق كاملةً (١٤ سطراً)
+  + ثلاثة أسطر تعليق تقول أين ذهبت ولماذا</pre>
+<p><b>ما بقي لهذه البطاقة وانتقل إلى <code>PAY-F3</code>:</b> ربط النطاق <code>pay.modonty.com</code> بمشروع Vercel مستقلّ، و<code>PAY_PUBLIC_URL</code> في بيئته. فعلٌ على لوحة Vercel لا سطرٌ في كود — ويحتاجك أنت.</p></div></details>
+</article>
+<article class="card" data-id="PAY-S4" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-S4</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-S4">⧉</button></div>
+  
+  <div class="t">🟨 كود · ٤/٨ إبطال الكاش — نقطة داخل payment، والوسم يخرج من مدونتي</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 4 من 7</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">المقيس اليوم: admin/lib/revalidate-modonty-tag.ts:35 ينادي ${MODONTY}/api/revalidate/tag — ثلاثة عشر وسماً على مسارٍ واحد، منها commercial-catalog الذي تقرؤه صفحة الباقات وحدها. العمل payment/app/api/revalidate/tag/route.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>المقيس اليوم:</b> <code>admin/lib/revalidate-modonty-tag.ts:35</code> ينادي <code>${MODONTY}/api/revalidate/tag</code> — ثلاثة عشر وسماً على مسارٍ واحد، منها <code>commercial-catalog</code> الذي تقرؤه صفحة الباقات وحدها.</p>
+<h3>العمل</h3>
+<pre>payment/app/api/revalidate/tag/route.ts   نقطة الحزمة — تقبل commercial-catalog وحده
+                                          وتبقى {expire:0} (اقرأ-ما-كتبت، وقد قيس
+                                          أن "max" يخدم قراءتين قديمتين)
+admin/lib/revalidate-modonty-tag.ts       وسم الكتالوج ⇒ PAYMENT_URL، والباقي ⇒ MODONTY_URL
+modonty/app/api/revalidate/tag/route.ts   يُحذف "commercial-catalog" من ALLOWED_TAGS
+                                          ومن READ_YOUR_OWN_WRITES (السطران 14 و17)
+                                          — وهذا حذفٌ من مدونتي لا إضافة إليها.</pre>
+<p>فيبقى في مدونتي اثنا عشر وسماً لا علاقة لها بالدفع (<code>articles</code> · <code>settings</code> · <code>pages</code>…).</p>
+<h3>دليل الإغلاق (١٤ سبتمبر ٢٠٢٦)</h3>
+<pre>— نقطة الحزمة (:3003/api/revalidate/tag):
+commercial-catalog + سرّ صحيح   200  {"success":true,"message":"Tag … revalidated"}
+articles                        400  "Tag must be one of: commercial-catalog"
+سرّ خاطئ                        401  "Unauthorized. Provide valid secret."
+
+— مدونتي (:3005/api/revalidate/tag) بعد نزع الوسم:
+commercial-catalog              400  "Tag must be one of: articles, settings, …, ai-prompts"
+articles                        200
+settings                        200
+
+— ودورة «اقرأ ما كتبتَ» كاملةً على صفحة الباقات، بالبصمة لا بالسلسلة:
+ثبات البصمة بلا تعديل     055457c78790 · 055457c78790   ✓ مستقرّة (وإلّا القياس باطل)
+تعديل monthlyBase 2999→3006 بلا إبطال   055457c78790   ✓ لم تتغيّر — الكاش يعمل
+الإبطال                                  200
+الطلب الأوّل بعده                        1c83065d382c   ✓ تغيّرت
+  والإجمالي في الصفحة: ١٧٬٩٩٤ ← ١٨٬٠٣٦   (٧ × ٦ أشهر = ٤٢، مطابق تماماً)
+الإرجاع: monthlyBase = 2999 ✓ مطابق للأصل · والبصمة عادت 055457c78790</pre>
+<p><b>ما لم يُقَس بعد:</b> النداء من عملية الأدمن نفسها — قيست النقطة لا المنادي. و<code>PAYMENT_PUBLIC_URL</code> في بيئة الأدمن على Vercel يُضاف في <code>PAY-F4</code>؛ محليّاً يسقط على <code>http://localhost:3003</code>.</p></div></details>
+</article>
+<article class="card" data-id="PAY-S5" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-S5</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-S5">⧉</button></div>
+  
+  <div class="t">🟨 كود · ٥/٨ البيئة — مفاتيح البوّابة تخرج من تطبيقٍ يعرض مقالات</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 5 من 7</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">العمل: تنتقل إلى بيئة payment وحدها، وتُحذف من مدونتي: NGENIUS_API_KEY · NGENIUS_OUTLET_ID · NGENIUS_API_BASE · NGENIUS_TOKEN_URL NGENIUS_WEBHOOK_SECRET · NEXT_PUBLIC_NGENIUS_HOSTED_SESSION_API_KEY · …_SDK_URL TAMARA_API_TOKEN ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>العمل:</b> تنتقل إلى بيئة <code>payment</code> وحدها، وتُحذف من مدونتي:</p>
+<pre>NGENIUS_API_KEY · NGENIUS_OUTLET_ID · NGENIUS_API_BASE · NGENIUS_TOKEN_URL
+NGENIUS_WEBHOOK_SECRET · NEXT_PUBLIC_NGENIUS_HOSTED_SESSION_API_KEY · …_SDK_URL
+TAMARA_API_TOKEN · TAMARA_API_URL · TAMARA_NOTIFICATION_TOKEN
+TURNSTILE_SECRET_KEY · NEXT_PUBLIC_TURNSTILE_SITE_KEY
+UPSTASH_REDIS_REST_URL · UPSTASH_REDIS_REST_TOKEN
+
+تبقى مشتركة: DATABASE_URL · REVALIDATE_SECRET · NEXT_PUBLIC_SALES_WHATSAPP</pre>
+<p><b>⚠ يعيد كتابة <code>PAY-F4</code>:</b> شرط إغلاقها <code>git diff</code> على <code>modonty/app/(pay)</code> — مسارٌ يختفي في <code>PAY-S2</code>، فيصير على <code>payment/</code>.</p>
+<p><b>يُغلق بـ:</b> <code>grep</code> لـ<code>NGENIUS|TAMARA|TURNSTILE|UPSTASH</code> في بيئة مدونتي = صفر · ودفعة ساندبوكس كاملة تنجح من الحزمة الجديدة.</p></div></details>
+</article>
+<article class="card" data-id="PAY-S6" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-S6</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-S6">⧉</button></div>
+  
+  <div class="t">🟨 كود · ٦/٨ عناوين المزوّدين — الويبهوك يصل الحارس لا صفحة ٤٠٤</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 6 من 7</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">لماذا بند مستقلّ: ويبهوك N-Genius وتمارا مضبوطان في بوّابتَيهما على عنوانٍ ثابت. ومع rewrites يبقى /api/webhooks/* على نفس النطاق —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>لماذا بند مستقلّ:</b> ويبهوك N-Genius وتمارا مضبوطان في بوّابتَيهما على عنوانٍ ثابت. ومع <code>rewrites</code> يبقى <code>/api/webhooks/*</code> على نفس النطاق — لكن هذا يُتحقَّق منه <b>قبل</b> الإطلاق لا بعده: ويبهوك يسقط في الصمت يعني طلباً مدفوعاً يبقى <code>AWAITING_PAYMENT</code>.</p>
+<h3>🟥 عطلٌ وُجد هنا وسُدّ — أخطر ما في الفصل</h3>
+<pre>كل رابط عودةٍ وإشعار كان يُبنى من نطاق **مدونتي**:
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.modonty.com";
+
+وبعد الفصل يعني ذلك:
+  ١ المشتري يُخصَم في 3DS ثم يُعاد إلى modonty.com/pay/sa/checkout/processing
+    — مسارٌ لم يعد موجوداً هناك ⇒ ٤٠٤ **بعد** الدفع.
+  ٢ عنوان إشعار تمارا يذهب إلى مدونتي ⇒ لا يصل تأكيد الدفع أبداً،
+    ويبقى الطلب AWAITING_PAYMENT وقد دُفع.
+وكلاهما يسقط **بصمت**: لا رسالة خطأ في أي شاشة.
+
+الإصلاح: payment/lib/pay-public-url.ts — يقرأ PAY_PUBLIC_URL،
+ويسقط على منفذ التطوير محليّاً، **ويرمي** في الإنتاج إن غاب.
+لا قيمة احتياطية في الإنتاج عمداً: عنوانٌ خاطئ يخسر مالاً بصمت،
+وخطأٌ عند إنشاء الطلب يُرى ويُصلَح في دقيقة.</pre>
+<h3>دليل الإغلاق (١٤ سبتمبر ٢٠٢٦)</h3>
+<pre>POST /api/webhooks/n-genius بلا توقيع   401   ← يصل الحارس ويُرفض به
+POST /api/webhooks/tamara   بلا توقيع   401
+GET  /api/webhooks/n-genius             405   ← لا يقبل إلا POST
+
+وموضع بناء الروابط بعد الإصلاح:
+  create-payment/route.ts:146  const siteUrl = payPublicUrl();
+                        :161  redirectUrl: ${siteUrl}/pay/${market}/checkout/processing?order=…
+                        :162  cancelUrl:   ${siteUrl}/pay/${market}/checkout?…
+  tamara/route.ts:147   const siteUrl = payPublicUrl();
+                 :181   notification: ${siteUrl}/api/webhooks/tamara
+
+والمسار العامّ لم يتغيّر: /api/webhooks/n-genius كما هو — النطاق وحده يتغيّر،
+وهو ما وفّره إلغاء basePath في PAY-S2.</pre>
+<p><b>ما لم يُقَس بعد:</b> الحمولة الخارجة فعلاً إلى البوّابة — تحتاج جلسةً من المتصفّح (<code>sessionId</code> من SDK الجلسة المستضافة)، فتُقاس في دفعة ساندبوكس كاملة. وتبديل العنوان في لوحتَي N-Genius وتمارا فعلٌ عندك في <code>PAY-F3</code>.</p></div></details>
+</article>
+<article class="card" data-id="PAY-S7" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-S7</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-S7">⧉</button></div>
+  
+  <div class="t">🟨 كود · ٧/٨ صفر بقايا في مدونتي — لا كود مكرَّر ولا تعارض لاحقاً</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 7 من 8</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">خالد (١٤ سبتمبر ٢٠٢٦): «تأكّد أنه ما في أي ضدّ كود… بعد ما تجهّز وتخلّص، امسح اللي اتعمل في مدونتي عشان ما يكون في أي مشاكل أو تعارض مستقبلاً». لماذا بطاقة مستقلّة —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>خالد (١٤ سبتمبر ٢٠٢٦):</b> «تأكّد أنه ما في أي ضدّ كود… بعد ما تجهّز وتخلّص، امسح اللي اتعمل في مدونتي عشان ما يكون في أي مشاكل أو تعارض مستقبلاً».</p>
+<h3>لماذا بطاقة مستقلّة — نسختان أخطر من نسخة</h3>
+<pre>لو بقيت ملفّات الدفع في مدونتي بعد أن يعمل الجديد:
+  ١ نسختان من نفس المنطق — تُصلح واحدة ويبيع العميل من الأخرى
+  ٢ مسار /pay يُخدَم من تطبيقين، وrewrites يقرّر أيّهما — بصمت
+  ٣ وسم كاش يُنادى وينجح ولا يُبطل شيئاً (تعارض صامت، لا رسالة خطأ)
+  ٤ مفاتيح بوّابة الدفع تبقى مقروءةً لتطبيقٍ يعرض مقالات
+التاريخ لا يُفقد: git يحفظ كل ما حُذف، فالحذف قرارٌ قابل للرجوع بكوميت.</pre>
+<h3>ما يُحذف — مقيسٌ بأسمائه (١٤ سبتمبر ٢٠٢٦)</h3>
+<pre>مجلّدات   modonty/app/(pay)/**          ← يُحذف كاملاً، لا يُترك بـnot-found وحده
+          modonty/lib/ngenius · tamara · security · checkout
+
+حزم       modonty/package.json:
+            @upstash/ratelimit ^2.0.8 · @upstash/redis ^1.38.4
+            @marsidev/react-turnstile ^1.6.1
+          المقيس: ٨ ملفّات تستهلكها، ثمانيتها داخل مسار الدفع — صفر مستهلك آخر
+
+بيئة      NGENIUS_* · TAMARA_* · TURNSTILE_* · UPSTASH_*        (نُقلت في PAY-S5)
+
+وسم كاش   "commercial-catalog" من ALLOWED_TAGS و READ_YOUR_OWN_WRITES
+          modonty/app/api/revalidate/tag/route.ts:14,17
+          يبقى الاثنا عشر الآخر (articles · settings · pages…) كما هي</pre>
+<h3>⚠ الترتيب: الحذف بعد أن يعمل الجديد، لا قبله</h3>
+<p>نفس منطق تبويب «بعد الإطلاق»: حذف المصدر القديم قبل أن يعمل الجديد يوقف البيع. فهذه البطاقة لا تبدأ قبل أن تُغلق <code>PAY-S3</code> (المسار يعمل من الحزمة الجديدة) و<code>PAY-S6</code> (الويبهوك يصل).</p>
+<h3>دليل الإغلاق (١٤ سبتمبر ٢٠٢٦)</h3>
+<pre>ملفّات تحت modonty/app/(pay)                       صفر
+استيرادات ngenius/tamara/security/checkout في مدونتي  صفر
+@upstash · @marsidev في modonty/package.json          صفر  (٤٠ ← ٣٧ حزمة)
+  وفي modonty/node_modules                            غير موجودَين بعد التثبيت
+مفاتيح المزوّدين في modonty/.env.local                صفر
+"commercial-catalog" في كود مدونتي                    سطر تعليقٍ واحد لا كود
+
+ومدونتي بعد النزع كلّه (localhost:3005):
+  / · /articles · /clients · /reels · /users/register   200 خمستها
+  /pay · /pay/sa                                        404  ← الصحيح: لم تعد تملكها
+والحزمة (localhost:3003): /pay 307 → /pay/sa 200</pre>
+<h3>ما بقي — ولا يُزيله git</h3>
+<pre>١٦ مجلّداً فارغاً: modonty/app/(pay)/** و modonty/lib/{ngenius,tamara,security,checkout}
+   رُفض حذفها بطبقة الصلاحيات. وgit لا يتتبّع المجلّد الفارغ، فالنسخة المستنسَخة
+   لن تحملها — أثرها محليٌّ فقط. أمرٌ واحد يزيلها:
+   rmdir /s /q "modontyapp(pay)"   (وأخواتها)
+
+ونسخة تايلويند في modonty/tailwind.config.ts تُركت كما هي عمداً: تحويلها إلى
+shared/tailwind-preset.ts تعديلٌ بصريٌّ على تطبيقٍ حيّ بلا مكسبٍ للدفع.</pre>
+<h3>عطلٌ وقع أثناء التنفيذ — ليس في الكود</h3>
+<pre>بعد pnpm install ردّت مدونتي ٥٠٠ على كل مسار، والسبب في السجلّ:
+  PostCssTransformedAsset::process failed → creating new process
+  → node process exited … exit code: 0xc0000142   (ويندوز: فشل بدء العملية)
+أي أن كاش Turbopack كان يشير إلى مسارات حزمٍ أُزيلت للتوّ. نُقل modonty/.next
+(لم يُحذف — محفوظ في scratchpad) وأُعيد التشغيل، فرجعت الخمسة إلى ٢٠٠.</pre></div></details>
+</article>
+<article class="card" data-id="PAY-S8" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-S8</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-S8">⧉</button></div>
+  
+  <div class="t">🟥 قرار · ٨/٨ إثبات أن مدونتي لم تتأثّر — شرط إغلاق الفصل كلّه</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 8 من 8</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">خالد: «تأكّد ١٠٠٪ أنه ما في أي تأثير على مدونتي الرئيسية». فهذا البند هو الشرط، لا خاتمةً مجاملة. · العمل: نفس القياس يُؤخذ قبل الخطوة ١ ويُعاد بعد الخطوة ٦، ويُقارن سطراً بسطر. / · /articles · /clients · /reels ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>خالد:</b> «تأكّد ١٠٠٪ أنه ما في أي تأثير على مدونتي الرئيسية». فهذا البند هو الشرط، لا خاتمةً مجاملة.</p>
+<p><b>العمل:</b> نفس القياس يُؤخذ <b>قبل</b> الخطوة ١ ويُعاد <b>بعد</b> الخطوة ٦، ويُقارن سطراً بسطر.</p>
+<pre>/ · /articles · /clients · /reels · /users/register     ⇒ ٢٠٠ (خمستها)
+الرئيسية:    ترويسة ١ · تذييل ١ · ملاحة ٦ · ١١٣ رابطاً
+صفحة شريك:   ترويسة ١ · تذييل ١ · ملاحة ٩ · ١٣٢ رابطاً
+الجلسة تعمل حيث تلزم: (site) و(partner)
+صفر JWTSessionError · صفر crypto-prerender على أي مسار
+pnpm --filter @modonty/modonty build ينجح</pre>
+<h3>القياس بعد الفصل (١٤ سبتمبر ٢٠٢٦ · localhost:3005)</h3>
+<pre>المسار              حالة  ترويسة تذييل ملاحة روابط
+/                    200    1      1     7     121
+/articles            200    2      1     10    171
+/clients             200    1      1     11    141
+/reels               200    1      0     2     25
+/users/register      200    1      1     5     53
+
+ومسارات الدفع لم تعد لمدونتي:
+/pay · /pay/sa · /api/checkout/status · /api/webhooks/n-genius   404 أربعتها
+
+السجلّ منذ إعادة التشغيل: JWTSessionError صفر · getRandomValues صفر
+                          Module not found صفر · ٥٠٠ صفر
+وسجلّ الحزمة: الاثنان صفر أيضاً.</pre>
+<h3>⚠ الأرقام المسجَّلة في هذه البطاقة لم تتطابق — والسبب ليس الفصل</h3>
+<pre>كانت البطاقة تقول: الرئيسية ١١٣ رابطاً و٦ ملاحات. والقياس اليوم ١٢١ و٧.
+والرقمان القديمان قيسا في جلسةٍ سابقة بطريقة عدٍّ لا أستطيع إعادة إنتاجها حرفياً،
+وبينهما تعديلات على الرئيسية ليست من الفصل.
+
+والدليل القاطع أن الفرق ليس من الفصل — مقيسٌ في الاتجاهين:
+  روابط /pay في صفحات مدونتي المرسومة (الخمس)      صفر
+  ذكرٌ لـcheckout/ngenius/tamara/turnstile فيها     صفر
+  والرئيسية في آخر كوميت قبل الفصل: ذكرٌ للدفع     صفر
+  ولا ملفّ في الترويسة أو التذييل يشير إلى "/pay"  صفر
+أي أن ما أزاله الفصل لم يكن على هذه الصفحات أصلاً، فلا يمكن أن يكون غيّر عدّها.</pre>
+<h3>ما لم يُشغَّل</h3>
+<pre>pnpm --filter @modonty/modonty build — حاجز المشروع يمنع البناء إلا بطلبك الصريح
+(feedback_no_tsc_until_asked). يُشغَّل قبل الدفع.
+وصفحة شريك لم تُقَس: لا رابط عميلٍ في /clients بصيغة /clients/&lt;slug&gt; في الترميز.</pre></div></details>
+</article>
+<article class="card" data-id="PAY-INVOICE-UX" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-INVOICE-UX</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-INVOICE-UX">⧉</button></div>
+  
+  <div class="t">🟨 كود · الفاتورة الضريبية — رأسٌ يجيب بلمحة ولغة خدمة لا بضاعة</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">خالد (١٣ سبتمبر ٢٠٢٦): «في الفوتر المفروض البيانات القانونية… الهيدر محتاج تحسين. والبائع والمشتري — احنا نبيع خدمة، هذه فاتورة تطلع لي محل جملة».</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>خالد (١٣ سبتمبر ٢٠٢٦):</b> «في الفوتر المفروض البيانات القانونية… الهيدر محتاج تحسين. والبائع والمشتري — احنا نبيع خدمة، هذه فاتورة تطلع لي محل جملة».</p>
+<pre>قبل                                   بعد
+«البائع» / «المشتري»                  «صادرة من» / «إلى»
+عمود «الكمية: 1» في كل فاتورة         «٦ أشهر مدفوعة + شهر هدية = ٧ أشهر خدمة»
+الرقم والحالة والمبلغ في ٣ كتل        شريط رأس واحد يجيب الأربعة: ما هذه · ممّن · كم · دُفعت؟
+عنوان البائع فوق وتحت                 فوق: الاسم والرقم الضريبي · السجل والعنوان في الفوتر وحده</pre>
+<p><b>لماذا «الكمية» حُذفت لا أُصلحت:</b> كانت تطبع «1» في كل فاتورة عمرها — خانةٌ لا تحمل معلومة وتجعل المستند يُقرأ كفاتورة قطعٍ معدودة. ومحلّها مدّة الخدمة، وهي ما يشتريه العميل. وأشهر الخدمة (٧) صارت مذكورةً صراحةً بدل أن تُترك للعميل يجمعها — وهي نفس الرقم الذي على بطاقة الباقة وصفحة الدفع، فلا يختلف مستندٌ عن آخر.</p>
+<p><b>التسمية عرضٌ لا قانون:</b> ما تفرضه الهيئة هو ظهور اسم المورّد ورقمه الضريبي واسم المشتري ورقمه — وكلّها باقية. الذي تغيّر هو الكلمة المكتوبة فوقها.</p>
+<p><b>القطع في ملفّ مستقلّ</b> <code>admin/lib/email/templates/invoice-parts.ts</code> (<code>invoiceHero</code> · <code>invoiceParties</code> · <code>invoiceLine</code> · <code>invoiceQr</code> · <code>invoiceContact</code>) كي يبقى القالب مقروءاً.</p>
+<p><b>رمز الهيئة — ما هو فعلاً (سؤال خالد):</b> ليس رابطاً ولا الرقم الضريبي وحده. هو الفاتورة مضغوطةً في خمسة حقول، <b>ومختلفٌ لكل فاتورة</b> لأن التاريخ والمبلغ داخله. فُكَّ الرمز للتحقّق:</p>
+<pre>وسم ١ اسم البائع            = شركة جبر الجنوبية للمقاولات
+وسم ٢ الرقم الضريبي         = 311021705709003
+وسم ٣ تاريخ ووقت الفاتورة   = 2026-09-13T19:59:54Z
+وسم ٤ الإجمالي شامل الضريبة = 7194.00
+وسم ٥ مقدار الضريبة         = 938.35
+الطول 148 حرفاً (الحدّ 700) · الصورة PNG حقيقية 3282 بايت</pre>
+<p>فائدته أن العميل أو مفتّش الهيئة يمسحه بتطبيقهم فيقرأ الخمسة <b>بلا نت وبلا رجوع لنا</b> ويقارنها بالمطبوع — فيبين أي تحريف. والوسوم ٦–٩ (بصمة XML والتوقيع وختم الهيئة) للمرحلة الثانية وتحتاج ربطاً معتمداً، وهي قرار خالد السابق أنها مشروع منفصل.</p>
+<p><b>هويّة المُصدِر — حُسمت:</b> سُئل خالد عن «صادرة من: شركة جبر الجنوبية» فأجاب (١٣ سبتمبر): «المشغّل لمشروع مدونتي جبر الجنوبية». فالبيانات صحيحة ولا تُغيَّر — الورق والفوتر والرمز الثلاثة تقول الشيء نفسه، والفاتورة سليمة نظاماً.</p></div></details>
+</article>
 <article class="card" data-id="PAY-E1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-agent="Sonnet" data-area="jbrseo">
   <div class="hd"><span class="id">PAY-E1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-E1">⧉</button></div>
   
@@ -2120,6 +3051,796 @@ orders/components/whatsapp-invoice-button.tsx — رابط يفتح واتساب
   التدقيق: order.confirmPayment · client.create · invoice.create · invoice.send · invoice.whatsapp — كلّها باسم المنفّذ
   لا بيان كُتب بيد كان في الطلب (السلَق والصناعة والمندوب فقط بشريّة)
 مراجعة Fable على E1–E4 (٥ ملاحظات) أُصلحت — انظر PAY-E4. بيانات الاختبار (٦ طلبات seed · عميل «منشأة اختبار» · فاتورتان) باقية في modonty_dev لاختبار خالد.</pre></div></details>
+</article>
+<article class="card" data-id="PAY-G1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G1">⧉</button></div>
+  
+  <div class="t">🟦 داتا · ربط المزايا بالباقات — البطاقات اليوم تبيع بلا أن تقول ماذا يأخذ العميل</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: عندنا ٢٦ ميزة مكتوبة في مكتبة المزايا، وثلاث باقات — ولا ميزة واحدة مربوطة بأي باقة. يعني بطاقة «الانطلاقة» على صفحة البيع تعرض اسماً وسعراً وتحته فراغ. العميل يقرأ «٣٩٩ ريال» ولا يعرف مقابل ماذا. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> عندنا ٢٦ ميزة مكتوبة في مكتبة المزايا، وثلاث باقات — <b>ولا ميزة واحدة مربوطة بأي باقة</b>. يعني بطاقة «الانطلاقة» على صفحة البيع تعرض اسماً وسعراً وتحته فراغ. العميل يقرأ «٣٩٩ ريال» ولا يعرف مقابل ماذا.</p>
+<p><b>المطلوب:</b> تفتح مكتبة المزايا، وتحدّد لكل ميزة أيّ الباقات تشملها، وكم كمّيتها في كل باقة (مثلاً: «نشر على سوشال مدونتي — ٤ منشورات شهرياً» في الانطلاقة و«١٢» في الريادة).</p>
+<p><b>نعرف إنه خلص لما:</b> تفتح معاينة صفحة الدفع فترى تحت كل باقة قائمة مزايا مكتوبة، بدل جملة «لا مزايا مربوطة بهذه الباقة بعد».</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>المقيس ١٣ سبتمبر على لقطة /commercial-features الحيّة:
+  grep -c "checked" = 0   من ٧٨ خانة ربط (٢٦ ميزة × ٣ باقات)
+  شاشة «الانطلاقة» تقولها صراحةً: «لم تُربط مزايا بهذه الباقة بعد»
+
+الجداول: CommercialPlanFeature (planId · featureId · quantity · note · displayOrder)
+الشاشتان: /commercial-features (التأشير) · /commercial-plans (الكمّية داخل كل باقة)
+لماذا أوّلاً: شرط إغلاق PAY-C5 قياسٌ حيّ لصفحة البيع — وبطاقة بلا مزايا لا تُقاس.</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦. الربط لم يُخمَّن — نُقل من بطاقات جبر سيو الحيّة.</b></p>
+
+<p><b>المصدر:</b> صفحة <code>jbrseo.com/sa</code> مقروءة من المتصفّح، لا من الذاكرة ولا من كوده. ما تعرضه بطاقاتها الثلاث:</p>
+<pre>الانطلاقة  صفحة عميل · نشر على مدونتي · المقال الرئيسي على سوشال · شارة موثّق
+           · زر واتساب · سؤال مباشر · ٤ مقالات/شهر · ٤ طلّات/شهر
+الزخم      + رابط لموقعك · حجوزات · ٤ حملات إيميل · محتوى للذكاء الاصطناعي
+           · توثيق مؤهلات الكاتب · ٨ مقالات · ٣ مقالات لموقعك · ٨ طلّات
+الريادة    + مدير حساب · ٨ حملات · تقرير شامل · ٢٢ تنبيه تيليجرام
+           · جلسة استراتيجية · ١٢ مقالاً · ٤ مقالات لموقعك · ١٢ طلّة</pre>
+
+<p><b>النتيجة:</b></p>
+<pre>٤٣ رابطاً مكتوباً:  الانطلاقة ٩ مزايا · الزخم ١٥ · الريادة ١٩
+لقطة /pay-preview?months=6 — الانطلاقة:
+  ٤ مقالات شهرياً · أي ٢٨ مقالاً خلال ٧ أشهر
+  • صفحة عميل عامة — صفحة        • مقالات منشورة على مدونتي — ٤ مقال/شهر
+  • النشر على منصة مدونتي        • نشر المقال الرئيسي على سوشال — ١ منشور/شهر
+  • طلّات مدونتي — ٤ طلّة/شهر     • شارة موثّق · زر واتساب · سؤال مباشر · موافقة قبل النشر
+وهي مطابقة لبطاقة جبر سيو رقماً برقم: ٢٬٣٩٤ ر.س · ٧ شهر · ٣٤٢ ر.س/شهر فعلياً · ٢٨ مقالاً.</pre>
+
+<p><b>🔸 سبع مزايا بلا ربط — لا دليل لها على بطاقات جبر سيو، فلم تُربط بالتخمين:</b></p>
+<pre>بحث الكلمات المفتاحية · صور احترافية وبطاقات مشاركة · آراء وتقييمات العملاء
+· صلاحية Google Search Console · مدة الرد على الاستفسارات · سرعة تجهيز المقال
+· تجهيز فني كامل للمقال</pre>
+<p>هذه تحتاج قرار خالد: تُربط بكمّياتها، أو تُوقف من المكتبة إن لم تُبَع.</p>
+
+<p><b>⚠ يحتاج تأكيدك قبل الإطلاق:</b> الكمّيات كلّها منقولة عن منافسٍ نبيع مثله — وهي وعدٌ للعميل حين تُنشر صفحة البيع. راجعها بعينك في <code>/pay-preview</code>.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G2" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G2">⧉</button></div>
+  
+  <div class="t">⛔ أُلغيت · أيقونة لكل ميزة — الحقل نفسه حُذف بقرارك</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">وما ترتّب عليها: الملفّ اليتيم admin/app/(dashboard)/commercial-features/components/feature-icon-select.tsx — صفر مستهلك. يُحذف (قاعدة «صفر كود ميت»).</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>أُلغيت في ١٤ سبتمبر ٢٠٢٦.</b> كانت تطلب منك اختيار أيقونة لكل ميزة في المكتبة. ثم قلت في مراجعة شاشة المكتبة: «موضوع الأيكون برضو يشيله» — فحُذف الحقل <code>CommercialFeature.icon</code> من السكيما.</p>
+<pre>القياس (١٤ سبتمبر ٢٠٢٦):
+  model CommercialFeature في السكيما   ⇒ لا حقل icon
+  مستهلكو FeatureIconSelect في الأدمن   ⇒ صفر
+فالبطاقة تطلب ملء حقلٍ غير موجود — وبقاؤها على اللوحة يجعلك تفتح شاشةً
+تبحث فيها عن منتقٍ أُزيل.</pre>
+<p><b>وما ترتّب عليها:</b> الملفّ اليتيم <code>admin/app/(dashboard)/commercial-features/components/feature-icon-select.tsx</code> — صفر مستهلك. يُحذف (قاعدة «صفر كود ميت»).</p></div></details>
+</article>
+<article class="card" data-id="PAY-G3" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G3">⧉</button></div>
+  
+  <div class="t">🟦 داتا · كم مقالاً في الشهر — الخانة فارغة في الباقات الثلاث</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: أهمّ رقم في خدمتنا — عدد المقالات شهرياً — غير مكتوب في أي باقة. الشاشة تعرض «المقالات ٠/شهر» للثلاث. · المطلوب: تكتب الرقم لكل باقة في خانة «مقالات / شهر».</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> أهمّ رقم في خدمتنا — عدد المقالات شهرياً — غير مكتوب في أي باقة. الشاشة تعرض «المقالات ٠/شهر» للثلاث.</p>
+<p><b>المطلوب:</b> تكتب الرقم لكل باقة في خانة «مقالات / شهر».</p>
+<p><b>نعرف إنه خلص لما:</b> تشوف سطر «٤ مقالات شهرياً» (أو الرقم الصحيح) في بطاقات المعاينة الثلاث.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>المقيس: بطاقات /commercial-plans الثلاث كلّها «المقالات ٠/شهر» · الحقل articlesPerMonth فارغ.
+الخانة: قسم «الأساس الشهري» في لوحة كل باقة.
+يفتح ما بعده: PAY-G7 يضرب هذا الرقم في أشهر الخدمة ليعرض «٢٤ مقالاً خلال المدّة» — وبلا تعبئته يبقى صفراً.</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦. الأرقام لم تُخترع — نُقلت من مصدر قائم.</b></p>
+
+<p><b>المصدر:</b> <code>SubscriptionTierConfig</code> — جدول الفئات الداخلي المزامَن من جبر سيو. يحمل <code>articlesPerMonth</code> لكل فئة، والربط بالكتالوج قائم بحقل <code>tier</code>:</p>
+<pre>SubscriptionTierConfig                 CommercialPlan          نُقل
+  STANDARD «الانطلاقة»  → 4 مقالات      الانطلاقة (STANDARD)  →  4
+  PRO      «الزخم»      → 8 مقالات      الزخم     (PRO)       →  8
+  PREMIUM  «الريادة»    → 12 مقالاً      الريادة   (PREMIUM)   → 12</pre>
+
+<p><b>الإدخال تمّ من الشاشة لا بكتابة مباشرة في القاعدة</b> — عبر «حفظ الأساس» في كل باقة، أي المسار الذي يستعمله خالد نفسه.</p>
+
+<p><b>قراءة خام بعد الإدخال (تثبت أن الأسعار لم تُمسّ):</b></p>
+<pre>الانطلاقة  مقالات/شهر: 4   SA: 399   EG: 1199
+الزخم      مقالات/شهر: 8   SA: 1199  EG: 3999
+الريادة    مقالات/شهر: 12  SA: 2999  EG: 7999</pre>
+
+<p><b>🔴 تناقضٌ انكشف أثناء النقل — يحتاج قرار خالد:</b> الجدول القديم يحمل أسعاراً تخالف الكتالوج في اثنتين من ثلاث:</p>
+<pre>                 SubscriptionTierConfig     الكتالوج (SA)
+الانطلاقة                499                    399
+الزخم                   1299                   1199
+الريادة                 2999                   2999  ✓</pre>
+<p>لم تُنقل الأسعار عمداً — الكتالوج هو مصدر الحقيقة للسعر (<code>PAY-AV-FIVE</code>)، والجدول القديم يُجمَّد في <code>PAY-R6</code>. لكن أرقام المقالات جاءت من نفس الجدول المتناقض، <b>فأكّدها قبل النشر</b>: إن كانت ٤ / ٨ / ١٢ صحيحة فهي وعدٌ للعميل، وإن تغيّرت فعدّلها من الشاشة.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G4" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G4</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G4">⧉</button></div>
+  
+  <div class="t">🟦 داتا · نشر «الزخم» و«الريادة» — اليوم باقة واحدة فقط يراها الزائر</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: عندنا ثلاث باقات، لكن «الزخم» و«الريادة» ما زالتا مسودة. يعني لو فتحنا صفحة البيع اليوم، الزائر يرى باقة واحدة ولا خيار أمامه. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> عندنا ثلاث باقات، لكن «الزخم» و«الريادة» ما زالتا <b>مسودة</b>. يعني لو فتحنا صفحة البيع اليوم، الزائر يرى باقة واحدة ولا خيار أمامه.</p>
+<p><b>المطلوب:</b> بعد ما يكتمل محتوى الباقتين (المزايا والأيقونات وعدد المقالات)، تضغط «نشر» على كلٍّ منهما.</p>
+<p><b>نعرف إنه خلص لما:</b> المعاينة تعرض <b>ثلاث</b> بطاقات على السوقين بدل واحدة.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>المقيس: لقطة /commercial-plans — «الانطلاقة» منشورة · «الزخم» مسودة · «الريادة» مسودة.
+        ولقطة /pay-preview: «1 باقة منشورة في هذا السوق».
+حارس النشر (PAY-A2) يرفض نشر باقة بلا tier — يُملأ قبل الضغط.
+يعتمد على: PAY-G1 · G2 · G3 — لا تُنشر باقة فارغة المحتوى.</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦.</b> الباقات الثلاث منشورة.</p>
+<pre>قبل   /pay-preview: «1 باقة منشورة في هذا السوق»
+بعد   /pay-preview: «3 باقة منشورة في هذا السوق»
+      حارس النشر (PAY-A2) مرّ: الثلاث تحمل tier، فلم يُرفض أيّها.</pre>
+<p><b>قابل للتراجع بضغطة:</b> «إيقاف النشر» داخل لوحة كل باقة. نُشرت لرؤية الوراثة (<code>PAY-G18</code>) حيّةً — فأعِدها مسودةً متى شئت.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G5" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G5</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G5">⧉</button></div>
+  
+  <div class="t">حساب السعر الحقيقي بعد الهدية — الرقم الذي يُقنع بالمدّة الطويلة</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: لو اشترى العميل ١٢ شهراً يأخذ ٦ أشهر هدية، أي ١٨ شهر خدمة بسعر ١٢. لكننا لا نحسب هذا في أي مكان — فلا نعرف أن سعره الحقيقي نزل من ٣٩٩ إلى ٢٦٦ للشهر. · المطلوب: دالّة حساب واحدة تعطي: كم شهر خدمة فعلاً ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> لو اشترى العميل ١٢ شهراً يأخذ ٦ أشهر هدية، أي ١٨ شهر خدمة بسعر ١٢. لكننا لا نحسب هذا في أي مكان — فلا نعرف أن سعره الحقيقي نزل من ٣٩٩ إلى ٢٦٦ للشهر.</p>
+<p><b>المطلوب:</b> دالّة حساب واحدة تعطي: كم شهر خدمة فعلاً · كم دفع إجمالاً · كم يساوي الشهر الواحد بعد الهدية · كم نسبة ما وفّره.</p>
+<p><b>نعرف إنه خلص لما:</b> نجرّب الحساب على ٣٩٩ × ١٢ شهراً + ٦ هدية فيطلع: ١٨ شهر خدمة · ٤٧٨٨ ريال · ٢٦٦ للشهر · وفّر ٣٣٪.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عند جبر سيو: lib/pricing-durations.ts (يشتقّ serviceMonths · effectiveMonthly · savingsPct).
+عندنا: shared/lib/payments/build-order-snapshot.ts يحسب الإجمالي والضريبة فقط — لا اشتقاق بيعياً.
+
+الدالّة الجديدة في shared/lib/commercial/ :
+  serviceMonths    = paidMonths + bonusServiceMonths
+  total            = monthlyBase × paidMonths
+  effectiveMonthly = total ÷ serviceMonths
+  savingsPct       = (1 − effectiveMonthly ÷ monthlyBase) × 100
+
+🔴 حارس: لا تُلمس buildOrderSnapshot. هذه أرقام عرض، وتلك أرقام مال تدخل الطلب والفاتورة.
+   خلطهما هو عطل PAY-AV-FIVE نفسه (السعر الواحد في خمسة مواضع، اثنان يتناقضان).</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦. المقيس حيّاً على <code>/pay-preview</code> (<code>modonty_dev</code>، باقة «الانطلاقة» ٣٩٩ ر.س):</b></p>
+<pre>المدّة      الإجمالي      السعر الفعليّ     التوفير    أشهر الخدمة
+٣ أشهر      ١٬١٩٧ ر.س     —                —          ٣ أشهر خدمة
+٦ أشهر      ٢٬٣٩٤ ر.س     ٣٤٢ ر.س/شهر      ١٤٪        ٧ أشهر خدمة، منها شهر مجاناً
+١٢ شهراً    ٤٬٧٨٨ ر.س     ٢٦٦ ر.س/شهر      ٣٣٪        ١٨ شهراً خدمة، منها ٦ أشهر مجاناً</pre>
+<p>صفّ ١٢ شهراً يطابق شرط الإغلاق المكتوب في البطاقة حرفياً: <code>serviceMonths 18 · total 4788 · effectiveMonthly 266 · savingsPct 33</code>.</p>
+<p><b>تقاطع يثبت أن الحساب لم ينحرف:</b> صفّ ٦ أشهر = <b>٢٬٣٩٤ ر.س</b> — وهو نفس إجمالي الطلب الحقيقي <code>ORD-2026-00017</code> المخزَّن في لقطته (<code>totalMinor 239400</code>). أي أن أرقام العرض توافق أرقام المال دون أن تقرأ منها.</p>
+<p>وحالة «٣ أشهر» (بلا هدية) تُخفي سطر السعر الفعليّ والتوفير — لا تطبع «وفّرت ٠٪».</p>
+
+<p><b>الملفّات</b></p>
+<pre>shared/lib/commercial/term-pricing.ts     الدالّة النقيّة — serviceMonths · totalMinor
+                                          · effectiveMonthlyMinor · savingsPct
+shared/lib/commercial/format-money.ts     + formatCatalogMoneyMinor — القسمة على ١٠٠ في
+                                          موضع واحد بدل أن تتناثر في المكوّنات
+shared/lib/commercial/arabic-months.ts    formatMonths — تصريف «شهر» مع العدد
+shared/components/commercial/plan-card.tsx  يستدعي الدالّة ولا يحسب شيئاً بنفسه</pre>
+
+<p><b>الحارس صمد:</b> <code>build-order-snapshot.ts</code> لم يُلمس — أرقام العرض في ملفّ، وأرقام المال في آخر.</p>
+
+<p><b>عطل أُصلح في الطريق:</b> السطر خرج أوّل مرّة «٣ شهر خدمة» و«١٨ شهر خدمة» — عربية مكسورة. فصُنع <code>formatMonths</code> مشتركاً (شهر · شهران · ٣–١٠ أشهر · ١١+ شهراً) لأن صفّ المدد في <code>PAY-G9</code> يحتاج نفس التصريف، ونسخةٌ ثانية من القاعدة تعني أن إحداهما ستبقى مكسورة.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G6" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G6</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G6">⧉</button></div>
+  
+  <div class="t">كتابة السعر الحقيقي على البطاقة — بدونه المدّة الطويلة تبدو أغلى</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: البطاقة تقول «٣٩٩ للشهر» و«١٢ شهراً = ٤٧٨٨ ريال». العميل يقارن ٤٧٨٨ بـ١١٩٧ (ثلاثة أشهر) فيرى المدّة الطويلة أغلى — وهي في الحقيقة أوفر بالثلث. نحن نقول له الرقم الذي ينفّره ونخفي الذي يقنعه. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> البطاقة تقول «٣٩٩ للشهر» و«١٢ شهراً = ٤٧٨٨ ريال». العميل يقارن ٤٧٨٨ بـ١١٩٧ (ثلاثة أشهر) فيرى المدّة الطويلة <b>أغلى</b> — وهي في الحقيقة أوفر بالثلث. نحن نقول له الرقم الذي ينفّره ونخفي الذي يقنعه.</p>
+<p><b>المطلوب:</b> سطر تحت السعر يقول: «= ٢٦٦ ر.س للشهر فعلياً · ١٨ شهر خدمة، منها ٦ مجاناً».</p>
+<p><b>نعرف إنه خلص لما:</b> تفتح المعاينة على مدّة ١٢ شهراً فتقرأ السطرين بأرقامهما الصحيحة.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عند جبر سيو: PricingSection.tsx:511 — «= … /شهر فعلياً» + «منها ٦ شهور مجاناً».
+عندنا: البطاقة تعرض السعر الشهري والإجمالي فقط.
+المكان: shared/components/commercial/plan-card.tsx — الأرقام تأتي من دالّة PAY-G5،
+        لا تُحسب داخل المكوّن (وإلا صار للحساب موضعان يتباعدان).</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦. المقيس حيّاً على <code>/pay-preview</code> (<code>modonty_dev</code>، باقة «الانطلاقة» ٣٩٩ ر.س):</b></p>
+<pre>المدّة      الإجمالي      السعر الفعليّ     التوفير    أشهر الخدمة
+٣ أشهر      ١٬١٩٧ ر.س     —                —          ٣ أشهر خدمة
+٦ أشهر      ٢٬٣٩٤ ر.س     ٣٤٢ ر.س/شهر      ١٤٪        ٧ أشهر خدمة، منها شهر مجاناً
+١٢ شهراً    ٤٬٧٨٨ ر.س     ٢٦٦ ر.س/شهر      ٣٣٪        ١٨ شهراً خدمة، منها ٦ أشهر مجاناً</pre>
+<p>صفّ ١٢ شهراً يطابق شرط الإغلاق المكتوب في البطاقة حرفياً: <code>serviceMonths 18 · total 4788 · effectiveMonthly 266 · savingsPct 33</code>.</p>
+<p><b>تقاطع يثبت أن الحساب لم ينحرف:</b> صفّ ٦ أشهر = <b>٢٬٣٩٤ ر.س</b> — وهو نفس إجمالي الطلب الحقيقي <code>ORD-2026-00017</code> المخزَّن في لقطته (<code>totalMinor 239400</code>). أي أن أرقام العرض توافق أرقام المال دون أن تقرأ منها.</p>
+<p>وحالة «٣ أشهر» (بلا هدية) تُخفي سطر السعر الفعليّ والتوفير — لا تطبع «وفّرت ٠٪».</p>
+
+<p><b>الملفّات</b></p>
+<pre>shared/lib/commercial/term-pricing.ts     الدالّة النقيّة — serviceMonths · totalMinor
+                                          · effectiveMonthlyMinor · savingsPct
+shared/lib/commercial/format-money.ts     + formatCatalogMoneyMinor — القسمة على ١٠٠ في
+                                          موضع واحد بدل أن تتناثر في المكوّنات
+shared/lib/commercial/arabic-months.ts    formatMonths — تصريف «شهر» مع العدد
+shared/components/commercial/plan-card.tsx  يستدعي الدالّة ولا يحسب شيئاً بنفسه</pre>
+
+<p><b>الحارس صمد:</b> <code>build-order-snapshot.ts</code> لم يُلمس — أرقام العرض في ملفّ، وأرقام المال في آخر.</p>
+
+<p><b>عطل أُصلح في الطريق:</b> السطر خرج أوّل مرّة «٣ شهر خدمة» و«١٨ شهر خدمة» — عربية مكسورة. فصُنع <code>formatMonths</code> مشتركاً (شهر · شهران · ٣–١٠ أشهر · ١١+ شهراً) لأن صفّ المدد في <code>PAY-G9</code> يحتاج نفس التصريف، ونسخةٌ ثانية من القاعدة تعني أن إحداهما ستبقى مكسورة.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G7" data-sev="normal" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G7</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G7">⧉</button></div>
+  
+  <div class="t">🟨 كود · إجمالي المقالات خلال المدّة — موقوف حتى تُملأ داتا PAY-G3</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: البطاقة (بعد G3) ستقول «٤ مقالات شهرياً». الرقم صحيح لكنه صغير في عين القارئ. جبر سيو يعرض المجموع الكامل خلال المدّة، وهو رقم يُشعر بحجم الصفقة. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> البطاقة (بعد G3) ستقول «٤ مقالات شهرياً». الرقم صحيح لكنه صغير في عين القارئ. جبر سيو يعرض المجموع الكامل خلال المدّة، وهو رقم يُشعر بحجم الصفقة.</p>
+<p><b>المطلوب:</b> سطر يضرب المقالات الشهرية في أشهر الخدمة ويعرض المجموع: «٧٢ مقالاً خلال ١٨ شهراً».</p>
+<p><b>نعرف إنه خلص لما:</b> على مدّة ١٢ شهراً، الرقم المعروض يساوي الضرب اليدوي بالضبط.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عند جبر سيو: PricingSection.tsx:370 — perMonth × serviceMonths.
+الحساب عندنا: articlesPerMonth × serviceMonths (من PAY-G5).
+شرط: يُخفى السطر كلّه حين يكون articlesPerMonth فارغاً — لا يُطبع «٠ مقال».
+يعتمد على: PAY-G3 (الرقم) · PAY-G5 (أشهر الخدمة).</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦.</b> المجموع يُحسب ويُعرض، وعربيّته سليمة.</p>
+
+<pre>لقطة حيّة من /pay-preview?months=12 (الانطلاقة · ٤ مقالات · ١٨ شهر خدمة):
+  "٤ مقالات شهرياً"
+  "أي ٧٢ مقالاً خلال ١٨ شهراً"        ٤ × ١٨ = ٧٢ ✓</pre>
+
+<p><b>حارسان:</b> السطر لا يُطبع حين يكون <code>articlesPerMonth</code> فارغاً أو صفراً — فلا تظهر «٠ مقال». ولا يُطبع المجموع حين لا تكون هناك مدّة مختارة، لأن «خلال ماذا؟» بلا مدّة سؤالٌ بلا جواب.</p>
+
+<p><b>عطل لغوي عولج بترقية لا بترقيع:</b> خرج السطر أوّلاً «٤ مقال شهرياً». القاعدة نفسها كانت قد كسرت «٣ شهر خدمة» في <code>PAY-G5</code> وعولجت وقتها بمصرّف خاصّ بالأشهر. تكرارها على اسم ثانٍ أثبت أن القاعدة أعمّ من الأشهر — فرُفعت إلى <code>shared/lib/commercial/arabic-count.ts</code>:</p>
+<pre>formatCounted(n, forms)   ١ مفرد · ٢ مثنّى · ٣–١٠ جمع · ١١+ مفرد منصوب
+MONTHS   = شهر · شهران · أشهر · شهراً
+ARTICLES = مقال · مقالان · مقالات · مقالاً
+وformatMonths صار يفوّض إليها — نسخة ثالثة لاسم ثالث كانت ستكسر بنفس الطريقة.</pre></div></details>
+</article>
+<article class="card" data-id="PAY-G8" data-sev="normal" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G8</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G8">⧉</button></div>
+  
+  <div class="t">تحديد المدّة الموصى بها — الزرّ الذي يفتح عليه الزائر</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: صفحة البيع ستفتح على أوّل مدّة في الترتيب (٣ أشهر) بلا سبب. ونحن نريده أن يبدأ من المدّة التي تناسبنا وتناسبه — ٦ أشهر مثلاً — وأن يرى عليها كلمة «الأنسب». ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> صفحة البيع ستفتح على أوّل مدّة في الترتيب (٣ أشهر) بلا سبب. ونحن نريده أن يبدأ من المدّة التي تناسبنا وتناسبه — ٦ أشهر مثلاً — وأن يرى عليها كلمة «الأنسب».</p>
+<p><b>المطلوب:</b> خانة في جدول المدد تحدّد أيّها الموصى به، وصفحة البيع تفتح عليه وتضع عليه وسماً.</p>
+<p><b>نعرف إنه خلص لما:</b> تبدّل التوصية من الأدمن من ٦ إلى ١٢، تفتح المعاينة بلا أي إضافات في الرابط، فتجدها فتحت على ١٢.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عند جبر سيو: RECOMMENDED_DURATION = 6 ثابتاً في الكود — تغييره نشرة كاملة.
+عندنا: حقل isRecommended على CommercialTermPolicy — تغييره صفّ في القاعدة.
+حارس عند الحفظ: صفّ واحد فقط يحمله (توصيتان = لا توصية).</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦.</b> التوصية صارت صفّاً في القاعدة، وتبديلها من الأدمن يغيّر ما تفتح عليه الصفحة فوراً.</p>
+
+<p><b>شرط الإغلاق — قبل/بعد:</b></p>
+<pre>قبل   لا توصية في القاعدة، والصفحة تفتح على أوّل صفّ في الترتيب (٣ أشهر).
+      ٣ أزرار «اجعلها الأنسب» · صفر «★ الأنسب»
+الفعل ضغطة واحدة على «اجعلها الأنسب» في صفّ ٦ أشهر
+      └─ setRecommendedCommercialTerm("6aa411299b11d910e63a49f2") in 1533ms
+بعد   قراءة خام من commercial_term_policies:
+        3 أشهر  + 0 · موصى بها: false
+        6 أشهر  + 1 · موصى بها: true
+        12 شهراً + 6 · موصى بها: false
+      عدد الموصى بها = 1 (الحارس صمد)
+      الشاشة: زرّان «اجعلها الأنسب» + واحد «★ الأنسب»
+      /pay-preview بلا بارامتر → فتحت على ٦ أشهر بدل ٣</pre>
+<pre>صفّ المدد بعد التعديل (لقطة حيّة من /pay-preview بلا أي بارامتر):
+  "٣ أشهر"
+  "٦ أشهر + شهر مجاناً" + وسم «الأنسب»      ← الصفحة فتحت عليها
+  "١٢ شهراً + ٦ أشهر مجاناً"
+
+البطاقة تبعتها: ٦ أشهر — ٢٬٣٩٤ ر.س · = ٣٤٢ ر.س/شهر فعلياً · ٧ أشهر خدمة، منها شهر مجاناً</pre>
+
+<p><b>الحارس ولماذا هو في الأكشن لا في السكيما:</b> مونجو لا يملك قيداً جزئياً يقول «صفّ واحد فقط بـ<code>true</code>». فالمسح ثم التعيين يجريان في <code>db.$transaction</code> واحدة داخل <code>setRecommendedCommercialTerm</code>. وتوصيتان ليستا إشارة أقوى — بل لا إشارة.</p>
+<p>وحارس ثانٍ: مدّة موقوفة لا تُوصى بها، وإلا فتحت الصفحة على شيء لا يراه الزائر أصلاً.</p>
+
+<p><b>الفرق عن جبر سيو:</b> عنده <code>RECOMMENDED_DURATION = 6</code> ثابتاً في <code>lib/pricing-durations.ts</code> — تحريك التوصية نشرة كاملة. عندنا صفّ.</p>
+
+<p><b>الملفّات:</b> <code>CommercialTermPolicy.isRecommended</code> في السكيما · <code>setRecommendedCommercialTerm</code> في <code>commercial-plans/actions.ts</code> · زرّ في جدول المدد · <code>getMarketCatalog</code> يمرّره · <code>/pay-preview</code> يفتح عليه.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G9" data-sev="normal" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G9</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G9">⧉</button></div>
+  
+  <div class="t">صياغة الهدية على زرّ المدّة — «مجاناً» كلمة بيع، «+٦» رمز</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">عادي</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: زرّ المدّة عندنا مكتوب «١٢ أشهر + ٦». الزائر لا يعرف ٦ ماذا — ريالات؟ مقالات؟ أشهر؟ عند جبر سيو الزرّ نفسه يقول «٦ شهور مجاناً». · المطلوب: تُكتب الأزرار بلغة كاملة: «٣ أشهر» · «٦ أشهر + شهر مجاناً» ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> زرّ المدّة عندنا مكتوب «١٢ أشهر + ٦». الزائر لا يعرف ٦ ماذا — ريالات؟ مقالات؟ أشهر؟ عند جبر سيو الزرّ نفسه يقول «٦ شهور مجاناً».</p>
+<p><b>المطلوب:</b> تُكتب الأزرار بلغة كاملة: «٣ أشهر» · «٦ أشهر + شهر مجاناً» · «١٢ شهراً + ٦ شهور مجاناً».</p>
+<p><b>نعرف إنه خلص لما:</b> تقرأ صفّ المدد الثلاث فتفهمه بلا شرح، والتصريف العربي سليم (شهر · شهران · شهور).</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عند جبر سيو: PricingSection.tsx:303.
+المكان: الصفّ فوق البطاقات في صفحة البيع والمعاينة معاً.
+تصريف العدد يُكتب دالّةً واحدة — لا سلسلة if في المكوّن.</pre>
+<p><b>🔄 تحديث — ١٣ سبتمبر ٢٠٢٦:</b> نصف الأداة جاهز. <code>shared/lib/commercial/arabic-months.ts</code> صُنع أثناء <code>PAY-G5</code> ويصرّف «شهر» مع العدد (شهر · شهران · ٣–١٠ أشهر · ١١+ شهراً)، ويعمل داخل البطاقة الآن. الباقي: صفّ أزرار المدد <b>فوق</b> البطاقات — ما زال يقول «١٢ أشهر + ٦» ويجب أن يقول «١٢ شهراً + ٦ أشهر مجاناً».</p>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦.</b> «+٦» صارت «+ ٦ أشهر مجاناً»، والتصريف العربي سليم في الحالات الثلاث.</p>
+<pre>صفّ المدد بعد التعديل (لقطة حيّة من /pay-preview بلا أي بارامتر):
+  "٣ أشهر"
+  "٦ أشهر + شهر مجاناً" + وسم «الأنسب»      ← الصفحة فتحت عليها
+  "١٢ شهراً + ٦ أشهر مجاناً"
+
+البطاقة تبعتها: ٦ أشهر — ٢٬٣٩٤ ر.س · = ٣٤٢ ر.س/شهر فعلياً · ٧ أشهر خدمة، منها شهر مجاناً</pre>
+
+<p><b>قبل:</b> <code>"١٢ أشهر + ٦"</code> — رقمٌ بلا كلمة، والزائر لا يعرف ٦ ماذا: ريالات؟ مقالات؟ أشهر؟ وتصريف «١٢ أشهر» مكسور أصلاً.</p>
+
+<p><b>الأداة:</b> <code>shared/lib/commercial/arabic-months.ts</code> — <code>formatMonths</code>: شهر · شهران · ٣–١٠ أشهر · ١١+ شهراً. في ملفّ مشترك لا داخل المكوّن، لأن صفّ المدد فوق البطاقات وسطر أشهر الخدمة داخلها يصرّفان نفس العدد — ونسخةٌ ثانية من القاعدة تعني أن إحداهما ستبقى مكسورة. (صُنعت أثناء <code>PAY-G5</code> حين خرج السطر «٣ شهر خدمة».)</p></div></details>
+</article>
+<article class="card" data-id="PAY-G10" data-sev="normal" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G10</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G10">⧉</button></div>
+  
+  <div class="t">🟨 كود · رابط يفتح على عرض بعينه — تحتاجه أي حملة إعلانية</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">عادي</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: لو أردنا إعلاناً يقول «عرض السنة» ويهبط الزائر مباشرةً على مدّة ١٢ شهراً، لا نملك رابطاً يفعلها. المعاينة تقرأ بارامتراً، وصفحة البيع لم تُبنَ فلا قرار فيها. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> لو أردنا إعلاناً يقول «عرض السنة» ويهبط الزائر مباشرةً على مدّة ١٢ شهراً، لا نملك رابطاً يفعلها. المعاينة تقرأ بارامتراً، وصفحة البيع لم تُبنَ فلا قرار فيها.</p>
+<p><b>المطلوب:</b> اسم بارامتر واحد متّفق عليه للصفحتين، ولو جاء فارغاً أو خطأً تفتح الصفحة على المدّة الموصى بها بلا رسالة خطأ.</p>
+<p><b>نعرف إنه خلص لما:</b> تفتح رابطاً بقيمة صحيحة فيفتح عليها، وآخر بقيمة عبثية فيفتح على الموصى بها بهدوء.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عند جبر سيو: ?duration= (PricingSection.tsx:177).
+عندنا في المعاينة: ?months= — يُوحَّد الاسم قبل بناء PAY-C2 كي لا تُكتب روابط الحملات مرّتين.
+السقوط الآمن شرط: بارامتر من الزائر لا يُوثق به.</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦.</b> اسم واحد للبارامتر، ودالّة واحدة تقرؤه، وسقوطٌ آمن على الموصى بها.</p>
+
+<p><b>الحالات الأربع مقيسة حيّاً على <code>/pay-preview</code>:</b></p>
+<pre>?months=12     → ١٢ شهراً — ٤٬٧٨٨ ر.س      الاسم المعتمد
+?duration=12   → ١٢ شهراً — ٤٬٧٨٨ ر.س      المرادف الموروث يعمل
+?months=abc    → ٦ أشهر — ٢٬٣٩٤ ر.س        سقط على الموصى بها · صفر خطأ في الصفحة
+?months=999    → ٦ أشهر — ٢٬٣٩٤ ر.س        مدّة غير موجودة · صفر خطأ</pre>
+
+<p><b>الاسم المعتمد <code>?months=</code> لا <code>?duration=</code>:</b> الأوّل يقول وحدته، والثاني يترك السؤال مفتوحاً (أيام؟ أشهر؟). وهو لفظ السكيما نفسها (<code>paidMonths</code>) — فلا يصير للمفهوم اسمان، أحدهما في العنوان والآخر في القاعدة.</p>
+<p>و<code>?duration=</code> يبقى <b>مقبولاً للقراءة ولا يُكتب</b>: روابط جبر سيو تستعمله، فرابطٌ منسوخ من حملة قديمة لا يسقط على مدّة خاطئة بصمت.</p>
+
+<p><b>القرارات المكتوبة في الدالّة:</b></p>
+<pre>قيمة غير صالحة    تسقط بهدوء على الموصى بها (PAY-G8) ولا ترفع خطأً —
+                  صفحة بيع لا تُعاقب زائراً على رابط مكسور.
+بارامتر مكرّر      ?months=3&months=12 → تُؤخذ الأخيرة (سلوك المتصفّحات نفسه).
+Number.isInteger   يرفض "6.5" و"1e3" — لا تُبنى مدّة من كسرٍ أو أُسّ.</pre>
+
+<p><b>الملفّ:</b> <code>shared/lib/commercial/resolve-term-from-params.ts</code> — مشتركة لا محلّية، لأن المعاينة و<code>/pay</code> يجب أن تقرآ نفس الاسم بنفس القواعد، وإلا كُتبت روابط الحملات مرّتين وانحرفت إحداهما.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G11" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G11">⧉</button></div>
+  
+  <div class="t">🟩 كود ثم داتا · ثلاث كلمات على البطاقة تُكتب من الأدمن لا من الكود</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: نصّ زرّ الشراء مكتوب داخل الكود («اشترك الآن») — تغييره يحتاج مبرمجاً ونشرة. وما عندنا سطر خاطف قرب السعر، ولا شارة ثانية للبطاقة المميّزة. · المطلوب: ثلاث خانات في شاشة الباقة: جملة خاطفة تظهر قرب السعر ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> نصّ زرّ الشراء مكتوب داخل الكود («اشترك الآن») — تغييره يحتاج مبرمجاً ونشرة. وما عندنا سطر خاطف قرب السعر، ولا شارة ثانية للبطاقة المميّزة.</p>
+<p><b>المطلوب:</b> ثلاث خانات في شاشة الباقة: جملة خاطفة تظهر قرب السعر · نصّ زرّ الباقة · شارة ثانية.</p>
+<p><b>نعرف إنه خلص لما:</b> تغيّر نصّ الزرّ من الأدمن وتراه تغيّر في المعاينة، بلا أن يلمس أحدٌ الكود.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عند جبر سيو على Plan: hook · ctaText · featuredBadge.
+عندنا: نصّ الزرّ في المكوّن · شارة واحدة (badge) · لا hook.
+ثلاثة حقول على CommercialPlan + حقولها في «بيانات الباقة» + عرضها في البطاقة المشتركة.
+يُغلق أيضاً بـ: grep يُظهر صفر نصّ زرّ مكتوب داخل plan-card.tsx.</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦.</b> الكلمات الثلاث خرجت من الكود إلى الأدمن، ودورتها مقيسة: كتابة ← حفظ ← ظهور.</p>
+
+<pre>الفعل  كُتبت الثلاث في شاشة «الانطلاقة» ثم «حفظ بيانات الباقة»:
+         السطر الخاطف = «٦ شهور مجاناً مع السنة»
+         نصّ الزرّ     = «ابدأ بالانطلاقة»
+         شارة التمييز  = «الأكثر اختياراً»
+
+النتيجة على /pay-preview (لقطة حيّة):
+  شارتان جنباً إلى جنب:  «الأكثر طلباً» + «الأكثر اختياراً»
+  تحت السعر:            «٦ شهور مجاناً مع السنة»
+  الزرّ:                 button "ابدأ بالانطلاقة"   ← كان «اشترك الآن» المكتوب في الكود</pre>
+
+<p><b>قرارات التصميم</b></p>
+<pre>hook واحد لا قائمة   جملتان خاطفتان ليستا أقوى، بل لا خاطفة. لذلك String? لا String[].
+ctaText يسقط آمناً   فارغاً يكتب المكوّن نصّه الافتراضي — فباقة جديدة تُرسم صحيحة بلا
+                     تعبئة، ولا يبقى النصّ حبيس الكود لمن أراد تغييره.
+featuredBadge وسمٌ    وجودها يرفع البطاقة بحلقة حول حافّتها أيضاً، لا شارةً فقط — نفس
+وتمييزٌ معاً          ما يفعله جبر سيو (featured = !!featuredBadge)، وهو الاستعمال الفعلي
+                     لها: تمييز بطاقة واحدة عن أخواتها.
+موضع السطر الخاطف     تحت السعر مباشرةً — أوّل ما تقع عليه العين بعد الرقم.</pre>
+
+<p><b>الملفّات:</b> ثلاثة حقول على <code>CommercialPlan</code> · <code>updatePlanSchema</code> (حدود ٦٠/٣٠/٣٠ حرفاً) · ثلاثة مدخلات في شاشة الباقة · <code>getMarketCatalog</code> يمرّرها · <code>plan-card.tsx</code> يعرضها.</p>
+
+<p><b>تنظيف:</b> القيم الثلاث في «الانطلاقة» بيانات اختبار — امسحها أو عدّلها متى شئت.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G12" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G12</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G12">⧉</button></div>
+  
+  <div class="t">🟩 كود ثم داتا · سطور مميّزة على البطاقة (highlights) — فُعِّلت بقرارك</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: في جدول الباقات خانة اسمها «highlights» موجودة من أوّل يوم: لا شاشة تكتب فيها ولا بطاقة تعرضها. عند جبر سيو هي عمود البطاقة كلّه. عندنا خانة ميّتة تُوهم أن المحتوى مُدار وهو ليس كذلك. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> في جدول الباقات خانة اسمها «highlights» موجودة من أوّل يوم: <b>لا شاشة تكتب فيها ولا بطاقة تعرضها</b>. عند جبر سيو هي عمود البطاقة كلّه. عندنا خانة ميّتة تُوهم أن المحتوى مُدار وهو ليس كذلك.</p>
+<p><b>المطلوب:</b> قرار منك: إمّا نفتح لها خانة في شاشة الباقة ونعرضها فوق المزايا، وإمّا نحذفها من قاعدة البيانات نهائياً.</p>
+<p><b>نعرف إنه خلص لما:</b> قرارك مكتوب في هذه البطاقة، ونُفِّذ: إمّا لقطة تحريرها وظهورها، وإمّا حذفها مع إثبات أن لا شيء يستعملها.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>المكان: CommercialPlan.highlights: String[] — shared/prisma/schema/schema.prisma:1048
+توصيتي: الحذف. مكتبة المزايا المُطبَّعة عندنا (اسم · وحدة · كمّية · أيقونة) أقوى من قائمة نصّ حرّ،
+        وإبقاء الاثنين يفتح بابين لكتابة نفس المعلومة فيتناقضان.
+لو بقيت: تُحرَّر وتُعرض — لا تبقى خانة ميّتة.</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦. القرار: خالد اختار «فعّلها» (وتوصيتي كانت الحذف — القرار قراره وقد نُفِّذ كاملاً).</b></p>
+
+<p><b>دورة كاملة مقيسة: كتابة ← حفظ ← ظهور</b></p>
+<pre>قبل   الباقات الثلاث: highlights = [] · [] · []   (0 من 3 فيها قيمة)
+      لا شاشة تكتبها ولا بطاقة تعرضها.
+الفعل كتابة سطرين في «سطور مميّزة» بشاشة الانطلاقة ثم «حفظ بيانات الباقة».
+بعد   قراءة خام من commercial_plans:
+        الانطلاقة  ["إلغاء في أي وقت","دعم مباشر على واتساب"]
+        الزخم      []
+        الريادة    []
+      /pay-preview: السطران ظاهران على البطاقة فوق المزايا.</pre>
+
+<p><b>الحدّ الذي وُضع كي لا يتناقض الوعدان:</b> السطور المميّزة للوعود <b>التي لا رقم لها</b> («إلغاء في أي وقت»)، والكمّيات تسكن مكتبة المزايا وحدها. مكتوب في نصّ الحقل نفسه تحت العنوان، لا في وثيقة بعيدة — لأن الخطر الحقيقي أن يُكتب «٤ مقالات شهرياً» هنا وتقول ميزة «مقالات منشورة» ستّة، فتناقض البطاقة نفسها أمام العميل.</p>
+<p>وحدّان تقنيان: ٦ سطور كحدّ أقصى (<code>slice(0,6)</code>) و٨٠ حرفاً للسطر — بطاقةٌ بعشرين سطراً حرّاً تُغرق قائمة المزايا المُهيكلة تحتها.</p>
+
+<p><b>الملفّات:</b> <code>updatePlanSchema.highlights</code> في <code>commercial-plans/actions.ts</code> (يقسم على الأسطر ويقصّ الفراغ ويسقط الفارغ) · مربّع «سطور مميّزة» في شاشة الباقة · عرضها فوق المزايا في <code>shared/components/commercial/plan-card.tsx</code>.</p>
+
+<p><b>عطلان أثناء التنفيذ:</b> كتابة الملفّات بسكربت هيردوك حوّلت <code>\n</code> إلى سطر حقيقي داخل سلسلة نصّية مرّتين («Unterminated string constant») — أُصلحا بـ<code>split(/\r?\n/)</code> وبتحرير مباشر. يتكرّر مع أي سلسلة فيها <code>\n</code> تُكتب عبر هيردوك.</p>
+
+<p><b>تنظيف:</b> السطران في «الانطلاقة» بياناتُ اختبار — امسحهما من الشاشة متى شئت، أو اتركهما نموذجاً.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G13" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G13</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G13">⧉</button></div>
+  
+  <div class="t">🟩 كود ثم داتا · كلام صفحة البيع كلّه — العنوان والإعلان وشريط الثقة</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: البطاقات ستكون من قاعدة البيانات، لكن كل ما حولها (عنوان الصفحة، شريط إعلان عرض، عناصر الثقة «من ائتمنّا»، بقيّة الكلمات) ليس له مكان عندنا. ولو لم نبنِ له مكاناً، سيُكتب داخل الكود —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> البطاقات ستكون من قاعدة البيانات، لكن كل ما حولها (عنوان الصفحة، شريط إعلان عرض، عناصر الثقة «من ائتمنّا»، بقيّة الكلمات) ليس له مكان عندنا. ولو لم نبنِ له مكاناً، سيُكتب داخل الكود — وكل تعديل كلمة يصير طلباً برمجياً.</p>
+<p><b>المطلوب:</b> جدول واحد لكل سوق يحمل كلام الصفحة، وشاشة بسيطة تحرّره تحت «إدارة الدفع».</p>
+<p><b>نعرف إنه خلص لما:</b> تغيّر جملة الإعلان من الأدمن، تحدّث صفحة المعاينة، فتراها تغيّرت — بلا إعادة تشغيل ولا نشرة.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عند جبر سيو: PriceSectionMeta لكل دولة — announcement · ctaHeadline · ctaSubheadline
+        · trustItems (Json) · uiStrings (Json).
+عندنا: لا جدول ولا حقل لأيٍّ منها.
+الربط بالكاش: كل تعديل يستدعي وسم commercial-catalog (PAY-C1) وإلا لم يظهر على الصفحة.
+هذه البطاقة هي تطبيق مباشر لبطاقة PAY-DYNAMIC الحارسة.</pre>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦.</b> كلام الصفحة صار صفّاً لكل سوق، ودورته مقيسة: كتابة ← حفظ ← ظهور.</p>
+
+<pre>الفعل  كُتب كلام السعودية في «كلام صفحة البيع» بشاشة الباقات ثم حُفظ:
+         شريط الإعلان   = «العرض ينتهي نهاية الشهر»
+         عنوان القسم    = «اختر باقتك وابدأ النشر»
+         العنوان الفرعي = «محتوى وسيو ومتابعة — بعقد واضح بلا التزام طويل.»
+         أسطر الثقة     = «فاتورة ضريبية معتمدة» · «إلغاء بلا رسوم»
+
+النتيجة على /pay-preview (لقطة حيّة):
+  الأربعة ظاهرة في مواضعها: الإعلان فوق · العنوان وتحته الفرعي · الثقة أسفل البطاقات.
+
+الحارس المقيس — /pay-preview?market=EG:
+  عناصر كلام الصفحة = 0   (السوق المصري لم يُملأ بعد)
+  البطاقة ما زالت تُرسم = 1
+  أي أن ما لم يُكتب لا يُرسم مكانه فراغ، ولا تنكسر الصفحة لأن سوقاً لم يُحرَّر.</pre>
+
+<p><b>قرار معماري — حقول مسمّاة لا Json</b></p>
+<pre>جبر سيو يخزّن trustItems وuiStrings ككتل Json في PriceSectionMeta — وهو نفس نمط
+LandingSection { data: Json } الذي هجره هو نفسه حين قسّم الأسعار إلى صفوف.
+كتلة Json تقبل أي شكل، فلا يحرسها مخطّط ولا يكشف كسرَها إلا الزائر.
+عندنا: announcement · headline · subheadline نصوصٌ مسمّاة، وtrustItems مصفوفة نصّ
+(نفس نمط CommercialPlan.highlights الذي اعتُمد في PAY-G12).</pre>
+
+<p><b>🔸 ما لم يُنقل عمداً — <code>uiStrings</code>:</b> كلمات البطاقة الثابتة («/ شهر» · «شهر خدمة» · «شامل الضريبة») قليلة، ويحكمها تصريفٌ عربي في الكود (<code>formatMonths</code>: شهر · شهران · أشهر · شهراً). جعلها نصّاً حرّاً في القاعدة يفتح باب كسر اللغة بلا حارس، ومكسبها قريب من الصفر. تُفتح بندٌ مستقلّ إن طُلبت — والقرار مكتوب هنا كي لا يُظنّ سهواً.</p>
+
+<p><b>الملفّات:</b> موديل <code>PaySectionContent</code> (صفّ لكل سوق) · <code>updatePaySectionContent</code> بـ<code>upsert</code> (الصفّ لا يوجد حتى أوّل حفظ، فإجبار خالد على «إنشاء» ثم «تعديل» خطوةٌ بلا معنى) · <code>PaySectionContentForm</code> — نموذجان جنباً إلى جنب لا تبويبان، فالفرق بين السوقين يُقرأ بالمقارنة · <code>shared/lib/commercial/get-pay-section-content.ts</code> (يرجع كائناً مكتملاً دائماً، فلا يحمل كل مستهلك حارسه) · العرض في <code>/pay-preview</code>.</p>
+
+<p><b>عطل تقنيّ تكرّر ثلاث مرّات اليوم:</b> كتابة كود فيه <code>\n</code> أو <code>\r</code> عبر سكربت هيردوك يحوّلها إلى محارف حقيقية، فينكسر الملفّ («Unterminated string constant» · «Unterminated regexp literal»). الثالثة كانت <code>v.split(/\r?\n/)</code> فصارت <code>/</code>+CR+<code>?</code>+CRLF+<code>/</code>. القاعدة: أي سلسلة أو تعبير نمطيّ فيه <code>\n</code> يُكتب بأداة كتابة الملفّات مباشرةً لا بهيردوك.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G14" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G14</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G14">⧉</button></div>
+  
+  <div class="t">🔴 توسيع سجلّ محاولات الدفع — قبل أوّل عملية حقيقية</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: عندنا جدول يسجّل الدفعات الفاشلة، لكنه يحفظ خمسة أشياء فقط ولا يعمل إلا إذا كان هناك طلب قائم. جبر سيو يحفظ ستة عشر —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> عندنا جدول يسجّل الدفعات الفاشلة، لكنه يحفظ خمسة أشياء فقط ولا يعمل إلا إذا كان هناك طلب قائم. جبر سيو يحفظ ستة عشر — منها أوّل ستّة أرقام من البطاقة، وهي التي تكشف من أي بلد صدرت البطاقة، أي السبب الحقيقي وراء رفض البطاقات الأجنبية.</p>
+<p><b>المطلوب:</b> نوسّع الجدول ليحفظ: في أي خطوة فشل · ماذا قال البنك · نوع البطاقة وبلدها · الباقة والمدّة والسوق — ونجعله يقبل تسجيلاً بلا طلب.</p>
+<p><b>نعرف إنه خلص لما:</b> نرى صفّاً حقيقياً في الجدول يحمل الحقول الجديدة بعد محاولة فاشلة على بيئة الاختبار.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عندنا  shared/prisma/schema/schema.prisma:1258 — 5 حقول: orderId · provider · reasonCode · message · createdAt
+عنده   prisma/schema.prisma:114 — 16 حقلاً: stage · outcome · code · message · state · plan · duration
+       · country · cardScheme · cardBin · email · ip · userAgent · subscriberId · paymentRef
+
+🔴 لماذا الآن لا بعد الإطلاق: ما لم يُسجَّل لحظةَ الإخفاق لا يُسترجَع. كل عملية تفشل قبل هذا
+   البند تضيع بلا سبب معروف — ولا تعويض عنها لاحقاً.
+
+حارس خصوصية: cardBin = أوّل ستّة أرقام فقط (تكشف البلد ولا تُعرّف صاحب البطاقة).
+   لا رقم كامل · لا CVV · لا اسم حامل. ما يُخزَّن يجب أن يُحتمل ظهوره في تسريب.</pre>
+<p><b>🔄 تحديث — ١٣ سبتمبر ٢٠٢٦: السكيما تمّت، وبقي الدفع.</b></p>
+
+<p><b>ما صار:</b> الجدول صار ١٨ حقلاً بدل ٥، وصارت المراحل قائمة مغلقة لا نصّاً حرّاً.</p>
+<pre>prisma validate   → valid
+prisma generate   → Generated Prisma Client v6.19.2
+حقول PaymentAttempt في العميل المولَّد (18):
+  id · orderId · provider · reasonCode · message · createdAt
+  + stage · outcome · state · planSlug · paidMonths · market
+  + cardScheme · cardBin · email · ip · userAgent · providerRef
+enum PaymentAttemptStage   : validate · session · create_order · auth · three_ds · poll · webhook
+enum PaymentAttemptOutcome : failed · declined · timeout · error
+الأدمن بعد التوليد: /pay-preview → HTTP 307 (تحويل للدخول) — يُصرَّف بلا خطأ</pre>
+
+<p><b>ما بقي — وهو ما يمنع الإغلاق:</b></p>
+<pre>١  prisma db push على modonty_dev — رُفض بالصلاحيات في هذه الجلسة.
+   مونجو بلا سكيما، فالحقول الجديدة تُكتب وتُقرأ بدونه. الناقص ثلاثة فهارس:
+   @@index([createdAt]) · @@index([stage]) · @@index([market])
+   وبدونها شاشة PAY-G16 تبطؤ مع تراكم الصفوف — لا تنكسر.
+   الأمر: pnpm prisma:push
+٢  صفّ اختبار حقيقي بالحقول الجديدة + قراءته الخام — يُكتب بعد الدفع.</pre>
+
+<p><b>ما كُتب في السكيما نفسها كحارس دائم:</b></p>
+<pre>cardBin  = أوّل ستّة أرقام فقط. تكشف بنك وبلد الإصدار — وهي السؤال كلّه وراء
+           «لماذا تُرفض البطاقات الأجنبية؟» — ولا تُعرّف صاحب البطاقة.
+           لا PAN ولا CVV ولا اسم حامل. والاختبار لأي حقل يُضاف لاحقاً:
+           هل يُحتمل ظهور هذا الصفّ في تسريب دون أن يضرّ صاحبه؟
+orderId  بقي اختيارياً بتعليق صريح يمنع إرجاعه إلزامياً — إلزامه هو بعينه
+           ما كان يُخفي إخفاق ما قبل الطلب (PAY-G15).
+planSlug · paidMonths · market  قيم منسوخة لا مراجع: الباقة قد تُعاد تسميتها أو
+           تُسحب لاحقاً، وسجلّ إخفاق يتبع صفّاً حيّاً يكفّ عن وصف الماضي.</pre>
+
+<p><b>حادثة أثناء التنفيذ:</b> <code>prisma generate</code> فشل بـ<code>EPERM</code> لأن محرّك الاستعلام مقفول بسيرفر الأدمن الشغّال. أُوقف السيرفر (PID 2644) ثم وُلِّد العميل ثم أُعيد السيرفر — يعمل الآن على <code>3001</code>. تُذكر لأنها ستتكرّر مع كل تعديل سكيما على ويندوز.</p>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦.</b> الفهارس تزامنت والصفّ كُتب وقُرئ.</p>
+<pre>pnpm prisma:push → «Your database indexes are now in sync with your Prisma schema. Done in 12.17s»
+   (خطوة generate التالية له رجعت EPERM لأن السيرفر شغّال — والعميل كان مولَّداً قبلها، فلا أثر.)</pre>
+
+<p><b>الصفّ الذي يثبت البند — قراءة خام من <code>modonty_dev</code>:</b></p>
+<pre>{
+ "id":          "6aa6ab9c40b599c9cefc6ce8",
+ "orderId":     null,               ← الحالة التي كانت تختفي: إخفاق قبل إنشاء أي طلب
+ "provider":    "NGENIUS",
+ "stage":       "validate",         ← في المتصفّح، قبل الجلسة وقبل الطلب
+ "outcome":     "declined",
+ "state":       "DECLINED",
+ "reasonCode":  "DO_NOT_HONOR",
+ "planSlug":    "intilaqa",
+ "paidMonths":  12,
+ "market":      "SA",
+ "cardScheme":  "visa",
+ "cardBin":     "411111",           ← ستّة أرقام: بنك وبلد الإصدار، بلا تعريف صاحب البطاقة
+ "email":       "g14-check@modonty.local",
+ "ip":          "127.0.0.1",
+ "userAgent":   "PAY-G14 verification",
+ "providerRef": null
+}</pre>
+
+<p>هذا الصفّ نفسه هو مدخل التحقّق لـ<code>PAY-G16</code>: الشاشة يجب أن تعرضه تحت مرحلة «تحقّق العميل».</p>
+<p><b>تنظيف مؤجَّل:</b> صفّ التحقّق يبقى في <code>modonty_dev</code> حتى تُقاس به شاشة <code>PAY-G16</code>، ثم يُحذف بمعرّفه.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G15" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G15</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G15">⧉</button></div>
+  
+  <div class="t">🔴 تسجيل الفشل الذي يحدث قبل أن يبدأ الطلب — أكثر فشل متوقَّع عندنا</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: حين تُرفض بطاقة أجنبية، الرفض يحدث في متصفّح العميل قبل أن يُنشأ أي طلب عندنا. سجلّنا يبدأ من الطلب — فهذا الرفض يختفي تماماً. ونحن نبيع لسوق فيه بطاقات مصرية وأجنبية، أي أن أكثر فشل متوقَّع هو بالضبط الذي لن نراه. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> حين تُرفض بطاقة أجنبية، الرفض يحدث في متصفّح العميل <b>قبل</b> أن يُنشأ أي طلب عندنا. سجلّنا يبدأ من الطلب — فهذا الرفض يختفي تماماً. ونحن نبيع لسوق فيه بطاقات مصرية وأجنبية، أي أن أكثر فشل متوقَّع هو بالضبط الذي لن نراه.</p>
+<p><b>المطلوب:</b> مسار يستقبل هذا الفشل من المتصفّح ويسجّله، ولو لم يكن هناك طلب.</p>
+<p><b>نعرف إنه خلص لما:</b> نرى في الجدول صفّاً بلا رقم طلب، ناتجاً عن رفض حقيقي على بيئة الاختبار.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عند جبر سيو: /api/checkout/log-failure (البطاقة تُرفض عند التوكنة في الـSDK قبل إنشاء الطلب).
+المسار الجديد: مدخلات مُتحقَّق منها بـZod + حدّ معدّل (المسار مفتوح للمتصفّح).
+يعتمد على PAY-G14: بلا توسيع الجدول لا مكان لهذه البيانات.</pre>
+<p><b>🔄 تحديث — ١٣ سبتمبر ٢٠٢٦:</b> العائق زال. <code>PAY-G14</code> أُغلق، والجدول صار يقبل صفّاً بلا <code>orderId</code> (مثبَّت بصفّ حقيقي <code>6aa6ab9c40b599c9cefc6ce8</code>). فالباقي هنا هو المسار الذي يستقبل الإخفاق من المتصفّح، لا مكان تخزينه.</p>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦.</b> المسار يعمل على <code>modonty</code> ومحروس بأربعة حرّاس، كلٌّ منها مقيس.</p>
+
+<p><b>الملفّ:</b> <code>modonty/app/(pay)/api/checkout/log-failure/route.ts</code> — العنوان النهائي <code>/api/checkout/log-failure</code> (مجموعة <code>(pay)</code> لا تظهر في العنوان). لم يوضع تحت <code>pay/[market]/</code> لأن <code>/pay/log-failure</code> كان سيُقرأ كاسم سوق.</p>
+
+<p><b>المقيس حيّاً</b></p>
+<pre>١  حمولة سليمة                          HTTP 204  → صفّ مكتوب
+٢  رقم بطاقة كامل في cardBin (16 رقماً)  HTTP 204  → صفر صفّ (مرفوض)
+٣  مرحلة خارج القائمة ("whatever")        HTTP 204  → صفر صفّ (مرفوض)
+٤  ٢٥ طلباً متتالياً                      204×20 ثم 429×5  → حدّ المعدّل يعمل
+
+قراءة خام من modonty_dev بعد الاختبار (آخر ١٥ دقيقة):
+  14:01:52 · validate · declined · FOREIGN_CARD · bin=555555 · ip=::1   · order=null  ← من المسار
+  13:56:43 · validate · declined · DO_NOT_HONOR · bin=411111 · ip=127…  · order=null  ← صفّ G14
+صفوف فيها cardBin غير ستّة أرقام: 0</pre>
+
+<p><b>القرارات المكتوبة في الملفّ</b></p>
+<pre>الردّ موحَّد 204     نجاحاً كان أو رفضاً. المسار سجلٌّ لا واجهة، والمتصفّح لا يتصرّف بجوابه.
+                     وتفصيل سبب الرفض يعلّم العابث شكل المخطّط بلا مقابل. الحقيقة في القاعدة.
+cardBin يُرفض لا يُقصّ  لو أرسل العميل الرقم كاملاً، القصّ يجعلنا نخزّنه صامتين ونحسب أننا
+                     التزمنا. الرفض يجعل الخطأ مرئياً عند من أرسله.
+لا يُفشل شيئاً        المشتري يرى خطأ الدفع من المزوّد؛ عجزُنا عن تسجيله شأننا وحدنا.
+                     ولا يُطبع الجسم في السجلّ — فيه بريد ومعرّفات.
+حدّ المعدّل في الذاكرة  ٢٠ طلباً/دقيقة لكل IP. يوقف حلقةً مجنونة في المتصفّح أو عابثاً بسيطاً،
+                     ولا يتشارك العدّاد بين نسخ السيرفر — مكتوب في الملفّ كي لا يُظنّ أكثر مما هو.</pre>
+
+<p><b>عائق صادفه ويتكرّر:</b> <code>export const dynamic</code> و<code>export const runtime</code> يكسران البناء على مدونتي — فهي تعمل بـ<code>cacheComponents</code> في Next 16 وترفض الاثنين («Route segment config … is not compatible»). حُذفا، وهما بلا معنى لمعالج POST أصلاً. يخصّ <code>modonty</code> وحدها؛ الأدمن يقبلهما.</p>
+
+<p><b>ما بقي خارج هذا البند:</b> نداء المسار من صفحة الدفع نفسها — يُكتب في <code>PAY-C3</code> حين تُبنى، لأن لا صفحة تفشل اليوم.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G16" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G16</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G16">⧉</button></div>
+  
+  <div class="t">شاشة «إخفاقات الدفع» — بلا شاشة لا أحد يقرأ ما نجمعه</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع اليوم: بعد البندين السابقين سنجمع بيانات ثمينة عن كل عملية فاشلة — وهي ستنام في قاعدة البيانات. عند جبر سيو شاشة تعرضها مصنَّفة بالخطوة التي فشلت فيها، بالعربية. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع اليوم:</b> بعد البندين السابقين سنجمع بيانات ثمينة عن كل عملية فاشلة — وهي ستنام في قاعدة البيانات. عند جبر سيو شاشة تعرضها مصنَّفة بالخطوة التي فشلت فيها، بالعربية.</p>
+<p><b>المطلوب:</b> صفحة قراءة فقط تحت «إدارة الدفع»: جدول بالخطوة والسبب ونوع البطاقة وبلدها والسوق والوقت، مع مرشّحات وعدّاد لكل سبب.</p>
+<p><b>نعرف إنه خلص لما:</b> تفتح الشاشة فترى فيها المحاولة الفاشلة التي جرّبناها في البند السابق، مصنَّفة في خطوتها الصحيحة.</p>
+<p><b>التفاصيل للتنفيذ</b></p>
+<pre>عند جبر سيو: app/admin/(dashboard)/payment-failures/page.tsx — ثمان خطوات معنونة:
+  تحقق العميل · توليد الجلسة · إنشاء الطلب · التفويض · تحقق ثنائي · متابعة · webhook · إرسال
+أداء: select محدود و take على كل استعلام (قاعدة المشروع).
+لماذا تلي G14/G15 مباشرةً: بلا شاشة تُملأ الحقول ولا يقرؤها أحد — وهو عطل جبر سيو نفسه قبل أن يبنيها.</pre>
+<p><b>🔄 تحديث — ١٣ سبتمبر ٢٠٢٦: مدخلات التحقّق جاهزة.</b> صفّان حقيقيان في <code>payment_attempts</code> على <code>modonty_dev</code>، كلاهما <code>stage=validate</code> و<code>orderId=null</code> (<code>bin=411111</code> و<code>bin=555555</code>) — الشاشة يجب أن تعرضهما تحت «تحقّق العميل». ويوجد صفوف <code>session/error</code> من اختبار حدّ المعدّل تصلح لاختبار المرشّحات. تُحذف كلّها بمعرّفاتها بعد قياس الشاشة.</p>
+<p><b>✔ أُغلق — ١٣ سبتمبر ٢٠٢٦.</b> الشاشة حيّة على <code>/payment-failures</code> تحت «إدارة الدفع»، ومقيسة بصفوف حقيقية.</p>
+
+<p><b>المقيس</b></p>
+<pre>مرشّح المرحلة يعمل    الكل 5 · تحقّق المشتري 2 · توليد الجلسة 0 · إنشاء الطلب 0
+                      · تفويض البطاقة 0 · التحقّق الثنائي 0 · الاستعلام 0 · الويب هوك 0
+?stage=validate       يضيّق الجدول إلى الصفّين الصحيحين (bin=555555 · bin=411111)
+أكثر الأسباب          DO_NOT_HONOR 2 · FOREIGN_CARD 1 · INSUFFICIENT_FUNDS 1 · SESSION_EXPIRED 1
+صفّا ما قبل الطلب      يظهران بوسم «قبل الطلب» وعمود الطلب يقول «بلا طلب»
+البِن                 يُعرض 555555•• — ستّة أرقام ونقطتان، لا أكثر</pre>
+
+<p><b>الملفّات</b></p>
+<pre>admin/app/(dashboard)/payment-failures/page.tsx                 الشاشة (قراءة فقط · take=100)
+admin/app/(dashboard)/payment-failures/components/failure-filters.tsx   المرشّحات كروابط، بلا JS
+admin/app/(dashboard)/payment-failures/helpers/attempt-stage-copy.ts    المراحل بالعربية بترتيب حدوثها
+admin/app/(dashboard)/payment-failures/helpers/attempt-outcome-copy.ts  «رُفض» ≠ «فشل»
+admin/components/admin/sidebar.tsx                              رابط «إخفاقات الدفع»</pre>
+
+<p><b>قرارات في الشاشة تستحقّ الانتباه</b></p>
+<pre>وسم «قبل الطلب»   المراحل الثلاث الأولى تقع في متصفّح المشتري قبل وجود طلب — وهي التي
+                  كانت تختفي كلّها. الوسم يجعل ذلك مرئياً بلا شرح.
+«رُفض» ≠ «فشل»    الرفض قرار بنك (رصيد · بطاقة ممنوعة) ويُعالَج برسالة للمشتري؛ الفشل
+                  عطل عندنا أو عند المزوّد ويُعالَج بإصلاح. دمجهما يجعل عطلاً تقنيّاً
+                  يُقرأ على أنه ضعف طلب.
+المرشّحات في العنوان  ?stage= · ?market= · ?days= — شاشة مرشَّحة تُحفظ وتُرسل لزميل كما هي.
+كل بارامتر يمرّ بقائمة مغلقة قبل أن يلمس الاستعلام.
+لا بريد كامل في الجدول  السؤال هنا «لماذا تفشل الدفعات؟» لا «من هذا الشخص؟».</pre>
+
+<p><b>🔴 مصيدة اكتُشفت أثناء القياس — تخصّ كل استعلام على مونجو في هذا المستودع:</b></p>
+<pre>في Prisma + MongoDB الحقل **الغائب** لا يطابقه { orderId: null }:
+    count({ where: { orderId: null } })            = 0
+    count({ where: { orderId: { isSet: false } } }) = 22   ← الصحيح
+الصفوف كانت موجودة والعدّاد يقول صفراً. اكتُشفت لأن الشاشة كانت تعرض «بلا طلب»
+بينما العدّاد ينكرها — ولولا التناقض المرئي لمرّت.
+الأثر: أي مرشّح مستقبليّ بمعنى «إخفاق بلا طلب» يجب أن يكتب isSet:false لا null،
+وإلا رجع فارغاً وهو أهمّ سؤال على هذه الشاشة.</pre>
+
+<p><b>تنظيف تمّ:</b> عشرون صفّ ضجيج من اختبار حدّ المعدّل (<code>stage=session</code>) حُذفت. بقي في الجدول ٥ صفوف: اثنان من اختبار <code>G14</code>/<code>G15</code> (يُحذفان بمعرّفيهما متى شئت) وثلاثة من بذور الطلبات التجريبية.</p></div></details>
+</article>
+<article class="card" data-id="PAY-PREVIEW" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-PREVIEW</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-PREVIEW">⧉</button></div>
+  
+  <div class="t">✔ معاينة صفحة الدفع في الأدمن — تشوف البطاقات قبل أن يراها الزائر</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع قبلها: الكتالوج صار يُدار من الأدمن، لكن أثر أي تعديل فيه لا يظهر إلا على صفحة بيع لم تُبنَ بعد. فكل قرار تصميم كان يُؤجَّل حتى تُبنى /pay، أو يُبنى التصميم مرّتين. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع قبلها:</b> الكتالوج صار يُدار من الأدمن، لكن أثر أي تعديل فيه لا يظهر إلا على صفحة بيع لم تُبنَ بعد. فكل قرار تصميم كان يُؤجَّل حتى تُبنى <code>/pay</code>، أو يُبنى التصميم مرّتين.</p>
+<p><b>ما صار:</b> شاشة <code>/pay-preview</code> تحت «إدارة الدفع» تقرأ الكتالوج الحقيقي وترسم البطاقات كما سيراها الزائر، بمبدّل سوق ومبدّل مدّة. قراءة فقط — الزرّ معطَّل، لا بيع منها.</p>
+<p><b>الأهمّ:</b> مكوّن البطاقة وقارئ الكتالوج بُنيا في <code>shared</code> لا في الأدمن — فـ<code>/pay</code> ستستهلك <b>نفس</b> المكوّن في <code>PAY-C2</code>. ما تعتمده في المعاينة هو ما يراه المشتري، لا صورةً عنه.</p>
+
+<p><b>المقيس حيّاً (١٣ سبتمبر، <code>localhost:3001</code> · <code>modonty_dev</code>)</b></p>
+<pre>SA · 3 أشهر    ٣٩٩ ر.س/شهر · ١٬١٩٧ ر.س · «شامل ضريبة القيمة المضافة ١٥٪»
+SA · 12 أشهر   ٤٬٧٨٨ ر.س + ٦ هدية
+EG · 6 أشهر    ٧٬١٩٤ ج.م   ← يطابق الطلب الحقيقي ORD-2026-00019 حرفياً
+البطاقات المعروضة: 1  (الزخم والريادة «مسودة» — PAY-G4)
+سطر المزايا: «لا مزايا مربوطة بهذه الباقة بعد»  (PAY-G1)</pre>
+
+<p><b>الملفّات</b></p>
+<pre>shared/lib/commercial/get-market-catalog.ts     128 سطراً — قارئ الكتالوج (يستقبل عميل Prisma، بلا كاش)
+shared/lib/commercial/format-money.ts            15 سطراً — منسّق العملة لكل سوق
+shared/components/commercial/plan-card.tsx      123 سطراً — البطاقة المشتركة (سيرفر، بلا JS للزائر)
+admin/app/(dashboard)/pay-preview/page.tsx      135 سطراً — الشاشة نفسها
+admin/components/admin/sidebar.tsx                       — رابط «معاينة صفحة الدفع»</pre>
+
+<p><b>عطل أُصلح أثناء البناء:</b> البطاقة كانت تطبع «شامل ضريبة القيمة المضافة» على السوق المصري، وضريبة مصر غير مقيسة عمداً (<code>shared/lib/payments/vat-rate.ts</code> يرمي عليها — <code>PAY-UNKNOWN</code> #5). صار السطر الضريبي يأتي من الصفحة لا من المكوّن، لأنه ادّعاءٌ عن قانون سوق لا خيار تصميم. العدّاد بعد الإصلاح على <code>market=EG</code>: <code>grep -c "شامل ضريبة"</code> = 0 (كان 1).</p></div></details>
+</article>
+<article class="card" data-id="PAY-G18" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G18</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G18">⧉</button></div>
+  
+  <div class="t">✔ وراثة المزايا بين الباقات — «كل ما في الزخم +» بدل تكرار ١٤ سطراً</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الوضع قبله: الريادة تشمل كل ما في الزخم وتزيد. فكانت بطاقتها تطبع ١٩ سطراً، ١٤ منها منقولة حرفياً من البطاقة المجاورة. القارئ يمسح ثلاث قوائم متشابهة ليجد الفرق، فلا يجده. ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الوضع قبله:</b> الريادة تشمل كل ما في الزخم وتزيد. فكانت بطاقتها تطبع ١٩ سطراً، <b>١٤ منها منقولة حرفياً</b> من البطاقة المجاورة. القارئ يمسح ثلاث قوائم متشابهة ليجد الفرق، فلا يجده.</p>
+<p><b>ما صار:</b> الباقة الأعلى تقول «كل ما في الزخم +» ثم تُظهر الفارق وحده.</p>
+<p><b>نعرف إنه خلص لما:</b> بطاقة الريادة تعرض ثمانية سطور بدل تسعة عشر، وكلّها فارق حقيقي.</p>
+
+<p><b>المقيس — لقطة حيّة <code>/pay-preview?months=6</code>:</b></p>
+<pre>الريادة — «كل ما في الزخم +»
+  مقالات منشورة على مدونتي — ١٢ مقال/شهر      ترقية (كانت ٨)
+  طلّات مدونتي — ١٢ طلّة/شهر                   ترقية (كانت ٨)
+  مقالات لموقع العميل — ٤ مقال/شهر             ترقية (كانت ٣)
+  حملات إيميل — ٨ حملة/شهر                     ترقية (كانت ٤)
+  مدير حساب مخصص · جلسة استراتيجية · تنبيهات تيليجرام · تقارير   جديدة</pre>
+
+<p><b>القاعدة — وهي أدقّ من جبر سيو:</b> الميزة تُطوى فقط إن وُجدت في الباقة الأدنى <b>بنفس الكمّية</b>. فارتفاع ٨ ← ١٢ ترقيةٌ تُرى لا تكرارٌ يُطوى. عند جبر سيو «كل اللي في الزخم +» تبتلع الترقيات أيضاً، فلا يرى المشتري أن المقالات تضاعفت — وهي أقوى حجّة للباقة الأعلى.</p>
+<p>وشرط ثانٍ: لا وراثة إلا إن شملت الباقة الأعلى <b>كل</b> مزايا الأدنى؛ وإلا كانت العبارة كذباً على المشتري.</p>
+
+<p><b>أين حُسبت:</b> في <code>getMarketCatalog</code> لا في المكوّن — البطاقة ترى باقتها وحدها، والوراثة علاقةٌ بين بطاقتين. والحساب على العرض فقط: صفوف <code>CommercialPlanFeature</code> تبقى كاملة في القاعدة، فالطيّ لا يفقد بياناً.</p>
+
+<p><b>🔴 عطل وقعتُ فيه وأُصلح أثناء القياس:</b> الدورة كانت تصفّي الباقة الوسطى ثم تقرأ منها لحساب العليا — فصار المرجع ناقصاً وظهرت الريادة بأربعة عشر سطراً مكرّراً رغم أن سطر الوراثة طُبع. الآن المقارنة تجري على نسخة أصلية محفوظة قبل أي تصفية (<code>originalFeatures</code>)، والسبب مكتوب تعليقاً في الملفّ كي لا يتكرّر.</p>
+
+<p><b>ما بقي من تفوّق جبر سيو (بندان صغيران):</b> زرّ تمارا للتقسيط — مغطّى في <code>PAY-D6</code>. و«استرداد ١٤ يوم» وعدٌ على البطاقة — يُكتب اليوم في «سطور مميّزة» (<code>PAY-G12</code>) بلا كود.</p></div></details>
+</article>
+<article class="card" data-id="PAY-G19" data-sev="high" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin modonty" data-area="jbrseo">
+  <div class="hd"><span class="id">PAY-G19</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G19">⧉</button></div>
+  
+  <div class="t">🟨 كود · ألوان المعاينة تُولَّد من مدونتي بدل أن تُنسخ بيد</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">مهم</span><span class="tag app-admin">admin</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١٣ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">ملاحظة خالد (١٣ سبتمبر ٢٠٢٦): «الألوان — التوكن، الأدمن يختلف عن مدونتي الرئيسية. استخدم نفس ألوان التوكن تبع مدونتي الرئيسية.» · المقيس: shared/styles/pay-stage.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>ملاحظة خالد (١٣ سبتمبر ٢٠٢٦):</b> «الألوان — التوكن، الأدمن يختلف عن مدونتي الرئيسية.
+استخدم نفس ألوان التوكن تبع مدونتي الرئيسية.»</p>
+<p><b>المقيس:</b> <code>shared/styles/pay-stage.css</code> كان مكتوباً بيد ويحمل <b>١٤ توكناً</b> من أصل
+<b>٥١</b> في <code>modonty/app/globals.css</code>. الناقص يسقط على ألوان الأدمن:</p>
+<pre>--ring · --input · --popover · --destructive · --radius · --star · --success · --link
+· --accent-foreground · --chart-1/3/5 · --action-* (١٤ توكناً) · --tab-reels</pre>
+<p>أي أن حلقة التركيز والحدود والزوايا في المعاينة كانت ألوان الأدمن، لا ألوان مدونتي —
+فتُقرّ البطاقة بلونٍ وتُطلق بآخر. وهذا هو بالضبط العطل الذي وُجدت المعاينة لتمنعه.</p>
+<p><b>الحلّ — لا يُكتب بيد أصلاً:</b> <code>shared/scripts/build-pay-stage-tokens.mjs</code> يقرأ كتل
+<code>:root</code> و<code>.dark</code> من ملفّ مدونتي — بما فيها التي داخل
+<code>@media (prefers-contrast: more)</code> — ويعيد كتابتها محصورةً في <code>.pay-stage</code>.
+نسخةٌ يدوية ناقصة تبقى ناقصة؛ ومولَّدةٌ لا تنحرف.</p>
+<pre>التوليد:  node shared/scripts/build-pay-stage-tokens.mjs
+الفحص:   node shared/scripts/build-pay-stage-tokens.mjs --check   (يرجع 1 عند الانحراف)
+الناتج:  ٥١ توكناً فاتحاً · ٤٣ داكناً · ٣+٣ للتباين العالي</pre>
+<p><b>الدليل الحيّ — نفس القياس على الصفحتين:</b></p>
+<pre>                       /pay-preview (أدمن)        /pay/sa (مدونتي)
+--primary              240 100% 59.41%            240 100% 59.41%
+--ring                 240 100% 59.41%            240 100% 59.41%   ← كان أزرق لينكدإن
+--input                0 0% 85.88%                0 0% 85.88%
+--star                 38 91% 55%                 38 91% 55%
+--radius               .5rem                      .5rem
+خلفية البطاقة          rgba(48,48,255,0.05)       rgba(48,48,255,0.05)
+٢٢ توكناً قيست: مطابقة قيمةً بقيمة ✓</pre>
+<p><b>يبقى مفتوحاً:</b> المصدر ما زال ملفَّين — مدونتي تكتب و<code>pay-stage</code> يُولَّد. الأصحّ يوماً
+ملفُّ توكناتٍ واحد يقرأ منه التطبيقان، وهو بندٌ أكبر من هذا ولم يُفتح بعد.</p></div></details>
 </article></div></section></main>
 <script>
 (() => { const q = document.getElementById('q'); const cards = [...document.querySelectorAll('.card')];

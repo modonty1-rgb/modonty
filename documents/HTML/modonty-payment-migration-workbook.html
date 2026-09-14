@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>مدونتي × JBRSEO — دفتر قرار بوابة الدفع</title>
+  <style>
+    :root { --ink:#eaf0ff; --muted:#9ba8c3; --bg:#07101f; --surface:#0d192c; --line:#233653; --accent:#70b7ff; --green:#63d2a7; --amber:#f5c76e; --red:#ff8989; }
+    * { box-sizing:border-box; } body { margin:0; color:var(--ink); background:radial-gradient(circle at 85% 0%,#173764 0,transparent 32rem),var(--bg); font-family:Tahoma,"Segoe UI",Arial,sans-serif; line-height:1.7; }
+    main { max-width:1180px; margin:auto; padding:48px 22px 90px; } header { border-bottom:1px solid var(--line); padding-bottom:28px; margin-bottom:30px; }
+    .eyebrow { color:var(--accent); letter-spacing:.08em; font-size:.8rem; font-weight:700; } h1 { font-size:clamp(2rem,5vw,3.9rem); line-height:1.15; margin:.35rem 0 1rem; } h2 { margin:0; font-size:1.35rem; } h3 { margin:.2rem 0 .5rem; font-size:1rem; } p { margin:.45rem 0; color:var(--muted); } strong { color:var(--ink); } section { margin-top:22px; }
+    .panel,.decision,details { background:rgba(13,25,44,.88); border:1px solid var(--line); border-radius:16px; padding:20px; } .grid { display:grid; grid-template-columns:repeat(12,1fr); gap:16px; } .span-4 { grid-column:span 4; } .span-6 { grid-column:span 6; } .span-8 { grid-column:span 8; } .span-12 { grid-column:span 12; }
+    .tag { display:inline-block; margin:0 0 7px 5px; padding:2px 9px; border-radius:99px; border:1px solid var(--line); color:var(--muted); font-size:.76rem; } .good { color:var(--green); } .warn { color:var(--amber); } .risk { color:var(--red); }
+    table { width:100%; border-collapse:collapse; margin-top:12px; font-size:.92rem; } th,td { text-align:right; vertical-align:top; padding:12px 10px; border-bottom:1px solid var(--line); } th { color:var(--accent); font-size:.8rem; } code { direction:ltr; display:inline-block; padding:1px 5px; border-radius:4px; background:#07101f; color:#c2d7ff; }
+    .flow { display:flex; gap:8px; align-items:stretch; overflow:auto; padding:6px 0; } .node { min-width:155px; flex:1; padding:14px; border:1px solid var(--line); border-radius:12px; background:#091628; } .arrow { align-self:center; color:var(--accent); font-size:1.4rem; }
+    button { cursor:pointer; color:var(--ink); background:#142947; border:1px solid #31547e; border-radius:9px; padding:9px 12px; font:inherit; } button:hover,button.active { background:#2462a2; border-color:#70b7ff; } textarea { width:100%; min-height:120px; resize:vertical; border:1px solid var(--line); border-radius:10px; background:#07101f; color:var(--ink); padding:12px; font:inherit; line-height:1.7; } textarea:focus { outline:2px solid var(--accent); outline-offset:2px; }
+    .status { color:var(--green); font-size:.82rem; } summary { cursor:pointer; color:var(--ink); font-weight:700; } li { color:var(--muted); margin:.3rem 0; } .callout { border-right:3px solid var(--accent); padding-right:15px; }
+    @media(max-width:760px){ main{padding:28px 14px 60px}.span-4,.span-6,.span-8{grid-column:span 12}.flow{flex-direction:column}.arrow{transform:rotate(90deg);align-self:center}table{font-size:.8rem}th,td{padding:9px 6px} }
+    @media print { body{background:#fff;color:#111} p,li{color:#333}.panel,.decision,details,.node{background:#fff;border-color:#bbb}.eyebrow,th{color:#135899}.tag,code{color:#333;background:#eee}button,textarea,.status{display:none} }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">وثيقة عمل قابلة للنقاش · 09 سبتمبر 2026</div>
+    <h1>نقل بوابة الدفع من JBRSEO إلى مدونتي</h1>
+    <p>هذه ليست خطة تنفيذ نهائية بعد. هي مساحة قرار مشتركة: نفهم الموجود، نحدد مصدر الحقيقة، ثم نعتمد التصميم قبل كتابة منظومة الدفع.</p>
+  </header>
+
+  <section class="panel callout">
+    <h2>القرار المبدئي المقترح</h2>
+    <p><strong>مدونتي تصبح مركز التجارة بالكامل.</strong> صفحة الدفع <code>/pay</code> ولوحة الإدارة وطلبات الدفع والفواتير تعمل من قاعدة مدونتي. جبر SEO يبقى مرجعًا لاستخراج المحتوى والسياسات الحالية فقط، وليس نظامًا يعتمد عليه العميل أو الموظف بعد النقل.</p>
+  </section>
+
+  <section class="grid">
+    <article class="panel span-4"><span class="tag good">موجود في JBRSEO</span><h3>إدارة الباقات</h3><p>اسم، وصف، مميزات، ترتيب، ظهور، شارات، وسعر أساس لكل سوق.</p></article>
+    <article class="panel span-4"><span class="tag good">موجود في JBRSEO</span><h3>حساب آمن للسعر</h3><p>السيرفر يقرأ الباقة ويحسب الإجمالي؛ لا يثق بسعر المتصفح.</p></article>
+    <article class="panel span-4"><span class="tag warn">فجوة في مدونتي</span><h3>نظام تجاري مستقل</h3><p>الإعدادات الحالية bridge قديم ومربوط بتصنيفات اشتراك داخلية، وليست كتالوج بيع مرن.</p></article>
+  </section>
+
+  <section>
+    <div class="panel"><h2>ما الذي وجدناه في JBRSEO؟</h2>
+      <table><thead><tr><th>العنصر</th><th>وظيفته الحالية</th><th>ماذا نفعل في مدونتي؟</th></tr></thead><tbody>
+        <tr><td><code>Plan</code></td><td>باقة لكل سوق SA/EG: محتوى، ترتيب، ظهور، وسعر شهري أساس.</td><td><strong>ننقله كفكرة</strong> إلى كتالوج باقات تجاري مستقل.</td></tr>
+        <tr><td>3 / 6 / 12 شهرًا</td><td>3 بلا هدية، 6 + شهر، 12 + 6 أشهر خدمة.</td><td><strong>نعتمدها كسياسة مدة</strong> قابلة للتعديل لاحقًا.</td></tr>
+        <tr><td><code>Subscriber</code></td><td>مختلط بين lead ومحاولة دفع وسجل عميل.</td><td><strong>لا ننسخه كما هو</strong>؛ نفصل الطلب عن العميل.</td></tr>
+        <tr><td><code>WebhookEvent</code></td><td>منع تكرار webhooks والتحقق من مزود الدفع.</td><td><strong>ننقله</strong>، فهو أساس الأمان والمحاسبة.</td></tr>
+        <tr><td><code>PaymentAttempt</code></td><td>تشخيص حالات الرفض والفشل الداخلية.</td><td><strong>ننقله بصورة محسّنة</strong> دون تخزين بيانات بطاقة حساسة.</td></tr>
+      </tbody></table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>رحلة البيانات المستهدفة</h2>
+    <div class="flow" aria-label="تدفق نظام الدفع المقترح">
+      <div class="node"><strong>أدمن مدونتي</strong><br><small>يدير الباقات والأسعار</small></div><div class="arrow">←</div>
+      <div class="node"><strong>كتالوج الباقات</strong><br><small>المصدر الوحيد للحقيقة</small></div><div class="arrow">←</div>
+      <div class="node"><strong>/pay</strong><br><small>يعرض السعر المحسوب</small></div><div class="arrow">←</div>
+      <div class="node"><strong>Checkout Order</strong><br><small>يثبّت السعر والبنود</small></div><div class="arrow">←</div>
+      <div class="node"><strong>مزود الدفع</strong><br><small>N-Genius ثم Tamara</small></div><div class="arrow">←</div>
+      <div class="node"><strong>عميل + فاتورة</strong><br><small>بعد تأكيد webhook</small></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>البيانات التي نحتاجها في مدونتي</h2>
+    <table><thead><tr><th>الكيان</th><th>أهم البيانات</th><th>السبب</th></tr></thead><tbody>
+      <tr><td><strong>CommercialPlan</strong></td><td>slug، اسم، وصف، مميزات، badge، ترتيب، نشر.</td><td>فصل باقات البيع عن tiers التشغيلية القديمة.</td></tr>
+      <tr><td><strong>CommercialPlanPrice</strong></td><td>الباقة، السوق، العملة، السعر الشهري الأساس، ضريبة.</td><td>سعر السعودية لا يختلط بسعر مصر أو العملة.</td></tr>
+      <tr><td><strong>CheckoutOrder</strong></td><td>بيانات المشتري + snapshot للباقة والسعر والمدة والحالة.</td><td>حتى تغيير السعر غدًا لا يغيّر طلب الأمس.</td></tr>
+      <tr><td><strong>PaymentTransaction</strong></td><td>المزوّد، المرجع، الحالة، وقت التسوية.</td><td>تتبع العملية بدون خلطها بالفاتورة أو العميل.</td></tr>
+      <tr><td><strong>PaymentWebhookEvent</strong></td><td>provider event id فريد، توقيع، payload، وقت المعالجة.</td><td>حماية من تكرار الإشعارات والتزوير.</td></tr>
+    </tbody></table>
+  </section>
+
+  <section class="grid">
+    <article class="decision span-6"><span class="tag warn">قرار 1</span><h2>هل نستبدل `SubscriptionTierConfig`؟</h2><p>التوصية: نعم، لا نجعله مصدر الدفع. نحتفظ به مؤقتًا لاشتراكات التشغيل الداخلية، ونبني <code>CommercialPlan</code> للكتالوج العام.</p><div data-choice="tier-source"><button data-value="موافق: كتالوج مستقل">موافق: كتالوج مستقل</button> <button data-value="أحتاج مناقشة">أحتاج مناقشة</button></div></article>
+    <article class="decision span-6"><span class="tag warn">قرار 2</span><h2>سياسة المدد والأسعار</h2><p>التوصية: نخزن السعر الشهري فقط، ونشتق 3/6/12. لا ننقل حقل السعر السنوي القديم كمصدر حقيقة.</p><div data-choice="terms"><button data-value="اعتماد 3/6/12">اعتماد 3/6/12</button> <button data-value="نحتاج استثناءات">نحتاج استثناءات</button></div></article>
+    <article class="decision span-6"><span class="tag warn">قرار 3</span><h2>نطاق السوق عند الإطلاق</h2><p>التوصية: نطلق الدفع للسعودية فقط. يمكن إدارة أسعار مصر الآن، لكن لا نظهر زر دفع حتى تتوفر بوابة جاهزة لها.</p><div data-choice="market"><button data-value="السعودية أولاً">السعودية أولاً</button> <button data-value="السعودية ومصر">السعودية ومصر</button></div></article>
+    <article class="decision span-6"><span class="tag warn">قرار 4</span><h2>مكان بوابة الدفع</h2><p>التوصية: نطوّرها محليًا على <code>/pay</code> الآن، ثم نضعها على <code>pay.modonty.com</code> من نفس تطبيق مدونتي عند الإطلاق.</p><div data-choice="domain"><button data-value="pay.modonty.com">pay.modonty.com</button> <button data-value="داخل modonty.com/pay">داخل modonty.com/pay</button></div></article>
+  </section>
+
+  <section class="panel">
+    <h2>قائمة التنفيذ — ننجز مرحلة ثم نعتمدها</h2>
+    <p>لا نبدأ المرحلة التالية قبل الاتفاق على الحالية. ضع ✓ بعد مراجعة كل بند.</p>
+    <div class="grid" id="todo-list">
+      <article class="decision span-6"><span class="tag good">مرحلة 0 · مكتملة</span><h3>إثبات توجيه السوق</h3><label><input type="checkbox" data-todo="geo-routing" data-default="true" /> الـIP من مصر يفتح سوق مصر، وكل الدول الأخرى تفتح سوق السعودية.</label></article>
+      <article class="decision span-6"><span class="tag warn">مرحلة 1 · قرار</span><h3>اعتماد قواعد التجارة</h3><label><input type="checkbox" data-todo="market-policy" /> اعتماد مصر = EGP، وغير مصر = SAR، بلا اختيار دولة للعميل.</label><br><label><input type="checkbox" data-todo="plan-policy" /> اعتماد الباقات والمدة 3/6/12 وسياسة الأشهر المجانية.</label></article>
+      <article class="decision span-6"><span class="tag warn">مرحلة 2 · بيانات</span><h3>نموذج الباقات داخل مدونتي</h3><label><input type="checkbox" data-todo="commercial-schema" /> تصميم واعتماد جداول الباقة والسوق والسعر والمدة.</label><br><label><input type="checkbox" data-todo="pricing-migration" /> نقل الباقات والأسعار المعتمدة من JBRSEO كبيانات أولية.</label></article>
+      <article class="decision span-6"><span class="tag warn">مرحلة 3 · أدمن</span><h3>التحكم بالأسعار</h3><label><input type="checkbox" data-todo="admin-pricing" /> صفحة أدمن لإدارة الباقات وأسعار السعودية ومصر والظهور والترتيب.</label><br><label><input type="checkbox" data-todo="admin-qa" /> اختبار تغيير سعر من الأدمن وظهوره في السوق الصحيح فقط.</label></article>
+      <article class="decision span-6"><span class="tag warn">مرحلة 4 · واجهة</span><h3>صفحة الدفع الحقيقية</h3><label><input type="checkbox" data-todo="pay-data" /> ربط <code>/pay</code> بالبيانات الفعلية بدل شاشة الاختبار.</label><br><label><input type="checkbox" data-todo="pay-design" /> اعتماد تصميم السعودية ومصر ومراجعة النصوص والأسعار.</label></article>
+      <article class="decision span-6"><span class="tag warn">مرحلة 5 · طلب ودفع</span><h3>الدفع الآمن</h3><label><input type="checkbox" data-todo="order-snapshot" /> إنشاء طلب يثبت الباقة والسعر وقت الشراء.</label><br><label><input type="checkbox" data-todo="gateway-webhooks" /> ربط N-Genius وwebhooks والتحقق من العملية.</label></article>
+      <article class="decision span-12"><span class="tag warn">مرحلة 6 · ما بعد الدفع</span><h3>تفعيل الخدمة داخل مدونتي</h3><label><input type="checkbox" data-todo="post-payment" /> نجاح الدفع ينشئ العميل والفاتورة وبدء إجراءات الخدمة والتنبيهات.</label></article>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>مخاطر نمنعها من البداية</h2>
+    <ul>
+      <li><strong>سعر من المتصفح:</strong> ممنوع؛ السعر النهائي يحسب على السيرفر فقط.</li>
+      <li><strong>تغيير باقة يغيّر طلبًا قائمًا:</strong> كل طلب يحتفظ بنسخة snapshot من شروطه.</li>
+      <li><strong>اعتبار redirect نجاحًا:</strong> لا؛ النجاح يأتي فقط من webhook موثّق أو استعلام مباشر من المزود.</li>
+      <li><strong>خلط العميل بالطلب:</strong> العميل قد يحاول أكثر من مرة، والطلب قد يفشل؛ لذلك لكل منهما كيان مستقل.</li>
+      <li><strong>نقل حقول JBRSEO القديمة بلا مراجعة:</strong> خصوصًا <code>priceYearly</code> و<code>Subscriber</code>؛ لا ننقلها كتصميم نهائي.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>ملاحظاتنا وقرارات الاجتماع</h2>
+    <p>اكتب أي سؤال أو تعديل هنا. النص والاختيارات تُحفظ محليًا في هذا المتصفح فقط؛ ليست مرسلة إلى قاعدة البيانات.</p>
+    <textarea id="notes" placeholder="مثال: باقة Presence لا نريد نقلها الآن...&#10;مثال: نحتاج سعرًا خاصًا لـ12 شهر في باقة Scale..."></textarea>
+    <p id="save-status" class="status" role="status">جاهز للحفظ المحلي.</p>
+  </section>
+
+  <section>
+    <details><summary>ملاحظة تقنية عن الباقات الحالية</summary><p>جسر JBRSEO الموجود في مدونتي مفيد للاطلاع المؤقت، لكنه لا يصلح كمصدر نهائي: يربط الباقات بـ enum داخلي محدود ويحتفظ بنموذج شهري/سنوي قديم. صفحة الدفع الحالية في مدونتي مجرد واجهة ثابتة مؤقتة، ويجب تحويلها إلى قراءة server-side من الكتالوج الجديد في المرحلة الثالثة.</p></details>
+  </section>
+</main>
+<script>
+  const key = 'modonty-payment-migration-workbook-v1';
+  const notes = document.querySelector('#notes'), status = document.querySelector('#save-status');
+  const state = JSON.parse(localStorage.getItem(key) || '{"choices":{},"todos":{},"notes":""}');
+  notes.value = state.notes || '';
+  function save(){ state.notes = notes.value; localStorage.setItem(key, JSON.stringify(state)); status.textContent='تم الحفظ محليًا — ' + new Date().toLocaleTimeString('ar-SA'); }
+  notes.addEventListener('input', save);
+  document.querySelectorAll('[data-choice]').forEach(group => { const name=group.dataset.choice; group.querySelectorAll('button').forEach(button => { if(state.choices?.[name]===button.dataset.value) button.classList.add('active'); button.addEventListener('click',()=>{ state.choices ??={}; state.choices[name]=button.dataset.value; group.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b===button)); save(); }); }); });
+  document.querySelectorAll('[data-todo]').forEach(box => { const id=box.dataset.todo; state.todos ??={}; box.checked = state.todos[id] ?? box.dataset.default === 'true'; box.addEventListener('change',()=>{ state.todos[id]=box.checked; save(); }); });
+</script>
+</body>
+</html>

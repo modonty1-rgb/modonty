@@ -449,7 +449,12 @@
       "Edit(~/.claude/skills/ultra-ui-ux/**)",
       "Bash(curl -s -o /dev/null -w \"console %{http_code}\\\\n\" --max-time 120 http://localhost:3001/dashboard/page-content)",
       "Bash(curl -s -o /dev/null -w \"modonty %{http_code}\\\\n\" --max-time 120 http://localhost:3000/)",
-      "Bash(git branch *)"
+      "Bash(git branch *)",
+      "Bash(echo \"الفارق بينهما: $\\(git rev-list --left-right --count origin/main...origin/test\\)\")",
+      "Bash(echo \"قبل الدمج: main=$\\(git rev-parse --short origin/main\\) test=$\\(git rev-parse --short origin/test\\) | فرق: $\\(git rev-list --left-right --count origin/main...origin/test\\)\")",
+      "Bash(echo \"بعد الدمج: main=$\\(git rev-parse --short origin/main\\) | فرق: $\\(git rev-list --left-right --count origin/main...origin/test\\)\")",
+      "Bash(echo \"الدمج \\(تقديم مباشر؟ $\\(git rev-list --left-right --count origin/main...origin/test\\)\\):\")",
+      "Bash(echo \"بعد: main=$\\(git rev-parse --short origin/main\\) test=$\\(git rev-parse --short origin/test\\) فرق=$\\(git rev-list --left-right --count origin/main...origin/test\\)\")"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
@@ -464,18 +469,6 @@
     ]
   },
   "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-brief.mjs\"",
-            "timeout": 10,
-            "statusMessage": "قراءة آخر جلسة…"
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write|MultiEdit",
