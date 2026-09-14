@@ -45,13 +45,13 @@ export function ModontyArticlesMark(props: SVGProps<SVGSVGElement>) {
         strokeLinecap="round"
       />
       <rect
-        x="63"
-        y="15"
-        width="14"
-        height="14"
-        rx="2"
-        transform="rotate(45 70 22)"
-        fill="var(--modonty-articles-accent, hsl(var(--accent)))"
+        x="60"
+        y="12"
+        width="20"
+        height="20"
+        rx="4"
+        transform="rotate(30 70 22)"
+        fill="var(--modonty-articles-accent, var(--modonty-accent, #00d8d8))"
       />
     </svg>
   );

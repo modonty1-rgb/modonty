@@ -28,7 +28,7 @@ export function ModontyGalleryMark(props: SVGProps<SVGSVGElement>) {
     >
       <rect x="22" y="22" width="76" height="76" rx="14" stroke="var(--modonty-gallery-body, currentColor)" strokeWidth="8"/>
       <path d="M26 84L48 58L66 76L82 60L94 74" stroke="var(--modonty-gallery-body, currentColor)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="67" y="37" width="14" height="14" rx="2" transform="rotate(45 74 44)" fill="var(--modonty-gallery-accent, hsl(var(--accent)))"/>
+      <rect x="64" y="34" width="20" height="20" rx="4" transform="rotate(30 74 44)" fill="var(--modonty-gallery-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

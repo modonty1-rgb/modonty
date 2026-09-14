@@ -28,8 +28,8 @@ export function ModontyNotificationsMark(props: SVGProps<SVGSVGElement>) {
     >
       <circle cx="60" cy="17" r="6" fill="var(--modonty-notifications-body, currentColor)"/>
       <path d="M78 31C72 25 65 22 58 22C43 22 32 32 30 47L28 68C27 78 24 83 18 88C14 91 16 99 22 99H98C104 99 106 91 102 88C96 83 93 78 92 68L90 48" stroke="var(--modonty-notifications-body, currentColor)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="83" y="29" width="14" height="14" rx="2" transform="rotate(45 90 36)" fill="#FFFFFF" stroke="var(--modonty-notifications-accent, hsl(var(--accent)))" strokeWidth="5"/>
-      <rect x="53" y="101" width="14" height="14" rx="2" transform="rotate(45 60 108)" fill="var(--modonty-notifications-accent, hsl(var(--accent)))"/>
+      <rect x="80" y="26" width="20" height="20" rx="4" transform="rotate(30 90 36)" fill="#FFFFFF" stroke="var(--modonty-notifications-accent, var(--modonty-accent, #00d8d8))" strokeWidth="5"/>
+      <rect x="50" y="98" width="20" height="20" rx="4" transform="rotate(30 60 108)" fill="var(--modonty-notifications-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

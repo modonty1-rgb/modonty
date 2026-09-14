@@ -29,7 +29,7 @@ export function ModontyOffersMark(props: SVGProps<SVGSVGElement>) {
       <rect x="26" y="48" width="68" height="52" rx="8" stroke="var(--modonty-offers-body, currentColor)" strokeWidth="8"/>
       <rect x="20" y="38" width="80" height="14" rx="4" stroke="var(--modonty-offers-body, currentColor)" strokeWidth="6"/>
       <path d="M60 38V100" stroke="var(--modonty-offers-body, currentColor)" strokeWidth="8"/>
-      <rect x="53" y="17" width="14" height="14" rx="2" transform="rotate(45 60 24)" fill="var(--modonty-offers-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="14" width="20" height="20" rx="4" transform="rotate(30 60 24)" fill="var(--modonty-offers-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

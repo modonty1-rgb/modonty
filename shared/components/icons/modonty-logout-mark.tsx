@@ -28,7 +28,7 @@ export function ModontyLogoutMark(props: SVGProps<SVGSVGElement>) {
     >
       <path d="M58 24H34C28.5 24 24 28.5 24 34V86C24 91.5 28.5 96 34 96H58" stroke="var(--modonty-logout-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M50 60H96M96 60L80 44M96 60L80 76" stroke="var(--modonty-logout-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="43" y="53" width="14" height="14" rx="2" transform="rotate(45 50 60)" fill="var(--modonty-logout-accent, hsl(var(--accent)))"/>
+      <rect x="40" y="50" width="20" height="20" rx="4" transform="rotate(30 50 60)" fill="var(--modonty-logout-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

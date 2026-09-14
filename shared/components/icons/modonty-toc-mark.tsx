@@ -27,9 +27,9 @@ export function ModontyTocMark(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path d="M52 36H94M52 60H94M52 84H94" stroke="var(--modonty-toc-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
-      <rect x="27" y="29" width="14" height="14" rx="2" transform="rotate(45 34 36)" fill="var(--modonty-toc-body, currentColor)"/>
-      <rect x="27" y="53" width="14" height="14" rx="2" transform="rotate(45 34 60)" fill="var(--modonty-toc-accent, hsl(var(--accent)))"/>
-      <rect x="27" y="77" width="14" height="14" rx="2" transform="rotate(45 34 84)" fill="var(--modonty-toc-body, currentColor)"/>
+      <rect x="24" y="26" width="20" height="20" rx="4" transform="rotate(30 34 36)" fill="var(--modonty-toc-body, currentColor)"/>
+      <rect x="24" y="50" width="20" height="20" rx="4" transform="rotate(30 34 60)" fill="var(--modonty-toc-accent, var(--modonty-accent, #00d8d8))"/>
+      <rect x="24" y="74" width="20" height="20" rx="4" transform="rotate(30 34 84)" fill="var(--modonty-toc-body, currentColor)"/>
     </svg>
   );
 }

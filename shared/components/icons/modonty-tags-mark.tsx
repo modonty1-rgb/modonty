@@ -28,7 +28,7 @@ export function ModontyTagsMark(props: SVGProps<SVGSVGElement>) {
     >
       <path d="M26 62V34C26 29.6 29.6 26 34 26H62L96 60C99.2 63.2 99.2 68.8 96 72L72 96C68.8 99.2 63.2 99.2 60 96L26 62Z" stroke="var(--modonty-tags-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <circle cx="44" cy="44" r="6" fill="var(--modonty-tags-body, currentColor)"/>
-      <rect x="65" y="65" width="14" height="14" rx="2" transform="rotate(45 72 72)" fill="var(--modonty-tags-accent, hsl(var(--accent)))"/>
+      <rect x="62" y="62" width="20" height="20" rx="4" transform="rotate(30 72 72)" fill="var(--modonty-tags-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

@@ -29,7 +29,7 @@ export function ModontyCategoriesMark(props: SVGProps<SVGSVGElement>) {
       <rect x="22" y="22" width="30" height="30" rx="8" stroke="var(--modonty-categories-body, currentColor)" strokeWidth="8"/>
       <rect x="68" y="22" width="30" height="30" rx="8" stroke="var(--modonty-categories-body, currentColor)" strokeWidth="8"/>
       <rect x="22" y="68" width="30" height="30" rx="8" stroke="var(--modonty-categories-body, currentColor)" strokeWidth="8"/>
-      <rect x="76" y="76" width="14" height="14" rx="2" transform="rotate(45 83 83)" fill="var(--modonty-categories-accent, hsl(var(--accent)))"/>
+      <rect x="73" y="73" width="20" height="20" rx="4" transform="rotate(30 83 83)" fill="var(--modonty-categories-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

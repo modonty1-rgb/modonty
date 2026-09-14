@@ -1049,10 +1049,18 @@ model CommercialPlan {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   slug        String   @unique
     name        String
-    description String?
     articlesPerMonth Int?
     highlights  String[]
   badge       String?
+  /// سطر خاطف واحد يظهر قرب السعر — «٦ شهور مجاناً مع السنة» (PAY-G11).
+  /// واحد لا قائمة: جملتان خاطفتان ليستا أقوى، بل لا خاطفة.
+  hook        String?
+  /// نصّ زرّ هذه الباقة. فارغاً يسقط على النصّ الافتراضي في المكوّن — فباقة جديدة
+  /// تُرسم صحيحة بلا تعبئة، ولا يبقى النصّ حبيس الكود لمن أراد تغييره.
+  ctaText     String?
+  /// شارة ثانية تميّز بطاقةً واحدة عن أخواتها («الأكثر اختياراً»). وجودها يرفع البطاقة
+  /// بصرياً أيضاً — فهي وسمٌ وتمييزٌ معاً، كما عند جبر سيو (`featured = !!featuredBadge`).
+  featuredBadge String?
   tier        SubscriptionTier?
   theme       CommercialPlanTheme @default(NEUTRAL)
   isPublished Boolean  @default(false)
@@ -1070,12 +1078,25 @@ model CommercialFeature {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
-  unitLabel   String?  // e.g. مقال | حملة | فيديو; null means a fixed inclusion
-  /// Name from the icon registry (`shared/lib/icons.ts`, e.g. "IconArticle"). The admin
-  /// picks from a closed list and the action rejects anything else — PAY-Q11 keeps how a
-  /// feature is DRAWN in code; only WHICH registry entry is chosen lives in the DB.
-  icon        String?
+  /// الوحدة تُطبع بعد الكمّية («١٢ مقال/شهر»). قائمة مغلقة في الأدمن لا كتابةً حرّة
+  /// (خالد ١٤ سبتمبر ٢٠٢٦) — الكتابة اليدوية أنتجت «مقال/شهر» و«مقال / شهر» و«مقالات»
+  /// لنفس المعنى، وحساب الإجمالي يميّز الوحدات الشهرية بـ«/شهر» فاختلاف مسافةٍ يُسقط الرقم.
+  unitLabel   String?
   isActive    Boolean  @default(true)
+  /// سطرٌ يستحقّ أن يُرى قبل غيره — يُطبع عريضاً على بطاقة الباقة (خالد ١٤ سبتمبر ٢٠٢٦).
+  /// قرارُ تسويقٍ لا تصنيفُ محتوى، فمكانه المكتبة حيث تُعرَّف الميزة مرّة.
+  isHighlighted Boolean @default(false)
+  /// هل تنزل هذه الميزة في الفاتورة؟ (خالد ١٣ سبتمبر ٢٠٢٦: «نعمل شيك اللي يطلع في الفاتورة»)
+  ///
+  /// البطاقة تعرض كل مزايا الباقة — هذا تسويق. والفاتورة مستند **التزام**: كل سطر فيها
+  /// شيءٌ يستطيع العميل أن يطالب به ونستطيع أن نثبت تسليمه. فما لا يُثبت لا ينزل —
+  /// «محتواك جاهز للذكاء الاصطناعي» جاهزيّةٌ عند طرفٍ ثالث، و«طلّات» تُقرأ وصولاً،
+  /// و«تنبيهات» تتبع أحداثاً قد لا تقع.
+  ///
+  /// افتراضها `false`: ميزةٌ جديدة لا تدخل مستنداً قانونياً حتى يقرّر إنسانٌ أنها تُثبَت.
+  /// وموضعها المكتبة لا الإسناد: الميزة تُعرَّف مرّة وتُستعمل في كل الباقات، فلا يتناقض
+  /// حكمُها بين باقةٍ وأخرى.
+  billable    Boolean  @default(false)
   displayOrder Int     @default(0)
   assignments CommercialPlanFeature[]
   createdAt   DateTime @default(now())
@@ -1120,6 +1141,54 @@ model CommercialPlanPrice {
   @@map("commercial_plan_prices")
 }
 
+/**
+ * كلام صفحة البيع حول البطاقات — صفّ واحد لكل سوق (PAY-G13).
+ *
+ * لماذا: البطاقات صارت من القاعدة، لكن كل ما حولها (عنوان القسم، شريط إعلان عرض، عناصر
+ * الثقة) لا مكان له — ولو تُرك لكُتب في الكود، وهو ما تمنعه بطاقة PAY-DYNAMIC: نصف بطاقة
+ * جبر سيو مكتوب في الكود، فتغيير كلمة فيه نشرة كاملة.
+ *
+ * حقول مسمّاة لا Json: نظير جبر سيو (`PriceSectionMeta`) يخزّن `trustItems` و`uiStrings`
+ * ككتل Json — وهو نفس نمط `LandingSection { data: Json }` الذي هجره هو نفسه حين قسّم
+ * الأسعار إلى صفوف. كتلة Json تقبل أي شكل، فلا يحرسها مخطّط ولا يكشف كسرَها إلا الزائر.
+ *
+ * `uiStrings` لم يُنقل عمداً: كلمات البطاقة الثابتة («/ شهر» · «شهر خدمة») قليلة ويحكمها
+ * تصريفٌ عربي في الكود (`formatMonths`) — جعلها نصّاً في القاعدة يفتح باب كسر اللغة بلا
+ * حارس. تُفتح بندٌ مستقلّ إن طُلبت.
+ */
+model PaySectionContent {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  /// SA | EG — صفّ واحد لكل سوق، والسوق يختاره البروكسي حسب الدولة.
+  market       String   @unique
+  /// شريط أعلى الصفحة: «العرض ينتهي نهاية الشهر». فارغاً لا يُرسم الشريط أصلاً.
+  announcement String?
+  headline     String?
+  subheadline  String?
+  /// أسطر «من ائتمنّا» القصيرة. مصفوفة نصّ لا Json — نفس نمط `CommercialPlan.highlights`.
+  trustItems   String[]
+
+  // ─── نصوص البيع التي كانت مكتوبة في الكود (PAY-G20) ───
+  // خالد ١٣ سبتمبر ٢٠٢٦: «ضيفهم ونحرّرهم من الأدمن». كلّها ادّعاءات تجارية أو قانونية
+  // تتغيّر بتغيّر السوق والمزوّد — فبقاؤها في الكود يجعل تعديل كلمة نشرةً كاملة.
+  /// «شامل ضريبة القيمة المضافة ١٥٪» — ادّعاء عن قانون السوق، لا يُخمَّن لسوق غير مقيس.
+  vatNote            String?
+  /// «قسّطها على دفعات» — فارغاً لا يظهر زرّ التقسيط أصلاً (تمارا ترفض مصر).
+  installmentLabel   String?
+  /// «استرداد ١٤ يوم — لو ما فعّلنا حسابك» — وعدٌ يخصّ الاشتراك لا طريقة الدفع.
+  refundNote         String?
+  /// حاشية أسفل الشبكة وسطرها الثاني (اسم البوّابة وشهادتها).
+  paymentFootnote    String?
+  paymentFootnoteSub String?
+  /// أسماء شعارات الدفع من القائمة المغلقة في `shared/lib/commercial/pay-mark-names.ts`.
+  payMarks           String[]
+  /// شعار التقسيط وحده — يُفصل لأن التقسيط شركة مستقلّة بعقدها لا بوّابتنا.
+  installmentMark    String?
+
+  updatedAt    DateTime @updatedAt
+
+  @@map("pay_section_content")
+}
+
 /** Single duration policy shared by every plan — see PAY-Q3 (one policy, not one row per plan). */
 model CommercialTermPolicy {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -1127,6 +1196,13 @@ model CommercialTermPolicy {
   bonusServiceMonths Int     @default(0)
   displayOrder      Int      @default(0)
   isActive          Boolean  @default(true)
+  /// The duration /pay opens on, marked «الأنسب» (PAY-G8). At most ONE row may hold it —
+  /// enforced in `setRecommendedCommercialTerm`, which clears the others in the same
+  /// transaction. Two recommendations are not a stronger hint, they are none at all.
+  ///
+  /// jbrseo hard-codes this (`RECOMMENDED_DURATION = 6` in lib/pricing-durations.ts), so
+  /// moving the recommendation is a deploy there. Here it is a row.
+  isRecommended     Boolean  @default(false)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -1180,6 +1256,17 @@ model CheckoutOrder {
   planName         String
   planTier         SubscriptionTier?
   articlesPerMonth Int?
+
+  /// ما وُعد به المشتري، مجمَّداً لحظة الشراء — سطرٌ لكل ميزة كما قرأها على البطاقة
+  /// («٨٤ مقال على مدونتي» · «نظام حجوزات احجز الآن»).
+  ///
+  /// مُخزَّنٌ هنا لا مقروءٌ من الكتالوج وقت إصدار الفاتورة: الباقة تتغيّر — تُضاف ميزة
+  /// أو تُنقص كمّية — والفاتورة مستندُ التزامٍ يجب أن يقول ما اتُّفق عليه يومها لا ما
+  /// صارت عليه الباقة اليوم. وهو نفس سبب تجميد السعر في الحقول أعلاه (PAY-AV-SNAPSHOT).
+  ///
+  /// نصوصٌ جاهزة لا معرّفات: حذفُ ميزةٍ من الكتالوج بعد سنة يجب ألّا يُفرغ سطراً في
+  /// فاتورةٍ صادرة.
+  planCommitments  String[]
 
   // ── Price snapshot (minor units) ────────────────────────────────────────────────
   monthlyBaseMinor   Int
@@ -1254,9 +1341,42 @@ model PaymentWebhookEvent {
   @@map("payment_webhook_events")
 }
 
-/// Failure intelligence only — reason + message. NEVER card data.
+/// The stage a payment died at. Closed list, not free text: a free-text stage turns the
+/// failures screen into a pile of near-duplicate strings nobody can count.
+/// `validate` · `session` · `3ds` happen in the BROWSER before any order exists.
+enum PaymentAttemptStage {
+  validate      // تحقّق مدخلات المشتري في المتصفّح
+  session       // توليد جلسة الدفع عند المزوّد
+  create_order  // إنشاء الطلب عندنا
+  auth          // تفويض البطاقة
+  three_ds      // التحقّق الثنائي
+  poll          // الاستعلام الاحتياطي عن الحالة
+  webhook       // ما وصل من المزوّد
+}
+
+enum PaymentAttemptOutcome {
+  failed
+  declined
+  timeout
+  error
+}
+
+/// Failure intelligence. NEVER card data beyond the BIN (first six digits).
+///
+/// Widened 13 Sep 2026 (PAY-G14). The five-field version could only describe a failure
+/// that already had an order, so the most likely failure in our market — a foreign or
+/// Egyptian card rejected at tokenization, in the browser, BEFORE an order exists — left
+/// no trace at all. jbrseo hit exactly this and answered it with sixteen fields plus a
+/// browser endpoint; the fields below are that lesson, not an invention.
+///
+/// PRIVACY: `cardBin` is the first SIX digits only. It identifies the ISSUING BANK AND
+/// COUNTRY — which is the whole question behind "why do foreign cards fail?" — and cannot
+/// identify a cardholder. No PAN, no CVV, no holder name, ever. The test for anything
+/// added here: could this row appear in a leak without harming the person it describes?
 model PaymentAttempt {
   id       String         @id @default(auto()) @map("_id") @db.ObjectId
+  /// Null for a failure that happened before an order was created — the case that used
+  /// to vanish. Do not make this required again.
   orderId  String?        @db.ObjectId
   order    CheckoutOrder? @relation(fields: [orderId], references: [id], onDelete: Cascade)
   provider PaymentProvider
@@ -1264,7 +1384,32 @@ model PaymentAttempt {
   message    String?
   createdAt  DateTime @default(now())
 
+  // ─── PAY-G14 ───
+  stage      PaymentAttemptStage?
+  outcome    PaymentAttemptOutcome?
+  /// The provider's own payment state, verbatim (e.g. DECLINED / FAILED) — kept raw
+  /// because its vocabulary is theirs and mapping it here would lose detail.
+  state      String?
+  /// What was being bought, snapshotted as plain values: the plan may be renamed or
+  /// retired later, and a failure log that follows a live row stops describing the past.
+  planSlug   String?
+  paidMonths Int?
+  market     String?
+  /// visa | mastercard | mada — how the card is routed, which is often the failure itself.
+  cardScheme String?
+  /// First SIX digits only. See PRIVACY above.
+  cardBin    String?
+  /// Set only when the buyer had already typed it; a failure with no email is still logged.
+  email      String?
+  ip         String?
+  userAgent  String?
+  /// The provider's reference for this attempt, when one was issued before it failed.
+  providerRef String?
+
   @@index([orderId])
+  @@index([createdAt])
+  @@index([stage])
+  @@index([market])
   @@map("payment_attempts")
 }
 

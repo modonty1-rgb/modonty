@@ -27,7 +27,7 @@ export function ModontyFeedbackMark(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <rect x="26" y="22" width="68" height="76" rx="12" stroke="var(--modonty-feedback-body, currentColor)" strokeWidth="8"/>
-      <rect x="53" y="37" width="14" height="14" rx="2" transform="rotate(45 60 44)" fill="var(--modonty-feedback-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="34" width="20" height="20" rx="4" transform="rotate(30 60 44)" fill="var(--modonty-feedback-accent, var(--modonty-accent, #00d8d8))"/>
       <path d="M42 66H78M42 78H66" stroke="var(--modonty-feedback-body, currentColor)" strokeWidth="6" strokeLinecap="round"/>
     </svg>
   );

@@ -1,0 +1,755 @@
+{
+  "at": "2026-09-13T17:02:38.842Z",
+  "features": [
+    {
+      "id": "6aa168788a00cef23ea91ba9",
+      "name": "صفحة عميل عامة",
+      "description": "بديل موقع إلكتروني للنشاط",
+      "unitLabel": "صفحة",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 0,
+      "createdAt": "2026-09-09T14:08:56.715Z",
+      "updatedAt": "2026-09-09T14:08:56.715Z"
+    },
+    {
+      "id": "6aa1687c8a00cef23ea91baa",
+      "name": "نشر المقال الرئيسي على سوشال مدونتي",
+      "description": "توزيع المقال الرئيسي على حسابات مدونتي",
+      "unitLabel": "منشور/شهر",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 1,
+      "createdAt": "2026-09-09T14:09:00.134Z",
+      "updatedAt": "2026-09-09T14:09:00.134Z"
+    },
+    {
+      "id": "6aa168808a00cef23ea91bab",
+      "name": "بحث الكلمات المفتاحية",
+      "description": "بحث أساسي أو موسع أو تنافسي أو استراتيجي",
+      "unitLabel": "مستوى",
+      "icon": null,
+      "isActive": false,
+      "displayOrder": 2,
+      "createdAt": "2026-09-09T14:09:04.412Z",
+      "updatedAt": "2026-09-13T16:59:16.965Z"
+    },
+    {
+      "id": "6aa168848a00cef23ea91bac",
+      "name": "موافقة العميل قبل النشر",
+      "description": "لا يُنشر المقال قبل موافقة العميل",
+      "unitLabel": "مقال",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 3,
+      "createdAt": "2026-09-09T14:09:08.679Z",
+      "updatedAt": "2026-09-09T14:09:08.679Z"
+    },
+    {
+      "id": "6aa168898a00cef23ea91bad",
+      "name": "مقالات منشورة على مدونتي",
+      "description": "مقالات تنشر على منصة مدونتي",
+      "unitLabel": "مقال/شهر",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 4,
+      "createdAt": "2026-09-09T14:09:13.948Z",
+      "updatedAt": "2026-09-09T14:09:13.948Z"
+    },
+    {
+      "id": "6aa1688e8a00cef23ea91bae",
+      "name": "طلّات مدونتي",
+      "description": "ظهور النشاط في محتوى طلّات مدونتي",
+      "unitLabel": "طلّة/شهر",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 5,
+      "createdAt": "2026-09-09T14:09:18.338Z",
+      "updatedAt": "2026-09-09T14:09:18.338Z"
+    },
+    {
+      "id": "6aa168928a00cef23ea91baf",
+      "name": "رابط خارجي لموقع العميل",
+      "description": "توجيه الزائر إلى موقع أو متجر العميل",
+      "unitLabel": "رابط",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 6,
+      "createdAt": "2026-09-09T14:09:22.676Z",
+      "updatedAt": "2026-09-09T14:09:22.676Z"
+    },
+    {
+      "id": "6aa168b68a00cef23ea91bb0",
+      "name": "النشر على منصة مدونتي",
+      "description": "نشر المحتوى على منصة مدونتي",
+      "unitLabel": "قناة نشر",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 7,
+      "createdAt": "2026-09-09T14:09:58.594Z",
+      "updatedAt": "2026-09-09T14:09:58.594Z"
+    },
+    {
+      "id": "6aa168bb8a00cef23ea91bb1",
+      "name": "صور احترافية وبطاقات مشاركة",
+      "description": "تصميم صور المقال وبطاقات المشاركة",
+      "unitLabel": "تصميم/مقال",
+      "icon": null,
+      "isActive": false,
+      "displayOrder": 8,
+      "createdAt": "2026-09-09T14:10:03.205Z",
+      "updatedAt": "2026-09-13T16:59:16.965Z"
+    },
+    {
+      "id": "6aa168c18a00cef23ea91bb2",
+      "name": "مقالات لموقع العميل عبر الربط البرمجي",
+      "description": "مقالات يسحبها موقع العميل عبر API",
+      "unitLabel": "مقال/شهر",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 9,
+      "createdAt": "2026-09-09T14:10:09.194Z",
+      "updatedAt": "2026-09-09T14:10:09.194Z"
+    },
+    {
+      "id": "6aa168c68a00cef23ea91bb3",
+      "name": "زر واتساب في صفحة العميل",
+      "description": "تواصل مباشر مع النشاط",
+      "unitLabel": "زر",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 10,
+      "createdAt": "2026-09-09T14:10:14.462Z",
+      "updatedAt": "2026-09-09T14:10:14.462Z"
+    },
+    {
+      "id": "6aa168ca8a00cef23ea91bb4",
+      "name": "آراء وتقييمات العملاء",
+      "description": "عرض المراجعات والرد عليها",
+      "unitLabel": "ميزة",
+      "icon": null,
+      "isActive": false,
+      "displayOrder": 11,
+      "createdAt": "2026-09-09T14:10:18.727Z",
+      "updatedAt": "2026-09-13T16:59:16.965Z"
+    },
+    {
+      "id": "6aa168cf8a00cef23ea91bb5",
+      "name": "تقارير مباشرة في اللوحة",
+      "description": "تقارير أساسية أو كاملة",
+      "unitLabel": "مستوى",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 12,
+      "createdAt": "2026-09-09T14:10:23.056Z",
+      "updatedAt": "2026-09-09T14:10:23.056Z"
+    },
+    {
+      "id": "6aa168ff8a00cef23ea91bb6",
+      "name": "شارة موثّق وبيانات قانونية",
+      "description": "تعزيز الثقة وبيانات النشاط",
+      "unitLabel": "شارة",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 13,
+      "createdAt": "2026-09-09T14:11:11.854Z",
+      "updatedAt": "2026-09-09T14:11:11.854Z"
+    },
+    {
+      "id": "6aa169048a00cef23ea91bb7",
+      "name": "نظام حجوزات احجز الآن",
+      "description": "حجوزات مباشرة للمحتوى الحساس",
+      "unitLabel": "نظام",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 14,
+      "createdAt": "2026-09-09T14:11:16.407Z",
+      "updatedAt": "2026-09-09T14:11:16.407Z"
+    },
+    {
+      "id": "6aa1690a8a00cef23ea91bb8",
+      "name": "حملات إيميل للعملاء",
+      "description": "حملات إلى قائمة العميل التي يزوّدنا بها",
+      "unitLabel": "حملة/شهر",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 15,
+      "createdAt": "2026-09-09T14:11:22.516Z",
+      "updatedAt": "2026-09-09T14:11:22.516Z"
+    },
+    {
+      "id": "6aa1691c8a00cef23ea91bb9",
+      "name": "صلاحية Google Search Console",
+      "description": "وصول إلى أدوات مشرفي المواقع",
+      "unitLabel": "صلاحية",
+      "icon": null,
+      "isActive": false,
+      "displayOrder": 16,
+      "createdAt": "2026-09-09T14:11:40.201Z",
+      "updatedAt": "2026-09-13T16:59:16.965Z"
+    },
+    {
+      "id": "6aa169208a00cef23ea91bba",
+      "name": "محتوى جاهز للذكاء الاصطناعي",
+      "description": "تحسين ظهور المحتوى في الإجابات الذكية",
+      "unitLabel": "ميزة",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 17,
+      "createdAt": "2026-09-09T14:11:44.561Z",
+      "updatedAt": "2026-09-09T14:11:44.561Z"
+    },
+    {
+      "id": "6aa169248a00cef23ea91bbb",
+      "name": "مدة الرد على الاستفسارات",
+      "description": "اتفاقية مستوى خدمة الدعم",
+      "unitLabel": "ساعة",
+      "icon": null,
+      "isActive": false,
+      "displayOrder": 18,
+      "createdAt": "2026-09-09T14:11:48.864Z",
+      "updatedAt": "2026-09-13T16:59:16.965Z"
+    },
+    {
+      "id": "6aa169298a00cef23ea91bbc",
+      "name": "جلسة استراتيجية مع مدير الحساب",
+      "description": "مراجعة استراتيجية دورية",
+      "unitLabel": "جلسة",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 19,
+      "createdAt": "2026-09-09T14:11:53.137Z",
+      "updatedAt": "2026-09-09T14:11:53.137Z"
+    },
+    {
+      "id": "6aa1693e8a00cef23ea91bbd",
+      "name": "سرعة تجهيز المقال",
+      "description": "المدة حتى يصبح المقال جاهزًا للمراجعة",
+      "unitLabel": "يوم",
+      "icon": null,
+      "isActive": false,
+      "displayOrder": 20,
+      "createdAt": "2026-09-09T14:12:14.296Z",
+      "updatedAt": "2026-09-13T16:59:16.965Z"
+    },
+    {
+      "id": "6aa169428a00cef23ea91bbe",
+      "name": "سؤال مباشر تحت المقال",
+      "description": "يتلقى العميل سؤال الزائر ويرد عليه",
+      "unitLabel": "سؤال",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 21,
+      "createdAt": "2026-09-09T14:12:18.567Z",
+      "updatedAt": "2026-09-09T14:12:18.567Z"
+    },
+    {
+      "id": "6aa169468a00cef23ea91bbf",
+      "name": "تنبيهات تيليجرام",
+      "description": "إشعارات فورية عن أحداث الحساب",
+      "unitLabel": "تنبيه",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 22,
+      "createdAt": "2026-09-09T14:12:22.831Z",
+      "updatedAt": "2026-09-09T14:12:22.831Z"
+    },
+    {
+      "id": "6aa1694b8a00cef23ea91bc0",
+      "name": "تجهيز فني كامل للمقال",
+      "description": "بيانات منظمة وتجهيز تقني لمحركات البحث",
+      "unitLabel": "مقال",
+      "icon": null,
+      "isActive": false,
+      "displayOrder": 23,
+      "createdAt": "2026-09-09T14:12:27.244Z",
+      "updatedAt": "2026-09-13T16:59:16.965Z"
+    },
+    {
+      "id": "6aa1694f8a00cef23ea91bc1",
+      "name": "توثيق مؤهلات الكاتب",
+      "description": "للأنشطة الطبية والمالية والقانونية",
+      "unitLabel": "توثيق",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 24,
+      "createdAt": "2026-09-09T14:12:31.518Z",
+      "updatedAt": "2026-09-09T14:12:31.518Z"
+    },
+    {
+      "id": "6aa169538a00cef23ea91bc2",
+      "name": "مدير حساب مخصص",
+      "description": "نقطة اتصال مخصصة للحساب",
+      "unitLabel": "مدير",
+      "icon": null,
+      "isActive": true,
+      "displayOrder": 25,
+      "createdAt": "2026-09-09T14:12:35.834Z",
+      "updatedAt": "2026-09-11T16:31:03.207Z"
+    }
+  ],
+  "links": [
+    {
+      "id": "6aa6bf5807d6d5380c42336c",
+      "planId": "6aa163e18a00cef23ea91b97",
+      "featureId": "6aa168788a00cef23ea91ba9",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 1,
+      "createdAt": "2026-09-13T15:20:56.048Z",
+      "updatedAt": "2026-09-13T15:34:01.360Z"
+    },
+    {
+      "id": "6aa6bf5807d6d5380c42336d",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa168788a00cef23ea91ba9",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 1,
+      "createdAt": "2026-09-13T15:20:56.321Z",
+      "updatedAt": "2026-09-13T15:34:01.820Z"
+    },
+    {
+      "id": "6aa6bf5807d6d5380c42336e",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa168788a00cef23ea91ba9",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 1,
+      "createdAt": "2026-09-13T15:20:56.568Z",
+      "updatedAt": "2026-09-13T15:34:02.180Z"
+    },
+    {
+      "id": "6aa6c26a23bddf1a47c9f8f7",
+      "planId": "6aa163e18a00cef23ea91b97",
+      "featureId": "6aa168b68a00cef23ea91bb0",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 2,
+      "createdAt": "2026-09-13T15:34:02.556Z",
+      "updatedAt": "2026-09-13T15:34:02.556Z"
+    },
+    {
+      "id": "6aa6c26b23bddf1a47c9f8f8",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa168b68a00cef23ea91bb0",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 2,
+      "createdAt": "2026-09-13T15:34:02.915Z",
+      "updatedAt": "2026-09-13T15:34:02.915Z"
+    },
+    {
+      "id": "6aa6c26b23bddf1a47c9f8f9",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa168b68a00cef23ea91bb0",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 2,
+      "createdAt": "2026-09-13T15:34:03.272Z",
+      "updatedAt": "2026-09-13T15:34:03.272Z"
+    },
+    {
+      "id": "6aa6c26b23bddf1a47c9f8fa",
+      "planId": "6aa163e18a00cef23ea91b97",
+      "featureId": "6aa168898a00cef23ea91bad",
+      "quantity": 8,
+      "note": null,
+      "displayOrder": 3,
+      "createdAt": "2026-09-13T15:34:03.617Z",
+      "updatedAt": "2026-09-13T16:42:53.365Z"
+    },
+    {
+      "id": "6aa6c26c23bddf1a47c9f8fb",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa168898a00cef23ea91bad",
+      "quantity": 12,
+      "note": null,
+      "displayOrder": 3,
+      "createdAt": "2026-09-13T15:34:03.951Z",
+      "updatedAt": "2026-09-13T16:42:54.116Z"
+    },
+    {
+      "id": "6aa6c26c23bddf1a47c9f8fc",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa168898a00cef23ea91bad",
+      "quantity": 16,
+      "note": null,
+      "displayOrder": 3,
+      "createdAt": "2026-09-13T15:34:04.271Z",
+      "updatedAt": "2026-09-13T16:42:54.840Z"
+    },
+    {
+      "id": "6aa6c26c23bddf1a47c9f8fd",
+      "planId": "6aa163e18a00cef23ea91b97",
+      "featureId": "6aa1687c8a00cef23ea91baa",
+      "quantity": 1,
+      "note": null,
+      "displayOrder": 4,
+      "createdAt": "2026-09-13T15:34:04.591Z",
+      "updatedAt": "2026-09-13T15:34:04.591Z"
+    },
+    {
+      "id": "6aa6c26c23bddf1a47c9f8fe",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa1687c8a00cef23ea91baa",
+      "quantity": 1,
+      "note": null,
+      "displayOrder": 4,
+      "createdAt": "2026-09-13T15:34:04.915Z",
+      "updatedAt": "2026-09-13T15:34:04.915Z"
+    },
+    {
+      "id": "6aa6c26d23bddf1a47c9f8ff",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa1687c8a00cef23ea91baa",
+      "quantity": 1,
+      "note": null,
+      "displayOrder": 4,
+      "createdAt": "2026-09-13T15:34:05.247Z",
+      "updatedAt": "2026-09-13T15:34:05.247Z"
+    },
+    {
+      "id": "6aa6c26d23bddf1a47c9f900",
+      "planId": "6aa163e18a00cef23ea91b97",
+      "featureId": "6aa1688e8a00cef23ea91bae",
+      "quantity": 4,
+      "note": null,
+      "displayOrder": 5,
+      "createdAt": "2026-09-13T15:34:05.563Z",
+      "updatedAt": "2026-09-13T15:34:05.563Z"
+    },
+    {
+      "id": "6aa6c26d23bddf1a47c9f901",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa1688e8a00cef23ea91bae",
+      "quantity": 8,
+      "note": null,
+      "displayOrder": 5,
+      "createdAt": "2026-09-13T15:34:05.898Z",
+      "updatedAt": "2026-09-13T15:34:05.898Z"
+    },
+    {
+      "id": "6aa6c26e23bddf1a47c9f902",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa1688e8a00cef23ea91bae",
+      "quantity": 12,
+      "note": null,
+      "displayOrder": 5,
+      "createdAt": "2026-09-13T15:34:06.217Z",
+      "updatedAt": "2026-09-13T15:34:06.217Z"
+    },
+    {
+      "id": "6aa6c26e23bddf1a47c9f903",
+      "planId": "6aa163e18a00cef23ea91b97",
+      "featureId": "6aa168ff8a00cef23ea91bb6",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 6,
+      "createdAt": "2026-09-13T15:34:06.541Z",
+      "updatedAt": "2026-09-13T15:34:06.541Z"
+    },
+    {
+      "id": "6aa6c26e23bddf1a47c9f904",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa168ff8a00cef23ea91bb6",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 6,
+      "createdAt": "2026-09-13T15:34:06.861Z",
+      "updatedAt": "2026-09-13T15:34:06.861Z"
+    },
+    {
+      "id": "6aa6c26f23bddf1a47c9f905",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa168ff8a00cef23ea91bb6",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 6,
+      "createdAt": "2026-09-13T15:34:07.182Z",
+      "updatedAt": "2026-09-13T15:34:07.182Z"
+    },
+    {
+      "id": "6aa6c26f23bddf1a47c9f906",
+      "planId": "6aa163e18a00cef23ea91b97",
+      "featureId": "6aa168c68a00cef23ea91bb3",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 7,
+      "createdAt": "2026-09-13T15:34:07.500Z",
+      "updatedAt": "2026-09-13T15:34:07.500Z"
+    },
+    {
+      "id": "6aa6c26f23bddf1a47c9f907",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa168c68a00cef23ea91bb3",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 7,
+      "createdAt": "2026-09-13T15:34:07.815Z",
+      "updatedAt": "2026-09-13T15:34:07.815Z"
+    },
+    {
+      "id": "6aa6c27023bddf1a47c9f908",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa168c68a00cef23ea91bb3",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 7,
+      "createdAt": "2026-09-13T15:34:08.131Z",
+      "updatedAt": "2026-09-13T15:34:08.131Z"
+    },
+    {
+      "id": "6aa6c27023bddf1a47c9f909",
+      "planId": "6aa163e18a00cef23ea91b97",
+      "featureId": "6aa169428a00cef23ea91bbe",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 8,
+      "createdAt": "2026-09-13T15:34:08.459Z",
+      "updatedAt": "2026-09-13T15:34:08.459Z"
+    },
+    {
+      "id": "6aa6c27023bddf1a47c9f90a",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa169428a00cef23ea91bbe",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 8,
+      "createdAt": "2026-09-13T15:34:08.777Z",
+      "updatedAt": "2026-09-13T15:34:08.777Z"
+    },
+    {
+      "id": "6aa6c27123bddf1a47c9f90b",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa169428a00cef23ea91bbe",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 8,
+      "createdAt": "2026-09-13T15:34:09.102Z",
+      "updatedAt": "2026-09-13T15:34:09.102Z"
+    },
+    {
+      "id": "6aa6c27123bddf1a47c9f90c",
+      "planId": "6aa163e18a00cef23ea91b97",
+      "featureId": "6aa168848a00cef23ea91bac",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 9,
+      "createdAt": "2026-09-13T15:34:09.431Z",
+      "updatedAt": "2026-09-13T15:34:09.431Z"
+    },
+    {
+      "id": "6aa6c27123bddf1a47c9f90d",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa168848a00cef23ea91bac",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 9,
+      "createdAt": "2026-09-13T15:34:09.752Z",
+      "updatedAt": "2026-09-13T15:34:09.752Z"
+    },
+    {
+      "id": "6aa6c27223bddf1a47c9f90e",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa168848a00cef23ea91bac",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 9,
+      "createdAt": "2026-09-13T15:34:10.075Z",
+      "updatedAt": "2026-09-13T15:34:10.075Z"
+    },
+    {
+      "id": "6aa6c27223bddf1a47c9f90f",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa168928a00cef23ea91baf",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 10,
+      "createdAt": "2026-09-13T15:34:10.393Z",
+      "updatedAt": "2026-09-13T15:34:10.393Z"
+    },
+    {
+      "id": "6aa6c27223bddf1a47c9f910",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa168928a00cef23ea91baf",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 10,
+      "createdAt": "2026-09-13T15:34:10.718Z",
+      "updatedAt": "2026-09-13T15:34:10.718Z"
+    },
+    {
+      "id": "6aa6c27323bddf1a47c9f911",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa168c18a00cef23ea91bb2",
+      "quantity": 3,
+      "note": null,
+      "displayOrder": 11,
+      "createdAt": "2026-09-13T15:34:11.037Z",
+      "updatedAt": "2026-09-13T15:34:11.037Z"
+    },
+    {
+      "id": "6aa6c27323bddf1a47c9f912",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa168c18a00cef23ea91bb2",
+      "quantity": 4,
+      "note": null,
+      "displayOrder": 11,
+      "createdAt": "2026-09-13T15:34:11.370Z",
+      "updatedAt": "2026-09-13T15:34:11.370Z"
+    },
+    {
+      "id": "6aa6c27323bddf1a47c9f913",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa169048a00cef23ea91bb7",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 12,
+      "createdAt": "2026-09-13T15:34:11.723Z",
+      "updatedAt": "2026-09-13T15:34:11.723Z"
+    },
+    {
+      "id": "6aa6c27423bddf1a47c9f914",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa169048a00cef23ea91bb7",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 12,
+      "createdAt": "2026-09-13T15:34:12.039Z",
+      "updatedAt": "2026-09-13T15:34:12.039Z"
+    },
+    {
+      "id": "6aa6c27423bddf1a47c9f915",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa1690a8a00cef23ea91bb8",
+      "quantity": 4,
+      "note": null,
+      "displayOrder": 13,
+      "createdAt": "2026-09-13T15:34:12.356Z",
+      "updatedAt": "2026-09-13T15:34:12.356Z"
+    },
+    {
+      "id": "6aa6c27423bddf1a47c9f916",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa1690a8a00cef23ea91bb8",
+      "quantity": 8,
+      "note": null,
+      "displayOrder": 13,
+      "createdAt": "2026-09-13T15:34:12.674Z",
+      "updatedAt": "2026-09-13T15:34:12.674Z"
+    },
+    {
+      "id": "6aa6c27523bddf1a47c9f917",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa169208a00cef23ea91bba",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 14,
+      "createdAt": "2026-09-13T15:34:12.999Z",
+      "updatedAt": "2026-09-13T15:34:12.999Z"
+    },
+    {
+      "id": "6aa6c27523bddf1a47c9f918",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa169208a00cef23ea91bba",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 14,
+      "createdAt": "2026-09-13T15:34:13.314Z",
+      "updatedAt": "2026-09-13T15:34:13.314Z"
+    },
+    {
+      "id": "6aa6c27523bddf1a47c9f919",
+      "planId": "6aa163f68a00cef23ea91b9d",
+      "featureId": "6aa1694f8a00cef23ea91bc1",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 15,
+      "createdAt": "2026-09-13T15:34:13.653Z",
+      "updatedAt": "2026-09-13T15:34:13.653Z"
+    },
+    {
+      "id": "6aa6c27623bddf1a47c9f91a",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa1694f8a00cef23ea91bc1",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 15,
+      "createdAt": "2026-09-13T15:34:13.972Z",
+      "updatedAt": "2026-09-13T15:34:13.972Z"
+    },
+    {
+      "id": "6aa6c27623bddf1a47c9f91b",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa169538a00cef23ea91bc2",
+      "quantity": 1,
+      "note": null,
+      "displayOrder": 16,
+      "createdAt": "2026-09-13T15:34:14.324Z",
+      "updatedAt": "2026-09-13T15:34:14.324Z"
+    },
+    {
+      "id": "6aa6c27623bddf1a47c9f91c",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa169298a00cef23ea91bbc",
+      "quantity": 1,
+      "note": null,
+      "displayOrder": 17,
+      "createdAt": "2026-09-13T15:34:14.650Z",
+      "updatedAt": "2026-09-13T15:34:14.650Z"
+    },
+    {
+      "id": "6aa6c27723bddf1a47c9f91d",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa169468a00cef23ea91bbf",
+      "quantity": 22,
+      "note": null,
+      "displayOrder": 18,
+      "createdAt": "2026-09-13T15:34:14.972Z",
+      "updatedAt": "2026-09-13T15:34:14.972Z"
+    },
+    {
+      "id": "6aa6c27723bddf1a47c9f91e",
+      "planId": "6aa164058a00cef23ea91ba3",
+      "featureId": "6aa168cf8a00cef23ea91bb5",
+      "quantity": null,
+      "note": null,
+      "displayOrder": 19,
+      "createdAt": "2026-09-13T15:34:15.293Z",
+      "updatedAt": "2026-09-13T15:34:15.293Z"
+    }
+  ],
+  "plans": [
+    {
+      "id": "6aa163e18a00cef23ea91b97",
+      "name": "الانطلاقة",
+      "hook": "٦ شهور مجاناً مع السنة",
+      "ctaText": "ابدأ بالانطلاقة",
+      "badge": null,
+      "featuredBadge": null,
+      "highlights": [
+        "إلغاء في أي وقت",
+        "دعم مباشر على واتساب"
+      ]
+    },
+    {
+      "id": "6aa163f68a00cef23ea91b9d",
+      "name": "الزخم",
+      "hook": null,
+      "ctaText": null,
+      "badge": null,
+      "featuredBadge": null,
+      "highlights": []
+    },
+    {
+      "id": "6aa164058a00cef23ea91ba3",
+      "name": "الريادة",
+      "hook": null,
+      "ctaText": null,
+      "badge": "للمؤسسات",
+      "featuredBadge": "الأفضل قيمة",
+      "highlights": []
+    }
+  ]
+}

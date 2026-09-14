@@ -28,7 +28,7 @@ export function ModontyHomeMark(props: SVGProps<SVGSVGElement>) {
     >
       <path d="M22 56L56.5 25.5C58.5 23.8 61.5 23.8 63.5 25.5L98 56" stroke="var(--modonty-home-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M32 52V92C32 96.4 35.6 100 40 100H80C84.4 100 88 96.4 88 92V52" stroke="var(--modonty-home-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="53" y="71" width="14" height="14" rx="2" transform="rotate(45 60 78)" fill="var(--modonty-home-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="68" width="20" height="20" rx="4" transform="rotate(30 60 78)" fill="var(--modonty-home-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

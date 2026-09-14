@@ -29,7 +29,7 @@ export function ModontyProfessionalsMark(props: SVGProps<SVGSVGElement>) {
       <path d="M18 48L60 28L102 48L60 68L18 48Z" stroke="var(--modonty-professionals-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M36 58V78C36 86 46.7 94 60 94C73.3 94 84 86 84 78V58" stroke="var(--modonty-professionals-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
       <path d="M96 52V76" stroke="var(--modonty-professionals-body, currentColor)" strokeWidth="6" strokeLinecap="round"/>
-      <rect x="53" y="41" width="14" height="14" rx="2" transform="rotate(45 60 48)" fill="var(--modonty-professionals-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="38" width="20" height="20" rx="4" transform="rotate(30 60 48)" fill="var(--modonty-professionals-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

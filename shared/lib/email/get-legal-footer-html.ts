@@ -25,6 +25,7 @@ export async function getLegalFooterHtml(): Promise<string | null> {
       orgLegalName: true,
       orgCommercialRegistrationNumber: true,
       orgUnifiedNationalNumber: true,
+      orgVatNumber: true,
       orgLegalForm: true,
       orgCapitalAmount: true,
       orgStreetAddress: true,
@@ -36,10 +37,18 @@ export async function getLegalFooterHtml(): Promise<string | null> {
   const t = (v: string | null | undefined) => v?.trim() || null;
   const cr = t(s?.orgCommercialRegistrationNumber);
   const unified = t(s?.orgUnifiedNationalNumber);
+  const vat = t(s?.orgVatNumber);
 
   let html: string | null = null;
   if (s && cr && unified) {
-    const line1 = [t(s.orgLegalName), `السجل التجاري ${cr}`, `الرقم الوطني الموحّد ${unified}`, t(s.orgLegalForm)]
+    const line1 = [
+      t(s.orgLegalName),
+      `السجل التجاري ${cr}`,
+      `الرقم الوطني الموحّد ${unified}`,
+      // يُضاف حين يكون مسجَّلاً فقط: تذييلٌ يعلن رقماً ضريبياً لمنشأة غير مسجَّلة ادّعاءٌ نظاميّ.
+      vat ? `الرقم الضريبي ${vat}` : null,
+      t(s.orgLegalForm),
+    ]
       .filter(Boolean)
       .join(" &nbsp;·&nbsp; ");
     const address = [t(s.orgAddressLocality), t(s.orgAddressNeighborhood), t(s.orgStreetAddress)]

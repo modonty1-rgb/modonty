@@ -28,7 +28,7 @@ export function ModontyViewsMark(props: SVGProps<SVGSVGElement>) {
     >
       <path d="M16 60C30 36 90 36 104 60C90 84 30 84 16 60Z" stroke="var(--modonty-views-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <circle cx="60" cy="60" r="16" stroke="var(--modonty-views-body, currentColor)" strokeWidth="6"/>
-      <rect x="53" y="53" width="14" height="14" rx="2" transform="rotate(45 60 60)" fill="var(--modonty-views-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="50" width="20" height="20" rx="4" transform="rotate(30 60 60)" fill="var(--modonty-views-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

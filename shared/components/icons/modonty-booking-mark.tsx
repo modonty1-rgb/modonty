@@ -29,7 +29,7 @@ export function ModontyBookingMark(props: SVGProps<SVGSVGElement>) {
       <rect x="22" y="28" width="76" height="74" rx="14" stroke="var(--modonty-booking-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M40 18V30M80 18V30" stroke="var(--modonty-booking-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
       <path d="M24 48H96" stroke="var(--modonty-booking-body, currentColor)" strokeWidth="6" strokeLinecap="round"/>
-      <rect x="53" y="66" width="14" height="14" rx="2" transform="rotate(45 60 73)" fill="var(--modonty-booking-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="63" width="20" height="20" rx="4" transform="rotate(30 60 73)" fill="var(--modonty-booking-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

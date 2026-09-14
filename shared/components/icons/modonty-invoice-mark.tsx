@@ -28,7 +28,7 @@ export function ModontyInvoiceMark(props: SVGProps<SVGSVGElement>) {
     >
       <path d="M30 20H90V96L80 90L70 96L60 90L50 96L40 90L30 96V20Z" stroke="var(--modonty-invoice-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M44 38H76M44 50H76" stroke="var(--modonty-invoice-body, currentColor)" strokeWidth="6" strokeLinecap="round"/>
-      <rect x="53" y="65" width="14" height="14" rx="2" transform="rotate(45 60 72)" fill="var(--modonty-invoice-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="62" width="20" height="20" rx="4" transform="rotate(30 60 72)" fill="var(--modonty-invoice-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

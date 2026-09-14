@@ -28,7 +28,7 @@ export function ModontyShoppingMark(props: SVGProps<SVGSVGElement>) {
     >
       <path d="M44 42V34C44 25.2 51.2 18 60 18C68.8 18 76 25.2 76 34V42" stroke="var(--modonty-shopping-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
       <path d="M24 42H96L88 98C88 101.3 85.3 104 82 104H38C34.7 104 32 101.3 32 98L24 42Z" stroke="var(--modonty-shopping-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="53" y="63" width="14" height="14" rx="2" transform="rotate(45 60 70)" fill="var(--modonty-shopping-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="60" width="20" height="20" rx="4" transform="rotate(30 60 70)" fill="var(--modonty-shopping-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

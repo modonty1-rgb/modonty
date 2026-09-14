@@ -24,7 +24,7 @@ export function ModontyReelsClosedClapperMark(props: SVGProps<SVGSVGElement>) {
         width="56"
         height="96"
         rx="28"
-        fill="var(--modonty-reels-accent, hsl(var(--accent)))"
+        fill="var(--modonty-reels-accent, var(--modonty-accent, #00d8d8))"
         transform="rotate(-35 104 116)"
       />
       <rect

@@ -28,8 +28,8 @@ export function ModontyPaymentMark(props: SVGProps<SVGSVGElement>) {
     >
       <path d="M60 20L92 32V60C92 80 78 96 60 102C42 96 28 80 28 60V32L60 20Z" stroke="var(--modonty-payment-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M50 54V46C50 40.5 54.5 36 60 36C65.5 36 70 40.5 70 46V54" stroke="var(--modonty-payment-body, currentColor)" strokeWidth="6" strokeLinecap="round"/>
-      <rect x="53" y="57" width="14" height="14" rx="2" transform="rotate(45 60 64)" fill="var(--modonty-payment-accent, hsl(var(--accent)))"/>
-      <path d="M60 70V78" stroke="var(--modonty-payment-accent, hsl(var(--accent)))" strokeWidth="4" strokeLinecap="round"/>
+      <rect x="50" y="54" width="20" height="20" rx="4" transform="rotate(30 60 64)" fill="var(--modonty-payment-accent, var(--modonty-accent, #00d8d8))"/>
+      <path d="M60 70V78" stroke="var(--modonty-payment-accent, var(--modonty-accent, #00d8d8))" strokeWidth="4" strokeLinecap="round"/>
     </svg>
   );
 }

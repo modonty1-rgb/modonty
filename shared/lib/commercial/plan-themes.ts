@@ -12,7 +12,6 @@ export const COMMERCIAL_PLAN_THEMES: Record<CommercialPlanTheme, {
   border: string;
   background: string;
   badge: string;
-  button: string;
 }> = {
   // Swatches must read at ≥ 3:1 against the select's surface (WCAG 1.4.11): `bg-secondary`
   // and `bg-accent` are near-surface grays in both themes and vanished in the dropdown.
@@ -22,30 +21,31 @@ export const COMMERCIAL_PLAN_THEMES: Record<CommercialPlanTheme, {
     border: "border-border",
     background: "bg-card",
     badge: "bg-secondary text-secondary-foreground",
-    button: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
   },
+  // ⚠ الخلفية تُركَّب فوق `bg-card` لا فوق خلفية الصفحة.
+  // قيس (١٤ سبتمبر ٢٠٢٦ على /sa داكناً): `bg-primary/5` وحدها = rgb(25,25,37) على صفحةٍ
+  // rgb(21,21,25) — أي أن البطاقة **أغمق** من سطح البطاقة القياسي rgb(31,31,35)، فتُقرأ
+  // حفرةً لا بطاقة. في الفاتح لا يظهر العطل لأن الشفّاف فوق الأبيض يبقى أبيضَ ملوّناً.
+  // فالسطح أوّلاً ثم اللمسة فوقه: `bg-card` لوناً، واللمسة صورةً متدرّجة بلونٍ واحد.
   PRIMARY: {
     label: "أساسي",
     swatch: "bg-primary",
     border: "border-primary/40",
-    background: "bg-primary/5",
+    background: "bg-card [background-image:linear-gradient(hsl(var(--primary)/0.07),hsl(var(--primary)/0.07))]",
     badge: "bg-primary text-primary-foreground",
-    button: "bg-primary text-primary-foreground hover:bg-primary/90",
   },
   ACCENT: {
     label: "مميَّز",
     swatch: "bg-chart-2",
     border: "border-chart-2/50",
-    background: "bg-chart-2/10",
+    background: "bg-card [background-image:linear-gradient(hsl(var(--chart-2)/0.07),hsl(var(--chart-2)/0.07))]",
     badge: "bg-chart-2 text-background",
-    button: "bg-chart-2 text-background hover:bg-chart-2/90",
   },
   PREMIUM: {
     label: "بريميوم",
     swatch: "bg-chart-4",
     border: "border-chart-4/50",
-    background: "bg-chart-4/10",
+    background: "bg-card [background-image:linear-gradient(hsl(var(--chart-4)/0.07),hsl(var(--chart-4)/0.07))]",
     badge: "bg-chart-4 text-background",
-    button: "bg-chart-4 text-background hover:bg-chart-4/90",
   },
 };

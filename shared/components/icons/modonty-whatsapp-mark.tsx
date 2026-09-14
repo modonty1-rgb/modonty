@@ -27,7 +27,7 @@ export function ModontyWhatsappMark(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path d="M60 22C39 22 22 39 22 60C22 67.5 24.2 74.5 28 80.5L24 98L42 94C47.5 97 53.5 98 60 98C81 98 98 81 98 60C98 39 81 22 60 22Z" stroke="var(--modonty-whatsapp-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="53" y="53" width="14" height="14" rx="2" transform="rotate(45 60 60)" fill="var(--modonty-whatsapp-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="50" width="20" height="20" rx="4" transform="rotate(30 60 60)" fill="var(--modonty-whatsapp-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

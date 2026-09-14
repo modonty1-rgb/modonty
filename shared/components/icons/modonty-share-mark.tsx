@@ -29,7 +29,7 @@ export function ModontyShareMark(props: SVGProps<SVGSVGElement>) {
       <path d="M42 56L78 38M42 64L78 82" stroke="var(--modonty-share-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
       <circle cx="84" cy="34" r="12" stroke="var(--modonty-share-body, currentColor)" strokeWidth="8" fill="#FFFFFF"/>
       <circle cx="84" cy="86" r="12" stroke="var(--modonty-share-body, currentColor)" strokeWidth="8" fill="#FFFFFF"/>
-      <rect x="27" y="53" width="14" height="14" rx="2" transform="rotate(45 34 60)" fill="var(--modonty-share-accent, hsl(var(--accent)))"/>
+      <rect x="24" y="50" width="20" height="20" rx="4" transform="rotate(30 34 60)" fill="var(--modonty-share-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

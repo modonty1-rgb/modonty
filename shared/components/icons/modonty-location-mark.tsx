@@ -27,7 +27,7 @@ export function ModontyLocationMark(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path d="M60 102C60 102 88 68 88 48C88 32.5 75.5 20 60 20C44.5 20 32 32.5 32 48C32 68 60 102 60 102Z" stroke="var(--modonty-location-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="53" y="41" width="14" height="14" rx="2" transform="rotate(45 60 48)" fill="var(--modonty-location-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="38" width="20" height="20" rx="4" transform="rotate(30 60 48)" fill="var(--modonty-location-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

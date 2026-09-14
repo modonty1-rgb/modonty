@@ -50,13 +50,13 @@ export function ModontyCalendarMark(props: SVGProps<SVGSVGElement>) {
         strokeLinecap="round"
       />
       <rect
-        x="53"
-        y="68"
-        width="14"
-        height="14"
-        rx="2"
-        transform="rotate(45 60 75)"
-        fill="var(--modonty-calendar-accent, hsl(var(--accent)))"
+        x="50"
+        y="65"
+        width="20"
+        height="20"
+        rx="4"
+        transform="rotate(30 60 75)"
+        fill="var(--modonty-calendar-accent, var(--modonty-accent, #00d8d8))"
       />
     </svg>
   );

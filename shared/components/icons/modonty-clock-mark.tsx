@@ -28,7 +28,7 @@ export function ModontyClockMark(props: SVGProps<SVGSVGElement>) {
     >
       <circle cx="60" cy="60" r="42" stroke="var(--modonty-clock-body, currentColor)" strokeWidth="8"/>
       <path d="M60 32V60L78 68" stroke="var(--modonty-clock-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="53" y="53" width="14" height="14" rx="2" transform="rotate(45 60 60)" fill="var(--modonty-clock-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="50" width="20" height="20" rx="4" transform="rotate(30 60 60)" fill="var(--modonty-clock-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

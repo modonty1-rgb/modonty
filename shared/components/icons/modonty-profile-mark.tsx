@@ -28,7 +28,7 @@ export function ModontyProfileMark(props: SVGProps<SVGSVGElement>) {
     >
       <circle cx="60" cy="46" r="18" stroke="var(--modonty-profile-body, currentColor)" strokeWidth="8"/>
       <path d="M26 94C26 76 41 72 60 72C79 72 94 76 94 94" stroke="var(--modonty-profile-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
-      <rect x="53" y="86" width="14" height="14" rx="2" transform="rotate(45 60 93)" fill="var(--modonty-profile-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="83" width="20" height="20" rx="4" transform="rotate(30 60 93)" fill="var(--modonty-profile-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

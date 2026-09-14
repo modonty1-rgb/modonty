@@ -28,7 +28,7 @@ export function ModontyLoginMark(props: SVGProps<SVGSVGElement>) {
     >
       <path d="M62 24H36C30.5 24 26 28.5 26 34V86C26 91.5 30.5 96 36 96H62" stroke="var(--modonty-login-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M46 60H94M94 60L78 44M94 60L78 76" stroke="var(--modonty-login-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="39" y="53" width="14" height="14" rx="2" transform="rotate(45 46 60)" fill="var(--modonty-login-accent, hsl(var(--accent)))"/>
+      <rect x="36" y="50" width="20" height="20" rx="4" transform="rotate(30 46 60)" fill="var(--modonty-login-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

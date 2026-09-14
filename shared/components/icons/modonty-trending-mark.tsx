@@ -28,7 +28,7 @@ export function ModontyTrendingMark(props: SVGProps<SVGSVGElement>) {
     >
       <path d="M24 74L48 50L68 60L90 32" stroke="var(--modonty-trending-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M76 30H92V46" stroke="var(--modonty-trending-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="61" y="53" width="14" height="14" rx="2" transform="rotate(45 68 60)" fill="var(--modonty-trending-accent, hsl(var(--accent)))"/>
+      <rect x="58" y="50" width="20" height="20" rx="4" transform="rotate(30 68 60)" fill="var(--modonty-trending-accent, var(--modonty-accent, #00d8d8))"/>
       <circle cx="24" cy="74" r="4" fill="var(--modonty-trending-body, currentColor)"/>
     </svg>
   );

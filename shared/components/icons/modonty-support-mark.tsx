@@ -30,7 +30,7 @@ export function ModontySupportMark(props: SVGProps<SVGSVGElement>) {
       <rect x="20" y="56" width="12" height="24" rx="4" fill="var(--modonty-support-body, currentColor)"/>
       <rect x="88" y="56" width="12" height="24" rx="4" fill="var(--modonty-support-body, currentColor)"/>
       <path d="M86 86V88C86 94 80 98 74 98H68" stroke="var(--modonty-support-body, currentColor)" strokeWidth="6" strokeLinecap="round"/>
-      <rect x="51" y="89" width="14" height="14" rx="2" transform="rotate(45 58 96)" fill="var(--modonty-support-accent, hsl(var(--accent)))"/>
+      <rect x="48" y="86" width="20" height="20" rx="4" transform="rotate(30 58 96)" fill="var(--modonty-support-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

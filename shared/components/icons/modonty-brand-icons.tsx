@@ -6,7 +6,7 @@ export function ModontyActivityMark(props: SVGProps<SVGSVGElement>) {
     <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
     <path d="M14 64.6 H30.5 L37.4 52.5 L49.3 84.1 L60.4 41.4" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4.7"></path>
     <path d="M65.7 41.4 L76.9 79.3 L85.3 64.6 H106" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4.7"></path>
-    <rect fill="#00D8D8" height="8.7" rx="1.35" transform="rotate(45 63.05 33.95)" width="8.7" x="58.7" y="29.6"></rect>
+    <rect fill="#00D8D8" height="8.7" rx="53.05" transform="rotate(30 63.05 33.95)" width="8.7" x="58.7" y="23.95"></rect>
     </svg>
   );
 }
@@ -34,7 +34,7 @@ export function ModontyFolderMark(props: SVGProps<SVGSVGElement>) {
            H28
            C22.5 98 18 93.5 18 88
            Z" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-    <rect fill="#00D8D8" height="12" rx="2" transform="rotate(45 53 34)" width="12" x="47" y="28"></rect>
+    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 53 34)" width="12" x="47" y="28"></rect>
     </svg>
   );
 }
@@ -47,7 +47,7 @@ export function ModontyDownloadMark(props: SVGProps<SVGSVGElement>) {
 
     <path d="M28 82V88C28 94.627 33.373 100 40 100H80C86.627 100 92 94.627 92 88V82" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
 
-    <rect fill="#00D8D8" height="12" rx="2" transform="rotate(45 60 22)" width="12" x="54" y="16"></rect>
+    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 60 22)" width="12" x="54" y="16"></rect>
     </svg>
   );
 }
@@ -86,7 +86,7 @@ export function ModontyUploadMark(props: SVGProps<SVGSVGElement>) {
 
     <path d="M28 82V88C28 94.627 33.373 100 40 100H80C86.627 100 92 94.627 92 88V82" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
 
-    <rect fill="#00D8D8" height="12" rx="2" transform="rotate(45 60 18)" width="12" x="54" y="12"></rect>
+    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 60 18)" width="12" x="54" y="12"></rect>
     </svg>
   );
 }
@@ -117,7 +117,7 @@ export function ModontySuccessMark(props: SVGProps<SVGSVGElement>) {
 
     <path d="M38 61L53 76L82 47" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
 
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 53 76)" width="10" x="48" y="71"></rect>
+    <rect fill="#00D8D8" height="10" rx="4" transform="rotate(45 53 76)" width="10" x="48" y="71"></rect>
     </svg>
   );
 }
@@ -135,7 +135,7 @@ export function ModontyAlertTriangleMark(props: SVGProps<SVGSVGElement>) {
 
     <path d="M60 42V66" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
 
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 60 79)" width="10" x="55" y="74"></rect>
+    <rect fill="#00D8D8" height="10" rx="4" transform="rotate(45 60 79)" width="10" x="55" y="74"></rect>
     </svg>
   );
 }
@@ -179,7 +179,7 @@ export function ModontySettingsMark(props: SVGProps<SVGSVGElement>) {
 
     <circle cx="60" cy="60" r="22" stroke="#0E065A" strokeWidth="8"></circle>
 
-    <rect fill="#00D8D8" height="12" rx="2" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
+    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
     </svg>
   );
 }
@@ -198,7 +198,7 @@ export function ModontyThemeLightMark(props: SVGProps<SVGSVGElement>) {
     <path d="M84 36L92.5 27.5" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
     <path d="M27.5 92.5L36 84" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
 
-    <rect fill="#00D8D8" height="14" rx="2" transform="rotate(45 60 60)" width="14" x="53" y="53"></rect>
+    <rect fill="#00D8D8" height="20" rx="4" transform="rotate(45 60 60)" width="20" x="53" y="53"></rect>
     </svg>
   );
 }
@@ -225,7 +225,7 @@ export function ModontyDeleteMark(props: SVGProps<SVGSVGElement>) {
     <path d="M53 55V80" stroke="#0E065A" strokeLinecap="round" strokeWidth="6"></path>
     <path d="M67 55V80" stroke="#0E065A" strokeLinecap="round" strokeWidth="6"></path>
 
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 60 87)" width="10" x="55" y="82"></rect>
+    <rect fill="#00D8D8" height="10" rx="4" transform="rotate(45 60 87)" width="10" x="55" y="82"></rect>
     </svg>
   );
 }
@@ -235,7 +235,7 @@ export function ModontyCircleMark(props: SVGProps<SVGSVGElement>) {
     <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
     <circle cx="60" cy="60" r="38" stroke="#0E065A" strokeWidth="8"></circle>
 
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 60 60)" width="10" x="55" y="55"></rect>
+    <rect fill="#00D8D8" height="10" rx="4" transform="rotate(45 60 60)" width="10" x="55" y="55"></rect>
     </svg>
   );
 }
@@ -249,7 +249,7 @@ export function ModontyLinkMark(props: SVGProps<SVGSVGElement>) {
 
     <path d="M45 75L75 45" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
 
-    <rect fill="#00D8D8" height="12" rx="2" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
+    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
     </svg>
   );
 }
@@ -276,7 +276,7 @@ export function ModontyLinkOffMark(props: SVGProps<SVGSVGElement>) {
     <path d="M47 91L52 85" stroke="#00D8D8" strokeLinecap="round" strokeWidth="6"></path>
     <path d="M73 91L68 85" stroke="#00D8D8" strokeLinecap="round" strokeWidth="6"></path>
 
-    <rect fill="#00D8D8" height="12" rx="2" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
+    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
     </svg>
   );
 }
@@ -284,13 +284,13 @@ export function ModontyLinkOffMark(props: SVGProps<SVGSVGElement>) {
 export function ModontyListMark(props: SVGProps<SVGSVGElement>) {
   return (
     <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <rect height="14" rx="4" stroke="#0E065A" strokeWidth="6" width="14" x="18" y="24"></rect>
+    <rect height="20" rx="4" stroke="#0E065A" strokeWidth="6" width="20" x="18" y="24"></rect>
     <path d="M46 31H98" stroke="#0E065A" strokeLinecap="round" strokeWidth="7"></path>
 
-    <rect height="14" rx="4" stroke="#0E065A" strokeWidth="6" width="14" x="18" y="53"></rect>
+    <rect height="20" rx="4" stroke="#0E065A" strokeWidth="6" width="20" x="18" y="53"></rect>
     <path d="M46 60H98" stroke="#0E065A" strokeLinecap="round" strokeWidth="7"></path>
 
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 25 85)" width="10" x="20" y="80"></rect>
+    <rect fill="#00D8D8" height="10" rx="4" transform="rotate(45 25 85)" width="10" x="20" y="80"></rect>
     <path d="M46 85H98" stroke="#0E065A" strokeLinecap="round" strokeWidth="7"></path>
     </svg>
   );

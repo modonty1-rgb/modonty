@@ -34,7 +34,7 @@ export function ModontyIndustriesMark(props: SVGProps<SVGSVGElement>) {
         y="42.5"
         width="15"
         height="15"
-        fill="var(--modonty-industries-accent, hsl(var(--accent)))"
+        fill="var(--modonty-industries-accent, var(--modonty-accent, #00d8d8))"
         transform="rotate(45 50 50)"
       />
     </svg>

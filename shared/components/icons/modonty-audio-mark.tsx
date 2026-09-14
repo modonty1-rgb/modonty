@@ -46,13 +46,13 @@ export function ModontyAudioMark(props: SVGProps<SVGSVGElement>) {
         strokeLinecap="round"
       />
       <rect
-        x="93"
-        y="53"
-        width="14"
-        height="14"
-        rx="2"
-        transform="rotate(45 100 60)"
-        fill="var(--modonty-audio-accent, hsl(var(--accent)))"
+        x="90"
+        y="50"
+        width="20"
+        height="20"
+        rx="4"
+        transform="rotate(30 100 60)"
+        fill="var(--modonty-audio-accent, var(--modonty-accent, #00d8d8))"
       />
     </svg>
   );

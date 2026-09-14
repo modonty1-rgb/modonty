@@ -27,7 +27,7 @@ export function ModontyRatingMark(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path d="M60 18L72.4 43.1L100 47.1L80 66.6L84.7 94L60 81L35.3 94L40 66.6L20 47.1L47.6 43.1L60 18Z" stroke="var(--modonty-rating-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="53" y="49" width="14" height="14" rx="2" transform="rotate(45 60 56)" fill="var(--modonty-rating-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="46" width="20" height="20" rx="4" transform="rotate(30 60 56)" fill="var(--modonty-rating-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

@@ -27,9 +27,9 @@ export function ModontyCommentMark(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path d="M24 58C24 38.1 40.1 22 60 22C79.9 22 96 38.1 96 58C96 77.9 79.9 94 60 94C53.2 94 46.8 92.1 41.3 88.8L22 94L27.5 76.2C25.3 70.8 24 64.6 24 58Z" stroke="var(--modonty-comment-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="39" y="51" width="14" height="14" rx="2" transform="rotate(45 46 58)" fill="var(--modonty-comment-body, currentColor)"/>
-      <rect x="53" y="51" width="14" height="14" rx="2" transform="rotate(45 60 58)" fill="var(--modonty-comment-accent, hsl(var(--accent)))"/>
-      <rect x="67" y="51" width="14" height="14" rx="2" transform="rotate(45 74 58)" fill="var(--modonty-comment-body, currentColor)"/>
+      <rect x="36" y="48" width="20" height="20" rx="4" transform="rotate(30 46 58)" fill="var(--modonty-comment-body, currentColor)"/>
+      <rect x="50" y="48" width="20" height="20" rx="4" transform="rotate(30 60 58)" fill="var(--modonty-comment-accent, var(--modonty-accent, #00d8d8))"/>
+      <rect x="64" y="48" width="20" height="20" rx="4" transform="rotate(30 74 58)" fill="var(--modonty-comment-body, currentColor)"/>
     </svg>
   );
 }

@@ -31,7 +31,7 @@ export function ModontyCompanyMark(props: SVGProps<SVGSVGElement>) {
       <rect x="68" y="36" width="10" height="10" rx="2" fill="var(--modonty-company-body, currentColor)"/>
       <rect x="42" y="54" width="10" height="10" rx="2" fill="var(--modonty-company-body, currentColor)"/>
       <rect x="68" y="54" width="10" height="10" rx="2" fill="var(--modonty-company-body, currentColor)"/>
-      <rect x="53" y="77" width="14" height="14" rx="2" transform="rotate(45 60 84)" fill="var(--modonty-company-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="74" width="20" height="20" rx="4" transform="rotate(30 60 84)" fill="var(--modonty-company-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

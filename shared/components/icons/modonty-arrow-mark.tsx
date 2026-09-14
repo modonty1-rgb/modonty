@@ -43,13 +43,13 @@ export function ModontyArrowMark(props: SVGProps<SVGSVGElement>) {
         strokeLinejoin="round"
       />
       <rect
-        x="83"
-        y="53"
-        width="14"
-        height="14"
-        rx="2"
-        transform="rotate(45 90 60)"
-        fill="var(--modonty-arrow-accent, hsl(var(--accent)))"
+        x="80"
+        y="50"
+        width="20"
+        height="20"
+        rx="4"
+        transform="rotate(30 90 60)"
+        fill="var(--modonty-arrow-accent, var(--modonty-accent, #00d8d8))"
       />
     </svg>
   );

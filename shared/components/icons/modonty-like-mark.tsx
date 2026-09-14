@@ -27,7 +27,7 @@ export function ModontyLikeMark(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path d="M60 98C60 98 20 74 20 46C20 32 32 22 45 22C52 22 57 26 60 30C63 26 68 22 75 22C88 22 100 32 100 46C100 74 60 98 60 98Z" stroke="var(--modonty-like-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="53" y="45" width="14" height="14" rx="2" transform="rotate(45 60 52)" fill="var(--modonty-like-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="42" width="20" height="20" rx="4" transform="rotate(30 60 52)" fill="var(--modonty-like-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

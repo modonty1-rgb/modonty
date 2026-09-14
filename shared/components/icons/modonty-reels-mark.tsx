@@ -57,14 +57,17 @@ export function ModontyReelsMark(props: SVGProps<SVGSVGElement>) {
         strokeWidth="6"
         strokeLinejoin="round"
       />
+      {/* Fourth pass, 12 Sep 2026 (Khalid): bigger, tilted 30 instead of 45, and pushed into
+          the body so it covers the white notch at the top-right corner instead of floating
+          beside it. A perfect 45 diamond read as a separate speck at 20px. */}
       <rect
-        x="79"
+        x="73"
         y="11"
-        width="14"
-        height="14"
-        rx="2"
-        transform="rotate(45 86 18)"
-        fill="var(--modonty-reels-accent, hsl(var(--accent)))"
+        width="20"
+        height="20"
+        rx="4"
+        transform="rotate(30 83 21)"
+        fill="var(--modonty-reels-accent, var(--modonty-accent, #00d8d8))"
       />
     </svg>
   );

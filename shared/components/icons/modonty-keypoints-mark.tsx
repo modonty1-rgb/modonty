@@ -27,7 +27,7 @@ export function ModontyKeypointsMark(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path d="M66 18L34 62H62L54 102L86 54H58L66 18Z" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="53" y="53" width="14" height="14" rx="2" transform="rotate(45 60 60)" fill="var(--modonty-keypoints-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="50" width="20" height="20" rx="4" transform="rotate(30 60 60)" fill="var(--modonty-keypoints-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

@@ -28,7 +28,7 @@ export function ModontyDirectionsMark(props: SVGProps<SVGSVGElement>) {
     >
       <rect x="30" y="30" width="60" height="60" rx="10" transform="rotate(45 60 60)" stroke="var(--modonty-directions-body, currentColor)" strokeWidth="8"/>
       <path d="M46 72V52C46 47.6 49.6 44 54 44H74M74 44L64 34M74 44L64 54" stroke="var(--modonty-directions-body, currentColor)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="39" y="65" width="14" height="14" rx="2" transform="rotate(45 46 72)" fill="var(--modonty-directions-accent, hsl(var(--accent)))"/>
+      <rect x="36" y="62" width="20" height="20" rx="4" transform="rotate(30 46 72)" fill="var(--modonty-directions-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

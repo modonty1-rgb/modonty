@@ -28,7 +28,7 @@ export function ModontySearchMark(props: SVGProps<SVGSVGElement>) {
     >
       <circle cx="52" cy="52" r="28" stroke="var(--modonty-search-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
       <path d="M72 72L96 96" stroke="var(--modonty-search-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
-      <rect x="45" y="45" width="14" height="14" rx="2" transform="rotate(45 52 52)" fill="var(--modonty-search-accent, hsl(var(--accent)))"/>
+      <rect x="42" y="42" width="20" height="20" rx="4" transform="rotate(30 52 52)" fill="var(--modonty-search-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

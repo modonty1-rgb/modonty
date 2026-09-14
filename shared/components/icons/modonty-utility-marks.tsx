@@ -1,5 +1,5 @@
 import type { SVGProps } from "react";
-const Diamond = () => <rect x="53" y="53" width="14" height="14" rx="2" transform="rotate(45 60 60)" fill="hsl(var(--accent))" />;
+const Diamond = () => <rect x="50" y="50" width="20" height="20" rx="4" transform="rotate(30 60 60)" fill="var(--modonty-accent, #00d8d8)" />;
 const Base = ({ children, ...props }: SVGProps<SVGSVGElement>) => <svg viewBox="0 0 120 120" fill="none" width="1em" height="1em" aria-hidden="true" {...props}>{children}</svg>;
 const n = "currentColor";
 export function ModontyFootprintsMark(p: SVGProps<SVGSVGElement>) { return <Base {...p}><ellipse cx="42" cy="76" rx="13" ry="23" transform="rotate(24 42 76)" stroke={n} strokeWidth="8"/><ellipse cx="79" cy="43" rx="13" ry="23" transform="rotate(24 79 43)" stroke={n} strokeWidth="8"/><Diamond/></Base>; }

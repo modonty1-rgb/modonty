@@ -28,7 +28,7 @@ export function ModontySortMark(props: SVGProps<SVGSVGElement>) {
     >
       <path d="M42 94V26M42 26L30 38M42 26L54 38" stroke="var(--modonty-sort-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M78 26V94M78 94L66 82M78 94L90 82" stroke="var(--modonty-sort-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="53" y="53" width="14" height="14" rx="2" transform="rotate(45 60 60)" fill="var(--modonty-sort-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="50" width="20" height="20" rx="4" transform="rotate(30 60 60)" fill="var(--modonty-sort-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

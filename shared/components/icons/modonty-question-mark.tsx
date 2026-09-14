@@ -28,7 +28,7 @@ export function ModontyQuestionMark(props: SVGProps<SVGSVGElement>) {
     >
       <circle cx="60" cy="60" r="42" stroke="var(--modonty-question-body, currentColor)" strokeWidth="8"/>
       <path d="M48 44C48 36.5 53.5 32 60 32C66.5 32 72 36.5 72 43C72 50 63 54 60 62" stroke="var(--modonty-question-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
-      <rect x="53" y="73" width="14" height="14" rx="2" transform="rotate(45 60 80)" fill="var(--modonty-question-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="70" width="20" height="20" rx="4" transform="rotate(30 60 80)" fill="var(--modonty-question-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }

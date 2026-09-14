@@ -28,7 +28,7 @@ export function ModontyEmailMark(props: SVGProps<SVGSVGElement>) {
     >
       <rect x="22" y="30" width="76" height="60" rx="12" stroke="var(--modonty-email-body, currentColor)" strokeWidth="8"/>
       <path d="M26 36L56.5 58.5C58.5 60 61.5 60 63.5 58.5L94 36" stroke="var(--modonty-email-body, currentColor)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="53" y="63" width="14" height="14" rx="2" transform="rotate(45 60 70)" fill="var(--modonty-email-accent, hsl(var(--accent)))"/>
+      <rect x="50" y="60" width="20" height="20" rx="4" transform="rotate(30 60 70)" fill="var(--modonty-email-accent, var(--modonty-accent, #00d8d8))"/>
     </svg>
   );
 }
