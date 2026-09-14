@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>أرشيف المنجز — 138 بنداً</title>
+<title>أرشيف المنجز — 143 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -132,7 +132,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 .hidden{display:none!important}
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
-<header class="top"><div class="wrap"><h1>أرشيف المنجز — 138 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
+<header class="top"><div class="wrap"><h1>أرشيف المنجز — 143 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
 <div class="tools"><input id="q" type="search" placeholder="ابحث في المنجز…" aria-label="بحث"></div></div></header>
 <main class="wrap"><section class="grp"><div class="grid"><article class="card" data-id="G11" data-sev="normal" data-who="c" data-tab="done" data-board="seo" data-apps="admin modonty" data-n="113" data-audit="pass">
   <div class="hd"><span class="num" title="رقم البند — قل «بند 113» في الشات">113</span><span class="id">G11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند G11">⧉</button></div>
@@ -3051,6 +3051,177 @@ orders/components/whatsapp-invoice-button.tsx — رابط يفتح واتساب
   التدقيق: order.confirmPayment · client.create · invoice.create · invoice.send · invoice.whatsapp — كلّها باسم المنفّذ
   لا بيان كُتب بيد كان في الطلب (السلَق والصناعة والمندوب فقط بشريّة)
 مراجعة Fable على E1–E4 (٥ ملاحظات) أُصلحت — انظر PAY-E4. بيانات الاختبار (٦ طلبات seed · عميل «منشأة اختبار» · فاتورتان) باقية في modonty_dev لاختبار خالد.</pre></div></details>
+</article>
+<article class="card" data-id="SHIP-1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty admin" data-area="jbrseo">
+  <div class="hd"><span class="id">SHIP-1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند SHIP-1">⧉</button></div>
+  
+  <div class="t">🟨 كود · ١/٦ جرد ما لم يُدفَع — قبل أي كوميت</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 1 من 6</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الحالة المقيسة (١٤ سبتمبر ٢٠٢٦): git rev-list --left-right --count origin/main...main ⇒ 0 17 أي أن المحلّي متقدّم بسبعة عشر كوميتاً، والإنتاج لم يرَ منها شيئاً. أقدمها: الكتالوج التجاري · ثم PAY-A1…A7 · B1…B3 · E1…E7 ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>الحالة المقيسة (١٤ سبتمبر ٢٠٢٦):</b></p>
+<pre>git rev-list --left-right --count origin/main...main   ⇒  0  17
+  أي أن المحلّي متقدّم بسبعة عشر كوميتاً، والإنتاج لم يرَ منها شيئاً.
+  أقدمها: الكتالوج التجاري · ثم PAY-A1…A7 · B1…B3 · E1…E7 · الفاتورة الضريبية.
+
+وغير مكمَّت أصلاً (ملفّات):
+  admin      ٢٣٤        shared     ٧٩
+  documents  ٥٢         modonty    ٢٦
+  payment    ٧٥ ملفّاً جديداً كلّها (الحزمة لم تدخل git بعد)
+  والجذر فيه ~٤٠ لقطة شاشة و__tmp-*.mjs — لا تدخل الكوميت.</pre>
+<h3>لماذا بندٌ مستقلّ</h3>
+<p>الفرق بين الحيّ والمحلّي ليس تفصيلاً: <code>--primary</code> في الوضع الداكن ٥٩٫٤١٪ على <code>modonty.com</code> و٦٨٪ عندنا — أي أن إصلاح التباين الذي أقررتَه (١٣ سبتمبر) لم ينزل بعد. وكل يومٍ يمرّ يكبر الفرق ويصعب فهم ما كسر ماذا.</p>
+<p><b>يُغلق بـ:</b> قائمة مكتوبة لما سيدخل الكوميتات، وقائمة لما يُستبعَد (اللقطات · <code>__tmp-*</code> · النسخ الاحتياطية <code>.bak-*</code>).</p>
+<h3>دليل الإغلاق (١٤ سبتمبر ٢٠٢٦)</h3>
+<pre>الجرد نُفِّذ وأثمر استبعادين حقيقيين:
+  ٨ ملفّات __tmp-*.mjs ونسخة package.json.bak كانت ستدخل كوميت مدونتي
+  ٣٨ ملفّ .bak-* كانت ستدخل كوميت اللوحة
+وحارس البيئة: payment/.env.local متجاهَل في .gitignore:21 · وصفر ملفّ بيئة
+في الفهرس · وصفر قيمة مفتاح مزوّد في git diff --cached.
+والمتتبَّعان الوحيدان .env.shared.example وconsole-mobile/.env.local.example
+وقيمهما AUTH_TRUST_HOST=true وOPENAI_MODEL=gpt-4o-mini — لا أسرار.</pre></div></details>
+</article>
+<article class="card" data-id="SHIP-2" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty admin" data-area="jbrseo">
+  <div class="hd"><span class="id">SHIP-2</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند SHIP-2">⧉</button></div>
+  
+  <div class="t">🟨 كود · ٢/٦ كوميتات مفصولة — الأدمن ثم المشترك ثم الدفع</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 2 من 6</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">العمل: لا كوميت واحد ضخم. أربعة، كلٌّ يُقرأ وحده ويُرجَع وحده: ١ feat(admin) شاشات الطلبات والفواتير والمكتبة وما تبعها ٢ feat(shared) السكيما · لقطة الطلب · البريست ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>العمل:</b> لا كوميت واحد ضخم. أربعة، كلٌّ يُقرأ وحده ويُرجَع وحده:</p>
+<pre>١ feat(admin)   شاشات الطلبات والفواتير والمكتبة وما تبعها
+٢ feat(shared)  السكيما · لقطة الطلب · البريست · مكوّنات البيع
+٣ feat(payment) الحزمة الجديدة كاملةً (٧٥ ملفّاً) — كوميتٌ واحد لأنها وحدة
+٤ chore(modonty) خروج الدفع: البروكسي · وسم الكاش · الحزم الثلاث · البيئة
+و.gitignore يُراجَع أوّلاً: payment/.env.local لا يدخل، ولا اللقطات.</pre>
+<p><b>⚠ حارس:</b> <code>payment/.env.local</code> فيه تسعة مفاتيح مزوّد. دخوله git تسريبٌ لا يُسترجَع — يُتحقَّق منه <b>قبل</b> الكوميت لا بعده.</p>
+<p><b>يُغلق بـ:</b> <code>git status</code> نظيف من الملفّات المستبعَدة · و<code>git show --stat</code> لكل كوميت يطابق وصفه · وصفر ملفّ بيئة في <code>git log -p</code>.</p>
+<h3>دليل الإغلاق — ستّة كوميتات لا أربعة</h3>
+<pre>b674d9a feat(admin)    دورة البيع · المكتبة · الفاتورة الالتزامية
+e100e73 feat(shared)   اللقطة · البريست · إصلاحا هرميّة وارتفاع البطاقة
+d726ce3 feat(payment)  الحزمة كاملةً (٧٩ ملفّاً)
+c04b82f chore(modonty) خروج الدفع — صفر ملفّ وحزمة ومفتاح
+5b9139c docs(board)    اللوحة: تبويبات حسب ما يوقف البند
+c3a1514 fix(build)     الأخطاء السبعة التي أوقفها البناء
+وdocuments انفصلت بكوميتها لأنها تُقرأ وحدها.</pre></div></details>
+</article>
+<article class="card" data-id="SHIP-3" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty admin" data-area="jbrseo">
+  <div class="hd"><span class="id">SHIP-3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند SHIP-3">⧉</button></div>
+  
+  <div class="t">🟨 كود · ٣/٦ البناء قبل الدفع — الأربعة تبني</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 3 من 6</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">العمل: pnpm build:all — وقد صار يشمل payment (أُضيف اليوم إلى package.json الجذر مع dev:payment). pnpm build:admin &amp;&amp; pnpm build:modonty &amp;&amp; pnpm build:console &amp;&amp; pnpm build:payment ولا يُدفَع شيء قبل أن تنجح الأربعة: Vercel يبني ب…</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>العمل:</b> <code>pnpm build:all</code> — وقد صار يشمل <code>payment</code> (أُضيف اليوم إلى <code>package.json</code> الجذر مع <code>dev:payment</code>).</p>
+<pre>pnpm build:admin && pnpm build:modonty && pnpm build:console && pnpm build:payment</pre>
+<p>ولا يُدفَع شيء قبل أن تنجح الأربعة: Vercel يبني بعد الدفع، وفشلٌ هناك يعني إنتاجاً معطَّلاً حتى يُصلَح، بينما فشلٌ هنا يعني دقيقة على جهازك.</p>
+<p><b>يُغلق بـ:</b> ناتج الأمر الأربعة <code>✓ Compiled successfully</code> ملصوقاً.</p>
+<h3>دليل الإغلاق — البناء أوقف كارثة</h3>
+<pre>pnpm build:payment · build:modonty · build:admin · build:console
+  ✓ Compiled successfully أربعتها · admin 29/29 · console 27/27
+
+وأخطر ما كشفه — وكان سينزل على الإنتاج:
+  admin/app/(dashboard)/commercial-plans/actions.ts:82
+  async function revalidateCatalog(planId?) { await revalidateCatalog(); … }
+  تنادي نفسها بلا شرط توقّف ⇒ كل حفظ باقةٍ أو ميزة استدعاءٌ لا نهائيّ.
+
+وستّة أخطاء أنواع: pathOptions على Edge المجرّد · padding "40px" أمام
+PaddingWithUnit · تقاطعٌ يرفض null · مصفوفة  · orderReference
+غير معرَّف في النوع · استيراد tailwindcss من حزمةٍ لا تعتمده.
+
+وبعد الدفع (c3a1514) — القياس من الإنتاج الحيّ:
+  git rev-list --left-right --count origin/main...main  ⇒ 0  0
+  modonty.com / · /articles · /clients · /reels · /users/register ⇒ 200
+  /pay · /pay/sa ⇒ 404 (المتوقَّع حتى يُربط النطاق)
+  admin.modonty.com 307→/login · console.modonty.com 200
+  والرئيسية تشغّل الجديد: --primary 240 100% 68% (كان 59.41%)
+  ترويسة ١ · تذييل ١ · ١١٣ رابطاً — مطابق للمسجَّل قبل الفصل</pre></div></details>
+</article>
+<article class="card" data-id="SHIP-4" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty admin" data-area="jbrseo">
+  <div class="hd"><span class="id">SHIP-4</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند SHIP-4">⧉</button></div>
+  
+  <div class="t">🟦 داتا · ٤/٦ مشروع Vercel لحزمة الدفع — خمس دقائق على اللوحة</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 4 من 6</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">ما جهّزتُه لك في الكود: payment/vercel.json بنفس نمط الحزم الثلاث — فلا شيء تكتبه في الحقول: buildCommand pnpm --filter @modonty/payment build installCommand pnpm install --filter @modonty/payment... framework nextjs ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>ما جهّزتُه لك في الكود:</b> <code>payment/vercel.json</code> بنفس نمط الحزم الثلاث — فلا شيء تكتبه في الحقول:</p>
+<pre>buildCommand    pnpm --filter @modonty/payment build
+installCommand  pnpm install --filter @modonty/payment...
+framework       nextjs</pre>
+<p><b>خطواتك على لوحة Vercel:</b></p>
+<pre>١ Add New → Project → نفس المستودع (dreamtoapp/MODONTY)
+٢ Root Directory = payment/           ← الحقل الوحيد الذي يُختار بيد
+٣ اسم المشروع: modonty-payment
+٤ لا تنشر بعد — المتغيّرات أوّلاً (SHIP-5)</pre>
+<p><b>ولماذا مشروعٌ مستقلّ لا نطاقٌ فرعيّ على مشروع مدونتي:</b> لأن الفصل كلّه (<code>PAY-S1…S8</code>) قام على أن كودَ المدوّنة لا يستطيع أن يوقف الدفع. ومشروعٌ واحد يعني بناءً واحداً يسقط فيسقط الاثنان معاً.</p>
+<p><b>يُغلق بـ:</b> نشرةُ معاينة (Preview) تفتح على عنوان <code>*.vercel.app</code> وتعرض الباقات.</p>
+<h3>دليل الإغلاق (١٤ سبتمبر ٢٠٢٦) — نُفِّذ بالـCLI واللوحة</h3>
+<pre>vercel link --project modonty-payment  ⇒ prj_1SOoqP0lzQmUIk1ysN7tS34e6FUS
+vercel git connect                     ⇒ modonty1-rgb/modonty متّصل
+Root Directory                         ⇒ "payment"  (كانت "." فأخفق أوّل نشر)
+  vercel project inspect: Root Directory payment · Build pnpm --filter @modonty/payment build
+النشر: أوّل محاولة ● Error (install أخفق لأن الجذر كان ".")
+       وبعد التصحيح ● Ready في ١م — modonty-payment-cyklgapfr…vercel.app</pre></div></details>
+</article>
+<article class="card" data-id="SHIP-5" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="modonty admin" data-area="jbrseo">
+  <div class="hd"><span class="id">SHIP-5</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند SHIP-5">⧉</button></div>
+  
+  <div class="t">🟦 داتا · ٥/٦ متغيّرات بيئة الدفع — وأين تُنسَخ من أين</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 5 من 6</span><span class="tag tab-done">منجز</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag app-admin">admin</span><span class="tag">جبر سيو</span><span>١٤ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">يُغلق بـ: نشرةٌ ناجحة، و/sa تعرض الباقات، وPOST بلا توقيع على /api/webhooks/n-genius يردّ ٤٠١. دليل الإغلاق — ١٤ متغيّراً على Production وPreview vercel env ls production ⇒ 14 سطراً NGENIUS_ENV · _API_KEY · _TOKEN_URL ·</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>تُدخَل في مشروع <code>modonty-payment</code> وحده</b> (Production + Preview):</p>
+<pre>من payment/.env.local عندك (٩ مفاتيح · انتقلت من مدونتي في PAY-S5):
+  NGENIUS_ENV · NGENIUS_API_KEY · NGENIUS_TOKEN_URL · NGENIUS_API_BASE
+  NGENIUS_OUTLET_ID · NGENIUS_WEBHOOK_SECRET
+  NEXT_PUBLIC_NGENIUS_HOSTED_SESSION_API_KEY
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY · TURNSTILE_SECRET_KEY
+
+ومن المشترك (نفس قيم مدونتي):
+  DATABASE_URL · REVALIDATE_SECRET · NEXT_PUBLIC_SITE_URL · NEXT_PUBLIC_SALES_WHATSAPP
+
+وجديدٌ لهذه الحزمة وحدها:
+  PAY_PUBLIC_URL = https://pay.modonty.com
+    ⚠ بغيابه يرمي إنشاءُ الطلب خطأً عمداً (PAY-S6): منه تُبنى روابط العودة
+    وعنوان الإشعار، وعنوانٌ خاطئ هنا يعني مشترياً يُخصَم ثم يهبط على ٤٠٤.
+
+وفي مشروع الأدمن يُضاف:
+  PAYMENT_PUBLIC_URL = https://pay.modonty.com
+    منه ينادي الأدمن إبطال كاش الكتالوج بعد تعديل سعر (PAY-S4).
+
+وتُحذف من مشروع مدونتي: NGENIUS_* · TURNSTILE_*   (لم تعد تُقرأ هناك)</pre>
+<p><b>يُغلق بـ:</b> نشرةٌ ناجحة، و<code>/sa</code> تعرض الباقات، و<code>POST</code> بلا توقيع على <code>/api/webhooks/n-genius</code> يردّ <b>٤٠١</b>.</p>
+<h3>دليل الإغلاق — ١٤ متغيّراً على Production وPreview</h3>
+<pre>vercel env ls production ⇒ 14 سطراً
+  NGENIUS_ENV · _API_KEY · _TOKEN_URL · _API_BASE · _OUTLET_ID · _WEBHOOK_SECRET
+  TURNSTILE_SECRET_KEY · NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  NEXT_PUBLIC_NGENIUS_HOSTED_SESSION_API_KEY
+  DATABASE_URL · REVALIDATE_SECRET · NEXT_PUBLIC_SITE_URL · NEXT_PUBLIC_SALES_WHATSAPP
+  PAY_PUBLIC_URL = https://pay.modonty.com
+
+ومصيدة: مفاتيح NEXT_PUBLIC_ ترفضها الـCLI بلا --no-sensitive — تسأل تفاعلياً
+«Expose publicly: keep … as Config» فتعلق العملية وتُقتل (status=null).
+وAUTH_SECRET غير موجود محليّاً فلم يُرفع — ولا يحتاجه الدفع (بلا مصادقة).</pre></div></details>
 </article>
 <article class="card" data-id="PAY-G1" data-sev="critical" data-who="c" data-tab="done" data-board="jbrseo" data-apps="admin" data-area="jbrseo">
   <div class="hd"><span class="id">PAY-G1</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-G1">⧉</button></div>

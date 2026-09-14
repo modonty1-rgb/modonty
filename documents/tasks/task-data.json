@@ -4813,8 +4813,8 @@
       "sec": "code",
       "date": "١٤ سبتمبر ٢٠٢٦",
       "jlane": "pay",
-      "tab": "open",
-      "jgrp": "pay-work",
+      "tab": "done",
+      "jgrp": "pay-done",
       "psec": "ship",
       "sev": "critical",
       "app": [
@@ -4827,7 +4827,7 @@
       "step": 1,
       "stepOf": 6,
       "t": "🟨 كود · ١/٦ جرد ما لم يُدفَع — قبل أي كوميت",
-      "d": "<p><b>الحالة المقيسة (١٤ سبتمبر ٢٠٢٦):</b></p>\n<pre>git rev-list --left-right --count origin/main...main   ⇒  0  17\n  أي أن المحلّي متقدّم بسبعة عشر كوميتاً، والإنتاج لم يرَ منها شيئاً.\n  أقدمها: الكتالوج التجاري · ثم PAY-A1…A7 · B1…B3 · E1…E7 · الفاتورة الضريبية.\n\nوغير مكمَّت أصلاً (ملفّات):\n  admin      ٢٣٤        shared     ٧٩\n  documents  ٥٢         modonty    ٢٦\n  payment    ٧٥ ملفّاً جديداً كلّها (الحزمة لم تدخل git بعد)\n  والجذر فيه ~٤٠ لقطة شاشة و__tmp-*.mjs — لا تدخل الكوميت.</pre>\n<h3>لماذا بندٌ مستقلّ</h3>\n<p>الفرق بين الحيّ والمحلّي ليس تفصيلاً: <code>--primary</code> في الوضع الداكن ٥٩٫٤١٪ على <code>modonty.com</code> و٦٨٪ عندنا — أي أن إصلاح التباين الذي أقررتَه (١٣ سبتمبر) لم ينزل بعد. وكل يومٍ يمرّ يكبر الفرق ويصعب فهم ما كسر ماذا.</p>\n<p><b>يُغلق بـ:</b> قائمة مكتوبة لما سيدخل الكوميتات، وقائمة لما يُستبعَد (اللقطات · <code>__tmp-*</code> · النسخ الاحتياطية <code>.bak-*</code>).</p>"
+      "d": "<p><b>الحالة المقيسة (١٤ سبتمبر ٢٠٢٦):</b></p>\n<pre>git rev-list --left-right --count origin/main...main   ⇒  0  17\n  أي أن المحلّي متقدّم بسبعة عشر كوميتاً، والإنتاج لم يرَ منها شيئاً.\n  أقدمها: الكتالوج التجاري · ثم PAY-A1…A7 · B1…B3 · E1…E7 · الفاتورة الضريبية.\n\nوغير مكمَّت أصلاً (ملفّات):\n  admin      ٢٣٤        shared     ٧٩\n  documents  ٥٢         modonty    ٢٦\n  payment    ٧٥ ملفّاً جديداً كلّها (الحزمة لم تدخل git بعد)\n  والجذر فيه ~٤٠ لقطة شاشة و__tmp-*.mjs — لا تدخل الكوميت.</pre>\n<h3>لماذا بندٌ مستقلّ</h3>\n<p>الفرق بين الحيّ والمحلّي ليس تفصيلاً: <code>--primary</code> في الوضع الداكن ٥٩٫٤١٪ على <code>modonty.com</code> و٦٨٪ عندنا — أي أن إصلاح التباين الذي أقررتَه (١٣ سبتمبر) لم ينزل بعد. وكل يومٍ يمرّ يكبر الفرق ويصعب فهم ما كسر ماذا.</p>\n<p><b>يُغلق بـ:</b> قائمة مكتوبة لما سيدخل الكوميتات، وقائمة لما يُستبعَد (اللقطات · <code>__tmp-*</code> · النسخ الاحتياطية <code>.bak-*</code>).</p>\n<h3>دليل الإغلاق (١٤ سبتمبر ٢٠٢٦)</h3>\n<pre>الجرد نُفِّذ وأثمر استبعادين حقيقيين:\n  ٨ ملفّات __tmp-*.mjs ونسخة package.json.bak كانت ستدخل كوميت مدونتي\n  ٣٨ ملفّ .bak-* كانت ستدخل كوميت اللوحة\nوحارس البيئة: payment/.env.local متجاهَل في .gitignore:21 · وصفر ملفّ بيئة\nفي الفهرس · وصفر قيمة مفتاح مزوّد في git diff --cached.\nوالمتتبَّعان الوحيدان .env.shared.example وconsole-mobile/.env.local.example\nوقيمهما AUTH_TRUST_HOST=true وOPENAI_MODEL=gpt-4o-mini — لا أسرار.</pre>"
     },
     {
       "b": "jbrseo",
@@ -4836,8 +4836,8 @@
       "sec": "code",
       "date": "١٤ سبتمبر ٢٠٢٦",
       "jlane": "pay",
-      "tab": "open",
-      "jgrp": "pay-work",
+      "tab": "done",
+      "jgrp": "pay-done",
       "psec": "ship",
       "sev": "critical",
       "app": [
@@ -4850,7 +4850,7 @@
       "step": 2,
       "stepOf": 6,
       "t": "🟨 كود · ٢/٦ كوميتات مفصولة — الأدمن ثم المشترك ثم الدفع",
-      "d": "<p><b>العمل:</b> لا كوميت واحد ضخم. أربعة، كلٌّ يُقرأ وحده ويُرجَع وحده:</p>\n<pre>١ feat(admin)   شاشات الطلبات والفواتير والمكتبة وما تبعها\n٢ feat(shared)  السكيما · لقطة الطلب · البريست · مكوّنات البيع\n٣ feat(payment) الحزمة الجديدة كاملةً (٧٥ ملفّاً) — كوميتٌ واحد لأنها وحدة\n٤ chore(modonty) خروج الدفع: البروكسي · وسم الكاش · الحزم الثلاث · البيئة\nو.gitignore يُراجَع أوّلاً: payment/.env.local لا يدخل، ولا اللقطات.</pre>\n<p><b>⚠ حارس:</b> <code>payment/.env.local</code> فيه تسعة مفاتيح مزوّد. دخوله git تسريبٌ لا يُسترجَع — يُتحقَّق منه <b>قبل</b> الكوميت لا بعده.</p>\n<p><b>يُغلق بـ:</b> <code>git status</code> نظيف من الملفّات المستبعَدة · و<code>git show --stat</code> لكل كوميت يطابق وصفه · وصفر ملفّ بيئة في <code>git log -p</code>.</p>"
+      "d": "<p><b>العمل:</b> لا كوميت واحد ضخم. أربعة، كلٌّ يُقرأ وحده ويُرجَع وحده:</p>\n<pre>١ feat(admin)   شاشات الطلبات والفواتير والمكتبة وما تبعها\n٢ feat(shared)  السكيما · لقطة الطلب · البريست · مكوّنات البيع\n٣ feat(payment) الحزمة الجديدة كاملةً (٧٥ ملفّاً) — كوميتٌ واحد لأنها وحدة\n٤ chore(modonty) خروج الدفع: البروكسي · وسم الكاش · الحزم الثلاث · البيئة\nو.gitignore يُراجَع أوّلاً: payment/.env.local لا يدخل، ولا اللقطات.</pre>\n<p><b>⚠ حارس:</b> <code>payment/.env.local</code> فيه تسعة مفاتيح مزوّد. دخوله git تسريبٌ لا يُسترجَع — يُتحقَّق منه <b>قبل</b> الكوميت لا بعده.</p>\n<p><b>يُغلق بـ:</b> <code>git status</code> نظيف من الملفّات المستبعَدة · و<code>git show --stat</code> لكل كوميت يطابق وصفه · وصفر ملفّ بيئة في <code>git log -p</code>.</p>\n<h3>دليل الإغلاق — ستّة كوميتات لا أربعة</h3>\n<pre>b674d9a feat(admin)    دورة البيع · المكتبة · الفاتورة الالتزامية\ne100e73 feat(shared)   اللقطة · البريست · إصلاحا هرميّة وارتفاع البطاقة\nd726ce3 feat(payment)  الحزمة كاملةً (٧٩ ملفّاً)\nc04b82f chore(modonty) خروج الدفع — صفر ملفّ وحزمة ومفتاح\n5b9139c docs(board)    اللوحة: تبويبات حسب ما يوقف البند\nc3a1514 fix(build)     الأخطاء السبعة التي أوقفها البناء\nوdocuments انفصلت بكوميتها لأنها تُقرأ وحدها.</pre>"
     },
     {
       "b": "jbrseo",
@@ -4859,8 +4859,8 @@
       "sec": "code",
       "date": "١٤ سبتمبر ٢٠٢٦",
       "jlane": "pay",
-      "tab": "open",
-      "jgrp": "pay-work",
+      "tab": "done",
+      "jgrp": "pay-done",
       "psec": "ship",
       "sev": "critical",
       "app": [
@@ -4873,7 +4873,7 @@
       "step": 3,
       "stepOf": 6,
       "t": "🟨 كود · ٣/٦ البناء قبل الدفع — الأربعة تبني",
-      "d": "<p><b>العمل:</b> <code>pnpm build:all</code> — وقد صار يشمل <code>payment</code> (أُضيف اليوم إلى <code>package.json</code> الجذر مع <code>dev:payment</code>).</p>\n<pre>pnpm build:admin && pnpm build:modonty && pnpm build:console && pnpm build:payment</pre>\n<p>ولا يُدفَع شيء قبل أن تنجح الأربعة: Vercel يبني بعد الدفع، وفشلٌ هناك يعني إنتاجاً معطَّلاً حتى يُصلَح، بينما فشلٌ هنا يعني دقيقة على جهازك.</p>\n<p><b>يُغلق بـ:</b> ناتج الأمر الأربعة <code>✓ Compiled successfully</code> ملصوقاً.</p>"
+      "d": "<p><b>العمل:</b> <code>pnpm build:all</code> — وقد صار يشمل <code>payment</code> (أُضيف اليوم إلى <code>package.json</code> الجذر مع <code>dev:payment</code>).</p>\n<pre>pnpm build:admin && pnpm build:modonty && pnpm build:console && pnpm build:payment</pre>\n<p>ولا يُدفَع شيء قبل أن تنجح الأربعة: Vercel يبني بعد الدفع، وفشلٌ هناك يعني إنتاجاً معطَّلاً حتى يُصلَح، بينما فشلٌ هنا يعني دقيقة على جهازك.</p>\n<p><b>يُغلق بـ:</b> ناتج الأمر الأربعة <code>✓ Compiled successfully</code> ملصوقاً.</p>\n<h3>دليل الإغلاق — البناء أوقف كارثة</h3>\n<pre>pnpm build:payment · build:modonty · build:admin · build:console\n  ✓ Compiled successfully أربعتها · admin 29/29 · console 27/27\n\nوأخطر ما كشفه — وكان سينزل على الإنتاج:\n  admin/app/(dashboard)/commercial-plans/actions.ts:82\n  async function revalidateCatalog(planId?) { await revalidateCatalog(); … }\n  تنادي نفسها بلا شرط توقّف ⇒ كل حفظ باقةٍ أو ميزة استدعاءٌ لا نهائيّ.\n\nوستّة أخطاء أنواع: pathOptions على Edge المجرّد · padding \"40px\" أمام\nPaddingWithUnit · تقاطعٌ يرفض null · مصفوفة  · orderReference\nغير معرَّف في النوع · استيراد tailwindcss من حزمةٍ لا تعتمده.\n\nوبعد الدفع (c3a1514) — القياس من الإنتاج الحيّ:\n  git rev-list --left-right --count origin/main...main  ⇒ 0  0\n  modonty.com / · /articles · /clients · /reels · /users/register ⇒ 200\n  /pay · /pay/sa ⇒ 404 (المتوقَّع حتى يُربط النطاق)\n  admin.modonty.com 307→/login · console.modonty.com 200\n  والرئيسية تشغّل الجديد: --primary 240 100% 68% (كان 59.41%)\n  ترويسة ١ · تذييل ١ · ١١٣ رابطاً — مطابق للمسجَّل قبل الفصل</pre>"
     },
     {
       "b": "jbrseo",
@@ -4882,8 +4882,8 @@
       "sec": "code",
       "date": "١٤ سبتمبر ٢٠٢٦",
       "jlane": "pay",
-      "tab": "open",
-      "jgrp": "pay-work",
+      "tab": "done",
+      "jgrp": "pay-done",
       "psec": "ship",
       "sev": "critical",
       "app": [
@@ -4892,11 +4892,11 @@
       ],
       "id": "SHIP-4",
       "ord": 60.4,
-      "who": "k",
+      "who": "c",
       "step": 4,
       "stepOf": 6,
       "t": "🟦 داتا · ٤/٦ مشروع Vercel لحزمة الدفع — خمس دقائق على اللوحة",
-      "d": "<p><b>ما جهّزتُه لك في الكود:</b> <code>payment/vercel.json</code> بنفس نمط الحزم الثلاث — فلا شيء تكتبه في الحقول:</p>\n<pre>buildCommand    pnpm --filter @modonty/payment build\ninstallCommand  pnpm install --filter @modonty/payment...\nframework       nextjs</pre>\n<p><b>خطواتك على لوحة Vercel:</b></p>\n<pre>١ Add New → Project → نفس المستودع (dreamtoapp/MODONTY)\n٢ Root Directory = payment/           ← الحقل الوحيد الذي يُختار بيد\n٣ اسم المشروع: modonty-payment\n٤ لا تنشر بعد — المتغيّرات أوّلاً (SHIP-5)</pre>\n<p><b>ولماذا مشروعٌ مستقلّ لا نطاقٌ فرعيّ على مشروع مدونتي:</b> لأن الفصل كلّه (<code>PAY-S1…S8</code>) قام على أن كودَ المدوّنة لا يستطيع أن يوقف الدفع. ومشروعٌ واحد يعني بناءً واحداً يسقط فيسقط الاثنان معاً.</p>\n<p><b>يُغلق بـ:</b> نشرةُ معاينة (Preview) تفتح على عنوان <code>*.vercel.app</code> وتعرض الباقات.</p>"
+      "d": "<p><b>ما جهّزتُه لك في الكود:</b> <code>payment/vercel.json</code> بنفس نمط الحزم الثلاث — فلا شيء تكتبه في الحقول:</p>\n<pre>buildCommand    pnpm --filter @modonty/payment build\ninstallCommand  pnpm install --filter @modonty/payment...\nframework       nextjs</pre>\n<p><b>خطواتك على لوحة Vercel:</b></p>\n<pre>١ Add New → Project → نفس المستودع (dreamtoapp/MODONTY)\n٢ Root Directory = payment/           ← الحقل الوحيد الذي يُختار بيد\n٣ اسم المشروع: modonty-payment\n٤ لا تنشر بعد — المتغيّرات أوّلاً (SHIP-5)</pre>\n<p><b>ولماذا مشروعٌ مستقلّ لا نطاقٌ فرعيّ على مشروع مدونتي:</b> لأن الفصل كلّه (<code>PAY-S1…S8</code>) قام على أن كودَ المدوّنة لا يستطيع أن يوقف الدفع. ومشروعٌ واحد يعني بناءً واحداً يسقط فيسقط الاثنان معاً.</p>\n<p><b>يُغلق بـ:</b> نشرةُ معاينة (Preview) تفتح على عنوان <code>*.vercel.app</code> وتعرض الباقات.</p>\n<h3>دليل الإغلاق (١٤ سبتمبر ٢٠٢٦) — نُفِّذ بالـCLI واللوحة</h3>\n<pre>vercel link --project modonty-payment  ⇒ prj_1SOoqP0lzQmUIk1ysN7tS34e6FUS\nvercel git connect                     ⇒ modonty1-rgb/modonty متّصل\nRoot Directory                         ⇒ \"payment\"  (كانت \".\" فأخفق أوّل نشر)\n  vercel project inspect: Root Directory payment · Build pnpm --filter @modonty/payment build\nالنشر: أوّل محاولة ● Error (install أخفق لأن الجذر كان \".\")\n       وبعد التصحيح ● Ready في ١م — modonty-payment-cyklgapfr…vercel.app</pre>"
     },
     {
       "b": "jbrseo",
@@ -4905,8 +4905,8 @@
       "sec": "code",
       "date": "١٤ سبتمبر ٢٠٢٦",
       "jlane": "pay",
-      "tab": "open",
-      "jgrp": "pay-work",
+      "tab": "done",
+      "jgrp": "pay-done",
       "psec": "ship",
       "sev": "critical",
       "app": [
@@ -4915,11 +4915,11 @@
       ],
       "id": "SHIP-5",
       "ord": 60.5,
-      "who": "k",
+      "who": "c",
       "step": 5,
       "stepOf": 6,
       "t": "🟦 داتا · ٥/٦ متغيّرات بيئة الدفع — وأين تُنسَخ من أين",
-      "d": "<p><b>تُدخَل في مشروع <code>modonty-payment</code> وحده</b> (Production + Preview):</p>\n<pre>من payment/.env.local عندك (٩ مفاتيح · انتقلت من مدونتي في PAY-S5):\n  NGENIUS_ENV · NGENIUS_API_KEY · NGENIUS_TOKEN_URL · NGENIUS_API_BASE\n  NGENIUS_OUTLET_ID · NGENIUS_WEBHOOK_SECRET\n  NEXT_PUBLIC_NGENIUS_HOSTED_SESSION_API_KEY\n  NEXT_PUBLIC_TURNSTILE_SITE_KEY · TURNSTILE_SECRET_KEY\n\nومن المشترك (نفس قيم مدونتي):\n  DATABASE_URL · REVALIDATE_SECRET · NEXT_PUBLIC_SITE_URL · NEXT_PUBLIC_SALES_WHATSAPP\n\nوجديدٌ لهذه الحزمة وحدها:\n  PAY_PUBLIC_URL = https://pay.modonty.com\n    ⚠ بغيابه يرمي إنشاءُ الطلب خطأً عمداً (PAY-S6): منه تُبنى روابط العودة\n    وعنوان الإشعار، وعنوانٌ خاطئ هنا يعني مشترياً يُخصَم ثم يهبط على ٤٠٤.\n\nوفي مشروع الأدمن يُضاف:\n  PAYMENT_PUBLIC_URL = https://pay.modonty.com\n    منه ينادي الأدمن إبطال كاش الكتالوج بعد تعديل سعر (PAY-S4).\n\nوتُحذف من مشروع مدونتي: NGENIUS_* · TURNSTILE_*   (لم تعد تُقرأ هناك)</pre>\n<p><b>يُغلق بـ:</b> نشرةٌ ناجحة، و<code>/sa</code> تعرض الباقات، و<code>POST</code> بلا توقيع على <code>/api/webhooks/n-genius</code> يردّ <b>٤٠١</b>.</p>"
+      "d": "<p><b>تُدخَل في مشروع <code>modonty-payment</code> وحده</b> (Production + Preview):</p>\n<pre>من payment/.env.local عندك (٩ مفاتيح · انتقلت من مدونتي في PAY-S5):\n  NGENIUS_ENV · NGENIUS_API_KEY · NGENIUS_TOKEN_URL · NGENIUS_API_BASE\n  NGENIUS_OUTLET_ID · NGENIUS_WEBHOOK_SECRET\n  NEXT_PUBLIC_NGENIUS_HOSTED_SESSION_API_KEY\n  NEXT_PUBLIC_TURNSTILE_SITE_KEY · TURNSTILE_SECRET_KEY\n\nومن المشترك (نفس قيم مدونتي):\n  DATABASE_URL · REVALIDATE_SECRET · NEXT_PUBLIC_SITE_URL · NEXT_PUBLIC_SALES_WHATSAPP\n\nوجديدٌ لهذه الحزمة وحدها:\n  PAY_PUBLIC_URL = https://pay.modonty.com\n    ⚠ بغيابه يرمي إنشاءُ الطلب خطأً عمداً (PAY-S6): منه تُبنى روابط العودة\n    وعنوان الإشعار، وعنوانٌ خاطئ هنا يعني مشترياً يُخصَم ثم يهبط على ٤٠٤.\n\nوفي مشروع الأدمن يُضاف:\n  PAYMENT_PUBLIC_URL = https://pay.modonty.com\n    منه ينادي الأدمن إبطال كاش الكتالوج بعد تعديل سعر (PAY-S4).\n\nوتُحذف من مشروع مدونتي: NGENIUS_* · TURNSTILE_*   (لم تعد تُقرأ هناك)</pre>\n<p><b>يُغلق بـ:</b> نشرةٌ ناجحة، و<code>/sa</code> تعرض الباقات، و<code>POST</code> بلا توقيع على <code>/api/webhooks/n-genius</code> يردّ <b>٤٠١</b>.</p>\n<h3>دليل الإغلاق — ١٤ متغيّراً على Production وPreview</h3>\n<pre>vercel env ls production ⇒ 14 سطراً\n  NGENIUS_ENV · _API_KEY · _TOKEN_URL · _API_BASE · _OUTLET_ID · _WEBHOOK_SECRET\n  TURNSTILE_SECRET_KEY · NEXT_PUBLIC_TURNSTILE_SITE_KEY\n  NEXT_PUBLIC_NGENIUS_HOSTED_SESSION_API_KEY\n  DATABASE_URL · REVALIDATE_SECRET · NEXT_PUBLIC_SITE_URL · NEXT_PUBLIC_SALES_WHATSAPP\n  PAY_PUBLIC_URL = https://pay.modonty.com\n\nومصيدة: مفاتيح NEXT_PUBLIC_ ترفضها الـCLI بلا --no-sensitive — تسأل تفاعلياً\n«Expose publicly: keep … as Config» فتعلق العملية وتُقتل (status=null).\nوAUTH_SECRET غير موجود محليّاً فلم يُرفع — ولا يحتاجه الدفع (بلا مصادقة).</pre>"
     },
     {
       "b": "jbrseo",
@@ -4938,11 +4938,11 @@
       ],
       "id": "SHIP-6",
       "ord": 60.6,
-      "who": "k",
+      "who": "c",
       "step": 6,
       "stepOf": 6,
-      "t": "🟦 داتا · ٦/٦ النطاق pay.modonty.com — وتبديل عنوانه عند المزوّد",
-      "d": "<p><b>على Vercel:</b></p>\n<pre>مشروع modonty-payment → Settings → Domains → Add → pay.modonty.com\nثم سجلّ DNS عند مزوّد النطاق:  CNAME   pay → cname.vercel-dns.com\n(وVercel يصدر الشهادة تلقائياً بعد أن يرى السجلّ)</pre>\n<p><b>ثم — وهذا ما لا يُنسى:</b> عنوان الويبهوك عند المزوّدين يتغيّر نطاقُه:</p>\n<pre>N-Genius  →  https://pay.modonty.com/api/webhooks/n-genius\nتمارا      →  https://pay.modonty.com/api/webhooks/tamara\nالمسار نفسه لم يتغيّر — النطاق وحده. وهذا ما وفّره إلغاء basePath في PAY-S2.</pre>\n<p><b>يُغلق بـ:</b> <code>https://pay.modonty.com/</code> ⇒ ٣٠٧ إلى <code>/sa</code> · <code>/sa</code> ⇒ ٢٠٠ بالباقات · <code>POST</code> بلا توقيع على عنوان الويبهوك العام ⇒ ٤٠١ (وصل الحارس) · وشهادة TLS صالحة.</p>\n<p>وبعدها يبقى <code>PAY-F1</code> و<code>PAY-F4</code> و<code>PAY-F5</code>: تأكيد الشركة، ثم مفاتيح الإنتاج مكان مفاتيح الساندبوكس، ثم أوّل عملية حقيقية.</p>"
+      "t": "🟦 داتا · ٦/٦ النطاق pay.modonty.com — حيٌّ · وبقي عنوان الويبهوك",
+      "d": "<p><b>الحالة (١٤ سبتمبر ٢٠٢٦): النطاق يعمل. بقي بندٌ واحد عند المزوّدين.</b></p>\n<h3>ما نُفِّذ</h3>\n<pre>لوحة Vercel: pay.modonty.com أُضيف إلى مشروع modonty-payment\nلوحة Namecheap (عبر المتصفّح): سجلّان أُضيفا وحُفظا\n  CNAME   pay       dc0dce6a16ff8a16.vercel-dns-016.com.\n  TXT     _vercel   vc-domain-verify=pay.modonty.com,f3a0dfd2fd17a04535a7\nوالـTXT لازم لأن modonty.com مرتبط بحساب Vercel آخر — يُثبت التملّك.</pre>\n<h3>دليل الإغلاق — القياس من DNS العالمي والطلب الحيّ</h3>\n<pre>nslookup -type=CNAME pay.modonty.com 8.8.8.8\n  pay.modonty.com  canonical name = dc0dce6a16ff8a16.vercel-dns-016.com   (انتشر بعد ٢٠ث)\nnslookup -type=TXT _vercel.modonty.com 8.8.8.8\n  \"vc-domain-verify=pay.modonty.com,f3a0dfd2fd17a04535a7\"\n\nhttps://pay.modonty.com/              307 → /sa\nhttps://pay.modonty.com/?months=12    307 → /sa?months=12   (السلسلة تُحمَل)\nhttps://pay.modonty.com/sa            200\nhttps://pay.modonty.com/eg            307 → /sa (بلا ترويسة بلد من curl)</pre>\n<h3>جرد DNS كامل بطلب خالد — ٣٠ سجلّاً، صفر تعارض</h3>\n<pre>A 1 · CNAME 13 · TXT 13 · MX 3\nالفحوص: تعدّد CNAME على اسم واحد (RFC 1034) ⇒ صفر\n        SPF على الجذر ⇒ سجلّ واحد (اثنان يُسقطان البريد — RFC 7208)\n        _vercel ⇒ ٧ سجلّات، واحدة لكل نطاق فرعي وpay السابع\n        pay ⇒ لا A ولا MX ولا CNAME آخر يصطدم به\n\nملاحظات لا أعطال: TXT @ b048a5848b… تحقّقٌ قديم بلا مالك معروف ·\ntest وv0 نطاقان اختباريان حيّان · DMARC على p=none يراقب ولا يمنع.</pre>\n<h3>⏸ الباقي — عند المزوّدين بحسابك</h3>\n<pre>N-Genius  →  https://pay.modonty.com/api/webhooks/n-genius\nتمارا      →  https://pay.modonty.com/api/webhooks/tamara\nالمسار نفسه لم يتغيّر — النطاق وحده (وهو ما وفّره إلغاء basePath في PAY-S2).\nيُغلق بـ: POST بلا توقيع على العنوان العام ⇒ ٤٠١ (وصل الحارس).</pre>"
     },
     {
       "b": "jbrseo",
