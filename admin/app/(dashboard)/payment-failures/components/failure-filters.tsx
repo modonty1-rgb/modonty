@@ -26,8 +26,17 @@ export interface FilterState {
   days: number;
 }
 
-/** يبني العنوان من الحالة الحالية مع تبديل مفتاح واحد — فلا يضيع بقيّة المرشّحات عند النقر. */
-function hrefWith(state: FilterState, patch: Partial<FilterState> & { stage?: PaymentAttemptStage | null; market?: string | null }): string {
+/**
+ * يبني العنوان من الحالة الحالية مع تبديل مفتاح واحد — فلا يضيع بقيّة المرشّحات عند النقر.
+ *
+ * و`Omit` قبل التقاطع مقصود: `Partial<FilterState> & { stage?: … | null }` تقاطعٌ يفرض
+ * **النوعين معاً**، فـ`null` يرسب أمام `stage?: PaymentAttemptStage`. وزرّ «الكل» يمرّر
+ * `null` عمداً ليمحو المرشّح. (كشفه بناء ١٤ سبتمبر ٢٠٢٦.)
+ */
+function hrefWith(
+  state: FilterState,
+  patch: Omit<Partial<FilterState>, "stage" | "market"> & { stage?: PaymentAttemptStage | null; market?: string | null },
+): string {
   const next = { ...state, ...patch };
   const params = new URLSearchParams();
   if (next.stage) params.set("stage", next.stage);

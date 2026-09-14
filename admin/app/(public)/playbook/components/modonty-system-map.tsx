@@ -6,6 +6,7 @@ import {
   MarkerType,
   Position,
   ReactFlow,
+  type BuiltInEdge,
   type Edge,
   type Node,
   type NodeProps,
@@ -30,7 +31,9 @@ import { FitOnResize } from "./fit-on-resize";
 
 import "@xyflow/react/dist/style.css";
 
-const FIT = { padding: { left: "40px", right: "40px", y: "40px" } };
+// `as const` لا اختياريّاً: PaddingWithUnit نوعٌ قالبيّ (`${number}px`)، وبدونها
+// تتّسع "40px" إلى string فترسب. كشفه بناء ١٤ سبتمبر ٢٠٢٦.
+const FIT = { padding: { left: "40px", right: "40px", y: "40px" } } as const;
 
 type StageKey =
   | "marketing" | "organic" | "sales" | "money" | "verify" | "assets"
@@ -192,7 +195,7 @@ const feedback = {
   labelBgBorderRadius: 8,
 };
 
-const edges: Edge[] = [
+const edges: (Edge | BuiltInEdge)[] = [
   { id: "lead1", source: "lead-paid", target: "sales", ...step, pathOptions: { offset: 6, borderRadius: 8 } },
   { id: "lead2", source: "lead-organic", target: "sales", ...step, pathOptions: { offset: 6, borderRadius: 8 } },
   { id: "a1", source: "sales", sourceHandle: "back-out", target: "marketing", targetHandle: "in-left", ...step },

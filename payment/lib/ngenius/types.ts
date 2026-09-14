@@ -48,6 +48,15 @@ export type NGeniusPayment = {
 export type NGeniusOrderResponse = {
   _id: string;                    // "urn:order:{uuid}"
   reference: string;              // N-Genius' internal reference — used in find-order URL
+  /**
+   * مرجعُ **الطلب** — وهو غير `reference` أعلاه الذي هو مرجع الدفعة.
+   *
+   * قيس حيّاً على الساندبوكس (١٣ سبتمبر ٢٠٢٦): بحفظ `reference` ردّ المزوّد
+   * `404 invalidOrderReference`، فبقي طلبٌ **مدفوع فعلاً** عالقاً على «بانتظار الدفع»
+   * ولا الاستعلام ولا الويبهوك يجد ما يسأل عنه. والحقل كان غائباً عن هذا النوع، فكشفه
+   * البناء (١٤ سبتمبر): `Property 'orderReference' does not exist`.
+   */
+  orderReference?: string;
   merchantOrderReference?: string; // echoed back from our request; = CheckoutOrder.id عندنا
   action: "PURCHASE" | "AUTH" | "VERIFY";
   amount: { currencyCode: string; value: number };

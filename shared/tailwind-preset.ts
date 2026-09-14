@@ -1,5 +1,3 @@
-import type { Config } from "tailwindcss";
-
 /**
  * خريطة توكنات مدونتي لتايلويند، في مكانٍ واحد يستهلكه أكثر من تطبيق.
  *
@@ -13,9 +11,15 @@ import type { Config } from "tailwindcss";
  *
  * ⚠ مدونتي لا تستهلكه بعد: نسختها داخل `modonty/tailwind.config.ts` كما هي، كي لا يمسّ
  * هذا البند تطبيقاً حيّاً. توحيدهما بندٌ مستقلّ في `PAY-S7` (صفر كود مكرَّر).
+.
+ *
+ * ⚠ بلا `import type { Config } from "tailwindcss"`: هذا الملفّ في `shared` وهي لا تعتمد
+ * تايلويند، فالاستيراد يرسب في البناء (`Cannot find module 'tailwindcss'` — كشفه بناء
+ * ١٤ سبتمبر ٢٠٢٦). والتطبيق المستهلك يفرض النوع عند الاستعمال، فلا نفقد فحصاً.
  */
 export const modontyTokensPreset = {
-  darkMode: "class",
+  // `as const` لا نصّاً عامّاً: بدونها يتّسع النوع إلى string ويرفضه Partial<Config>.
+  darkMode: "class" as const,
   content: [],
   theme: {
     extend: {
@@ -122,6 +126,6 @@ export const modontyTokensPreset = {
       },
     },
   },
-} satisfies Config;
+};
 
 export default modontyTokensPreset;

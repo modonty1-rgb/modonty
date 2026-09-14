@@ -1,6 +1,6 @@
 "use server";
 
-import { CommercialPlanTheme, SubscriptionTier } from "@prisma/client";
+import { CommercialPlanTheme, Prisma, SubscriptionTier } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -79,8 +79,15 @@ const updatePlanSchema = z.object({
  * لا يبرّر رفض حفظٍ نجح في القاعدة.
  */
 async function revalidateCatalog(planId?: string) {
-  await revalidateCatalog();
-  if (planId) await revalidateCatalog(planId);
+  /**
+   * ⚠ كانت تنادي **نفسها** بلا شرط توقّف (`await revalidateCatalog()`)، فكل حفظٍ في
+   * الكتالوج يدخل استدعاءً لا نهائياً. وُجدت في ١٤ سبتمبر ٢٠٢٦ أثناء بناء ما قبل الدفع —
+   * وهي في الكوميتات غير المدفوعة، أي أنها لم تصل الإنتاج. والمقصود بيّن: تفريغ صفحتَي
+   * الأدمن ثم إبطال وسم صفحة البيع.
+   */
+  revalidatePath("/commercial-plans");
+  revalidatePath("/commercial-features");
+  if (planId) revalidatePath(`/commercial-plans/${planId}`);
   await revalidateModontyTag("commercial-catalog");
 }
 
@@ -120,7 +127,10 @@ export async function updateCommercialPlan(id: string, form: FormData) {
   // شارة التمييز على باقة واحدة فقط: بطاقتان «مميَّزتان» ليستا تمييزاً أقوى، بل لا تمييز.
   // الحارس هنا لا في السكيما — مونجو لا يملك قيداً جزئياً يقول «حقل غير فارغ في صفّ واحد».
   // نفس مبدأ `setRecommendedCommercialTerm`: المسح والكتابة في معاملة واحدة.
-  const writes = [
+  // النوع `PrismaPromise<unknown>` صراحةً: المصفوفة تُستنتج من أوّل عنصرٍ فيها، فيصير
+  // نوعها «تحديث باقة واحدة»، ثم يرفض `unshift` نتيجةَ `updateMany` (BatchPayload).
+  // كشفه البناء (١٤ سبتمبر ٢٠٢٦) — والتشغيل كان يعمل، فالخطأ في الأنواع لا في المنطق.
+  const writes: Prisma.PrismaPromise<unknown>[] = [
     db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, badge: parsed.data.badge, tier: parsed.data.tier, theme: parsed.data.theme, highlights: parsed.data.highlights, hook: parsed.data.hook, ctaText: parsed.data.ctaText, featuredBadge: parsed.data.featuredBadge } }),
   ];
   if (parsed.data.featuredBadge) {
