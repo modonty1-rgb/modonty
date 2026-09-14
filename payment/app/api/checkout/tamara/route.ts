@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+/**
+ * المنطقة: البوّابة في الرياض، والافتراضي في Vercel `iad1` (فرجينيا). قيس حيّاً
+ * (١٤ سبتمبر ٢٠٢٦ على pay.modonty.com): نداءا التوكن والاستعلام من iad1 تجاوزا مهلة
+ * الستّ ثوانٍ — `AbortError: This operation was aborted` — فبقي طلبٌ مدفوعٌ فعلاً على
+ * «بانتظار الدفع». و`fra1` أقرب منطقة متاحة إلى الخليج، فتقصر المسافة إلى النصف.
+ */
+export const preferredRegion = "fra1";
+
 import { db } from "@/lib/db";
 import { verifyTurnstileToken } from "@/lib/security/verify-turnstile-token";
 import { orderLimiter } from "@/lib/security/rate-limiters";

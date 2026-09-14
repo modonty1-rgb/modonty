@@ -19,7 +19,11 @@ async function fetchNewToken(): Promise<string> {
   if (!apiKey) throw new Error("NGENIUS_API_KEY is not set");
 
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 6_000);
+  // ١٢ ثانية لا ٦: قيس حيّاً (١٤ سبتمبر ٢٠٢٦) أن النداء من iad1 إلى بوّابة الرياض
+  // يتجاوز الستّ، فيُجهَض الاستعلام ويبقى طلبٌ **مدفوع** على «بانتظار الدفع». ومع
+  // preferredRegion=fra1 تقصر المسافة، لكن المهلة تبقى واسعة: إجهاضُ استعلامٍ يصحّح
+  // حالة طلبٍ أخطرُ من انتظار ثوانٍ.
+  const timer = setTimeout(() => ctrl.abort(), 12_000);
   let res: Response;
   try {
     res = await fetch(TOKEN_URL, {
