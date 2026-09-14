@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    /* سماويّ العلامة #00d8d8. نقاط أيقونات مدونتي ترجع إليه، وكانت ترجع إلى
+       --accent وهو رماديّ في الأدمن والكونسول وسماويّ في مدونتي — أيقونة واحدة بلونين. */
+    --modonty-accent: #00d8d8;
     /* ===== MODONTY BRAND COLORS =====
        The six values the designer signs off on, taken from their sheet on 2026-08-19 and
        converted so each one round-trips back to its exact hex. They used to be rounded to whole
@@ -130,7 +133,13 @@
        better than the 5.5:1 the lighter blue gave. Its edge against the page is 2.77:1, under
        the 3:1 asked of a control's boundary — which no dark ground can fix (pure black caps at
        2.99), so the CTA carries a light hairline ring instead, the boundary the rule allows. */
-    --primary: var(--brand-blue);         /* Brand Blue — #3030FF, same as light mode */
+    /* الأزرق في الداكن — خالد ١٣ سبتمبر ٢٠٢٦: «التباين تبعه جدا سيء».
+       #3030FF سطوعه 0.10 والسطح الداكن 0.008، فالنسبة 2.59:1 — تحت 3:1 التي تفرضها
+       WCAG 1.4.11 لحدود عناصر الواجهة، فيذوب اللسان والحدّ في الخلفية.
+       الدرجة كما هي (240°) والإشباع كما هو (100%) — السطوع وحده يتكيّف: 59.41% → 68%.
+       القياس عند 68%: مع السطح 3.84:1 · النصّ الأبيض فوقه 4.74:1 — كلاهما يمرّ.
+       والفاتح لم يُمسّ: العلامة تبقى #3030FF حيث تُقرأ أصلاً. */
+    --primary: 240 100% 68%;
     /* Was navy (245 87% 19%) on this blue = 3.2:1 — under the 4.5:1 AA floor, on the
        most-clicked button of the site. White measures 5.5:1 and matches light mode,
        so the primary button now reads the same way in both themes. */

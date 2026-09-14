@@ -29,6 +29,8 @@ export interface LegalEntityDisplay {
    */
   isRegistrationActive: boolean;
   unifiedNumber: string | null;
+  /** الرقم الضريبي كما في شهادة الزكاة والضريبة — يظهر على /trust وعلى الفاتورة. */
+  vatNumber: string | null;
   entityType: string | null;
   capital: string | null;
   /** Registration date, Gregorian, spelled in Arabic — "١٣ سبتمبر ٢٠٢٣". */
@@ -87,6 +89,7 @@ export function toLegalEntityDisplay(legal: LegalEntity): LegalEntityDisplay {
     crStatus: legal.crStatus,
     isRegistrationActive: isActive(legal.crStatus),
     unifiedNumber: legal.unifiedNumber,
+    vatNumber: legal.vatNumber,
     entityType: legal.entityType,
     capital: legal.capital,
     registrationDate: legal.foundingDate ? DATE_FORMAT.format(legal.foundingDate) : null,

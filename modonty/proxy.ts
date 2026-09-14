@@ -40,8 +40,6 @@ import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
  */
 export const config = {
   matcher: [
-    "/pay",
-    "/pay/:market",
     "/articles/:slug",
     "/categories/:slug",
     "/tags/:slug",
@@ -141,21 +139,7 @@ async function resolveUserSegment(id: string, request: NextRequest): Promise<Nex
 }
 
 export async function proxy(request: NextRequest) {
-  // Commercial market routing deliberately happens before a payment page is
-  // rendered. Egypt is the only EGP market; Saudi pricing is the default for
-  // every other country, including the GCC. We enforce the selected route too,
-  // so a visitor cannot reveal the other market merely by changing the URL.
-  if (request.nextUrl.pathname === "/pay" || /^\/pay\/(sa|eg)$/.test(request.nextUrl.pathname)) {
-    const country = request.headers.get("x-vercel-ip-country")?.toUpperCase();
-    const market = country === "EG" ? "eg" : "sa";
-    const expectedPath = `/pay/${market}`;
-
-    if (request.nextUrl.pathname !== expectedPath) {
-      return NextResponse.redirect(new URL(expectedPath, request.url), 307);
-    }
-    return;
-  }
-
+  // No /pay rule here: payment is its own app (PAY-S3, 2026-09-14). See payment/proxy.ts.
   const segments = request.nextUrl.pathname.split("/");
   const section = segments[1];
   const rawSlug = segments[2];

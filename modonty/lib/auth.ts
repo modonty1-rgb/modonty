@@ -50,9 +50,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   logger: {
     error(error: Error) {
-      // Suppress JWTSessionError in console (e.g. no matching decryption secret / stale cookie)
+      /**
+       * كتمُ خطأ الكوكي التالف — كوكي وُقِّع بسرٍّ قديم أو تلف، ونتيجته «زائر غير مسجَّل»
+       * وهي حالةٌ عاديّة لا عطل.
+       *
+       * ⚠ الفحص على `name` لا على `message`: كان يفحص الرسالة، ورسالة authjs هي
+       * «Read more at https://errors.authjs.dev#jwtsessionerror» — لا تحوي الكلمة أبداً،
+       * فما كُتم خطأٌ واحد منذ كُتب الشرط. قيس (١٤ سبتمبر ٢٠٢٦): ٦ أخطاء لكل طلب على
+       * `/pay/sa` و٢٤ على الصفحة الرئيسية، بكوكي تالف واحد.
+       *
+       * ولماذا يصل هذا **صفحة البيع** أصلاً: `app/not-found.tsx` يركّب `SiteShell`،
+       * وNext يجهّز صفحة ٤٠٤ مع كل طلب — فجرس الإشعارات يُنفَّذ حتى على صفحةٍ خارج
+       * مجموعة `(site)`. فكان سجلّ خادم صفحة بيعٍ لغير المسجَّلين يمتلئ بضجيج مصادقة،
+       * وتغرق فيه أخطاء الدفع الحقيقية يوم تقع — وهذا وحده سبب كافٍ.
+       *
+       * والسبب الجذريّ (`JWEInvalid`) يبقى ظاهراً عند تفعيل `AUTH_DEBUG`.
+       */
+      const name = error?.name ?? "";
       const msg = error?.message ?? "";
-      if (msg.includes("JWTSessionError") || msg.includes("no matching decryption secret")) return;
+      const isStaleCookie =
+        name === "JWTSessionError"
+        || msg.includes("JWTSessionError")
+        || msg.includes("jwtsessionerror")
+        || msg.includes("no matching decryption secret");
+      if (isStaleCookie && process.env.AUTH_DEBUG !== "true") return;
       console.error("[auth][error]", error);
     },
     warn(message) {

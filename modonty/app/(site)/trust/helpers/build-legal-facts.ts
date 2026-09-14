@@ -23,6 +23,7 @@ export function buildLegalFacts(legal: LegalEntityDisplay): LegalFact[] {
     { k: text.status, v: legal.crStatus ?? "", active: legal.isRegistrationActive },
     { k: text.cr, v: legal.cr ?? "", ltr: true },
     { k: text.unifiedNumber, v: legal.unifiedNumber ?? "", ltr: true },
+    { k: text.vatNumber, v: legal.vatNumber ?? "", ltr: true },
     { k: text.entityType, v: legal.entityType ?? "" },
     { k: text.registrationDate, v: legal.registrationDate ?? "" },
     { k: text.capital, v: legal.capital ? `${legal.capital} ${text.currency}` : "" },

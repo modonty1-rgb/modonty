@@ -10,14 +10,9 @@ import { messages } from "@/lib/i18n/messages";
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getListingPageSeo("home");
   const safeMetadata = metadata ?? {};
-  // Mariam audit 2026-05-27: homepage og:url was https://modonty.com (no www) from DB
-  // Settings.homeMetaTags column — mismatched the canonical (www). Force override here so
-  // www-only canonical is honored across all metadata fields until DB row is updated.
+ 
   const baseOpenGraph = (safeMetadata as { openGraph?: Record<string, unknown> }).openGraph ?? {};
-  // Admin-stored title already ends with the brand; wrap in `absolute` so the root
-  // layout's `%s | مدونتي` template doesn't append it a second time. Same fix the
-  // listing pages carry — the homepage was missed because its title comes from
-  // Settings, not from the shared builder.
+ 
   const storedTitle = (safeMetadata as { title?: unknown }).title;
   const title: Metadata["title"] =
     typeof storedTitle === "string" ? { absolute: storedTitle } : (storedTitle as Metadata["title"]);
@@ -28,10 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       ...(safeMetadata as { alternates?: object } | null)?.alternates,
       canonical: `${SITE_URL}/`,
-      // Mariam audit: Next.js replaces `alternates` entirely from generateMetadata —
-      // inherited languages from layout.tsx get lost. Must re-declare here. The list itself
-      // comes from Settings: this block used to spell out four locales while Settings held
-      // nine, so the homepage — the page Google crawls most — declared the fewest markets.
+     
       languages: buildHreflangLanguages(
         (await getPageSeoDefaults()).alternateLanguages,
         `${SITE_URL}/`,
@@ -45,10 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-// Uncached on purpose. UserCard reads the session cookie, which "use cache" forbids
-// inside its scope — so the element is created out here and handed to the cached page
-// as a pass-through slot. The cached shell never introspects it, so the cache entry is
-// unaffected and only the card renders per request (use-cache.md, "Interleaving").
+
 export default function HomePage() {
   return <CachedHomePage page={1} userCard={<UserCard />} />;
 }

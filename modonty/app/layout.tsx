@@ -3,7 +3,6 @@ import { Tajawal, Montserrat } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import { ThemeProvider } from "@/app/layout/components/theme-provider";
-import { SessionProviderWrapper } from "@/app/layout/components/SessionProviderWrapper";
 import { GTMContainer } from "@/app/layout/components/gtm/GTMContainer";
 import { WebVitals } from "@/app/layout/components/gtm/WebVitals";
 import { PageViewTracker } from "@/app/layout/components/analytics/PageViewTracker";
@@ -118,12 +117,17 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* The provider hands down an unresolved session promise, so nothing here
-              blocks the prerender. Only the components that read the session suspend,
-              each behind its own boundary. */}
-          {/* No chrome here on purpose: `app/(site)/layout.tsx` mounts modonty's
-              header/footer, `app/(partner)/…` mounts the partner's own. */}
-          <SessionProviderWrapper>{children}</SessionProviderWrapper>
+          {/* لا هيكل ولا جلسة هنا عمداً.
+              الهيكل: `app/(site)/layout.tsx` يركّب ترويسة مدونتي وتذييلها، و`(partner)` ترويسته.
+              الجلسة: `SessionProviderWrapper` نزل إلى `(site)` و`(partner)` — وهما وحدهما
+              مَن يقرأها (١٥ مستهلكاً، كلّهم تحتهما). كان في الجذر فينادي `auth()` لكل صفحة،
+              ومنها **صفحة البيع** التي يزورها غير مسجَّل — فكوكي منتهٍ في متصفّح الزائر
+              يطبع `JWTSessionError` في سجلّ خادم صفحة بيع لا علاقة لها بالمصادقة أصلاً
+              (خالد ١٤ سبتمبر ٢٠٢٦: «صفحة الدفع المفروض تكون خارج الأوثنتيكيشن»).
+              والتخطيط المتداخل يلفّ ولا يستبدل — فالخروج من الجذر يكون بإنزال المزوّد
+              لا بتخطيط ثانٍ؛ وتخطيط جذرٍ ثانٍ ثمنه إعادة تحميل كاملة عند التنقّل بينهما
+              (توثيق Next 16: Route Groups › Caveats). */}
+          {children}
         </ThemeProvider>
       </body>
     </html>

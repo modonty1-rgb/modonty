@@ -676,7 +676,8 @@
       "entityType": "نوع الكيان",
       "registrationDate": "تاريخ القيد",
       "capital": "رأس المال",
-      "currency": "﷼"
+      "currency": "﷼",
+      "vatNumber": "الرقم الضريبي"
     },
     "pillars": {
       "title": "ليش تثق فينا",

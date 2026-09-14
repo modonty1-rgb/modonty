@@ -8,6 +8,9 @@ import { revalidateTag } from "next/cache";
 // "ai-prompts" هو الوسم الذي يقرأ تحته مودو برومبتاته من `ai_prompts`. بدونه يبقى
 // المساعد على النصّ القديم بعد تعديله من الأدمن — وهو عطلٌ لا يظهر في أي شاشة، فقط
 // في جوابٍ يعطيه المساعد للزائر بشخصيةٍ ظنّ خالد أنه غيّرها.
+// "commercial-catalog" خرج من هنا في ١٤ سبتمبر ٢٠٢٦ (PAY-S4): صفحة البيع صارت حزمة
+// `payment` مستقلّة، فوسمها يُبطَل على نقطتها هي. وإبقاؤه هنا كان سيقبل النداء ويردّ
+// نجاحاً لا يُبطل شيئاً — تعارضٌ صامت بلا رسالة خطأ.
 const ALLOWED_TAGS = ["articles", "settings", "categories", "clients", "tags", "industries", "faqs", "authors", "ga4-clients", "reels", "pages", "ai-prompts"] as const;
 
 export async function POST(req: NextRequest) {
@@ -38,6 +41,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // `"max"` دلالته stale-while-revalidate: يُعلّم المدخل قديماً، فيخدم القديم مرّةً
+    // أو مرّتين ويحدّث في الخلفية. وهو مقبولٌ لكل وسمٍ هنا — مقالٌ أو إعداد يظهر بعد
+    // طلبٍ أو اثنين ولا يضرّ. الحالة التي لا تحتمله (السعر) خرجت إلى حزمة `payment`
+    // ومعها `{ expire: 0 }`، انظر PAY-S4.
     revalidateTag(tag, "max");
 
     return NextResponse.json({

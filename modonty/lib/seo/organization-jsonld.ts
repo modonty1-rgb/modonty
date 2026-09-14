@@ -31,6 +31,8 @@ export interface LegalEntity {
   cr: string | null;
   crStatus: string | null;
   unifiedNumber: string | null;
+  /** `Settings.orgVatNumber` — الرقم الضريبي؛ schema.org يسمّيه `vatID` على المؤسسة. */
+  vatNumber: string | null;
   entityType: string | null;
   capital: string | null;
   street: string | null;
@@ -46,7 +48,7 @@ export interface LegalEntity {
 /** Every field null — returned when Settings has no row yet. */
 export const EMPTY_LEGAL_ENTITY: LegalEntity = {
   siteName: null, alternateName: null, contactEmail: null, contactTelephone: null,
-  legalName: null, cr: null, crStatus: null, unifiedNumber: null, entityType: null,
+  legalName: null, cr: null, crStatus: null, unifiedNumber: null, vatNumber: null, entityType: null,
   capital: null, street: null, district: null, city: null, region: null, country: null,
   latitude: null, longitude: null, foundingDate: null,
 };
@@ -67,6 +69,7 @@ export async function getLegalEntity(): Promise<LegalEntity> {
       orgCommercialRegistrationNumber: true,
       orgCommercialRegistrationStatus: true,
       orgUnifiedNationalNumber: true,
+      orgVatNumber: true,
       orgLegalForm: true,
       orgCapitalAmount: true,
       orgFoundingDate: true,
@@ -95,6 +98,7 @@ export async function getLegalEntity(): Promise<LegalEntity> {
     cr: t(s.orgCommercialRegistrationNumber),
     crStatus: t(s.orgCommercialRegistrationStatus),
     unifiedNumber: t(s.orgUnifiedNationalNumber),
+    vatNumber: t(s.orgVatNumber),
     entityType: t(s.orgLegalForm),
     capital: t(s.orgCapitalAmount),
     street: t(s.orgStreetAddress),
@@ -130,6 +134,16 @@ const toCountryCode = (c: string) =>
  * rather than emitted empty — publishing `"legalName": ""` to Google is worse than nothing.
  * Capital is intentionally never exposed (owner decision — it adds no trust value).
  */
+/**
+ * رقم ضريبيّ ببادئة دولته، كما تطلب المواصفة لا كما يُكتب محليّاً.
+ *
+ * يُضاف `SA` فقط حين لا يبدأ الرقم بحرفين — فأدمنٌ أدخله مع البادئة لا يصير `SASA…`.
+ */
+function withCountryPrefix(vat: string): string {
+  const v = vat.trim();
+  return /^[A-Za-z]{2}/.test(v) ? v : `SA${v}`;
+}
+
 export function buildOrganizationJsonLd(legal: LegalEntity): Record<string, unknown> {
   const identifier = [
     legal.cr && {
@@ -166,6 +180,15 @@ export function buildOrganizationJsonLd(legal: LegalEntity): Record<string, unkn
     url: SITE_URL,
     logo: { "@type": "ImageObject", url: LOGO_URL },
     ...(identifier.length > 0 && { identifier }),
+    // `vatID` — خاصيّة قائمة بذاتها على Organization، لا عنصرٌ داخل `identifier`.
+    // schema.org/vatID (رُوجِع ١١ سبتمبر ٢٠٢٦): «The value-added Tax ID of the organization or
+    // person with national prefix (for example IT123456789)» · domainIncludes: Organization, Person
+    // · rangeIncludes: Text.
+    //
+    // البادئة من المواصفة لا من اجتهادِنا: الشهادة السعودية تكتب ١٥ خانة بلا بادئة،
+    // وهذا هو الشكل الذي يُطبَع على الفاتورة ويُخزَّن في القاعدة. وجوجل تقرأ هذا الحقل
+    // عبر الدول، فيُضاف الرمز هنا وحده — ولا يُضاف مرتين إن أدخله الأدمن أصلاً.
+    ...(legal.vatNumber && { vatID: withCountryPrefix(legal.vatNumber) }),
     ...(legal.foundingDate && { foundingDate: legal.foundingDate.toISOString().slice(0, 10) }),
     ...(Object.keys(address).length > 1 && { address }),
     // تُبنى فقط حين يحمل العمود بريداً: عقدةُ اتصالٍ بلا بريد لا تفيد جوجل، وبريدٌ مكتوب
