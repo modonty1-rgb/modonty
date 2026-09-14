@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    /* سماويّ العلامة #00d8d8. نقاط أيقونات مدونتي ترجع إليه، وكانت ترجع إلى
+       --accent وهو رماديّ في الأدمن والكونسول وسماويّ في مدونتي — أيقونة واحدة بلونين. */
+    --modonty-accent: #00d8d8;
     /* LinkedIn's exact warm gray background */
     --background: 45 8% 95%;        /* #f3f2ef - LinkedIn's signature background */
     --foreground: 0 0% 0%;
