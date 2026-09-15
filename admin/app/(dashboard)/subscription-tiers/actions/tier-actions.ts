@@ -79,34 +79,71 @@ export const getActiveTierConfigs = cache(async () => {
 });
 
 /**
- * The tiers a client can actually be put on — the SAME set the Subscription Tiers page
- * sells: the VISIBLE rows of the jbrseo `Plan` collection (the trusted source). The
- * `subscriptionTierConfig` table carries an extra internal «مجاني» (BASIC) tier that the
- * Plan source hides, which is why the client selector must not read `subscriptionTierConfig`
- * directly (Khalid 2026-07-25). The two are joined by their canonical Arabic name — the one
- * key they share (Plan uses slug, config uses the SubscriptionTier enum). Ordered to match
- * the page (Plan.displayOrder).
+ * الباقات التي يُوضَع عليها العميل — **من كتالوج البيع وحده** (خالد ١٥ سبتمبر ٢٠٢٦:
+ * «قراري سورس أوف ترووث واحد»).
+ *
+ * ── ما كانت تفعله قبل اليوم ──
+ * تجمع مصدرين قديمين: `subscriptionTierConfig` ومجموعة `Plan` الخام — وهي **جدول جبر
+ * سيو نفسه**، تُقرأ بـ`$runCommandRaw` وتُوصَل بالاسم العربي. فكان اختيار باقة العميل
+ * يعتمد على جدولٍ يملكه موقعٌ آخر، ويطابَق بنصٍّ لا بمفتاح.
+ *
+ * والنتيجة مقيسة على الشاشة الحيّة: «الزخم ٨ مقالات · ١٬٠٣٩ ريال» بينما المشتري يدفع
+ * ١٬١٩٩ مقابل ١٢ مقالاً. ومنها كان يُحسب **الرصيد الافتتاحي** الذي يدخل تقرير المبيعات.
+ *
+ * ── الوصلة `tier` ──
+ * `CommercialPlan.tier` يربط باقة البيع بتصنيف العميل التشغيلي، ومقيسٌ حيّاً في
+ * القاعدتين: الانطلاقة⇢STANDARD · الزخم⇢PRO · الريادة⇢PREMIUM. وباقةٌ بلا `tier` أو
+ * بلا سعرٍ لسوقها تُسقَط — عرضُ باقةٍ لا تُربط بتصنيف يُنتج عميلاً بلا حدود.
+ *
+ * ⚠ القيد المقبول بقرار خالد: **باقة منشورة واحدة لكل تصنيف**. باقتان بنفس `tier`
+ * تجعلان الاختيار غامضاً، فتُؤخَذ الأولى بـ`displayOrder`.
+ *
+ * ── لا سعر سنويّ ──
+ * الشكل المُرجَع يبقى `{ SA: {mo,yr}, EG: {mo,yr} }` كما تتوقّعه الشاشات، لكن
+ * `yr === mo`: الكتالوج لا يخزّن سعراً سنوياً مخفَّضاً — خصمُ المدّة عنده **شهور هدية**
+ * في `CommercialTermPolicy`. ومن `yr` المختلف عن `mo` في الجدول القديم جاء الرقم
+ * ١٬٠٣٩ الذي ناقض ١٬٢٩٩ في شاشةٍ أخرى.
  */
 export const getSellableTierConfigs = cache(async () => {
   try {
-    const [configs, planRes] = await Promise.all([
-      db.subscriptionTierConfig.findMany({ where: { isActive: true } }),
-      db.$runCommandRaw({ find: "Plan", filter: {}, batchSize: 1000 }),
-    ]);
+    const plans = await db.commercialPlan.findMany({
+      where: { isPublished: true, tier: { not: null } },
+      orderBy: { displayOrder: "asc" },
+      select: {
+        id: true,
+        tier: true,
+        name: true,
+        articlesPerMonth: true,
+        featuredBadge: true,
+        prices: {
+          where: { isActive: true },
+          select: { market: true, monthlyBase: true },
+        },
+      },
+    });
 
-    const planDocs =
-      ((planRes as unknown as { cursor?: { firstBatch?: Array<{ name: string; visible?: boolean; displayOrder?: number }> } })
-        .cursor?.firstBatch ?? []).filter((p) => p.visible !== false);
+    const seen = new Set<SubscriptionTier>();
+    return plans.flatMap((plan) => {
+      const tier = plan.tier;
+      if (!tier || seen.has(tier)) return [];
 
-    // name → displayOrder, from the visible plans (the sellable set).
-    const order = new Map<string, number>();
-    for (const p of planDocs) {
-      if (!order.has(p.name)) order.set(p.name, p.displayOrder ?? 999);
-    }
+      const sa = plan.prices.find((p) => p.market === "SA")?.monthlyBase;
+      const eg = plan.prices.find((p) => p.market === "EG")?.monthlyBase;
+      if (sa == null && eg == null) return [];
 
-    return configs
-      .filter((c) => order.has(c.name))
-      .sort((a, b) => (order.get(a.name) ?? 999) - (order.get(b.name) ?? 999));
+      seen.add(tier);
+      const saMo = sa ?? 0;
+      const egMo = eg ?? 0;
+      return [{
+        id: plan.id,
+        tier,
+        name: plan.name,
+        articlesPerMonth: plan.articlesPerMonth ?? 0,
+        price: saMo,
+        isPopular: Boolean(plan.featuredBadge),
+        pricing: { SA: { mo: saMo, yr: saMo }, EG: { mo: egMo, yr: egMo } },
+      }];
+    });
   } catch (error) {
     console.error("Error fetching sellable tier configs:", error);
     return [];
