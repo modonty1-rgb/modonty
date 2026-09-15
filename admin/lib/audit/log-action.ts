@@ -41,6 +41,11 @@ export type AuditAction =
   | "article.transition"
   | "article.schedule"
   | "article.resetStatus"
+  /**
+   * 🔴 يملأ جداول الدفع الستّة دفعةً واحدة — لا يُزرَع إلا في قاعدةٍ فارغة، ويُقيَّد
+   * لأن السؤال بعد شهر سيكون «من حمّل هذه الأسعار ومتى».
+   */
+  | "commercial.seed"
   // 🟠 Changes the record
   | "article.update"
   | "article.create"

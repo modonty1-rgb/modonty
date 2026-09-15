@@ -17,7 +17,12 @@ import { revalidateTag } from "next/cache";
  * إضافة حساب أو تصحيح رقم السجلّ التجاري يظهر في المدوّنة ولا يظهر هنا أبداً — والرقم
  * الخاطئ يبقى مطبوعاً في نموذج العقد الذي يقرؤه المشتري قبل الدفع.
  */
-const ALLOWED_TAGS = ["commercial-catalog", "settings"] as const;
+/**
+ * `staff` ثالثها (١٥ سبتمبر ٢٠٢٦): قسم الفريق على الأوفرفيو يقرأ الموظّفين المؤشَّر
+ * لهم «اعرض للعملاء»، وهو مكاشٌ لأن الأوفرفيو ساكنة. فبلا هذا الوسم يبقى موظّفٌ
+ * تُرك العمل معروضاً للمشترين حتى أوّل نشرة.
+ */
+const ALLOWED_TAGS = ["commercial-catalog", "settings", "staff"] as const;
 
 export async function POST(req: NextRequest) {
   try {

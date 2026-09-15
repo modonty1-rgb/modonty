@@ -20,7 +20,12 @@ async function getModontyBaseUrl(baseUrl?: string | null): Promise<string | null
  * ولو نُودي العنوان القديم لرجع ٤٠٠ «Tag must be one of…» لا يقرؤه أحد، وبقيت صفحة
  * البيع على السعر القديم — وهو أخطر ما يبيت قديماً في هذا المشروع.
  */
-const PAYMENT_TAGS = new Set<string>(["commercial-catalog"]);
+/**
+ * `staff` ثانيها (١٥ سبتمبر ٢٠٢٦): قسم الفريق على أوفرفيو البيمنت يقرأ الموظّفين
+ * المؤشَّر لهم «اعرض للعملاء»، وهو مكاشٌ لأن الصفحة ساكنة. ومدونتي لا تقرأ الموظّفين،
+ * فلا يُرسَل إليها.
+ */
+const PAYMENT_TAGS = new Set<string>(["commercial-catalog", "staff"]);
 
 /**
  * وسومٌ يقرؤها التطبيقان معاً، فتُبطَّل في الاثنين لا في أحدهما.
@@ -44,7 +49,7 @@ export async function revalidateModontyTag(
   // union allows but that route rejects comes back as a 400 nobody reads, and the page keeps
   // serving stale data. That is exactly what "pages" did until 25 Aug 2026.
   // "commercial-catalog" is the exception: its route lives in payment/, see PAYMENT_TAGS.
-  tag: "articles" | "settings" | "categories" | "clients" | "tags" | "industries" | "faqs" | "authors" | "reels" | "pages" | "ai-prompts" | "commercial-catalog",
+  tag: "articles" | "settings" | "categories" | "clients" | "tags" | "industries" | "faqs" | "authors" | "reels" | "pages" | "ai-prompts" | "commercial-catalog" | "staff",
   baseUrl?: string | null
 ): Promise<void> {
   try {

@@ -2,6 +2,8 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import bcrypt from "bcryptjs";
 import { StaffRole } from "@prisma/client";
 import { auth } from "@/lib/auth";
@@ -93,6 +95,10 @@ export async function getUserById(id: string) {
         role: true,
         isActive: true,
         canViewReports: true,
+        titleAr: true,
+        phoneSa: true,
+        phoneEg: true,
+        isPublicContact: true,
         createdAt: true,
       },
     });
@@ -109,6 +115,17 @@ export async function createUser(data: {
   role?: StaffRole;
   isActive?: boolean;
   canViewReports?: boolean;
+  /**
+   * ── واجهة العميل ──
+   * `titleAr` اللقب الذي يقرأه العميل («مديرة الحسابات») لا `role` التقنيّ، و`phoneSa`
+   * و`phoneEg` رقما تواصلٍ يُعرضان في مسار الدفع: المشتري المصريّ يرى الاثنين — المصريّ
+   * زرَّ تواصلٍ محلّيّ والسعوديّ إثباتَ أن خلف الصفحة مؤسّسةً سعودية.
+   * ولا شيء من هذا يُنشر بلا `isPublicContact` صريحة.
+   */
+  titleAr?: string;
+  phoneSa?: string;
+  phoneEg?: string;
+  isPublicContact?: boolean;
 }) {
   try {
     const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
@@ -132,6 +149,10 @@ export async function createUser(data: {
         isActive: data.isActive ?? true,
         canViewReports: data.canViewReports ?? false,
         image: optimizeAvatarUrl(data.image),
+        titleAr: data.titleAr?.trim() || null,
+        phoneSa: data.phoneSa?.trim() || null,
+        phoneEg: data.phoneEg?.trim() || null,
+        isPublicContact: data.isPublicContact ?? false,
       },
     });
 
@@ -144,6 +165,12 @@ export async function createUser(data: {
       metadata: { role },
     });
 
+    /**
+     * كاش البيمنت لا الأدمن: قسم الفريق على الأوفرفيو مكاشٌ تحت وسم `staff` لأن
+     * الصفحة ساكنة. وبلا هذا النداء يبقى موظّفٌ تُرك العمل — أو رقمٌ مُسح — معروضاً
+     * للمشترين حتى أوّل نشرة. ولا يُفشل الحفظ إن سقط البيمنت (`allSettled` داخله).
+     */
+    await revalidateModontyTag("staff");
     revalidatePath("/users");
     return { success: true };
   } catch {
@@ -161,6 +188,17 @@ export async function updateUser(
     role?: StaffRole;
     isActive?: boolean;
     canViewReports?: boolean;
+    /**
+     * ── واجهة العميل ──
+     * `titleAr` اللقب الذي يقرأه العميل («مديرة الحسابات») لا `role` التقنيّ، و`phoneSa`
+     * و`phoneEg` رقما تواصلٍ يُعرضان في مسار الدفع: المشتري المصريّ يرى الاثنين — المصريّ
+     * زرَّ تواصلٍ محلّيّ والسعوديّ إثباتَ أن خلف الصفحة مؤسّسةً سعودية.
+     * ولا شيء من هذا يُنشر بلا `isPublicContact` صريحة.
+     */
+    titleAr?: string;
+    phoneSa?: string;
+    phoneEg?: string;
+    isPublicContact?: boolean;
   }
 ) {
   try {
@@ -180,6 +218,10 @@ export async function updateUser(
       role?: StaffRole;
       isActive?: boolean;
       canViewReports?: boolean;
+      titleAr?: string | null;
+      phoneSa?: string | null;
+      phoneEg?: string | null;
+      isPublicContact?: boolean;
     } = {
       name: data.name,
       email: data.email,
@@ -189,6 +231,14 @@ export async function updateUser(
     if (data.role) updateData.role = data.role;
     if (data.isActive !== undefined) updateData.isActive = data.isActive;
     if (data.canViewReports !== undefined) updateData.canViewReports = data.canViewReports;
+    /**
+     * `|| null` لا `|| undefined`: الفراغ هنا يعني «امسحه»، و`undefined` في بريزما يعني
+     * «لا تلمسه». فمن مسح رقمه في النموذج يجب أن يُمسح فعلاً لا أن يبقى معروضاً للعملاء.
+     */
+    if (data.titleAr !== undefined) updateData.titleAr = data.titleAr.trim() || null;
+    if (data.phoneSa !== undefined) updateData.phoneSa = data.phoneSa.trim() || null;
+    if (data.phoneEg !== undefined) updateData.phoneEg = data.phoneEg.trim() || null;
+    if (data.isPublicContact !== undefined) updateData.isPublicContact = data.isPublicContact;
 
     if (data.password) {
       updateData.password = await bcrypt.hash(data.password, 10);
@@ -209,6 +259,12 @@ export async function updateUser(
       metadata: { passwordChanged: Boolean(data.password), self: id === session.user?.id },
     });
 
+    /**
+     * كاش البيمنت لا الأدمن: قسم الفريق على الأوفرفيو مكاشٌ تحت وسم `staff` لأن
+     * الصفحة ساكنة. وبلا هذا النداء يبقى موظّفٌ تُرك العمل — أو رقمٌ مُسح — معروضاً
+     * للمشترين حتى أوّل نشرة. ولا يُفشل الحفظ إن سقط البيمنت (`allSettled` داخله).
+     */
+    await revalidateModontyTag("staff");
     revalidatePath("/users");
     return { success: true };
   } catch {
@@ -236,6 +292,12 @@ export async function deleteUser(id: string) {
       metadata: doomed?.role ? { role: doomed.role } : null,
     });
 
+    /**
+     * كاش البيمنت لا الأدمن: قسم الفريق على الأوفرفيو مكاشٌ تحت وسم `staff` لأن
+     * الصفحة ساكنة. وبلا هذا النداء يبقى موظّفٌ تُرك العمل — أو رقمٌ مُسح — معروضاً
+     * للمشترين حتى أوّل نشرة. ولا يُفشل الحفظ إن سقط البيمنت (`allSettled` داخله).
+     */
+    await revalidateModontyTag("staff");
     revalidatePath("/users");
     return { success: true };
   } catch {

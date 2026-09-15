@@ -42,6 +42,11 @@ interface FormInputProps {
   step?: string | number;
   autoComplete?: string;
   maxLength?: number;
+  /**
+   * اتجاه النصّ داخل الحقل. أرقام الهواتف والآيبان لاتينية، وداخل نموذجٍ عربيّ تُقلَب
+   * مقاطعها فيُقرأ `+9665…` معكوساً — يُحفظ صحيحاً ويُقرأ خطأً، وهو أسوأ من الاثنين.
+   */
+  dir?: "rtl" | "ltr";
 }
 
 export function FormInput({
@@ -59,6 +64,7 @@ export function FormInput({
   step,
   autoComplete,
   maxLength,
+  dir,
 }: FormInputProps) {
   return (
     <FormField label={label} name={name} error={error} required={required} hint={hint}>
@@ -74,6 +80,7 @@ export function FormInput({
         step={step}
         autoComplete={autoComplete}
         maxLength={maxLength}
+        dir={dir}
         className={error ? "border-destructive" : ""}
       />
     </FormField>

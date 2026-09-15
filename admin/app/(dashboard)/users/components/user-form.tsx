@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormInput } from "@/components/admin/form-field";
 import {
@@ -19,7 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ArrowRight, Loader2, Save, Trash2, Eye, EyeOff, UserPlus, ImageOff, Camera, Activity, Clock, CalendarDays, ScrollText, ShieldCheck } from "lucide-react";
+import { ArrowRight, Loader2, Save, Trash2, Eye, EyeOff, UserPlus, ImageOff, Camera, Activity, Clock, CalendarDays, ScrollText, ShieldCheck, UserRound } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import type { StaffRole } from "@prisma/client";
@@ -28,6 +27,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { createUser, updateUser, deleteUser } from "../actions/users-actions";
 import { STAFF_ROLES, roleMeta } from "../lib/roles";
+import { uploadAvatar } from "../actions/upload-avatar";
 
 interface UserFormProps {
   initialData?: {
@@ -38,6 +38,10 @@ interface UserFormProps {
     role?: string;
     isActive?: boolean | null;
     canViewReports?: boolean | null;
+    titleAr?: string | null;
+    phoneSa?: string | null;
+    phoneEg?: string | null;
+    isPublicContact?: boolean | null;
     createdAt?: Date;
   };
   /** Edit mode only — the account's activity snapshot for the sidebar. */
@@ -71,7 +75,6 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [imgError, setImgError] = useState(false);
-  const [showImageInput, setShowImageInput] = useState(false);
   const isEditMode = Boolean(userId);
 
   const [formData, setFormData] = useState({
@@ -83,7 +86,12 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
     isActive: initialData?.isActive !== false, // absent/null/true = active
     // Absent on rows that predate the field — reads as false, which is the safe direction.
     canViewReports: initialData?.canViewReports === true,
+    titleAr: initialData?.titleAr || "",
+    phoneSa: initialData?.phoneSa || "",
+    phoneEg: initialData?.phoneEg || "",
+    isPublicContact: initialData?.isPublicContact === true,
   });
+  const [uploading, setUploading] = useState(false);
 
   const passwordStrength = useMemo(() => getPasswordStrength(formData.password), [formData.password]);
   const initials = (formData.name || "A").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -94,10 +102,35 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
     setImgError(false);
   };
 
+  /**
+   * رفعٌ حقيقيّ إلى Bunny بدل لصق رابط.
+   *
+   * `uploadAvatar` كان موجوداً وشغّالاً منذ ٢٩ يوليو (منطقة `assets`)، ولا ينادى من هنا:
+   * النموذج كان يعرض حقل «Paste image link» فقط. فمن لا يملك رابطاً جاهزاً لا يضع صورة —
+   * وكل صفوف الستاف اليوم بلا صورة (قيس ١٥ سبتمبر ٢٠٢٦: الجدول يعرض أحرفاً أولى للجميع).
+   * واللصق يبقى بجانبه لمن عنده رابطٌ أصلاً.
+   */
+  const handleFilePick = async (file: File | null) => {
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("name", formData.name || "staff");
+      const res = await uploadAvatar(fd);
+      if (res.success && res.url) handleImageChange(res.url);
+      else setError(res.error || "Upload failed.");
+    } catch {
+      setError("Upload failed.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleClearImage = () => {
     setFormData((prev) => ({ ...prev, image: "" }));
     setImgError(false);
-    setShowImageInput(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -122,6 +155,10 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
           role: formData.role,
           isActive: formData.isActive,
           canViewReports: formData.canViewReports,
+          titleAr: formData.titleAr,
+          phoneSa: formData.phoneSa,
+          phoneEg: formData.phoneEg,
+          isPublicContact: formData.isPublicContact,
         })
       : await createUser({
           name: formData.name,
@@ -131,6 +168,10 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
           role: formData.role,
           isActive: formData.isActive,
           canViewReports: formData.canViewReports,
+          titleAr: formData.titleAr,
+          phoneSa: formData.phoneSa,
+          phoneEg: formData.phoneEg,
+          isPublicContact: formData.isPublicContact,
         });
 
     if (result.success) {
@@ -285,30 +326,51 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
                       <span className="text-2xl font-semibold text-muted-foreground/60">{initials}</span>
                     )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (formData.image) handleClearImage();
-                      else setShowImageInput(true);
-                    }}
-                    className="absolute bottom-0 end-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors"
+                  {/* الزرّ يرفع فعلاً: كان يفتح حقل لصق رابطٍ وحده، فبقيت صفوف الستاف بلا صور. */}
+                  <label
+                    className="absolute bottom-0 end-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors cursor-pointer"
+                    title={formData.image ? "Replace photo" : "Upload photo"}
                   >
-                    {formData.image ? <Trash2 className="h-3.5 w-3.5" /> : <Camera className="h-3.5 w-3.5" />}
-                  </button>
-                </div>
-                {(showImageInput || formData.image) && (
-                  <div className="flex-1">
-                    <Input
-                      value={formData.image}
-                      onChange={(e) => handleImageChange(e.target.value)}
-                      placeholder="Paste image link..."
-                      className={imgError ? "border-destructive" : ""}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      disabled={uploading}
+                      onChange={(e) => {
+                        void handleFilePick(e.target.files?.[0] ?? null);
+                        e.target.value = "";
+                      }}
                     />
-                    {imgError && (
-                      <p className="text-xs text-destructive mt-1">This link doesn&apos;t seem to be a valid image</p>
-                    )}
-                  </div>
-                )}
+                    {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Camera className="h-3.5 w-3.5" />}
+                  </label>
+                  {formData.image && (
+                    <button
+                      type="button"
+                      onClick={handleClearImage}
+                      title="Remove photo"
+                      className="absolute bottom-0 start-0 w-7 h-7 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow-lg hover:bg-destructive/90 transition-colors"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+                {/*
+                  ولا حقل «الصق رابط صورة» (خالد ١٥ سبتمبر ٢٠٢٦: «الايمنج لينك ما في،
+                  بيست من الافاتار اضغط تجيني طريقه الرفع»). الرفع طريقٌ واحد: تضغط
+                  الصورة فتختار ملفّاً. وطريقان لغرضٍ واحد يجعلان الشاشة تسأل بدل أن تُنفّذ،
+                  والرابط الملصوق يشير إلى خادمٍ غيرنا قد يسقط يوماً فتصير الصورة مكسورة.
+                */}
+                <div className="flex-1 text-sm">
+                  <p className="font-medium text-foreground">
+                    {formData.image ? "اضغط الصورة لتبديلها" : "اضغط الصورة لرفع صورة"}
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {uploading ? "جارٍ الرفع…" : "PNG أو JPG أو WebP — تُرفع على مساحتنا."}
+                  </p>
+                  {imgError && formData.image && (
+                    <p className="mt-1 text-xs text-destructive">تعذّر عرض هذه الصورة — ارفعها من جديد.</p>
+                  )}
+                </div>
               </div>
 
               <FormInput
@@ -350,6 +412,88 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
                 </select>
                 <p className="text-xs text-muted-foreground">{roleMeta(formData.role).description}</p>
               </div>
+            </CardContent>
+          </Card>
+
+          {/*
+            ── واجهة العميل — لكل الأدوار، والتأشيرة وحدها هي القرار ──
+
+            كانت مقصورةً على `SALES` ساعتين (خالد ١٥ سبتمبر ٢٠٢٦: «تظهر بس لما يكون
+            الرول سيلز»)، ثم فُتحت في اليوم نفسه حين طُلب عرض فريقٍ فيه «مسؤول عملاء»
+            و«مديرة حسابات»: وهؤلاء ليسوا مبيعات، وجعلُهم كذلك ليظهروا يفتح لهم شاشات
+            المبيعات كلّها — أي تغييرُ صلاحياتٍ لأجل سطرٍ في صفحةٍ عامّة.
+
+            فالقسمة كما هي منذ أوّل يوم: `role` يحكم ما يفتحه الموظّف في الأدمن،
+            و`isPublicContact` تحكم ما يراه العميل. والتأشيرة صريحةٌ يضعها إنسان، فلا
+            يُنشر أحدٌ بالسهو — وهي الحارس وحدها، فلا يحتاج القارئ في البيمنت أن يشترط
+            دوراً لم يعد شرطاً هنا.
+          */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <UserRound className="h-4 w-4 text-muted-foreground" />
+                <CardTitle>واجهة العميل</CardTitle>
+              </div>
+              <CardDescription>
+                ما يراه المشتري عن هذا الشخص في صفحة الدفع. لا شيء منه يُنشر قبل تفعيل
+                المفتاح بالأسفل.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <FormInput
+                label="اللقب كما يقرأه العميل"
+                name="titleAr"
+                value={formData.titleAr}
+                onChange={(e) => setFormData({ ...formData, titleAr: e.target.value })}
+                placeholder="مديرة الحسابات"
+                hint="يظهر تحت الاسم في صفحة الدفع — لا يُعرض دوره التقنيّ للعميل."
+              />
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <FormInput
+                  label="رقم السعودية"
+                  name="phoneSa"
+                  type="tel"
+                  dir="ltr"
+                  value={formData.phoneSa}
+                  onChange={(e) => setFormData({ ...formData, phoneSa: e.target.value })}
+                  placeholder="+9665XXXXXXXX"
+                  hint="يظهر لمشتري السعودية، ولمشتري مصر كإثبات هوية المؤسّسة."
+                />
+                <FormInput
+                  label="رقم مصر"
+                  name="phoneEg"
+                  type="tel"
+                  dir="ltr"
+                  value={formData.phoneEg}
+                  onChange={(e) => setFormData({ ...formData, phoneEg: e.target.value })}
+                  placeholder="+201XXXXXXXXX"
+                  hint="زرّ التواصل للمشتري المصريّ — مكالمة محلّية لا دولية."
+                />
+              </div>
+
+              {/* ⚠ رقما عملٍ لا شخصيّان: ما يُنشر على صفحةٍ حيّة لا يُسحَب. */}
+              <p className="rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+                استعمل <strong className="text-foreground">أرقام عمل</strong> لا شخصية: ما يُنشر
+                على صفحة حيّة يُجمَع في قوائم الإزعاج ولا يُسحَب، ومن يترك العمل يبقى عملاؤنا
+                يتصلون برقمه.
+              </p>
+
+              <label className="flex items-start gap-3 rounded-lg border border-border p-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.isPublicContact}
+                  onChange={(e) => setFormData({ ...formData, isPublicContact: e.target.checked })}
+                  className="mt-0.5 size-5 shrink-0 accent-primary"
+                />
+                <span className="text-sm">
+                  <span className="font-semibold text-foreground">اعرض هذا الشخص للعملاء</span>
+                  <span className="mt-0.5 block text-xs text-muted-foreground">
+                    اسمه وصورته ولقبه ورقمه تظهر في صفحة الدفع. بلا هذا المفتاح لا يُنشر شيء —
+                    والاتجاه الآمن هو ألّا تُنشر بيانات موظّفٍ بالسهو.
+                  </span>
+                </span>
+              </label>
             </CardContent>
           </Card>
 

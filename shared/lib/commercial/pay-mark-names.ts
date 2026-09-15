@@ -34,6 +34,20 @@ export function isPayMarkName(value: string): value is PayMarkName {
  * والمسار واحدٌ في التطبيقين: لكلٍّ نسخته من الملفّات في `public/logos` — ملفّات `public`
  * لا تُشارَك بين تطبيقَي Next، لكن العنوان يبقى هو هو، فلا وسيط ولا فرع.
  */
+/**
+ * العلامات التي لا يوجد لها SVG رسميّ، فتُخدَم PNG شفّافة.
+ *
+ * و`instapay` منها منذ ١٥ سبتمبر ٢٠٢٦: الذي كان في المستودع شعارٌ **مختلف كليّاً** —
+ * ألوانه `#602E8D` و`#F9DB2A` و`#38B5BE` (بنفسجي وأصفر وتركوازي) بينما علامة إنستا
+ * باي المصرية بنفسجيّة وبرتقالية. وموقعها الرسميّ `instapay.eg` يردّ **٤٠٣** من
+ * خارج مصر، فأُخذ الأصل من قائمة تطبيقها التي ناشرها **EBC** نفسها (الشركة المصرية
+ * للبنوك، مشغّل الشبكة) — ثم أُزيل بياضه وقُصّ إلى حدوده.
+ *
+ * ولا يُعاد رسمه SVG بيد: علامةٌ تجارية على صفحة دفع، وأي تقريبٍ فيها تشويهٌ يراه
+ * المصريّ فوراً ويقرؤه شكّاً في الصفحة كلّها.
+ */
+const PNG_MARKS = new Set<PayMarkName>(["sadad", "saib-bank", "instapay"]);
+
 export function payMarkAsset(name: PayMarkName): { src: string; alt: string } {
-  return { src: `/logos/${name}${name === "sadad" || name === "saib-bank" ? ".png" : ".svg"}`, alt: PAY_MARKS[name] };
+  return { src: `/logos/${name}${PNG_MARKS.has(name) ? ".png" : ".svg"}`, alt: PAY_MARKS[name] };
 }

@@ -1,0 +1,442 @@
+{
+  "version": 1,
+  "exportedAt": "2026-09-15",
+  "source": "modonty_dev",
+  "features": [
+    {
+      "name": "مقالات على مدونتي",
+      "unitLabel": "مقال/شهر",
+      "isActive": true,
+      "isHighlighted": true,
+      "billable": true,
+      "displayOrder": 0
+    },
+    {
+      "name": "مقالات على موقعك",
+      "unitLabel": "مقال/شهر",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 1
+    },
+    {
+      "name": "طلّات مدونتي",
+      "unitLabel": "صورة أو فيديو/شهر",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": false,
+      "displayOrder": 2
+    },
+    {
+      "name": "صفحة عميل احترافية (بديل موقع إلكتروني)",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 3
+    },
+    {
+      "name": "نشر على منصة مدونتي",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 4
+    },
+    {
+      "name": "المقال الرئيسي ينشر على حسابات مدونتي",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 5
+    },
+    {
+      "name": "شارة «موثّق» + بيانات قانونية",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": false,
+      "displayOrder": 6
+    },
+    {
+      "name": "زر واتساب + سؤال مباشر تحت المقال",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 7
+    },
+    {
+      "name": "رابط لموقعك الخاص",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 8
+    },
+    {
+      "name": "نظام حجوزات «احجز الآن»",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 9
+    },
+    {
+      "name": "حملات إيميل شهرياً — الإيميلات من عندك",
+      "unitLabel": "حملة/شهر",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 10
+    },
+    {
+      "name": "محتواك جاهز للذكاء الاصطناعي",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": false,
+      "displayOrder": 11
+    },
+    {
+      "name": "توثيق مؤهلات الكاتب (طبي/مالي/قانوني)",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 12
+    },
+    {
+      "name": "مدير حساب مخصص لك",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 13
+    },
+    {
+      "name": "تقرير شامل لموقعك — مشاكل السيو وحلولها",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 14
+    },
+    {
+      "name": "تنبيهات تيليجرام — تعرف بأي حدث لحظتها",
+      "unitLabel": "تنبيه",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": false,
+      "displayOrder": 15
+    },
+    {
+      "name": "جلسة استراتيجية ربع سنوية",
+      "isActive": true,
+      "isHighlighted": false,
+      "billable": true,
+      "displayOrder": 16
+    }
+  ],
+  "plans": [
+    {
+      "slug": "plan-4e07fc71",
+      "name": "الانطلاقة",
+      "articlesPerMonth": 8,
+      "hook": "احنا نكتب وننشر، الزبون يجيك من جوجل لحاله",
+      "ctaText": "ابدأ الحين",
+      "tier": "STANDARD",
+      "theme": "PRIMARY",
+      "isPublished": true,
+      "displayOrder": 0,
+      "prices": [
+        {
+          "market": "EG",
+          "currency": "EGP",
+          "monthlyBase": 1199,
+          "isActive": true
+        },
+        {
+          "market": "SA",
+          "currency": "SAR",
+          "monthlyBase": 399,
+          "isActive": true
+        }
+      ],
+      "features": [
+        {
+          "featureName": "مقالات على مدونتي",
+          "quantity": 8,
+          "displayOrder": 0
+        },
+        {
+          "featureName": "طلّات مدونتي",
+          "quantity": 4,
+          "displayOrder": 2
+        },
+        {
+          "featureName": "صفحة عميل احترافية (بديل موقع إلكتروني)",
+          "displayOrder": 3
+        },
+        {
+          "featureName": "نشر على منصة مدونتي",
+          "displayOrder": 4
+        },
+        {
+          "featureName": "المقال الرئيسي ينشر على حسابات مدونتي",
+          "displayOrder": 5
+        },
+        {
+          "featureName": "شارة «موثّق» + بيانات قانونية",
+          "displayOrder": 6
+        },
+        {
+          "featureName": "زر واتساب + سؤال مباشر تحت المقال",
+          "displayOrder": 7
+        }
+      ]
+    },
+    {
+      "slug": "plan-f1854bef",
+      "name": "الزخم",
+      "articlesPerMonth": 12,
+      "hook": "نعرّفك على العميل الجاهز للشراء قبل غيرك",
+      "ctaText": "ابدأ الحين",
+      "featuredBadge": "الأكثر اختياراً ✦",
+      "tier": "PRO",
+      "theme": "NEUTRAL",
+      "isPublished": true,
+      "displayOrder": 1,
+      "prices": [
+        {
+          "market": "EG",
+          "currency": "EGP",
+          "monthlyBase": 3999,
+          "isActive": true
+        },
+        {
+          "market": "SA",
+          "currency": "SAR",
+          "monthlyBase": 1199,
+          "isActive": true
+        }
+      ],
+      "features": [
+        {
+          "featureName": "مقالات على مدونتي",
+          "quantity": 12,
+          "displayOrder": 0
+        },
+        {
+          "featureName": "مقالات على موقعك",
+          "quantity": 3,
+          "displayOrder": 1
+        },
+        {
+          "featureName": "طلّات مدونتي",
+          "quantity": 8,
+          "displayOrder": 2
+        },
+        {
+          "featureName": "صفحة عميل احترافية (بديل موقع إلكتروني)",
+          "displayOrder": 3
+        },
+        {
+          "featureName": "نشر على منصة مدونتي",
+          "displayOrder": 4
+        },
+        {
+          "featureName": "المقال الرئيسي ينشر على حسابات مدونتي",
+          "displayOrder": 5
+        },
+        {
+          "featureName": "شارة «موثّق» + بيانات قانونية",
+          "displayOrder": 6
+        },
+        {
+          "featureName": "زر واتساب + سؤال مباشر تحت المقال",
+          "displayOrder": 7
+        },
+        {
+          "featureName": "رابط لموقعك الخاص",
+          "displayOrder": 8
+        },
+        {
+          "featureName": "نظام حجوزات «احجز الآن»",
+          "displayOrder": 9
+        },
+        {
+          "featureName": "حملات إيميل شهرياً — الإيميلات من عندك",
+          "quantity": 4,
+          "displayOrder": 10
+        },
+        {
+          "featureName": "محتواك جاهز للذكاء الاصطناعي",
+          "displayOrder": 11
+        },
+        {
+          "featureName": "توثيق مؤهلات الكاتب (طبي/مالي/قانوني)",
+          "displayOrder": 12
+        }
+      ]
+    },
+    {
+      "slug": "plan-86239ea8",
+      "name": "الريادة",
+      "articlesPerMonth": 16,
+      "badge": "للمؤسسات",
+      "hook": "فريق متفرّغ يشتغل معاك — أنت تركّز على البيع",
+      "ctaText": "ابدأ الحين",
+      "tier": "PREMIUM",
+      "theme": "PREMIUM",
+      "isPublished": true,
+      "displayOrder": 2,
+      "prices": [
+        {
+          "market": "EG",
+          "currency": "EGP",
+          "monthlyBase": 7999,
+          "isActive": true
+        },
+        {
+          "market": "SA",
+          "currency": "SAR",
+          "monthlyBase": 2999,
+          "isActive": true
+        }
+      ],
+      "features": [
+        {
+          "featureName": "مقالات على مدونتي",
+          "quantity": 16,
+          "displayOrder": 0
+        },
+        {
+          "featureName": "مقالات على موقعك",
+          "quantity": 4,
+          "displayOrder": 1
+        },
+        {
+          "featureName": "طلّات مدونتي",
+          "quantity": 12,
+          "displayOrder": 2
+        },
+        {
+          "featureName": "صفحة عميل احترافية (بديل موقع إلكتروني)",
+          "displayOrder": 3
+        },
+        {
+          "featureName": "نشر على منصة مدونتي",
+          "displayOrder": 4
+        },
+        {
+          "featureName": "المقال الرئيسي ينشر على حسابات مدونتي",
+          "displayOrder": 5
+        },
+        {
+          "featureName": "شارة «موثّق» + بيانات قانونية",
+          "displayOrder": 6
+        },
+        {
+          "featureName": "زر واتساب + سؤال مباشر تحت المقال",
+          "displayOrder": 7
+        },
+        {
+          "featureName": "رابط لموقعك الخاص",
+          "displayOrder": 8
+        },
+        {
+          "featureName": "نظام حجوزات «احجز الآن»",
+          "displayOrder": 9
+        },
+        {
+          "featureName": "حملات إيميل شهرياً — الإيميلات من عندك",
+          "quantity": 8,
+          "displayOrder": 10
+        },
+        {
+          "featureName": "محتواك جاهز للذكاء الاصطناعي",
+          "displayOrder": 11
+        },
+        {
+          "featureName": "توثيق مؤهلات الكاتب (طبي/مالي/قانوني)",
+          "displayOrder": 12
+        },
+        {
+          "featureName": "مدير حساب مخصص لك",
+          "displayOrder": 13
+        },
+        {
+          "featureName": "تقرير شامل لموقعك — مشاكل السيو وحلولها",
+          "displayOrder": 14
+        },
+        {
+          "featureName": "تنبيهات تيليجرام — تعرف بأي حدث لحظتها",
+          "quantity": 22,
+          "displayOrder": 15
+        },
+        {
+          "featureName": "جلسة استراتيجية ربع سنوية",
+          "displayOrder": 16
+        }
+      ]
+    }
+  ],
+  "terms": [
+    {
+      "paidMonths": 3,
+      "bonusServiceMonths": 0,
+      "displayOrder": 3,
+      "isActive": true,
+      "isRecommended": false
+    },
+    {
+      "paidMonths": 6,
+      "bonusServiceMonths": 1,
+      "displayOrder": 6,
+      "isActive": true,
+      "isRecommended": true
+    },
+    {
+      "paidMonths": 12,
+      "bonusServiceMonths": 6,
+      "displayOrder": 12,
+      "isActive": true,
+      "isRecommended": false
+    }
+  ],
+  "paySectionContent": [
+    {
+      "market": "AE",
+      "payMarks": [
+        "visa",
+        "mastercard"
+      ]
+    },
+    {
+      "market": "EG",
+      "announcement": "العرض ينتهي نهاية الشهر",
+      "headline": "اختر باقتك وابدأ الانتشار",
+      "subheadline": "محتوى وسيو وفيديوهات وصفحة تعرّف بك — بعقد واضح.",
+      "trustItems": [
+        "فاتورة ضريبية معتمدة"
+      ],
+      "vatNote": "شامل ضريبة القيمة المضافة ١٤٪",
+      "refundNote": "استرداد ١٤ يوم — لو ما فعّلنا حسابك",
+      "payMarks": [
+        "instapay",
+        "saib-bank"
+      ]
+    },
+    {
+      "market": "SA",
+      "announcement": "العرض ينتهي نهاية الشهر",
+      "headline": "اختر باقتك وابدأ الانتشار",
+      "subheadline": "محتوى وسيو وفيديوهات وصفحة تعرّف بك — بعقد واضح.",
+      "trustItems": [
+        "فاتورة ضريبية معتمدة"
+      ],
+      "vatNote": "شامل ضريبة القيمة المضافة ١٥٪",
+      "installmentLabel": "قسّطها على دفعات",
+      "refundNote": "استرداد ١٤ يوم — لو ما فعّلنا حسابك",
+      "paymentFootnote": "الدفع بالبطاقة عبر بوابة معتمدة · والتقسيط عبر تمارا",
+      "paymentFootnoteSub": "Network International · PCI DSS",
+      "payMarks": [
+        "mada",
+        "visa",
+        "mastercard"
+      ],
+      "installmentMark": "tamara"
+    }
+  ]
+}

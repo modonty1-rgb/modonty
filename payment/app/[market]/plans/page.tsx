@@ -7,6 +7,7 @@ import { isPayMarkName, payMarkAsset } from "@modonty/shared/lib/commercial/pay-
 
 import { getCachedMarketCatalog, getCachedPaySectionContent } from "../../data/get-cached-catalog";
 import { PayHeader } from "../../components/pay-header/PayHeader";
+import { WhatsappFab } from "@/app/components/whatsapp-fab/WhatsappFab";
 
 /**
  * صفحة البيع (PAY-C2) — تحلّ محلّ شاشة اختبار التوجيه التي كانت هنا.
@@ -116,6 +117,9 @@ export default async function MarketPayPage({
         }
         />
       </main>
+
+      {/* في صفحات التصفّح وحدها: السؤال يولد هنا، ومسار الشراء له زرّه الأدقّ. */}
+      <WhatsappFab text="مرحباً، عندي سؤال عن باقات مدونتي" />
     </>
   );
 }

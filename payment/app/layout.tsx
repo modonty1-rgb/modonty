@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 
-import { WhatsappFab } from "./components/whatsapp-fab/WhatsappFab";
 import { Tajawal, Montserrat } from "next/font/google";
 
 import "./globals.css";
@@ -100,11 +99,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="bg-background font-sans">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
-          {/* في التخطيط لا في كل صفحة: الزرّ يخصّ المسار كلّه، ووضعه في كل صفحة يعني
-              أربعة مواضع تُنسى واحدةٌ منها — وهي غالباً صفحة الفشل، حيث يحتاجه أكثر.
-              ونصُّه محايد هنا لأن التخطيط لا يعرف أي صفحة يرسم؛ والصفحات التي تعرف
-              سياقها (الفشل · الطلب) تمرّر نصّها الخاصّ من `salesWhatsappWithText`. */}
-          <WhatsappFab text="مرحباً، عندي سؤال عن باقات مدونتي" />
+          {/*
+            ⚠ الزرّ العائم **لم يعد هنا** (خالد ١٥ سبتمبر ٢٠٢٦).
+
+            كان في التخطيط ليغطّي المسار كلّه، وهو صحيحٌ لصفحات التصفّح. لكنّ مسار
+            الدفع صار له زرّ واتساب خاصٌّ به: صفحة التحويل المصرية تُرسل الإيصال إلى
+            رقم المؤسّسة، وصفحتا الفشل والنجاح لهما زرّهما. فبقاؤه هناك يعني زرّين
+            أخضرين على شاشةٍ واحدة برقمين مختلفين — والمشتري في اللحظة التي يريد أن
+            ينتهي فيها يُسأل «أيّهما؟».
+
+            فصار يُركَّب في صفحات التصفّح وحدها: الأوفرفيو (`page.tsx` و`[market]/page.tsx`)
+            وصفحة الباقات. وصفحات مسار الشراء لا تحمله — لأن فيها ما هو أدقّ منه.
+          */}
         </ThemeProvider>
       </body>
     </html>

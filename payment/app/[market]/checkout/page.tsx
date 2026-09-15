@@ -11,6 +11,7 @@ import { getCachedMarketCatalog, getCachedPaySectionContent } from "../../data/g
 import { CheckoutHeader } from "./components/checkout-header/CheckoutHeader";
 import { OrderSummary } from "./components/order-summary/OrderSummary";
 import { CheckoutForm } from "./components/checkout-form/CheckoutForm";
+import { TransferCheckoutForm } from "./components/transfer-checkout/TransferCheckoutForm";
 
 /**
  * صفحة إتمام الشراء (PAY-C3) — منقولة من جبر سيو `app/[country]/checkout/page.tsx`.
@@ -23,7 +24,17 @@ import { CheckoutForm } from "./components/checkout-form/CheckoutForm";
  * مسار الإنشاء. لو حُسب في المتصفّح لظهر رقمٌ قد يخالف ما يُخصم فعلاً.
  */
 
-const MARKETS = { sa: "SA" } as const; // مصر تحويلٌ بنكي (PAY-Q12)، ولا تمرّ من هنا.
+/**
+ * السوقان يمرّان من هنا، ويفترقان عند **لوح الدفع** وحده.
+ *
+ * كانت `{ sa: "SA" }` وحدها، فكل ضغطةٍ على «ابدأ الحين» في صفحة مصر تسقط على
+ * `notFound()` — ثلاثة أزرارٍ في ثلاث بطاقات، كلّها إلى **٤٠٤** (قيس حيّاً ١٥ سبتمبر
+ * ٢٠٢٦ على `/eg/checkout?plan=…`). فصفحة الباقات كانت تبيع لمصر بابَ خطأ.
+ *
+ * وما فوق اللوح مشتركٌ عمداً: العنوان وملخّص الطلب والمبلغ والضريبة تُبنى من نفس
+ * `buildOrderSnapshot` للسوقين. السوق يغيّر **كيف** يُدفع، لا **ماذا** يُشترى.
+ */
+const MARKETS = { sa: "SA", eg: "EG" } as const;
 type MarketSlug = keyof typeof MARKETS;
 
 export const instant = false;
@@ -111,6 +122,21 @@ export default async function CheckoutPage({
             vatNote={content.vatNote}
           />
 
+          {market === "EG" ? (
+            /**
+             * مصر بلا بوّابة بطاقات اليوم (PAY-Q12): يُسجَّل الطلب أوّلاً ثم تُعرض
+             * بيانات التحويل ورقم الطلب. والترتيب مقصود — راجع
+             * `app/api/checkout/bank-transfer/route.ts`.
+             */
+            <TransferCheckoutForm
+              planSlug={plan.slug}
+              planName={plan.name}
+              paidMonths={term.paidMonths}
+              totalDisplay={totalDisplay}
+              turnstileSiteKey={getTurnstileSiteKey()}
+              marketSlug={slug}
+            />
+          ) : (
           <CheckoutForm
             market={market}
             planSlug={plan.slug}
@@ -123,6 +149,7 @@ export default async function CheckoutPage({
             ngeniusHostedSessionKey={process.env.NEXT_PUBLIC_NGENIUS_HOSTED_SESSION_API_KEY ?? ""}
             ngeniusOutletRef={process.env.NGENIUS_OUTLET_ID ?? ""}
           />
+          )}
         </div>
       </main>
     </>

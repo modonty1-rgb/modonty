@@ -16,6 +16,8 @@ import { CreateCommercialPlanForm } from "./components/create-commercial-plan-fo
 import { DeleteCommercialPlanButton } from "./components/delete-commercial-plan-button";
 import { PlanPanel } from "./components/plan-panel";
 import { PaySectionContentForm } from "./components/pay-section-content-form";
+import { SeedDefaultsPanel } from "./components/seed-defaults-panel";
+import { getCommercialSeedSummary, isCommercialDataEmpty } from "./actions/seed-commercial-defaults";
 
 export const dynamic = "force-dynamic";
 
@@ -36,16 +38,27 @@ export default async function CommercialPlansPage() {
     db.commercialTermPolicy.findMany({ orderBy: { displayOrder: "asc" } }),
     db.paySectionContent.findMany(),
   ]);
+
+  /**
+   * لوح البذرة يُحسب هنا لا في المكوّن: الشرط قراءةُ قاعدة، ومكانها السيرفر.
+   * وتُقرأ في كل فتحةٍ لأن `force-dynamic` أصلاً مضبوط على هذه الشاشة.
+   */
+  const dbEmpty = await isCommercialDataEmpty();
+  const seedSummary = dbEmpty ? await getCommercialSeedSummary() : null;
   const sectionBy = (market: string) =>
     paySections.find((row) => row.market === market) ?? {
       announcement: null, headline: null, subheadline: null, trustItems: [],
       vatNote: null, installmentLabel: null, refundNote: null,
       paymentFootnote: null, paymentFootnoteSub: null, payMarks: [], installmentMark: null,
+      teamHeadline: null, teamSubheadline: null,
     };
   const tierLabel = (tier: SubscriptionTier) => tierConfigs.find((config) => config.tier === tier)?.name ?? tier;
 
   return <main className="mx-auto flex max-w-6xl flex-col gap-5 pb-8" dir="rtl">
     <header className="flex flex-wrap items-end justify-between gap-2"><div className="flex flex-col gap-1"><h1 className="text-2xl font-semibold">الباقات والأسعار</h1><p className="text-sm text-muted-foreground">راجع الباقات وانشرها، وافتح التفاصيل عند الحاجة للتعديل.</p></div>{plans.length > 0 ? <p className="text-sm text-muted-foreground">{plans.length} باقات في الكتالوج</p> : null}</header>
+
+    {/* لا يُرسم إلا والجداول الأربعة الجذرية فارغة — راجع `seed-commercial-defaults.ts`. */}
+    {seedSummary ? <SeedDefaultsPanel summary={seedSummary} /> : null}
     <CreateCommercialPlanForm />
 
     <section className="rounded-xl border bg-card p-4" aria-label="كلام صفحة البيع">

@@ -1,4 +1,13 @@
 import type { Config } from "tailwindcss";
+/**
+ * ⚠ استيرادٌ لا `require`: الملفّ وحدة ESM (فيه `export default`)، و`require` غير
+ * معرَّفٍ داخلها. وكان `plugins: [require("tailwindcss-animate")]` يُسقط خادم التطوير
+ * عند أوّل تصريفٍ لصفحة — قيس ١٥ سبتمبر ٢٠٢٦:
+ *   ReferenceError: require is not defined
+ *     at admin/tailwind.config.ts:102  →  tailwindcss/lib/lib/load-config.js:51
+ * فلا تُفتح شاشةٌ واحدة في الأدمن.
+ */
+import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
   darkMode: ["class"],
@@ -99,7 +108,7 @@ const config: Config = {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 };
 
 export default config;

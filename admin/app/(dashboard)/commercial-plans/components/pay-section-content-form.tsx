@@ -25,6 +25,8 @@ export interface PaySectionValues {
   paymentFootnoteSub: string | null;
   payMarks: string[];
   installmentMark: string | null;
+  teamHeadline: string | null;
+  teamSubheadline: string | null;
 }
 
 export function PaySectionContentForm({ market, label, values }: { market: string; label: string; values: PaySectionValues }) {
@@ -91,6 +93,25 @@ export function PaySectionContentForm({ market, label, values }: { market: strin
           <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">
             سطر الحاشية الثاني
             <Input className="h-9" name="paymentFootnoteSub" maxLength={80} placeholder="Network International · PCI DSS" defaultValue={values.paymentFootnoteSub ?? ""} />
+          </label>
+
+          {/*
+            قسم الفريق — العنوان وسطره. يظهران فوق وجوه من أُشّر لهم «اعرض هذا الشخص
+            للعملاء» في شاشة الموظّفين. وفارغين يسقطان على نصٍّ افتراضيّ في المكوّن،
+            فالقسم يُرسم صحيحاً قبل أن يُملأ.
+
+            ⚠ الصياغة هنا تُقاس بالثقة لا بالوصف: «فريقٌ باسمه ووجهه» رُفضت لأنها تعلن
+            أننا نثبت أننا حقيقيّون — وإعلانُ ذلك يزرع الشكّ الذي ينفيه. قل ما يفعله
+            الفريق، لا أنه موجود.
+          */}
+          <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">
+            عنوان قسم الفريق
+            <Input className="h-9" name="teamHeadline" maxLength={60} placeholder="من يتابع اشتراكك" defaultValue={values.teamHeadline ?? ""} />
+          </label>
+
+          <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">
+            سطر قسم الفريق
+            <Input className="h-9" name="teamSubheadline" maxLength={140} placeholder="بعد اشتراكك يتواصل معك فريقك ويتابع النشر شهراً بشهر." defaultValue={values.teamSubheadline ?? ""} />
           </label>
         </div>
       </div>

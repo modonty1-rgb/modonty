@@ -22,12 +22,16 @@ export interface PaySectionContent {
   /** أسماء من القائمة المغلقة — تُحوَّل إلى مسارات في `payMarkAsset`. */
   payMarks: string[];
   installmentMark: string | null;
+  /** قسم الفريق على صفحة التصفّح — فارغين يسقطان على افتراضيّ المكوّن. */
+  teamHeadline: string | null;
+  teamSubheadline: string | null;
 }
 
 const EMPTY = {
   announcement: null, headline: null, subheadline: null, trustItems: [] as string[],
   vatNote: null, installmentLabel: null, refundNote: null,
   paymentFootnote: null, paymentFootnoteSub: null, payMarks: [] as string[], installmentMark: null,
+  teamHeadline: null, teamSubheadline: null,
 };
 
 export async function getPaySectionContent(db: PrismaClient, market: string): Promise<PaySectionContent> {
@@ -37,6 +41,7 @@ export async function getPaySectionContent(db: PrismaClient, market: string): Pr
       announcement: true, headline: true, subheadline: true, trustItems: true,
       vatNote: true, installmentLabel: true, refundNote: true,
       paymentFootnote: true, paymentFootnoteSub: true, payMarks: true, installmentMark: true,
+      teamHeadline: true, teamSubheadline: true,
     },
   });
   return { market, ...(row ?? EMPTY) };

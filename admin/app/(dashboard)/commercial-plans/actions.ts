@@ -190,6 +190,8 @@ const paySectionSchema = z.object({
   refundNote: optionalText(120),
   paymentFootnote: optionalText(160),
   paymentFootnoteSub: optionalText(80),
+  teamHeadline: optionalText(60),
+  teamSubheadline: optionalText(140),
   payMarks: payMarkList,
   installmentMark: z.preprocess(
     (v) => (typeof v === "string" && v.trim() ? v.trim() : null),
@@ -215,6 +217,7 @@ export async function updatePaySectionContent(market: string, form: FormData) {
     vatNote: value(form, "vatNote"), installmentLabel: value(form, "installmentLabel"),
     refundNote: value(form, "refundNote"), paymentFootnote: value(form, "paymentFootnote"),
     paymentFootnoteSub: value(form, "paymentFootnoteSub"),
+    teamHeadline: value(form, "teamHeadline"), teamSubheadline: value(form, "teamSubheadline"),
     payMarks: value(form, "payMarks"), installmentMark: value(form, "installmentMark"),
   });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقق من كلام الصفحة");
