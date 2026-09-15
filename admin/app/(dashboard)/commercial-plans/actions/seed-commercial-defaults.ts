@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { auth } from "@/lib/auth";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
 import seed from "@modonty/shared/data/commercial-seed.json";
@@ -262,6 +263,13 @@ export async function seedCommercialDefaults(): Promise<
 
     revalidatePath("/commercial-plans");
     revalidatePath("/commercial-features");
+    /**
+     * ⚠ كانت ناقصة: البذرة تملأ ستّة جداول يقرؤها البيمنت، ولا تُبطل وسمه — فتنزل
+     * الباقات في القاعدة وتبقى صفحة البيع تعرض «الباقات قيد التحديث» بلا أي أثر.
+     * وُجد حيّاً على الإنتاج ١٥ سبتمبر ٢٠٢٦ بعد ضغط الزرّ: الجداول 3/17/6/37/3/3
+     * وصفحةُ الدفع فاضية. بقيّة أكشنات الكتالوج (٢٢ أكشناً) تناديه منذ البداية.
+     */
+    await revalidateModontyTag("commercial-catalog");
     return { success: true, created };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message.slice(0, 200) : "تعذّر الزرع" };
