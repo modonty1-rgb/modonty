@@ -1,7 +1,7 @@
 "use server";
 
 import { CommercialPlanTheme, Prisma, SubscriptionTier } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { isFeatureUnitLabel } from "@modonty/shared/lib/commercial/feature-unit-labels";
@@ -88,6 +88,12 @@ async function revalidateCatalog(planId?: string) {
   revalidatePath("/commercial-plans");
   revalidatePath("/commercial-features");
   if (planId) revalidatePath(`/commercial-plans/${planId}`);
+  /**
+   * وصفحات دليل الفريق معها (١٥ سبتمبر ٢٠٢٦): صار `get-tier-pricing.ts` يقرأ من
+   * الكتالوج، وهو مُكاش `unstable_cache` بساعة. ولم يكن أحدٌ يُبطل وسمه قطّ —
+   * فتعدّل السعر هنا ويبقى فريق المبيعات يقرأ القديم ساعةً كاملة ويقوله للعميل.
+   */
+  revalidateTag("tier-pricing", { expire: 0 });
   await revalidateModontyTag("commercial-catalog");
 }
 

@@ -1,5 +1,6 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
+import { SubscriptionTier } from "@prisma/client";
 import { db } from "@/lib/db";
 
 export type Country = "SA" | "EG";
@@ -12,78 +13,69 @@ export interface TierPricingRow {
   yearly: number;
 }
 
-interface PricingJson {
-  SA?: { mo: number; yr: number };
-  EG?: { mo: number; yr: number };
-}
+/**
+ * سعر باقةٍ واحدة لصفحات دليل الفريق — **من كتالوج البيع، لا من النظام القديم**.
+ *
+ * ── لماذا تبدّل المصدر (خالد ١٥ سبتمبر ٢٠٢٦) ──
+ * «مرجع السعر اللي هو الآن البيمنت الأخير، هذا هو السورس أوف ترووث للأسعار والباقات».
+ * وكان يقرأ `SubscriptionTierConfig.price`، فيعرض «الزخم» بـ١٬٢٩٩ بينما المشتري يدفع
+ * ١٬١٩٩ على `pay.modonty.com` — رقمٌ يقرؤه فريق المبيعات ويقوله للعميل.
+ *
+ * ── الوصلة `tier` لا `jbrseoId` ──
+ * `CommercialPlan.tier` حقلٌ موجود يربط باقة البيع بتصنيف العميل التشغيلي
+ * (`STANDARD` · `PRO` · `PREMIUM`)، ومقيسٌ حيّاً في القاعدتين: الانطلاقة⇢STANDARD ·
+ * الزخم⇢PRO · الريادة⇢PREMIUM. والمفتاح الخارجي يبقى `jbrseoId` كما هو حتى لا
+ * تتغيّر نداءات الصفحات، ويُترجَم هنا في موضعٍ واحد.
+ *
+ * `مجاني`/`free` لا مقابل له في الكتالوج — يرجع `null`، وصفحات الدليل تتحمّله
+ * (التوقيع يرجع `null` أصلاً حين لا تُوجد الباقة).
+ */
+const TIER_BY_JBRSEO_ID: Record<string, SubscriptionTier> = {
+  starter: SubscriptionTier.STANDARD,
+  growth: SubscriptionTier.PRO,
+  scale: SubscriptionTier.PREMIUM,
+};
 
 /**
- * Reads a single tier by jbrseoId and returns its pricing for the given country.
- * Reads from `pricing[country]` first; falls back to legacy `price` field if pricing JSON is empty.
- * Returns null if the tier doesn't exist.
+ * ⚠ `yearly` = الشهريّ × ١٢، لا سعرَ سنويٍّ مخفَّضاً.
+ *
+ * النظام القديم كان يحمل رقمين (`mo` و`yr`)، ومن هنا جاء اختلاف ١٬٢٩٩ عن ١٬٠٣٩ بين
+ * شاشتين. والكتالوج لا يخزّن سعراً سنوياً: الخصم فيه **شهورُ هدية** على صفّ المدّة
+ * (`CommercialTermPolicy`)، لا سعرٌ ثانٍ للباقة. فالضرب في ١٢ هو الإجمالي الصادق
+ * قبل الهدية — ومن يريد سعر المدّة يقرأ سياسة المدد لا هذا القارئ.
  */
 export const getTierPricing = unstable_cache(
   async (
     jbrseoId: string,
     country: Country = "SA"
   ): Promise<TierPricingRow | null> => {
-    const tier = await db.subscriptionTierConfig.findUnique({
-      where: { jbrseoId },
+    const tier = TIER_BY_JBRSEO_ID[jbrseoId];
+    if (!tier) return null;
+
+    const plan = await db.commercialPlan.findFirst({
+      where: { tier, isPublished: true },
       select: {
-        jbrseoId: true,
         name: true,
         articlesPerMonth: true,
-        price: true,
-        pricing: true,
+        prices: {
+          where: { market: country, isActive: true },
+          select: { monthlyBase: true },
+          take: 1,
+        },
       },
     });
 
-    if (!tier) return null;
-
-    const pricing = (tier.pricing as PricingJson | null) ?? {};
-    const countryPricing = pricing[country];
+    const monthly = plan?.prices[0]?.monthlyBase;
+    if (!plan || monthly == null) return null;
 
     return {
-      jbrseoId: tier.jbrseoId ?? jbrseoId,
-      name: tier.name,
-      articlesPerMonth: tier.articlesPerMonth,
-      monthly: countryPricing?.mo ?? tier.price,
-      yearly: countryPricing?.yr ?? tier.price * 12,
+      jbrseoId,
+      name: plan.name,
+      articlesPerMonth: plan.articlesPerMonth ?? 0,
+      monthly,
+      yearly: monthly * 12,
     };
   },
   ["tier-pricing"],
-  { revalidate: 3600, tags: ["tier-pricing"] }
-);
-
-/**
- * Returns all tiers (for guideline pages that show full pricing tables).
- */
-export const getAllTiersPricing = unstable_cache(
-  async (country: Country = "SA"): Promise<TierPricingRow[]> => {
-    const tiers = await db.subscriptionTierConfig.findMany({
-      where: { jbrseoId: { not: null } },
-      select: {
-        jbrseoId: true,
-        name: true,
-        articlesPerMonth: true,
-        price: true,
-        pricing: true,
-      },
-      orderBy: { articlesPerMonth: "asc" },
-    });
-
-    return tiers.map((tier) => {
-      const pricing = (tier.pricing as PricingJson | null) ?? {};
-      const countryPricing = pricing[country];
-      return {
-        jbrseoId: tier.jbrseoId!,
-        name: tier.name,
-        articlesPerMonth: tier.articlesPerMonth,
-        monthly: countryPricing?.mo ?? tier.price,
-        yearly: countryPricing?.yr ?? tier.price * 12,
-      };
-    });
-  },
-  ["all-tiers-pricing"],
-  { revalidate: 3600, tags: ["tier-pricing"] }
+  { revalidate: 3600, tags: ["tier-pricing", "commercial-catalog"] }
 );

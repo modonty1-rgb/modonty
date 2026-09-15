@@ -41,10 +41,3 @@ export async function formatPriceForGuideline(
 export async function getMomentumPrice(country: Country = "SA"): Promise<FormattedPrice | null> {
   return formatPriceForGuideline("growth", country);
 }
-
-/**
- * Returns Leadership/scale tier price formatted.
- */
-export async function getLeadershipPrice(country: Country = "SA"): Promise<FormattedPrice | null> {
-  return formatPriceForGuideline("scale", country);
-}

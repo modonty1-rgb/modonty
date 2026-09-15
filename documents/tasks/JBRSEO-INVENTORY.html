@@ -156,7 +156,7 @@
 <span class="muted">السبب: حقل <code>pricing</code> في القاعدة <code>null</code> في الصفوف الأربعة،
 فيسقط الكود على جدولٍ مكتوبٍ داخل الكود فيه سعرٌ شهريّ وآخر سنويّ.</span></p>
 
-<h3>ب · المتبقّي — سبعة بنود ووين تلقاها</h3>
+<h3>ب · المتبقّي — خمسة بنود ووين تلقاها</h3>
 
 <div class="scroll">
 <table>
@@ -173,22 +173,8 @@
       <td>يصير <b>٨ / ١٢ / ١٦</b></td>
       <td class="pend">؟</td>
     </tr>
-    <tr>
-      <td class="num">٢</td><td>دليل المبيعات</td>
-      <td>الهيدر ← <b>دليل الفريق</b> ← المبيعات</td>
-      <td>الزخم <span class="num">١٬٢٩٩</span></td>
-      <td>ياخذ السعر من صفحة الدفع</td>
-      <td class="pend">؟</td>
-    </tr>
-    <tr>
-      <td class="num">٣</td><td>دليل الشرائح</td>
-      <td>الهيدر ← <b>دليل الفريق</b> ← الشرائح</td>
-      <td>الزخم <span class="num">١٬٢٩٩</span></td>
-      <td>نفسه</td>
-      <td class="pend">؟</td>
-    </tr>
     <tr class="money">
-      <td class="num">٤</td>
+      <td class="num">٢</td>
       <td>إنشاء عميل جديد <span class="tag t-risk">فلوس</span></td>
       <td>السايدبار ← <b>Clients</b> ← New Client</td>
       <td>الزخم <span class="num">١٬٠٣٩</span> · ٨ مقالات<br>والمبلغ المدفوع يتعبّى منها</td>
@@ -196,7 +182,7 @@
       <td class="pend">؟</td>
     </tr>
     <tr class="money">
-      <td class="num">٥</td>
+      <td class="num">٣</td>
       <td>حساب العميل والفواتير <span class="tag t-risk">فلوس</span></td>
       <td>السايدبار ← <b>Clients</b> ← All Clients ← افتح عميل</td>
       <td>الفاتورة والمستحق من القديم</td>
@@ -204,16 +190,16 @@
       <td class="pend">؟</td>
     </tr>
     <tr class="money">
-      <td class="num">٦</td>
+      <td class="num">٤</td>
       <td>تعديل العميل <span class="tag t-risk">فلوس</span></td>
       <td>نفس الطريق ← افتح عميل ← تعديل</td>
       <td>تغيير الباقة بأسعار قديمة</td>
-      <td>مع رقم ٥</td>
+      <td>مع رقم ٣</td>
       <td class="pend">؟</td>
     </tr>
     <tr>
-      <td class="num">٧</td><td>حذف الكود القديم</td><td>—</td><td>—</td>
-      <td>بعد ما تخلص ١–٦ وما يبقى شي يستخدمه</td>
+      <td class="num">٥</td><td>حذف الكود القديم</td><td>—</td><td>—</td>
+      <td>بعد ما تخلص ١–٤ وما يبقى شي يستخدمه</td>
       <td class="pend">؟</td>
     </tr>
   </tbody>
@@ -242,8 +228,8 @@
         <td>حُذفت الشاشة وكودها الميّت — البطاقة تُغلق على اللوحة</td></tr>
     <tr><td><code>PAY-A11</code></td><td>باقة العميل تُطابَق بالاسم العربي</td><td>مفتوحة</td>
         <td>—</td></tr>
-    <tr><td><code>PAY-R5</code></td><td>أسعار صفحات الدليل ← الكتالوج</td><td>مفتوحة</td>
-        <td><b>تقول ٧ صفحات تحت <code>guidelines/</code> — والمسار اليوم <code>playbook/</code> وصفحتان</b></td></tr>
+    <tr><td><code>PAY-R5</code></td><td>أسعار صفحات الدليل ← الكتالوج</td><td><span class="tag t-live">مُنفّذة ١٥ سبتمبر</span></td>
+        <td><b>وكانت تقول ٧ صفحات تحت <code>guidelines/</code> — والمسار اليوم <code>playbook/</code> وصفحتان</b></td></tr>
     <tr><td><code>PAY-R6</code></td><td>تجميد النظام القديم — جسر قراءة</td><td>مفتوحة</td>
         <td>—</td></tr>
     <tr><td><code>PAY-R7</code></td><td>الجرد النهائي — صفر مصدر قديم</td>
