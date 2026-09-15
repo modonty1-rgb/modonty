@@ -15,9 +15,21 @@ import { Ratelimit } from "@upstash/ratelimit";
  * ويحاول دفعةً مفتوحٌ بلا سقف.
  */
 
+/**
+ * ── اسمان لشيءٍ واحد، و`KV_` أوّلاً (١٥ سبتمبر ٢٠٢٦) ──
+ * قاعدة الدفع أُنشئت عبر Vercel Marketplace، وهو يحقن أسماءه هو
+ * (`KV_REST_API_URL` · `KV_REST_API_TOKEN`) لا أسماء Upstash المباشرة.
+ *
+ * والأولوية له لا لنا عمداً: هذه المتغيّرات **يملكها التكامل ويدوّرها**، فلو نسخنا
+ * قيمتها إلى `UPSTASH_…` يدوياً لصار عندنا سرٌّ ثانٍ يبيت قديماً عند أوّل تدوير —
+ * والعطل حينها صامت: حدُّ معدّلٍ يفشل في الخلفية بينما الصفحة تبدو سليمة.
+ *
+ * و`UPSTASH_…` يبقى خلفه لا يُحذف: هو ما يستعمله جهاز التطوير المحلّي، وحذفه يقطع
+ * الحدّ على اللوكل بلا فائدة.
+ */
 function makeRedis(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
   return new Redis({ url, token });
 }
@@ -49,8 +61,34 @@ function build(prefix: string, limit: number, windowSec: number) {
   });
   return {
     limit: async (key: string): Promise<LimiterResult> => {
-      const r = await rl.limit(key);
-      return { success: r.success, limit: r.limit, remaining: r.remaining, reset: r.reset };
+      try {
+        const r = await rl.limit(key);
+        return { success: r.success, limit: r.limit, remaining: r.remaining, reset: r.reset };
+      } catch (e) {
+        /**
+         * ── ليش `try` أصلاً، والسقف اليومي هو السبب ──
+         * توثيق Upstash الرسميّ نصّاً: «Exceeding the request limit on a Free Database
+         * (10,000 requests per day) will cause the exceeding commands to **return an
+         * exception**» (`_snippets/faq-snippet.mdx`). فالتجاوز ليس بطئاً ولا `success:
+         * false` — بل رميةٌ تخرج من هذا السطر.
+         *
+         * وكان النداء عارياً في المواضع الأربعة (`bank-transfer` · `create-payment` ·
+         * `tamara` · `status`)، فالرمية تصعد إلى المسار فيرجع ٥٠٠. أي أن حارساً
+         * وُضع ليصدّ مُجرِّب البطاقات كان — عند أوّل يومٍ مزدحم — **يقفل الشراء على
+         * الجميع** بدل أن يصدّه وحده. وحملةٌ إعلانية هي بالضبط اليوم المزدحم.
+         *
+         * ── ولماذا يُفتح لا يُقفل ──
+         * الخياران كلاهما خسارة: الفتح يعني بُرهةً بلا سقفٍ ثانٍ، والإقفال يعني ردّ كل
+         * مشترٍ صادق بـ٤٢٩ لعطلٍ عندنا لا عنده. ويُرجّح الفتح لسببين: Turnstile هو
+         * الحارس الأوّل ضدّ الآلات وهو قائمٌ مستقلّ عن ريديس، وهذه الوحدة **تفتح أصلاً**
+         * حين تغيب المفاتيح (`NOOP_LIMIT` أعلاه) — فالإقفال هنا يناقض عقدها المعلن.
+         *
+         * والصمت ممنوع: بلا هذا السطر يمرّ فقدان السقف بلا أثرٍ في سجلّ Vercel، فتُقرأ
+         * حملةٌ مكشوفة نجاحاً هادئاً.
+         */
+        console.error(`[rate-limit] pay:${prefix} تعذّر — مرّ الطلب بلا سقف`, e);
+        return NOOP_LIMIT;
+      }
     },
   };
 }

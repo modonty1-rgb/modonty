@@ -112,3 +112,10 @@ __tmp-*
 scratch/*
 !scratch/README.md
 payment/_*.mjs
+
+# أدوات الوكيل — تُولَّد محليّاً ولا تُنشر
+.agents/
+**/.agents/
+skills-lock.json
+**/skills-lock.json
+payment/.claude/
