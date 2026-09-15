@@ -48,6 +48,7 @@
   .t-data{background:var(--blue-bg);color:var(--blue)}
   ul{margin:8px 0;padding-inline-start:22px} li{margin:4px 0}
   .num{font-variant-numeric:tabular-nums;font-weight:700}
+  .muted{color:var(--muted);font-size:12.5px}
   .foot{color:var(--muted);font-size:12.5px;margin-top:40px;border-top:1px solid var(--line);padding-top:14px}
 </style>
 </head>
@@ -178,127 +179,96 @@
   إلى «جبر سيو» — يخصّ <code>/campaigns/reports/jbrseo</code>، فبقي.
 </p>
 
-<h2>٤ · الأسعار — الجرد الكامل (١٥ سبتمبر ٢٠٢٦)</h2>
+<h2>٤ · الأسعار</h2>
 
 <div class="flag red">
-  <b>أربعة أرقامٍ للباقة الواحدة، كلّها حيّة اليوم.</b>
-  «الزخم» في السعودية يُعرض بأربع قيم مختلفة حسب الشاشة التي تفتحها. مقيسٌ حيّاً على
-  <code>localhost:3001</code> ومن القاعدتين — لا مُقدَّر.
+  <b>المشكلة في سطر واحد:</b> عندنا نظاما أسعار. المشتري يدفع على الأوّل، والأدمن يشتغل
+  على الثاني — وأرقامهما مختلفة.
 </div>
+
+<h3>باقة «الزخم» في السعودية — أربعة أرقام</h3>
 
 <div class="scroll">
 <table>
-  <thead><tr><th>أين</th><th>الزخم · SA</th><th>مقالات</th><th>المصدر</th></tr></thead>
+  <thead><tr><th>الشاشة</th><th>السعر</th><th>المقالات</th><th>صحيح؟</th></tr></thead>
   <tbody>
-    <tr><td><code>pay.modonty.com</code> — <b>ما يدفعه المشتري</b></td>
+    <tr><td>صفحة الدفع — <b>ما يدفعه العميل</b></td>
         <td class="num">١٬١٩٩</td><td class="num">١٢</td>
-        <td><code>commercial_plan_prices</code></td></tr>
-    <tr><td><code>/subscription-tiers</code></td>
-        <td class="num">١٬١٩٩</td><td class="num">٨</td>
-        <td><code>FALLBACK_PRICING</code> · سنويّ</td></tr>
-    <tr><td><code>/clients/new</code> — <b>الرصيد الافتتاحي</b></td>
-        <td class="num">١٬٠٣٩</td><td class="num">٨</td>
-        <td><code>FALLBACK_PRICING</code> · <code>yr</code></td></tr>
-    <tr><td><code>/playbook/sales</code> · <code>/playbook/segments</code></td>
-        <td class="num">١٬٢٩٩</td><td>—</td>
-        <td><code>tier.price</code> من القاعدة</td></tr>
+        <td><span class="tag t-live">هذا المرجع</span></td></tr>
+    <tr><td>شاشة الباقات</td><td class="num">١٬١٩٩</td><td class="num">٨</td>
+        <td>المقالات غلط</td></tr>
+    <tr><td><b>إنشاء عميل جديد</b></td><td class="num">١٬٠٣٩</td><td class="num">٨</td>
+        <td>الاثنان غلط</td></tr>
+    <tr><td>دليل الفريق</td><td class="num">١٬٢٩٩</td><td>—</td>
+        <td>السعر غلط</td></tr>
   </tbody>
 </table>
 </div>
 
-<p><b>وسبب الأربعة:</b> حقل <code>pricing</code> في <code>subscription_tier_configs</code>
-<b><code>null</code> في الصفوف الأربعة</b>، و<code>syncedAtSA/EG</code> فارغان — أي أن
-<code>sync-tier-pricing.ts</code> لم يُشغَّل قطّ. فيسقط الكود على جدول أسعارٍ
-<b>مكتوبٍ في الكود</b> (<code>subscription-tiers/lib/pricing.ts:15-20</code>)، وهو يحمل
-قيمتين لكل باقة: <code>mo</code> شهري و<code>yr</code> سنوي — ومن هنا اختلاف ١٬٢٩٩ عن ١٬٠٣٩.</p>
+<p><b>وش يصير عملياً:</b> عميل يشتري «الزخم» بـ١٬١٩٩ وله ١٢ مقالاً. ندخله في الأدمن،
+فيُسجَّل على ١٬٠٣٩ وله ٨ مقالات. الفرق يظهر أوّل شهر — نعطيه ٨ وهو دافع مقابل ١٢.</p>
+
+<h3>الفرق كامل</h3>
 
 <div class="scroll">
 <table>
-  <thead><tr><th>الباقة</th><th>القديم <code>price</code> · مقالات</th><th>الكتالوج SA · مقالات</th><th>الفرق</th></tr></thead>
+  <thead><tr><th>الباقة</th><th>الأدمن (القديم)</th><th>صفحة الدفع (الصحيح)</th></tr></thead>
   <tbody>
-    <tr><td>الانطلاقة</td><td class="num">٤٩٩ · ٤</td><td class="num">٣٩٩ · ٨</td><td>−١٠٠ ر.س · ضعف المقالات</td></tr>
-    <tr><td>الزخم</td><td class="num">١٬٢٩٩ · ٨</td><td class="num">١٬١٩٩ · ١٢</td><td>−١٠٠ ر.س · +٤</td></tr>
-    <tr><td>الريادة</td><td class="num">٢٬٩٩٩ · ١٢</td><td class="num">٢٬٩٩٩ · ١٦</td><td>السعر واحد · +٤</td></tr>
-    <tr><td>مجاني</td><td class="num">٠ · ١</td><td>— لا مقابل له</td><td>—</td></tr>
-  </tbody>
-</table>
-</div>
-<p class="muted">مقيسٌ من <code>modonty</code> و<code>modonty_dev</code> — الجدولان متطابقان في القاعدتين.
-والكتالوج في مصر: ١٬١٩٩ · ٣٬٩٩٩ · ٧٬٩٩٩ ج.م.</p>
-
-<h3>ما يُقرأ منه سعرٌ فعلاً — ستّ شاشات لا ٤٥ ملفّاً</h3>
-
-<p>جردُ <code>subscriptionTierConfig</code> يرجع ٤٥ ملفّاً، لكن أكثرها يقرأ <b>اسم الباقة</b>
-لا سعرها. الذي يقرأ رقماً ينتهي إلى ثلاث دوالّ فقط:</p>
-
-<div class="scroll">
-<table>
-  <thead><tr><th>الدالّة</th><th>الشاشة</th><th>ما يظهر · مقيسٌ حيّاً</th><th>الخطر</th></tr></thead>
-  <tbody>
-    <tr><td rowspan="3"><code>resolvePricing</code><br><span class="muted">subscription-tiers/lib/pricing.ts</span></td>
-        <td><code>/clients/new</code></td>
-        <td>بطاقات الباقة ٣٩٩ · ١٬٠٣٩ · ٢٬٣٩٩ ريال، و<b>الرصيد الافتتاحي يتعبّى منها</b></td>
-        <td><span class="tag t-risk">مال</span></td></tr>
-    <tr><td><code>/clients/[id]/account</code></td>
-        <td>«+ إصدار فاتورة» · المستحق · إجمالي المدفوع</td>
-        <td><span class="tag t-risk">مال</span></td></tr>
-    <tr><td><code>/clients/[id]/edit</code> → قسم الاشتراك</td>
-        <td>تغيير باقة عميل قائم</td>
-        <td><span class="tag t-risk">مال</span></td></tr>
-    <tr><td><code>formatPrice</code><br><span class="muted">نفس الملفّ</span></td>
-        <td><code>/subscription-tiers</code></td>
-        <td>بطاقات السوقين: SA ٣٩٩/٤٬٧٨٨ · EG ١٬١٩٩ … · «٤ مقالات/شهر»</td>
-        <td><span class="tag">عرض</span></td></tr>
-    <tr><td rowspan="2"><code>getMomentumPrice</code><br><span class="muted">lib/pricing/format-for-guideline.ts<br>← get-tier-pricing.ts:50-51</span></td>
-        <td><code>/playbook/sales</code></td>
-        <td>١٬٢٩٩ ريال</td>
-        <td><span class="tag">عرض</span></td></tr>
-    <tr><td><code>/playbook/segments</code></td>
-        <td>١٬٢٩٩ ريال</td>
-        <td><span class="tag">عرض</span></td></tr>
+    <tr><td>الانطلاقة</td><td class="num">٤٩٩ · ٤ مقالات</td><td class="num">٣٩٩ · ٨ مقالات</td></tr>
+    <tr><td>الزخم</td><td class="num">١٬٢٩٩ · ٨</td><td class="num">١٬١٩٩ · ١٢</td></tr>
+    <tr><td>الريادة</td><td class="num">٢٬٩٩٩ · ١٢</td><td class="num">٢٬٩٩٩ · ١٦</td></tr>
   </tbody>
 </table>
 </div>
 
-<h3>ترتيب العمل المقترح</h3>
+<h3>الشاشات اللي لازم تتصلّح — ستّ</h3>
 
 <div class="scroll">
 <table>
-  <thead><tr><th>#</th><th>الخطوة</th><th>لماذا هنا</th><th>الحجم</th></tr></thead>
+  <thead><tr><th>الشاشة</th><th>وش فيها</th><th>خطرها</th></tr></thead>
   <tbody>
-    <tr><td class="num">١</td>
-        <td>توحيد <b>عدد المقالات</b> أوّلاً: ٤/٨/١٢ ← ٨/١٢/١٦</td>
-        <td>هذا وعدٌ للعميل لا رقمٌ داخليّ. مشترٍ وُعد بـ٨ ويُنشأ حسابه على ٤ — والفرق يظهر عند أوّل شهر، لا في محاسبة لاحقة.</td>
-        <td>حقل واحد × ٣ صفوف</td></tr>
-    <tr><td class="num">٢</td>
-        <td><code>/playbook/sales</code> و<code>/playbook/segments</code> ← الكتالوج</td>
-        <td>صفحتا قراءةٍ للفريق، بلا كتابة ولا فاتورة. أرخص موضعٍ نثبت فيه أن القراءة من الكتالوج تعمل.</td>
-        <td>دالّة واحدة</td></tr>
-    <tr><td class="num">٣</td>
-        <td><code>/subscription-tiers</code> ← الكتالوج (أو تُحذف)</td>
-        <td>عرضٌ فقط. والسؤال المرافق: هل تبقى الشاشة بعد أن يصير الكتالوج هو المرجع؟</td>
-        <td>شاشة</td></tr>
-    <tr><td class="num">٤</td>
-        <td><code>/clients/new</code> ← الكتالوج</td>
-        <td>أوّل موضعٍ يمسّ المال: الرصيد الافتتاحي يدخل تقرير المبيعات فوراً.</td>
-        <td><span class="tag t-risk">مال</span></td></tr>
-    <tr><td class="num">٥</td>
-        <td><code>/clients/[id]/account</code> و<code>edit</code> ← الكتالوج</td>
-        <td>الفواتير. تُترك للآخر لأن أي غلطٍ فيها يظهر عند العميل لا عندنا.</td>
-        <td><span class="tag t-risk">مال</span></td></tr>
-    <tr><td class="num">٦</td>
-        <td>حذف <code>FALLBACK_PRICING</code> و<code>get-tier-pricing.ts</code> و<code>sync-tier-pricing.ts</code></td>
-        <td>لا يُحذف قبل أن يخلو من قارئ — وإلّا انكسرت شاشةٌ بلا أثر.</td>
-        <td>تنظيف</td></tr>
+    <tr><td><code>/clients/new</code></td><td>تختار الباقة، والمبلغ المدفوع يتعبّى لحاله</td>
+        <td><span class="tag t-risk">فلوس</span></td></tr>
+    <tr><td><code>/clients/[id]/account</code></td><td>الفواتير والمستحق</td>
+        <td><span class="tag t-risk">فلوس</span></td></tr>
+    <tr><td><code>/clients/[id]/edit</code></td><td>تغيير باقة عميل قائم</td>
+        <td><span class="tag t-risk">فلوس</span></td></tr>
+    <tr><td><code>/subscription-tiers</code></td><td>عرض الباقات للسوقين</td><td>عرض فقط</td></tr>
+    <tr><td><code>/playbook/sales</code></td><td>صفحة للفريق</td><td>عرض فقط</td></tr>
+    <tr><td><code>/playbook/segments</code></td><td>صفحة للفريق</td><td>عرض فقط</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="muted">٤٥ ملفّاً يذكر النظام القديم، لكن أكثرها يقرأ <b>اسم</b> الباقة لا سعرها.
+هذي الستّ وحدها اللي تعرض رقماً.</p>
+
+<h3>ترتيب الشغل</h3>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>#</th><th>نسوي</th><th>ليش بهذا الترتيب</th></tr></thead>
+  <tbody>
+    <tr><td class="num">١</td><td>نصلّح عدد المقالات: ٤/٨/١٢ ← ٨/١٢/١٦</td>
+        <td>هذا وعد للعميل. أسرع شي وأهمّه.</td></tr>
+    <tr><td class="num">٢</td><td>صفحتا دليل الفريق</td>
+        <td>قراءة بس، ما فيها فلوس — نجرّب عليها أوّلاً.</td></tr>
+    <tr><td class="num">٣</td><td>شاشة الباقات</td>
+        <td>عرض. وسؤال: نخلّيها ولا نشيلها؟</td></tr>
+    <tr><td class="num">٤</td><td>إنشاء عميل جديد</td>
+        <td>أوّل شاشة فيها فلوس.</td></tr>
+    <tr><td class="num">٥</td><td>الفواتير وتعديل العميل</td>
+        <td>آخر شي — غلطها يوصل العميل.</td></tr>
+    <tr><td class="num">٦</td><td>نحذف الكود القديم</td>
+        <td>بعد ما يصير ما فيه شي يستخدمه.</td></tr>
   </tbody>
 </table>
 </div>
 
 <div class="flag amber">
-  <b>سؤالٌ يسبق الخطوة ١:</b> حين يُربط عميلٌ قائم بالكتالوج، ما مصير <code>SubscriptionTier</code>
-  (<code>FREE</code> · <code>STANDARD</code> · <code>PRO</code>)؟ هو <b>enum</b> على <code>Client</code>
-  تقرؤه ٤٥ ملفّاً لا سعراً بل صلاحيةً وحدوداً. أرجّح: يبقى الـenum للتشغيل، ويُشتقّ السعر وعدد
-  المقالات من الكتالوج وحده. ولم يُقرَّر بعد.
+  <b>سؤال قبل ما نبدأ:</b> عند العميل فيه تصنيف <code>FREE / STANDARD / PRO</code> —
+  هذا مو سعر، هذا صلاحيات وحدود، ويقرأه ٤٥ ملفّاً. أرى نخلّيه مكانه، والسعر وعدد
+  المقالات ياخذهما من صفحة الدفع وبس. توافق؟
 </div>
 
 <h2>٥ · مواضع متفرّقة تحمل الاسم</h2>
