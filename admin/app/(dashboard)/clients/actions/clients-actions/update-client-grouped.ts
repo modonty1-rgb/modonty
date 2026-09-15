@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import type { ClientFormData } from "@/lib/types";
 import { getFieldsForGroup } from "../../helpers/group-fields-by-tab";
-import { getTierConfigByTier } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
+import { getCatalogArticlesPerMonth, getTierConfigByTier } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
 import { SubscriptionTier } from "@prisma/client";
 import { validateAndNormalizeUrls } from "./validate-and-normalize-urls";
 import { probeArticlesBaseUrl } from "./probe-articles-base-url";
@@ -133,7 +133,10 @@ export async function updateRequiredFields(
       const tierConfig = await getTierConfigByTier(data.subscriptionTier as SubscriptionTier);
       
       if (tierConfig) {
-        articlesPerMonth = tierConfig.articlesPerMonth;
+        // الحصّة من الكتالوج — نفس سبب `create-client.ts`.
+        articlesPerMonth =
+          (await getCatalogArticlesPerMonth(data.subscriptionTier as SubscriptionTier))
+          ?? tierConfig.articlesPerMonth;
         subscriptionTierConfigId = tierConfig.id;
         
         if (!tierConfig.isActive) {

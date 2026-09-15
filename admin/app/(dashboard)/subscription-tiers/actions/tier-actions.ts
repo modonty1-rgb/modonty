@@ -65,6 +65,35 @@ export const getTierConfigByTier = cache(async (tier: SubscriptionTier) => {
   }
 });
 
+/**
+ * حصّة المقالات الشهرية لتصنيفٍ ما — **من كتالوج البيع**، وهي التي تُكتب على العميل.
+ *
+ * ── لماذا دالّة منفصلة عن `getTierConfigByTier` ──
+ * ذاك يرجع صفّ `subscriptionTierConfig` لأن العميل مرتبطٌ به بمفتاح أجنبيّ
+ * (`subscriptionTierConfigId`) ويُفحص منه `isActive` — فيبقى. لكن **الرقم** لا يُؤخذ
+ * منه: الجدولان يختلفان (٤/٨/١٢ عنده مقابل ٨/١٢/١٦ في الكتالوج).
+ *
+ * والعطل الذي أغلقته (مقيسٌ ١٥ سبتمبر ٢٠٢٦): بعد تحويل بطاقات الباقة إلى الكتالوج
+ * صارت الشاشة تعرض «الزخم ١٢ مقالاً» ثم **يكتب السيرفر ٨** — فالبطاقة تعد بما لا
+ * يُنفَّذ، والفرق يظهر عند أوّل شهر لا في مراجعةٍ لاحقة.
+ *
+ * `null` حين لا باقة منشورة لهذا التصنيف — والمنادي يُبقي ما كان بدل أن يصفّر حصّة
+ * عميلٍ قائم.
+ */
+export const getCatalogArticlesPerMonth = cache(async (tier: SubscriptionTier): Promise<number | null> => {
+  try {
+    const plan = await db.commercialPlan.findFirst({
+      where: { tier, isPublished: true },
+      orderBy: { displayOrder: "asc" },
+      select: { articlesPerMonth: true },
+    });
+    return plan?.articlesPerMonth ?? null;
+  } catch (error) {
+    console.error("Error fetching catalog quota by tier:", error);
+    return null;
+  }
+});
+
 export const getActiveTierConfigs = cache(async () => {
   try {
     const configs = await db.subscriptionTierConfig.findMany({
