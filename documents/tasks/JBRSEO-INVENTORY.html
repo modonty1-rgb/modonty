@@ -62,62 +62,14 @@
 <h1>جرد جبر سيو داخل الأدمن</h1>
 <p class="sub">
   كل موضعٍ في <code>admin/</code> يقرأ من جبر سيو أو يحمل اسمها — محتوىً وأسعاراً وبيانات.
-  قياس حيّ على <code>modonty_dev</code>، ١٤ سبتمبر ٢٠٢٦. كل رقمٍ هنا مقروءٌ من القاعدة أو من <code>grep</code>، لا مُقدَّر.
+  جُرد ١٤ سبتمبر ٢٠٢٦، <b>وحُدِّث ١٥ سبتمبر</b> بقياسٍ حيّ على <code>localhost:3001</code>
+  ومن القاعدتين (<code>modonty</code> و<code>modonty_dev</code>). كل رقمٍ هنا مقروءٌ، لا مُقدَّر.
 </p>
 
 <div class="flag red">
-  <b>🔴 أهمّ ما كشفه الجرد: نظاما أسعارٍ يعملان معاً ويختلفان</b>
-  جدولان حيّان (<code>isActive: true</code> في كليهما) يحملان نفس أسماء الباقات بأرقامٍ مختلفة.
-  اثنان من ثلاثة أسعار مختلفان، و<b>أعداد المقالات مختلفة في الثلاثة كلّها</b>.
-</div>
-
-<div class="scroll">
-<table>
-  <thead><tr>
-    <th>الباقة</th>
-    <th>SubscriptionTierConfig<br><span style="font-weight:400">إرث جبر سيو · <code>jbrseoId</code></span></th>
-    <th>CommercialPlan<br><span style="font-weight:400">كتالوج البيمنت · SA</span></th>
-    <th>الفرق</th>
-  </tr></thead>
-  <tbody>
-    <tr><td><b>الانطلاقة</b><br><code>starter</code></td>
-        <td><span class="num">499</span> ر.س · <span class="num">4</span> مقالات</td>
-        <td><span class="num">399</span> ر.س · <span class="num">8</span> مقالات</td>
-        <td style="color:var(--red)">−100 ر.س · ضعف المقالات</td></tr>
-    <tr><td><b>الزخم</b><br><code>growth</code></td>
-        <td><span class="num">1299</span> ر.س · <span class="num">8</span> مقالات</td>
-        <td><span class="num">1199</span> ر.س · <span class="num">12</span> مقالاً</td>
-        <td style="color:var(--red)">−100 ر.س · +4 مقالات</td></tr>
-    <tr><td><b>الريادة</b><br><code>scale</code></td>
-        <td><span class="num">2999</span> ر.س · <span class="num">12</span> مقالاً</td>
-        <td><span class="num">2999</span> ر.س · <span class="num">16</span> مقالاً</td>
-        <td style="color:var(--amber)">السعر واحد · +4 مقالات</td></tr>
-    <tr><td><b>مجاني</b><br><code>free</code></td>
-        <td><span class="num">0</span> ر.س · <span class="num">1</span> مقال</td>
-        <td>— لا مقابل له</td>
-        <td class="mono">—</td></tr>
-  </tbody>
-</table>
-</div>
-
-<div class="card">
-  <h3 style="margin-top:0">ليش هذا خطير وليس مجرّد تكرار</h3>
-  <p>
-    الجدولان ليسا أحدهما ميّتاً: <b>٤٣ ملفّاً</b> في الأدمن والكونسول يقرأ
-    <code>subscriptionTierConfig</code> — إنشاء العميل، الفواتير، تبويب الاشتراك، تقرير المبيعات،
-    واجهة الجوّال (<code>console/app/api/mobile/v1/subscription</code>). فهو <b>باقة التشغيل</b>
-    للعملاء القائمين. و<code>CommercialPlan</code> هو <b>باقة البيع</b> التي تُعرض على المشتري الجديد.
-  </p>
-  <p>
-    والنتيجة عمليّاً: مشترٍ يدفع <b>٣٩٩</b> على صفحة البيع ويُوعَد بـ<b>٨ مقالات</b>،
-    ثم يُحوَّل إلى عميلٍ فيُربط بباقةٍ مكتوبٌ فيها <b>٤٩٩</b> و<b>٤ مقالات</b> — والفاتورة
-    وتبويب الاشتراك يقرآن من الثاني.
-  </p>
-  <p style="margin-bottom:0">
-    <span class="tag t-risk">قرار مطلوب</span>
-    أي الجدولين هو المرجع؟ ومن يتبع من عند التعديل؟ لا يوجد اليوم أي مزامنة بينهما —
-    <code>syncedAtSA</code> و<code>syncedAtEG</code> <b>فارغان في الأربعة</b>، و<code>pricing</code> (JSON) <code>null</code> في الأربعة.
-  </p>
+  <b>أهمّ ما في هذا الملفّ: نظاما أسعار يعملان معاً ويختلفان.</b>
+  المشتري يدفع على صفحة الدفع، والأدمن يشتغل على نظام قديم.
+  <b>التفاصيل ولوحة القرار في القسم ٤ أسفل</b> — الأرقام والشاشات الثمانية ومكان كل واحدة في الواجهة.
 </div>
 
 <h2>١ · الاتصال بقاعدة جبر سيو</h2>
