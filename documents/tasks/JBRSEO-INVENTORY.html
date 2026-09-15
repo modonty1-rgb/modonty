@@ -122,10 +122,6 @@
     <tr><td><code>/campaigns/reports/jbrseo</code></td>
         <td>تقرير حملات Meta لعلامة جبر سيو (المسار <code>[brand]</code>)</td>
         <td><code>meta-live-report.ts</code></td></tr>
-    <tr><td><code>/subscription-tiers</code></td>
-        <td>الباقات ومزامنة المشتركين — <code>jbrseo-queries.ts</code> · <code>sync-button</code> ·
-            <code>subscribers-table</code> · <code>plan-cards</code></td>
-        <td>قاعدة جبر سيو + <code>SubscriptionTierConfig</code></td></tr>
   </tbody>
 </table>
 </div>
@@ -160,7 +156,7 @@
 <span class="muted">السبب: حقل <code>pricing</code> في القاعدة <code>null</code> في الصفوف الأربعة،
 فيسقط الكود على جدولٍ مكتوبٍ داخل الكود فيه سعرٌ شهريّ وآخر سنويّ.</span></p>
 
-<h3>ب · الشاشات الثمانية — ووين تلقاها</h3>
+<h3>ب · المتبقّي — سبعة بنود ووين تلقاها</h3>
 
 <div class="scroll">
 <table>
@@ -191,15 +187,8 @@
       <td>نفسه</td>
       <td class="pend">؟</td>
     </tr>
-    <tr>
-      <td class="num">٤</td><td>الباقات التشغيلية</td>
-      <td>الهيدر ← <b>المبيعات</b> ← الباقات التشغيلية</td>
-      <td>مقالات غلط · سعران لكل باقة</td>
-      <td>تُصلَّح <b>أو تُحذف</b> — الكتالوج يغني عنها</td>
-      <td class="pend">؟</td>
-    </tr>
     <tr class="money">
-      <td class="num">٥</td>
+      <td class="num">٤</td>
       <td>إنشاء عميل جديد <span class="tag t-risk">فلوس</span></td>
       <td>السايدبار ← <b>Clients</b> ← New Client</td>
       <td>الزخم <span class="num">١٬٠٣٩</span> · ٨ مقالات<br>والمبلغ المدفوع يتعبّى منها</td>
@@ -207,7 +196,7 @@
       <td class="pend">؟</td>
     </tr>
     <tr class="money">
-      <td class="num">٦</td>
+      <td class="num">٥</td>
       <td>حساب العميل والفواتير <span class="tag t-risk">فلوس</span></td>
       <td>السايدبار ← <b>Clients</b> ← All Clients ← افتح عميل</td>
       <td>الفاتورة والمستحق من القديم</td>
@@ -215,16 +204,16 @@
       <td class="pend">؟</td>
     </tr>
     <tr class="money">
-      <td class="num">٧</td>
+      <td class="num">٦</td>
       <td>تعديل العميل <span class="tag t-risk">فلوس</span></td>
       <td>نفس الطريق ← افتح عميل ← تعديل</td>
       <td>تغيير الباقة بأسعار قديمة</td>
-      <td>مع رقم ٦</td>
+      <td>مع رقم ٥</td>
       <td class="pend">؟</td>
     </tr>
     <tr>
-      <td class="num">٨</td><td>حذف الكود القديم</td><td>—</td><td>—</td>
-      <td>بعد ما تخلص ١–٧ وما يبقى شي يستخدمه</td>
+      <td class="num">٧</td><td>حذف الكود القديم</td><td>—</td><td>—</td>
+      <td>بعد ما تخلص ١–٦ وما يبقى شي يستخدمه</td>
       <td class="pend">؟</td>
     </tr>
   </tbody>
@@ -232,7 +221,7 @@
 </div>
 
 <p class="muted">٤٥ ملفّاً يذكر النظام القديم، لكن أكثرها يقرأ <b>اسم</b> الباقة لا سعرها.
-هذي الثمانية وحدها اللي تعرض رقماً. مقيسٌ حيّاً ١٥ سبتمبر ٢٠٢٦ على <code>localhost:3001</code>.</p>
+وما يعرض رقماً هو هذي وحدها. مقيسٌ حيّاً ١٥ سبتمبر ٢٠٢٦ على <code>localhost:3001</code>.</p>
 
 <h3>ج · هذا الشغل على لوحة التاسكات من قبل</h3>
 
@@ -248,8 +237,9 @@
         <td>الترتيب الثماني أعلاه</td></tr>
     <tr><td><code>PAY-STUDY-ADMIN</code></td><td>الباقات في الأدمن — ثلاثة أماكن</td>
         <td><span class="tag t-risk">حرجة</span></td><td>أماكن السايدبار</td></tr>
-    <tr><td><code>PAY-A9</code></td><td>«الباقات التشغيلية» — تُحوَّل أو تُطفأ</td><td>مفتوحة</td>
-        <td>بند ٤ أعلاه</td></tr>
+    <tr><td><code>PAY-A9</code></td><td>«الباقات التشغيلية» — تُحوّل أو تُطفأ</td>
+        <td><span class="tag t-live">مُنفّذة ١٥ سبتمبر</span></td>
+        <td>حُذفت الشاشة وكودها الميّت — البطاقة تُغلق على اللوحة</td></tr>
     <tr><td><code>PAY-A11</code></td><td>باقة العميل تُطابَق بالاسم العربي</td><td>مفتوحة</td>
         <td>—</td></tr>
     <tr><td><code>PAY-R5</code></td><td>أسعار صفحات الدليل ← الكتالوج</td><td>مفتوحة</td>

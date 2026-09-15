@@ -39,14 +39,3 @@ export function resolvePricing(name: string, pricingFromDb: unknown): TierPricin
   }
   return FALLBACK_PRICING_BY_NAME[name] ?? { SA: { mo: 0, yr: 0 }, EG: { mo: 0, yr: 0 } };
 }
-
-export function formatPrice(amount: number, currency: "SA" | "EG"): string {
-  if (amount === 0) return currency === "SA" ? "مجاناً" : "مجاناً";
-  const locale = currency === "SA" ? "ar-SA" : "ar-EG";
-  const code = currency === "SA" ? "SAR" : "EGP";
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: code,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}

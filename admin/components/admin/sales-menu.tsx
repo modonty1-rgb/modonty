@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarClock, CreditCard, TrendingUp, UserPlus, UsersRound, Wallet } from "lucide-react";
+import { CalendarClock, Eye, TrendingUp, UserPlus, UsersRound, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +19,7 @@ const ITEMS = [
   { href: "/sales-leads/new", label: "إضافة عميل محتمل", icon: UserPlus },
   { href: "/sales-leads/follow-ups", label: "متابعة العملاء", icon: CalendarClock },
   { href: "/sales-leads", label: "إدارة العملاء المحتملين", icon: UsersRound },
-  { href: "/subscription-tiers", label: "الباقات التشغيلية", icon: CreditCard },
+  { href: "/pay-preview", label: "الباقات", icon: Eye },
   { href: "/clients/accounts", label: "حسابات وفواتير العملاء", icon: Wallet },
   { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp },
 ] as const;
