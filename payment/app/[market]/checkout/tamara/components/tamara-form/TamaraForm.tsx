@@ -6,7 +6,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
 
 import { cn } from "@/lib/utils";
-import { composeSaPhone } from "../../../helpers/compose-sa-phone";
+import { composeMarketPhone } from "../../../helpers/compose-market-phone";
 import { modontyUrl } from "@/lib/modonty-url";
 
 /**
@@ -83,7 +83,7 @@ export function TamaraForm({
           termsAccepted,
           name: name.trim(),
           email: email.trim(),
-          phone: composeSaPhone(phone),
+          phone: composeMarketPhone(phone, "SA"),
           businessName: businessName.trim() || undefined,
           planSlug,
           paidMonths,

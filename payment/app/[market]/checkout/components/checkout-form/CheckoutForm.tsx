@@ -8,7 +8,7 @@ import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { cn } from "@/lib/utils";
 import type { FailureReason } from "@/lib/checkout/resolve-checkout-reason";
 import { CardField, type NGeniusHandle } from "../card-field/CardField";
-import { composeSaPhone } from "../../helpers/compose-sa-phone";
+import { composeMarketPhone } from "../../helpers/compose-market-phone";
 import { modontyUrl } from "@/lib/modonty-url";
 
 /**
@@ -184,7 +184,7 @@ export function CheckoutForm({
           name,
           email,
           // يُضمّ «+966» هنا: الحقل يعرضه لاصقاً ولا يكتبه المشتري.
-          phone: composeSaPhone(phone),
+          phone: composeMarketPhone(phone, "SA"),
           businessName: businessName.trim() || undefined,
           planSlug,
           paidMonths,

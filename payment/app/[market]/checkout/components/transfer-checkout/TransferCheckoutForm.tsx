@@ -8,6 +8,8 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import { cn } from "@/lib/utils";
 import { modontyUrl } from "@/lib/modonty-url";
 
+import { composeMarketPhone } from "../../helpers/compose-market-phone";
+
 /**
  * فورم الطلب المصريّ — يسجّل الطلب، ولا يدفع.
  *
@@ -92,7 +94,7 @@ export function TransferCheckoutForm({
         body: JSON.stringify({
           name: name.trim(),
           email: email.trim(),
-          phone: phone.trim(),
+          phone: composeMarketPhone(phone, "EG"),
           businessName: businessName.trim() || undefined,
           planSlug,
           paidMonths,
