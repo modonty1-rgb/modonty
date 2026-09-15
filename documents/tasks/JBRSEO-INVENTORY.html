@@ -146,13 +146,15 @@
     <tr><td><code>JbrseoSubscriber</code></td><td><code>jbrseo_subscribers</code></td>
         <td class="num">17</td>
         <td>مرآة عرضٍ فقط لمشتركي جبر سيو — لا تدخل أي سير عمل</td></tr>
-    <tr><td><code>JbrSiteSettings</code></td><td><code>SiteSettings</code></td>
+    <tr><td><s><code>JbrSiteSettings</code></s></td><td><code>SiteSettings</code></td>
         <td class="num">1</td>
-        <td>GTM ورقم واتساب موقع جبر سيو. القيم الحيّة:
-            <code>GTM-TT25M3GX</code> · <code>966541018020</code></td></tr>
-    <tr><td><code>JbrLandingSection</code></td><td>أقسام صفحة الهبوط</td>
+        <td>GTM ورقم واتساب موقع جبر سيو (<code>GTM-TT25M3GX</code> · <code>966541018020</code>).
+            <b>النموذج حُذف من السكيما ١٥ سبتمبر ٢٠٢٦</b> — المجموعة باقية ويقرؤها
+            <code>jbrseo.com</code> من سكيماه.</td></tr>
+    <tr><td><s><code>JbrLandingSection</code></s></td><td><code>LandingSection</code></td>
         <td class="num">18</td>
-        <td>محتوى صفحة جبر سيو الرئيسية — يُحرَّر من الأدمن</td></tr>
+        <td>محتوى صفحة جبر سيو الرئيسية. <b>النموذج حُذف من السكيما ١٥ سبتمبر ٢٠٢٦</b>
+            مع شاشة <code>/jbr-seo/content</code> — المجموعة باقية بصفوفها الثمانية عشر.</td></tr>
     <tr><td><code>SubscriptionTierConfig</code></td><td>—</td>
         <td class="num">4</td>
         <td>مفتاحها <code>jbrseoId</code>: <code>free</code> · <code>starter</code> · <code>growth</code> · <code>scale</code></td></tr>
@@ -246,8 +248,12 @@
 
 <div class="flag green">
   <b>٢ · قسم <code>/jbr-seo/content</code> — حُذف ١٥ سبتمبر ٢٠٢٦</b>
-  خالد: «شيله تماماً، ما نحتاجه». والقياس أيّده: <code>JbrLandingSection</code> = <b>٠ صفوف
-  على الإنتاج</b> (١٨ في <code>modonty_dev</code> وحدها) — أي أن الشاشة كانت تحرّر لا شيء هناك.
+  خالد: «شيله تماماً، ما نحتاجه». والسبب ليس فراغ الجداول — <b>المجموعتان عامرتان في
+  القاعدتين</b> (<code>LandingSection</code> = ١٨ و<code>SiteSettings</code> = ١ في
+  <code>modonty</code> و<code>modonty_dev</code> معاً) — بل أن محتواها يخصّ موقع
+  <code>jbrseo.com</code> وله أدمنه الخاصّ، ومدونتي لا تقرؤه.
+  <br><span class="muted">تصحيح: قياسٌ أوّل قال «٠ على الإنتاج» وكان باسم مجموعة خاطئ
+  (<code>JbrLandingSection</code> بدل <code>LandingSection</code>). الرقم الصحيح ١٨.</span>
   <br><b>المحذوف:</b> <code>app/(dashboard)/jbr-seo/</code> (٦ ملفّات) ·
   <code>lib/jbr/</code> (٤ ملفّات) · سطر السايدبار <code>sidebar.tsx:277</code>.
   <br><b>بقي عمداً:</b> <code>lib/jbrseo-client.ts</code> (يستعمله <code>sync-subscribers</code>) ·
@@ -255,8 +261,11 @@
   <br><b>القياس بعد الحذف:</b> <code>/jbr-seo/content</code> ⇐ <code>404</code> ·
   بند السايدبار ٠ مرّة · الداشبورد يحمّل · سجلّ <code>next dev</code> بلا أخطاء ·
   <code>grep</code> على <code>admin/</code> ⇐ صفر مراجع باقية.
-  <br><b>مفتوح:</b> نموذجا <code>JbrLandingSection</code> و<code>JbrSiteSettings</code> بقيا في
-  السكيما بلا قارئ — يُحذفان بقرار منفصل.
+  <br><b>والنموذجان حُذفا معهما:</b> <code>JbrSiteSettings</code> و<code>JbrLandingSection</code>
+  أُزيلا من <code>shared/prisma/schema/schema.prisma</code> (٣٤ سطراً بتعليقهما) — صفر قارئ في
+  المونوريبو كلّه. البيانات باقية في المجموعتين كما هي؛ الحذف من السكيما لا يمسّها،
+  وموقع جبر سيو يواصل قراءتها من سكيماه هو.
+  <br><code>prisma validate</code> ⇐ <code>The schema at prisma\schema is valid 🚀</code>
 </div>
 
 <div class="flag amber">
