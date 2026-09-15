@@ -36,9 +36,21 @@ const nextConfig: NextConfig = {
         { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
         { key: "X-DNS-Prefetch-Control", value: "on" },
         { key: "X-Content-Type-Options", value: "nosniff" },
-        // ⚠ لا `X-Frame-Options: DENY` هنا كما في مدونتي: صفحة الدفع تركّب إطار
-        // المزوّد (3DS) داخلها، والحظر المطلق يمنع التحقّق من البطاقة. الحماية المطلوبة
-        // هي ألّا يُؤطَّر موقعنا نحن — وهي `frame-ancestors` في CSP يوم تُكتب (PAY-S3).
+        /**
+         * ⚠ لا `X-Frame-Options: DENY` هنا كما في مدونتي: صفحة الدفع تركّب إطار
+         * المزوّد (3DS) داخلها، والحظر المطلق يمنع التحقّق من البطاقة. الحماية المطلوبة
+         * هي ألّا يُؤطَّر موقعنا نحن — وهي `frame-ancestors`.
+         *
+         * كُتبت الآن (فحصٌ حيّ ١٥ سبتمبر ٢٠٢٦): `curl -sI pay.modonty.com/sa/checkout`
+         * رجع HSTS و`Referrer-Policy` و`nosniff` و`Permissions-Policy` **ولا واحدة**
+         * من `X-Frame-Options` أو `Content-Security-Policy` — فصفحةٌ يُدخَل فيها رقم
+         * بطاقة كانت تُؤطَّر في أي موقع، وهو نقر-الاختطاف بعينه.
+         *
+         * و`frame-ancestors` وحدها بلا بقيّة التوجيهات عمداً: هي تحكم **من يؤطّرنا**،
+         * ولا تمسّ `frame-src` — أي أن تركيب إطار إنجينيس (3DS) داخلنا يبقى كما هو.
+         * وسياسةٌ كاملة تحتاج جرد كل نصٍّ وأصلٍ خارجيّ، وأي سهوٍ فيها يكسر مسار المال.
+         */
+        { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
         { key: "X-XSS-Protection", value: "1; mode=block" },
         { key: "Referrer-Policy", value: "origin-when-cross-origin" },
         { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
