@@ -49,6 +49,10 @@
   ul{margin:8px 0;padding-inline-start:22px} li{margin:4px 0}
   .num{font-variant-numeric:tabular-nums;font-weight:700}
   .muted{color:var(--muted);font-size:12.5px}
+  .pend{display:inline-block;min-width:34px;text-align:center;font-weight:800;
+    color:var(--amber);background:var(--amber-bg);border:1px dashed var(--amber);
+    border-radius:6px;padding:1px 8px}
+  tr.money td{background:color-mix(in srgb, var(--red-bg) 45%, transparent)}
   .foot{color:var(--muted);font-size:12.5px;margin-top:40px;border-top:1px solid var(--line);padding-top:14px}
 </style>
 </head>
@@ -179,96 +183,145 @@
   إلى «جبر سيو» — يخصّ <code>/campaigns/reports/jbrseo</code>، فبقي.
 </p>
 
-<h2>٤ · الأسعار</h2>
+<h2>٤ · الأسعار — لوحة القرار</h2>
 
 <div class="flag red">
-  <b>المشكلة في سطر واحد:</b> عندنا نظاما أسعار. المشتري يدفع على الأوّل، والأدمن يشتغل
-  على الثاني — وأرقامهما مختلفة.
+  <b>عندنا نظاما أسعار.</b> المشتري يدفع على صفحة الدفع، والأدمن يشتغل على نظام قديم —
+  وأرقامهما مختلفة. النتيجة: عميل يدفع مقابل ١٢ مقالاً ونعطيه ٨.
 </div>
 
-<h3>باقة «الزخم» في السعودية — أربعة أرقام</h3>
+<h3>أ · الفرق بالأرقام</h3>
 
 <div class="scroll">
 <table>
-  <thead><tr><th>الشاشة</th><th>السعر</th><th>المقالات</th><th>صحيح؟</th></tr></thead>
+  <thead><tr><th>الباقة</th><th>الأدمن — القديم</th><th>صفحة الدفع — المرجع</th><th>الفرق</th></tr></thead>
   <tbody>
-    <tr><td>صفحة الدفع — <b>ما يدفعه العميل</b></td>
-        <td class="num">١٬١٩٩</td><td class="num">١٢</td>
-        <td><span class="tag t-live">هذا المرجع</span></td></tr>
-    <tr><td>شاشة الباقات</td><td class="num">١٬١٩٩</td><td class="num">٨</td>
-        <td>المقالات غلط</td></tr>
-    <tr><td><b>إنشاء عميل جديد</b></td><td class="num">١٬٠٣٩</td><td class="num">٨</td>
-        <td>الاثنان غلط</td></tr>
-    <tr><td>دليل الفريق</td><td class="num">١٬٢٩٩</td><td>—</td>
-        <td>السعر غلط</td></tr>
+    <tr><td>الانطلاقة</td><td class="num">٤٩٩ · ٤ مقالات</td><td class="num">٣٩٩ · ٨ مقالات</td><td>−١٠٠ ر.س · ضعف المقالات</td></tr>
+    <tr><td>الزخم</td><td class="num">١٬٢٩٩ · ٨</td><td class="num">١٬١٩٩ · ١٢</td><td>−١٠٠ ر.س · +٤</td></tr>
+    <tr><td>الريادة</td><td class="num">٢٬٩٩٩ · ١٢</td><td class="num">٢٬٩٩٩ · ١٦</td><td>السعر واحد · +٤</td></tr>
   </tbody>
 </table>
 </div>
 
-<p><b>وش يصير عملياً:</b> عميل يشتري «الزخم» بـ١٬١٩٩ وله ١٢ مقالاً. ندخله في الأدمن،
-فيُسجَّل على ١٬٠٣٩ وله ٨ مقالات. الفرق يظهر أوّل شهر — نعطيه ٨ وهو دافع مقابل ١٢.</p>
+<p>و«الزخم» وحده يُعرض بـ<b>أربعة أرقام</b> حسب الشاشة: ١٬١٩٩ على صفحة الدفع ·
+١٬١٩٩ على شاشة الباقات · <b>١٬٠٣٩</b> في إنشاء عميل · <b>١٬٢٩٩</b> في دليل الفريق.
+<span class="muted">السبب: حقل <code>pricing</code> في القاعدة <code>null</code> في الصفوف الأربعة،
+فيسقط الكود على جدولٍ مكتوبٍ داخل الكود فيه سعرٌ شهريّ وآخر سنويّ.</span></p>
 
-<h3>الفرق كامل</h3>
-
-<div class="scroll">
-<table>
-  <thead><tr><th>الباقة</th><th>الأدمن (القديم)</th><th>صفحة الدفع (الصحيح)</th></tr></thead>
-  <tbody>
-    <tr><td>الانطلاقة</td><td class="num">٤٩٩ · ٤ مقالات</td><td class="num">٣٩٩ · ٨ مقالات</td></tr>
-    <tr><td>الزخم</td><td class="num">١٬٢٩٩ · ٨</td><td class="num">١٬١٩٩ · ١٢</td></tr>
-    <tr><td>الريادة</td><td class="num">٢٬٩٩٩ · ١٢</td><td class="num">٢٬٩٩٩ · ١٦</td></tr>
-  </tbody>
-</table>
-</div>
-
-<h3>الشاشات اللي لازم تتصلّح — ستّ</h3>
+<h3>ب · الشاشات الثمانية — ووين تلقاها</h3>
 
 <div class="scroll">
 <table>
-  <thead><tr><th>الشاشة</th><th>وش فيها</th><th>خطرها</th></tr></thead>
+  <thead><tr>
+    <th>#</th><th>الشاشة</th><th>وين تلقاها</th><th>الغلط الحالي</th>
+    <th>المقترح</th><th>قرار خالد</th>
+  </tr></thead>
   <tbody>
-    <tr><td><code>/clients/new</code></td><td>تختار الباقة، والمبلغ المدفوع يتعبّى لحاله</td>
-        <td><span class="tag t-risk">فلوس</span></td></tr>
-    <tr><td><code>/clients/[id]/account</code></td><td>الفواتير والمستحق</td>
-        <td><span class="tag t-risk">فلوس</span></td></tr>
-    <tr><td><code>/clients/[id]/edit</code></td><td>تغيير باقة عميل قائم</td>
-        <td><span class="tag t-risk">فلوس</span></td></tr>
-    <tr><td><code>/subscription-tiers</code></td><td>عرض الباقات للسوقين</td><td>عرض فقط</td></tr>
-    <tr><td><code>/playbook/sales</code></td><td>صفحة للفريق</td><td>عرض فقط</td></tr>
-    <tr><td><code>/playbook/segments</code></td><td>صفحة للفريق</td><td>عرض فقط</td></tr>
+    <tr>
+      <td class="num">١</td>
+      <td>عدد المقالات<br><span class="muted">مو شاشة — رقم في القاعدة</span></td>
+      <td>—</td>
+      <td class="num">٤ / ٨ / ١٢</td>
+      <td>يصير <b>٨ / ١٢ / ١٦</b></td>
+      <td class="pend">؟</td>
+    </tr>
+    <tr>
+      <td class="num">٢</td><td>دليل المبيعات</td>
+      <td>الهيدر ← <b>دليل الفريق</b> ← المبيعات</td>
+      <td>الزخم <span class="num">١٬٢٩٩</span></td>
+      <td>ياخذ السعر من صفحة الدفع</td>
+      <td class="pend">؟</td>
+    </tr>
+    <tr>
+      <td class="num">٣</td><td>دليل الشرائح</td>
+      <td>الهيدر ← <b>دليل الفريق</b> ← الشرائح</td>
+      <td>الزخم <span class="num">١٬٢٩٩</span></td>
+      <td>نفسه</td>
+      <td class="pend">؟</td>
+    </tr>
+    <tr>
+      <td class="num">٤</td><td>الباقات التشغيلية</td>
+      <td>الهيدر ← <b>المبيعات</b> ← الباقات التشغيلية</td>
+      <td>مقالات غلط · سعران لكل باقة</td>
+      <td>تُصلَّح <b>أو تُحذف</b> — الكتالوج يغني عنها</td>
+      <td class="pend">؟</td>
+    </tr>
+    <tr class="money">
+      <td class="num">٥</td>
+      <td>إنشاء عميل جديد <span class="tag t-risk">فلوس</span></td>
+      <td>السايدبار ← <b>Clients</b> ← New Client</td>
+      <td>الزخم <span class="num">١٬٠٣٩</span> · ٨ مقالات<br>والمبلغ المدفوع يتعبّى منها</td>
+      <td>بطاقات الباقة من صفحة الدفع</td>
+      <td class="pend">؟</td>
+    </tr>
+    <tr class="money">
+      <td class="num">٦</td>
+      <td>حساب العميل والفواتير <span class="tag t-risk">فلوس</span></td>
+      <td>السايدبار ← <b>Clients</b> ← All Clients ← افتح عميل</td>
+      <td>الفاتورة والمستحق من القديم</td>
+      <td>آخر شي — غلطها يوصل العميل</td>
+      <td class="pend">؟</td>
+    </tr>
+    <tr class="money">
+      <td class="num">٧</td>
+      <td>تعديل العميل <span class="tag t-risk">فلوس</span></td>
+      <td>نفس الطريق ← افتح عميل ← تعديل</td>
+      <td>تغيير الباقة بأسعار قديمة</td>
+      <td>مع رقم ٦</td>
+      <td class="pend">؟</td>
+    </tr>
+    <tr>
+      <td class="num">٨</td><td>حذف الكود القديم</td><td>—</td><td>—</td>
+      <td>بعد ما تخلص ١–٧ وما يبقى شي يستخدمه</td>
+      <td class="pend">؟</td>
+    </tr>
   </tbody>
 </table>
 </div>
 
 <p class="muted">٤٥ ملفّاً يذكر النظام القديم، لكن أكثرها يقرأ <b>اسم</b> الباقة لا سعرها.
-هذي الستّ وحدها اللي تعرض رقماً.</p>
+هذي الثمانية وحدها اللي تعرض رقماً. مقيسٌ حيّاً ١٥ سبتمبر ٢٠٢٦ على <code>localhost:3001</code>.</p>
 
-<h3>ترتيب الشغل</h3>
+<h3>ج · هذا الشغل على لوحة التاسكات من قبل</h3>
+
+<p>البنود موجودة في <code>TASK.html</code> ← لوحة <b>🔗 جبر سيو</b>، تحت <b>المرحلة ٧</b>
+(<code>PAY-P7</code>). وشرطك مكتوب فيها: «بعد ما نبني System كامل تبع الـpayment، بعد كده
+هنراجع الـcode» — فلا تبدأ قبل إغلاق <code>PAY-P6</code> (الإطلاق).</p>
 
 <div class="scroll">
 <table>
-  <thead><tr><th>#</th><th>نسوي</th><th>ليش بهذا الترتيب</th></tr></thead>
+  <thead><tr><th>البطاقة</th><th>موضوعها</th><th>الحالة</th><th>وش ينقصها من جرد اليوم</th></tr></thead>
   <tbody>
-    <tr><td class="num">١</td><td>نصلّح عدد المقالات: ٤/٨/١٢ ← ٨/١٢/١٦</td>
-        <td>هذا وعد للعميل. أسرع شي وأهمّه.</td></tr>
-    <tr><td class="num">٢</td><td>صفحتا دليل الفريق</td>
-        <td>قراءة بس، ما فيها فلوس — نجرّب عليها أوّلاً.</td></tr>
-    <tr><td class="num">٣</td><td>شاشة الباقات</td>
-        <td>عرض. وسؤال: نخلّيها ولا نشيلها؟</td></tr>
-    <tr><td class="num">٤</td><td>إنشاء عميل جديد</td>
-        <td>أوّل شاشة فيها فلوس.</td></tr>
-    <tr><td class="num">٥</td><td>الفواتير وتعديل العميل</td>
-        <td>آخر شي — غلطها يوصل العميل.</td></tr>
-    <tr><td class="num">٦</td><td>نحذف الكود القديم</td>
-        <td>بعد ما يصير ما فيه شي يستخدمه.</td></tr>
+    <tr><td><code>PAY-P7</code></td><td>المرحلة ٧ — المراجعة والتوحيد</td><td>مفتوحة</td>
+        <td>الترتيب الثماني أعلاه</td></tr>
+    <tr><td><code>PAY-STUDY-ADMIN</code></td><td>الباقات في الأدمن — ثلاثة أماكن</td>
+        <td><span class="tag t-risk">حرجة</span></td><td>أماكن السايدبار</td></tr>
+    <tr><td><code>PAY-A9</code></td><td>«الباقات التشغيلية» — تُحوَّل أو تُطفأ</td><td>مفتوحة</td>
+        <td>بند ٤ أعلاه</td></tr>
+    <tr><td><code>PAY-A11</code></td><td>باقة العميل تُطابَق بالاسم العربي</td><td>مفتوحة</td>
+        <td>—</td></tr>
+    <tr><td><code>PAY-R5</code></td><td>أسعار صفحات الدليل ← الكتالوج</td><td>مفتوحة</td>
+        <td><b>تقول ٧ صفحات تحت <code>guidelines/</code> — والمسار اليوم <code>playbook/</code> وصفحتان</b></td></tr>
+    <tr><td><code>PAY-R6</code></td><td>تجميد النظام القديم — جسر قراءة</td><td>مفتوحة</td>
+        <td>—</td></tr>
+    <tr><td><code>PAY-R7</code></td><td>الجرد النهائي — صفر مصدر قديم</td>
+        <td><span class="tag t-risk">حرجة</span></td><td>—</td></tr>
   </tbody>
 </table>
 </div>
 
 <div class="flag amber">
-  <b>سؤال قبل ما نبدأ:</b> عند العميل فيه تصنيف <code>FREE / STANDARD / PRO</code> —
-  هذا مو سعر، هذا صلاحيات وحدود، ويقرأه ٤٥ ملفّاً. أرى نخلّيه مكانه، والسعر وعدد
-  المقالات ياخذهما من صفحة الدفع وبس. توافق؟
+  <b>ثلاثة أشياء كشفها جرد اليوم وليست في تلك البطاقات:</b>
+  <br>١ · الفرق <b>مو سعر فقط</b> — عدد المقالات ٤/٨/١٢ مقابل ٨/١٢/١٦، وهذا وعدٌ للعميل يظهر أوّل شهر.
+  <br>٢ · ثلاث شاشات <b>تمسّ فلوساً</b> (إنشاء عميل · الفواتير · تعديل العميل) — و<code>PAY-R5</code> تتكلّم عن صفحات الدليل وحدها.
+  <br>٣ · <code>PAY-R5</code> مبنيّة على مسارٍ قديم (<code>guidelines/</code>) لم يعد موجوداً.
+</div>
+
+<div class="flag amber">
+  <b>سؤال قبل البداية.</b> عند كل عميل تصنيف <code>FREE / STANDARD / PRO</code> — هذا
+  <b>مو سعر</b>، هذا صلاحيات وحدود، ويقرأه ٤٥ ملفّاً.
+  <br>المقترح: يبقى مكانه ولا نلمسه · والسعر وعدد المقالات من صفحة الدفع وبس.
+  <br><b>قرارك:</b> <span class="pend">؟</span>
 </div>
 
 <h2>٥ · مواضع متفرّقة تحمل الاسم</h2>
