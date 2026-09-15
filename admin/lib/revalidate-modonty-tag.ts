@@ -22,6 +22,16 @@ async function getModontyBaseUrl(baseUrl?: string | null): Promise<string | null
  */
 const PAYMENT_TAGS = new Set<string>(["commercial-catalog"]);
 
+/**
+ * وسومٌ يقرؤها التطبيقان معاً، فتُبطَّل في الاثنين لا في أحدهما.
+ *
+ * `settings` منها: مدونتي تقرأ منه الشعار والحسابات، والبيمنت يقرأ منه نفسها **زائداً**
+ * السجلّ القانوني الذي يُطبع في نموذج العقد (`payment/app/data/get-seller-legal.ts`).
+ * وقبل هذا السطر كان يذهب إلى مدونتي وحدها، فيبقى رقم السجلّ القديم في عقدٍ يقرؤه
+ * المشتري قبل الدفع — بلا أي أثرٍ يدلّ على ذلك.
+ */
+const SHARED_TAGS = new Set<string>(["settings"]);
+
 async function getPaymentBaseUrl(): Promise<string | null> {
   if (process.env.NODE_ENV === "development") {
     return process.env.PAYMENT_LOCAL_URL?.trim() || "http://localhost:3003";
@@ -38,8 +48,13 @@ export async function revalidateModontyTag(
   baseUrl?: string | null
 ): Promise<void> {
   try {
-    const url = PAYMENT_TAGS.has(tag) ? await getPaymentBaseUrl() : await getModontyBaseUrl(baseUrl);
-    if (!url) return;
+    const targets = PAYMENT_TAGS.has(tag)
+      ? [await getPaymentBaseUrl()]
+      : SHARED_TAGS.has(tag)
+        ? [await getModontyBaseUrl(baseUrl), await getPaymentBaseUrl()]
+        : [await getModontyBaseUrl(baseUrl)];
+    const urls = targets.filter((u): u is string => Boolean(u));
+    if (urls.length === 0) return;
     const secret = process.env.REVALIDATE_SECRET;
 
     if (!secret) {
@@ -49,15 +64,20 @@ export async function revalidateModontyTag(
       return;
     }
 
-    const res = await fetch(`${url}/api/revalidate/tag`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tag, secret }),
-    });
-
-    if (!res.ok) {
-      console.error(`[revalidateModontyTag] Failed to revalidate tag "${tag}" on ${url} — status ${res.status}`);
-    }
+    // `allSettled` لا `all`: تطبيقٌ ساقط يجب ألّا يمنع إبطال الآخر — وأكشن الحفظ في
+    // الأدمن لا يفشل لأن أحد المستهلكَين لم يردّ.
+    await Promise.allSettled(
+      urls.map(async (url) => {
+        const res = await fetch(`${url}/api/revalidate/tag`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tag, secret }),
+        });
+        if (!res.ok) {
+          console.error(`[revalidateModontyTag] Failed to revalidate tag "${tag}" on ${url} — status ${res.status}`);
+        }
+      }),
+    );
   } catch (error) {
     console.error(`[revalidateModontyTag] Network error revalidating tag "${tag}" — modonty may be down:`, error instanceof Error ? error.message : error);
   }

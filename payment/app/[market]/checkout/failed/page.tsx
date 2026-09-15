@@ -69,7 +69,7 @@ export default async function CheckoutFailedPage({
       <main className="mx-auto max-w-xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8" dir="rtl">
         <div className="mb-8 text-center">
           <div className="inline-flex h-20 w-20 items-center justify-center rounded-full border-2 border-destructive/40 bg-destructive/10 shadow-lg shadow-destructive/20">
-            <XCircle className="h-11 w-11 text-destructive" strokeWidth={2.5} />
+            <XCircle className="h-11 w-11 text-destructive-ink" strokeWidth={2.5} />
           </div>
           <h1 className="mt-6 text-2xl font-black text-foreground sm:text-3xl">الدفع لم يكتمل</h1>
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
@@ -79,8 +79,8 @@ export default async function CheckoutFailedPage({
         </div>
 
         <div className="mb-6 rounded-2xl border border-destructive/25 bg-destructive/5 p-5 sm:p-6">
-          <p className="mb-3 text-xs font-semibold text-destructive/80">سبب الفشل</p>
-          <p className="mb-2 text-[15px] font-semibold text-destructive">{resolved.title}</p>
+          <p className="mb-3 text-xs font-semibold text-destructive-ink">سبب الفشل</p>
+          <p className="mb-2 text-[15px] font-semibold text-destructive-ink">{resolved.title}</p>
           <p className="text-[13px] leading-relaxed text-muted-foreground">{resolved.hint}</p>
           {row && (
             <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-destructive/20 pt-3 text-xs">

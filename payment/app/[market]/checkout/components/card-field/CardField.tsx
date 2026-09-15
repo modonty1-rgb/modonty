@@ -289,14 +289,14 @@ export const CardField = forwardRef<NGeniusHandle, Props>(function CardField(
           )}
         >
           <div className="flex items-center gap-2.5 border-b border-border p-4">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/10 text-success-ink">
               <ShieldCheck className="h-4 w-4" strokeWidth={2.25} />
             </div>
             <div className="flex-1 text-start">
               <p id="ngenius-3ds-title" className="text-[14px] font-bold leading-tight text-foreground">التحقّق من بنكك</p>
               <p className="mt-0.5 text-[11px] text-muted-foreground">أدخل رمز التحقق (OTP) لإتمام الدفع</p>
             </div>
-            <span className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-emerald-600">
+            <span className="inline-flex items-center gap-1 text-[10.5px] font-bold text-success-ink">
               <Loader2 className="h-3 w-3 animate-spin" strokeWidth={3} />
               قيد التحقق
             </span>
@@ -335,7 +335,7 @@ export const CardField = forwardRef<NGeniusHandle, Props>(function CardField(
         <div className="inline-flex items-center gap-1.5 text-[10.5px] font-medium text-neutral-600">
           <Lock className="h-3.5 w-3.5 text-emerald-600" strokeWidth={2.5} />
           <span>تشفير SSL 256-bit</span>
-          <span className="text-neutral-300">·</span>
+          <span className="text-neutral-500" aria-hidden>·</span>
           <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" strokeWidth={2.5} />
           <span>PCI DSS</span>
         </div>

@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
+
+import { WhatsappFab } from "./components/whatsapp-fab/WhatsappFab";
 import { Tajawal, Montserrat } from "next/font/google";
 
 import "./globals.css";
+import { payPublicUrl } from "@/lib/pay-public-url";
 import { ThemeProvider } from "./theme-provider";
 
 /**
@@ -39,11 +42,45 @@ const montserrat = Montserrat({
   preload: true,
 });
 
+/**
+ * بطاقة المشاركة — ما يراه من يرى رابط الإعلان قبل أن يضغطه.
+ *
+ * لماذا أُضيفت (خالد ١٥ سبتمبر ٢٠٢٦: «عندي حملة إعلانية فلا تخسرني فلوس»): قيس على
+ * السيرفر المحلّي — الصفحة كانت تُرسل **صفر** وسوم `og:` و`twitter:`. فرابطٌ يُلصق في
+ * إعلان ميتا أو في واتساب يُرسَم بطاقةً عارية: بلا صورة ولا عنوان ولا وصف، عنوانٌ خامٌ
+ * وحده. وبطاقةٌ عارية في إعلانٍ مدفوع تخفض النقر وتُضعف مراجعة الإعلان.
+ *
+ * و`metadataBase` شرطٌ لا زينة: بدونه تُطبع الصورة بمسارٍ **نسبيّ**، وبوت المعاينة لا
+ * يملك أصلاً يحلّه عليه فيسقطها. ويُقرأ من `payPublicUrl()` نفسه الذي تبني به البوّابة
+ * روابط العودة — مصدرٌ واحد، فلا ينفرط عنوانٌ عن عنوان.
+ *
+ * والفهرسة تبقى مغلقة: `robots: index:false` هنا، و`robots.txt` يفتح الزحف لبوتات
+ * المعاينة وحدها على صفحتَي التسويق. الزحف والفهرسة قراران منفصلان.
+ */
 export const metadata: Metadata = {
+  metadataBase: new URL(payPublicUrl()),
   title: "الباقات والدفع",
+  description:
+    "منصّة سعودية ١٠٠٪ لإدارة محتوى مدوّنتك — اختر باقتك وابدأ الانتشار. فاتورة ضريبية معتمدة، ودفع آمن عبر مدى وفيزا وماستركارد وآبل باي وتمارا.",
   // لا فهرسة لمسار الدفع: صفحات النتيجة والطلب لا مكان لها في نتائج البحث.
   // صفحة الباقات وحدها تصرّح بعكس ذلك في `generateMetadata` الخاصّ بها.
   robots: { index: false, follow: false },
+  openGraph: {
+    type: "website",
+    locale: "ar_SA",
+    siteName: "مدونتي",
+    url: "/",
+    title: "مدونتي — منصّة سعودية ١٠٠٪ لإدارة محتوى مدوّنتك",
+    description:
+      "اختر باقتك وابدأ الانتشار. فاتورة ضريبية معتمدة، ودفع آمن عبر مدى وفيزا وماستركارد وآبل باي وتمارا.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "مدونتي — باقات إدارة المحتوى" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "مدونتي — منصّة سعودية ١٠٠٪ لإدارة محتوى مدوّنتك",
+    description: "اختر باقتك وابدأ الانتشار. فاتورة ضريبية معتمدة ودفع آمن.",
+    images: ["/og.png"],
+  },
 };
 
 export const viewport: Viewport = {
@@ -63,6 +100,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="bg-background font-sans">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
+          {/* في التخطيط لا في كل صفحة: الزرّ يخصّ المسار كلّه، ووضعه في كل صفحة يعني
+              أربعة مواضع تُنسى واحدةٌ منها — وهي غالباً صفحة الفشل، حيث يحتاجه أكثر.
+              ونصُّه محايد هنا لأن التخطيط لا يعرف أي صفحة يرسم؛ والصفحات التي تعرف
+              سياقها (الفشل · الطلب) تمرّر نصّها الخاصّ من `salesWhatsappWithText`. */}
+          <WhatsappFab text="مرحباً، عندي سؤال عن باقات مدونتي" />
         </ThemeProvider>
       </body>
     </html>

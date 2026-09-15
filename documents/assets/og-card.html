@@ -1,0 +1,53 @@
+<!--
+  مصدر بطاقة المشاركة `payment/public/og.png` (١٢٠٠×٦٣٠).
+
+  ليش ملفّ HTML لا صورة مرسومة: البطاقة تحمل الشعار والعلم وشعارات الدفع من
+  `payment/public/` نفسها، وخطّ Tajawal نفسه — فتتغيّر معها ولا تتقادم. ولا مكتبة
+  ولا خدمة خارجية: تُفتح على سيرفر التطوير وتُلتقط.
+
+  إعادة التوليد:
+    1) انسخ هذا الملفّ مؤقّتاً إلى `payment/public/_og-card.html`
+    2) شغّل `payment` على ٣٠٠٣، وافتح `http://localhost:3003/_og-card.html` بعرض ١٢٠٠×٦٣٠
+    3) التقط اللقطة إلى `payment/public/og.png` بقصٍّ ١٢٠٠×٦٣٠
+    4) احذف النسخة المؤقّتة من `public/`
+
+  ولا يبقى في `public/`: كل ما فيه يُخدَم علناً، وقالبٌ نصفُ مصمَّم ليس مما يُنشر.
+-->
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=block" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1200px;height:630px;font-family:Tajawal,sans-serif;background:#0E065A;color:#fff;
+ display:flex;flex-direction:column;justify-content:center;padding:0 88px;position:relative;overflow:hidden}
+body::before{content:"";position:absolute;inset:0;
+ background:radial-gradient(900px 520px at 88% 12%, rgba(92,92,255,.42), transparent 62%),
+            radial-gradient(700px 460px at 6% 96%, rgba(0,209,209,.24), transparent 60%)}
+.in{position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:16px;margin-bottom:40px}
+.brand img{height:54px;width:auto}
+.brand span{font-size:30px;font-weight:800;letter-spacing:-.01em}
+h1{font-size:74px;font-weight:900;line-height:1.18;letter-spacing:-.02em;max-width:940px}
+h1 em{font-style:normal;color:#00D1D1}
+p{margin-top:26px;font-size:30px;font-weight:500;line-height:1.55;color:rgba(255,255,255,.82);max-width:880px}
+.row{margin-top:46px;display:flex;align-items:center;gap:14px}
+.pill{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);
+ border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:12px 22px;font-size:23px;font-weight:700}
+.pill img{height:30px;width:auto;border-radius:3px}
+.marks{margin-inline-start:auto;display:flex;align-items:center;gap:12px}
+.marks span{display:inline-flex;align-items:center;justify-content:center;background:#fff;border-radius:9px;padding:9px 13px}
+.marks img{height:26px;width:auto}
+</style></head><body><div class="in">
+<div class="brand"><img src="http://localhost:3003/modonty-mark.svg" alt=""><span>مدونتي</span></div>
+<h1>اختر باقتك <em>وابدأ الانتشار</em></h1>
+<p>مقالاتٌ تُكتب، وظهورٌ يتحسّن، ونشرٌ منتظم — بفريقٍ سعودي.</p>
+<div class="row">
+  <span class="pill"><img src="http://localhost:3003/logos/flag-sa.svg" alt="">منصّة سعودية ١٠٠٪</span>
+  <span class="pill">فاتورة ضريبية معتمدة</span>
+  <span class="marks">
+    <span><img src="http://localhost:3003/logos/mada.svg" alt=""></span>
+    <span><img src="http://localhost:3003/logos/visa.svg" alt=""></span>
+    <span><img src="http://localhost:3003/logos/mastercard.svg" alt=""></span>
+    <span><img src="http://localhost:3003/logos/apple-pay.svg" alt=""></span>
+  </span>
+</div></div></body></html>

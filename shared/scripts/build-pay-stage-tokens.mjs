@@ -174,6 +174,22 @@ ${render(darkContrast).replace(/^/gm, "    ")}
   * {
     @apply border-border;
   }
+
+  /**
+   * لون نصّ الجسم — التوكن الغائب الذي أعاد العطل مرّتين.
+   *
+   * المولّد كان ينقل التوكنات وسطر الحدود ولا ينقل قاعدة \`body\` من مدونتي
+   * (\`modonty/app/globals.css:325\`). فلا شيء يضبط \`color\` على الجسم، ويسقط على
+   * افتراضيّ المتصفّح — وهو **أبيض** تحت \`color-scheme: dark\`. فكان السعر والهوك
+   * وكل نصٍّ لا يحمل لوناً صريحاً يُرسم أبيض على سطحٍ أبيض في الوضع الفاتح
+   * (قياس ١٥ سبتمبر ٢٠٢٦: \`body color: rgb(255,255,255)\` و\`--foreground\` navy).
+   *
+   * وموضع الإصلاح هنا لا في \`payment/app/globals.css\`: ذاك مولَّد، وأيّ تصحيحٍ فيه
+   * يُمحى عند أوّل \`node shared/scripts/build-pay-stage-tokens.mjs\`.
+   */
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
 }
 `;
 

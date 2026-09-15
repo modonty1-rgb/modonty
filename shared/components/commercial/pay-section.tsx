@@ -67,6 +67,10 @@ export interface PaySectionProps {
   emptyState?: ReactNode;
   /** شريحة الباقة القادمة من جدول المقارنة في الأوفرفيو — تُحاط بحلقة وتُعطى مرساة. */
   highlightPlanSlug?: string | null;
+  /** `h1` افتراضاً — يُنزَّل إلى `h2` في شاشةٍ تحمل عنوانها الخاصّ (معاينة الأدمن). */
+  headingLevel?: "h1" | "h2";
+  /** رابط جدول المقارنة — يُمرَّر حين توجد صفحةٌ تحمله. */
+  compareHref?: string | null;
 }
 
 export function PaySection({
@@ -86,6 +90,8 @@ export function PaySection({
   paymentFootnote = null,
   emptyState = null,
   highlightPlanSlug = null,
+  headingLevel = "h1",
+  compareHref = null,
 }: PaySectionProps) {
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-5">
@@ -99,9 +105,14 @@ export function PaySection({
          * مجاناً») يُقرأ ككتلة فتضيع الهدية داخله — وهي أقوى ما في العرض.
          */
         <div className="pt-2">
-          <div
-            className="mx-auto grid w-full max-w-96 rounded-[14px] bg-muted p-1.5 text-sm font-medium"
-            role="tablist"
+          <nav
+            /* حدٌّ على الشريط (قياس ١٤ سبتمبر ٢٠٢٦): `bg-muted` يُخرج rgb(245,245,245)
+               وخلفية الصفحة rgb(243,243,241) — نسبتهما **١٫٠١:١**، فالشريط غير مرئيّ
+               أصلاً ولا يُقرأ عنصرَ تحكّمٍ بل نصّاً متناثراً. والحدّ يجعله مجموعةً واحدة. */
+            className="mx-auto grid w-full max-w-96 rounded-[14px] border border-foreground/15 bg-muted p-1.5 text-sm font-medium"
+            /* `nav` لا `tablist` (قياس ١٤ سبتمبر ٢٠٢٦): الأدوار كانت تَعِد قارئ الشاشة
+               بلوحاتٍ تُبدَّل بالأسهم — و`aria-controls` كان `null` و`role="tabpanel"` صفراً.
+               والواقع ثلاثة روابط تنقل الصفحة، فـ`nav` + `aria-current` يصفها كما هي. */
             aria-label="مدة الاشتراك"
             style={{ gridTemplateColumns: `repeat(${catalog.terms.length}, minmax(0, 1fr))` }}
           >
@@ -115,32 +126,37 @@ export function PaySection({
                   // مدّة — وميضٌ وفقدُ موضع التمرير في أكثر عنصر يُضغط في صفحة بيع.
                   // و`scroll={false}` يُبقي العين على البطاقات بدل القفز إلى الأعلى.
                   scroll={false}
-                  aria-current={isActive ? "true" : undefined}
-                  role="tab"
-                  aria-selected={isActive}
+                  aria-current={isActive ? "page" : undefined}
                   className={cx(
-                    "relative rounded-[11px] px-2 py-3 text-center text-[15px] font-bold",
+                    "relative rounded-[11px] px-2 pb-3 pt-6 text-center text-[15px] font-bold",
                     // حلقة الخانة صريحة أيضاً: الافتراضية ٠٫٦٧px بلون قاتم، تختفي على
                     // السطح الداكن. والمدّة أوّل ما يُضغط في الصفحة (WCAG 2.4.7).
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                     isActive
-                      ? "bg-card text-foreground shadow-[0_1px_3px_color-mix(in_oklch,var(--foreground)_8%,transparent)]"
-                      : "bg-transparent text-muted-foreground",
+                      // الخانة المختارة: سطحٌ وحدٌّ وظلّ معاً. السطح وحده كان
+                      // rgb(255,255,255) على شريطٍ rgb(245,245,245) — **١٫٠٥:١**، أي أن
+                      // «المختارة» لم تكن تُرى مختارةً في الوضع الفاتح. والحدّ يرفعها فوق
+                      // حدّ WCAG 1.4.11 (٣:١)، والظلّ يعطيها الارتفاع.
+                      ? "bg-card text-foreground border border-foreground/25 shadow-[0_1px_2px_rgba(0,0,0,.06),0_4px_10px_-4px_rgba(14,6,90,.25)]"
+                      : "border border-transparent bg-transparent text-muted-foreground",
                   )}
                 >
                   {termTabLabel(term.paidMonths)}
-                  {/* شارة واحدة لكل خانة، تقول **الهدية** لا رأياً. حين كانت خانة تحمل
-                      «الأنسب» وأخرى تحمل عرضاً، صارت الخانتان موسومتين على مقياسين
-                      مختلفين — توصيةٌ مقابل عرض — ولا تُقارنان بالثالثة العارية. بالهدية
-                      تصطفّ الثلاث على مقياس واحد: لا شيء · شهر · ستّة. وحقيقةٌ يتحقّق
-                      منها القارئ أقوى من كلمة تملي عليه ما يفضّل.
-                      ولونان: الموصى بها بلون العلامة، وغيرها بلون العرض — فالتوصية
-                      تُقرأ من اللون بلا كلمة إضافية. */}
+                  {/* الهدية شارةٌ صغيرة في **جنب** الخانة لا في وسط حافّتها (خالد ١٤
+                      سبتمبر ٢٠٢٦). المركزية كانت تتّسع أعرض من خانتها فتركب جارتها
+                      وتُقصّ («٦ شهور مجاناً» قُصّت فعلاً)، والجنب يترك لها مهرباً.
+                      و٩٫٥px بحشوةٍ ضيّقة: هي حاشيةٌ على المدّة لا عنوانٌ ينافسها. */}
                   {term.bonusServiceMonths > 0 ? (
                     <span
                       className={cx(
-                        "absolute -top-2.5 start-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-bold rtl:translate-x-1/2",
-                        term.isRecommended ? "bg-primary text-primary-foreground" : "bg-star text-foreground",
+                        "pointer-events-none absolute top-1 end-1 whitespace-nowrap rounded-full px-1.5 py-[1px] text-[9.5px] font-normal leading-[1.5]",
+                        /* `action-save-foreground` لا `foreground` على الكهرماني (قياس ١٥ سبتمبر ٢٠٢٦).
+                           خلفية الشارة `--star` كهرمانيّة في السمتين، بينما `--foreground` ينقلب —
+                           فصار النصّ أبيض على كهرماني في الداكن: **١٫٨٣:١** (يلزم ٤٫٥:١).
+                           و`--action-save-foreground` معرَّف navy في `:root` و`.dark` معاً — أي
+                           لا ينقلب، لأنه صُمِّم لنصٍّ يجلس على سطحٍ ثابت اللون. النتيجة ٨٫٨١:١
+                           فاتحاً و٨٫٥٤:١ داكناً. */
+                        term.isRecommended ? "bg-primary text-primary-foreground" : "bg-star text-action-save-foreground",
                       )}
                     >
                       {bonusBadgeLabel(term.bonusServiceMonths)}
@@ -149,7 +165,7 @@ export function PaySection({
                 </Link>
               );
             })}
-          </div>
+          </nav>
         </div>
       ) : null}
 
@@ -160,7 +176,15 @@ export function PaySection({
 
       {content.headline || content.subheadline ? (
         <div className="text-center">
-          {content.headline ? <h2 className="text-xl font-extrabold">{content.headline}</h2> : null}
+          {/* `h1` لا `h2` (قياس ١٤ سبتمبر ٢٠٢٦: الصفحة كانت بلا `h1` إطلاقاً).
+              عنوان الصفحة هو هذا، وقارئ الشاشة يقفز إليه أوّلاً — وبلا رأسٍ من المستوى
+              الأوّل يبدأ من لا شيء. ويصير مستوى البطاقات `h2` تحته فتكتمل الشجرة.
+              والمستدعي الذي يملك `h1` خاصّاً به يمرّر `headingLevel="h2"`. */}
+          {content.headline ? (
+            headingLevel === "h2"
+              ? <h2 className="text-xl font-extrabold">{content.headline}</h2>
+              : <h1 className="text-xl font-extrabold">{content.headline}</h1>
+          ) : null}
           {content.subheadline ? <p className="mt-1 text-sm text-muted-foreground">{content.subheadline}</p> : null}
         </div>
       ) : null}
@@ -180,8 +204,6 @@ export function PaySection({
               ctaHref={ctaHref && selectedTerm ? ctaHref(plan.slug, selectedTerm.paidMonths) : null}
               installmentHref={installmentHref && selectedTerm ? installmentHref(plan.slug, selectedTerm.paidMonths) : null}
               installmentLabel={installmentLabel}
-              refundNote={refundNote}
-              payMarks={payMarks}
               installmentMark={installmentMark}
               anchorId={`plan-${plan.slug}`}
               highlighted={highlightPlanSlug === plan.slug}
@@ -189,6 +211,66 @@ export function PaySection({
           ))}
         </div>
       )}
+
+      {/* وعد الاسترداد مرّة واحدة تحت الشبكة لا في كل بطاقة (خالد ١٤ سبتمبر ٢٠٢٦).
+          كان يُطبع ثلاث مرّات في ثلاث بطاقات، والوعد المكرّر يفقد ثقله ويصير ضجيجاً —
+          وهو أصلاً يخصّ الاشتراك كلّه لا باقةً بعينها، فتكراره يوحي بأنه شرطٌ لكل واحدة
+          على حدة. وموضعه بعد الشبكة: يُقرأ بعد المقارنة، حين يتردّد لا حين يوازن. */}
+      {compareHref ? (
+        /* من وصل إلى الأسعار وتردّد بين باقتين لا سبيل له للمقارنة إلا الرجوع إلى
+           الأوفرفيو — والرجوع خروجٌ من صفحة الشراء. سطرٌ واحد يعيده إلى الجدول. */
+        <p className="pt-1 text-center">
+          <a
+            href={compareHref}
+            className="inline-flex h-11 items-center rounded-lg px-3 text-[13px] font-bold text-foreground underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30"
+          >
+            قارن الباقات ميزةً بميزة
+          </a>
+        </p>
+      ) : null}
+
+      {refundNote || priceNote ? (
+        <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 pt-1 text-[12px] font-medium text-muted-foreground">
+          {refundNote ? (
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden>✓</span>
+              {refundNote}
+            </span>
+          ) : null}
+          {/* نصّ الضريبة الكامل مرّة واحدة: البطاقة تحمل «شامل الضريبة» ملتصقة بالرقم
+              (وهو ما يلزم عند السعر)، والنسبة وصياغتها الرسمية تكفي هنا مرّة. */}
+          {priceNote ? <span>{priceNote}</span> : null}
+        </p>
+      ) : null}
+
+      {/* شعارات الدفع مرّة واحدة تحت الشبكة (خالد ١٤ سبتمبر ٢٠٢٦).
+          كانت تتكرّر في ذيل كل بطاقة — ومدى وفيزا وماستركارد **واحدة في الباقات الثلاث**
+          فليست فرقاً بينها، مثل وعد الاسترداد وسطر الضريبة تماماً.
+          ولا تُرفع فوق الشبكة: الشعارات طمأنينة، والطمأنينة تُقرأ عند التردّد لا قبل
+          المقارنة — ففوق تصير زينةً تؤخّر وصوله إلى الأسعار. وهنا تلتحق بجملتها في
+          `paymentFootnote` («الدفع بالبطاقة عبر بوابة معتمدة…») فيقرأ النصّ والشعار معاً.
+          أمّا شعار التقسيط فبقي داخل زرّه: هناك يقول من يموّل، لا من يقبل البطاقات. */}
+      {payMarks.length > 0 ? (
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+          <span className="text-[12px] font-medium text-muted-foreground">الدفع عبر</span>
+          {payMarks.map((m) => (
+            /* ⚠ **الاستثناء الوحيد من التوكنات في هذا المكوّن، ومقصود.** شعارات مدى وفيزا
+              وماستركارد وتمارا علاماتٌ تجارية بألوان ثابتة مصمَّمة على أرضيّة فاتحة —
+              على سطحٍ داكن تختفي أو تنقلب. فالأرضيّة بيضاء في السمتين، كما تفعل
+              Stripe وShopify، وهو نفس منطق إطار البطاقة في `CardField`.
+
+              والحدّ وحده يتبع التوكن: `ring-black/5` كان يُخرج rgb(242,242,242)
+              و**١٫٠٠:١** ضدّ البطاقة الفاتحة — أي شريحةٌ بيضاء بلا حافّة على سطحٍ
+              أبيض. و`foreground/50` يُخرج ٣٫١٩:١ فاتحاً (فوق حدّ WCAG 1.4.11) ويخفّ
+              في الداكن حيث البياض نفسه يكفي للفصل (١٨٫٢:١). */
+            <span key={m.src} className="flex h-6 items-center rounded bg-white px-1.5 ring-1 ring-foreground/50 dark:ring-foreground/20">
+              {/* `img` لا `next/image`: المكوّن مشترك بين تطبيقين، و`next/image` يفرض
+                  إعداداً لكل واحد. الشعار SVG صغير، فلا مكسب من التحسين. */}
+              <img src={m.src} alt={m.alt} style={{ height: 13, width: "auto" }} />
+            </span>
+          ))}
+        </div>
+      ) : null}
 
       {/* الحاشية تُقرأ بعد القرار لا قبله — فموضعها تحت الشبكة، والعلامات تبقى على
           الأزرار التي تستعملها. */}

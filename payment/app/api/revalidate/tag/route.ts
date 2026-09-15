@@ -9,7 +9,15 @@ import { revalidateTag } from "next/cache";
  * والمزايا وكلام الصفحة). وسومُ مدونتي الاثنا عشر (`articles` · `settings` · `pages`…)
  * تبقى عندها، وهذه النقطة ترفضها بـ٤٠٠ كي لا يظنّ أحدٌ أن الإبطال وقع وهو لم يقع.
  */
-const ALLOWED_TAGS = ["commercial-catalog"] as const;
+/**
+ * `settings` مضافٌ إلى جانب الكتالوج (مراجعة ١٤ سبتمبر ٢٠٢٦).
+ *
+ * العطل الذي كشفه الجرد: `getSiteChrome` و`getSellerLegal` في هذه الحزمة تُكاشان تحت
+ * `settings`، وأكشن الأدمن كان يرسل هذا الوسم إلى **مدونتي وحدها**. فتبديل الشعار أو
+ * إضافة حساب أو تصحيح رقم السجلّ التجاري يظهر في المدوّنة ولا يظهر هنا أبداً — والرقم
+ * الخاطئ يبقى مطبوعاً في نموذج العقد الذي يقرؤه المشتري قبل الدفع.
+ */
+const ALLOWED_TAGS = ["commercial-catalog", "settings"] as const;
 
 export async function POST(req: NextRequest) {
   try {

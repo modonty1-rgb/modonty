@@ -1,6 +1,9 @@
 
 import { modontyUrl } from "@/lib/modonty-url";
 import { getSiteChrome } from "@/app/data/get-site-chrome";
+import { getSellerLegal } from "@/app/data/get-seller-legal";
+import { salesWhatsapp } from "@/lib/sales-whatsapp";
+import { SocialRow } from "../social-row/SocialRow";
 
 /**
  * تذييل الأوفرفيو والعقد: الروابط التي يبحث عنها المتردّد.
@@ -12,7 +15,8 @@ import { getSiteChrome } from "@/app/data/get-site-chrome";
  * والحسابات لم تعد فيه — انتقلت إلى ترويسة الأوفرفيو (`SocialRow`) في نفس اليوم.
  */
 export async function PayFooter() {
-  const { siteName } = await getSiteChrome();
+  const [{ siteName, socials }, legal] = await Promise.all([getSiteChrome(), getSellerLegal()]);
+  const wa = salesWhatsapp();
 
   return (
     <footer className="mt-14 border-t border-border/60 bg-card/30">
@@ -41,11 +45,101 @@ export async function PayFooter() {
           ))}
         </nav>
 
-        <p className="mt-5 text-center text-[11.5px] leading-relaxed text-muted-foreground/80">
-          {/* بلا سنة (خالد ١٤ سبتمبر ٢٠٢٦): `new Date()` يرفضه `cacheComponents` عند
-              التقديم المسبق، فيُخرج الأوفرفيو من السكون — والتذييل في كل صفحة. والسنة
-              لا تضيف حقّاً ولا تُسقطه، فحذفها أرخص من كاشٍ يحرسها. */}
-          © {siteName ?? "مدونتي"} — جميع الحقوق محفوظة.
+        {/* الحسابات هنا لا في الترويسة (خالد ١٥ سبتمبر ٢٠٢٦): في الأعلى مخرجٌ قبل أن
+            يرى الزائر سعراً، وفي الأسفل دليل وجودٍ لمن قرأ ولم يقرّر. */}
+        <div className="mt-2 flex justify-center">
+          <SocialRow socials={socials} />
+        </div>
+
+        {/* `min-h-11` على البريد والهاتفين (قياس ١٥ سبتمبر ٢٠٢٦: ارتفاعها كان ١٧px).
+            الاستثناء في WCAG 2.5.8 يعفي الروابط **داخل جملة** — وهذه ليست كذلك: الهاتف
+            والواتساب يُضغطان بالإبهام على الجوّال لا يُقرآن، فيؤخذان بحدّ الهدف لا بحدّ
+            النصّ. والارتفاع وحده يكفي — `inline-flex` يمدّد منطقة اللمس بلا أن يزيح السطر. */}
+        {/* السجلّ النظاميّ للمنشأة — من نفس القارئ الذي تقرأ به الفاتورة الضريبية ونموذج
+            العقد (`getSellerLegal`)، فلا يختلف ما في التذييل عمّا في العقد الذي يوقّعه
+            المشتري بالدفع. ومصدره `Settings` فيُصحَّح من شاشة بيانات المنشأة بلا نشر.
+
+            وموضعه التذييل: مشترٍ يدفع لشركةٍ يريد أن يعرف **من** يقبض — والسجلّ التجاري
+            والرقم الضريبي هما ما يُتحقَّق منهما، لا الاسم التجاري وحده. وما ليس في
+            الإعدادات لا يُرسم، فلا حقلٌ فارغ بعنوان بلا قيمة. */}
+        {legal.legalName || legal.crNumber || legal.vatNumber ? (
+          <dl className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 border-t border-border/60 pt-5 text-[11.5px] leading-relaxed text-muted-foreground">
+            {legal.legalName ? (
+              /* «تُشغّلها» لا الاسم مجرَّداً (خالد ١٥ سبتمبر ٢٠٢٦): «مدونتي» علامةٌ تجارية
+                 و«شركة جبر الجنوبية» هي المنشأة النظامية التي تقبض وتُصدر الفاتورة.
+                 وسردهما بلا رابطٍ يجعل المشتري يظنّهما جهتين — والجملة تقول العلاقة
+                 صراحةً، وهو نفس ما يقوله بند ١ في نموذج العقد. */
+              <div className="w-full text-center">
+                <dt className="sr-only">الجهة المشغِّلة</dt>
+                <dd>
+                  منصّة <span className="font-semibold text-foreground/85">{legal.siteName ?? "مدونتي"}</span>
+                  {" تُشغّلها "}
+                  <span className="font-semibold text-foreground/85">{legal.legalName}</span>
+                </dd>
+              </div>
+            ) : null}
+            {legal.crNumber ? (
+              <div className="flex items-center gap-1.5">
+                <dt>سجل تجاري</dt>
+                {/* `dir=ltr` و`tabular-nums` على الأرقام النظامية: رقمٌ يُنسخ ويُطابق، فلا
+                    ينعكس ترتيبه ولا تختلف عروض خاناته. */}
+                <dd dir="ltr" className="font-medium tabular-nums text-foreground/85">{legal.crNumber}</dd>
+              </div>
+            ) : null}
+            {legal.vatNumber ? (
+              <div className="flex items-center gap-1.5">
+                <dt>الرقم الضريبي</dt>
+                <dd dir="ltr" className="font-medium tabular-nums text-foreground/85">{legal.vatNumber}</dd>
+              </div>
+            ) : null}
+            {legal.capital ? (
+              <div className="flex items-center gap-1.5">
+                <dt>رأس المال</dt>
+                {/* نصٌّ لا رقم: يُعرض كما قُيّد في السجلّ بعملته، ولا يُعاد تنسيقه. */}
+                {/* `dir=ltr` و`tabular-nums` كالسجلّ والرقم الضريبي: رقمٌ نظاميّ يُنسخ
+                    ويُطابَق، فيُكتب بأرقام لاتينية لا هندية، ولا ينعكس ترتيبه. */}
+                <dd dir="ltr" className="font-medium tabular-nums text-foreground/85">{legal.capital}</dd>
+              </div>
+            ) : null}
+            {legal.address ? (
+              <div className="flex items-center gap-1.5">
+                <dt className="sr-only">العنوان</dt>
+                <dd>{legal.address}</dd>
+              </div>
+            ) : null}
+            {legal.email ? (
+              <div className="flex items-center gap-1.5">
+                <dt className="sr-only">البريد</dt>
+                <dd><a href={`mailto:${legal.email}`} dir="ltr" className="inline-flex min-h-11 items-center hover:text-foreground">{legal.email}</a></dd>
+              </div>
+            ) : null}
+            {legal.phone ? (
+              <div className="flex items-center gap-1.5">
+                <dt className="sr-only">الهاتف</dt>
+                <dd><a href={`tel:${legal.phone}`} dir="ltr" className="inline-flex min-h-11 items-center tabular-nums hover:text-foreground">{legal.phone}</a></dd>
+              </div>
+            ) : null}
+            {/* رقم المبيعات غير هاتف المنشأة: هذا للتواصل التجاري قبل الشراء، وذاك
+                الرقم النظاميّ المقيَّد في السجلّ. وفصلهما مقصود — المشتري يريد الأوّل. */}
+            {wa ? (
+              <div className="flex items-center gap-1.5">
+                <dt>مبيعات</dt>
+                <dd>
+                  <a href={wa.href} target="_blank" rel="noopener noreferrer" dir="ltr" className="inline-flex min-h-11 items-center tabular-nums hover:text-foreground">
+                    {wa.label}
+                  </a>
+                </dd>
+              </div>
+            ) : null}
+          </dl>
+        ) : null}
+
+        <p className="mt-5 text-center text-[11.5px] leading-relaxed text-muted-foreground">
+          {/* السنة ثابتةٌ في الكود لا محسوبة (خالد ١٤ سبتمبر ٢٠٢٦). `new Date()` يرفضه
+              `cacheComponents` عند التقديم المسبق فيُخرج الأوفرفيو من السكون — والتذييل
+              في كل صفحة. وتُحدَّث يدوياً مرّةً كل سنة: سطرٌ واحد أرخص من كاشٍ يحرس رقماً
+              يتبدّل مرّةً في ٣٦٥ يوماً. */}
+          © ٢٠٢٦ {siteName ?? "مدونتي"} — جميع الحقوق محفوظة.
         </p>
       </div>
     </footer>

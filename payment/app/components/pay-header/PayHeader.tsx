@@ -1,6 +1,8 @@
+import { Whatsapp } from "@modonty/shared/components/icons/whatsapp";
+
 import { getSiteChrome } from "@/app/data/get-site-chrome";
 import { ThemeToggle } from "../theme-toggle/ThemeToggle";
-import { SocialRow } from "../social-row/SocialRow";
+import { salesWhatsapp } from "@/lib/sales-whatsapp";
 
 /**
  * ترويسة صفحة الباقات: شعارٌ وزرّ سمة، ولا شيء غيرهما.
@@ -11,8 +13,15 @@ import { SocialRow } from "../social-row/SocialRow";
  *
  * والشعار من الإعدادات لا من `public/`: يُبدَّل من شاشة الأدمن ويظهر هنا بلا نشر.
  */
-export async function PayHeader({ showSocials = false }: { showSocials?: boolean } = {}) {
-  const { siteName, logoUrl, socials } = await getSiteChrome();
+/**
+ * ⚠ بلا حسابات التواصل (خالد ١٥ سبتمبر ٢٠٢٦): نزلت إلى التذييل.
+ * في الترويسة خمسة مخارج قبل أن يرى الزائر سعراً — ومن يفتح إنستقرامك من صفحة بيع نادراً
+ * ما يعود. وفي التذييل تصير دليل وجودٍ لمن قرأ ولم يقرّر، وهو نفس منطق روابط العقد
+ * والشروط. والواتساب وحده يبقى هنا لأنه **يُدخل** لا يُخرج.
+ */
+export async function PayHeader() {
+  const { siteName, logoUrl } = await getSiteChrome();
+  const wa = salesWhatsapp();
 
   return (
     <header className="border-b border-border/60 bg-card/40 backdrop-blur">
@@ -36,7 +45,21 @@ export async function PayHeader({ showSocials = false }: { showSocials?: boolean
         {/* الحسابات في الأوفرفيو وحدها: هناك تعريفٌ بالمنصّة، وفي صفحة الباقات مخرجٌ
             قبل الشراء. */}
         <div className="flex items-center gap-1">
-          {showSocials ? <SocialRow socials={socials} /> : null}
+          {/* رقم المبيعات في الترويسة: المشتري المتردّد يريد إنساناً قبل أن يقرأ سعراً،
+              والرقم ظاهرٌ يقول «خلفه أحد». ولا يُرسم إن لم يُضبط المتغيّر — زرٌّ يفتح
+              محادثةً مع لا أحد أسوأ من غيابه. والنصّ يُخفى تحت `sm` ويبقى الأيقونة. */}
+          {wa ? (
+            <a
+              href={wa.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`تواصل على واتساب ${wa.label}`}
+              className="inline-flex h-11 items-center gap-1.5 rounded-xl px-2.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30"
+            >
+              <Whatsapp className="size-[17px]" aria-hidden />
+              <span dir="ltr" className="hidden text-[12.5px] font-medium tabular-nums sm:inline">{wa.label}</span>
+            </a>
+          ) : null}
           <ThemeToggle />
         </div>
       </div>

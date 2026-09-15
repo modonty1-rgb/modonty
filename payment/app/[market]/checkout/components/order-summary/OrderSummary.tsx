@@ -41,10 +41,12 @@ export function OrderSummary({
           الثقة بالذات — ما أقنعه. و«منها» لا «ومعها»: المدّة أعلاه تعدّ أشهر الخدمة،
           فالشهر المجاني داخلها لا مضافٌ إليها.
 
-          و`text-star` لا `amber`: التوكن نفسه الذي تستعمله شارة الهدية على بطاقة الباقة،
-          فالمشتري يرى اللون ذاته في الموضعين ويتغيّر من مكانٍ واحد. */}
+          و`text-star-ink` لا `amber` ولا `text-star`: هو حبر التوكن الذهبيّ نفسه الذي تُعبَّأ
+          به شارة الهدية على بطاقة الباقة — فالمشتري يرى العائلة اللونية ذاتها في الموضعين
+          ويتغيّران من مكانٍ واحد. و`star` الأصل لامعٌ لأنه سطحٌ يُكتب فوقه؛ نصّاً على أبيض
+          كان يقرأ ١٫٩٢:١ (قيس ١٥ سبتمبر ٢٠٢٦) والحدّ ٤٫٥:١، فالحبر هو الصحيح هنا. */}
       {freeMonths > 0 && (
-        <p className="mt-3 flex items-center gap-1.5 border-t border-t-border pt-3 text-[12px] font-bold leading-[1.6] text-star">
+        <p className="mt-3 flex items-center gap-1.5 border-t border-t-border pt-3 text-[12px] font-bold leading-[1.6] text-star-ink">
           <Gift className="size-3.5 shrink-0" strokeWidth={2.5} aria-hidden />
           {freeMonths === 1 ? "منها شهر خدمة مجاني" : `منها ${new Intl.NumberFormat("ar-SA").format(freeMonths)} شهور خدمة مجانية`}
         </p>

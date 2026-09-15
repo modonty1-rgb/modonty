@@ -71,6 +71,9 @@ export const modontyTokensPreset = {
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+          // `ink` = لون الحالة حين تكون نصّاً على خلفية الصفحة، لا تعبئةً يُكتب فوقها.
+          // الدوران يسحبان اللون في اتجاهين متضادّين، فلكلٍّ توكنه (globals.css).
+          ink: "hsl(var(--destructive-ink))",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -83,7 +86,10 @@ export const modontyTokensPreset = {
           gray: "hsl(var(--brand-gray))",
           "gray-dark": "hsl(var(--brand-gray-dark))",
         },
-        star: "hsl(var(--star))",
+        star: {
+          DEFAULT: "hsl(var(--star))",
+          ink: "hsl(var(--star-ink))",
+        },
         // أفعال القارئ الستّة. لا تستعملها مكوّنات البيع اليوم (قياس: صفر)، لكنها تبقى
         // هنا لأن العطل الذي وقع في PAY-S1 كان بالضبط «مفتاحٌ ناقص في الخريطة»: صنفٌ
         // لا يُولَّد، فعنصرٌ بلا خلفية ونصٌّ أبيض على أبيض. والخريطة إعدادٌ لا CSS —
@@ -117,6 +123,7 @@ export const modontyTokensPreset = {
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
+          ink: "hsl(var(--success-ink))",
         },
       },
       borderRadius: {

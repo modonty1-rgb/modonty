@@ -37,6 +37,11 @@ export interface PlanCardProps {
   /** «قسّطها على دفعات» — يظهر فقط حين يقرّر المستدعي أن التقسيط متاح لهذا السوق (PAY-D6). */
   installmentLabel?: string | null;
   /** «استرداد ١٤ يوم…» — وعدٌ يخصّ الاشتراك لا طريقة الدفع، فيلي الزرّين معاً. */
+  /**
+   * ⚠ لم تعد تُرسم داخل البطاقة (خالد ١٤ سبتمبر ٢٠٢٦): وعدٌ واحد مكرّر ثلاث مرّات
+   * في شبكةٍ واحدة يفقد ثقله ويصير ضجيجاً. موضعه الآن سطرٌ واحد تحت الشبكة في
+   * `PaySection`. تبقى الخاصيّة في الواجهة كي لا ينكسر مستدعٍ يمرّرها، وتُهمَل.
+   */
   refundNote?: string | null;
   /** علامات الدفع أسفل البطاقة. فارغة = لا ذيل، فلا يُرسم إطارٌ بلا محتوى. */
   payMarks?: { src: string; alt: string }[];
@@ -91,13 +96,43 @@ export function PlanCard({
       /* `scroll-mt` لا زينة: الترويسة لاصقة، فالقفزة إلى `#plan-x` تضع البطاقة تحتها
          ويظهر نصفها. والهامش يدفعها إلى ما تحت الترويسة بالضبط. */
       className={cx(
-        "relative flex flex-col rounded-[18px] border-2 px-6 py-7 scroll-mt-24",
-        /* حلقةٌ حول الباقة القادمة من جدول المقارنة: الزائر ضغط اسمها هناك، فلا يُترك
-           يبحث عنها بين ثلاث بطاقات متشابهة. لونها `primary` لا `featured` كي لا تنازع
-           شارة «الأنسب» — هذه «اللي اخترتها»، وتلك «اللي نرشّحها». */
-        highlighted && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+        /* ظلٌّ خفيف في الفاتح وحده: خلفية الصفحة rgb(243,243,241) وجسم البطاقة
+           rgb(241,241,255) — نسبتهما ١٫٠١:١، أي لا يفصلهما لون. فالحدّ يحمل الالتزام
+           (WCAG 1.4.11) والظلّ يحمل الإحساس بالارتفاع. ويُلغى في الداكن لأن الظلّ الأسود
+           على سطحٍ أسود لا يُرى، والفصل هناك يأتي من فاتحيّة البطاقة نفسها. */
+        "relative flex flex-col rounded-[18px] border px-5 py-6 scroll-mt-24",
+        "shadow-[0_1px_2px_rgba(14,6,90,.05),0_12px_28px_-16px_rgba(14,6,90,.22)] dark:shadow-none",
         theme.background,
-        featured ? "border-primary ring-2 ring-primary/40" : "border-border",
+        /**
+         * حدّ البطاقة غير المميَّزة `foreground/50` لا `border` (قياس ١٤ سبتمبر ٢٠٢٦).
+         *
+         * توكن `--border` يُخرج rgb(219,219,219) فاتحًا و rgb(48,47,55) داكنًا، وقياسه ضدّ
+         * خلفيّة الصفحة **١٫٢٥:١** و**١٫٣٨:١** — وكلاهما يرسب حدّ WCAG 1.4.11 (٣:١ لحدود
+         * عناصر الواجهة). وجسم البطاقة نفسه **١٫٠١:١** ضدّ الصفحة، أي أنه لا يفصلها شيء:
+         * بطاقتان من ثلاث كانتا بلا حافّة مرئيّة، والمميَّزة وحدها تُرى لأن حدّها أزرق (٦٫٣٢:١).
+         *
+         * و`foreground/50` يُخرج rgb(133,129,173) فاتحًا (**٣٫٢٩:١**) و rgb(141,141,143)
+         * داكنًا (**٥٫٥:١**) — قيمة واحدة تعبر في السمتين لأنها تُشتقّ من `foreground` نفسه
+         * الذي ينقلب مع السمة، لا من رمادٍ ثابت يصلح في واحدة ويسقط في الأخرى.
+         */
+        /**
+         * الاختيار يلوّن **الحدّ نفسه** لا يضيف حلقةً خارجه (خالد ١٤ سبتمبر ٢٠٢٦).
+         * الحلقة سطحٌ ثانٍ حول البطاقة فتبدو مركَّبةً عليها، والحدّ صفةٌ فيها — والفرق
+         * يُقرأ: «هذه بطاقة مختارة» لا «بطاقة داخل إطار».
+         *
+         * وكهرمانيّ لا `primary`: المميَّزة حدّها أزرق أصلاً، فلونٌ أزرق على أخرى يجعل
+         * بطاقتين زرقاوين ولا يُعرف أيّهما المقصود. والدرجتان مختلفتان بين السمتين لأن
+         * لوناً واحداً يسقط في إحداهما — قيس على خلفيّتَي المنصّة: `amber-700` ⇒ ٤٫٥٢:١
+         * فاتحاً و`amber-400` ⇒ ١٠٫٩١:١ داكناً، وكلاهما فوق حدّ WCAG 1.4.11 (٣:١)،
+         * بينما `amber-500` وحده يرسب فاتحاً (١٫٩٣:١).
+         *
+         * ومعه شارة «اللي اخترتها» النصّية: اللون وحده لا يحمل معنًى (WCAG 1.4.1).
+         */
+        highlighted
+          ? "border-amber-700 dark:border-amber-400"
+          : featured
+            ? "border-primary ring-1 ring-primary/35"
+            : "border-foreground/50",
       )}
     >
       {/* الاسم على لسانٍ يركب الحافّة العليا: هو ما يُقارَن ويُشار إليه، فيأخذ الموضع الأوّل
@@ -105,25 +140,54 @@ export function PlanCard({
       <span
         className={cx(
           "absolute -top-[19px] start-6 z-10 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[20px] font-extrabold leading-none",
-          featured ? "bg-primary text-primary-foreground" : "border-2 border-border bg-card text-foreground",
+          featured ? "bg-primary text-primary-foreground" : "border border-foreground/30 bg-card text-foreground",
         )}
       >
         {featured ? <span aria-hidden>★</span> : null}
         {plan.name}
       </span>
 
+      {/* المدّة على لسانٍ في الزاوية **المقابلة** للاسم (خالد ١٤ سبتمبر ٢٠٢٦): الاسم
+          يركب الحافّة من جهة `start`، والمدّة من جهة `end` — فيتوازن رأس البطاقة ويُقرأ
+          الاثنان معاً «الانطلاقة · ٧ أشهر» بلا أن تزاحم المدّةُ الرقمَ في شريط السعر.
+          وحياديّة شكلها مقصودة: حدٌّ ونصٌّ ثانويّ لا تعبئة — فاللسان المعبَّأ لباس الاسم
+          وحده، ولباسٌ مشترك يجعل العين تحسبهما شيئاً واحداً. */}
+      {pricing ? (
+        <span className="absolute -top-[13px] end-6 z-10 inline-flex items-center rounded-full border border-foreground/25 bg-card px-3 py-0.5 text-[11px] font-bold text-muted-foreground">
+          {formatMonths(pricing.serviceMonths)}
+        </span>
+      ) : null}
+
+      {/* شارة «اللي اخترتها» في الحافّة المقابلة للاسم: الحلقة الكهرمانية لونٌ، واللون
+          وحده لا يحمل معنًى (WCAG 1.4.1) — ولا يراه عمى الألوان ولا قارئ الشاشة. وموضعها
+          `end` لا `start` كي لا تزاحم لسان الاسم على بطاقةٍ مميَّزة تحمل الاثنين. */}
+      {highlighted ? (
+        <span className="absolute top-3 end-6 z-10 inline-flex items-center rounded-full border border-amber-700 bg-card px-2.5 py-0.5 text-[11px] font-bold text-amber-700 dark:border-amber-400 dark:text-amber-400">
+          اللي اخترتها
+        </span>
+      ) : null}
+
       {/* السعر على شريط يخرج من حشوة البطاقة إلى حافّتيها: رقمٌ في وسط شريط كامل العرض
           يُقرأ كبطاقة سعر، لا كجملة بين جمل. بلا استدارة ولا تعبئة قويّة — فالأزرار وحدها
           هي المستديرة المعبَّأة هنا، وأي شيء يلبس لبسها يُقرأ كأنه يُضغط. */}
-      <div className="-mx-6 mt-3 mb-1 border-y bg-foreground/[.03] px-6 py-4 text-center">
+      <div className="-mx-5 mt-3 mb-1 border-y bg-foreground/[.03] px-5 py-4 text-center">
         {pricing ? (
           <>
             <div className="flex items-baseline justify-center gap-2">
               {/* dir=ltr على الرقم: السعر لا ينعكس في أي لغة، وفاصل الآلاف يبقى مكانه. */}
               {/* tracking سالب للنصّ الكبير (Apple §15): الحروف تُقرأ متباعدة كلّما كبرت. */}
-              <span dir="ltr" className="text-[40px] font-semibold leading-none tracking-[-0.02em]">{amount(pricing.totalMinor, plan.currency)}</span>
-              <span className="text-[13px] text-muted-foreground">
-                {currency} · {formatMonths(pricing.serviceMonths)}
+              <span dir="ltr" className="text-[40px] font-extrabold leading-none tracking-[-0.02em]">{amount(pricing.totalMinor, plan.currency)}</span>
+              {/* العملة وحدها هنا — المدّة صعدت إلى لسانٍ في الزاوية المقابلة للاسم
+                  (خالد ١٤ سبتمبر ٢٠٢٦). المدّة واحدةٌ للبطاقات الثلاث، فتكرارها ثلاث
+                  مرّات بجوار ثلاثة أسعار مختلفة يُقرأ كأنها جزءٌ من السعر. */}
+              {/* «شامل الضريبة» ملتصقة بالرقم لا سطراً ثالثاً (خالد ١٤ سبتمبر ٢٠٢٦).
+                  الشمول **وصفٌ للرقم**: يقول إن ٢٬٣٩٤ هو ما يُدفع لا ما تُضاف عليه
+                  الضريبة، وهو أوّل ما يسأل عنه المشتري السعودي — ونظاماً يجب أن يكون
+                  واضحاً عند السعر لا في حاشية. وسطرٌ كامل مكرّر في ثلاث بطاقات ضجيج،
+                  فاختُصر هنا ونزل نصّه الكامل مرّة واحدة تحت الشبكة. */}
+              <span className="text-[13px] font-medium text-muted-foreground">
+                {currency}
+                {priceNote ? <span className="text-[11px]"> شامل الضريبة</span> : null}
               </span>
             </div>
             {/* السعر الفعليّ والهدية في سطر واحد — هنا وحده يشرح الرقمان أحدهما الآخر:
@@ -134,7 +198,7 @@ export function PlanCard({
             <p className="mt-2 text-[12px] font-bold leading-[1.6]">
               = <span dir="ltr">{amount(pricing.effectiveMonthlyMinor, plan.currency)}</span> {currency}/شهر فعلياً
               {pricing.bonusServiceMonths > 0 ? (
-                <span className="font-semibold text-muted-foreground">
+                <span className="font-bold text-muted-foreground">
                   {" · "}منها {formatMonths(pricing.bonusServiceMonths)} مجاناً
                 </span>
               ) : null}
@@ -142,11 +206,10 @@ export function PlanCard({
           </>
         ) : (
           <div className="flex items-baseline justify-center gap-2">
-            <span dir="ltr" className="text-[40px] font-semibold leading-none tracking-[-0.02em]">{ar.format(plan.monthlyBase)}</span>
-            <span className="text-[13px] text-muted-foreground">{currency} / شهر</span>
+            <span dir="ltr" className="text-[40px] font-extrabold leading-none tracking-[-0.02em]">{ar.format(plan.monthlyBase)}</span>
+            <span className="text-[13px] font-medium text-muted-foreground">{currency} / شهر</span>
           </div>
         )}
-        {priceNote ? <p className="mt-1 text-[11px] text-muted-foreground">{priceNote}</p> : null}
       </div>
 
       {plan.hook ? <p className="mt-3 text-center text-[13px] font-bold">{plan.hook}</p> : null}
@@ -176,7 +239,7 @@ export function PlanCard({
            */
           featured
             ? "bg-primary text-primary-foreground hover:bg-primary/90"
-            : "border-2 border-foreground/25 bg-secondary text-secondary-foreground hover:bg-secondary/80",
+            : "border border-foreground/30 bg-secondary text-secondary-foreground hover:bg-secondary/80",
           ctaDisabled && "cursor-not-allowed opacity-50",
         );
       const label = plan.ctaText || ctaLabel;
@@ -193,27 +256,42 @@ export function PlanCard({
         const insClass = cx(
             // الحدّ وحده كان يترك النصّ بلون الوارث — ١٫٠١:١ في الداكن. `text-foreground`
             // يجعله يتبع السطح في الوضعين، و`active:scale` يعطي استجابة اللمس (Apple §1).
-            "mt-2 h-11 w-full rounded-xl border text-[14px] font-bold text-foreground",
+            "mt-2 h-11 w-full rounded-xl border text-[13px] font-bold text-foreground",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "transition-transform duration-100 ease-out hover:bg-muted active:scale-[0.98]",
             "motion-reduce:transition-none motion-reduce:active:scale-100",
             ctaDisabled && "cursor-not-allowed opacity-50",
           );
+        /**
+         * شعار المزوّد **داخل الزرّ** (خالد ١٤ سبتمبر ٢٠٢٦): شعارات البطاقات خرجت إلى
+         * سطرٍ واحد تحت الشبكة لأنها واحدة في الباقات الثلاث فليست فرقاً بينها — أمّا
+         * هذا فمربوطٌ بالزرّ نفسه ويقول من يموّل التقسيط، فبقاؤه هنا معلومةٌ لا زينة.
+         */
+        const body = (
+          <>
+            <span>{installmentLabel}</span>
+            {installmentMark ? (
+              /* ⚠ **الاستثناء الوحيد من التوكنات في هذا المكوّن، ومقصود.** شعارات مدى وفيزا
+                  وماستركارد وتمارا علاماتٌ تجارية بألوان ثابتة مصمَّمة على أرضيّة فاتحة —
+                  على سطحٍ داكن تختفي أو تنقلب. فالأرضيّة بيضاء في السمتين، كما تفعل
+                  Stripe وShopify، وهو نفس منطق إطار البطاقة في `CardField`.
+
+                  والحدّ وحده يتبع التوكن: `ring-black/5` كان يُخرج rgb(242,242,242)
+                  و**١٫٠٠:١** ضدّ البطاقة الفاتحة — أي شريحةٌ بيضاء بلا حافّة على سطحٍ
+                  أبيض. و`foreground/50` يُخرج ٣٫١٩:١ فاتحاً (فوق حدّ WCAG 1.4.11) ويخفّ
+                  في الداكن حيث البياض نفسه يكفي للفصل (١٨٫٢:١). */
+                <span className="flex h-[18px] items-center rounded bg-white px-1 ring-1 ring-foreground/50 dark:ring-foreground/20">
+                <img src={installmentMark.src} alt={installmentMark.alt} style={{ height: 10, width: "auto" }} />
+              </span>
+            ) : null}
+          </>
+        );
         return installmentHref && !ctaDisabled ? (
-          <a href={installmentHref} className={cx(insClass, "flex items-center justify-center no-underline")}>{installmentLabel}</a>
+          <a href={installmentHref} className={cx(insClass, "flex items-center justify-center gap-2 no-underline")}>{body}</a>
         ) : (
-          <button type="button" disabled={ctaDisabled} className={insClass}>{installmentLabel}</button>
+          <button type="button" disabled={ctaDisabled} className={cx(insClass, "flex items-center justify-center gap-2")}>{body}</button>
         );
       })() : null}
-
-      {/* يلي الزرّين معاً عن قصد: الأربعة عشر يوماً تخصّ الاشتراك لا طريقة الدفع، ووضعه
-          تحت أحدهما يجعله وعداً يخصّ ذلك الزرّ وحده. */}
-      {refundNote ? (
-        <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-          <span aria-hidden>✓</span>
-          <span>{refundNote}</span>
-        </p>
-      ) : null}
 
       {/* كتلة الأرقام: المجموع خلال المدّة كبيراً، والإيقاع الشهري تحته — «٥٦ مقالاً» حجمُ
           الصفقة و«٨ / شهر» وتيرتها، والثاني يسمح بمراجعة الأوّل بدل تصديقه. */}
@@ -229,15 +307,15 @@ export function PlanCard({
                 <span aria-hidden className={cx("size-1.5 shrink-0 rounded-full", featured ? "bg-primary" : "bg-muted-foreground/40")} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className={cx("text-[22px] font-extrabold leading-[1.15]", (featured || f.isHighlighted) && "text-primary")}>
+                    <span className={cx("text-[20px] font-extrabold leading-[1.15]", (featured || f.isHighlighted) && "text-primary")}>
                       {ar.format(perTerm ?? f.quantity ?? 0)}
                       <span className="text-[13px] font-bold text-muted-foreground"> {f.name}</span>
                     </span>
-                    <span className="shrink-0 text-[12px] text-muted-foreground">
+                    <span className="shrink-0 text-[12px] font-medium text-muted-foreground">
                       {ar.format(f.quantity ?? 0)} {f.unitLabel ?? ""}
                     </span>
                   </div>
-                  {f.note ? <p className="text-[11px] text-muted-foreground">{f.note}</p> : null}
+                  {f.note ? <p className="text-[11px] font-medium text-muted-foreground">{f.note}</p> : null}
                 </div>
               </div>
             );
@@ -253,7 +331,7 @@ export function PlanCard({
       )}
 
       {bullets.length > 0 ? (
-        <ul className="mt-2.5 space-y-2.5 text-[13.5px]">
+        <ul className="mt-2.5 space-y-2.5 text-[13px]">
           {bullets.map((f) => (
             <li key={f.id} className="flex gap-2.5">
               <span aria-hidden className={cx("mt-[7px] size-1.5 shrink-0 rounded-full", featured ? "bg-primary" : "bg-muted-foreground/40")} />
@@ -264,7 +342,7 @@ export function PlanCard({
                 {f.quantity !== null ? (
                   <span className="text-muted-foreground"> — {ar.format(f.quantity)} {f.unitLabel ?? ""}</span>
                 ) : null}
-                {f.note ? <span className="block text-[11px] text-muted-foreground">{f.note}</span> : null}
+                {f.note ? <span className="block text-[11px] font-medium text-muted-foreground">{f.note}</span> : null}
               </span>
             </li>
           ))}
@@ -273,7 +351,7 @@ export function PlanCard({
 
       {/* السطور المميّزة آخر القائمة: وعودٌ بلا رقم، والأرقام أعلاها هي التي تُقارَن. */}
       {plan.highlights.length > 0 ? (
-        <ul className="mt-3 space-y-1.5 text-[13px] font-semibold">
+        <ul className="mt-3 space-y-1.5 text-[13px] font-bold">
           {plan.highlights.map((line) => (
             <li key={line} className="flex gap-2">
               <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-current" />
@@ -283,38 +361,6 @@ export function PlanCard({
         </ul>
       ) : null}
 
-      {/* ذيل العلامات: يخرج من حشوة البطاقة إلى حافّتيها ويلتصق بالأسفل (`mt-auto`)،
-          فيُقرأ جزءاً من البطاقة لا صندوقاً بداخلها. والبطاقات في جهة والتقسيط في جهة
-          بينهما فراغ — لأنهما ليسا شيئاً واحداً: البطاقات تمرّ ببوّابتنا، والتقسيط شركة
-          مستقلّة بعقدها. الفصل يقول ذلك بلا شرح.
-
-          و`flex-wrap` لا عصر: البطاقة ٣٢١px والمجموعتان ٢٦١px — على حافّة الضيق. بلا التفاف
-          تنكسر الأوسمة إلى سطرين داخل خانتها (قيست ٢٣px بدل ١٢). الالتفاف ينقل المجموعة
-          الثانية إلى سطر كامل بدل أن يكسر كلمةً في نصفها. */}
-      {payMarks.length > 0 ? (
-        <div className="-mx-6 -mb-7 mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-b-[16px] border-t bg-foreground/[.02] px-6 pb-3 pt-4">
-          <span className="flex items-center gap-2">
-            <span className="whitespace-nowrap text-[11.5px] leading-none text-muted-foreground">الدفع عبر</span>
-            <span className="flex items-center gap-1.5">
-              {payMarks.map((m) => (
-                <span key={m.src} className="flex h-5 items-center rounded bg-white px-1 ring-1 ring-black/5">
-                  {/* `img` لا `next/image`: المكوّن مشترك بين تطبيقين، و`next/image` يفرض
-                      إعداداً لكل واحد. الشعار SVG صغير، فلا مكسب من التحسين. */}
-                  <img src={m.src} alt={m.alt} style={{ height: 11, width: "auto" }} />
-                </span>
-              ))}
-            </span>
-          </span>
-          {installmentMark ? (
-            <span className="flex items-center gap-2">
-              <span className="whitespace-nowrap text-[11.5px] leading-none text-muted-foreground">أو قسّط</span>
-              <span className="flex h-5 items-center rounded bg-white px-1 ring-1 ring-black/5">
-                <img src={installmentMark.src} alt={installmentMark.alt} style={{ height: 11, width: "auto" }} />
-              </span>
-            </span>
-          ) : null}
-        </div>
-      ) : null}
     </article>
   );
 }

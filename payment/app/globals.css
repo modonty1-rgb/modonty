@@ -4,7 +4,7 @@
  * لإعادة توليده: node shared/scripts/build-pay-stage-tokens.mjs
  *
  * توكنات مدونتي كما هي، كي تكون صفحة الدفع بنفس ألوان المنصّة حرفاً بحرف — لا لوناً
- * قريباً منها. 51 توكناً في الفاتح و43 في الداكن.
+ * قريباً منها. 54 توكناً في الفاتح و44 في الداكن.
  */
 @tailwind base;
 @tailwind components;
@@ -47,7 +47,10 @@
   --chart-5: 180 80% 60%;
   --star: 38 91% 55%;
   --success: 142 71% 45%;
-  --success-foreground: 0 0% 100%;
+  --success-foreground: 245 87% 19%;
+  --destructive-ink: 0 74% 42%;
+  --success-ink: 142 76% 27%;
+  --star-ink: 38 95% 30%;
   --action-like: var(--brand-blue);
   --action-like-foreground: 0 0% 100%;
   --action-save: 38 92% 50%;
@@ -92,9 +95,10 @@
   --chart-3: 245 60% 40%;
   --chart-4: 240 80% 75%;
   --chart-5: 180 80% 65%;
-  --star: 38 92% 58%;
-  --success: 142 60% 50%;
-  --success-foreground: 0 0% 100%;
+  --success-foreground: 245 87% 19%;
+  --destructive-ink: 0 85% 70%;
+  --success-ink: 142 60% 50%;
+  --star-ink: 38 92% 58%;
   --action-like: var(--brand-blue);
   --action-like-foreground: 0 0% 100%;
   --action-save: 38 92% 58%;
@@ -128,5 +132,21 @@
 
   * {
     @apply border-border;
+  }
+
+  /**
+   * لون نصّ الجسم — التوكن الغائب الذي أعاد العطل مرّتين.
+   *
+   * المولّد كان ينقل التوكنات وسطر الحدود ولا ينقل قاعدة `body` من مدونتي
+   * (`modonty/app/globals.css:325`). فلا شيء يضبط `color` على الجسم، ويسقط على
+   * افتراضيّ المتصفّح — وهو **أبيض** تحت `color-scheme: dark`. فكان السعر والهوك
+   * وكل نصٍّ لا يحمل لوناً صريحاً يُرسم أبيض على سطحٍ أبيض في الوضع الفاتح
+   * (قياس ١٥ سبتمبر ٢٠٢٦: `body color: rgb(255,255,255)` و`--foreground` navy).
+   *
+   * وموضع الإصلاح هنا لا في `payment/app/globals.css`: ذاك مولَّد، وأيّ تصحيحٍ فيه
+   * يُمحى عند أوّل `node shared/scripts/build-pay-stage-tokens.mjs`.
+   */
+  body {
+    @apply bg-background text-foreground antialiased;
   }
 }

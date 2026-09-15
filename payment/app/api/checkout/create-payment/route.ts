@@ -171,8 +171,15 @@ export async function POST(req: Request) {
     },
     emailAddress: body.email,
     merchantAttributes: {
-      redirectUrl: `${siteUrl}/pay/${market}/checkout/processing?order=${order.id}`,
-      cancelUrl: `${siteUrl}/pay/${market}/checkout?plan=${snapshot.planSlug}&months=${snapshot.paidMonths}&error=cancelled_by_user&order=${order.id}`,
+      /**
+       * بلا بادئة `/pay` — بقيت من زمن مدونتي حيث كان المسار `modonty.com/pay/sa/...`،
+       * ولمّا صار للبيمنت نطاقه صار المسار `pay.modonty.com/sa/...`. قيس حيّاً
+       * (١٤ سبتمبر ٢٠٢٦): `/pay/sa/checkout/processing` ⇒ **٤٠٤** و`/sa/checkout/processing`
+       * ⇒ ٢٠٠. أي أن كل مشترٍ يُنهي ٣DS كان يعود إلى صفحة غير موجودة — الدفعة تنجح عند
+       * المزوّد ولا يرى هو إلا ٤٠٤، ولا يُنادى `status` فيبقى طلبه «بانتظار الدفع».
+       */
+      redirectUrl: `${siteUrl}/${market}/checkout/processing?order=${order.id}`,
+      cancelUrl: `${siteUrl}/${market}/checkout?plan=${snapshot.planSlug}&months=${snapshot.paidMonths}&error=cancelled_by_user&order=${order.id}`,
     },
   };
 

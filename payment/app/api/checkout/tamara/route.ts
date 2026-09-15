@@ -186,9 +186,11 @@ export async function POST(req: Request) {
       tax_amount: { amount: 0, currency: snapshot.currency },
       shipping_amount: { amount: 0, currency: snapshot.currency },
       merchant_url: {
-        success: `${siteUrl}/pay/${market}/checkout/processing?order=${order.id}&via=tamara`,
-        failure: `${siteUrl}/pay/${market}/checkout/failed?order=${order.id}&via=tamara`,
-        cancel: `${siteUrl}/pay/${market}/checkout?plan=${snapshot.planSlug}&months=${snapshot.paidMonths}&error=cancelled_by_user&order=${order.id}`,
+        /* بلا `/pay` — نفس علّة N-Genius: البادئة من زمن `modonty.com/pay/…` وقد صار
+           للبيمنت نطاقه. قيس حيّاً: `/pay/sa/checkout/processing` ⇒ ٤٠٤. */
+        success: `${siteUrl}/${market}/checkout/processing?order=${order.id}&via=tamara`,
+        failure: `${siteUrl}/${market}/checkout/failed?order=${order.id}&via=tamara`,
+        cancel: `${siteUrl}/${market}/checkout?plan=${snapshot.planSlug}&months=${snapshot.paidMonths}&error=cancelled_by_user&order=${order.id}`,
         notification: `${siteUrl}/api/webhooks/tamara`,
       },
     });

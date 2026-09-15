@@ -105,6 +105,8 @@ export default async function MarketPayPage({
         /* الباقة التي ضغطها الزائر في جدول المقارنة — تُحاط بحلقة، والقفزة `#plan-<slug>`
            تنزله عليها. بلا هذا يهبط على ثلاث بطاقات متشابهة ويبحث عن التي اختارها. */
         highlightPlanSlug={search.plan?.trim() || null}
+        /* الجدول في الأوفرفيو، والمرساة تنزل الزائر عليه مباشرةً بلا بحث. */
+        compareHref="/#قارن"
         emptyState={
           /* الحالة الفارغة بلغة الزائر لا بلغة الفريق: لا يُقال له «انشر باقة». */
           <div className="rounded-xl border border-dashed p-12 text-center">

@@ -15,6 +15,10 @@ export type SellerLegal = {
   address: string | null;
   email: string | null;
   phone: string | null;
+  /** رأس المال كما هو مقيَّد — نصٌّ لا رقم، يُعرض كما كُتب ولا يدخل في حساب. */
+  capital: string | null;
+  /** اسم المنصّة التجاريّ — تُشغّلها المنشأة أعلاه، والتمييز بينهما يخصّ من يدفع. */
+  siteName: string | null;
 };
 
 export async function getSellerLegal(): Promise<SellerLegal> {
@@ -26,6 +30,7 @@ export async function getSellerLegal(): Promise<SellerLegal> {
       orgLegalName: true, orgVatNumber: true, orgCommercialRegistrationNumber: true,
       orgStreetAddress: true, orgAddressNeighborhood: true, orgAddressLocality: true,
       orgAddressCountry: true, orgContactEmail: true, orgContactTelephone: true,
+      orgCapitalAmount: true, siteName: true,
     },
   });
 
@@ -42,5 +47,7 @@ export async function getSellerLegal(): Promise<SellerLegal> {
       .join(" · ") || null,
     email: t(s?.orgContactEmail),
     phone: t(s?.orgContactTelephone),
+    capital: t(s?.orgCapitalAmount),
+    siteName: t(s?.siteName),
   };
 }

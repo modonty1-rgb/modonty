@@ -150,7 +150,7 @@ export function TamaraForm({
           aria-invalid={!!errors.name}
           className={field(!!errors.name)}
         />
-        {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name}</p>}
+        {errors.name && <p className="mt-1 text-xs text-destructive-ink">{errors.name}</p>}
       </div>
 
       <div>
@@ -163,7 +163,7 @@ export function TamaraForm({
           aria-invalid={!!errors.email}
           className={cn(field(!!errors.email), "text-start")}
         />
-        {errors.email && <p className="mt-1 text-xs text-destructive">{errors.email}</p>}
+        {errors.email && <p className="mt-1 text-xs text-destructive-ink">{errors.email}</p>}
       </div>
 
       <div>
@@ -176,7 +176,7 @@ export function TamaraForm({
           aria-invalid={!!errors.phone}
           className={field(!!errors.phone)}
         />
-        {errors.phone && <p className="mt-1 text-xs text-destructive">{errors.phone}</p>}
+        {errors.phone && <p className="mt-1 text-xs text-destructive-ink">{errors.phone}</p>}
         {/* تمارا ترسل رمز التحقّق على هذا الرقم، فرقمٌ خاطئ طريقٌ مسدود لا غلطةٌ تُصحَّح
             لاحقاً داخل مسارها. */}
         <p className="mt-1 text-xs text-muted-foreground">تمارا بترسل لك رمز تحقق على هذا الرقم.</p>
@@ -206,7 +206,7 @@ export function TamaraForm({
               onError={() => setTurnstileToken(null)}
             />
           </div>
-          {errors.turnstile && <p className="text-center text-xs text-destructive">{errors.turnstile}</p>}
+          {errors.turnstile && <p className="text-center text-xs text-destructive-ink">{errors.turnstile}</p>}
         </>
       ) : null}
 
@@ -229,10 +229,10 @@ export function TamaraForm({
           وعلى شروط تمارا لخطة التقسيط.
         </span>
       </label>
-      {errors.terms && <p className="text-xs text-destructive">{errors.terms}</p>}
+      {errors.terms && <p className="text-xs text-destructive-ink">{errors.terms}</p>}
 
       {errors.submit && (
-        <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+        <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive-ink">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
           <span>{errors.submit}</span>
         </div>

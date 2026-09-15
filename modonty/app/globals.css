@@ -71,7 +71,29 @@
     /* Semantic accents (not brand palette) — client-page rating + status */
     --star: 38 91% 55%;                /* #f5a623 gold — rating stars */
     --success: 142 71% 45%;            /* #16a34a green — open-now + verification */
-    --success-foreground: 0 0% 100%;
+    /**
+     * نصٌّ أبيض على الأخضر كان ١٫٩٢:١ فاتحاً و٢٫١٠:١ داكناً (قيس ١٥ سبتمبر ٢٠٢٦ على زرّ
+     * «تواصل معنا على واتساب» في صفحتَي الفشل والنجاح) — و‪WCAG 1.4.3‬ يفرض ٤٫٥:١.
+     * والأخضر نفسه لا يتحرّك لأن شارات «مفتوح الآن» في مدونتي مبنيّةٌ عليه؛ الذي يتحرّك
+     * هو ما يُكتب **فوقه**. والنيلي يقرأ ٧٫٦٣:١ فاتحاً و٨٫٣٧:١ داكناً على نفس الأخضر.
+     */
+    --success-foreground: 245 87% 19%;
+
+    /**
+     * ── أحبار الحالة (`-ink`) — لونُ الحالة حين يكون **نصّاً** لا تعبئة ──
+     *
+     * `--destructive` و`--success` و`--star` مضبوطةٌ لتكون **سطحاً** تُكتب فوقه، فهي
+     * لامعة عمداً. وحين يستعملها مكوّنٌ لوناً لنصٍّ على خلفية الصفحة تسقط تحت الحدّ:
+     * قيس على ٣٢٠px (١٥ سبتمبر ٢٠٢٦) — «لم يكتمل الدفع» ٣٫١٨:١ فاتحاً و٣٫٤٨:١ داكناً،
+     * «سبب الفشل» ٢٫٦٣:١، و«منها شهر خدمة مجاني» ١٫٩٢:١ فاتحاً. والحدّ ٤٫٥:١.
+     *
+     * ولا تُصلَح بتغميق التوكن الأصل: نفس اللون يخدم الدورين في اتجاهين متضادّين —
+     * التعبئة تريده لامعاً والنصّ يريده غامقاً — ولونٌ واحد لا يفي بالاثنين. فدورٌ ثانٍ
+     * يأخذ توكناً ثانياً، وتبقى التعبئة كما هي في مدونتي حرفاً بحرف.
+     */
+    --destructive-ink: 0 74% 42%;      /* #bb1c1c — ٦٫٣٧:١ على الأبيض */
+    --success-ink: 142 76% 27%;        /* #117937 — ٥٫٥١:١ على الأبيض */
+    --star-ink: 38 95% 30%;            /* #956004 — ٥٫٣١:١ على الأبيض */
 
     /* Reader actions — one colour each, so the four are told apart at a glance.
        Adopted 2026-08-19 (Khalid): they started as raw Tailwind values on the article
@@ -183,9 +205,11 @@
        changes with the theme is not a brand colour — the semantic tokens below are where a
        theme is allowed to differ. Removed. */
 
-    --star: 38 92% 58%;
-    --success: 142 60% 50%;
-    --success-foreground: 0 0% 100%;
+    --success-foreground: 245 87% 19%;
+    /* الأحبار داكنةً: تنعكس فتُضيء — ٦٫٢٨:١ و٨٫٧٨:١ و٩٫٢٣:١ على سطح البطاقة الداكن. */
+    --destructive-ink: 0 85% 70%;
+    --success-ink: 142 60% 50%;
+    --star-ink: 38 92% 58%;
 
     /* Reader actions — each lifted a step, the same way --primary and --accent are,
        so the fills stay separable against the dark navy ground. */

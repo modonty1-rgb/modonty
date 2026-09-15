@@ -286,9 +286,9 @@ export function CheckoutForm({
     <form noValidate onSubmit={handleSubmit} className="space-y-5">
       {paymentError && (
         <div role="alert" aria-live="polite" className="flex items-start gap-3 rounded-xl border-2 border-destructive/40 bg-destructive/10 px-4 py-3.5">
-          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" strokeWidth={2.5} />
+          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive-ink" strokeWidth={2.5} />
           <div className="min-w-0 flex-1">
-            <p className="mb-0.5 text-sm font-bold text-destructive">
+            <p className="mb-0.5 text-sm font-bold text-destructive-ink">
               {paymentError.title}
               {attemptNumber && attemptNumber > 1 && (
                 <span className="ms-2 rounded-full bg-destructive/15 px-2 py-0.5 text-[11px] font-semibold" dir="ltr">
@@ -314,7 +314,7 @@ export function CheckoutForm({
           aria-describedby={errors.name ? "err-name" : undefined}
           className={fieldClass(!!errors.name)}
         />
-        {errors.name && <p id="err-name" className="mt-1 text-xs text-destructive">{errors.name}</p>}
+        {errors.name && <p id="err-name" className="mt-1 text-xs text-destructive-ink">{errors.name}</p>}
       </div>
 
       <div>
@@ -328,7 +328,7 @@ export function CheckoutForm({
           aria-describedby={errors.email ? "err-email" : undefined}
           className={fieldClass(!!errors.email)}
         />
-        {errors.email && <p id="err-email" className="mt-1 text-xs text-destructive">{errors.email}</p>}
+        {errors.email && <p id="err-email" className="mt-1 text-xs text-destructive-ink">{errors.email}</p>}
         <p className="mt-1.5 text-xs text-muted-foreground">هذا البريد يستقبل رابط الدخول وفاتورتك من مدونتي.</p>
       </div>
 
@@ -355,7 +355,7 @@ export function CheckoutForm({
             +966
           </span>
         </div>
-        {errors.phone && <p id="err-phone" className="mt-1 text-xs text-destructive">{errors.phone}</p>}
+        {errors.phone && <p id="err-phone" className="mt-1 text-xs text-destructive-ink">{errors.phone}</p>}
       </div>
 
       {/* اسم النشاط اختياريّ عمداً: هو ما يظهر على الفاتورة وفي صفحة العميل، لكن اشتراطه
@@ -366,6 +366,10 @@ export function CheckoutForm({
         </label>
         <input
           id="checkout-business" name="businessName" type="text" maxLength={120}
+          /* `organization` — WCAG 1.3.5 (AA) يفرض أن يكون غرض الحقل مُدرَكاً برمجيّاً،
+             والثلاثة الأخرى تحمله (`name` · `email` · `tel`) وهذا وحده كان بلا قيمة.
+             وثمرته عمليّة: المتصفّح يملؤه من بطاقة المستخدم بلا كتابة على الجوّال. */
+          autoComplete="organization"
           value={businessName}
           onChange={(e) => setBusinessName(e.target.value)}
           placeholder="عيادة النور"
@@ -374,7 +378,7 @@ export function CheckoutForm({
       </div>
 
       <CardField ref={ngeniusRef} apiKey={ngeniusHostedSessionKey} outletRef={ngeniusOutletRef} language="ar" />
-      {errors.card && <p className="text-xs text-destructive">{errors.card}</p>}
+      {errors.card && <p className="text-xs text-destructive-ink">{errors.card}</p>}
 
       {/* Turnstile في وضعه المُدار (مرئيّ). الوضع الخفيّ أخفق صامتاً على أجهزة وشبكات
           بعينها (سفاري iPad ومزوّدين محدَّدين): لا رمز يصدر أبداً، فيبقى زرّ الدفع معطّلاً
@@ -392,7 +396,7 @@ export function CheckoutForm({
               onError={() => setTurnstileToken(null)}
             />
           </div>
-          {errors.turnstile && <p className="text-center text-xs text-destructive">{errors.turnstile}</p>}
+          {errors.turnstile && <p className="text-center text-xs text-destructive-ink">{errors.turnstile}</p>}
         </>
       ) : null}
 
@@ -418,7 +422,7 @@ export function CheckoutForm({
       </label>
 
       {errors.terms && (
-        <p id="checkout-terms-error" role="alert" className="text-xs font-semibold text-destructive">{errors.terms}</p>
+        <p id="checkout-terms-error" role="alert" className="text-xs font-semibold text-destructive-ink">{errors.terms}</p>
       )}
 
       {/* يُسأل عنه قبل الدفع لا بعده: من يتردّد يريد أن يقرأ ما يلتزم به، والعقد
@@ -467,7 +471,7 @@ export function CheckoutForm({
       )}
 
       {errors.submit && (
-        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-center text-xs text-destructive">{errors.submit}</p>
+        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-center text-xs text-destructive-ink">{errors.submit}</p>
       )}
 
       <div className="flex items-center justify-center gap-2 rounded-lg border border-primary/25 bg-primary/5 px-3 py-2.5 text-center text-xs text-foreground">

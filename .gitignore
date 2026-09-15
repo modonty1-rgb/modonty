@@ -68,6 +68,13 @@ backups/
 !modonty/app/apple-icon.png
 !brand/favicon/*.png
 !modonty/public/trust/*.png
+
+# Payment public assets — the *.png ignore was silently dropping shipped files.
+# Measured 15 Sep 2026: og.png (the ad/social share card), plus sadad.png and
+# saib-bank.png which the Egypt pay-methods row renders live on the homepage.
+# All three were untracked, so a deploy served 404s: a blank ad card and two
+# broken payment logos. Anything under payment/public is served to buyers.
+!payment/public/**/*.png
 .vercel
 
 # نسخ احتياطية يخلّفها سكربت تدقيق الأيقونات (scripts/refresh-icon-inventory.mjs).

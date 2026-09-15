@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>جرد جبر سيو في الأدمن — ١٤ سبتمبر ٢٠٢٦</title>
+<style>
+  :root{
+    --bg:#f6f6f4; --card:#fff; --ink:#15151a; --muted:#6b6b76; --line:#e3e3df;
+    --red:#c0392b; --red-bg:#fdeceb; --amber:#8a6100; --amber-bg:#fdf4e0;
+    --green:#1d7a4c; --green-bg:#e9f6ef; --blue:#1d4ed8; --blue-bg:#eaf0fe;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#151519;--card:#1f1f23;--ink:#ececf0;--muted:#a0a0ac;--line:#33333a;
+      --red:#ff8579;--red-bg:#3a1f1d;--amber:#f0c060;--amber-bg:#352a12;
+      --green:#6ddba3;--green-bg:#14301f;--blue:#93b4ff;--blue-bg:#1a2340;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.75 "Tajawal",-apple-system,"Segoe UI",system-ui,sans-serif;
+    padding:24px 16px 80px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:26px;font-weight:800;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13.5px;margin:0 0 28px}
+  h2{font-size:19px;font-weight:800;margin:36px 0 10px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:15px;font-weight:700;margin:20px 0 8px}
+  p{margin:8px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:12px 0}
+  .flag{border-radius:12px;padding:14px 16px;margin:14px 0;border:1px solid transparent}
+  .flag.red{background:var(--red-bg);border-color:var(--red);}
+  .flag.amber{background:var(--amber-bg);border-color:var(--amber);}
+  .flag.green{background:var(--green-bg);border-color:var(--green);}
+  .flag b{display:block;margin-bottom:4px}
+  .flag.red b{color:var(--red)} .flag.amber b{color:var(--amber)} .flag.green b{color:var(--green)}
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card);margin:12px 0}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px}
+  th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:rgba(125,125,140,.08);font-weight:700;font-size:12.5px;color:var(--muted)}
+  tbody tr:last-child td{border-bottom:0}
+  code,.mono{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:12.5px;
+    background:rgba(125,125,140,.12);padding:1px 5px;border-radius:5px;direction:ltr;display:inline-block}
+  pre{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;
+    overflow-x:auto;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.7;direction:ltr;text-align:left}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap}
+  .t-live{background:var(--green-bg);color:var(--green)}
+  .t-dead{background:rgba(125,125,140,.15);color:var(--muted)}
+  .t-risk{background:var(--red-bg);color:var(--red)}
+  .t-data{background:var(--blue-bg);color:var(--blue)}
+  ul{margin:8px 0;padding-inline-start:22px} li{margin:4px 0}
+  .num{font-variant-numeric:tabular-nums;font-weight:700}
+  .foot{color:var(--muted);font-size:12.5px;margin-top:40px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>جرد جبر سيو داخل الأدمن</h1>
+<p class="sub">
+  كل موضعٍ في <code>admin/</code> يقرأ من جبر سيو أو يحمل اسمها — محتوىً وأسعاراً وبيانات.
+  قياس حيّ على <code>modonty_dev</code>، ١٤ سبتمبر ٢٠٢٦. كل رقمٍ هنا مقروءٌ من القاعدة أو من <code>grep</code>، لا مُقدَّر.
+</p>
+
+<div class="flag red">
+  <b>🔴 أهمّ ما كشفه الجرد: نظاما أسعارٍ يعملان معاً ويختلفان</b>
+  جدولان حيّان (<code>isActive: true</code> في كليهما) يحملان نفس أسماء الباقات بأرقامٍ مختلفة.
+  اثنان من ثلاثة أسعار مختلفان، و<b>أعداد المقالات مختلفة في الثلاثة كلّها</b>.
+</div>
+
+<div class="scroll">
+<table>
+  <thead><tr>
+    <th>الباقة</th>
+    <th>SubscriptionTierConfig<br><span style="font-weight:400">إرث جبر سيو · <code>jbrseoId</code></span></th>
+    <th>CommercialPlan<br><span style="font-weight:400">كتالوج البيمنت · SA</span></th>
+    <th>الفرق</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><b>الانطلاقة</b><br><code>starter</code></td>
+        <td><span class="num">499</span> ر.س · <span class="num">4</span> مقالات</td>
+        <td><span class="num">399</span> ر.س · <span class="num">8</span> مقالات</td>
+        <td style="color:var(--red)">−100 ر.س · ضعف المقالات</td></tr>
+    <tr><td><b>الزخم</b><br><code>growth</code></td>
+        <td><span class="num">1299</span> ر.س · <span class="num">8</span> مقالات</td>
+        <td><span class="num">1199</span> ر.س · <span class="num">12</span> مقالاً</td>
+        <td style="color:var(--red)">−100 ر.س · +4 مقالات</td></tr>
+    <tr><td><b>الريادة</b><br><code>scale</code></td>
+        <td><span class="num">2999</span> ر.س · <span class="num">12</span> مقالاً</td>
+        <td><span class="num">2999</span> ر.س · <span class="num">16</span> مقالاً</td>
+        <td style="color:var(--amber)">السعر واحد · +4 مقالات</td></tr>
+    <tr><td><b>مجاني</b><br><code>free</code></td>
+        <td><span class="num">0</span> ر.س · <span class="num">1</span> مقال</td>
+        <td>— لا مقابل له</td>
+        <td class="mono">—</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0">ليش هذا خطير وليس مجرّد تكرار</h3>
+  <p>
+    الجدولان ليسا أحدهما ميّتاً: <b>٤٣ ملفّاً</b> في الأدمن والكونسول يقرأ
+    <code>subscriptionTierConfig</code> — إنشاء العميل، الفواتير، تبويب الاشتراك، تقرير المبيعات،
+    واجهة الجوّال (<code>console/app/api/mobile/v1/subscription</code>). فهو <b>باقة التشغيل</b>
+    للعملاء القائمين. و<code>CommercialPlan</code> هو <b>باقة البيع</b> التي تُعرض على المشتري الجديد.
+  </p>
+  <p>
+    والنتيجة عمليّاً: مشترٍ يدفع <b>٣٩٩</b> على صفحة البيع ويُوعَد بـ<b>٨ مقالات</b>،
+    ثم يُحوَّل إلى عميلٍ فيُربط بباقةٍ مكتوبٌ فيها <b>٤٩٩</b> و<b>٤ مقالات</b> — والفاتورة
+    وتبويب الاشتراك يقرآن من الثاني.
+  </p>
+  <p style="margin-bottom:0">
+    <span class="tag t-risk">قرار مطلوب</span>
+    أي الجدولين هو المرجع؟ ومن يتبع من عند التعديل؟ لا يوجد اليوم أي مزامنة بينهما —
+    <code>syncedAtSA</code> و<code>syncedAtEG</code> <b>فارغان في الأربعة</b>، و<code>pricing</code> (JSON) <code>null</code> في الأربعة.
+  </p>
+</div>
+
+<h2>١ · الاتصال بقاعدة جبر سيو</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>الملفّ</th><th>ماذا يفعل</th><th>الحالة</th></tr></thead>
+  <tbody>
+    <tr><td><code>admin/lib/jbrseo-client.ts</code></td>
+        <td>عميل MongoDB مستقلّ على <code>JBRSEO_DATABASE_URL</code> — يرمي عند الإقلاع إن غاب المتغيّر</td>
+        <td><span class="tag t-live">حيّ</span></td></tr>
+    <tr><td><code>subscription-tiers/actions/sync-subscribers.ts</code></td>
+        <td><b>المستهلك الوحيد</b> — يسحب مشتركي جبر سيو إلى <code>jbrseo_subscribers</code></td>
+        <td><span class="tag t-live">حيّ</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  <code>JBRSEO_DATABASE_URL</code> مفعَّل في <code>.env.shared</code> سطر ٣١ ويشير إلى قاعدة
+  <code>modonty</code> — أي أن الأدمن يفتح <b>اتصالاً ثانياً</b> بنفس العنقود لقراءة مجموعاتٍ
+  أنشأها موقع جبر سيو.
+</p>
+
+<h2>٢ · جداول جبر سيو في القاعدة</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>النموذج</th><th>المجموعة</th><th>الصفوف <span style="font-weight:400">(حيّ)</span></th><th>الدور</th></tr></thead>
+  <tbody>
+    <tr><td><code>JbrseoSubscriber</code></td><td><code>jbrseo_subscribers</code></td>
+        <td class="num">17</td>
+        <td>مرآة عرضٍ فقط لمشتركي جبر سيو — لا تدخل أي سير عمل</td></tr>
+    <tr><td><code>JbrSiteSettings</code></td><td><code>SiteSettings</code></td>
+        <td class="num">1</td>
+        <td>GTM ورقم واتساب موقع جبر سيو. القيم الحيّة:
+            <code>GTM-TT25M3GX</code> · <code>966541018020</code></td></tr>
+    <tr><td><code>JbrLandingSection</code></td><td>أقسام صفحة الهبوط</td>
+        <td class="num">18</td>
+        <td>محتوى صفحة جبر سيو الرئيسية — يُحرَّر من الأدمن</td></tr>
+    <tr><td><code>SubscriptionTierConfig</code></td><td>—</td>
+        <td class="num">4</td>
+        <td>مفتاحها <code>jbrseoId</code>: <code>free</code> · <code>starter</code> · <code>growth</code> · <code>scale</code></td></tr>
+    <tr><td><code>ReferralLead</code></td><td>—</td>
+        <td class="num">0</td>
+        <td>نُقل من قاعدة <code>jbrseo_sales</code> المستقلّة (٤ سبتمبر ٢٠٢٦) — فارغ</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>٣ · شاشات الأدمن التي تخصّ جبر سيو</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>المسار</th><th>ما فيه</th><th>يقرأ من</th></tr></thead>
+  <tbody>
+    <tr><td><code>/jbr-seo/content</code></td>
+        <td>تحرير محتوى صفحة هبوط جبر سيو — ٦ ملفّات
+            (<code>page</code> · <code>ReviewClient</code> · <code>EditFieldButton</code> ·
+             <code>EditArrayButton</code> · <code>content-actions</code> · <code>landing-read</code>)</td>
+        <td><code>db.jbrSiteSettings</code> + <code>JbrLandingSection</code></td></tr>
+    <tr><td><code>/settings/jbr-seo</code></td>
+        <td>لوحة B2B على صفحة العملاء — الزرّ يخرج إلى <code>jbrseo.com</code></td>
+        <td><code>Settings.b2bCtaUrl</code> — <b>قيمته الحيّة <code>null</code></b></td></tr>
+    <tr><td><code>/campaigns/reports/jbrseo</code></td>
+        <td>تقرير حملات Meta لعلامة جبر سيو (المسار <code>[brand]</code>)</td>
+        <td><code>meta-live-report.ts</code></td></tr>
+    <tr><td><code>/subscription-tiers</code></td>
+        <td>الباقات ومزامنة المشتركين — <code>jbrseo-queries.ts</code> · <code>sync-button</code> ·
+            <code>subscribers-table</code> · <code>plan-cards</code></td>
+        <td>قاعدة جبر سيو + <code>SubscriptionTierConfig</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  <b>الظهور في التنقّل:</b> <code>sidebar.tsx:277</code> بندٌ اسمه «JBR SEO Content» ←
+  <code>/jbr-seo/content</code>؛ و<code>settings/page.tsx:54</code> بطاقة «B2B · jbrseo.com»؛
+  و<code>breadcrumb-utils.ts:101</code> يترجم <code>jbrseo</code> إلى «جبر سيو».
+</p>
+
+<h2>٤ · الأسعار — أين تُقرأ وتُكتب</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>الملفّ</th><th>الدور</th></tr></thead>
+  <tbody>
+    <tr><td><code>admin/lib/pricing/get-tier-pricing.ts</code></td>
+        <td>يقرأ باقةً بـ<code>jbrseoId</code> ويُخرج سعرها حسب البلد — <b>قلب نظام الأسعار القديم</b></td></tr>
+    <tr><td><code>admin/lib/pricing/format-for-guideline.ts</code></td>
+        <td>يصوغ السعر لدليل الكتابة، مفتاحه <code>jbrseoId</code></td></tr>
+    <tr><td><code>admin/scripts/sync-tier-pricing.ts</code></td>
+        <td>سكربت مزامنة الأسعار — يكتب <code>syncedAtSA/EG</code>، و<b>القيمتان فارغتان</b> أي لم يُشغَّل</td></tr>
+    <tr><td><code>admin/scripts/seed-tiers.ts</code></td>
+        <td>بذر الباقات الأربع بـ<code>jbrseoId</code></td></tr>
+    <tr><td><code>sales-leads/helpers/get-plans.ts</code></td>
+        <td>باقات نموذج العملاء المحتملين</td></tr>
+    <tr><td><code>subscription-tiers/lib/pricing.ts</code></td>
+        <td>حساب الأسعار في شاشة الباقات</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>٥ · مواضع متفرّقة تحمل الاسم</h2>
+
+<p>٤٩ ملفّ مصدرٍ في <code>admin/</code> يذكر جبر سيو (خارج <code>.next</code>). ما لم يُذكر أعلاه:</p>
+
+<ul>
+  <li><code>lib/jbr/</code> — أربعة ملفّات أنواعٍ وثوابت:
+      <code>landing-content.types</code> · <code>landing-sections</code> ·
+      <code>site-settings.types</code> · <code>team-presets</code></li>
+  <li><code>clients/actions/convert-subscriber-to-client.ts</code> — تحويل مشترك جبر سيو إلى عميل
+      <span class="tag t-risk">هنا يلتقي النظامان</span></li>
+  <li><code>clients/page.tsx</code> · <code>clients-tabs.tsx</code> — تبويب مشتركي جبر سيو</li>
+  <li><code>articles/components/client-site-banner.tsx</code> — شارة موقع العميل</li>
+  <li><code>database/actions/</code> — ثلاثة: <code>orphan-scan</code> ·
+      <code>date-published-backfill</code> · <code>run-all-maintenance</code> (تشمل جداول جبر سيو في الصيانة)</li>
+  <li><code>campaigns/</code> — <code>campaign-schema</code> · <code>channels</code> ·
+      <code>reports/[brand]/page</code> · <code>meta-live-report</code></li>
+  <li><code>settings/advertising-platforms/</code> — الأكشن والنموذج و<code>advertising-platforms.seed.json</code></li>
+  <li><code>emails/email-templates-config.ts</code> · <code>lib/seo/knowledge-graph-generator.ts</code> ·
+      <code>scripts/changelog-sync.ts</code> · <code>components/tasks/task-dialog.tsx</code> ·
+      <code>payment-failures/page.tsx</code> · <code>clients/actions/clients-actions/probe-articles-base-url.ts</code></li>
+</ul>
+
+<h2>٦ · ما يحتاج قرارك</h2>
+
+<div class="flag red">
+  <b>١ · أي جدولٍ هو مرجع السعر؟</b>
+  اليوم اثنان، وأرقامهما تختلف، ولا مزامنة بينهما. الخيارات: يُجمَّد
+  <code>SubscriptionTierConfig</code> ويُشتقّ من الكتالوج · أو يبقى للتشغيل ويُمنع تعديله يدوياً ·
+  أو يُدمجان. ولا يُقرَّر هذا من الكود.
+</div>
+
+<div class="flag amber">
+  <b>٢ · هل قسم <code>/jbr-seo/content</code> ما زال مستعمَلاً؟</b>
+  ١٨ صفّ محتوى وصفّ إعدادات واحد حيّ، وتحريرها يؤثّر على موقع جبر سيو لا على مدونتي.
+  إن كان الموقع ما زال يعمل فهو قسمٌ قائم؛ وإلّا فهو ستّة ملفّاتٍ وبندُ سايدبار بلا غرض.
+</div>
+
+<div class="flag amber">
+  <b>٣ · لوحة B2B معطَّلة فعلياً</b>
+  <code>Settings.b2bCtaUrl</code> قيمتها <code>null</code> — فالبطاقة موجودة في الإعدادات
+  ولا تقود إلى شيء. تُملأ أو يُخفى القسم.
+</div>
+
+<div class="flag green">
+  <b>٤ · ما لا يحتاج قراراً</b>
+  <code>ReferralLead</code> فارغ (٠ صفوف) و<code>JbrseoSubscriber</code> عرضٌ فقط بلا سير عمل —
+  كلاهما لا يؤثّر على مسار البيع الجديد.
+</div>
+
+<p class="foot">
+  جُرد في ١٤ سبتمبر ٢٠٢٦ · المصدر: <code>grep</code> على <code>admin/</code> (خارج <code>.next</code>)
+  + قراءة حيّة من <code>modonty_dev</code> عبر Prisma · الأعداد لحظة الجرد وتتغيّر بتغيّر القاعدة.
+</p>
+
+</div>
+</body>
+</html>
