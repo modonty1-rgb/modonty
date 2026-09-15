@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الدورة المالية — من العميل المحتمل إلى الفاتورة</title>
+<style>
+  :root{
+    --bg:#f6f6f4; --card:#fff; --ink:#15151a; --muted:#6b6b76; --line:#e3e3df;
+    --red:#c0392b; --red-bg:#fdeceb; --amber:#8a6100; --amber-bg:#fdf4e0;
+    --green:#1d7a4c; --green-bg:#e9f6ef; --blue:#1d4ed8; --blue-bg:#eaf0fe;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#151519;--card:#1f1f23;--ink:#ececf0;--muted:#a0a0ac;--line:#33333a;
+      --red:#ff8579;--red-bg:#3a1f1d;--amber:#f0c060;--amber-bg:#352a12;
+      --green:#6ddba3;--green-bg:#14301f;--blue:#93b4ff;--blue-bg:#1a2340;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.75 "Tajawal",-apple-system,"Segoe UI",system-ui,sans-serif;
+    padding:24px 16px 80px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:26px;font-weight:800;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13.5px;margin:0 0 28px}
+  h2{font-size:19px;font-weight:800;margin:36px 0 10px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:15px;font-weight:700;margin:20px 0 8px}
+  p{margin:8px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:12px 0}
+  .flag{border-radius:12px;padding:14px 16px;margin:14px 0;border:1px solid transparent}
+  .flag.red{background:var(--red-bg);border-color:var(--red);}
+  .flag.amber{background:var(--amber-bg);border-color:var(--amber);}
+  .flag.green{background:var(--green-bg);border-color:var(--green);}
+  .flag b{display:block;margin-bottom:4px}
+  .flag.red b{color:var(--red)} .flag.amber b{color:var(--amber)} .flag.green b{color:var(--green)}
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card);margin:12px 0}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px}
+  th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:rgba(125,125,140,.08);font-weight:700;font-size:12.5px;color:var(--muted)}
+  tbody tr:last-child td{border-bottom:0}
+  code,.mono{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:12.5px;
+    background:rgba(125,125,140,.12);padding:1px 5px;border-radius:5px;direction:ltr;display:inline-block}
+  pre{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;
+    overflow-x:auto;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.7;direction:ltr;text-align:left}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap}
+  .t-live{background:var(--green-bg);color:var(--green)}
+  .t-dead{background:rgba(125,125,140,.15);color:var(--muted)}
+  .t-risk{background:var(--red-bg);color:var(--red)}
+  .t-data{background:var(--blue-bg);color:var(--blue)}
+  ul{margin:8px 0;padding-inline-start:22px} li{margin:4px 0}
+  .num{font-variant-numeric:tabular-nums;font-weight:700}
+  .muted{color:var(--muted);font-size:12.5px}
+  .pend{display:inline-block;min-width:34px;text-align:center;font-weight:800;
+    color:var(--amber);background:var(--amber-bg);border:1px dashed var(--amber);
+    border-radius:6px;padding:1px 8px}
+  tr.money td{background:color-mix(in srgb, var(--red-bg) 45%, transparent)}
+  .foot{color:var(--muted);font-size:12.5px;margin-top:40px;border-top:1px solid var(--line);padding-top:14px}
+  .pend{display:inline-block;min-width:34px;text-align:center;font-weight:800;
+    color:var(--amber);background:var(--amber-bg);border:1px dashed var(--amber);
+    border-radius:6px;padding:1px 8px}
+  .muted{color:var(--muted);font-size:12.5px}
+  tr.money td{background:color-mix(in srgb, var(--red-bg) 45%, transparent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>الدورة المالية — من العميل المحتمل إلى الفاتورة</h1>
+<p class="sub">
+  جرد كامل للكود والقاعدة قبل أي تعديل. <b>كل رقم هنا مقروءٌ من قاعدة الإنتاج
+  <code>modonty</code> أو من الكود بـ<code>grep</code>، لا مُقدَّر</b> — ١٥ سبتمبر ٢٠٢٦.
+</p>
+
+<div class="flag red">
+  <b>الخلاصة في سطر:</b> الدورة غير مقفولة. الفلوس تدخل من ثلاثة أبواب لا يتكلّم بعضها مع
+  بعض، وأرقام العميل تُدهس بلا تاريخ — فلا المبيعات تقدر تتابع، ولا الحسابات تضبط.
+</div>
+
+<h2>١ · الحالة اليوم — أرقام الإنتاج</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>القياس</th><th>العدد</th><th>يعني</th></tr></thead>
+  <tbody>
+    <tr><td>العملاء</td><td class="num">٤١</td><td>—</td></tr>
+    <tr class="money"><td>حصّة مقالاته تخالف الكتالوج</td><td class="num">٣٩ / ٤١</td>
+        <td>PRO مكتوب عنده ٨ والكتالوج ١٢ — <b>٩٥٪ من الدفتر</b></td></tr>
+    <tr class="money"><td>بلا تاريخ نهاية اشتراك</td><td class="num">٢٣ / ٤١</td>
+        <td>ما تقدر تعرف متى ينتهي ولا تُذكَّر بالتجديد</td></tr>
+    <tr class="money"><td>بلا مندوب</td><td class="num">٢٠ / ٤١</td>
+        <td>المبيعات ما تقدر تتابعه ولا يدخل تقرير مندوب</td></tr>
+    <tr><td>بلا رصيد افتتاحي</td><td class="num">١٤ / ٤١</td><td>ما دخل تقرير المبيعات</td></tr>
+    <tr><td>اشتراكه منتهٍ وهو حيّ</td><td class="num">٩ / ٤١</td><td>يُخدَم بلا دفع</td></tr>
+    <tr><td>الفواتير</td><td class="num">١٥</td><td>كلها مدفوعة · ٠ مستحقّة · واحدة من رصيد افتتاحي</td></tr>
+    <tr><td>الطلبات من صفحة الدفع</td><td class="num">٤</td><td>—</td></tr>
+    <tr><td>العملاء المحتملون</td><td class="num">٢٦</td><td>—</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>٢ · ثلاثة أبواب يدخل منها العميل</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>الباب</th><th>الشاشة</th><th>وش يمرّر</th><th>وش يضيع</th></tr></thead>
+  <tbody>
+    <tr><td><b>يدويّ</b></td><td><code>/clients/new</code></td>
+        <td>الباقة · الدورة · العملة · الرصيد الافتتاحي · المندوب</td>
+        <td>— (الأكمل)</td></tr>
+    <tr class="money"><td><b>عميل محتمل</b></td><td><code>/sales-leads/[id]</code> ← «حوّل»</td>
+        <td><code>subscriptionTier</code> و<code>salesRepId</code> <b>فقط</b></td>
+        <td>الرصيد الافتتاحي · الدورة · التواريخ — <code>sales-leads/actions.ts:436-446</code></td></tr>
+    <tr class="money"><td><b>شراء من صفحة الدفع</b></td><td><code>/orders/[id]</code></td>
+        <td>الطلب فيه لقطة كاملة للسعر</td>
+        <td>لا يُنشئ العميل تلقائياً — <code>orders/actions.ts:137</code>
+            «أنشئ حساب العميل أولاً»</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>فثلاثة أبواب، وكلٌّ يملأ حقولاً مختلفة على نفس الصفّ. ومن هنا جاء
+<b>٢٠ عميلاً بلا مندوب</b> و<b>٢٣ بلا تاريخ نهاية</b>.</p>
+
+<h2>٣ · أين يسكن المال — وأين لا يسكن</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>الجدول</th><th>يحمل</th><th>له تاريخ؟</th></tr></thead>
+  <tbody>
+    <tr class="money"><td><code>Client</code><br><span class="muted">schema.prisma:637-657</span></td>
+        <td><code>subscriptionTier</code> · <code>articlesPerMonth</code> · <code>billingCycle</code> ·
+            <code>openingBalance</code> · <code>subscriptionStartDate</code> · <code>subscriptionEndDate</code></td>
+        <td><b>لا</b> — قيمة واحدة تُدهس عند كل تعديل</td></tr>
+    <tr><td><code>Invoice</code><br><span class="muted">schema.prisma:3751</span></td>
+        <td>لقطة كاملة: <code>tier</code> · <code>tierName</code> · <code>period</code> ·
+            <code>currency</code> · <code>amount</code> · <code>subscriptionStart/End</code> ·
+            <code>paidMonths</code> · <code>bonusServiceMonths</code></td>
+        <td><span class="tag t-live">نعم</span></td></tr>
+    <tr><td><code>CheckoutOrder</code></td><td>لقطة السعر لحظة الشراء</td>
+        <td><span class="tag t-live">نعم</span></td></tr>
+    <tr><td><code>SubscriptionTierConfig</code></td><td>باقة تشغيلية قديمة — ٤ صفوف</td>
+        <td>لا — ويُجمَّد</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="flag amber">
+  <b>الفجوة الحقيقية:</b> التاريخ موجود في <code>Invoice</code> — لكنه يُكتب <b>عند الفوترة
+  فقط</b>. وتغييرُ الباقة لا يُصدِر فاتورة، فيُدهَس صفّ العميل ولا يبقى أثر.
+  <br>فالسؤال «في مارس كان على أي باقة وبأي سعر؟» لا جواب له إلا إن صادف أن فاتورةً صدرت.
+</div>
+
+<h2>٤ · عطلان مقيسان في الفوترة</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>#</th><th>العطل</th><th>الدليل</th></tr></thead>
+  <tbody>
+    <tr class="money"><td class="num">١</td>
+        <td>مبلغ الفاتورة <b>يُكتب باليد</b> — لا يُحسب من الباقة</td>
+        <td><code>create-invoice.ts:15,58</code> — <code>amount: number</code> من المدخل،
+            والتحقّق الوحيد <code>amount &gt; 0</code></td></tr>
+    <tr class="money"><td class="num">٢</td>
+        <td>اسم الباقة على الفاتورة من <b>الجدول القديم</b></td>
+        <td><code>create-invoice.ts:122</code> —
+            <code>client.subscriptionTierConfig?.name</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>٥ · الخياران — والقرار لك</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th></th><th>أ · صفحة مالية للعميل</th><th>ب · المال في المبيعات</th></tr></thead>
+  <tbody>
+    <tr><td>الفكرة</td>
+        <td>القسم المالي يخرج من نموذج العميل إلى <code>/clients/[id]/money</code></td>
+        <td>المبيعات تملك الدورة: العميل يجي منها، وماله يُدار منها</td></tr>
+    <tr><td>يحلّ</td><td>خلط التحرير بالعرض</td><td>الباب الواحد — ينتهي اختلاف الأبواب الثلاثة</td></tr>
+    <tr class="money"><td><b>لا يحلّ</b></td>
+        <td colspan="2"><b>ولا واحد منهما يحلّ غياب التاريخ</b> — ما دام المال حقولاً مفردة على
+            <code>Client</code>، يبقى التعديل يدهس ما قبله</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="flag red">
+  <b>رأيي:</b> المكان ثانويّ، والناقص جدول. <b>«اشتراك» صفٌّ لكل فترة</b>: العميل · الباقة ·
+  السعر <b>وقت الاتفاق</b> · العملة · الدورة · من ← إلى · الحالة. والعميل يشير إلى الاشتراك
+  الحاليّ وحده.
+  <br>عندها: تغيير الباقة صفٌّ جديد والقديم يبقى · تغيير سعر الكتالوج <b>لا يمسّ</b> عميلاً
+  قائماً · الفاتورة تُصدَر من الاشتراك فتطابق ما دُفع · والتجديد له تاريخ يُذكِّر.
+  <br><b>والسابقة عندك:</b> <code>CheckoutOrder</code> يلقط السعر لحظة الشراء — نفس الدرس.
+</div>
+
+<h2>٦ · البنود — اكتب قرارك في العمود الأخير</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>#</th><th>البند</th><th>ليش</th><th>الحجم</th><th>قرار خالد</th></tr></thead>
+  <tbody>
+    <tr><td class="num">١</td><td>القرار: أ أم ب أم الجدول</td>
+        <td>كل ما بعده يتفرّع منه</td><td>قرار</td><td class="pend">؟</td></tr>
+    <tr><td class="num">٢</td><td>الاشتراك <b>يتجدّد فترةً بعد فترة</b> أم عقدٌ واحد يُمدَّد؟</td>
+        <td>يحدّد هل الجدول «فترات» أم «تغييرات»</td><td>قرار</td><td class="pend">؟</td></tr>
+    <tr class="money"><td class="num">٣</td><td>مبلغ الفاتورة يُحسب من الاشتراك لا باليد</td>
+        <td>اليوم يُكتب يدوياً بلا سقف</td><td><span class="tag t-risk">فلوس</span></td><td class="pend">؟</td></tr>
+    <tr class="money"><td class="num">٤</td><td>اسم الباقة على الفاتورة من الكتالوج</td>
+        <td>اليوم من الجدول القديم</td><td><span class="tag t-risk">فلوس</span></td><td class="pend">؟</td></tr>
+    <tr class="money"><td class="num">٥</td><td>تحويل العميل المحتمل يمرّر المال كاملاً</td>
+        <td>اليوم تصنيفٌ ومندوبٌ فقط — ومنه ٢٠ عميلاً ناقصاً</td><td><span class="tag t-risk">فلوس</span></td><td class="pend">؟</td></tr>
+    <tr class="money"><td class="num">٦</td><td>الطلب المدفوع يُنشئ العميل بلقطته</td>
+        <td>اليوم يرفض حتى تُنشئه بيدك</td><td><span class="tag t-risk">فلوس</span></td><td class="pend">؟</td></tr>
+    <tr><td class="num">٧</td><td>ترحيل ٣٩ عميلاً إلى حصّة الكتالوج</td>
+        <td>٩٥٪ من الدفتر على رقمٍ قديم</td><td>بيانات إنتاج</td><td class="pend">؟</td></tr>
+    <tr><td class="num">٨</td><td>٢٣ بلا تاريخ نهاية · ٢٠ بلا مندوب</td>
+        <td>تُملأ يدوياً أم تُشتقّ؟</td><td>بيانات إنتاج</td><td class="pend">؟</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="foot">
+  جُرد ١٥ سبتمبر ٢٠٢٦ · المصدر: <code>grep</code> على <code>admin/</code> (خارج
+  <code>.next</code>) + قراءة حيّة من <code>modonty</code> عبر سائق مونقو مباشرةً.
+  الأعداد لحظة الجرد وتتغيّر بتغيّر القاعدة.
+</p>
+
+</div>
+</body>
+</html>
