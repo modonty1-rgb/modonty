@@ -57,13 +57,6 @@ const KEY_MAP: Record<ListingKey, {
     fieldList: [
       "clientsSeoTitle",
       "clientsSeoDescription",
-      "b2bLabel",
-      "b2bHeadline",
-      "b2bBullet1",
-      "b2bBullet2",
-      "b2bBullet3",
-      "b2bCtaText",
-      "b2bCtaUrl",
     ],
   },
   categories: {

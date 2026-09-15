@@ -3302,15 +3302,6 @@ model Settings {
   faqSeoTitle                  String?
   faqSeoDescription            String?
 
-  // Clients page — Hero B2B panel (CP-1 / JBRSEO-ADMIN-1)
-  b2bLabel    String?  // e.g. "لأصحاب الأعمال والشركات"
-  b2bHeadline String?  // e.g. "عملاؤك يبحثون عنك على جوجل"
-  b2bBullet1  String?
-  b2bBullet2  String?
-  b2bBullet3  String?
-  b2bCtaText  String?  // e.g. "عملاء بلا إعلانات"
-  b2bCtaUrl   String?  // e.g. "https://www.jbrseo.com"
-
   // Homepage feed banner (JBRSEO-ADMIN-2)
   platformTagline     String?  // e.g. "مرحباً بك في مودونتي"
   platformDescription String?  // e.g. "منصة المحتوى العربي — اكتشف مقالات..."

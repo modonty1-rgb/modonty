@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   Building2,
   Gem,
-  Target,
   Shield,
   Share2,
   ImageIcon,
@@ -47,14 +46,6 @@ const BRAND: CardSpec = {
   description:
     "Brand description, site logo, mobile icon & alt text — the Organization identity in Google and the navbar logo on every page.",
   icon: Gem,
-};
-
-// Sales channel — JBR SEO B2B promo ("بوابة البيع"). Its own area; the panel is shown on the clients hero.
-const SALES: CardSpec = {
-  href: "/settings/jbr-seo",
-  title: "JBR SEO",
-  description: "B2B sales channel — the promo panel pitching JBR SEO services on the clients page (CTA → jbrseo.com).",
-  icon: Target,
 };
 
 // Reference data — admin-managed foundational lookups (countries + licensing
@@ -183,23 +174,6 @@ export default function SettingsDashboardPage() {
           <ArrowRight className="ms-auto h-4 w-4 flex-none text-muted-foreground/30 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all" />
         </Link>
       </div>
-
-      {/* ── Sales channel — JBR SEO (بوابة البيع) ── */}
-      <SectionLabel>Sales channel</SectionLabel>
-      <Link
-        href={SALES.href}
-        title={SALES.description}
-        className="group flex items-center gap-3.5 rounded-xl border bg-card px-4 py-3.5 transition-colors hover:bg-muted/30"
-      >
-        <div className="h-10 w-10 flex-none rounded-lg bg-muted text-muted-foreground grid place-items-center transition-colors group-hover:text-foreground">
-          <SALES.icon className="h-5 w-5" />
-        </div>
-        <h3 className="text-sm font-bold truncate">{SALES.title}</h3>
-        <span className="flex-none text-[9.5px] font-bold tracking-wide text-primary bg-primary/10 border border-primary/25 rounded-full px-2 py-0.5">
-          B2B · jbrseo.com
-        </span>
-        <ArrowRight className="ms-auto h-4 w-4 flex-none text-muted-foreground/30 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all" />
-      </Link>
 
       <Link
         href={ADVERTISING_PLATFORMS.href}

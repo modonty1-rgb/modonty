@@ -171,9 +171,9 @@
 <table>
   <thead><tr><th>المسار</th><th>ما فيه</th><th>يقرأ من</th></tr></thead>
   <tbody>
-    <tr><td><code>/settings/jbr-seo</code></td>
+    <tr><td><s><code>/settings/jbr-seo</code></s></td>
         <td>لوحة B2B على صفحة العملاء — الزرّ يخرج إلى <code>jbrseo.com</code></td>
-        <td><code>Settings.b2bCtaUrl</code> — <b>قيمته الحيّة <code>null</code></b></td></tr>
+        <td><b>حُذفت ١٥ سبتمبر ٢٠٢٦</b> — كانت ميّتة، لا معطَّلة (البند ٣ أدناه)</td></tr>
     <tr><td><code>/campaigns/reports/jbrseo</code></td>
         <td>تقرير حملات Meta لعلامة جبر سيو (المسار <code>[brand]</code>)</td>
         <td><code>meta-live-report.ts</code></td></tr>
@@ -268,10 +268,23 @@
   <br><code>prisma validate</code> ⇐ <code>The schema at prisma\schema is valid 🚀</code>
 </div>
 
-<div class="flag amber">
-  <b>٣ · لوحة B2B معطَّلة فعلياً</b>
-  <code>Settings.b2bCtaUrl</code> قيمتها <code>null</code> — فالبطاقة موجودة في الإعدادات
-  ولا تقود إلى شيء. تُملأ أو يُخفى القسم.
+<div class="flag green">
+  <b>٣ · لوحة B2B — حُذفت ١٥ سبتمبر ٢٠٢٦</b>
+  الفكرة كانت: بانر إعلانيّ لجبر سيو يُعرض على هيرو صفحة الشركاء في مدونتي، وزرّه يخرج
+  إلى <code>jbrseo.com</code> — سبعة حقول تُملأ من الأدمن.
+  <br><b>ولم يكن معطَّلاً بل ميّتاً:</b> الدالّة التي تقرأ البانر
+  (<code>modonty/app/(site)/clients/helpers/get-b2b-panel-settings.ts</code>) لم يكن يستوردها
+  أحد — صفر مستورد في <code>modonty</code> و<code>admin</code> و<code>console</code>. فصفحة الشركاء
+  لم تكن ترسمه أصلاً، وشاشة الإعدادات تملأ حقولاً لا تظهر في أي مكان.
+  و<code>Settings.b2bCtaUrl</code> = <code>undefined</code> على الإنتاج.
+  <br><b>المحذوف:</b> <code>settings/jbr-seo/</code> (ملفّان) · الدالّة الميّتة في مدونتي ·
+  بطاقة <code>settings/page.tsx</code> واستيراد <code>Target</code> اليتيم · سبعة حقول من
+  <code>listing-page-form.tsx</code> · <b>٤٢ سطراً</b> من <code>settings-actions.ts</code> ·
+  سبعة حقول من السكيما.
+  <br><b>القياس بعد الحذف:</b> <code>/settings/jbr-seo</code> ⇐ <code>404</code> · بطاقة JBR SEO ٠ مرّة
+  في لقطة <code>/settings</code> والصفحة ترسم ١٠٥ عناصر · <code>grep</code> على المونوريبو ⇐ صفر بقايا ·
+  <code>prisma validate</code> ⇐ valid 🚀.
+  <br><span class="muted">القيم المخزّنة في الحقول السبعة تبقى في مستند الإعدادات — حذفها من السكيما لا يمسّ مونقو.</span>
 </div>
 
 <div class="flag green">

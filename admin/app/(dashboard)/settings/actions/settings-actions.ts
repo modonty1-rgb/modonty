@@ -69,13 +69,6 @@ export interface ModontySettings {
   tagsSeoDescription: string | null;
   industriesSeoTitle: string | null;
   industriesSeoDescription: string | null;
-  b2bLabel: string | null;
-  b2bHeadline: string | null;
-  b2bBullet1: string | null;
-  b2bBullet2: string | null;
-  b2bBullet3: string | null;
-  b2bCtaText: string | null;
-  b2bCtaUrl: string | null;
   platformTagline: string | null;
   platformDescription: string | null;
 }
@@ -349,13 +342,6 @@ const DEFAULT_SETTINGS: AllSettings = {
   industriesPageJsonLdStructuredData: null,
   industriesPageJsonLdLastGenerated: null,
   industriesPageJsonLdValidationReport: null,
-  b2bLabel: null,
-  b2bHeadline: null,
-  b2bBullet1: null,
-  b2bBullet2: null,
-  b2bBullet3: null,
-  b2bCtaText: null,
-  b2bCtaUrl: null,
   platformTagline: null,
   platformDescription: null,
   categoriesPageImage: null,
@@ -527,13 +513,6 @@ export async function getAllSettings(): Promise<AllSettings> {
         tagsSeoDescription: (newSettings as Record<string, unknown>).tagsSeoDescription as string | null,
         industriesSeoTitle: (newSettings as Record<string, unknown>).industriesSeoTitle as string | null,
         industriesSeoDescription: (newSettings as Record<string, unknown>).industriesSeoDescription as string | null,
-        b2bLabel: newSettings.b2bLabel,
-        b2bHeadline: newSettings.b2bHeadline,
-        b2bBullet1: newSettings.b2bBullet1,
-        b2bBullet2: newSettings.b2bBullet2,
-        b2bBullet3: newSettings.b2bBullet3,
-        b2bCtaText: newSettings.b2bCtaText,
-        b2bCtaUrl: newSettings.b2bCtaUrl,
         platformTagline: (newSettings as Record<string, unknown>).platformTagline as string | null ?? null,
         platformDescription: (newSettings as Record<string, unknown>).platformDescription as string | null ?? null,
         categoriesPageImage: (newSettings as Record<string, unknown>).categoriesPageImage as string | null ?? null,
@@ -684,13 +663,6 @@ export async function getAllSettings(): Promise<AllSettings> {
       tagsSeoDescription: (settings as Record<string, unknown>).tagsSeoDescription as string | null ?? null,
       industriesSeoTitle: (settings as Record<string, unknown>).industriesSeoTitle as string | null ?? null,
       industriesSeoDescription: (settings as Record<string, unknown>).industriesSeoDescription as string | null ?? null,
-      b2bLabel: settings.b2bLabel,
-      b2bHeadline: settings.b2bHeadline,
-      b2bBullet1: settings.b2bBullet1,
-      b2bBullet2: settings.b2bBullet2,
-      b2bBullet3: settings.b2bBullet3,
-      b2bCtaText: settings.b2bCtaText,
-      b2bCtaUrl: settings.b2bCtaUrl,
       platformTagline: (settings as Record<string, unknown>).platformTagline as string | null ?? null,
       platformDescription: (settings as Record<string, unknown>).platformDescription as string | null ?? null,
       categoriesPageImage: (settings as Record<string, unknown>).categoriesPageImage as string | null ?? null,
@@ -983,13 +955,6 @@ export async function saveModontySettings(data: Partial<ModontySettings>): Promi
         tagsSeoDescription: data.tagsSeoDescription,
         industriesSeoTitle: data.industriesSeoTitle,
         industriesSeoDescription: data.industriesSeoDescription,
-        b2bLabel: data.b2bLabel,
-        b2bHeadline: data.b2bHeadline,
-        b2bBullet1: data.b2bBullet1,
-        b2bBullet2: data.b2bBullet2,
-        b2bBullet3: data.b2bBullet3,
-        b2bCtaText: data.b2bCtaText,
-        b2bCtaUrl: data.b2bCtaUrl,
         platformTagline: data.platformTagline,
         platformDescription: data.platformDescription,
       },
@@ -1197,13 +1162,6 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           tagsSeoDescription: data.tagsSeoDescription,
           industriesSeoTitle: data.industriesSeoTitle,
           industriesSeoDescription: data.industriesSeoDescription,
-          b2bLabel: data.b2bLabel,
-          b2bHeadline: data.b2bHeadline,
-          b2bBullet1: data.b2bBullet1,
-          b2bBullet2: data.b2bBullet2,
-          b2bBullet3: data.b2bBullet3,
-          b2bCtaText: data.b2bCtaText,
-          b2bCtaUrl: data.b2bCtaUrl,
           platformTagline: data.platformTagline,
           platformDescription: data.platformDescription,
           tagsPageMetaTags: data.tagsPageMetaTags as Prisma.InputJsonValue | undefined,
