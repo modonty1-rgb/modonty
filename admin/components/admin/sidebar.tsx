@@ -274,7 +274,6 @@ const rawMenuGroups: MenuGroup[] = [
       // The existing screen, not a second one: `/users` already creates, edits,
       // deletes and sets roles and avatars for staff.
       { icon: Users2, label: "Staff", href: "/users" },
-      { icon: FileText, label: "JBR SEO Content", href: "/jbr-seo/content" },
     ],
   },
   {

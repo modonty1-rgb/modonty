@@ -169,11 +169,6 @@
 <table>
   <thead><tr><th>المسار</th><th>ما فيه</th><th>يقرأ من</th></tr></thead>
   <tbody>
-    <tr><td><code>/jbr-seo/content</code></td>
-        <td>تحرير محتوى صفحة هبوط جبر سيو — ٦ ملفّات
-            (<code>page</code> · <code>ReviewClient</code> · <code>EditFieldButton</code> ·
-             <code>EditArrayButton</code> · <code>content-actions</code> · <code>landing-read</code>)</td>
-        <td><code>db.jbrSiteSettings</code> + <code>JbrLandingSection</code></td></tr>
     <tr><td><code>/settings/jbr-seo</code></td>
         <td>لوحة B2B على صفحة العملاء — الزرّ يخرج إلى <code>jbrseo.com</code></td>
         <td><code>Settings.b2bCtaUrl</code> — <b>قيمته الحيّة <code>null</code></b></td></tr>
@@ -189,9 +184,9 @@
 </div>
 
 <p>
-  <b>الظهور في التنقّل:</b> <code>sidebar.tsx:277</code> بندٌ اسمه «JBR SEO Content» ←
-  <code>/jbr-seo/content</code>؛ و<code>settings/page.tsx:54</code> بطاقة «B2B · jbrseo.com»؛
-  و<code>breadcrumb-utils.ts:101</code> يترجم <code>jbrseo</code> إلى «جبر سيو».
+  <b>الظهور في التنقّل:</b> <code>settings/page.tsx:54</code> بطاقة «B2B · jbrseo.com»؛
+  و<code>breadcrumb-utils.ts:101</code> يترجم <code>jbrseo</code> إلى «جبر سيو»
+  (يخصّ <code>/campaigns/reports/jbrseo</code>، فبقي).
 </p>
 
 <h2>٤ · الأسعار — أين تُقرأ وتُكتب</h2>
@@ -241,16 +236,27 @@
 <h2>٦ · ما يحتاج قرارك</h2>
 
 <div class="flag red">
-  <b>١ · أي جدولٍ هو مرجع السعر؟</b>
-  اليوم اثنان، وأرقامهما تختلف، ولا مزامنة بينهما. الخيارات: يُجمَّد
-  <code>SubscriptionTierConfig</code> ويُشتقّ من الكتالوج · أو يبقى للتشغيل ويُمنع تعديله يدوياً ·
-  أو يُدمجان. ولا يُقرَّر هذا من الكود.
+  <b>١ · مرجع السعر — تقرّر ١٥ سبتمبر ٢٠٢٦</b>
+  <b>المرجع هو كتالوج البيمنت <code>CommercialPlan</code>.</b> خالد: «مرجع السعر اللي هو الآن
+  البيمنت الأخير، هذا هو السورس أوف ترووث للأسعار والباقات».
+  <code>SubscriptionTierConfig</code> يتبعه ولا يُعدَّل يدوياً.
+  <b>لم يُنفَّذ بعد:</b> ٤٣ ملفّاً في الأدمن والكونسول ما زال يقرأ منه — الفواتير وإنشاء العميل
+  وتبويب الاشتراك وتقرير المبيعات وواجهة الجوّال. يلزم جردٌ لمواضع قراءة السعر قبل التحويل.
 </div>
 
-<div class="flag amber">
-  <b>٢ · هل قسم <code>/jbr-seo/content</code> ما زال مستعمَلاً؟</b>
-  ١٨ صفّ محتوى وصفّ إعدادات واحد حيّ، وتحريرها يؤثّر على موقع جبر سيو لا على مدونتي.
-  إن كان الموقع ما زال يعمل فهو قسمٌ قائم؛ وإلّا فهو ستّة ملفّاتٍ وبندُ سايدبار بلا غرض.
+<div class="flag green">
+  <b>٢ · قسم <code>/jbr-seo/content</code> — حُذف ١٥ سبتمبر ٢٠٢٦</b>
+  خالد: «شيله تماماً، ما نحتاجه». والقياس أيّده: <code>JbrLandingSection</code> = <b>٠ صفوف
+  على الإنتاج</b> (١٨ في <code>modonty_dev</code> وحدها) — أي أن الشاشة كانت تحرّر لا شيء هناك.
+  <br><b>المحذوف:</b> <code>app/(dashboard)/jbr-seo/</code> (٦ ملفّات) ·
+  <code>lib/jbr/</code> (٤ ملفّات) · سطر السايدبار <code>sidebar.tsx:277</code>.
+  <br><b>بقي عمداً:</b> <code>lib/jbrseo-client.ts</code> (يستعمله <code>sync-subscribers</code>) ·
+  <code>breadcrumb-utils.ts:101</code> (يخصّ تقرير الحملات).
+  <br><b>القياس بعد الحذف:</b> <code>/jbr-seo/content</code> ⇐ <code>404</code> ·
+  بند السايدبار ٠ مرّة · الداشبورد يحمّل · سجلّ <code>next dev</code> بلا أخطاء ·
+  <code>grep</code> على <code>admin/</code> ⇐ صفر مراجع باقية.
+  <br><b>مفتوح:</b> نموذجا <code>JbrLandingSection</code> و<code>JbrSiteSettings</code> بقيا في
+  السكيما بلا قارئ — يُحذفان بقرار منفصل.
 </div>
 
 <div class="flag amber">
