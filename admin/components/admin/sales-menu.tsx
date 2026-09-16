@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarClock, Eye, TrendingUp, UserPlus, UsersRound, Wallet } from "lucide-react";
+import { BadgeCheck, CalendarClock, Eye, Receipt, ShieldAlert, TrendingUp, UserPlus, Users2, UsersRound, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,14 +15,43 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-const ITEMS = [
-  { href: "/sales-leads/new", label: "إضافة عميل محتمل", icon: UserPlus },
-  { href: "/sales-leads/follow-ups", label: "متابعة العملاء", icon: CalendarClock },
-  { href: "/sales-leads", label: "إدارة العملاء المحتملين", icon: UsersRound },
-  { href: "/pay-preview", label: "الباقات", icon: Eye },
-  { href: "/clients/accounts", label: "حسابات وفواتير العملاء", icon: Wallet },
-  { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp },
+/**
+ * ثلاث مجموعات يفصل بينها خطّ (خالد ١٥ سبتمبر ٢٠٢٦)، والفاصل يقول «انتهت مرحلة
+ * وبدأت أخرى» فتُقرأ القائمة كخريطة لا كقائمة روابط.
+ *
+ * والمشتركون **فوق** المحتملين بقرار خالد — لا لأنهم لاحقون في الرحلة، بل لأنهم
+ * الشغل اليوميّ: الطلب الواصل والتفعيل والمتابعة أكثر ما تُفتح، والمحتمَل عملٌ
+ * يسبقهم زمناً ويليهم في الأهمية.
+ */
+const GROUPS = [
+  {
+    title: "العملاء المشتركون",
+    items: [
+      { href: "/orders", label: "طلب اشتراك", icon: Receipt },
+      { href: "/clients/activate", label: "تفعيل عميل", icon: BadgeCheck },
+      { href: "/clients", label: "كل المشتركين", icon: Users2 },
+    ],
+  },
+  {
+    title: "العملاء المحتملون",
+    items: [
+      { href: "/sales-leads/new", label: "إضافة عميل محتمل", icon: UserPlus },
+      { href: "/sales-leads", label: "إدارة العملاء المحتملين", icon: UsersRound },
+      { href: "/sales-leads/follow-ups", label: "متابعة العملاء", icon: CalendarClock },
+    ],
+  },
+  {
+    title: "الأمور المالية",
+    items: [
+      { href: "/pay-preview", label: "الباقات", icon: Eye },
+      { href: "/clients/accounts", label: "حسابات وفواتير العملاء", icon: Wallet },
+      { href: "/payment-failures", label: "إخفاقات الدفع", icon: ShieldAlert },
+      { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp },
+    ],
+  },
 ] as const;
+
+const ITEMS = GROUPS.flatMap((group) => group.items);
 
 /**
  * Sales, in the top bar rather than the sidebar — the same move Tasks made on
@@ -69,23 +98,29 @@ export function SalesMenu() {
       {/* الاتجاه على العنصر لا على المكوّن: `DropdownMenuContent` لا تُمرِّر `dir` (ليست في
           واجهتها)، فيُكتب على الحاوية التي يُعرَض داخلها المحتوى فعلاً. */}
       <DropdownMenuContent align="end" className="w-64" style={{ direction: "rtl" }}>
-        <DropdownMenuLabel>المبيعات</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {ITEMS.map(({ href, label, icon: Icon }) => {
-          const current = activeItemHref === href;
-          return (
-            <DropdownMenuItem key={href} asChild>
-              <Link
-                href={href}
-                aria-current={current ? "page" : undefined}
-                className={cn("flex items-center gap-2", current && "bg-accent")}
-              >
-                <Icon className="size-4 shrink-0" aria-hidden />
-                <span className="text-[13px] font-medium">{label}</span>
-              </Link>
-            </DropdownMenuItem>
-          );
-        })}
+        {GROUPS.map((group, groupIndex) => (
+          <div key={group.title}>
+            {groupIndex > 0 && <DropdownMenuSeparator />}
+            <DropdownMenuLabel className="text-[11px] font-bold text-muted-foreground">
+              {group.title}
+            </DropdownMenuLabel>
+            {group.items.map(({ href, label, icon: Icon }) => {
+              const current = activeItemHref === href;
+              return (
+                <DropdownMenuItem key={href} asChild>
+                  <Link
+                    href={href}
+                    aria-current={current ? "page" : undefined}
+                    className={cn("flex items-center gap-2", current && "bg-accent")}
+                  >
+                    <Icon className="size-4 shrink-0" aria-hidden />
+                    <span className="text-[13px] font-medium">{label}</span>
+                  </Link>
+                </DropdownMenuItem>
+              );
+            })}
+          </div>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

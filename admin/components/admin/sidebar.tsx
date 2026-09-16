@@ -61,7 +61,6 @@ import {
   Flame,
   HelpCircle,
   Mail,
-  ShieldAlert,
   Library,
   Newspaper,
   Images,
@@ -86,7 +85,6 @@ import {
   Share2,
   Archive,
   CreditCard,
-  Receipt,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
@@ -153,7 +151,6 @@ const rawMenuGroups: MenuGroup[] = [
     items: [
       { icon: Users2, label: "All Clients", href: "/clients", exact: true },
       { icon: UserPlus, label: "New Client", href: "/clients/new" },
-      { icon: BadgeCheck, label: "Activate Client", href: "/clients/activate" },
       { icon: PauseCircle, label: "Suspend Client", href: "/clients/suspend" },
       // تحت «Clients» لا تحت قسم مستقلّ: الإحالة يرفعها عميلٌ قائم عن مُرشَّح، فمصدرها
       // وصاحب مكافأتها كلاهما عميل — والفريق يفتحها وهو يفكّر في العملاء لا في التسويق.
@@ -232,8 +229,6 @@ const rawMenuGroups: MenuGroup[] = [
     items: [
       { icon: CreditCard, label: "الباقات والأسعار", href: "/commercial-plans" },
       { icon: Library, label: "مكتبة المزايا", href: "/commercial-features" },
-      { icon: ShieldAlert, label: "إخفاقات الدفع", href: "/payment-failures" },
-      { icon: Receipt, label: "الطلبات", href: "/orders" },
     ],
   },
   // Its own group, not one line under Media (Khalid 2026-09-01): a reel is a lifecycle
