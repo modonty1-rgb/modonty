@@ -62,6 +62,11 @@ export type AuditAction =
   | "invoice.send"
   | "invoice.whatsapp" // staff opened the ready WhatsApp message for this invoice (PAY-Q13)
   | "order.confirmPayment"
+  /**
+   * طلبُ اشتراكٍ يسجّله الموظّف بيده لا العميل بنفسه — فالسؤال بعد شهر سيكون
+   * «من أدخل هذا الطلب ومتى»، ولا جواب له إلا هذا السطر.
+   */
+  | "order.manual_create"
   // 🟠 Client lifecycle + assets (each changes what a client shows or whether they're live)
   | "client.activate"
   | "client.suspend"

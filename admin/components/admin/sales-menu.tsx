@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BadgeCheck, CalendarClock, Eye, Receipt, ShieldAlert, TrendingUp, UserPlus, Users2, UsersRound, Wallet } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +24,24 @@ import { cn } from "@/lib/utils";
  * الشغل اليوميّ: الطلب الواصل والتفعيل والمتابعة أكثر ما تُفتح، والمحتمَل عملٌ
  * يسبقهم زمناً ويليهم في الأهمية.
  */
-const GROUPS = [
+/**
+ * النوع مكتوبٌ صراحةً بدل `as const`: مع `as const` يصير كل `items` **تابل** بعناصر
+ * حرفيّة، فيقرأ `flatMap` اتّحاد ثلاث تابلات مختلفة الأشكال ويرجع `unknown` — وهو
+ * ما أسقط بناء الإنتاج (`TS18046: 'i' is of type 'unknown'`). النوع الصريح يعطي
+ * مصفوفةً واحدة متجانسة، والقراءة بعدها مضمونة.
+ */
+interface SalesLink {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+}
+
+interface SalesGroup {
+  title: string;
+  items: SalesLink[];
+}
+
+const GROUPS: SalesGroup[] = [
   {
     title: "العملاء المشتركون",
     items: [
@@ -49,7 +67,7 @@ const GROUPS = [
       { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp },
     ],
   },
-] as const;
+];
 
 const ITEMS = GROUPS.flatMap((group) => group.items);
 

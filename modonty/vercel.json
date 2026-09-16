@@ -2,5 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "pnpm --filter @modonty/modonty build",
   "installCommand": "pnpm install --filter @modonty/modonty...",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ./ ../shared ../pnpm-lock.yaml ../package.json"
 }
