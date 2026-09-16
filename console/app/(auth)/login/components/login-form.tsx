@@ -94,7 +94,23 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
         <Input
           id={ID_IDENTIFIER}
           type="text"
-          inputMode="text"
+          inputMode="email"
+          /**
+           * إيقافُ ترفيع أوّل حرف — وهو سبب «بيانات غير صحيحة» على الآيفون.
+           *
+           * قِيس ١٦ سبتمبر ٢٠٢٦: العميل يدخل من كروم على سطح المكتب فيمرّ، ومن
+           * جوّاله فيُرفض. والسبب أنّ المفتاح الافتراضيّ لـ`autocapitalize` في
+           * كروم وسفاري هو `sentences` (توثيق MDN)، ويعمل على لوحة المفاتيح
+           * الافتراضيّة وحدها — فالجوّال يرفع أوّل حرف ويُرسَل `Support@…`
+           * بدل `support@…`، والبحث مطابقةٌ حرفيّة فيرجع فارغاً.
+           *
+           * وحقل الأدمن سالمٌ لأنّ نوعه `email`، وهو نوعٌ يستثنيه المواصف من
+           * الترفيع أصلاً. وهنا لا يصلح `type="email"` لأنّ الحقل يقبل معرّف
+           * العميل أيضاً، فيُوقَف الترفيع صراحةً.
+           */
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           autoComplete="username"
           placeholder={ar.login.placeholderIdentifier}
           value={identifier}

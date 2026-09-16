@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { ImagePlus, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
+import { ImagePlus, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
-import { compressToWebP } from "@/lib/compress-image";
 
+import { ImageField } from "./image-field";
 import type { AchievementInput } from "../helpers/page-content-types";
 import { updateAchievements } from "../actions/update-achievements";
 
@@ -31,7 +31,6 @@ const EMPTY: AchievementInput = { value: "", label: "", image: "", description: 
 const VALUE_MAX = 24;
 const LABEL_MAX = 52;
 const DESC_MAX = 250;
-const IMG_MAX_BYTES = 10 * 1024 * 1024;
 
 interface Draft {
   index: number | null;
@@ -211,7 +210,12 @@ export function AchievementsEditor({
               />
             </DialogField>
 
-            <ImageField image={draft?.value.image ?? ""} onChange={(image) => patch({ image })} />
+            <ImageField
+              image={draft?.value.image ?? ""}
+              onChange={(image) => patch({ image })}
+              label="صورة (اختياري)"
+              folder="achievements"
+            />
 
             <DialogFooter className="gap-2 sm:gap-2">
               <Button type="button" variant="outline" onClick={() => setDraft(null)} disabled={pending}>
@@ -231,94 +235,6 @@ export function AchievementsEditor({
       </Dialog>
 
       {confirmDialog}
-    </div>
-  );
-}
-
-/** صورة الإنجاز — تُضغط إلى WebP قبل الرفع، فما يصل بني إلا الحجم الذي يُعرض فعلاً. */
-function ImageField({ image, onChange }: { image: string; onChange: (url: string) => void }) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
-
-  async function handleFile(file: File) {
-    if (!file.type.startsWith("image/")) {
-      toast.error("الملف مش صورة");
-      return;
-    }
-    if (file.size > IMG_MAX_BYTES) {
-      toast.error("حجم الصورة كبير — الحد 10 ميجا");
-      return;
-    }
-    setUploading(true);
-    try {
-      const compressed = await compressToWebP(file);
-      const fd = new FormData();
-      fd.append("file", compressed);
-      fd.append("folder", "achievements");
-      const res = await fetch("/api/upload-bunny", { method: "POST", body: fd });
-      const json = await res.json().catch(() => null);
-      if (!res.ok || !json?.url) {
-        toast.error(json?.error || "فشل رفع الصورة");
-        return;
-      }
-      onChange(json.url);
-    } catch {
-      toast.error("فشل رفع الصورة");
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  return (
-    <div>
-      <span className="mb-1 block text-xs font-medium text-muted-foreground">صورة (اختياري)</span>
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) handleFile(f);
-          e.target.value = "";
-        }}
-      />
-      {image ? (
-        <div className="relative w-40 overflow-hidden rounded-md border bg-muted" style={{ aspectRatio: "16/10" }}>
-          <OptimizedImage media={asMedia(image)} alt="" fill className="object-cover" sizes="160px" />
-          <Button
-            type="button"
-            size="sm"
-            variant="secondary"
-            disabled={uploading}
-            onClick={() => inputRef.current?.click()}
-            className="absolute inset-x-1 bottom-1 h-6 bg-background/90 px-2 text-[11px] backdrop-blur"
-          >
-            {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : "استبدال"}
-          </Button>
-          <Button
-            type="button"
-            size="icon"
-            variant="secondary"
-            onClick={() => onChange("")}
-            aria-label="حذف الصورة"
-            className="absolute end-1 top-1 h-6 w-6 bg-background/90 text-[hsl(var(--destructive-ink))] backdrop-blur hover:bg-destructive/10"
-          >
-            <X className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          disabled={uploading}
-          style={{ aspectRatio: "16/10" }}
-          className="flex w-40 flex-col items-center justify-center gap-1 rounded-md border-2 border-dashed border-border text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/30 disabled:opacity-50"
-        >
-          {uploading ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <ImagePlus className="h-5 w-5" />}
-          <span className="text-[11px] font-medium">{uploading ? "جاري الرفع..." : "أضف صورة"}</span>
-        </button>
-      )}
     </div>
   );
 }

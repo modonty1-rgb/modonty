@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 
+import { ImageField } from "./image-field";
 import type { TeamMemberInput } from "../helpers/page-content-types";
 import { updateTeam } from "../actions/update-team";
 
@@ -181,17 +182,16 @@ export function TeamEditor({
               />
             </DialogField>
 
-            <DialogField label="رابط صورة (اختياري)">
-              <Input
-                type="url"
-                inputMode="url"
-                dir="ltr"
-                className="text-start"
-                value={draft?.value.photoUrl ?? ""}
-                onChange={(e) => patch({ photoUrl: e.target.value })}
-                placeholder="https://…"
-              />
-            </DialogField>
+            {/* رفعٌ من الجهاز لا رابط: صاحب العيادة يملك صورة موظّفه على جوّاله،
+                ولا يملك لها رابطاً — فطلبُ الرابط يترك الحقل فارغاً (خالد ١٦ سبتمبر). */}
+            <ImageField
+              image={draft?.value.photoUrl ?? ""}
+              onChange={(photoUrl) => patch({ photoUrl })}
+              label="صورة العضو (اختياري)"
+              folder="team"
+              shape="round"
+              hint="صورةُ وجهٍ واضحة — تُقصّ دائريّةً كما تظهر في «من نحن»."
+            />
 
             <DialogFooter className="gap-2 sm:gap-2">
               <Button type="button" variant="outline" onClick={() => setDraft(null)} disabled={pending}>
