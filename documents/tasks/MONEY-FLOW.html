@@ -145,6 +145,17 @@
     padding:16px 20px;margin:18px 0}
   .done b{color:var(--money);font-weight:900}
 
+  /* ── جداول الجرد ── */
+  .scroll{overflow-x:auto;border:1.5px solid var(--line);border-radius:16px;background:var(--card);margin:16px 0 0}
+  table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+  th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:var(--sand);font-weight:800;font-size:12.5px;color:var(--muted);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:0}
+  .tag{display:inline-block;font-size:11px;font-weight:900;padding:2px 9px;border-radius:99px;white-space:nowrap}
+  .t-ok{background:var(--money-bg);color:var(--money);border:1px solid var(--money-line)}
+  .t-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-line)}
+  .t-stop{background:var(--stop-bg);color:var(--stop);border:1px solid var(--stop-line)}
+
   /* ── خطوات الفلو ── */
   .flow{counter-reset:st;border:1.5px solid var(--line);border-radius:18px;background:var(--card);
     padding:6px 20px;margin:18px 0 0}
@@ -202,7 +213,7 @@
   <h1>قسمة المال: ما يبقى مع العميل، وما يذهب إلى الطلبات</h1>
   <p class="lede">هذه الورقة تحمل ما اتُّفق عليه في جلسة ١٦ سبتمبر ٢٠٢٦، وما بقي معلّقاً بقرارك.</p>
   <p class="stamp">القرارات الأربعة في القسم ٥ أُغلقت كلّها. وبقي سؤالٌ واحد مفتوح في آخر
-    القسم — ومعه اختيار شكل الربط في القسم ٧.</p>
+    القسم — ومعه اختيار شكل الربط في القسم ٨.</p>
 
   <!-- ═════ ١ ═════ -->
   <h2><span class="n">١</span>لماذا نفصل أصلاً</h2>
@@ -522,6 +533,35 @@ admin/app/(dashboard)/clients/actions/activate-client.ts:31
     <div class="item">
       <span class="no">٥</span>
       <div>
+        <h4>التقارير تقرأ الطلبات <span class="sz m">متوسّط</span></h4>
+        <p>تقرير المبيعات وصفحة الحسابات ولوحة الأدمن: لا واحدٌ منها يعرف جدول الطلبات.
+          الإيراد يُجمع من رصيد التأسيس والفواتير فقط — ورصيد التأسيس يُلغى بقرارك.</p>
+        <span class="where">كل ريالٍ من صفحة الدفع خارج كل رقمٍ تراه اليوم. التفصيل في القسم ٧.</span>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="no">٦</span>
+      <div>
+        <h4>تنبيهٌ للطلب المدفوع النائم <span class="sz s">صغير</span></h4>
+        <p>العميل دفع ونحن مدينون له بالخدمة — ولا شيء في أي شاشة يقول ذلك. الأمر معلّقٌ
+          بأن يفتح موظّفٌ صفحة الطلب بنفسه.</p>
+        <span class="where">المقيس: ٤ من ٥ طلبات مدفوعة بلا حساب ولا فاتورة.</span>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="no">٧</span>
+      <div>
+        <h4>لقطة هويّة على الفاتورة <span class="sz s">صغير</span></h4>
+        <p>اسم · إيميل · اسم نظاميّ · رقم ضريبيّ — لقطةً وقت الإصدار، مثل الطلب تماماً.
+          وهو شرط قرار الأرشفة في القسم ٨.</p>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="no">٨</span>
+      <div>
         <h4>رصيد التسليم القائم <span class="sz l">كبير</span></h4>
         <p>لكل عميل: ما اشتراه ناقص ما سُلِّم فعلاً. رقمٌ يُعرَض للفريق — وإلّا تراكم الدَّين بصمت.</p>
         <span class="where">يحتاج عدّاً دقيقاً لما سُلِّم، ويتوقّف على السؤال المفتوح:
@@ -538,7 +578,177 @@ admin/app/(dashboard)/clients/actions/activate-client.ts:31
   </div>
 
   <!-- ═════ ٦ ═════ -->
-  <h2><span class="n">٧</span>الربط بين الطلب والعميل — كل الاحتمالات</h2>
+  <h2><span class="n">٧</span>الجرد — كل مكانٍ فيه مال عميل</h2>
+  <p class="h2sub">أحد عشر جدولاً تمسّ المال، وثلاثة أبواب دخول، وعشرون ملفّاً يقرأ الفواتير.
+    الأرقام مقيسة على <span class="ref">modonty_dev</span> ببيانات تجربة — البنية والثقوب حقيقيّة
+    في الحالتين، والأرقام تُعاد على الإنتاج قبل أي تنفيذ.</p>
+
+  <h3 style="font-size:17px;font-weight:900;margin:30px 0 0">أ · الجداول التي تحمل المال</h3>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>الجدول</th><th>يحمل</th><th>السطر</th></tr></thead>
+    <tbody>
+      <tr><td><b>طلبات الشراء</b><br><span class="ref">checkout_orders</span></td>
+          <td>لقطة البيع كاملة: السعر · المدّة · الهدية · الضريبة · الإجمالي · اسم المشتري وإيميله وجوّاله · المندوب · الملاحظة</td>
+          <td class="ref">1280</td></tr>
+      <tr><td><b>الفواتير</b><br><span class="ref">invoices</span></td>
+          <td>المستند الضريبيّ: المبلغ · فترة الاشتراك · حالة السداد · الأرشفة · تفاصيل الضريبة</td>
+          <td class="ref">3768</td></tr>
+      <tr><td><b>عمليات الدفع</b><br><span class="ref">payment_transactions</span></td>
+          <td>ما وصل من البوابة فعلاً: المبلغ · المرجع · تاريخ التسوية</td><td class="ref">1366</td></tr>
+      <tr><td><b>محاولات لم تنجح</b><br><span class="ref">payment_attempts</span></td>
+          <td>الرفض ورمزه ونصّ البوابة</td><td class="ref">1436</td></tr>
+      <tr><td><b>إشعارات البوابة</b><br><span class="ref">payment_webhook_events</span></td>
+          <td>ما أرسلته البوابة إلينا · وهل عولج</td><td class="ref">1390</td></tr>
+      <tr><td>كتالوج الباقات</td>
+          <td><span class="ref">commercial_plans</span> · <span class="ref">commercial_plan_prices</span> ·
+              <span class="ref">commercial_term_policies</span> — الأسعار المعروضة</td>
+          <td class="ref">1079 · 1157 · 1236</td></tr>
+      <tr><td>العدّادات</td>
+          <td><span class="ref">counters</span> — أرقام الفواتير والطلبات المتسلسلة بلا فجوات</td>
+          <td class="ref">3817</td></tr>
+      <tr><td><b>كرت العميل</b></td>
+          <td>رصيد التأسيس · حالة الدفع · دورة الفوترة · تاريخ النهاية · الباقة
+              <span class="tag t-warn">يُفرَّغ — القسمان ٢ و٥</span></td>
+          <td class="ref">534</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:34px 0 0">ب · من أين يدخل المال — ثلاثة أبواب</h3>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>الباب</th><th>أين يُسجَّل</th><th>الحالة</th></tr></thead>
+    <tbody>
+      <tr><td><b>صفحة الدفع</b> — العميل يشتري بنفسه</td>
+          <td>صفٌّ في طلبات الشراء + عملية دفع</td>
+          <td><span class="tag t-ok">شغّال</span></td></tr>
+      <tr><td><b>فورم تسجيل الطلب</b> — الموظّف يسجّل بيعاً مباشراً</td>
+          <td>نفس الجدول، نفس الشكل</td>
+          <td><span class="tag t-ok">بُني ١٥ سبتمبر</span></td></tr>
+      <tr><td><b>رصيد التأسيس</b> — مالٌ قديم داخل كرت العميل</td>
+          <td>حقلٌ على العميل، لا صفّ في أي جدول مالّي</td>
+          <td><span class="tag t-stop">يُلغى بقرارك</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:34px 0 0">ج · رحلة الريال — وأين ينقطع الخيط</h3>
+
+  <div class="flow">
+    <div class="st"><div><b>العميل يدفع</b>
+      <span>يُفتح صفٌّ في طلبات الشراء بحالة «مدفوع»، ومعه عملية الدفع من البوابة.</span></div></div>
+    <div class="st no"><div><b>ثمّ يقف — لا شيء يتحرّك تلقائيّاً</b>
+      <span>لا حساب عميل يُفتح، ولا فاتورة تُصدَر، ولا تنبيه يظهر لأحد.</span></div></div>
+    <div class="st"><div><b>موظّفٌ يفتح صفحة الطلب ويضغط «إنشاء حساب العميل»</b>
+      <span>يدويّ بالكامل. ولو لم يفتحها أحد، بقي الطلب كما هو إلى الأبد.</span></div></div>
+    <div class="st"><div><b>ثمّ يضغط «إصدار الفاتورة»</b>
+      <span>يدويّ كذلك. والفاتورة ترفض الصدور إن لم يُنشر للعميل مقالٌ بعد.</span></div></div>
+    <div class="st"><div><b>ثمّ «إرسال الفاتورة» بالإيميل أو واتساب</b>
+      <span>يُشترط الاسم النظاميّ والرقم الضريبيّ للمنشأة، وإلّا رُفض الإرسال.</span></div></div>
+    <div class="st ok"><div><b>وعند إصدارها يتحدّث تاريخ نهاية الاشتراك</b>
+      <span>دالّةٌ واحدة تأخذ أبعد نهايةٍ من كل الفواتير غير المؤرشفة، ولا ترجع بالتاريخ للوراء.</span></div></div>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:34px 0 0">د · الثقوب — مرتّبةً بالخطورة</h3>
+
+  <div class="bug">
+    <b>١ · تقرير المبيعات لا يرى الطلبات إطلاقاً</b>
+    <p>الإيراد يُجمع من رصيد التأسيس والفواتير فقط. وكلمة «طلب» لا ترد في التقرير ولا في
+      صفحة الحسابات ولا في لوحة الأدمن.</p>
+    <pre style="background:var(--card);border:1px solid var(--stop-line);border-radius:10px;
+      padding:12px 14px;margin:10px 0 0;overflow-x:auto;direction:ltr;text-align:left;
+      font-family:ui-monospace,Consolas,monospace;font-size:11.5px;line-height:1.7">$ grep -c "checkoutOrder" &lt;file&gt;
+
+admin/app/(dashboard)/clients/sales-report/actions/get-sales-report.ts   0
+admin/app/(dashboard)/clients/accounts/page.tsx                          0
+admin/app/(dashboard)/actions/dashboard-actions.ts                       0</pre>
+    <p>وبعد إلغاء رصيد التأسيس يبقى للتقرير مصدرٌ واحد: الفواتير. <b>← البند ٥ في قائمة البناء.</b></p>
+  </div>
+
+  <div class="bug">
+    <b>٢ · طلبٌ مدفوع ينام بلا حساب ولا فاتورة ولا تنبيه</b>
+    <pre style="background:var(--card);border:1px solid var(--stop-line);border-radius:10px;
+      padding:12px 14px;margin:10px 0 0;overflow-x:auto;direction:ltr;text-align:left;
+      font-family:ui-monospace,Consolas,monospace;font-size:11.5px;line-height:1.7">طلبات مدفوعة: 5
+  بلا حساب عميل: 4
+  بلا فاتورة  : 4
+  مالٌ مدفوع بلا فاتورة: 40,776 SAR</pre>
+    <p>دفع العميل، ونحن مدينون له — والأمر معلّقٌ بأن يفتح موظّفٌ الصفحة بنفسه.
+      <b>← البند ٦ في قائمة البناء.</b></p>
+  </div>
+
+  <div class="qs">
+    <div class="q">
+      <span class="lab">ثقب ٣ · مفتوح</span>
+      <b>الاسترداد مُستقبَل ولا مُعالَج</b>
+      <p>حالة «مسترد» موجودة وويب هوك تمارا يكتبها، ولا أحد يقرؤها بعدها: لا زرّ استرداد،
+        ولا أثرٌ في الفاتورة أو التقرير، ولا إشعار دائن.<br>
+        <b>القرار المطلوب:</b> هل نسترد أصلاً؟</p>
+    </div>
+
+    <div class="q">
+      <span class="lab">ثقب ٤ · مفتوح</span>
+      <b>خمس عشرة فاتورةً من ستّ عشرة بلا طلب</b>
+      <p>صدرت قبل وجود جدول الطلبات. وبعد اعتماد «الفاتورة لا تولد إلّا من طلب» تصير استثناءً دائماً.<br>
+        <b>القرار المطلوب:</b> تُعلَّم «ما قبل النظام»، أم يُولَّد لكلٍّ منها طلبٌ أثريّ بتاريخها؟</p>
+    </div>
+
+    <div class="q">
+      <span class="lab">ثقب ٥ · مفتوح</span>
+      <b>العملتان تُفصلان بدولة الكرت لا بعملة الطلب</b>
+      <p>الطلب يحمل عملته صراحةً، والتقرير يفصل بحسب عنوان العميل — وهو يتغيّر.<br>
+        <b>الأصحّ:</b> الاعتماد على عملة الطلب.</p>
+    </div>
+
+    <div class="q">
+      <span class="lab">ثقب ٦ · مفتوح</span>
+      <b>وحدتا قياسٍ للمال في نفس النظام</b>
+      <p>الطلبات بالهللة والقرش (أعداد صحيحة)، والفواتير بالريال والجنيه (كسور عشرية).
+        والكسر العشريّ لا يصلح للمال، وكل تحويلٍ بينهما موضع خطأ تقريب.</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:36px 0 0">هـ · ما هو محكمٌ فعلاً — ثمانية حرّاس لا تُهدَم في الفصل</h3>
+  <p class="h2sub" style="margin-bottom:0">كلٌّ منها بُني على عطلٍ وقع فعلاً. أُدرجت كي لا يُهدَم شيءٌ منها سهواً.</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>الحارس</th><th>ما يمنعه</th><th>الملف</th></tr></thead>
+    <tbody>
+      <tr><td>تاريخ النهاية لا يرجع للوراء</td>
+          <td>عميلٌ سدّد أقدم فواتيره فانكمشت نهايته من ٢٠٢٧-٠٥ إلى ٢٠٢٦-١٠ — خسر شهوراً بالسداد</td>
+          <td class="ref">recompute-subscription-end.ts</td></tr>
+      <tr><td>الفاتورة تُلغى ولا تُحذف</td>
+          <td>ثقبٌ في الدفتر. والمؤرشفة تخرج من كل مجموع وتتوقّف عن حجز فترة</td>
+          <td class="ref">archive-invoice.ts</td></tr>
+      <tr><td>منع فاتورةٍ ثانية وسابقتُها غير مسدّدة</td>
+          <td>تراكم ديونٍ بلا انتباه</td><td class="ref">find-blocking-unpaid-invoice.ts</td></tr>
+      <tr><td>ترقيمٌ متسلسل بلا فجوات</td>
+          <td>فجوة في الترقيم — وهي مأخذٌ ضريبيّ</td><td class="ref">next-invoice-number.ts</td></tr>
+      <tr><td>رفضُ الإرسال بلا رقم ضريبيّ</td>
+          <td>فاتورة ضريبية غير نظاميّة تخرج للعميل</td><td class="ref">send-invoice-action.ts:76</td></tr>
+      <tr><td>رفضُ الفوترة قبل أوّل مقال</td>
+          <td>محاسبة العميل على فترةٍ لم تبدأ خدمتُه فيها</td><td class="ref">create-invoice.ts:89</td></tr>
+      <tr><td>الأسعار لقطةٌ على الطلب</td>
+          <td>تعديل الكتالوج يغيّر فاتورةً صادرة</td><td class="ref">schema.prisma:1297</td></tr>
+      <tr><td>رمز الاستجابة السريعة على الفاتورة</td>
+          <td>عدم مطابقة متطلّب الفاتورة الإلكترونية</td><td class="ref">render-invoice-qr.ts</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="thesis" style="margin-top:22px">
+    <p class="big">الحسابات محروسةٌ جيّداً. العطل في الوصل.</p>
+    <p class="why">
+      المال يدخل من باب، والتقارير تقرأ من بابٍ آخر، ولا جسر بينهما إلّا يدُ موظّف.
+      وهذا ما تعالجه بنود البناء الثمانية في القسم ٦.
+    </p>
+  </div>
+
+  <h2><span class="n">٨</span>الربط بين الطلب والعميل — كل الاحتمالات</h2>
   <p class="h2sub">سؤالك: نعمل علاقة بينهما، أم يشتغل كلّ واحد لوحده؟ وهل يقرأ الكرت من الطلب بدل أن يُنسَخ إليه؟</p>
 
   <div class="done">
@@ -696,8 +906,8 @@ admin/app/(dashboard)/clients/actions/activate-client.ts:31
   </div>
 
   <p class="foot">
-    جلسة ١٦ سبتمبر ٢٠٢٦ · نقاشٌ بلا كود.<br>
-    جرد ما هو موجود اليوم بأرقامه في <span class="ref">documents/tasks/MONEY-CYCLE.html</span>.<br>
+    جلسة ١٦ سبتمبر ٢٠٢٦ · نقاشٌ وجرد، بلا كود.<br>
+    أرقام الجرد من <span class="ref">modonty_dev</span> ببيانات تجربة — تُعاد على الإنتاج قبل التنفيذ.<br>
     النسخة السابقة من هذه الورقة — الاقتراح ذو المراحل السبع — محفوظة في سجلّ الكوميتات.
   </p>
 
