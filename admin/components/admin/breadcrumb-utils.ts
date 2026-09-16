@@ -70,7 +70,9 @@ const routeLabels: Record<string, string> = {
   'commercial-plans': 'الباقات والأسعار',
   'commercial-features': 'مكتبة المزايا',
   'payment-failures': 'إخفاقات الدفع',
-  orders: 'الطلبات',
+  // «طلبات الاشتراك» لا «الطلبات» (خالد ١٦ سبتمبر ٢٠٢٦): في متجرٍ «طلب» بضاعةٌ
+  // تُشحن، ونحن لا نبيع بضاعة — وهو المسمّى نفسه في قائمة المبيعات وفي الصفحة.
+  orders: 'طلبات الاشتراك',
 };
 
 const sectionLabels: Record<string, string> = {

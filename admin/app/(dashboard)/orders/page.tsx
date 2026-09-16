@@ -1,11 +1,12 @@
 import type { CheckoutOrderStatus } from "@prisma/client";
-import { PackageOpen } from "lucide-react";
+import { PackageOpen, Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { db } from "@/lib/db";
 import { OrderStatusBadge } from "./components/order-status-badge";
 import { OrderStatusFilter } from "./components/order-status-filter";
+import { formatMonths } from "./helpers/format-months";
 import { formatOrderDate } from "./helpers/format-order-date";
 import { formatOrderMoney } from "./helpers/format-order-money";
 import { orderMarketLabel } from "./helpers/order-market-label";
@@ -40,10 +41,20 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     <main className="mx-auto flex max-w-6xl flex-col gap-5 pb-8" dir="rtl">
       <header className="flex flex-wrap items-end justify-between gap-2">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold">الطلبات</h1>
+          <h1 className="text-2xl font-semibold">طلبات الاشتراك</h1>
           <p className="text-sm text-muted-foreground">طلبات الاشتراك من صفحة الدفع — تأكيد التحويل والفواتير من تفاصيل كل طلب.</p>
         </div>
-        <p className="text-sm text-muted-foreground">{total} طلباً{orders.length < TAKE ? "" : ` — أحدث ${TAKE}`}</p>
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">{total} طلباً{orders.length < TAKE ? "" : ` — أحدث ${TAKE}`}</p>
+          {/* المنفذ الثاني بجانب صفحة الدفع — ومنه تُعاد إدخال العملاء القائمين. */}
+          <Link
+            href="/orders/new"
+            className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            <Plus className="size-4" />
+            طلب اشتراك جديد
+          </Link>
+        </div>
       </header>
 
       <OrderStatusFilter counts={counts} total={total} active={activeStatus} />
@@ -59,15 +70,15 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/40 hover:bg-muted/40">
-                <TableHead className="h-9 text-right">الرقم</TableHead>
+                <TableHead className="h-9 text-right">رقم الطلب</TableHead>
                 <TableHead className="h-9 text-right">التاريخ</TableHead>
-                <TableHead className="h-9 text-right">المشتري</TableHead>
+                <TableHead className="h-9 text-right">العميل</TableHead>
                 <TableHead className="h-9 text-right">السوق</TableHead>
                 <TableHead className="h-9 text-right">الباقة</TableHead>
                 <TableHead className="h-9 text-right">المدة</TableHead>
                 <TableHead className="h-9 text-right">الإجمالي</TableHead>
                 <TableHead className="h-9 text-right">الحالة</TableHead>
-                <TableHead className="h-9 text-right">المزوّد</TableHead>
+                <TableHead className="h-9 text-right">البوابة</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -80,7 +91,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
                   <TableCell className="py-2">{order.buyerName}</TableCell>
                   <TableCell className="py-2">{orderMarketLabel(order.market)}</TableCell>
                   <TableCell className="py-2">{order.planName}</TableCell>
-                  <TableCell className="py-2 tabular-nums">{order.paidMonths} أشهر</TableCell>
+                  <TableCell className="py-2 tabular-nums">{formatMonths(order.paidMonths)}</TableCell>
                   <TableCell className="py-2 font-medium tabular-nums">{formatOrderMoney(order.totalMinor, order.currency)}</TableCell>
                   <TableCell className="py-2"><OrderStatusBadge status={order.status} /></TableCell>
                   <TableCell className="py-2 text-muted-foreground">{order.transactions[0] ? orderProviderLabel(order.transactions[0].provider) : "—"}</TableCell>
