@@ -3,275 +3,703 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>رحلة العميل المالية</title>
+<title>قسمة المال — الاتفاق</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#f6f6f4; --card:#fff; --ink:#15151a; --muted:#6b6b76; --line:#e3e3df;
-    --red:#c0392b; --red-bg:#fdeceb; --amber:#8a6100; --amber-bg:#fdf4e0;
-    --green:#1d7a4c; --green-bg:#e9f6ef; --blue:#1d4ed8; --blue-bg:#eaf0fe;
+    --bg:#f4f4f1; --card:#fff; --ink:#15151a; --muted:#6b6b76; --line:#e2e2dd;
+    --sand:#efefe9;
+    --money:#0f6b45; --money-bg:#e6f4ec; --money-line:#9ed4ba;
+    --card2:#1d4ed8; --card2-bg:#e9effd; --card2-line:#a9c0f7;
+    --warn:#8a5a00; --warn-bg:#fcf3e1; --warn-line:#e0bd76;
+    --stop:#b3271e; --stop-bg:#fdecea; --stop-line:#eda9a3;
   }
   @media (prefers-color-scheme: dark){
-    :root{--bg:#151519;--card:#1f1f23;--ink:#ececf0;--muted:#a0a0ac;--line:#33333a;
-      --red:#ff8579;--red-bg:#3a1f1d;--amber:#f0c060;--amber-bg:#352a12;
-      --green:#6ddba3;--green-bg:#14301f;--blue:#93b4ff;--blue-bg:#1a2340;}
+    :root{
+      --bg:#131316; --card:#1d1d21; --ink:#ededf1; --muted:#9e9eaa; --line:#32323a;
+      --sand:#232329;
+      --money:#63d69c; --money-bg:#12301f; --money-line:#2b6b48;
+      --card2:#8fb1ff; --card2-bg:#161f38; --card2-line:#2f4482;
+      --warn:#f0c264; --warn-bg:#33280f; --warn-line:#6d5622;
+      --stop:#ff8b80; --stop-bg:#37201d; --stop-line:#7a3b35;
+    }
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
-    font:15px/1.75 "Tajawal",-apple-system,"Segoe UI",system-ui,sans-serif;
-    padding:24px 16px 80px}
-  .wrap{max-width:980px;margin:0 auto}
-  h1{font-size:26px;font-weight:800;margin:0 0 4px}
-  .sub{color:var(--muted);font-size:13.5px;margin:0 0 28px}
-  h2{font-size:19px;font-weight:800;margin:36px 0 10px;padding-top:18px;border-top:1px solid var(--line)}
-  h3{font-size:15px;font-weight:700;margin:20px 0 8px}
-  p{margin:8px 0}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:12px 0}
-  .flag{border-radius:12px;padding:14px 16px;margin:14px 0;border:1px solid transparent}
-  .flag.red{background:var(--red-bg);border-color:var(--red);}
-  .flag.amber{background:var(--amber-bg);border-color:var(--amber);}
-  .flag.green{background:var(--green-bg);border-color:var(--green);}
-  .flag b{display:block;margin-bottom:4px}
-  .flag.red b{color:var(--red)} .flag.amber b{color:var(--amber)} .flag.green b{color:var(--green)}
-  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card);margin:12px 0}
-  table{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px}
-  th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
-  thead th{background:rgba(125,125,140,.08);font-weight:700;font-size:12.5px;color:var(--muted)}
-  tbody tr:last-child td{border-bottom:0}
-  code,.mono{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:12.5px;
-    background:rgba(125,125,140,.12);padding:1px 5px;border-radius:5px;direction:ltr;display:inline-block}
-  pre{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;
-    overflow-x:auto;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.7;direction:ltr;text-align:left}
-  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap}
-  .t-live{background:var(--green-bg);color:var(--green)}
-  .t-dead{background:rgba(125,125,140,.15);color:var(--muted)}
-  .t-risk{background:var(--red-bg);color:var(--red)}
-  .t-data{background:var(--blue-bg);color:var(--blue)}
-  ul{margin:8px 0;padding-inline-start:22px} li{margin:4px 0}
-  .num{font-variant-numeric:tabular-nums;font-weight:700}
-  .muted{color:var(--muted);font-size:12.5px}
-  .pend{display:inline-block;min-width:34px;text-align:center;font-weight:800;
-    color:var(--amber);background:var(--amber-bg);border:1px dashed var(--amber);
-    border-radius:6px;padding:1px 8px}
-  tr.money td{background:color-mix(in srgb, var(--red-bg) 45%, transparent)}
-  .foot{color:var(--muted);font-size:12.5px;margin-top:40px;border-top:1px solid var(--line);padding-top:14px}
-  .pend{display:inline-block;min-width:34px;text-align:center;font-weight:800;
-    color:var(--amber);background:var(--amber-bg);border:1px dashed var(--amber);
-    border-radius:6px;padding:1px 8px}
-  .muted{color:var(--muted);font-size:12.5px}
-  tr.money td{background:color-mix(in srgb, var(--red-bg) 45%, transparent)}
-  .pend{display:inline-block;min-width:34px;text-align:center;font-weight:800;
-    color:var(--amber);background:var(--amber-bg);border:1px dashed var(--amber);
-    border-radius:6px;padding:1px 8px}
-  .muted{color:var(--muted);font-size:12.5px}
-  tr.money td{background:color-mix(in srgb, var(--red-bg) 45%, transparent)}
+    font:16px/1.85 "Tajawal",-apple-system,"Segoe UI",system-ui,sans-serif;
+    padding:28px 16px 90px}
+  .wrap{max-width:1000px;margin:0 auto}
 
-  /* مراحل الرحلة */
-  .stage{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;
-    padding:14px 0;border-top:1px solid var(--line)}
-  .stage:first-of-type{border-top:0}
-  .stage .n{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
-    font-weight:800;font-size:14px;background:var(--blue-bg);color:var(--blue);
-    font-variant-numeric:tabular-nums}
-  .stage.mny .n{background:var(--red-bg);color:var(--red)}
-  .stage h3{margin:2px 0 6px;font-size:15px}
-  .stage p{margin:0 0 6px}
-  .row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
-  .chip{font-size:11.5px;border:1px solid var(--line);background:var(--card);
-    border-radius:6px;padding:2px 8px;white-space:nowrap}
-  .chip b{font-weight:700}
-  .writes{font-size:12px;color:var(--muted)}
-  .writes code{font-size:11.5px}
-  .q{border-inline-start:3px solid var(--amber);background:var(--amber-bg);
-    padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0 0;font-size:13px}
+  .eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--muted);margin:0 0 6px}
+  h1{font-size:clamp(28px,5vw,40px);font-weight:900;margin:0 0 10px;line-height:1.25;text-wrap:balance}
+  .lede{font-size:18px;color:var(--muted);margin:0 0 6px;max-width:60ch}
+  .stamp{font-size:12.5px;color:var(--muted);margin:14px 0 0}
+
+  h2{font-size:22px;font-weight:900;margin:52px 0 6px;line-height:1.35}
+  h2 .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;
+    background:var(--ink);color:var(--bg);font-size:15px;font-weight:900;margin-inline-end:10px;
+    vertical-align:2px;font-variant-numeric:tabular-nums}
+  .h2sub{color:var(--muted);font-size:14.5px;margin:0 0 18px;max-width:64ch}
+
+  /* ── الجملة المحورية ── */
+  .thesis{background:var(--sand);border:1px solid var(--line);border-radius:18px;
+    padding:26px 26px;margin:22px 0 0}
+  .thesis .big{font-size:clamp(19px,3.2vw,25px);font-weight:800;line-height:1.6;margin:0;text-wrap:balance}
+  .thesis .why{color:var(--muted);font-size:15px;margin:12px 0 0;max-width:62ch}
+
+  /* ── القسمة: عمودان ── */
+  .split{display:grid;gap:16px;grid-template-columns:1fr;margin:20px 0 0}
+  @media(min-width:760px){.split{grid-template-columns:1fr 1fr}}
+  .box{border-radius:18px;border:1.5px solid;overflow:hidden;background:var(--card);
+    display:flex;flex-direction:column}
+  .box.money{border-color:var(--money-line)}
+  .box.client{border-color:var(--card2-line)}
+  .box header{padding:16px 20px 14px;border-bottom:1.5px solid}
+  .box.money header{background:var(--money-bg);border-color:var(--money-line)}
+  .box.client header{background:var(--card2-bg);border-color:var(--card2-line)}
+  .box h3{margin:0;font-size:19px;font-weight:900}
+  .box.money h3{color:var(--money)} .box.client h3{color:var(--card2)}
+  .box .role{margin:4px 0 0;font-size:13.5px;color:var(--muted);font-weight:500}
+  .box ul{list-style:none;margin:0;padding:14px 20px 18px;display:flex;flex-direction:column;gap:0}
+  .box li{padding:9px 0;border-bottom:1px dashed var(--line);font-size:15.5px;font-weight:500}
+  .box li:last-child{border-bottom:0}
+  .box li .note{display:block;font-size:12.5px;color:var(--muted);font-weight:400;line-height:1.6;margin-top:2px}
+  .box li b{font-weight:800}
+
+  /* ── المؤشّر ── */
+  .link-band{margin:16px 0 0;border:1.5px solid var(--line);border-radius:18px;
+    background:var(--card);padding:20px 22px}
+  .link-band .t{font-size:17px;font-weight:900;margin:0 0 6px}
+  .link-band p{margin:0;color:var(--muted);font-size:14.5px;max-width:70ch}
+  .chain{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:16px 0 0;font-size:14px}
+  .chip{border-radius:10px;padding:7px 13px;font-weight:800;border:1.5px solid}
+  .chip.c{background:var(--card2-bg);color:var(--card2);border-color:var(--card2-line)}
+  .chip.m{background:var(--money-bg);color:var(--money);border-color:var(--money-line)}
+  .chip.dim{background:transparent;color:var(--muted);border-color:var(--line);border-style:dashed;font-weight:600}
+  .arrow{color:var(--muted);font-weight:800;font-size:18px}
+
+  /* ── الشريط الزمني للترقية ── */
+  .rail{margin:18px 0 0;border:1.5px solid var(--line);border-radius:18px;background:var(--card);padding:6px 20px 18px}
+  .step{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:0}
+  .dot{width:11px;height:11px;border-radius:50%;margin-top:9px;background:var(--muted)}
+  .dot.now{background:var(--money);box-shadow:0 0 0 4px var(--money-bg)}
+  .step b{display:block;font-size:16px;font-weight:800}
+  .step span{color:var(--muted);font-size:14px}
+
+  /* ── بطاقات الأسئلة المعلّقة ── */
+  .qs{display:grid;gap:14px;grid-template-columns:1fr;margin:18px 0 0}
+  @media(min-width:760px){.qs{grid-template-columns:1fr 1fr}}
+  .q{border:1.5px solid var(--warn-line);background:var(--warn-bg);border-radius:16px;padding:18px 20px}
+  .q .lab{display:inline-block;font-size:11.5px;font-weight:900;letter-spacing:.08em;
+    color:var(--warn);margin:0 0 6px}
+  .q b{display:block;font-size:16.5px;font-weight:800;line-height:1.5;margin-bottom:6px}
+  .q p{margin:0;font-size:14px;color:var(--muted);line-height:1.7}
+
+  .q.ans{border-color:var(--money-line);background:var(--money-bg)}
+  .q.ans .lab{color:var(--money)}
+  .q.ans p{color:var(--ink)}
+  .q .need{display:block;margin-top:10px;padding-top:10px;border-top:1px dashed var(--money-line);
+    font-size:13.5px;color:var(--muted)}
+
+  /* ── التاريخان ── */
+  .dates{display:grid;gap:0;grid-template-columns:1fr;border:1.5px solid var(--line);
+    border-radius:18px;overflow:hidden;background:var(--card);margin:18px 0 0}
+  @media(min-width:760px){.dates{grid-template-columns:1fr 1fr 1fr}}
+  .d{padding:18px 20px;border-bottom:1px solid var(--line)}
+  @media(min-width:760px){.d{border-bottom:0;border-inline-start:1px solid var(--line)}
+    .d:first-child{border-inline-start:0}}
+  .d .when{font-size:11.5px;font-weight:900;letter-spacing:.07em;color:var(--muted);margin:0 0 6px}
+  .d h4{margin:0 0 6px;font-size:17px;font-weight:900;line-height:1.4}
+  .d p{margin:0;font-size:14px;color:var(--muted);line-height:1.7}
+  .d.gap{background:var(--warn-bg)}
+  .d.gap .when,.d.gap h4{color:var(--warn)}
+  .d.gap p{color:var(--ink)}
+  .d.go{background:var(--money-bg)}
+  .d.go .when,.d.go h4{color:var(--money)}
+  .d.go p{color:var(--ink)}
+
+  /* ── الأساس القائم ── */
+  .base{border:1.5px solid var(--money-line);background:var(--card);border-radius:16px;
+    padding:18px 20px;margin:16px 0}
+  .base > b{display:block;font-size:17px;font-weight:900;color:var(--money);margin-bottom:8px}
+  .base p{margin:8px 0 0;font-size:14.5px;line-height:1.75}
+  .base pre{background:var(--sand);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;margin:10px 0 0;overflow-x:auto;direction:ltr;text-align:left;
+    font-family:ui-monospace,Consolas,monospace;font-size:11.5px;line-height:1.7}
+  .chainflow{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:14px 0 0;font-size:13.5px}
+
+  /* ── الأعطال ── */
+  .bug{border:1.5px solid var(--stop-line);background:var(--stop-bg);border-radius:16px;
+    padding:18px 20px;margin:14px 0}
+  .bug b{display:block;font-size:16.5px;font-weight:800;color:var(--stop);margin-bottom:6px}
+  .bug p{margin:6px 0 0;font-size:14.5px;line-height:1.75}
+  .bug .said{border-inline-start:3px solid var(--stop-line);padding-inline-start:12px;
+    margin:8px 0;color:var(--muted);font-size:14px}
+  .ref{font-family:ui-monospace,Consolas,monospace;font-size:12px;direction:ltr;display:inline-block;
+    background:rgba(125,125,140,.14);padding:1px 6px;border-radius:5px}
+
+  .done{border:1.5px solid var(--money-line);background:var(--money-bg);border-radius:16px;
+    padding:16px 20px;margin:18px 0}
+  .done b{color:var(--money);font-weight:900}
+
+  /* ── خطوات الفلو ── */
+  .flow{counter-reset:st;border:1.5px solid var(--line);border-radius:18px;background:var(--card);
+    padding:6px 20px;margin:18px 0 0}
+  .st{counter-increment:st;display:grid;grid-template-columns:auto 1fr;gap:14px;
+    padding:13px 0;border-bottom:1px solid var(--line);align-items:start}
+  .st:last-child{border-bottom:0}
+  .st::before{content:counter(st);display:grid;place-items:center;width:27px;height:27px;
+    border-radius:9px;background:var(--sand);border:1px solid var(--line);color:var(--muted);
+    font-size:13px;font-weight:900;font-variant-numeric:tabular-nums;margin-top:1px}
+  .st b{display:block;font-size:15.5px;font-weight:700;line-height:1.55}
+  .st span{color:var(--muted);font-size:13.5px}
+  .st.ok b{color:var(--money)} .st.no b{color:var(--stop)}
+
+  /* ── قائمة ما يُبنى ── */
+  .build{border:1.5px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card);margin:18px 0 0}
+  .item{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:18px 20px;
+    border-bottom:1px solid var(--line);align-items:start}
+  .item:last-child{border-bottom:0}
+  .item .no{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;
+    background:var(--sand);border:1px solid var(--line);color:var(--muted);
+    font-size:14px;font-weight:900;font-variant-numeric:tabular-nums;margin-top:2px}
+  .item h4{margin:0 0 4px;font-size:16.5px;font-weight:800;line-height:1.45}
+  .item p{margin:4px 0 0;font-size:14.5px;color:var(--muted);line-height:1.75}
+  .item .where{display:block;margin-top:8px;font-size:12.5px;color:var(--muted)}
+  .sz{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.05em;
+    border-radius:99px;padding:2px 10px;margin-inline-start:8px;vertical-align:2px}
+  .sz.s{background:var(--money-bg);color:var(--money);border:1px solid var(--money-line)}
+  .sz.m{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-line)}
+  .sz.l{background:var(--stop-bg);color:var(--stop);border:1px solid var(--stop-line)}
+
+  /* ── جدول الاحتمالات ── */
+  .opts{border:1.5px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card);margin:18px 0 0}
+  .opt{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:18px 20px;border-bottom:1px solid var(--line);align-items:start}
+  .opt:last-child{border-bottom:0}
+  .opt.pick{background:var(--money-bg)}
+  .opt.bad{background:var(--stop-bg)}
+  .verdict{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;
+    font-size:17px;font-weight:900;margin-top:2px}
+  .verdict.yes{background:var(--money);color:var(--card)}
+  .verdict.no{background:var(--stop);color:var(--card)}
+  .verdict.meh{background:transparent;color:var(--muted);border:1.5px dashed var(--line);font-size:14px}
+  .opt h4{margin:0 0 4px;font-size:16.5px;font-weight:800}
+  .opt .now{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.06em;
+    background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-line);
+    border-radius:99px;padding:1px 9px;margin-inline-start:8px;vertical-align:2px}
+  .opt p{margin:4px 0 0;font-size:14.5px;color:var(--muted);line-height:1.75}
+  .opt p.cut{color:var(--ink)}
+  .foot{color:var(--muted);font-size:13px;margin-top:54px;border-top:1px solid var(--line);padding-top:16px;line-height:1.9}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<h1>رحلة العميل المالية — الفلو المقترح</h1>
-<p class="sub">
-  هذا <b>اقتراح للنقاش</b>، لا وصفٌ للموجود. الموجود مجرودٌ في
-  <code>MONEY-CYCLE.html</code>. نتّفق على الرحلة هنا أولاً، ثم نقارنها بالأدمن ونعدّل.
-</p>
+  <p class="eyebrow">مدونتي · الجانب الماليّ</p>
+  <h1>قسمة المال: ما يبقى مع العميل، وما يذهب إلى الطلبات</h1>
+  <p class="lede">هذه الورقة تحمل ما اتُّفق عليه في جلسة ١٦ سبتمبر ٢٠٢٦، وما بقي معلّقاً بقرارك.</p>
+  <p class="stamp">القرارات الأربعة في القسم ٥ أُغلقت كلّها. وبقي سؤالٌ واحد مفتوح في آخر
+    القسم — ومعه اختيار شكل الربط في القسم ٧.</p>
 
-<div class="flag red">
-  <b>المبدأ الذي تُبنى عليه الرحلة كلها:</b> كل مرحلة تكتب <b>صفّاً جديداً</b>، ولا تدهس
-  ما قبلها. فتقدر في أي يوم تسأل «هذا العميل — من متى، على أي باقة، بكم، ومن باعه؟»
-  وتلقى الجواب.
-</div>
+  <!-- ═════ ١ ═════ -->
+  <h2><span class="n">١</span>لماذا نفصل أصلاً</h2>
 
-<h2>المراحل السبع</h2>
-
-<div class="stage">
-  <div class="n">٠</div>
-  <div>
-    <h3>عميل محتمل</h3>
-    <p>اسمٌ ورقمٌ واهتمام. <b>لا مال بعد</b> — ولا يُنشأ له حساب.</p>
-    <div class="row">
-      <span class="chip">المصدر</span><span class="chip">المندوب</span>
-      <span class="chip">الباقة المتوقّعة</span><span class="chip">المتابعات</span>
-    </div>
-    <p class="writes">يكتب: <code>SalesLead</code> — موجود ويعمل اليوم.</p>
+  <div class="thesis">
+    <p class="big">الطلب واقعةٌ لا تتغيّر. وكرت العميل يتغيّر كل يوم.</p>
+    <p class="why">
+      حين اشترى العميل، كان السعر كذا والمدّة كذا — وهذا لا يصحّ أن يتبدّل بعدها أبداً.
+      أمّا كرت العميل فاسمُه يُصحَّح، وشعارُه يُستبدَل، وحالتُه تتقلّب.
+      فإن جلس الاثنان في مكانٍ واحد، صار تعديلُ اسم العميل يمسّ صفّاً فيه أرقام محاسبة —
+      وضاع تاريخُ أسعاره عند أوّل ترقية.
+    </p>
   </div>
-</div>
 
-<div class="stage mny">
-  <div class="n">١</div>
-  <div>
-    <h3>الاتفاق — وهنا يولد «الاشتراك»</h3>
-    <p>العميل وافق. تُنشأ <b>لقطة</b> لا مرجع: الباقة وسعرها ومدّتها <b>كما اتُّفق اليوم</b>.
-       بعدها لو تغيّر سعر الكتالوج، <b>لا يتغيّر عليه شيء</b>.</p>
-    <div class="row">
-      <span class="chip"><b>الباقة</b> + عدد المقالات</span>
-      <span class="chip"><b>السعر</b> وقت الاتفاق</span>
-      <span class="chip">العملة</span>
-      <span class="chip">الدورة: شهري / سنوي</span>
-      <span class="chip">شهور الهدية</span>
-      <span class="chip">من ← إلى</span>
-      <span class="chip">المندوب</span>
+  <!-- ═════ ٢ ═════ -->
+  <h2><span class="n">٢</span>القسمة — من يملك ماذا</h2>
+  <p class="h2sub">القاعدة: ما يُقاس بالمال يذهب إلى الطلبات، وما يصف حالة الخدمة يبقى مع العميل.</p>
+
+  <div class="split">
+
+    <div class="box money">
+      <header>
+        <h3>الطلبات</h3>
+        <p class="role">لحظة البيع — تُكتب مرّة ولا تُمسّ بعدها</p>
+      </header>
+      <ul>
+        <li>السعر يوم الشراء</li>
+        <li>المدّة المشتراة</li>
+        <li>أشهر الهدية</li>
+        <li>الضريبة والإجمالي</li>
+        <li>تاريخ الدفع</li>
+        <li>المندوب صاحب الصفقة</li>
+        <li><b>ينضمّ إليها من كرت العميل:</b>
+          <span class="note">تاريخ نهاية الاشتراك<br>
+          (ودورة الفوترة وحالة الدفع تسقطان تماماً — انظر القسم ٥)</span></li>
+      </ul>
     </div>
-    <p class="writes">يكتب: <b><code>Subscription</code> — الجدول الجديد</b>، وهو عمود الرحلة.</p>
-    <div class="q"><b>قرار ١:</b> الاشتراك يولد عند <b>الاتفاق</b> (حتى قبل الدفع، بحالة
-      «بانتظار الدفع») أم عند <b>وصول المبلغ</b> فقط؟</div>
-  </div>
-</div>
 
-<div class="stage mny">
-  <div class="n">٢</div>
-  <div>
-    <h3>الدفع</h3>
-    <p>ثلاثة طرق تصبّ في نفس الاشتراك، ولا تُنشئ مسارات منفصلة:</p>
-    <div class="row">
-      <span class="chip">بطاقة من <b>صفحة الدفع</b></span>
-      <span class="chip">تحويل بنكي / إنستا باي</span>
-      <span class="chip">نقداً أو خارج النظام — يسجّله المندوب</span>
+    <div class="box client">
+      <header>
+        <h3>كرت العميل</h3>
+        <p class="role">من هو، وما حالة خدمته اليوم</p>
+      </header>
+      <ul>
+        <li>حالة الاشتراك — نشط أو منتهٍ
+          <span class="note">لا تُنقَل: هي مفتاح ظهور صفحة الشريك على الموقع، و٢٥ ملفّاً في مدونتي يصفّي عليها مباشرةً. نقلُها يجعل كل صفحة شريك استعلامَين بدل واحد.</span></li>
+        <li>عدد المقالات شهريّاً
+          <span class="note">حصّة شغل لفريق المحتوى، لا مال.</span></li>
+        <li>نوع الباقة
+          <span class="note">يُعرَض من الكرت، ويبقى الطلب هو مصدر السعر.</span></li>
+        <li><b>يُضاف: مؤشّر الطلب الساري</b>
+          <span class="note">الحقل الذي يقول: أيّ طلبٍ يحكم هذا العميل الآن.</span></li>
+      </ul>
     </div>
-    <p class="writes">يكتب: <code>Payment</code> مربوطاً بالاشتراك — كم وصل، متى، وبأي طريقة.
-       <br>واشتراكٌ قد يستقبل <b>أكثر من دفعة</b> (دفعة أولى ثم تكملة).</p>
-    <div class="q"><b>قرار ٢:</b> نسمح بالدفع <b>على دفعات</b>، أم دفعةٌ واحدة تقفل الاشتراك؟</div>
-  </div>
-</div>
 
-<div class="stage mny">
-  <div class="n">٣</div>
-  <div>
-    <h3>التفعيل</h3>
-    <p>الحساب يُفتح، وحصّة المقالات <b>تُقرأ من الاشتراك</b> لا من جدول جانبي.
-       والتواريخ تُضبط: البداية اليوم، والنهاية = البداية + المدفوع + الهدية.</p>
-    <div class="row">
-      <span class="chip">إنشاء الحساب</span><span class="chip">إيميل ترحيب</span>
-      <span class="chip">الحصّة من الاشتراك</span><span class="chip">تاريخ النهاية</span>
+  </div>
+
+  <div class="done">
+    <b>يسقط تماماً: رصيد التأسيس.</b>
+    كان حلّاً مؤقّتاً لعملاء أُسّسوا قبل أن يوجد مسار مالّي — والمبيعات تديرها الآن.
+    يحمله اليوم ٢٥ عميلاً من ٣٩.
+  </div>
+
+  <!-- ═════ ٣ ═════ -->
+  <h2><span class="n">٣</span>كيف يربط المؤشّر الاثنين</h2>
+
+  <div class="link-band">
+    <p class="t">للعميل طلباتٌ كثيرة، وواحدٌ منها هو الساري</p>
+    <p>
+      والمؤشّر يوضع على <b>كرت العميل</b> لا على الطلب: حقلٌ واحد لا يمكن أن يحمل قيمتين،
+      أمّا علامةٌ على الطلب فيمكن أن يحملها طلبان معاً وقاعدةُ البيانات لا تمنع ذلك.
+    </p>
+    <div class="chain">
+      <span class="chip c">كرت العميل</span>
+      <span class="arrow">←</span>
+      <span class="chip m">الطلب الساري</span>
+      <span class="arrow">|</span>
+      <span class="chip dim">طلب سابق</span>
+      <span class="chip dim">طلب أسبق</span>
+      <span style="color:var(--muted);font-size:13px">تبقى في السجلّ بأسعارها القديمة</span>
     </div>
-    <p class="writes">يكتب: <code>Client</code> — ويشير إلى <code>currentSubscriptionId</code> وحده.</p>
-    <div class="q"><b>قرار ٣:</b> التفعيل <b>تلقائيّ</b> بمجرّد اكتمال الدفع، أم بزرٍّ يضغطه موظّف؟</div>
   </div>
-</div>
 
-<div class="stage mny">
-  <div class="n">٤</div>
-  <div>
-    <h3>الفاتورة</h3>
-    <p>تُصدَر <b>من الاشتراك</b>: المبلغ محسوبٌ لا مكتوباً باليد، واسم الباقة من اللقطة.
-       فيستحيل أن تخالف الفاتورةُ ما اتُّفق عليه.</p>
-    <div class="row">
-      <span class="chip">رقم متسلسل</span><span class="chip">صافٍ + ضريبة</span>
-      <span class="chip">المدّة المغطّاة</span><span class="chip">إيميل + واتساب</span>
+  <p class="h2sub" style="margin-top:26px"><b style="color:var(--ink)">والترقية تمشي هكذا:</b></p>
+
+  <div class="rail">
+    <div class="step"><span class="dot"></span>
+      <div><b>العميل على باقة، وطلبه ساري</b>
+        <span>المؤشّر يشير إليه.</span></div></div>
+    <div class="step"><span class="dot"></span>
+      <div><b>يرقّي بعد ستّة أشهر</b>
+        <span>يُفتح له طلبٌ جديد بالسعر الجديد — لا يُعدَّل القديم.</span></div></div>
+    <div class="step"><span class="dot now"></span>
+      <div><b>المؤشّر ينتقل إلى الطلب الجديد</b>
+        <span>والقديم يبقى في السجلّ، فيتّضح تاريخ العميل الماليّ بدل أن يُدهَس.</span></div></div>
+  </div>
+
+  <div class="thesis" style="margin-top:22px">
+    <p class="big">والفاتورة لا تولد إلّا من طلب.</p>
+    <p class="why">
+      كان السؤال: السنة الثانية ما لها طلب، فأين تُكتب؟ والجواب الذي استقرّ عليه الأمر:
+      <b>التجديد نفسه طلبٌ جديد</b> — يُفتح من فورم تسجيل الطلب أو من صفحة الدفع.
+      فلا يوجد مالٌ بلا طلبٍ يشرحه، والفواتير تبقى الدفتر لكنّها تُولَد من الطلبات لا بجانبها.
+      وبهذا تصير القيادة كلّها في مكانٍ واحد: الطلب.
+    </p>
+  </div>
+
+  <!-- ═════ ٤ ═════ -->
+  <h2><span class="n">٤</span>تاريخان لا تاريخ واحد</h2>
+  <p class="h2sub">خالد ١٦ سبتمبر: «مجرّد ما العميل يسدّد، حسابه يتفعّل ونبدأ نجهّز له البروفايل
+    والموقع والداتا والكونسول — وهذا كلّه <b>مو محسوب</b> من فترة الاشتراك.»</p>
+
+  <div class="dates">
+    <div class="d">
+      <p class="when">اليوم صفر</p>
+      <h4>الدفع والتفعيل</h4>
+      <p>وصل المال، فُتح الحساب. ونبدأ التجهيز: البروفايل التجاريّ · الموقع · الداتا · الكونسول.</p>
     </div>
-    <p class="writes">يكتب: <code>Invoice</code> — موجود ويلقط بالفعل، ويتغيّر مصدره فقط.</p>
-    <div class="q"><b>قرار ٤:</b> تُصدَر <b>تلقائياً</b> عند اكتمال الدفع، أم بزرٍّ كما اليوم؟</div>
-  </div>
-</div>
-
-<div class="stage">
-  <div class="n">٥</div>
-  <div>
-    <h3>الخدمة</h3>
-    <p>شهراً بشهر: تُنشر المقالات وتُخصَم من الحصّة. لا مال هنا — لكن هنا يظهر
-       <b>هل نوفي بما بعنا</b>.</p>
-    <div class="row">
-      <span class="chip">المنشور / الحصّة</span><span class="chip">المتأخّر</span>
-      <span class="chip">تنبيه عند التقصير</span>
+    <div class="d gap">
+      <p class="when">ما بينهما</p>
+      <h4>مدّة التجهيز — على حسابنا</h4>
+      <p>أسبوعان أو شهر. <b>لا تُحسب على العميل</b> — هي شغلنا نحن لا خدمته هو.</p>
     </div>
-    <div class="q"><b>قرار ٥:</b> الحصّة غير المستهلكة <b>تُرحَّل</b> للشهر التالي أم تسقط؟</div>
-  </div>
-</div>
-
-<div class="stage mny">
-  <div class="n">٦</div>
-  <div>
-    <h3>التجديد — أو النهاية</h3>
-    <p>قبل تاريخ النهاية بمدّة، ينبّه النظام المندوب. فإن جدّد: <b>اشتراك جديد</b> يبدأ من
-       حيث انتهى السابق، والقديم يُغلق بتاريخه ويبقى في السجل.</p>
-    <div class="row">
-      <span class="chip">تنبيه قبل الانتهاء</span>
-      <span class="chip">جدّد بنفس الباقة</span>
-      <span class="chip">رقّى / خفّض</span>
-      <span class="chip">أوقف</span>
+    <div class="d go">
+      <p class="when">هنا يبدأ العدّ</p>
+      <h4>أوّل مقال يصل الكونسول</h4>
+      <p>من هذه اللحظة تُحسب المدّة المشتراة وأشهر الهدية، ومنها يُعرَف تاريخ الانتهاء.</p>
     </div>
-    <div class="q"><b>قرار ٦:</b> التنبيه قبل كم يوم؟ ولمن — المندوب وحده أم العميل معه؟</div>
-    <div class="q"><b>قرار ٧:</b> <b>الترقية وسط الفترة</b> — نحسب فرق سعرٍ للمتبقّي، أم نقفل
-      القديم ونبدأ فترة جديدة كاملة؟</div>
   </div>
-</div>
 
-<h2>الجداول التي تحملها الرحلة</h2>
+  <div class="bug">
+    <b>والنظام اليوم يخلط التاريخين في حقلٍ واحد</b>
+    <p>زرّ التفعيل يكتب تاريخ اليوم في خانة <b>بداية الاشتراك</b> — فيأكل من العميل
+      مدّة التجهيز كلّها، ويقصّر اشتراكه بقدرها.</p>
+    <pre style="background:var(--card);border:1px solid var(--stop-line);border-radius:10px;
+      padding:12px 14px;margin:10px 0 0;overflow-x:auto;direction:ltr;text-align:left;
+      font-family:ui-monospace,Consolas,monospace;font-size:11.5px;line-height:1.7">admin/app/(dashboard)/clients/actions/activate-client.ts:34-39
+      where: { id: clientId },
+      data: {
+        subscriptionStatus: "ACTIVE",
+        paymentStatus: "PAID",              &lt;- يُحذف (القرار ٣)
+        subscriptionStartDate: new Date(),  &lt;- هذا تاريخ التفعيل لا بداية الاشتراك
+      },</pre>
+    <p><b>العلاج:</b> حقلان منفصلان — تاريخُ تفعيلٍ يبقى مكانه، وبدايةُ اشتراكٍ تُملأ
+      من حقل «أوّل وصولٍ للعميل» على المقال. والنهاية تُحسب من الثاني لا الأوّل.</p>
+  </div>
 
-<div class="scroll">
-<table>
-  <thead><tr><th>الجدول</th><th>دوره</th><th>الحالة اليوم</th></tr></thead>
-  <tbody>
-    <tr><td><code>SalesLead</code></td><td>قبل المال</td>
-        <td><span class="tag t-live">موجود</span> ٢٦ صفّاً</td></tr>
-    <tr class="money"><td><b><code>Subscription</code></b></td>
-        <td><b>عمود الرحلة</b> — لقطة لكل فترة</td>
-        <td><span class="tag t-risk">غير موجود</span></td></tr>
-    <tr class="money"><td><code>Payment</code></td><td>كم وصل ومتى وبأي طريقة</td>
-        <td>موجود جزئياً في <code>CheckoutOrder</code> — للبطاقة وحدها</td></tr>
-    <tr><td><code>Invoice</code></td><td>المستند</td>
-        <td><span class="tag t-live">موجود</span> ١٥ صفّاً · يلقط بالفعل</td></tr>
-    <tr><td><code>Client</code></td><td>من هو — ويشير إلى اشتراكه الحاليّ</td>
-        <td>يحمل المال اليوم · <b>يُفرَّغ منه</b></td></tr>
-  </tbody>
-</table>
-</div>
+  <div class="base">
+    <b>الأساس قائمٌ بالفعل — المبدأ مطبَّقٌ منذ اليوم، لكن على النشر لا على الوصول</b>
 
-<div class="flag amber">
-  <b>ماذا يحدث للأربعين عميلاً القائمين؟</b> يُولَّد لكل واحد اشتراكٌ واحد من بياناته
-  الحالية (الباقة · التاريخ · الرصيد)، ويصير هو الحاليّ. ولا يُمسّ شيء آخر.
-  <div class="q"><b>قرار ٨:</b> التسعة المنتهية — يُولَّد لهم اشتراكٌ <b>مغلق</b> بتاريخه،
-    أم يُتركون بلا اشتراك حتى يُجدَّدوا؟</div>
-</div>
+    <p>قرار «الاشتراك يبدأ مع أوّل مقال» ليس جديداً: الكود يطبّقه اليوم في موضعين،
+      ويرفض إصدار فاتورةٍ لعميلٍ لم يُنشر له مقال بعد.</p>
 
-<h2>القرارات الثمانية — مجمّعة</h2>
+    <pre>admin/app/(dashboard)/clients/[id]/account/actions/convert-opening-balance.ts:71-79
+  // Billing starts when the client's first article goes live - that anchors the period.
+  const firstPublished = await db.article.findFirst({
+    where: { clientId: client.id, status: "PUBLISHED", datePublished: { not: null } },
+    orderBy: { datePublished: "asc" },
+  });
+  if (!firstPublished?.datePublished) {
+    return { ok: false, error: "ما فيه مقال منشور بعد - الفوترة تبدأ مع أول مقال." };
+  }
 
-<div class="scroll">
-<table>
-  <thead><tr><th>#</th><th>السؤال</th><th>يؤثّر على</th><th>قرار خالد</th></tr></thead>
-  <tbody>
-    <tr><td class="num">١</td><td>الاشتراك يولد عند الاتفاق أم عند الدفع؟</td>
-        <td>شكل الجدول وحالاته</td><td class="pend">؟</td></tr>
-    <tr><td class="num">٢</td><td>دفعٌ على دفعات أم دفعة واحدة؟</td>
-        <td>هل <code>Payment</code> جدولٌ مستقلّ</td><td class="pend">؟</td></tr>
-    <tr><td class="num">٣</td><td>التفعيل تلقائيّ أم بزرّ؟</td>
-        <td>مسار الطلب المدفوع</td><td class="pend">؟</td></tr>
-    <tr><td class="num">٤</td><td>الفاتورة تلقائية أم بزرّ؟</td>
-        <td><code>create-invoice</code></td><td class="pend">؟</td></tr>
-    <tr><td class="num">٥</td><td>الحصّة غير المستهلكة تُرحَّل أم تسقط؟</td>
-        <td>حساب المتأخّر والتسليم</td><td class="pend">؟</td></tr>
-    <tr><td class="num">٦</td><td>التنبيه قبل كم يوم ولمن؟</td>
-        <td>التجديد والمتابعة</td><td class="pend">؟</td></tr>
-    <tr><td class="num">٧</td><td>الترقية وسط الفترة — فرق سعر أم فترة جديدة؟</td>
-        <td>أصعب حالة في الحساب</td><td class="pend">؟</td></tr>
-    <tr><td class="num">٨</td><td>الأربعون القائمون — كيف يُرحَّلون؟</td>
-        <td>بيانات إنتاج</td><td class="pend">؟</td></tr>
-  </tbody>
-</table>
-</div>
+admin/app/(dashboard)/clients/[id]/account/actions/create-invoice.ts:86-96
+  // Billing starts when the client's first article goes live - that is what they are
+  // paying for. No article yet means the clock has not started, so the admin has to
+  // say out loud that they mean to bill anyway.
+  if (!firstPublished?.datePublished &amp;&amp; !input.confirmNotActivated) {
+    return { ok: false, error: "NOT_ACTIVATED" };
+  }</pre>
 
-<p class="foot">
-  اقتراحٌ للنقاش — ١٥ سبتمبر ٢٠٢٦. لا يُبنى منه سطر كود قبل أن تُملأ القرارات الثمانية.
-  والموجود اليوم مجرودٌ بأرقامه في <code>documents/tasks/MONEY-CYCLE.html</code>.
-</p>
+    <p><b>والتاريخ لا يُكتب في كرت العميل مباشرةً</b> — يُحسب، فيُوضع في الفاتورة،
+      ثمّ تأخذ دالّةٌ واحدة أبعد نهايةٍ من كل الفواتير وتكتبها في الكرت:</p>
+
+    <div class="chainflow">
+      <span class="chip m">أوّل مقال</span>
+      <span class="arrow">←</span>
+      <span class="chip m">الفاتورة</span>
+      <span class="arrow">←</span>
+      <span class="chip c">كرت العميل</span>
+      <span style="color:var(--muted);font-size:12.5px">recompute-subscription-end.ts</span>
+    </div>
+
+    <p style="margin-top:14px"><b>فالتعديل المطلوب أصغر ممّا يبدو — نقطةٌ واحدة:</b>
+      الموضعان يقرآن حالة <b>«منشور»</b>، والقرار أن يقرآ <b>«وصل الكونسول للموافقة»</b>.
+      والسلسلة كلّها تبقى كما هي.</p>
+
+    <p><span class="ref">recompute-subscription-end.ts</span> فيه أيضاً حارسٌ مهمّ:
+      التاريخ <b>لا يرجع للوراء أبداً</b> — بعد عطلٍ حقيقيّ سنة ٢٠٢٦ خسر فيه عميلٌ
+      شهوراً لمّا سدّد أقدم فواتيره.</p>
+  </div>
+
+  <h2><span class="n">٥</span>القرارات الأربعة</h2>
+  <p class="h2sub">الأسئلة الأربعة التي فتحها النقاش — <b style="color:var(--money)">حُسمت كلّها في جلسة ١٦ سبتمبر</b>.</p>
+
+  <div class="qs">
+
+    <div class="q ans">
+      <span class="lab">محسوم · ١٦ سبتمبر</span>
+      <b>الاشتراك يبدأ يوم يصل العميلَ أوّلُ مقال على الكونسول</b>
+      <p>لا يوم النشر: المقال قد يجلس عند العميل أسابيع بانتظار موافقته هو —
+        وهذا التأخير لا يُحسب عليه. ولا يوم الضغط على زرّ التفعيل كما يفعل النظام اليوم.</p>
+      <p style="margin-top:8px"><b>الحساب:</b> البداية = تاريخ وصول أوّل مقال ·
+        النهاية = البداية + المدّة المشتراة + أشهر الهدية.</p>
+      <span class="need"><b>يلزمه حقلٌ جديد على المقال:</b> تاريخ أوّل وصولٍ للعميل.
+        المقال اليوم يحمل تاريخ الإنشاء والتعديل والنشر والجدولة — ولا شيء يقول متى ظهر
+        للعميل. وتاريخ التعديل يُدهَس مع كل تغيير فلا يصلح. يُكتب مرّةً واحدة أوّل ما تصير
+        حالته «بانتظار الموافقة»، ولا يتغيّر بعدها ولو أعاده العميل للتعديل ثمّ رجع.</span>
+    </div>
+
+    <div class="q ans">
+      <span class="lab">محسوم · ١٦ سبتمبر</span>
+      <b>دورة الفوترة تسقط — لا شهري ولا سنوي</b>
+      <p>الكلّ يدفع مقدّماً عن المدّة كلّها، والطلب يقول المدّة والمبلغ. فالخانة كانت
+        تكرّر معلومةً موجودة — وقد تناقضها: عميلٌ اشترى ستّة أشهر وكرتُه مكتوبٌ فيه «سنوي».</p>
+      <span class="need"><b>وما هو أكبر من ذلك:</b> القيادة كلّها تنتقل إلى الطلب —
+        الفواتير · تاريخ الانتهاء · المندوب الذي يتابع العميل. كرت العميل يعرض، والطلب يحكم.</span>
+    </div>
+
+    <div class="q ans">
+      <span class="lab">محسوم · ١٦ سبتمبر</span>
+      <b>خانة حالة الدفع على كرت العميل تُحذف</b>
+      <p>ما أحد يحدّثها، فصارت تكذب. وحالة الدفع تُقرأ من الطلب الساري ومن الفواتير المفتوحة.</p>
+      <p><b>وقد كذبت مرّةً بـ٤٣ ألف جنيه:</b> لوحة الأدمن طبعت «صفر متأخّرات»
+        وفي الحقيقة ثلاث فواتير غير مدفوعة بـ<b>٤٣٬١٦٤ جنيهاً</b>. ولم تُصلَح الخانة —
+        بل <b>هُجِرت</b>، وصار الحساب من الفواتير.</p>
+      <span class="need"><b>الجرد الّذي بُني عليه القرار:</b>
+        ٠ إشارة في مدونتي · ٠ في المشترك · ٩٩ في الأدمن · ١٢ في الكونسول —
+        و<b>ولا استعلامٍ واحد يفلتر عليها</b>. كل ما ظُنّ أنّه يفلتر عليها اتّضح أنّه يفلتر
+        على <b>الفواتير</b>. والباقي كتابةٌ عمياء (زرّ التفعيل · تحويل مشترك · بيانات تجريبية)
+        وعرضٌ في الشاشات. فالحذف يمسّ الشاشات لا المنطق.
+        <pre style="background:var(--card);border:1px solid var(--line);border-radius:10px;
+          padding:12px 14px;margin:10px 0 0;overflow-x:auto;direction:ltr;text-align:left;
+          font-family:ui-monospace,Consolas,monospace;font-size:11px;line-height:1.7">admin/app/(dashboard)/actions/dashboard-actions.ts:205
+  // `Client.paymentStatus` is never written OVERDUE by any code path,
+  // so filtering on it listed nobody - the invoices are the truth
+
+admin/app/(dashboard)/actions/client-status-counts.ts:141
+  // the dashboard printed a reassuring 0 beside three unpaid invoices
+  // worth 43,164 EGP
+
+console/app/(dashboard)/dashboard/helpers/dashboard-queries.ts:313
+  // nothing keeps that flag in sync; it says PAID with invoices open
+
+admin/app/(dashboard)/clients/actions/activate-client.ts:31
+  // TEMP FIX (2026-05-29): also mark payment PAID so the badge reads "Active"</pre></span>
+    </div>
+
+    <div class="q ans">
+      <span class="lab">محسوم · ١٦ سبتمبر</span>
+      <b>الحصّة غير المستهلكة تُرحَّل — رصيدٌ للعميل لا يسقط</b>
+      <p>انتهى الشهر وبقيت له مقالات؟ التقصير من عندنا لا منه، فلا يُحاسَب عليه.
+        الباقي يُقيَّد رصيداً له ويُسلَّم.</p>
+      <span class="need"><b>ما يترتّب عليه:</b> لكل عميل رصيدُ تسليمٍ قائم = مجموع ما اشتراه
+        ناقص ما سُلِّم فعلاً. وهو رقمٌ يجب أن يُعرَض للفريق — وإلّا تراكم بصمت.</span>
+    </div>
+
+  </div>
+
+  <div class="q" style="margin-top:16px">
+    <span class="lab">سؤالٌ تابع · مفتوح</span>
+    <b>ورصيد التسليم المتراكم — هل يمدّ نهاية الاشتراك؟</b>
+    <p>عميلٌ اشترى ستّة أشهر وبقي له عشرة مقالات عند انتهائها: هل يمتدّ اشتراكه حتى
+      يستلمها، أم ينتهي في موعده ويبقى الرصيد ديناً نسلّمه له؟<br>
+      الفرق يظهر في تاريخ التجديد وفي متى يُطالَب بالدفعة القادمة.</p>
+  </div>
+
+  <!-- ═════ ٥ ═════ -->
+  <h2><span class="n">٦</span>ما يلزم بناؤه</h2>
+  <p class="h2sub">خمسة بنود خرجت من قرارات هذه الجلسة. مرتّبةٌ بترتيب التنفيذ — كلٌّ منها يعتمد على ما قبله.</p>
+
+  <div class="build">
+
+    <div class="item">
+      <span class="no">١</span>
+      <div>
+        <h4>حقل «أوّل وصولٍ للعميل» على المقال <span class="sz s">صغير</span></h4>
+        <p>تاريخٌ يُكتب مرّةً واحدة أوّل ما تصير حالة المقال «بانتظار الموافقة»، ولا يتغيّر
+          بعدها ولو أعاده العميل للتعديل ثمّ رجع.</p>
+        <span class="where">بدونه لا يوجد تاريخٌ يقول متى ظهر المقال للعميل — والموجود
+          (الإنشاء · التعديل · النشر · الجدولة) لا يصلح أيّ منها.</span>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="no">٢</span>
+      <div>
+        <h4>الفوترة تقرأ «وصل الكونسول» بدل «منشور» <span class="sz s">صغير</span></h4>
+        <p>نقطتان في الكود تقرآن حالة النشر، تصيران تقرآن الحقل الجديد. والسلسلة
+          (مقال ← فاتورة ← كرت) تبقى كما هي.</p>
+        <span class="where"><span class="ref">convert-opening-balance.ts:71</span> ·
+          <span class="ref">create-invoice.ts:89</span></span>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="no">٣</span>
+      <div>
+        <h4>فصل تاريخ التفعيل عن بداية الاشتراك <span class="sz m">متوسّط</span></h4>
+        <p>حقلان بدل واحد: تفعيلٌ يُكتب عند الدفع، وبدايةُ اشتراكٍ تأتي من البند ١.
+          فلا تُؤكل مدّة التجهيز من العميل.</p>
+        <span class="where">يلمس <span class="ref">activate-client.ts:38</span> وكل شاشةٍ
+          تعرض «تاريخ الاشتراك» اليوم.</span>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="no">٤</span>
+      <div>
+        <h4>مؤشّر الطلب الساري على كرت العميل <span class="sz m">متوسّط</span></h4>
+        <p>الحقل الذي يقول: أيّ طلبٍ يحكم هذا العميل الآن. تُقرأ منه الباقة والسعر
+          والمندوب، وينتقل عند كل ترقيةٍ وتجديد.</p>
+        <span class="where">هو مفتاح الفصل كلّه — بدونه لا يعرف الكرت أيّ طلبٍ يتبع.</span>
+      </div>
+    </div>
+
+    <div class="item">
+      <span class="no">٥</span>
+      <div>
+        <h4>رصيد التسليم القائم <span class="sz l">كبير</span></h4>
+        <p>لكل عميل: ما اشتراه ناقص ما سُلِّم فعلاً. رقمٌ يُعرَض للفريق — وإلّا تراكم الدَّين بصمت.</p>
+        <span class="where">يحتاج عدّاً دقيقاً لما سُلِّم، ويتوقّف على السؤال المفتوح:
+          هل يمدّ الرصيدُ نهايةَ الاشتراك أم يبقى ديناً؟</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="done">
+    <b>وما يُحذف — لا يُبنى:</b>
+    رصيد التأسيس · دورة الفوترة · حالة الدفع على كرت العميل.
+    الثلاثة مشروحةٌ في القسم ٥، ولا واحدٍ منها يدخل في قرارٍ اليوم.
+  </div>
+
+  <!-- ═════ ٦ ═════ -->
+  <h2><span class="n">٧</span>الربط بين الطلب والعميل — كل الاحتمالات</h2>
+  <p class="h2sub">سؤالك: نعمل علاقة بينهما، أم يشتغل كلّ واحد لوحده؟ وهل يقرأ الكرت من الطلب بدل أن يُنسَخ إليه؟</p>
+
+  <div class="done">
+    <b>محسوم · ١٦ سبتمبر — أرشفة لا حذف، وفحصٌ قبلها، وبلا علاقةٍ تربط الجدولين</b>
+    العميل المنتهي يُؤرشَف: يختفي من القوائم، وماله في مكانه، ويرجع متى شئت.
+    ويسبق الأرشفةَ فحصٌ يقول ما عليه.
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:30px 0 0">الفلو — خطوة تحت خطوة</h3>
+
+  <div class="flow">
+    <div class="st"><div><b>تضغط «أرشِف العميل»</b></div></div>
+    <div class="st"><div><b>النظام يفحص</b>
+      <span>كم له طلب؟ كم له فاتورة؟ فيه فاتورة غير مسدّدة؟</span></div></div>
+    <div class="st"><div><b>يعرض النتيجة</b>
+      <span>«له ٣ طلبات وفاتورتان، واحدة غير مسدّدة بـ٤ آلاف»</span></div></div>
+    <div class="st"><div><b>أنت تقرّر</b>
+      <span>أرشِف، أو الغِ وحصّل الدَّين أوّلاً.</span></div></div>
+    <div class="st ok"><div><b>بعد الأرشفة: الكرت يختفي من القوائم ولا يُحذف</b>
+      <span>والطلبات والفواتير تبقى كما هي.</span></div></div>
+    <div class="st ok"><div><b>الطلبات مفهومة بذاتها</b>
+      <span>اسم المشتري وإيميله وجوّاله ومنشأته محفوظة جوّاها.</span></div></div>
+    <div class="st no"><div><b>الفواتير ما فيها اسمه اليوم — فيها رقمه فقط</b>
+      <span>فتصير ورقةً فيها مبلغ بلا صاحب لو انفصلت عن الكرت.</span></div></div>
+    <div class="st"><div><b>العلاج: الفاتورة تحفظ الاسم مثل الطلب</b>
+      <span>اسم · إيميل · اسم المنشأة · الرقم الضريبيّ — لقطةً وقت الإصدار.</span></div></div>
+  </div>
+
+  <div class="base">
+    <b>ولماذا الأرشفة لا الحذف — السبب محاسبيّ لا تقنيّ</b>
+    <p>الفاتورة مستندٌ ضريبيّ. حذف صاحبها يكسر سلسلة المستندات ولو بقي اسمه مكتوباً فيها،
+      والمراجع يسأل «من هذا العميل؟» فيكون الجواب «محذوف».</p>
+    <p><b>والمنطق نفسه مطبَّقٌ عندكم على الفاتورة أصلاً:</b></p>
+    <pre>shared/prisma/schema/schema.prisma:3788-3790
+  // Voiding an invoice, never deleting it - the ledger has to stay whole
+  // for accounting. Only an UNPAID invoice can be archived; it then leaves
+  // every unpaid total, stops blocking the next issuance...</pre>
+    <p>الفاتورة تُلغى ولا تُحذف — فلماذا يُحذف صاحبها؟</p>
+    <p><b>وميزة الأرشفة على «الحذف مع فحص»:</b> الفحص يمنعك مرّةً واحدة، ثمّ لو تجاوزتَه
+      ضاع الأمر. والأرشفة لا تحتاج قراراً صعباً أصلاً.</p>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:36px 0 0">وللمقارنة — الاحتمالات التي دُرست</h3>
+
+
+  <div class="bug">
+    <b>قبل الاختيار — ما هو قائمٌ اليوم</b>
+    <p>الوضع مختلط، وليس مبنيّاً على قرار واحد:</p>
+    <p><b>الطلب ← العميل:</b> مجرّد رقم مخزّن، بلا علاقة ولا حارس.<br>
+       <b>الفاتورة ← العميل:</b> علاقةٌ كاملة، <b>وحذف العميل يحذف فواتيره معه</b>.</p>
+    <p class="said">أي أنّ الدفتر المحاسبيّ يضيع بضغطة حذف عميل — وهذا ما يجب ألّا يحدث أبداً في مال.</p>
+    <p><span class="ref">schema.prisma:1352 (الطلب)</span> · <span class="ref">schema.prisma:3771 (الفاتورة)</span></p>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:32px 0 0">أ · كيف يُربَط الجدولان — خمسة احتمالات</h3>
+
+  <div class="opts">
+
+    <div class="opt">
+      <span class="verdict no">✕</span>
+      <div>
+        <h4>١ · بلا ربط أصلاً — كلّ واحد لوحده</h4>
+        <p>الطلب لا يعرف عميله، والعميل لا يعرف طلباته. المطابقة بالإيميل أو باليد.</p>
+        <p class="cut"><b>يسقط:</b> لا تعرف كم دفع عميلٌ إلّا ببحثٍ نصّيّ — والإيميل يتغيّر.</p>
+      </div>
+    </div>
+
+    <div class="opt">
+      <span class="verdict meh">≈</span>
+      <div>
+        <h4>٢ · رقمٌ مخزّن بلا علاقة <span class="now">الوضع الحاليّ للطلب</span></h4>
+        <p>الطلب يحمل رقم العميل، والقاعدة لا تتحقّق منه.</p>
+        <p class="cut"><b>يسقط:</b> يمكن أن يحمل الطلب رقم عميلٍ <b>محذوف</b> ولا شيء يمنع — طلبٌ معلّق في الهواء، وكل جلبة بيانات تحتاج استعلامين.</p>
+      </div>
+    </div>
+
+    <div class="opt bad">
+      <span class="verdict no">✕</span>
+      <div>
+        <h4>٣ · علاقة + حذف متسلسل <span class="now">الوضع الحاليّ للفاتورة</span></h4>
+        <p>حذف العميل يجرّ معه كل طلباته وفواتيره.</p>
+        <p class="cut"><b>مرفوض قطعاً:</b> المستند الماليّ لا يُحذف مع من صدر له — السنة المالية تبقى مقفولة ولو رحل العميل.</p>
+      </div>
+    </div>
+
+    <div class="opt">
+      <span class="verdict meh">≈</span>
+      <div>
+        <h4>٤ · علاقة + تفريغ الرقم عند الحذف</h4>
+        <p>يُحذف العميل، وتبقى الطلبات بلا صاحب.</p>
+        <p class="cut"><b>يسقط:</b> مالٌ وصل ولا تعرف من دفعه — تقرير المبيعات يختلّ بصمت.</p>
+      </div>
+    </div>
+
+    <div class="opt">
+      <span class="verdict meh">≈</span>
+      <div>
+        <h4>٥ · علاقة + منع الحذف</h4>
+        <p>الطلب والفاتورة يرتبطان بالعميل علاقةً حقيقيّة، ومحاولة حذف عميلٍ عليه مال تُرفض.</p>
+        <p class="cut"><b>لم يُؤخذ:</b> يحلّ المشكلة بقيدٍ في القاعدة بدل أن يحلّها بالأرشفة —
+          والأرشفة تبلغ نفس الغاية وتُبقي للعميل رجعةً، بلا ربطٍ يجعل الجدولين متعلّقين ببعضهما.</p>
+      </div>
+    </div>
+
+    <div class="opt pick">
+      <span class="verdict yes">✓</span>
+      <div>
+        <h4>٦ · بلا علاقة + أرشفة + فحصٌ قبلها <span class="now" style="background:var(--money-bg);color:var(--money);border-color:var(--money-line)">المعتمد</span></h4>
+        <p>الجدولان منفصلان تماماً، والعميل يُؤرشَف لا يُحذَف، ويسبق الأرشفةَ فحصٌ يقول ما عليه.</p>
+        <p class="cut"><b>شرطه الوحيد:</b> الفاتورة تحفظ هويّة صاحبها كما يفعل الطلب — وإلّا بقي المستند بلا اسم.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:36px 0 0">ب · المندوب — يُنسَخ أم يُقرَأ؟</h3>
+  <p class="h2sub" style="margin-bottom:0">هذا مثال سؤالك الملموس: المندوب مكتوبٌ اليوم على الاثنين معاً.</p>
+
+  <div class="opts">
+
+    <div class="opt bad">
+      <span class="verdict no">✕</span>
+      <div>
+        <h4>يُنسَخ إلى كرت العميل <span class="now">الوضع الحاليّ</span></h4>
+        <p>المندوب مخزّنٌ في المكانين، والتقرير يقرأ <b>من الكرت دائماً</b> — حتّى لإيراد الفواتير.</p>
+        <p class="cut"><b>العطل المقيس:</b> لو جدّد لعميلٍ مندوبٌ ثانٍ، العمولة تُنسَب للمندوب الأوّل.<br>
+          <span class="ref">get-sales-report.ts:212</span></p>
+      </div>
+    </div>
+
+    <div class="opt pick">
+      <span class="verdict yes">✓</span>
+      <div>
+        <h4>يُقرَأ من الطلب — الموصى به</h4>
+        <p>المندوب يُكتب على <b>الطلب وحده</b>، والعمولة تُحسب من طلبها هي.</p>
+        <p class="cut"><b>يُكسِب:</b> من باع الأوّل يأخذ عمولة الأوّل، ومن جدّد يأخذ عمولة التجديد. ولا نسختان تتباعدان.</p>
+      </div>
+    </div>
+
+    <div class="opt">
+      <span class="verdict meh">≈</span>
+      <div>
+        <h4>الاثنان معاً — والكرت يتبع الطلب الساري تلقائيّاً</h4>
+        <p>يُكتب على الطلب، ويُنسَخ إلى الكرت ليُسرّع الفرز في القوائم.</p>
+        <p class="cut"><b>ثمنه:</b> أي موضعٍ ينسى التحديث يعيد العطل نفسه. يصلح فقط إن كان النسخ في <b>مكانٍ واحد</b> لا غير: لحظة نقل المؤشّر.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="done" style="margin-top:22px">
+    <b>الخلاصة:</b>
+    علاقة بين الجدولين تمنع الحذف (احتمال ٥)، والمندوب يُقرأ من الطلب لا يُنسَخ.
+    والعميل الذي انتهى يُأرشَف لا يُحذَف.
+  </div>
+
+  <p class="foot">
+    جلسة ١٦ سبتمبر ٢٠٢٦ · نقاشٌ بلا كود.<br>
+    جرد ما هو موجود اليوم بأرقامه في <span class="ref">documents/tasks/MONEY-CYCLE.html</span>.<br>
+    النسخة السابقة من هذه الورقة — الاقتراح ذو المراحل السبع — محفوظة في سجلّ الكوميتات.
+  </p>
 
 </div>
 </body>
