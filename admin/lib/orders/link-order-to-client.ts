@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { setActiveOrder } from "./resolve-active-order";
 
 /**
  * Writes CheckoutOrder.clientId only — createClient() itself is never edited (PAY-E3),
@@ -36,7 +37,13 @@ export async function linkOrderToClient(orderId: string, clientId: string): Prom
 
   await db.checkoutOrder.update({ where: { id: orderId }, data: { clientId } });
 
+  // The pointer moves with the link: this order is now the deal that governs the client
+  // (MONEY-FLOW §4). A renewal linked later overwrites it, which is exactly the intent —
+  // the newest deal governs, and the older ones stay in the list at their own prices.
+  await setActiveOrder(clientId, orderId);
+
   revalidatePath("/orders");
+  revalidatePath(`/clients/${clientId}`);
   revalidatePath(`/orders/${orderId}`);
   revalidatePath("/clients");
 }

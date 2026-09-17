@@ -12,6 +12,8 @@ interface PartnerCardMobileProps {
     name: string;
     slug: string;
     addressCity?: string | null;
+    /** شارة «شريك موثّق» — خانةُ الأدمن وحدها. */
+    isVerified?: boolean;
     logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   };
   articleId: string;
@@ -60,7 +62,9 @@ export function PartnerCardMobile({ client, articleId, credential, details, labe
           {/* The claim first, small: it is what the reader is checking before they read, and it
               frames the name underneath instead of repeating beside it. */}
           <span className="flex items-center gap-1 text-[11px] font-semibold text-muted-foreground">
-            <VerifiedBadge className="h-3.5 w-3.5" label={labels.verifiedBadge} />
+            {/* // مشروطةٌ بخانة الأدمن منذ ١٧ سبتمبر — كانت تُرسم لكل شريك بلا استثناء.
+                والنصّ «راجعه واعتمده» عن المقال فيبقى بلا شرط. */}
+            {client.isVerified && <VerifiedBadge className="h-3.5 w-3.5" label={labels.verifiedBadge} />}
             {labels.reviewed}
           </span>
           <span className="mt-0.5 block truncate text-[15px] font-bold leading-tight text-foreground">

@@ -47,7 +47,7 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
       select: {
         name: true, slug: true, slogan: true, description: true, legalName: true, phone: true, email: true, ctaMode: true, ctaLabel: true, ctaUrl: true, isYmyl: true,
         addressStreet: true, addressCity: true, addressLatitude: true, addressLongitude: true,
-        foundingDate: true, openingHoursSpecification: true, commercialRegistrationNumber: true, verificationImageUrl: true,
+        foundingDate: true, openingHoursSpecification: true, commercialRegistrationNumber: true, verificationImageUrl: true, isVerified: true,
         site: { select: { primaryColor: true, hiddenSections: true } },
         industry: { select: { name: true } },
         logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
@@ -131,7 +131,9 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
       foundingYear,
     },
     trust: {
-      verified: Boolean(client.commercialRegistrationNumber || client.legalName || client.verificationImageUrl),
+      // خانةُ الأدمن وحدها (خالد ١٧ سبتمبر): السجلّ التجاريّ والاسم النظاميّ وصورة التوثيق
+      // بياناتٌ يدخلها العميل، فامتلاؤها لا يعني أنّ أحداً راجعها.
+      verified: client.isVerified,
       credentials: client.credentials.filter((c) => c.name?.trim()).map((c) => ({ name: c.name, authority: c.authority ?? null, year: c.year ?? null })),
     },
     about: { description: client.description, legalName: client.legalName },

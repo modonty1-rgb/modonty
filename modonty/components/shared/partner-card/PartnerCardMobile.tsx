@@ -88,8 +88,13 @@ export function PartnerCardMobile({ partner }: PartnerCardMobileProps) {
               >
                 {partner.name}
               </Link>
-              <ModontyTrustMark className="h-4 w-4 shrink-0" />
-              <span className="sr-only">{messages.shared.badges.verifiedPartnerLabel}</span>
+              {/* // مشروطةٌ بخانة الأدمن منذ ١٧ سبتمبر — كانت تُرسم لكل شريك بلا استثناء. */}
+              {partner.isVerified && (
+                <>
+                  <ModontyTrustMark className="h-4 w-4 shrink-0" />
+                  <span className="sr-only">{messages.shared.badges.verifiedPartnerLabel}</span>
+                </>
+              )}
             </h2>
             <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
               {partner.industry?.name && <span className="truncate font-medium text-link-accent">{partner.industry.name}</span>}

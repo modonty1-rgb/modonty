@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>قسمة المال — أين وصلنا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f4f1; --card:#fff; --ink:#15151a; --muted:#6b6b76; --line:#e2e2dd;
+    --ok:#0f6b45; --ok-bg:#e6f4ec; --ok-line:#9ed4ba;
+    --wait:#8a5a00; --wait-bg:#fcf3e1; --wait-line:#e0bd76;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#131316; --card:#1d1d21; --ink:#ededf1; --muted:#9e9eaa; --line:#32323a;
+      --ok:#63d69c; --ok-bg:#12301f; --ok-line:#2b6b48;
+      --wait:#f0c264; --wait-bg:#33280f; --wait-line:#6d5622;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.8 "Tajawal",-apple-system,system-ui,sans-serif;padding:20px 16px 60px}
+  .wrap{max-width:640px;margin:0 auto}
+  .eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.1em;color:var(--muted);margin:0 0 6px}
+  h1{font-size:25px;font-weight:900;margin:0 0 16px;line-height:1.3}
+  h2{font-size:17px;font-weight:900;margin:32px 0 10px}
+  .big{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 18px;margin:0}
+  .big p{margin:0;font-size:17.5px;font-weight:700;line-height:1.6}
+  .big small{display:block;color:var(--muted);font-size:14px;font-weight:400;margin-top:8px;line-height:1.7}
+
+  .box{border-radius:14px;border:1.5px solid;padding:14px 16px;margin:10px 0 0;background:var(--card)}
+  .box.ok{border-color:var(--ok-line)}
+  .box.wait{border-color:var(--wait-line)}
+  .box .lab{display:inline-block;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:7px;margin:0 0 8px}
+  .box.ok .lab{background:var(--ok-bg);color:var(--ok)}
+  .box.wait .lab{background:var(--wait-bg);color:var(--wait)}
+  .box b{display:block;font-size:15.5px;font-weight:800;margin:0 0 4px}
+  .box p{margin:0;font-size:14px;color:var(--muted);line-height:1.75}
+
+  ul{list-style:none;margin:10px 0 0;padding:0}
+  li{padding:9px 0;border-bottom:1px dashed var(--line);font-size:14.5px}
+  li:last-child{border-bottom:0}
+  li b{font-weight:800}
+  li span{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:var(--bg);
+    border:1px solid var(--line);border-radius:5px;padding:1px 5px;direction:ltr;display:inline-block}
+  pre{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+    margin:10px 0 0;overflow-x:auto;direction:ltr;text-align:left;
+    font-family:ui-monospace,Consolas,monospace;font-size:11.5px;line-height:1.8;color:var(--ink)}
+  .next{background:var(--ok-bg);border:1.5px solid var(--ok-line);border-radius:16px;
+    padding:16px 18px;margin:28px 0 0}
+  .next b{display:block;color:var(--ok);font-size:16px;font-weight:900;margin:0 0 6px}
+  .next p{margin:0;font-size:14.5px;line-height:1.75}
+  .foot{color:var(--muted);font-size:12.5px;margin:26px 0 0;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">مدونتي · ١٦ سبتمبر ٢٠٢٦</p>
+  <h1>قسمة المال — أين وصلنا</h1>
+
+  <div class="big">
+    <p>الورقة قوبلت بالكود، والسكيما عُدِّلت مرّةً واحدة.</p>
+    <small>ولا صفّ في قاعدة البيانات لُمس — كل الحقول اختياريّة، تُقرأ فارغةً في كل مستند قائم.
+      صفر ترحيل، صفر خطر.</small>
+  </div>
+
+  <h2>١ · اتّضح إنّ الورقة صادقة — و١٢ شيئاً كان ناقصاً</h2>
+
+  <div class="box ok">
+    <span class="lab">محسوم</span>
+    <b>أخطر ثلاثة</b>
+    <p>· فاتورة الطلب المدفوع تبدأ الاشتراك <b>يوم الدفع</b> — نفس العطل الذي اتّفقنا على إصلاحه،
+      لكن في المسار الجديد لا القديم.<br>
+      · فاتورة التجديد <b>لا تكتب تاريخ البداية أبداً</b>، فالإيميل يخرج للعميل بلا السطر.<br>
+      · <b>الأرشفة ما لها حقل أصلاً</b> في قاعدة البيانات — وهي أساس قرارك.</p>
+  </div>
+
+  <div class="box ok">
+    <span class="lab">صُحّح</span>
+    <b>تناقضٌ كان سيبني عكس قرارك</b>
+    <p>خلاصة القسم ٨ كانت تقول «نعمل علاقة بين الجدولين» والقرار فوقها «بلا علاقة + أرشفة».
+      بقايا مسوّدة — لو نُفِّذت حرفيّاً لبُني الضدّ.</p>
+  </div>
+
+  <div class="box wait">
+    <span class="lab">قاعدة ثبّتَّها أنت</span>
+    <b>أرقام قاعدة التطوير ليست دليلاً</b>
+    <p>«١٣ فاتورة ملغاة» نحن من ألغاها في تجاربنا، و«٣٠ طلباً فاشلاً» محاولات اختبار.
+      الرقم الذي يصف <b>عطلاً في الكود</b> يُعتمد — والرقم الذي يصف <b>كم صفّاً عندنا</b>
+      يُعاد قياسه على الإنتاج وقت الحاجة.</p>
+  </div>
+
+  <h2>٢ · السكيما — مطبَّقة ومتحقَّقة</h2>
+
+  <ul>
+    <li><b>المقال</b> ← <code>firstDeliveredAt</code>
+      <span>تاريخ أوّل وصولٍ للعميل — مرساة بداية الاشتراك.</span></li>
+    <li><b>كرت العميل</b> ← <code>activatedAt</code>
+      <span>يوم الدفع والتفعيل، منفصلاً عن بداية الاحتساب — بالضبط كما قلت.</span></li>
+    <li><b>كرت العميل</b> ← <code>activeOrderId</code>
+      <span>مؤشّر الطلب الساري، بلا علاقة تربط الجدولين.</span></li>
+    <li><b>كرت العميل</b> ← <code>archivedAt</code> + سببها + من أرشف
+      <span>الأرشفة التي قرّرتها، صار لها مكان.</span></li>
+    <li><b>الفاتورة</b> ← الاسم · الإيميل · الاسم النظاميّ · الرقم الضريبيّ
+      <span>لقطة هويّة وقت الإصدار — شرط الأرشفة.</span></li>
+    <li><b>الفاتورة</b> ← الحذف المتسلسل <b>أُلغي</b>
+      <span>كان حذف العميل يمحو فواتيره معه. ما عاد.</span></li>
+  </ul>
+
+  <pre>$ prisma validate  →  The schema is valid 🚀
+$ prisma generate  →  ✔ Generated Prisma Client v6.19.2
+$ فحص العميل المولَّد → العشرة موجودة · onDelete = Restrict
+$ tsc --noEmit     →  admin 0 · console 0 · modonty 0</pre>
+
+  <h2>٣ · ما ينتظر</h2>
+
+  <div class="box wait">
+    <span class="lab">دفعة ثانية</span>
+    <b>الحذف من السكيما — بعد ما يهجره الكود</b>
+    <p>حالة الدفع (٣٤ ملفّاً) · دورة الفوترة (١٥) · رصيد التأسيس (يلزمه بديل حارس) ·
+      المبلغ العشريّ. حذفها اليوم يكسر البناء لحظته — فتنتظر حتى يتوقّف آخر قارئ.</p>
+  </div>
+
+  <div class="next">
+    <b>الخطوة الجاية</b>
+    <p>البند ١ شغل كود: يُكتب تاريخ الوصول مرّةً واحدة أوّل ما يصير المقال
+      «بانتظار الموافقة» — بحارسٍ يمنع الكتابة الثانية لو ردّه العميل للتعديل ورجع.</p>
+  </div>
+
+  <p class="foot">
+    الورقة كاملةً: <code>documents/tasks/MONEY-FLOW.html</code> — فيها القسمان الجديدان
+    ٩ (مقابلة الكود) و١٠ (جرد السكيما).<br>
+    ٩ قرارات محسومة · الاسترداد مؤجَّل بأمرك · ١١ بند تنفيذ.
+  </p>
+
+</div>
+</body>
+</html>

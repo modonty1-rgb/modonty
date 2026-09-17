@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+import { db } from "@/lib/db";
 import { requireFinanceAdmin } from "@/lib/require-finance-admin";
 
 import { ManualOrderForm } from "./components/manual-order-form";
@@ -15,9 +16,20 @@ export const dynamic = "force-dynamic";
  * إعادة إدخال **العملاء القائمين** بتواريخهم ومبالغهم القديمة حتى يصير للجميع
  * سجلٌّ واحد. وذلك عملٌ يُراجَع قبل الحفظ، والحوار يضيق به ويُقفل بالخطأ.
  */
-export default async function NewOrderPage() {
+export default async function NewOrderPage({ searchParams }: { searchParams: Promise<{ leadId?: string }> }) {
   await requireFinanceAdmin();
-  const data = await loadOrderFormData();
+  const { leadId } = await searchParams;
+  const [data, lead] = await Promise.all([
+    loadOrderFormData(),
+    // تعبئةُ الهويّة من العميل المحتمَل — لا المال. المبلغ يكتبه الموظّف بما اتُّفق عليه
+    // فعلاً، و`expectedMonthly` على المحتمَل تقديرُ خطٍّ لا مبلغٌ مقبوض.
+    leadId
+      ? db.salesLead.findUnique({
+          where: { id: leadId },
+          select: { id: true, name: true, company: true, email: true, phone: true, countryCode: true, ownerId: true, createdById: true, convertedClientId: true },
+        })
+      : Promise.resolve(null),
+  ]);
 
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-4 pb-10" dir="rtl">
@@ -29,9 +41,13 @@ export default async function NewOrderPage() {
           <ArrowRight className="size-3.5" />
           كل الطلبات
         </Link>
-        <h1 className="text-xl font-semibold">طلب اشتراك جديد</h1>
+        <h1 className="text-xl font-semibold">
+          {lead ? `طلب اشتراك — ${lead.company || lead.name}` : "طلب اشتراك جديد"}
+        </h1>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          نفس الطلب الذي تكتبه صفحة الدفع — بيدك.
+          {lead
+            ? "من عميلٍ محتمَل. الهويّة معبّأة منه — والمبلغ تكتبه بما اتُّفق عليه فعلاً."
+            : "نفس الطلب الذي تكتبه صفحة الدفع — بيدك."}
         </p>
       </header>
 
@@ -44,7 +60,22 @@ export default async function NewOrderPage() {
           لا مدّة مفعّلة في سياسة المدد — أضف مدّةً من «الباقات والأسعار» أولاً.
         </div>
       ) : (
-        <ManualOrderForm data={data} />
+        <ManualOrderForm
+          data={data}
+          leadId={lead && !lead.convertedClientId ? lead.id : undefined}
+          prefill={
+            lead && !lead.convertedClientId
+              ? {
+                  buyerName: lead.name,
+                  businessName: lead.company ?? "",
+                  buyerEmail: lead.email ?? "",
+                  buyerPhone: lead.phone ?? "",
+                  market: /eg|مصر/i.test(lead.countryCode ?? "") ? "EG" : "SA",
+                  salesRepId: lead.ownerId ?? lead.createdById ?? "",
+                }
+              : undefined
+          }
+        />
       )}
     </main>
   );

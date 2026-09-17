@@ -111,7 +111,6 @@ export function mapFormDataToClientData(data: ClientFormData) {
     openingHoursSpecification: data.openingHoursSpecification || null,
 
     // Subscription Management
-    subscriptionTier: data.subscriptionTier || null,
     subscriptionTierConfigId: data.subscriptionTierConfigId || null,
     subscriptionStartDate: data.subscriptionStartDate || null,
     subscriptionEndDate: data.subscriptionEndDate || null,
@@ -121,6 +120,7 @@ export function mapFormDataToClientData(data: ClientFormData) {
 
     // Featured/premium partner spotlight (admin toggle)
     isFeatured: data.isFeatured ?? false,
+    isVerified: data.isVerified ?? true,
     showSchedule: data.showSchedule ?? true,
     // Platform/demo account — excluded from billing (admin toggle)
     isInternal: data.isInternal ?? false,

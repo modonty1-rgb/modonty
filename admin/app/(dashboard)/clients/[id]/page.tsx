@@ -10,6 +10,8 @@ import { ClientHeader } from "./components/client-header";
 import { ClientTabs } from "./components/client-tabs";
 import { ArticleStatus } from "@prisma/client";
 import { loadSiteUrl } from "@/lib/seo/site-url";
+import { getActiveOrderForClient, getClientOrders } from "@/lib/orders/resolve-active-order";
+import { getPaymentState } from "@/lib/clients/payment-state";
 import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
 import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 
@@ -179,6 +181,14 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
     redirect("/clients");
   }
 
+  // The governing deal + the client's money history. Sequential, not parallel with the
+  // block above: the order list needs the active id that getActiveOrderForClient resolves
+  // (and persists) so the «الساري» row is marked on the same read.
+  const activeOrder = await getActiveOrderForClient(id);
+  const clientOrders = await getClientOrders(id, activeOrder?.id ?? null);
+  // حالةُ الدفع من الفواتير لا من `Client.paymentStatus` — ذاك حقلٌ لا يعرف فواتير صاحبه.
+  const paymentState = await getPaymentState(id);
+
   // SEO score — SHARED helper (single source of truth used by admin SEO page +
   // console portal) so every surface shows the SAME number from the same data.
   const { score: seoScore } = computeClientSeoScore(
@@ -211,6 +221,9 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
           analytics={analytics}
           media={media}
           form={intakeForm}
+          activeOrder={activeOrder}
+          clientOrders={clientOrders}
+          paymentState={paymentState}
         />
       </div>
     </div>

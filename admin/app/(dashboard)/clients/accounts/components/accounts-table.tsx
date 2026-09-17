@@ -34,11 +34,10 @@ export interface AccountRow {
   id: string;
   name: string;
   email: string;
-  tier: string; // enum (BASIC/STANDARD/PRO/PREMIUM) — drives the plan chip tone
   planName: string; // real subscribed plan name (tier config) or enum fallback
   billing: string | null; // "monthly" | "annual" | null (from latest invoice)
   accountStatus: string;
-  paymentStatus: string;
+  invoiceCount: number;
   /** Counted from the client's invoices — the stored paymentStatus never says OVERDUE. */
   unpaidCount: number;
   unpaidAmount: number;
@@ -61,14 +60,16 @@ const ACCOUNT_TONE: Record<string, string> = {
 
 const PAYMENT_TONE: Record<string, string> = {
   PAID: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-  PENDING: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-  OVERDUE: "bg-red-500/15 text-red-600 dark:text-red-400",
+  // رماديّ: «بلا فواتير» ليست خبراً سيّئاً ولا حسناً — هي غيابُ خبر.
+  NONE: "bg-muted text-muted-foreground",
 };
 
-// Higher tiers get a violet accent so the premium plans stand out at a glance.
+// الباقات الأعلى تأخذ لمسةً بنفسجيّة لتُميَّز بلمحة.
+// مفاتيحُه **أسماءُ الباقات** لا رموزَ الـenum (كانت PRO · PREMIUM): الرمز يتقاعد،
+// والاسمُ هو ما يُشترى. وباقةٌ لا اسمَ لها هنا تأخذ اللون الحياديّ — لا يختفي شيء.
 const PLAN_TONE: Record<string, string> = {
-  PRO: "bg-violet-500/15 text-violet-700 dark:text-violet-300",
-  PREMIUM: "bg-violet-500/15 text-violet-700 dark:text-violet-300",
+  الزخم: "bg-violet-500/15 text-violet-700 dark:text-violet-300",
+  الريادة: "bg-violet-500/15 text-violet-700 dark:text-violet-300",
 };
 
 const PAGE_SIZE = 15;
@@ -91,7 +92,8 @@ function sortValue(r: AccountRow, key: SortKey): string | number | null {
     case "plan": return r.planName;
     case "billing": return r.billing ?? "";
     case "account": return r.accountStatus;
-    case "payment": return r.paymentStatus;
+    // الترتيب يتبع ما يُعرض: غير مسدَّد أوّلاً، ثمّ المسدَّد، ثمّ بلا فواتير.
+    case "payment": return r.unpaidCount > 0 ? `0_${String(r.unpaidCount).padStart(4, "0")}` : r.invoiceCount > 0 ? "1" : "2";
     case "subscribed": return r.subscribedTs;
     case "activation": return r.activationTs;
     case "end": return r.endTs;
@@ -445,7 +447,9 @@ export function AccountsTable({ rows }: { rows: AccountRow[] }) {
                   <div className="text-[11px] text-muted-foreground truncate max-w-[240px] leading-tight">{r.email}</div>
                 </TableCell>
                 <TableCell className="px-2 py-1.5 text-center">
-                  <Pill value={r.planName} tone={PLAN_TONE[r.tier]} />
+                  {/* اللون يتبع اسمَ الباقة لا رمزَ الـenum: الرمزُ يتقاعد، والاسمُ هو
+                      ما يُشترى فعلاً — وباقةٌ جديدة تأخذ لونَها الحياديّ بلا تعديلِ كود. */}
+                  <Pill value={r.planName} tone={PLAN_TONE[r.planName]} />
                 </TableCell>
                 <TableCell className="px-2 py-1.5 text-center">
                   <BillingCell billing={r.billing} />
@@ -468,8 +472,12 @@ export function AccountsTable({ rows }: { rows: AccountRow[] }) {
                         </span>
                       )}
                     </span>
+                  ) : r.invoiceCount > 0 ? (
+                    <Pill value="مسدَّد" tone={PAYMENT_TONE.PAID} />
                   ) : (
-                    <Pill value={r.paymentStatus} tone={PAYMENT_TONE[r.paymentStatus]} />
+                    /* «بلا فواتير» لا تُطوى في «مدفوع»: عميلٌ لم تصدر له فاتورةٌ قطّ
+                       ليس مسدِّداً، والطيّ هو ما جعل ٢٦ كرتاً يقول «PAID» بلا سند. */
+                    <Pill value="بلا فواتير" tone={PAYMENT_TONE.NONE} />
                   )}
                 </TableCell>
                 <TableCell className="px-2 py-1.5 text-center text-muted-foreground tabular-nums">

@@ -1,11 +1,12 @@
 import { db } from "@/lib/db";
 import { ArticleStatus, TrafficSource } from "@prisma/client";
+import { getActiveOrderForClient, formatOrderMoney } from "@/lib/subscription/active-order";
 
 export interface DashboardStats {
   subscription: {
-    tier: string;
     tierName: string;
-    price: number | null;
+    /** الإجماليّ المدفوع بعملته، نصّاً — من الطلب لا من الكتالوج. */
+    paidTotal: string | null;
     articlesPerMonth: number;
     status: string;
     paymentStatus: string;
@@ -113,10 +114,11 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
     interactions,
     conversions,
     engagementDuration,
+    activeOrder,
   ] = await Promise.all([
     db.client.findUnique({
       where: { id: clientId },
-      include: { subscriptionTierConfig: true },
+      // لا `include` للكتالوج القديم: اسم الباقة وسعرها من الطلب الساري.
     }),
     db.article.count({
       where: {
@@ -225,13 +227,13 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
         id: true,
       },
     }),
+    getActiveOrderForClient(clientId),
   ]);
 
   if (!client) {
     throw new Error("Client not found");
   }
 
-  const tier = client.subscriptionTierConfig;
   const totalViews = engagementData._count.id;
   const avgTimeOnPage = engagementData._avg.timeOnPage ?? 0;
   const avgScrollDepth = engagementData._avg.scrollDepth ?? 0;
@@ -320,9 +322,8 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
 
   return {
     subscription: {
-      tier: client.subscriptionTier,
-      tierName: tier?.name ?? client.subscriptionTier,
-      price: tier?.price ?? null,
+      tierName: activeOrder?.planName ?? "—",
+      paidTotal: activeOrder ? formatOrderMoney(activeOrder.totalMinor, activeOrder.currency) : null,
       articlesPerMonth: client.articlesPerMonth ?? 0,
       status: client.subscriptionStatus,
       paymentStatus: client.paymentStatus,

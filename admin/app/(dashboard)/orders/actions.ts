@@ -9,6 +9,7 @@ import { addMonths } from "@/lib/invoices/add-months";
 import { findBlockingUnpaidInvoice } from "@/lib/invoices/find-blocking-unpaid-invoice";
 import { nextInvoiceNumber } from "@/lib/invoices/next-invoice-number";
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
+import { setActiveOrder } from "@/lib/orders/resolve-active-order";
 import { requireFinanceAdmin } from "@/lib/require-finance-admin";
 import { notifyPaymentReceived } from "@modonty/shared/lib/payments/notify-payment-received";
 import { sendInvoiceAction } from "@/lib/invoices/send-invoice-action";
@@ -60,11 +61,14 @@ export async function confirmOrderPaymentAction(orderId: string, form: FormData)
   });
   if (count === 0) throw new Error("الطلب مؤكَّد مسبقاً أو ليس بانتظار تحويل");
 
-  const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { number: true, totalMinor: true, currency: true, market: true, planName: true, paidMonths: true, bonusServiceMonths: true, buyerName: true } });
+  const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { number: true, totalMinor: true, currency: true, market: true, planName: true, paidMonths: true, bonusServiceMonths: true, buyerName: true, clientId: true } });
   if (order) {
     await db.paymentTransaction.create({
       data: { orderId, provider: "BANK_TRANSFER", providerReference: parsed.data.transferReference, status: "SUCCESS", amountMinor: order.totalMinor, currency: order.currency, settledAt: now },
     });
+    // A transfer only becomes the governing deal once the money is confirmed — an order
+    // sitting in AWAITING_TRANSFER must never govern a client (MONEY-FLOW §4).
+    if (order.clientId) await setActiveOrder(order.clientId, orderId);
   }
 
   await logAction("order.confirmPayment", { entity: "Order", entityId: orderId, summary: `تأكيد تحويل — مرجع ${parsed.data.transferReference}` });
@@ -139,7 +143,7 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<voi
 
   const client = await db.client.findUnique({
     where: { id: order.clientId },
-    select: { id: true, name: true, createdAt: true, openingBalance: true, subscriptionEndDate: true, subscriptionTier: true, subscriptionTierConfig: { select: { name: true } }, _count: { select: { invoices: true } } },
+    select: { id: true, name: true, createdAt: true, openingBalance: true, subscriptionEndDate: true, subscriptionTierConfig: { select: { name: true } }, _count: { select: { invoices: true } } },
   });
   if (!client) throw new Error("العميل غير موجود");
 
@@ -157,7 +161,8 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<voi
   // catalogs' enum values don't match, e.g. "الانطلاقة" is BASIC on the order but STANDARD
   // here). Using the order's raw enum would silently invoice a paying client as BASIC/free
   // (Fable, 11 Sep).
-  if (!client.subscriptionTier) throw new Error("لا فئة اشتراك على حساب العميل");
+  // سقط الحارس: كان يمنع إصدار الفاتورة على عميلٍ بلا باقة — وهي الآن اختياريّة،
+  // واسمُ الباقة يأتي من الطلب نفسه (`order.planName`) لا من الكرت.
 
   const blocking = await findBlockingUnpaidInvoice(client.id);
   if (blocking) throw new Error(`فيه فاتورة غير مسدّدة (${blocking}) لهذا العميل — حدّدها مدفوعة أو أرشفها أولاً`);
@@ -172,8 +177,9 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<voi
     data: {
       number,
       clientId: client.id,
-      tier: client.subscriptionTier,
-      tierName: client.subscriptionTierConfig?.name ?? order.planName,
+      // `tier` لم يعد يُكتب — بلا قارئٍ واحد (مقيسٌ ١٧ سبتمبر). واسمُ الباقة من الطلب
+      // نفسه أوّلاً: هو ما دفع عليه العميل، لا ما يقوله كرتُه اليوم.
+      tierName: order.planName || client.subscriptionTierConfig?.name || "—",
       period,
       currency: order.currency,
       amount: order.totalMinor / 100,

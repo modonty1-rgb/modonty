@@ -24,7 +24,8 @@ export interface ClientListItem {
   /** Strongest paper he holds: a licence or accreditation, already checked by us. */
   credential: string | null;
   /** He uploaded his official record/licence image — checked, even without a named credential. */
-  hasVerifiedPapers: boolean;
+  /** شهادةُ فحصِ الأوراق — خانةُ الأدمن في كرت العميل، لا استنتاجٌ من حقلٍ يدخله العميل. */
+  isVerified: boolean;
   articleCount: number;
   reelCount: number;
   /** Curated portfolio images (Media type=GALLERY) waiting on his page. */
@@ -77,6 +78,7 @@ export async function getClientsList(): Promise<ClientListItem[]> {
       seoDescription: true,
       addressCity: true,
       isFeatured: true,
+      isVerified: true,
       ctaMode: true,
       ctaLabel: true,
       ctaUrl: true,
@@ -85,7 +87,6 @@ export async function getClientsList(): Promise<ClientListItem[]> {
       heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       industry: { select: { name: true, slug: true } },
       foundingDate: true,
-      verificationImageUrl: true,
       phone: true,
       introVideoMediaId: true,
       introVideoUrl: true,
@@ -119,7 +120,7 @@ export async function getClientsList(): Promise<ClientListItem[]> {
     services: client.services.map((service) => service.title).filter(Boolean),
     yearsInBusiness: client.foundingDate ? yearsSince(client.foundingDate) : null,
     credential: client.credentials[0]?.name?.trim() || null,
-    hasVerifiedPapers: Boolean(client.verificationImageUrl?.trim()),
+    isVerified: client.isVerified,
     rating: client.reviews.length
       ? {
           average: client.reviews.reduce((sum, review) => sum + review.rating, 0) / client.reviews.length,

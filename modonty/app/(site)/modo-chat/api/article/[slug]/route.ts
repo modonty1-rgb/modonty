@@ -233,7 +233,7 @@ export async function POST(
           logo: mediaSrc(article.client.logoMedia) || null,
           city: article.client.addressCity,
           credential: article.client.credentials[0]?.name?.trim() || null,
-          hasVerifiedPapers: Boolean(article.client.verificationImageUrl?.trim()),
+          isVerified: article.client.isVerified,
         }];
 
     /**

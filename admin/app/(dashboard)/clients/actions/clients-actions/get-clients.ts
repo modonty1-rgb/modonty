@@ -91,7 +91,9 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
         email: true,
         phone: true,
         createdAt: true,
-        subscriptionTier: true,
+        // للشارة «ملفّ ناقص»: التفعيل من الطلب لا يسأل عن الصناعة (الطلب لا يحملها)،
+        // فيصل العميل بلا واحدة — ولا تظهر الفجوة إلّا عند فشل أوّل حفظ. تظهر هنا بدلها.
+        industryId: true,
         subscriptionStatus: true,
         paymentStatus: true,
         subscriptionEndDate: true,

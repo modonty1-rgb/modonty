@@ -129,21 +129,39 @@ function Choice({
  * الكتالوج للتأكيد البصريّ فقط. والأكشن يعيد القراءة والحساب من القاعدة — فلا
  * يمرّ مبلغٌ من المتصفّح إلى الصفّ.
  */
-export function ManualOrderForm({ data }: { data: OrderFormData }) {
+/** تعبئةُ الهويّة من عميلٍ محتمَل — ولا مبلغَ فيها: المال يكتبه الموظّف بما اتُّفق عليه. */
+export type OrderPrefill = {
+  buyerName: string;
+  businessName: string;
+  buyerEmail: string;
+  buyerPhone: string;
+  market: "SA" | "EG";
+  salesRepId: string;
+};
+
+export function ManualOrderForm({
+  data,
+  leadId,
+  prefill,
+}: {
+  data: OrderFormData;
+  leadId?: string;
+  prefill?: OrderPrefill;
+}) {
   const router = useRouter();
   const { toast } = useToast();
   const [pending, startTransition] = useTransition();
 
-  const [market, setMarket] = useState<MarketKey>("SA");
+  const [market, setMarket] = useState<MarketKey>(prefill?.market ?? "SA");
   const [planId, setPlanId] = useState(data.plans[0]?.id ?? "");
   const [paidMonths, setPaidMonths] = useState(
     data.terms.find((t) => t.isRecommended)?.paidMonths ?? data.terms[0]?.paidMonths ?? 1,
   );
-  const [buyerName, setBuyerName] = useState("");
-  const [buyerEmail, setBuyerEmail] = useState("");
-  const [buyerPhone, setBuyerPhone] = useState("");
-  const [businessName, setBusinessName] = useState("");
-  const [salesRepId, setSalesRepId] = useState("");
+  const [buyerName, setBuyerName] = useState(prefill?.buyerName ?? "");
+  const [buyerEmail, setBuyerEmail] = useState(prefill?.buyerEmail ?? "");
+  const [buyerPhone, setBuyerPhone] = useState(prefill?.buyerPhone ?? "");
+  const [businessName, setBusinessName] = useState(prefill?.businessName ?? "");
+  const [salesRepId, setSalesRepId] = useState(prefill?.salesRepId ?? "");
   const [paidAt, setPaidAt] = useState("");
   const [notes, setNotes] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -233,6 +251,7 @@ export function ManualOrderForm({ data }: { data: OrderFormData }) {
         status: "PAID",
         paidAt: paidAt || undefined,
         notes: notes || undefined,
+        leadId,
       });
 
       if (!res.ok) {

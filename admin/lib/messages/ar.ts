@@ -12,7 +12,6 @@ import type {
   SettingHintKey,
   FaqHintKey,
   ContactMessageHintKey,
-  SubscriptionTierHintKey,
 } from './types';
 
 // ─── SUCCESS MESSAGES ───
@@ -266,7 +265,6 @@ const hints = {
     postalCode: 'الرمز البريدي — 5 أرقام، أو 9 مع الرقم الإضافي (العنوان الوطني من البريد السعودي). اختياري',
     tradeLicense: 'رقم السجل التجاري — اختياري',
     taxId: 'رقم التسجيل الضريبي من هيئة الزكاة — 15 رقم',
-    subscriptionTier: 'خطة الاشتراك الحالية',
     credentialsTitle: 'بيانات دخول العميل',
     businessType: 'يساعد الكتّاب في تخصيص المحتوى والأسلوب',
     keywords: 'كلمات مفتاحية للكتّاب — مفصولة بفاصلة',
@@ -311,12 +309,6 @@ const hints = {
     message: 'محتوى الرسالة',
   } satisfies Record<ContactMessageHintKey, string>,
 
-  subscriptionTier: {
-    name: 'اسم الخطة',
-    description: 'وصف الخطة',
-    price: 'سعر الخطة',
-    features: 'المميزات المتضمنة',
-  } satisfies Record<SubscriptionTierHintKey, string>,
 } as const;
 
 // ─── EXPORT ───

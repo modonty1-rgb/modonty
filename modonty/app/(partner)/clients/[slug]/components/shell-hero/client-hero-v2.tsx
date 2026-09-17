@@ -21,6 +21,8 @@ interface ClientHeroV2Client {
   logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   heroImageMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; width?: number | null; height?: number | null } | null;
   industry?: { name: string } | null;
+  /** شارة «شريك موثّق» — خانةُ الأدمن وحدها، لا الباقة ولا امتلاء حقلٍ يدخله العميل. */
+  isVerified?: boolean;
   addressCity?: string | null;
   addressRegion?: string | null;
   addressCountry?: string | null;
@@ -144,13 +146,18 @@ export function ClientHeroV2({
                   every other surface. */}
               <div className="relative flex-shrink-0">
                 <PartnerAvatar media={logoMedia} name={client.name} size="big" />
-                <span
-                  className="absolute -bottom-1 -start-1 grid h-6 w-6 place-items-center rounded-full border-2 border-card bg-accent text-white shadow-sm"
-                  aria-label={messages.shared.badges.verifiedPartnerLabel}
-                  title={messages.shared.badges.verifiedPartnerLabel}
-                >
-                  <IconCheck className="h-3.5 w-3.5" />
-                </span>
+                {/* مشروطةٌ بخانة الأدمن منذ ١٧ سبتمبر — كانت تُرسم لكل شريك بلا استثناء.
+                    هذا المكوّن غير مُستدعىً اليوم (يُستورد منه نوعٌ فقط في hero-stats)، والحارس
+                    موضوعٌ كي لا يعود خاطئاً إن أُحيي. */}
+                {client.isVerified && (
+                  <span
+                    className="absolute -bottom-1 -start-1 grid h-6 w-6 place-items-center rounded-full border-2 border-card bg-accent text-white shadow-sm"
+                    aria-label={messages.shared.badges.verifiedPartnerLabel}
+                    title={messages.shared.badges.verifiedPartnerLabel}
+                  >
+                    <IconCheck className="h-3.5 w-3.5" />
+                  </span>
+                )}
               </div>
 
               {/* Name + tagline + chips */}

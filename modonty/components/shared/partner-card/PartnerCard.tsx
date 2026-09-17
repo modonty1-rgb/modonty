@@ -90,9 +90,14 @@ export function PartnerCard({ partner }: PartnerCardProps) {
               {partner.name}
             </Link>
             {/* The mark is the whole promise of this page: this one was checked. It draws
-                itself aria-hidden, so the meaning is spelled out for screen readers. */}
-            <ModontyTrustMark className="h-4 w-4 shrink-0" />
-            <span className="sr-only">{messages.shared.badges.verifiedPartnerLabel}</span>
+                itself aria-hidden, so the meaning is spelled out for screen readers.
+                مشروطةٌ بخانة الأدمن منذ ١٧ سبتمبر — كانت تُرسم لكل شريك بلا استثناء. */}
+            {partner.isVerified && (
+              <>
+                <ModontyTrustMark className="h-4 w-4 shrink-0" />
+                <span className="sr-only">{messages.shared.badges.verifiedPartnerLabel}</span>
+              </>
+            )}
           </h2>
           {/* Trust row — where he is, his papers, how long he has been at it. */}
           <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
@@ -108,10 +113,10 @@ export function PartnerCard({ partner }: PartnerCardProps) {
                 <RatingStars average={partner.rating.average} count={partner.rating.count} />
               </>
             )}
-            {(partner.credential || partner.hasVerifiedPapers) && (
+            {partner.credential && (
               <>
                 <span aria-hidden>·</span>
-                <TrustNote credential={partner.credential} hasVerifiedPapers={partner.hasVerifiedPapers} />
+                <TrustNote credential={partner.credential} />
               </>
             )}
             {partner.yearsInBusiness && (

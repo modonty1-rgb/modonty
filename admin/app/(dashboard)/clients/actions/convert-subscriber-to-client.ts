@@ -74,7 +74,12 @@ export async function convertSubscriberToClientAction(
       email: subscriber.email,
       phone: subscriber.phone,
       password: hashedPassword,
-      subscriptionTier: tierConfig.tier,
+      // `subscriptionTier` لم يعد يُكتب — كان هذا آخرَ كاتبٍ له في الأدمن.
+      // ويبقى ربطُ الكتالوج والحصّة: منهما تُعرف الباقةُ بالاسم حتى يُنجَز الترحيل.
+      //
+      // ملاحظة: هذا **بابُ ميلادٍ رابع** للعميل (مشترِك jbrseo ← عميل)، ويختار الباقة
+      // من الكتالوج لا من طلبٍ مدفوع — نفس ما عولج في تحويل العميل المحتمَل.
+      // لم يُعالَج بعد: يحتاج أن يمرّ بطلبٍ كما يمرّ المحتمَل.
       subscriptionTierConfig: { connect: { id: tierConfig.id } },
       articlesPerMonth: tierConfig.articlesPerMonth,
       subscriptionStatus: "PENDING",

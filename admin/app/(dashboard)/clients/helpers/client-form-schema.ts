@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SubscriptionTier, SubscriptionStatus, PaymentStatus, ClientCtaMode } from "@prisma/client";
+import { SubscriptionStatus, PaymentStatus, ClientCtaMode } from "@prisma/client";
 import { LEGAL_FORM_VALUES, ORGANIZATION_TYPE_VALUES } from "@modonty/shared/lib/constants/client-classification";
 
 /**
@@ -32,11 +32,8 @@ const dateSchema = z.preprocess(
 const stringArraySchema = z.array(z.string()).optional().default([]);
 
 // Subscription Tier enum (required)
-const subscriptionTierSchema = z
-  .nativeEnum(SubscriptionTier, {
-    required_error: "Subscription tier is required",
-    invalid_type_error: "Please select a valid subscription tier",
-  });
+// `subscriptionTierSchema` سقط: لا شاشةَ تجمع الباقة بعد اليوم — تأتي من الطلب
+// الساري (`planName`) عند التفعيل.
 
 // Subscription Status enum
 const subscriptionStatusSchema = z
@@ -68,7 +65,12 @@ const organizationTypeSchema = z.enum(ORGANIZATION_TYPE_VALUES).optional().nulla
 // admin can't see or fix. Completes the field-ownership migration (admin caps were left behind).
 const consoleOwnedText = z.string().optional().nullable().or(z.literal(""));
 
-export const clientFormSchema = z
+/**
+ * الشكل الخام — بلا تنقيح. مفصولٌ لأنّ `.superRefine()` يُرجع `ZodEffects` لا
+ * `ZodObject`، و`ZodEffects` لا يقبل `.extend()` ولا إعادةَ تنقيحٍ مختلف. والشاشتان
+ * (الإنشاء والتعديل) صارتا تطلبان حقولاً مختلفة، فلزم أصلٌ واحدٌ يتفرّعان عنه.
+ */
+const clientFormObject = z
   .object({
     // Basic fields (required)
     name: z.string().min(1, "Name is required").max(200, "Name must be less than 200 characters"),
@@ -213,7 +215,6 @@ export const clientFormSchema = z
     ctaUrl: z.string().max(500, "Link must be less than 500 characters").optional().nullable().or(z.literal("")),
 
     // Subscription Management
-    subscriptionTier: subscriptionTierSchema,
     subscriptionTierConfigId: z.string().optional().nullable(),
     subscriptionStartDate: dateSchema,
     subscriptionEndDate: dateSchema,
@@ -221,6 +222,7 @@ export const clientFormSchema = z
     subscriptionStatus: subscriptionStatusSchema,
     paymentStatus: paymentStatusSchema,
     isFeatured: z.boolean().optional().default(false),
+    isVerified: z.boolean().optional().default(true),
     // Defaults to true — the tab is already visible to every client, so an unset value
     // must mean "keep showing it", never "hide it".
     showSchedule: z.boolean().optional().default(true),
@@ -245,8 +247,10 @@ export const clientFormSchema = z
     // months come from billingCycle). No invoice at founding. Base schema keeps it optional;
     // clientCreateFormSchema makes it mandatory for a billable (non-internal) client.
     openingBalance: z.number().nonnegative().optional().nullable(),
-  })
-  .superRefine((data, ctx) => {
+  });
+
+/** القواعد التي لا تختلف بين إنشاءٍ وتعديل — تُستدعى من كليهما بلا نسخةٍ ثانية. */
+const refineShared: Parameters<typeof clientFormObject.superRefine>[0] = (data, ctx) => {
     // LINK mode needs a destination; FORM/NONE don't.
     if (data.ctaMode === ClientCtaMode.LINK) {
       const url = (data.ctaUrl ?? "").trim();
@@ -275,29 +279,31 @@ export const clientFormSchema = z
         message: "Add the articles address on the client's site first",
       });
     }
-  });
+};
+
+// لم يبقَ فرقٌ بين مخطّطَي الإنشاء والتعديل بعد سقوط اشتراط الباقة — كلاهما الأصلُ
+// وقواعدُه المشتركة. يبقيان باسمين لأنّ المستدعين يفرّقون بينهما اليوم.
+export const clientFormSchema = clientFormObject.superRefine(refineShared);
 
 export type ClientFormSchemaType = z.infer<typeof clientFormSchema>;
 
-// CREATE-only: a sales rep is mandatory — every new client must be attributed to who
-// brought them (Khalid 2026-07-25: «القسم المالي كله إجباري»). The shared clientFormSchema
-// keeps salesRepId optional on purpose so EDIT of the existing rep-less clients isn't blocked.
-export const clientCreateFormSchema = clientFormSchema.superRefine((data, ctx) => {
-  if (!data.salesRepId || !data.salesRepId.trim()) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ["salesRepId"],
-      message: "اختر مندوب المبيعات",
-    });
-  }
-
-  // A billable client (not internal) pays at founding → the opening balance is mandatory.
-  // Internal/free accounts carry no balance, so they're exempt (Khalid 2026-07-25:
-  // «الحقل إلزامي» للمدفوع، «داخلي/مجاني بلا رصيد»).
-  if (!data.isInternal && (!data.openingBalance || data.openingBalance <= 0)) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["openingBalance"], message: "أدخل الرصيد الافتتاحي (المبلغ المدفوع)" });
-  }
-});
+/**
+ * **مخطّط الإنشاء — للحسابات الداخليّة وحدها (المرحلة ٣).**
+ *
+ * كان يطلب المندوبَ والرصيدَ الافتتاحيّ والباقة، لأنّ `/clients/new` كانت تؤسّس عميلاً
+ * يدفع. وقد صارت الشاشة للحسابات الداخليّة فقط، ومن يدفع يُفعَّل من طلبه في `/orders`
+ * حيث الأرقام مكتوبةٌ بما دفعه فعلاً.
+ *
+ * **وما تكفّ الشاشة عن سؤاله يكفّ المخطّط عن طلبه** — وإلّا سقط زرّ الحفظ على حقلٍ لا
+ * يراه الموظّف ولا يستطيع إصلاحه:
+ *
+ *   الباقة   الحساب الداخليّ مجّانيّ، و`createClient` يكتب له صفّ الكتالوج المجّانيّ.
+ *   المندوب  لا عمولةَ على حسابٍ لا يدفع.
+ *   الرصيد   كان معفىً للداخليّ أصلاً، وصار العفو هو الحالة الوحيدة.
+ *
+ * والقواعد المشتركة تبقى كما هي عبر `refineShared`.
+ */
+export const clientCreateFormSchema = clientFormObject.superRefine(refineShared);
 
 // ============================================
 // SEO SUB-FORM SCHEMA (the /clients/[id]/seo page)

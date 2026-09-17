@@ -1,4 +1,3 @@
-import type { SubscriptionTier } from "@prisma/client";
 
 /**
  * Pure function: catalog inputs → the immutable price/plan snapshot stored on a
@@ -11,7 +10,7 @@ import type { SubscriptionTier } from "@prisma/client";
  *   subtotal = total − vat
  */
 export interface OrderSnapshotInput {
-  plan: { id: string; slug: string; name: string; tier: SubscriptionTier | null; articlesPerMonth: number | null };
+  plan: { id: string; slug: string; name: string; articlesPerMonth: number | null };
   price: { market: string; currency: string; monthlyBase: number }; // major units, as stored in the catalog
   term: { paidMonths: number; bonusServiceMonths: number };
   vatRateBp: number;
@@ -23,7 +22,6 @@ export interface OrderSnapshot {
   planId: string;
   planSlug: string;
   planName: string;
-  planTier: SubscriptionTier | null;
   articlesPerMonth: number | null;
   monthlyBaseMinor: number;
   paidMonths: number;
@@ -53,7 +51,6 @@ export function buildOrderSnapshot({ plan, price, term, vatRateBp }: OrderSnapsh
     planId: plan.id,
     planSlug: plan.slug,
     planName: plan.name,
-    planTier: plan.tier,
     articlesPerMonth: plan.articlesPerMonth,
     monthlyBaseMinor,
     paidMonths: term.paidMonths,

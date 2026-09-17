@@ -116,7 +116,7 @@ export async function POST(req: Request) {
   if (!term) return NextResponse.json({ error: "term-not-found" }, { status: 400 });
 
   const snapshot = buildOrderSnapshot({
-    plan: { id: plan.id, slug: plan.slug, name: plan.name, tier: plan.tier, articlesPerMonth: plan.articlesPerMonth },
+    plan: { id: plan.id, slug: plan.slug, name: plan.name, articlesPerMonth: plan.articlesPerMonth },
     price: { market: price.market, currency: price.currency, monthlyBase: price.monthlyBase },
     term: { paidMonths: term.paidMonths, bonusServiceMonths: term.bonusServiceMonths },
     vatRateBp: vatRateBpForMarket(body.market),

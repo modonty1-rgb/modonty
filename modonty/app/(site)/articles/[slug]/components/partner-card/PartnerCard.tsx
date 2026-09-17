@@ -52,6 +52,8 @@ interface PartnerCardProps {
     phone?: string | null;
     sameAs?: string[];
     addressCity?: string | null;
+    /** شارة «شريك موثّق» — خانةُ الأدمن وحدها. */
+    isVerified?: boolean;
     logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
     /** `width`/`height` are what let the cover box take the artwork's own shape. */
     heroImageMedia?: {
@@ -177,7 +179,8 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
               className="inline-flex items-center gap-1 text-foreground transition-colors hover:text-primary"
             >
               {client.name}
-              <VerifiedBadge className="h-4 w-4" label="شريك موثّق" />
+              {/* مشروطةٌ بخانة الأدمن منذ ١٧ سبتمبر — كانت تُرسم لكل شريك بلا استثناء. */}
+              {client.isVerified && <VerifiedBadge className="h-4 w-4" label="شريك موثّق" />}
             </CtaTrackedLink>
           </h2>
           <IconChevronLeft className="ms-auto h-4 w-4 shrink-0 text-muted-foreground ltr:rotate-180" aria-hidden />

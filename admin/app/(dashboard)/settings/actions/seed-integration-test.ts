@@ -339,7 +339,6 @@ async function seedIndustries(): Promise<SectionResult> {
         name: "temp",
         slug: "test-temp-constraint",
         email: "temp@test.com",
-        subscriptionTier: "BASIC",
         industryId: i1.industry.id,
         logoMediaId: tempLogo.id,
         heroImageMediaId: tempHero.id,
@@ -386,14 +385,14 @@ async function seedClients(): Promise<SectionResult> {
   const industry = await db.industry.findFirst({ select: { id: true } });
 
   // ── VALIDATE: missing required fields ──
-  const v1 = await createClient({ name: "", slug: "test-empty-client", email: "x@x.com", subscriptionTier: "BASIC" as const });
+  const v1 = await createClient({ name: "", slug: "test-empty-client", email: "x@x.com" });
   R.push(ok(!v1.success, "createClient(empty name) → should fail", "validate", v1.success ? "Should have failed" : undefined));
 
   // ── CREATE ──
   const c1 = await createClient({
     name: "عميل تست نوفا", slug: "test-client-nova", email: "test-nova@example.com", phone: "+966500000001",
     description: "عميل تجريبي لاختبار كل الفانكشنز", industryId: industry?.id || null,
-    subscriptionTier: "PRO" as const, subscriptionStatus: "ACTIVE" as const, paymentStatus: "PAID" as const,
+    subscriptionStatus: "ACTIVE" as const, paymentStatus: "PAID" as const,
     seoTitle: "عميل تست نوفا", seoDescription: "وصف SEO عميل تجريبي.", addressCity: "الرياض", addressCountry: "SA",
     keywords: ["تست", "إلكترونيات"],
   });
@@ -404,7 +403,10 @@ async function seedClients(): Promise<SectionResult> {
     const dbClient = await db.client.findUnique({ where: { id: c1.client.id } });
     R.push(ok(dbClient?.name === "عميل تست نوفا", "verify client name", "verify", `got: ${dbClient?.name}`));
     R.push(ok(dbClient?.email === "test-nova@example.com", "verify client email", "verify", `got: ${dbClient?.email}`));
-    R.push(ok(dbClient?.subscriptionTier === "PRO", "verify subscriptionTier = PRO", "verify", `got: ${dbClient?.subscriptionTier}`));
+    // كان يتحقّق من `subscriptionTier === "PRO"`. لم يعد `createClient` يقبل الباقة
+    // (لا شاشةَ تجمعها، وهي تأتي من الطلب الساري)، فصار الفحص يسقط على تغييرٍ مقصود.
+    // والمقيس الآن هو ما يُكتب فعلاً: الحالة.
+    R.push(ok(dbClient?.subscriptionStatus === "ACTIVE", "verify subscriptionStatus = ACTIVE", "verify", `got: ${dbClient?.subscriptionStatus}`));
     R.push(ok(dbClient?.addressCity === "الرياض", "verify addressCity = الرياض", "verify", `got: ${dbClient?.addressCity}`));
     if (industry) R.push(ok(dbClient?.industryId === industry.id, "verify industryId linked", "verify", `got: ${dbClient?.industryId}`));
   }
@@ -432,8 +434,8 @@ async function seedClients(): Promise<SectionResult> {
   for (const i of allInd) industryMap[i.slug] = i.id;
 
   const FINALS = [
-    { name: "متجر نوفا للإلكترونيات", slug: "nova-electronics", email: "info@nova-electronics.sa", industryId: industryMap["ecommerce"] || null, subscriptionTier: "PRO" as const, subscriptionStatus: "ACTIVE" as const, paymentStatus: "PAID" as const, seoTitle: "متجر نوفا", seoDescription: "أحدث الأجهزة الإلكترونية.", addressCity: "الرياض", addressCountry: "SA" },
-    { name: "عيادات بلسم الطبية", slug: "balsam-medical", email: "info@balsam-medical.sa", industryId: industryMap["healthcare"] || null, subscriptionTier: "STANDARD" as const, subscriptionStatus: "ACTIVE" as const, paymentStatus: "PAID" as const, seoTitle: "عيادات بلسم", seoDescription: "رعاية صحية متميزة.", addressCity: "الرياض", addressCountry: "SA" },
+    { name: "متجر نوفا للإلكترونيات", slug: "nova-electronics", email: "info@nova-electronics.sa", industryId: industryMap["ecommerce"] || null, subscriptionStatus: "ACTIVE" as const, paymentStatus: "PAID" as const, seoTitle: "متجر نوفا", seoDescription: "أحدث الأجهزة الإلكترونية.", addressCity: "الرياض", addressCountry: "SA" },
+    { name: "عيادات بلسم الطبية", slug: "balsam-medical", email: "info@balsam-medical.sa", industryId: industryMap["healthcare"] || null, subscriptionStatus: "ACTIVE" as const, paymentStatus: "PAID" as const, seoTitle: "عيادات بلسم", seoDescription: "رعاية صحية متميزة.", addressCity: "الرياض", addressCountry: "SA" },
   ];
 
   for (const f of FINALS) {

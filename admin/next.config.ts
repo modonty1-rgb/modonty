@@ -7,6 +7,10 @@ import type { NextConfig } from "next";
 loadDotenv({ path: path.resolve(process.cwd(), "../.env.shared") });
 
 const nextConfig: NextConfig = {
+  // التطوير وحده: Next 16 يحجب طلبات التطوير القادمة من أصلٍ غير الذي بدأ منه،
+  // فتفشل الترطيب (hydration) والخطوط بـ403 عند فتح الصفحة على 127.0.0.1 بدل localhost.
+  // يخصّ خادم التطوير فقط ولا أثر له في الإنتاج.
+  allowedDevOrigins: ["127.0.0.1", "localhost"],
   // sharp is a native module (aspect-crop generation) — must be required at runtime,
   // not bundled, or its win32/native binding fails to load in the server runtime.
   serverExternalPackages: ["sharp"],

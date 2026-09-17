@@ -1,75 +1,90 @@
-# الجلسة الحالية — ١٥ سبتمبر ٢٠٢٦
+# الجلسة الحاليّة — ١٦ سبتمبر ٢٠٢٦
 
-**الموضوع:** مسح نهائي لواجهة البيمنت، رفع، لايف تست على الإنتاج، وتنسيق بيكسلات التتبّع.
+**الموضوع:** مصادر المقالات في الأدمن · إصلاحات الكونسول (دخول الآيفون · رفع صورة الفريق) · بناءٌ انتقائيّ على فيرسل.
 
 ---
 
-## أين توقّف العمل — والخطوة التالية
+## أين وقفنا — والخطوة التالية
 
-**توقّف عند:** خالد ينتظر جواب سؤالين قبل أي كود جديد:
-1. **حاوية GTM** — مشتركة مع مدونتي (`GTM-MNRR2NS9`) أم مستقلّة للبيمنت؟ (توصيتي: مستقلّة).
-2. **معرّفات البيكسلات والتوكنات** من الميديا باير — بدونها لا يُركَّب شيء.
+كل شيءٍ مثبَّتٌ ومدفوع، والإنتاج أخضر. الخطوة التالية بكلمات خالد:
+**«نرجع للتذكرة الرئيسيّة»** — قائمة البناء في `documents/tasks/MONEY-FLOW.html`،
+بندها الأوّل: حقل «أوّل وصول للعميل» على `Article` (تاريخ أوّل مقالٍ يصل الكونسول،
+وهو ما يبدأ به الاشتراك — لا تاريخ النشر).
 
-**الخطوة التالية بعد وصولهما:** تركيب `GTMContainer` في تخطيط البيمنت (النمط جاهز في
-`modonty/app/layout/components/gtm/GTMContainer.tsx`، والمُحلّل المشترك
-`shared/lib/gtm/getGTMSettings.ts` يقرأ `NEXT_PUBLIC_GTM_CONTAINER_ID`)، ثم دفع حدث
-`purchase` إلى dataLayer في صفحة النجاح، ثم CAPI من السيرفر بنفس `event_id`.
+---
 
-⚠ اسم الـdataLayer في نمط مدونتي هو `shared` لا `dataLayer`.
+## ما أُنجز
 
-## ما أُنجز — مُودَع ومدفوع
+**الأدمن — صفحة `/articles/sources`** (كوميت `9a69d27`): جرد كل رابطٍ خارجيّ في كل
+مقال بكل حالاته، نطاقاً في كل صفّ. ثلاث طبقات فحصٍ مجّانيّة: تصنيفٌ فوريّ من الاسم ·
+`RDAP` عمر النطاق · `Safe Browsing` الخطر · `OpenPageRank` قوّة النطاق ٠–١٠.
 
-`42e9dae` · `fd9f0c8` على `main`. غير مُودَع: `documents/tasks/PAYMENT-PIXELS-BRIEF.html` فقط.
+- الملفّات: `admin/app/(dashboard)/articles/sources/` (خمسة ملفّات) + سطرٌ في
+  `admin/components/admin/sidebar.tsx` تحت `Maintenance & SEO`.
+- المقيس: ٣٦٠ رابطاً · ١٢٩ نطاقاً · ٢٢١ مقالاً · **صفر مشبوه · صفر تهديد** ·
+  ١٢٥ نطاقاً رجعت لها قوّة.
+- المفاتيح في `admin/.env.local`: `GOOGLE_SAFE_BROWSING_KEY` و`OPEN_PAGE_RANK_KEY`
+  (الأخير مجّانيّ ٣٠ ألف نطاق شهريّاً، حساب `modonty1@gmail.com`).
 
-- **بطاقة المشاركة**: كانت صفر وسوم OG ⇒ رابط الإعلان يُرسَم عارياً. أُضيفت
-  `openGraph`+`twitter`+`metadataBase`، و`payment/public/og.png` ١٢٠٠×٦٣٠
-  (مصدرها `documents/assets/og-card.html`).
-- **`robots.txt`**: `Disallow: /` كان يحجب بوتات المعاينة فتُكسر البطاقة. استُثنيت على
-  صفحتَي التسويق وحدهما. (جوجل أدز لم يكن متأثّراً: `AdsBot-Google` يتجاهل `*`.)
-- **توكنات الحبر** `--destructive-ink`/`--success-ink`/`--star-ink` (إضافة محضة في
-  `modonty/app/globals.css`) + `--success-foreground` أبيض ⇒ نيليّ (كان ٢٫١٠:١).
-- **`.gitignore`**: `*.png` الشامل كان يُسقط `og.png` و`sadad.png` و`saib-bank.png` —
-  والأخير يُرسم حيّاً. أُضيف `!payment/public/**/*.png`.
-- **`frame-ancestors 'none'`** في `payment/next.config.ts`: صفحة البطاقة كانت تُؤطَّر
-  في أي موقع. (لا `X-Frame-Options: DENY` — يكسر إطار 3DS.)
-- **تنظيف**: ٢٣ سكربت `_*.mjs` من جذر `payment/` · `boomtest/`+`_boomtest/` ·
-  ٣٨ لقطة من جذر المستودع · ملفٌّ متعقَّب باسمٍ مشوّه. الجذر ٥٣ ⇒ ٩ ملفّات.
-  ونُقل `nextjs.yml` و`seo-devnadish-lines.json` إلى `documents/attic/`.
+**الكونسول** (كوميت `9b85657`):
 
-## اللايف تست — ناتج خام
+- `console/app/(auth)/login/components/login-form.tsx` — `autoCapitalize="none"`.
+- `console/auth.config.ts` — بحثٌ غير حسّاس لحالة الأحرف + تهريب محارف نمطيّة.
+- `console/app/(dashboard)/dashboard/page-content/components/image-field.tsx` — جديد.
+- `team-editor.tsx` (رابط ← رفع) · `achievements-editor.tsx` (صار يستورد المشترك).
+- `console/app/api/upload-bunny/route.ts` — `team` في القائمة البيضاء.
 
-**سليم:** ٢٤ لقطة حيّة (٤ صفحات × ٣ عروض × وضعين) = صفر عطل · `og.png` **200** ·
-`wa.me/966541018020` في HTML الحيّ · `POST /api/revalidate/tag` بلا سرّ = **401** ·
-HSTS و`Referrer-Policy` و`nosniff` و`Permissions-Policy`.
+**النشر** (كوميت `68dad96`): `ignoreCommand` في `vercel.json` للمشاريع الأربعة،
+وإصلاح خطأي بناءٍ في الأدمن (`log-action.ts` + `sales-menu.tsx`).
 
-**معطوب على الإنتاج:**
-- **إنجينيس ساندبوكس**: إطار الدفع = `paypage.sandbox.ksa.ngenius-payments.com`.
-- **تيرنستايل مفتوح**: `turnstileToken:"dummy-token-for-probe"` ⇒ **502 ngenius-failed**
-  بدل **403 bot-check-failed**. و`data-sitekey: null` فالودجت لا يُرسم.
-- **سقف المعدّل معطّل**: ٧٠ طلباً على `/api/checkout/status` ⇒ ٧٠×**404** وصفر **429**.
-- **لا تنبيه للطلبات**: `admin/lib/notifications/registry.ts:30-49` يحمل ثلاثة أحداث
-  فقط (`contact_reply` · `campaign_interest` · `faq_reply`).
+**اللوحة:** بطاقة `TOOLS1` على `To Do` — أدوات فريق المحتوى، **للنقاش لا للتنفيذ**،
+وفيها أربعة أسئلة تنتظر قرار خالد.
 
-## دَينٌ عليّ — أنشأتُ بيانات على الإنتاج
+---
 
-جسّي للـAPI مرّ من تيرنستايل المفتوح، و`create-payment/route.ts:145` يُنشئ الطلب **قبل**
-نداء البوّابة (`:188`) — فصار صفّ `CheckoutOrder` + `PaymentAttempt` وهميّ:
-`sessionId: livecheck-0000000001` · `email: t@example.com` · `name: فحص حيّ`.
-**لم يُحذف** — خالد لم يجب على عرض الحذف.
+## قرارات وعوائق قائمة
 
-## يحتاج قراره
+- **بوّابة المصادر لم تُبنَ بعد** — الجرد فقط. السؤال المفتوح: تمنع الكاتب أم تنبّهه؟
+  وما حدّ القوّة الذي يخرج تحته الرابط بـ`nofollow`؟ (بطاقة `TOOLS1`).
+- **«Spam Score» غير متاحٍ مجّاناً** — ملكُ موز، أرخص وصولٍ إليه ٢٠ دولاراً شهريّاً.
+  و`VirusTotal` و`Spamhaus` ترخيصهما المجّانيّ لغير التجاريّ، فلا يجوزان لنا.
+- **`OpenPageRank` لا يقيس مدونتي** — `modonty.com` و`jbrseo.com` خارج فهرس
+  `Common Crawl`، فالمقياس يصلح للحكم على المصادر لا لقياس تقدّمنا.
+- **`jbrseo.com` عليه ٣٤ رابط تزكية من ٦٢** في مقالاتنا — موقعان يملكهما خالد،
+  ونمطٌ قد يُقرأ شبكة. لم يُتّخذ فيه قرار.
+- **حدُّ `ignoreCommand`:** المقارنة `HEAD^..HEAD`، فدفعةٌ بكوميتات كثيرة قد تتخطّى
+  مشروعاً تغيّر في أوّلها — عندها يُعاد البناء يدويّاً من فيرسل.
+- **N-Genius:** وعدوا بالتفاصيل نهاية اليوم. الويب هوك:
+  `https://pay.modonty.com/api/webhooks/n-genius` · POST · `x-ngenius-webhook-secret`.
+- **الاسترداد** مؤجَّلٌ بقرار خالد.
 
-1. حاوية GTM: مشتركة أم مستقلّة.
-2. حذف الصفّ الوهمي أعلاه.
-3. تنبيه الطلبات: تيليجرام/بريد أم متابعة يدوية.
-4. رقم الشراكات للتذييل · محتوى مصر (ضريبة ١٤٪) · رأس المال `8,000,000 ر.س`.
+---
 
-## للإنتاج (فيرسال) — لم يُنفَّذ
+## حساباتٌ وأدوات
 
-مفاتيح **Turnstile** الحقيقية · مفاتيح **Upstash** · `NEXT_PUBLIC_GTM_CONTAINER_ID`.
-(`NEXT_PUBLIC_SALES_WHATSAPP` و`REVALIDATE_SECRET` متحقَّقان حيّاً — مضبوطان.)
+- **الكونسول (محلّي):** `claude-console@modonty.local` / `Mdnty-Console-Check-2026!`
+  — عميلٌ في `modonty_dev` (`6aaa8a45b0eb839d793a0f53`)، محفوظٌ في الذاكرة.
+- **تحذير:** `3001` و`3002` يتقاسمان كوكيز `localhost`، فالخروج من أحدهما يُسقط
+  جلسة الآخر. ولا تشغّل `pnpm dev` بأنبوب `| head` — يقتل السيرفر.
+- **سيرفرا التطوير موقوفان** (أُوقفا لأجل البناء المحليّ).
 
-## حالة البناء
+---
 
-`tsc` **صفر أخطاء** في `payment` و`admin` و`modonty` (شُغّل هذه الجلسة).
-البناء والنشر: نجح — `fd9f0c8` حيٌّ على `pay.modonty.com`.
+## جِت والنشر
+
+- الفرع `main` · آخر كوميت `68dad96` · **صفر كوميت غير مدفوع**.
+- غير مثبَّت: `documents/context/CURRENT-SESSION.md` (هذا الملفّ) ·
+  `ahrefs-backlinks.json` و`ahrefs-raw.json` في الجذر (زبالة بحثٍ تُحذف) ·
+  `documents/tasks/MONEY-AUDIT.html` (محتواه مدموجٌ في `MONEY-FLOW.html`).
+- **الإنتاج — الثلاثة خضراء، مقيسةً هذه الجلسة:** `modonty-console` ✅ ·
+  `modonty-admin` ✅ (بعد إصلاح خطأي الأنواع) · `modonty-modonty` ✅ نجح في
+  البناء التالي بلا تعديلٍ عليه — أي أنّ سقوطه كان انقطاع اتّصالٍ عابراً من أطلس
+  أثناء التوليد المسبق، لا خطأ كود.
+- بناءٌ محلّيّ نظيف هذه الجلسة: الكونسول والأدمن.
+
+---
+
+## متبقٍّ صغير
+
+عضوان باسم «د. سارة منصور» من اختبار الرفع في `modonty_dev` — يُحذفان من
+`/dashboard/page-content` ← «من نحن» ← الفريق.

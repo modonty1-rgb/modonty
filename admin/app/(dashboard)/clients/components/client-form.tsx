@@ -10,8 +10,6 @@ import { ClientLogoModal } from "./client-logo-modal";
 import { ClientHeroModal } from "./client-hero-modal";
 import { ClientVerificationModal } from "./client-verification-modal";
 import { useClientForm } from "../helpers/hooks/use-client-form";
-import { BasicInfoSection } from "./form-sections/basic-info-section";
-import { SubscriptionSection } from "./form-sections/subscription-section";
 import { ClientEditWorkspace } from "./edit-workspace/client-edit-workspace";
 import { OpenClientConsoleButton } from "./edit-workspace/open-client-console-button";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
@@ -70,7 +68,7 @@ export function ClientForm({
     setCurrentVerificationUrl((initialData as { verificationImageUrl?: string | null })?.verificationImageUrl ?? null);
   }, [(initialData as { verificationImageUrl?: string | null })?.verificationImageUrl]);
 
-  const { form, handleSubmit, loading, error, setError, invalidFields, setInvalidFields, tierConfigs, isEditMode } = useClientForm({
+  const { form, handleSubmit, loading, error, setError, invalidFields, setInvalidFields, isEditMode } = useClientForm({
     initialData,
     clientId,
   });
@@ -171,21 +169,10 @@ export function ClientForm({
         )}
 
         <div suppressHydrationWarning>
-          {!isEditMode ? (
-            /* CREATE MODE — flat, essentials only (unchanged) */
-            <div className="space-y-6">
-              {watchedValues.slug && (
-                <div className="flex justify-end">
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                    https://modonty.com/clients/{watchedValues.slug}
-                  </span>
-                </div>
-              )}
-              <BasicInfoSection form={form} industries={industries} salesReps={salesReps} editors={editors} countries={countries} />
-              <SubscriptionSection form={form} isEditMode={false} tierConfigs={tierConfigs} addressCountry={watchedValues.addressCountry} />
-            </div>
-          ) : (
-            /* EDIT MODE — logical-zone workspace (left live panel + 5 zones) */
+          {/* فرعُ الإنشاء حُذف: `isEditMode = Boolean(clientId)`، و`ClientForm` لا
+              يُستدعى إلّا من `[id]/edit/page.tsx` ومعه `clientId` — فالفرع لم يكن
+              يُصرَّف أبداً. والإنشاء له شاشتُه: `new/components/create-client-form.tsx`. */}
+          {(
             <>
               <ClientEditWorkspace
                 form={form}
@@ -195,7 +182,6 @@ export function ClientForm({
                 clients={clients}
                 countries={countries}
                 ctaPresets={ctaPresets}
-                tierConfigs={tierConfigs}
                 clientId={clientId}
                 seoScore={unifiedSeoScore}
                 seoChecks={seoChecks}
@@ -296,6 +282,19 @@ export function ClientForm({
                       onCheckedChange={(c) => form.setValue("isFeatured", c === true, { shouldDirty: true })}
                     />
                     <span className="text-xs font-semibold whitespace-nowrap">⭐ مميّز</span>
+                  </label>
+                  {/* شهادةُ فحصٍ لا حقلُ بيانات: السجلّ التجاريّ وصورة التوثيق يدخلهما العميل،
+                      فوجودهما لا يعني أنّ أحداً راجعهما. تُوضع بعد الفحص، وهي وحدها مصدر
+                      شارة التوثيق على مدونتي — القائمة والبحث وصفحة الشريك. */}
+                  <label
+                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-sky-500/30 bg-sky-500/[0.06] px-2.5 py-1.5"
+                    title="موثَّق — فحصنا أوراقه الرسميّة. تظهر الشارة على مدونتي: القائمة والبحث وصفحة الشريك"
+                  >
+                    <Checkbox
+                      checked={watchedValues.isVerified ?? true}
+                      onCheckedChange={(c) => form.setValue("isVerified", c === true, { shouldDirty: true })}
+                    />
+                    <span className="text-xs font-semibold whitespace-nowrap">✅ موثَّق</span>
                   </label>
                   {/* On for everyone today. Unticking it hides the «مجدولة» tab from this
                       client's articles page — for the client who reads an unpublished

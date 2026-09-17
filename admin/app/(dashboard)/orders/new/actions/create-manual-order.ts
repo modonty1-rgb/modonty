@@ -73,6 +73,13 @@ const Body = z.object({
   paidAt: z.string().trim().optional(),
   /** ملاحظة داخليّة — لا تُعرض للعميل ولا تُطبع على الفاتورة. */
   notes: z.string().trim().max(500).optional(),
+  /**
+   * العميل المحتمَل الذي جاء منه هذا الطلب (يُمرَّر من `/orders/new?leadId=`).
+   *
+   * كان تحويلُ المحتمَل يسأل «اختر الباقة» ويكتبها على كرتٍ جديد — بابُ ميلادٍ ثالث
+   * بفلوسٍ مكتوبةٍ باليد. صار يمرّ من هنا: طلبٌ بمبلغٍ حقيقيّ، ومنه يُولد العميل.
+   */
+  leadId: z.string().trim().optional(),
 });
 
 export type CreateManualOrderInput = z.input<typeof Body>;
@@ -126,7 +133,7 @@ export async function createManualOrder(input: CreateManualOrderInput): Promise<
     if (!term) return { ok: false, error: "هذه المدّة غير مفعّلة في سياسة المدد" };
 
     snapshot = buildOrderSnapshot({
-      plan: { id: plan.id, slug: plan.slug, name: plan.name, tier: plan.tier, articlesPerMonth: plan.articlesPerMonth },
+      plan: { id: plan.id, slug: plan.slug, name: plan.name, articlesPerMonth: plan.articlesPerMonth },
       price: { market: price.market, currency: price.currency, monthlyBase: price.monthlyBase },
       term: { paidMonths: term.paidMonths, bonusServiceMonths: term.bonusServiceMonths },
       vatRateBp,
@@ -153,7 +160,6 @@ export async function createManualOrder(input: CreateManualOrderInput): Promise<
       planId: null as unknown as string,
       planSlug: "custom",
       planName: body.customName?.trim() || "اتفاق خاصّ",
-      planTier: null,
       articlesPerMonth: body.customArticlesPerMonth,
       monthlyBaseMinor: Math.round(totalMinor / body.paidMonths),
       paidMonths: body.paidMonths,
@@ -183,6 +189,7 @@ export async function createManualOrder(input: CreateManualOrderInput): Promise<
       status: body.status,
       salesRepId: body.salesRepId || null,
       notes: body.notes || null,
+      leadId: body.leadId || null,
       paidAt,
     },
     select: { id: true, number: true },

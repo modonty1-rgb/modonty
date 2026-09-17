@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
     const partnerBySlug = new Map(scopePartners.map((p) => [p.slug, p]));
     const partners: {
       name: string; slug: string; canBook: boolean; whyRecommended: string;
-      logo: string | null; city: string | null; credential: string | null; hasVerifiedPapers: boolean;
+      logo: string | null; city: string | null; credential: string | null; isVerified: boolean;
     }[] = [];
     if (dbDocs.length > 0) {
       const articleByTitle = new Map(scopeArticles.map((a) => [a.title, a]));
@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
             logo: full?.logo ?? null,
             city: full?.city ?? null,
             credential: full?.credential ?? null,
-            hasVerifiedPapers: full?.hasVerifiedPapers ?? false,
+            isVerified: full?.isVerified ?? false,
           });
         }
       }
@@ -231,7 +231,7 @@ export async function POST(request: NextRequest) {
           logo: p.logo,
           city: p.city,
           credential: p.credential,
-          hasVerifiedPapers: p.hasVerifiedPapers,
+          isVerified: p.isVerified,
         })),
       });
     }
@@ -312,7 +312,7 @@ export async function POST(request: NextRequest) {
             logo: p.logo,
             city: p.city,
             credential: p.credential,
-            hasVerifiedPapers: p.hasVerifiedPapers,
+            isVerified: p.isVerified,
           })),
         }),
       });

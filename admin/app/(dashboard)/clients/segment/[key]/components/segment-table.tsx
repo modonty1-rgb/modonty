@@ -34,7 +34,8 @@ export interface SegmentClient {
   ctaMode: string | null;
   isYmyl: boolean;
   subscriptionStatus: string;
-  paymentStatus: string;
+  paymentLabel: string;
+  paymentBad: boolean;
   subscriptionStartDate: string | null;
   subscriptionEndDate: string | null;
   articleCount: number;
@@ -170,7 +171,7 @@ export function SegmentTable({
                 const noReach = !c.ctaMode || c.ctaMode === "NONE";
                 const reach = c.ctaMode ? (CTA_LABEL[c.ctaMode] ?? c.ctaMode) : "Never set";
                 const subBad = BAD.has(c.subscriptionStatus);
-                const payBad = BAD.has(c.paymentStatus);
+                const payBad = c.paymentBad;
                 return (
                   // Zebra striping: at this row density the eye loses its line otherwise.
                   <TableRow key={c.id} className="text-xs odd:bg-muted/40">
@@ -228,7 +229,7 @@ export function SegmentTable({
                           payBad ? "font-semibold text-red-600 dark:text-red-400" : "text-muted-foreground"
                         }
                       >
-                        {c.paymentStatus.toLowerCase()}
+                        {c.paymentLabel}
                       </span>
                     </TableCell>
                     <TableCell className="whitespace-nowrap py-2 tabular-nums text-muted-foreground">

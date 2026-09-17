@@ -149,10 +149,20 @@ export async function updateCommercialPlan(id: string, form: FormData) {
 export async function setCommercialPlanPublished(id: string, isPublished: boolean) {
   await requireFinanceAdmin();
   if (isPublished) {
-    const plan = await db.commercialPlan.findUnique({ where: { id }, select: { tier: true } });
-    if (!plan?.tier) throw new Error("حدّد فئة الاشتراك قبل النشر");
-    const conflict = await db.commercialPlan.findFirst({ where: { id: { not: id }, isPublished: true, tier: plan.tier }, select: { name: true } });
-    if (conflict) throw new Error(`الفئة مستعملة في باقة «${conflict.name}» المنشورة`);
+    /**
+     * **سقط قفصُ «أربع باقاتٍ للأبد» (١٧ سبتمبر ٢٠٢٦).**
+     *
+     * كان هنا شرطان: فئةُ اشتراكٍ إلزاميّة قبل النشر، وباقةٌ واحدة منشورة لكل فئة.
+     * والفئات أربع (`SubscriptionTier`)، فالسقف أربع باقاتٍ مهما كبر العرض.
+     *
+     * وُجد الشرطان ليجد القارئُ الباقةَ بلا لبس — وكان يبحث بالفئة لأنّ السلَق هاش.
+     * صار للباقات سلَقٌ ذو معنى (`intilaqa` · `zakham` · `riyada`) وهو `@unique` في
+     * السكيما، فالبحثُ به لا يلتبس ولا يحدّ العدد.
+     *
+     * والباقي: السلَق مطلوبٌ قبل النشر — فبه يُنادى في رابط الدفع.
+     */
+    const plan = await db.commercialPlan.findUnique({ where: { id }, select: { slug: true } });
+    if (!plan?.slug?.trim()) throw new Error("حدّد سلَق الباقة قبل النشر");
   }
   await db.commercialPlan.update({ where: { id }, data: { isPublished } });
   await revalidateCatalog(id);

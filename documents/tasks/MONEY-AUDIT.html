@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>جرد المال — كل ما يخصّ العميل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f4f1; --card:#fff; --ink:#15151a; --muted:#6b6b76; --line:#e2e2dd; --sand:#efefe9;
+    --ok:#0f6b45; --ok-bg:#e6f4ec; --ok-line:#9ed4ba;
+    --info:#1d4ed8; --info-bg:#e9effd; --info-line:#a9c0f7;
+    --warn:#8a5a00; --warn-bg:#fcf3e1; --warn-line:#e0bd76;
+    --stop:#b3271e; --stop-bg:#fdecea; --stop-line:#eda9a3;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#131316; --card:#1d1d21; --ink:#ededf1; --muted:#9e9eaa; --line:#32323a; --sand:#232329;
+      --ok:#63d69c; --ok-bg:#12301f; --ok-line:#2b6b48;
+      --info:#8fb1ff; --info-bg:#161f38; --info-line:#2f4482;
+      --warn:#f0c264; --warn-bg:#33280f; --warn-line:#6d5622;
+      --stop:#ff8b80; --stop-bg:#37201d; --stop-line:#7a3b35;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.85 "Tajawal",-apple-system,"Segoe UI",system-ui,sans-serif;padding:28px 16px 90px}
+  .wrap{max-width:1020px;margin:0 auto}
+  .eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--muted);margin:0 0 6px}
+  h1{font-size:clamp(28px,5vw,40px);font-weight:900;margin:0 0 10px;line-height:1.25;text-wrap:balance}
+  .lede{font-size:18px;color:var(--muted);margin:0 0 6px;max-width:62ch}
+  .stamp{font-size:12.5px;color:var(--muted);margin:14px 0 0}
+  h2{font-size:22px;font-weight:900;margin:52px 0 6px;line-height:1.35}
+  h2 .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;
+    background:var(--ink);color:var(--bg);font-size:15px;font-weight:900;margin-inline-end:10px;
+    vertical-align:2px;font-variant-numeric:tabular-nums}
+  .h2sub{color:var(--muted);font-size:14.5px;margin:0 0 18px;max-width:66ch}
+  h3{font-size:17px;font-weight:900;margin:30px 0 0}
+
+  .scroll{overflow-x:auto;border:1.5px solid var(--line);border-radius:16px;background:var(--card);margin:16px 0 0}
+  table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+  th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:var(--sand);font-weight:800;font-size:12.5px;color:var(--muted);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:0}
+  td b{font-weight:800}
+  .num{font-variant-numeric:tabular-nums;font-weight:800;white-space:nowrap}
+
+  .ref{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;direction:ltr;display:inline-block;
+    background:rgba(125,125,140,.14);padding:1px 6px;border-radius:5px;word-break:break-all}
+  pre{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;
+    overflow-x:auto;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;
+    font-size:11.5px;line-height:1.75;margin:12px 0 0}
+
+  .tag{display:inline-block;font-size:11px;font-weight:900;padding:2px 9px;border-radius:99px;white-space:nowrap}
+  .t-ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-line)}
+  .t-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-line)}
+  .t-stop{background:var(--stop-bg);color:var(--stop);border:1px solid var(--stop-line)}
+  .t-info{background:var(--info-bg);color:var(--info);border:1px solid var(--info-line)}
+
+  .gap{border:1.5px solid;border-radius:16px;padding:18px 20px;margin:16px 0;background:var(--card)}
+  .gap.hi{border-color:var(--stop-line);background:var(--stop-bg)}
+  .gap.mid{border-color:var(--warn-line);background:var(--warn-bg)}
+  .gap .head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:8px}
+  .gap h4{margin:0;font-size:17px;font-weight:900;line-height:1.45}
+  .gap.hi h4{color:var(--stop)} .gap.mid h4{color:var(--warn)}
+  .gap p{margin:8px 0 0;font-size:14.5px;line-height:1.75}
+  .gap .so{display:block;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);
+    font-size:13.5px;color:var(--muted)}
+
+  .flowbox{border:1.5px solid var(--line);border-radius:18px;background:var(--card);padding:6px 20px;margin:16px 0 0}
+  .st{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);align-items:start}
+  .st:last-child{border-bottom:0}
+  .pin{width:10px;height:10px;border-radius:50%;margin-top:9px;background:var(--muted)}
+  .pin.ok{background:var(--ok);box-shadow:0 0 0 4px var(--ok-bg)}
+  .pin.no{background:var(--stop);box-shadow:0 0 0 4px var(--stop-bg)}
+  .st b{display:block;font-size:15.5px;font-weight:800}
+  .st span{color:var(--muted);font-size:13.5px}
+
+  .note{border:1.5px solid var(--info-line);background:var(--info-bg);border-radius:14px;
+    padding:14px 18px;margin:18px 0;font-size:14.5px;line-height:1.75}
+  .note b{color:var(--info);font-weight:900}
+  .foot{color:var(--muted);font-size:13px;margin-top:54px;border-top:1px solid var(--line);padding-top:16px;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">مدونتي · جرد</p>
+  <h1>كل مكانٍ فيه مالُ عميل</h1>
+  <p class="lede">جردٌ كامل قبل الفصل: أين يدخل المال، وأين يُسجَّل، ومن يقرؤه — وأين الثقوب.</p>
+  <p class="stamp">١٦ سبتمبر ٢٠٢٦ · الأرقام مقيسة على <span class="ref">modonty_dev</span> (بيانات تجربة، لا إنتاج).
+    البنية والثقوب حقيقيّة في الحالتين. القرارات في <span class="ref">MONEY-FLOW.html</span>.</p>
+
+  <!-- ═════ ١ ═════ -->
+  <h2><span class="n">١</span>الجداول التي تحمل المال</h2>
+  <p class="h2sub">أحد عشر جدولاً في السكيما تمسّ المال. خمسةٌ منها تحمل مبالغ فعليّة، والباقي كتالوجٌ وسجلّات.</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>الجدول</th><th>يحمل</th><th>السطر</th></tr></thead>
+    <tbody>
+      <tr><td><b>طلبات الشراء</b><br><span class="ref">checkout_orders</span></td>
+          <td>لقطة البيع كاملة: السعر · المدّة · الهدية · الضريبة · الإجمالي · اسم المشتري وإيميله وجوّاله · المندوب · الملاحظة</td>
+          <td class="ref">1280</td></tr>
+      <tr><td><b>الفواتير</b><br><span class="ref">invoices</span></td>
+          <td>المستند الضريبيّ: المبلغ · فترة الاشتراك · حالة السداد · الأرشفة · تفاصيل الضريبة</td>
+          <td class="ref">3768</td></tr>
+      <tr><td><b>عمليات الدفع</b><br><span class="ref">payment_transactions</span></td>
+          <td>ما وصل من البوابة فعلاً: المبلغ · المرجع · تاريخ التسوية</td>
+          <td class="ref">1366</td></tr>
+      <tr><td><b>محاولات لم تنجح</b><br><span class="ref">payment_attempts</span></td>
+          <td>الرفض ورمزه ونصّ البوابة</td><td class="ref">1436</td></tr>
+      <tr><td><b>إشعارات البوابة</b><br><span class="ref">payment_webhook_events</span></td>
+          <td>ما أرسلته البوابة إلينا · وهل عولج</td><td class="ref">1390</td></tr>
+      <tr><td>كتالوج الباقات</td>
+          <td><span class="ref">commercial_plans</span> · <span class="ref">commercial_plan_prices</span> ·
+              <span class="ref">commercial_term_policies</span> — الأسعار المعروضة</td>
+          <td class="ref">1079 · 1157 · 1236</td></tr>
+      <tr><td>العدّادات</td>
+          <td><span class="ref">counters</span> — أرقام الفواتير والطلبات المتسلسلة بلا فجوات</td>
+          <td class="ref">3817</td></tr>
+      <tr><td><b>كرت العميل</b><br><span class="ref">Client</span></td>
+          <td>رصيد التأسيس · حالة الدفع · دورة الفوترة · تاريخ النهاية · الباقة
+              <span class="tag t-warn">يُفرَّغ — انظر قرارات الفصل</span></td>
+          <td class="ref">534</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- ═════ ٢ ═════ -->
+  <h2><span class="n">٢</span>من أين يدخل المال — ثلاثة أبواب</h2>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>الباب</th><th>أين يُسجَّل</th><th>الحالة</th></tr></thead>
+    <tbody>
+      <tr><td><b>صفحة الدفع</b> — العميل يشتري بنفسه<br>
+              <span class="ref">pay.modonty.com</span></td>
+          <td>صفٌّ في طلبات الشراء + عملية دفع</td>
+          <td><span class="tag t-ok">شغّال</span></td></tr>
+      <tr><td><b>فورم تسجيل الطلب</b> — الموظّف يسجّل بيعاً مباشراً<br>
+              <span class="ref">admin /orders/new</span></td>
+          <td>نفس الجدول، نفس الشكل</td>
+          <td><span class="tag t-ok">بُني أمس</span></td></tr>
+      <tr><td><b>رصيد التأسيس</b> — مالٌ قديمٌ مكتوبٌ داخل كرت العميل</td>
+          <td>حقلٌ على العميل، لا صفّ في أي جدول مالّي</td>
+          <td><span class="tag t-stop">يُلغى بقرارك</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- ═════ ٣ ═════ -->
+  <h2><span class="n">٣</span>رحلة الريال — خطوة تحت خطوة، وأين ينقطع الخيط</h2>
+
+  <div class="flowbox">
+    <div class="st"><span class="pin ok"></span><div><b>العميل يدفع</b>
+      <span>يُفتح صفٌّ في طلبات الشراء بحالة «مدفوع»، ومعه عملية الدفع من البوابة.</span></div></div>
+    <div class="st"><span class="pin no"></span><div><b>ثمّ يقف — لا شيء يتحرّك تلقائيّاً</b>
+      <span>لا حساب عميل يُفتح، ولا فاتورة تُصدَر، ولا تنبيه يظهر لأحد.</span></div></div>
+    <div class="st"><span class="pin"></span><div><b>موظّفٌ يفتح صفحة الطلب ويضغط «إنشاء حساب العميل»</b>
+      <span>يدويّ بالكامل. ولو لم يفتحها أحد، بقي الطلب كما هو إلى الأبد.</span></div></div>
+    <div class="st"><span class="pin"></span><div><b>ثمّ يضغط «إصدار الفاتورة»</b>
+      <span>يدويّ كذلك. والفاتورة ترفض الصدور إن لم يُنشر للعميل مقالٌ بعد.</span></div></div>
+    <div class="st"><span class="pin"></span><div><b>ثمّ «إرسال الفاتورة» بالإيميل أو واتساب</b>
+      <span>يُشترط الاسم النظاميّ والرقم الضريبيّ للمنشأة، وإلّا رُفض الإرسال.</span></div></div>
+    <div class="st"><span class="pin ok"></span><div><b>وعند إصدار الفاتورة يتحدّث تاريخ نهاية الاشتراك</b>
+      <span>دالّةٌ واحدة تأخذ أبعد نهايةٍ من كل الفواتير غير المؤرشفة، ولا ترجع بالتاريخ للوراء أبداً.</span></div></div>
+  </div>
+
+  <!-- ═════ ٤ ═════ -->
+  <h2><span class="n">٤</span>الثقوب — مرتّبةً بالخطورة</h2>
+  <p class="h2sub">كلٌّ منها مقيس، ولم يُطرح قبل اليوم في نقاش الفصل.</p>
+
+  <div class="gap hi">
+    <div class="head"><h4>١ · تقرير المبيعات لا يرى الطلبات إطلاقاً</h4>
+      <span class="tag t-stop">مالٌ لا يُحسب</span></div>
+    <p>التقرير يجمع الإيراد من <b>رصيد التأسيس</b> و<b>الفواتير</b> فقط. وكلمة «طلب» لا ترد فيه ولا مرّة —
+      ولا في صفحة حسابات العملاء، ولا في لوحة الأدمن.</p>
+    <pre>$ grep -c "checkoutOrder" \
+    admin/app/(dashboard)/clients/sales-report/actions/get-sales-report.ts   -> 0
+    admin/app/(dashboard)/clients/accounts/page.tsx                          -> 0
+    admin/app/(dashboard)/actions/dashboard-actions.ts                       -> 0</pre>
+    <p>أي أنّ كل ريالٍ يدخل من صفحة الدفع <b>غير مرئيٍّ للتقرير</b> حتى يحوّله موظّفٌ إلى فاتورة بيده.
+      وبعد إلغاء رصيد التأسيس، يبقى للتقرير مصدرٌ واحد: الفواتير.</p>
+    <span class="so"><b>ما يلزم:</b> التقرير يقرأ الطلبات المدفوعة مباشرةً — وإلّا ظلّ المال المحصَّل
+      خارج كل رقمٍ تراه.</span>
+  </div>
+
+  <div class="gap hi">
+    <div class="head"><h4>٢ · طلبٌ مدفوع ينام بلا حساب ولا فاتورة، وبلا تنبيه</h4>
+      <span class="tag t-stop">التزامٌ غير مُدار</span></div>
+    <p>العميل دفع، ونحن مدينون له بالخدمة — ولا شيء في الشاشات يقول ذلك. الأمر كلّه معلّقٌ
+      بأن يفتح موظّفٌ صفحة الطلب بنفسه.</p>
+    <pre>طلبات مدفوعة: 5
+  بلا حساب عميل: 4
+  بلا فاتورة  : 4
+  مالٌ مدفوع بلا فاتورة: 40,776 SAR</pre>
+    <span class="so"><b>ما يلزم:</b> تنبيهٌ على لوحة الأدمن — «طلباتٌ مدفوعة تنتظر فتح حساب» —
+      وعدّادٌ في قائمة المبيعات. أو تحويلٌ تلقائيّ عند الدفع.</span>
+  </div>
+
+  <div class="gap mid">
+    <div class="head"><h4>٣ · الاسترداد مُستقبَل ولا مُعالَج</h4>
+      <span class="tag t-warn">ثقبٌ في الاتجاه المعاكس</span></div>
+    <p>حالة «مسترد» موجودة، وويب هوك تمارا يحوّل إليها. لكن لا يوجد في الأدمن زرُّ استرداد،
+      ولا أثرٌ للاسترداد في الفاتورة أو في التقرير — ولا إشعار دائن.</p>
+    <p><span class="ref">payment/app/api/webhooks/tamara/route.ts:52</span> يكتب الحالة، ولا أحد يقرؤها بعدها.</p>
+    <span class="so"><b>ما يلزم:</b> قرارٌ أوّلاً — هل نسترد أصلاً؟ فإن نعم، فالفاتورة الصادرة تحتاج
+      إشعاراً دائناً لا حذفاً.</span>
+  </div>
+
+  <div class="gap mid">
+    <div class="head"><h4>٤ · الفاتورة لا تحمل اسم صاحبها</h4>
+      <span class="tag t-warn">مذكورٌ في قرارات الفصل</span></div>
+    <p>تحفظ اسم الباقة لقطةً، ولا تحفظ اسم العميل — تقرؤه من كرته وقت الإرسال. فلو أُرشِف أو حُذف،
+      بقي المستند بلا هويّة.</p>
+    <p>والطلب على العكس: يحمل الاسم والإيميل والجوّال والمنشأة داخله.</p>
+    <span class="so"><b>ما يلزم:</b> لقطة هويّةٍ على الفاتورة — اسم · إيميل · اسم نظاميّ · رقم ضريبيّ.</span>
+  </div>
+
+  <div class="gap mid">
+    <div class="head"><h4>٥ · خمس عشرة فاتورةً من ستّ عشرة بلا طلبٍ يفسّرها</h4>
+      <span class="tag t-warn">قبل مسار الدفع</span></div>
+    <p>الفواتير القديمة صدرت قبل أن يوجد جدول الطلبات، فحقل «الطلب» فيها فارغ.
+      وبعد اعتماد «الفاتورة لا تولد إلّا من طلب»، تصير هذه استثناءً دائماً.</p>
+    <pre>فواتير: 16 · بلا طلب: 15
+عملاء: 39 · منهم مربوط بطلب مدفوع: 1</pre>
+    <span class="so"><b>ما يلزم:</b> قرار — تُترك بلا طلب ويُعلَّم أنّها «ما قبل النظام»،
+      أم يُولَّد لكلٍّ منها طلبٌ أثريّ بتاريخها؟</span>
+  </div>
+
+  <div class="gap mid">
+    <div class="head"><h4>٦ · العملتان تُجمعان في مكانٍ واحد</h4>
+      <span class="tag t-warn">دقّة أرقام</span></div>
+    <p>الريال والجنيه يُخزَّنان في نفس الحقول، والتقرير يفصلهما بحسب دولة العميل لا بحسب
+      عملة الطلب نفسها — والطلب يحمل عملته صراحةً.</p>
+    <span class="so"><b>ما يلزم:</b> الاعتماد على عملة الطلب لا على دولة الكرت — أدقّ ولا يتأثّر
+      بتعديلٍ لاحقٍ على العنوان.</span>
+  </div>
+
+  <div class="gap mid">
+    <div class="head"><h4>٧ · وحدتا قياسٍ للمال في نفس النظام</h4>
+      <span class="tag t-warn">خطر تقريب</span></div>
+    <p>الطلبات تخزّن بالهللة والقرش (أعداد صحيحة)، والفواتير تخزّن بالريال والجنيه (كسور عشرية).
+      وكل تحويلٍ بينهما موضعُ خطأ تقريب، والكسر العشريّ لا يصلح للمال أصلاً.</p>
+    <span class="so"><b>ما يلزم:</b> توحيدٌ على الوحدات الصغرى — أو على الأقل نقطةُ تحويلٍ واحدة
+      بدل تحويلٍ متفرّق.</span>
+  </div>
+
+  <!-- ═════ ٥ ═════ -->
+  <h2><span class="n">٥</span>ما هو محكمٌ فعلاً — لا يُمسّ</h2>
+  <p class="h2sub">أُدرج كي لا يُهدَم في الفصل شيءٌ بُني على عطلٍ حقيقيّ.</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>الحارس</th><th>ما يمنعه</th><th>الملف</th></tr></thead>
+    <tbody>
+      <tr><td>تاريخ النهاية لا يرجع للوراء</td>
+          <td>عميلٌ سدّد أقدم فواتيره فانكمشت نهايته من ٢٠٢٧-٠٥ إلى ٢٠٢٦-١٠ — خسر شهوراً بالسداد</td>
+          <td class="ref">recompute-subscription-end.ts</td></tr>
+      <tr><td>الفاتورة تُلغى ولا تُحذف</td>
+          <td>ثقب في الدفتر المحاسبيّ. والمؤرشفة تخرج من كل مجموع وتتوقّف عن حجز فترة</td>
+          <td class="ref">archive-invoice.ts</td></tr>
+      <tr><td>منع فاتورةٍ ثانية وفاتورةٌ سابقةٌ غير مسدّدة</td>
+          <td>تراكم ديونٍ بلا انتباه</td>
+          <td class="ref">find-blocking-unpaid-invoice.ts</td></tr>
+      <tr><td>رقمٌ متسلسل بلا فجوات</td>
+          <td>فجوة في الترقيم — وهي مأخذٌ ضريبيّ</td>
+          <td class="ref">next-invoice-number.ts</td></tr>
+      <tr><td>رفضُ الإرسال بلا رقم ضريبيّ</td>
+          <td>فاتورة ضريبية غير نظاميّة تخرج للعميل</td>
+          <td class="ref">send-invoice-action.ts:76</td></tr>
+      <tr><td>رفضُ الفوترة قبل أوّل مقال</td>
+          <td>محاسبة العميل على فترةٍ لم تبدأ خدمتُه فيها</td>
+          <td class="ref">create-invoice.ts:89</td></tr>
+      <tr><td>الأسعار لقطةٌ على الطلب</td>
+          <td>تعديل الكتالوج يغيّر فاتورةً صادرة</td>
+          <td class="ref">schema.prisma:1297</td></tr>
+      <tr><td>رمز الاستجابة السريعة على الفاتورة</td>
+          <td>عدم مطابقة متطلّب الفاتورة الإلكترونية</td>
+          <td class="ref">render-invoice-qr.ts</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <b>خلاصة الجرد:</b> الأعطال ليست في الحسابات — الحسابات محروسةٌ جيّداً.
+    الأعطال في <b>الوصل</b>: المال يدخل من باب، والتقارير تقرأ من بابٍ آخر، ولا جسر بينهما إلّا يدُ موظّف.
+  </div>
+
+  <p class="foot">
+    جرد ١٦ سبتمبر ٢٠٢٦ · الأرقام من <span class="ref">modonty_dev</span> ببيانات تجربة —
+    تُعاد على الإنتاج قبل أي تنفيذ.<br>
+    القرارات المتّفق عليها في <span class="ref">documents/tasks/MONEY-FLOW.html</span>.
+  </p>
+
+</div>
+</body>
+</html>

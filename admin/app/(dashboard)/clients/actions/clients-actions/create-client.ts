@@ -5,8 +5,6 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import type { ClientFormData } from "@/lib/types";
-import { getCatalogArticlesPerMonth, getTierConfigByTier } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
-import { SubscriptionTier } from "@prisma/client";
 import type { Prisma } from "@prisma/client";
 import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
 import { generateClientSEO } from "./generate-client-seo";
@@ -61,33 +59,21 @@ export async function createClient(data: ClientFormData) {
     let articlesPerMonth = data.articlesPerMonth || null;
     let subscriptionTierConfigId = data.subscriptionTierConfigId || null;
 
-    if (data.subscriptionTier) {
-      const tierConfig = await getTierConfigByTier(data.subscriptionTier as SubscriptionTier);
-      
-      if (!tierConfig) {
-        return {
-          success: false as const,
-          error: `Tier config not found for tier: ${data.subscriptionTier}`,
-        };
-      }
-
-      if (!tierConfig.isActive) {
-        return {
-          success: false as const,
-          error: `Tier ${tierConfig.name} is not active and cannot be assigned to new clients`,
-        };
-      }
-
-      /**
-       * الحصّة من **الكتالوج** لا من الجدول القديم (١٥ سبتمبر ٢٠٢٦): البطاقة على
-       * الشاشة صارت تعد بـ١٢ مقالاً وكان السيرفر يكتب ٨. والصفّ القديم يبقى مربوطاً
-       * (`subscriptionTierConfigId`) لأنّه مفتاحٌ أجنبيّ على `Client` ومنه يُفحص `isActive`.
-       */
-      articlesPerMonth =
-        (await getCatalogArticlesPerMonth(data.subscriptionTier as SubscriptionTier))
-        ?? tierConfig.articlesPerMonth;
-      subscriptionTierConfigId = tierConfig.id;
-    }
+    /**
+     * **منطقُ الكتالوج القديم سقط كلُّه (١٧ سبتمبر ٢٠٢٦).**
+     *
+     * كان يفعل شيئين، وكلاهما انتفى:
+     *
+     *   ١) يكتب للحساب الداخليّ باقةَ «مجاني» — لأنّ `Client.subscriptionTier` كان
+     *      إلزاميّاً في السكيما. صار اختياريّاً، والحسابُ الداخليّ مجّانيّ بلا باقةٍ أصلاً.
+     *
+     *   ٢) يبحث في `SubscriptionTierConfig` عن الحصّة الشهريّة ويربط `subscriptionTierConfigId`.
+     *      ولم يبقَ مَن يمرّر باقةً إلى هنا: شاشة الإنشاء صارت داخليّةً فقط،
+     *      و`convertLeadToClient` حُذفت (المحتمَل يمرّ بطلبٍ الآن).
+     *
+     * والحصّة الشهريّة تأتي من الطلب عند التفعيل (`activate-from-order`)، ومن الشاشة
+     * يدويّاً للحساب الداخليّ.
+     */
 
     const mappedData = mapFormDataToClientData(data);
 
@@ -105,10 +91,6 @@ export async function createClient(data: ClientFormData) {
       clientData.openingBalance = data.openingBalance;
     }
     
-    if (mappedData.subscriptionTier) {
-      clientData.subscriptionTier = mappedData.subscriptionTier;
-    }
-
     // Admins don't set a password. The client gets the default password
     // (sent via the welcome email) and changes it from the console on first login.
     const rawPassword =
@@ -155,17 +137,16 @@ export async function createClient(data: ClientFormData) {
       "keywords",
       "knowsLanguage",
       "organizationType",
-      "subscriptionTier",
       "subscriptionStartDate",
       "subscriptionEndDate",
       "articlesPerMonth",
       "subscriptionStatus",
-      "paymentStatus",
-      "openingBalance",
+      // سقطت من القائمة (١٧ سبتمبر ٢٠٢٦): `paymentStatus` تُشتقّ من الفواتير،
+      // و`openingBalance` و`billingCycle` مكانُهما الطلب لا الكرت.
       "isFeatured",
+      "isVerified",
       "showSchedule",
       "isInternal",
-      "billingCycle",
       "gbpProfileUrl",
       "gbpPlaceId",
       "gbpAccountId",

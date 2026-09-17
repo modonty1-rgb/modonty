@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { checkAdmin } from "@/lib/admin-guard";
 import { getClients, getClientsStats, ClientFilters } from "./actions/clients-actions";
 import { ClientsHeaderWrapper } from "./components/clients-header-wrapper";
+import { getTierConfigs } from "../subscription-tiers/actions/tier-actions";
 import { ClientsTabs } from "./components/clients-tabs";
 import { RegenerateAllSeoButton } from "./components/regenerate-all-seo-button";
 import {
@@ -14,7 +15,6 @@ import {
   getJbrseoSubscriberStats,
   getWelcomeEmailStatuses,
 } from "../subscription-tiers/helpers/jbrseo-queries";
-import { getTierConfigs } from "../subscription-tiers/actions/tier-actions";
 import { getPlatformDefaults } from "../settings/defaults/actions/defaults-actions";
 import { expiringThisMonthWhere } from "./segment/segments";
 
@@ -36,6 +36,9 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
   const gate = await checkAdmin();
   if (gate.status !== "ok") redirect("/login");
 
+  // `tiers` يبقى: `TierDistribution` مكوّنٌ حيّ يعرض توزيع العملاء على الباقات
+  // (`clients-tabs.tsx:213`). حُذف نداؤه أوّلاً دون تفكيكه فانزاح كل ما بعده بصمت —
+  // «allClientEmails is not iterable». الاثنان يُعدَّلان معاً أو لا يُعدَّلان.
   const [clients, stats, signupsRows, signupStats, tiers, defaults, allClientEmails, expiringThisMonth] = await Promise.all([
     getClients(filters),
     getClientsStats(),

@@ -3,10 +3,9 @@ import { notFound } from "next/navigation";
 import { ArrowRight, Users } from "lucide-react";
 
 import { db } from "@/lib/db";
-import { getActiveTierConfigs } from "../../../subscription-tiers/actions/tier-actions";
-import { resolvePricing } from "../../../subscription-tiers/lib/pricing";
 import { getStaffScope, isClientOutOfScope } from "../../helpers/sales-scope";
 
+import { getActiveOrderForClient } from "@/lib/orders/resolve-active-order";
 import { AccountLedger } from "./components/account-ledger";
 import type { LedgerInvoice, Currency } from "./components/account-ledger";
 
@@ -50,14 +49,13 @@ interface PageProps {
 export default async function ClientAccountPage({ params }: PageProps) {
   const { id: clientId } = await params;
 
-  const [client, tierConfigs, invoices, firstPublished] = await Promise.all([
+  const [client, invoices, firstPublished, activeOrder] = await Promise.all([
     db.client.findUnique({
       where: { id: clientId },
       select: {
         id: true,
         name: true,
         email: true,
-        subscriptionTier: true,
         subscriptionTierConfig: { select: { name: true } },
         subscriptionStatus: true,
         subscriptionEndDate: true,
@@ -68,7 +66,6 @@ export default async function ClientAccountPage({ params }: PageProps) {
         salesRep: { select: { name: true, email: true } },
       },
     }),
-    getActiveTierConfigs(),
     db.invoice.findMany({ where: { clientId }, orderBy: { issuedAt: "desc" } }),
     // Activation = first published article (billing anchor).
     db.article.findFirst({
@@ -76,6 +73,9 @@ export default async function ClientAccountPage({ params }: PageProps) {
       orderBy: { datePublished: "asc" },
       select: { datePublished: true },
     }),
+    // ترتيبُه هنا = ترتيبُ `activeOrder` في التفكيك أعلاه. فصلُ الاثنين هو الخطأ الذي
+    // وقع مرّتين في هذه الورقة: التفكيك يُضاف والجلبُ يُنسى، فتُقرأ القيمة undefined بصمت.
+    getActiveOrderForClient(clientId),
   ]);
 
   if (!client) {
@@ -114,18 +114,33 @@ export default async function ClientAccountPage({ params }: PageProps) {
   }
 
   const currency = currencyForCountry(client.addressCountry);
-  const currentTierName = client.subscriptionTierConfig?.name ?? client.subscriptionTier;
+  /**
+   * اسمُ الباقة **من الطلب الساري** — هو ما اشتراه العميل ودفع عليه.
+   *
+   * كان يُقرأ من الكتالوج المربوط بالكرت، فاختلفت الشاشةُ عن الفاتورة: النافذة تقول
+   * «الانطلاقة» والفاتورةُ الصادرة منها تحمل اسم الطلب (مقيسٌ حيّاً ١٧ سبتمبر ٢٠٢٦
+   * على MOD-2026-00022). فصار المصدر واحداً للاثنين.
+   *
+   * والكتالوج القديم بديلٌ للعملاء الذين سبقوا نظام الطلبات — حتى يُنجَز الترحيل.
+   */
+  const currentTierName = activeOrder?.planName ?? client.subscriptionTierConfig?.name ?? "—";
   // Billing period follows the most-recent invoice (default annual).
   const currentPeriod = invoices[0]?.period ?? "annual";
   const periodLabel = currentPeriod === "monthly" ? "شهري" : "سنوي";
 
-  // Default amount for the issue dialog = reference price for current tier+period.
+  /**
+   * المبلغ الافتراضيّ في نافذة الإصدار — **من الطلب الساري**، أي ما دفعه العميل فعلاً.
+   *
+   * كان يُحسب من سعر الكتالوج الحيّ لباقة الكرت: فتغييرُ السعر اليوم يغيّر المبلغ
+   * المقترَح لفاتورة اشتراكٍ اشتُري بسعر أمس. والطلب يحمل الرقم الذي دُفع، مجمَّداً.
+   *
+   * `totalMinor` إجماليُّ المدّة كلّها، فيُقسَم على `paidMonths` ليُعطي سعرَ الشهر،
+   * ثمّ يُضرب في أشهر الفاتورة المطلوبة.
+   */
   let defaultAmount: number | null = null;
-  const cfg = tierConfigs.find((c) => c.tier === client.subscriptionTier);
-  if (cfg) {
-    const p = resolvePricing(cfg.name, cfg.pricing);
-    const bucket = currency === "EGP" ? p.EG : p.SA;
-    defaultAmount = currentPeriod === "monthly" ? bucket.mo : Math.round(bucket.yr * 12);
+  if (activeOrder && activeOrder.paidMonths > 0) {
+    const perMonth = activeOrder.totalMinor / 100 / activeOrder.paidMonths;
+    defaultAmount = Math.round(currentPeriod === "monthly" ? perMonth : perMonth * 12);
   }
 
   // Opening balance → the founding payment. It shows the «Auto Button» that documents it as

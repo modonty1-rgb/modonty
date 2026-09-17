@@ -12,8 +12,6 @@ import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { slugify } from "@/lib/utils";
 import { updateClient, createClient } from "../../actions/clients-actions";
-import { SubscriptionTier } from "@prisma/client";
-import { getSellableTierConfigs } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
 
 // Friendly labels for the "can't save" toast so it names the blocking fields
 // in human terms instead of raw schema keys.
@@ -25,8 +23,6 @@ const FIELD_LABELS: Record<string, string> = {
   industryId: "Industry",
   salesRepId: "Sales Rep",
   editorId: "Editor",
-  openingBalance: "الرصيد الافتتاحي",
-  subscriptionTier: "Subscription Tier",
   businessBrief: "Business Brief",
   logoMediaId: "Logo",
   heroImageMediaId: "Hero Image",
@@ -72,18 +68,6 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
   const [error, setError] = useState<string | null>(null);
   // Plain-language list of what's blocking the save — shown as a top banner.
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
-  const [tierConfigs, setTierConfigs] = useState<Array<{
-    id: string;
-    tier: SubscriptionTier;
-    name: string;
-    articlesPerMonth: number;
-    price: number;
-    isPopular: boolean;
-    // Multi-currency pricing JSON ({ SA:{mo,yr}, EG:{mo,yr} }) — drives the country-aware
-    // price shown on the create form. resolvePricing() validates/falls back on it.
-    pricing?: unknown;
-  }>>([]);
-
   const isEditMode = Boolean(clientId);
 
   // Initialize form with React Hook Form
@@ -94,19 +78,6 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
     defaultValues: mapInitialDataToFormData(initialData) as Partial<ClientFormSchemaType>,
     mode: "onSubmit", // Validate all fields on submit to show all errors
   });
-
-  // Load tier configs
-  useEffect(() => {
-    async function loadTierConfigs() {
-      try {
-        const configs = await getSellableTierConfigs();
-        setTierConfigs(configs);
-      } catch (error) {
-        console.error("Failed to load tier configs:", error);
-      }
-    }
-    loadTierConfigs();
-  }, []);
 
   // Auto-update slug when name changes — uses same slugify as categories/tags/industries.
   // Create mode only: once the client exists the slug is frozen (updateRequiredFields pins
@@ -128,38 +99,11 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
     return () => subscription.unsubscribe();
   }, [form, isEditMode]);
 
-  // Auto-calculate subscription end date (18 months from start)
-  useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (
-        (name === "subscriptionTier" || name === "subscriptionStartDate") &&
-        value.subscriptionTier &&
-        value.subscriptionStartDate
-      ) {
-        const startDate = new Date(value.subscriptionStartDate);
-        const endDate = new Date(startDate);
-        endDate.setMonth(endDate.getMonth() + 18);
-        form.setValue("subscriptionEndDate", endDate, { shouldValidate: false });
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [form]);
-
-  // Auto-update articlesPerMonth when tier changes
-  useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (name === "subscriptionTier" && value.subscriptionTier && tierConfigs.length > 0) {
-        const tierConfig = tierConfigs.find(
-          (config) => config.tier === value.subscriptionTier
-        );
-        if (tierConfig) {
-          form.setValue("articlesPerMonth", tierConfig.articlesPerMonth, { shouldValidate: false });
-          form.setValue("subscriptionTierConfigId", tierConfig.id, { shouldValidate: false });
-        }
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [form, tierConfigs]);
+  // أُسقط أثران كانا يتبعان `subscriptionTier` (١٧ سبتمبر ٢٠٢٦):
+  //   • تاريخُ الانتهاء = البداية + ١٨ شهراً — رقمٌ ثابتٌ لا يعرف المدّة المشتراة،
+  //     والمدّة الآن في الطلب (`paidMonths` + `bonusServiceMonths`).
+  //   • الحصّةُ الشهريّة من الكتالوج — تأتي من الطلب عند التفعيل.
+  // وكلاهما كان مُطلِقُه حقلاً لم تعد شاشةٌ تضعه، فصارا لا يعملان أصلاً.
 
   const handleSubmit = form.handleSubmit(
     async (data) => {
@@ -180,10 +124,11 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
         subscriptionStartDate: data.subscriptionStartDate || null,
         subscriptionEndDate: data.subscriptionEndDate || null,
         articlesPerMonth: data.articlesPerMonth ?? undefined,
-        subscriptionTierConfigId: data.subscriptionTierConfigId || null,
-        subscriptionTier: data.subscriptionTier || null,
+        // `subscriptionTier` سقط من الإرسال: لا شاشةَ تجمعه، والباقة تأتي من الطلب.
         subscriptionStatus: data.subscriptionStatus || "PENDING",
-        paymentStatus: data.paymentStatus || "PENDING",
+        // `paymentStatus` سقط من الإرسال: الشاشة لم تعد تسأله، وحالةُ الدفع تُشتقّ من
+        // الفواتير (`lib/clients/payment-state`). وإرسالُ "PENDING" افتراضاً كان يكتب
+        // على الكرت كلمةً لا سندَ لها.
         description: data.description || null,
         contactType: data.contactType || null,
         addressStreet: data.addressStreet || null,
@@ -226,9 +171,8 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
         isYmyl: data.isYmyl ?? false,
         ymylCategory: data.ymylCategory ?? null,
         ymylData: data.ymylData ?? null,
-        // Opening balance (create only) — create-client persists it on Client.openingBalance;
-        // updateClient ignores it via its field whitelist.
-        openingBalance: (data as { openingBalance?: number | null }).openingBalance ?? null,
+        // `openingBalance` سقط: شاشة الإنشاء صارت للحسابات الداخليّة وهي مجّانيّة،
+        // ومن يدفع يُفعَّل من طلبه حيث المبلغ مكتوبٌ بما دفعه فعلاً.
       } as ClientFormData;
 
       const result = clientId
@@ -306,7 +250,6 @@ export function useClientForm({ initialData, clientId, onCreated, schema }: UseC
     setError,
     invalidFields,
     setInvalidFields,
-    tierConfigs,
     isEditMode,
   };
 }

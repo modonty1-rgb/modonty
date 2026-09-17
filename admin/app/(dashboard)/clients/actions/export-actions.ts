@@ -62,6 +62,8 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
       where,
       include: {
         industry: { select: { name: true } },
+        // اسمُ الباقة للعمود — بلا هذا الجلب يطبع الملفُّ «بلا باقة» للجميع بصمت.
+        subscriptionTierConfig: { select: { name: true } },
         _count: {
           select: {
             articles: {
@@ -121,7 +123,8 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
         escapeCsvValue(client.phone),
         escapeCsvValue(client.url),
         escapeCsvValue(client.industry?.name),
-        escapeCsvValue(client.subscriptionTier),
+        // اسمُ الباقة لا رمزُها: ملفّ التصدير يُفتح في إكسل ويُقرأ بشراً.
+        escapeCsvValue(client.subscriptionTierConfig?.name ?? "بلا باقة"),
         escapeCsvValue(client.subscriptionStatus),
         escapeCsvValue(client.paymentStatus),
         formatDate(client.subscriptionStartDate),

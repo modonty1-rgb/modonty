@@ -460,6 +460,19 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
                             >
                               {client.name}
                             </Link>
+                            {/* ملفٌّ ناقص — الصناعة إلزاميّةٌ في شاشة التعديل ولا يحملها
+                                الطلب، فالعميل المفعَّل يصل بلا واحدة. بلا هذه الشارة لا
+                                تُكتشف الفجوة إلّا حين يسقط أوّل حفظ برسالة Zod خام. */}
+                            {!client.industryId && (
+                              <Link
+                                href={`/clients/${client.id}/edit`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-600 hover:bg-amber-500/25 dark:text-amber-400"
+                                title="بلا صناعة — أكملْ ملفّه قبل أوّل مقال"
+                              >
+                                ملفّ ناقص
+                              </Link>
+                            )}
                             {introVideo && (
                               // Red when the link cannot play at all (a share page, not a
                               // file) — that is a call today, not a routine follow-up.

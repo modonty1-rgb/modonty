@@ -107,7 +107,7 @@ export async function POST(req: Request) {
   // الإجمالي** على جدولها الخاص — الجدولان لا علاقة بينهما، وأشهر الخدمة المجانية تبقى
   // هديّة تنفيذٍ لا خصماً على المبلغ.
   const snapshot = buildOrderSnapshot({
-    plan: { id: plan.id, slug: plan.slug, name: plan.name, tier: plan.tier, articlesPerMonth: plan.articlesPerMonth },
+    plan: { id: plan.id, slug: plan.slug, name: plan.name, articlesPerMonth: plan.articlesPerMonth },
     price: { market: price.market, currency: price.currency, monthlyBase: price.monthlyBase },
     term: { paidMonths: term.paidMonths, bonusServiceMonths: term.bonusServiceMonths },
     vatRateBp: vatRateBpForMarket(body.market),

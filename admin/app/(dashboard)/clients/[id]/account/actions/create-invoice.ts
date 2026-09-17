@@ -9,6 +9,7 @@ import { addMonths } from "@/lib/invoices/add-months";
 import { findBlockingUnpaidInvoice } from "@/lib/invoices/find-blocking-unpaid-invoice";
 import { nextInvoiceNumber } from "@/lib/invoices/next-invoice-number";
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
+import { getActiveOrderForClient } from "@/lib/orders/resolve-active-order";
 
 export interface CreateInvoiceInput {
   clientId: string;
@@ -60,12 +61,15 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
     return { ok: false, error: "المدة غير صحيحة" };
   }
 
+  // اسمُ الباقة على الفاتورة يأتي من الطلب الساري — هو ما اشتراه العميل فعلاً.
+  // والكتالوج القديم بديلٌ للعملاء الذين سبقوا نظام الطلبات، حتى يُنجَز الترحيل.
+  const activeOrder = await getActiveOrderForClient(input.clientId);
+
   const client = await db.client.findUnique({
     where: { id: input.clientId },
     select: {
       id: true,
       name: true,
-      subscriptionTier: true,
       subscriptionTierConfig: { select: { name: true } },
       addressCountry: true,
       subscriptionEndDate: true,
@@ -118,8 +122,10 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
       data: {
         number,
         clientId: client.id,
-        tier: client.subscriptionTier,
-        tierName: client.subscriptionTierConfig?.name ?? client.subscriptionTier,
+        // `tier` لم يعد يُكتب: مقيسٌ أنّه بلا قارئٍ واحد، و`tierName` هي اللقطة التي
+        // يقرؤها تقرير المبيعات. واسمُ الباقة يأتي من الطلب الساري حين يوجد — وهو
+        // المصدر الوحيد — ومن الكتالوج القديم للعملاء الذين سبقوا الطلبات.
+        tierName: activeOrder?.planName ?? client.subscriptionTierConfig?.name ?? "—",
         period,
         currency: currencyForCountry(client.addressCountry),
         amount: input.amount,

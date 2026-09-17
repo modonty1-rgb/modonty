@@ -30,6 +30,7 @@ export function mapInitialDataToFormData(
     subscriptionStatus: "PENDING",
     paymentStatus: "PENDING",
     isFeatured: false,
+    isVerified: true,
     isInternal: false,
     // On by default — a new client sees the schedule like everyone else.
     showSchedule: true,
@@ -178,7 +179,6 @@ export function mapInitialDataToFormData(
     ctaUrl: (initialData as { ctaUrl?: string | null }).ctaUrl ?? "",
 
     // Subscription Management
-    subscriptionTier: initialData.subscriptionTier || null,
     subscriptionTierConfigId: (initialData as any).subscriptionTierConfigId || null,
     subscriptionStartDate: initialData.subscriptionStartDate || null,
     subscriptionEndDate: initialData.subscriptionEndDate || null,
@@ -186,6 +186,7 @@ export function mapInitialDataToFormData(
     subscriptionStatus: initialData.subscriptionStatus || "PENDING",
     paymentStatus: initialData.paymentStatus || "PENDING",
     isFeatured: (initialData as { isFeatured?: boolean }).isFeatured ?? false,
+    isVerified: (initialData as { isVerified?: boolean }).isVerified ?? true,
     // `?? true` matters: a client saved before this field existed has it undefined, and
     // reading that as false would tick the box off on a tab they can currently see.
     showSchedule: (initialData as { showSchedule?: boolean }).showSchedule ?? true,

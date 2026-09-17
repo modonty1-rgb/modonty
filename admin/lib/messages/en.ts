@@ -12,7 +12,6 @@ import type {
   SettingHintKey,
   FaqHintKey,
   ContactMessageHintKey,
-  SubscriptionTierHintKey,
 } from './types';
 
 // ─── SUCCESS MESSAGES ───
@@ -266,7 +265,6 @@ const hints = {
     postalCode: 'Postal code — 5 digits, or 9 with the additional number (Saudi Post National Address). Optional',
     tradeLicense: 'Commercial registration number — optional',
     taxId: 'Tax registration number from tax authority — 15 digits',
-    subscriptionTier: 'Current subscription plan',
     credentialsTitle: 'Client login data',
     businessType: 'Helps writers customize content and style',
     keywords: 'Keywords for writers — comma-separated',
@@ -311,12 +309,6 @@ const hints = {
     message: 'Message content',
   } satisfies Record<ContactMessageHintKey, string>,
 
-  subscriptionTier: {
-    name: 'Plan name',
-    description: 'Plan description',
-    price: 'Plan price',
-    features: 'Included features',
-  } satisfies Record<SubscriptionTierHintKey, string>,
 } as const;
 
 // ─── EXPORT ───

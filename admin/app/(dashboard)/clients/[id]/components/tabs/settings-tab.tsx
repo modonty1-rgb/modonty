@@ -3,14 +3,17 @@
 import { Badge } from "@/components/ui/badge";
 import { CreditCard } from "lucide-react";
 
+import { paymentStateLabel, type ClientPaymentState } from "@/lib/clients/payment-state";
+
 interface SettingsTabProps {
   client: {
     subscriptionStatus: string;
-    paymentStatus: string;
   };
+  /** محسوبةٌ من الفواتير على السيرفر — لا تُقرأ من `Client.paymentStatus`. */
+  paymentState: ClientPaymentState;
 }
 
-export function SettingsTab({ client }: SettingsTabProps) {
+export function SettingsTab({ client, paymentState }: SettingsTabProps) {
   return (
     <div className="space-y-6">
       <div className="border rounded-lg overflow-hidden bg-card">
@@ -43,16 +46,18 @@ export function SettingsTab({ client }: SettingsTabProps) {
                 <CreditCard className="h-4 w-4 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground">Payment Status</p>
               </div>
+              {/* من الفواتير لا من الكرت. الحقل المخزَّن كان يطبع «PAID» لعميلٍ عليه
+                  ثلاث فواتير غير مسدَّدة — ولا شيء يكتب فيه OVERDUE أصلاً. */}
               <Badge
                 variant={
-                  client.paymentStatus === "PAID"
-                    ? "default"
-                    : client.paymentStatus === "OVERDUE"
+                  paymentState.status === "UNPAID"
                     ? "destructive"
+                    : paymentState.status === "PAID"
+                    ? "default"
                     : "secondary"
                 }
               >
-                {client.paymentStatus}
+                {paymentStateLabel(paymentState)}
               </Badge>
             </div>
           </div>

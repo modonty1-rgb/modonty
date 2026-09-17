@@ -4,7 +4,6 @@ import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { Link2, RefreshCw, Pencil, ImageIcon, ChevronDown } from "lucide-react";
-import { SubscriptionTier } from "@prisma/client";
 
 import { FormInput, FormField, FormSelect, FormNativeSelect, FormTextarea } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
@@ -39,7 +38,6 @@ interface ClientEditWorkspaceProps {
   /** Active CTA buttons from Settings → Dropdown Lists — feeds the picker in CtaSection. */
   ctaPresets: Array<{ id: string; labelAr: string; mode: "FORM" | "LINK"; defaultUrl: string | null }>;
   /** Named subscription tiers — feeds the tier selector (subscription is client-owned). */
-  tierConfigs?: Array<{ id: string; tier: SubscriptionTier; name: string; articlesPerMonth: number; price: number; isPopular: boolean; pricing?: unknown }>;
   clientId?: string;
   seoScore: number;
   seoChecks: SeoCheck[];
@@ -53,7 +51,7 @@ interface ClientEditWorkspaceProps {
 
 const ZONES = [
   { id: "z-account", label: "Account & Access" },
-  { id: "z-financial", label: "القسم المالي" },
+  { id: "z-financial", label: "النسبة ونوع الحساب" },
   { id: "z-contact", label: "Contact & Classification" },
   { id: "z-media", label: "Verification" },
   { id: "z-seo", label: "SEO" },
@@ -158,7 +156,6 @@ export function ClientEditWorkspace({
   clients,
   countries,
   ctaPresets,
-  tierConfigs = [],
   clientId,
   seoScore,
   seoChecks,
@@ -191,11 +188,10 @@ export function ClientEditWorkspace({
   const countryName = addressCountry
     ? countries.find((c) => c.code === addressCountry)?.nameAr ?? addressCountry
     : null;
-  const subTier = (initialData as { subscriptionTier?: string | null } | undefined)?.subscriptionTier;
+  // كان يسقط على رمز الـenum («PRO») حين لا اسمَ للباقة، فيُعرض للموظّف رمزٌ تقنيّ.
   const subscriptionLabel =
     (initialData as { subscriptionTierConfig?: { name?: string } | null } | undefined)?.subscriptionTierConfig?.name ??
-    subTier ??
-    "—";
+    "بلا باقة";
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 items-start">
@@ -294,19 +290,20 @@ export function ClientEditWorkspace({
           </div>
         </details>
 
-        {/* ── ZONE 2 · القسم المالي ────────────────────────────── */}
-        {/* Subscription is client-owned (Khalid 2026-07-25: whoever set up the client owns
-           the tier, not the invoice flow). Its own zone, mirroring the create form's money
-           section — sales rep, tier cards, internal/free card, billing cycle + currency. */}
+        {/* ── ZONE 2 · النسبة ونوع الحساب ───────────────────────
+           كان اسمها «القسم الماليّ» وفيها بطاقاتُ باقاتٍ بأسعارٍ حيّة ودورةُ فوترة،
+           يكتبها الموظّف بيده على الكرت — فيصير للصفقة رقمان: ما دفعه العميل في الطلب
+           وما كُتب هنا. خرج المال إلى حيث هو مكتوب أصلاً (بطاقة «الاشتراك الحالي» من
+           الطلب · صفحة الحساب من الفواتير)، وبقي ما ليس مالاً. */}
         <details open className="group border-b pb-4 last:border-b-0">
           <ZoneHeader
             index={2}
             id="z-financial"
-            title="القسم المالي"
-            hint="الباقة · المندوب · دورة الفوترة والعملة — التواريخ تُضبط عند الفوترة"
+            title="النسبة ونوع الحساب"
+            hint="المندوب · حساب داخليّ — والباقة والسعر يُقرآن من الطلب الساري"
           />
           <div className="rounded-2xl border bg-card p-5">
-            <SubscriptionSection form={form} isEditMode tierConfigs={tierConfigs} addressCountry={addressCountry} salesReps={salesReps} />
+            <SubscriptionSection form={form} isEditMode salesReps={salesReps} />
           </div>
         </details>
 

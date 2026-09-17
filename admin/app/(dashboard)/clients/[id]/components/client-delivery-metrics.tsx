@@ -10,7 +10,6 @@ import { getSubscriptionDaysRemaining, calculateDeliveryRate } from "../../helpe
 
 interface ClientDeliveryMetricsProps {
   client: {
-    subscriptionTier?: string | null;
     subscriptionStatus: string;
     subscriptionStartDate: Date | null;
     subscriptionEndDate: Date | null;

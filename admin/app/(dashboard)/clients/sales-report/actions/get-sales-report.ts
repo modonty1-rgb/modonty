@@ -113,7 +113,6 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
       createdAt: true,
       openingBalance: true,
       addressCountry: true,
-      subscriptionTier: true,
       subscriptionTierConfig: { select: { name: true } },
     },
     take: 3000,
@@ -195,7 +194,9 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
     if (!c.openingBalance || c.openingBalance <= 0) continue;
     if (!inPeriod(c.createdAt)) continue;
     const isEgp = currencyForCountry(c.addressCountry) === "EGP";
-    const tierName = c.subscriptionTierConfig?.name ?? c.subscriptionTier ?? "—";
+    // كان يسقط على رمز الـenum («PRO») حين لا اسمَ للباقة، فيظهر في التقرير سطرٌ
+    // باسم رمزٍ تقنيّ بين أسماءٍ عربيّة. والاسمُ الناقص يُقال ناقصاً.
+    const tierName = c.subscriptionTierConfig?.name ?? "بلا باقة";
     payingClients.add(c.id);
     fan(isEgp, tierName, c.salesRepId, c.openingBalance, true, false);
   }

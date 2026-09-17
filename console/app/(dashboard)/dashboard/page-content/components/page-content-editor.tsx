@@ -57,6 +57,8 @@ interface Props {
     name: string;
     logoUrl: string | null;
     phone: string | null;
+    /** شارة «شريك موثَّق» — خانةُ الأدمن وحدها. */
+    verified: boolean;
     hero: { slogan: string | null; description: string | null; coverUrl: string | null };
   };
 }
@@ -369,11 +371,14 @@ function HeroSketch({ chrome, block }: { chrome: Props["chrome"]; block: BlockVi
           </div>
         )}
         <div className="space-y-1.5 p-4">
-          {/* الشارة مع الغلاف (خالد ٣١ أغسطس) — ثابتة لكل شريك، بعلامة مدونتي الرسمية. */}
-          <p className="flex items-center gap-2 text-xs font-medium text-foreground">
-            <ModontyTrustMark className="h-4 w-4 shrink-0" />
-            شريك موثَّق في مدونتي
-          </p>
+          {/* الشارة مع الغلاف (خالد ٣١ أغسطس)، بعلامة مدونتي الرسمية. كانت ثابتةً لكل شريك —
+              فصارت تتبع خانة الأدمن منذ ١٧ سبتمبر، كي لا تَعِد المعاينةُ بما لا تعطيه الصفحة. */}
+          {chrome.verified && (
+            <p className="flex items-center gap-2 text-xs font-medium text-foreground">
+              <ModontyTrustMark className="h-4 w-4 shrink-0" />
+              شريك موثَّق في مدونتي
+            </p>
+          )}
           <p className="text-base font-bold text-foreground">{slogan ?? chrome.name}</p>
           {description && <p className="line-clamp-2 text-xs text-muted-foreground">{description}</p>}
         </div>

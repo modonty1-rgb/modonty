@@ -36,9 +36,17 @@ export function SubscriptionCard({ data }: { data: SubscriptionData }) {
             <p className="text-2xl font-bold leading-tight tracking-tight">
               {data.tierName}
             </p>
-            {data.priceSar != null && (
+            {data.paidTotal && (
               <p className="text-xs text-muted-foreground tabular-nums">
-                {new Intl.NumberFormat("en-GB").format(data.priceSar)} SAR / {s.perYear}
+                {/* الإجماليّ المدفوع فعلاً، بعملته — لا سعر الكتالوج اليوم. */}
+                {data.paidTotal}
+                {data.paidMonths != null && (
+                  <>
+                    {" · "}
+                    {data.paidMonths} شهر
+                    {data.bonusServiceMonths ? ` + ${data.bonusServiceMonths} هديّة` : ""}
+                  </>
+                )}
               </p>
             )}
           </div>

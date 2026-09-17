@@ -11,9 +11,12 @@ import { MediaSocialTab } from "./tabs/media-social-tab";
 import { SecurityTab } from "./tabs/security-tab";
 import { AdditionalTab } from "./tabs/additional-tab";
 import { SettingsTab } from "./tabs/settings-tab";
+import type { ClientPaymentState } from "@/lib/clients/payment-state";
 import { ClientAnalytics } from "./client-analytics";
 import { ClientArticles } from "./client-articles";
 import { IntakeBrief, type BriefForm } from "./intake-brief";
+import { ClientSubscriptionDeal } from "./client-subscription-deal";
+import type { ActiveOrderSummary, ClientOrderRow } from "@/lib/orders/resolve-active-order";
 import { ArticleStatus } from "@prisma/client";
 import type { MediaType } from "@prisma/client";
 import { calculateDeliveryRate } from "../../helpers/client-display-utils";
@@ -56,7 +59,6 @@ type ClientTabsProps = {
     keywords: string[];
     knowsLanguage: string[];
     numberOfEmployees: string | null;
-    subscriptionTier: string | null;
     subscriptionStartDate: Date | null;
     subscriptionEndDate: Date | null;
     articlesPerMonth: number | null;
@@ -122,6 +124,10 @@ type ClientTabsProps = {
     author: { name: string } | null;
   }>;
   form: BriefForm | null;
+  /** The order that governs this client right now — the source of price, term and rep. */
+  activeOrder: ActiveOrderSummary | null;
+  paymentState: ClientPaymentState;
+  clientOrders: ClientOrderRow[];
   articlesThisMonth: number;
   analytics: {
     totalViews: number;
@@ -224,6 +230,9 @@ export function ClientTabs({
   analytics,
   media,
   form,
+  activeOrder,
+  paymentState,
+  clientOrders,
 }: ClientTabsProps) {
   // Delivery
   const promised =
@@ -312,7 +321,10 @@ export function ClientTabs({
 
       {/* ── Tab 1: Overview ── */}
       <TabsContent value="overview" className="space-y-4">
-        {/* ① Profile */}
+        {/* ① The deal — first, because «كم دفع ومتى» is the question this page never answered */}
+        <ClientSubscriptionDeal activeOrder={activeOrder} orders={clientOrders} />
+
+        {/* ② Profile */}
         <SectionCard title="Profile">
           <Grid cols={2}>
             <Field label="Email">
@@ -373,7 +385,7 @@ export function ClientTabs({
           )}
         </SectionCard>
 
-        {/* ② Delivery This Month */}
+        {/* ③ Delivery This Month */}
         <SectionCard
           title="Delivery This Month"
           badge={
@@ -521,7 +533,7 @@ export function ClientTabs({
           media={media.map((m) => ({ ...m, type: m.type as MediaType }))}
         />
         <SecurityTab client={client} />
-        <SettingsTab client={client} />
+        <SettingsTab client={client} paymentState={paymentState} />
         <AdditionalTab client={client} />
       </TabsContent>
 

@@ -69,6 +69,9 @@ export type AuditAction =
   | "order.manual_create"
   // 🟠 Client lifecycle + assets (each changes what a client shows or whether they're live)
   | "client.activate"
+  // تفعيلٌ من طلبٍ مدفوع — يؤسّس الكرت ويربطه بالطلب. يُميَّز عن `client.activate`
+  // أعلاه (تفعيلُ كرتٍ قائم) لأنّ الأوّل يخلق حساباً والثاني يبدّل حالته.
+  | "client.activate-from-order"
   | "client.suspend"
   | "client.seo"
   | "client.logo"

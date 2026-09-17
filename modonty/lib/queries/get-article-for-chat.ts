@@ -33,7 +33,7 @@ export async function getArticleForChat(slug: string) {
           slug: true,
           ctaMode: true,
           addressCity: true,
-          verificationImageUrl: true,
+          isVerified: true,
           logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
           credentials: { select: { name: true } },
         },

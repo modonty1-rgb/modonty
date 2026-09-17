@@ -20,7 +20,8 @@ export type ClientForList = {
   email: string;
   phone: string | null;
   createdAt: Date;
-  subscriptionTier: SubscriptionTier | null;
+  /** فارغٌ = ملفٌّ ناقص: العميل فُعّل من طلبه ولم يُكمَّل ملفّه بعد. */
+  industryId: string | null;
   subscriptionStatus: SubscriptionStatus;
   paymentStatus: PaymentStatus;
   subscriptionEndDate: Date | null;

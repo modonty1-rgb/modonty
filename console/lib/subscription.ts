@@ -11,7 +11,17 @@ export interface SubscriptionData {
   paymentStatus: string | null;
   startDate: Date | null;
   endDate: Date | null;
-  priceSar: number | null;
+  /**
+   * الإجماليّ المدفوع كما هو على الطلب — نصٌّ جاهز بعملته («٢٬٣٩٤ ر.س»).
+   *
+   * كان `priceSar: number` يقرأ `tierConfig.price` ويفترض الريال دائماً، فعميلٌ مصريّ
+   * دفع بالجنيه كان يُعرض له رقمه متبوعاً بـ«SAR». والعملة الآن من الطلب، مجمّدةً يوم
+   * الشراء (MONEY-FLOW · القرار ٤).
+   */
+  paidTotal: string | null;
+  /** المدّة المشتراة وأشهر الهديّة — يعرفهما الطلب ولا يعرفهما الكتالوج. */
+  paidMonths: number | null;
+  bonusServiceMonths: number | null;
 }
 
 export interface SubscriptionProgress {

@@ -36,11 +36,9 @@ async function getAccounts(): Promise<AccountRow[]> {
       id: true,
       name: true,
       email: true,
-      subscriptionTier: true,
       // The real plan the client is on (named tier config), not just the enum.
       subscriptionTierConfig: { select: { name: true } },
       subscriptionStatus: true,
-      paymentStatus: true,
       subscriptionStartDate: true,
       subscriptionEndDate: true,
     },
@@ -81,6 +79,11 @@ async function getAccounts(): Promise<AccountRow[]> {
   // card read PAID for a client sitting on three unpaid invoices and could never show
   // anything but zero (Khalid spotted it 2026-07-24).
   // Archived invoices are void — they stay in the ledger but owe nothing.
+  // وعددُ الفواتير كلّها — لتمييز «مسدَّد» عن «بلا فواتير». طيُّهما في واحدة هي
+  // الكذبة نفسها: ٢٦ عميلاً من ٤٢ على كرتهم «PAID» وما لهم فاتورةٌ واحدة (مقيسٌ ١٧ سبتمبر).
+  const invoiceCountByClient = new Map<string, number>();
+  for (const inv of invoices) invoiceCountByClient.set(inv.clientId, (invoiceCountByClient.get(inv.clientId) ?? 0) + 1);
+
   const unpaidByClient = new Map<string, { count: number; amount: number; currency: string }>();
   for (const inv of invoices) {
     if (inv.paymentStatus === "PAID" || inv.archivedAt) continue;
@@ -100,11 +103,10 @@ async function getAccounts(): Promise<AccountRow[]> {
       id: c.id,
       name: c.name,
       email: c.email,
-      tier: c.subscriptionTier,
-      planName: c.subscriptionTierConfig?.name ?? c.subscriptionTier,
+      planName: c.subscriptionTierConfig?.name ?? "بلا باقة",
       billing: billingMap.get(c.id) ?? null,
       accountStatus: c.subscriptionStatus,
-      paymentStatus: c.paymentStatus,
+      invoiceCount: invoiceCountByClient.get(c.id) ?? 0,
       subscribedDate: fmtDate(c.subscriptionStartDate),
       subscribedTs: c.subscriptionStartDate?.getTime() ?? null,
       activationDate: fmtDate(activation),

@@ -68,25 +68,10 @@ export const clientFormSections: FormSectionConfig[] = [
     availableInCreate: true,
     availableInEdit: true,
   },
-  {
-    id: "subscription",
-    title: "Subscription",
-    description: "Subscription tier",
-    icon: "CreditCard",
-    // subscriptionStatus + paymentStatus removed (2026-06-10): owned by the Activate/Suspend
-    // sidebar pages. subscriptionStartDate + subscriptionEndDate + articlesPerMonth removed
-    // (2026-06-10): dates come from the invoice workflow (Accounts → createInvoiceAction),
-    // and articlesPerMonth is derived from the tier config — neither is edited in this form.
-    fields: [
-      "subscriptionTier",
-      "subscriptionTierConfigId",
-      "billingCycle",
-    ],
-    required: ["subscriptionTier"],
-    priority: "primary",
-    availableInCreate: true,
-    availableInEdit: true,
-  },
+  // مجموعةُ «Subscription» حُذفت (١٧ سبتمبر ٢٠٢٦): لم يبقَ فيها إلّا مال —
+  // `subscriptionTier` و`subscriptionTierConfigId` و`billingCycle`. وكانت الشاشة تسأل
+  // الموظّف عنها فيكتبها على الكرت، فتصير للصفقة الواحدة نسختان: ما دفعه العميل في
+  // الطلب، وما كُتب هنا. والمال يُقرأ الآن من الطلب الساري ومن الفواتير.
   {
     id: "business",
     title: "Content priorities",
@@ -180,7 +165,7 @@ export const clientFormSections: FormSectionConfig[] = [
     // subscriptionStatus/paymentStatus owned by Activate/Suspend only.
     // isFeatured («شريك مميّز») routes here so updateSettingsFields() persists it
     // (the toggle UI is rendered in the Subscription section; grouping is by field name).
-    fields: ["isFeatured", "isInternal", "showSchedule"],
+    fields: ["isFeatured", "isVerified", "isInternal", "showSchedule"],
     required: [],
     priority: "secondary",
     availableInCreate: false,

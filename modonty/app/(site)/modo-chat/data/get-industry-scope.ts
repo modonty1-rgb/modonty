@@ -32,8 +32,8 @@ export interface PartnerForCard {
   city: string | null;
   /** A named licence or accreditation, when he has one. */
   credential: string | null;
-  /** He uploaded his official record image — checked, even without a named credential. */
-  hasVerifiedPapers: boolean;
+  /** شهادةُ فحصِ الأوراق — خانةُ الأدمن، مصدرُ شارة «شريك موثّق» الوحيد. */
+  isVerified: boolean;
 }
 
 const MAX_ARTICLES = 30;
@@ -85,7 +85,7 @@ export async function getIndustryScope(slug: string): Promise<IndustryScope | nu
         description: true,
         slogan: true,
         addressCity: true,
-        verificationImageUrl: true,
+        isVerified: true,
         logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
         credentials: { select: { name: true } },
       },
@@ -106,7 +106,7 @@ export async function getIndustryScope(slug: string): Promise<IndustryScope | nu
       logo: mediaSrc(p.logoMedia) || null,
       city: p.addressCity,
       credential: p.credentials[0]?.name?.trim() || null,
-      hasVerifiedPapers: Boolean(p.verificationImageUrl?.trim()),
+      isVerified: p.isVerified,
     })),
   };
 }

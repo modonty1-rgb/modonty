@@ -66,6 +66,7 @@ export default async function PageContentPage() {
           name: home.data.name,
           logoUrl: home.data.hero.logoUrl,
           phone: home.data.phone,
+          verified: home.data.trust.verified,
           hero: {
             slogan: home.data.hero.slogan,
             description: home.data.hero.description,

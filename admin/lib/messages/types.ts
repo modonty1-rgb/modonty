@@ -219,7 +219,6 @@ export type ClientHintKey =
   | 'postalCode'
   | 'tradeLicense'
   | 'taxId'
-  | 'subscriptionTier'
   | 'credentialsTitle'
   | 'businessType'
   | 'keywords'
@@ -263,13 +262,6 @@ export type ContactMessageHintKey =
   | 'subject'
   | 'message';
 
-// Subscription Tiers hints
-export type SubscriptionTierHintKey =
-  | 'name'
-  | 'description'
-  | 'price'
-  | 'features';
-
 // Union of all hint keys
 export type HintKey =
   | ArticleHintKey
@@ -282,4 +274,4 @@ export type HintKey =
   | SettingHintKey
   | FaqHintKey
   | ContactMessageHintKey
-  | SubscriptionTierHintKey;
+  ;

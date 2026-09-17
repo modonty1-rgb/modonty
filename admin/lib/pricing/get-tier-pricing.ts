@@ -1,6 +1,5 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
-import { SubscriptionTier } from "@prisma/client";
 import { db } from "@/lib/db";
 
 export type Country = "SA" | "EG";
@@ -21,19 +20,27 @@ export interface TierPricingRow {
  * وكان يقرأ `SubscriptionTierConfig.price`، فيعرض «الزخم» بـ١٬٢٩٩ بينما المشتري يدفع
  * ١٬١٩٩ على `pay.modonty.com` — رقمٌ يقرؤه فريق المبيعات ويقوله للعميل.
  *
- * ── الوصلة `tier` لا `jbrseoId` ──
- * `CommercialPlan.tier` حقلٌ موجود يربط باقة البيع بتصنيف العميل التشغيلي
- * (`STANDARD` · `PRO` · `PREMIUM`)، ومقيسٌ حيّاً في القاعدتين: الانطلاقة⇢STANDARD ·
- * الزخم⇢PRO · الريادة⇢PREMIUM. والمفتاح الخارجي يبقى `jbrseoId` كما هو حتى لا
- * تتغيّر نداءات الصفحات، ويُترجَم هنا في موضعٍ واحد.
+ * ── الوصلة صارت السلَق، لا الإنم (١٧ سبتمبر ٢٠٢٦) ──
+ * كانت تمرّ بـ`CommercialPlan.tier` لأنّ سلَق الباقة كان هاشاً (`plan-4e07fc71`) لا
+ * يصلح مفتاحاً مقروءاً. وقد صار للباقات سلَقٌ ذو معنى (`intilaqa` · `zakham` ·
+ * `riyada`)، فسقط الوسيط: يُبحَث بالسلَق مباشرةً.
+ *
+ * وهذا ما كان يحبس الكتالوج في **أربع باقاتٍ للأبد**: الإنم أربع قيم، وحارسُ النشر
+ * يمنع باقتين منشورتين على القيمة الواحدة. بسقوطه يصير العدد مفتوحاً.
  *
  * `مجاني`/`free` لا مقابل له في الكتالوج — يرجع `null`، وصفحات الدليل تتحمّله
  * (التوقيع يرجع `null` أصلاً حين لا تُوجد الباقة).
  */
-const TIER_BY_JBRSEO_ID: Record<string, SubscriptionTier> = {
-  starter: SubscriptionTier.STANDARD,
-  growth: SubscriptionTier.PRO,
-  scale: SubscriptionTier.PREMIUM,
+/**
+ * معرّفُ صفحات الدليل → سلَقُ الباقة في الكتالوج.
+ *
+ * المفتاح الخارجيّ (`starter`…) يبقى كما هو حتى لا تتغيّر نداءات الصفحات، والترجمة
+ * في موضعٍ واحد. وباقةٌ جديدة تُضاف بسطرٍ هنا — أو بلا سطرٍ أصلاً إن وافق اسمُها سلَقَها.
+ */
+const PLAN_SLUG_BY_JBRSEO_ID: Record<string, string> = {
+  starter: "intilaqa",
+  growth: "zakham",
+  scale: "riyada",
 };
 
 /**
@@ -49,11 +56,10 @@ export const getTierPricing = unstable_cache(
     jbrseoId: string,
     country: Country = "SA"
   ): Promise<TierPricingRow | null> => {
-    const tier = TIER_BY_JBRSEO_ID[jbrseoId];
-    if (!tier) return null;
+    const slug = PLAN_SLUG_BY_JBRSEO_ID[jbrseoId] ?? jbrseoId;
 
     const plan = await db.commercialPlan.findFirst({
-      where: { tier, isPublished: true },
+      where: { slug, isPublished: true },
       select: {
         name: true,
         articlesPerMonth: true,

@@ -87,9 +87,9 @@ export async function getClientsSearch(
       likesCount,
       dislikesCount,
       favoritesCount,
-      subscriptionTier: client.subscriptionTier || undefined,
       createdAt: client.createdAt,
-      isVerified: client.subscriptionTier === "PRO" || client.subscriptionTier === "PREMIUM",
+      // نفس المصدر الذي تقرؤه القائمة وصفحة الشريك — خانة الأدمن وحدها.
+      isVerified: client.isVerified,
     };
   });
 }

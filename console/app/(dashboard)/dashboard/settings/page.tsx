@@ -10,6 +10,7 @@ import { PullAddressPanel } from "./components/pull-address-panel";
 import { SiteSeoCheck } from "./components/site-seo-check";
 import { TelegramCard } from "./components/telegram-card";
 import type { SubscriptionData } from "@/lib/subscription";
+import { getActiveOrderForClient, formatOrderMoney } from "@/lib/subscription/active-order";
 import type { NotificationPreferences } from "./actions/settings-actions";
 import type { TelegramEventPreferences } from "@/lib/telegram/events";
 
@@ -24,12 +25,10 @@ export default async function SettingsPage() {
     where: { id: clientId },
     select: {
       notificationPreferences: true,
-      subscriptionTier: true,
       subscriptionStatus: true,
       paymentStatus: true,
       subscriptionStartDate: true,
       subscriptionEndDate: true,
-      subscriptionTierConfig: { select: { name: true, price: true } },
       telegramChatId: true,
       telegramConnectedAt: true,
       telegramEventPreferences: true,
@@ -47,14 +46,17 @@ export default async function SettingsPage() {
   const prefs =
     (client.notificationPreferences as NotificationPreferences | null) ?? null;
 
-  const tier = client.subscriptionTierConfig;
+  // اسم الباقة وسعرها من الطلب الساري — لا من الكتالوج الذي يتغيّر (قاعدة المصدر الواحد).
+  const order = await getActiveOrderForClient(clientId);
   const subscription: SubscriptionData = {
-    tierName: tier?.name ?? client.subscriptionTier ?? "—",
+    tierName: order?.planName ?? "—",
     status: client.subscriptionStatus ?? null,
     paymentStatus: client.paymentStatus ?? null,
     startDate: client.subscriptionStartDate ?? null,
     endDate: client.subscriptionEndDate ?? null,
-    priceSar: tier?.price ?? null,
+    paidTotal: order ? formatOrderMoney(order.totalMinor, order.currency) : null,
+    paidMonths: order?.paidMonths ?? null,
+    bonusServiceMonths: order?.bonusServiceMonths ?? null,
   };
 
   const tgPrefs =

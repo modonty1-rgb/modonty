@@ -20,8 +20,7 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
   if (!lead) notFound();
 
   // متوازيان: العدّ لا يتوقّف على السلَق ولا العكس، وتسلسلهما يضيف رحلةً إلى القاعدة بلا سبب.
-  const [suggestedSlug, followUpCount, sourceLabels, tierLabels] = await Promise.all([
-    lead.convertedClientId ? Promise.resolve("") : suggestSlug(lead.name),
+  const [followUpCount, sourceLabels, tierLabels] = await Promise.all([
     countLeadFollowUps(id),
     getLeadSourceLabels(),
     getTierLabels(),
@@ -84,7 +83,6 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
           <aside aria-label="الصفقة والقرار" className="w-full shrink-0 lg:sticky lg:top-0 lg:w-[260px]">
             <LeadDealRail
               lead={lead}
-              suggestedSlug={suggestedSlug}
               tierLabels={tierLabels}
               dealTotal={dealTotal}
               dealMonths={months}

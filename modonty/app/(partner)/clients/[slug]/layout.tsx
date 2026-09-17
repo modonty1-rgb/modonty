@@ -87,7 +87,10 @@ async function PartnerChrome({ params, slot }: PartnerChromeProps) {
   }
 
   const Header = getHeaderTemplate(site.site?.headerTemplate).Component;
-  const isVerified = Boolean(site.commercialRegistrationNumber || site.legalName || site.verificationImageUrl);
+  // كان يستنتج التوثيق من امتلاء السجلّ أو الاسم النظاميّ أو صورة التوثيق — وكلّها
+  // بياناتٌ يدخلها العميل، فوجودها لا يعني أنّ أحداً فحصها. والقوائم كانت تستنتجه من
+  // الباقة، فظهر العميل موثَّقاً هنا وغيرَ موثَّق هناك. المصدر الآن خانة الأدمن وحدها.
+  const isVerified = site.isVerified;
   // Visible trail lives in the partner header's home link; this machine-readable one tells
   // Google where a sub-page opened straight from search (photos, reviews) sits.
   const breadcrumbTrail = [

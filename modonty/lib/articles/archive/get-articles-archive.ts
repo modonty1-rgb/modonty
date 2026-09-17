@@ -53,9 +53,9 @@ const archiveSelect = {
       name: true,
       slug: true,
       logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
-      // Trust marks. Empty on dev today (0 of 23 partners) — the card simply renders nothing,
-      // and lights up on its own the day the papers are uploaded. No second pass needed.
-      verificationImageUrl: true,
+      // شارة التوثيق — خانةُ الأدمن وحدها منذ ١٧ سبتمبر. كانت تُشتقّ من verificationImageUrl،
+      // أي من صورةٍ يرفعها العميل بنفسه لا من فحصٍ منّا.
+      isVerified: true,
       credentials: { select: { name: true } },
     },
   },
@@ -93,7 +93,7 @@ function mapArchiveArticle(a: ArchivePayload, coreClientId: string | null): Arch
     favorites: a.favoritesCount || 0,
     views: a.viewsCount || 0,
     status: "published",
-    verified: Boolean(a.client.verificationImageUrl?.trim()),
+    verified: a.client.isVerified,
     credential: a.client.credentials[0]?.name?.trim() || null,
   };
 }

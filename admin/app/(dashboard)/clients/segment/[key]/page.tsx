@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
 import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 import { hasStoredOgImage } from "@modonty/shared/lib/seo/client/meta-score";
+import { getPaymentStates, paymentStateLabel, NO_INVOICES } from "@/lib/clients/payment-state";
 import { getSegment } from "../segments";
 import { SegmentTable, type SegmentClient } from "./components/segment-table";
 import { MoneySegmentTable, type MoneySegmentClient } from "./components/money-segment-table";
@@ -31,6 +32,9 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
     take: 300,
   });
 
+  // حالةُ الدفع لكلّ الصفّ دفعةً واحدة — استعلامٌ واحد لا واحدٌ لكلّ صفّ.
+  const payStates = await getPaymentStates(rows.map((c) => c.id));
+
   // Dates cross the server/client boundary as ISO strings — a Date instance would not.
   const clients: SegmentClient[] = rows.map((c) => ({
     id: c.id,
@@ -41,7 +45,10 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
     ctaMode: c.ctaMode,
     isYmyl: c.isYmyl,
     subscriptionStatus: String(c.subscriptionStatus),
-    paymentStatus: String(c.paymentStatus),
+    // من الفواتير لا من الكرت: `Client.paymentStatus` لا يُكتب فيه OVERDUE قطّ،
+    // فكان وسمُ «متأخّر» في هذا الجدول لا يظهر أبداً مهما بلغت المستحقّات.
+    paymentLabel: paymentStateLabel(payStates.get(c.id) ?? NO_INVOICES),
+    paymentBad: (payStates.get(c.id) ?? NO_INVOICES).status === "UNPAID",
     subscriptionStartDate: c.subscriptionStartDate?.toISOString() ?? null,
     subscriptionEndDate: c.subscriptionEndDate?.toISOString() ?? null,
     articleCount: c._count.articles,

@@ -73,6 +73,7 @@ export const clientServerSchema = z.object({
   // Optional boolean fields
   competitiveMentionsAllowed: z.boolean().optional().nullable(),
   isFeatured: z.boolean().optional().nullable(), // featured/premium partner spotlight
+  isVerified: z.boolean().optional().nullable(), // شهادة فحص الأوراق — مصدر شارة التوثيق
   showSchedule: z.boolean().optional().nullable(), // client sees the «مجدولة» tab
   // Publishing to the client's own website. The key itself is never accepted from
   // the form — it is generated server-side, so it is deliberately absent here.
@@ -100,7 +101,6 @@ export const clientServerSchema = z.object({
   heroImageMediaId: z.string().optional().nullable(),
 
   // Enums — passthrough as strings, validated by Prisma
-  subscriptionTier: z.string().optional().nullable(),
   subscriptionStatus: z.string().optional().nullable(),
   paymentStatus: z.string().optional().nullable(),
   metaRobots: z.string().optional().nullable(),

@@ -3,8 +3,6 @@
 import { db } from "@/lib/db";
 import type { ClientFormData } from "@/lib/types";
 import { getFieldsForGroup } from "../../helpers/group-fields-by-tab";
-import { getCatalogArticlesPerMonth, getTierConfigByTier } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
-import { SubscriptionTier } from "@prisma/client";
 import { validateAndNormalizeUrls } from "./validate-and-normalize-urls";
 import { probeArticlesBaseUrl } from "./probe-articles-base-url";
 import { normalizeOrganizationType } from "@modonty/shared/lib/constants/client-classification";
@@ -108,11 +106,8 @@ export async function updateRequiredFields(
         name: true,
         slug: true,
         email: true,
-        subscriptionTier: true,
         subscriptionStartDate: true,
         subscriptionEndDate: true,
-        subscriptionTierConfigId: true,
-        articlesPerMonth: true,
       },
     });
 
@@ -123,43 +118,24 @@ export async function updateRequiredFields(
     // Slug is immutable after creation — always keep original to protect SEO
     data.slug = client.slug;
 
-    // Handle subscription tier logic
-    let articlesPerMonth = data.articlesPerMonth ?? client.articlesPerMonth;
-    let subscriptionTierConfigId = data.subscriptionTierConfigId ?? client.subscriptionTierConfigId;
-
-    const tierChanged = client.subscriptionTier !== data.subscriptionTier;
-
-    if (data.subscriptionTier && tierChanged) {
-      const tierConfig = await getTierConfigByTier(data.subscriptionTier as SubscriptionTier);
-      
-      if (tierConfig) {
-        // الحصّة من الكتالوج — نفس سبب `create-client.ts`.
-        articlesPerMonth =
-          (await getCatalogArticlesPerMonth(data.subscriptionTier as SubscriptionTier))
-          ?? tierConfig.articlesPerMonth;
-        subscriptionTierConfigId = tierConfig.id;
-        
-        if (!tierConfig.isActive) {
-          // Deactivated tier assigned — allowed but tracked via UI warning
-        }
-      } else {
-        // Tier config not found — keeping existing articlesPerMonth
-        articlesPerMonth = client.articlesPerMonth;
-      }
-    } else if (!data.subscriptionTier) {
-      subscriptionTierConfigId = null;
-      articlesPerMonth = null;
-    }
-
+    // منطقُ الباقة كلُّه سقط من هنا (١٧ سبتمبر ٢٠٢٦). وكان فيه فخٌّ صريح:
+    //
+    //     } else if (!data.subscriptionTier) {
+    //       subscriptionTierConfigId = null;
+    //       articlesPerMonth = null;
+    //     }
+    //
+    // أي أنّ **غياب** الحقل من الفورم كان يُقرأ أمراً بالمسح. فلمّا كفّت الشاشة عن سؤال
+    // الباقة (خروج المال من شاشتَي الإنشاء والتعديل)، صار كلُّ حفظٍ للملفّ يمحو حصّة
+    // العميل الشهريّة وربطَه بالكتالوج. اكتُشف بالقياس مباشرةً بعد تلك الدفعة.
+    //
+    // والحصّة والباقة يأتيان من الطلب عند التفعيل، ولا تمسّهما شاشةُ الملفّ.
     const newData: Record<string, unknown> = {
       name: data.name,
       slug: data.slug,
       email: data.email,
-      subscriptionTier: data.subscriptionTier,
       subscriptionStartDate: normalizeDate(data.subscriptionStartDate),
       subscriptionEndDate: normalizeDate(data.subscriptionEndDate),
-      subscriptionTierConfigId,
-      articlesPerMonth,
     };
 
     const updateData = buildGroupUpdateData("required", client as Record<string, unknown>, newData);
@@ -188,54 +164,19 @@ export async function updateRequiredFields(
  * the group-field filter would drop them. Previously nothing persisted the subscription
  * group at all — the tier was silently read-only on edit.
  */
+/**
+ * **لم تعد تكتب شيئاً.** كانت تكتب `subscriptionTier` و`subscriptionTierConfigId`
+ * و`billingCycle` على الكرت من الفورم — وهي نسخةُ المال الثانية التي أسقطتها الورقة.
+ *
+ * تبقى بتوقيعها لأنّ `updateClient` يستدعيها ضمن مجموعاته، وتُحذف مع تنظيف ذلك المستدعي.
+ */
 export async function updateSubscriptionFields(
-  clientId: string,
-  data: Partial<ClientFormData>
+  _clientId: string,
+  _data: Record<string, unknown> | undefined,
 ): Promise<GroupUpdateResult> {
-  try {
-    const client = await db.client.findUnique({
-      where: { id: clientId },
-      select: {
-        subscriptionTier: true,
-        subscriptionTierConfigId: true,
-        articlesPerMonth: true,
-        billingCycle: true,
-      },
-    });
-    if (!client) {
-      return { success: false, error: "Client not found", groupName: "subscription" };
-    }
-
-    const update: Record<string, unknown> = {};
-
-    if (data.subscriptionTier && data.subscriptionTier !== client.subscriptionTier) {
-      update.subscriptionTier = data.subscriptionTier;
-      const tierConfig = await getTierConfigByTier(data.subscriptionTier as SubscriptionTier);
-      if (tierConfig) {
-        update.subscriptionTierConfigId = tierConfig.id;
-        update.articlesPerMonth = tierConfig.articlesPerMonth;
-      }
-    }
-
-    if (data.billingCycle && data.billingCycle !== client.billingCycle) {
-      update.billingCycle = data.billingCycle;
-    }
-
-    if (Object.keys(update).length === 0) {
-      return { success: true, groupName: "subscription", fieldsUpdated: 0 };
-    }
-
-    await db.client.update({ where: { id: clientId }, data: update });
-    return { success: true, groupName: "subscription", fieldsUpdated: Object.keys(update).length };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update subscription";
-    return { success: false, error: message, groupName: "subscription" };
-  }
+  return { success: true, groupName: "subscription", fieldsUpdated: 0 };
 }
 
-/**
- * Updates Settings fields group (subscription/payment status and similar toggles)
- */
 export async function updateSettingsFields(
   clientId: string,
   data: Partial<ClientFormData>
@@ -247,6 +188,7 @@ export async function updateSettingsFields(
         subscriptionStatus: true,
         paymentStatus: true,
         isFeatured: true,
+        isVerified: true,
         isInternal: true,
         showSchedule: true,
       },
@@ -260,6 +202,7 @@ export async function updateSettingsFields(
       subscriptionStatus: data.subscriptionStatus ?? client.subscriptionStatus,
       paymentStatus: data.paymentStatus ?? client.paymentStatus,
       isFeatured: data.isFeatured ?? client.isFeatured,
+      isVerified: data.isVerified ?? client.isVerified,
       isInternal: data.isInternal ?? client.isInternal,
       showSchedule: data.showSchedule ?? client.showSchedule,
     };

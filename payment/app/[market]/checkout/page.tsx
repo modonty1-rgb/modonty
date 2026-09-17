@@ -90,7 +90,7 @@ export default async function CheckoutPage({
   if (!plan || !term) redirect(`/${slug}/plans`);
 
   const snapshot = buildOrderSnapshot({
-    plan: { id: plan.id, slug: plan.slug, name: plan.name, tier: plan.tier, articlesPerMonth: plan.articlesPerMonth },
+    plan: { id: plan.id, slug: plan.slug, name: plan.name, articlesPerMonth: plan.articlesPerMonth },
     price: { market, currency: plan.currency, monthlyBase: plan.monthlyBase },
     term: { paidMonths: term.paidMonths, bonusServiceMonths: term.bonusServiceMonths },
     vatRateBp: vatRateBpForMarket(market),

@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { getDashboardAlerts } from "./actions/dashboard-actions";
 import { DashboardAlertsBanner } from "./components/dashboard-alerts-banner";
+import { AwaitingActivationCard } from "./components/awaiting-activation-card";
 import { DashboardNav } from "./components/dashboard-nav";
 import { PlatformSeoOverall } from "./components/sections/platform-seo-overall";
 import { TodayStrip } from "./components/sections/today-strip";
@@ -56,6 +57,12 @@ export default async function DashboardPage() {
 
       {/* Urgent cross-source alerts — renders nothing when all is clear */}
       <DashboardAlertsBanner alerts={alerts} />
+
+      {/* المال الذي وصل والخدمة لم تبدأ — أعلى بندٍ في الفرز لأنّه الوحيد الذي يخصّ عميلاً
+          دفع ولم يأخذ شيئاً بعد. يختفي تماماً حين لا ينتظر أحد (ACTIVATION-FLOW §1). */}
+      <Suspense fallback={<Skeleton className="h-[74px] w-full rounded-2xl" />}>
+        <AwaitingActivationCard />
+      </Suspense>
 
       {/* The seven modonty listing pages — meta + JSON-LD + their link to Settings.
           Sits right under the platform number because it explains it: these are the

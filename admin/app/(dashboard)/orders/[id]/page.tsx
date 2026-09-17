@@ -14,6 +14,7 @@ import { confirmOrderPaymentAction, createInvoiceFromOrderAction, getExistingCli
 import { ConfirmTransferButton } from "../components/confirm-transfer-button";
 import { WhatsappInvoiceButton } from "../components/whatsapp-invoice-button";
 import { buildInvoiceWhatsappLink } from "../helpers/build-invoice-whatsapp-link";
+import { ActivateOrderButton } from "../components/activate-order-button";
 import { OrderStatusBadge } from "../components/order-status-badge";
 import { formatOrderDate } from "../helpers/format-order-date";
 import { formatOrderDateTime } from "../helpers/format-order-date-time";
@@ -143,7 +144,20 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               <Button type="submit" size="sm">ربط بالعميل القائم — {existingClient.name}</Button>
             </form>
           ) : (
-            <Link href={`/clients/new?orderId=${order.id}`} className={buttonVariants({ variant: "default", size: "sm" })}>إنشاء حساب العميل</Link>
+            // كان يفتح `/clients/new?orderId=` — فورمٌ يعيد سؤال الموظّف عن الباقة والسعر
+            // والمدّة، وكلّها مكتوبةٌ في هذا الطلب. صار نفس زرّ القائمة: نافذةٌ تقرأ ولا تسأل.
+            <ActivateOrderButton
+              order={{
+                id: order.id,
+                number: order.number,
+                buyerName: order.buyerName,
+                businessName: order.businessName,
+                buyerEmail: order.buyerEmail,
+                planName: order.planName,
+                totalLabel: formatOrderMoney(order.totalMinor, order.currency),
+                termLabel: formatMonths(order.paidMonths) + (order.bonusServiceMonths ? ` + ${formatMonths(order.bonusServiceMonths)} هديّة` : ""),
+              }}
+            />
           )
         ) : null}
         {order.status === "PAID" && order.clientId && !order.invoiceId && isFinanceAdmin ? (

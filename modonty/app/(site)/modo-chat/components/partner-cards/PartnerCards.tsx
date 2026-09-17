@@ -19,8 +19,8 @@ export interface SuggestedPartner {
   city?: string | null;
   /** A named licence or accreditation. */
   credential?: string | null;
-  /** His official papers were checked, even without a named credential. */
-  hasVerifiedPapers?: boolean;
+  /** شارة «شريك موثّق» — خانةُ الأدمن وحدها. */
+  isVerified?: boolean;
 }
 
 /**
@@ -56,8 +56,8 @@ export function PartnerCards({
       </p>
 
       {partners.map((partner) => {
-        const trustLine = partner.credential?.trim()
-          || (partner.hasVerifiedPapers ? "أوراقه الرسمية مفحوصة" : null);
+        // «أوراقه الرسمية مفحوصة» سقطت (خالد ١٧ سبتمبر): الشارة تؤدّي المدلول كاملاً.
+        const trustLine = partner.credential?.trim() || null;
 
         return (
           <Card key={partner.slug} className="overflow-hidden p-0">
@@ -70,7 +70,7 @@ export function PartnerCards({
               <div className="min-w-0 flex-1">
                 <p className="flex items-center gap-1.5 text-sm font-bold leading-snug text-foreground">
                   <span className="truncate">{partner.name}</span>
-                  {(partner.hasVerifiedPapers || partner.credential) && (
+                  {partner.isVerified && (
                     <VerifiedBadge className="h-4 w-4" label="شريك موثّق" />
                   )}
                 </p>

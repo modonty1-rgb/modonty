@@ -49,7 +49,6 @@ export async function convertOpeningBalanceAction(clientId: string): Promise<Con
       billingCycle: true,
       isInternal: true,
       createdAt: true,
-      subscriptionTier: true,
       subscriptionTierConfig: { select: { name: true } },
     },
   });
@@ -89,8 +88,8 @@ export async function convertOpeningBalanceAction(clientId: string): Promise<Con
       data: {
         number,
         clientId: client.id,
-        tier: client.subscriptionTier,
-        tierName: client.subscriptionTierConfig?.name ?? client.subscriptionTier,
+        // نفس سبب `create-invoice`: `tier` بلا قارئ، و`tierName` هي اللقطة.
+        tierName: client.subscriptionTierConfig?.name ?? "—",
         period,
         currency: currencyForCountry(client.addressCountry),
         amount: client.openingBalance,

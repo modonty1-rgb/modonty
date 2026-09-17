@@ -94,9 +94,10 @@ export async function getClientsWithCounts(serviceId?: string): Promise<ClientRe
       likesCount,
       dislikesCount,
       favoritesCount,
-      subscriptionTier: client.subscriptionTier || undefined,
       createdAt: client.createdAt,
-      isVerified: client.subscriptionTier === 'PRO' || client.subscriptionTier === 'PREMIUM',
+      // شارة التوثيق: خانةٌ يضعها الأدمن بعد فحص الأوراق، لا تُستنتج من الباقة ولا من
+      // امتلاء حقلٍ أدخله العميل بنفسه (خالد ١٧ سبتمبر ٢٠٢٦).
+      isVerified: client.isVerified,
       isFeatured: client.isFeatured, // featured/premium partner spotlight (admin toggle)
       ctaMode: client.ctaMode,
       ctaLabel: client.ctaLabel || undefined,

@@ -25,7 +25,6 @@ interface ClientCardProps {
   likesCount: number;
   dislikesCount: number;
   favoritesCount: number;
-  subscriptionTier?: string;
   isVerified: boolean;
   /** Featured/premium partner (annual) — adds the gold spotlight ribbon. */
   isFeatured?: boolean;

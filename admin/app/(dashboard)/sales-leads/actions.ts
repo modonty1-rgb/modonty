@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
-import { createClient } from "@/app/(dashboard)/clients/actions/clients-actions/create-client";
 import { findLeadByPhone } from "./helpers/find-lead-by-phone";
 import { leadSchema, type LeadInput } from "./helpers/lead-schema";
 import { followUpSchema, lostSchema, type FollowUpInput, type LostInput } from "./helpers/follow-up-schema";
@@ -413,86 +412,14 @@ export async function reopenLead(id: string): Promise<Result> {
 }
 
 /**
- * Turn a lead into a real client on Modonty.
+ * **حُذفت `convertLeadToClient` (١٧ سبتمبر ٢٠٢٦).**
  *
- * It calls the ordinary `createClient` rather than writing the row itself. That action owns
- * slug and email uniqueness, the tier config, the client's SEO, the default password and the
- * audit entry — half a dozen steps a second creation path would drift away from in a month.
+ * كانت تسأل الموظّف «اختر الباقة» ثمّ تؤسّس الكرت مباشرةً — بابُ ميلادٍ ثالث بفلوسٍ
+ * مكتوبةٍ باليد، لا طلبَ وراءها ولا مبلغَ مدفوع. وهي نفسُ النسخة الثانية التي
+ * أسقطتها الورقة من شاشتَي الإنشاء والتعديل.
  *
- * The lead row is not deleted. It stays as the record of where this client came from, and
- * `convertedClientId` joins the two halves of the journey.
+ * والمسار الآن واحد: زرُّ «حوّله إلى عميل» يفتح `/orders/new?leadId=` — طلبٌ بمبلغٍ
+ * حقيقيّ — ثمّ يُفعَّل بزرّ «فعّل» نفسه، فيُختَم `convertedClientId` من هناك
+ * (`lib/orders/activate-from-order.ts`). مصدرٌ واحد للمال، ومَولدٌ واحد للعميل.
  */
-export async function convertLeadToClient(
-  id: string,
-  input: { slug: string; email: string; subscriptionTier: string },
-): Promise<Result> {
-  const gate = await requireAdmin();
-  if ("error" in gate) return { success: false, error: gate.error };
 
-  const lead = await db.salesLead.findUnique({ where: { id } });
-  if (!lead) return { success: false, error: "العميل غير موجود." };
-  if (lead.convertedClientId) return { success: false, error: "تم تحويل هذا العميل مسبقاً." };
-
-  const created = await createClient({
-    name: lead.name,
-    slug: input.slug.trim(),
-    email: input.email.trim(),
-    phone: lead.phone ?? undefined,
-    url: lead.website ?? undefined,
-    industryId: lead.industryId ?? undefined,
-    // الربط الذي كان في السكيما قبل هذا الشغل كلّه: مَن تابع المحتمَل يصير مندوب العميل.
-    // هذه اللحظة الوحيدة التي يُعرف فيها الجواب — لو فاتت لن يُعرف بعدها.
-    salesRepId: lead.ownerId ?? lead.createdById ?? undefined,
-    subscriptionTier: input.subscriptionTier,
-  } as never);
-
-  if (!created.success) {
-    // رسالة `createClient` تُمرَّر كما هي: هي التي تعرف السبب («السلَق مستخدم» · «الإيميل
-    // مستخدم من عميل آخر»)، واستبدالها برسالة عامّة يمسح الخطوة التالية من أمام فاتن.
-    return { success: false, error: created.error || "ما قدرنا ننشئ العميل." };
-  }
-
-  const clientId = created.client?.id;
-  if (!clientId) return { success: false, error: "أُنشئ العميل لكن ما قدرنا نربطه — راجعي قائمة العملاء." };
-
-  const now = new Date();
-  await db.salesLead.update({
-    where: { id },
-    data: {
-      convertedClientId: clientId,
-      convertedAt: now,
-      stage: "WON",
-      status: "ACTIVE",
-      nextActionAt: null,
-      nextActionNote: null,
-    },
-  });
-
-  const open = await db.salesLeadFollowUp.findMany({
-    where: { leadId: id },
-    select: { id: true, doneAt: true, nextActionAt: true },
-    take: 500,
-  });
-  const openIds = open.filter((r) => r.nextActionAt != null && r.doneAt == null).map((r) => r.id);
-  if (openIds.length) {
-    await db.salesLeadFollowUp.updateMany({ where: { id: { in: openIds } }, data: { doneAt: now } });
-  }
-
-  await db.salesLeadFollowUp.create({
-    data: {
-      leadId: id,
-      channel: "NOTE",
-      happenedAt: now,
-      body: "تحوّل إلى عميل على مدونتي. 🎉",
-      nextActionAt: null,
-      nextActionNote: null,
-      doneAt: now,
-      stageAfter: "WON",
-      createdById: gate.userId,
-    },
-  });
-
-  revalidateLead(id);
-  revalidatePath("/clients");
-  return { success: true, id: clientId };
-}

@@ -18,6 +18,8 @@ interface PartnerStripProps {
     description?: string | null;
     businessBrief?: string | null;
     slogan?: string | null;
+    /** شارة «شريك موثّق» — خانةُ الأدمن وحدها. */
+    isVerified?: boolean;
     logoMedia?: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   };
   cta?: {
@@ -60,7 +62,8 @@ export function PartnerStrip({ client, cta }: PartnerStripProps) {
             className="flex items-center gap-1 text-[13px] font-semibold leading-tight text-foreground hover:text-primary"
           >
             <span className="truncate">{client.name}</span>
-            <VerifiedBadge className="size-3.5" label="شريك موثّق" />
+            {/* // مشروطةٌ بخانة الأدمن منذ ١٧ سبتمبر — كانت تُرسم لكل شريك بلا استثناء. */}
+            {client.isVerified && <VerifiedBadge className="size-3.5" label="شريك موثّق" />}
           </Link>
           {credential && (
             <p className="mt-0.5 line-clamp-1 text-[11px] leading-tight text-muted-foreground">

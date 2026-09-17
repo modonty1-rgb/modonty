@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { ArrowLeftRight, CalendarClock, Pencil, Wallet } from "lucide-react";
+import { ArrowLeftRight, CalendarClock, Pencil, Receipt, Wallet } from "lucide-react";
 
-import { ConvertDialog } from "./convert-dialog";
 import { LostDialog, ReopenButton } from "./lost-dialog";
 
 import { Button } from "@/components/ui/button";
@@ -22,13 +21,11 @@ import type { LeadDetail } from "../helpers/get-lead";
  */
 export function LeadDealRail({
   lead,
-  suggestedSlug,
   tierLabels,
   dealTotal,
   dealMonths,
 }: {
   lead: LeadDetail;
-  suggestedSlug: string;
   /** أسماء الباقات من `modonty_plans` — لا خريطةٌ مكتوبة في الكود. */
   tierLabels: Record<string, string>;
   /** إجماليّ الصفقة للمدّة كلّها، ومدّتها — محسوبان على السيرفر بنفس دالّة شاشة التأسيس. */
@@ -145,15 +142,16 @@ export function LeadDealRail({
         </Card>
       ) : (
         <div className="space-y-2">
-          <ConvertDialog
-            leadId={lead.id}
-            leadName={lead.name}
-            suggestedSlug={suggestedSlug}
-            email={lead.email}
-            expectedTier={lead.expectedTier}
-            tierLabels={tierLabels}
-            className="w-full"
-          />
+          {/* كانت نافذةً تسأل «اختر الباقة» ثمّ تؤسّس الكرت مباشرةً — بابُ ميلادٍ ثالث
+              بفلوسٍ مكتوبةٍ باليد، لا طلبَ وراءها ولا مبلغَ مدفوع.
+
+              صارت تفتح **طلباً** بالهويّة معبّأةً من المحتمَل، والمبلغُ يُكتب بما اتُّفق
+              عليه فعلاً. ومن الطلب يُولد العميل بزرّ «فعّل» نفسه — مصدرٌ واحد للمال. */}
+          <Button asChild size="sm" className="w-full gap-1.5">
+            <Link href={`/orders/new?leadId=${lead.id}`}>
+              <Receipt className="size-3.5" aria-hidden /> حوّله إلى عميل — افتح طلباً
+            </Link>
+          </Button>
           <div className="flex gap-2">
             {/* `asChild`: زرٌّ داخل رابط تعشيقٌ ممنوع في المواصفة — والوجهة رابط فالعنصر رابط. */}
             <Button asChild variant="outline" size="sm" className="flex-1 gap-1.5">

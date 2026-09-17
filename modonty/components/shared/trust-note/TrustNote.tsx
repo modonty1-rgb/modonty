@@ -5,8 +5,6 @@ import { messages } from "@/lib/i18n/messages";
 interface TrustNoteProps {
   /** A named licence or accreditation — «ISO 9001», «عضوية الجمعية الأمريكية…». */
   credential?: string | null;
-  /** He uploaded his official record image, without naming an accreditation. */
-  hasVerifiedPapers?: boolean;
   className?: string;
 }
 
@@ -17,8 +15,11 @@ interface TrustNoteProps {
  * (measured 2026-08-16: 4 partners with papers, 0 with a single approved review).
  * Renders nothing when there is nothing verified — never a placeholder.
  */
-export function TrustNote({ credential, hasVerifiedPapers, className }: TrustNoteProps) {
-  const label = credential?.trim() || (hasVerifiedPapers ? messages.shared.badges.verifiedLicenseLabel : null);
+export function TrustNote({ credential, className }: TrustNoteProps) {
+  // «أوراقه الرسميّة مفحوصة» سقطت (خالد ١٧ سبتمبر): شارة «شريك موثّق» تؤدّي المدلول
+  // كاملاً، وكانت تُشتقّ من verificationImageUrl — صورةٌ يرفعها العميل، لا شهادةَ فحصٍ
+  // منّا. ويبقى credential وحده: شهادةٌ مُسمّاة («ISO 9001») تقول أكثر من الشارة.
+  const label = credential?.trim() || null;
   if (!label) return null;
 
   return (

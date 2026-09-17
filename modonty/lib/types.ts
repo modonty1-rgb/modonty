@@ -203,7 +203,6 @@ export interface ClientResponse {
   likesCount: number;
   dislikesCount: number;
   favoritesCount: number;
-  subscriptionTier?: string;
   createdAt: Date;
   isVerified: boolean;
   isFeatured?: boolean; // featured/premium partner spotlight (admin toggle)

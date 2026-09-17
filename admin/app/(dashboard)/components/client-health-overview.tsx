@@ -95,9 +95,9 @@ export function ClientHealthOverview({ health }: ClientHealthOverviewProps) {
                             )}
                           </Badge>
                         )}
-                      {client.paymentStatus === "OVERDUE" && (
-                        <Badge variant="destructive">Overdue</Badge>
-                      )}
+                      {/* حُذفت شارةُ «Overdue»: كانت تقرأ `Client.paymentStatus === "OVERDUE"`
+                          ولا مسارَ في الكود يكتب OVERDUE فيه — فلم تظهر مرّةً واحدة.
+                          والمتأخّرات الحقيقيّة لها قائمتُها على اللوحة، مبنيّةً على الفواتير. */}
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" asChild>

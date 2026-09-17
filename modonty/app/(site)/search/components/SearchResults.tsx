@@ -110,7 +110,6 @@ export function SearchResults({
                 likesCount={client.likesCount}
                 dislikesCount={client.dislikesCount}
                 favoritesCount={client.favoritesCount}
-                subscriptionTier={client.subscriptionTier}
                 isVerified={client.isVerified}
                 url={client.url}
                 highlightQuery={query}

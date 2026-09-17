@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, CreditCard, Shield, Plus, Loader2, Mail } from "lucide-react";
-import type { SubscriptionTier } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,28 +17,14 @@ import { useToast } from "@/hooks/use-toast";
 import { useClientForm } from "../../helpers/hooks/use-client-form";
 import { clientCreateFormSchema } from "../../helpers/client-form-schema";
 import { sendClientWelcome } from "../../actions/clients-actions";
-import { linkOrderToClient } from "@/lib/orders/link-order-to-client";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
 import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/shared/lib/seo/ymyl-config";
 import { LEGAL_FORMS, type LegalForm } from "@modonty/shared/lib/constants/client-classification";
-import { resolvePricing } from "../../../subscription-tiers/lib/pricing";
 
 interface CreatedClient {
   id: string;
   name: string;
   email: string;
-}
-
-interface OrderPrefill {
-  orderId: string;
-  name: string;
-  email: string;
-  phone: string;
-  addressCountry: string | null;
-  subscriptionTier: string | null;
-  planName: string;
-  billingCycle: "monthly" | "annual";
-  openingBalance: number;
 }
 
 interface CreateClientFormProps {
@@ -48,36 +33,19 @@ interface CreateClientFormProps {
   countries?: Array<{ code: string; nameAr: string; nameEn: string }>;
   salesReps?: Array<{ id: string; name: string }>;
   editors?: Array<{ id: string; name: string }>;
-  /** PAY-E3: when set (from /clients/new?orderId=…), the identity + plan fields the
-   *  order already carries are pre-filled — the rest (industry, sales rep, opening
-   *  balance) stays a human decision, same as any other create. */
-  prefill?: OrderPrefill | null;
 }
 
 // Self-contained CREATE UI. Backend is shared via useClientForm (createClient).
 // Editing has its own UI (ClientForm) — changes here never affect it.
-export function CreateClientForm({ industries = [], siteUrl = null, countries = [], salesReps = [], editors = [], prefill = null }: CreateClientFormProps) {
+export function CreateClientForm({ industries = [], siteUrl = null, countries = [], editors = [] }: CreateClientFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [created, setCreated] = useState<CreatedClient | null>(null);
   const [sending, setSending] = useState(false);
 
-  const { form, handleSubmit, loading, error, tierConfigs } = useClientForm({
+  const { form, handleSubmit, loading, error } = useClientForm({
     schema: clientCreateFormSchema,
-    onCreated: async (client) => {
-      if (prefill?.orderId) {
-        try {
-          await linkOrderToClient(prefill.orderId, client.id);
-        } catch (linkError) {
-          toast({
-            title: "العميل انحفظ، لكن الربط بالطلب فشل",
-            description: linkError instanceof Error ? linkError.message : "افتح الطلب واربطه يدوياً.",
-            variant: "destructive",
-          });
-        }
-      }
-      setCreated(client);
-    },
+    onCreated: setCreated,
   });
   const { watch, setValue, register, formState: { errors } } = form;
 
@@ -87,45 +55,13 @@ export function CreateClientForm({ industries = [], siteUrl = null, countries = 
   // wins — this effect only fills the gap when there is no prefill to say otherwise.
   useEffect(() => {
     if (!form.getValues("addressCountry")) {
-      setValue("addressCountry", prefill?.addressCountry || "SA", { shouldValidate: false });
+      setValue("addressCountry", "SA", { shouldValidate: false });
     }
+    // هذه الصفحة لم يعد لها إلّا نوعٌ واحد. تُكتب هنا لا في الـ`defaultValues` لأنّ
+    // `useClientForm` مشتركٌ مع شاشة التعديل، وتغييرُ افتراضيّاته يمسّها.
+    setValue("isInternal", true, { shouldValidate: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Identity fields from the order snapshot — set once, on mount, same pattern as
-  // addressCountry above. The admin can still edit every field before submitting.
-  useEffect(() => {
-    if (!prefill) return;
-    if (prefill.name) setValue("name", prefill.name, { shouldDirty: true });
-    if (prefill.email) setValue("email", prefill.email, { shouldDirty: true });
-    if (prefill.phone) setValue("phone", prefill.phone, { shouldDirty: true });
-    if (prefill.billingCycle) setValue("billingCycle", prefill.billingCycle, { shouldDirty: true });
-    // The order's own total — not the generic tier-catalog guess below (Fable, 11 Sep:
-    // measured 0 live — the catalog's own price bucket can differ from, or simply not
-    // yet be resolved for, this exact plan/market when the tier is still settling in).
-    if (prefill.openingBalance > 0) setValue("openingBalance", prefill.openingBalance, { shouldDirty: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // subscriptionTier waits for tierConfigs to load (a plain useEffect([]) would fire
-  // before the async fetch resolves, and the watch()-driven articlesPerMonth/
-  // subscriptionTierConfigId sync in useClientForm needs a real tierConfigs entry to
-  // find — setting the value before that would silently skip that sync).
-  //
-  // Matched by NAME first, not the raw tier enum: CommercialPlan.tier (the checkout
-  // catalog) and SubscriptionTierConfig.tier (this form's catalog) do not share one
-  // mapping — "الانطلاقة" is BASIC in one and STANDARD in the other, and that catalog's
-  // own BASIC is an unrelated free tier. Matching the enum directly would silently drop
-  // a paying client onto the free tier (measured live testing this exact order).
-  useEffect(() => {
-    if (!prefill || tierConfigs.length === 0) return;
-    if (form.getValues("subscriptionTier")) return;
-    const byName = tierConfigs.find((cfg) => cfg.name === prefill.planName);
-    const tier = byName?.tier ?? (prefill.subscriptionTier as SubscriptionTier | undefined);
-    if (!tier) return;
-    setValue("subscriptionTier", tier, { shouldValidate: true, shouldDirty: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tierConfigs]);
 
   // After create: either send the welcome email (login creds) or skip — then go to list.
   const finishToList = () => {
@@ -148,31 +84,6 @@ export function CreateClientForm({ industries = [], siteUrl = null, countries = 
   };
 
   const v = watch();
-
-  // Tiers shown ascending by price (مجاني → الأعلى) for natural scanning.
-  const sortedTiers = [...tierConfigs].sort((a, b) => a.price - b.price);
-
-  // Currency follows the client's country (Egypt → EGP, everything else → SAR), the same
-  // rule the Accounts/invoice pages use. Shown read-only here so the money section is complete.
-  const currency: "EGP" | "SAR" = /^eg/i.test(v.addressCountry ?? "") ? "EGP" : "SAR";
-  const billingCycle = v.billingCycle ?? "annual";
-
-  // Auto-fill the opening balance = unit price (country + cycle aware) × the cycle's months
-  // (annual → 12, monthly → 1). Admin can override for a client who paid a different amount.
-  // Internal accounts are free, so they carry no balance. Skipped when an order prefilled
-  // it already (see the identity effect above) — that is the real amount paid, and this
-  // catalog guess must never overwrite it once subscriptionTier finishes resolving.
-  useEffect(() => {
-    if (v.isInternal) return;
-    if (prefill) return;
-    const cfg = tierConfigs.find((c) => c.tier === v.subscriptionTier);
-    if (!cfg) return;
-    const bucket = currency === "EGP" ? resolvePricing(cfg.name, cfg.pricing).EG : resolvePricing(cfg.name, cfg.pricing).SA;
-    const unit = billingCycle === "monthly" ? bucket.mo : bucket.yr;
-    const months = billingCycle === "monthly" ? 1 : 12;
-    setValue("openingBalance", unit * months, { shouldValidate: false });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v.subscriptionTier, v.billingCycle, v.addressCountry, v.isInternal, tierConfigs]);
 
   return (
     <>
@@ -241,137 +152,37 @@ export function CreateClientForm({ industries = [], siteUrl = null, countries = 
       </Card>
 
 
-      {/* 4. Financial — plan, billing cycle, currency, featured. Dates + payment status are
-          set later by the invoice/activation workflow, not at creation. */}
+      {/* 4. الحساب — وما فيه مالٌ يُدخَل.
+          كان هنا «القسم الماليّ»: بطاقاتُ باقات وسعرٌ ودورةُ فوترة ورصيدٌ افتتاحيّ،
+          كلّها يكتبها الموظّف بيده. وهذه الصفحة صارت **للحسابات الداخليّة وحدها**،
+          والحساب الداخليّ مجّانيّ بطبيعته — فلا باقة له ولا سعر ولا دورة.
+          والعميل الذي يدفع يُفعَّل من طلبه في /orders، حيث الأرقام مكتوبةٌ أصلاً. */}
       <Card
         icon={<CreditCard />}
         tone="green"
-        title="القسم المالي"
-        desc="الباقة، الفوترة، والعملة — التواريخ تُضبط عند الفوترة"
-        headerRight={
-          <div className="flex items-center gap-2">
-            <Label className="text-xs font-bold whitespace-nowrap">
-              المندوب<span className="text-destructive ms-0.5">*</span>
-            </Label>
-            <Select value={v.salesRepId || undefined} onValueChange={(val) => setValue("salesRepId", val || null, { shouldValidate: true })}>
-              <SelectTrigger className={`h-9 w-[190px] ${errors.salesRepId ? "border-destructive ring-1 ring-destructive/40" : ""}`}>
-                <SelectValue placeholder="اختر المندوب…" />
-              </SelectTrigger>
-              <SelectContent>
-                {salesReps.map((rep) => <SelectItem key={rep.id} value={rep.id}>{rep.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-        }
+        title="الحساب"
+        desc="حسابٌ داخليّ مجّانيّ — خارج كل فوترةٍ وتجديدٍ وعدّادِ مال"
       >
-        <p className="text-xs font-semibold text-muted-foreground mb-2">الباقة</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {sortedTiers.map((cfg) => {
-            const selected = v.subscriptionTier === cfg.tier;
-            // Price follows the client's country + billing cycle (same source as the
-            // Accounts page): EG bucket for Egypt, SA otherwise; monthly vs annual rate.
-            const bucket = currency === "EGP" ? resolvePricing(cfg.name, cfg.pricing).EG : resolvePricing(cfg.name, cfg.pricing).SA;
-            const amount = billingCycle === "monthly" ? bucket.mo : bucket.yr;
-            return (
-              <button
-                key={cfg.tier}
-                type="button"
-                onClick={() => setValue("subscriptionTier", cfg.tier, { shouldValidate: true })}
-                className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-start transition-all ${
-                  selected ? "border-primary bg-primary/[0.07] ring-2 ring-primary/20" : "border-input hover:border-primary/40"
-                }`}
-              >
-                <div className="min-w-0">
-                  <div className="text-[13px] font-bold truncate">{cfg.name}</div>
-                  <div className="text-[10px] text-muted-foreground">
-                    {cfg.articlesPerMonth > 0 ? `${cfg.articlesPerMonth} مقالات/شهر` : "تجربة"}
-                  </div>
-                </div>
-                <div className="shrink-0 text-end text-sm font-extrabold tabular-nums">
-                  {amount > 0 ? amount.toLocaleString() : "0"}
-                  <span className="text-[10px] font-medium text-muted-foreground"> {currency === "EGP" ? "جنيه" : "ريال"}</span>
-                  <div className="text-[9px] font-normal text-muted-foreground">/شهر</div>
-                </div>
-              </button>
-            );
-          })}
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+          <div className="flex items-center gap-2 rounded-lg border border-primary bg-primary/[0.07] px-3 py-2 ring-2 ring-primary/20">
+            <span className="truncate text-[13px] font-bold">🏛️ حساب داخلي</span>
+            <span className="ms-auto shrink-0 text-[10px] font-medium text-muted-foreground">مجاني — مثبَّت</span>
+          </div>
 
-          {/* Fourth card — internal/platform account (free, excluded from all billing).
-              Independent toggle (isInternal), not a subscription tier. */}
+          {/* موثَّق — شهادةُ فحصٍ منّا لا حقلُ بيانات منه: السجلّ التجاريّ وصورة التوثيق
+              يدخلهما العميل، فامتلاؤها لا يعني أنّ أحداً راجعها. وهي مصدر شارة
+              «شريك موثّق» على مدونتي — القوائم والبحث وبطاقات المقال. */}
           <button
             type="button"
-            onClick={() => setValue("isInternal", !v.isInternal, { shouldDirty: true })}
+            onClick={() => setValue("isVerified", !(v.isVerified ?? true), { shouldDirty: true })}
             className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-start transition-all ${
-              v.isInternal ? "border-primary bg-primary/[0.07] ring-2 ring-primary/20" : "border-dashed border-input hover:border-primary/40"
+              (v.isVerified ?? true) ? "border-primary bg-primary/[0.07] ring-2 ring-primary/20" : "border-dashed border-input hover:border-primary/40"
             }`}
           >
-            <span className="text-[13px] font-bold truncate">🏛️ حساب داخلي</span>
-            <span className="ms-auto shrink-0 text-[10px] font-medium text-muted-foreground">مجاني</span>
+            <span className="truncate text-[13px] font-bold">✅ موثَّق</span>
+            <span className="ms-auto shrink-0 text-[10px] font-medium text-muted-foreground">فحصنا أوراقه</span>
           </button>
         </div>
-        {errors.subscriptionTier && <p className="text-xs text-destructive mt-2">{errors.subscriptionTier.message}</p>}
-
-        {/* Billing cycle + currency — the money inputs at creation (rep is in the header). */}
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
-          <Field label="دورة الفوترة">
-            <div className="grid grid-cols-2 gap-2">
-              {([["annual", "سنوي"], ["monthly", "شهري"]] as const).map(([val, label]) => {
-                const on = billingCycle === val;
-                return (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => setValue("billingCycle", val, { shouldDirty: true })}
-                    className={`rounded-lg border py-2.5 text-sm font-semibold transition ${
-                      on ? "border-primary bg-primary/[0.07] ring-2 ring-primary/20" : "border-input hover:border-primary/40"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-            <Help>السنوي يمنح مكافأة الشهور الإضافية</Help>
-          </Field>
-          <Field label="العملة">
-            <div className="flex h-[42px] items-center rounded-lg border border-input bg-muted/30 px-3">
-              <span className="text-sm font-semibold">
-                {currency === "EGP" ? "جنيه مصري (EGP)" : "ريال سعودي (SAR)"}
-              </span>
-            </div>
-            <Help>تتبع دولة العميل تلقائياً</Help>
-          </Field>
-        </div>
-
-        {/* Opening balance — the founding payment («تأسيسه معناه دفع»). Recorded as revenue
-            immediately (paid date = today's creation). NO invoice now; the first invoice is
-            generated later from the account page once the client's first article is live.
-            Hidden for internal (free) accounts; mandatory for a billable client. */}
-        {!v.isInternal && (
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
-            <Field label="الرصيد الافتتاحي (المبلغ المدفوع)" required error={errors.openingBalance?.message}>
-              <div className="relative">
-                <Input
-                  type="number"
-                  min={0}
-                  value={v.openingBalance ?? ""}
-                  onChange={(e) => setValue("openingBalance", e.target.value === "" ? null : Number(e.target.value), { shouldValidate: true })}
-                  className="pe-14"
-                  placeholder="0"
-                />
-                <span className="absolute inset-y-0 end-3 flex items-center text-xs font-medium text-muted-foreground">
-                  {currency === "EGP" ? "جنيه" : "ريال"}
-                </span>
-              </div>
-              <Help>يتعبّى تلقائياً حسب الباقة والدورة — عدّله لو دفع مبلغ مختلف</Help>
-            </Field>
-            <div className="flex items-end">
-              <p className="text-xs text-muted-foreground leading-relaxed pb-2">
-                يُسجَّل كرصيد افتتاحي بتاريخ اليوم ويدخل تقرير المبيعات فوراً. الفاتورة تُصدَر لاحقاً من صفحة الحساب عند نشر أول مقال.
-              </p>
-            </div>
-          </div>
-        )}
       </Card>
 
       {/* 5. YMYL classification */}

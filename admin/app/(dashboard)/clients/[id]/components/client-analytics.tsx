@@ -38,7 +38,6 @@ interface ClientAnalyticsProps {
   };
   clientId: string;
   client: {
-    subscriptionTier?: string | null;
     subscriptionStatus: string;
     subscriptionStartDate: Date | null;
     subscriptionEndDate: Date | null;

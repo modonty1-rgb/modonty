@@ -36,6 +36,8 @@ export async function getPartnerSite(decodedSlug: string) {
       legalForm: true,
       commercialRegistrationNumber: true,
       verificationImageUrl: true,
+      // مصدر شارة التوثيق — خانة الأدمن، لا امتلاء الحقول الثلاثة أعلاه.
+      isVerified: true,
       openingHoursSpecification: true,
       ctaMode: true,
       ctaLabel: true,

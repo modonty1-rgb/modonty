@@ -115,7 +115,7 @@ export function DeliveryProgress({
           <div className="pt-2 border-t border-border">
             <p className="text-xs text-muted-foreground leading-relaxed">
               <strong>Delivered:</strong> Articles published or scheduled this month (based on <code className="text-xs bg-muted px-1 py-0.5 rounded">datePublished</code> for PUBLISHED, <code className="text-xs bg-muted px-1 py-0.5 rounded">scheduledAt</code> for SCHEDULED). <strong>Source:</strong> Real-time database queries.{" "}
-              <strong>Limit:</strong> Sum of all active clients' <code className="text-xs bg-muted px-1 py-0.5 rounded">articlesPerMonth</code> values stored in database. Tier limits are configured in <code className="text-xs bg-muted px-1 py-0.5 rounded">SubscriptionTierConfig</code> collection and can be managed via Subscription Tiers admin page.
+              <strong>Limit:</strong> Sum of all active clients' <code className="text-xs bg-muted px-1 py-0.5 rounded">articlesPerMonth</code> values stored in database. The quota comes from the client's active order at activation; the Subscription Tiers admin page no longer exists.
             </p>
           </div>
         </div>

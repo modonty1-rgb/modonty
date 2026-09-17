@@ -14,7 +14,6 @@ export type {
   SettingHintKey,
   FaqHintKey,
   ContactMessageHintKey,
-  SubscriptionTierHintKey,
   HintKey,
 } from './types';
 

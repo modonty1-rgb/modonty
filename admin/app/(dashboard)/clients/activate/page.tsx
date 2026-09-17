@@ -16,7 +16,8 @@ async function getPendingClients() {
       name: true,
       email: true,
       phone: true,
-      subscriptionTier: true,
+      // اسمُ الباقة لا رمزُها: الشارة كانت تطبع «PRO» للموظّف — رمزَ enum لا اسمَ باقة.
+      subscriptionTierConfig: { select: { name: true } },
     },
     orderBy: { createdAt: "desc" },
     take: 200,
@@ -57,7 +58,7 @@ export default async function ActivateClientPage() {
                 <div className="flex items-center gap-2">
                   <span className="font-semibold truncate">{client.name}</span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted-foreground/15 font-medium shrink-0">
-                    {client.subscriptionTier}
+                    {client.subscriptionTierConfig?.name ?? "—"}
                   </span>
                 </div>
                 <div className="mt-1 flex items-center gap-x-4 gap-y-1 flex-wrap text-xs text-muted-foreground">

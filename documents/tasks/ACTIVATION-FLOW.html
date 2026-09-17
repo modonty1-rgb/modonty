@@ -1,0 +1,1588 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تفعيل العميل — الفلو المعتمد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f4f1; --card:#fff; --ink:#15151a; --muted:#6b6b76; --line:#e2e2dd; --sand:#efefe9;
+    --go:#0f6b45; --go-bg:#e6f4ec; --go-line:#9ed4ba;
+    --key:#1d4ed8; --key-bg:#e9effd; --key-line:#a9c0f7;
+    --warn:#8a5a00; --warn-bg:#fcf3e1; --warn-line:#e0bd76;
+    --stop:#b3271e; --stop-bg:#fdecea; --stop-line:#eda9a3;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#131316; --card:#1d1d21; --ink:#ededf1; --muted:#9e9eaa; --line:#32323a; --sand:#232329;
+      --go:#63d69c; --go-bg:#12301f; --go-line:#2b6b48;
+      --key:#8fb1ff; --key-bg:#161f38; --key-line:#2f4482;
+      --warn:#f0c264; --warn-bg:#33280f; --warn-line:#6d5622;
+      --stop:#ff8b80; --stop-bg:#37201d; --stop-line:#7a3b35;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.8 "Tajawal",-apple-system,"Segoe UI",system-ui,sans-serif;padding:26px 16px 80px}
+  .wrap{max-width:900px;margin:0 auto}
+  .eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.11em;color:var(--muted);margin:0 0 6px}
+  h1{font-size:clamp(25px,4.6vw,35px);font-weight:900;margin:0 0 10px;line-height:1.25;text-wrap:balance}
+  .lede{font-size:17px;color:var(--muted);margin:0;max-width:62ch}
+  h2{font-size:20px;font-weight:900;margin:46px 0 6px;line-height:1.35}
+  h2 .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;
+    background:var(--ink);color:var(--bg);font-size:14px;font-weight:900;margin-inline-end:9px;
+    vertical-align:2px;font-variant-numeric:tabular-nums}
+  .sub{color:var(--muted);font-size:14.5px;margin:0 0 16px;max-width:66ch}
+
+  .thesis{background:var(--sand);border:1px solid var(--line);border-radius:16px;padding:22px;margin:18px 0 0}
+  .thesis .big{font-size:clamp(18px,3vw,23px);font-weight:800;line-height:1.55;margin:0;text-wrap:balance}
+  .thesis .why{color:var(--muted);font-size:14.5px;margin:11px 0 0;max-width:64ch}
+
+  pre{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+    margin:12px 0 0;overflow-x:auto;direction:ltr;text-align:left;
+    font-family:ui-monospace,Consolas,monospace;font-size:12px;line-height:1.85;color:var(--ink)}
+  pre.rtl{direction:rtl;text-align:right;font-family:"Tajawal",monospace;font-size:13.5px}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;background:var(--sand);
+    border:1px solid var(--line);border-radius:5px;padding:1px 6px;direction:ltr;display:inline-block}
+
+  .rail{margin:16px 0 0;padding-inline-start:20px;border-inline-start:2px solid var(--line)}
+  .step{position:relative;padding:0 0 22px}
+  .step:last-child{padding-bottom:0}
+  .dot{position:absolute;inset-inline-start:-27px;top:7px;width:12px;height:12px;border-radius:50%;
+    background:var(--bg);border:2.5px solid var(--line)}
+  .dot.now{border-color:var(--go);background:var(--go)}
+  .step b{display:block;font-size:15.5px;font-weight:800;margin:0 0 3px}
+  .step span{display:block;color:var(--muted);font-size:14px;line-height:1.75}
+
+  .card{border:1.5px solid var(--line);border-radius:14px;background:var(--card);padding:16px 18px;margin:12px 0 0}
+  .card.key{border-color:var(--key-line);background:var(--key-bg)}
+  .card.go{border-color:var(--go-line);background:var(--go-bg)}
+  .card.warn{border-color:var(--warn-line);background:var(--warn-bg)}
+  .card.stop{border-color:var(--stop-line);background:var(--stop-bg)}
+  .card > b{display:block;font-size:15.5px;font-weight:900;margin:0 0 5px}
+  .card.key > b{color:var(--key)} .card.go > b{color:var(--go)}
+  .card.warn > b{color:var(--warn)} .card.stop > b{color:var(--stop)}
+  .card p{margin:0 0 8px;font-size:14.5px;line-height:1.75}
+  .card p:last-child{margin-bottom:0}
+
+  .scroll{overflow-x:auto;margin:14px 0 0}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{padding:11px 13px;text-align:start;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--sand);font-weight:800;font-size:12.5px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.05em}
+  tr:last-child td{border-bottom:0}
+  td b{font-weight:800}
+  .tag{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:7px;border:1px solid;white-space:nowrap}
+  .t-go{background:var(--go-bg);color:var(--go);border-color:var(--go-line)}
+  .t-warn{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-line)}
+  .t-stop{background:var(--stop-bg);color:var(--stop);border-color:var(--stop-line)}
+
+  .mock{border:1.5px solid var(--key-line);border-radius:14px;background:var(--card);
+    padding:0;margin:14px 0 0;overflow:hidden}
+  .mock .bar{background:var(--key-bg);border-bottom:1.5px solid var(--key-line);
+    padding:9px 14px;font-size:12.5px;font-weight:800;color:var(--key)}
+  .mock .body{padding:16px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:14px}
+  .row:last-child{margin-bottom:0}
+  .row .btn{background:var(--go);color:#fff;border-radius:8px;padding:5px 15px;font-size:13px;font-weight:800;white-space:nowrap}
+  .fld{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .fld:last-of-type{border-bottom:0}
+  .fld .lbl{color:var(--muted);font-size:13px}
+  .fld .val{font-weight:700}
+  .fld .from{font-size:11.5px;color:var(--muted);font-weight:400}
+
+  .foot{color:var(--muted);font-size:12.5px;margin:40px 0 0;line-height:1.8;
+    border-top:1px solid var(--line);padding-top:16px}
+
+  /* ── المقارنة: عمودان متقابلان ── */
+  .vs{display:grid;gap:14px;grid-template-columns:1fr;margin:16px 0 0}
+  @media(min-width:800px){.vs{grid-template-columns:1fr 1fr}}
+  .pane{border:1.5px solid;border-radius:14px;background:var(--card);overflow:hidden;display:flex;flex-direction:column}
+  .pane.old{border-color:var(--stop-line)}
+  .pane.src{border-color:var(--go-line)}
+  .pane > header{padding:12px 15px;border-bottom:1.5px solid}
+  .pane.old > header{background:var(--stop-bg);border-color:var(--stop-line)}
+  .pane.src > header{background:var(--go-bg);border-color:var(--go-line)}
+  .pane h4{margin:0;font-size:15px;font-weight:900}
+  .pane.old h4{color:var(--stop)} .pane.src h4{color:var(--go)}
+  .pane .cap{margin:3px 0 0;font-size:12px;color:var(--muted);font-weight:500}
+  .pane ul{list-style:none;margin:0;padding:10px 15px 14px}
+  .pane li{padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px;
+    display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .pane li:last-child{border-bottom:0}
+  .pane li .req{color:var(--stop);font-weight:900}
+  .pane li .src{font-size:11px;color:var(--muted);font-family:ui-monospace,Consolas,monospace;direction:ltr}
+  .pane li.gap{opacity:.55}
+  .pane li.gap .src{color:var(--warn)}
+
+  /* ── جدول المحاذاة: حقلٌ مقابل حقل ── */
+  table.align{min-width:700px}
+  table.align th:first-child{width:27%} table.align th:nth-child(2){width:31%}
+  table.align td{font-size:13.5px;line-height:1.7}
+  td .f{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;
+    color:var(--muted);direction:ltr;display:block;margin-top:2px}
+  table.align tr.same{background:color-mix(in srgb, var(--go-bg) 45%, transparent)}
+  table.align tr.diff{background:color-mix(in srgb, var(--warn-bg) 55%, transparent)}
+  table.align tr.miss{background:color-mix(in srgb, var(--stop-bg) 40%, transparent)}
+  table.align tr.plus{background:color-mix(in srgb, var(--key-bg) 45%, transparent)}
+  .dash{color:var(--muted);font-weight:800}
+
+  /* ── السايدبار — نفس نمط اللوحة الرئيسيّة (build-task-board.mjs:206) ── */
+  body{padding-inline-start:200px}
+  .navcol{position:fixed;inset-inline-start:0;top:0;bottom:0;width:200px;z-index:10;
+    display:flex;flex-direction:column;gap:3px;padding:16px 10px;background:var(--card);
+    border-inline-end:1px solid var(--line);overflow-y:auto}
+  .navcol .brand{font-size:12.5px;font-weight:900;color:var(--muted);padding:0 10px 10px;
+    letter-spacing:.06em}
+  .navtab{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;
+    min-height:38px;padding:0 11px;border:0;border-inline-start:3px solid transparent;
+    background:none;color:var(--muted);font:inherit;font-size:13.5px;font-weight:700;
+    cursor:pointer;border-radius:8px;text-align:start}
+  .navtab:hover{background:var(--sand);color:var(--ink)}
+  .navtab[aria-selected="true"]{color:var(--ink);border-inline-start-color:currentColor;background:var(--sand)}
+  .navtab b{font-size:11.5px;font-weight:900;min-width:20px;padding:2px 6px;border-radius:999px;
+    background:var(--line);color:var(--muted);text-align:center}
+  .navtab[aria-selected="true"] b{background:var(--card);color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+  .navtab[data-view="now"][aria-selected="true"]{color:var(--key)}
+  .navtab[data-view="done"][aria-selected="true"]{color:var(--go)}
+  .navtab[data-view="enums"][aria-selected="true"]{color:var(--stop)}
+  .navsep{height:1px;background:var(--line);margin:9px 6px}
+  .navnote{font-size:11px;color:var(--muted);padding:8px 11px 0;line-height:1.7}
+  /* المشهدان: كل عنصرٍ يحمل data-view، والسكربت يُظهر واحداً */
+  [data-view].hideview{display:none!important}
+  @media (max-width:900px){
+    body{padding-inline-start:0}
+    .navcol{position:static;width:auto;flex-direction:row;flex-wrap:wrap;
+      border-inline-end:0;border-bottom:1px solid var(--line);gap:6px}
+    .navcol .brand,.navcol .navsep,.navcol .navnote{display:none}
+    .navtab{width:auto;min-height:34px;border-inline-start:0;border:1px solid var(--line)}
+    .navtab[aria-selected="true"]{border-color:currentColor}
+  }
+</style>
+</head>
+<body>
+<nav class="navcol" role="tablist" aria-label="مشاهد الورقة">
+  <div class="brand">تفعيل العميل</div>
+  <button class="navtab" role="tab" data-view="now"  aria-selected="true"
+    title="الفلو والشاشات والمقارنة والمراحل الأربع الباقية">الحالي<b>4</b></button>
+  <button class="navtab" role="tab" data-view="done" aria-selected="false"
+    title="إحدى وعشرون أُغلقت بدليلها الخام">المنجَز<b>21</b></button>
+  <button class="navtab" role="tab" data-view="enums" aria-selected="false"
+    title="جرد SubscriptionTier — أين تُستعمل، وما الذي يمنع حذفها">Enums<b>!</b></button>
+  <div class="navsep"></div>
+  <button class="navtab" role="tab" data-view="all"  aria-selected="false"
+    title="الورقة كاملةً">الكلّ<b>↕</b></button>
+  <p class="navnote"><b>الحالي</b> — الفلو والشاشات والمقارنة والمراحل السبع.<br><br><b>المنجَز</b> — الثلاثة المغلقة بدليلها، وحدها.</p>
+</nav>
+
+<div class="wrap">
+
+  <p class="eyebrow">مدونتي · الجانب الماليّ · قرار ١٦ سبتمبر ٢٠٢٦</p>
+  <h1>تفعيل العميل — لا إنشاؤه</h1>
+  <p class="lede">اللغز كان: كيف نربط صفحة الدفع بجدول العملاء؟ والجواب لم يكن نوع علاقة —
+    بل <b>لحظة</b>. من هذه الورقة يُبنى كل ما بعدها.</p>
+
+  <div class="thesis">
+    <p class="big">الرابط بين الطلب والعميل ليس علاقةً في القاعدة. الرابط لحظةُ التفعيل.</p>
+    <p class="why">
+      الورقة الأمّ ناقشت ستّة احتمالات، كلّها عن <b>شكل العلاقة</b>: نربط؟ لا نربط؟ نمنع الحذف؟
+      وخالد غيّر السؤال: العميل يتأسّس <b>من</b> الطلب، فالربط يحدث مرّةً واحدة يوم يُفعَّل —
+      ولا يحتاج قيداً بعدها. مؤشّران لا قيد: الطلب يحمل مَن، والكرت يحمل أيّ صفقة.
+    </p>
+  </div>
+
+  <section data-view="now">
+  <!-- ═════ ١ ═════ -->
+  <h2><span class="n">١</span>الفلو — كما استقرّ</h2>
+
+  <div class="rail">
+    <div class="step"><span class="dot"></span>
+      <div><b>العميل يدفع</b>
+        <span>من صفحة الدفع، أو يسجّل الموظّف بيعاً مباشراً بالفورم اليدويّ.
+          يُفتح صفٌّ في الطلبات بحالة «مدفوع».</span></div></div>
+
+    <div class="step"><span class="dot"></span>
+      <div><b>الطلب يظهر في قائمة «ينتظر التفعيل»</b>
+        <span>لأنّه مدفوعٌ ولا يحمل رقم عميل بعد. وبطاقةٌ على لوحة الأدمن تقول العدد والمبلغ.</span></div></div>
+
+    <div class="step"><span class="dot"></span>
+      <div><b>الموظّف يضغط «فعّل» في صفّ الطلب</b>
+        <span>نافذةٌ صغيرة لا صفحةٌ جديدة. كل شيءٍ معبّأ من الطلب، ولا يُطلب منه إدخالٌ واحد —
+          نظرةٌ على الرابط العامّ وتأكيد.</span></div></div>
+
+    <div class="step"><span class="dot now"></span>
+      <div><b>ضغطة واحدة ← ثلاث كتابات معاً</b>
+        <span>يُؤسَّس العميل · يُربط الطلب به · يُرسَل إيميل الترحيب. وبها يخرج الطلب من
+          القائمة، ويصير له كرتٌ يعرض صفقته.</span></div></div>
+
+    <div class="step"><span class="dot"></span>
+      <div><b>الباقي كلّه يُكمَّل من صفحة التعديل</b>
+        <span>الصناعة · البريف · الكاتب · اللوجو · العنوان · تصنيف YMYL — ولا واحدةٌ منها
+          تمنع العميل من الاشتغال، ولا واحدةٌ منها تُقفل.</span></div></div>
+  </div>
+
+  <div class="card key">
+    <b>التفعيل يدويّ — بقرار خالد</b>
+    <p>لا تفعيل تلقائيّ عند وصول الدفع. الفريق يقرّر متى يبدأ.</p>
+    <p><b>وثمنه:</b> الطلب لا يفعّل نفسه، فالقائمة والبطاقة <b>شرطٌ لا تحسين</b> —
+      وإلّا نام الطلب كما ينام اليوم.</p>
+  </div>
+
+  <!-- ═════ ٢ ═════ -->
+  <h2><span class="n">٢</span>الشاشتان</h2>
+  <p class="sub">لا صفحة إنشاءٍ فارغة بعد اليوم. يبدأ من قائمة، وينتهي في نافذة.</p>
+
+  <div class="mock">
+    <div class="bar">/orders — مرشَّح «مدفوع · ينتظر التفعيل»</div>
+    <div class="body">
+      <div class="row"><span>ORD-2026-00031 · الزخم · ٧٬١٩٤ ر.س · دفع قبل ٥ أيام</span><span class="btn">فعّل</span></div>
+      <div class="row"><span>ORD-2026-00033 · الزخم · ٧٬١٩٤ ر.س · دفع قبل ٣ أيام</span><span class="btn">فعّل</span></div>
+      <div class="row"><span>ORD-2026-00058 · الزخم · ٢٣٬٩٩٤ ج.م · دفع أمس</span><span class="btn">فعّل</span></div>
+    </div>
+  </div>
+
+  <div class="mock">
+    <div class="bar">نافذة التفعيل — تُفتح فوق القائمة، ولا تغيّر الصفحة</div>
+    <div class="body">
+      <div class="fld"><span class="lbl">الاسم</span>
+        <span class="val">دريم تو آب <span class="from">من الطلب · يُعدَّل</span></span></div>
+      <div class="fld"><span class="lbl">الرابط العامّ</span>
+        <span class="val">/clients/دريم-تو-آب <span class="from">مقترح · الشيء الوحيد الذي يُقفل للأبد</span></span></div>
+      <div class="fld"><span class="lbl">الإيميل · الجوال · الدولة · الباقة · المبلغ · المدّة · المندوب</span>
+        <span class="val"><span class="from">من الطلب — تُعرض ولا تُسأل</span></span></div>
+      <div class="fld"><span class="lbl">الصناعة · البريف · الكاتب · اللوجو · العنوان · YMYL</span>
+        <span class="val"><span class="from">ليست هنا — صفحة التعديل، متى شاء</span></span></div>
+      <div style="margin-top:14px"><span class="btn" style="display:inline-block">فعّل العميل</span></div>
+    </div>
+  </div>
+
+  <div class="card go">
+    <b>ثانيتان للعميل الواحد — والإدخال البشريّ صفر</b>
+    <p>الفورم اليوم ٥١٣ سطراً وستّة حقولٍ إلزاميّة. خمسةٌ منها يعرفها الطلب،
+      و<b>الصناعة تسقط بقرار خالد</b> إلى صفحة التعديل — فلا يبقى إدخالٌ أصلاً، بل <b>تأكيد</b>.</p>
+    <p>وأربعون عميلاً يُفعَّلون من نفس القائمة بلا فتح صفحةٍ ولا مرّة — وهذا شرطه:
+      «بكرا حيكون عشرين تلاتين أربعين».</p>
+  </div>
+
+  <div class="card key">
+    <b>ولماذا بقي التفعيل بيد إنسان، وما عاد فيه سؤال؟</b>
+    <p>لأنّ الرابط العامّ (<code>slug</code>) <b>يُقفل للأبد</b>، والطلب لا يحمله:
+      عنده <code>buyerName</code> و<code>businessName</code> — اسم المشتري لا اسم البراند.
+      فالنظام يقترح، <b>وعينُ الموظّف تؤكّد</b>. هذه النظرة وحدها هي كل ما تبقّى من العمل اليدويّ.</p>
+  </div>
+
+  <!-- ═════ ٣ ═════ -->
+  <h2><span class="n">٣</span>المقارنة — حقلاً بحقل</h2>
+  <p class="sub">ما يسأله فورم الإنشاء اليوم، مقابل ما يحمله الطلب أصلاً. الأسماء من السكيما،
+    و<span style="color:var(--stop);font-weight:900">*</span> = إلزاميّ في الفورم.</p>
+
+  <div class="vs">
+
+    <div class="pane old">
+      <header>
+        <h4>ما يسأله الفورم اليوم</h4>
+        <p class="cap">المجموعة في القاعدة: <code>clients</code> · <code>model Client</code></p>
+      </header>
+      <ul>
+        <li><span>اسم العميل <span class="req">*</span></span><span class="src">name</span></li>
+        <li><span>الرابط العامّ <span class="cap" style="display:inline">— يتولّد تلقائيّاً</span></span><span class="src">slug</span></li>
+        <li><span>الإيميل — اسم الدخول <span class="req">*</span></span><span class="src">email</span></li>
+        <li><span>الجوال <span class="req">*</span></span><span class="src">phone</span></li>
+        <li><span>الدولة <span class="req">*</span></span><span class="src">addressCountry</span></li>
+        <li><span>الصناعة <span class="req">*</span></span><span class="src">industryId</span></li>
+        <li><span>الشكل القانوني</span><span class="src">legalForm</span></li>
+        <li><span>الكاتب</span><span class="src">editorId</span></li>
+        <li><span>المندوب <span class="req">*</span></span><span class="src">salesRepId</span></li>
+        <li><span>الباقة</span><span class="src">subscriptionTier</span></li>
+        <li><span>دورة الفوترة</span><span class="src">billingCycle</span></li>
+        <li><span>العملة</span><span class="src">— تُشتقّ من الدولة</span></li>
+        <li><span>الرصيد الافتتاحي <span class="req">*</span></span><span class="src">openingBalance</span></li>
+        <li><span>تصنيف YMYL</span><span class="src">isYmyl · ymylCategory</span></li>
+        <li><span>حساب داخليّ</span><span class="src">isInternal</span></li>
+      </ul>
+    </div>
+
+    <div class="pane src">
+      <header>
+        <h4>ما يحمله الطلب أصلاً</h4>
+        <p class="cap">المجموعة في القاعدة: <code>checkout_orders</code> · <code>model CheckoutOrder</code></p>
+      </header>
+      <ul>
+        <li><span>اسم المشتري</span><span class="src">buyerName</span></li>
+        <li><span>اسم المنشأة</span><span class="src">businessName</span></li>
+        <li><span>الإيميل</span><span class="src">buyerEmail</span></li>
+        <li><span>الجوال</span><span class="src">buyerPhone</span></li>
+        <li><span>الدولة · السوق</span><span class="src">country · market</span></li>
+        <li><span>الباقة — اسماً وفئةً</span><span class="src">planName · planTier</span></li>
+        <li><span>المقالات شهريّاً</span><span class="src">articlesPerMonth</span></li>
+        <li><span>ما وُعد به المشتري</span><span class="src">planCommitments[]</span></li>
+        <li><span>المدّة المشتراة</span><span class="src">paidMonths</span></li>
+        <li><span>أشهر الهديّة</span><span class="src">bonusServiceMonths</span></li>
+        <li><span>المبلغ · الضريبة · الإجمالي</span><span class="src">subtotal/vat/totalMinor</span></li>
+        <li><span>العملة</span><span class="src">currency</span></li>
+        <li><span>المندوب</span><span class="src">salesRepId</span></li>
+        <li><span>تاريخ الدفع</span><span class="src">paidAt</span></li>
+        <li><span>بداية فترة الخدمة</span><span class="src">serviceStartedAt</span></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:34px 0 0">والآن محاذاةً — حقلٌ مقابل حقل</h3>
+  <p class="sub">سؤال خالد: «اسم المشتري هو نفس اسم العميل؟» — الجواب تحت، وهو <b>لا</b>.
+    الصفّ الملوّن يقول الحكم: أخضر يتطابق · أصفر يتشابه ويختلف · أحمر مفقود · أزرق يملكه الطلب وحده.</p>
+
+  <div class="scroll">
+  <table class="align">
+    <thead><tr>
+      <th>كرت العميل — <code>clients</code></th>
+      <th>الطلب — <code>checkout_orders</code></th>
+      <th>الحكم</th>
+    </tr></thead>
+    <tbody>
+      <tr class="diff"><td>اسم العميل <span class="req" style="color:var(--stop);font-weight:900">*</span><span class="f">name</span></td>
+          <td>اسم المشتري · واسم المنشأة<span class="f">buyerName · businessName</span></td>
+          <td><b>ليس نفسه.</b> <code>buyerName</code> اسم <b>الشخص</b> الذي اشترى،
+              و<code>businessName</code> <b>اختياريّ وقد يكون فارغاً</b>
+              (<code>create-payment/route.ts:63,152</code>). واسم الكرت هو ما يُنشر على مدونتي.</td></tr>
+
+      <tr class="miss"><td>الرابط العامّ<span class="f">slug</span></td>
+          <td><span class="dash">— لا يوجد</span></td>
+          <td><b>مفقود، ويُقفل للأبد.</b> يُشتقّ من الاسم — فإن أُخذ الاسم من المشتري،
+              صار رابط الشريك اسمَ شخص.</td></tr>
+
+      <tr class="same"><td>الإيميل — اسم الدخول <span style="color:var(--stop);font-weight:900">*</span><span class="f">email</span></td>
+          <td>إيميل المشتري<span class="f">buyerEmail</span></td>
+          <td>يتطابق.</td></tr>
+
+      <tr class="same"><td>الجوال <span style="color:var(--stop);font-weight:900">*</span><span class="f">phone</span></td>
+          <td>جوّال المشتري<span class="f">buyerPhone</span></td>
+          <td>يتطابق — والاثنان بصيغة E.164.</td></tr>
+
+      <tr class="same"><td>الدولة <span style="color:var(--stop);font-weight:900">*</span><span class="f">addressCountry</span></td>
+          <td>الدولة · السوق<span class="f">country · market</span></td>
+          <td>يتطابق، والطلب يزيد عليه السوق (SA/EG).</td></tr>
+
+      <tr class="same"><td>المندوب <span style="color:var(--stop);font-weight:900">*</span><span class="f">salesRepId</span></td>
+          <td>مندوب هذه الصفقة<span class="f">salesRepId</span></td>
+          <td>نفس الحقل — ومقيسٌ اليوم: <b>٠ من ٤٢ طلباً يحمله</b>، لأنّ الربط لا ينقله.</td></tr>
+
+      <tr class="diff"><td>الباقة<span class="f">subscriptionTier</span></td>
+          <td>الباقة اسماً وفئةً<span class="f">planTier · planName</span></td>
+          <td><b>الفئتان لا تتطابقان:</b> «الانطلاقة» هي <code>BASIC</code> في كتالوج الدفع
+              و<code>STANDARD</code> في كتالوج العملاء — و<code>BASIC</code> هناك باقةٌ
+              مجّانيّة أخرى. <b>المطابقة بالاسم لا بالرمز</b>، وإلّا نزل عميلٌ دافع على المجّاني.</td></tr>
+
+      <tr class="diff"><td>دورة الفوترة<span class="f">billingCycle</span></td>
+          <td>المدّة المشتراة<span class="f">paidMonths</span></td>
+          <td><b>الطلب أدقّ:</b> الكرت يقول «سنوي» والطلب يقول <code>6</code>. والخانة تسقط.</td></tr>
+
+      <tr class="diff"><td>العملة<span class="f">— تُشتقّ من الدولة</span></td>
+          <td>العملة يوم الشراء<span class="f">currency</span></td>
+          <td><b>الطلب أصدق:</b> الدولة حقلٌ يُعدَّل، فتصحيحُها ينقل الإيراد من الجنيه
+              إلى الريال والمبلغ لم يتغيّر.</td></tr>
+
+      <tr class="diff"><td>الرصيد الافتتاحي <span style="color:var(--stop);font-weight:900">*</span><span class="f">openingBalance</span></td>
+          <td>الإجمالي المدفوع<span class="f">totalMinor</span></td>
+          <td>نفس المبلغ — لكن الكرت يخزّنه <b>كسراً عشريّاً</b> والطلب <b>بالهللة</b>.
+              ومن لحظة النسخ يوجد رقمان لصفقةٍ واحدة.</td></tr>
+
+      <tr class="miss"><td>الصناعة <span style="color:var(--stop);font-weight:900">*</span><span class="f">industryId</span></td>
+          <td><span class="dash">— لا يعرفها</span></td>
+          <td>تسقط إلى صفحة التعديل (قرار خالد). اختياريّة في السكيما.</td></tr>
+      <tr class="miss"><td>الشكل القانوني<span class="f">legalForm</span></td>
+          <td><span class="dash">—</span></td><td>صفحة التعديل.</td></tr>
+      <tr class="miss"><td>الكاتب<span class="f">editorId</span></td>
+          <td><span class="dash">—</span></td><td>صفحة التعديل.</td></tr>
+      <tr class="miss"><td>تصنيف YMYL<span class="f">isYmyl · ymylCategory</span></td>
+          <td><span class="dash">—</span></td><td>صفحة التعديل.</td></tr>
+      <tr class="miss"><td>حساب داخليّ<span class="f">isInternal</span></td>
+          <td><span class="dash">—</span></td>
+          <td>لا يأتي من طلبٍ بطبعه — ويبقى له بابه في <code>/clients/new</code>.</td></tr>
+
+      <tr class="plus"><td><span class="dash">— لا يعرفها الكرت</span></td>
+          <td>أشهر الهديّة<span class="f">bonusServiceMonths</span></td>
+          <td rowspan="5"><b>هذه الخمسة جوهر الصفقة، والكرت لا مكان فيه لها.</b>
+              فتُقرأ من الطلب ولا تُنسخ — وهذا ما تفعله بطاقة «الاشتراك الحالي» على كرت العميل اليوم.</td></tr>
+      <tr class="plus"><td><span class="dash">—</span></td>
+          <td>ما وُعد به المشتري<span class="f">planCommitments[]</span></td></tr>
+      <tr class="plus"><td><span class="dash">—</span></td>
+          <td>الضريبة والصافي<span class="f">vatMinor · subtotalMinor · vatRateBp</span></td></tr>
+      <tr class="plus"><td><span class="dash">—</span></td>
+          <td>تاريخ الدفع<span class="f">paidAt</span></td></tr>
+      <tr class="plus"><td><span class="dash">—</span></td>
+          <td>بداية فترة الخدمة<span class="f">serviceStartedAt</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="card stop">
+    <b>أخطر ثغرة كشفها هذا الصفّ: اسم الكرت</b>
+    <p>لو أُخذ <code>Client.name</code> من <code>buyerName</code> تلقائيّاً، فالموظّف الذي اشترى
+      لشركته يصير <b>اسمَ الشريك المنشور على مدونتي</b> — و<code>slug</code> يُقفل عليه للأبد.</p>
+    <p><b>والقاعدة التي تُثبَّت:</b> الاسم يُقترح من <code>businessName</code> أوّلاً، فإن كان
+      فارغاً فمن <code>buyerName</code> — و<b>في الحالتين تراه عين الموظّف قبل الحفظ</b>.
+      وهذا ثاني سببٍ يجعل التفعيل يدويّاً، بعد الرابط.</p>
+  </div>
+
+  <div class="card go">
+    <b>القراءة: ٦ حقول تتكرّر · ٥ يجهلها الطلب · ٥ لا يعرفها الكرت</b>
+    <p><b>تتكرّر (والفورم ينسخها):</b> الاسم · الإيميل · الجوال · الدولة · المندوب · المبلغ.
+      وهذه الستّة هي كل ما يسأله الفورم من العميل ويعرفه الطلب مسبقاً.</p>
+    <p><b>يجهلها الطلب (وتذهب لصفحة التعديل):</b> الصناعة · الشكل القانوني · الكاتب ·
+      تصنيف YMYL · الحساب الداخليّ. <b>ولا واحدةٌ منها تمنع العميل من الاشتغال.</b></p>
+    <p><b>لا يعرفها الكرت أصلاً (وهي جوهر الصفقة):</b> المدّة المشتراة · أشهر الهديّة ·
+      الضريبة والإجمالي · ما وُعد به المشتري · تاريخ الدفع.
+      <b>هذا هو سبب البطاقة الجديدة على كرت العميل.</b></p>
+  </div>
+
+  <div class="card stop">
+    <b>وحقلان في العمود الأيمن كذبةٌ بالتصميم</b>
+    <p><b>دورة الفوترة</b> (<code>billingCycle</code>): تكتب «سنوي» والطلب يقول ٦ أشهر.
+      والطلب يحمل العدد الحقيقيّ في <code>paidMonths</code>.</p>
+    <p><b>العملة</b>: تُشتقّ من دولة العميل، والدولة حقلٌ يُعدَّل — فتصحيحُ عنوان عميلٍ مصريّ
+      ينقل إيراده من الجنيه إلى الريال والمبلغ لم يتغيّر. والطلب يحمل
+      <code>currency</code> مجمَّدةً يوم الشراء.</p>
+  </div>
+
+  <!-- ═════ ٤ ═════ -->
+  <h2><span class="n">٤</span>ما يُكتب في لحظة التفعيل</h2>
+
+  <pre>Client.create({
+  name, email, phone, addressCountry,     ← من لقطة المشتري في الطلب
+  subscriptionTier,                        ← من لقطة الباقة
+  slug,                                    ← مقترحٌ من الاسم، مؤكَّدٌ بعين الموظّف
+  subscriptionStatus: "ACTIVE",
+  activatedAt:   now,                      ← يوم فتح الحساب
+  activeOrderId: order.id,                 ← أيّ صفقة تحكمه
+})
+// industryId غائبٌ عمداً — اختياريّ في السكيما (schema.prisma:564)، ومكانه صفحة التعديل.
+
+CheckoutOrder.update({ clientId })         ← ومعناه: هذا الطلب فُعِّل
+
+sendClientWelcome()                        ← بعد نجاح الاثنين. فشلُه لا يُسقط التفعيل.</pre>
+
+  <div class="card warn">
+    <b>الثلاثة تنجح معاً أو لا تصير ولا واحدة</b>
+    <p>لو كُتب العميل وفشل ربط الطلب: صار عندك عميلٌ يتيم، والطلب باقٍ في قائمة «ينتظر» —
+      فيُفعَّل مرّةً ثانية ويُنشأ عميلٌ مكرّر بنفس الاسم.</p>
+    <p><b>والحارس الرخيص:</b> قبل الكتابة، يُقرأ الطلب ويُرفض إن كان يحمل
+      <code>clientId</code> أصلاً — نفس نمط <code>link-order-to-client.ts:35</code> القائم.</p>
+  </div>
+
+  <div class="card stop">
+    <b>وفخّ مونغو — مقيسٌ مرّتين في هذا المستودع</b>
+    <p>قائمة «ينتظر التفعيل» تعني: طلبٌ مدفوعٌ بلا <code>clientId</code>.
+      و<b>الفلتر البديهيّ يرجع صفراً</b>: مونغو لا يطابق <code>clientId: null</code> على مستندٍ
+      لم يُكتب فيه الحقل أصلاً — وكل طلبٍ من صفحة الدفع كذلك.</p>
+    <pre>where: {
+  status: "PAID",
+  OR: [{ clientId: null }, { clientId: { isSet: false } }],   ← الشرط الثاني إلزاميّ
+}</pre>
+    <p>مكتوبٌ في <code>link-order-to-client.ts:17-23</code>، ووقعتُ فيه مرّةً أخرى وأنا أفحص
+      القاعدة اليوم — فرجع الاستعلام بصفر بينما الصحيح أربعة.</p>
+  </div>
+
+  <!-- ═════ ٥ ═════ -->
+  </section>
+
+  <div data-view="now done">
+  <h2><span class="n">٥</span>الشلّال — من الطلب إلى نظامٍ مرتّب</h2>
+  <p class="sub"><b style="color:var(--ink)">تتبُّع:</b> المنجَز في البطاقة الخضراء، والمتبقّي في الجدول — لا يختلطان.<br>خالد ١٦ سبتمبر: «الأدمن فيه كمية جنك مو طبيعيّة… بدنا نرتّب السيستم صحّ قبل ما
+    يجونا عملاء». فهذا ليس خطّة ميزةٍ واحدة — بل <b>ترتيبٌ متسلسل</b>: كل مرحلة تفتح التي بعدها،
+    ولا تبدأ واحدةٌ قبل أن تُرى السابقة على الشاشة. <b>كل رقمٍ تحت مقيسٌ اليوم</b>، لا مقدَّر.</p>
+
+  </div>
+  <section data-view="done">
+  <div class="card go">
+    <b>✅ المنجَز — لا تعد إليه</b>
+    <p style="margin-bottom:10px">ثلاثة أُغلقت بدليلها. <b>ليست في الجدول تحت</b> — الجدول للمتبقّي وحده.</p>
+
+    <p><b>١ · السكيما</b> — ١١ تعديلاً، ولا صفٌّ في القاعدة لُمس:
+      <code>Client.activatedAt · activeOrderId · archivedAt+Reason+By</code> ·
+      <code>CheckoutOrder.serviceStartedAt</code> · <code>Article.firstDeliveredAt</code> ·
+      <code>Invoice.buyerName/Email/LegalName/VatID</code> · وإلغاء الحذف المتسلسل
+      (<code>onDelete: Cascade → Restrict</code>).
+      <span class="f">prisma validate → valid · generate → v6.19.2</span></p>
+
+    <p><b>٢ · بطاقة «الاشتراك الحالي»</b> على كرت العميل — تقرأ الطلب لا الكرت
+      (<code>admin/lib/orders/resolve-active-order.ts</code> · <code>client-subscription-deal.tsx</code>).
+      والمؤشّر يتحرّك عند الربط وعند تأكيد التحويل، ويشفي نفسه إن كان فارغاً.
+      <span class="f">مقيس حيّاً: ORD-2026-00017 · ٢٬٣٩٤ ر.س · 6+1 شهر · المؤشّر الفارغ صار 6aa452c7…</span></p>
+
+    <p><b>٣ · كنس الجنك</b> (المرحلة ٧، نُفِّذت خارج ترتيبها بطلب خالد لأنّها لا تعتمد على شيء) —
+      <b>١٤ ملفّاً ميّتاً · ١٬٧٩٨ سطراً</b> من مجلّد العملاء. التفصيل والدليل في البطاقة الحمراء تحت الجدول.
+      <span class="f">ترجمة من الصفر بعده: /clients/[id] 200 · /clients 200 · /clients/new 200 · صفر خطأ</span></p>
+  </div>
+
+  <div class="card go">
+    <b>✅ محسوم — «موثّق» يخرج من الباقة</b>
+    <p>كل عميل مسجَّل موثَّق: لا يُفعَّل أحدٌ قبل التحقّق من أوراقه الرسميّة (خالد ١٧ سبتمبر).</p>
+    <p>فالسطران يسقطان بلا بديل — <code>isVerified</code> يصير <code>true</code> لكل عميل ظاهر:</p>
+    <pre>modonty/app/(site)/clients/helpers/get-clients-with-counts.ts:99
+modonty/app/(site)/search/helpers/get-clients-search.ts:92
+  isVerified: client.subscriptionTier === 'PRO' || client.subscriptionTier === 'PREMIUM'</pre>
+    <p><b>ونُفِّذ ١٧ سبتمبر:</b> حقل <code>Client.isVerified Boolean @default(true)</code> — خانةٌ في كرت العميل.
+      افتراضيّها صحّ لأنّ وجود العميل عندنا هو شهادة الفحص، وتُشال للاستثناء. و<code>@default</code>
+      يغطّي العملاء القائمين بلا ترحيل: مونغو يقرأ الحقل الغائب بالافتراضيّ — <b>٤٠ من ٤٠ موثَّقون.</b></p>
+    <p><b>ولماذا خانة لا اشتقاق:</b> السجلّ التجاريّ وصورة التوثيق بياناتٌ يدخلها العميل،
+      فامتلاؤها لا يعني أنّ أحداً راجعها. وهي غير <code>isFeatured</code> — تلك قرارٌ تسويقيّ.</p>
+    <pre>الملفّات الأربعة:
+  get-clients-with-counts.ts:101   isVerified: client.isVerified
+  get-clients-search.ts:93         isVerified: client.isVerified
+  clients/[slug]/layout.tsx:93     const isVerified = site.isVerified
+  get-partner-site.ts:40           isVerified: true   ← أُضيف للـselect
+مقيسٌ حيّاً: إزالة الخانة ← حُفظت false · إعادتها ← 40/40
+
+وجرد ثانٍ كشف 12 موضعاً لا موضعين — في الثلاثة:
+  مدونتي  get-clients-list.ts · get-clients-search.ts · get-article-for-chat.ts
+          get-industry-scope.ts · get-articles-archive.ts · api/chat · api/article
+          shared/partner-card ×2 · articles/PartnerCard ×2 · PartnerStrip · modo-chat
+  shared  get-home-data.ts:136  (يغذّي موقع الشريك والكونسول)
+  console page-content/page.tsx · page-content-editor.tsx
+  admin   فورم الإنشاء + فورم التعديل
+
+وسقط معه hasVerifiedPapers («أوراقه الرسميّة مفحوصة») — الشارة تؤدّي المدلول كاملاً.
+
+القياس الحيّ النهائي (سيرفرات نظيفة):
+  مدونتي /clients        24 شارة ← إزالة التوثيق عن شريك ← 22 ← إعادته ← 24
+  مدونتي /articles/[slug]  3 شارات ← إزالة ← 1 ← إعادة ← 3
+  الكونسول /dashboard/page-content  الشارة تظهر وتختفي مع الخانة
+  صفر خطأ ترجمة في الثلاثة · 39/39 موثَّقون بعد الإرجاع</pre>
+  </div>
+
+  <div class="card go">
+    <b>مدونتي تحرّرت من الـ<code>enum</code> كليّاً — وما كان لها منه مكسب أصلاً</b>
+    <p>الفحص كشف أنّ فلتر الباقات <b>ميّتٌ بالكامل</b>: <code>useClientFilters</code> صفر مستدعٍ ·
+      <code>ActiveFilters</code> و<code>FilterPanel</code> صفر مستورد · و<code>subscriptionTiers</code>
+      لا يظهر في أي واجهة. الباقة كانت تُقرأ من القاعدة وتُمرَّر عبر أربعة ملفّات لتنتهي في
+      بطاقةٍ تتجاهلها.</p>
+    <pre>حُذف: 3 ملفّات ميّتة · 190 سطراً
+  (site)/clients/helpers/use-client-filters.ts      72
+  (site)/clients/components/filter-panel.tsx        62
+  (site)/clients/components/active-filters.tsx      53
+
+وحُذفت 5 أسطر تمرير:
+  get-clients-with-counts.ts:97 · get-clients-search.ts:90
+  search/client-card.tsx:28 · search/SearchResults.tsx:113 · lib/types.ts:206
+
+grep subscriptionTier modonty/  →  صفر
+ترجمة حيّة نظيفة: /clients 200 · /search 200 · صفر خطأ ترجمة</pre>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — السطر الميّت في الكونسول</b>
+    <p><code>dashboard-queries.ts:323</code> كان يصدّر <code>tier: client.subscriptionTier</code>
+      و<b>لا مستهلك له في الكونسول كلّه</b>. حُذف هو ونوعه اليتيم في <code>DashboardStats</code>.</p>
+    <pre>grep ".tier" console/  (عدا tierName/tierConfig)  →  صفر
+ترجمة حيّة نظيفة: GET /dashboard 200 · صفر خطأ ترجمة</pre>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — المرحلة ١: قائمة «ينتظر التفعيل» + بطاقة اللوحة</b>
+    <p><b>تعريفٌ واحد يقرأه المشهدان</b> — <code>admin/lib/orders/awaiting-activation.ts</code> (جديد):
+      مدفوعٌ بلا <code>clientId</code>. فلا يمكن أن يختلف رقمُ البطاقة عن صفوف القائمة خلفها.</p>
+    <p><b>وفخّ مونغو وقع فيه أوّل مسوّدة:</b> <code>clientId: null</code> وحده يرجع <b>صفراً</b> —
+      كل طلبٍ من صفحة الدفع لا يحمل المفتاح أصلاً. الشرط <code>isSet: false</code> إلزاميّ.</p>
+    <pre>الملفّات: awaiting-activation.ts · awaiting-activation-card.tsx (جديدان)
+          orders/page.tsx · order-status-filter.tsx · (dashboard)/page.tsx
+
+القياس الحيّ — localhost:3012 · modonty_dev:
+  القاعدة        4 طلبات · 16,782 SAR + 23,994 EGP · أقدمها 2026-09-13
+  الحبّة         «ينتظر التفعيل 4»  ← أوّل الصفّ، كهرمانيّة
+  القائمة        4 صفوف مطابقة رقماً ومبلغاً
+  البطاقة        «4 طلبات مدفوعة تنتظر التفعيل · ٢٣٬٩٩٤ ج.م + ١٦٬٧٨٢ ر.س · أقدمها من 3 يوم»
+
+اختبار المال — ربطُ طلبٍ بعميل:
+  ORD-2026-00036 (2,394 ر.س) رُبط  →  العدد 4→3 · الريال 16,782→14,388 · الجنيه ثابت
+  القائمة 3 صفوف والطلب اختفى منها
+  فُكّ الربط                        →  رجع 4 · 16,782 SAR · مطابقٌ للأصل
+
+صفر خطأ ترجمة · GET / 200 · GET /orders?view=awaiting-activation 200</pre>
+    <p><b>وكل عملةٍ وحدها</b> — لا جمع بين الريال والجنيه في رقمٍ واحد، وهو الخطأ الذي وُجد
+      القرار ٤ ليمنعه. والبطاقة <b>تختفي تماماً</b> حين لا ينتظر أحد.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — الكونسول يقرأ من الطلب الساري</b>
+    <p>خمس شاشاتٍ كانت تقرأ اسم الباقة وسعرها من <code>SubscriptionTierConfig</code>، وصارت
+      تقرأ من <code>CheckoutOrder</code> عبر <code>client.activeOrderId</code>. مصدرٌ واحد:
+      <code>console/lib/subscription/active-order.ts</code> (جديد).</p>
+    <pre>planName      ←  اسم الباقة        (كان tierConfig.name ?? subscriptionTier)
+totalMinor    ←  الإجماليّ المدفوع  (كان tierConfig.price — سعر الكتالوج الحيّ)
+currency      ←  العملة             (كانت تُشتقّ من addressCountry)
+paidMonths    ←  المدّة + الهديّة    (كانت billingCycle: «سنوي» والطلب ٦ أشهر)</pre>
+    <p><b>وثلاثة أعطالٍ أُغلقت معها:</b></p>
+    <pre>api/mobile/v1/me      «باقة PRO»          →  «باقة الانطلاقة نشطة»
+                        كان يطبع رمز الـenum في تطبيق الجوّال
+
+العملة                 عميلٌ مصريّ كان رقمه يُتبع بـ«SAR»
+                        →  ٢٣٬٩٩٤ ج.م — مقيسٌ حيّاً على الطلب
+
+priceSar: number       →  paidTotal: string   نصٌّ يحمل عملته
+                        النوع نفسه كان يفترض الريال</pre>
+    <p><b>وبيانات الفحص زُرعت لا احتُيل عليها</b> (خالد: «اعمل سكربت تضيف بيانات»):
+      <code>admin/scripts/seed-orders-for-clients.ts</code> — يبني الطلبات بـ
+      <code>buildOrderSnapshot</code> نفسها التي تستعملها صفحة الدفع، فما يُفحص هو ما يعمل
+      في الإنتاج. يرفض أي قاعدةٍ غير <code>modonty_dev</code>، و<code>--clean</code> يرجّع كل شيء.
+      <b>وسيخدم الأدمن حين نصل إليه.</b></p>
+    <pre>زُرع 37 طلباً · 125,943 SAR + 1,139,802 EGP
+فحص الرياضيات على 37 طلباً: monthlyBase×paidMonths = total · subtotal+vat = total  →  كلّها صحيحة
+عملاء لهم مؤشّر طلب: 1 → 38 من 40
+
+القياس الحيّ — localhost:3013:
+  الشريط الجانبيّ وبطاقة الاشتراك   «الانطلاقة · ١٬١٩٧ ر.س · 3 شهر»   و«SAR» الثابتة اختفت
+  api/mobile/v1/me                  «باقة الانطلاقة نشطة»
+  api/mobile/v1/subscription (مصر)  الباقة: الزخم · المدفوع: ٢٣٬٩٩٤ ج.م · المدّة: 6 شهر + 1 هديّة
+  الأربعة 200 · صفر خطأ ترجمة · grep subscriptionTier console/ → صفر</pre>
+    <p class="said">وسقطت معها دالّةٌ يتيمة (<code>pricePointFor</code>) ونوعُها و<code>billingCycle</code>
+      من الـ<code>select</code> — بقايا الاشتقاق القديم.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — المرحلة ٢: نافذة التفعيل</b>
+    <p>زرّ <code>[فعّل]</code> على كلّ طلبٍ مدفوعٍ بلا كرت، ونافذةٌ لا تسأل عن الباقة ولا السعر
+      ولا المدّة — كلّها تُقرأ من الطلب وتُعرض للنظر لا للتعديل. المطلوب حقلان: الاسم والسلَج.</p>
+    <pre>lib/orders/activate-from-order.ts            جديد — الفعل الواحد
+orders/components/activate-order-dialog.tsx  جديد — حقلان + أربعة صفوفٍ للقراءة
+orders/components/activate-order-button.tsx  جديد — حالة النافذة للصفّ الواحد
+orders/page.tsx                              عمودٌ جديد: الزرّ يظهر إذا PAID وبلا clientId</pre>
+
+    <p><b>ما يُكتب — ولا حقلَ منها سُئل عنه الموظّف:</b></p>
+    <pre>subscriptionTier · articlesPerMonth · salesRepId   ←  الطلب
+email · phone (E.164)                              ←  المشتري
+subscriptionStatus ACTIVE · paymentStatus PAID · activatedAt = الآن
+activeOrderId = الطلب   ثمّ   order.clientId = الكرت
+subscriptionStartDate = order.serviceStartedAt     ←  يبقى فارغاً، لا يُزوَّر بيوم التفعيل</pre>
+
+    <p><b>خمسةُ حرّاسٍ ترفض قبل أن تكتب:</b></p>
+    <pre>الطلب غير مدفوع            ·  الطلب مفعَّلٌ مسبقاً  (يُقرأ من جديدٍ لا من صفّ القائمة)
+الطلب بلا باقة             ·  السلَج مستخدم
+البريد لعميلٍ قائم         →  «اربطه به» — تجديدٌ لا تأسيس، وإلّا انشقّ سجلّه الماليّ بين كرتين</pre>
+
+    <p class="said">وإيميل الترحيب <b>بعد</b> الكتابتين وبأثرٍ غير مُسقِط: فشلُه يُبلَّغ ولا يلغي
+      تفعيلاً نجح. وتصادُم الهاتف <code>@unique</code> يُترك الحقل فارغاً ولا يوقف التفعيل —
+      المال وصل والخدمة يجب أن تبدأ.</p>
+
+    <p><b>القياس الحيّ — localhost:3012، تفعيلان حقيقيّان:</b></p>
+    <pre>قبل   ٤ طلبات  ·  SAR ١٦٬٧٨٢ + EGP ٢٣٬٩٩٤  ·  ٤٠ عميلاً
+بعد   ٢ طلبان  ·  SAR ١٤٬٣٨٨            ·  ٤٢ عميلاً
+
+سلّة الجنيه اختفت كاملةً (٢٣٬٩٩٤) والريال نزل ٢٬٣٩٤ بالضبط — لا خلطَ عملتين.
+
+النافذة قرأت من الطلب المصريّ:  الزخم · ٢٣٬٩٩٤ ج.م · ٦ أشهر + شهر واحد هديّة · eg2@example.com
+والاسم امتلأ من businessName «متجر القاهرة» لا من اسم المشتري «محمد عبد الرحمن».
+
+المؤشّران متطابقان في الاتّجاهين:
+  ORD-2026-00058  order.id = client.activeOrderId  ✓   الزخم    ٢٣٬٩٩٤ EGP
+  ORD-2026-00036  order.id = client.activeOrderId  ✓   الانطلاقة ٢٬٣٩٤ SAR
+
+بطاقة اللوحة:  «2 طلبات مدفوعة تنتظر التفعيل — ١٤٬٣٨٨ ر.س وصلت، والخدمة ما بدأت»
+كرت العميل:    «الاشتراك الحالي · الزخم · ٢٣٬٩٩٤ ج.م · 6 شهر + 1 هديّة
+                بدء احتساب الاشتراك: ما بدأ — ينتظر أوّل مقال يوصل العميل»
+
+حارس التكرار — مقيسٌ لا مفترَض: صفحتان مفتوحتان، فُعّل الطلب في الأولى ثمّ ضُغط
+«فعّل» على الصفّ نفسه في الثانية القديمة →  «هذا الطلب مفعَّلٌ مسبقاً»
+والعدّ بعدها: كرتٌ واحدٌ بذلك البريد · ٤٢ عميلاً لا ٤٣ · ولا كرتَ يحمل طلبين.
+
+tsc --noEmit  →  صفر خطأ</pre>
+    <p class="said">وسقط معها خطأ ترجمةٍ قديم: <code>AWAITING_ACTIVATION</code> كان
+      <code>as const</code>، فجمّد المصفوفة و Prisma يطلبها قابلةً للتغيير — كلُّ مستهلكٍ للثابت
+      كان يسقط في <code>TS2322</code>. صارت <code>satisfies</code>.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — المرحلة ٣: البابُ القديم أُغلق</b>
+    <p>كانت <code>/clients/new</code> تؤسّس عميلاً يدفع: فورمٌ يسأل الموظّف عن الباقة والسعر
+      والعملة ودورة الفوترة والرصيد الافتتاحيّ <b>بيده</b> — وكلّها مكتوبةٌ في الطلب.
+      صارت <b>للحسابات الداخليّة وحدها</b>، ومن يدفع يُفعَّل من طلبه.</p>
+    <pre>ما سقط من الشاشة:
+  بطاقاتُ الباقات الأربع (سعرٌ حيٌّ من الكتالوج)     ·  دورةُ الفوترة (سنوي/شهري)
+  العملة المشتقّة من الدولة                          ·  الرصيد الافتتاحيّ
+  المندوب (لا عمولةَ على حسابٍ لا يدفع)              ·  مسار ?orderId= كلّه
+
+ما بقي: 🏛️ حساب داخليّ (مثبَّت) · ✅ موثَّق — وليس فيهما مال.</pre>
+
+    <p><b>والمخطّطات تبع الشاشة، وإلّا سقط الحفظ على حقلٍ لا يراه الموظّف:</b></p>
+    <pre>clientFormObject   الشكل الخام، مفصولٌ لأنّ superRefine يُرجع ZodEffects لا ZodObject
+refineShared       القواعد المشتركة — يرثها المخطّطان بلا نسخةٍ ثانية
+clientFormSchema        = الأصل + «الباقة إلزاميّة»   ← شاشة التعديل، كما كانت
+clientCreateFormSchema  = الأصل وحده                  ← بلا باقةٍ ولا مندوبٍ ولا رصيد</pre>
+
+    <p><b>والخادم يقرّر ما لم تعد الشاشة تسأله:</b> <code>createClient</code> يكتب للحساب
+      الداخليّ صفّ الكتالوج المجّانيّ «مجاني» — وصفٌ صادقٌ لحسابٍ مجّانيّ لا قيمةٌ مفترَضة —
+      <b>ويرفض الإنشاء لو غاب ذلك الصفّ</b> بدل أن يخمّن باقة.</p>
+
+    <p><b>وبابا الطلب صارا باباً واحداً:</b> زرّ «إنشاء حساب العميل» في صفحة الطلب كان يفتح
+      الفورم القديم، وصار يفتح نفس نافذة التفعيل.</p>
+
+    <p><b>وشارة «ملفّ ناقص»:</b> التفعيل لا يسأل عن الصناعة (الطلب لا يحملها)، والصناعة
+      إلزاميّةٌ في شاشة التعديل — فكانت الفجوة لا تُكتشف إلّا حين يسقط أوّل حفظ برسالة
+      Zod خام «Expected string, received null». صارت تظهر في القائمة، ورابطُها التعديل.</p>
+
+    <p><b>القياس الحيّ — localhost:3012:</b></p>
+    <pre>/clients/new     العنوان «حساب داخلي جديد» ومعه رابطٌ لـ«فعّله من طلبه»
+                 فحصُ ١٠ كلماتِ مال في نصّ الصفحة  →  لم يبقَ إلّا «مجاني» وهي وسمُ البطاقة
+
+تأسيسٌ حقيقيّ من الشاشة، وما كتبه الخادم:
+  isInternal true · subscriptionTier BASIC («مجاني») · articlesPerMonth 1
+  openingBalance null · salesRepId null · isVerified true
+
+شاشة التعديل لم تُمسّ: فُتحت وحُفظت  →  «تم التحديث بنجاح»
+  (وسقط الحفظ أوّلاً على الصناعة الناقصة — وهي الفجوة التي صارت لها شارة)
+
+صفحة الطلب:  رابط /clients/new?orderId= اختفى · وزرّ «فعّل» يفتح النافذة
+             «تفعيل عميل — الطلب ORD-2026-00033 · الزخم · ٧٬١٩٤ ر.س · ٦ أشهر + شهر واحد هديّة»
+
+الشارة:  ٢ من ٤٢ في الشاشة  =  ٢ في قاعدة البيانات — مطابقة
+         (أوّل قياسٍ أعطى ١٠: ترجمةٌ قديمة لم تُحدَّث بعد، لا خطأ منطق)
+
+صفر طلبٍ غير-200 · صفر خطأ ترجمة في سجلّ الخادم</pre>
+    <p class="said">وسقط معها ملفٌّ ميت: <code>get-order-prefill-for-client.ts</code>
+      (٥٣ سطراً) — كان الجسر الوحيد بين الطلب والفورم القديم، وصفر مستهلكٍ بعد إغلاقه.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — حالةُ الدفع صارت تُشتقّ من الفواتير</b>
+    <p><b>الحقل كان يكذب — والقياس لا رأيي:</b></p>
+    <pre>عملاء بلا أيّ فاتورة:  27 من 42     وماذا يقول كرتُهم:  PAID 26 · PENDING 1
+
+  الكرت «PAID» · فواتيره صفر   مدونتي
+  الكرت «PAID» · فواتيره صفر   شركة جبر الجنوبية للمقاولات
+  الكرت «PAID» · فواتيره صفر   متجر باقتك
+  الكرت «PAID» · فواتيره صفر   كيما زون</pre>
+    <p>ولا مسارَ في الكود يكتب <code>OVERDUE</code> فيه أصلاً — «تحديد مدفوعة» يكتب
+      <code>PAID</code> فقط. فكلّ شارةٍ مبنيّةٍ على <code>=== "OVERDUE"</code> لم تظهر مرّةً واحدة.</p>
+
+    <p><b>البديل — <code>admin/lib/clients/payment-state/</code> (جديد، أربعة ملفّات):</b></p>
+    <pre>getPaymentStates(ids)   دفعةً لا واحداً واحداً — القوائم تعرض عشرات الصفوف
+getPaymentState(id)     غلافٌ عليها، فلا منطقان يفترقان
+paymentStateLabel/Tone  النصّ واللون
+
+وحالةٌ ثالثة صريحة:  PAID · UNPAID · NO_INVOICES
+«بلا فواتير» لا تُطوى في «مدفوع» — الطيّ هو الكذبة نفسها.
+والمتأخّر لكلّ عملة: [{"currency":"EGP","amount":3597}] لا رقمٌ واحدٌ مجموع.</pre>
+
+    <p><b>الفحص — ثلاثة مسارات، كلٌّ في عمليّةٍ منفصلة:</b></p>
+    <pre>الأصل            PAID  · unpaid 0                          →  «مسدَّد»
+قُلبت DUE        UNPAID · unpaid 1 · EGP 3597 · 2026-07-24 →  «فاتورةٌ غير مسدَّدة»
+أُرشفت           PAID  · unpaid 0                          →  «مسدَّد» (الملغاة لا تُطالِب)
+أُرجعت           archivedAt null                           ✓ القاعدة كما كانت</pre>
+    <p class="said">وأوّل فحصٍ سقط ولم يُتجاهَل: قُلبت وقُرئت في نفس العمليّة فرجعت القيمة
+      القديمة — نسختان من وحدة <code>db</code> (الاسم المستعار والمسار النسبيّ). خللٌ في
+      سكربت الفحص لا في الوحدة؛ فُصلت العمليّات فظهر الصحيح.</p>
+
+    <p><b>وما تغيّر في الشاشات:</b></p>
+    <pre>شاشة الحسابات      العمود يقرأ الفواتير في الحالتين  →  14 «بلا فواتير» · 1 «مسدَّد»
+صفحة العميل        «PAID»  →  «بلا فواتير»
+الشرائح            «active · paid»  →  «active · بلا فواتير»
+لوحة الصحّة         شارةُ «Overdue» حُذفت — لم تكن تُطلَق قطّ
+الفورم (إنشاء+تعديل) المال خرج: بطاقاتُ الباقات والسعر ودورةُ الفوترة
+                   وبقي ما ليس مالاً: المندوب · حساب داخليّ · موثَّق</pre>
+
+    <p><b>القياس بحالةٍ حقيقيّة — «مدار حواء»، كرتُه يقول <code>PAID</code>:</b></p>
+    <pre>قُلبت فاتورتُه  →  صفحته:  «فاتورةٌ غير مسدَّدة»  بخلفية rgb(239,68,68)
+                   الحسابات: المؤشّر 0 → 1 · الصفّ «1 غير مدفوعة · 3,597 EGP»
+أُرجعت          →  المؤشّر 1 → 0
+وكرتُه طوال الوقت يقول PAID.</pre>
+    <p class="said">وسقط ميتان: <code>settings-section.tsx</code> (٦٧ سطراً — وهو الذي كان
+      يسمح بكتابة «مدفوع» باليد) و<code>basic-info-section.tsx</code> (٣٢٨) — صفر مستهلكٍ
+      في الأربعة تطبيقات. وفرعُ الإنشاء في <code>client-form.tsx</code> كان لا يُصرَّف أبداً
+      (<code>isEditMode = Boolean(clientId)</code>، و<code>ClientForm</code> لا يُستدعى إلّا بـ<code>clientId</code>).</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — مسارُ الكتابة كفّ عن لمس المال</b>
+    <p>ثلاثةُ مواضعَ كانت تكتب الباقة والدورة والحصّة على الكرت من شاشة الملفّ. سقطت كلُّها،
+      ومعها <b>فخٌّ اكتُشف بالقياس</b>.</p>
+    <pre>client-form-config    مجموعة «Subscription» حُذفت — لم يبقَ فيها إلّا مال
+                      (subscriptionTier · subscriptionTierConfigId · billingCycle)
+updateSubscriptionFields   لم تعد تكتب شيئاً
+updateRequiredFields       ٣٨ سطراً من منطق الباقة سقطت
+use-client-form            تحميلُ الكتالوج + أثران يتبعان الباقة
+create-client              paymentStatus · openingBalance · billingCycle خرجت من القائمة</pre>
+
+    <p><b>🐞 والفخّ — انحدارٌ أدخلتْه الدفعةُ الأولى نفسها:</b></p>
+    <pre>    } else if (!data.subscriptionTier) {
+      subscriptionTierConfigId = null;
+      articlesPerMonth = null;
+    }
+
+**غيابُ** الحقل كان يُقرأ أمراً بالمسح. فلمّا خرجت الباقة من الشاشة، صار كلُّ حفظٍ
+للملفّ يمحو حصّةَ العميل الشهريّة وربطَه بالكتالوج — بلا رسالة خطأ ولا أثر.</pre>
+    <p class="said">اكتُشف بقراءة الكرت بعد الحفظ، لا بقراءة الكود. والسبب مكتوبٌ الآن في
+      مكانه في <code>update-client-grouped.ts</code> كي لا يُعاد.</p>
+
+    <p><b>القياس الحيّ — قبل/بعد على عميلٍ له حصّةٌ وكتالوج:</b></p>
+    <pre>قبل الحفظ:  STANDARD · 69d020efbe4b3c3ed2425cec · 4 مقالات · annual
+بعد الحفظ:  STANDARD · 69d020efbe4b3c3ed2425cec · 4 مقالات · annual · openingBalance 3999
+            ولا حقلَ سقط.
+
+وحسابٌ داخليٌّ أُسِّس من الشاشة:
+  isInternal true · BASIC («مجاني») · articlesPerMonth 1 · openingBalance null
+  salesRepId null · isVerified true
+  paymentStatus PENDING · billingCycle annual  ←  من افتراضيّات السكيما لا من الفورم
+
+صفر خطأ ترجمة في سجلّ الخادم · صفر طلبٍ غير-200</pre>
+
+    <p><b>والعدّ ينزل:</b></p>
+    <pre>subscriptionTier   148 → 127 سطراً
+billingCycle        19 →  17
+openingBalance      39 →  37
+paymentStatus       77 →  76</pre>
+    <p class="said">وبقي مسارُ ميلادٍ ثالث لم يُمسّ: <code>convertLeadToClient</code>
+      (<code>sales-leads/actions.ts:436</code>) يختار الباقة بيده ويمرّرها لـ<code>createClient</code>.
+      هو نفسُ «النسخة الثانية» ويحتاج أن يُنتج <b>طلباً</b> لا باقةً مختارة — مُسجَّلٌ ولم يُنفَّذ.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — البابُ الثالث أُغلق: المحتمَل يُنتج طلباً لا باقةً مختارة</b>
+    <p>كان تحويلُ العميل المحتمَل نافذةً فيها قائمةٌ منسدلة اسمها «الباقة» — الموظّف يختار،
+      والخادم يكتبها على كرتٍ جديد. <b>لا طلبَ وراءها ولا مبلغَ مدفوع.</b></p>
+    <pre>convert-dialog.tsx:135   &lt;Label htmlFor="ctier"&gt;الباقة&lt;/Label&gt;
+convert-dialog.tsx:73    convertLeadToClient(leadId, { slug, email, subscriptionTier: tier })
+sales-leads/actions.ts:436   createClient({ … subscriptionTier: input.subscriptionTier })</pre>
+
+    <p><b>وصار المسار واحداً:</b></p>
+    <pre>زرّ «حوّله إلى عميل — افتح طلباً»  →  /orders/new?leadId=…
+  الهويّة معبّأةٌ من المحتمَل (الاسم · النشاط · البريد · الجوال · السوق · المندوب)
+  والمالُ فارغ — يكتبه الموظّف بما اتُّفق عليه فعلاً
+ثمّ زرّ «فعّل» نفسه  →  العميل يُولد، والمحتمَل يُختَم من هناك</pre>
+
+    <p><b>وحقلٌ واحد في السكيما يحمل الرابط:</b> <code>CheckoutOrder.leadId</code> — بلا
+      <code>@relation</code> عن قصد، نفس قاعدة <code>activeOrderId</code>: حذفُ محتمَلٍ لا يمسّ
+      طلباً ماليّاً.</p>
+
+    <p><b>القياس الحيّ — المسار كاملاً على محتمَلٍ حقيقيّ:</b></p>
+    <pre>صفحة المحتمَل   الزرّ: «حوّله إلى عميل — افتح طلباً»
+                 الوجهة: /orders/new?leadId=6a9d6376ab050f09b0543f05
+                 والنافذة القديمة: غير موجودة
+
+صفحة الطلب     العنوان «طلب اشتراك — متجر عطور»
+                 معبّأ: محمد عامر · fatenhassanin96@gmail.com · +966596954708 · متجر عطور
+                 والمبلغ فارغ
+
+سُجّل ORD-2026-00062:
+  leadId ✓ · salesRepId انتقل ✓ · الانطلاقة · 239400 SAR · 6 أشهر · PAID
+
+نافذة التفعيل   «الانطلاقة · ٢٬٣٩٤ ر.س · ٦ أشهر + شهر واحد هديّة» — ولا سؤالَ عن باقة
+
+بعد التفعيل:
+  الطلب    leadId ✓ · clientId ✓
+  العميل   «متجر عطور» · activeOrderId = الطلب · المندوب ✓ · ACTIVE
+  المحتمَل  stage WON · convertedClientId مكتوب · convertedAt · المتابعة مُسحت
+  الخطّ مقفول؟  true
+
+ثمّ أُرجعت البيانات: المحتمَل CONTACTED · عملاء 42 · طلبات 79 — كما كانت</pre>
+    <p class="said">وسقط معها ملفّان: <code>convert-dialog.tsx</code> (١٦٧ سطراً) و
+      <code>convertLeadToClient</code> (٨٤ سطراً) — وورث التفعيلُ تفاصيلَهما
+      (<code>stage: WON</code> · مسحُ موعد المتابعة). و<code>allowedDevOrigins</code>
+      أُضيف لـ<code>next.config.ts</code> — إعدادُ تطويرٍ بحت لا أثر له في الإنتاج.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — بدأ تقاعدُ الإنم: حقلان صارا اختياريّين</b>
+    <p><b>تصحيحُ ترتيب</b> (خالد): الترحيل آخر مرحلة، فالإنم يُشال <b>الآن على اللوكل</b>
+      كي تظهر مشاكلُه هنا — لا على بياناتٍ حيّة فيها فلوسٌ وعملاء. ووقفتُ مرّتين بلا سبب
+      قبل هذا التصحيح.</p>
+    <pre>Client.subscriptionTier   إلزاميّ  →  اختياريّ
+Invoice.tier              إلزاميّ  →  اختياريّ</pre>
+
+    <p><b>ولماذا <code>Invoice.tier</code> أوّلاً — مقيسٌ لا مفترَض:</b></p>
+    <pre>يُكتب في ٣ مواضع:  create-invoice · convert-opening-balance · orders/actions
+ويُقرأ في:          صفر موضع
+والقارئ الوحيد للفواتير (get-sales-report:256) يستعمل tierName — لقطةَ الاسم.</pre>
+    <p>فأُوقف الكتّاب الثلاثة، و<code>tierName</code> صارت تُقرأ من <b>الطلب الساري</b>
+      (<code>order.planName</code>) — وهو ما دفع عليه العميل — والكتالوجُ القديم بديلٌ
+      للعملاء الذين سبقوا الطلبات.</p>
+
+    <p><b>القياس الحيّ — فاتورةٌ أُصدرت فعلاً:</b></p>
+    <pre>MOD-2026-00022   tier: null ✓   tierName: "الريادة"   1500 EGP   annual
+ثمّ حُذفت، والفواتير رجعت 16.</pre>
+
+    <p><b>🔍 وأوّل مطلبٍ للترحيل انكشف بالقياس:</b></p>
+    <pre>نافذة الإصدار كانت تقول:  «للباقة الحالية: الانطلاقة»
+والفاتورةُ الصادرة منها كتبت: «الريادة»
+
+  الكرت  →  STANDARD · الانطلاقة   (subscriptionTierConfig)
+  الطلب  →  PREMIUM  · الريادة     (order.planName)
+
+مصدران لنفس الرقم على شاشةٍ واحدة. وُحِّدا: الشاشة صارت تقرأ الطلب،
+ومقيسٌ بعدها أنّ الاثنين يقولان «الريادة».</pre>
+    <p class="said"><b>المطلب:</b> قبل الترحيل تُستخرج قائمةُ العملاء الذين يخالف كرتُهم
+      طلبَهم — لأنّ فواتيرهم الجديدة ستحمل اسماً غير الذي كانت تحمله. الاختلافُ المقيس
+      هنا مصدرُه طلباتٌ زرعها سكربت الفحص، لا خللٌ في الإنتاج — ويُعاد قياسه على بياناته.</p>
+
+    <p><b>العدّ:</b> ٤٨ ملفّاً · ١٦١ ← <b>١٥٧ سطراً</b>. والباقي يُمَرّ عليه بنفس الطريقة:
+      يُشال، يُقاس، ويُسجَّل ما ينكشف.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — المجموعة ١: الترجمات والعرض. <span style="color:var(--ink)">٤٨ ← ٤٤ ملفّاً · ١٥٧ ← ١٤٢ سطراً</span></b>
+    <p><b>تغييرُ إيقاع</b> (خالد: «نفس الأرقام ما قاعدة تتغيّر»): كان الشغلُ ملفّاً ملفّاً
+      بفحصٍ بعد كلٍّ منه — آمنٌ وبطيء، والرقم لا يتحرّك. صار <b>مجموعةً مجموعة</b>،
+      من الأسهل إلى الأثقل، والفحصُ بعد كل مجموعة.</p>
+
+    <p><b>أ · الترجمات — أربعة ملفّات، صفر مستهلك:</b></p>
+    <pre>lib/messages/ar.ts · en.ts · types.ts · index.ts
+
+  'خطة الاشتراك الحالية'  ·  'اسم الخطة' · 'وصف الخطة' · 'سعر الخطة' · 'المميزات المتضمنة'
+  ونوعُها SubscriptionTierHintKey
+
+فُحص المستهلك قبل الحذف:  grep على hints.subscriptionTier و labels…subscriptionTier  →  صفر
+نصوصٌ لشاشةٍ لم تعد موجودة.</pre>
+
+    <p><b>ب · ثلاثةُ إعلاناتٍ بلا استعمال:</b></p>
+    <pre>client-analytics.tsx · client-delivery-metrics.tsx · client-tabs.tsx
+
+كلٌّ منها يعلن  subscriptionTier?: string | null  ولا يقرؤه أبداً —
+الاستعمال الفعليّ في الثلاثة هو subscriptionTierConfig?.articlesPerMonth.</pre>
+
+    <p><b>ج · شاشتان كانتا تطبعان رمز الـ<code>enum</code> للموظّف:</b></p>
+    <pre>clients/suspend · clients/activate     الشارة تعرض {client.subscriptionTier}
+  أي «PRO» و«STANDARD» — رمزُ enum لا اسمُ باقة.
+صارت تقرأ subscriptionTierConfig.name.
+
+القياس الحيّ بعدها:
+  /clients/suspend    رموزٌ خام: []   أسماءُ باقات: [الانطلاقة · الزخم · مجاني]
+  /clients/activate   رموزٌ خام: []   أسماءُ باقات: [الانطلاقة]
+  صفر خطأ في الشاشتين.</pre>
+
+    <p class="said">و<code>database-health.ts</code> تُرك عمداً: عدّادُه
+      (<code>subscriptionTiers</code>) يعدّ صفوفَ جدول <code>SubscriptionTierConfig</code>
+      نفسِه — يسقط مع الجدول لا قبله.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — المجموعة ٢: الكتالوج القديم. <span style="color:var(--ink)">٤٤ ← ٤٢ ملفّاً · ١٤٢ ← ١٢٦ سطراً</span></b>
+    <p><b>حصيلةٌ أقلّ ممّا قُدّر</b> — و<code>tier-actions.ts</code> طلع <b>حيّاً</b>:
+      <code>TierDistribution</code> يعرض توزيعَ العملاء على الباقات في شاشة العملاء
+      (<code>clients-tabs.tsx:213</code>). فبقي.</p>
+    <pre>ما سقط ودام:
+  subscription-tiers/lib/pricing.ts   (resolvePricing — صفر مستهلك)
+  scripts/sync-tier-pricing.ts        (يتيم)
+
+وما تحوّل مصدرُه:
+  clients/page.tsx            نداءٌ لا تُستعمل نتيجتُه  →  حُذف ثمّ أُعيد (TierDistribution يحتاجه)
+  account/page.tsx            المبلغ الافتراضيّ في نافذة الإصدار
+  create-client.ts            ٤٨ سطراً من منطق الكتالوج سقطت كلُّها</pre>
+
+    <p><b>المبلغُ الافتراضيّ صار من الطلب لا من الكتالوج:</b></p>
+    <pre>كان:  سعرُ الكتالوج الحيّ لباقة الكرت  →  تغييرُ السعر اليوم يغيّر المقترَح لفاتورة
+      اشتراكٍ اشتُري بسعر أمس.
+صار:  order.totalMinor ÷ paidMonths × أشهر الفاتورة — رقمٌ مجمَّد بما دُفع.
+
+القياس الحيّ:  ORD-2026-00554 · 95,988 ÷ 12 = 7,999/شهر × 12 = 95,988
+               والنافذة عرضت 95988 بالضبط.</pre>
+
+    <p><b>🐞 وكُسرت الشاشة مرّتين قبل اكتشاف ذلك — والسببان مسجَّلان:</b></p>
+    <pre>Module not found: jbrseo-queries
+  فُحص المستهلكون بالاسم، واستُثني كل سطرٍ فيه "subscription-tiers/" —
+  ومسارُ الاستيراد نفسه يحمل تلك الكلمة. فبدا الملفّ ميتاً وهو حيّ.
+  ← الفحص بالمسار الكامل لا بالاسم.
+
+allClientEmails is not iterable
+  حُذف نداءٌ من Promise.all بلا حذف تفكيكه، فانزاح كل ما بعده بصمت.
+  ← وهو نفس الفخّ المسجَّل في هذه الورقة، وقع للمرّة الثالثة.
+  ← النداء وتفكيكه يُعدَّلان في تعديلٍ واحد أو لا يُعدَّلان.
+
+استُرجع من git، وأُصلح، وفُحص حيّاً: /clients → 10 صفوف · شارتان · صفر خطأ.</pre>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — المجموعة ٣: الفواتير والحسابات. <span style="color:var(--ink)">١٢٦ ← ١٢٠ سطراً</span></b>
+    <p><b>أربعةُ <code>select</code> ميتة</b> — تُجلب الباقة من القاعدة ولا تُقرأ بعد تحويل
+      المصدر إلى الطلب الساري:</p>
+    <pre>account/page.tsx · create-invoice.ts · convert-opening-balance.ts · orders/actions.ts</pre>
+
+    <p><b>واستعمالان حقيقيّان — كلاهما كان يُظهر رمزَ الـ<code>enum</code> للموظّف:</b></p>
+    <pre>get-sales-report:198
+  const tierName = …?.name ?? c.subscriptionTier ?? "—"
+  فيسقط على «PRO» حين لا اسمَ للباقة — رمزٌ تقنيّ بين أسماءٍ عربيّة في تقرير مال.
+  →  "بلا باقة"  — الاسمُ الناقص يُقال ناقصاً.
+
+accounts-table: PLAN_TONE[r.tier]
+  مفاتيحُه رموز (PRO · PREMIUM) وتقود لونَ شارة الباقة.
+  →  صارت أسماءً (الزخم · الريادة). وباقةٌ جديدة تأخذ اللونَ الحياديّ بلا تعديلِ كود.</pre>
+    <p class="said">ولو بُدِّل المصدر دون المفاتيح لاختفى اللون بصمت — فُحص أنّه ما زال يعمل.</p>
+
+    <p><b>القياس الحيّ:</b></p>
+    <pre>/clients/accounts    15 صفّاً · رموزٌ خام: []  · شارتان بنفسجيّتان ما زالتا تعملان
+                     عيّنة: «الانطلاقة · ACTIVE · بلا فواتير»
+/clients/sales-report  رموزٌ خام: []  · أسماء: [الانطلاقة · الزخم]
+                     ومبالغُه كما هي: 84,851 · 42,082 · 27,181 · 10,791 …
+صفر خطأ في الشاشتين.</pre>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — المجموعة ٤: مجلّد العملاء. <span style="color:var(--ink)">١٢٠ ← ١٠٢ سطراً</span></b>
+    <p><b>سلسلةُ الفورم قُطعت كاملةً في تعديلٍ واحد</b> — الباقة لم تعد تمرّ من الشاشة
+      إلى القاعدة في أيّ خطوة:</p>
+    <pre>client-form-schema      subscriptionTierSchema + الحقل + اشتراطُه في التعديل
+use-client-form         كفّ عن إرساله
+map-initial-data        كفّ عن تحميله من الكرت
+client-field-mapper     كفّ عن تمريره
+client-server-schema    كفّ عن قبوله
+create-client           كفّ عن كتابته، وخرج من قائمة المسموح
+lib/types/form-types    الحقل والاستيراد
+
+ولم يبقَ فرقٌ بين مخطّطَي الإنشاء والتعديل — كلاهما الأصلُ وقواعدُه المشتركة.</pre>
+
+    <p><b>ومواضعُ أخفّ — كلُّها كانت تُظهر رمزَ الـ<code>enum</code> أو تجلبه بلا قراءة:</b></p>
+    <pre>edit-workspace     شارةُ الباقة تسقط على «PRO»      →  «بلا باقة»
+export-actions     عمودُ CSV يطبع الرمز              →  اسمُ الباقة (ومعه جلبُ العلاقة)
+get-clients/types  يُجلب ويُعلَن ولا يُقرأ أبداً       →  سقط
+update-client      يُجلب ولا يُقرأ                   →  سقط</pre>
+    <p class="said">وفي <code>export-actions</code> كان الجلبُ ناقصاً بعد التبديل — فلولا
+      إضافةُ <code>subscriptionTierConfig</code> للـ<code>include</code> لطبع الملفُّ
+      «بلا باقة» لكل عميلٍ بصمت.</p>
+
+    <p><b>الفحص الحاسم — الحفظ لا يمسح ما لم يعد يُرسَل:</b></p>
+    <pre>قبل الحفظ:  STANDARD · 69d020efbe4b3c3ed2425cec · 4 مقالات · openingBalance 3999
+بعد الحفظ:  STANDARD · 69d020efbe4b3c3ed2425cec · 4 مقالات · openingBalance 3999
+POST /clients/…/edit  →  200
+
+ولا حقلَ سقط — القيمُ القائمة تبقى، والكتابةُ الجديدة تتوقّف.</pre>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">صفر كاتبٍ للإنم في مسارات الإنتاج</span></b>
+    <p>آخرُ كاتبَين سقطا، وأوّلُ عميلٍ وُلد بلا إنمٍ على كرته — وشاشتُه تعرض باقتَه كاملةً
+      من الطلب.</p>
+    <pre>activate-from-order        كان يكتب subscriptionTier: order.planTier  →  سقط
+                           ومعه حارسٌ كان يرفض الطلبَ بلا planTier (الحقل صار اختياريّاً،
+                           و planName إلزاميٌّ على الطلب أصلاً).
+convert-subscriber         كان يكتب tierConfig.tier  →  سقط (ويبقى ربطُ الكتالوج للحصّة)</pre>
+
+    <p><b>القياس الحيّ — تفعيلٌ كامل:</b></p>
+    <pre>العميل «منشأة الدورة»:
+  subscriptionTier: null ✓   articlesPerMonth: 12   activeOrderId: الطلب   ACTIVE
+
+وبطاقة «الاشتراك الحالي» على شاشته:
+  الباقة الزخم · المدفوع ٧٬١٩٤ ر.س · المدّة 6 شهر + 1 هديّة · تاريخ الدفع ١٤ سبتمبر
+  — كلُّها من الطلب، ولا شيء منها على الكرت.
+
+ثمّ رُجّعت البيانات: عملاء 42 · ينتظر التفعيل 2.</pre>
+
+    <p><b>🐞 وانكشف عطبٌ في التفعيل نفسه — سابقٌ لهذا الشغل:</b></p>
+    <pre>Unique constraint failed on: clients_phone_key
+
+الحارسُ القديم كان **يُسقط الهاتف** عند تصادُمه ظنّاً أنّه يهرب من القيد.
+والفهرس ليس sparse — مقيسٌ خاماً:
+
+  listIndexes(clients) →  {"key":{"phone":1},"unique":true}     بلا sparse
+  عملاء بلا هاتف: 1
+
+فإسقاطُ الحقل يصنع مستنداً ثانياً بلا هاتف، فيصطدم بالأوّل. أي أنّ الحارس كان
+يصنع الخطأ الذي يهرب منه — ويخرج برسالةِ قاعدةٍ لا تدلّ على السبب.
+
+صار يرفض بوضوح:
+  «رقم الجوال +966501234567 مسجَّلٌ لعميلٍ آخر (اختبار المنطق الكامل) —
+   صحّح الرقم على الطلب قبل التفعيل»
+ثمّ صُحّح الرقم فنجح التفعيل.</pre>
+
+    <p><b>ومسارُ ميلادٍ رابع انكشف ولم يُعالَج:</b> <code>convertSubscriberToClientAction</code>
+      — مشترِك jbrseo ← عميل، يختار الباقة من الكتالوج لا من طلبٍ مدفوع. مُسجَّلٌ في الكود
+      نفسه، ويحتاج أن يمرّ بطلبٍ كما صار المحتمَل يمرّ.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — الكنسة اكتملت. <span style="color:var(--ink)">٢٣٨ ← ٩١ سطراً</span></b>
+    <pre>البداية      ٥٦ ملفّاً · ٢٣٨ سطراً
+الآن         ٣٨ ملفّاً ·  ٩١ سطراً
+
+وتركيبُ الـ٩١ — مقيسٌ لا مُقدَّر:
+  ٦٢   subscriptionTierConfig   الكتالوج القديم — يسقط مع جدوله في المرحلة ٨
+  ١٨   تعليقاتٌ تشرح ما سقط
+  ١٨   الإنم نفسه كوداً حيّاً    ← وهذا وحده ما بقي فعلاً</pre>
+
+    <p><b>آخرُ ما سقط:</b></p>
+    <pre>getTierDisplayName            دالّةٌ تترجم الرمز لاسمٍ إنجليزيّ — صفر مستهلك
+generate-client-test-data     ملفٌّ كامل (١١٠ سطراً) — صفر مستهلك
+seed-integration-test         كان يمرّر الباقة ويتحقّق منها
+delivery-progress             نصُّ مساعدةٍ يحيل لشاشةٍ لم تعد موجودة</pre>
+    <p class="said">وفحصُ البذر كان سيسقط <b>كذباً</b>: يتحقّق من
+      <code>subscriptionTier === "PRO"</code> بينما <code>createClient</code> ما عاد يقبل
+      الباقة. صار يقيس ما يُكتب فعلاً — الحالة.</p>
+
+    <p><b>وموضعٌ أُوقفت عنده عمداً:</b> <code>lib/pricing/get-tier-pricing.ts</code> يربط
+      معرّفات jbrseo (<code>starter</code> · <code>growth</code> · <code>scale</code>) بالباقة
+      عبر الإنم. والبديل المفترَض — الـ<code>slug</code> — <b>هاشٌ بلا معنى</b>:</p>
+    <pre>plan-4e07fc71  الانطلاقة      plan-f1854bef  الزخم      plan-86239ea8  الريادة</pre>
+    <p class="said">فالربط بالهاش أسوأ من الربط بالإنم. يلزم أوّلاً أن تُعطى الباقات
+      <code>slug</code> ذا معنى — قرارٌ لك، لا تعديلٌ ميكانيكيّ.</p>
+
+    <p><b>القياس الحيّ — عشر شاشات:</b></p>
+    <pre>/clients · /clients/accounts · /orders · /orders?view=awaiting-activation
+/clients/new · /clients/suspend · /clients/activate · /clients/sales-report
+/commercial-plans · /database
+
+كلُّها 200 · صفر «Application error» · صفر «Module not found» · صفر «is not iterable»</pre>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">قفصُ «أربع باقاتٍ للأبد» سقط</span></b>
+    <p><b>الجذر كان سلَقاً بلا معنى.</b> باقاتُ الكتالوج وُلدت بهاش
+      (<code>plan-4e07fc71</code>)، فلم يجد الكود مفتاحاً مقروءاً يربط به الباقة —
+      فاستعمل <code>SubscriptionTier</code> وسيطاً. والإنم أربعُ قيمٍ، وحارسُ النشر يمنع
+      باقتين على القيمة الواحدة. <b>فالسقفُ أربعٌ مهما كبر العرض.</b></p>
+    <pre>plan-4e07fc71  →  intilaqa       الانطلاقة
+plan-f1854bef  →  zakham         الزخم
+plan-86239ea8  →  riyada         الريادة
+
+scripts/rename-plan-slugs.ts (جديد) — ويُحدّث معها لقطةَ كل طلب:
+  باقات: 3 · طلبات: 79 · طلباتٌ ما زالت على الهاش: 0</pre>
+    <p class="said">خالد: «إحنا لسّه في اللوكل — حتى الباقات ممكن تتغيّر. عايزين نبتدي صح».
+      وكنتُ عاملتُ السلَق كأنّه إنتاجٌ لا يُمَسّ.</p>
+
+    <p><b>وبسقوط السلَق الهاش سقطت السلسلة كلُّها:</b></p>
+    <pre>get-tier-pricing       كان jbrseoId → tier → الباقة    صار jbrseoId → slug → الباقة
+حارسُ النشر            «فئةٌ إلزاميّة» + «باقةٌ واحدة لكل فئة»  →  «سلَقٌ إلزاميّ» فقط
+                       والسلَق @unique في السكيما، فالبحثُ به لا يلتبس ولا يحدّ العدد.
+CommercialPlan.tier    خرج من لقطة الطلب
+CheckoutOrder.planTier كان يُكتب في ٧ مواضع ويُقرأ في **صفر** — سقط من اللقطة المشتركة
+                       (shared/lib/payments/build-order-snapshot.ts)</pre>
+
+    <p><b>القياس الحيّ — صفحة الدفع نفسها:</b></p>
+    <pre>/sa/plans                              200
+/sa/checkout?plan=intilaqa&months=6    200
+/sa/checkout?plan=zakham&months=12     200
+/eg/checkout?plan=riyada&months=6      200
+/sa/checkout?plan=plan-4e07fc71…       307  (الهاش القديم يُحوَّل، لا يكسر)
+
+والصفحة تعرض: «الزخم · ١٤٬٣٨٨ ر.س · ١٨ شهر · منها ٦ شهور خدمة مجانية»</pre>
+
+    <p><b>والإنم في المستودع كلّه — كوداً حيّاً:</b></p>
+    <pre>admin 13 · shared 2 · payment 0 · modonty 0 · console 0
+
+والثلاثةَ عشرَ الباقية كلُّها على SubscriptionTierConfig — الجدول القديم،
+يسقط بجدوله في المرحلة ٨.</pre>
+  </div>
+
+  </section>
+
+  <section data-view="now">
+  <div class="card" style="margin-top:22px">
+    <b>📋 ملاحظاتٌ للمرحلة ٨ — الترحيل. <span style="color:var(--go)">لا توقف الكنسة.</span></b>
+    <p>الحقولُ الثلاثة بديلُها جملةٌ واحدة: <b>«اقرأ من الطلب»</b>. والمتّفق عليه أنّ
+      <code>openingBalance</code> <b>مكانه <code>CheckoutOrder</code></b>، وأنّ الترحيل
+      <b>آخر مرحلة</b> — يُحسب له حسابه حينها لا الآن.</p>
+    <p class="said">وهذه أرقامُ <code>modonty_dev</code> وحدها — بيئةُ عملٍ محلّيّة، لا حكمٌ
+      على الإنتاج (لم يُقرأ). تُسجَّل هنا كي لا تُكتشف وقت الترحيل.</p>
+    <pre>عملاء: 42 · طلبات: 79 · منها زرعها سكربت الفحص: 37 · حقيقيّة: 42
+  له طلبٌ حقيقيّ:   3
+  طلبُه مزروع فقط: 37
+  بلا طلبٍ أصلاً:   2
+
+عملاء برصيدٍ افتتاحيّ > 0: 25 · مجموعها: 80,051
+مقارنة الرصيد بإجماليّ الطلب:  متطابق 3 · مختلف 22
+  الكرت 3999  ≠  الطلب 23994 EGP   اد/ محمد يسري
+  الكرت 3597  ≠  الطلب 95988 EGP   مدار حواء
+  الكرت 9388  ≠  الطلب 95988 EGP   مركز عطاء لطب الاسنان
+  الكرت 1200  ≠  الطلب  3597 EGP   عيادة دكتور عمرو مصطفى
+
+  ← الاختلاف متوقَّع: تلك الطلباتُ زرعتُها أنا بباقاتٍ لا بأرصدة العملاء.
+    لا يدلّ على خللٍ في الإنتاج، ويُعاد قياسه على بياناته وقت الترحيل.</pre>
+    <p><b>ما يجب أن يحمله سكربت الترحيل — لكلّ عميلٍ قديم، طلبٌ يحمل:</b></p>
+    <pre>totalMinor        ←  openingBalance × 100        (الإيراد المسجَّل — يعدّه تقرير المبيعات)
+currency          ←  من دولة العميل                (ولا يُجمع ريالٌ على جنيه)
+paidMonths        ←  billingCycle: annual→12 · monthly→1
+planName/planTier ←  subscriptionTierConfig.name للعميل
+serviceStartedAt  ←  subscriptionStartDate الحاليّ
+status PAID · notes: وسمُ ترحيلٍ يسمح بالرجوع</pre>
+    <p><b>ومطلبٌ انكشف بالقياس ١٧ سبتمبر:</b> قائمةُ العملاء الذين يخالف كرتُهم طلبَهم —
+      فواتيرُهم الجديدة ستحمل اسمَ باقةٍ غير الذي كانت تحمله، وهذا يُرى قبل الترحيل لا بعده.</p>
+    <p class="said">وثلاثةُ حرّاسٍ لا يُتجاوزون: <b>لا عميلَ بلا مقابلٍ ماليّ</b> (يُبلَّغ عنه
+      ولا يُخمَّن له مبلغ) · <b>مجموعُ الإيراد قبل الترحيل = بعده</b> لكلّ عملةٍ على حدة ·
+      <b>وسمُ الترحيل يسمح بالتراجع</b> كما في <code>seed-orders-for-clients --clean</code>.</p>
+  </div>
+
+  <p class="sub" style="margin:22px 0 0"><b style="color:var(--ink)">والمتبقّي — أربع مراحل:</b></p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>#</th><th>المرحلة</th><th>المقيس</th><th>لماذا هنا بالذات</th></tr></thead>
+    <tbody>
+
+
+      <tr><td><b>٤</b></td>
+          <td><b>إسقاط الحقول الكاذبة الثلاثة</b><br>
+              <code>billingCycle</code> · العملة المشتقّة · <code>openingBalance</code>
+              <span class="f">مقيسٌ ١٧ سبتمبر بعد الكنسة:
+              billingCycle admin ١١ ملفّ · ١٧ سطراً — console ملفّ واحد ·
+              openingBalance admin ٩ ملفّات · ٣٧ سطراً</span></td>
+          <td>٢٠ ملفّاً<br><span class="tag t-warn">متوسّط</span></td>
+          <td><b>موقوفةٌ على الترحيل.</b> <code>openingBalance</code> يحمل إيراداً يعدّه
+              تقرير المبيعات، وبديلُه <code>order.totalMinor</code> — ولا طلبَ للعميل القديم.
+              وما سقط منها بالفعل: كتابتُها من الشاشتين (لم تعودا تسألان عنها).</td></tr>
+
+      <tr><td><b>٥</b></td>
+          <td><b>«حالة الدفع» على الكرت تنقرض</b><br>
+              <span class="f">PaymentStatus|paymentStatus: admin ٤٦ ملفّاً · ٨٥ سطراً
+              — console ٦ ملفّات — و<code>Invoice.paymentStatus</code> تبقى وهي المصدر</span></td>
+          <td>٤٦ ملفّاً<br><span class="tag t-warn">متوسّط</span></td>
+          <td><b>البديل مبنيٌّ ومُستعمَل</b> — <code>lib/clients/payment-state/</code>، وخمسُ
+              شاشاتٍ تقرأ منه. الباقي كتابةٌ لا يقرؤها أحد، تسقط مع الحقل في المرحلة ٨.
+              و<b>الكونسول ما زال يعرضها للعميل نفسه</b> (٦ ملفّات).</td></tr>
+
+      <tr><td><b>٦</b></td>
+          <td><b>الباقة تصير مرجعاً لا <code>enum</code></b><br>
+              <code>SubscriptionTier</code> يتقاعد، و<code>CommercialPlan</code> يصير المصدر.
+              <span class="f">admin ٤٨ ملفّاً · ١٦١ سطراً — console صفر — مدونتي صفر</span></td>
+          <td>٤٨ ملفّاً<br><span class="tag t-warn">متوسّط</span></td>
+          <td><code>SubscriptionTierConfig.tier @unique</code> يعني <b>أربع باقاتٍ للأبد</b>.
+              والكتابةُ من الشاشات سقطت؛ الباقي قراءةٌ وكتالوجٌ قديم وترجمات —
+              وأثقلُها <code>create-client</code> و<code>tier-actions</code>.</td></tr>
+
+      <tr><td><b>٨</b></td>
+          <td><b>ترحيل البيانات القديمة</b><br>
+              طلبٌ بتاريخه ومبلغه لكل عميلٍ قائم.
+              <span class="f">مقيسٌ على modonty_dev: ٤٢ عميلاً · ١٦ فاتورة · ٢٥ برصيدٍ افتتاحيّ</span></td>
+          <td><span class="tag t-stop">كبير</span></td>
+          <td><b>آخر مرحلة، بلا استثناء</b> — و<b>هي التي تفتح ٤ و٥ و٦</b>: بديلُ الثلاثة
+              كلِّه «اقرأ من الطلب»، والعميل القديم لا طلبَ له.
+              تفاصيلُها في بطاقة «📋 ملاحظاتٌ للمرحلة ٨» أعلاه.</td></tr>
+
+    </tbody>
+  </table>
+  </div>
+
+  </section>
+
+  <section data-view="done">
+  <div class="card stop">
+    <b>✅ الجنك — حُذف ١٦ سبتمبر: ١٤ ملفّاً · ١٬٧٩٨ سطراً</b>
+    <p>لم يستوردها أيّ ملفّ. فُحصت بخمس طرق قبل الحذف: المسار · كل رمزٍ مُصدَّر ·
+      الاستيراد الديناميكيّ (<code>dynamic()</code> / <code>import()</code>) ·
+      بحثٌ نصّيّ في المستودع كلّه (admin · console · modonty · shared · payment) ·
+      وأنّ ولا واحدٍ منها ملفّ مسار. <b>كلّها رجعت صفراً.</b></p>
+    <pre>clients/[id]/components/tabs/     basic-info-tab.tsx     431 سطر
+                                  required-tab.tsx       201
+                                  subscription-tab.tsx   143   ← الباقة والدفع، ميّتة أصلاً
+                                  contact-tab.tsx        135
+                                  overview-tab.tsx       118
+                                  business-tab.tsx        75
+clients/components/               business-analytics.tsx 177
+                                  client-row-actions.tsx 128
+                                  client-media-modal.tsx  92
+                                  export-button.tsx       79
+                                  section-status-badge.tsx 77
+                                  subscription-tier-cards.tsx 60
+                                  field-dependency-indicator.tsx 37
+                                  client-form-header-wrapper.tsx 31
+                                  ─────────────────────────────────
+                                  14 ملفّاً ≈ 1,784 سطراً</pre>
+    <p><b>وأطرفها:</b> <code>export-button.tsx</code> مكرّرٌ في <b>خمسة مسارات</b>
+      (articles · categories · clients · industries · tags) — <b>ولا واحدٌ منها مستورد</b>.
+      هذا نمط «انسخ الملفّ للمسار الجديد» الذي صنع الجنك، لا ملفٌّ واحد نُسي.</p>
+    <p class="said">ومجلّد <code>clients/</code> كان فيه <b>١٦٤ ملفّاً</b> مقابل <b>٢٤</b> في
+      <code>orders/</code> — والأخير يفعل شغل المال كلّه.</p>
+
+    <p style="margin-top:12px"><b>والدليل بعد الحذف — ترجمةٌ من الصفر لا ذاكرةُ HMR:</b>
+      أُوقف سيرفر التطوير القديم (<code>PID 14900</code>) وأُعيد تشغيله نظيفاً، ثمّ فُتحت
+      الصفحات الثلاث في المجلّد الذي حُذف منه:</p>
+    <pre>✓ Ready in 951ms
+
+GET /clients/6aa4530e5ae98764cbb34de1   200 in 15.0s
+GET /clients                             200 in 5.7s
+GET /clients/new                         200 in 1281ms
+
+أخطاء الترجمة (module not found · cannot find module · failed to compile): 0
+الخطأ الوحيد في السجلّ: querySrv ECONNREFUSED — انقطاع DNS لأطلس، سابقٌ للحذف</pre>
+    <p>وكرت العميل كامل: «الاشتراك الحالي» · PROFILE · DELIVERY THIS MONTH · SEO.</p>
+
+    <p><b>وثلاثةٌ من المحذوف كانت الشاشات التي ناقشناها:</b>
+      <code>subscription-tab</code> (الباقة وحالة الدفع) · <code>overview-tab</code> ·
+      <code>required-tab</code>. كانت ميّتةً قبل أن نصل إليها، والحيّ هو
+      <code>client-tabs.tsx</code> وحده — فأيّ تعديلٍ كنّا سنجريه عليها كان سيذهب في الهواء.</p>
+  </div>
+
+  </section>
+
+  <div class="card key">
+    <b>ترتيب الشلّال ليس اعتباطاً — ثلاث قواعد تحكمه</b>
+    <p><b>١ · ما يُولد كل يوم يُوقَف أوّلاً.</b> المراحل ١–٣ تغلق مصنع النسخة الثانية.
+      كل يومٍ تأخير يعني عملاء جدداً بأرقامٍ مزدوجة.</p>
+    <p><b>٢ · لا يُحذف حقلٌ قبل أن يهجره آخر قارئ.</b> المراحل ٤–٦ ترتيبها بعدد الملفّات
+      لا بالأهميّة: ٣٠ ثمّ ٤٠ ثمّ ٧٧.</p>
+    <p><b>٣ · الترحيل آخراً.</b> لأنّه الوحيد الذي لا يُعاد بلا كلفة.</p>
+  </div>
+
+  <section data-view="now">
+  <h2><span class="n">٦</span>ملاحظاتي — ما يجب ألّا يُنسى</h2>
+
+  <div class="card warn">
+    <b>١ · الحسابات الداخليّة لا طلب لها بطبعها</b>
+    <p>مدونتي · جبر · بسيطة — مجّانيّة، و<code>Client.isInternal</code> موجودٌ لها.
+      فـ<code>/clients/new</code> <b>لا ينقرض</b>: يبقى لها وحدها، بلا قسمٍ ماليّ.</p>
+  </div>
+
+  <div class="card warn">
+    <b>٢ · القاعدة تخصّ الجديد، لا القديم</b>
+    <p>٣٩ عميلاً قائماً بلا طلب. القاعدة تُقرأ: <b>«لا عميل جديد بلا طلب»</b> —
+      والقدامى يُولَّد لكلٍّ منهم طلبٌ بتاريخه عند الترحيل، لا قبله.</p>
+  </div>
+
+  <div class="card warn">
+    <b>٣ · السلَق يُقفل للأبد — والطلب لا يحمله</b>
+    <p>يُولَّد اليوم تلقائيّاً من اسم العميل في شاشة الإنشاء وحدها
+      (<code>use-client-form.ts:117 → if (isEditMode) return</code>)، ويرفضه التعديل بعدها
+      (<code>update-client-grouped.ts:124 → data.slug = client.slug</code>).</p>
+    <p>والطلب يحمل <code>buyerName</code> و<code>businessName</code> — <b>اسم المشتري، لا اسم البراند</b>.
+      فالمقترح يُعرض، وعينُ الموظّف تؤكّده قبل الحفظ. هذه وحدها تبرّر أن يبقى التفعيل بيد إنسان.</p>
+  </div>
+
+  <div class="card warn">
+    <b>٤ · الصناعة تسقط من التفعيل — فيلزم ما يكشف الملفّ الناقص</b>
+    <p>قرار خالد ١٦ سبتمبر: كل تعديلات العميل من صفحة التعديل، والتفعيل تأكيدٌ لا إدخال.
+      وهو سليمٌ تقنيّاً: <code>Client.industryId</code> اختياريّ (<code>schema.prisma:564</code>)،
+      ومدونتي لا تنكسر بدونه — يسقط العميل فقط من «شركاء نفس الصناعة»
+      (<code>client-page-data.ts:88</code>).</p>
+    <p><b>وثمنه:</b> الصناعة قد تبقى فارغةً بصمتٍ إلى الأبد. فيلزم ما يقولها —
+      أبسطه شارة «ملفّ ناقص» في قائمة العملاء لمن لا صناعة له. <b>تدخل الدفعة ٢.</b></p>
+  </div>
+
+  <div class="card warn">
+    <b>٥ · «مفعّل» لا يحتاج حقلاً جديداً</b>
+    <p><code>order.clientId</code> مملوء = فُعِّل · فارغ = ينتظر. وهو نفسه مرشَّح القائمة،
+      فلا حالةَ زائدة تُخزَّن ويمكن أن تتناقض مع الواقع.</p>
+  </div>
+
+  <div class="card go">
+    <b>٦ · وما بُني فعلاً قبل هذه الورقة — الأرضيّة جاهزة</b>
+    <p>السكيما استوعبت القرار مسبقاً: <code>Client.activatedAt</code> ·
+      <code>Client.activeOrderId</code> · <code>CheckoutOrder.serviceStartedAt</code> ·
+      <code>Invoice.buyer*</code> · وإلغاء الحذف المتسلسل
+      (<code>onDelete: Cascade → Restrict</code>).</p>
+    <p>وبطاقة «الاشتراك الحالي» تشتغل على كرت العميل اليوم، وتقرأ الطلب لا الكرت
+      (<code>resolve-active-order.ts</code>) — فمخرَج التفعيل له مكانٌ يُعرض فيه من اللحظة الأولى.</p>
+  </div>
+
+  <div class="thesis" style="margin-top:26px">
+    <p class="big">وما يموت بهذه الورقة: نسخةُ المال الثانية.</p>
+    <p class="why">
+      فورم الإنشاء اليوم <b>ينسخ</b> مبلغ الطلب ومدّته في كرت العميل، والموظّف يقدر يعدّلهما بعدها
+      (<code>create-client-form.tsx:95-106</code> — «The admin can still edit every field»).
+      فمن لحظة الميلاد يوجد رقمان لنفس الصفقة. وبعد اليوم: الطلب يحكم، والكرت يعرض.
+    </p>
+  </div>
+
+  </section>
+
+  <section data-view="enums">
+  <h2><span class="n">E</span><code style="font-size:16px">SubscriptionTier</code> — الجرد الكامل</h2>
+  <p class="sub">المصدر الواحد: <code>CommercialPlan</code>. الجرد مقيسٌ ١٧ سبتمبر.</p>
+
+  <h3 style="font-size:17px;font-weight:900;margin:26px 0 0">أ · السكيما — ٦ حاملين + جدول</h3>
+  <div class="scroll">
+  <table class="align">
+    <thead><tr><th>الحقل</th><th>السطر</th><th>بديلٌ نصّيّ بجانبه</th><th>متى يسقط</th></tr></thead>
+    <tbody>
+      <tr class="miss"><td><code>enum SubscriptionTier</code><span class="f">BASIC · STANDARD · PRO · PREMIUM</span></td>
+          <td class="f">76</td><td>—</td><td>آخراً</td></tr>
+      <tr class="diff"><td><code>Client.subscriptionTier</code><span class="f">إلزاميّ</span></td>
+          <td class="f">637</td><td>عبر <code>subscriptionTierConfigId</code></td><td>بعد الترحيل</td></tr>
+      <tr class="miss"><td><code>Client.subscriptionTierConfigId</code> + العلاقة</td>
+          <td class="f">638-639</td><td>—</td><td>مع الجدول</td></tr>
+      <tr class="miss"><td><code>SubscriptionTierConfig</code><span class="f">الجدول كلّه · tier @unique</span></td>
+          <td class="f">1097 · 1101</td><td><code>name</code> · <code>price</code> Float</td>
+          <td><b>سجن الأربع باقات</b></td></tr>
+      <tr class="same"><td><code>CommercialPlan.tier</code><span class="f">اختياريّ — جسر</span></td>
+          <td class="f">1155</td><td><code>name</code> · <code>slug</code></td><td><b>الآن</b></td></tr>
+      <tr class="same"><td><code>CheckoutOrder.planTier</code><span class="f">اختياريّ — لقطة</span></td>
+          <td class="f">1360</td><td><code>planName</code> · <code>planSlug</code></td><td><b>الآن</b></td></tr>
+      <tr class="diff"><td><code>Invoice.tier</code><span class="f">إلزاميّ — مستند صادر</span></td>
+          <td class="f">3886</td><td><b><code>tierName</code></b> لقطة الاسم</td><td>بعد الترحيل</td></tr>
+      <tr class="same"><td><code>SalesLead.expectedTier</code><span class="f">اختياريّ</span></td>
+          <td class="f">4263</td><td>—</td><td><b>الآن</b></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:30px 0 0">ب · الكود — ٣٨ ملفّاً · ٩١ سطراً — <b>منها ١٨ فقط إنمٌ حيّ</b></h3>
+
+  <p class="sub" style="margin:16px 0 0"><b style="color:var(--go)">ADMIN — ٣٨ ملفّاً · ٩١ سطراً</b>
+    &nbsp;·&nbsp; مقيسٌ ١٧ سبتمبر
+    <br><span class="f"><b>المقياس:</b> <code>grep -rn "SubscriptionTier|subscriptionTier"</code>
+    — <b>النوع والحقل معاً</b>، لأنّ إسقاط الإنم يسقطهما معاً. (قياسُ الحقل وحده يعطي ٤١ · ١٢٤،
+    وخلطُ المقياسين هو سببُ تضارب الأرقام قبل هذا التصحيح.)
+    <br>والحقولُ الثلاثةُ الأخرى بنفس المقياس:
+    <code>PaymentStatus|paymentStatus</code> ٤٦ ملفّاً · ٨٥ سطراً ·
+    <code>billingCycle</code> ١١ · ١٧ · <code>openingBalance</code> ٩ · ٣٧
+    &nbsp;·&nbsp; اتّحادُ الأربعة <b>٦٨ ملفّاً</b></span></p>
+
+  <div class="scroll">
+  <table class="align">
+    <thead><tr><th>المجموعة</th><th>ملفّات</th><th>أسطر</th><th>ماذا تفعل بالإنم</th><th>البديل</th></tr></thead>
+    <tbody>
+      <tr class="same" style="opacity:.55"><td><b>١ · كتابة العميل وتعديله</b>
+              <span class="f">clients/actions · clients/helpers · form-sections · edit-workspace · form-types</span></td>
+          <td class="f">—</td><td class="f">—</td>
+          <td><b>✅ سقطت</b> — لا تمرّ الباقة من الشاشة إلى القاعدة</td>
+          <td>—</td></tr>
+
+      <tr class="miss"><td><b>٢ · الكتالوج القديم</b>
+              <span class="f">tier-actions · subscription-tiers/lib/pricing · lib/pricing/get-tier-pricing · sync-tier-pricing</span></td>
+          <td class="f">٤</td><td class="f">٢٠</td>
+          <td>مبنيّةٌ عليه كلّها</td>
+          <td><b>تسقط</b> — لا تُبدَّل</td></tr>
+
+      <tr class="same" style="opacity:.55"><td><b>٣ · الفواتير والحسابات</b>
+              <span class="f">clients/[id]/account/* · clients/accounts · orders/actions · sales-report</span></td>
+          <td class="f">—</td><td class="f">—</td>
+          <td><b>✅ سقطت</b> — <code>Invoice.tier</code> تقاعد، و<code>tierName</code> من الطلب</td>
+          <td>—</td></tr>
+
+      <tr class="same"><td><b>٤ · قراءةٌ وعرض</b>
+              <span class="f">clients/[id]/components · briefs · sales-leads · commercial-plans · database-health · suspend · activate</span></td>
+          <td class="f">١٤</td><td class="f">٣٥</td>
+          <td>تعرضه أو تعدّ به — لا تكتبه</td>
+          <td><code>planName</code> من الطلب الساري</td></tr>
+
+      <tr class="same" style="opacity:.55"><td><b>٥ · الترجمات</b><span class="f">lib/messages — ar · en · types · index</span></td>
+          <td class="f">صفر</td><td class="f">صفر</td>
+          <td><b>✅ سقطت</b> — صفر مستهلك</td>
+          <td>—</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="sub" style="margin:14px 0 0"><b>أثقل خمسة ملفّات — بعد الكنسة:</b>
+    <code>create-client</code> ٢٢ · <code>tier-actions</code> ١٠ ·
+    <code>get-tier-pricing</code> ٦ · <code>seed-integration-test</code> ٦ ·
+    <code>orders/actions</code> ٥
+    <br><span class="f">و<code>update-client-grouped</code> نزل من ١٩ إلى تعليقٍ واحد،
+    و<code>use-client-form</code> من ١٠ إلى صفر.</span></p>
+
+  <div class="card" style="margin-top:18px">
+    <b>⚖️ قرارٌ مفتوح — ترتيب المرحلة ٦</b>
+    <p><b>٢٠ ملفّاً من الـ٤٨ (٤٢٪) في مجلّد العملاء</b> — وهو نفسه ما تمسّه المرحلتان ٤ و٥
+      (<code>billingCycle</code> · <code>openingBalance</code> · <code>paymentStatus</code>).</p>
+    <pre>الترتيب الحاليّ  ٤ ← ٥ ← ٦     كلّ ملفٍّ يُفتح مرّةً واحدة بثلاثة تعديلاتٍ معاً
+الترتيب المقلوب  ٦ أوّلاً       الإنم يختفي الآن، وتُفتح الـ٢٠ ثلاث مرّات</pre>
+    <p><b>وطريقٌ ثالث — مقيسٌ لا مفترَض:</b> فُحص كل ملفٍّ من المجموعتين ٢ و٣ عن
+      <code>billingCycle|openingBalance|paymentStatus</code> (حقول المرحلتين ٤ و٥):</p>
+    <pre>المجموعة ٢ — الكتالوج القديم · مستقلّةٌ فعلاً · سبعتها صفر
+  0  subscription-tiers/actions/tier-actions.ts        0  lib/pricing/get-tier-pricing.ts
+  0  subscription-tiers/lib/pricing.ts                 0  clients/helpers/get-tier-config.ts
+  0  components/subscription-tier-chart.tsx            0  scripts/seed-tiers.ts
+  0  scripts/sync-tier-pricing.ts
+
+المجموعة ٣ — الفواتير والحسابات · متداخلةٌ كلّها، وبعنف
+ 12  clients/[id]/account/page.tsx                    11  clients/sales-report/.../get-sales-report.ts
+  9  clients/[id]/account/.../convert-opening-balance.ts   5  orders/actions.ts
+  5  clients/accounts/page.tsx                         3  clients/[id]/account/.../create-invoice.ts
+                                                  (العدد = أسطر تلك الحقول في الملفّ)</pre>
+    <p class="said">وادّعيتُ أوّلاً أنّ المجموعة ٢ «تسقط الآن بصفر تعارض» — وقستُ تداخلها
+      مع حقول ٤ و٥ فقط، ولم أقِس <b>من يستهلكها</b>. والقياس الثاني أسقط الادّعاء:</p>
+    <pre>tier-actions  ←  ٦ مستهلكين، خمستهم من ملفّات مجلّد العملاء الثقيلة:
+  create-client · update-client-grouped · use-client-form · clients/page · account/page
+subscription-tiers/lib/pricing  ←  subscription-section · account/page  (resolvePricing)
+
+فإسقاط المجموعة ٢ يفتح نفس ملفّات مجلّد العملاء التي قلتُ إنّها لا تُمَسّ.</pre>
+    <p><b>والميت فعلاً — صفر مستهلك، وقد حُذف ١٧ سبتمبر (١٢٣ سطراً):</b></p>
+    <pre>clients/helpers/get-tier-config.ts         7 سطر
+components/subscription-tier-chart.tsx    86 سطر
+scripts/seed-tiers.ts                     30 سطر
+
+التحقّق قبل الحذف — أربع طبقات لا الاسم وحده:
+  اسم الملفّ في الكود · في barrel/index · في package.json  →  صفر
+  والرمزان المصدَّران (getTierConfig · SubscriptionTierChart) عبر الأربعة  →  صفر
+بعد الحذف — سجلّ الخادم الخام:  module-not-found 0 · طلبات غير-200 0</pre>
+    <p class="said">فالخياران الحقيقيّان اثنان لا ثلاثة: <b>٤←٥←٦</b> (فتحةٌ واحدة لكل ملفّ)
+      أو <b>٦ أوّلاً</b> (ثلاث فتحات). والمجموعة ٢ جزءٌ من مجلّد العملاء لا مستقلّةٌ عنه.</p>
+  </div>
+
+  <p class="sub" style="margin:22px 0 0"><b style="color:var(--go)">SHARED — ملفّان · أنواعٌ فقط &nbsp;·&nbsp; PAYMENT — صفر</b></p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>الملفّ</th><th>يفعل</th></tr></thead>
+    <tbody>
+      <tr class="same"><td><code>shared/lib/commercial/get-market-catalog.ts</code><span class="f">1 · 50</span></td>
+          <td><code>tier: SubscriptionTier | null</code> — نوعٌ في مخرَج الكتالوج</td></tr>
+      <tr class="same"><td><code>shared/lib/payments/build-order-snapshot.ts</code><span class="f">1 · 14 · 26</span></td>
+          <td>نوعُ <code>planTier</code> في لقطة الطلب</td></tr>
+      <tr class="same"><td><b><code>payment/</code></b></td>
+          <td><b>صفر إشارة.</b> صفحة الدفع تبيع بالكتالوج التجاريّ وحده —
+              وهي البرهان العمليّ أنّ النظام يستغني عن الـ<code>enum</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="card go">
+    <b>الكتالوج القديم بلا واجهة أصلاً</b>
+    <p><code>admin/app/(dashboard)/subscription-tiers/</code> فيه actions وcomponents وhelpers
+      و<b>لا <code>page.tsx</code></b>، وليس في الشريط الجانبيّ. الحيّ في الشريط:
+      «الباقات والأسعار» ← <code>/commercial-plans</code>.</p>
+    <p>وما تبقّى منه استيراداتٌ من مكانين: <code>getTierConfigByTier</code> في
+      create/update-client، وثلاثة مكوّنات في <code>clients-tabs.tsx</code>.</p>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:30px 0 0">ج · الخطوات</h3>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>#</th><th>الخطوة</th><th>الحجم</th><th>يعتمد على</th></tr></thead>
+    <tbody>
+      <tr><td><b>١</b></td><td>حذف ملفّات <code>__tmp-</code> في <code>admin/scripts/</code></td>
+          <td class="f">2 ملفّ</td><td>—</td></tr>
+      <tr><td><b>٢</b></td><td>حذف الثلاثة الاختياريّة: <code>CommercialPlan.tier</code> ·
+          <code>CheckoutOrder.planTier</code> · <code>SalesLead.expectedTier</code></td>
+          <td class="f">shared 2 · sales-leads 6</td><td>—</td></tr>
+      <tr><td><b>٣</b></td><td>الكونسول يقرأ اسم الباقة من الطلب الساري بدل <code>tierConfig</code></td>
+          <td class="f">5 ملفّات</td><td>مؤشّر الطلب</td></tr>
+      <tr><td><b>٤</b></td><td>فلتر مدونتي بأسماء الباقات الحقيقيّة — أو يسقط (قرار ٣)</td>
+          <td class="f">6 ملفّات</td><td>القرار ٣</td></tr>
+      <tr><td><b>٥</b></td><td>حذف <code>Client.subscriptionTier</code> · <code>Invoice.tier</code> ·
+          <code>SubscriptionTierConfig</code> · الـ<code>enum</code></td>
+          <td class="f">66 ملفّ</td><td><b>الترحيل</b></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="card key">
+    <b>ثلاثة قرارات</b>
+    <p><b>١ ·</b> <code>Client.articlesPerMonth</code> — حصّة شغلٍ يعدّلها الفريق على الكرت،
+      أم تُقرأ من الطلب؟</p>
+    <p><b>٢ ·</b> <code>ModontyPlan</code> (<code>schema:4556</code>) — كتالوج ثالث بأسماء
+      <code>free/presence/starter/growth/scale</code>، يقرؤه ملفّ واحد في sales-leads.
+      يسقط أم يُربط بـ<code>CommercialPlan</code>؟</p>
+    <p><b>٣ ·</b> فلتر الباقات في <code>/clients</code> العامّة — يبقى بالأسماء الحقيقيّة،
+      أم يسقط لأنّه يكشف للزائر كم يدفع كل شريك؟</p>
+  </div>
+
+  </section>
+
+  <p class="foot">
+    نقاش ١٦ سبتمبر ٢٠٢٦ — خالد وكلود، بلا كود.<br>
+    الورقة الأمّ: <code>documents/tasks/MONEY-FLOW.html</code> — القرارات التسعة وقائمة البناء والجرد.<br>
+    الأرقام من <code>modonty_dev</code>، وتُعاد على الإنتاج قبل التنفيذ.
+  </p>
+
+</div>
+<script>
+(function () {
+  // مشهدان فوق نفس الصفحة: كل قسمٍ موسومٌ data-view، والزرّ يُخفي ما لا يخصّه.
+  // لا يُعاد بناء شيء — الإخفاء يحفظ موضع القراءة عند التنقّل.
+  var tabs = document.querySelectorAll('.navtab');
+  var marked = document.querySelectorAll('[data-view]:not(.navtab)');
+  function show(view) {
+    tabs.forEach(function (t) { t.setAttribute('aria-selected', String(t.dataset.view === view)); });
+    marked.forEach(function (el) {
+      el.classList.toggle('hideview', view !== 'all' && !el.dataset.view.split(' ').includes(view));
+    });
+    window.scrollTo(0, 0);
+    try { localStorage.setItem('af-view', view); } catch (e) {}
+  }
+  tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.view); }); });
+  var saved = 'now';
+  try { saved = localStorage.getItem('af-view') || 'now'; } catch (e) {}
+  show(saved);
+})();
+</script>
+</body>
+</html>

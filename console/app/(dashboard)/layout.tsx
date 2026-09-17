@@ -4,6 +4,7 @@ import { ar } from "@/lib/ar";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";
+import { getActiveOrderForClient } from "@/lib/subscription/active-order";
 import { isYmylClientComplete } from "@/lib/seo/ymyl-helpers";
 import {
   statusLabel,
@@ -51,7 +52,7 @@ export default async function DashboardLayout({
   const clientId = (session as { clientId?: string }).clientId!;
   const impersonated = (session as { impersonated?: boolean }).impersonated ?? false;
 
-  const [client, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientCanSeeSiteArticles] =
+  const [client, activeOrder, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientCanSeeSiteArticles] =
     await Promise.all([
       db.client.findUnique({
         where: { id: clientId },
@@ -74,11 +75,9 @@ export default async function DashboardLayout({
           subscriptionEndDate: true,
           // Feeds the plan block pinned in the sidebar foot — same fields the settings
           // card reads, so the two can never show a different plan or a different count.
-          subscriptionTier: true,
           subscriptionStatus: true,
           paymentStatus: true,
           subscriptionStartDate: true,
-          subscriptionTierConfig: { select: { name: true } },
           invoices: {
             // `archivedAt: null` matches nothing on Mongo for rows written before the
             // field existed — it must be paired with `isSet: false` or the notice goes
@@ -91,6 +90,7 @@ export default async function DashboardLayout({
           },
         },
       }),
+      getActiveOrderForClient(clientId),
       getPendingArticlesCount(clientId),
       getPendingCommentsCount(clientId),
       getPendingQuestionsCount(clientId),
@@ -140,7 +140,8 @@ export default async function DashboardLayout({
   // Derived on the server: the sidebar is a client component, and computing "days left"
   // there would let the rendered number depend on the visitor's clock.
   const subscription = {
-    tierName: client?.subscriptionTierConfig?.name ?? client?.subscriptionTier ?? "—",
+    // اسم الباقة من الطلب الساري — لقطةٌ مجمّدة يوم الشراء لا الكتالوج الحيّ.
+    tierName: activeOrder?.planName ?? "—",
     status: statusLabel(client?.subscriptionStatus ?? null),
     payment: paymentLabel(client?.paymentStatus ?? null),
     progress: subscriptionProgress(
