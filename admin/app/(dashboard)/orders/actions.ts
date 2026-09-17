@@ -143,19 +143,29 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<voi
 
   const client = await db.client.findUnique({
     where: { id: order.clientId },
-    select: { id: true, name: true, createdAt: true, openingBalance: true, subscriptionEndDate: true, subscriptionTierConfig: { select: { name: true } }, _count: { select: { invoices: true } } },
+    select: { id: true, name: true, createdAt: true, subscriptionEndDate: true, subscriptionTierConfig: { select: { name: true } }, _count: { select: { invoices: true } } },
   });
   if (!client) throw new Error("العميل غير موجود");
 
-  // Cash-basis rule of the sales report (get-sales-report.ts:195-207): a client's
-  // openingBalance is counted as revenue at founding, and an invoice flagged
-  // fromOpeningBalance only DOCUMENTS it. A client created FROM this order carries the
-  // order's total as its opening balance (PAY-E3 prefill — the form requires > 0), so the
-  // invoice issued from the same order must be flagged, or the one payment is counted
-  // twice (measured: 2394 + 2394). A renewal order linked to a pre-existing client is real
-  // new money and stays unflagged — told apart by the client having been created after
-  // the order, with no invoice yet.
-  const foundingInvoice = client.createdAt > order.createdAt && (client.openingBalance ?? 0) > 0 && client._count.invoices === 0;
+  /**
+   * أهذه الفاتورةُ توثيقٌ لدفعةٍ محسوبةٍ سلفاً، أم مالٌ جديد؟
+   *
+   * تقريرُ المبيعات نقديُّ الأساس: يعدّ **الطلبَ المدفوعَ الأوّل** لكلّ عميل إيراداً
+   * تأسيسيّاً (`get-sales-report.ts`). فالفاتورةُ الصادرةُ من ذلك الطلب نفسِه لا تحمل
+   * مالاً جديداً — تُوثّقه — وتُوسَم `fromOpeningBalance` كي لا يُعدّ المبلغُ مرّتين
+   * (قيس سابقاً: ٢٣٩٤ + ٢٣٩٤).
+   *
+   * وكان الشرطُ يقرأ `Client.openingBalance`، وسقط الحقل (١٧ سبتمبر ٢٠٢٦). فصار
+   * السؤالُ مباشراً: **أهذا هو طلبُ العميل المؤسِّس؟** — أوّلُ طلبٍ مدفوعٍ له بترتيب
+   * بدء الخدمة، وهو نفسُه الذي يعدّه التقرير. وطلبُ التجديد يأتي بعده فيبقى بلا وسم،
+   * لأنّه مالٌ جديدٌ فعلاً.
+   */
+  const founding = await db.checkoutOrder.findFirst({
+    where: { clientId: client.id, status: "PAID", totalMinor: { gt: 0 } },
+    orderBy: [{ serviceStartedAt: "asc" }, { createdAt: "asc" }],
+    select: { id: true },
+  });
+  const foundingInvoice = founding?.id === order.id && client._count.invoices === 0;
   // The CLIENT's own tier, not order.planTier: PAY-E3 already resolved the checkout
   // catalog's plan onto this client's real SubscriptionTierConfig tier (by name — the two
   // catalogs' enum values don't match, e.g. "الانطلاقة" is BASIC on the order but STANDARD

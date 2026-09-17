@@ -81,24 +81,24 @@ function periodBounds(period: Period): { start: Date | null; end: Date | null } 
   return { start: new Date(year, period - 1, 1), end: new Date(year, period, 1) };
 }
 
-// Egypt → EGP, everything else (default Saudi) → SAR — the same rule invoices use, so an
-// opening balance lands in the same currency column as the client's later invoices.
-function currencyForCountry(country: string | null): "SAR" | "EGP" {
-  const c = (country ?? "").toLowerCase();
-  return /مصر|egypt|\beg\b/.test(c) ? "EGP" : "SAR";
-}
+// سقطت `currencyForCountry` (١٧ سبتمبر ٢٠٢٦): كانت تشتقّ العملة من نصّ بلد العميل
+// لأنّ `openingBalance` رقمٌ بلا عملة. وصار الإيرادُ يُقرأ من الطلب، والطلبُ يحمل
+// `currency` صريحةً — فسقط الاشتقاقُ ومعه احتمالُ أن يخطئ في بلدٍ مكتوبٍ بصيغةٍ غريبة.
 
 const dateFmt = new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "short", day: "numeric" });
 
 /**
  * Sales / revenue report for the whole book, on a CASH basis (Khalid 2026-07-25).
  *
- * «تأسيسه معناه دفع»: a client pays at founding, recorded as `Client.openingBalance` — cash
- * in, dated at the client's createdAt. NO invoice is issued then. When the first article goes
- * live an invoice is generated FROM that balance, flagged `fromOpeningBalance` — a document,
+ * «تأسيسه معناه دفع»: a client pays at founding. That payment now lives on the client's
+ * FIRST paid order — `totalMinor` with its own `currency` and `paidAt` — not on
+ * `Client.openingBalance`, which was a bare number dated at the client's createdAt and
+ * whose currency had to be guessed from the address (١٧ سبتمبر ٢٠٢٦).
+ *
+ * An invoice generated FROM that balance is flagged `fromOpeningBalance` — a document,
  * not new money, so it is EXCLUDED here to avoid double-counting.
  *
- * Collected (المحصّل) = opening balances (by createdAt) + PAID invoices (by paidAt).
+ * Collected (المحصّل) = founding orders (by paidAt) + PAID invoices (by paidAt).
  * Outstanding (المستحق, DUE) is shown separately — it is a receivable, never counted as sales.
  * Money is split by currency (88% of the audience is Egyptian/EGP) — never summed across
  * SAR + EGP. Archived (void) invoices are excluded. Rep + tier breakdowns are secondary views.
@@ -111,7 +111,6 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
       name: true,
       salesRepId: true,
       createdAt: true,
-      openingBalance: true,
       addressCountry: true,
       subscriptionTierConfig: { select: { name: true } },
     },
@@ -119,6 +118,31 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
   });
   const clientById = new Map(clients.map((c) => [c.id, c]));
   const clientIds = clients.map((c) => c.id);
+
+  /**
+   * ── الإيرادُ التأسيسيّ يُقرأ من الطلب، لا من `Client.openingBalance` ──
+   *
+   * كان رقماً على الكرت مؤرَّخاً بيوم إنشاء العميل — وكلاهما تقريب: المبلغُ لا عملةَ
+   * معه (تُشتقّ من البلد)، والتاريخُ يومُ فتح الملفّ لا يومُ الدفع. وصار لكلّ عميلٍ
+   * طلبٌ يحمل الاثنين صريحين: `currency` و`paidAt`.
+   *
+   * وقيس التطابقُ قبل التبديل (١٧ سبتمبر ٢٠٢٦): مجموعُ أرصدة عملاء مصر ١٠٤٬٣٣٥ =
+   * مجموعُ طلباتهم ١٠٤٬٣٣٥ — نفسُ الرقم، بمصدرٍ يعرف عملتَه وتاريخَه.
+   *
+   * ويُؤخذ الطلبُ الأوّل لكلّ عميل (`serviceStartedAt` صعوداً): هو الشراءُ المؤسِّس،
+   * وما بعده تجديداتٌ تأتي بفواتيرها.
+   */
+  const foundingOrders = await db.checkoutOrder.findMany({
+    where: { clientId: { in: clientIds }, status: "PAID", totalMinor: { gt: 0 } },
+    select: { clientId: true, currency: true, totalMinor: true, paidAt: true, serviceStartedAt: true, createdAt: true },
+    orderBy: [{ serviceStartedAt: "asc" }, { createdAt: "asc" }],
+  });
+  const foundingByClient = new Map<string, (typeof foundingOrders)[number]>();
+  for (const o of foundingOrders) {
+    if (o.clientId && !foundingByClient.has(o.clientId)) foundingByClient.set(o.clientId, o);
+  }
+  /** يومُ الدفع إن وُجد، وإلّا يومُ بدء الخدمة — لا يومُ إنشاء الصفّ. */
+  const foundingDate = (o: (typeof foundingOrders)[number]) => o.paidAt ?? o.serviceStartedAt ?? o.createdAt;
 
   const { start, end } = periodBounds(period);
   // Whether a contribution's date falls in the active period (whole-book = always).
@@ -189,16 +213,18 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
     }
   };
 
-  // 1) Opening balances — founding cash, dated at the client's createdAt. Always "collected".
+  // 1) الشراءُ المؤسِّس — من الطلب الأوّل، بعملته وتاريخِ دفعه. يُعدّ محصَّلاً دائماً.
   for (const c of clients) {
-    if (!c.openingBalance || c.openingBalance <= 0) continue;
-    if (!inPeriod(c.createdAt)) continue;
-    const isEgp = currencyForCountry(c.addressCountry) === "EGP";
+    const order = foundingByClient.get(c.id);
+    if (!order) continue;
+    if (!inPeriod(foundingDate(order))) continue;
+    // العملةُ من الطلب نفسه لا من بلد العميل — الطلبُ يحملها صريحةً.
+    const isEgp = order.currency === "EGP";
     // كان يسقط على رمز الـenum («PRO») حين لا اسمَ للباقة، فيظهر في التقرير سطرٌ
     // باسم رمزٍ تقنيّ بين أسماءٍ عربيّة. والاسمُ الناقص يُقال ناقصاً.
     const tierName = c.subscriptionTierConfig?.name ?? "بلا باقة";
     payingClients.add(c.id);
-    fan(isEgp, tierName, c.salesRepId, c.openingBalance, true, false);
+    fan(isEgp, tierName, c.salesRepId, order.totalMinor / 100, true, false);
   }
 
   // 2) Invoices — PAID counts as collected on its paidAt; DUE is outstanding on its issuedAt.
@@ -301,8 +327,9 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
     }
   };
   for (const c of clients) {
-    if (!c.openingBalance || c.openingBalance <= 0) continue;
-    addMonthly(c.createdAt, currencyForCountry(c.addressCountry) === "EGP", c.openingBalance);
+    const order = foundingByClient.get(c.id);
+    if (!order) continue;
+    addMonthly(foundingDate(order), order.currency === "EGP", order.totalMinor / 100);
   }
   for (const inv of invoices) {
     if (inv.fromOpeningBalance) continue;

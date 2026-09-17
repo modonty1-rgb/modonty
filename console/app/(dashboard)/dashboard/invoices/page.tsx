@@ -18,6 +18,24 @@ function arDate(d: Date | null) {
 
 const PERIOD_LABEL: Record<string, string> = { monthly: "شهري", annual: "سنوي" };
 
+/**
+ * مدّةُ الفاتورة بالعربيّة.
+ *
+ * صارت تُشتقّ من `CheckoutOrder.paidMonths` (١٧ سبتمبر ٢٠٢٦) بدل `Client.billingCycle`
+ * الذي كان يخالف المبلغَ المدفوع. فظهرت مُدَدٌ لا اسمَ لها: ثلاثةُ أشهر، ستّة. تُكتب
+ * `3m` في القاعدة وتُقرأ هنا «٣ شهور» — وبلا هذه الدالّة يقرأ العميلُ «3m» في فاتورته.
+ */
+function periodLabel(period: string): string {
+  const known = PERIOD_LABEL[period];
+  if (known) return known;
+  const months = /^(\d+)m$/.exec(period)?.[1];
+  if (!months) return period;
+  const n = Number(months);
+  if (n === 1) return "شهر واحد";
+  if (n === 2) return "شهران";
+  return n <= 10 ? `${n.toLocaleString("ar-EG")} شهور` : `${n.toLocaleString("ar-EG")} شهراً`;
+}
+
 export default async function InvoicesPage() {
   const session = await auth();
   const clientId = (session as { clientId?: string })?.clientId;
@@ -113,7 +131,7 @@ export default async function InvoicesPage() {
                       <td className="text-muted-foreground tabular-nums">{arDate(inv.issuedAt)}</td>
                       <td className="font-mono text-xs">{inv.number}</td>
                       <td className="text-muted-foreground">
-                        {inv.tierName} · {PERIOD_LABEL[inv.period] ?? inv.period}
+                        {inv.tierName} · {periodLabel(inv.period)}
                       </td>
                       <td className="text-muted-foreground tabular-nums">
                         {arDate(inv.subscriptionEnd)}

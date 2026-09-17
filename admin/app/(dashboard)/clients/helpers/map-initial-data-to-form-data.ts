@@ -34,7 +34,6 @@ export function mapInitialDataToFormData(
     isInternal: false,
     // On by default — a new client sees the schedule like everyone else.
     showSchedule: true,
-    billingCycle: "annual",
     canPublishToOwnSite: false,
     articlesBaseUrl: "",
     apiKeySuspended: false,
@@ -191,7 +190,6 @@ export function mapInitialDataToFormData(
     // reading that as false would tick the box off on a tab they can currently see.
     showSchedule: (initialData as { showSchedule?: boolean }).showSchedule ?? true,
     isInternal: (initialData as { isInternal?: boolean }).isInternal ?? false,
-    billingCycle: ((initialData as { billingCycle?: "monthly" | "annual" }).billingCycle ?? "annual"),
     canPublishToOwnSite: (initialData as { canPublishToOwnSite?: boolean }).canPublishToOwnSite ?? false,
     articlesBaseUrl: (initialData as { articlesBaseUrl?: string | null }).articlesBaseUrl ?? "",
     apiKeySuspended: (initialData as { apiKeySuspended?: boolean }).apiKeySuspended ?? false,

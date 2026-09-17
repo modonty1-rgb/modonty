@@ -124,7 +124,6 @@ export function mapFormDataToClientData(data: ClientFormData) {
     showSchedule: data.showSchedule ?? true,
     // Platform/demo account — excluded from billing (admin toggle)
     isInternal: data.isInternal ?? false,
-    billingCycle: data.billingCycle ?? "annual",
 
     // Client-site publishing. The key fields are absent on purpose — the server owns them.
     canPublishToOwnSite: data.canPublishToOwnSite ?? false,

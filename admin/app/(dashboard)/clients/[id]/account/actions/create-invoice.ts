@@ -73,7 +73,6 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
       subscriptionTierConfig: { select: { name: true } },
       addressCountry: true,
       subscriptionEndDate: true,
-      billingCycle: true,
     },
   });
   if (!client) return { ok: false, error: "العميل غير موجود" };
@@ -111,9 +110,19 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
     client.subscriptionEndDate ?? firstPublished?.datePublished ?? now;
   const subEnd = addMonths(anchor, input.months);
 
-  // Billing period is client-owned — read it off the client, not the last invoice
-  // (Khalid 2026-07-25: the tier + cycle are set on the client edit page).
-  const period = client.billingCycle === "monthly" ? "monthly" : "annual";
+  /**
+   * المدّةُ من الطلب، لا من `Client.billingCycle`.
+   *
+   * كان الحقلُ مِلكَ الكرت يكتبه الموظّف، وقيس على بيانات الإنتاج فخالف المبلغَ في
+   * **٢٣ من ٢٨**: عميلٌ مكتوبٌ عليه `annual` ورصيدُه يساوي ثلاثةَ أشهر بسعر باقته.
+   * والطلبُ يحمل `paidMonths` رقماً صريحاً دُفع مقابلَه.
+   *
+   * و`period` نصُّ عرضٍ تقرؤه بوّابةُ العميل: شهرٌ واحد «monthly»، واثنا عشر «annual»
+   * حفاظاً على تسميتهما القائمة، وما بينهما يُقال بعدده (`3m`) — لا يُدفَع في خانةٍ
+   * تكذب عليه. ومَن لا طلبَ له بعدُ يبقى على «annual» كما كان الافتراضيّ.
+   */
+  const months = activeOrder?.paidMonths ?? null;
+  const period = months === 1 ? "monthly" : months == null || months === 12 ? "annual" : `${months}m`;
 
   try {
     const number = await nextInvoiceNumber(now.getFullYear());

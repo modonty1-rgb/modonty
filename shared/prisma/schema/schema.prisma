@@ -663,9 +663,14 @@ model Client {
   activatedAt           DateTime?
   subscriptionEndDate   DateTime?
   articlesPerMonth      Int? // Calculated from tier (can be overridden manually)
-  // Billing cycle — client-owned (set on the client edit page, not per-invoice). New
-  // invoices read it instead of copying the previous invoice's period. Optional so
-  // legacy docs (which lack it) keep working; defaults to annual on read.
+  /// **حقلٌ متقاعد — مصدرُ ترحيلٍ لا غير (١٧ سبتمبر ٢٠٢٦).**
+  ///
+  /// لا يقرؤه ولا يكتبه سطرٌ واحد في التطبيقات الأربعة. الموضعُ الوحيد الذي يلمسه
+  /// هو `admin/app/api/dev/rebuild-orders` — وهو يبني منه الطلباتِ للعملاء القدامى،
+  /// ويرفض أيّ قاعدةٍ غير `modonty_dev`. فلا سبيلَ لأن يمسّ الإنتاج.
+  ///
+  /// كان يقول مدّةَ الاشتراك، وقيس على بيانات الإنتاج فخالف المبلغَ المدفوع في
+  /// **٢٣ من ٢٨** عميلاً. المدّةُ اليوم `CheckoutOrder.paidMonths` — رقمٌ دُفع مقابلَه.
   billingCycle          String?            @default("annual") // "monthly" | "annual"
   subscriptionStatus    SubscriptionStatus @default(PENDING)
   paymentStatus         PaymentStatus      @default(PENDING)
@@ -693,13 +698,15 @@ model Client {
   archivedAt            DateTime?
   archivedReason        String?
   archivedByUserId      String?            @db.ObjectId
-  // Opening balance — the founding payment («تأسيسه معناه دفع»). Cash received the day
-  // the client is created (paid date = createdAt), recognized as revenue immediately.
-  // NO invoice is issued at founding; the sales report counts this amount directly. When
-  // the client's first article goes live, an admin generates the first invoice from this
-  // balance (flagged Invoice.fromOpeningBalance) — that invoice is a document, not extra
-  // revenue, so the report excludes it to avoid double-counting. Absent for internal/free
-  // accounts and legacy clients.
+  /// **حقلٌ متقاعد — مصدرُ ترحيلٍ لا غير (١٧ سبتمبر ٢٠٢٦).**
+  ///
+  /// لا يقرؤه ولا يكتبه سطرٌ واحد في التطبيقات الأربعة. الموضعُ الوحيد الذي يلمسه
+  /// هو `admin/app/api/dev/rebuild-orders` — وهو يبني منه الطلباتِ للعملاء القدامى،
+  /// ويرفض أيّ قاعدةٍ غير `modonty_dev`. فلا سبيلَ لأن يمسّ الإنتاج.
+  ///
+  /// كان دفعةَ التأسيس: رقمٌ بلا عملة (تُشتقّ من نصّ البلد) ولا تاريخِ دفع (يُؤخذ
+  /// يومُ إنشاء الصفّ). وصارت على `CheckoutOrder.totalMinor` بعملتها ويومِ دفعها.
+  /// وقيس التطابقُ قبل التبديل: مجموعُ الأرصدة ١٠٤٬٣٣٥ = مجموعُ الطلبات ١٠٤٬٣٣٥.
   openingBalance        Float?
   // Platform's own / demo accounts (مدونتي, جبر, بسيطة…). Free by nature — excluded from
   // every billing, renewal and money counter so they never appear as "expired" or

@@ -83,13 +83,9 @@ export async function createClient(data: ClientFormData) {
       articlesPerMonth: articlesPerMonth,
     };
 
-    // Opening balance — the founding payment («تأسيسه معناه دفع»). Recorded as revenue
-    // immediately (paid date = the createdAt we're about to set). No invoice at founding;
-    // the first invoice is generated later from this balance on the account page. Internal
-    // accounts are free, so they carry no balance.
-    if (!data.isInternal && typeof data.openingBalance === "number" && data.openingBalance > 0) {
-      clientData.openingBalance = data.openingBalance;
-    }
+    // سقطت كتابةُ `openingBalance` (١٧ سبتمبر ٢٠٢٦): دفعةُ التأسيس صارت تعيش على
+    // الطلب المدفوع — بمبلغه وعملته ويوم دفعه — وتقريرُ المبيعات يقرؤها من هناك.
+    // ورقمٌ على الكرت بلا عملةٍ ولا تاريخٍ كان تقريباً، لا مصدراً.
     
     // Admins don't set a password. The client gets the default password
     // (sent via the welcome email) and changes it from the console on first login.

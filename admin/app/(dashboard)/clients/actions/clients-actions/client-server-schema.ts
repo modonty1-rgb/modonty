@@ -81,7 +81,6 @@ export const clientServerSchema = z.object({
   articlesBaseUrl: z.string().optional().nullable(),
   apiKeySuspended: z.boolean().optional().nullable(),
   isInternal: z.boolean().optional().nullable(), // platform/demo account — excluded from billing
-  billingCycle: z.enum(["monthly", "annual"]).optional().nullable(), // client-owned billing period
 
   // Optional array fields
   sameAs: z.array(z.string()).optional(),

@@ -204,7 +204,6 @@ export interface ClientFormData {
   isVerified?: boolean; // شهادة فحص الأوراق الرسميّة — مصدر شارة التوثيق على مدونتي
   showSchedule?: boolean; // client sees the «مجدولة» tab in their console (default on)
   isInternal?: boolean; // platform/demo account — excluded from billing (admin toggle)
-  billingCycle?: "monthly" | "annual"; // client-owned billing period (drives invoice period)
 
   // Client Site Publishing — articles delivered to the client's own website.
   // apiKeyLastUsedAt is absent by design: the endpoint stamps it when their site
@@ -215,7 +214,6 @@ export interface ClientFormData {
 
   // Opening balance (CREATE only) — the founding payment, persisted on Client.openingBalance.
   // Auto-filled from tier × billingCycle but editable; mandatory for a billable client.
-  openingBalance?: number | null;
 
   // GBP
   gbpProfileUrl?: string | null;

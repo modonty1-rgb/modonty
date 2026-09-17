@@ -61,7 +61,6 @@ export default async function ClientAccountPage({ params }: PageProps) {
         subscriptionEndDate: true,
         addressCountry: true,
         createdAt: true,
-        openingBalance: true,
         salesRepId: true,
         salesRep: { select: { name: true, email: true } },
       },
@@ -143,15 +142,17 @@ export default async function ClientAccountPage({ params }: PageProps) {
     defaultAmount = Math.round(currentPeriod === "monthly" ? perMonth : perMonth * 12);
   }
 
-  // Opening balance → the founding payment. It shows the «Auto Button» that documents it as
-  // the first invoice, but only while it hasn't been converted yet (a fromOpeningBalance
-  // invoice = already done). Compute this first — the collected total below depends on it.
-  const openingBalanceConverted = invoices.some((i) => i.fromOpeningBalance);
-  const openingBalance = client.openingBalance ?? 0;
-  // Before conversion the founding cash lives only on the client; after conversion it lives
-  // in the PAID fromOpeningBalance invoice. Count it exactly once so «إجمالي المدفوع» is the
-  // real collected figure and doesn't jump when the balance is turned into its invoice.
-  const collectedOpening = !openingBalanceConverted ? openingBalance : 0;
+  /**
+   * الدفعةُ المؤسِّسة — من الطلب الساري، لا من `Client.openingBalance`.
+   *
+   * كان رقماً على الكرت بلا عملةٍ ولا تاريخِ دفع، ويُحسب «محصَّلاً» ما دام لم يُحوَّل
+   * إلى فاتورة. وصار الطلبُ يحمل الثلاثة: المبلغ والعملة ويومَ الدفع.
+   *
+   * ويُعدّ مرّةً واحدة: إن وُجدت له فاتورةٌ فالمبلغُ محسوبٌ فيها، وإلّا فمن الطلب —
+   * وإلّا قفز «إجمالي المدفوع» مرّتين للمبلغ نفسه.
+   */
+  const foundingInvoiced = invoices.some((i) => i.fromOpeningBalance);
+  const foundingPaid = !foundingInvoiced && activeOrder ? activeOrder.totalMinor / 100 : 0;
 
   // Accounting bottom line (derived from invoices + the unconverted opening balance).
   // Archived invoices are void: they stay in the ledger for the record but owe nothing.
@@ -160,7 +161,7 @@ export default async function ClientAccountPage({ params }: PageProps) {
     .reduce((s, i) => s + i.amount, 0);
   const paid =
     invoices.filter((i) => i.paymentStatus === "PAID" && !i.archivedAt).reduce((s, i) => s + i.amount, 0) +
-    collectedOpening;
+    foundingPaid;
   const hasPaid = paid > 0;
 
   const end = client.subscriptionEndDate;
@@ -238,10 +239,9 @@ export default async function ClientAccountPage({ params }: PageProps) {
               <p className="mt-0.5 text-xl font-extrabold tabular-nums text-emerald-600 dark:text-emerald-400">
                 {money(paid, currency)}
               </p>
-              {openingBalance > 0 && (
+              {foundingPaid > 0 && (
                 <p className="text-[11px] text-muted-foreground">
-                  منها رصيد افتتاحي {money(openingBalance, currency)}
-                  {openingBalanceConverted ? " · محوّل لفاتورة" : " · بانتظار أول مقال"}
+                  منها دفعة التأسيس {money(foundingPaid, currency)} · من الطلب {activeOrder?.number}
                 </p>
               )}
             </div>
@@ -289,8 +289,6 @@ export default async function ClientAccountPage({ params }: PageProps) {
           planLabel={`${currentTierName} · ${periodLabel}`}
           currency={currency}
           defaultAmount={defaultAmount}
-          openingBalance={client.openingBalance ?? null}
-          openingBalanceConverted={openingBalanceConverted}
         />
       </div>
     </div>

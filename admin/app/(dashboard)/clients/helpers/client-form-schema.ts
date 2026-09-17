@@ -227,7 +227,6 @@ const clientFormObject = z
     // must mean "keep showing it", never "hide it".
     showSchedule: z.boolean().optional().default(true),
     isInternal: z.boolean().optional().default(false),
-    billingCycle: z.enum(["monthly", "annual"]).optional().default("annual"),
 
     // Publishing to the client's own website. `articlesBaseUrl` must be an absolute
     // http(s) URL — every canonical URL of that client's articles is built from it,
@@ -243,10 +242,8 @@ const clientFormObject = z
     apiKeySuspended: z.boolean().optional().default(false),
 
     // Opening balance (CREATE only) — the founding payment («تأسيسه معناه دفع»). Persisted
-    // on Client.openingBalance and counted as revenue immediately (paid date = createdAt;
-    // months come from billingCycle). No invoice at founding. Base schema keeps it optional;
-    // clientCreateFormSchema makes it mandatory for a billable (non-internal) client.
-    openingBalance: z.number().nonnegative().optional().nullable(),
+    // سقط `openingBalance` و`billingCycle` (١٧ سبتمبر ٢٠٢٦): المبلغُ والمدّة يعيشان
+    // على الطلب المدفوع، لا على كرت العميل. ولا شاشةَ تجمعهما بعد اليوم.
   });
 
 /** القواعد التي لا تختلف بين إنشاءٍ وتعديل — تُستدعى من كليهما بلا نسخةٍ ثانية. */
