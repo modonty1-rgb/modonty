@@ -14,7 +14,10 @@ const nextConfig: NextConfig = {
   // الاتّصال على 127.0.0.1 و localhost معاً، ويمرّ عبر عنوان الشبكة وحده. وبلا إدراجه هنا
   // يحجب نكست أصولَ التطوير، فلا تحصل hydration، فيُرسَل نموذجُ الدخول إرسالاً أصليّاً
   // (GET بكلمة المرور في الرابط) بدل ما يناديَ الفعل. تطويرٌ فقط — لا أثر على البناء.
-  allowedDevOrigins: ["127.0.0.1", "localhost", "192.168.1.12"],
+  // عناوينُ الشبكة تتغيّر بتغيّر المكان (بيت ← مكتب)، ومتصفّحُ الفحص لا يصل
+  // loopback هذا الجهاز — فيمرّ عبر عنوان الشبكة وحده. تُضاف هنا كي لا يحجب
+  // نكست أصولَ التطوير فتموت الـhydration بلا رسالة خطأ واحدة.
+  allowedDevOrigins: ["127.0.0.1", "localhost", "192.168.1.12", "10.29.20.68"],
   // sharp is a native module (aspect-crop generation) — must be required at runtime,
   // not bundled, or its win32/native binding fails to load in the server runtime.
   serverExternalPackages: ["sharp"],

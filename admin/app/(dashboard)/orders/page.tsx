@@ -33,6 +33,8 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
         planName: true, paidMonths: true, totalMinor: true, currency: true, status: true,
         // للتفعيل: `clientId` يقرّر ظهور الزرّ، والثلاثة الباقية تملأ النافذة بلا استعلامٍ ثانٍ.
         clientId: true, businessName: true, buyerEmail: true, bonusServiceMonths: true,
+        // `notes` تبدأ بـ⚠ في الطلب المُرحَّل الذي تناقضت بياناتُه — فيُصبغ صفُّه.
+        notes: true,
         transactions: { select: { provider: true }, orderBy: { createdAt: "desc" }, take: 1 },
       },
       orderBy: { createdAt: "desc" },
@@ -96,10 +98,32 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.map((order) => (
-                <TableRow key={order.id}>
+              {orders.map((order) => {
+                /**
+                 * الطلبُ المُرحَّل الذي تناقضت بياناتُه يُصبغ كهرمانيّاً.
+                 *
+                 * الترحيل بنى ٤٢ طلباً من بياناتٍ متضاربة (`billingCycle` خالف المبلغَ في
+                 * ٢٣ من ٢٨)، فما خُمّنت المدّة — وُسمت في `notes` بادئةً بـ⚠. ومراجعةُ
+                 * سبعةٍ وثلاثين صفّاً بفتح كلٍّ منها على حدة تضيع، فالعلامةُ تُرى من القائمة.
+                 *
+                 * واللونُ لا يحمل المعلومة وحده: شارةُ «يحتاج مراجعة» مكتوبةٌ في الصفّ
+                 * نفسه لمن لا يميّز الألوان.
+                 */
+                const needsReview = order.notes?.startsWith("⚠") ?? false;
+                return (
+                <TableRow key={order.id} className={needsReview ? "bg-amber-500/10 hover:bg-amber-500/20" : undefined}>
                   <TableCell className="py-2 font-medium">
-                    <Link href={`/orders/${order.id}`} className="tabular-nums underline-offset-2 hover:underline">{order.number}</Link>
+                    <div className="flex items-center gap-1.5">
+                      <Link href={`/orders/${order.id}`} className="tabular-nums underline-offset-2 hover:underline">{order.number}</Link>
+                      {needsReview ? (
+                        <span
+                          title={order.notes ?? undefined}
+                          className="inline-flex items-center gap-0.5 rounded-full border border-amber-500/40 bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-bold leading-none text-amber-700 dark:text-amber-400"
+                        >
+                          ⚠ يحتاج مراجعة
+                        </span>
+                      ) : null}
+                    </div>
                   </TableCell>
                   <TableCell className="py-2 text-muted-foreground">{formatOrderDate(order.createdAt)}</TableCell>
                   <TableCell className="py-2">{order.buyerName}</TableCell>
@@ -127,7 +151,8 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
                     ) : null}
                   </TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </div>

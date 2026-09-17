@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Wrench, Database, Eraser } from "lucide-react";
+import { Wrench, Database, Eraser, RefreshCw } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SyncLocalDialog } from "./sync-local-button";
 import { WipeOrdersDialog } from "./wipe-orders-button";
+import { RebuildOrdersDialog } from "./rebuild-orders-dialog";
 
 /**
  * أدوات التطوير — قائمةٌ واحدة بدل أيقونتين في الشريط.
@@ -29,6 +30,7 @@ import { WipeOrdersDialog } from "./wipe-orders-button";
 export function DevToolsMenu({ enabled }: { enabled: boolean }) {
   const [syncOpen, setSyncOpen] = useState(false);
   const [wipeOpen, setWipeOpen] = useState(false);
+  const [rebuildOpen, setRebuildOpen] = useState(false);
 
   if (!enabled) return null;
 
@@ -75,15 +77,30 @@ export function DevToolsMenu({ enabled }: { enabled: boolean }) {
 
           <DropdownMenuItem
             onSelect={() => {
+              setTimeout(() => setRebuildOpen(true), 0);
+            }}
+            className="cursor-pointer gap-2"
+          >
+            <RefreshCw className="size-4 text-red-600 dark:text-red-400" aria-hidden />
+            <div className="flex flex-col">
+              <span className="text-sm">إعادة بناء الطلبات</span>
+              <span className="text-[11px] text-muted-foreground">
+                إخلاءٌ ثمّ طلبٌ لكلّ عميل من بياناته
+              </span>
+            </div>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onSelect={() => {
               setTimeout(() => setWipeOpen(true), 0);
             }}
             className="cursor-pointer gap-2"
           >
-            <Eraser className="size-4 text-red-600 dark:text-red-400" aria-hidden />
+            <Eraser className="size-4 text-muted-foreground" aria-hidden />
             <div className="flex flex-col">
-              <span className="text-sm">إخلاء الطلبات والفواتير</span>
+              <span className="text-sm">إخلاءٌ فقط</span>
               <span className="text-[11px] text-muted-foreground">
-                العملاء والمحتمَلون لا يُمَسّون
+                بلا بناء — لفحص قاعدةٍ فارغة
               </span>
             </div>
           </DropdownMenuItem>
@@ -92,6 +109,7 @@ export function DevToolsMenu({ enabled }: { enabled: boolean }) {
 
       <SyncLocalDialog open={syncOpen} onOpenChange={setSyncOpen} />
       <WipeOrdersDialog open={wipeOpen} onOpenChange={setWipeOpen} />
+      <RebuildOrdersDialog open={rebuildOpen} onOpenChange={setRebuildOpen} />
     </>
   );
 }

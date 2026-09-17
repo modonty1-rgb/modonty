@@ -171,6 +171,19 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           </form>
         ) : null}
         {invoice && whatsapp ? ("href" in whatsapp ? <WhatsappInvoiceButton href={whatsapp.href} orderId={order.id} /> : <Badge variant="destructive" className="text-[11px]">{whatsapp.error}</Badge>) : null}
+
+        {/**
+          * التعديل لمدير النظام وحده. وُجد لأنّ الترحيل بنى الطلباتِ من بياناتٍ متناقضة
+          * (`billingCycle` خالف المبلغَ في ٢٣ من ٢٨)، فما خُمّنت المدّة — وُسمت، وتُصحَّح
+          * هنا بيدٍ تعرف الحقيقة. خالد ١٧ سبتمبر ٢٠٢٦: «الأدمن اللي يقدر يعدّل».
+          */}
+        {isFinanceAdmin ? (
+          <Button asChild size="sm" variant={order.notes?.startsWith("⚠") ? "default" : "outline"}>
+            <Link href={`/orders/${order.id}/edit`}>
+              {order.notes?.startsWith("⚠") ? "مراجعة وتعديل ⚠" : "تعديل الطلب"}
+            </Link>
+          </Button>
+        ) : null}
       </section>
 
       {/**
