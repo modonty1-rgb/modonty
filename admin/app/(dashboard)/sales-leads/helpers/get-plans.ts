@@ -3,8 +3,6 @@ import "server-only";
 import { db } from "@/lib/db";
 
 export interface PlanOption {
-  /** `SubscriptionTier` المقابلة — هي ما يُكتب في `SalesLead.expectedTier`. */
-  tier: string;
   slug: string;
   name: string;
   priceMonthly: number;
@@ -38,14 +36,9 @@ export interface PlanOption {
  * وحساب مدّة الصفقة شغلٌ لاحق.
  */
 
-/** جسر السلَق ← الباقة. مكتوبٌ هنا لأن الصفّ الرابط في `subscription_tier_configs` قد يغيب. */
-const TIER_BY_SLUG: Record<string, string> = {
-  free: "BASIC",
-  presence: "BASIC",
-  starter: "STANDARD",
-  growth: "PRO",
-  scale: "PREMIUM",
-};
+// سقط `TIER_BY_SLUG` (١٧ سبتمبر ٢٠٢٦): كان يترجم سلَق الباقة إلى قيمةٍ من
+// `SubscriptionTier` لأنّ `SalesLead.expectedTier` كان إنماً. صار الحقلُ يخزّن السلَق
+// نفسه، فسقطت الترجمةُ ومعها آخرُ ما يربط العميلَ المحتمَل بالإنم.
 
 export async function getPlans(): Promise<Record<"SA" | "EG", PlanOption[]>> {
   const rows = await db.modontyPlan.findMany({
@@ -64,7 +57,6 @@ export async function getPlans(): Promise<Record<"SA" | "EG", PlanOption[]>> {
   for (const r of rows) {
     if (r.country !== "SA" && r.country !== "EG") continue;
     out[r.country].push({
-      tier: TIER_BY_SLUG[r.slug] ?? "STANDARD",
       slug: r.slug,
       name: r.name,
       priceMonthly: r.priceMonthly,

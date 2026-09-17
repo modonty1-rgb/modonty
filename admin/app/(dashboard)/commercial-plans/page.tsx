@@ -1,4 +1,4 @@
-import { SubscriptionTier, CommercialPlanTheme } from "@prisma/client";
+import { CommercialPlanTheme } from "@prisma/client";
 import { COMMERCIAL_PLAN_THEMES } from "@modonty/shared/lib/commercial/plan-themes";
 import { ArrowDown, ArrowUp, PackageOpen } from "lucide-react";
 import Link from "next/link";
@@ -21,12 +21,15 @@ import { getCommercialSeedSummary, isCommercialDataEmpty } from "./actions/seed-
 
 export const dynamic = "force-dynamic";
 
-const TIER_VALUES = [SubscriptionTier.BASIC, SubscriptionTier.STANDARD, SubscriptionTier.PRO, SubscriptionTier.PREMIUM];
 const THEME_VALUES = [CommercialPlanTheme.NEUTRAL, CommercialPlanTheme.PRIMARY, CommercialPlanTheme.ACCENT, CommercialPlanTheme.PREMIUM];
 
 /** The whole commercial catalogue stays on one screen: this product has 3–4 plans, not hundreds. */
 export default async function CommercialPlansPage() {
-  const [plans, tierConfigs, termPolicies, paySections] = await Promise.all([
+  // سقط `subscriptionTierConfig` من هنا مع منتقي الفئة (١٧ سبتمبر ٢٠٢٦): كان يجلب
+  // أسماءَ الفئات لتسمية خيارات المنتقي، والمنتقي نفسه سقط لأنّ `CommercialPlan.tier`
+  // ما عاد له قارئ. الاستدعاءُ وموضعُه في التفكيك يُحذفان معاً أو لا يُحذفان — إسقاطُ
+  // أحدهما وحده يزيح كلَّ ما بعده بمقدار واحد، فتصل القوائمُ إلى المتغيّر الخطأ صامتةً.
+  const [plans, termPolicies, paySections] = await Promise.all([
     db.commercialPlan.findMany({
       include: {
         prices: { orderBy: { market: "desc" } },
@@ -34,7 +37,6 @@ export default async function CommercialPlansPage() {
       },
       orderBy: { displayOrder: "asc" },
     }),
-    db.subscriptionTierConfig.findMany({ select: { tier: true, name: true } }),
     db.commercialTermPolicy.findMany({ orderBy: { displayOrder: "asc" } }),
     db.paySectionContent.findMany(),
   ]);
@@ -52,7 +54,6 @@ export default async function CommercialPlansPage() {
       paymentFootnote: null, paymentFootnoteSub: null, payMarks: [], installmentMark: null,
       teamHeadline: null, teamSubheadline: null,
     };
-  const tierLabel = (tier: SubscriptionTier) => tierConfigs.find((config) => config.tier === tier)?.name ?? tier;
 
   return <main className="mx-auto flex max-w-6xl flex-col gap-5 pb-8" dir="rtl">
     <header className="flex flex-wrap items-end justify-between gap-2"><div className="flex flex-col gap-1"><h1 className="text-2xl font-semibold">الباقات والأسعار</h1><p className="text-sm text-muted-foreground">راجع الباقات وانشرها، وافتح التفاصيل عند الحاجة للتعديل.</p></div>{plans.length > 0 ? <p className="text-sm text-muted-foreground">{plans.length} باقات في الكتالوج</p> : null}</header>
@@ -92,13 +93,7 @@ export default async function CommercialPlansPage() {
               <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الاسم<Input className="h-9" name="name" maxLength={60} defaultValue={plan.name} required/></label>
               
               <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">شارة الشريحة <span className="font-normal">— لمن هذه الباقة («للمؤسسات» · «للمتاجر»). ليست وسم شعبية.</span><Input className="h-9" name="badge" maxLength={30} placeholder="للمؤسسات" defaultValue={plan.badge ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">سطور مميّزة <span className="font-normal">— سطر لكل جملة، ٦ سطور كحدّ أقصى. للوعود التي لا رقم لها («إلغاء في أي وقت»). الكمّيات تُكتب في المزايا لا هنا، وإلا تناقضت البطاقة مع نفسها.</span><Textarea name="highlights" rows={4} placeholder={"إلغاء في أي وقت\nدعم مباشر على واتساب"} defaultValue={plan.highlights.join("\n")}/></label>
-              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">السطر الخاطف <span className="font-normal">— جملة واحدة تظهر تحت السعر مباشرة.</span><Input className="h-9" name="hook" maxLength={60} placeholder="٦ شهور مجاناً مع السنة" defaultValue={plan.hook ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">نصّ الزرّ <span className="font-normal">— فارغاً يكتب «اشترك الآن».</span><Input className="h-9" name="ctaText" maxLength={30} placeholder="اشترك الآن" defaultValue={plan.ctaText ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">شارة التمييز <span className="font-normal">— وسم الشعبية («الأكثر طلباً»). على باقة واحدة فقط: كتابتها هنا تمسحها من الباقي تلقائياً.</span><Input className="h-9" name="featuredBadge" maxLength={30} placeholder="الأكثر طلباً" defaultValue={plan.featuredBadge ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">فئة الاشتراك
-                <Select name="tier" defaultValue={plan.tier ?? undefined}>
-                  <SelectTrigger className="h-9"><SelectValue placeholder="بلا فئة — لن تُنشر"/></SelectTrigger>
-                  <SelectContent>{TIER_VALUES.map((tier) => <SelectItem key={tier} value={tier}>{tierLabel(tier)}</SelectItem>)}</SelectContent>
-                </Select>
-              </label>
-              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الثيم
+              <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">السطر الخاطف <span className="font-normal">— جملة واحدة تظهر تحت السعر مباشرة.</span><Input className="h-9" name="hook" maxLength={60} placeholder="٦ شهور مجاناً مع السنة" defaultValue={plan.hook ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">نصّ الزرّ <span className="font-normal">— فارغاً يكتب «اشترك الآن».</span><Input className="h-9" name="ctaText" maxLength={30} placeholder="اشترك الآن" defaultValue={plan.ctaText ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">شارة التمييز <span className="font-normal">— وسم الشعبية («الأكثر طلباً»). على باقة واحدة فقط: كتابتها هنا تمسحها من الباقي تلقائياً.</span><Input className="h-9" name="featuredBadge" maxLength={30} placeholder="الأكثر طلباً" defaultValue={plan.featuredBadge ?? ""}/></label><label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">الثيم
                 <Select name="theme" defaultValue={plan.theme}>
                   <SelectTrigger className="h-9"><SelectValue/></SelectTrigger>
                   <SelectContent>{THEME_VALUES.map((theme) => <SelectItem key={theme} value={theme}><span className="flex items-center gap-2"><span className={`size-3 rounded-full border border-border ${COMMERCIAL_PLAN_THEMES[theme].swatch}`} aria-hidden/>{COMMERCIAL_PLAN_THEMES[theme].label}</span></SelectItem>)}</SelectContent>

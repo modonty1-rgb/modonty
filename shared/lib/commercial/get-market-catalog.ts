@@ -1,4 +1,4 @@
-import type { CommercialPlanTheme, PrismaClient, SubscriptionTier } from "@prisma/client";
+import type { CommercialPlanTheme, PrismaClient } from "@prisma/client";
 
 /**
  * The published catalog for ONE market, shaped for a selling card.
@@ -47,7 +47,8 @@ export interface CatalogPlan {
   ctaText: string | null;
   featuredBadge: string | null;
   theme: CommercialPlanTheme;
-  tier: SubscriptionTier | null;
+  // سقط `tier` (١٧ سبتمبر ٢٠٢٦) مع الحقل نفسه من `CommercialPlan`: كان يربط الباقة
+  // بفئةٍ من إنم، وهو ما حبس الكتالوج في أربع باقاتٍ للأبد. المفتاحُ اليوم `slug`.
   articlesPerMonth: number | null;
   highlights: string[];
   /** Major units, VAT-inclusive (PAY-Q7). */
@@ -82,7 +83,6 @@ export async function getMarketCatalog(db: PrismaClient, market: string): Promis
         ctaText: true,
         featuredBadge: true,
         theme: true,
-        tier: true,
         articlesPerMonth: true,
         highlights: true,
         prices: {
@@ -122,7 +122,6 @@ export async function getMarketCatalog(db: PrismaClient, market: string): Promis
       ctaText: row.ctaText,
       featuredBadge: row.featuredBadge,
       theme: row.theme,
-      tier: row.tier,
       articlesPerMonth: row.articlesPerMonth,
       highlights: row.highlights,
       monthlyBase: price.monthlyBase,

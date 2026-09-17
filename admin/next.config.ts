@@ -10,7 +10,11 @@ const nextConfig: NextConfig = {
   // التطوير وحده: Next 16 يحجب طلبات التطوير القادمة من أصلٍ غير الذي بدأ منه،
   // فتفشل الترطيب (hydration) والخطوط بـ403 عند فتح الصفحة على 127.0.0.1 بدل localhost.
   // يخصّ خادم التطوير فقط ولا أثر له في الإنتاج.
-  allowedDevOrigins: ["127.0.0.1", "localhost"],
+  // `192.168.1.12` مضاف لأنّ متصفّح الفحص الآليّ لا يصل إلى loopback هذا الجهاز — يرفض
+  // الاتّصال على 127.0.0.1 و localhost معاً، ويمرّ عبر عنوان الشبكة وحده. وبلا إدراجه هنا
+  // يحجب نكست أصولَ التطوير، فلا تحصل hydration، فيُرسَل نموذجُ الدخول إرسالاً أصليّاً
+  // (GET بكلمة المرور في الرابط) بدل ما يناديَ الفعل. تطويرٌ فقط — لا أثر على البناء.
+  allowedDevOrigins: ["127.0.0.1", "localhost", "192.168.1.12"],
   // sharp is a native module (aspect-crop generation) — must be required at runtime,
   // not bundled, or its win32/native binding fails to load in the server runtime.
   serverExternalPackages: ["sharp"],

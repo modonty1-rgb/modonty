@@ -51,7 +51,7 @@ async function run() {
   }
 
   const plans = await db.commercialPlan.findMany({
-    select: { id: true, slug: true, name: true, tier: true, articlesPerMonth: true,
+    select: { id: true, slug: true, name: true, articlesPerMonth: true,
       prices: { where: { isActive: true }, select: { market: true, currency: true, monthlyBase: true } } },
   });
   if (plans.length === 0) throw new Error("لا باقات في الكتالوج التجاريّ");

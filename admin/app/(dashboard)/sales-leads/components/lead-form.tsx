@@ -197,10 +197,10 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
    * تقرير. فالمبلغ نتيجةٌ للباقة، ومصدره صفّها في القاعدة.
    */
   const pickPlan = (p: PlanOption) => {
-    const same = form.expectedTier === p.tier;
+    const same = form.expectedTier === p.slug;
     setForm((f) => ({
       ...f,
-      expectedTier: same ? "" : p.tier,
+      expectedTier: same ? "" : p.slug,
       expectedMonthly: same ? "" : String(p.priceMonthly),
     }));
   };
@@ -797,7 +797,7 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
           ) : (
             <div className="grid w-full grid-cols-3 gap-1">
               {marketPlans.map((p) => {
-                const on = form.expectedTier === p.tier;
+                const on = form.expectedTier === p.slug;
                 const price = priceOf(p);
                 const tag = p.featuredBadge ?? p.badge;
                 const featured = Boolean(p.featuredBadge);

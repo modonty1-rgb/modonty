@@ -66,27 +66,12 @@ export const getTierConfigByTier = cache(async (tier: SubscriptionTier) => {
 });
 
 /**
- * حصّة المقالات الشهرية لتصنيفٍ ما — **من كتالوج البيع**، وهي التي تُكتب على العميل.
+ * سقطت `getCatalogArticlesPerMonth` (١٧ سبتمبر ٢٠٢٦) — بصفر مستهلك.
  *
- * ── لماذا دالّة منفصلة عن `getTierConfigByTier` ──
- * ذاك يرجع صفّ `subscriptionTierConfig` لأن العميل مرتبطٌ به بمفتاح أجنبيّ
- * (`subscriptionTierConfigId`) ويُفحص منه `isActive` — فيبقى. لكن **الرقم** لا يُؤخذ
- * منه: الجدولان يختلفان (٤/٨/١٢ عنده مقابل ٨/١٢/١٦ في الكتالوج).
- *
- * والعطل الذي أغلقته (مقيسٌ ١٥ سبتمبر ٢٠٢٦): بعد تحويل بطاقات الباقة إلى الكتالوج
- * صارت الشاشة تعرض «الزخم ١٢ مقالاً» ثم **يكتب السيرفر ٨** — فالبطاقة تعد بما لا
- * يُنفَّذ، والفرق يظهر عند أوّل شهر لا في مراجعةٍ لاحقة.
- *
- * `null` حين لا باقة منشورة لهذا التصنيف — والمنادي يُبقي ما كان بدل أن يصفّر حصّة
- * عميلٍ قائم.
+ * كانت تبحث في الكتالوج بـ`CommercialPlan.tier`، والحقلُ سقط في نفس اليوم. ومَن
+ * أراد حصّةَ باقةٍ يقرؤها بالسلَق (`lib/pricing/get-tier-pricing.ts`) — وهو ما يفعله
+ * كلُّ قارئٍ قائم فعلاً.
  */
-export const getCatalogArticlesPerMonth = cache(async (tier: SubscriptionTier): Promise<number | null> => {
-  try {
-    const plan = await db.commercialPlan.findFirst({
-      where: { tier, isPublished: true },
-      orderBy: { displayOrder: "asc" },
-      select: { articlesPerMonth: true },
-    });
     return plan?.articlesPerMonth ?? null;
   } catch (error) {
     console.error("Error fetching catalog quota by tier:", error);
@@ -108,73 +93,13 @@ export const getActiveTierConfigs = cache(async () => {
 });
 
 /**
- * الباقات التي يُوضَع عليها العميل — **من كتالوج البيع وحده** (خالد ١٥ سبتمبر ٢٠٢٦:
- * «قراري سورس أوف ترووث واحد»).
+ * سقطت `getSellableTierConfigs` (١٧ سبتمبر ٢٠٢٦) — خمسون سطراً بصفر مستهلك.
  *
- * ── ما كانت تفعله قبل اليوم ──
- * تجمع مصدرين قديمين: `subscriptionTierConfig` ومجموعة `Plan` الخام — وهي **جدول جبر
- * سيو نفسه**، تُقرأ بـ`$runCommandRaw` وتُوصَل بالاسم العربي. فكان اختيار باقة العميل
- * يعتمد على جدولٍ يملكه موقعٌ آخر، ويطابَق بنصٍّ لا بمفتاح.
+ * كانت تختار باقات البيع وتُسقط ما لا `tier` له، وتُبقي **واحدةً لكل فئة** عبر
+ * `new Set<SubscriptionTier>()`. وهذا هو قفصُ «أربع باقاتٍ للأبد» بعينه: الإنم أربعُ
+ * قيم، فالمعروضُ أربعةٌ مهما كبر الكتالوج.
  *
- * والنتيجة مقيسة على الشاشة الحيّة: «الزخم ٨ مقالات · ١٬٠٣٩ ريال» بينما المشتري يدفع
- * ١٬١٩٩ مقابل ١٢ مقالاً. ومنها كان يُحسب **الرصيد الافتتاحي** الذي يدخل تقرير المبيعات.
- *
- * ── الوصلة `tier` ──
- * `CommercialPlan.tier` يربط باقة البيع بتصنيف العميل التشغيلي، ومقيسٌ حيّاً في
- * القاعدتين: الانطلاقة⇢STANDARD · الزخم⇢PRO · الريادة⇢PREMIUM. وباقةٌ بلا `tier` أو
- * بلا سعرٍ لسوقها تُسقَط — عرضُ باقةٍ لا تُربط بتصنيف يُنتج عميلاً بلا حدود.
- *
- * ⚠ القيد المقبول بقرار خالد: **باقة منشورة واحدة لكل تصنيف**. باقتان بنفس `tier`
- * تجعلان الاختيار غامضاً، فتُؤخَذ الأولى بـ`displayOrder`.
- *
- * ── لا سعر سنويّ ──
- * الشكل المُرجَع يبقى `{ SA: {mo,yr}, EG: {mo,yr} }` كما تتوقّعه الشاشات، لكن
- * `yr === mo`: الكتالوج لا يخزّن سعراً سنوياً مخفَّضاً — خصمُ المدّة عنده **شهور هدية**
- * في `CommercialTermPolicy`. ومن `yr` المختلف عن `mo` في الجدول القديم جاء الرقم
- * ١٬٠٣٩ الذي ناقض ١٬٢٩٩ في شاشةٍ أخرى.
+ * سقط الحقلُ `CommercialPlan.tier` نفسُه في نفس اليوم، فلم يبقَ للدالّة ما تبني عليه
+ * — ولا قارئَ يطلبها. فمَن احتاج قائمةَ الباقات يقرأ الكتالوج بالسلَق مباشرةً
+ * (`lib/pricing/get-tier-pricing.ts`).
  */
-export const getSellableTierConfigs = cache(async () => {
-  try {
-    const plans = await db.commercialPlan.findMany({
-      where: { isPublished: true, tier: { not: null } },
-      orderBy: { displayOrder: "asc" },
-      select: {
-        id: true,
-        tier: true,
-        name: true,
-        articlesPerMonth: true,
-        featuredBadge: true,
-        prices: {
-          where: { isActive: true },
-          select: { market: true, monthlyBase: true },
-        },
-      },
-    });
-
-    const seen = new Set<SubscriptionTier>();
-    return plans.flatMap((plan) => {
-      const tier = plan.tier;
-      if (!tier || seen.has(tier)) return [];
-
-      const sa = plan.prices.find((p) => p.market === "SA")?.monthlyBase;
-      const eg = plan.prices.find((p) => p.market === "EG")?.monthlyBase;
-      if (sa == null && eg == null) return [];
-
-      seen.add(tier);
-      const saMo = sa ?? 0;
-      const egMo = eg ?? 0;
-      return [{
-        id: plan.id,
-        tier,
-        name: plan.name,
-        articlesPerMonth: plan.articlesPerMonth ?? 0,
-        price: saMo,
-        isPopular: Boolean(plan.featuredBadge),
-        pricing: { SA: { mo: saMo, yr: saMo }, EG: { mo: egMo, yr: egMo } },
-      }];
-    });
-  } catch (error) {
-    console.error("Error fetching sellable tier configs:", error);
-    return [];
-  }
-});

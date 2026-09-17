@@ -102,7 +102,7 @@ export async function POST(req: Request) {
   const plan = await db.commercialPlan.findFirst({
     where: { slug: body.planSlug, isPublished: true },
     select: {
-      id: true, slug: true, name: true, tier: true, articlesPerMonth: true,
+      id: true, slug: true, name: true, articlesPerMonth: true,
       prices: { where: { market: body.market, isActive: true }, select: { market: true, currency: true, monthlyBase: true } },
     },
   });

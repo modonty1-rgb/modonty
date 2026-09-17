@@ -150,7 +150,9 @@
   .navtab[aria-selected="true"] b{background:var(--card);color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
   .navtab[data-view="now"][aria-selected="true"]{color:var(--key)}
   .navtab[data-view="done"][aria-selected="true"]{color:var(--go)}
-  .navtab[data-view="enums"][aria-selected="true"]{color:var(--stop)}
+  .navtab[data-view="enums"][aria-selected="true"]{color:var(--go)}
+  .navtab[data-view="urgent"]{color:var(--stop);font-weight:900}
+  .navtab[data-view="urgent"][aria-selected="true"]{color:var(--stop);background:var(--stop-bg)}
   .navsep{height:1px;background:var(--line);margin:9px 6px}
   .navnote{font-size:11px;color:var(--muted);padding:8px 11px 0;line-height:1.7}
   /* المشهدان: كل عنصرٍ يحمل data-view، والسكربت يُظهر واحداً */
@@ -168,12 +170,14 @@
 <body>
 <nav class="navcol" role="tablist" aria-label="مشاهد الورقة">
   <div class="brand">تفعيل العميل</div>
-  <button class="navtab" role="tab" data-view="now"  aria-selected="true"
+  <button class="navtab" role="tab" data-view="urgent" aria-selected="true"
+    title="عوائقُ تُعالَج قبل أيّ عملٍ آخر">هامٌّ جدّاً<b>1</b></button>
+  <button class="navtab" role="tab" data-view="now"  aria-selected="false"
     title="الفلو والشاشات والمقارنة والمراحل الأربع الباقية">الحالي<b>4</b></button>
   <button class="navtab" role="tab" data-view="done" aria-selected="false"
-    title="إحدى وعشرون أُغلقت بدليلها الخام">المنجَز<b>21</b></button>
+    title="ثمانٍ وعشرون أُغلقت بدليلها الخام">المنجَز<b>28</b></button>
   <button class="navtab" role="tab" data-view="enums" aria-selected="false"
-    title="جرد SubscriptionTier — أين تُستعمل، وما الذي يمنع حذفها">Enums<b>!</b></button>
+    title="SubscriptionTier — خمسةٌ من ستّة سقطت، وبقي الجدولُ القديم وحده">Enums<b>1</b></button>
   <div class="navsep"></div>
   <button class="navtab" role="tab" data-view="all"  aria-selected="false"
     title="الورقة كاملةً">الكلّ<b>↕</b></button>
@@ -196,7 +200,46 @@
     </p>
   </div>
 
+  <section data-view="urgent">
+  <div class="card stop">
+    <b>🚨 عائقٌ مفتوح — <span style="color:var(--stop)">Atlas يقطع اتّصال الإنتاج · يُعالَج قبل الترحيل</span></b>
+    <p class="said">خالد (١٧ سبتمبر): «لازم نشوف المشكلة هذه عشان نعالجها قبل ما نخلّص
+      موضوع العميل والترحيل».</p>
+    <p><b>النصُّ الحرفيّ من <code>system_errors</code> في الإنتاج:</b></p>
+    <pre>Kind: Connection pool for ac-ounlw6n-shard-00-02.tgixa8h.mongodb.net:27017 cleared
+because another operation failed with:
+Kind: I/O error: received fatal alert: InternalError, labels: {"RetryableWriteError"}</pre>
+
+    <p><b>القياس (١٧ سبتمبر · ١٤:٢٤):</b></p>
+    <pre>إجماليّ الإنتاج          1070 خطأً
+هذا الخطأ وحده          684 من 925 في النسخة المحليّة
+١٥ · ١٦ · ١٧ سبتمبر     311 · 517 · 145      ← نوبات لا استمرار
+اليوم                   11:00 → 41 · 12:00 → 104 · ثمّ هدوء
+
+modonty:rsc اليوم        47   ← الموقعُ العامّ يسقط على الزائر
+/api/internal/log-error 352   ← المسجّلُ نفسه يفشل، فالعددُ الحقيقيّ أكبر</pre>
+
+    <p><b>والباقي (٢٤١) أخفّ:</b></p>
+    <pre>169 × خطأُ رندر Server Components (الرسالة محجوبةٌ في الإنتاج)
+ 63 × Expected the resume to render &lt;div&gt; … __next_metadata_boundary__  ← بق PPR في نكست
+  6 × The destination stream closed early</pre>
+
+    <p><b>ما قيس ولم يُحسم:</b> <code>serverStatus</code> و<code>hostInfo</code> مرفوضان
+      (<code>user is not allowed to do action [serverStatus]</code>) — وهذا نفسُه مؤشّرٌ على
+      <b>باقةٍ مشتركة</b>، فالباقاتُ المخصّصة تسمح بهما. فالترجيحُ: تجاوزُ حدّ الاتّصالات
+      (أربعةُ تطبيقات + دوالّ Vercel بلا حدّ) — <b>ترجيحٌ لا حكم</b>، يحتاج لوحةَ Atlas
+      (<code>Connections</code> · <code>Alerts</code> · <code>Tier</code>).</p>
+
+    <p><b>ولمَ يعطّل الترحيل:</b> سكربتٌ يكتب على قاعدةٍ تسقط اتّصالاتُها قد يُنفَّذ
+      نصفَ تنفيذ، فيُترك مالُ العملاء بين حالتين.</p>
+
+    <p class="said"><b>وأمانةً:</b> مزامنةُ ١٠:١١ قرأت ١٥ ألف وثيقة، والنوبةُ بدأت ١١:٠٠.
+      النوباتُ قائمةٌ منذ ١٥ سبتمبر قبل أيّ مزامنة — لكنّ القربَ الزمنيَّ يُذكر لا يُخفى.</p>
+  </div>
+  </section>
+
   <section data-view="now">
+
   <!-- ═════ ١ ═════ -->
   <h2><span class="n">١</span>الفلو — كما استقرّ</h2>
 
@@ -1164,6 +1207,209 @@ CheckoutOrder.planTier كان يُكتب في ٧ مواضع ويُقرأ في **
 يسقط بجدوله في المرحلة ٨.</pre>
   </div>
 
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">الفرزُ الحقيقيّ: الباقي ١٣ سطراً لا ٩١</span></b>
+    <p><b>الرقم المعروض كان يخلط ثلاثة أشياء.</b> القياس الخام الآن
+      <code>admin 39 ملفّاً · 88 سطراً</code> — وفرزُه:</p>
+    <pre>تعليقاتٌ تشرح ما سقط                 20 سطراً   ليست كوداً
+SubscriptionTierConfig (الجدول القديم) 55 سطراً   يسقط بجدوله — المرحلة ٨
+الإنمُ نفسه — كوداً حيّاً              13 سطراً   ← الباقي فعلاً</pre>
+
+    <p><b>والثلاثةَ عشرَ في أربعة ملفّات فقط:</b></p>
+    <pre>subscription-tiers/actions/tier-actions.ts   4   يقرأ الجدول القديم
+commercial-plans/page.tsx + actions.ts       6   منتقي فئةٍ لحقلٍ ما عاد يقرؤه أحد
+database/actions/database-health.ts          2   عدُّ صفوفٍ في لوحة الصحّة
+clients-actions/types.ts                     1   نوعٌ داخل وصف الجدول القديم</pre>
+
+    <p><b>وحقولُ الإنم الستّة — كلٌّ بحاله، والقاعدةُ مقيسةٌ لا مخمَّنة:</b></p>
+    <pre>الحقل                        القاعدة   كاتب  قارئ   الحكم
+Client.subscriptionTier      42/42      0     0    ميتٌ تماماً — بياناتٌ بلا كود
+CheckoutOrder.planTier       79/79      0     0    ميت — أُسقط آخرُ كاتبٍ له اليوم
+Invoice.tier                 16/16      3     0    يُكتب بلا قارئ
+SalesLead.expectedTier        0/26     حيّ    حيّ   ١١ سطراً — ولا لَيْدَ واحدٌ استعمله
+CommercialPlan.tier           3/3      UI     0    منتقٍ لحقلٍ صار بلا قارئ
+SubscriptionTierConfig.tier  @unique   حيّ    حيّ   الجدولُ القديم — المرحلة ٨</pre>
+
+    <p><b>وكسرٌ وجدتُه وأصلحتُه في نفس الدور:</b> <code>scripts/seed-test-orders.ts</code>
+      كان ما زال يمرّر <code>tier</code> للّقطة المشتركة بعد حذفه من نوعها (٥ مواضع)،
+      وفيه آخرُ كاتبٍ لـ<code>planTier</code>. سقطا — فصار <code>planTier</code> بلا كاتبٍ
+      ولا قارئٍ في المستودع كلّه.</p>
+
+    <p class="said"><b>عيبٌ في المقياس نفسه يُسجَّل:</b> الـgrep يبحث عن نصّ
+      <code>SubscriptionTier</code>، و<code>expectedTier</code> ومستهلكو <code>p.tier</code>
+      لا يذكرونه — فالمقياسُ يُنقِص. الرقمُ الصادق: ١٣ + ١١ = <b>٢٤ سطراً</b> حيّاً.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">الجدولُ القديم زائدٌ تقريباً — والعائقُ فجوةٌ واحدة</span></b>
+    <p><b>لا يُستهلك من <code>SubscriptionTierConfig</code> إلا حقلان:</b></p>
+    <pre>subscriptionTierConfig.name               10 قراءات
+subscriptionTierConfig.articlesPerMonth    7 قراءات
+(والبقيةُ findMany/findUnique/count — شاشةُ الكتالوج نفسها)</pre>
+
+    <p><b>١) الحصّة — زائدةٌ تماماً.</b> قياسُ القاعدة:</p>
+    <pre>عملاء 42
+  Client.articlesPerMonth موجودٌ مباشرةً      41
+  يعتمد على الجدول القديم وحده                 0   ← لا شيء يعطّل
+  الحقلُ والجدولُ يختلفان                       0
+  بلا حصّةٍ في أيٍّ منهما                        1   (حساب فحص الكونسول)</pre>
+
+    <p><b>٢) الاسم — الجدولُ صار احتياطيّاً في نصف المواضع أصلاً.</b></p>
+    <pre>تقرأ الطلبَ أوّلاً والجدولُ احتياطيّ   4   account/page · create-invoice · orders/actions · …
+تقرأ الجدولَ وحده                    6   accounts · suspend · activate · sales-report · export · edit-workspace</pre>
+
+    <p class="said"><b>وتصحيحٌ على نفسي قبل أن يصير عائقاً كاذباً:</b> قِستُ أوّلاً «٣٥ عميلاً
+      تناقضُ بطاقتُهم طلبَهم» وكدتُ أُعلنها عقبة. ثمّ فحصتُ تواريخ الطلبات:
+      <b>٣٧ من الـ٤٠ وُلدت ١٦ سبتمبر بسكربت البذر خاصّتي</b>، وهو يختار باقةً لا تطابق
+      حصّةَ العميل. فالتناقضُ ضجيجي أنا، لا بياناتُ النظام. أُسقط.</p>
+
+    <p><b>فالعائقُ الحقيقيّ واحدٌ لا غير:</b></p>
+    <pre>عملاءُ لهم طلبٌ حقيقيّ (قبل البذر)    3
+عملاءُ بلا طلبٍ حقيقيّ                39   ← اسمُ باقتهم لا مصدرَ له سوى الجدول القديم</pre>
+    <p>وهذا <b>هو الترحيلُ بعينه</b> — ويُتمرَّن عليه الآن على اللوكل: يُعاد البذرُ بحيث
+      يطابق طلبُ كلِّ عميلٍ حصّتَه الفعليّة، فيصير لكلٍّ طلبٌ صادقٌ يحمل الاسم والحصّة،
+      ويسقط الجدولُ بلا قارئ.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">خطُّ الأساس الأمنيّ قبل الترحيل</span></b>
+    <p>قبل أيّ كلامٍ عن مزامنةِ الإنتاج، قِيس ما تتّصل به التطبيقاتُ فعلاً:</p>
+    <pre>.env.shared            modonty_dev
+shared/.env            modonty_dev
+shared/.env.local      modonty_dev
+admin/.env(.local)     لا تعريفَ فعّالاً — معلَّق
+console · modonty · payment  لا تعريفَ فعّالاً — معلَّق
+(والأدمن يحمّل ../.env.shared صراحةً في next.config.ts)</pre>
+    <p><b>النتيجة: كلُّ عملِ هذه الجلسة كان على <code>modonty_dev</code>، ومفتاحُ الإنتاج
+      غيرُ موجودٍ على الجهاز إطلاقاً</b> — <code>shared/.env</code> يقول إنّه في Vercel.</p>
+    <p class="said">وهذا اليوم <b>حمايةٌ قائمة</b>، لا نقص. أيُّ خطّةِ مزامنةٍ من الإنتاج
+      تبدأ بكسرها — فلا تُكسَر إلا بمستخدمٍ <b>للقراءة فقط</b>، وإلا فالخطرُ أكبرُ من الفائدة.</p>
+    <p><b>وأدواتُ مونجو الأصليّة غيرُ مثبَّتة:</b> <code>mongodump · mongorestore · mongosh</code>
+      — فالنسخُ سيكون بسكربت driver، وهو أفضل: يقبل حارسَي مصدرٍ وهدف.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">اللوكل صار نسخةَ الإنتاج، ثمّ أُخلي من الطلبات</span></b>
+    <p><b>المزامنة (زرُّ الناف بار، ضُغط آليّاً):</b></p>
+    <pre>114 / 114 جدول · 102 نجح · 12 مُستثنى · 0 فشل · 15,013 وثيقة · 150.6 ثانية
+✅ فحصُ السلامة: 59 علاقةً إجباريّة — صفر صفوف مكسورة</pre>
+
+    <p><b>وصورةُ الإنتاج الحقيقيّة — مختلفةٌ عمّا كنّا نشتغل عليه:</b></p>
+    <pre>                        الإنتاج    اللوكل قبلها
+clients                    42         42
+checkout_orders             6         79   ← الـ79 كانت بذري أنا
+invoices                   15         16
+sales_leads                26         26
+commercial_plans            3          3</pre>
+
+    <p><b>ثمّ أُخليت الطلباتُ وتوابعُها بأمرِ خالد — «عشان نبدأ صحّ».</b>
+      وقبل المحو جردٌ للقراءة أثبت أنّ المسح لا يكسر شيئاً:</p>
+    <pre>الطلباتُ الستّة: لا واحدٌ مدفوع · لا واحدٌ مربوطٌ بعميل · اثنان مكتوبٌ عليهما «فحص مسار»
+Client.activeOrderId مضبوط   0
+طلباتٌ مربوطةٌ بعميلٍ أو محتمَل  0   ← صفرُ مؤشّراتٍ معلّقة</pre>
+    <pre>payment_webhook_events  1 → 0     invoices          15 → 0
+payment_attempts        5 → 0     checkout_orders    6 → 0
+payment_transactions    2 → 0
+ومجموعتان قديمتان خارج السكيما: PaymentAttempt 8 → 0 · WebhookEvent 2 → 0
+
+والباقي سليم: clients 42 · sales_leads 26 · staff 16 · articles 265</pre>
+
+    <p class="said"><b>وأوّلُ فخٍّ ظهر من بيانات الإنتاج نفسها</b> (سُجّلت الفواتيرُ قبل محوها):
+      كلُّ الخمس عشرة بالجنيه، و<b>نفسُ اسم الباقة بمبالغَ متباعدة</b> —
+      «الانطلاقة» مرّةً 1200 ومرّةً 3999، و«الزخم» 3597 و9597. فالاسمُ وحده لا يعطي سعراً،
+      وأيُّ ترحيلٍ يفترض «باقة ⇐ سعر» سيكذب. يُبنى على مبلغ الصفّ نفسه لا على اسم الباقة.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">زرُّ «إخلاء الطلبات» في الناف بار</span></b>
+    <p>سكربتُ المحو المؤقّت صار <b>أداةً دائمة</b> بجانب زرّ المزامنة — لأنّهما خطوتان
+      في عملٍ واحد: تُجلب نسخةُ الإنتاج، ثمّ تُخلى الطلباتُ لتبدأ التجربةُ من صفحةٍ بيضاء.</p>
+    <pre>app/api/dev/wipe-orders/route.ts          GET جرد · POST محو
+components/admin/wipe-orders-button.tsx   أيقونةٌ حمراء جنب المزامنة الكهرمانيّة
+components/admin/header.tsx               enabled={canSyncLocal} — نفسُ البوّابة</pre>
+
+    <p><b>وحرّاسُه:</b></p>
+    <pre>مصادقة · ورفضُ أيّ DATABASE_URL لا يحوي modonty_dev (400 بنصِّ القاعدة الحاليّة)
+GET يقرأ العددَ الحقيقيّ قبل التأكيد — لا رقمَ مكتوبٌ في الواجهة سلفاً
+POST يعيد العدَّ بعد الحذف — الدليلُ هو العدُّ المُعاد لا ما ادّعى الحذفُ أنّه حذفه
+وسجلُّ الفواتير يُرجَع في الرد قبل محوها — المستندُ الماليّ لا يُمحى بلا أثر</pre>
+
+    <p><b>الفحص الحيّ — بُذر طلبان وفاتورة، ثمّ ضُغط الزرّ:</b></p>
+    <pre>نافذةُ التأكيد قرأت: checkout_orders 2 · invoices 1 · والباقي 0
+وعرضت ما يبقى:     clients 42 · sales_leads 26 · staff 17 · articles 265
+بعد الضغط:         «أُخليت — القاعدة نظيفة» · في 3.5 ثانية
+
+والتحقّق من القاعدة مباشرةً لا من الشاشة:
+  طلبات: 0 · فواتير: 0 · معاملات: 0 · محاولات: 0
+  عملاء: 42 · محتمَلون: 26 · موظّفون: 17 · مقالات: 265</pre>
+
+    <p class="said"><b>وثلاثةُ عوائقَ ظهرت في الفحص وتُسجَّل حتى لا تُكتشف مرّتين:</b>
+      <br>١) متصفّحُ الفحص معزول — <code>localhost</code> عنده هو نفسُه، فلا يصل هذا الجهاز أبداً.
+      يُفتح عبر <code>192.168.1.12</code> وحده، وأُضيف في <code>allowedDevOrigins</code>.
+      <br>٢) <code>NEXTAUTH_URL</code> في <code>admin/.env.local</code> يشير لـ<code>localhost:3001</code>،
+      فيحوّل الدخولَ إلى عنوانٍ لا يصله المتصفّح. يُتجاوَز بمتغيّرٍ عند التشغيل، بلا تعديل الملفّ.
+      <br>٣) المزامنة تمسح <code>staff</code> ومعه حسابُ الفحص، فيبقى كوكي جلسةٍ يشير لحسابٍ
+      غير موجود — فتدور الصفحةُ في إعادةِ تحميلٍ كلَّ ثانية. العلاج: <code>/api/auth/signout</code>
+      ثمّ إعادةُ إنشاء الحساب.</p>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">حلقةُ دخولٍ لا تنتهي — بقٌّ يضرب الإنتاج، أُصلح</span></b>
+    <p>ظهر بعد المزامنة: صفحةُ الدخول تدور كلَّ نصف ثانية ولا تُفتح. السجلُّ الخام:</p>
+    <pre>GET /login 200  →  GET /api/auth/session ×2  →  GET /login 200  →  … بلا توقّف</pre>
+    <p><b>السبب: مصدران لنفس السؤال.</b></p>
+    <pre>proxy.ts:45-49   يسأل القاعدة    → الصفُّ محذوفٌ أو موقوف → يرجّع إلى /login
+login/page.tsx   يثق بالتذكرة وحدها (JWT صالحٌ ذاتيّاً) → يحوّل إلى /
+فيقول الأوّل «ليس داخلاً» ويقول الثاني «داخلٌ» — وتدور للأبد.</pre>
+    <p class="said"><b>وليس عارضَ تطوير:</b> إيقافُ أيّ موظّفٍ في الإنتاج وهو داخلٌ بعدُ
+      يفعل الشيء نفسه بمتصفّحه — ولا يصل حتى إلى نموذج الدخول ليدخل بحسابٍ آخر.</p>
+    <p><b>العلاج:</b> صفحةُ الدخول تسأل القاعدة بنفس شرط البروكسي — مصدرٌ واحد.</p>
+    <pre>القياس بعد الإصلاح:
+  عدُّ /login الآن: 134  ·  بعد ٢٥ ثانية: 134  ·  الفرق: 0
+  (كان يزيد ~٥٠ كلَّ ٢٥ ثانية)</pre>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">الإنم سقط من كلّ مكانٍ إلّا جدولَه القديم</span></b>
+    <p>خمسُ خطواتٍ على التوالي، كلٌّ منها قيس قبلها ووُثّق في مكان الحقل:</p>
+    <pre>١  Client.subscriptionTier    ٨ مواضعَ كلُّها تعليقات · ٠ كاتب · ٠ قارئ   → سقط
+٢  CheckoutOrder.planTier     موضعان تعليقان · القاعدة ٠/٠              → سقط
+٣  Invoice.tier               الكتّابُ الثلاثة يكتبون tierName · ٠ قارئ    → سقط
+٤  CommercialPlan.tier        أُزيل منتقي الواجهة وزود والتحديث           → سقط
+٥  SalesLead.expectedTier     إنم ← سلَق · القاعدة ٠/٢٦ فبلا ترحيل       → String?</pre>
+
+    <p><b>وفي الطريق سقط ما بُني عليه:</b></p>
+    <pre>TIER_BY_SLUG                  جسرُ السلَق←الإنم في المحتمَلين — آخرُ ما يربطهم به
+getSellableTierConfigs        ٧١ سطراً · ٠ مستهلك · وفيها new Set&lt;SubscriptionTier&gt;()
+                              — أي قفصُ «أربع باقاتٍ للأبد» مرّةً أخرى
+getCatalogArticlesPerMonth    ٢٢ سطراً · ٠ مستهلك
+tierConfigs من Promise.all    أُزيل مع موضعه في التفكيك معاً (٣ ↔ ٣)</pre>
+
+    <p class="said"><b>وثلاثةُ كسورٍ كشفها الحذفُ نفسُه</b> — ملفّاتٌ ما زالت تختار حقلاً
+      لم يعد موجوداً، ومنها <b>مسارا دفعٍ حيّان</b>:</p>
+    <pre>shared/lib/commercial/get-market-catalog.ts   tier في النوع والاختيار والإرجاع
+payment/api/checkout/{bank-transfer,create-payment,tamara}   tier: true في الاختيار
+admin/orders/new/create-manual-order · scripts/seed-orders-for-clients</pre>
+
+    <p><b>القياس النهائيّ — سطورُ الإنم الحيّة:</b></p>
+    <pre>admin    60   منها 54 على SubscriptionTierConfig · و6 الباقية كلُّها تقرأ نفسَ الجدول
+shared    0
+payment   0
+modonty   0
+console   0
+
+وفي السكيما موضعٌ واحد:  SubscriptionTierConfig.tier  SubscriptionTier @unique</pre>
+
+    <p><b>والفحص الحيّ:</b></p>
+    <pre>prisma validate                 valid
+prisma generate                 Generated Prisma Client v6.19.2
+استعلاماتُ الشاشات المتأثّرة       commercial-plans 3 · sales-leads 5 · modonty-plans 6
+                                clients 5 · invoices 0 · orders 0   — صفرُ سقوط
+سيرفر الأدمن                     GET / 200 · صفرُ أخطاءٍ في السجلّ</pre>
+
+    <p><b>فالإنمُ ما عاد يقف بينه وبين الحذف إلّا جدولُه</b> — يسقطان معاً في الترحيل.</p>
+  </div>
+
   </section>
 
   <section data-view="now">
@@ -1376,45 +1622,49 @@ GET /clients/new                         200 in 1281ms
 
   <section data-view="enums">
   <h2><span class="n">E</span><code style="font-size:16px">SubscriptionTier</code> — الجرد الكامل</h2>
-  <p class="sub">المصدر الواحد: <code>CommercialPlan</code>. الجرد مقيسٌ ١٧ سبتمبر.</p>
+  <p class="sub">المصدر الواحد: <code>CommercialPlan</code>. <b style="color:var(--go)">أُغلق ١٧ سبتمبر ٢٠٢٦ مساءً:</b> خمسةٌ من الستّة سقطت، وبقي الجدولُ القديم وحدَه.</p>
 
-  <h3 style="font-size:17px;font-weight:900;margin:26px 0 0">أ · السكيما — ٦ حاملين + جدول</h3>
+  <h3 style="font-size:17px;font-weight:900;margin:26px 0 0">أ · السكيما — <b style="color:var(--go)">بقي حاملٌ واحد</b></h3>
   <div class="scroll">
   <table class="align">
     <thead><tr><th>الحقل</th><th>السطر</th><th>بديلٌ نصّيّ بجانبه</th><th>متى يسقط</th></tr></thead>
     <tbody>
       <tr class="miss"><td><code>enum SubscriptionTier</code><span class="f">BASIC · STANDARD · PRO · PREMIUM</span></td>
           <td class="f">76</td><td>—</td><td>آخراً</td></tr>
-      <tr class="diff"><td><code>Client.subscriptionTier</code><span class="f">إلزاميّ</span></td>
-          <td class="f">637</td><td>عبر <code>subscriptionTierConfigId</code></td><td>بعد الترحيل</td></tr>
+      <tr class="same" style="opacity:.55"><td><code>Client.subscriptionTier</code><span class="f">٨ مواضعَ كلُّها تعليقات · ٠ كاتب · ٠ قارئ</span></td>
+          <td class="f">—</td><td><code>CheckoutOrder.planName</code></td><td><b style="color:var(--go)">✅ سقط</b></td></tr>
       <tr class="miss"><td><code>Client.subscriptionTierConfigId</code> + العلاقة</td>
           <td class="f">638-639</td><td>—</td><td>مع الجدول</td></tr>
-      <tr class="miss"><td><code>SubscriptionTierConfig</code><span class="f">الجدول كلّه · tier @unique</span></td>
-          <td class="f">1097 · 1101</td><td><code>name</code> · <code>price</code> Float</td>
-          <td><b>سجن الأربع باقات</b></td></tr>
-      <tr class="same"><td><code>CommercialPlan.tier</code><span class="f">اختياريّ — جسر</span></td>
-          <td class="f">1155</td><td><code>name</code> · <code>slug</code></td><td><b>الآن</b></td></tr>
-      <tr class="same"><td><code>CheckoutOrder.planTier</code><span class="f">اختياريّ — لقطة</span></td>
-          <td class="f">1360</td><td><code>planName</code> · <code>planSlug</code></td><td><b>الآن</b></td></tr>
-      <tr class="diff"><td><code>Invoice.tier</code><span class="f">إلزاميّ — مستند صادر</span></td>
-          <td class="f">3886</td><td><b><code>tierName</code></b> لقطة الاسم</td><td>بعد الترحيل</td></tr>
-      <tr class="same"><td><code>SalesLead.expectedTier</code><span class="f">اختياريّ</span></td>
-          <td class="f">4263</td><td>—</td><td><b>الآن</b></td></tr>
+      <tr class="miss"><td><code>SubscriptionTierConfig</code><span class="f">الجدول كلّه · tier @unique — <b>الحاملُ الوحيدُ الباقي</b></span></td>
+          <td class="f">1105 · 1109</td><td><code>name</code> · <code>price</code> Float</td>
+          <td><b>مع الترحيل</b></td></tr>
+      <tr class="same" style="opacity:.55"><td><code>CommercialPlan.tier</code><span class="f">أُزيل منتقي الواجهة وزود والتحديث</span></td>
+          <td class="f">—</td><td><code>slug</code> <b>@unique</b></td><td><b style="color:var(--go)">✅ سقط</b></td></tr>
+      <tr class="same" style="opacity:.55"><td><code>CheckoutOrder.planTier</code><span class="f">موضعان تعليقان · القاعدة ٠/٠</span></td>
+          <td class="f">—</td><td><code>planName</code> · <code>planSlug</code></td><td><b style="color:var(--go)">✅ سقط</b></td></tr>
+      <tr class="same" style="opacity:.55"><td><code>Invoice.tier</code><span class="f">الكتّابُ الثلاثة يكتبون tierName · ٠ قارئ</span></td>
+          <td class="f">—</td><td><b><code>tierName</code></b> لقطة الاسم</td><td><b style="color:var(--go)">✅ سقط</b></td></tr>
+      <tr class="same" style="opacity:.55"><td><code>SalesLead.expectedTier</code><span class="f">صار <code>String?</code> — القاعدة ٠/٢٦ فبلا ترحيل</span></td>
+          <td class="f">4289</td><td><code>ModontyPlan.slug</code></td><td><b style="color:var(--go)">✅ تحوَّل</b></td></tr>
     </tbody>
   </table>
   </div>
 
-  <h3 style="font-size:17px;font-weight:900;margin:30px 0 0">ب · الكود — ٣٨ ملفّاً · ٩١ سطراً — <b>منها ١٨ فقط إنمٌ حيّ</b></h3>
+  <h3 style="font-size:17px;font-weight:900;margin:30px 0 0">ب · الكود — <b style="color:var(--go)">ما بقي منه شيءٌ خارج الجدول القديم</b></h3>
 
-  <p class="sub" style="margin:16px 0 0"><b style="color:var(--go)">ADMIN — ٣٨ ملفّاً · ٩١ سطراً</b>
-    &nbsp;·&nbsp; مقيسٌ ١٧ سبتمبر
-    <br><span class="f"><b>المقياس:</b> <code>grep -rn "SubscriptionTier|subscriptionTier"</code>
-    — <b>النوع والحقل معاً</b>، لأنّ إسقاط الإنم يسقطهما معاً. (قياسُ الحقل وحده يعطي ٤١ · ١٢٤،
-    وخلطُ المقياسين هو سببُ تضارب الأرقام قبل هذا التصحيح.)
-    <br>والحقولُ الثلاثةُ الأخرى بنفس المقياس:
+  <p class="sub" style="margin:16px 0 0"><b style="color:var(--go)">ADMIN — ٦٠ سطراً حيّاً · كلُّها تقرأ الجدول القديم</b>
+    &nbsp;·&nbsp; أُعيد قياسُه ١٧ سبتمبر بعد إسقاط الحقول الخمسة
+    <br><span class="f"><b>الفرزُ بالأمر نفسه</b>
+    (<code>grep -rnE "SubscriptionTier|subscriptionTier"</code> ثمّ إسقاطُ أسطر التعليق):
+    <br>&nbsp;&nbsp;• <code>admin</code> <b>٦٠</b> سطراً — منها <b>٥٤</b> على <code>SubscriptionTierConfig</code>،
+    و<b>الستّةُ الباقية تقرأ نفسَ الجدول</b> (<code>types.ts</code> شكلُ الصفّ ·
+    <code>database-health</code> عدُّ صفوفه · <code>getTierConfigByTier</code> قراءتُه).
+    <br>&nbsp;&nbsp;• <code>shared</code> · <code>payment</code> · <code>modonty</code> · <code>console</code> — <b>صفر</b>.
+    <br>&nbsp;&nbsp;• وفي السكيما موضعٌ واحد: <code>SubscriptionTierConfig.tier SubscriptionTier @unique</code>.
+    <br><b>فلم يبقَ للإنم وجودٌ مستقلّ</b> — يسقط بجدوله في المرحلة ٨، ولا عملَ عليه قبلها.
+    <br><br><b>والحقولُ الثلاثةُ الأخرى</b> (لم تُمَسّ بعد، بنفس المقياس):
     <code>PaymentStatus|paymentStatus</code> ٤٦ ملفّاً · ٨٥ سطراً ·
-    <code>billingCycle</code> ١١ · ١٧ · <code>openingBalance</code> ٩ · ٣٧
-    &nbsp;·&nbsp; اتّحادُ الأربعة <b>٦٨ ملفّاً</b></span></p>
+    <code>billingCycle</code> ١١ · ١٧ · <code>openingBalance</code> ٩ · ٣٧</span></p>
 
   <div class="scroll">
   <table class="align">
@@ -1576,11 +1826,14 @@ scripts/seed-tiers.ts                     30 سطر
       el.classList.toggle('hideview', view !== 'all' && !el.dataset.view.split(' ').includes(view));
     });
     window.scrollTo(0, 0);
-    try { localStorage.setItem('af-view', view); } catch (e) {}
+    try { localStorage.setItem('af-view2', view); } catch (e) {}
   }
   tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.view); }); });
-  var saved = 'now';
-  try { saved = localStorage.getItem('af-view') || 'now'; } catch (e) {}
+  // المفتاحُ تغيّر من af-view إلى af-view2 عمداً: الصفحةُ كانت تفتح آخرَ تبويبٍ محفوظ،
+  // فبطاقةُ عائقٍ جديدةٍ في تبويبٍ جديد لا يراها أحدٌ فتحَ الورقة من قبل. بتغيير المفتاح
+  // يُفتح «هامٌّ جدّاً» مرّةً واحدة للجميع، ثمّ يعود اختيارُ القارئ يُحفظ كما كان.
+  var saved = 'urgent';
+  try { saved = localStorage.getItem('af-view2') || 'urgent'; } catch (e) {}
   show(saved);
 })();
 </script>

@@ -1,6 +1,6 @@
 "use server";
 
-import { CommercialPlanTheme, Prisma, SubscriptionTier } from "@prisma/client";
+import { CommercialPlanTheme, Prisma } from "@prisma/client";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -55,7 +55,6 @@ const updatePlanSchema = z.object({
   hook: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(60, "السطر الخاطف طويل — اجعله جملة واحدة").nullable()),
   ctaText: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(30, "نصّ الزرّ طويل").nullable()),
   featuredBadge: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.string().max(30).nullable()),
-  tier: z.preprocess((v) => (typeof v === "string" && v.trim() ? v.trim() : null), z.nativeEnum(SubscriptionTier).nullable()),
   theme: z.nativeEnum(CommercialPlanTheme),
   /**
    * سطور تسويق حرّة تظهر فوق المزايا (PAY-G12). تُكتب سطراً لكل جملة في مربّع واحد،
@@ -128,7 +127,7 @@ export async function createCommercialPlan(form: FormData) {
 
 export async function updateCommercialPlan(id: string, form: FormData) {
   await requireFinanceAdmin();
-  const parsed = updatePlanSchema.safeParse({ name: value(form, "name"), badge: value(form, "badge"), tier: value(form, "tier"), theme: value(form, "theme"), highlights: form.get("highlights"), hook: value(form, "hook"), ctaText: value(form, "ctaText"), featuredBadge: value(form, "featuredBadge") });
+  const parsed = updatePlanSchema.safeParse({ name: value(form, "name"), badge: value(form, "badge"), theme: value(form, "theme"), highlights: form.get("highlights"), hook: value(form, "hook"), ctaText: value(form, "ctaText"), featuredBadge: value(form, "featuredBadge") });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقق من بيانات الباقة");
   // شارة التمييز على باقة واحدة فقط: بطاقتان «مميَّزتان» ليستا تمييزاً أقوى، بل لا تمييز.
   // الحارس هنا لا في السكيما — مونجو لا يملك قيداً جزئياً يقول «حقل غير فارغ في صفّ واحد».
@@ -137,7 +136,7 @@ export async function updateCommercialPlan(id: string, form: FormData) {
   // نوعها «تحديث باقة واحدة»، ثم يرفض `unshift` نتيجةَ `updateMany` (BatchPayload).
   // كشفه البناء (١٤ سبتمبر ٢٠٢٦) — والتشغيل كان يعمل، فالخطأ في الأنواع لا في المنطق.
   const writes: Prisma.PrismaPromise<unknown>[] = [
-    db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, badge: parsed.data.badge, tier: parsed.data.tier, theme: parsed.data.theme, highlights: parsed.data.highlights, hook: parsed.data.hook, ctaText: parsed.data.ctaText, featuredBadge: parsed.data.featuredBadge } }),
+    db.commercialPlan.update({ where: { id }, data: { name: parsed.data.name, badge: parsed.data.badge, theme: parsed.data.theme, highlights: parsed.data.highlights, hook: parsed.data.hook, ctaText: parsed.data.ctaText, featuredBadge: parsed.data.featuredBadge } }),
   ];
   if (parsed.data.featuredBadge) {
     writes.unshift(db.commercialPlan.updateMany({ where: { id: { not: id }, featuredBadge: { not: null } }, data: { featuredBadge: null } }));

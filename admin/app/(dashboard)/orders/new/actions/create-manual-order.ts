@@ -113,7 +113,6 @@ export async function createManualOrder(input: CreateManualOrderInput): Promise<
         id: true,
         slug: true,
         name: true,
-        tier: true,
         articlesPerMonth: true,
         prices: {
           where: { market: body.market, isActive: true },

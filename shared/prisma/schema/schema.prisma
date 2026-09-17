@@ -634,19 +634,15 @@ model Client {
   openingHoursSpecification Json?
 
   // Subscription Management
-  /// **اختياريّ — خطوةُ تقاعدِ الإنم.**
+  /// **سقط `subscriptionTier` (١٧ سبتمبر ٢٠٢٦).**
   ///
-  /// كان إلزاميّاً، فكلُّ قارئٍ في الأدمن يفترض وجود قيمة. جعلُه اختياريّاً يجعل المترجمَ
-  /// نفسَه أداةَ الكشف: كلُّ موضعٍ يسقط في TS هو موضعٌ يجب أن يقرأ الباقة من الطلب
-  /// الساري (planName) — أو موضعٌ لا بديلَ له، فيُسجَّل مطلباً على الترحيل.
+  /// كان `SubscriptionTier` إلزاميّاً على العميل، ثمّ صار اختياريّاً ليكشف المترجمُ
+  /// قرّاءَه، ثمّ سقط: قيس على نسخةِ الإنتاج فوُجد **صفرُ كاتبٍ وصفرُ قارئ** — ثمانيةُ
+  /// مواضعَ باقيةٍ في الشيفرة كلُّها تعليقاتٌ تشرح سقوطَه. وباقةُ العميل تُقرأ اليوم من
+  /// الطلب الساري (`CheckoutOrder.planName`).
   ///
-  /// خالد ١٧ سبتمبر ٢٠٢٦: «الترحيل آخر مرحلة، فالمفروض نشيل اللي موجود عشان نشوف
-  /// المشاكل اللي حتواجهنا في الترحيل ونعمل لها خطة عمل». أي: تظهر المشاكل هنا على
-  /// اللوكل، لا على بياناتٍ حيّة فيها فلوسٌ وعملاء.
-  ///
-  /// ومونغو يقرأ الغائب بالافتراضيّ، فالمستنداتُ القائمة لا تتأثّر — القيمةُ المكتوبة
-  /// فيها تبقى مقروءةً كما هي.
-  subscriptionTier      SubscriptionTier?
+  /// ومونغو لا يحذف ما في المستندات حين يسقط الحقلُ من السكيما — القيمُ الاثنتان
+  /// والأربعون باقيةٌ في القاعدة، مهجورةً، تُنظَّف في الترحيل.
   subscriptionTierConfigId String? @db.ObjectId // Reference to tier config
   subscriptionTierConfig SubscriptionTierConfig? @relation("ClientTierConfig", fields: [subscriptionTierConfigId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   /// **بداية احتساب الاشتراك** — من هذا اليوم تُعدّ المدّة المشتراة وأشهر الهدية.
@@ -1164,7 +1160,11 @@ model CommercialPlan {
   /// شارة ثانية تميّز بطاقةً واحدة عن أخواتها («الأكثر اختياراً»). وجودها يرفع البطاقة
   /// بصرياً أيضاً — فهي وسمٌ وتمييزٌ معاً، كما عند جبر سيو (`featured = !!featuredBadge`).
   featuredBadge String?
-  tier        SubscriptionTier?
+  /// سقط `tier` (١٧ سبتمبر ٢٠٢٦). كان يربط الباقة بفئةٍ من الإنم، وهو ما حبس
+  /// الكتالوج في **أربع باقاتٍ للأبد**: الإنم أربعُ قيم، وحارسُ النشر كان يمنع
+  /// باقتين منشورتين على القيمة الواحدة. وُلد لأنّ `slug` كان هاشاً لا يصلح
+  /// مفتاحاً مقروءاً؛ فلمّا صار السلَق ذا معنى (`intilaqa` · `zakham` · `riyada`)
+  /// وهو `@unique`، سقط الوسيطُ وسقط معه السقف.
   theme       CommercialPlanTheme @default(NEUTRAL)
   isPublished Boolean  @default(false)
   displayOrder Int    @default(0)
@@ -1369,7 +1369,9 @@ model CheckoutOrder {
   planId           String?           @db.ObjectId
   planSlug         String
   planName         String
-  planTier         SubscriptionTier?
+  /// سقط `planTier` (١٧ سبتمبر ٢٠٢٦): كان يُكتب في سبعة مواضع ويُقرأ في **صفر**.
+  /// اللقطةُ تحمل `planSlug` و`planName`، وهما ما يُعرَض ويُبحَث به — والفئةُ كانت
+  /// وسيطاً وُلد لأنّ سلَق الباقة كان هاشاً بلا معنى، فسقط بسقوطه.
   articlesPerMonth Int?
 
   /// ما وُعد به المشتري، مجمَّداً لحظة الشراء — سطرٌ لكل ميزة كما قرأها على البطاقة
@@ -3905,15 +3907,9 @@ model Invoice {
   buyerEmail        String?
   buyerLegalName    String?
   buyerVatID        String?
-  /// **يتقاعد — اكتُبْ `tierName` وحدها.**
-  ///
-  /// مقيسٌ ١٧ سبتمبر ٢٠٢٦: يُكتب في ثلاثة مواضع (`create-invoice` · `convert-opening-balance`
-  /// · `orders/actions`) و**لا يُقرأ في موضعٍ واحد** — القارئ الوحيد للفواتير
-  /// (`get-sales-report:256`) يستعمل `tierName`.
-  ///
-  /// صار اختياريّاً وكفّت المواضعُ الثلاثة عن كتابته. يبقى الحقل حتى تُحذف قيمُه
-  /// القديمة في الترحيل — والمستنداتُ الصادرة لا تُمَسّ.
-  tier              SubscriptionTier?
+  /// سقط `tier` (١٧ سبتمبر ٢٠٢٦): كان يُكتب في ثلاثة مواضع ويُقرأ في **صفر**.
+  /// كفّت المواضعُ الثلاثة عن كتابته أوّلاً، ثمّ سقط. و`tierName` تحته هي المصدر —
+  /// لقطةُ اسمٍ مجمَّدةٌ لحظةَ الإصدار، لا تتغيّر لو تغيّر الكتالوج بعدها.
   tierName          String // display-name snapshot at issue time (e.g. "الزخم") — هذه هي المصدر
   period            String // "monthly" | "annual"
   currency          String // "SAR" | "EGP"
@@ -4288,9 +4284,15 @@ model SalesLead {
   /// The deal. The old form asked WHO the lead was and never WHAT the deal was, so the list
   /// could not be sorted by anything that matters.
   ///
-  /// `SubscriptionTier` is reused rather than a parallel enum: the tier they are interested in
-  /// IS one of the real tiers, and a second list would drift from the first within a quarter.
-  expectedTier    SubscriptionTier?
+  /// **سلَقُ الباقة، لا قيمةٌ من إنم (١٧ سبتمبر ٢٠٢٦).**
+  ///
+  /// كان `SubscriptionTier`، والحجّةُ أنّ الفئة المطلوبة هي إحدى الفئات الحقيقيّة فلا
+  /// داعيَ لقائمةٍ ثانية. لكنّ الإنم أربعُ قيمٍ ثابتة، فباقةٌ جديدة في `modonty_plans`
+  /// لا يمكن أن تُختار هنا أصلاً — والقائمةُ في الكود كانت تُرفض صامتةً ما ليس فيها.
+  ///
+  /// صار يخزّن `ModontyPlan.slug` — وهو ما تعرضه الشاشةُ فعلاً. والتحويل بلا ترحيل:
+  /// قيس على نسخة الإنتاج فوُجد **٠ من ٢٦** محتمَلاً يحمل قيمة.
+  expectedTier    String?
   /// السعر الشهري الأساسي للباقة في سوق العميل — منه يُشتقّ كل شيء.
   expectedMonthly Float?
   /// مدّة الصفقة بالشهور المدفوعة: ٣ · ٦ · ١٢.

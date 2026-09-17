@@ -36,7 +36,7 @@ async function run() {
 
   // 1) SA · PAID — the exact numbers PAY-E4 closes with: 399 × 6 + 1 bonus month.
   const paidSnapshot = buildOrderSnapshot({
-    plan: { id: starter.id, slug: starter.slug, name: starter.name, tier: starter.tier, articlesPerMonth: starter.articlesPerMonth },
+    plan: { id: starter.id, slug: starter.slug, name: starter.name, articlesPerMonth: starter.articlesPerMonth },
     price: { market: "SA", currency: "SAR", monthlyBase: starterSa.monthlyBase },
     term: { paidMonths: 6, bonusServiceMonths: 1 },
     vatRateBp: SA_VAT_RATE_BP,
@@ -63,7 +63,7 @@ async function run() {
 
   // 2) SA · AWAITING_PAYMENT — gateway session open, one declined attempt already logged.
   const pendingSnapshot = buildOrderSnapshot({
-    plan: { id: (momentum ?? starter).id, slug: (momentum ?? starter).slug, name: (momentum ?? starter).name, tier: (momentum ?? starter).tier, articlesPerMonth: (momentum ?? starter).articlesPerMonth },
+    plan: { id: (momentum ?? starter).id, slug: (momentum ?? starter).slug, name: (momentum ?? starter).name, articlesPerMonth: (momentum ?? starter).articlesPerMonth },
     price: { market: "SA", currency: "SAR", monthlyBase: momentumSa?.monthlyBase ?? starterSa.monthlyBase },
     term: { paidMonths: 3, bonusServiceMonths: 0 },
     vatRateBp: SA_VAT_RATE_BP,
@@ -98,7 +98,6 @@ async function run() {
       planId: starter.id,
       planSlug: starter.slug,
       planName: starter.name,
-      planTier: starter.tier,
       articlesPerMonth: starter.articlesPerMonth,
       monthlyBaseMinor: egMonthlyMinor,
       paidMonths: 6,
@@ -113,7 +112,7 @@ async function run() {
 
   // 4) SA · FAILED — gateway declined twice, buyer gave up.
   const failedSnapshot = buildOrderSnapshot({
-    plan: { id: starter.id, slug: starter.slug, name: starter.name, tier: starter.tier, articlesPerMonth: starter.articlesPerMonth },
+    plan: { id: starter.id, slug: starter.slug, name: starter.name, articlesPerMonth: starter.articlesPerMonth },
     price: { market: "SA", currency: "SAR", monthlyBase: starterSa.monthlyBase },
     term: { paidMonths: 3, bonusServiceMonths: 0 },
     vatRateBp: SA_VAT_RATE_BP,
@@ -139,7 +138,7 @@ async function run() {
 
   // 5) CANCELLED and 6) REFUNDED — so every status has at least one row in the filter.
   const cancelledSnapshot = buildOrderSnapshot({
-    plan: { id: starter.id, slug: starter.slug, name: starter.name, tier: starter.tier, articlesPerMonth: starter.articlesPerMonth },
+    plan: { id: starter.id, slug: starter.slug, name: starter.name, articlesPerMonth: starter.articlesPerMonth },
     price: { market: "SA", currency: "SAR", monthlyBase: starterSa.monthlyBase },
     term: { paidMonths: 3, bonusServiceMonths: 0 },
     vatRateBp: SA_VAT_RATE_BP,
@@ -157,7 +156,7 @@ async function run() {
   });
 
   const refundedSnapshot = buildOrderSnapshot({
-    plan: { id: starter.id, slug: starter.slug, name: starter.name, tier: starter.tier, articlesPerMonth: starter.articlesPerMonth },
+    plan: { id: starter.id, slug: starter.slug, name: starter.name, articlesPerMonth: starter.articlesPerMonth },
     price: { market: "SA", currency: "SAR", monthlyBase: starterSa.monthlyBase },
     term: { paidMonths: 6, bonusServiceMonths: 1 },
     vatRateBp: SA_VAT_RATE_BP,

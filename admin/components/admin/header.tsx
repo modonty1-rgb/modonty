@@ -20,6 +20,7 @@ import { NotificationsBell } from "./notifications-bell";
 // `app/(dashboard)/feedback/`. The bar could only send; the page also reads back
 // what was sent, which is what the reports were being stored for all along.
 import { SyncLocalButton } from "./sync-local-button";
+import { WipeOrdersButton } from "./wipe-orders-button";
 import { TasksMenu } from "./tasks-menu";
 import { SalesMenu } from "./sales-menu";
 import { CampaignsMenu } from "./campaigns-menu";
@@ -80,6 +81,10 @@ export function Header({
 
           {/* Test-database only — sync local DB from PROD */}
           <SyncLocalButton enabled={canSyncLocal} />
+
+          {/* يجاوره لأنّهما خطوتان في عملٍ واحد: تُجلب نسخةُ الإنتاج، ثمّ تُخلى الطلباتُ
+              لتبدأ تجربةُ الترحيل من صفحةٍ بيضاء. نفس البوّابة — قاعدةُ الاختبار وحدها. */}
+          <WipeOrdersButton enabled={canSyncLocal} />
 
           {/* Unified notifications bell */}
           <NotificationsBell />

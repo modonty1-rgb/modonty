@@ -119,10 +119,9 @@ export const leadSchema = z.object({
   stage: z.enum(PICKABLE_STAGES).default("NEW"),
 
   // الصفقة — وهي ما كان الفورم كلّه لا يسأل عنه.
-  expectedTier: z.preprocess(
-    blankToUndefined,
-    z.enum(["BASIC", "STANDARD", "PRO", "PREMIUM"]).optional(),
-  ),
+  // سلَقُ الباقة من `modonty_plans`، لا قيمةٌ من إنم (١٧ سبتمبر ٢٠٢٦). القائمةُ المغلقة
+  // كانت تعني أنّ باقةً جديدةً في الكتالوج تُرفض هنا صامتةً حتى يُعدَّل هذا السطر.
+  expectedTier: z.preprocess(blankToUndefined, z.string().max(40).optional()),
   expectedMonthly: z.preprocess(
     (v) => (v === "" || v == null ? undefined : Number(v)),
     z.number().min(0, "المبلغ لا يصحّ أن يكون سالباً").max(1_000_000).optional(),
