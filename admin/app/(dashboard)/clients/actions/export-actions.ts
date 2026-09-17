@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { ArticleStatus, Prisma } from "@prisma/client";
 import { ClientFilters } from "./clients-actions";
+import { getPaymentStates, paymentStateLabel, NO_INVOICES } from "@/lib/clients/payment-state";
 
 function escapeCsvValue(value: string | null | undefined): string {
   if (!value) return "";
@@ -113,6 +114,15 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
       "Created Date",
     ];
 
+    /**
+     * حالةُ الدفع تُحسب من الفواتير، لا من `Client.paymentStatus`.
+     *
+     * ذاك حقلٌ لا يُكتب فيه «متأخّر» في أيّ مسار، فكان التصديرُ يخرج بعمودٍ كلُّه
+     * «مسدَّد» — ومنهم ٢٦ عميلاً بلا فاتورةٍ واحدة. و«بلا فواتير» حالةٌ ثالثة لا
+     * تُطوى في «مسدَّد»: مَن لم تُصدَر له فاتورةٌ بعدُ ليس مسدِّداً ولا متأخّراً.
+     */
+    const paymentStates = await getPaymentStates(filteredClients.map((c) => c.id));
+
     const csvRows = [headers.join(",")];
 
     for (const client of filteredClients) {
@@ -126,7 +136,7 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
         // اسمُ الباقة لا رمزُها: ملفّ التصدير يُفتح في إكسل ويُقرأ بشراً.
         escapeCsvValue(client.subscriptionTierConfig?.name ?? "بلا باقة"),
         escapeCsvValue(client.subscriptionStatus),
-        escapeCsvValue(client.paymentStatus),
+        escapeCsvValue(paymentStateLabel(paymentStates.get(client.id) ?? NO_INVOICES)),
         formatDate(client.subscriptionStartDate),
         formatDate(client.subscriptionEndDate),
         (client.articlesPerMonth ?? "").toString(),

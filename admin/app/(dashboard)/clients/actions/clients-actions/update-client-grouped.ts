@@ -186,7 +186,6 @@ export async function updateSettingsFields(
       where: { id: clientId },
       select: {
         subscriptionStatus: true,
-        paymentStatus: true,
         isFeatured: true,
         isVerified: true,
         isInternal: true,
@@ -200,7 +199,6 @@ export async function updateSettingsFields(
 
     const newData: Record<string, unknown> = {
       subscriptionStatus: data.subscriptionStatus ?? client.subscriptionStatus,
-      paymentStatus: data.paymentStatus ?? client.paymentStatus,
       isFeatured: data.isFeatured ?? client.isFeatured,
       isVerified: data.isVerified ?? client.isVerified,
       isInternal: data.isInternal ?? client.isInternal,

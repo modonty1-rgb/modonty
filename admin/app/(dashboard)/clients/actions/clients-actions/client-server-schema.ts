@@ -101,7 +101,6 @@ export const clientServerSchema = z.object({
 
   // Enums — passthrough as strings, validated by Prisma
   subscriptionStatus: z.string().optional().nullable(),
-  paymentStatus: z.string().optional().nullable(),
   metaRobots: z.string().optional().nullable(),
 
   // Dates — accept string or Date

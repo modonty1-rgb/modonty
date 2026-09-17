@@ -26,8 +26,25 @@ export default async function SettingsPage() {
     select: {
       notificationPreferences: true,
       subscriptionStatus: true,
-      paymentStatus: true,
       subscriptionStartDate: true,
+      /**
+       * حالةُ الدفع تُحسب من الفواتير، لا من `Client.paymentStatus`.
+       *
+       * ذاك حقلٌ لا يكتب فيه أيُّ مسارٍ قيمةَ «متأخّر» إطلاقاً — يُكتب «مسدَّد» ويبقى.
+       * فقيس على بيانات الإنتاج: ٢٦ عميلاً بلا فاتورةٍ واحدة مكتوبٌ عليهم «مسدَّد»،
+       * وهي شارةٌ يراها العميلُ نفسُه في بوّابته.
+       *
+       * والفاتورةُ غيرُ المؤرشفة وغيرُ المسدَّدة هي الجواب. و`archivedAt: null` وحدها
+       * لا تطابق صفّاً كُتب قبل وجود الحقل في مونغو — فتُقرن بـ`isSet: false`.
+       */
+      invoices: {
+        where: {
+          NOT: { paymentStatus: "PAID" },
+          OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
+        },
+        select: { id: true },
+        take: 1,
+      },
       subscriptionEndDate: true,
       telegramChatId: true,
       telegramConnectedAt: true,
@@ -51,7 +68,7 @@ export default async function SettingsPage() {
   const subscription: SubscriptionData = {
     tierName: order?.planName ?? "—",
     status: client.subscriptionStatus ?? null,
-    paymentStatus: client.paymentStatus ?? null,
+    paymentStatus: client.invoices.length > 0 ? "UNPAID" : "PAID",
     startDate: client.subscriptionStartDate ?? null,
     endDate: client.subscriptionEndDate ?? null,
     paidTotal: order ? formatOrderMoney(order.totalMinor, order.currency) : null,

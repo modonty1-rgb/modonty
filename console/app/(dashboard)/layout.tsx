@@ -76,7 +76,6 @@ export default async function DashboardLayout({
           // Feeds the plan block pinned in the sidebar foot — same fields the settings
           // card reads, so the two can never show a different plan or a different count.
           subscriptionStatus: true,
-          paymentStatus: true,
           subscriptionStartDate: true,
           invoices: {
             // `archivedAt: null` matches nothing on Mongo for rows written before the
@@ -143,7 +142,9 @@ export default async function DashboardLayout({
     // اسم الباقة من الطلب الساري — لقطةٌ مجمّدة يوم الشراء لا الكتالوج الحيّ.
     tierName: activeOrder?.planName ?? "—",
     status: statusLabel(client?.subscriptionStatus ?? null),
-    payment: paymentLabel(client?.paymentStatus ?? null),
+    // نفسُ قاعدة صفحة الإعدادات: الفاتورةُ القائمة هي الجواب، لا حقلُ الكرت الذي
+    // لا يُكتب فيه «متأخّر» أبداً. والفواتيرُ مجلوبةٌ أعلاه بنفس الشرط.
+    payment: paymentLabel((client?.invoices.length ?? 0) > 0 ? "UNPAID" : "PAID"),
     progress: subscriptionProgress(
       client?.subscriptionStartDate ?? null,
       client?.subscriptionEndDate ?? null

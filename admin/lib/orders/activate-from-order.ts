@@ -112,7 +112,8 @@ export async function activateFromOrder(input: {
       articlesPerMonth: order.articlesPerMonth,
       ...(order.salesRepId ? { salesRep: { connect: { id: order.salesRepId } } } : {}),
       subscriptionStatus: "ACTIVE",
-      paymentStatus: "PAID",
+      // سقطت كتابةُ `paymentStatus` (١٧ سبتمبر ٢٠٢٦): تُحسب من الفواتير، ولا مسارَ
+      // كتب فيها «متأخّر» قطّ — فكانت تقول «مسدَّد» لكلّ عميل.
       activatedAt: new Date(),
       // بدايةُ الاحتساب تتبع `serviceStartedAt` على الطلب لا يومَ التفعيل: مدّة التجهيز
       // علينا نحن. وهي فارغةٌ اليوم في أغلب الطلبات، فتبقى فارغةً حتى تُكتب هناك.

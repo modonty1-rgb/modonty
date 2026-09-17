@@ -1,4 +1,4 @@
-import { ArticleStatus, SubscriptionStatus, PaymentStatus, UserRole, ClientCtaMode } from "@prisma/client";
+import { ArticleStatus, SubscriptionStatus, UserRole, ClientCtaMode } from "@prisma/client";
 
 export interface FAQItem {
   question: string;
@@ -199,7 +199,6 @@ export interface ClientFormData {
   articlesPerMonth?: number;
   subscriptionTierConfigId?: string | null;
   subscriptionStatus?: SubscriptionStatus;
-  paymentStatus?: PaymentStatus;
   isFeatured?: boolean; // featured/premium partner spotlight (admin toggle)
   isVerified?: boolean; // شهادة فحص الأوراق الرسميّة — مصدر شارة التوثيق على مدونتي
   showSchedule?: boolean; // client sees the «مجدولة» tab in their console (default on)

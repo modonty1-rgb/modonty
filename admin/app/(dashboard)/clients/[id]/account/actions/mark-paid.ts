@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { SubscriptionStatus, PaymentStatus } from "@prisma/client";
+import { SubscriptionStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
@@ -70,7 +70,8 @@ export async function markInvoicePaidAction(input: MarkPaidInput): Promise<MarkP
       where: { id: invoice.clientId },
       data: {
         subscriptionStatus: SubscriptionStatus.ACTIVE,
-        ...(stillOutstanding === 0 ? { paymentStatus: PaymentStatus.PAID } : {}),
+        // كانت تكتب «مسدَّد» على الكرت حين تُقفل آخرُ فاتورة. سقطت: الحالةُ تُحسب
+        // من الفواتير نفسها، فكتابتُها تصنع نسخةً ثانيةً تفترق عند أوّل فاتورةٍ جديدة.,
       },
     });
 

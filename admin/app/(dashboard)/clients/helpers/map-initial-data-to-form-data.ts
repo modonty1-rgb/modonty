@@ -28,7 +28,6 @@ export function mapInitialDataToFormData(
     keywords: [],
     knowsLanguage: [],
     subscriptionStatus: "PENDING",
-    paymentStatus: "PENDING",
     isFeatured: false,
     isVerified: true,
     isInternal: false,
@@ -183,7 +182,6 @@ export function mapInitialDataToFormData(
     subscriptionEndDate: initialData.subscriptionEndDate || null,
     articlesPerMonth: initialData.articlesPerMonth ?? undefined,
     subscriptionStatus: initialData.subscriptionStatus || "PENDING",
-    paymentStatus: initialData.paymentStatus || "PENDING",
     isFeatured: (initialData as { isFeatured?: boolean }).isFeatured ?? false,
     isVerified: (initialData as { isVerified?: boolean }).isVerified ?? true,
     // `?? true` matters: a client saved before this field existed has it undefined, and

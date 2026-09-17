@@ -326,7 +326,8 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
       paidTotal: activeOrder ? formatOrderMoney(activeOrder.totalMinor, activeOrder.currency) : null,
       articlesPerMonth: client.articlesPerMonth ?? 0,
       status: client.subscriptionStatus,
-      paymentStatus: client.paymentStatus,
+      // من الفواتير القائمة (`openInvoices` أعلاه)، لا من حقلٍ لا يُكتب فيه «متأخّر».
+      paymentStatus: openInvoices.length > 0 ? "UNPAID" : "PAID",
       startDate: client.subscriptionStartDate,
       endDate: client.subscriptionEndDate,
       unpaidCount: openInvoices.length,

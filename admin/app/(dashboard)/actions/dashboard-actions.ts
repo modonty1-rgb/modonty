@@ -217,7 +217,10 @@ export async function getDashboardAlerts() {
         .then((rows) =>
           db.client.findMany({
             where: { AND: [{ id: { in: [...new Set(rows.map((r) => r.clientId))] } }, NOT_INTERNAL] },
-            select: { id: true, name: true, paymentStatus: true },
+            // سقط `paymentStatus` من الانتقاء (١٧ سبتمبر ٢٠٢٦): الصفُّ مُنتقًى أصلاً
+            // لأنّ له فاتورةً غيرَ مسدَّدة، فحقلُ الكرت لا يضيف جواباً — كان يقول
+            // «مسدَّد» لهم جميعاً.
+            select: { id: true, name: true },
             take: 10,
           })
         ),

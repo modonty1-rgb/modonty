@@ -1,4 +1,4 @@
-import { SubscriptionStatus, PaymentStatus } from "@prisma/client";
+import { SubscriptionStatus } from "@prisma/client";
 
 /**
  * Flexible interface for client data used in business metrics calculations
@@ -12,7 +12,6 @@ interface ClientWithRelations {
   articlesPerMonth?: number | null;
   subscriptionEndDate?: Date | null;
   subscriptionStatus: SubscriptionStatus;
-  paymentStatus: PaymentStatus;
 }
 
 export function getSubscriptionDaysRemaining(client: ClientWithRelations): number | null {

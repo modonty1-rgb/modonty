@@ -95,7 +95,6 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
         // فيصل العميل بلا واحدة — ولا تظهر الفجوة إلّا عند فشل أوّل حفظ. تظهر هنا بدلها.
         industryId: true,
         subscriptionStatus: true,
-        paymentStatus: true,
         subscriptionEndDate: true,
         articlesPerMonth: true,
         nextjsMetadata: true,

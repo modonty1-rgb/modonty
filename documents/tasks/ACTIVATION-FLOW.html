@@ -175,7 +175,7 @@
   <button class="navtab" role="tab" data-view="now"  aria-selected="false"
     title="الفلو والشاشات والمقارنة والمراحل الأربع الباقية">الحالي<b>4</b></button>
   <button class="navtab" role="tab" data-view="done" aria-selected="false"
-    title="إحدى وثلاثون أُغلقت بدليلها الخام">المنجَز<b>31</b></button>
+    title="ثلاثٌ وثلاثون أُغلقت بدليلها الخام">المنجَز<b>33</b></button>
   <button class="navtab" role="tab" data-view="enums" aria-selected="false"
     title="SubscriptionTier — خمسةٌ من ستّة سقطت، وبقي الجدولُ القديم وحده">Enums<b>1</b></button>
   <div class="navsep"></div>
@@ -1519,6 +1519,70 @@ currencyForCountry             اشتقاقُ العملة من نصّ البل�
 أخطاءُ التجميع 0 · والشاشاتُ الأربع تُحمَّل</pre>
   </div>
 
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">المرحلة ٥: «حالة الدفع» الكاذبة سقطت</span></b>
+    <p><b>الحقلُ كان يقول «مسدَّد» دائماً.</b> ولا مسارَ في المستودع كلِّه يكتب فيه
+      «متأخّر» — يُكتب «مسدَّد» عند التفعيل ويبقى. وقيس على بيانات الإنتاج:
+      <b>٢٦ عميلاً بلا فاتورةٍ واحدة مكتوبٌ عليهم «مسدَّد»</b>، وهي شارةٌ يراها العميلُ
+      نفسُه في بوّابته.</p>
+
+    <p><b>البديل كان مبنيّاً ومُستعمَلاً — صار المصدرَ الوحيد:</b></p>
+    <pre>lib/clients/payment-state/   يحسب من الفواتير · و«بلا فواتير» حالةٌ ثالثة
+                             لا تُطوى في «مسدَّد»: مَن لم تُصدَر له فاتورةٌ ليس
+                             مسدِّداً ولا متأخّراً.</pre>
+
+    <p><b>ما سقط — خمسةُ كتّاب:</b></p>
+    <pre>activate-client · activate-from-order · mark-paid
+update-client-grouped · client-field-mapper</pre>
+
+    <p><b>وما بُدِّل مصدرُه في الكونسول — وهو ما يراه العميل:</b></p>
+    <pre>layout.tsx              شارةُ الشريط الجانبيّ  → من الفواتير القائمة
+settings/page.tsx       بطاقةُ الاشتراك        → من الفواتير القائمة
+dashboard-queries.ts    لوحةُ العميل           → من openInvoices المجلوبة أصلاً</pre>
+
+    <p><b>وما سقط تماماً:</b></p>
+    <pre>payment-status-chart.tsx    رسمٌ بيانيٌّ للحقل الكاذب — صفر مستهلك
+paymentStatusSchema         مخطَّطُ زود لحقلٍ لا شاشةَ تجمعه
+وخمسةُ استيراداتٍ يتيمة للإنم PaymentStatus</pre>
+
+    <p class="said">و<code>Invoice.paymentStatus</code> <b>يبقى</b> — هو المصدر. والفرقُ
+      بينهما هو كلُّ الحكاية: واحدٌ يُكتب مرّةً ويُنسى، والآخرُ يتغيّر مع كلّ فاتورة.</p>
+
+    <p><b>القياس الحيّ — والفرقُ ظاهرٌ على الشاشة:</b></p>
+    <pre>/clients/accounts   كان يعرض «مسدَّد» لكلّ صفّ
+                    صار يعرض «بلا فواتير» — وهي الحقيقة (الفواتير صفر بعد الإخلاء)
+
+استعلاماتُ الشاشات: clients · invoices · sales-report · console×3 · orders
+                   صفرُ سقوط
+أخطاءُ التجميع 0 · ستُّ شاشاتٍ تُحمَّل · prisma validate valid</pre>
+  </div>
+
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">فحصُ التجديد: النظامُ صمد أمام طلبَين لعميلٍ واحد</span></b>
+    <p>الترحيلُ أعطى كلَّ عميلٍ طلباً واحداً، وهذا لا يكشف ما يحدث حين يجدّد. فأُنشئ
+      طلبُ تجديدٍ حقيقيّ لعميلٍ قائم (١٤٬٣٨٨ ج.م · ١٢+١ شهر · يبدأ بعد نهاية الأوّل)
+      وقيس أربعةُ أسئلة — ثمّ حُذف.</p>
+
+    <pre>المؤشّر بعد الربط      →  انتقل للتجديد                        ✓
+تقرير المبيعات        →  ما زال يعدّ المؤسِّس لا التجديد        ✓
+فاتورةُ التأسيس        →  لا تُوسَم للتجديد (مالٌ جديد)          ✓
+إجماليّ الإيراد        →  104,335 ثابتٌ رغم وجود طلبين          ✓
+وعلى الشاشة: /clients/sales-report يعرض 104,335</pre>
+
+    <p><b>وكشف الفحصُ كيف يمرّ التجديدُ فعلاً — وهو مسارٌ يدويٌّ محروس:</b></p>
+    <pre>عميلٌ قائم يجدّد  →  يدفع  →  الطلب «ينتظر التفعيل»
+   ↓  يضغط «فعّل»  →  يُرفض: «هذا البريد لعميلٍ قائم (فلان) — اربط الطلب به»
+   ↓  يضغط «اربط بعميل»  →  linkOrderToClient  →  setActiveOrder  ✓</pre>
+    <p class="said">فما فيه بقّ — فيه خطوةٌ بيدِ موظّف، والرسالةُ تقول له ماذا يفعل بالضبط.
+      وحارسُ <code>linkOrderToClient</code> يمنع ربطَ طلبٍ مربوطٍ مرّتين.</p>
+
+    <p><b>والمؤشّر ينتقل في حدثين، وثالثٌ يكتبه مباشرةً:</b></p>
+    <pre>تأكيدُ التحويل البنكيّ   setActiveOrder      ✓
+ربطُ طلبٍ بعميل          setActiveOrder      ✓
+التفعيلُ من الطلب        activeOrderId: order.id  ✓ (يكتبه ضمن إنشاء العميل)
+الدفعُ الإلكترونيّ        يضع PAID فقط — وهذا مقصود: الطلبُ ينتظر إنساناً يقرّر</pre>
+  </div>
+
   </section>
 
   <section data-view="now">
@@ -1557,7 +1621,7 @@ status PAID · notes: وسمُ ترحيلٍ يسمح بالرجوع</pre>
       <b>وسمُ الترحيل يسمح بالتراجع</b> كما في <code>seed-orders-for-clients --clean</code>.</p>
   </div>
 
-  <p class="sub" style="margin:22px 0 0"><b style="color:var(--ink)">والمتبقّي — <b>مرحلتان</b>، وقد انفكّ حبسُهما:</b></p>
+  <p class="sub" style="margin:22px 0 0"><b style="color:var(--ink)"><b style="color:var(--go)">المراحلُ الثمانِ كلُّها أُغلقت</b> — والجدولُ سجلٌّ لا قائمةَ عمل:</b></p>
 
   <div class="scroll">
   <table>
@@ -1565,28 +1629,20 @@ status PAID · notes: وسمُ ترحيلٍ يسمح بالرجوع</pre>
     <tbody>
 
 
-      <tr><td><b>٤</b></td>
-          <td><b>إسقاط الحقول الكاذبة الثلاثة</b><br>
-              <code>billingCycle</code> · العملة المشتقّة · <code>openingBalance</code>
-              <span class="f">مقيسٌ ١٧ سبتمبر بعد الكنسة:
-              billingCycle admin ١١ ملفّ · ١٧ سطراً — console ملفّ واحد ·
-              openingBalance admin ٩ ملفّات · ٣٧ سطراً</span></td>
-          <td>٢٠ ملفّاً<br><span class="tag t-warn">متوسّط</span></td>
-          <td><b style="color:var(--go)">انفكّ الحبس ١٧ سبتمبر:</b> كانت موقوفةً لأنّ
-              <code>openingBalance</code> يحمل إيراداً يعدّه تقرير المبيعات وبديلُه
-              <code>order.totalMinor</code> — ولا طلبَ للعميل القديم. <b>والآن لكلِّ
-              عميلٍ طلبُه</b> (٤٢/٤٢، ومجموعُ الجنيه ١٠٤٬٣٣٥ يطابق مجموعَ الأرصدة).
-              <br><b>وإسقاطُها هو ما يكسر الحلقة:</b> ما دام الرقمُ في مكانين، فتصحيحُ
-              الطلب يبقى معارَضاً بالكرت، وأوّلُ «إعادة بناء» تمحوه.</td></tr>
+      <tr class="same" style="opacity:.55"><td><b>٤</b></td>
+          <td><b>إسقاط الحقول الكاذبة</b><br>
+              <span class="f">openingBalance → order.totalMinor بعملته ويومِ دفعه ·
+              billingCycle → order.paidMonths · وسقط اشتقاقُ العملة من نصّ البلد</span></td>
+          <td><span class="tag t-go">✅ منجَزة</span></td>
+          <td>الرقمُ لم يتحرّك: ١٠٤٬٣٣٥ قبل وبعد. وبها انكسرت الحلقة — ما عاد
+              للطلب معارِضٌ على الكرت.</td></tr>
 
-      <tr><td><b>٥</b></td>
+      <tr class="same" style="opacity:.55"><td><b>٥</b></td>
           <td><b>«حالة الدفع» على الكرت تنقرض</b><br>
-              <span class="f">PaymentStatus|paymentStatus: admin ٤٦ ملفّاً · ٨٥ سطراً
-              — console ٦ ملفّات — و<code>Invoice.paymentStatus</code> تبقى وهي المصدر</span></td>
-          <td>٤٦ ملفّاً<br><span class="tag t-warn">متوسّط</span></td>
-          <td><b>البديل مبنيٌّ ومُستعمَل</b> — <code>lib/clients/payment-state/</code>، وخمسُ
-              شاشاتٍ تقرأ منه. و<b style="color:var(--go)">المرحلة ٨ تمّت</b>، فما عاد
-              يحبسها شيء. و<b>الكونسول ما زال يعرضها للعميل نفسه</b> (٦ ملفّات).</td></tr>
+              <span class="f">٢٦ عميلاً بلا فاتورةٍ كان مكتوباً عليهم «مسدَّد».
+              الحالةُ تُحسب من الفواتير — والكونسول صار يقرؤها كذلك.</span></td>
+          <td><span class="tag t-go">✅ منجَزة</span></td>
+          <td><code>Invoice.paymentStatus</code> يبقى — هو المصدر.</td></tr>
 
       <tr class="same" style="opacity:.55"><td><b>٦</b></td>
           <td><b>الباقة تصير مرجعاً لا <code>enum</code></b><br>

@@ -20,7 +20,6 @@ interface ClientHealthData {
     id: string;
     name: string;
     subscriptionStatus: string;
-    paymentStatus: string;
     subscriptionEndDate: Date | null;
   }>;
   topClientsByArticles: Array<{

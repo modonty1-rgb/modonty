@@ -1,4 +1,4 @@
-import { SubscriptionTier, SubscriptionStatus, PaymentStatus } from "@prisma/client";
+import { SubscriptionTier, SubscriptionStatus } from "@prisma/client";
 
 export interface ClientFilters {
   createdFrom?: Date;
@@ -23,7 +23,6 @@ export type ClientForList = {
   /** فارغٌ = ملفٌّ ناقص: العميل فُعّل من طلبه ولم يُكمَّل ملفّه بعد. */
   industryId: string | null;
   subscriptionStatus: SubscriptionStatus;
-  paymentStatus: PaymentStatus;
   subscriptionEndDate: Date | null;
   articlesPerMonth: number | null;
   nextjsMetadata: unknown;

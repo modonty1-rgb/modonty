@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SubscriptionStatus, PaymentStatus, ClientCtaMode } from "@prisma/client";
+import { SubscriptionStatus, ClientCtaMode } from "@prisma/client";
 import { LEGAL_FORM_VALUES, ORGANIZATION_TYPE_VALUES } from "@modonty/shared/lib/constants/client-classification";
 
 /**
@@ -42,11 +42,8 @@ const subscriptionStatusSchema = z
   .default(SubscriptionStatus.PENDING);
 
 // Payment Status enum
-const paymentStatusSchema = z
-  .nativeEnum(PaymentStatus)
-  .optional()
-  .default(PaymentStatus.PENDING);
-
+// سقط `paymentStatusSchema` (١٧ سبتمبر ٢٠٢٦): لا شاشةَ تجمع حالة الدفع — تُحسب من
+// الفواتير. والمخطَّطُ الذي لا يُغذّى يبقى ليضلّل مَن يقرأ النموذج.
 // Meta Robots validation
 const metaRobotsSchema = z
   .enum(["index, follow", "noindex, follow", "index, nofollow", "noindex, nofollow"])
@@ -220,7 +217,6 @@ const clientFormObject = z
     subscriptionEndDate: dateSchema,
     articlesPerMonth: z.number().int().min(0).max(100).optional().nullable(),
     subscriptionStatus: subscriptionStatusSchema,
-    paymentStatus: paymentStatusSchema,
     isFeatured: z.boolean().optional().default(false),
     isVerified: z.boolean().optional().default(true),
     // Defaults to true — the tab is already visible to every client, so an unset value

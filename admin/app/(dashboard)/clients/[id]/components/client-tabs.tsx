@@ -71,7 +71,6 @@ type ClientTabsProps = {
       isPopular: boolean;
     } | null;
     subscriptionStatus: string;
-    paymentStatus: string;
     contactType: string | null;
     addressStreet: string | null;
     addressCity: string | null;

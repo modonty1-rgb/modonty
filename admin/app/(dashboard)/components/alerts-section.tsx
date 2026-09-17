@@ -23,7 +23,6 @@ interface AlertData {
   overduePayments: Array<{
     id: string;
     name: string;
-    paymentStatus: string;
   }>;
   expiredSubscriptions: Array<{
     id: string;

@@ -34,7 +34,9 @@ export async function activateClientAction(clientId: string): Promise<ActivateRe
       where: { id: clientId },
       data: {
         subscriptionStatus: "ACTIVE",
-        paymentStatus: "PAID",
+        // سقطت كتابةُ `paymentStatus` (١٧ سبتمبر ٢٠٢٦): حالةُ الدفع تُحسب من
+        // الفواتير، ولا مسارَ في المستودع كتب فيها «متأخّر» قطّ — فكانت تقول
+        // «مسدَّد» لكلّ عميل، ومنهم ٢٦ بلا فاتورةٍ واحدة.
         subscriptionStartDate: new Date(),
       },
     });
