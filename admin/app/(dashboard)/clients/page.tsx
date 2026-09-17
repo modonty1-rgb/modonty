@@ -10,11 +10,6 @@ import { ClientsHeaderWrapper } from "./components/clients-header-wrapper";
 import { getTierConfigs } from "../subscription-tiers/actions/tier-actions";
 import { ClientsTabs } from "./components/clients-tabs";
 import { RegenerateAllSeoButton } from "./components/regenerate-all-seo-button";
-import {
-  getJbrseoSubscribers,
-  getJbrseoSubscriberStats,
-  getWelcomeEmailStatuses,
-} from "../subscription-tiers/helpers/jbrseo-queries";
 import { getPlatformDefaults } from "../settings/defaults/actions/defaults-actions";
 import { expiringThisMonthWhere } from "./segment/segments";
 
@@ -36,32 +31,21 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
   const gate = await checkAdmin();
   if (gate.status !== "ok") redirect("/login");
 
-  // `tiers` يبقى: `TierDistribution` مكوّنٌ حيّ يعرض توزيع العملاء على الباقات
-  // (`clients-tabs.tsx:213`). حُذف نداؤه أوّلاً دون تفكيكه فانزاح كل ما بعده بصمت —
-  // «allClientEmails is not iterable». الاثنان يُعدَّلان معاً أو لا يُعدَّلان.
-  const [clients, stats, signupsRows, signupStats, tiers, defaults, allClientEmails, expiringThisMonth] = await Promise.all([
+  // سقط تبويبُ «مشترِكو jbrseo» (١٧ سبتمبر ٢٠٢٦): تكامُل جبر سيو أُلغي من أوّله،
+  // وبقي التبويبُ يعرض ٢٧ صفّاً مرآةً لنظامٍ لم يعد يُستعمل — وفيه بابُ ميلادٍ رابع
+  // للعميل يتجاوز الطلب المدفوع. سقط معه `allClientEmails` و`clientByEmail`، ولم
+  // يكونا إلّا لإخفاء مَن صار عميلاً من قائمة التحويل.
+  //
+  // والاستدعاءُ وموضعُه في التفكيك يُحذفان معاً أو لا يُحذفان: إسقاطُ أحدهما وحده
+  // يزيح كلَّ ما بعده بصمت — وهو ما أنتج «allClientEmails is not iterable» من قبل.
+  const [clients, stats, tiers, defaults, expiringThisMonth] = await Promise.all([
     getClients(filters),
     getClientsStats(),
-    getJbrseoSubscribers(),
-    getJbrseoSubscriberStats(),
     getTierConfigs(),
     getPlatformDefaults(),
-    // ALL clients (filter-independent) — used to hide already-clients from the
-    // jbrseo "to convert" list by matching email.
-    db.client.findMany({ select: { id: true, email: true } }),
     // Renewals due this calendar month — money queue (same where as the segment list).
     db.client.count({ where: expiringThisMonthWhere() }),
   ]);
-
-  const clientByEmail: Record<string, string> = {};
-  for (const c of allClientEmails) {
-    if (c.email) clientByEmail[c.email.trim().toLowerCase()] = c.id;
-  }
-
-  const convertedClientIds = signupsRows
-    .map((r) => r.convertedToClientId)
-    .filter((id): id is string => Boolean(id));
-  const emailStatuses = await getWelcomeEmailStatuses(convertedClientIds);
 
   return (
     <ClientsHeaderWrapper clientCount={clients.length} stats={stats} expiringThisMonth={expiringThisMonth}>
@@ -70,11 +54,7 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
       </div>
       <ClientsTabs
         clientsCount={clients.length}
-        signupsCount={signupStats.total}
-        signupsRows={signupsRows}
-        emailStatuses={emailStatuses}
         clients={clients}
-        clientByEmail={clientByEmail}
         defaultLogoUrl={defaults.LOGO}
         tiers={tiers}
       />

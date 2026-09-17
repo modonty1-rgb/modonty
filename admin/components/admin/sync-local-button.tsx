@@ -15,7 +15,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -79,14 +78,14 @@ const INITIAL_PROGRESS: ProgressState = {
   failedCount: 0,
 };
 
-export function SyncLocalButton({ enabled }: { enabled: boolean }) {
-  // Visibility follows the DATABASE the instance is on, not the bundle it was built with.
-  // The migration rehearsal runs a production build against the local test database, and a
-  // NODE_ENV check hid this button exactly when it was needed. The route itself refuses any
-  // database other than modonty_dev, so this is presentation, not protection.
-  if (!enabled) return null;
-
-  const [open, setOpen] = useState(false);
+/**
+ * نافذةُ المزامنة — بلا زرٍّ خاصّ بها.
+ *
+ * كانت أيقونةً مستقلّةً في الشريط، فصارت بنداً في قائمة «أدوات التطوير» مع الإخلاء
+ * (خالد ١٧ سبتمبر ٢٠٢٦): أداتان تُستعملان معاً في حلقةٍ واحدة، وأيقونتان متجاورتان
+ * في شريطٍ عامّ تزاحمان ما يُستعمل كلَّ يوم. فالفتحُ يأتي من القائمة، والحالةُ تُدار هنا.
+ */
+export function SyncLocalDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [progress, setProgress] = useState<ProgressState>(INITIAL_PROGRESS);
   const { toast } = useToast();
@@ -97,7 +96,7 @@ export function SyncLocalButton({ enabled }: { enabled: boolean }) {
   }
 
   function handleOpenChange(o: boolean) {
-    setOpen(o);
+    onOpenChange(o);
     if (!o) reset();
   }
 
@@ -276,22 +275,6 @@ export function SyncLocalButton({ enabled }: { enabled: boolean }) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      {/* Icon only. The full «Sync Local from PROD» label was the widest thing in the bar
-          and it sits right next to the database badge that already says `modonty_dev` —
-          so the words repeated the context they stood in. Khalid (2026-09-04): «خلّي لي
-          أبو button صغير عشان ما اتلخبط في الـnav bar». The amber tint stays: this button
-          wipes the local database, and it should not read like the ones beside it. */}
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          aria-label="Sync local database from production"
-          title="نسخ بيانات الإنتاج إلى التطوير المحلي (DEV فقط)"
-          className="inline-flex size-8 items-center justify-center rounded-md border border-amber-500/30 bg-amber-500/10 text-amber-700 hover:bg-amber-500/20 dark:text-amber-400"
-        >
-          <Database className="size-4" aria-hidden />
-        </button>
-      </DialogTrigger>
-
       <DialogContent className="max-w-2xl">
         {phase === "idle" || phase === "confirm" ? (
           <>
@@ -338,7 +321,7 @@ export function SyncLocalButton({ enabled }: { enabled: boolean }) {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>
+              <Button variant="outline" onClick={() => handleOpenChange(false)}>
                 إلغاء
               </Button>
               <Button onClick={startSync}>تأكيد · بدء المزامنة</Button>
@@ -539,7 +522,7 @@ export function SyncLocalButton({ enabled }: { enabled: boolean }) {
                   تحديث الصفحة
                 </Button>
               ) : (
-                <Button variant="outline" onClick={() => setOpen(false)}>
+                <Button variant="outline" onClick={() => handleOpenChange(false)}>
                   إغلاق
                 </Button>
               )}

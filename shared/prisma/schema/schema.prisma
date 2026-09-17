@@ -1576,35 +1576,18 @@ model PaymentAttempt {
 }
 
 // ============================================
-// JBRSEO SUBSCRIBERS MIRROR
+// JBRSEO SUBSCRIBERS MIRROR — سقط ١٧ سبتمبر ٢٠٢٦
 // ============================================
-// Pure mirror of jbrseo's Subscriber collection — display only, no workflow.
-// Synced via admin button (manual). See: JBRSEO-INTEGRATION-PLAN.md Phase 4.
-
-model JbrseoSubscriber {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  jbrseoId        String   @unique          // _id الأصلي من jbrseo
-  contactName     String?
-  email           String
-  phone           String
-  businessName    String?
-  businessType    String?
-  planName        String                    // الباقة اللي اختارها
-  planIndex       Int?
-  country         String                    // "SA" | "EG"
-  isAnnual        Boolean
-  jbrseoCreatedAt DateTime                  // الـ createdAt الأصلي من jbrseo
-  syncedAt        DateTime @default(now())
-
-  // ─── Subscriber → Client conversion tracking ───
-  convertedToClientId String?   @db.ObjectId   // null = لسه، موجود = اتحوّل لعميل
-  convertedAt         DateTime?                 // متى تم التحويل
-
-  @@index([country])
-  @@index([jbrseoCreatedAt])
-  @@index([convertedToClientId])
-  @@map("jbrseo_subscribers")
-}
+// كان مرآةً لمجموعة `Subscriber` في جبر سيو، تُملأ بزرّ مزامنةٍ في تبويب `/clients`.
+// وتكامُلُ جبر سيو أُلغي من أوّله، فبقي التبويبُ يعرض ٢٧ صفّاً لنظامٍ لم يعد يُستعمل
+// (خالد ١٧ سبتمبر: «لغيناه من أوّل، فهذه سقطت في الجرد»).
+//
+// والأخطر أنّه كان **بابَ ميلادٍ رابعاً** للعميل: `convertSubscriberToClientAction`
+// يصنع عميلاً من مشترِكٍ ويختار له الباقة من الكتالوج — بلا طلبٍ مدفوع، فيتجاوز
+// المصدرَ الذي قام عليه هذا الريفاكتور كلُّه.
+//
+// سقط معه ٩٣٠ سطراً في سبعة ملفّات. ولا حقلَ على `Client` كان يشير إليه، فلم يُيتَّم
+// أحد. والصفوفُ الـ٢٧ تبقى في مونغو مهجورةً — إسقاطُ الموديل لا يحذف بيانات.
 
 // ============================================
 // EMAIL EVENTS (Resend webhook tracking)

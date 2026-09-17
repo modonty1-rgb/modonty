@@ -72,12 +72,6 @@ export const getTierConfigByTier = cache(async (tier: SubscriptionTier) => {
  * أراد حصّةَ باقةٍ يقرؤها بالسلَق (`lib/pricing/get-tier-pricing.ts`) — وهو ما يفعله
  * كلُّ قارئٍ قائم فعلاً.
  */
-    return plan?.articlesPerMonth ?? null;
-  } catch (error) {
-    console.error("Error fetching catalog quota by tier:", error);
-    return null;
-  }
-});
 
 export const getActiveTierConfigs = cache(async () => {
   try {

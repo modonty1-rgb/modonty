@@ -175,7 +175,7 @@
   <button class="navtab" role="tab" data-view="now"  aria-selected="false"
     title="الفلو والشاشات والمقارنة والمراحل الأربع الباقية">الحالي<b>4</b></button>
   <button class="navtab" role="tab" data-view="done" aria-selected="false"
-    title="ثمانٍ وعشرون أُغلقت بدليلها الخام">المنجَز<b>28</b></button>
+    title="تسعٌ وعشرون أُغلقت بدليلها الخام">المنجَز<b>29</b></button>
   <button class="navtab" role="tab" data-view="enums" aria-selected="false"
     title="SubscriptionTier — خمسةٌ من ستّة سقطت، وبقي الجدولُ القديم وحده">Enums<b>1</b></button>
   <div class="navsep"></div>
@@ -1410,6 +1410,38 @@ prisma generate                 Generated Prisma Client v6.19.2
     <p><b>فالإنمُ ما عاد يقف بينه وبين الحذف إلّا جدولُه</b> — يسقطان معاً في الترحيل.</p>
   </div>
 
+  <div class="card go">
+    <b>✅ منجَز ١٧ سبتمبر — <span style="color:var(--go)">بابُ الميلاد الرابع سقط · تكامُل جبر سيو أُزيل</span></b>
+    <p class="said">خالد، من شاشة <code>/clients</code>: «جبر سيو subscribers — لغيناه من أوّل،
+      فهذه سقطت في الجرد».</p>
+    <p><b>كان تبويباً في <code>/clients</code> يعرض ٢٧ مشترِكاً مرآةً لنظامٍ ملغى — وفيه
+      <span style="color:var(--stop)">بابُ ميلادٍ رابع للعميل</span></b>: <code>convertSubscriberToClientAction</code>
+      يصنع عميلاً من مشترِك ويختار الباقة من الكتالوج، <b>بلا طلبٍ مدفوع</b> — فيتجاوز
+      المصدرَ الذي قام عليه هذا الريفاكتور كلُّه.</p>
+
+    <p><b>ما سقط — سبعةُ ملفّات:</b></p>
+    <pre>subscribers-table.tsx            321      convert-subscriber-to-client.ts  155
+convert-subscriber-dialog.tsx    140      sync-subscribers.ts               97
+jbrseo-queries.ts                 89      sync-button.tsx                   69
+tier-distribution.tsx             ~60                             المجموع ≈ 930 سطراً
+
+ومن السكيما: model JbrseoSubscriber (٢٧ صفّاً — تبقى في مونغو مهجورةً)
+ومن الشاشة:  التبويبُ · مزامنتُه التلقائيّة عند الفتح · شريطُ حالتها</pre>
+
+    <p class="said"><b>وفخُّ <code>Promise.all</code> عاد:</b> صفحةُ العملاء كانت ثمانيةَ
+      استدعاءاتٍ بثمانية مواضعَ في التفكيك. حُذف اثنان — <b>مع موضعَيهما معاً</b>، فصارت
+      ٥ ↔ ٥. إسقاطُ أحدهما وحده يزيح كلَّ ما بعده صامتاً، وهو ما أنتج
+      «allClientEmails is not iterable» من قبل.</p>
+
+    <p><b>ومَن كان يشغّل المزامنة؟</b> لا كرون ولا مسار — كانت تنطلق تلقائيّاً عند فتح
+      التبويب (<code>useEffect</code>)، وآخرُ تشغيلٍ لها ١٦ سبتمبر ١٩:٣٥ كان من فحصي أنا.</p>
+
+    <p><b>القياس الحيّ بعد مسح كاش Turbopack:</b></p>
+    <pre>أخطاءُ التجميع  0
+/clients · /orders · /commercial-plans · /sales-leads · /database   كلُّها تُحمَّل
+وشريطُ التبويبات في /clients:  «Clients 42» وحده — لا أثرَ لـjbrseo</pre>
+  </div>
+
   </section>
 
   <section data-view="now">
@@ -1448,7 +1480,7 @@ status PAID · notes: وسمُ ترحيلٍ يسمح بالرجوع</pre>
       <b>وسمُ الترحيل يسمح بالتراجع</b> كما في <code>seed-orders-for-clients --clean</code>.</p>
   </div>
 
-  <p class="sub" style="margin:22px 0 0"><b style="color:var(--ink)">والمتبقّي — أربع مراحل:</b></p>
+  <p class="sub" style="margin:22px 0 0"><b style="color:var(--ink)">والمتبقّي — <b>ثلاث</b> مراحل:</b></p>
 
   <div class="scroll">
   <table>
@@ -1476,14 +1508,12 @@ status PAID · notes: وسمُ ترحيلٍ يسمح بالرجوع</pre>
               شاشاتٍ تقرأ منه. الباقي كتابةٌ لا يقرؤها أحد، تسقط مع الحقل في المرحلة ٨.
               و<b>الكونسول ما زال يعرضها للعميل نفسه</b> (٦ ملفّات).</td></tr>
 
-      <tr><td><b>٦</b></td>
+      <tr class="same" style="opacity:.55"><td><b>٦</b></td>
           <td><b>الباقة تصير مرجعاً لا <code>enum</code></b><br>
-              <code>SubscriptionTier</code> يتقاعد، و<code>CommercialPlan</code> يصير المصدر.
-              <span class="f">admin ٤٨ ملفّاً · ١٦١ سطراً — console صفر — مدونتي صفر</span></td>
-          <td>٤٨ ملفّاً<br><span class="tag t-warn">متوسّط</span></td>
-          <td><code>SubscriptionTierConfig.tier @unique</code> يعني <b>أربع باقاتٍ للأبد</b>.
-              والكتابةُ من الشاشات سقطت؛ الباقي قراءةٌ وكتالوجٌ قديم وترجمات —
-              وأثقلُها <code>create-client</code> و<code>tier-actions</code>.</td></tr>
+              <span class="f">أُغلقت ١٧ سبتمبر: خمسةُ حقولٍ سقطت، و<code>expectedTier</code> صار سلَقاً.
+              الباقي ٦٠ سطراً كلُّها تقرأ <code>SubscriptionTierConfig</code> — تسقط بجدوله هنا في ٨.</span></td>
+          <td><span class="tag t-go">✅ منجَزة</span></td>
+          <td>لم يبقَ للإنم وجودٌ مستقلّ. التفصيل في تبويب <b>Enums</b>.</td></tr>
 
       <tr><td><b>٨</b></td>
           <td><b>ترحيل البيانات القديمة</b><br>
@@ -1624,28 +1654,19 @@ GET /clients/new                         200 in 1281ms
   <h2><span class="n">E</span><code style="font-size:16px">SubscriptionTier</code> — الجرد الكامل</h2>
   <p class="sub">المصدر الواحد: <code>CommercialPlan</code>. <b style="color:var(--go)">أُغلق ١٧ سبتمبر ٢٠٢٦ مساءً:</b> خمسةٌ من الستّة سقطت، وبقي الجدولُ القديم وحدَه.</p>
 
-  <h3 style="font-size:17px;font-weight:900;margin:26px 0 0">أ · السكيما — <b style="color:var(--go)">بقي حاملٌ واحد</b></h3>
+  <h3 style="font-size:17px;font-weight:900;margin:26px 0 0">أ · السكيما — <b style="color:var(--go)">حقلٌ واحدٌ فقط ما زال نوعُه <code>SubscriptionTier</code></b></h3>
+  <p class="sub" style="margin:10px 0 0">كانت ستّةَ حقول. خمسةٌ سقطت في ١٧ سبتمبر، وبقي <code>SubscriptionTierConfig.tier</code> — ويسقط مع جدوله في المرحلة ٨.</p>
   <div class="scroll">
   <table class="align">
     <thead><tr><th>الحقل</th><th>السطر</th><th>بديلٌ نصّيّ بجانبه</th><th>متى يسقط</th></tr></thead>
     <tbody>
       <tr class="miss"><td><code>enum SubscriptionTier</code><span class="f">BASIC · STANDARD · PRO · PREMIUM</span></td>
           <td class="f">76</td><td>—</td><td>آخراً</td></tr>
-      <tr class="same" style="opacity:.55"><td><code>Client.subscriptionTier</code><span class="f">٨ مواضعَ كلُّها تعليقات · ٠ كاتب · ٠ قارئ</span></td>
-          <td class="f">—</td><td><code>CheckoutOrder.planName</code></td><td><b style="color:var(--go)">✅ سقط</b></td></tr>
       <tr class="miss"><td><code>Client.subscriptionTierConfigId</code> + العلاقة</td>
           <td class="f">638-639</td><td>—</td><td>مع الجدول</td></tr>
       <tr class="miss"><td><code>SubscriptionTierConfig</code><span class="f">الجدول كلّه · tier @unique — <b>الحاملُ الوحيدُ الباقي</b></span></td>
           <td class="f">1105 · 1109</td><td><code>name</code> · <code>price</code> Float</td>
           <td><b>مع الترحيل</b></td></tr>
-      <tr class="same" style="opacity:.55"><td><code>CommercialPlan.tier</code><span class="f">أُزيل منتقي الواجهة وزود والتحديث</span></td>
-          <td class="f">—</td><td><code>slug</code> <b>@unique</b></td><td><b style="color:var(--go)">✅ سقط</b></td></tr>
-      <tr class="same" style="opacity:.55"><td><code>CheckoutOrder.planTier</code><span class="f">موضعان تعليقان · القاعدة ٠/٠</span></td>
-          <td class="f">—</td><td><code>planName</code> · <code>planSlug</code></td><td><b style="color:var(--go)">✅ سقط</b></td></tr>
-      <tr class="same" style="opacity:.55"><td><code>Invoice.tier</code><span class="f">الكتّابُ الثلاثة يكتبون tierName · ٠ قارئ</span></td>
-          <td class="f">—</td><td><b><code>tierName</code></b> لقطة الاسم</td><td><b style="color:var(--go)">✅ سقط</b></td></tr>
-      <tr class="same" style="opacity:.55"><td><code>SalesLead.expectedTier</code><span class="f">صار <code>String?</code> — القاعدة ٠/٢٦ فبلا ترحيل</span></td>
-          <td class="f">4289</td><td><code>ModontyPlan.slug</code></td><td><b style="color:var(--go)">✅ تحوَّل</b></td></tr>
     </tbody>
   </table>
   </div>
@@ -1666,97 +1687,29 @@ GET /clients/new                         200 in 1281ms
     <code>PaymentStatus|paymentStatus</code> ٤٦ ملفّاً · ٨٥ سطراً ·
     <code>billingCycle</code> ١١ · ١٧ · <code>openingBalance</code> ٩ · ٣٧</span></p>
 
-  <div class="scroll">
-  <table class="align">
-    <thead><tr><th>المجموعة</th><th>ملفّات</th><th>أسطر</th><th>ماذا تفعل بالإنم</th><th>البديل</th></tr></thead>
-    <tbody>
-      <tr class="same" style="opacity:.55"><td><b>١ · كتابة العميل وتعديله</b>
-              <span class="f">clients/actions · clients/helpers · form-sections · edit-workspace · form-types</span></td>
-          <td class="f">—</td><td class="f">—</td>
-          <td><b>✅ سقطت</b> — لا تمرّ الباقة من الشاشة إلى القاعدة</td>
-          <td>—</td></tr>
+  <pre>الستّون سطراً، مفرَزةً بمَن يقرؤها:
+  ٥٤   subscriptionTierConfig — شكلُ صفّه · عدُّ صفوفه · قراءتُه
+   ٦   types.ts · database-health · getTierConfigByTier — وكلُّها تقرأ نفسَ الجدول
+فلا عملَ على الإنم قبل المرحلة ٨: يسقط بجدوله، لا قبله ولا بعده.</pre>
 
-      <tr class="miss"><td><b>٢ · الكتالوج القديم</b>
-              <span class="f">tier-actions · subscription-tiers/lib/pricing · lib/pricing/get-tier-pricing · sync-tier-pricing</span></td>
-          <td class="f">٤</td><td class="f">٢٠</td>
-          <td>مبنيّةٌ عليه كلّها</td>
-          <td><b>تسقط</b> — لا تُبدَّل</td></tr>
-
-      <tr class="same" style="opacity:.55"><td><b>٣ · الفواتير والحسابات</b>
-              <span class="f">clients/[id]/account/* · clients/accounts · orders/actions · sales-report</span></td>
-          <td class="f">—</td><td class="f">—</td>
-          <td><b>✅ سقطت</b> — <code>Invoice.tier</code> تقاعد، و<code>tierName</code> من الطلب</td>
-          <td>—</td></tr>
-
-      <tr class="same"><td><b>٤ · قراءةٌ وعرض</b>
-              <span class="f">clients/[id]/components · briefs · sales-leads · commercial-plans · database-health · suspend · activate</span></td>
-          <td class="f">١٤</td><td class="f">٣٥</td>
-          <td>تعرضه أو تعدّ به — لا تكتبه</td>
-          <td><code>planName</code> من الطلب الساري</td></tr>
-
-      <tr class="same" style="opacity:.55"><td><b>٥ · الترجمات</b><span class="f">lib/messages — ar · en · types · index</span></td>
-          <td class="f">صفر</td><td class="f">صفر</td>
-          <td><b>✅ سقطت</b> — صفر مستهلك</td>
-          <td>—</td></tr>
-    </tbody>
-  </table>
+  <div class="card go" style="margin-top:18px">
+    <b>✅ حُسم ونُفِّذ ١٧ سبتمبر — المرحلة ٦ سبقت ٤ و٥</b>
+    <p>كان السؤال: أتُنفَّذ ٦ أوّلاً فتُفتح ملفّاتُ مجلّد العملاء ثلاث مرّات، أم ٤←٥←٦
+      فتُفتح مرّةً واحدة؟ <b>نُفِّذت ٦ أوّلاً، ولم تُفتح ثلاثاً.</b></p>
+    <pre>السببُ ظهر أثناء التنفيذ لا قبله: أكثرُ ما سقط كان ميتاً أصلاً —
+  ١١٤ سطراً بصفر مستهلك:  getSellableTierConfigs · getCatalogArticlesPerMonth · TIER_BY_SLUG
+فما لُمس من مجلّد العملاء إلّا ما لا بديلَ عنه.</pre>
   </div>
 
-  <p class="sub" style="margin:14px 0 0"><b>أثقل خمسة ملفّات — بعد الكنسة:</b>
-    <code>create-client</code> ٢٢ · <code>tier-actions</code> ١٠ ·
-    <code>get-tier-pricing</code> ٦ · <code>seed-integration-test</code> ٦ ·
-    <code>orders/actions</code> ٥
-    <br><span class="f">و<code>update-client-grouped</code> نزل من ١٩ إلى تعليقٍ واحد،
-    و<code>use-client-form</code> من ١٠ إلى صفر.</span></p>
-
-  <div class="card" style="margin-top:18px">
-    <b>⚖️ قرارٌ مفتوح — ترتيب المرحلة ٦</b>
-    <p><b>٢٠ ملفّاً من الـ٤٨ (٤٢٪) في مجلّد العملاء</b> — وهو نفسه ما تمسّه المرحلتان ٤ و٥
-      (<code>billingCycle</code> · <code>openingBalance</code> · <code>paymentStatus</code>).</p>
-    <pre>الترتيب الحاليّ  ٤ ← ٥ ← ٦     كلّ ملفٍّ يُفتح مرّةً واحدة بثلاثة تعديلاتٍ معاً
-الترتيب المقلوب  ٦ أوّلاً       الإنم يختفي الآن، وتُفتح الـ٢٠ ثلاث مرّات</pre>
-    <p><b>وطريقٌ ثالث — مقيسٌ لا مفترَض:</b> فُحص كل ملفٍّ من المجموعتين ٢ و٣ عن
-      <code>billingCycle|openingBalance|paymentStatus</code> (حقول المرحلتين ٤ و٥):</p>
-    <pre>المجموعة ٢ — الكتالوج القديم · مستقلّةٌ فعلاً · سبعتها صفر
-  0  subscription-tiers/actions/tier-actions.ts        0  lib/pricing/get-tier-pricing.ts
-  0  subscription-tiers/lib/pricing.ts                 0  clients/helpers/get-tier-config.ts
-  0  components/subscription-tier-chart.tsx            0  scripts/seed-tiers.ts
-  0  scripts/sync-tier-pricing.ts
-
-المجموعة ٣ — الفواتير والحسابات · متداخلةٌ كلّها، وبعنف
- 12  clients/[id]/account/page.tsx                    11  clients/sales-report/.../get-sales-report.ts
-  9  clients/[id]/account/.../convert-opening-balance.ts   5  orders/actions.ts
-  5  clients/accounts/page.tsx                         3  clients/[id]/account/.../create-invoice.ts
-                                                  (العدد = أسطر تلك الحقول في الملفّ)</pre>
-    <p class="said">وادّعيتُ أوّلاً أنّ المجموعة ٢ «تسقط الآن بصفر تعارض» — وقستُ تداخلها
-      مع حقول ٤ و٥ فقط، ولم أقِس <b>من يستهلكها</b>. والقياس الثاني أسقط الادّعاء:</p>
-    <pre>tier-actions  ←  ٦ مستهلكين، خمستهم من ملفّات مجلّد العملاء الثقيلة:
-  create-client · update-client-grouped · use-client-form · clients/page · account/page
-subscription-tiers/lib/pricing  ←  subscription-section · account/page  (resolvePricing)
-
-فإسقاط المجموعة ٢ يفتح نفس ملفّات مجلّد العملاء التي قلتُ إنّها لا تُمَسّ.</pre>
-    <p><b>والميت فعلاً — صفر مستهلك، وقد حُذف ١٧ سبتمبر (١٢٣ سطراً):</b></p>
-    <pre>clients/helpers/get-tier-config.ts         7 سطر
-components/subscription-tier-chart.tsx    86 سطر
-scripts/seed-tiers.ts                     30 سطر
-
-التحقّق قبل الحذف — أربع طبقات لا الاسم وحده:
-  اسم الملفّ في الكود · في barrel/index · في package.json  →  صفر
-  والرمزان المصدَّران (getTierConfig · SubscriptionTierChart) عبر الأربعة  →  صفر
-بعد الحذف — سجلّ الخادم الخام:  module-not-found 0 · طلبات غير-200 0</pre>
-    <p class="said">فالخياران الحقيقيّان اثنان لا ثلاثة: <b>٤←٥←٦</b> (فتحةٌ واحدة لكل ملفّ)
-      أو <b>٦ أوّلاً</b> (ثلاث فتحات). والمجموعة ٢ جزءٌ من مجلّد العملاء لا مستقلّةٌ عنه.</p>
-  </div>
-
-  <p class="sub" style="margin:22px 0 0"><b style="color:var(--go)">SHARED — ملفّان · أنواعٌ فقط &nbsp;·&nbsp; PAYMENT — صفر</b></p>
+  <p class="sub" style="margin:22px 0 0"><b style="color:var(--go)">SHARED — صفر &nbsp;·&nbsp; PAYMENT — صفر</b></p>
   <div class="scroll">
   <table>
     <thead><tr><th>الملفّ</th><th>يفعل</th></tr></thead>
     <tbody>
-      <tr class="same"><td><code>shared/lib/commercial/get-market-catalog.ts</code><span class="f">1 · 50</span></td>
-          <td><code>tier: SubscriptionTier | null</code> — نوعٌ في مخرَج الكتالوج</td></tr>
-      <tr class="same"><td><code>shared/lib/payments/build-order-snapshot.ts</code><span class="f">1 · 14 · 26</span></td>
-          <td>نوعُ <code>planTier</code> في لقطة الطلب</td></tr>
+      <tr class="same" style="opacity:.55"><td><code>shared/lib/commercial/get-market-catalog.ts</code></td>
+          <td><b style="color:var(--go)">✅ سقط</b> — <code>tier</code> خرج من النوع والاختيار والإرجاع</td></tr>
+      <tr class="same" style="opacity:.55"><td><code>shared/lib/payments/build-order-snapshot.ts</code></td>
+          <td><b style="color:var(--go)">✅ سقط</b> — <code>planTier</code> خرج من اللقطة</td></tr>
       <tr class="same"><td><b><code>payment/</code></b></td>
           <td><b>صفر إشارة.</b> صفحة الدفع تبيع بالكتالوج التجاريّ وحده —
               وهي البرهان العمليّ أنّ النظام يستغني عن الـ<code>enum</code></td></tr>

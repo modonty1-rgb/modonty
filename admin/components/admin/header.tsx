@@ -19,8 +19,7 @@ import { NotificationsBell } from "./notifications-bell";
 // «Feedback» left the bar for the sidebar's System group on 2026-09-04 —
 // `app/(dashboard)/feedback/`. The bar could only send; the page also reads back
 // what was sent, which is what the reports were being stored for all along.
-import { SyncLocalButton } from "./sync-local-button";
-import { WipeOrdersButton } from "./wipe-orders-button";
+import { DevToolsMenu } from "./dev-tools-menu";
 import { TasksMenu } from "./tasks-menu";
 import { SalesMenu } from "./sales-menu";
 import { CampaignsMenu } from "./campaigns-menu";
@@ -79,12 +78,8 @@ export function Header({
           {/* Which database this instance is on — rendered on the server, never guessed */}
           {dbBadge}
 
-          {/* Test-database only — sync local DB from PROD */}
-          <SyncLocalButton enabled={canSyncLocal} />
-
-          {/* يجاوره لأنّهما خطوتان في عملٍ واحد: تُجلب نسخةُ الإنتاج، ثمّ تُخلى الطلباتُ
-              لتبدأ تجربةُ الترحيل من صفحةٍ بيضاء. نفس البوّابة — قاعدةُ الاختبار وحدها. */}
-          <WipeOrdersButton enabled={canSyncLocal} />
+          {/* أدوات التطوير — المزامنة والإخلاء في قائمةٍ واحدة، قاعدةُ الاختبار وحدها */}
+          <DevToolsMenu enabled={canSyncLocal} />
 
           {/* Unified notifications bell */}
           <NotificationsBell />

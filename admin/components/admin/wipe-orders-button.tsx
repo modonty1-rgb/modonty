@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eraser, Loader2, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -49,10 +48,7 @@ interface Inventory {
  *
  * `enabled` عرضٌ لا حماية — المسار نفسه يرفض أيّ قاعدةٍ غير `modonty_dev`.
  */
-export function WipeOrdersButton({ enabled }: { enabled: boolean }) {
-  if (!enabled) return null;
-
-  const [open, setOpen] = useState(false);
+export function WipeOrdersDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [inventory, setInventory] = useState<Inventory | null>(null);
   const [result, setResult] = useState<WipeResult | null>(null);
@@ -60,7 +56,7 @@ export function WipeOrdersButton({ enabled }: { enabled: boolean }) {
   const { toast } = useToast();
 
   async function handleOpenChange(o: boolean) {
-    setOpen(o);
+    onOpenChange(o);
     if (!o) {
       setPhase("idle");
       setInventory(null);
@@ -129,19 +125,6 @@ export function WipeOrdersButton({ enabled }: { enabled: boolean }) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      {/* أيقونة فقط، بنفس مقاس زرّ المزامنة الذي يجاوره. الحمرةُ تميّزه عنه: ذاك يجلب
-          بيانات، وهذا يمحوها — ولا يصحّ أن يتشابها في الشريط. */}
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          aria-label="Wipe orders and invoices from the test database"
-          title="إخلاء الطلبات والفواتير (قاعدة الاختبار فقط)"
-          className="inline-flex size-8 items-center justify-center rounded-md border border-red-500/30 bg-red-500/10 text-red-700 hover:bg-red-500/20 dark:text-red-400"
-        >
-          <Eraser className="size-4" aria-hidden />
-        </button>
-      </DialogTrigger>
-
       <DialogContent className="max-w-2xl">
         {phase === "idle" || phase === "loading" ? (
           <>
@@ -202,7 +185,7 @@ export function WipeOrdersButton({ enabled }: { enabled: boolean }) {
             ) : null}
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>
+              <Button variant="outline" onClick={() => handleOpenChange(false)}>
                 إلغاء
               </Button>
               <Button
@@ -337,7 +320,7 @@ export function WipeOrdersButton({ enabled }: { enabled: boolean }) {
               ) : phase === "done" ? (
                 <Button onClick={() => window.location.reload()}>تحديث الصفحة</Button>
               ) : (
-                <Button variant="outline" onClick={() => setOpen(false)}>
+                <Button variant="outline" onClick={() => handleOpenChange(false)}>
                   إغلاق
                 </Button>
               )}

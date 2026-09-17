@@ -1,23 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { Loader2, CheckCircle2, Video } from "lucide-react";
+import { useMemo, useState, useTransition } from "react";
+import { Loader2, Video } from "lucide-react";
 import { SubscriptionStatus } from "@prisma/client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-import { SyncButton } from "../../subscription-tiers/components/sync-button";
-import { SubscribersTable } from "../../subscription-tiers/components/subscribers-table";
 import { ClientsPageClient } from "./clients-page-client";
-import { TierDistribution } from "../../subscription-tiers/components/tier-distribution";
 import type { ClientForList } from "../actions/clients-actions/types";
 import { hasExternalIntroVideo, type StatusFilterKey } from "./client-table";
-import type { JbrseoSubscriberRow, WelcomeEmailStatus } from "../../subscription-tiers/helpers/jbrseo-queries";
-import { syncJbrseoSubscribersAction } from "../../subscription-tiers/actions/sync-subscribers";
 
 /** Status tab split into two segments: label | count, divided by a splitter.
  *  Same shape as the Articles status tabs. Count inverts colour when active. */
@@ -66,39 +58,34 @@ const STATUS_TABS: Array<{ key: StatusFilterKey; label: string }> = [
   { key: SubscriptionStatus.CANCELLED, label: "Cancelled" },
 ];
 
+/**
+ * سقط تبويبُ «مشترِكو jbrseo» (١٧ سبتمبر ٢٠٢٦) وبقي تبويبُ العملاء وحده.
+ *
+ * تكامُلُ جبر سيو أُلغي من أوّله، وظلّ التبويبُ يعرض ٢٧ صفّاً مرآةً لنظامٍ لم يعد
+ * يُستعمل — وفيه **بابُ ميلادٍ رابع** للعميل يتجاوز الطلبَ المدفوع (خالد ١٧ سبتمبر:
+ * «لغيناه من أوّل، فهذه سقطت في الجرد»).
+ *
+ * وسقط معه ما لم يكن إلّا له: مزامنةٌ تلقائيّة عند فتح التبويب · شريطُ حالتها ·
+ * `TierDistribution` (كان يُرسم في ذلك التبويب وحده) · و`clientByEmail` الذي لم
+ * يكن إلّا لإخفاء مَن صار عميلاً من قائمة التحويل.
+ *
+ * والغلافُ `Tabs` باقٍ: صفُّ مرشِّحات الحالة مبنيٌّ داخله.
+ */
 interface Props {
   clientsCount: number;
-  signupsCount: number;
-  signupsRows: JbrseoSubscriberRow[];
-  emailStatuses: Record<string, WelcomeEmailStatus>;
   clients: ClientForList[];
-  // email (lowercased) → client id, for ALL clients (filter-independent) — used to
-  // hide signups that are already clients from the to-convert list.
-  clientByEmail: Record<string, string>;
   defaultLogoUrl?: string | null;
-  tiers: React.ComponentProps<typeof TierDistribution>["tiers"];
 }
 
 export function ClientsTabs({
   clientsCount,
-  signupsCount,
-  signupsRows,
-  emailStatuses,
   clients,
-  clientByEmail,
   defaultLogoUrl,
-  tiers,
 }: Props) {
-  const router = useRouter();
-  const { toast } = useToast();
   const [tab, setTab] = useState("clients");
   const [statusFilter, setStatusFilter] = useState<StatusFilterKey>("ALL");
   const [externalVideoOnly, setExternalVideoOnly] = useState(false);
   const [isFiltering, startFilter] = useTransition();
-  const [autoSyncState, setAutoSyncState] = useState<"idle" | "running" | "done" | "failed">("idle");
-  const [syncSummary, setSyncSummary] = useState<{ total: number; created: number; updated: number; durationMs: number } | null>(null);
-  const firedOnce = useRef(false);
-  const [, startTransition] = useTransition();
 
   // Status counts over ALL clients (search-independent, like the Articles status tabs).
   const statusCounts = useMemo(() => {
@@ -124,34 +111,6 @@ export function ClientsTabs({
     startFilter(() => setStatusFilter(key));
   };
 
-  // Auto-fire sync the FIRST time the jbrseo Subscribers tab is opened (per page load)
-  useEffect(() => {
-    if (tab !== "signups" || firedOnce.current) return;
-    firedOnce.current = true;
-    setAutoSyncState("running");
-    startTransition(async () => {
-      const res = await syncJbrseoSubscribersAction();
-      if (res.ok) {
-        setAutoSyncState("done");
-        setSyncSummary({ total: res.total, created: res.created, updated: res.updated, durationMs: res.durationMs });
-        // ALWAYS show a toast so user knows sync ran, even when there are zero changes
-        toast({
-          title: res.created > 0 || res.updated > 0 ? "Auto-synced — new data pulled" : "Auto-synced — already up to date",
-          description: `${res.total} total · ${res.created} new · ${res.updated} updated · ${res.durationMs}ms`,
-        });
-        if (res.created > 0 || res.updated > 0) {
-          router.refresh();
-        }
-      } else {
-        setAutoSyncState("failed");
-        toast({
-          title: "Auto-sync failed",
-          description: res.error,
-          variant: "destructive",
-        });
-      }
-    });
-  }, [tab, router, toast]);
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
@@ -162,14 +121,6 @@ export function ClientsTabs({
             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted-foreground/15 tabular-nums font-bold">
               {clientsCount}
             </span>
-          </TabsTrigger>
-          <TabsTrigger value="signups" className="gap-2">
-            jbrseo Subscribers
-            {signupsCount > 0 && (
-              <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none bg-pink-500/20 text-pink-600 dark:text-pink-400">
-                {signupsCount}
-              </span>
-            )}
           </TabsTrigger>
         </TabsList>
 
@@ -207,34 +158,7 @@ export function ClientsTabs({
           </div>
         )}
 
-        {/* Distribution bar lives on the tab row (signups tab only) to save vertical space */}
-        {tab === "signups" && (
-          <div className="flex-1 min-w-[240px]">
-            <TierDistribution tiers={tiers} />
-          </div>
-        )}
 
-        {/* Compact inline sync status — sits on the tab row, no extra vertical space */}
-        {autoSyncState === "running" ? (
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            Syncing from jbrseo…
-          </span>
-        ) : autoSyncState === "done" && syncSummary ? (
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            {syncSummary.created > 0 || syncSummary.updated > 0
-              ? `+${syncSummary.created} new · ${syncSummary.updated} updated`
-              : "Up to date"}
-            <span className="text-muted-foreground font-normal">
-              · {syncSummary.total} subs · {syncSummary.durationMs}ms
-            </span>
-          </span>
-        ) : autoSyncState === "failed" ? (
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-600 dark:text-red-400">
-            Sync failed — use manual Sync
-          </span>
-        ) : null}
       </div>
 
       <TabsContent value="clients" className="mt-3">
@@ -258,26 +182,6 @@ export function ClientsTabs({
         </div>
       </TabsContent>
 
-      <TabsContent value="signups" className="mt-3">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div>
-              <h2 className="text-sm font-semibold">jbrseo Signups</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                People who signed up via jbrseo&apos;s pricing page · auto-synced on tab open
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <SyncButton />
-            </div>
-          </div>
-          <Card>
-            <CardContent className="pt-4">
-              <SubscribersTable rows={signupsRows} emailStatuses={emailStatuses} clientByEmail={clientByEmail} />
-            </CardContent>
-          </Card>
-        </div>
-      </TabsContent>
     </Tabs>
   );
 }
