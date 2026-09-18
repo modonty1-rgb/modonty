@@ -13,6 +13,7 @@ import { setActiveOrder } from "@/lib/orders/resolve-active-order";
 import { requireFinanceAdmin } from "@/lib/require-finance-admin";
 import { notifyPaymentReceived } from "@modonty/shared/lib/payments/notify-payment-received";
 import { sendInvoiceAction } from "@/lib/invoices/send-invoice-action";
+import { planInvoiceFromOrder, type InvoicePlanResult } from "./helpers/plan-invoice-from-order";
 
 /**
  * Read-only name lookup for the breadcrumb (see breadcrumb-actions.ts), same unguarded
@@ -91,19 +92,6 @@ export async function confirmOrderPaymentAction(orderId: string, form: FormData)
   revalidatePath(`/orders/${orderId}`);
 }
 
-/**
- * PAY-Q7: the invoice email is a human act too — a button on the order, after issuing.
- * Delegates to the shared send action (same email the client ledger sends) and surfaces
- * its error through the route's boundary.
- */
-export async function sendOrderInvoiceEmailAction(orderId: string): Promise<void> {
-  await requireFinanceAdmin();
-  const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { invoiceId: true } });
-  if (!order?.invoiceId) throw new Error("لا فاتورة لهذا الطلب بعد");
-  const result = await sendInvoiceAction(order.invoiceId);
-  if (!result.ok) throw new Error(result.error ?? "فشل إرسال الفاتورة");
-  revalidatePath(`/orders/${orderId}`);
-}
 
 /**
  * PAY-E6 / PAY-Q13: WhatsApp is a link a staff member clicks, not an API — the send itself
@@ -137,101 +125,85 @@ export async function getExistingClientForOrderEmail(orderId: string): Promise<{
  * else as "annual". A third format there is a defect, not a feature; paidMonths===1
  * is the same simplification PAY-E3 already made for the client form's billingCycle.
  */
-export async function createInvoiceFromOrderAction(orderId: string): Promise<void> {
+/** المرحلةُ الأولى: ما ستحمله الفاتورة — بلا كتابة. */
+export async function previewInvoiceFromOrderAction(orderId: string): Promise<InvoicePlanResult> {
+  await requireFinanceAdmin();
+  return planInvoiceFromOrder(orderId);
+}
+
+/**
+ * المرحلةُ الثانية: تُكتب الفاتورة.
+ *
+ * تُعيد حسابَ الخطّة عند الضغط لا تأخذها من الواجهة: النافذةُ قد تكون مفتوحةً منذ دقائق،
+ * وزميلٌ آخر قد يكون أصدر فاتورةً أو غيّر الطلب بينهما. فالحُرّاس تُفحص على القيمة
+ * المخزَّنة لا المعروضة — وهي نفسُها التي رُئيت، لأنّ المعاينة والإصدار حاسبٌ واحد.
+ */
+export async function createInvoiceFromOrderAction(orderId: string): Promise<{ ok: true; number: string } | { ok: false; error: string }> {
   await requireFinanceAdmin();
   const session = await auth();
   const userId = (session?.user as { id?: string } | undefined)?.id;
-  if (!userId) throw new Error("غير مصرح");
+  if (!userId) return { ok: false, error: "غير مصرح" };
 
-  const order = await db.checkoutOrder.findUnique({ where: { id: orderId } });
-  if (!order) throw new Error("الطلب غير موجود");
-  if (order.status !== "PAID") throw new Error("الطلب ليس مدفوعاً");
-  if (!order.clientId) throw new Error("أنشئ حساب العميل أولاً");
-  if (order.invoiceId) throw new Error("صدرت فاتورة لهذا الطلب مسبقاً");
-
-  const client = await db.client.findUnique({
-    where: { id: order.clientId },
-    select: { id: true, name: true, createdAt: true, subscriptionEndDate: true, subscriptionTierConfig: { select: { name: true } }, _count: { select: { invoices: true } } },
-  });
-  if (!client) throw new Error("العميل غير موجود");
-
-  /**
-   * أهذه الفاتورةُ توثيقٌ لدفعةٍ محسوبةٍ سلفاً، أم مالٌ جديد؟
-   *
-   * تقريرُ المبيعات نقديُّ الأساس: يعدّ **الطلبَ المدفوعَ الأوّل** لكلّ عميل إيراداً
-   * تأسيسيّاً (`get-sales-report.ts`). فالفاتورةُ الصادرةُ من ذلك الطلب نفسِه لا تحمل
-   * مالاً جديداً — تُوثّقه — وتُوسَم `fromOpeningBalance` كي لا يُعدّ المبلغُ مرّتين
-   * (قيس سابقاً: ٢٣٩٤ + ٢٣٩٤).
-   *
-   * وكان الشرطُ يقرأ `Client.openingBalance`، وسقط الحقل (١٧ سبتمبر ٢٠٢٦). فصار
-   * السؤالُ مباشراً: **أهذا هو طلبُ العميل المؤسِّس؟** — أوّلُ طلبٍ مدفوعٍ له بترتيب
-   * بدء الخدمة، وهو نفسُه الذي يعدّه التقرير. وطلبُ التجديد يأتي بعده فيبقى بلا وسم،
-   * لأنّه مالٌ جديدٌ فعلاً.
-   */
-  const founding = await db.checkoutOrder.findFirst({
-    where: { clientId: client.id, status: "PAID", totalMinor: { gt: 0 } },
-    orderBy: [{ serviceStartedAt: "asc" }, { createdAt: "asc" }],
-    select: { id: true },
-  });
-  const foundingInvoice = founding?.id === order.id && client._count.invoices === 0;
-  // The CLIENT's own tier, not order.planTier: PAY-E3 already resolved the checkout
-  // catalog's plan onto this client's real SubscriptionTierConfig tier (by name — the two
-  // catalogs' enum values don't match, e.g. "الانطلاقة" is BASIC on the order but STANDARD
-  // here). Using the order's raw enum would silently invoice a paying client as BASIC/free
-  // (Fable, 11 Sep).
-  // سقط الحارس: كان يمنع إصدار الفاتورة على عميلٍ بلا باقة — وهي الآن اختياريّة،
-  // واسمُ الباقة يأتي من الطلب نفسه (`order.planName`) لا من الكرت.
-
-  const blocking = await findBlockingUnpaidInvoice(client.id);
-  if (blocking) throw new Error(`فيه فاتورة غير مسدّدة (${blocking}) لهذا العميل — حدّدها مدفوعة أو أرشفها أولاً`);
-
-  const anchor = client.subscriptionEndDate ?? order.paidAt ?? new Date();
-  const totalMonths = order.paidMonths + order.bonusServiceMonths;
-  const subscriptionEnd = addMonths(anchor, totalMonths);
-  const period = order.paidMonths === 1 ? "monthly" : "annual";
+  const planned = await planInvoiceFromOrder(orderId);
+  if (!planned.ok) return planned;
+  const p = planned.plan;
 
   const number = await nextInvoiceNumber(new Date().getFullYear());
   const created = await db.invoice.create({
     data: {
       number,
-      clientId: client.id,
-      // `tier` لم يعد يُكتب — بلا قارئٍ واحد (مقيسٌ ١٧ سبتمبر). واسمُ الباقة من الطلب
-      // نفسه أوّلاً: هو ما دفع عليه العميل، لا ما يقوله كرتُه اليوم.
-      tierName: order.planName || client.subscriptionTierConfig?.name || "—",
-      period,
-      currency: order.currency,
-      amount: order.totalMinor / 100,
+      clientId: p.clientId,
+      // `tier` لم يعد يُكتب — بلا قارئٍ واحد (مقيسٌ ١٧ سبتمبر).
+      tierName: p.tierName,
+      period: p.period,
+      currency: p.currency,
+      amount: p.totalMinor / 100,
       paymentStatus: "PAID",
-      paidAt: order.paidAt,
-      subscriptionStart: anchor,
-      subscriptionEnd,
+      paidAt: (await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { paidAt: true } }))?.paidAt ?? null,
+      subscriptionStart: p.subscriptionStart,
+      subscriptionEnd: p.subscriptionEnd,
       issuedAt: new Date(),
       issuedByUserId: userId,
-      orderId: order.id,
-      subtotalMinor: order.subtotalMinor,
-      vatRateBp: order.vatRateBp,
-      vatMinor: order.vatMinor,
-      totalMinor: order.totalMinor,
-      paidMonths: order.paidMonths,
-      bonusServiceMonths: order.bonusServiceMonths,
-      fromOpeningBalance: foundingInvoice,
+      orderId: p.orderId,
+      subtotalMinor: p.subtotalMinor,
+      vatRateBp: p.vatRateBp,
+      vatMinor: p.vatMinor,
+      totalMinor: p.totalMinor,
+      paidMonths: p.paidMonths,
+      bonusServiceMonths: p.bonusServiceMonths,
+      fromOpeningBalance: p.foundingInvoice,
     },
     select: { id: true },
   });
 
   await db.checkoutOrder.update({ where: { id: orderId }, data: { invoiceId: created.id } });
-  await recomputeSubscriptionEnd(client.id);
+  await recomputeSubscriptionEnd(p.clientId);
 
   await logAction("invoice.create", {
     entity: "Invoice",
     entityId: created.id,
-    summary: `${number} · من الطلب ${order.number} · ${client.name ?? client.id}`,
-    metadata: { orderId: order.id, totalMinor: order.totalMinor, paidMonths: order.paidMonths, bonusServiceMonths: order.bonusServiceMonths, fromOpeningBalance: foundingInvoice },
+    summary: `${number} · من الطلب ${p.orderNumber} · ${p.clientName}`,
+    metadata: { orderId: p.orderId, totalMinor: p.totalMinor, paidMonths: p.paidMonths, bonusServiceMonths: p.bonusServiceMonths, fromOpeningBalance: p.foundingInvoice },
   });
 
   revalidatePath("/orders");
   revalidatePath(`/orders/${orderId}`);
-  revalidatePath(`/clients/${client.id}/account`);
+  revalidatePath(`/clients/${p.clientId}/account`);
   revalidatePath("/clients/accounts");
   revalidatePath("/");
+  return { ok: true, number };
+}
+
+/**
+ * إرسالُ فاتورةٍ صدرت — يُستدعى من صفحة الطلب لا من صفحة الفاتورة (خالد ١٨ سبتمبر ٢٠٢٦:
+ * «صفحة الإصدار للإصدار بس، والإرسال من صفحة الأوردر عشان أعمل كنترول كامل»).
+ * وبأثرٍ غير مُسقِط: الفاتورةُ مكتوبة، وفشلُ البريد لا يُلغيها.
+ */
+export async function sendInvoiceForOrderAction(orderId: string): Promise<{ ok: boolean; error?: string }> {
+  await requireFinanceAdmin();
+  const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { invoiceId: true } });
+  if (!order?.invoiceId) return { ok: false, error: "لا فاتورة لهذا الطلب بعد" };
+  const result = await sendInvoiceAction(order.invoiceId);
+  revalidatePath(`/orders/${orderId}`);
+  return result.ok ? { ok: true } : { ok: false, error: result.error ?? "فشل إرسال الفاتورة" };
 }

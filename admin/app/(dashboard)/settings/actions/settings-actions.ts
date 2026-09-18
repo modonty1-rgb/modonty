@@ -159,6 +159,9 @@ export interface SiteOrgSettings {
   orgContactType: string | null;
   orgContactEmail: string | null;
   orgContactTelephone: string | null;
+  /** تواصلُ المبيعات — يُطبع على الفاتورة، وفارغاً يرجع لتواصل المنشأة. */
+  salesPhone: string | null;
+  salesEmail: string | null;
   orgContactAvailableLanguage: string | null;
   orgContactOption: string | null;
   orgContactHoursAvailable: string | null;
@@ -268,6 +271,8 @@ const DEFAULT_SETTINGS: AllSettings = {
   orgContactType: null,
   orgContactEmail: null,
   orgContactTelephone: null,
+  salesPhone: null,
+  salesEmail: null,
   orgContactAvailableLanguage: null,
   orgContactOption: null,
   orgContactHoursAvailable: null,
@@ -471,6 +476,8 @@ export async function getAllSettings(): Promise<AllSettings> {
         orgContactType: newSettings.orgContactType,
         orgContactEmail: newSettings.orgContactEmail,
         orgContactTelephone: newSettings.orgContactTelephone,
+        salesPhone: newSettings.salesPhone,
+        salesEmail: newSettings.salesEmail,
         orgContactAvailableLanguage: (newSettings as { orgContactAvailableLanguage?: string | null }).orgContactAvailableLanguage ?? null,
         orgContactOption: (newSettings as { orgContactOption?: string | null }).orgContactOption ?? null,
         orgContactHoursAvailable: (newSettings as { orgContactHoursAvailable?: string | null }).orgContactHoursAvailable ?? null,
@@ -621,6 +628,8 @@ export async function getAllSettings(): Promise<AllSettings> {
       orgContactType: settings.orgContactType,
       orgContactEmail: settings.orgContactEmail,
       orgContactTelephone: settings.orgContactTelephone,
+      salesPhone: settings.salesPhone,
+      salesEmail: settings.salesEmail,
       orgContactAvailableLanguage: (settings as { orgContactAvailableLanguage?: string | null }).orgContactAvailableLanguage ?? null,
       orgContactOption: (settings as { orgContactOption?: string | null }).orgContactOption ?? null,
       orgContactHoursAvailable: (settings as { orgContactHoursAvailable?: string | null }).orgContactHoursAvailable ?? null,
@@ -1078,6 +1087,10 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           orgContactType: data.orgContactType,
           orgContactEmail: data.orgContactEmail,
           orgContactTelephone: data.orgContactTelephone,
+          // تواصلُ المبيعات — يُطبع على الفاتورة. حقلٌ لا يُذكر هنا يُحفظ في الواجهة
+          // ويسقط في القاعدة بلا رسالةِ خطأ: النموذج يقول «حُفظ» والقيمة لا تصل.
+          salesPhone: data.salesPhone,
+          salesEmail: data.salesEmail,
           orgContactAvailableLanguage: data.orgContactAvailableLanguage,
           orgContactOption: data.orgContactOption,
           orgContactHoursAvailable: data.orgContactHoursAvailable,

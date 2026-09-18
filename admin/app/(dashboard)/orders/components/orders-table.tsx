@@ -167,7 +167,31 @@ const COLUMNS: Column<OrderRow>[] = [
   },
 ];
 
-export function OrdersTable({ rows, emptyText }: { rows: OrderRow[]; emptyText: string }) {
+/**
+ * إجماليُّ المعروض — بكلّ عملةٍ على حدة، ولا يُجمع ريالٌ على جنيه أبداً (قاعدة المال).
+ * يتغيّر بتغيّر التوغل لأنّه محسوبٌ على مجموعةِ الصفوف نفسِها التي جلبها الفلتر.
+ */
+export interface CurrencyTotal {
+  currency: string;
+  market: string;
+  label: string;
+}
+
+function TableTotals({ totals }: { totals: CurrencyTotal[] }) {
+  return (
+    <div className="flex items-stretch overflow-hidden rounded-md border bg-card">
+      {totals.map((t, i) => (
+        <div key={t.currency} className={`flex min-w-[92px] flex-col items-center px-3 py-1 ${i > 0 ? "border-s" : ""}`}>
+          {/* اسمُ البلد ترويسةً فوق الرقم — وهو يقول العملة، فلا تُكتب (خالد ١٨ سبتمبر). */}
+          <span className="text-[9.5px] leading-none text-muted-foreground">{t.market}</span>
+          <span className="mt-1 text-[15px] font-bold leading-none tabular-nums">{t.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function OrdersTable({ rows, emptyText, totals }: { rows: OrderRow[]; emptyText: string; totals: CurrencyTotal[] }) {
   // عمودُ «فعّل» يظهر حين يوجد ما يُفعَّل فقط — وإلّا بقي عموداً فارغاً يوحي بشيءٍ
   // مخفيّ (خالد ١٨ سبتمبر: «فيه حقل بعد البوابة ماني شايفه»).
   const columns = rows.some((r) => r.activatable) ? COLUMNS : COLUMNS.filter((c) => c.key !== "actions");
@@ -177,6 +201,7 @@ export function OrdersTable({ rows, emptyText }: { rows: OrderRow[]; emptyText: 
       columns={columns}
       searchKey="buyerName"
       searchPlaceholder="ابحث باسم العميل"
+      toolbar={<TableTotals totals={totals} />}
       pageSize={10}
       emptyText={emptyText}
       // خطٌّ أصغر درجة (12px) وأيقونةُ الفرز أصغر: ثلاثة عشر عموداً على ١٢٨٠ بلا تمرير.

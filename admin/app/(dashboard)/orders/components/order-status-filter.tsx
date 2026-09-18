@@ -69,7 +69,7 @@ export function OrderStatusFilter({
 function Group({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="ps-1 text-[9.5px] font-bold leading-none text-muted-foreground">{label}</span>
+      <span className="ps-1 text-[9.5px] font-medium leading-none text-muted-foreground">{label}</span>
       <div className="flex items-center gap-0.5 rounded-md border border-border/70 bg-muted/30 p-0.5">{children}</div>
     </div>
   );
@@ -85,7 +85,9 @@ function Pill({ href, label, count, isActive, tone }: { href: string; label: str
       aria-selected={isActive}
       className={cn(
         // أصغر (خالد ١٨ سبتمبر): 10px وحشوٌ أضيق — أربع عشرة حبّة في صفّ العنوان.
-        "inline-flex items-center overflow-hidden rounded-full border bg-card text-[10px] font-medium leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        // بلا بولد (خالد ١٨ سبتمبر): الوزنُ الثقيل على أربع عشرة حبّةٍ يجعل الصفَّ كلَّه
+        // يصرخ، فلا يبرز النشطُ منها. اللونُ وحده يميّز.
+        "inline-flex items-center overflow-hidden rounded-full border bg-card text-[10px] font-normal leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         isActive
           ? "border-primary"
           : alert
@@ -105,7 +107,7 @@ function Pill({ href, label, count, isActive, tone }: { href: string; label: str
       </span>
       <span
         className={cn(
-          "border-s px-1 py-1 font-bold tabular-nums",
+          "border-s px-1 py-1 tabular-nums",
           isActive
             ? "border-primary-foreground/30 bg-primary-foreground text-primary"
             : alert

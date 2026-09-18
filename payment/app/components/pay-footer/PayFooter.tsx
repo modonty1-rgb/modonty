@@ -16,7 +16,7 @@ import { SocialRow } from "../social-row/SocialRow";
  */
 export async function PayFooter() {
   const [{ siteName, socials }, legal] = await Promise.all([getSiteChrome(), getSellerLegal()]);
-  const wa = salesWhatsapp();
+  const wa = await salesWhatsapp();
 
   return (
     <footer className="mt-14 border-t border-border/60 bg-card/30">

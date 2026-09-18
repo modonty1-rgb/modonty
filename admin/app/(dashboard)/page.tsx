@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getDashboardAlerts } from "./actions/dashboard-actions";
 import { DashboardAlertsBanner } from "./components/dashboard-alerts-banner";
 import { AwaitingActivationCard } from "./components/awaiting-activation-card";
+import { RenewalsDueCard } from "./components/renewals-due-card";
 import { DashboardNav } from "./components/dashboard-nav";
 import { PlatformSeoOverall } from "./components/sections/platform-seo-overall";
 import { TodayStrip } from "./components/sections/today-strip";
@@ -62,6 +63,13 @@ export default async function DashboardPage() {
           دفع ولم يأخذ شيئاً بعد. يختفي تماماً حين لا ينتظر أحد (ACTIVATION-FLOW §1). */}
       <Suspense fallback={<Skeleton className="h-[74px] w-full rounded-2xl" />}>
         <AwaitingActivationCard />
+      </Suspense>
+
+      {/* الطرفُ الآخر من الدائرة: اشتراكٌ انتهى ولم يُجدَّد — خدمةٌ تُقدَّم بلا مقابل.
+          تحت بطاقة التفعيل لأنّ «دفع ولم يأخذ» أسبقُ من «أخذ ولم يدفع الجديد».
+          وتختفي حين لا يستحقّ أحد. */}
+      <Suspense fallback={<Skeleton className="h-[74px] w-full rounded-2xl" />}>
+        <RenewalsDueCard />
       </Suspense>
 
       {/* The seven modonty listing pages — meta + JSON-LD + their link to Settings.

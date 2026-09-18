@@ -137,6 +137,8 @@ export type OrderPrefill = {
   buyerPhone: string;
   market: "SA" | "EG";
   salesRepId: string;
+  /** الباقةُ المختارة سلفاً — يملؤها التجديد من الطلب السابق؛ والمبلغُ لا يُنسخ. */
+  planId?: string;
 };
 
 export function ManualOrderForm({
@@ -153,7 +155,10 @@ export function ManualOrderForm({
   const [pending, startTransition] = useTransition();
 
   const [market, setMarket] = useState<MarketKey>(prefill?.market ?? "SA");
-  const [planId, setPlanId] = useState(data.plans[0]?.id ?? "");
+  // باقةُ التجديد إن كانت ما تزال في الكتالوج — وإلّا فأوّل باقةٍ منشورة.
+  const [planId, setPlanId] = useState(
+    (prefill?.planId && data.plans.some((p) => p.id === prefill.planId) ? prefill.planId : data.plans[0]?.id) ?? "",
+  );
   const [paidMonths, setPaidMonths] = useState(
     data.terms.find((t) => t.isRecommended)?.paidMonths ?? data.terms[0]?.paidMonths ?? 1,
   );

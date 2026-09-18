@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { setActiveOrder } from "./resolve-active-order";
+import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 
 /**
  * Writes CheckoutOrder.clientId only — createClient() itself is never edited (PAY-E3),
@@ -35,12 +36,24 @@ export async function linkOrderToClient(orderId: string, clientId: string): Prom
   if (!order) throw new Error("الطلب غير موجود");
   if (order.clientId) throw new Error("الطلب مربوط بعميل مسبقاً");
 
-  await db.checkoutOrder.update({ where: { id: orderId }, data: { clientId } });
+  /**
+   * `activatedAt` يُكتب هنا أيضاً — والتجديدُ يمرّ من هذا الباب لا من التفعيل.
+   *
+   * كان يُكتب على الكرت في التأسيس وحده، فطلبُ التجديد يُربط بلا تاريخ تفعيل، فيخرج
+   * بشرطةٍ في عمود «التفعيل» ولا يُحسب حالُ اشتراكه — فلا يظهر في «منتهٍ» حين تنقضي
+   * مدّتُه، وهو الطلبُ الذي يحكم العميلَ الآن (`setActiveOrder` أدناه).
+   *
+   * ويومُ الربط هو يومُ بدء هذه الدورة فعلاً: المالُ وصل قبله، والخدمةُ تبدأ به.
+   */
+  await db.checkoutOrder.update({ where: { id: orderId }, data: { clientId, activatedAt: new Date() } });
 
   // The pointer moves with the link: this order is now the deal that governs the client
   // (MONEY-FLOW §4). A renewal linked later overwrites it, which is exactly the intent —
   // the newest deal governs, and the older ones stay in the list at their own prices.
   await setActiveOrder(clientId, orderId);
+
+  // والتجديدُ يمدّ المدّة: تُعاد من الطلبات كلّها فيُؤخذ أبعدُها، فلا يقصّر تجديدٌ اشتراكاً.
+  await recomputeSubscriptionEnd(clientId);
 
   revalidatePath("/orders");
   revalidatePath(`/clients/${clientId}`);

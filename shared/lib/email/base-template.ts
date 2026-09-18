@@ -1,6 +1,6 @@
 import { EMAIL_BRAND_AR, EMAIL_COLORS } from "./email-theme";
 import { emailHeader } from "./parts/email-header";
-import { emailFooter } from "./parts/email-footer";
+import { emailFooter, type EmailFooterOptions } from "./parts/email-footer";
 
 const { lightGray, border } = EMAIL_COLORS;
 
@@ -12,7 +12,12 @@ const { lightGray, border } = EMAIL_COLORS;
  * email carries it by construction. The previous design handed the footer to the caller as
  * an optional third argument — and 9 of 10 templates never passed it (MAILREV, 23 Aug).
  */
-export async function baseTemplate(content: string, previewText = ""): Promise<string> {
+export async function baseTemplate(
+  content: string,
+  previewText = "",
+  /** يُمرَّر للفوتر — قالبٌ يحمل سطرَ تواصلٍ خاصّاً به يطفئ سطرَ الفوتر العامّ. */
+  footer: EmailFooterOptions = {},
+): Promise<string> {
   return `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -40,7 +45,7 @@ export async function baseTemplate(content: string, previewText = ""): Promise<s
           </tr>
 
           <!-- FOOTER -->
-          ${await emailFooter()}
+          ${await emailFooter(footer)}
 
         </table>
       </td>

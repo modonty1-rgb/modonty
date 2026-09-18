@@ -15,8 +15,8 @@ import { salesWhatsapp } from "@/lib/sales-whatsapp";
  * ولا يُرسم إن لم يُضبط `NEXT_PUBLIC_SALES_WHATSAPP`: زرٌّ عائمٌ يفتح محادثةً مع لا أحد
  * أسوأ من غيابه، لأنه يَعِد بإنسانٍ في أكثر لحظةٍ يحتاجه فيها المشتري.
  */
-export function WhatsappFab({ text }: { text?: string }) {
-  const wa = salesWhatsapp();
+export async function WhatsappFab({ text }: { text?: string }) {
+  const wa = await salesWhatsapp();
   if (!wa) return null;
 
   const href = text ? `${wa.href}?text=${encodeURIComponent(text)}` : wa.href;

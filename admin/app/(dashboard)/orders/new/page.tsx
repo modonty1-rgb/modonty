@@ -16,10 +16,10 @@ export const dynamic = "force-dynamic";
  * إعادة إدخال **العملاء القائمين** بتواريخهم ومبالغهم القديمة حتى يصير للجميع
  * سجلٌّ واحد. وذلك عملٌ يُراجَع قبل الحفظ، والحوار يضيق به ويُقفل بالخطأ.
  */
-export default async function NewOrderPage({ searchParams }: { searchParams: Promise<{ leadId?: string }> }) {
+export default async function NewOrderPage({ searchParams }: { searchParams: Promise<{ leadId?: string; renewFrom?: string }> }) {
   await requireFinanceAdmin();
-  const { leadId } = await searchParams;
-  const [data, lead] = await Promise.all([
+  const { leadId, renewFrom } = await searchParams;
+  const [data, lead, previous] = await Promise.all([
     loadOrderFormData(),
     // تعبئةُ الهويّة من العميل المحتمَل — لا المال. المبلغ يكتبه الموظّف بما اتُّفق عليه
     // فعلاً، و`expectedMonthly` على المحتمَل تقديرُ خطٍّ لا مبلغٌ مقبوض.
@@ -27,6 +27,19 @@ export default async function NewOrderPage({ searchParams }: { searchParams: Pro
       ? db.salesLead.findUnique({
           where: { id: leadId },
           select: { id: true, name: true, company: true, email: true, phone: true, countryCode: true, ownerId: true, createdById: true, convertedClientId: true },
+        })
+      : Promise.resolve(null),
+    /**
+     * التجديد: طلبٌ جديد بهويّة الطلب المنتهي وباقته (خالد ١٨ سبتمبر ٢٠٢٦).
+     *
+     * كان التجديد يعني كتابةَ كلّ شيءٍ من جديد ثمّ «ربط بالعميل القائم» — خطواتٌ تُنسى،
+     * فيبقى المنتهي منتهياً. والهويّةُ والباقةُ تُنسخان، أمّا **المبلغُ فلا**: السعرُ
+     * يتغيّر بين دورةٍ وأخرى، ونسخُه يجعل التجديدَ يبيع بسعر أمس.
+     */
+    renewFrom
+      ? db.checkoutOrder.findUnique({
+          where: { id: renewFrom },
+          select: { number: true, buyerName: true, businessName: true, buyerEmail: true, buyerPhone: true, market: true, planId: true, salesRepId: true, clientId: true },
         })
       : Promise.resolve(null),
   ]);
@@ -42,12 +55,14 @@ export default async function NewOrderPage({ searchParams }: { searchParams: Pro
           كل الطلبات
         </Link>
         <h1 className="text-xl font-semibold">
-          {lead ? `اشتراك — ${lead.company || lead.name}` : "اشتراك جديد"}
+          {lead ? `اشتراك — ${lead.company || lead.name}` : previous ? `تجديد — ${previous.businessName || previous.buyerName}` : "اشتراك جديد"}
         </h1>
         <p className="mt-0.5 text-xs text-muted-foreground">
           {lead
             ? "من عميلٍ محتمَل. الهويّة معبّأة منه — والمبلغ تكتبه بما اتُّفق عليه فعلاً."
-            : "نفس الطلب الذي تكتبه صفحة الدفع — بيدك."}
+            : previous
+              ? `تجديدٌ للطلب ${previous.number}. الهويّة والباقة معبّأتان — والمبلغ تكتبه بسعر اليوم.`
+              : "نفس الطلب الذي تكتبه صفحة الدفع — بيدك."}
         </p>
       </header>
 
@@ -64,7 +79,17 @@ export default async function NewOrderPage({ searchParams }: { searchParams: Pro
           data={data}
           leadId={lead && !lead.convertedClientId ? lead.id : undefined}
           prefill={
-            lead && !lead.convertedClientId
+            previous
+              ? {
+                  buyerName: previous.buyerName,
+                  businessName: previous.businessName ?? "",
+                  buyerEmail: previous.buyerEmail,
+                  buyerPhone: previous.buyerPhone,
+                  market: previous.market === "EG" ? "EG" : "SA",
+                  salesRepId: previous.salesRepId ?? "",
+                  planId: previous.planId ?? "",
+                }
+              : lead && !lead.convertedClientId
               ? {
                   buyerName: lead.name,
                   businessName: lead.company ?? "",

@@ -53,6 +53,12 @@ export interface InvoiceEmailParams {
   qrCid?: string;
   /** ما وُعد به المشتري، من لقطة الطلب — لا من الكتالوج الحيّ (PAY-E5). */
   commitments?: string[];
+  /**
+   * تواصلُ المبيعات — من `Settings.salesPhone`/`salesEmail` (خالد ١٨ سبتمبر ٢٠٢٦).
+   * كان الرقمُ مكتوباً بنصّه هنا، فيُغيَّر في الإعدادات ويبقى القديمُ في كلّ فاتورة تُرسَل.
+   */
+  salesPhone?: string | null;
+  salesEmail?: string | null;
 }
 
 /** Arabic month names, Arabic digits — an `en-GB` date inside an RTL cell read backwards. */
@@ -118,6 +124,10 @@ export async function invoiceEmail(p: InvoiceEmailParams): Promise<EmailContent>
     ? invoiceLine({
         title: `اشتراك باقة «${p.tierName}»`,
         durationLabel: serviceLabel(t),
+        // الكمّيّة والسعر كما تطلبهما الهيئة — والسعرُ مشتقٌّ من الصافي ÷ الأشهر المدفوعة،
+        // فلا يوجد حقلٌ ثانٍ لسعر الشهر يفترق عن الإجمالي أوّلَ خصم.
+        qty: t.paidMonths === 1 ? "شهر واحد" : `${t.paidMonths} أشهر`,
+        unitPrice: money(t.paidMonths > 0 ? t.subtotal / t.paidMonths : t.subtotal, p.currency, 2),
         commitments: p.commitments ?? [],
         periodLabel: period,
         net: money(t.subtotal, p.currency, 2),
@@ -136,7 +146,10 @@ export async function invoiceEmail(p: InvoiceEmailParams): Promise<EmailContent>
 
   const content = `
     ${invoiceHero({
+      // عنوانٌ بلغتين: المستند الضريبيّ السعوديّ يُقرأ محلّيّاً ودوليّاً، والعنوان الإنجليزيّ
+      // تحته عرفٌ ثابت في فواتير المملكة — ولا يزاحم العربيّ لأنّه أصغر منه.
       title: isTax ? "فاتورة ضريبية" : "فاتورة",
+      titleEn: isTax ? "Tax Invoice" : "Invoice",
       invoiceNumber: p.invoiceNumber,
       orderNumber: t?.orderNumber ?? null,
       issuedAtLabel: isTax
@@ -151,7 +164,7 @@ export async function invoiceEmail(p: InvoiceEmailParams): Promise<EmailContent>
     ${body}
     ${p.qrCid ? invoiceQr(p.qrCid) : ""}
     ${divider()}
-    ${invoiceContact("0560299034", "modonty@modonty.com")}
+    ${p.salesPhone || p.salesEmail ? invoiceContact(p.salesPhone ?? "", p.salesEmail ?? "") : ""}
   `;
 
   const textLines = [
@@ -167,6 +180,8 @@ export async function invoiceEmail(p: InvoiceEmailParams): Promise<EmailContent>
     isTax ? `تاريخ ووقت الإصدار: ${dateTimeFmt.format(p.issuedAt)}` : `${paid ? "تاريخ الدفع" : "تاريخ الإصدار"}: ${dateFmt.format(p.issuedAt)}`,
     p.commitments?.length ? ["يشمل الاشتراك:", ...p.commitments.map((c) => `  · ${c}`)].join("\n") : null,
     t ? `البند: اشتراك باقة «${p.tierName}» — ${serviceLabel(t)}` : `الباقة: ${p.tierName} (${p.periodLabel})`,
+    // نفسُ حقول الجدول في النسخة النصّيّة: عميلُ بريدٍ يقرؤها وحدها يجب ألّا ينقصه حقلٌ ملزِم.
+    t ? `الكمّيّة: ${t.paidMonths === 1 ? "شهر واحد" : `${t.paidMonths} أشهر`} · سعر الوحدة: ${money(t.paidMonths > 0 ? t.subtotal / t.paidMonths : t.subtotal, p.currency, 2)}` : null,
     p.paymentMethodLabel ? `طريقة الدفع: ${p.paymentMethodLabel}` : null,
     p.subscriptionStart ? `بداية الاشتراك: ${dateFmt.format(p.subscriptionStart)}` : null,
     p.subscriptionEnd ? `نهاية الاشتراك: ${dateFmt.format(p.subscriptionEnd)}` : null,
@@ -176,14 +191,22 @@ export async function invoiceEmail(p: InvoiceEmailParams): Promise<EmailContent>
     `${isTax ? "الإجمالي شامل الضريبة" : "الإجمالي"}: ${money(t ? t.total : p.amount, p.currency, isTax ? 2 : 0)}`,
     "",
     "شكراً لتعاملك مع مُدَوَّنَتِي.",
-    "لأي استفسار عن الفاتورة: جوال 0560299034 · بريد modonty@modonty.com",
+    p.salesPhone || p.salesEmail
+      ? `لأي استفسار عن الفاتورة: ${[p.salesPhone ? `جوال ${p.salesPhone}` : null, p.salesEmail ? `بريد ${p.salesEmail}` : null].filter(Boolean).join(" · ")}`
+      : null,
     "",
     "— فريق مُدَوَّنَتِي",
   ].filter((line): line is string => line !== null);
 
   return {
     subject: `${isTax ? "فاتورة ضريبية" : "فاتورة"} ${p.invoiceNumber} — مُدَوَّنَتِي`,
-    html: await baseTemplate(content, `${isTax ? "فاتورة ضريبية" : "فاتورة"} ${p.invoiceNumber} بقيمة ${money(t ? t.total : p.amount, p.currency, isTax ? 2 : 0)}`),
+    // `contact: false`: الفاتورة تحمل سطرَ تواصلها («سؤال عن الفاتورة؟» بهاتفٍ وبريد)،
+    // فسطرُ الفوتر العامّ يكرّر نفس البريد سطراً متلاصقاً به.
+    html: await baseTemplate(
+      content,
+      `${isTax ? "فاتورة ضريبية" : "فاتورة"} ${p.invoiceNumber} بقيمة ${money(t ? t.total : p.amount, p.currency, isTax ? 2 : 0)}`,
+      { contact: false },
+    ),
     text: textLines.join("\n"),
   };
 }

@@ -34,36 +34,52 @@ const { navy, blue, gray, lightGray, border } = EMAIL_COLORS;
  * كل شيء جداول وأنماط داخلية: لا فليكس ولا شبكة ولا ورقة أنماط — نصف عملاء البريد
  * يُسقطونها.
  */
-export async function emailFooter(): Promise<string> {
+export interface EmailFooterOptions {
+  /**
+   * سطرُ «سؤال أو ملاحظة؟». يُطفأ في قالبٍ يحمل سطرَ تواصلٍ خاصّاً به — الفاتورة تكتب
+   * «سؤال عن الفاتورة؟» بهاتفها وبريدها، فيجيء الفوترُ بعده بنفس البريد سطراً ثانياً
+   * متلاصقاً (خالد ١٨ سبتمبر ٢٠٢٦: «الفوتر محتاج تنسيق»). عنوانٌ واحد يُكتب مرّتين
+   * متتاليتين لا يُقرأ تأكيداً، يُقرأ إهمالاً.
+   */
+  contact?: boolean;
+}
+
+export async function emailFooter(options: EmailFooterOptions = {}): Promise<string> {
+  const { contact = true } = options;
   const legalHtml = (await getLegalFooterHtml()) ?? EMAIL_LEGAL_FALLBACK_HTML;
   const host = EMAIL_SITE_URL.replace(/^https?:\/\//, "");
   const year = new Date().getFullYear();
 
   const link = (href: string, text: string) =>
-    `<a href="${href}" style="display:inline-block;padding:4px 2px;color:${blue};text-decoration:none;">${text}</a>`;
+    `<a href="${href}" style="display:inline-block;padding:5px 4px;color:${blue};text-decoration:none;">${text}</a>`;
+
+  /** فاصلٌ بين الروابط — نقطةٌ باهتة لا تُقرأ حرفاً، ومساحةٌ تكفي إصبعاً على الجوّال. */
+  const dot = `<span style="color:#c9c9d4;">&nbsp;&nbsp;·&nbsp;&nbsp;</span>`;
 
   return `<tr>
-            <td style="background-color:${lightGray};padding:22px 32px 18px;border-top:1px solid ${border};text-align:center;">
+            <td style="background-color:${lightGray};padding:${contact ? "22px" : "18px"} 32px 18px;border-top:1px solid ${border};text-align:center;">
 
-              <p style="margin:0 0 10px;font-size:12.5px;line-height:1.8;color:${gray};">
+              ${
+                contact
+                  ? `<p style="margin:0 0 12px;font-size:12.5px;line-height:1.8;color:${gray};">
                 سؤال أو ملاحظة؟ راسلنا على
                 <a href="mailto:${EMAIL_CONTACT_ADDRESS}" style="color:${blue};text-decoration:none;font-weight:bold;">${EMAIL_CONTACT_ADDRESS}</a>
-              </p>
+              </p>`
+                  : ""
+              }
 
-              <p style="margin:0 0 4px;font-size:12.5px;color:${navy};font-weight:bold;">${EMAIL_BRAND_AR}</p>
+              <p style="margin:0 0 2px;font-size:13px;color:${navy};font-weight:bold;letter-spacing:.01em;">${EMAIL_BRAND_AR}</p>
               <p style="margin:0;font-size:12px;color:${gray};">
-                ${link(EMAIL_SITE_URL, host)}
-                <span style="color:${border};">&nbsp;·&nbsp;</span>
-                ${link(`${EMAIL_SITE_URL}/privacy`, "سياسة الخصوصية")}
-                <span style="color:${border};">&nbsp;·&nbsp;</span>
-                ${link(`${EMAIL_SITE_URL}/terms`, "الشروط والأحكام")}
+                ${link(EMAIL_SITE_URL, host)}${dot}${link(`${EMAIL_SITE_URL}/privacy`, "سياسة الخصوصية")}${dot}${link(`${EMAIL_SITE_URL}/terms`, "الشروط والأحكام")}
               </p>
 
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:14px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 0;">
                 <tr>
-                  <td style="border-top:1px solid ${border};padding:16px 0 0;text-align:center;">
-                    <p style="margin:0;font-size:10.5px;color:#9a9aa8;line-height:1.8;">${legalHtml}</p>
-                    <p style="margin:12px 0 0;font-size:10.5px;color:#9a9aa8;">© ${year} ${EMAIL_BRAND_AR} — جميع الحقوق محفوظة</p>
+                  <td style="border-top:1px solid ${border};padding:14px 0 0;text-align:center;">
+                    <!-- السجلّ النظاميّ: line-height ٢٫١ — سطران قانونيّان بفواصل كثيرة
+                         يُقرآن كتلةً رماديّة لو تلاصقا؛ التنفّسُ يجعلهما يُمسحان بالعين. -->
+                    <p style="margin:0;font-size:10.5px;color:#9a9aa8;line-height:2.1;">${legalHtml}</p>
+                    <p style="margin:10px 0 0;font-size:10px;color:#b4b4c0;">© ${year} ${EMAIL_BRAND_AR} — جميع الحقوق محفوظة</p>
                   </td>
                 </tr>
               </table>

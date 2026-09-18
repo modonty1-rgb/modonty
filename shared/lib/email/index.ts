@@ -2,7 +2,7 @@ export { baseTemplate } from "./base-template";
 export { getLegalFooterHtml } from "./get-legal-footer-html";
 export { EMAIL_BRAND_AR, EMAIL_COLORS, EMAIL_CONTACT_ADDRESS, EMAIL_SITE_URL } from "./email-theme";
 export { emailHeader } from "./parts/email-header";
-export { emailFooter } from "./parts/email-footer";
+export { emailFooter, type EmailFooterOptions } from "./parts/email-footer";
 export { ctaButton } from "./parts/cta-button";
 export { divider } from "./parts/divider";
 export { heading } from "./parts/heading";

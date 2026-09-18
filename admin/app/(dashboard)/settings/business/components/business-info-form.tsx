@@ -31,6 +31,8 @@ function GroupHeader({ icon, title, note, tone }: { icon: string; title: string;
 // out of the Modonty Homepage form into its own settings area. Saves ONLY these fields.
 const BUSINESS_FIELDS = [
   "orgContactEmail", "orgContactTelephone",
+  // تواصلُ المبيعات — يُطبع على الفاتورة، ويرجع لتواصل المنشأة حين يُترك فارغاً.
+  "salesPhone", "salesEmail",
   "orgStreetAddress", "orgAddressNeighborhood", "orgAddressLocality", "orgAddressRegion", "orgPostalCode",
   "orgAddressCountry", "orgGeoLatitude", "orgGeoLongitude",
   "googleBusinessProfileUrl",
@@ -99,6 +101,21 @@ export function BusinessInfoForm({ initialSettings }: Props) {
           <p className="text-[11px] text-muted-foreground">
             Hours: always 24/7 (online platform) — emitted automatically as round-the-clock structured data.
           </p>
+        </div>
+
+        {/* Sales — printed on every invoice («سؤال عن الفاتورة؟»). Separate from the
+            Organization contactPoint above: that one is public structured data for every
+            visitor; this one answers someone holding an invoice. Empty falls back to it. */}
+        <div className="space-y-3">
+          <GroupHeader icon="🧾" title="Sales" note="printed on invoices" tone="bg-emerald-500/10 text-emerald-600" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Sales email" hint="falls back to the contact email">
+              <Input type="email" value={settings.salesEmail ?? ""} onChange={(e) => set("salesEmail", e.target.value)} placeholder="modonty@modonty.com" />
+            </Field>
+            <Field label="Sales phone" hint="falls back to the contact phone">
+              <Input value={settings.salesPhone ?? ""} onChange={(e) => set("salesPhone", e.target.value)} placeholder="+966560299034" />
+            </Field>
+          </div>
         </div>
 
         {/* Address */}

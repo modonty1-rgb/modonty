@@ -24,6 +24,13 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
+/** نهايةُ الاشتراك = يومُ التفعيل + الشهور — نفسُ صيغة `recompute-subscription-end.ts`. */
+function addMonthsTo(from: Date, months: number): Date {
+  const d = new Date(from);
+  d.setMonth(d.getMonth() + months);
+  return d;
+}
+
 function refuseIfNotDev(): Response | null {
   const url = process.env.DATABASE_URL;
   if (!url) return Response.json({ error: "DATABASE_URL is not set" }, { status: 500 });
@@ -60,6 +67,8 @@ function monthsForCycle(cycle: string | null): number | null {
 interface PlannedOrder {
   clientId: string;
   clientName: string;
+  /** مندوبُ الصفقة — من كرت العميل، وفارغاً يُوسم نقصاً لا يُخمَّن. */
+  salesRepId: string | null;
   planName: string | null;
   planSlug: string | null;
   planId: string | null;
@@ -96,6 +105,10 @@ async function planAll(): Promise<PlannedOrder[]> {
         id: true, name: true, email: true, phone: true, addressCountry: true,
         articlesPerMonth: true, openingBalance: true, billingCycle: true,
         subscriptionStartDate: true, subscriptionEndDate: true, createdAt: true,
+        // المندوبُ يُرحَّل مع الصفقة (خالد ١٨ سبتمبر ٢٠٢٦: «نقطة مهمّة جدّاً أنت ناسيها —
+        // المندوب»). كان يسقط، فتخرج ٤٢ صفقةً بلا صاحبٍ يُنسب إليه البيع، وتقريرُ
+        // عمولات المندوبين يقرأ الطلبَ لا الكرت.
+        salesRepId: true,
         subscriptionTierConfig: { select: { name: true } },
       },
       orderBy: { createdAt: "asc" },
@@ -134,6 +147,9 @@ async function planAll(): Promise<PlannedOrder[]> {
     if (months == null) gaps.push(c.billingCycle ? `دورةُ فوترةٍ غير مفهومة: «${c.billingCycle}»` : "بلا دورةِ فوترة");
 
     if (!c.subscriptionStartDate) gaps.push("بلا تاريخ بداية");
+
+    // مندوبٌ غائبٌ يُوسم ولا يُخمَّن: نسبةُ بيعٍ لغير صاحبها أسوأ من خانةٍ فارغة.
+    if (!c.salesRepId) gaps.push("بلا مندوب");
 
     /**
      * ── المدّة: ثلاثةُ مصادرَ تتناقض، ولا واحدَ منها يُصدَّق وحده ──
@@ -181,6 +197,7 @@ async function planAll(): Promise<PlannedOrder[]> {
     return {
       clientId: c.id,
       clientName: c.name,
+      salesRepId: c.salesRepId,
       planName: plan?.name ?? tierName,
       planSlug: plan?.slug ?? null,
       planId: plan?.id ?? null,
@@ -299,6 +316,7 @@ export async function POST(_req: NextRequest) {
           paidAt: p.serviceStartedAt,
           serviceStartedAt: p.serviceStartedAt,
           activatedAt: p.activatedAt,
+          salesRepId: p.salesRepId,
           // تاريخُ الطلب = يومُ التفعيل، لا يومُ تشغيل الترحيل (خالد ١٨ سبتمبر ٢٠٢٦):
           // ٤٢ طلباً بتاريخٍ واحد هو يومُ الضغط على الزرّ لا يقول شيئاً عن العميل.
           createdAt: p.activatedAt,
@@ -323,7 +341,15 @@ export async function POST(_req: NextRequest) {
         },
       });
 
-      await db.client.update({ where: { id: p.clientId }, data: { activeOrderId: order.id } });
+      // نهايةُ الاشتراك تُشتقّ من الطلب المبنيّ لتوّه — فيتطابق ما يراه العميلُ في بوّابته
+      // مع ما يقوله الأدمن من أوّل لحظة (كان الانقسام صفرَ تطابقٍ من ٤٢).
+      await db.client.update({
+        where: { id: p.clientId },
+        data: {
+          activeOrderId: order.id,
+          subscriptionEndDate: addMonthsTo(p.activatedAt, p.paidMonths),
+        },
+      });
       created.push({ number, clientName: p.clientName, currency: p.currency, totalMinor: p.totalMinor, gaps: p.gaps });
     } catch (error) {
       failed.push({ clientName: p.clientName, error: error instanceof Error ? error.message : String(error) });

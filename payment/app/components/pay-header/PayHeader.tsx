@@ -21,7 +21,7 @@ import { salesWhatsapp } from "@/lib/sales-whatsapp";
  */
 export async function PayHeader() {
   const { siteName, logoUrl } = await getSiteChrome();
-  const wa = salesWhatsapp();
+  const wa = await salesWhatsapp();
 
   return (
     <header className="border-b border-border/60 bg-card/40 backdrop-blur">

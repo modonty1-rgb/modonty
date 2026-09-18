@@ -8,6 +8,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
 import { logAction } from "@/lib/audit/log-action";
+import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { sendClientWelcome } from "@/app/(dashboard)/clients/actions/clients-actions/send-client-welcome";
 
@@ -99,6 +100,20 @@ export async function activateFromOrder(input: {
     return { ok: false, error: `رقم الجوال ${phone} مسجَّلٌ لعميلٍ آخر (${phoneOwner.name}) — صحّح الرقم على الطلب قبل التفعيل` };
   }
 
+  /**
+   * لحظةٌ واحدة تُكتب على الكرت وعلى الطلب معاً.
+   *
+   * كانت تُكتب على الكرت وحده، فيبقى `CheckoutOrder.activatedAt` فارغاً في كلّ تفعيلٍ
+   * حيّ — والطلبُ هو ما تقرؤه شاشةُ الاشتراكات. فيخرج عمودُ «التفعيل» بشرطةٍ، ولا
+   * يُحسب حالُ الاشتراك (ساري/منتهٍ) أصلاً، فلا يظهر العميلُ في فلتر «منتهٍ» حين
+   * تنقضي مدّتُه — تجديدٌ مستحقٌّ لا يراه أحد.
+   *
+   * كشفه اختبارُ ١٨ سبتمبر ٢٠٢٦: فُعِّل طلبان حيّاً فخرجا
+   * `order.activatedAt = null` بينما `client.activatedAt` مكتوب.
+   * والترحيلُ كان يكتبه، فبدا الحقلُ سليماً ما دامت البياناتُ مرحَّلةً كلُّها.
+   */
+  const activatedAt = new Date();
+
   const client = await db.client.create({
     data: {
       name,
@@ -114,7 +129,7 @@ export async function activateFromOrder(input: {
       subscriptionStatus: "ACTIVE",
       // سقطت كتابةُ `paymentStatus` (١٧ سبتمبر ٢٠٢٦): تُحسب من الفواتير، ولا مسارَ
       // كتب فيها «متأخّر» قطّ — فكانت تقول «مسدَّد» لكلّ عميل.
-      activatedAt: new Date(),
+      activatedAt,
       // بدايةُ الاحتساب تتبع `serviceStartedAt` على الطلب لا يومَ التفعيل: مدّة التجهيز
       // علينا نحن. وهي فارغةٌ اليوم في أغلب الطلبات، فتبقى فارغةً حتى تُكتب هناك.
       subscriptionStartDate: order.serviceStartedAt,
@@ -123,7 +138,11 @@ export async function activateFromOrder(input: {
     select: { id: true, name: true, slug: true },
   });
 
-  await db.checkoutOrder.update({ where: { id: order.id }, data: { clientId: client.id } });
+  await db.checkoutOrder.update({ where: { id: order.id }, data: { clientId: client.id, activatedAt } });
+
+  // نهايةُ الاشتراك تُشتقّ من هذا الطلب فوراً — وإلّا رأى العميلُ في بوّابته «بلا اشتراك»
+  // حتّى تُصدَر فاتورة، وقد لا تُصدر أبداً (`recompute-subscription-end.ts`).
+  await recomputeSubscriptionEnd(client.id);
 
   // خطُّ الرحلة يُقفل هنا: محتمَل ← طلبٌ مدفوع ← عميل. والختم بأثرٍ غير مُسقِط —
   // محتمَلٌ حُذف أو خُتم مسبقاً لا يُبطل تفعيلاً نجح.

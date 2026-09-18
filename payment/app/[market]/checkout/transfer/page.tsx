@@ -89,24 +89,26 @@ export default async function TransferPage({
 
   const channels = egTransferChannels();
   /**
-   * مسؤول الحساب من الأدمن، والرقم العامّ احتياطاً.
+   * رقمُ الاستقبال واحدٌ لكلّ المنصّة: `Settings.salesPhone` (خالد ١٨ سبتمبر ٢٠٢٦:
+   * «كله يشتغل على نفس الرقم اللي حطّيناه في السيتنج… المفروض يُقرأ من مكانٍ واحد»).
    *
-   * ولا زرّا واتساب على صفحةٍ واحدة: زرّان برقمين يجعلان المشتري يسأل «أيّهما؟» في
-   * اللحظة التي يريد فيها أن ينتهي. فإن وُجد مسؤولٌ منشور صار **هو** الزرّ، وإلا سقط
-   * على الرقم العامّ — والمهمّ ألّا يبقى المشتري بلا طريق.
+   * كان رقمُ مسؤول الحساب يُقدَّم عليه، فيصل إيصالٌ إلى جوّالِ موظّفٍ في إجازة ولا يعرف
+   * به أحد؛ والرقمُ يتغيّر بتغيّر الموظّف بلا أن يُعلَن. الآن الخطُّ واحدٌ يعرفه الفريق
+   * كلُّه وهو نفسُه المطبوع على الفاتورة، ويُغيَّر من شاشةٍ واحدة بلا نشرة.
+   *
+   * ومسؤولُ الحساب يبقى **وجهاً واسماً** فوق الزرّ: المشتري يرسل مالاً إلى حسابٍ لا
+   * يعرفه، وإنسانٌ بعينه يقصّر تلك المسافة — لكنّه لا يحمل الرقم.
    */
   const manager = await getAccountManager("EG");
-  const wa = salesWhatsapp();
+  const wa = await salesWhatsapp();
   /**
    * الرسالة معبّأة بالطلب والمبلغ: بغيرها يفتح المشتري محادثةً فارغة فيُسأل «مين
    * حضرتك؟» ويعيد كتابة ما كتبه قبل دقيقة — ونحن نعيد البحث عن طلبه يدوياً.
    */
   const waText = `مرحباً، حوّلت قيمة الطلب ${row.number} — باقة ${row.planName} — ${totalDisplay}. مرفق صورة الإيصال.`;
-  const waHref = manager
-    ? whatsappLink(manager.receiptPhone, waText)
-    : wa
-      ? `${wa.href}?text=${encodeURIComponent(waText)}`
-      : null;
+  const waHref = wa ? `${wa.href}?text=${encodeURIComponent(waText)}` : manager ? whatsappLink(manager.receiptPhone, waText) : null;
+  /** الرقمُ المعروض هو الرقمُ المضغوط — لا يُكتب واحدٌ ويُفتح آخر. */
+  const receiptPhone = wa?.label ?? manager?.receiptPhone ?? null;
 
   return (
     <>
@@ -225,13 +227,13 @@ export default async function TransferPage({
               يختار بينهما المشتري. والرقم المصريّ يُعلَن هنا **قبل** أن يرنّ: مكالمةٌ
               محلّية مجهولة بعد حوالةٍ بنكية تُقرأ احتيالاً، وكتابتُها تجعلها موعداً.
             */}
-            {manager ? (
+            {receiptPhone ? (
               <dl className="mb-4 space-y-2 rounded-xl border border-border bg-card px-3.5 py-3 text-[12.5px]">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
                   <dt className="font-bold text-foreground">ترسل الإيصال على</dt>
-                  <dd className="font-bold tabular-nums text-foreground" dir="ltr">{manager.receiptPhone}</dd>
+                  <dd className="font-bold tabular-nums text-foreground" dir="ltr">{receiptPhone}</dd>
                 </div>
-                {manager.followUpPhone ? (
+                {manager?.followUpPhone ? (
                   <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 border-t border-border pt-2">
                     <dt className="text-muted-foreground">{manager.followUpNote}</dt>
                     <dd className="font-bold tabular-nums text-foreground" dir="ltr">{manager.followUpPhone}</dd>

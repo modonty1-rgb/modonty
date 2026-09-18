@@ -3348,6 +3348,18 @@ model Settings {
   orgContactOption           String?   // ContactPoint.contactOption (e.g. toll-free)
   orgContactHoursAvailable   String?   // ContactPoint.hoursAvailable (e.g. "Mo-Fr 09:00-17:00")
   orgAreaServed              String?
+
+  /// تواصلُ المبيعات — يُطبع على الفاتورة في سطر «سؤال عن الفاتورة؟».
+  ///
+  /// كان الرقمُ مكتوباً بنصّه في قالب البريد (`invoice.ts:161`)، فتغييرُه يحتاج نشرةً
+  /// جديدة، والفواتيرُ المرسَلة تبقى تحمل القديم (خالد ١٨ سبتمبر ٢٠٢٦: «ما عندنا رقم
+  /// للمبيعات… نبغى نضيفه في السيتنج ويُقرأ منه هنا»).
+  ///
+  /// ومنفصلٌ عن `orgContactTelephone`: ذاك تواصلُ المنشأة في البيانات المنظَّمة ويُنشر
+  /// للزوّار كافّة، وهذا يذهب لمن بيده فاتورةٌ ويسأل عن مبلغ — وقد يكون خطّاً آخر.
+  /// وفارغاً يرجع إلى تواصل المنشأة، فلا يخرج مستندٌ ماليّ بلا جهةٍ تُسأل.
+  salesPhone                 String?
+  salesEmail                 String?
   orgStreetAddress    String?
   orgAddressLocality  String?
   orgAddressRegion    String?

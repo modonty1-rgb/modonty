@@ -1,0 +1,85 @@
+import { db } from "@/lib/db";
+import { addMonths } from "@/lib/invoices/add-months";
+import { findBlockingUnpaidInvoice } from "@/lib/invoices/find-blocking-unpaid-invoice";
+
+/**
+ * ما ستحمله الفاتورةُ لو صدرت الآن — يُحسب بلا أيّ كتابة.
+ *
+ * نفسُ الدالّة تخدم المعاينةَ والإصدار (خالد ١٨ سبتمبر ٢٠٢٦: «إصدار الفاتورة بمودال
+ * مرحلتين: بريفيو ثمّ تأكيد الإرسال»)، فما يُعرَض قبل الضغط هو ما يُكتب بعده حرفاً بحرف.
+ * حسابٌ في مكانٍ وعرضٌ في مكانٍ آخر هو كيف تكذب شاشةُ المعاينة.
+ */
+export interface InvoicePlan {
+  orderId: string;
+  orderNumber: string;
+  clientId: string;
+  clientName: string;
+  buyerEmail: string;
+  tierName: string;
+  period: "monthly" | "annual";
+  currency: string;
+  subtotalMinor: number;
+  vatRateBp: number;
+  vatMinor: number;
+  totalMinor: number;
+  paidMonths: number;
+  bonusServiceMonths: number;
+  subscriptionStart: Date;
+  subscriptionEnd: Date;
+  /**
+   * أهذه الفاتورةُ توثيقٌ لدفعةٍ محسوبةٍ سلفاً، أم مالٌ جديد؟ تقريرُ المبيعات نقديُّ
+   * الأساس ويعدّ أوّلَ طلبٍ مدفوعٍ لكلّ عميل إيراداً تأسيسيّاً، فالفاتورةُ الصادرةُ من
+   * ذلك الطلب نفسِه تُوسَم كي لا يُعدّ المبلغُ مرّتين.
+   */
+  foundingInvoice: boolean;
+}
+
+export type InvoicePlanResult = { ok: true; plan: InvoicePlan } | { ok: false; error: string };
+
+export async function planInvoiceFromOrder(orderId: string): Promise<InvoicePlanResult> {
+  const order = await db.checkoutOrder.findUnique({ where: { id: orderId } });
+  if (!order) return { ok: false, error: "الطلب غير موجود" };
+  if (order.status !== "PAID") return { ok: false, error: "الطلب ليس مدفوعاً" };
+  if (!order.clientId) return { ok: false, error: "أنشئ حساب العميل أولاً" };
+  if (order.invoiceId) return { ok: false, error: "صدرت فاتورة لهذا الطلب مسبقاً" };
+
+  const client = await db.client.findUnique({
+    where: { id: order.clientId },
+    select: { id: true, name: true, subscriptionEndDate: true, subscriptionTierConfig: { select: { name: true } }, _count: { select: { invoices: true } } },
+  });
+  if (!client) return { ok: false, error: "العميل غير موجود" };
+
+  const blocking = await findBlockingUnpaidInvoice(client.id);
+  if (blocking) return { ok: false, error: `فيه فاتورة غير مسدّدة (${blocking}) لهذا العميل — حدّدها مدفوعة أو أرشفها أولاً` };
+
+  const founding = await db.checkoutOrder.findFirst({
+    where: { clientId: client.id, status: "PAID", totalMinor: { gt: 0 } },
+    orderBy: [{ serviceStartedAt: "asc" }, { createdAt: "asc" }],
+    select: { id: true },
+  });
+
+  const anchor = client.subscriptionEndDate ?? order.paidAt ?? new Date();
+  return {
+    ok: true,
+    plan: {
+      orderId: order.id,
+      orderNumber: order.number,
+      clientId: client.id,
+      clientName: client.name,
+      buyerEmail: order.buyerEmail,
+      // اسمُ الباقة من الطلب أوّلاً: هو ما دفع عليه العميل، لا ما يقوله كرتُه اليوم.
+      tierName: order.planName || client.subscriptionTierConfig?.name || "—",
+      period: order.paidMonths === 1 ? "monthly" : "annual",
+      currency: order.currency,
+      subtotalMinor: order.subtotalMinor,
+      vatRateBp: order.vatRateBp,
+      vatMinor: order.vatMinor,
+      totalMinor: order.totalMinor,
+      paidMonths: order.paidMonths,
+      bonusServiceMonths: order.bonusServiceMonths,
+      subscriptionStart: anchor,
+      subscriptionEnd: addMonths(anchor, order.paidMonths + order.bonusServiceMonths),
+      foundingInvoice: founding?.id === order.id && client._count.invoices === 0,
+    },
+  };
+}

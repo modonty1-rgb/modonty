@@ -133,8 +133,10 @@ export function DataTable<T extends { id: string }>({
     <div className="space-y-4">
       {(searchKey || toolbar) && (
         <div className="flex flex-wrap items-center gap-2">
+          {/* البحثُ يأخذ عرضَ الصفّ كلَّه ويترك للأدوات حقَّها (خالد ١٨ سبتمبر) — كان
+              محصوراً في `max-w-sm` فيبقى ثلثا السطر فارغين. */}
           {searchKey && (
-            <div className="relative w-full max-w-sm">
+            <div className="relative min-w-[220px] flex-1">
               {/* `start-3`/`ps-10` لا `left-3`/`pl-10`: الجداول العربية (شاشات فاتن) تُرسم
                   داخل `dir="rtl"`، والقيمة المثبّتة يساراً تضع الأيقونة فوق آخر ما يُكتب.
                   في الإنجليزية `start` = يسار، فالرسم لا يتغيّر في أي جدول قائم. */}
@@ -150,7 +152,7 @@ export function DataTable<T extends { id: string }>({
               />
             </div>
           )}
-          {/* الفلاتر تجلس في صفّ البحث لا في صفٍّ فوقه. سطران أحدهما شبه فارغ يدفعان الجدول
+          {/* الأدوات تجلس في صفّ البحث لا في صفٍّ فوقه. سطران أحدهما شبه فارغ يدفعان الجدول
               — وهو المقصود من الصفحة — تحت الطيّة بلا مقابل. */}
           {toolbar}
         </div>

@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { db } from "@/lib/db";
 import { OrderStatusFilter } from "./components/order-status-filter";
-import { OrdersTable, type OrderRow } from "./components/orders-table";
+import { OrdersTable, type CurrencyTotal, type OrderRow } from "./components/orders-table";
 import { formatMonths } from "./helpers/format-months";
 import { formatOrderAmount } from "./helpers/format-order-amount";
 import { formatOrderDate } from "./helpers/format-order-date";
@@ -19,6 +19,11 @@ export const dynamic = "force-dynamic";
 
 const STATUSES: CheckoutOrderStatus[] = ["AWAITING_PAYMENT", "AWAITING_TRANSFER", "PAID", "FAILED", "CANCELLED", "REFUNDED"];
 const PROVIDERS: PaymentProvider[] = ["NGENIUS", "TAMARA", "BANK_TRANSFER", "INSTAPAY", "MIGRATED"];
+/** السوقان المعلنان — يُعرض إجماليّاهما معاً دائماً، ولو كان أحدهما صفراً. */
+const MARKET_CURRENCIES = [
+  { currency: "EGP", market: "مصر" },
+  { currency: "SAR", market: "السعودية" },
+] as const;
 const TAKE = 50;
 
 export default async function OrdersPage({ searchParams }: { searchParams: Promise<{ status?: string; view?: string; provider?: string }> }) {
@@ -32,17 +37,20 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   // تُجلب المدفوعةُ المفعَّلة كلُّها ويُرشَّح المنتهي منها هنا.
   const isExpiredView = view === "expired";
 
-  const [fetched, total, countRows, awaitingActivation, expiredCount, providerPairs] = await Promise.all([
+  /** شرطُ الفلتر الواحد — يقود الجدولَ والإجماليَّ معاً فلا يقول أحدُهما غيرَ ما يقوله الآخر. */
+  const where = isExpiredView
+    ? { status: "PAID" as const, NOT: [{ activatedAt: null }] }
+    : isAwaitingView
+      ? AWAITING_ACTIVATION
+      : activeProvider
+        ? { transactions: { some: { provider: activeProvider } } }
+        : activeStatus
+          ? { status: activeStatus }
+          : undefined;
+
+  const [fetched, total, countRows, awaitingActivation, expiredCount, providerPairs, sumRows] = await Promise.all([
     db.checkoutOrder.findMany({
-      where: isExpiredView
-        ? { status: "PAID", NOT: [{ activatedAt: null }] }
-        : isAwaitingView
-          ? AWAITING_ACTIVATION
-          : activeProvider
-            ? { transactions: { some: { provider: activeProvider } } }
-            : activeStatus
-              ? { status: activeStatus }
-              : undefined,
+      where,
       select: {
         id: true, number: true, createdAt: true, activatedAt: true, buyerName: true, market: true,
         planName: true, paidMonths: true, totalMinor: true, currency: true, status: true,
@@ -69,11 +77,33 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     // طلباتٌ لكلّ بوّابة — `distinct` على (الطلب، المزوّد) لأنّ الطلب الواحد قد يحمل
     // محاولاتٍ عدّة على نفس البوّابة، والعدّادُ يعدّ طلباتٍ لا محاولات.
     db.paymentTransaction.findMany({ select: { orderId: true, provider: true }, distinct: ["orderId", "provider"], take: 5000 }),
+    // إجماليُّ الفلتر — بكلّ عملةٍ على حدة، على المجموعة كاملةً لا على الصفحة المعروضة.
+    db.checkoutOrder.groupBy({ by: ["currency"], where, _sum: { totalMinor: true } }),
   ]);
   const orders = isExpiredView ? fetched.filter((o) => getSubscriptionStanding(o).state === "expired") : fetched;
   const counts = Object.fromEntries(countRows.map((row) => [row.status, row._count._all])) as Partial<Record<CheckoutOrderStatus, number>>;
   const providerCounts: Partial<Record<PaymentProvider, number>> = {};
   for (const pair of providerPairs) providerCounts[pair.provider] = (providerCounts[pair.provider] ?? 0) + 1;
+
+  /**
+   * إجماليّا السوقين معاً دائماً — ولو كان أحدهما صفراً (خالد ١٨ سبتمبر ٢٠٢٦).
+   * إخفاءُ الصفر يجعل غيابَ الرقم يُقرأ «لم يُحسب» بدل «لا شيء»، ويقفز موضعُ الآخر
+   * بين مشهدٍ وآخر. وكلُّ عملةٍ على حدة — لا يُجمع ريالٌ على جنيه أبداً.
+   *
+   * و«منتهٍ» يُحسب في الذاكرة لا في القاعدة، فمجموعُه من صفوفه هو؛ وكلُّ مشهدٍ آخر
+   * يأتي من `groupBy` فيشمل ما وراء الصفحة المعروضة.
+   */
+  const sumByCurrency = new Map<string, number>(
+    isExpiredView
+      ? [...orders.reduce((m, o) => m.set(o.currency, (m.get(o.currency) ?? 0) + o.totalMinor), new Map<string, number>())]
+      : sumRows.map((r) => [r.currency, r._sum.totalMinor ?? 0]),
+  );
+  // رقماً بلا عملة: اسمُ البلد فوقه يقولها — «مصر» جنيهٌ و«السعودية» ريال، ولا ثالثَ لهما.
+  const totals: CurrencyTotal[] = MARKET_CURRENCIES.map(({ currency, market }) => ({
+    currency,
+    market,
+    label: formatOrderAmount(sumByCurrency.get(currency) ?? 0),
+  }));
   // يعتمد على الطلبات المجلوبة، فلا يدخل `Promise.all` أعلاه.
   const firstArticleAt = await getFirstPublishedDates(
     orders.flatMap((order) => (order.clientId ? [order.clientId] : [])),
@@ -181,7 +211,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
         </Link>
       </header>
 
-      <OrdersTable rows={rows} emptyText={emptyText} />
+      <OrdersTable rows={rows} emptyText={emptyText} totals={totals} />
     </main>
   );
 }

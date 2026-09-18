@@ -23,6 +23,8 @@ const { navy, blue, gray, border } = EMAIL_COLORS;
 
 export interface InvoiceHeroInput {
   title: string;
+  /** العنوان الإنجليزيّ تحته — عرفٌ ثابت في الفاتورة الضريبيّة السعوديّة. */
+  titleEn?: string;
   invoiceNumber: string;
   orderNumber: string | null;
   issuedAtLabel: string;
@@ -49,7 +51,8 @@ export function invoiceHero(h: InvoiceHeroInput): string {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
           <tr>
             <td valign="top" style="font-size:12px;color:${gray};line-height:1.9;">
-              <div style="font-size:15px;font-weight:bold;color:${navy};">${h.title}</div>
+              <div style="font-size:16px;font-weight:bold;color:${navy};line-height:1.35;">${h.title}</div>
+              ${h.titleEn ? `<div dir="ltr" style="font-size:10.5px;color:#9a9aa8;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">${h.titleEn}</div>` : ""}
               <div style="margin-top:2px;">رقم الفاتورة: <span style="color:${navy};font-weight:bold;">${h.invoiceNumber}</span></div>
               ${h.orderNumber ? `<div>رقم الطلب: <span style="color:${navy};">${h.orderNumber}</span></div>` : ""}
               <div>${h.issuedAtLabel}</div>
@@ -112,6 +115,10 @@ export interface InvoiceLineView {
   title: string;
   /** «٦ أشهر مدفوعة + شهر هدية = ٧ أشهر خدمة» — بديل خانة «الكمية». */
   durationLabel: string;
+  /** الكمّيّة كما تطلبها الهيئة: عدد الأشهر المدفوعة. */
+  qty: string;
+  /** سعر الوحدة (الشهر) صافياً — مشتقٌّ من الصافي ÷ الأشهر، فلا يناقض الإجمالي أبداً. */
+  unitPrice: string;
   /** فترة الخدمة حين تكون معروفة. */
   periodLabel: string | null;
   /** ما وُعد به المشتري — مجمَّدٌ في الطلب لحظة الشراء. فارغاً لا يُرسم القسم. */
@@ -124,18 +131,27 @@ export interface InvoiceLineView {
 }
 
 /**
- * بند الخدمة وحسابه.
+ * بند الخدمة وحسابه — جدولُ بنودٍ بأعمدة، لا كتلةُ نصّ.
  *
- * لا عمود «الكمية»: كان يطبع «1» في كل فاتورة عمرها — خانةٌ لا تحمل معلومة، وتجعل
- * المستند يُقرأ كفاتورة قطعٍ معدودة. محلّها **مدّة الخدمة**، وهي ما يشتريه العميل فعلاً.
+ * **لماذا الأعمدة (١٨ سبتمبر ٢٠٢٦):** هيئةُ الزكاة والضريبة والجمارك تُلزم الفاتورة
+ * الضريبيّة بأن تحمل لكلّ بند: الوصفَ والكمّيّةَ وسعرَ الوحدة والمبلغَ الخاضع ونسبةَ
+ * الضريبة وقيمتَها والإجماليَّ شاملاً إيّاها
+ * (`zatca.gov.sa` — الدليل الإرشاديّ التفصيليّ للفوترة الإلكترونيّة · قرار الفوترة، الملحق ٢).
+ * وكان سعرُ الوحدة غائباً تماماً، فالمستندُ يقول «كم دفعت» ولا يقول «على أيّ أساس».
  *
- * والحساب يُقرأ من فوق إلى تحت بترتيبه الطبيعي: صافٍ ← ضريبة ← إجمالي بخطٍّ فاصل قبله،
- * فالعين تتتبّع الجمع بلا أن تقفز.
+ * وسعرُ الشهر **يُشتقّ** من الصافي ÷ الأشهر ولا يُقرأ من حقلٍ ثانٍ: حقلان لسعرٍ واحد
+ * يفترقان أوّلَ خصم، فتخرج فاتورةٌ حسابُها لا يقفل.
+ *
+ * والكمّيّة أشهرٌ لا قطع: نبيع خدمةً لا بضاعة، والعمودُ يحمل «١ شهر» لا «1».
+ *
+ * والحساب يُقرأ من فوق إلى تحت بترتيبه الطبيعي: صافٍ ← ضريبة ← إجمالي في صفٍّ مظلَّل،
+ * فالعين تتتبّع الجمع بلا أن تقفز. والجداولُ وحدَها تخطيطٌ مضمون في كلّ عملاء البريد
+ * (`caniemail.com` — دعمُ `<table>` ١٠٠٪، وفليكس والشبكة ليست كذلك).
  */
 export function invoiceLine(l: InvoiceLineView): string {
   const row = (label: string, value: string, strong = false) => `<tr>
-    <td style="padding:7px 14px;font-size:${strong ? "14px" : "12.5px"};color:${strong ? navy : gray};${strong ? "font-weight:bold;" : ""}">${label}</td>
-    <td style="padding:7px 14px;text-align:left;font-size:${strong ? "17px" : "12.5px"};color:${navy};${strong ? "font-weight:bold;" : ""}">${value}</td>
+    <td style="padding:${strong ? "10px" : "7px"} 14px;font-size:${strong ? "14px" : "12.5px"};color:${strong ? navy : gray};${strong ? "font-weight:bold;" : ""}${strong ? `background-color:#f7f7fb;` : ""}">${label}</td>
+    <td style="padding:${strong ? "10px" : "7px"} 14px;text-align:left;font-size:${strong ? "17px" : "12.5px"};color:${navy};${strong ? "font-weight:bold;" : ""}${strong ? `background-color:#f7f7fb;` : ""}">${value}</td>
   </tr>`;
 
   /**
@@ -159,14 +175,30 @@ export function invoiceLine(l: InvoiceLineView): string {
       </tr>`
     : "";
 
+  const th = (text: string, align: "right" | "left" = "right") =>
+    `<td align="${align === "right" ? "right" : "left"}" style="padding:8px 14px;font-size:10.5px;font-weight:bold;color:#9a9aa8;letter-spacing:.03em;text-align:${align};border-bottom:1px solid ${border};background-color:#fafafc;">${text}</td>`;
+
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${border};border-radius:10px;margin:0 0 18px;">
-    <tr>
-      <td style="padding:14px 14px 10px;border-bottom:1px solid #f0f0f4;">
-        <div style="font-size:14px;font-weight:bold;color:${navy};line-height:1.6;">${l.title}</div>
-        <div style="margin-top:4px;font-size:12px;color:${gray};">${l.durationLabel}</div>
-        ${l.periodLabel ? `<div style="margin-top:2px;font-size:12px;color:${gray};">${l.periodLabel}</div>` : ""}
-      </td>
-    </tr>
+    <tr><td style="padding:0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          ${th("البند")}
+          ${th("الكمّيّة")}
+          ${th("سعر الوحدة")}
+          ${th("الإجمالي", "left")}
+        </tr>
+        <tr>
+          <td valign="top" style="padding:12px 14px;border-bottom:1px solid #f0f0f4;">
+            <div style="font-size:13.5px;font-weight:bold;color:${navy};line-height:1.6;">${l.title}</div>
+            <div style="margin-top:3px;font-size:11.5px;color:${gray};">${l.durationLabel}</div>
+            ${l.periodLabel ? `<div style="margin-top:2px;font-size:11.5px;color:${gray};">${l.periodLabel}</div>` : ""}
+          </td>
+          <td valign="top" align="right" style="padding:12px 14px;font-size:12.5px;color:${navy};white-space:nowrap;border-bottom:1px solid #f0f0f4;">${l.qty}</td>
+          <td valign="top" align="right" style="padding:12px 14px;font-size:12.5px;color:${navy};white-space:nowrap;border-bottom:1px solid #f0f0f4;">${l.unitPrice}</td>
+          <td valign="top" align="left" style="padding:12px 14px;font-size:12.5px;font-weight:bold;color:${navy};white-space:nowrap;text-align:left;border-bottom:1px solid #f0f0f4;">${l.net}</td>
+        </tr>
+      </table>
+    </td></tr>
     ${commitmentsBlock}
     <tr><td style="padding:0;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
@@ -193,11 +225,24 @@ export function invoiceQr(cid: string): string {
 
 /** سطر التواصل — رقمٌ وبريد، بلا رموز تعبيرية تُكسر في بعض عملاء البريد. */
 export function invoiceContact(phone: string, email: string): string {
+  // أيّهما وُجد يُطبع وحده: الفاصلةُ بين طرفين أحدُهما غائب تترك «·» معلّقةً في آخر السطر.
   const digits = phone.replace(/\D/g, "");
+  /**
+   * الرقمُ يُعزَل اتّجاهيّاً وإلّا انقلب (خالد ١٨ سبتمبر ٢٠٢٦: «الرقم جاي مقلوب»).
+   *
+   * علامةُ `+` محايدةٌ في خوارزميّة الاتّجاه الثنائيّ (يونيكود UAX #9)، فداخل فقرةٍ
+   * عربيّة تأخذ اتّجاه ما حولها فتُرسَم في آخر الرقم: `966555000111+`. و`dir="ltr"`
+   * وحدها لا تكفي — بعضُ عملاء البريد يُسقط الخاصّيّة، فتُضاف علامتا `&lrm;`
+   * (U+200E) حول النصّ: محرفان يُثبّتان الاتّجاه ولا يُرسمان.
+   */
+  const ltr = (text: string) => `<span dir="ltr" style="unicode-bidi:isolate;">&lrm;${text}&lrm;</span>`;
+  const parts = [
+    phone ? `<a href="tel:+${digits}" dir="ltr" style="color:${blue};text-decoration:none;unicode-bidi:isolate;">${ltr(phone)}</a>` : null,
+    email ? `<a href="mailto:${email}" dir="ltr" style="color:${blue};text-decoration:none;unicode-bidi:isolate;">${ltr(email)}</a>` : null,
+  ].filter(Boolean);
+  if (parts.length === 0) return "";
   return `<p style="margin:0;font-size:12.5px;line-height:1.9;color:${gray};text-align:center;">
     سؤال عن الفاتورة؟
-    <a href="tel:+${digits}" style="color:${blue};text-decoration:none;">${phone}</a>
-    &nbsp;·&nbsp;
-    <a href="mailto:${email}" style="color:${blue};text-decoration:none;">${email}</a>
+    ${parts.join("&nbsp;&nbsp;·&nbsp;&nbsp;")}
   </p>`;
 }
