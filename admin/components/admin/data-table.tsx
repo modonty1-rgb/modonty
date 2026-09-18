@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Search, ArrowUpDown, ArrowUp, ArrowDown, Stethoscope } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Column<T> {
@@ -13,6 +13,8 @@ export interface Column<T> {
   render?: (item: T) => React.ReactNode;
   sortable?: boolean;
   sortFn?: (a: T, b: T) => number;
+  /** يُطبَّق على رأس العمود وخلاياه معاً — مثل `w-[1%]` ليأخذ العمودُ عرضَ محتواه فقط. */
+  className?: string;
 }
 
 interface DataTableProps<T> {
@@ -24,6 +26,12 @@ interface DataTableProps<T> {
   pageSize?: number;
   /** Controls rendered beside the search box — filters that belong on the same line as it. */
   toolbar?: React.ReactNode;
+  /** صفٌّ يحمل حالةً تُقرأ من لونه (كهرمانيّ = يحتاج مراجعة) — يبقى النصّ في الصفّ لمن لا يميّز الألوان. */
+  rowClassName?: (item: T) => string | undefined;
+  /** نصّ حالة الفراغ — الافتراضيّ إنجليزيّ للجداول القديمة، والعربيّة تمرّر نصّها. */
+  emptyText?: string;
+  /** يُلحق بعنصر `<table>` — لحجم خطٍّ أصغر في جدولٍ عريض الأعمدة مثلاً. */
+  className?: string;
 }
 
 type SortDirection = "asc" | "desc" | null;
@@ -36,6 +44,9 @@ export function DataTable<T extends { id: string }>({
   onRowClick,
   pageSize = 10,
   toolbar,
+  rowClassName,
+  emptyText = "No data found",
+  className,
 }: DataTableProps<T>) {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -106,14 +117,11 @@ export function DataTable<T extends { id: string }>({
     setCurrentPage(1);
   };
 
-  const getSortIcon = (columnKey: string) => {
-    if (sortKey !== columnKey) {
-      return <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />;
-    }
-    if (sortDirection === "asc") {
-      return <ArrowUp className="ml-2 h-4 w-4 text-primary" />;
-    }
-    return <ArrowDown className="ml-2 h-4 w-4 text-primary" />;
+  // الرأسُ نفسه هو زرّ الفرز (خالد ١٨ سبتمبر): لا أيقونةَ «⇅» ولا سهمَ اتّجاه — أيُّ
+  // رمزٍ يُضاف يوسّع العمود لحظةَ الضغط. الحالةُ تُقال باللون (أزرق العلامة) وبالتلميح.
+  const sortTitle = (columnKey: string) => {
+    if (sortKey !== columnKey) return "اضغط للترتيب";
+    return sortDirection === "asc" ? "مرتَّب تصاعديّاً — اضغط للتنازليّ" : "مرتَّب تنازليّاً — اضغط للإلغاء";
   };
 
   const totalPages = Math.ceil(filteredData.length / pageSize);
@@ -151,12 +159,15 @@ export function DataTable<T extends { id: string }>({
       {/* Standard admin-table look (entity-standard #3, mirrors the accounts table):
           LOCKED row height 40px header / 44px body row · muted small headers · column dividers · zebra rows.
           Row height is fixed here ONCE — never override per table. */}
-      <div className="border rounded-lg bg-card overflow-x-auto [&_th]:!h-10 [&_td]:!py-0 [&_th]:text-[11px] [&_th]:font-semibold [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-muted-foreground">
+      {/* الحشو الأفقيّ 10px لا 16px (خالد ١٨ سبتمبر): جدولُ اثني عشر عموداً كان يدفع
+          ٣٨٤px حشواً وحدها فيولد تمريرٌ أفقيّ على ١٢٨٠. كلّ عمودٍ يأخذ ما يحتاجه فقط. */}
+      <div className="border rounded-lg bg-card scroll-x-visible [&_th]:!h-10 [&_td]:!py-0 [&_th]:!px-2.5 [&_td]:!px-2.5 [&_th]:text-[11px] [&_th]:font-semibold [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-muted-foreground">
         <Table
           className={cn(
             "whitespace-nowrap text-[13px]",
             "[&_th]:border-e [&_td]:border-e [&_th:last-child]:border-e-0 [&_td:last-child]:border-e-0",
             "[&_th]:border-border/50 [&_td]:border-border/50",
+            className,
           )}
         >
           <TableHeader>
@@ -165,16 +176,21 @@ export function DataTable<T extends { id: string }>({
                 <TableHead
                   key={String(column.key)}
                   className={cn(
-                    column.sortable !== false && "cursor-pointer hover:bg-muted/50",
-                    sortKey === String(column.key) && "bg-muted/50",
-                    column.key === "seo" && "w-[70px]"
+                    // الرأسُ القابل للفرز يقول ذلك عند المرور: أرضيّةٌ أزرقُ العلامة الباهت
+                    // ونصٌّ بلون العلامة — لا رماديٌّ يُشبه الزيبرا (خالد ١٨ سبتمبر ٢٠٢٦).
+                    column.sortable !== false &&
+                      "cursor-pointer transition-colors hover:bg-primary/10 hover:!text-primary",
+                    sortKey === String(column.key) && "bg-primary/10 !text-primary",
+                    column.key === "seo" && "w-[70px]",
+                    column.className,
                   )}
                   onClick={() => column.sortable !== false && handleSort(String(column.key))}
+                  title={column.sortable !== false ? sortTitle(String(column.key)) : undefined}
+                  aria-sort={
+                    sortKey === String(column.key) ? (sortDirection === "asc" ? "ascending" : "descending") : undefined
+                  }
                 >
-                  <div className="flex items-center">
-                    {column.header}
-                    {column.sortable !== false && typeof column.header === "string" && getSortIcon(String(column.key))}
-                  </div>
+                  <div className="flex items-center">{column.header}</div>
                 </TableHead>
               ))}
             </TableRow>
@@ -183,7 +199,7 @@ export function DataTable<T extends { id: string }>({
             {paginatedData.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={columns.length} className="text-center text-muted-foreground">
-                  No data found
+                  {emptyText}
                 </TableCell>
               </TableRow>
             ) : (
@@ -191,10 +207,10 @@ export function DataTable<T extends { id: string }>({
                 <TableRow
                   key={item.id}
                   onClick={() => onRowClick?.(item)}
-                  className={cn("h-10", onRowClick && "cursor-pointer")}
+                  className={cn("h-10", onRowClick && "cursor-pointer", rowClassName?.(item))}
                 >
                   {columns.map((column) => (
-                    <TableCell key={String(column.key)}>
+                    <TableCell key={String(column.key)} className={column.className}>
                       {column.render
                         ? column.render(item)
                         : String(item[column.key as keyof T] ?? "-")}

@@ -73,7 +73,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               */}
             <Link
               href="/orders"
-              aria-label="العودة إلى طلبات الاشتراك"
+              aria-label="العودة إلى الاشتراكات"
               className="text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowRight className="size-4" aria-hidden />

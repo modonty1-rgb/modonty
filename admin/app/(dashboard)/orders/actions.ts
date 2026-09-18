@@ -26,6 +26,9 @@ export async function getOrderNumber(id: string): Promise<string | null> {
 const confirmTransferSchema = z.object({
   transferReference: z.string().trim().min(1, "مرجع التحويل مطلوب").max(80, "المرجع طويل جداً"),
   transferDate: z.coerce.date({ invalid_type_error: "تاريخ غير صحيح" }),
+  // القناةُ التي وصل منها المال — يقرّرها من رأى وصوله. كانت تُكتب `BANK_TRANSFER` دائماً
+  // فذابت إنستا باي في التحويل البنكيّ (خالد ١٨ سبتمبر ٢٠٢٦).
+  channel: z.enum(["BANK_TRANSFER", "INSTAPAY"], { errorMap: () => ({ message: "اختر قناة التحويل: بنكي أو إنستا باي" }) }),
 });
 
 /**
@@ -40,6 +43,7 @@ export async function confirmOrderPaymentAction(orderId: string, form: FormData)
   const parsed = confirmTransferSchema.safeParse({
     transferReference: String(form.get("transferReference") ?? "").trim(),
     transferDate: String(form.get("transferDate") ?? ""),
+    channel: String(form.get("channel") ?? ""),
   });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "تحقّق من بيانات التحويل");
 
@@ -64,14 +68,18 @@ export async function confirmOrderPaymentAction(orderId: string, form: FormData)
   const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { number: true, totalMinor: true, currency: true, market: true, planName: true, paidMonths: true, bonusServiceMonths: true, buyerName: true, clientId: true } });
   if (order) {
     await db.paymentTransaction.create({
-      data: { orderId, provider: "BANK_TRANSFER", providerReference: parsed.data.transferReference, status: "SUCCESS", amountMinor: order.totalMinor, currency: order.currency, settledAt: now },
+      data: { orderId, provider: parsed.data.channel, providerReference: parsed.data.transferReference, status: "SUCCESS", amountMinor: order.totalMinor, currency: order.currency, settledAt: now },
     });
     // A transfer only becomes the governing deal once the money is confirmed — an order
     // sitting in AWAITING_TRANSFER must never govern a client (MONEY-FLOW §4).
     if (order.clientId) await setActiveOrder(order.clientId, orderId);
   }
 
-  await logAction("order.confirmPayment", { entity: "Order", entityId: orderId, summary: `تأكيد تحويل — مرجع ${parsed.data.transferReference}` });
+  await logAction("order.confirmPayment", {
+    entity: "Order",
+    entityId: orderId,
+    summary: `تأكيد ${parsed.data.channel === "INSTAPAY" ? "إنستا باي" : "تحويل بنكي"} — مرجع ${parsed.data.transferReference}`,
+  });
 
   // PAY-E7: the team hears about every arrival. Never fails the confirmation (no-op outside production).
   if (order) {

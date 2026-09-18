@@ -42,7 +42,7 @@ export default async function NewOrderPage({ searchParams }: { searchParams: Pro
           كل الطلبات
         </Link>
         <h1 className="text-xl font-semibold">
-          {lead ? `طلب اشتراك — ${lead.company || lead.name}` : "طلب اشتراك جديد"}
+          {lead ? `اشتراك — ${lead.company || lead.name}` : "اشتراك جديد"}
         </h1>
         <p className="mt-0.5 text-xs text-muted-foreground">
           {lead

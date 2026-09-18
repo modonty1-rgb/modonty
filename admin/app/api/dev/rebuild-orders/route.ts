@@ -69,6 +69,12 @@ interface PlannedOrder {
   totalMinor: number;
   paidMonths: number;
   serviceStartedAt: Date | null;
+  /**
+   * يومُ التفعيل للمُرحَّل = يومُ إنشاء كرت العميل (خالد ١٨ سبتمبر ٢٠٢٦).
+   * القديمُ لم يسجّل تفعيلاً قطّ (`Client.activatedAt` صفر من ٤٢)، وإنشاءُ الكرت هو
+   * أقربُ حدثٍ موثَّق لدخول العميل الخدمة.
+   */
+  activatedAt: Date;
   /** المدّةُ كما يقولها كلُّ مصدر — تُعرَض معاً لأنّها تتناقض. */
   monthsByCycle: number | null;
   monthsByAmount: number | null;
@@ -89,7 +95,7 @@ async function planAll(): Promise<PlannedOrder[]> {
       select: {
         id: true, name: true, email: true, phone: true, addressCountry: true,
         articlesPerMonth: true, openingBalance: true, billingCycle: true,
-        subscriptionStartDate: true, subscriptionEndDate: true,
+        subscriptionStartDate: true, subscriptionEndDate: true, createdAt: true,
         subscriptionTierConfig: { select: { name: true } },
       },
       orderBy: { createdAt: "asc" },
@@ -184,6 +190,7 @@ async function planAll(): Promise<PlannedOrder[]> {
       totalMinor,
       paidMonths: months ?? 12,
       serviceStartedAt: c.subscriptionStartDate,
+      activatedAt: c.createdAt,
       monthsByCycle: months,
       monthsByAmount: monthsByAmount != null ? Number(monthsByAmount.toFixed(2)) : null,
       monthsByDates,
@@ -216,6 +223,7 @@ function serialise(p: PlannedOrder) {
   return {
     ...p,
     serviceStartedAt: p.serviceStartedAt ? p.serviceStartedAt.toISOString().slice(0, 10) : null,
+    activatedAt: p.activatedAt.toISOString().slice(0, 10),
   };
 }
 
@@ -290,10 +298,28 @@ export async function POST(_req: NextRequest) {
           status: "PAID",
           paidAt: p.serviceStartedAt,
           serviceStartedAt: p.serviceStartedAt,
+          activatedAt: p.activatedAt,
+          // تاريخُ الطلب = يومُ التفعيل، لا يومُ تشغيل الترحيل (خالد ١٨ سبتمبر ٢٠٢٦):
+          // ٤٢ طلباً بتاريخٍ واحد هو يومُ الضغط على الزرّ لا يقول شيئاً عن العميل.
+          createdAt: p.activatedAt,
           clientId: p.clientId,
           notes: p.gaps.length
             ? `⚠ ترحيلٌ يحتاج مراجعة — ${p.gaps.join(" · ")}`
             : "طلبٌ مُرحَّل من بيانات العميل القديمة",
+        },
+      });
+
+      // معاملةٌ بمزوّد `MIGRATED`: الترحيلُ يكتب بوّابته بنفسه، فعمودُ البوّابة لا يستنتج،
+      // وطلبٌ بلا معاملةٍ يبقى إشارةَ عطلٍ حقيقيّ لا حالةً تُفسَّر بحسن نيّة.
+      await db.paymentTransaction.create({
+        data: {
+          orderId: order.id,
+          provider: "MIGRATED",
+          status: "MIGRATED",
+          amountMinor: p.totalMinor,
+          currency: p.currency ?? "SAR",
+          providerReference: "rebuild-orders",
+          settledAt: p.serviceStartedAt,
         },
       });
 

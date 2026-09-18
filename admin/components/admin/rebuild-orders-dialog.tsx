@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import {
   Dialog,
@@ -76,30 +76,48 @@ export function RebuildOrdersDialog({
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  async function handleOpenChange(o: boolean) {
-    onOpenChange(o);
-    if (!o) {
+  /**
+   * الوضعُ الجافّ يُجلب على تغيّر `open` لا داخل `onOpenChange`.
+   *
+   * قائمةُ الأدوات تفتح النافذة بضبط `open` مباشرةً (`setRebuildOpen(true)`) فلا يمرّ
+   * الفتحُ بـ`onOpenChange` أصلاً — وكان الجلبُ هناك، فبقيت النافذة على «...» بلا زرّ
+   * تأكيدٍ للأبد (١٨ سبتمبر ٢٠٢٦). الحالةُ تُشتقّ من الخاصّيّة، لا من طريق فتحها.
+   */
+  useEffect(() => {
+    if (!open) {
       setPhase("idle");
       setDry(null);
       setResult(null);
       setError(null);
       return;
     }
+    let cancelled = false;
     setPhase("loading");
-    try {
-      const res = await fetch("/api/dev/rebuild-orders");
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-        setError(err.error ?? `HTTP ${res.status}`);
+    (async () => {
+      try {
+        const res = await fetch("/api/dev/rebuild-orders");
+        if (cancelled) return;
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+          setError(err.error ?? `HTTP ${res.status}`);
+          setPhase("error");
+          return;
+        }
+        setDry(await res.json());
+        setPhase("idle");
+      } catch (e) {
+        if (cancelled) return;
+        setError(e instanceof Error ? e.message : "Network error");
         setPhase("error");
-        return;
       }
-      setDry(await res.json());
-      setPhase("idle");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Network error");
-      setPhase("error");
-    }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
+
+  function handleOpenChange(o: boolean) {
+    onOpenChange(o);
   }
 
   async function run() {

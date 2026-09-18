@@ -202,39 +202,83 @@
 
   <section data-view="urgent">
   <div class="card stop">
-    <b>🚨 عائقٌ مفتوح — <span style="color:var(--stop)">Atlas يقطع اتّصال الإنتاج · يُعالَج قبل الترحيل</span></b>
-    <p class="said">خالد (١٧ سبتمبر): «لازم نشوف المشكلة هذه عشان نعالجها قبل ما نخلّص
-      موضوع العميل والترحيل».</p>
+    <b>🚨 عائقٌ مفتوح — <span style="color:var(--stop)">انقطاع اتّصال الإنتاج بأطلس · مُشخَّص، ولم يُصلَح بعد</span></b>
+    <p class="said">خالد (١٨ سبتمبر): «ضيف كل ما وجد من المشكلة هذي في ملف الـHTML في القسم تبعها، عشان
+      يخلص اللي في يدنا ونرجع لها».</p>
+
     <p><b>النصُّ الحرفيّ من <code>system_errors</code> في الإنتاج:</b></p>
-    <pre>Kind: Connection pool for ac-ounlw6n-shard-00-02.tgixa8h.mongodb.net:27017 cleared
-because another operation failed with:
-Kind: I/O error: received fatal alert: InternalError, labels: {"RetryableWriteError"}</pre>
+    <pre>Kind: I/O error: received fatal alert: InternalError, labels: {"RetryableWriteError"}
+Kind: Server selection timeout: … Topology: { Type: ReplicaSetNoPrimary … }</pre>
 
-    <p><b>القياس (١٧ سبتمبر · ١٤:٢٤):</b></p>
-    <pre>إجماليّ الإنتاج          1070 خطأً
-هذا الخطأ وحده          684 من 925 في النسخة المحليّة
-١٥ · ١٦ · ١٧ سبتمبر     311 · 517 · 145      ← نوبات لا استمرار
-اليوم                   11:00 → 41 · 12:00 → 104 · ثمّ هدوء
+    <p><b>الحكم (وكيل التحقيق · ١٨ سبتمبر · ٥٣ دقيقة · مصادر رسميّة فقط):</b>
+      <span style="color:var(--stop);font-weight:900">الخلل من عندنا، لا من أطلس ولا من السائق.</span>
+      طبقتان: حلقةُ تضخيمٍ في سجلّ الأخطاء نفسه، ورابطُ اتّصالٍ بلا سقفٍ للبِركة — يشعلهما زاحفُ فيسبوك
+      على عنقود Flex بلا هامش. الثقة عاليةٌ للحلقة والمشغّل، متوسّطة-عالية لسقف البِركة.</p>
 
-modonty:rsc اليوم        47   ← الموقعُ العامّ يسقط على الزائر
-/api/internal/log-error 352   ← المسجّلُ نفسه يفشل، فالعددُ الحقيقيّ أكبر</pre>
+    <table>
+      <thead><tr><th>الملاحظة</th><th>الدليل الخام</th></tr></thead>
+      <tbody>
+        <tr><td><b>حلقة تضخيم — ٥٥٪ من الأخطاء</b></td>
+            <td>٤٣٤ من ٧٨٧ مصدرها <code>admin:server /api/internal/log-error</code> — أي أنّ السجلّ يفشل في تسجيل فشله.
+                <code>admin/app/api/internal/log-error/route.ts:58</code> → <code>db.systemError.create</code> <b>بلا try/catch</b>
+                → <code>admin/instrumentation.ts:29</code> يرسل الخطأ إلى نفسه. أطول سلسلة متّصلة: ٣٢ · الذروة ١٠٥ خطأ/دقيقة.</td></tr>
+        <tr><td><b>المشغّل</b></td>
+            <td>١٢ من ١٣ دفقة أوّلُ خطأ فيها <code>modonty /</code> + <code>bot=Facebook</code>. ٣٩٣ من ٩٧٣ زواحف (٣٣٣ فيسبوك). المسارات: ١٤٩ × <code>/</code> · ٩٣ × <code>/clients</code>.</td></tr>
+        <tr><td><b>مدونتي تضخّ على الأدمن</b></td>
+            <td><code>modonty/instrumentation.ts:35</code> → <code>fetch("https://admin.modonty.com/api/internal/log-error")</code>: كلّ فشل تصييرٍ في مدونتي = كتابةٌ في مونغو من الأدمن.</td></tr>
+        <tr><td><b>الرابط بلا أيّ إعداد اتّصال</b></td>
+            <td><code>.env.shared:19</code> — <code>retryWrites=true&amp;w=majority&amp;appName=modonty-cluster</code> فقط. لا <code>maxPoolSize</code> (الافتراضيّ الرسميّ <b>١٠٠</b>) ولا <code>maxIdleTimeMS</code> ولا <code>serverSelectionTimeoutMS</code>.</td></tr>
+        <tr><td><b>حارس النسخة الواحدة معطَّل في الإنتاج</b></td>
+            <td><code>lib/db.ts:13</code> في الحزم الخمس: <code>if (NODE_ENV !== "production") globalForPrisma.prisma = db</code>. والـproxy رسمُ وحداتٍ منفصل (Next 16: «should not rely on shared modules or globals») → عميلٌ ثانٍ.</td></tr>
+        <tr><td><b>استعلامٌ على كلّ طلبٍ في الأدمن</b></td>
+            <td><code>admin/proxy.ts:31</code> و<code>:45</code> — <code>db.staff.findUnique</code> بلا كاش على كلّ مسارٍ محميّ. و<code>settings.findUnique</code> فشل ١٩٣ مرّة على صفحات مدونتي (٩١ منها على <code>/</code>).</td></tr>
+        <tr><td><b>ذاكرةُ الـproxy لكلّ نسخةٍ على حدة</b></td>
+            <td><code>modonty/lib/archive-cache.ts:13-15</code> — تسع ذاكرات في ذاكرة الدالّة، <code>CACHE_TTL_MS = 5 دقائق</code> — والدفقات تدوم ~٥ دقائق (وسيط ٣٠٥ث). قد يكون مصادفة: ٢٢٣ من ٢٨٣ خطأ مدونتي على مسارات لا يلمسها الـproxy.</td></tr>
+        <tr><td><b>سياقٌ زمنيّ</b></td>
+            <td><code>97f05db</code> ١٤ سبتمبر إطلاق التطبيق الرابع (payment) — أوّل خطأ <b>١٥ سبتمبر ١٤:٠٢Z</b>. وقبل <code>ignoreCommand</code> (١٦ سبتمبر) كانت كلّ دفعة تبني الأربعة معاً على نفس العنقود. آخر خطأ <b>١٧ سبتمبر ١٢:٠٤Z</b> وصفرٌ بعده — «الهدوء ليس إصلاحاً».</td></tr>
+      </tbody>
+    </table>
 
-    <p><b>والباقي (٢٤١) أخفّ:</b></p>
-    <pre>169 × خطأُ رندر Server Components (الرسالة محجوبةٌ في الإنتاج)
- 63 × Expected the resume to render &lt;div&gt; … __next_metadata_boundary__  ← بق PPR في نكست
-  6 × The destination stream closed early</pre>
+    <p style="margin-top:12px"><b>الحدود الرسميّة (Atlas Flex):</b> ٥٠٠ اتّصال · ٥٠٠ عمليّة/ثانية (تجاوزُها <b>يُصفّ ولا يُخطئ</b>) · عند بلوغ سقف الاتّصالات
+      «no new connections can be opened». و<code>received fatal alert</code> تنبيه TLS من الطرف الآخر (أطلس) يُنهي الاتّصال — السائق Rust/rustls.
+      أطلس نفسه سجّل <b>١٨ تنبيهاً</b> «Connections above 80%» في نفس الأيّام (١٥ × ٨ · ١٦ × ٨ · ١٧ × ٢).</p>
 
-    <p><b>ما قيس ولم يُحسم:</b> <code>serverStatus</code> و<code>hostInfo</code> مرفوضان
-      (<code>user is not allowed to do action [serverStatus]</code>) — وهذا نفسُه مؤشّرٌ على
-      <b>باقةٍ مشتركة</b>، فالباقاتُ المخصّصة تسمح بهما. فالترجيحُ: تجاوزُ حدّ الاتّصالات
-      (أربعةُ تطبيقات + دوالّ Vercel بلا حدّ) — <b>ترجيحٌ لا حكم</b>، يحتاج لوحةَ Atlas
-      (<code>Connections</code> · <code>Alerts</code> · <code>Tier</code>).</p>
+    <p><b>المحاكاة على <code>modonty_dev</code> (نفس العنقود):</b></p>
+    <pre>عميل واحد · ٢٥/٥٠/١٠٠/٢٠٠ متوازٍ              errors=0
+٣ عملاء × ١٠٠                                   errors=0 · 13.2s
+maxPoolSize=10 · ٢٠٠ متوازٍ                     30.9s  ← أسرع من الافتراضيّ 43.5s
+سوكِتات عميل واحد (netstat)                    خامل 3 · ذروة 16 · لا تُطلَق بعد الدفقة
+سوكِتات ٣ عملاء                                  ذروة 48 · مع maxPoolSize=5 → 33
+maxIdleTimeMS=30000 · خمول ١٢٠ث                 16 → 6 سوكِت  ← يُنظّف فعلاً
+إحماء proxy بارد (٩ استعلامات archive-cache)     ١٠ سوكِت · 1521ms
+١٠ نسخ proxy باردة متزامنة                      ١٠٠ سوكِت = ٢٠٪ من ميزانيّة Flex
+خمول ١٠ دقائق ثمّ استعلام                       OK لكن 10185ms (مقابل 141ms دافئاً)
 
-    <p><b>ولمَ يعطّل الترحيل:</b> سكربتٌ يكتب على قاعدةٍ تسقط اتّصالاتُها قد يُنفَّذ
-      نصفَ تنفيذ، فيُترك مالُ العملاء بين حالتين.</p>
+لم يُعَد إنتاج نصّ «fatal alert: InternalError» — جهاز واحد يفتح ١٦ سوكِتاً لا ٥٠٠.</pre>
 
-    <p class="said"><b>وأمانةً:</b> مزامنةُ ١٠:١١ قرأت ١٥ ألف وثيقة، والنوبةُ بدأت ١١:٠٠.
-      النوباتُ قائمةٌ منذ ١٥ سبتمبر قبل أيّ مزامنة — لكنّ القربَ الزمنيَّ يُذكر لا يُخفى.</p>
+    <p><b>الإصلاح — مرتّباً بالأثر (اقتراحٌ لم يُنفَّذ):</b></p>
+    <table>
+      <thead><tr><th>#</th><th>الإصلاح</th><th>لماذا · المصدر الرسميّ</th></tr></thead>
+      <tbody>
+        <tr><td>١</td><td><code>try/catch</code> حول <code>db.systemError.create</code> في <code>log-error/route.ts:58</code> + حارس في <code>admin/instrumentation.ts</code> يمنع تسجيل أخطاء <code>routePath === "/api/internal/log-error"</code></td>
+            <td>يقتل ٥٥٪ من الحِمل فوراً. <code>onRequestError</code> «will be triggered when the Next.js server captures the error» — الممسوك لا يصل الخادم فتنكسر الحلقة، والفشل يبقى في لوغات Vercel.</td></tr>
+        <tr><td>٢</td><td><code>&amp;maxPoolSize=10&amp;maxIdleTimeMS=60000&amp;serverSelectionTimeoutMS=10000</code> في رابط <b>كلّ</b> تطبيق (متغيّرات Vercel)</td>
+            <td>Prisma لمونغو: «There are no Prisma ORM-specific arguments» فالوسائط تمرّ للسائق · «configure a small pool size» للسيرفرلس · مقيس: أسرع لا أبطأ، و<code>maxIdleTimeMS</code> أسقط ١٦→٦.</td></tr>
+        <tr><td>٣</td><td>إسناد <code>globalForPrisma.prisma = db</code> في الإنتاج أيضاً في الحزم الخمس</td>
+            <td>علّة القيد الرسميّة هي إعادة التحميل الساخن — غائبةٌ في الإنتاج. يجمع الـproxy والتصيير على عميل واحد متى تقاسما العمليّة (Fluid: «a global state/process»).</td></tr>
+        <tr><td>٤</td><td>ذاكرات <code>archive-cache.ts</code> التسع → مخزن مشترك بين النسخ</td>
+            <td>سببُ تجنّب <code>unstable_cache</code> موثَّق في الملفّ (هيدر <code>x-next-cache-tags</code> يسقط على السلاگات العربيّة — vercel/next.js#73965). و<code>use cache</code> في السيرفرلس «entries typically don't persist across requests». يحتاج تصميماً لا سطراً.</td></tr>
+        <tr><td>٥</td><td>ترقية العنقود Flex → M10</td><td>٥٠٠ → ١٥٠٠ اتّصال، وبلا سقف ٥٠٠ عمليّة/ثانية (alert-resolutions/connection-alerts).</td></tr>
+        <tr><td>٦</td><td>كبح الزواحف على <code>/</code> و<code>/clients</code></td><td>١٢ من ١٣ دفقة بدأها زاحف فيسبوك على الصفحة الرئيسيّة.</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:12px"><b>ما بقي غير مؤكَّد:</b> الربط بين «بلوغ سقف أطلس» و«تنبيه TLS رقم ٨٠» استنتاجيّ — لا وثيقة رسميّة تقول إنّ الرفض
+      يأتي بهذا التنبيه تحديداً؛ تأكيده بتذكرة دعم لدى أطلس بالنافذة <code>2026-09-15T14:02Z → 2026-09-17T12:05Z</code>.
+      وعددُ نسخ PrismaClient الفعليّ في الإنتاج غير مقيس.</p>
+
+    <p class="said"><b>مُنجَزٌ وله أثر:</b> <code>ignoreCommand</code> (١٦ سبتمبر) أوقف أربعة بناءات متزامنة لكلّ دفعة ·
+      إزالةُ تكامل جبر سيو (١٧ سبتمبر) أغلقت <code>MongoClient</code> سادساً كان يفتح <b>قاعدة الإنتاج</b> من كلّ نسخة أدمن.</p>
   </div>
   </section>
 
@@ -1772,6 +1816,23 @@ GET /clients/new                         200 in 1281ms
       (<code>onDelete: Cascade → Restrict</code>).</p>
     <p>وبطاقة «الاشتراك الحالي» تشتغل على كرت العميل اليوم، وتقرأ الطلب لا الكرت
       (<code>resolve-active-order.ts</code>) — فمخرَج التفعيل له مكانٌ يُعرض فيه من اللحظة الأولى.</p>
+  </div>
+
+  <div class="card warn">
+    <b>٧ · معلّق قبل النشر — تطبيقُ الدفع والأدمن على قاعدةٍ واحدة في الإنتاج</b>
+    <p class="said">خالد (١٨ سبتمبر): «هل أنت متابعهم من البوّابة تبعت البيمنت على الداتا هذه؟» — «اضيفها من ضمن التسكات المعلّقة».</p>
+    <p><b>المقيس محلّيّاً:</b> تطبيق الدفع يكتب في نفس الجدولين اللذين يقرؤهما الأدمن —
+      <code>create-payment/route.ts:145</code> · <code>tamara/route.ts:144</code> · <code>bank-transfer/route.ts:134</code>
+      ← <code>checkoutOrder.create</code>، و<code>:229</code>/<code>:200</code> ← <code>paymentTransaction.create</code>،
+      و<code>status/route.ts:110/124</code> ← <code>PAID</code>/<code>FAILED</code>. و<code>DATABASE_URL</code> للحزمتين
+      = <code>modonty-cluster/modonty_dev</code>.</p>
+    <p><b>غير المقيس بعد — وهو البند:</b> متغيّرات Vercel للإنتاج. يُتحقَّق قبل الدفع أنّ
+      <code>DATABASE_URL</code> في مشروعَي <code>payment</code> و<code>admin</code> (و<code>modonty</code>
+      و<code>console</code>) يشير إلى قاعدة <code>modonty</code> نفسها — عبر <code>GET /v9/projects/{id}/env</code>
+      مع ترقيم الصفحات كاملاً، لا من الذاكرة. قاعدتان مختلفتان = دفعةٌ تصل ولا تظهر في الجدول.</p>
+    <p><b>ويُلحق به عند النشر نفسه:</b> إضافة <code>INSTAPAY</code> و<code>MIGRATED</code> إلى
+      <code>PaymentProvider</code> تحتاج <code>prisma generate</code> في بناء الحزم الأربع (البناء يفعلها:
+      <code>admin/package.json:10</code>) — ولا ترحيلَ بيانات، مونغو لا يحتاجه للـenum.</p>
   </div>
 
   <div class="thesis" style="margin-top:26px">

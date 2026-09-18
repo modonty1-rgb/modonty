@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import {
   Dialog,
@@ -55,33 +55,47 @@ export function WipeOrdersDialog({ open, onOpenChange }: { open: boolean; onOpen
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  async function handleOpenChange(o: boolean) {
-    onOpenChange(o);
-    if (!o) {
+  // يُعرض العددُ الحقيقيّ قبل التأكيد. رقمٌ مكتوبٌ في الواجهة سلفاً يكذب أوّلَ ما
+  // تتغيّر القاعدة — والقاعدة هنا تُستبدل كلَّ دورة مزامنة.
+  //
+  // يُجلب على تغيّر `open` لا داخل `onOpenChange`: قائمةُ الأدوات تفتح النافذة بضبط
+  // `open` مباشرةً فلا يمرّ الفتحُ بـ`onOpenChange`، وكان الجلبُ هناك فبقيت على «...»
+  // بلا زرّ تأكيد (١٨ سبتمبر ٢٠٢٦). الحالةُ تُشتقّ من الخاصّيّة، لا من طريق فتحها.
+  useEffect(() => {
+    if (!open) {
       setPhase("idle");
       setInventory(null);
       setResult(null);
       setError(null);
       return;
     }
-
-    // يُعرض العددُ الحقيقيّ قبل التأكيد. رقمٌ مكتوبٌ في الواجهة سلفاً يكذب أوّلَ ما
-    // تتغيّر القاعدة — والقاعدة هنا تُستبدل كلَّ دورة مزامنة.
+    let cancelled = false;
     setPhase("loading");
-    try {
-      const res = await fetch("/api/dev/wipe-orders");
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-        setError(err.error ?? `HTTP ${res.status}`);
+    (async () => {
+      try {
+        const res = await fetch("/api/dev/wipe-orders");
+        if (cancelled) return;
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+          setError(err.error ?? `HTTP ${res.status}`);
+          setPhase("error");
+          return;
+        }
+        setInventory(await res.json());
+        setPhase("idle");
+      } catch (e) {
+        if (cancelled) return;
+        setError(e instanceof Error ? e.message : "Network error");
         setPhase("error");
-        return;
       }
-      setInventory(await res.json());
-      setPhase("idle");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Network error");
-      setPhase("error");
-    }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
+
+  function handleOpenChange(o: boolean) {
+    onOpenChange(o);
   }
 
   async function startWipe() {
