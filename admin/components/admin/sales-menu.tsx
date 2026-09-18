@@ -62,7 +62,6 @@ const GROUPS: SalesGroup[] = [
     title: "الأمور المالية",
     items: [
       { href: "/pay-preview", label: "الباقات", icon: Eye },
-      { href: "/clients/accounts", label: "حسابات وفواتير العملاء", icon: Wallet },
       { href: "/payment-failures", label: "إخفاقات الدفع", icon: ShieldAlert },
       { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp },
     ],

@@ -36,6 +36,7 @@ import {
   ClipboardList,
   Cloud,
   CloudUpload,
+  ArrowRightLeft,
   Cookie,
   Copyright,
   CreditCard,
@@ -359,6 +360,10 @@ const rawMenuGroups: MenuGroup[] = [
       // TEMPORARY — one-time Cloudinary → Bunny migration. Delete this line together with
       // `app/(dashboard)/bunny-migration/` once every asset is on Bunny and verified.
       { icon: CloudUpload, label: "Bunny Migration", href: "/bunny-migration" },
+      // TEMPORARY — ترحيلُ الطلبات لمرّةٍ واحدة. يختفي من تلقائه متى امتلأ جدولُ
+      // الطلبات على الإنتاج (`showOrdersMigration` يُقرأ في الخادم، `layout.tsx`)،
+      // ويُحذف هذا السطرُ مع `app/(dashboard)/orders-migration/` بعد إتمامه.
+      { icon: ArrowRightLeft, label: "Orders Migration", href: "/orders-migration", flag: "ordersMigration" as const },
       { icon: Images, label: "Default Images", href: "/settings/defaults" },
       { icon: Wrench, label: "Maintenance", href: "/maintenance" },
       { icon: MailOpen, label: "Email Templates", href: "/emails" },
@@ -387,9 +392,20 @@ const sectionOrder: Record<MenuGroup["section"], number> = {
 
 // Keep operational work at the top. The source declarations stay grouped by
 // domain, while the rendered order reflects how an admin moves through a day.
-const menuGroups = [...rawMenuGroups].sort(
+const sortedMenuGroups = [...rawMenuGroups].sort(
   (a, b) => sectionOrder[a.section] - sectionOrder[b.section],
 );
+
+/** بندٌ يحمل `flag` لا يُرسم إلّا إذا رُفع علمُه — اليومَ واحدٌ: ترحيلُ الطلبات. */
+function applyFlags(flags: { ordersMigration: boolean }) {
+  return sortedMenuGroups.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => {
+      const flag = (item as { flag?: keyof typeof flags }).flag;
+      return !flag || flags[flag];
+    }),
+  }));
+}
 
 function NavLink({
   item,
@@ -553,9 +569,22 @@ function GroupItems({
   );
 }
 
-export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: ArticleStatusCounts | null }) {
+export function Sidebar({
+  articleStatusCounts,
+  showOrdersMigration = false,
+}: {
+  articleStatusCounts?: ArticleStatusCounts | null;
+  /**
+   * بندُ «Orders Migration» يُرسم فقط ما دام الترحيل متاحاً — والشرطُ يُقرأ في الخادم
+   * (`lib/orders-migration-gate.ts`) لأنّه يعدّ صفوفاً في القاعدة، ولا يجوز أن يهبط
+   * عدُّها إلى حزمة المتصفّح. وصفحتُه تُطبّق الشرطَ نفسَه، فإخفاءُ الرابط راحةٌ للعين
+   * لا حاجزُ أمان.
+   */
+  showOrdersMigration?: boolean;
+}) {
   const pathname = usePathname();
   const { collapsed, toggle } = useSidebar();
+  const menuGroups = applyFlags({ ordersMigration: showOrdersMigration });
 
   // T-SIDEBAR-ACCORDION: only one group open at a time. Initial value = the
   // group whose route is currently active (so it's auto-expanded on page load).

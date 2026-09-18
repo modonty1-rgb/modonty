@@ -102,11 +102,11 @@ export default async function ClientAccountPage({ params }: PageProps) {
           تقدر تدير عملاءك أنت فقط — لأي استفسار عن هذا الحساب تواصل مع المندوب المسؤول أو الإدارة.
         </p>
         <Link
-          href="/clients/accounts"
+          href="/orders"
           className="mt-6 inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-          رجوع لحساباتي
+          رجوع للاشتراكات
         </Link>
       </div>
     );
@@ -127,20 +127,6 @@ export default async function ClientAccountPage({ params }: PageProps) {
   const currentPeriod = invoices[0]?.period ?? "annual";
   const periodLabel = currentPeriod === "monthly" ? "شهري" : "سنوي";
 
-  /**
-   * المبلغ الافتراضيّ في نافذة الإصدار — **من الطلب الساري**، أي ما دفعه العميل فعلاً.
-   *
-   * كان يُحسب من سعر الكتالوج الحيّ لباقة الكرت: فتغييرُ السعر اليوم يغيّر المبلغ
-   * المقترَح لفاتورة اشتراكٍ اشتُري بسعر أمس. والطلب يحمل الرقم الذي دُفع، مجمَّداً.
-   *
-   * `totalMinor` إجماليُّ المدّة كلّها، فيُقسَم على `paidMonths` ليُعطي سعرَ الشهر،
-   * ثمّ يُضرب في أشهر الفاتورة المطلوبة.
-   */
-  let defaultAmount: number | null = null;
-  if (activeOrder && activeOrder.paidMonths > 0) {
-    const perMonth = activeOrder.totalMinor / 100 / activeOrder.paidMonths;
-    defaultAmount = Math.round(currentPeriod === "monthly" ? perMonth : perMonth * 12);
-  }
 
   /**
    * الدفعةُ المؤسِّسة — من الطلب الساري، لا من `Client.openingBalance`.
@@ -192,11 +178,11 @@ export default async function ClientAccountPage({ params }: PageProps) {
   return (
     <div className="space-y-4">
       <Link
-        href="/clients/accounts"
+        href="/orders"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowRight className="h-4 w-4" />
-        كل الحسابات
+        كلّ الاشتراكات
       </Link>
 
       {/* ── HEADER — identity + status, one compact line ── */}
@@ -284,11 +270,7 @@ export default async function ClientAccountPage({ params }: PageProps) {
         <AccountLedger
           clientId={client.id}
           invoices={ledger}
-          firstPublishedAt={firstPublished?.datePublished?.toISOString().slice(0, 10) ?? null}
-          currentEnd={client.subscriptionEndDate?.toISOString().slice(0, 10) ?? null}
-          planLabel={`${currentTierName} · ${periodLabel}`}
           currency={currency}
-          defaultAmount={defaultAmount}
         />
       </div>
     </div>

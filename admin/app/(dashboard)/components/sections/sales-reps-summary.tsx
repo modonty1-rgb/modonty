@@ -30,7 +30,7 @@ export function SalesRepsSummary({ reps, unassignedCount, unassigned }: SalesRep
         {reps.map((r) => (
           <PipelineRow
             key={r.name}
-            href="/clients/accounts"
+            href="/orders"
             tier="ok"
             icon={Users}
             value={r.count}

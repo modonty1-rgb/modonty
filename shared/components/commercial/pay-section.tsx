@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { vatRateBpForMarket } from "../../lib/payments/vat-rate";
 import Link from "next/link";
 
 import { formatMonths } from "../../lib/commercial/arabic-months";
@@ -93,6 +94,19 @@ export function PaySection({
   headingLevel = "h1",
   compareHref = null,
 }: PaySectionProps) {
+  /**
+   * **«شامل الضريبة» تظهر حيث توجد ضريبة** — لا حيث يوجد نصّ.
+   *
+   * كان الشرط وجودَ `priceNote` (نصٌّ يُحرَّر من الأدمن)، فظهرت على بطاقات السوق المصريّ
+   * وضريبتُه صفر منذ ١٥ سبتمبر ٢٠٢٦ (`shared/lib/payments/vat-rate.ts` — المؤسّسة سعوديّة
+   * وليست مسجَّلةً ضريبيّاً في مصر). مقيسٌ حيّاً ١٩ سبتمبر على `/eg/plans`:
+   * «٧٬١٩٤ ج.م شامل الضريبة».
+   *
+   * وإعلانُ ضريبةٍ لا تُحصَّل ولا تُورَّد أسوأ من إغفال السطر — وهو نفسُ ما صُحِّح في
+   * شاشة إنشاء الطلب بالأدمن في اليوم نفسه.
+   */
+  const marketHasVat = vatRateBpForMarket(catalog.market) > 0;
+
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-5">
       {catalog.terms.length > 0 ? (
@@ -198,7 +212,7 @@ export function PaySection({
               key={plan.id}
               plan={plan}
               term={selectedTerm}
-              priceNote={priceNote}
+              priceNote={marketHasVat ? priceNote : null}
               ctaLabel={ctaLabel}
               ctaDisabled={ctaDisabled}
               ctaHref={ctaHref && selectedTerm ? ctaHref(plan.slug, selectedTerm.paidMonths) : null}
@@ -229,7 +243,7 @@ export function PaySection({
         </p>
       ) : null}
 
-      {refundNote || priceNote ? (
+      {refundNote || (marketHasVat && priceNote) ? (
         <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 pt-1 text-[12px] font-medium text-muted-foreground">
           {refundNote ? (
             <span className="inline-flex items-center gap-1.5">
@@ -239,7 +253,7 @@ export function PaySection({
           ) : null}
           {/* نصّ الضريبة الكامل مرّة واحدة: البطاقة تحمل «شامل الضريبة» ملتصقة بالرقم
               (وهو ما يلزم عند السعر)، والنسبة وصياغتها الرسمية تكفي هنا مرّة. */}
-          {priceNote ? <span>{priceNote}</span> : null}
+          {marketHasVat && priceNote ? <span>{priceNote}</span> : null}
         </p>
       ) : null}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { vatRateBpForMarket } from "@modonty/shared/lib/payments/vat-rate";
 import { useRouter } from "next/navigation";
 import { Check, Loader2, Receipt } from "lucide-react";
 
@@ -20,8 +21,20 @@ const MARKETS = [
 
 type MarketKey = (typeof MARKETS)[number]["key"];
 
-/** نسبة الضريبة للعرض وحدها — الأكشن يعيد حسابها من `vatRateBpForMarket`. */
-const VAT_LABEL: Record<MarketKey, string> = { SA: "١٥٪", EG: "١٤٪" };
+/**
+ * **نسبةُ الضريبة تُقرأ من مصدرها الواحد** — لا نسخةَ ثانيةً للعرض.
+ *
+ * كانت `VAT_LABEL = { SA: "١٥٪", EG: "١٤٪" }` مكتوبةً بيد، و`EG_VAT_RATE_BP = 0` في
+ * `shared/lib/payments/vat-rate.ts` منذ ١٥ سبتمبر ٢٠٢٦ بقرارٍ صريح: المؤسّسةُ سعوديّة
+ * وليست مسجَّلةً ضريبيّاً في مصر، فلا ضريبةَ مصريّة تُحصَّل.
+ *
+ * فكانت الشاشةُ تَعِد المشتريَ المصريَّ بـ«شامل ضريبة ١٤٪» والطلبُ يُكتب بصفر — مقيسٌ
+ * حيّاً ١٩ سبتمبر ٢٠٢٦ على صفحة الإنشاء. وهذا أسوأ من رقمٍ غلط: إعلانُ ضريبةٍ لا تُورَّد.
+ */
+function vatLabel(market: MarketKey): string {
+  const bp = vatRateBpForMarket(market);
+  return bp === 0 ? "بلا ضريبة" : `شامل ضريبة ${(bp / 100).toLocaleString("ar-EG")}٪`;
+}
 
 /** معرّفٌ لا يساوي أي `planId` حقيقيّ — اختيارُه يعني «خارج الكتالوج». */
 const CUSTOM = "__custom__";
@@ -407,7 +420,7 @@ export function ManualOrderForm({
               </span>
               <span className="text-xs font-semibold text-muted-foreground">{marketMeta.currencyWord}</span>
               <span className="text-[11px] text-muted-foreground">
-                · شامل ضريبة {VAT_LABEL[market]} · خدمة {serviceMonths} شهراً
+                · {vatLabel(market)} · خدمة {serviceMonths} شهراً
                 {isCustom ? " · اتفاق خاصّ" : null}
               </span>
             </>

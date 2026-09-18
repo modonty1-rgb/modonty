@@ -13,9 +13,13 @@ const PROVIDERS: PaymentProvider[] = ["NGENIUS", "TAMARA", "BANK_TRANSFER", "INS
  * filtered view can be bookmarked or sent to a teammate. Same two-part pill shape as
  * daily-tasks/PersonFilter: label | count, active one inverted, links so no client JS.
  *
- * ثلاث مجموعات (خالد ١٨ سبتمبر ٢٠٢٦: «كلّ توغل حطّه كأنّه جروب»): ما يخصّ الاشتراك
- * نفسه (الكلّ · ينتظر التفعيل · منتهٍ) · حالاتُ الدفع · البوّابات. فلترٌ واحد نشطٌ في
- * كلّ مرّة — الرابط يحمل مفتاحاً واحداً.
+ * أربع مجموعات (خالد ١٨ سبتمبر ٢٠٢٦: «كلّ توغل حطّه كأنّه جروب»): ما يخصّ الاشتراك
+ * نفسه (الكلّ · ينتظر التفعيل · منتهٍ) · حالاتُ الدفع · **السوق** · البوّابات. فلترٌ واحد
+ * نشطٌ في كلّ مرّة — الرابط يحمل مفتاحاً واحداً.
+ *
+ * والسوقُ يُقرأ من حقل `market` على الطلب لا من العملة: العملةُ قد تتغيّر (سعرٌ بالدولار
+ * لعميلٍ مصريّ) ويبقى السوقُ هو الذي يقرّر الضريبةَ ونوعَ المستند — فاشتقاقُه من العملة
+ * يجعل الفلترَ يكذب يومَ يختلفان.
  */
 export function OrderStatusFilter({
   counts,
@@ -27,6 +31,9 @@ export function OrderStatusFilter({
   isExpiredView,
   providerCounts,
   activeProvider,
+  marketCounts,
+  marketLabels,
+  activeMarket,
 }: {
   counts: Partial<Record<CheckoutOrderStatus, number>>;
   total: number;
@@ -40,10 +47,17 @@ export function OrderStatusFilter({
   /** طلباتٌ لكلّ بوّابة — من `payment_transactions`؛ المُرحَّل له `MIGRATED`. */
   providerCounts: Partial<Record<PaymentProvider, number>>;
   activeProvider?: PaymentProvider;
+  /** طلباتٌ لكلّ سوق — من حقل `market` على الطلب لا من العملة. */
+  marketCounts: Partial<Record<string, number>>;
+  marketLabels: Record<string, string>;
+  activeMarket?: string;
 }) {
-  const nothingActive = !active && !isAwaitingView && !isExpiredView && !activeProvider;
+  const nothingActive = !active && !isAwaitingView && !isExpiredView && !activeProvider && !activeMarket;
   return (
-    <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5" role="tablist" aria-label="فلاتر الاشتراكات">
+    // صفٌّ واحدٌ يمرّر أفقيّاً عند الضيق ولا يلتفّ (خالد ١٩ سبتمبر ٢٠٢٦: «كلّها تكون في
+    // سطرٍ واحد»). الالتفافُ كان يُنزل «البوّابة» تحت «الاشتراك» على الشاشات الضيّقة، فيتغيّر
+    // ترتيبُ المجموعات بعرض النافذة — والعينُ تتعلّم الموضعَ قبل أن تقرأ الاسم.
+    <div className="flex items-end gap-x-2 overflow-x-auto pb-0.5 [scrollbar-width:thin]" role="tablist" aria-label="فلاتر الاشتراكات">
       <Group label="الاشتراك">
         <Pill href="/orders" label="الكل" count={total} isActive={nothingActive} />
         {/* الوحيد الذي يعني عملاً على الفريق الآن — مالٌ وصل وخدمةٌ لم تبدأ. */}
@@ -53,7 +67,12 @@ export function OrderStatusFilter({
       </Group>
       <Group label="الحالة">
         {STATUSES.map((status) => (
-          <Pill key={status} href={`/orders?status=${status}`} label={orderStatusCopy(status).label} count={counts[status] ?? 0} isActive={active === status} />
+          <Pill key={status} href={`/orders?status=${status}`} label={orderStatusCopy(status).label} title={orderStatusCopy(status).hint} count={counts[status] ?? 0} isActive={active === status} />
+        ))}
+      </Group>
+      <Group label="السوق">
+        {Object.keys(marketLabels).map((code) => (
+          <Pill key={code} href={`/orders?market=${code}`} label={marketLabels[code]} count={marketCounts[code] ?? 0} isActive={activeMarket === code} />
         ))}
       </Group>
       <Group label="البوابة">
@@ -68,14 +87,14 @@ export function OrderStatusFilter({
 /** اسمُ المجموعة فوقها لا بجانبها (خالد ١٨ سبتمبر) — يوفّر عرضاً فتتّسع الثلاث في سطرٍ واحد. */
 function Group({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-0.5">
+    <div className="flex shrink-0 flex-col gap-0.5">
       <span className="ps-1 text-[9.5px] font-medium leading-none text-muted-foreground">{label}</span>
       <div className="flex items-center gap-0.5 rounded-md border border-border/70 bg-muted/30 p-0.5">{children}</div>
     </div>
   );
 }
 
-function Pill({ href, label, count, isActive, tone }: { href: string; label: string; count: number; isActive: boolean; tone?: "alert" | "danger" }) {
+function Pill({ href, label, count, isActive, tone, title }: { href: string; label: string; count: number; isActive: boolean; tone?: "alert" | "danger"; title?: string }) {
   const alert = tone === "alert" && !isActive;
   const danger = tone === "danger" && !isActive;
   return (
@@ -83,6 +102,7 @@ function Pill({ href, label, count, isActive, tone }: { href: string; label: str
       href={href}
       role="tab"
       aria-selected={isActive}
+      title={title}
       className={cn(
         // أصغر (خالد ١٨ سبتمبر): 10px وحشوٌ أضيق — أربع عشرة حبّة في صفّ العنوان.
         // بلا بولد (خالد ١٨ سبتمبر): الوزنُ الثقيل على أربع عشرة حبّةٍ يجعل الصفَّ كلَّه

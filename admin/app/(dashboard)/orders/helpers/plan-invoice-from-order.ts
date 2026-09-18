@@ -70,7 +70,19 @@ export async function planInvoiceFromOrder(orderId: string): Promise<InvoicePlan
     select: { id: true },
   });
 
-  const anchor = client.subscriptionEndDate ?? order.paidAt ?? new Date();
+  /**
+   * **فترةُ الفاتورة من الطلب نفسِه، لا من نهاية اشتراك العميل.**
+   *
+   * كانت المرساةُ `client.subscriptionEndDate` — ونهايةُ الاشتراك تُحسب لحظةَ التفعيل
+   * فتصير «اليوم + مدّة الطلب». فتخرج فاتورةُ التأسيس واصفةً مدّةً تبدأ بعد انقضاء
+   * الاشتراك كلِّه. مقيسٌ حيّاً ١٩ سبتمبر ٢٠٢٦ على `ORD-2026-00385`: طلبٌ سُجِّل اليوم
+   * (١٢ شهراً + ٦ هديّة) خرجت فاتورتُه تقول «فترة الخدمة: ١٩ مارس ٢٠٢٨ — ١٨ سبتمبر ٢٠٢٩».
+   *
+   * والفاتورةُ مستندٌ عن **هذا الطلب**: تبدأ حيث بدأت خدمتُه (`serviceStartedAt`)، ثمّ
+   * يومُ تفعيله، ثمّ يومُ دفعه — بهذا الترتيب، وكلُّها على الطلب لا على الكرت. فلا تتغيّر
+   * فاتورةٌ صدرت لأنّ الكرتَ تغيّر بعدها، ولا يتداخل تجديدان في وصف مدّتهما.
+   */
+  const anchor = order.serviceStartedAt ?? order.activatedAt ?? order.paidAt ?? new Date();
   return {
     ok: true,
     plan: {

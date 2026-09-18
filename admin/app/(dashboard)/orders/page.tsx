@@ -4,7 +4,10 @@ import Link from "next/link";
 
 import { db } from "@/lib/db";
 import { OrderStatusFilter } from "./components/order-status-filter";
-import { OrdersTable, type CurrencyTotal, type OrderRow } from "./components/orders-table";
+import { OrdersSearch } from "./components/orders-search";
+import { MonthlyRevenueStrip, type CurrencyTotal } from "./components/monthly-revenue-strip";
+import { getMonthlyRevenue } from "./helpers/get-monthly-revenue";
+import { OrdersTable, type OrderRow } from "./components/orders-table";
 import { formatMonths } from "./helpers/format-months";
 import { formatOrderAmount } from "./helpers/format-order-amount";
 import { formatOrderDate } from "./helpers/format-order-date";
@@ -19,15 +22,32 @@ export const dynamic = "force-dynamic";
 
 const STATUSES: CheckoutOrderStatus[] = ["AWAITING_PAYMENT", "AWAITING_TRANSFER", "PAID", "FAILED", "CANCELLED", "REFUNDED"];
 const PROVIDERS: PaymentProvider[] = ["NGENIUS", "TAMARA", "BANK_TRANSFER", "INSTAPAY", "MIGRATED"];
-/** السوقان المعلنان — يُعرض إجماليّاهما معاً دائماً، ولو كان أحدهما صفراً. */
-const MARKET_CURRENCIES = [
-  { currency: "EGP", market: "مصر" },
-  { currency: "SAR", market: "السعودية" },
-] as const;
+/**
+ * **الأسواقُ الثلاثة — والإجماليّ يُجمَع بالسوق لا بالعملة.**
+ *
+ * كان يُجمَع بالعملة (`groupBy currency`) وهو يكفي لسوقين لكلٍّ عملتُه. ثمّ صار
+ * ما وراء السعوديّة ومصر يُسعَّر **بالريال السعوديّ** أيضاً (خالد ١٩ سبتمبر ٢٠٢٦)، فلو
+ * بقي الجمعُ بالعملة لذاب إجماليُّ الإمارات في إجماليّ السعودية وما ظهر صفٌّ ثالثٌ أبداً.
+ * والسوقُ حقلٌ على الطلب، فهو ما يُجمَع به.
+ *
+ * ويُعرض الثلاثة معاً دائماً ولو كان أحدها صفراً: إخفاءُ الصفر يجعل غيابَ الرقم يُقرأ
+ * «لم يُحسب» بدل «لا شيء»، ويقفز موضعُ الباقي بين مشهدٍ وآخر.
+ */
+const MARKETS = ["SA", "EG", "AE"] as const;
+const MARKET_LABEL: Record<(typeof MARKETS)[number], string> = { SA: "السعودية", EG: "مصر", AE: "الإمارات" };
+/** ما تقوله الترويسةُ عن العملة حين لا تكفي: سوقان بالريال نفسِه. */
+const MARKET_HINT: Record<(typeof MARKETS)[number], string> = {
+  SA: "بالريال السعوديّ",
+  EG: "بالجنيه المصريّ",
+  AE: "بالريال السعوديّ — أو ما يعادله بعملة بلد العميل حسب سعر التحويل",
+};
 const TAKE = 50;
 
-export default async function OrdersPage({ searchParams }: { searchParams: Promise<{ status?: string; view?: string; provider?: string }> }) {
-  const { status, view, provider } = await searchParams;
+export default async function OrdersPage({ searchParams }: { searchParams: Promise<{ status?: string; view?: string; provider?: string; market?: string; q?: string }> }) {
+  const { status, view, provider, market, q } = await searchParams;
+  const query = (q ?? "").trim();
+  // السوق حقلٌ على الطلب نفسه — لا يُستنتج من العملة، فقد تتغيّر العملة ويبقى السوق.
+  const activeMarket = MARKETS.find((candidate) => candidate === market);
   const activeStatus = STATUSES.find((candidate) => candidate === status);
   // البوّابة من المعاملة (`payment_transactions`) لا من الطلب — الترحيل يكتب `MIGRATED` بنفسه.
   const activeProvider = PROVIDERS.find((candidate) => candidate === provider);
@@ -37,8 +57,23 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   // تُجلب المدفوعةُ المفعَّلة كلُّها ويُرشَّح المنتهي منها هنا.
   const isExpiredView = view === "expired";
 
+  /**
+   * البحثُ يُضاف إلى الفلتر لا يحلّ محلَّه — فيقرأ «المصريّون الذين اسمُهم كذا».
+   * وهو على القاعدة لا على الصفوف المجلوبة، فيشمل ما وراء الخمسين المعروضة.
+   */
+  const searchWhere = query
+    ? {
+        OR: [
+          { buyerName: { contains: query, mode: "insensitive" as const } },
+          { businessName: { contains: query, mode: "insensitive" as const } },
+          { buyerEmail: { contains: query, mode: "insensitive" as const } },
+          { number: { contains: query, mode: "insensitive" as const } },
+        ],
+      }
+    : null;
+
   /** شرطُ الفلتر الواحد — يقود الجدولَ والإجماليَّ معاً فلا يقول أحدُهما غيرَ ما يقوله الآخر. */
-  const where = isExpiredView
+  const filterWhere = isExpiredView
     ? { status: "PAID" as const, NOT: [{ activatedAt: null }] }
     : isAwaitingView
       ? AWAITING_ACTIVATION
@@ -46,9 +81,14 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
         ? { transactions: { some: { provider: activeProvider } } }
         : activeStatus
           ? { status: activeStatus }
-          : undefined;
+          : activeMarket
+            ? { market: activeMarket }
+            : undefined;
 
-  const [fetched, total, countRows, awaitingActivation, expiredCount, providerPairs, sumRows] = await Promise.all([
+  const where =
+    filterWhere && searchWhere ? { AND: [filterWhere, searchWhere] } : (searchWhere ?? filterWhere);
+
+  const [fetched, total, countRows, awaitingActivation, expiredCount, providerPairs, marketRows, sumRows] = await Promise.all([
     db.checkoutOrder.findMany({
       where,
       select: {
@@ -77,33 +117,40 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     // طلباتٌ لكلّ بوّابة — `distinct` على (الطلب، المزوّد) لأنّ الطلب الواحد قد يحمل
     // محاولاتٍ عدّة على نفس البوّابة، والعدّادُ يعدّ طلباتٍ لا محاولات.
     db.paymentTransaction.findMany({ select: { orderId: true, provider: true }, distinct: ["orderId", "provider"], take: 5000 }),
-    // إجماليُّ الفلتر — بكلّ عملةٍ على حدة، على المجموعة كاملةً لا على الصفحة المعروضة.
-    db.checkoutOrder.groupBy({ by: ["currency"], where, _sum: { totalMinor: true } }),
+    // طلباتٌ لكلّ سوق — على الجدول كلِّه لا على الصفحة المعروضة.
+    db.checkoutOrder.groupBy({ by: ["market"], _count: { _all: true } }),
+    // إجماليّا السوقين — على الجدول كلِّه دائماً، لا على المشهد المفلتَر.
+    db.checkoutOrder.groupBy({ by: ["market"], _sum: { totalMinor: true } }),
   ]);
   const orders = isExpiredView ? fetched.filter((o) => getSubscriptionStanding(o).state === "expired") : fetched;
   const counts = Object.fromEntries(countRows.map((row) => [row.status, row._count._all])) as Partial<Record<CheckoutOrderStatus, number>>;
   const providerCounts: Partial<Record<PaymentProvider, number>> = {};
   for (const pair of providerPairs) providerCounts[pair.provider] = (providerCounts[pair.provider] ?? 0) + 1;
+  const marketCounts = Object.fromEntries(marketRows.map((row) => [row.market, row._count._all])) as Partial<Record<string, number>>;
 
   /**
    * إجماليّا السوقين معاً دائماً — ولو كان أحدهما صفراً (خالد ١٨ سبتمبر ٢٠٢٦).
    * إخفاءُ الصفر يجعل غيابَ الرقم يُقرأ «لم يُحسب» بدل «لا شيء»، ويقفز موضعُ الآخر
    * بين مشهدٍ وآخر. وكلُّ عملةٍ على حدة — لا يُجمع ريالٌ على جنيه أبداً.
    *
-   * و«منتهٍ» يُحسب في الذاكرة لا في القاعدة، فمجموعُه من صفوفه هو؛ وكلُّ مشهدٍ آخر
-   * يأتي من `groupBy` فيشمل ما وراء الصفحة المعروضة.
+   * **ولا يتبعان الفلتر** (خالد ١٩ سبتمبر ٢٠٢٦: «الإجمالي، مصر والسعودية مفروض يجي
+   * الاثنين، ما لها علاقة بالتوغل»). كانا يُحسبان بشرط الفلتر نفسِه، فالضغطُ على
+   * «السعودية» يُنزل إجماليَّ مصر إلى صفر — ورقمٌ يختفي بضغطةٍ يُقرأ خسارةً لا ترشيحاً.
+   * وهما هنا بمعنى «كم دخل في كلّ سوق»، وهذا سؤالٌ لا يتغيّر جوابُه باختيار عمودٍ يُعرض.
    */
-  const sumByCurrency = new Map<string, number>(
-    isExpiredView
-      ? [...orders.reduce((m, o) => m.set(o.currency, (m.get(o.currency) ?? 0) + o.totalMinor), new Map<string, number>())]
-      : sumRows.map((r) => [r.currency, r._sum.totalMinor ?? 0]),
-  );
-  // رقماً بلا عملة: اسمُ البلد فوقه يقولها — «مصر» جنيهٌ و«السعودية» ريال، ولا ثالثَ لهما.
-  const totals: CurrencyTotal[] = MARKET_CURRENCIES.map(({ currency, market }) => ({
-    currency,
-    market,
-    label: formatOrderAmount(sumByCurrency.get(currency) ?? 0),
+  const sumByMarket = new Map<string, number>(sumRows.map((r) => [r.market, r._sum.totalMinor ?? 0]));
+  const totals: CurrencyTotal[] = MARKETS.map((code) => ({
+    code,
+    market: MARKET_LABEL[code],
+    hint: MARKET_HINT[code],
+    label: formatOrderAmount(sumByMarket.get(code) ?? 0),
   }));
+  /**
+   * الإيرادُ الشهريُّ لا يتبع الفلتر ولا البحث — كالإجماليّين تماماً. سؤالُه «كم دخل
+   * في كلّ شهر»، وجوابُه لا يتغيّر باختيار عمودٍ يُعرض.
+   */
+  const monthly = await getMonthlyRevenue();
+
   // يعتمد على الطلبات المجلوبة، فلا يدخل `Promise.all` أعلاه.
   const firstArticleAt = await getFirstPublishedDates(
     orders.flatMap((order) => (order.clientId ? [order.clientId] : [])),
@@ -148,20 +195,6 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
       // من المعاملة وحدها — المُرحَّل له معاملةُ `MIGRATED` يكتبها الترحيل نفسه، فـ«—» هنا
       // يعني طلباً بلا معاملةٍ فعلاً (خالد ١٨ سبتمبر: «لو فيه بوّابة مو شغّالة نكون عارفين»).
       providerLabel: order.transactions[0] ? orderProviderLabel(order.transactions[0].provider) : null,
-      // الشرط هو تعريف «ينتظر التفعيل» نفسه: مدفوعٌ بلا كرت. لا حالةَ ثالثة.
-      activatable:
-        order.status === "PAID" && !order.clientId
-          ? {
-              id: order.id,
-              number: order.number,
-              buyerName: order.buyerName,
-              businessName: order.businessName,
-              buyerEmail: order.buyerEmail,
-              planName: order.planName,
-              totalLabel,
-              termLabel: termLabel + (order.bonusServiceMonths ? ` + ${formatMonths(order.bonusServiceMonths)} هديّة` : ""),
-            }
-          : null,
     };
   });
 
@@ -177,8 +210,16 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
 
   return (
     <main className="mx-auto flex max-w-6xl flex-col gap-5 pb-8" dir="rtl">
-      {/* صفٌّ واحد: العنوان · الفلاتر بينهما · زرّ «+» (خالد ١٨ سبتمبر). */}
-      <header className="flex flex-wrap items-center gap-x-4 gap-y-2">
+      {/**
+        * سطران لا سطرٌ واحد (خالد ١٩ سبتمبر ٢٠٢٦: «ارفع لي الاشتراكات والزائد فوق في
+        * سطرٍ لوحده… والاشتراك والحالة والسوق والبوّابات كلّها في سطرٍ واحد»).
+        *
+        * كانت الأربعُ تتقاسم الصفَّ مع العنوان والزرّ، فتُلفَّ مجموعةٌ أو اثنتان إلى سطرٍ
+        * ثانٍ كلّما ضاقت الشاشة — فيصير موضعُ «البوّابة» يتغيّر بعرض النافذة لا بمعناها.
+        * والعينُ تتعلّم الموضعَ قبل أن تقرأ الاسم.
+        */}
+      <header className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-4">
         {/* العددُ رقماً بجانب العنوان — بلا «طلباً». */}
         <h1 className="flex shrink-0 items-baseline gap-2 text-2xl font-semibold">
           الاشتراكات
@@ -186,19 +227,8 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
             {total}
           </span>
         </h1>
-        <div className="min-w-0 flex-1">
-          <OrderStatusFilter
-            counts={counts}
-            total={total}
-            active={activeStatus}
-            awaitingActivation={awaitingActivation}
-            isAwaitingView={isAwaitingView}
-            expired={expiredCount}
-            isExpiredView={isExpiredView}
-            providerCounts={providerCounts}
-            activeProvider={activeProvider}
-          />
-        </div>
+        {/* البحثُ بين العنوان وزرّ «+» (خالد ١٩ سبتمبر ٢٠٢٦) — ويأخذ ما بقي من الصفّ. */}
+        <OrdersSearch />
         {/* المنفذ الثاني بجانب صفحة الدفع — ومنه تُعاد إدخال العملاء القائمين.
             أيقونة «+» وحدها — والاسمُ في التلميح ولقارئ الشاشة. */}
         <Link
@@ -209,9 +239,29 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
         >
           <Plus className="size-5" strokeWidth={2.5} />
         </Link>
+      </div>
+
+      <div className="min-w-0">
+          <OrderStatusFilter
+            counts={counts}
+            total={total}
+            active={activeStatus}
+            awaitingActivation={awaitingActivation}
+            isAwaitingView={isAwaitingView}
+            expired={expiredCount}
+            isExpiredView={isExpiredView}
+            providerCounts={providerCounts}
+            activeProvider={activeProvider}
+            marketCounts={marketCounts}
+            marketLabels={MARKET_LABEL}
+            activeMarket={activeMarket}
+          />
+        </div>
       </header>
 
-      <OrdersTable rows={rows} emptyText={emptyText} totals={totals} />
+      <MonthlyRevenueStrip data={monthly} totals={totals} />
+
+      <OrdersTable rows={rows} emptyText={emptyText} />
     </main>
   );
 }

@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
-import { createInvoiceAction } from "../actions/create-invoice";
 import { markInvoicePaidAction } from "../actions/mark-paid";
 import { sendInvoiceAction } from "@/lib/invoices/send-invoice-action";
 import { archiveInvoiceAction } from "../actions/archive-invoice";
@@ -43,13 +42,9 @@ interface Props {
   clientId: string;
   invoices: LedgerInvoice[];
   // Issue-dialog context (plan/period/currency come from the client card).
-  planLabel: string; // "الانطلاقة · سنوي"
   currency: Currency;
-  defaultAmount: number | null; // reference price for the current tier+period
   /** First published article — billing only starts once the client's content is live. */
-  firstPublishedAt: string | null; // yyyy-mm-dd
   /** Where the subscription currently runs to; a renewal continues from here. */
-  currentEnd: string | null; // yyyy-mm-dd
   /** Founding payment stored on the client; drives the «Auto Button» that documents it. */
 }
 
@@ -67,11 +62,7 @@ function todayInput(): string {
 export function AccountLedger({
   clientId,
   invoices,
-  planLabel,
   currency,
-  defaultAmount,
-  firstPublishedAt,
-  currentEnd,
 }: Props) {
   // One outstanding invoice at a time — we do not sell on credit. Mirrors the server
   // guard so the button explains itself instead of failing after the click. `findLast`
@@ -88,15 +79,6 @@ export function AccountLedger({
             {invoices.length} {invoices.length === 1 ? "فاتورة" : "فواتير"}
           </span>
         </div>
-        <IssueInvoiceDialog
-          clientId={clientId}
-          planLabel={planLabel}
-          currency={currency}
-          defaultAmount={defaultAmount}
-          firstPublishedAt={firstPublishedAt}
-          currentEnd={currentEnd}
-          blockingNumber={blocking?.number ?? null}
-        />
       </div>
 
       {blocking && (
@@ -221,178 +203,17 @@ function addMonthsISO(fromISO: string, months: number): string {
   return out.toISOString().slice(0, 10);
 }
 
-function IssueInvoiceDialog({
-  clientId,
-  planLabel,
-  currency,
-  defaultAmount,
-  firstPublishedAt,
-  currentEnd,
-  blockingNumber,
-}: {
-  clientId: string;
-  planLabel: string;
-  currency: Currency;
-  defaultAmount: number | null;
-  firstPublishedAt: string | null;
-  currentEnd: string | null;
-  /** Outstanding invoice that must be settled or archived first — null when free to issue. */
-  blockingNumber: string | null;
-}) {
-  const { toast } = useToast();
-  const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const [amount, setAmount] = useState(defaultAmount ? String(defaultAmount) : "");
-  const [months, setMonths] = useState<number>(12);
-  const [confirmNotActivated, setConfirmNotActivated] = useState(false);
-
-  const today = todayInput();
-  // Same order the server uses: the current end (past or future — a renewal continues
-  // from it) → first published article → today.
-  const anchor = currentEnd ?? firstPublishedAt ?? today;
-  const previewEnd = addMonthsISO(anchor, months);
-  const notActivated = !firstPublishedAt;
-
-  const value = Number(amount) || 0;
-  const canSubmit = value > 0 && months > 0 && (!notActivated || confirmNotActivated);
-
-  function submit() {
-    if (!canSubmit) return;
-    startTransition(async () => {
-      const res = await createInvoiceAction({
-        clientId,
-        amount: value,
-        months,
-        confirmNotActivated,
-      });
-      if (res.ok) {
-        toast({
-          title: `تم إصدار الفاتورة ${res.number}`,
-          description: `الاشتراك يمتدّ حتى ${res.subscriptionEnd} — مستحقّة، أرسلها ثم حدّدها مدفوعة عند السداد.`,
-        });
-        setOpen(false);
-        setAmount(defaultAmount ? String(defaultAmount) : "");
-        setMonths(12);
-        setConfirmNotActivated(false);
-        router.refresh();
-      } else {
-        toast({
-          title: "فشل الإصدار",
-          description: res.error === "NOT_ACTIVATED" ? "أكّد الإصدار قبل بدء الاشتراك." : res.error,
-          variant: "destructive",
-        });
-      }
-    });
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Button
-        size="sm"
-        className="gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white"
-        onClick={() => setOpen(true)}
-        disabled={!!blockingNumber}
-        title={blockingNumber ? `فاتورة ${blockingNumber} غير مسدّدة` : undefined}
-      >
-        + إصدار فاتورة
-      </Button>
-      <DialogContent dir="rtl" className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>إصدار فاتورة</DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="issue-amount">المبلغ</Label>
-              <div className="flex h-10 items-stretch overflow-hidden rounded-md border bg-background focus-within:ring-2 focus-within:ring-ring/40">
-                <input
-                  id="issue-amount"
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="0"
-                  className="flex-1 bg-transparent px-3 text-sm outline-none tabular-nums min-w-0"
-                />
-                <span className="px-3 shrink-0 border-s bg-muted/50 flex items-center text-sm font-semibold text-muted-foreground">
-                  {currency}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="issue-months">المدة</Label>
-              <select
-                id="issue-months"
-                value={months}
-                onChange={(e) => setMonths(Number(e.target.value))}
-                className="h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/40"
-              >
-                {MONTH_OPTIONS.map((m) => (
-                  <option key={m} value={m}>
-                    {m === 1 ? "شهر" : m === 2 ? "شهران" : m <= 10 ? `${m} أشهر` : `${m} شهراً`}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* The end date is shown, never typed — a hand-entered date is how the wrong
-              renewal day gets into the record. */}
-          <div className="rounded-md border bg-muted/30 px-3 py-2.5 text-[12px]">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-muted-foreground">الاشتراك يمتدّ حتى</span>
-              <span className="font-bold tabular-nums text-foreground">{previewEnd}</span>
-            </div>
-            <p className="pt-1 text-[11px] text-muted-foreground">
-              {currentEnd
-                ? `تجديد — يُحتسب من نهاية الاشتراك ${currentEnd < today ? "المنتهية" : "الحالية"} (${currentEnd})`
-                : firstPublishedAt
-                  ? `يُحتسب من تاريخ أول مقال منشور (${firstPublishedAt})`
-                  : "يُحتسب من اليوم"}
-            </p>
-          </div>
-
-          {notActivated && (
-            <label className="flex cursor-pointer items-start gap-2.5 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2.5">
-              <input
-                type="checkbox"
-                checked={confirmNotActivated}
-                onChange={(e) => setConfirmNotActivated(e.target.checked)}
-                className="mt-0.5 h-4 w-4 shrink-0 accent-amber-600"
-              />
-              <span className="text-[12px] leading-relaxed text-amber-700 dark:text-amber-400">
-                <span className="font-semibold">لم يُنشر أي مقال لهذا العميل بعد.</span> الاشتراك يبدأ
-                مع نشر أول مقال — الإصدار الآن يحتسب المدة من اليوم. أكّد إن كنت تقصد ذلك.
-              </span>
-            </label>
-          )}
-
-          <p className="text-[12px] text-muted-foreground">
-            للباقة الحالية: <span className="font-semibold text-foreground">{planLabel}</span>
-          </p>
-        </div>
-
-        <DialogFooter className="gap-2 sm:gap-2">
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
-            إلغاء
-          </Button>
-          <Button
-            onClick={submit}
-            disabled={!canSubmit || isPending}
-            className="gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white"
-          >
-            {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-            إصدار وحفظ
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
+/**
+ * **لا إصدارَ فاتورةٍ من كرت العميل** (خالد ١٩ سبتمبر ٢٠٢٦: «إصدار الفاتورة مكانه مكان
+ * واحد عشان ما يكون في أيّ لخبطة»).
+ *
+ * كان هنا حوارٌ يسأل الموظّف عن **المبلغ والمدّة بيده**، فتخرج فاتورةٌ لا يحكمها طلب:
+ * رقمٌ يخالف ما دفعه العميلُ فعلاً، ومدّةٌ تخالف مدّتَه — وهو عينُ ما قامت عليه قسمةُ
+ * المال (مصدرٌ واحد: الطلب). وبابُ الإصدار اليومَ واحدٌ: `/orders/[id]/invoice`، يقرأ
+ * الطلبَ ولا يسأل عن رقم.
+ *
+ * وسقط معه `actions/create-invoice.ts` — كان مستهلكُه الوحيد.
+ */
 
 // ── Mark paid ─────────────────────────────────────────────────────────
 function MarkPaidDialog({ invoiceId, number }: { invoiceId: string; number: string }) {

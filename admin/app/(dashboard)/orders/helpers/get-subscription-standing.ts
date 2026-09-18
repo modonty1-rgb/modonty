@@ -7,7 +7,7 @@
  * `serviceMonths = paidMonths + bonusServiceMonths` هو نفس المفهوم في
  * `shared/lib/commercial/term-pricing.ts` — الهديّةُ خدمةٌ تُحتسب وإن لم تُدفع.
  *
- * «قرب الانتهاء» = ٧ أيام أو أقلّ، كما في جدول الحسابات (`expiring · ٧ أيام`).
+ * و«قرب الانتهاء» يُقرأ من `lib/orders/renewal-window.ts` — رقمٌ واحدٌ تتبعه كلُّ شاشة.
  */
 export type SubscriptionState = "active" | "expiring" | "expired" | "unknown";
 
@@ -18,8 +18,9 @@ export interface SubscriptionStanding {
   daysLeft: number | null;
 }
 
+import { RENEWAL_SOON_DAYS } from "@/lib/orders/renewal-window";
+
 const DAY_MS = 24 * 60 * 60 * 1000;
-const EXPIRING_DAYS = 7;
 
 export function getSubscriptionStanding(
   input: { activatedAt: Date | null; paidMonths: number; bonusServiceMonths: number },
@@ -29,6 +30,6 @@ export function getSubscriptionStanding(
   const endsAt = new Date(input.activatedAt);
   endsAt.setMonth(endsAt.getMonth() + input.paidMonths + input.bonusServiceMonths);
   const daysLeft = Math.ceil((endsAt.getTime() - now.getTime()) / DAY_MS);
-  const state: SubscriptionState = daysLeft < 0 ? "expired" : daysLeft <= EXPIRING_DAYS ? "expiring" : "active";
+  const state: SubscriptionState = daysLeft < 0 ? "expired" : daysLeft <= RENEWAL_SOON_DAYS ? "expiring" : "active";
   return { state, endsAt, daysLeft };
 }

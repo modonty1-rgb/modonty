@@ -73,8 +73,7 @@ export async function archiveInvoiceAction(input: ArchiveInvoiceInput): Promise<
 
     revalidatePath(`/clients/${invoice.clientId}/account`);
     revalidatePath(`/clients/${invoice.clientId}`);
-    revalidatePath("/clients/accounts");
-    revalidatePath("/");
+      revalidatePath("/");
     return { ok: true };
   } catch (e) {
     console.error("[archiveInvoice] failed:", e);

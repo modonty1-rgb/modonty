@@ -6,5 +6,5 @@ import { orderStatusCopy } from "../helpers/order-status-copy";
 /** `className` لحجمٍ أصغر في الجدول الكثيف؛ صفحةُ التفصيل تبقى بالحجم الافتراضيّ. */
 export function OrderStatusBadge({ status, className }: { status: CheckoutOrderStatus; className?: string }) {
   const copy = orderStatusCopy(status);
-  return <Badge variant={copy.badgeVariant} className={className}>{copy.label}</Badge>;
+  return <Badge variant={copy.badgeVariant} className={className} title={copy.hint}>{copy.label}</Badge>;
 }

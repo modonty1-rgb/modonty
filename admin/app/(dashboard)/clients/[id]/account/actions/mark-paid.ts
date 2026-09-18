@@ -90,8 +90,7 @@ export async function markInvoicePaidAction(input: MarkPaidInput): Promise<MarkP
 
     revalidatePath(`/clients/${invoice.clientId}/account`);
     revalidatePath(`/clients/${invoice.clientId}`);
-    revalidatePath("/clients/accounts");
-    revalidatePath("/"); // the dashboard's renewal + unpaid counters read these
+      revalidatePath("/"); // the dashboard's renewal + unpaid counters read these
     return { ok: true };
   } catch (e) {
     console.error("[markInvoicePaid] failed:", e);

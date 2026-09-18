@@ -8,8 +8,6 @@ import { DataTable, type Column } from "@/components/admin/data-table";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { OrderStatusBadge } from "./order-status-badge";
 import type { SubscriptionState } from "../helpers/get-subscription-standing";
-import { ActivateOrderButton } from "./activate-order-button";
-import type { ActivatableOrder } from "./activate-order-dialog";
 
 /**
  * صفٌّ جاهزٌ للعرض — كلُّ تنسيقٍ (تاريخ · مبلغ · مدّة) حُسب في الخادم.
@@ -44,8 +42,6 @@ export interface OrderRow {
   subscriptionState: SubscriptionState;
   subscriptionDaysLeft: number | null;
   subscriptionEndsLabel: string | null;
-  /** يُملأ للمدفوع بلا كرت وحده — وهو تعريف «ينتظر التفعيل» نفسه. */
-  activatable: ActivatableOrder | null;
 }
 
 const EMPTY = <span className="text-muted-foreground">—</span>;
@@ -158,50 +154,25 @@ const COLUMNS: Column<OrderRow>[] = [
   { key: "subscriptionDaysLeft", header: "الاشتراك", className: FIT, sortFn: byNumber((r) => r.subscriptionDaysLeft), render: (r) => <StandingCell r={r} /> },
   { key: "status", header: "الحالة", className: FIT, render: (r) => <OrderStatusBadge status={r.status} className="px-1.5 py-0 text-[10px] leading-4 font-semibold" /> },
   { key: "providerLabel", header: "البوابة", className: FIT, render: (r) => (r.providerLabel ? <span className="text-muted-foreground">{r.providerLabel}</span> : EMPTY) },
-  {
-    key: "actions",
-    header: "",
-    sortable: false,
-    className: FIT,
-    render: (r) => (r.activatable ? <ActivateOrderButton order={r.activatable} /> : null),
-  },
+  /**
+   * **لا عمودَ تفعيلٍ هنا** (خالد ١٩ سبتمبر ٢٠٢٦: «التفعيل اتّفقنا إنّه حتكون له آلية
+   * ثانية، فشيل لي التفعيل من الجدول هذا نهائي»).
+   *
+   * كان آخرُ عمودٍ يحمل زرَّ «فعّل» للمدفوع بلا كرت. والتفعيلُ يفتح حساباً ويرسل بيانات
+   * دخول — قرارٌ لا يُتَّخذ من صفٍّ في قائمةٍ يُمرّ عليها بالعين. وبابُه يبقى مفتوحاً من
+   * صفحة الطلب نفسِها، حيث تُقرأ بياناتُ المشتري كاملةً قبل الضغط.
+   */
 ];
 
-/**
- * إجماليُّ المعروض — بكلّ عملةٍ على حدة، ولا يُجمع ريالٌ على جنيه أبداً (قاعدة المال).
- * يتغيّر بتغيّر التوغل لأنّه محسوبٌ على مجموعةِ الصفوف نفسِها التي جلبها الفلتر.
- */
-export interface CurrencyTotal {
-  currency: string;
-  market: string;
-  label: string;
-}
 
-function TableTotals({ totals }: { totals: CurrencyTotal[] }) {
-  return (
-    <div className="flex items-stretch overflow-hidden rounded-md border bg-card">
-      {totals.map((t, i) => (
-        <div key={t.currency} className={`flex min-w-[92px] flex-col items-center px-3 py-1 ${i > 0 ? "border-s" : ""}`}>
-          {/* اسمُ البلد ترويسةً فوق الرقم — وهو يقول العملة، فلا تُكتب (خالد ١٨ سبتمبر). */}
-          <span className="text-[9.5px] leading-none text-muted-foreground">{t.market}</span>
-          <span className="mt-1 text-[15px] font-bold leading-none tabular-nums">{t.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
 
-export function OrdersTable({ rows, emptyText, totals }: { rows: OrderRow[]; emptyText: string; totals: CurrencyTotal[] }) {
-  // عمودُ «فعّل» يظهر حين يوجد ما يُفعَّل فقط — وإلّا بقي عموداً فارغاً يوحي بشيءٍ
-  // مخفيّ (خالد ١٨ سبتمبر: «فيه حقل بعد البوابة ماني شايفه»).
-  const columns = rows.some((r) => r.activatable) ? COLUMNS : COLUMNS.filter((c) => c.key !== "actions");
+export function OrdersTable({ rows, emptyText }: { rows: OrderRow[]; emptyText: string }) {
   return (
     <DataTable
       data={rows}
-      columns={columns}
-      searchKey="buyerName"
-      searchPlaceholder="ابحث باسم العميل"
-      toolbar={<TableTotals totals={totals} />}
+      columns={COLUMNS}
+      // لا `searchKey` هنا: البحثُ صعد إلى صفّ العنوان ويمرّ بالقاعدة، فحقلٌ ثانٍ
+      // يرشّح الصفوفَ المجلوبة وحدها كان سيقول «لا نتائج» على ما هو موجودٌ خارجها.
       pageSize={10}
       emptyText={emptyText}
       // خطٌّ أصغر درجة (12px) وأيقونةُ الفرز أصغر: ثلاثة عشر عموداً على ١٢٨٠ بلا تمرير.

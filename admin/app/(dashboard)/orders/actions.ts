@@ -189,7 +189,6 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<{ o
   revalidatePath("/orders");
   revalidatePath(`/orders/${orderId}`);
   revalidatePath(`/clients/${p.clientId}/account`);
-  revalidatePath("/clients/accounts");
   revalidatePath("/");
   return { ok: true, number };
 }

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { checkOrdersMigrationGate } from "@/lib/orders-migration-gate";
 import { checkAdmin } from "@/lib/admin-guard";
 import { canSeeReports } from "@/lib/can-see-reports";
 import { db } from "@/lib/db";
@@ -41,6 +42,13 @@ export default async function DashboardLayout({
   // on the staff row, and the session token carries only the role — a token minted before
   // the box was ticked would keep the link hidden until the next sign-in. The proxy and the
   // page enforce the same rule; this only decides whether a link is drawn.
+  // بندُ «Orders Migration» يُرسم ما دام الترحيل متاحاً — نفسُ الشرط الذي يطبّقه
+  // المسارُ والصفحة، مقروءاً هنا مرّةً واحدة لكلّ صفحة (خالد ١٨ سبتمبر ٢٠٢٦:
+  // «مجرّد ما أسوّي الترحيل يختفي»).
+  const ordersMigrationOpen = await checkOrdersMigrationGate()
+    .then((g) => g.allowed)
+    .catch(() => false);
+
   const reportViewer = await db.staff
     .findUnique({ where: { id: gate.userId }, select: { role: true, canViewReports: true } })
     .catch(() => null);
@@ -49,7 +57,7 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <EssentialSeoDialog missing={missingSeoFields} />
       <div className="flex h-screen bg-background">
-        <Sidebar articleStatusCounts={articleStatusCounts} />
+        <Sidebar articleStatusCounts={articleStatusCounts} showOrdersMigration={ordersMigrationOpen} />
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* The sync tool writes only to the test database, so its button follows the
               database this instance is on — read here on the server, never in the bundle. */}

@@ -20,7 +20,7 @@ export interface RenewalsDue {
   worstDaysPast: number | null;
 }
 
-const SOON_DAYS = 30;
+import { RENEWAL_SOON_DAYS } from "./renewal-window";
 
 export async function getRenewalsDue(): Promise<RenewalsDue> {
   const rows = await db.checkoutOrder.findMany({
@@ -39,7 +39,7 @@ export async function getRenewalsDue(): Promise<RenewalsDue> {
       expired++;
       const past = -s.daysLeft;
       if (worst === null || past > worst) worst = past;
-    } else if (s.daysLeft <= SOON_DAYS) soon++;
+    } else if (s.daysLeft <= RENEWAL_SOON_DAYS) soon++;
   }
   return { expired, soon, worstDaysPast: worst };
 }
