@@ -62,6 +62,7 @@ export type AuditAction =
   | "invoice.send"
   | "invoice.whatsapp" // staff opened the ready WhatsApp message for this invoice (PAY-Q13)
   | "order.confirmPayment"
+  | "order.refund" // تسجيلُ استردادٍ حصل — يسحب مالاً من الإيراد، فيُقيَّد بمن ومتى ولماذا
   | "order.update"
   /**
    * طلبُ اشتراكٍ يسجّله الموظّف بيده لا العميل بنفسه — فالسؤال بعد شهر سيكون

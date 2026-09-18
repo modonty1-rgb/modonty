@@ -42,6 +42,18 @@ export async function planInvoiceFromOrder(orderId: string): Promise<InvoicePlan
   if (order.status !== "PAID") return { ok: false, error: "الطلب ليس مدفوعاً" };
   if (!order.clientId) return { ok: false, error: "أنشئ حساب العميل أولاً" };
   if (order.invoiceId) return { ok: false, error: "صدرت فاتورة لهذا الطلب مسبقاً" };
+  /**
+   * الصفرُ لا يُفوتَر.
+   *
+   * كان الطلبُ بصفرٍ يُخرج مستنداً مكتوباً عليه «فاتورة ضريبية · TAX INVOICE» بقيمة
+   * ٠٫٠٠ ر.س. وضريبةٍ ٠٫٠٠ (مقيسٌ حيّاً ١٨ سبتمبر ٢٠٢٦ على طلبٍ سعوديٍّ بصفر). والفاتورةُ
+   * الضريبيّة مستندُ توريدٍ بمقابل: لا مقابلَ فلا مستند — ولا رقمَ تسلسليّاً يُحرق عليه،
+   * فالتسلسلُ يُدقَّق. والصفرُ عندنا اليوم علامةُ ترحيلٍ ناقصٍ لا هديّةٍ مقصودة: أربعةَ عشرَ
+   * طلباً منها موسومٌ «⚠ ترحيلٌ يحتاج مراجعة».
+   */
+  if ((order.totalMinor ?? 0) <= 0) {
+    return { ok: false, error: "الطلب بصفر — لا تُصدَر فاتورةٌ بلا مبلغ. صحّح مبلغ الطلب أوّلاً." };
+  }
 
   const client = await db.client.findUnique({
     where: { id: order.clientId },
