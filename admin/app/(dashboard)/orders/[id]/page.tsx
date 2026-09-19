@@ -13,6 +13,7 @@ import { confirmOrderPaymentAction } from "../actions";
 import { ConfirmTransferButton } from "../components/confirm-transfer-button";
 import { SendInvoiceButton } from "../components/send-invoice-button";
 import { RefundOrderButton } from "../components/refund-order-button";
+import { CancelOrderButton } from "../components/cancel-order-button";
 import { WhatsappInvoiceButton } from "../components/whatsapp-invoice-button";
 import { OrderStatusBadge } from "../components/order-status-badge";
 import { formatOrderDate } from "../helpers/format-order-date";
@@ -226,6 +227,14 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                 {standing.state === "expired" ? "تجديد — انتهى" : `تجديد — يبقى ${Math.abs(standing.daysLeft ?? 0)} يوم`}
               </Link>
             </Button>
+          ) : null}
+
+          {/**
+            * الإلغاء: لما لم يصل فيه مال. يظهر للحالتين وحدهما، ويختفي متى صدرت فاتورة
+            * — فالرقمُ محجوزٌ والورقةُ عند المشتري، وبابُ ذاك الاستردادُ لا الإلغاء.
+            */}
+          {(order.status === "AWAITING_PAYMENT" || order.status === "AWAITING_TRANSFER") && !order.invoiceId && isFinanceAdmin ? (
+            <CancelOrderButton orderId={order.id} orderNumber={order.number} buyerName={order.buyerName} />
           ) : null}
 
           {/* الاسترداد: تسجيلُ ما حصل في البنك — يُخرج الطلب من الإيراد ولا يفكّ التفعيل. */}
