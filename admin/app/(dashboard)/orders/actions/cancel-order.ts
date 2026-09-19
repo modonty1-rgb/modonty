@@ -73,8 +73,20 @@ export async function cancelOrderAction(
   if (!matches) return { ok: false, error: `الرقم لا يطابق — اكتب ${order.number} أو آخر أربعة أرقام (${last4})` };
 
   const stamp = `✕ أُلغي ${new Date().toISOString().slice(0, 10)} — ${reason}`;
+  /**
+   * **ولا `invoiceId: null` هنا — فخُّ مونغو.**
+   *
+   * توثيق Prisma للموصل نصّاً: «`name: null` is checking for equality, and a
+   * non-existing field isn't equal to null». وطلباتُ صفحة الدفع تُنشأ بلا هذا الحقل
+   * أصلاً، فهو **غائبٌ** لا `null` — فالشرطُ يستبعدها كلَّها ويرجع `count: 0`. قيس
+   * حيّاً على الإنتاج (٢٠ سبتمبر ٢٠٢٦): `ORD-2026-00001` رُدَّ بـ«تغيّرت حالةُ الطلب»
+   * وهي لم تتغيّر.
+   *
+   * ولا يُستبدل بـ`isSet: false`: الحقلُ قد يكون `null` صريحاً في صفوفٍ أخرى. والحارسُ
+   * لا يسقط — الفاتورةُ لا تصدر إلّا لطلبٍ `PAID`، و`PAID` مستبعدةٌ بشرط الحالة نفسِه.
+   */
   const { count } = await db.checkoutOrder.updateMany({
-    where: { id: orderId, status: { in: [...CANCELLABLE] }, invoiceId: null },
+    where: { id: orderId, status: { in: [...CANCELLABLE] } },
     data: { status: "CANCELLED", notes: order.notes ? `${order.notes}\n${stamp}` : stamp },
   });
   if (count === 0) return { ok: false, error: "تغيّرت حالةُ الطلب قبل لحظة — أعد تحميل الصفحة" };
