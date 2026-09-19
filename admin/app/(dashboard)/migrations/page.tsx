@@ -43,6 +43,7 @@ export default async function MigrationsPage() {
 
       <section className="space-y-3">
         <h2 className="text-sm font-bold">ترحيل الطلبات</h2>
+        {plan.toBuild > 0 && (
         <div className="flex items-start gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-4">
           <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
           <div className="space-y-1 text-sm">
@@ -57,6 +58,7 @@ export default async function MigrationsPage() {
             </p>
           </div>
         </div>
+        )}
         <RebuildOrdersPanel plan={plan} />
       </section>
 

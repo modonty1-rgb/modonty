@@ -14,6 +14,16 @@ export type GapGroup = { gap: string; clients: { name: string; totalMinor: numbe
 
 export type RebuildPlan = {
   clients: number;
+  /**
+   * **مَن سيُبنى له طلبٌ فعلاً، ومَن يُتخطّى** — بنفس شرط المسار حرفيّاً.
+   *
+   * كانت الشاشةُ تعلن `clients` كلَّهم «سيُصنع له طلب» لأنّ الجردَ يخطّط للجميع، بينما
+   * المسارُ يبني مَن لا طلبَ له وحدَه. فبعد أوّل تشغيلٍ ناجح بقي الزرُّ يقول «ابنِ ٤٢»
+   * وهو يبني صفراً — وهو عينُ الكذب الذي أُسقط في `existing`. فيُقرأ الشرطُ هنا كما
+   * يُقرأ هناك: `CheckoutOrder` بـ`clientId` غيرِ فارغ.
+   */
+  toBuild: number;
+  alreadyHave: number;
   clean: number;
   needsReview: number;
   /**
@@ -29,11 +39,16 @@ export type RebuildPlan = {
 };
 
 export async function planRebuild(): Promise<RebuildPlan> {
-  const [planned, orders, invoices] = await Promise.all([
+  const [planned, orders, invoices, owners] = await Promise.all([
     planAll(),
     db.checkoutOrder.count(),
     db.invoice.count(),
+    db.checkoutOrder.findMany({ where: { NOT: [{ clientId: null }] }, select: { clientId: true } }),
   ]);
+
+  // نفسُ مجموعةِ المسار (`rebuild-orders/route.ts`) — لا نسخةٌ ثانيةٌ من الشرط.
+  const alreadyHaveOrders = new Set(owners.map((o) => o.clientId as string));
+  const toBuild = planned.filter((p) => !alreadyHaveOrders.has(p.clientId));
 
   const byCurrency = new Map<string, { count: number; totalMinor: number }>();
   const groups = new Map<string, GapGroup["clients"]>();
@@ -56,6 +71,8 @@ export async function planRebuild(): Promise<RebuildPlan> {
 
   return {
     clients: planned.length,
+    toBuild: toBuild.length,
+    alreadyHave: planned.length - toBuild.length,
     clean: planned.filter((p) => p.gaps.length === 0).length,
     needsReview: planned.filter((p) => p.gaps.length > 0).length,
     existing: { orders, invoices },

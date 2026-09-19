@@ -96,7 +96,7 @@ export function RebuildOrdersPanel({ plan }: { plan: RebuildPlan }) {
   return (
     <div className="space-y-4">
       <div className="grid gap-2 sm:grid-cols-3">
-        <Stat value={plan.clients} label="عميلاً سيُصنع له طلب" tone="primary" />
+        <Stat value={plan.toBuild} label="عميلاً سيُصنع له طلب" tone="primary" />
         <Stat value={plan.clean} label="طلبٌ كامل" tone="emerald" />
         <Stat value={plan.needsReview} label="يحتاج مراجعة" tone="amber" />
       </div>
@@ -166,10 +166,21 @@ export function RebuildOrdersPanel({ plan }: { plan: RebuildPlan }) {
         * فاتورة، ويتخطّى كلَّ عميلٍ له طلبٌ بالفعل. فسقط عنه `variant="destructive"` ولفظُ
         * «امسح»: زرٌّ أحمرُ يقول «امسح» وهو لا يمسح يُعلّم الموظّفَ ألّا يصدّق التحذيرات.
         */}
-      <Button onClick={run} disabled={phase === "running"} className="w-full sm:w-auto">
-        {phase === "running" && <Loader2 className="me-2 size-4 animate-spin" aria-hidden />}
-        {phase === "running" ? "جارٍ..." : `ابنِ الطلبات الناقصة (${plan.clients} عميلاً)`}
-      </Button>
+      {plan.toBuild === 0 ? (
+        /**
+          * لا شيءَ يُبنى — فلا زرَّ يُضغط. وهذا نفسُ ما تقوله لوحةُ الوثائق حين تنتهي،
+          * وبه لا يبقى زرٌّ يعد بـ«٤٢ عميلاً» ثمّ يبني صفراً بعد أوّل تشغيلٍ ناجح.
+          */
+        <p className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-300">
+          لا شيءَ يُبنى — <b className="tabular-nums">{plan.alreadyHave}</b> عميلاً لهم طلبٌ بالفعل.
+          وما احتاج تصحيحاً يُصحَّح من صفحة الطلب نفسِه.
+        </p>
+      ) : (
+        <Button onClick={run} disabled={phase === "running"} className="w-full sm:w-auto">
+          {phase === "running" && <Loader2 className="me-2 size-4 animate-spin" aria-hidden />}
+          {phase === "running" ? "جارٍ..." : `ابنِ الطلبات الناقصة (${plan.toBuild} عميلاً)`}
+        </Button>
+      )}
 
       {phase === "running" && progress && (
         <div className="space-y-1.5" role="status" aria-live="polite">
