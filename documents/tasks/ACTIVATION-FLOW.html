@@ -542,17 +542,20 @@ maxIdleTimeMS=30000 · خمول ١٢٠ث                 16 → 6 سوكِت  �
 
   <pre>Client.create({
   name, email, phone, addressCountry,     ← من لقطة المشتري في الطلب
-  subscriptionTier,                        ← من لقطة الباقة
+  articlesPerMonth,                        ← حصّةُ الطلب — نسخةُ عرضٍ كاتبُها هذا السطر وحده
   slug,                                    ← مقترحٌ من الاسم، مؤكَّدٌ بعين الموظّف
   subscriptionStatus: "ACTIVE",
-  activatedAt:   now,                      ← يوم فتح الحساب
+  activatedAt:   now,                      ← يوم فتح الحساب (لا يوم بدء المدّة)
+  subscriptionStartDate: order.serviceStartedAt,  ← فارغٌ حتى يصل أوّلُ مقال
   activeOrderId: order.id,                 ← أيّ صفقة تحكمه
 })
 // industryId غائبٌ عمداً — اختياريّ في السكيما (schema.prisma:564)، ومكانه صفحة التعديل.
 
 CheckoutOrder.update({ clientId })         ← ومعناه: هذا الطلب فُعِّل
 
-sendClientWelcome()                        ← بعد نجاح الاثنين. فشلُه لا يُسقط التفعيل.</pre>
+recomputeSubscriptionEnd(client.id)        ← النهاية تُشتقّ، لا تُدخَل (فارغةٌ قبل أوّل مقال)
+
+لا بريدَ يُرسَل من هنا                      ← بيانات الدخول من صفحة العميل متى جهز ملفُّه</pre>
 
   <div class="card warn">
     <b>الثلاثة تنجح معاً أو لا تصير ولا واحدة</b>
@@ -579,6 +582,81 @@ sendClientWelcome()                        ← بعد نجاح الاثنين. �
   </section>
 
   <div data-view="now done">
+  <!-- ═════ ٤·ب — ساعة الاشتراك (١٩ سبتمبر ٢٠٢٦) ═════ -->
+  <h2><span class="n">٤ب</span>ساعةُ الاشتراك — تبدأ بأوّل مقال</h2>
+
+  <div class="card">
+    <p class="sub" style="margin:0 0 12px">
+      <b>قرار خالد (١٩ سبتمبر ٢٠٢٦):</b> «المدّة تبدأ بعد أوّل أرتيكل».
+      ومدّةُ التجهيز بين الدفع والتسليم — البروفايل · الموقع · الداتا · الكونسول —
+      <b>شغلُنا نحن</b>، فلا تُحسب على العميل من اشتراكه.
+    </p>
+
+    <pre style="margin:0 0 14px"><code>أوّلُ مقالٍ يصل العميل  (AWAITING_APPROVAL)
+      │
+      ├─ Article.firstDeliveredAt   ← يُختم مرّةً واحدة (الرجوع من التعديل لا يعيده)
+      ├─ CheckoutOrder.serviceStartedAt ← على الطلب السّاري، إن كان فارغاً
+      └─ recomputeSubscriptionEnd()  ← النهاية = بداية الخدمة + الشهور + الهديّة</code></pre>
+
+    <p class="sub" style="margin:0 0 10px">
+      <b>الصيغةُ واحدةٌ في خمسة مواضع</b> — أيُّ اختلافٍ بينها يعني رقمين لنفس السؤال:
+    </p>
+    <pre style="margin:0 0 14px"><code>lib/orders/start-service-clock.ts              الكاتب (من gated-transition.ts:206)
+lib/invoices/recompute-subscription-end.ts    نسخةُ الكرت: subscriptionEndDate
+orders/helpers/get-subscription-standing.ts   حالُ الاشتراك على شاشة الطلبات
+lib/orders/renewals-due.ts                    طابورُ التجديد على الداشبورد
+api/dev/rebuild-orders/plan.ts                الترحيل: MIN(datePublished) للمقال الأوّل</code></pre>
+
+    <p class="sub" style="margin:0 0 10px">
+      <b>ولماذا تغيّرت:</b> كانت تُحسب من <code>activatedAt</code> — فتبدأ المدّةُ يوم الدفع
+      ويأكل العميلُ مدّةَ التجهيز كلَّها. وقُرئ الأثرُ حيّاً بعد التصحيح على قاعدة التجارب:
+      <b>٢٦ عميلاً بدأت خدمتُهم و٢١ لم تبدأ</b>، فنزلت شريحةُ «انتهى» من ٤ إلى ١ و«يُجدَّد هذا الشهر»
+      من ٦ إلى ٣ — أي أنّ الفرق كان اشتراكاتٍ تُعدّ منتهيةً <b>ولم تبدأ أصلاً</b>.
+    </p>
+
+    <p class="sub" style="margin:0">
+      <b>وما دامت الخدمةُ لم تبدأ:</b> لا تاريخَ نهايةٍ على الكرت، ولا ظهورَ في طابور التجديد،
+      وحالُ الطلب <code>—</code> لا «نشط» ولا «منتهٍ». وهذا صحيحٌ لا نقص: لا يُطالَب بتجديدِ
+      مدّةٍ لم تبدأ.
+    </p>
+  </div>
+
+  <!-- ═════ ٤·ج — الترحيل صار إضافيّاً (١٩ سبتمبر ٢٠٢٦) ═════ -->
+  <h2><span class="n">٤ج</span>الترحيل — لا يمسح شيئاً بعد اليوم</h2>
+
+  <div class="card">
+    <p class="sub" style="margin:0 0 12px">
+      كان يمسح <b>الطلباتِ والفواتيرَ والمعاملاتِ كلَّها</b> ثمّ يبني، وحارسُه يمنعه متى وُجد
+      طلبٌ واحد. وقُرئ الإنتاج (١٩ سبتمبر) فوُجدت فيه <b>ستّةُ طلبات</b> — لا من رفعنا، بل من
+      <b>صفحة الدفع المنشورة منذ ١٥ سبتمبر</b>:
+    </p>
+
+    <pre style="margin:0 0 14px"><code>ORD-2026-00001  SA  الزخم      livetest-sa@modonty.test     فحصٌ داخليّ
+ORD-2026-00002  EG  الزخم      livetest-eg@modonty.test     فحصٌ داخليّ
+ORD-2026-00003  EG  الريادة    fatenhassanin96@gmail.com    زائرٌ حقيقيّ
+ORD-2026-00004  EG  الانطلاقة  fatenhassanin96@gmail.com    زائرٌ حقيقيّ
+ORD-2026-00005  EG  الانطلاقة  superharfoush@yahoo.com      زائرٌ حقيقيّ
+ORD-2026-00006  SA  الزخم      barkleyjakeem@gmail.com      زائرٌ حقيقيّ
+                                        كلُّها clientId: null · paidAt: null</code></pre>
+
+    <p class="sub" style="margin:0 0 10px">
+      فالحارسُ كان سيرفض الترحيلَ هناك <b>للأبد</b>، ويبقى ٤٢ عميلاً بلا طلبٍ ساري —
+      أي شاشاتُ مالٍ فارغةٌ على الإنتاج.
+    </p>
+
+    <p class="sub" style="margin:0 0 10px">
+      <b>فصار الترحيلُ إضافيّاً:</b> يقرأ مَن له طلبٌ ويتخطّاه، ويبني للباقين، ولا يلمس
+      طلباً ولا فاتورةً ولا معاملة. وسقط معه شرطُ <code>orders &gt; 0 → already-done</code>
+      من الحارس: سببُه كان المسح. ومعيارُ النجاح صار «لا عميلَ بلا طلبٍ ساري» بدل
+      <code>orders === clients</code> — فطلباتُ الزوّار بلا عميل، والعميلُ قد يكون له طلبان.
+    </p>
+
+    <pre style="margin:0"><code>إعادةُ التشغيل على قاعدة التجارب — الدليل الخام:
+{"phase":"skip","total":47} · {"phase":"build","total":0,"skipped":47}
+{"result","clean":true,"created":0,"failed":[],"clientsWithoutPointer":0}
+                                        صفرُ حذفٍ · صفرُ بناءٍ · بلا أثر</code></pre>
+  </div>
+
   <h2><span class="n">٥</span>الشلّال — من الطلب إلى نظامٍ مرتّب</h2>
   <p class="sub"><b style="color:var(--ink)">تتبُّع:</b> المنجَز في البطاقة الخضراء، والمتبقّي في الجدول — لا يختلطان.<br>خالد ١٦ سبتمبر: «الأدمن فيه كمية جنك مو طبيعيّة… بدنا نرتّب السيستم صحّ قبل ما
     يجونا عملاء». فهذا ليس خطّة ميزةٍ واحدة — بل <b>ترتيبٌ متسلسل</b>: كل مرحلة تفتح التي بعدها،
@@ -1691,17 +1769,20 @@ status PAID · notes: وسمُ ترحيلٍ يسمح بالرجوع</pre>
       <tr class="same" style="opacity:.55"><td><b>٦</b></td>
           <td><b>الباقة تصير مرجعاً لا <code>enum</code></b><br>
               <span class="f">أُغلقت ١٧ سبتمبر: خمسةُ حقولٍ سقطت، و<code>expectedTier</code> صار سلَقاً.
-              الباقي ٦٠ سطراً كلُّها تقرأ <code>SubscriptionTierConfig</code> — تسقط بجدوله هنا في ٨.</span></td>
+              وفي ١٩ سبتمبر سقط الباقي كلُّه: الإنمُ والجدولُ وحقلا الكرت خرجوا من السكيما،
+              والقياس <code>60 ← 35 ← 3</code> — والثلاثةُ قراءةٌ خامٌّ يحتاجها الترحيل وحده.</span></td>
           <td><span class="tag t-go">✅ منجَزة</span></td>
           <td>لم يبقَ للإنم وجودٌ مستقلّ. التفصيل في تبويب <b>Enums</b>.</td></tr>
 
       <tr class="same" style="opacity:.55"><td><b>٨</b></td>
           <td><b>ترحيل البيانات القديمة</b><br>
-              <span class="f">نُفِّذ ١٧ سبتمبر: 42 عميلاً · 42 طلباً · الربطُ 42/42 في الاتّجاهين
-              · صفوفٌ حسابُها لا يقفل 0 · طلبٌ كامل 5 · يحتاج مراجعة 37</span></td>
-          <td><span class="tag t-go">✅ نُفِّذ</span></td>
-          <td>يُعاد بزرٍّ واحد وقتما شئت — <code>api/dev/rebuild-orders</code>.
-              والـ37 تُصحَّح من <code>/orders/[id]/edit</code>.</td></tr>
+              <span class="f">صار <b>إضافيّاً</b> في ١٩ سبتمبر: لا يمسح طلباً ولا فاتورةً ولا معاملة،
+              ويتخطّى كلَّ عميلٍ له طلبٌ بالفعل. وبدايةُ الخدمة فيه من <b>أوّل مقالٍ منشور</b>
+              (<code>MIN(datePublished)</code>) لا من حقل الكرت القديم.</span></td>
+          <td><span class="tag t-go">✅ على dev</span></td>
+          <td>مقيسٌ حيّاً: <code>skipped:47 · created:0 · clean:true</code> — إعادتُه بلا أثر.
+              <b style="color:var(--stop)">ولم يُشغَّل على الإنتاج بعد</b>؛ وهناك ٤٢ عميلاً ينتظرونه،
+              وستّةُ طلباتٍ من صفحة الدفع تبقى كما هي.</td></tr>
 
     </tbody>
   </table>
@@ -1770,6 +1851,120 @@ GET /clients/new                         200 in 1281ms
 
   <section data-view="now">
   <h2><span class="n">٦</span>ملاحظاتي — ما يجب ألّا يُنسى</h2>
+
+    <!-- نُقلت بطاقةُ «٠ج · مؤجَّل — النشرة الب…» إلى لوحة التاسك الرئيسيّة (١٩ سبتمبر ٢٠٢٦): ملفّاتُ الفلو يُستغنى عنها، والمفتوحُ يعيش في TASK. -->
+
+
+  <div class="card warn">
+    <b>🚀 قائمةُ الإنتاج — ما يجب تنفيذُه عند الرفع (خالد ١٩ سبتمبر ٢٠٢٦)</b>
+    <p>كلُّ ما نُفِّذ على <code>modonty_dev</code> ولا يسري على الإنتاج من تلقائه. يُقرأ هذا
+      البندُ <b>قبل</b> الدفع، ويُشطب سطراً سطراً بعده.</p>
+
+    <p class="bad"><b>١ · فهرسُ البريد الفريد — الأخطر.</b></p>
+    <pre>schema.prisma:551    email String @unique
+المطلوب            pnpm --filter shared prisma:push   (أو createIndexes يدويّاً)</pre>
+    <p><b>لماذا لا يكفي <code>prisma generate</code>:</b> على مونغو يُنفَّذ <code>@unique</code>
+      بفهرسٍ حقيقيّ في القاعدة، والتوليدُ لا ينشئه. مقيسٌ حيّاً: بعد التوليد وحده بقيت
+      الكتابةُ المكرّرة <b>مقبولة</b>، ولم تُرفض إلّا بعد إنشاء <code>clients_email_key</code>.</p>
+    <p class="bad"><b>⚠ ويفشل الدفعُ إن كان في الإنتاج بريدٌ مكرَّر.</b> فيُقاس أوّلاً:</p>
+    <pre>db.client.groupBy({ by: ["email"], _count: true,
+  having: { email: { _count: { gt: 1 } } } })</pre>
+    <p>ويُصحَّح المكرَّرُ يدويّاً قبل الدفع — والبريدُ اسمُ الدخول، فالمكرَّرُ يعني عميلاً
+      لا يدخل حسابَه أبداً بينما الشاشةُ تقول «كلمة المرور غير صحيحة».</p>
+
+    <p><b>٢ · جدولُ <code>ClientDocument</code> الجديد.</b> مونغو ينشئ المجموعةَ عند أوّل
+      كتابة، لكنّ فهرسَ <code>@@index([clientId])</code> يحتاج نفسَ الدفع.</p>
+
+    <p><b>٣ · ترحيلُ الوثائق على الإنتاج.</b> يُفتح <code>/migrations</code> ويُضغط
+      «رحّل». والترحيلُ <b>يضيف ولا يمسح</b>، والتكرارُ يُمنع بالرابط نفسِه — فيجوز
+      تكرارُه بلا ضرر. ويُتوقَّع أن يجد روابطَ خارجَ مخزننا (وُجد واحدٌ على dev:
+      <code>cspdf.net</code>) فتُرحَّل موسومةً في الملاحظة.</p>
+
+    <p><b>٤ · تصحيحُ <code>businessName</code> للطلبات اليدويّة القديمة.</b> كان حقلُ
+      «نوع النشاط» في نموذج الأدمن يُخزَّن في نفس العمود الذي يقرؤه التفعيل <b>اسماً
+      للعميل</b>. فكلُّ طلبٍ يدويٍّ قديمٍ فيه وصفُ نشاطٍ («عيادة أسنان») سيفتح حساباً بهذا
+      الاسم ورابطاً عامّاً به. يُقاس قبل التفعيل:</p>
+    <pre>db.checkoutOrder.findMany({ where: { status: "PAID", clientId: null },
+  select: { number: true, buyerName: true, businessName: true } })</pre>
+
+    <p><b>٥ · متغيّرات البيئة.</b> <code>CONSOLE_URL</code> و<code>RESEND_FROM</code>
+      يقرؤهما إرسالُ بيانات الدخول، و<code>NEXT_PUBLIC_ARTICLES_API_BASE</code> تقرؤه شاشةُ
+      موقع العميل. تُفحص على مشروع Vercel لكلّ تطبيق — لا يكفي وجودُها محلّيّاً
+      (<code>.env.shared</code> لا يصل Vercel).</p>
+
+    <p class="bad"><b>٦ · اعتمادٌ مكشوفٌ في المستودع.</b>
+      <code>sync-local-from-prod/route.ts:9-10</code> يحمل رابطَ قاعدة الإنتاج نصّاً
+      صريحاً. <b>يُدوَّر قبل أيّ دفع</b> — ومَن رآه مرّةً رآه للأبد.</p>
+
+    <p><b>٧ · الملفّاتُ الميّتة — ✅ حُذفت ١٩ سبتمبر ٢٠٢٦</b> (بعد أن تعذّر <code>rm</code>
+      و<code>git rm</code>، نُفّذ الحذفُ بـ<code>fs.unlinkSync</code>):</p>
+    <pre>١٤ ملفّاً من مجلّد العملاء · ٤٤٬٦٢٦ بايتاً — جردٌ آليٌّ لـ١٤٨ ملفّاً ثمّ فحصٌ بأسماء الصادرات:
+  client-form-header · client-verification-modal · social-profiles-input · use-client-media-modal
+  address/business/legal/options/subscription-section · section-wrapper
+  client-seo-config.ts · client-seo-group-scores · sales-scope · client-delivery-metrics
++ ٤ سبقتها: activate-client.ts · activate-client-button.tsx · access-state · welcome-section
++ مجلّد subscription-tiers/ كلُّه   + ٣ سكربتات فحصٍ مؤقّتة
+
+والفحصُ بالاسم أنقذ ملفّاً حيّاً: rebake-client-site-canonicals.ts بدا يتيماً
+وهو يُستورَد ديناميكيّاً في update-client.ts:148 — ومطابقةُ المسار وحدَها كانت ستحذفه.
+
+إعادةُ المسح بعده: 134 ملفّاً · يتيمٌ واحدٌ وهو الحيُّ ديناميكيّاً · tsc = 0</pre>
+
+    <p><b>٩ · ترحيلُ الطلبات على الإنتاج — لم يُشغَّل بعد.</b>
+      صار إضافيّاً (لا يمسح شيئاً، ويتخطّى مَن له طلب)، فيجوز تشغيلُه هناك رغم وجود
+      ستّة طلباتٍ من صفحة الدفع. يُفتح <code>/migrations</code> ويُضغط «ابنِ الطلبات الناقصة».
+      وبدونه يبقى ٤٢ عميلاً بلا طلبٍ ساري — أي شاشاتُ مالٍ فارغة.</p>
+
+    <p><b>١٠ · حذفُ الكتالوج القديم لا يحتاج دفعَ سكيما.</b>
+      مونغو يتجاهل ما ليس في السكيما (توثيق Prisma)، والمجموعةُ <code>subscription_tier_configs</code>
+      تبقى مهجورةً — ويقرؤها الترحيلُ وحده خامّاً. فلا دفعَ لهذا البند، ويبقى الدفعُ
+      مطلوباً لبندَي ١ و٢ (فهرسُ البريد وفهرسُ الوثائق).</p>
+
+    <p><b>١١ · <code>next build</code> لم يُشغَّل على أيّ تطبيق.</b>
+      <code>tsc --noEmit</code> صفرٌ في الأربعة (<code>admin · console · modonty · payment</code>)،
+      لكنّه لا يكشف أعطالَ البناء: توليدُ الراوتات · متغيّراتُ البيئة وقتَ البناء · Turbopack.</p>
+
+    <p><b>٨ · لم يُفحص على الإنتاج بعد:</b> إبطالُ كاش مدونتي بعد حفظ الكونسول
+      (<code>revalidateModontyTag</code>) — نجح محلّيّاً بـ<code>200</code> ويحتاج
+      <code>MODONTY_LOCAL_URL</code>/عنوانَ الإنتاج صحيحاً هناك.</p>
+  </div>
+
+    <!-- نُقلت بطاقةُ «٠ب · مؤجَّل — <code>cont…» إلى لوحة التاسك الرئيسيّة (١٩ سبتمبر ٢٠٢٦): ملفّاتُ الفلو يُستغنى عنها، والمفتوحُ يعيش في TASK. -->
+
+
+  <div class="card warn">
+    <b>٠أ · بندٌ مفتوح — ستّةُ حقولٍ تنتقل إلى الكونسول (خالد ١٩ سبتمبر ٢٠٢٦)</b>
+    <p><b>السؤال كما طرحه:</b> «فيه معلومات العميل هو يعرفها أكثر عن نفسه، إحنا ما نعرفها،
+      فهو اللي مفروض يدخلها».</p>
+    <p><b>الجواب — ستّة، كلُّها في بطاقة «Client Page &amp; Contact» عندنا:</b></p>
+    <pre>Website URL      موقعُه
+Phone            رقمُه - ويبني زرَّ واتساب على صفحته
+Contact Type     أيُّ مكتبٍ يردّ
+Social Profiles  حساباتُه
+GBP URL          ملفُّه على جوجل
+Price Range      أسعارُه</pre>
+    <p><b>وأربعةٌ منها معروضةٌ له أصلاً قراءةً فقط</b>
+      (<code>console/.../profile-form.tsx:346-354</code>) — فالنقلُ تحويلُ صفِّ عرضٍ إلى
+      حقل، لا بناءُ صفحة.</p>
+    <p><b>ما لا يُنقل ولماذا:</b> الصناعة ونوعُ المنشأة والشكلُ القانونيّ (تحرّكه بين فئات
+      مدونتي وتغذّي JSON-LD) · مميّز وموثّق والمجدول (قراراتُنا) · صورةُ التوثيق (نحن نفحصها،
+      وصفرُ تطابقٍ لها في <code>console/</code>) · السلَجُ والبريدُ (هويّةُ دخول) ·
+      أولويّاتُ المحتوى (نحن نكتب له).</p>
+    <p class="bad"><b>عقبةٌ تسبق النقل:</b> <code>console/.../profile-actions.ts</code> بلا
+      Zod — <code>ProfileUpdate</code> نوعٌ TypeScript يختفي وقتَ التشغيل، والحارسُ الوحيد
+      <code>if (data.x !== undefined)</code>. فالتسعةُ المعروضةُ «قراءةً فقط» — ومنها
+      <b>البريدُ وهو اسمُ الدخول</b> — يكتبها الخادمُ لو أُرسلت. والقفلُ نمطٌ موجودٌ في نفس
+      التطبيق: <code>my-site</code> يستعمل <code>mySiteInputSchema</code>.</p>
+    <p><b>ما يملكه العميلُ في الكونسول اليوم (٣١ صفحة):</b>
+      <code>profile</code> ١٧ حقلاً (الاسم · القانونيّ · البديل · الشعار · الوصف · التأسيس ·
+      ٧ عنوان · السجلّ · الضريبيّان · ساعات العمل) ·
+      <code>settings</code> كلمةُ المرور والإشعارات ·
+      <code>my-site</code> النطاقُ الفرعيّ والقالبُ واللون ·
+      <code>seo/intake</code> ١١ حقلاً تحريريّاً ومنها <code>ymylReviewer</code>.</p>
+    <p class="bad"><b>وحقلٌ له كاتبان:</b> <code>name</code> — العميلُ في
+      <code>profile-form.tsx: field("name")</code> ونحن في صفحة التعديل. آخرُ كاتبٍ يفوز،
+      والسلَجُ لا يتبعه.</p>
+  </div>
 
   <div class="card warn">
     <b>٠ · بندٌ مفتوح — سوقٌ ثالث بالدولار (خالد ١٩ سبتمبر ٢٠٢٦)</b>
@@ -1924,10 +2119,17 @@ GET /clients/new                         200 in 1281ms
 
   <section data-view="enums">
   <h2><span class="n">E</span><code style="font-size:16px">SubscriptionTier</code> — الجرد الكامل</h2>
-  <p class="sub">المصدر الواحد: <code>CommercialPlan</code>. <b style="color:var(--go)">أُغلق ١٧ سبتمبر ٢٠٢٦ مساءً:</b> خمسةٌ من الستّة سقطت، وبقي الجدولُ القديم وحدَه.</p>
+  <p class="sub">المصدر الواحد: <code>CommercialPlan</code>. <b style="color:var(--go)">أُغلق بالكامل ١٩ سبتمبر ٢٠٢٦:</b> سقط الإنمُ والجدولُ وحقلا الكرت من السكيما، ولم يبقَ في الشيفرة إلّا قراءةٌ خامٌّ واحدةٌ يستعملها الترحيل.</p>
+  <pre style="margin:14px 0 0"><code>القياس بعد الحذف (grep بلا أسطر التعليق):
+admin 3   ·   shared 0   ·   payment 0   ·   modonty 0   ·   console 0
+  والثلاثة كلُّها في api/dev/rebuild-orders/plan.ts:82,87,96
+  — قراءةٌ خامّ للمجموعة المهجورة، لأنّ الترحيل وحده يحتاج اسمَ الباقة القديم.
 
-  <h3 style="font-size:17px;font-weight:900;margin:26px 0 0">أ · السكيما — <b style="color:var(--go)">حقلٌ واحدٌ فقط ما زال نوعُه <code>SubscriptionTier</code></b></h3>
-  <p class="sub" style="margin:10px 0 0">كانت ستّةَ حقول. خمسةٌ سقطت في ١٧ سبتمبر، وبقي <code>SubscriptionTierConfig.tier</code> — ويسقط مع جدوله في المرحلة ٨.</p>
+وفي schema.prisma: 4 إشاراتٍ، كلُّها <b>تعليقات</b> تشرح السقوط (638 · 645 · 1142 · 4372)
+  — لا enum ولا model ولا حقل.</code></pre>
+
+  <h3 style="font-size:17px;font-weight:900;margin:26px 0 0">أ · السكيما — <b style="color:var(--go)">لم يبقَ منها شيء</b></h3>
+  <p class="sub" style="margin:10px 0 0">كانت ستّةَ حقول. خمسةٌ سقطت في ١٧ سبتمبر، وسقط الباقي في ١٩ سبتمبر: <code>enum SubscriptionTier</code> · <code>model SubscriptionTierConfig</code> · <code>Client.subscriptionTierConfigId</code> وعلاقتُه — ٧٢٩ بايتاً. ومونغو لا يحذف ما في المستندات: المجموعةُ وقيمُها باقيةٌ مهجورةً، يتجاهلها Prisma («If a model or field is not present in the Prisma schema, it is ignored») ويقرؤها الترحيلُ وحده خامّاً.</p>
   <div class="scroll">
   <table class="align">
     <thead><tr><th>الحقل</th><th>السطر</th><th>بديلٌ نصّيّ بجانبه</th><th>متى يسقط</th></tr></thead>
@@ -1945,9 +2147,11 @@ GET /clients/new                         200 in 1281ms
 
   <h3 style="font-size:17px;font-weight:900;margin:30px 0 0">ب · الكود — <b style="color:var(--go)">ما بقي منه شيءٌ خارج الجدول القديم</b></h3>
 
-  <p class="sub" style="margin:16px 0 0"><b style="color:var(--go)">ADMIN — ٦٠ سطراً حيّاً · كلُّها تقرأ الجدول القديم</b>
-    &nbsp;·&nbsp; أُعيد قياسُه ١٧ سبتمبر بعد إسقاط الحقول الخمسة
-    <br><span class="f"><b>الفرزُ بالأمر نفسه</b>
+  <p class="sub" style="margin:16px 0 0"><b style="color:var(--go)">ADMIN — ٥ أسطرٍ باقية · ولا واحدٌ منها قارئُ مال</b>
+    &nbsp;·&nbsp; أُعيد قياسُه <b>١٩ سبتمبر</b>: <code>٦٠ ← ٣٥ ← ٥</code>
+    <br><span class="f"><b>ما سقط في ١٩ سبتمبر:</b> ستّةُ احتياطيّاتِ حصّة (<code>?? subscriptionTierConfig?.articlesPerMonth</code>) في البريفات وتحليلات العميل ومؤشّر التسليم وتبويباته — وقبل اللمس قيس الاعتماد عليها: <b>صفرُ عميلٍ من ٤٦</b>. وأربعةُ أسماءِ باقةٍ للعرض صارت من الطلب (تقرير المبيعات من الطلب المؤسِّس · صفحة الإيقاف من الطلب الساري · الفاتورة · وربطُ الكتالوج في إنشاء العميل). ومجلّد <code>subscription-tiers/</code> كلُّه حُذف — بلا مستهلكٍ واحد. وأربعةُ حواملَ في المخطَّطات والأنواع.
+    <br><b>والخمسةُ الباقية مشروعة:</b> <code>database-health</code> يعدّ صفوفَ الجداول · و<code>api/dev/rebuild-orders</code> يقرأ الجدولَ بوصفه <b>مصدرَ الترحيل</b> ويرفض أيّ قاعدةٍ غير <code>modonty_dev</code>. فلم يبقَ إلّا حذفُه من السكيما — بأمر خالد ومع ترحيل.</span>
+    <br><span class="f" style="opacity:.75"><b>القياس القديم (١٧ سبتمبر، للتاريخ):</b> <b>الفرزُ بالأمر نفسه</b>
     (<code>grep -rnE "SubscriptionTier|subscriptionTier"</code> ثمّ إسقاطُ أسطر التعليق):
     <br>&nbsp;&nbsp;• <code>admin</code> <b>٦٠</b> سطراً — منها <b>٥٤</b> على <code>SubscriptionTierConfig</code>،
     و<b>الستّةُ الباقية تقرأ نفسَ الجدول</b> (<code>types.ts</code> شكلُ الصفّ ·

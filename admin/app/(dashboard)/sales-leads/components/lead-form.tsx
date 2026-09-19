@@ -81,17 +81,16 @@ const MARKETS = [
   { code: "EG", label: "مصر", currency: "EGP", currencyLabel: "ج.م", currencyName: "بالجنيه المصري" },
 ] as const;
 
-interface PlanOption {
-  tier: string;
-  slug: string;
-  name: string;
-  priceMonthly: number;
-  priceYearly: number;
-  articlesLabel: string;
-  order: number;
-  badge: string | null;
-  featuredBadge: string | null;
-}
+/**
+ * النوعُ من منتِجه (`helpers/get-plans`) لا نسخةً منه.
+ *
+ * كانت هنا نسخةٌ بنفس الحقول زائداً `tier` — وقد سقط `tier` من الباقات، فصار الشكلان
+ * لا يتطابقان: TypeScript يقارن بالبنية لا بالاسم، فرفض تمريرَ `Record<"SA"|"EG", PlanOption[]>`
+ * القادمَ من الخادم إلى هذا المكوّن (TS2322 في `new/page.tsx` و`[id]/edit/page.tsx`).
+ *
+ * و`import type` يُمحى عند البناء، فلا يجرّ `"server-only"` من الملفّ المصدر إلى العميل.
+ */
+import type { PlanOption } from "../helpers/get-plans";
 
 interface Props {
   leadId?: string;

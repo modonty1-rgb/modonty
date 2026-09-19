@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,10 +10,8 @@ import { Loader2, AlertTriangle, X, PenLine } from "lucide-react";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { ClientLogoModal } from "./client-logo-modal";
 import { ClientHeroModal } from "./client-hero-modal";
-import { ClientVerificationModal } from "./client-verification-modal";
 import { useClientForm } from "../helpers/hooks/use-client-form";
 import { ClientEditWorkspace } from "./edit-workspace/client-edit-workspace";
-import { OpenClientConsoleButton } from "./edit-workspace/open-client-console-button";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import type { ClientWithRelations } from "@/lib/types";
 import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
@@ -21,7 +21,6 @@ import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 interface ClientFormProps {
   initialData?: Partial<ClientWithRelations>;
   industries?: Array<{ id: string; name: string }>;
-  salesReps?: Array<{ id: string; name: string }>;
   editors?: Array<{ id: string; name: string }>;
   clients?: Array<{ id: string; name: string; slug: string }>;
   clientId?: string;
@@ -34,7 +33,6 @@ interface ClientFormProps {
 export function ClientForm({
   initialData,
   industries = [],
-  salesReps = [],
   editors = [],
   clients = [],
   clientId,
@@ -45,15 +43,11 @@ export function ClientForm({
   const { collapsed } = useSidebar();
   const [logoModalOpen, setLogoModalOpen] = useState(false);
   const [heroModalOpen, setHeroModalOpen] = useState(false);
-  const [verificationModalOpen, setVerificationModalOpen] = useState(false);
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(
     mediaSrc(initialData?.logoMedia) ?? null
   );
   const [currentHeroUrl, setCurrentHeroUrl] = useState<string | null>(
     mediaSrc(initialData?.heroImageMedia) ?? null
-  );
-  const [currentVerificationUrl, setCurrentVerificationUrl] = useState<string | null>(
-    (initialData as { verificationImageUrl?: string | null })?.verificationImageUrl ?? null
   );
 
   useEffect(() => {
@@ -65,7 +59,6 @@ export function ClientForm({
   }, [mediaSrc(initialData?.heroImageMedia)]);
 
   useEffect(() => {
-    setCurrentVerificationUrl((initialData as { verificationImageUrl?: string | null })?.verificationImageUrl ?? null);
   }, [(initialData as { verificationImageUrl?: string | null })?.verificationImageUrl]);
 
   const { form, handleSubmit, loading, error, setError, invalidFields, setInvalidFields, isEditMode } = useClientForm({
@@ -178,7 +171,6 @@ export function ClientForm({
                 form={form}
                 initialData={initialData}
                 industries={industries}
-                salesReps={salesReps}
                 clients={clients}
                 countries={countries}
                 ctaPresets={ctaPresets}
@@ -187,10 +179,8 @@ export function ClientForm({
                 seoChecks={seoChecks}
                 currentLogoUrl={currentLogoUrl}
                 currentHeroUrl={currentHeroUrl}
-                currentVerificationUrl={currentVerificationUrl}
                 onOpenLogo={() => setLogoModalOpen(true)}
                 onOpenHero={() => setHeroModalOpen(true)}
-                onOpenVerification={() => setVerificationModalOpen(true)}
               />
               {clientId && (
                 <>
@@ -208,12 +198,6 @@ export function ClientForm({
                     initialHeroUrl={currentHeroUrl}
                     initialHeroMediaId={(initialData?.heroImageMedia as { id?: string } | null)?.id ?? null}
                   />
-                  <ClientVerificationModal
-                    open={verificationModalOpen}
-                    onOpenChange={setVerificationModalOpen}
-                    clientId={clientId}
-                    initialVerificationUrl={currentVerificationUrl}
-                  />
                 </>
               )}
             </>
@@ -225,7 +209,7 @@ export function ClientForm({
             scrolls cleanly under it. Save is always shown; the unsaved-changes
             hint + Discard appear only when the form differs from what's stored. */}
         <div
-          className="fixed bottom-0 right-0 z-30 border-t bg-background/95 px-6 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/85 shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.35)] transition-[left] duration-300"
+          className="fixed bottom-0 right-0 z-30 border-t bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/85 shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.35)] transition-[left] duration-300"
           style={{ left: collapsed ? "4rem" : "15rem" }}
         >
           <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4">
@@ -242,6 +226,7 @@ export function ClientForm({
               ) : (
                 <span className="text-muted-foreground">Fill the required fields, then create</span>
               )}
+
             </span>
             <div className="flex items-center gap-2">
               {/* Editor picker — the content writer responsible for this client's articles.
@@ -269,53 +254,34 @@ export function ClientForm({
                   </Select>
                 </div>
               )}
-              {/* Compact toggles — moved here from the form to save space (Khalid 2026-07-25).
-                 No description; the icon + short label carry it. */}
-              {isEditMode && (
-                <>
-                  <label
-                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/[0.06] px-2.5 py-1.5"
-                    title="شريك مميّز — يظهر في «الشركاء المميّزون» وبشارة على الموقع"
-                  >
-                    <Checkbox
-                      checked={watchedValues.isFeatured ?? false}
-                      onCheckedChange={(c) => form.setValue("isFeatured", c === true, { shouldDirty: true })}
-                    />
-                    <span className="text-xs font-semibold whitespace-nowrap">⭐ مميّز</span>
-                  </label>
-                  {/* شهادةُ فحصٍ لا حقلُ بيانات: السجلّ التجاريّ وصورة التوثيق يدخلهما العميل،
-                      فوجودهما لا يعني أنّ أحداً راجعهما. تُوضع بعد الفحص، وهي وحدها مصدر
-                      شارة التوثيق على مدونتي — القائمة والبحث وصفحة الشريك. */}
-                  <label
-                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-sky-500/30 bg-sky-500/[0.06] px-2.5 py-1.5"
-                    title="موثَّق — فحصنا أوراقه الرسميّة. تظهر الشارة على مدونتي: القائمة والبحث وصفحة الشريك"
-                  >
-                    <Checkbox
-                      checked={watchedValues.isVerified ?? true}
-                      onCheckedChange={(c) => form.setValue("isVerified", c === true, { shouldDirty: true })}
-                    />
-                    <span className="text-xs font-semibold whitespace-nowrap">✅ موثَّق</span>
-                  </label>
-                  {/* On for everyone today. Unticking it hides the «مجدولة» tab from this
-                      client's articles page — for the client who reads an unpublished
-                      date as a promise we have not made yet. */}
-                  <label
-                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-violet-500/30 bg-violet-500/[0.06] px-2.5 py-1.5"
-                    title="يشوف العميل تبويب «مجدولة» في مقالاته — قائمة اللي جدولناه وما نُشر بعد"
-                  >
-                    <Checkbox
-                      checked={watchedValues.showSchedule ?? true}
-                      onCheckedChange={(c) => form.setValue("showSchedule", c === true, { shouldDirty: true })}
-                    />
-                    <span className="text-xs font-semibold whitespace-nowrap">🗓️ يشوف المجدول</span>
-                  </label>
-                </>
+              {/**
+                * **الحبّاتُ الثلاثُ انتقلت إلى قسم «Options»** (خالد ١٩ سبتمبر ٢٠٢٦).
+                *
+                * كانت هنا منذ ٢٥ يوليو لتوفير مساحة، فصارت تُقرأ زينةً بين السكور وأزرار
+                * الحفظ — وهي قراراتٌ تغيّر ما يراه الناس: سلايدرُ المميّزين · شارةُ التوثيق ·
+                * تبويبُ المجدول في حساب العميل. وصار لكلٍّ سطرٌ يقول أثرَها.
+                */}
+              {/**
+                * **أبوابُ شاشات العميل الثلاثة** (خالد ١٩ سبتمبر ٢٠٢٦: «وثائق العميل
+                * وموقع الـAPI وبيانات الدخول نحطّها في البوتوم تحت»).
+                *
+                * كانت بطاقةً في الرفّ الأيمن، فأخذت من عمودٍ صار كلُّه لجرد ما أدخله
+                * العميل. والشريطُ موضعُها الطبيعيّ: لا تُملأ ولا تُحفظ — تفتح شاشةً
+                * أخرى، كـ«افتح كونسول العميل» الذي كان هنا.
+                */}
+              {isEditMode && clientId && (
+                <span className="flex items-center gap-0.5 rounded-lg border bg-muted/40 p-0.5">
+                  <FooterLink href={`/clients/${clientId}/documents`} label="الوثائق" />
+                  <FooterLink href={`/clients/${clientId}/site`} label="النشر على موقعه" />
+                  <FooterLink href={`/clients/${clientId}/welcome`} label="بيانات الدخول" />
+                </span>
               )}
               {/* SEO score — the ONE standard chip, clickable → the guide (/technical) */}
               {isEditMode && clientId && (
                 <SeoScoreBadge score={unifiedSeoScore} size="md" href={`/clients/${clientId}/technical`} />
               )}
-              {isEditMode && clientId && <OpenClientConsoleButton clientId={clientId} />}
+              {/* «Open Client Console» انتقل إلى بطاقة «من الكونسول» في عمود التعديل
+                  (خالد ١٩ سبتمبر ٢٠٢٦): بابُ الكونسول مع جردِ ما فيه، لا بين أزرار الحفظ. */}
               {isEditMode && isDirty && (
                 <Button
                   type="button"
@@ -323,11 +289,12 @@ export function ClientForm({
                   size="sm"
                   disabled={loading}
                   onClick={() => form.reset()}
+                  className="h-8"
                 >
                   Discard
                 </Button>
               )}
-              <Button type="submit" size="sm" disabled={loading}>
+              <Button type="submit" size="sm" disabled={loading} className="h-8">
                 {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 {loading ? "Saving…" : isEditMode ? "Save Changes" : "Create Client"}
               </Button>
@@ -336,5 +303,26 @@ export function ClientForm({
         </div>
       </div>
     </form>
+  );
+}
+
+/**
+ * رابطٌ في الشريط السفليّ — بحجم بقيّة ضوابطه.
+ *
+ * `Link` لا `Button`: هذه ملاحةٌ لا فعل، فتُفتح بوسط الفأرة وتُنسخ بزرّها الأيمن كأيّ
+ * رابط — وزرٌّ يحاكي شكلَها يسلب ذلك.
+ *
+ * وبلا إطارٍ لكلٍّ (خالد ١٩ سبتمبر ٢٠٢٦: «البوتوم محتاج تحسين UI/UX»): ثلاثةُ إطاراتٍ
+ * متجاورةٍ تُقرأ ثلاثةَ أفعالٍ بوزن «Save Changes». والإطارُ للمجموعة وحدها، فتُقرأ
+ * مجموعةَ ملاحةٍ واحدة — والفعلُ الوحيدُ في الشريط هو الحفظ.
+ */
+function FooterLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="inline-flex h-7 items-center rounded-md px-2.5 text-[11.5px] font-medium text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
+    >
+      {label}
+    </Link>
   );
 }

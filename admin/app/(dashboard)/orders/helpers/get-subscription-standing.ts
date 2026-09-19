@@ -1,5 +1,9 @@
 /**
- * حالُ الاشتراك اليوم — من يوم التفعيل زائدَ شهورِ الخدمة (المدفوعة + الهديّة).
+ * حالُ الاشتراك اليوم — من **بداية الخدمة** زائدَ شهورِها (المدفوعة + الهديّة).
+ *
+ * خالد (١٩ سبتمبر ٢٠٢٦): «المدّة تبدأ بعد أوّل أرتيكل» — فالساعةُ من `serviceStartedAt`
+ * التي تُختم عند وصول أوّل مقال، لا من `activatedAt`. وطلبٌ مفعَّلٌ لم يصله مقالٌ بعد
+ * حالُه `unknown`: لم تبدأ مدّتُه، فلا هو نشطٌ بالعدّ ولا منتهٍ.
  *
  * خالد (١٨ سبتمبر ٢٠٢٦): «عمود يبيّن حالة الاشتراك من تاريخ التفعيل لحدّ اليوم حسب
  * عدد الأشهر». يُحسب ولا يُخزَّن: التخزينُ يخلق رقماً يكذب أوّلَ ما تُعدَّل المدّة.
@@ -14,7 +18,7 @@ export type SubscriptionState = "active" | "expiring" | "expired" | "unknown";
 export interface SubscriptionStanding {
   state: SubscriptionState;
   endsAt: Date | null;
-  /** موجبٌ = باقٍ · سالبٌ = مضى على الانتهاء · null = لا تفعيل. */
+  /** موجبٌ = باقٍ · سالبٌ = مضى على الانتهاء · null = لم تبدأ الخدمة بعد. */
   daysLeft: number | null;
 }
 
@@ -23,11 +27,11 @@ import { RENEWAL_SOON_DAYS } from "@/lib/orders/renewal-window";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export function getSubscriptionStanding(
-  input: { activatedAt: Date | null; paidMonths: number; bonusServiceMonths: number },
+  input: { serviceStartedAt: Date | null; paidMonths: number; bonusServiceMonths: number },
   now: Date = new Date(),
 ): SubscriptionStanding {
-  if (!input.activatedAt) return { state: "unknown", endsAt: null, daysLeft: null };
-  const endsAt = new Date(input.activatedAt);
+  if (!input.serviceStartedAt) return { state: "unknown", endsAt: null, daysLeft: null };
+  const endsAt = new Date(input.serviceStartedAt);
   endsAt.setMonth(endsAt.getMonth() + input.paidMonths + input.bonusServiceMonths);
   const daysLeft = Math.ceil((endsAt.getTime() - now.getTime()) / DAY_MS);
   const state: SubscriptionState = daysLeft < 0 ? "expired" : daysLeft <= RENEWAL_SOON_DAYS ? "expiring" : "active";

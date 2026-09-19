@@ -124,28 +124,38 @@ async function runRebuild(send: Send) {
   const startedAt = Date.now();
   send({ type: "phase", phase: "plan" });
   const planned = await planAll();
-  send({ type: "phase", phase: "wipe", total: planned.length });
+  send({ type: "phase", phase: "skip", total: planned.length });
 
-  // ── ١) الإخلاء — التابعُ قبل المتبوع
-  const deleted: Record<string, number> = {};
-  for (const [name, run] of [
-    ["payment_webhook_events", () => db.paymentWebhookEvent.deleteMany({})],
-    ["payment_attempts", () => db.paymentAttempt.deleteMany({})],
-    ["payment_transactions", () => db.paymentTransaction.deleteMany({})],
-    ["invoices", () => db.invoice.deleteMany({})],
-    ["checkout_orders", () => db.checkoutOrder.deleteMany({})],
-  ] as const) {
-    deleted[name] = (await run()).count;
-  }
-  // مؤشّراتُ الطلب الساري تُصفَّر مع الطلبات، وإلّا أشارت لطلبٍ محذوف.
-  await db.client.updateMany({ where: {}, data: { activeOrderId: null } });
-  send({ type: "phase", phase: "build", total: planned.length, deleted });
+  /**
+   * **لا يُمسح شيء — الترحيلُ إضافيٌّ يتخطّى مَن له طلبٌ بالفعل** (خالد ١٩ سبتمبر ٢٠٢٦).
+   *
+   * ── ما كان ──
+   * كان يمسح `checkout_orders` و`invoices` والمعاملات كلَّها ثمّ يبني من جديد. وهو آمنٌ
+   * على قاعدةٍ لم يدخلها طلبٌ حقيقيٌّ قطّ، وكارثةٌ على غيرها — ولذلك كان حارسُه يمنعه
+   * متى وُجد طلبٌ واحد (`lib/orders-migration-gate.ts`).
+   *
+   * ── ولماذا سقط المسح ──
+   * قيس الإنتاج (١٩ سبتمبر ٢٠٢٦) فوُجدت فيه **ستّةُ طلبات**: اثنان فحصٌ داخليّ وأربعةٌ
+   * زوّارٌ حقيقيّون فتحوا صفحة الدفع ولم يُكملوا (`ORD-2026-00003..6` بإيميلاتٍ حقيقيّة،
+   * `clientId: null`). فصفحةُ الدفع منشورةٌ وتكتب في الجدول منذ ١٥ سبتمبر — والحارسُ كان
+   * سيرفض الترحيلَ للأبد، فيبقى ٤٢ عميلاً بلا طلبٍ ساري وشاشاتُ المال فارغةً هناك.
+   *
+   * فصار الترحيلُ إضافيّاً: يقرأ مَن له طلبٌ الآن ويتخطّاه، ولا يلمس طلباً ولا فاتورةً
+   * ولا معاملةً قائمة. وبهذا يُعاد تشغيلُه بلا خوف: الثانيةُ لا تفعل شيئاً.
+   */
+  const alreadyHaveOrders = new Set(
+    (await db.checkoutOrder.findMany({ where: { NOT: [{ clientId: null }] }, select: { clientId: true } }))
+      .map((o) => o.clientId as string),
+  );
+  const skipped = planned.filter((p) => alreadyHaveOrders.has(p.clientId)).map((p) => p.clientName);
+  const toBuild = planned.filter((p) => !alreadyHaveOrders.has(p.clientId));
+  send({ type: "phase", phase: "build", total: toBuild.length, skipped: skipped.length });
 
   // ── ٢) البناء
   const created: { number: string; clientName: string; currency: string | null; totalMinor: number; gaps: string[] }[] = [];
   const failed: { clientName: string; error: string }[] = [];
 
-  for (const p of planned) {
+  for (const p of toBuild) {
     try {
       const number = await nextOrderNumber(db);
       const monthlyBaseMinor = p.paidMonths > 0 ? Math.round(p.totalMinor / p.paidMonths) : p.totalMinor;
@@ -205,20 +215,30 @@ async function runRebuild(send: Send) {
 
       // نهايةُ الاشتراك تُشتقّ من الطلب المبنيّ لتوّه — فيتطابق ما يراه العميلُ في بوّابته
       // مع ما يقوله الأدمن من أوّل لحظة (كان الانقسام صفرَ تطابقٍ من ٤٢).
+      //
+      // و**من بداية الخدمة لا من يوم التفعيل** (خالد ١٩ سبتمبر ٢٠٢٦: «المدّة تبدأ بعد أوّل
+      // أرتيكل»): بدايةُ الخدمة هنا هي أوّلُ مقالٍ وصل العميل (`plan.ts`)، فيُحسب من نفس
+      // النقطة التي يحسب منها `recompute-subscription-end.ts` وشاشةُ الطلبات — صيغةٌ واحدة
+      // في المسارات الثلاثة. ومَن لم يصله مقالٌ بعد تبقى نهايتُه فارغةً: لم تبدأ مدّتُه.
       await db.client.update({
         where: { id: p.clientId },
         data: {
           activeOrderId: order.id,
-          subscriptionEndDate: addMonthsTo(p.activatedAt, p.paidMonths),
+          subscriptionStartDate: p.serviceStartedAt,
+          subscriptionEndDate: p.serviceStartedAt
+            // والهديّةُ صفرٌ في الطلب المُرحَّل (سطر `bonusServiceMonths: 0` أعلاه) — فلا تُضاف
+            // هنا رقماً لا يحمله الطلبُ نفسُه.
+            ? addMonthsTo(p.serviceStartedAt, p.paidMonths)
+            : null,
         },
       });
       created.push({ number, clientName: p.clientName, currency: p.currency, totalMinor: p.totalMinor, gaps: p.gaps });
-      send({ type: "progress", done: created.length + failed.length, total: planned.length, name: p.clientName, number, gaps: p.gaps });
+      send({ type: "progress", done: created.length + failed.length, total: toBuild.length, name: p.clientName, number, gaps: p.gaps });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       failed.push({ clientName: p.clientName, error: message });
       // الفشلُ يُبثّ كما يُبثّ النجاح — وإلّا توقّف العدّادُ عند صفٍّ ولم يُعرف أيُّه.
-      send({ type: "progress", done: created.length + failed.length, total: planned.length, name: p.clientName, error: message });
+      send({ type: "progress", done: created.length + failed.length, total: toBuild.length, name: p.clientName, error: message });
     }
   }
 
@@ -230,13 +250,22 @@ async function runRebuild(send: Send) {
   ]);
   const pointerCount = await db.client.count({ where: { NOT: [{ activeOrderId: null }] } });
 
-  const clean =
-    failed.length === 0 && orderCount === clientCount && linkedCount === clientCount && pointerCount === clientCount;
+  /**
+   * **معيارُ النظافة بعد أن صار الترحيلُ إضافيّاً.**
+   *
+   * كان `orders === clients` يصحّ حين يُمسح كلُّ شيءٍ ويُبنى صفٌّ لكلّ عميل. واليوم في
+   * الجدول طلباتُ زوّارٍ بلا عميل (`clientId: null` — فتحوا صفحة الدفع ولم يُكملوا)،
+   * وقد يكون للعميل الواحد طلبان: تأسيسٌ وتجديد. فالمعيارُ الصادق: **ألّا يبقى عميلٌ
+   * بلا طلبٍ ساري**، وألّا يفشل صفّ.
+   */
+  const clientsWithoutPointer = clientCount - pointerCount;
+  const clean = failed.length === 0 && clientsWithoutPointer === 0;
 
   send({
     type: "result",
     clean,
-    deleted,
+    skipped: skipped.length,
+    clientsWithoutPointer,
     created: created.length,
     failed,
     verify: { clients: clientCount, orders: orderCount, ordersLinked: linkedCount, clientsPointing: pointerCount },

@@ -24,17 +24,26 @@ import { NOT_ARCHIVED } from "./not-archived";
 export async function recomputeSubscriptionEnd(clientId: string): Promise<Date | null> {
   const [orders, invoices] = await Promise.all([
     db.checkoutOrder.findMany({
-      where: { clientId, status: "PAID", NOT: [{ activatedAt: null }] },
-      select: { activatedAt: true, paidMonths: true, bonusServiceMonths: true },
+      where: { clientId, status: "PAID", NOT: [{ serviceStartedAt: null }] },
+      select: { serviceStartedAt: true, paidMonths: true, bonusServiceMonths: true },
       take: 200,
     }),
     db.invoice.findMany({ where: { clientId, ...NOT_ARCHIVED }, select: { subscriptionEnd: true }, take: 500 }),
   ]);
 
-  /** نهايةُ دورةٍ واحدة: يومُ التفعيل + الشهور المدفوعة + شهور الهديّة. */
-  const endOf = (o: { activatedAt: Date | null; paidMonths: number; bonusServiceMonths: number }): Date | null => {
-    if (!o.activatedAt) return null;
-    const e = new Date(o.activatedAt);
+  /**
+   * نهايةُ دورةٍ واحدة: **بدايةُ الخدمة** + الشهور المدفوعة + شهور الهديّة.
+   *
+   * خالد (١٩ سبتمبر ٢٠٢٦): «المدّة تبدأ بعد أوّل أرتيكل». وبدايةُ الخدمة تُختم عند
+   * وصول أوّل مقالٍ للعميل (`lib/orders/start-service-clock.ts`)، لا يوم التفعيل:
+   * مدّةُ التجهيز بعد الدفع شغلُنا نحن لا خدمتُه هو.
+   *
+   * وطلبٌ لم تبدأ خدمتُه بعدُ لا نهايةَ له — وهذا صحيحٌ لا نقص: لا يُطالَب بتجديدِ
+   * مدّةٍ لم تبدأ.
+   */
+  const endOf = (o: { serviceStartedAt: Date | null; paidMonths: number; bonusServiceMonths: number }): Date | null => {
+    if (!o.serviceStartedAt) return null;
+    const e = new Date(o.serviceStartedAt);
     e.setMonth(e.getMonth() + o.paidMonths + o.bonusServiceMonths);
     return e;
   };

@@ -112,7 +112,6 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
       salesRepId: true,
       createdAt: true,
       addressCountry: true,
-      subscriptionTierConfig: { select: { name: true } },
     },
     take: 3000,
   });
@@ -120,7 +119,7 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
   const clientIds = clients.map((c) => c.id);
 
   /**
-   * ── الإيرادُ التأسيسيّ يُقرأ من الطلب، لا من `Client.openingBalance` ──
+   * -- الإيرادُ التأسيسيّ يُقرأ من الطلب، لا من `Client.openingBalance` --
    *
    * كان رقماً على الكرت مؤرَّخاً بيوم إنشاء العميل — وكلاهما تقريب: المبلغُ لا عملةَ
    * معه (تُشتقّ من البلد)، والتاريخُ يومُ فتح الملفّ لا يومُ الدفع. وصار لكلّ عميلٍ
@@ -134,7 +133,7 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
    */
   const foundingOrders = await db.checkoutOrder.findMany({
     where: { clientId: { in: clientIds }, status: "PAID", totalMinor: { gt: 0 } },
-    select: { clientId: true, currency: true, totalMinor: true, paidAt: true, serviceStartedAt: true, createdAt: true },
+    select: { clientId: true, currency: true, totalMinor: true, paidAt: true, serviceStartedAt: true, createdAt: true, planName: true },
     orderBy: [{ serviceStartedAt: "asc" }, { createdAt: "asc" }],
   });
   const foundingByClient = new Map<string, (typeof foundingOrders)[number]>();
@@ -220,9 +219,10 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
     if (!inPeriod(foundingDate(order))) continue;
     // العملةُ من الطلب نفسه لا من بلد العميل — الطلبُ يحملها صريحةً.
     const isEgp = order.currency === "EGP";
-    // كان يسقط على رمز الـenum («PRO») حين لا اسمَ للباقة، فيظهر في التقرير سطرٌ
-    // باسم رمزٍ تقنيّ بين أسماءٍ عربيّة. والاسمُ الناقص يُقال ناقصاً.
-    const tierName = c.subscriptionTierConfig?.name ?? "بلا باقة";
+    // اسمُ الباقة من **الطلب المؤسِّس نفسه** لا من جدول الباقات القديم (١٩ سبتمبر ٢٠٢٦):
+    // هذا السطرُ يعدّ إيرادَ ذلك الطلب، فاسمُ الباقة الصادق هو ما بيع فيه — لا ما صار
+    // على كرت العميل بعد ترقيةٍ أو تجديد. والاسمُ الناقص يُقال ناقصاً.
+    const tierName = order.planName || "بلا باقة";
     payingClients.add(c.id);
     fan(isEgp, tierName, c.salesRepId, order.totalMinor / 100, true, false);
   }

@@ -63,8 +63,6 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
       where,
       include: {
         industry: { select: { name: true } },
-        // اسمُ الباقة للعمود — بلا هذا الجلب يطبع الملفُّ «بلا باقة» للجميع بصمت.
-        subscriptionTierConfig: { select: { name: true } },
         _count: {
           select: {
             articles: {
@@ -123,6 +121,25 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
      */
     const paymentStates = await getPaymentStates(filteredClients.map((c) => c.id));
 
+    /**
+     * واسمُ الباقة من **الطلب الساري**، لا من `SubscriptionTierConfig`.
+     *
+     * ذاك جدولٌ متقاعدٌ لا يُكتب فيه، ويحمله اثنان وأربعون عميلاً مهجوراً على كروتهم —
+     * فكان عمودُ «Subscription Plan» يطبع باقةً باعها أحدٌ قبل سنة لعميلٍ رُقّيت باقتُه
+     * بعدها، ويطبع «بلا باقة» لمن وُلد من طلبٍ ولم يمسّ الجدولَ القديم أصلاً.
+     *
+     * والطلبُ بلا `@relation` في السكيما (مقصود)، فيُجلب بجلبةٍ واحدةٍ بالمعرّفات.
+     */
+    const orderIds = filteredClients.map((c) => c.activeOrderId).filter((id): id is string => !!id);
+    const planNames = new Map(
+      (
+        await db.checkoutOrder.findMany({
+          where: { id: { in: orderIds } },
+          select: { id: true, planName: true },
+        })
+      ).map((o) => [o.id, o.planName]),
+    );
+
     const csvRows = [headers.join(",")];
 
     for (const client of filteredClients) {
@@ -134,7 +151,7 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
         escapeCsvValue(client.url),
         escapeCsvValue(client.industry?.name),
         // اسمُ الباقة لا رمزُها: ملفّ التصدير يُفتح في إكسل ويُقرأ بشراً.
-        escapeCsvValue(client.subscriptionTierConfig?.name ?? "بلا باقة"),
+        escapeCsvValue((client.activeOrderId && planNames.get(client.activeOrderId)) || "بلا طلبٍ ساري"),
         escapeCsvValue(client.subscriptionStatus),
         escapeCsvValue(paymentStateLabel(paymentStates.get(client.id) ?? NO_INVOICES)),
         formatDate(client.subscriptionStartDate),

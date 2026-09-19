@@ -80,7 +80,7 @@ export function AlertsSection({ alerts }: AlertsSectionProps) {
                 </span>
               </div>
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/clients?filter=expiring">
+                <Link href="/clients/segment/expiring-soon">
                   View All
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>
@@ -199,7 +199,7 @@ export function AlertsSection({ alerts }: AlertsSectionProps) {
                 </span>
               </div>
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/clients?filter=at-limit">
+                <Link href="/clients">
                   View All
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>

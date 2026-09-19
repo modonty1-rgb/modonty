@@ -15,13 +15,6 @@ async function safeFindClientsWithRelations(startOfMonth: Date, endOfMonth: Date
   try {
     return await db.client.findMany({
       include: {
-        subscriptionTierConfig: {
-          select: {
-            price: true,
-            articlesPerMonth: true,
-            tier: true,
-          },
-        },
         articles: {
           where: {
             status: ArticleStatus.PUBLISHED,
@@ -60,13 +53,6 @@ async function safeFindClientsWithRelations(startOfMonth: Date, endOfMonth: Date
           subscriptionStatus: true,
           subscriptionEndDate: true,
           articlesPerMonth: true,
-          subscriptionTierConfig: {
-            select: {
-              price: true,
-              articlesPerMonth: true,
-              tier: true,
-            },
-          },
           _count: {
             select: {
               articles: {
@@ -296,8 +282,8 @@ export async function getClientsStats() {
     let behindSchedule = 0;
 
     activeClients.forEach((client) => {
-      const promised =
-        client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0;
+      // نفس مصدر عمود «This Month» في الجدول — الطلب الساري وحده (business-metrics.ts).
+      const promised = client.articlesPerMonth ?? 0;
       const delivered = client.articles.length;
       totalPromised += promised;
       totalDelivered += delivered;

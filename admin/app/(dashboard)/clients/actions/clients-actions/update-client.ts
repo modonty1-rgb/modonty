@@ -5,7 +5,6 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import type { ClientFormData } from "@/lib/types";
-import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
 import { clientServerSchema } from "./client-server-schema";
 import { groupFieldsByTab } from "../../helpers/group-fields-by-tab";
 import {
@@ -79,8 +78,9 @@ export async function updateClient(id: string, data: ClientFormData) {
     // Group fields by tab (before mapping to Prisma types)
     const groupedData = groupFieldsByTab(normalizedData);
     
-    // Map to Prisma types after grouping
-    const mappedData = mapFormDataToClientData(normalizedData);
+    // (سقطت `mapFormDataToClientData` من هنا — ١٩ سبتمبر ٢٠٢٦: حمولةٌ كاملةٌ تُحسب
+    //  ولا يقرؤها سطرٌ واحد بعدها؛ الكتّابُ الأربعةَ عشرَ يأخذون `groupedData`.
+    //  وبقاؤها يعني أنّ أوّل من يستعملها يكتب حقولَ المال من شاشة الملفّ.)
 
     // Update each group independently (separate updates keep each under the
     // MongoDB <50-pipeline-stage limit). We always invoke every writer — each one

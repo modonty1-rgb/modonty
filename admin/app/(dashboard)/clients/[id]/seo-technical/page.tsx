@@ -231,7 +231,7 @@ export default async function ClientSeoTechnicalPage({ params }: { params: Promi
   );
 }
 
-// ── Sub-components ───────────────────────────────────────────────────────────
+// -- Sub-components -----------------------------------------------------------
 
 function ScoreBar({ label, score }: { label: string; score: number }) {
   const t = tone(score);

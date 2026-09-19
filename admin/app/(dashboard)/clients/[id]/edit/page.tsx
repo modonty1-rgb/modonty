@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getClientById } from "../../actions/clients-actions";
 import { getIndustries } from "../../../industries/actions/industries-actions";
 import { getClientsForSelect } from "../../actions/clients-actions/get-clients-for-select";
-import { getSalesReps, getEditors } from "../../../users/actions/users-actions";
+import { getEditors } from "../../../users/actions/users-actions";
 import {
   getActiveCountries,
   getActiveCtaPresets,
@@ -11,13 +11,12 @@ import { ClientForm } from "../../components/client-form";
 
 export default async function EditClientPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [client, industries, clients, countries, ctaPresets, salesReps, editors] = await Promise.all([
+  const [client, industries, clients, countries, ctaPresets, editors] = await Promise.all([
     getClientById(id),
     getIndustries(),
     getClientsForSelect(id), // Exclude current client from parent options
     getActiveCountries(),
     getActiveCtaPresets(),
-    getSalesReps(),
     getEditors(),
   ]);
 
@@ -34,7 +33,6 @@ export default async function EditClientPage({ params }: { params: Promise<{ id:
         clientId={id}
         countries={countries}
         ctaPresets={ctaPresets}
-        salesReps={salesReps}
         editors={editors}
       />
     </div>

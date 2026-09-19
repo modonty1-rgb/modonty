@@ -27,13 +27,14 @@ export function QuickActions() {
             </Link>
           </Button>
           <Button asChild variant="outline" className="w-full justify-start text-sm">
-            <Link href="/clients/new">
+            {/* بابُ ميلاد العميل صار واحداً: طابورُ من دفع (خالد ١٩ سبتمبر ٢٠٢٦). */}
+            <Link href="/clients/activate">
               <ModontyPartnerMark className="h-4 w-4 mr-2 flex-shrink-0" />
-              New Client
+              Activate Client
             </Link>
           </Button>
           <Button asChild variant="outline" className="w-full justify-start text-sm">
-            <Link href="/clients?filter=expiring">
+            <Link href="/clients/segment/expiring-soon">
               <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
               Expiring
             </Link>
@@ -45,7 +46,7 @@ export function QuickActions() {
             </Link>
           </Button>
           <Button asChild variant="outline" className="w-full justify-start text-sm">
-            <Link href="/clients?filter=at-limit">
+            <Link href="/clients">
               <AlertTriangle className="h-4 w-4 mr-2 flex-shrink-0" />
               At Limit
             </Link>

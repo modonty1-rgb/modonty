@@ -19,7 +19,7 @@ export function DashboardAlertsBanner({ alerts }: DashboardAlertsBannerProps) {
     chips.push({
       label: "Expiring soon",
       count: alerts.expiringSubscriptions.length,
-      href: "/clients?filter=expiring",
+      href: "/clients/segment/expiring-soon",
       color: "bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/20",
       icon: <AlertTriangle className="h-3.5 w-3.5" />,
     });
@@ -46,7 +46,7 @@ export function DashboardAlertsBanner({ alerts }: DashboardAlertsBannerProps) {
     chips.push({
       label: "At article limit",
       count: alerts.clientsAtLimit.length,
-      href: "/clients?filter=at-limit",
+      href: "/clients",
       color: "bg-orange-500/10 text-orange-600 border-orange-500/20 hover:bg-orange-500/20",
       icon: <Gauge className="h-3.5 w-3.5" />,
     });

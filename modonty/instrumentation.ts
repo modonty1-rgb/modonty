@@ -12,6 +12,16 @@ export const onRequestError: Instrumentation.onRequestError = async (
   // pollute the production error log (`.env.shared` carries the secret into dev).
   if (process.env.VERCEL_ENV !== "production") return;
 
+  /**
+   * **لا يُبلَّغ عن فشلِ التبليغ — حارسُ الحلقة** (١٩ سبتمبر ٢٠٢٦).
+   *
+   * قياسُ الإنتاج: ٤٣٤ من ٧٨٧ خطأً (٥٥٪) مصدرها `/api/internal/log-error` نفسُه —
+   * السجلُّ يفشل فيُسجَّل فشلُه فيفشل. وحُرست الكتابةُ في الموجِّه، وهذا الحارسُ الثاني:
+   * لا يُرسَل خطأٌ وقع **على مسار التسجيل** أصلاً، فلا تُفتح الحلقةُ من أيّ طرف.
+   */
+  if (context.routePath === "/api/internal/log-error") return;
+
+
   const secret = process.env.INTERNAL_LOG_SECRET;
   if (!secret) return;
 

@@ -40,6 +40,8 @@ type ProfileUpdate = {
   email?: string | null;
   phone?: string | null;
   contactType?: string | null;
+  priceRange?: string | null;
+  gbpProfileUrl?: string | null;
   addressStreet?: string | null;
   addressCity?: string | null;
   addressCountry?: string | null;
@@ -95,6 +97,19 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
       u.phone = raw ? normalizePhone(raw) ?? raw : "";
     }
     if (data.contactType !== undefined) u.contactType = str(data.contactType);
+    /**
+     * **نطاقُ السعر — للعميل لا لنا** (خالد ١٩ سبتمبر ٢٠٢٦: «هو أعرف بأسعاره»).
+     *
+     * كان يُجلب في `page.tsx` ولا يُستعمل في سطرٍ واحدٍ بعده. ويقرؤه مولّدُ السيو
+     * (`generate-client-seo-bundle.ts:174`) فيدخل الـJSON-LD لحظةَ الحفظ.
+     *
+     * والقيمةُ `$`…`$$$$` كما يريدها schema.org، لكنّ العميلَ لا يراها: الواجهةُ تعرض
+     * «اقتصاديّ · متوسّط · مرتفع · فاخر». فيفهمها هو ويقرأها جوجل.
+     */
+    if (data.priceRange !== undefined) u.priceRange = str(data.priceRange);
+    // ملفُّ العميل على «جوجل بزنس» — رابطٌ يملكه هو، ويدخل `sameAs` في الـJSON-LD
+    // ويُشتقّ منه `hasMap` حين يكون نشاطُه محلّاً (`generate-organization-jsonld.ts:519`).
+    if (data.gbpProfileUrl !== undefined) u.gbpProfileUrl = str(data.gbpProfileUrl);
     if (data.addressStreet !== undefined) u.addressStreet = str(data.addressStreet);
     if (data.addressCity !== undefined) u.addressCity = str(data.addressCity);
     if (data.addressCountry !== undefined) u.addressCountry = str(data.addressCountry);

@@ -36,8 +36,19 @@ export async function checkOrdersMigrationGate(): Promise<MigrationGate> {
   const gate = await checkFinanceAdmin();
   if (gate.status !== "ok") return { allowed: false, reason: gate.status === "unauthenticated" ? "unauthenticated" : "forbidden", orders: 0 };
 
+  /**
+   * **والمنعُ الأبديُّ سقط (خالد ١٩ سبتمبر ٢٠٢٦) لأنّ سببَه سقط.**
+   *
+   * كان الترحيلُ يمسح الطلباتِ والفواتير كلَّها قبل البناء، فوجودُ طلبٍ واحدٍ يعني أنّ
+   * التشغيل يتلف مالاً مسجَّلاً — ومن هنا `orders > 0 → already-done`.
+   *
+   * وقيس الإنتاج فوُجد فيه ستّةُ طلبات، أربعةٌ منها زوّارٌ حقيقيّون فتحوا صفحة الدفع ولم
+   * يُكملوا (`ORD-2026-00003..6`). فالشرطُ كان سيمنع الترحيلَ هناك **للأبد**، ويبقى ٤٢
+   * عميلاً بلا طلبٍ ساري.
+   *
+   * فصار الترحيلُ إضافيّاً: لا يمسح شيئاً، ويتخطّى كلَّ عميلٍ له طلب — وإعادتُه لا تفعل
+   * شيئاً، فلا معنى لمنعها. والصلاحيّةُ تبقى: مديرُ النظام وحده.
+   */
   const orders = await db.checkoutOrder.count();
-  if (isDevDatabase()) return { allowed: true, isDev: true, orders };
-  if (orders > 0) return { allowed: false, reason: "already-done", orders };
-  return { allowed: true, isDev: false, orders };
+  return { allowed: true, isDev: isDevDatabase(), orders };
 }

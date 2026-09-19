@@ -130,18 +130,46 @@ export async function updateRequiredFields(
     // العميل الشهريّة وربطَه بالكتالوج. اكتُشف بالقياس مباشرةً بعد تلك الدفعة.
     //
     // والحصّة والباقة يأتيان من الطلب عند التفعيل، ولا تمسّهما شاشةُ الملفّ.
+    // وسقط معها تاريخا الاشتراك (١٩ سبتمبر ٢٠٢٦): بداية المدّة ونهايتُها يُحسبان من
+    // الطلب وحده (`lib/invoices/recompute-subscription-end.ts` = يوم التفعيل + الشهور
+    // المدفوعة + شهور الهديّة، لأبعد طلبٍ مدفوع). وكانا يُمرَّران هنا فينجوان بالمصادفة
+    // لا بالحارس: قائمةُ حقول المجموعة لا تحملهما، فـ`buildGroupUpdateData` يُسقطهما.
+    // وإضافةُ الاسم إلى تلك القائمة يوماً كانت تكفي ليصير كلُّ حفظٍ للملفّ يكتب `null`
+    // فوق تاريخ الاشتراك — الشاشةُ لا تسأل عنه، و`normalizeDate(undefined)` يرجع `null`.
+    // وهو حرفيّاً الفخُّ الذي أكل حصّةَ العملاء أعلاه.
     const newData: Record<string, unknown> = {
       name: data.name,
       slug: data.slug,
       email: data.email,
-      subscriptionStartDate: normalizeDate(data.subscriptionStartDate),
-      subscriptionEndDate: normalizeDate(data.subscriptionEndDate),
     };
 
     const updateData = buildGroupUpdateData("required", client as Record<string, unknown>, newData);
 
     if (Object.keys(updateData).length === 0) {
       return { success: true, groupName: "required", fieldsUpdated: 0 };
+    }
+
+    /**
+     * **البريدُ اسمُ الدخول — فلا يتكرّر** (خالد ١٩ سبتمبر ٢٠٢٦: «صلّح»).
+     *
+     * صار `@unique` في السكيما، وهو الحارسُ الذي لا يُخترق. لكنّ خطأ `P2002` يصل
+     * الموظّفَ نصّاً إنجليزيّاً عن فهرس، فيُفحص هنا أوّلاً لتُقال العلّةُ باسم صاحبها.
+     *
+     * ومقيسٌ حيّاً قبل الإصلاح: عميلان بنفس البريد، فالمصادقةُ تجد الأوّلَ وترفض كلمةَ
+     * الثاني، والشاشةُ تقول «كلمة المرور غير صحيحة» — فيُبحث عن العطب في المكان الخطأ.
+     */
+    if (typeof updateData.email === "string" && updateData.email.trim()) {
+      const taken = await db.client.findFirst({
+        where: { email: updateData.email.trim(), NOT: { id: clientId } },
+        select: { name: true },
+      });
+      if (taken) {
+        return {
+          success: false,
+          error: `هذا البريد مستعمَلٌ لعميلٍ آخر (${taken.name}) — والبريدُ اسمُ الدخول فلا يتكرّر.`,
+          groupName: "required",
+        };
+      }
     }
 
     await db.client.update({
@@ -185,7 +213,6 @@ export async function updateSettingsFields(
     const client = await db.client.findUnique({
       where: { id: clientId },
       select: {
-        subscriptionStatus: true,
         isFeatured: true,
         isVerified: true,
         isInternal: true,
@@ -197,8 +224,9 @@ export async function updateSettingsFields(
       return { success: false, error: "Client not found", groupName: "settings" };
     }
 
+    // ولا `subscriptionStatus` هنا: ليست في حقول المجموعة أصلاً فلا تُكتب، والتفعيلُ
+    // والإيقاف يملكانها وحدهما (`activate-from-order` · `clients/suspend`).
     const newData: Record<string, unknown> = {
-      subscriptionStatus: data.subscriptionStatus ?? client.subscriptionStatus,
       isFeatured: data.isFeatured ?? client.isFeatured,
       isVerified: data.isVerified ?? client.isVerified,
       isInternal: data.isInternal ?? client.isInternal,

@@ -177,7 +177,7 @@ export function mapInitialDataToFormData(
     ctaUrl: (initialData as { ctaUrl?: string | null }).ctaUrl ?? "",
 
     // Subscription Management
-    subscriptionTierConfigId: (initialData as any).subscriptionTierConfigId || null,
+    // (سقط `subscriptionTierConfigId` — ١٩ سبتمبر ٢٠٢٦: الباقةُ من الطلب الساري.)
     subscriptionStartDate: initialData.subscriptionStartDate || null,
     subscriptionEndDate: initialData.subscriptionEndDate || null,
     articlesPerMonth: initialData.articlesPerMonth ?? undefined,

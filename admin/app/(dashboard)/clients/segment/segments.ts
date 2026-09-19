@@ -111,12 +111,34 @@ export const NOT_INTERNAL: Prisma.ClientWhereInput = {
  * Active clients whose subscription ends within the current calendar month — the
  * renewal (money) queue. Shared by the clients-page counter chip and this segment's
  * list, so the number and the table can never disagree.
+ *
+ * `NOT_INTERNAL` is INSIDE the function, not added by each caller (Khalid 2026-09-19).
+ * It used to sit on the segment only, so the chip counted our own demo accounts and its
+ * own list did not — the exact split this file exists to prevent. Measured the day it
+ * was fixed: 6 = 6, equal only because neither internal account happened to end this
+ * month. A number that agrees by luck is not a number that agrees.
  */
 export function expiringThisMonthWhere(): Prisma.ClientWhereInput {
   const n = new Date();
   const start = new Date(n.getFullYear(), n.getMonth(), 1);
   const end = new Date(n.getFullYear(), n.getMonth() + 1, 0, 23, 59, 59, 999);
-  return { ...live, subscriptionEndDate: { gte: start, lte: end } };
+  return { AND: [{ ...live, subscriptionEndDate: { gte: start, lte: end } }, NOT_INTERNAL] };
+}
+
+/**
+ * Live clients whose paid period ALREADY ended — money owed, still being served.
+ *
+ * By DATE, not by the status flag: nothing in the repository ever flips ACTIVE→EXPIRED,
+ * so `subscriptionStatus` stays ACTIVE while the end date slips into the past — which is
+ * why the `Expired` tab on /clients reads 0 while four clients are overdue (measured
+ * 2026-09-19 on modonty_dev). `not: null` is REQUIRED: on Mongo `{ lt: now }` also matches
+ * an ABSENT date, which would drag in every client who has no date at all.
+ *
+ * Disjoint from the renewal queue above (that one starts at the first of this month), so
+ * a client who lapsed in an EARLIER month appears here and nowhere else.
+ */
+export function expiredByDateWhere(): Prisma.ClientWhereInput {
+  return { AND: [{ ...live, subscriptionEndDate: { lt: new Date(), not: null } }, NOT_INTERNAL] };
 }
 
 /**
@@ -274,11 +296,8 @@ export async function getSegment(key: string): Promise<Segment | null> {
     expired: {
       title: "Subscription expired",
       description: "Still live on the site, but the paid period ended — a renewal is overdue.",
-      // By DATE, not the status flag: nobody flips ACTIVE→EXPIRED, so the flag stays
-      // ACTIVE while the end date slips into the past. `not: null` is REQUIRED — on Mongo
-      // `{ lt: now }` also matches an ABSENT date, which would drag in the no-date clients
-      // (verified: 13 vs the real 3). Disjoint from «expiring this week» (gte: now).
-      where: { ...live, subscriptionEndDate: { lt: new Date(), not: null }, ...NOT_INTERNAL },
+      // One definition, shared with the /clients overdue chip — see expiredByDateWhere.
+      where: expiredByDateWhere(),
       action: MONEY_ACTION,
     },
     "expiring-soon": {
@@ -290,7 +309,7 @@ export async function getSegment(key: string): Promise<Segment | null> {
     "expiring-month": {
       title: "Expiring this month",
       description: "Subscription ends this month — renew before it lapses (money).",
-      where: { AND: [expiringThisMonthWhere(), NOT_INTERNAL] },
+      where: expiringThisMonthWhere(),
       action: MONEY_ACTION,
     },
     pending: {

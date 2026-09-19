@@ -32,7 +32,7 @@ async function sendTelegramMessage(text: string): Promise<void> {
   if (!res.ok) throw new Error("Failed to send Telegram message");
 }
 
-// ─── Step 1: Request OTP ──────────────────────────────────────────────────────
+// --- Step 1: Request OTP ------------------------------------------------------
 export async function requestSlugChangeOtp(clientId: string): Promise<{ success: boolean; error?: string }> {
   const session = await auth();
   if (!session) return { success: false, error: "Unauthorized" };
@@ -72,7 +72,7 @@ export async function requestSlugChangeOtp(clientId: string): Promise<{ success:
   return { success: true };
 }
 
-// ─── Step 2: Verify OTP + Execute Slug Change ─────────────────────────────────
+// --- Step 2: Verify OTP + Execute Slug Change ---------------------------------
 export async function verifyAndChangeSlug(
   clientId: string,
   otp: string,

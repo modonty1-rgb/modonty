@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { planDocuments } from "./migrations/helpers/plan-documents";
 import { checkOrdersMigrationGate } from "@/lib/orders-migration-gate";
 import { checkAdmin } from "@/lib/admin-guard";
 import { canSeeReports } from "@/lib/can-see-reports";
@@ -45,9 +46,16 @@ export default async function DashboardLayout({
   // بندُ «Orders Migration» يُرسم ما دام الترحيل متاحاً — نفسُ الشرط الذي يطبّقه
   // المسارُ والصفحة، مقروءاً هنا مرّةً واحدة لكلّ صفحة (خالد ١٨ سبتمبر ٢٠٢٦:
   // «مجرّد ما أسوّي الترحيل يختفي»).
-  const ordersMigrationOpen = await checkOrdersMigrationGate()
-    .then((g) => g.allowed)
-    .catch(() => false);
+  /**
+   * يُرسم البندُ ما دام **أيُّ** ترحيلٍ مفتوحاً (خالد ١٩ سبتمبر ٢٠٢٦: جمعُ الترحيلين في
+   * صفحةٍ واحدة). وكان الشرطُ ترحيلَ الطلبات وحده، فلمّا تمّ اختفى البندُ ومعه ترحيلُ
+   * الوثائق الذي لم يُجرَ بعد — رابطٌ يموت وفيه عملٌ باق.
+   */
+  const [ordersOpen, pendingDocs] = await Promise.all([
+    checkOrdersMigrationGate().then((g) => g.allowed).catch(() => false),
+    planDocuments().then((p) => p.candidates.length).catch(() => 0),
+  ]);
+  const ordersMigrationOpen = ordersOpen || pendingDocs > 0;
 
   const reportViewer = await db.staff
     .findUnique({ where: { id: gate.userId }, select: { role: true, canViewReports: true } })

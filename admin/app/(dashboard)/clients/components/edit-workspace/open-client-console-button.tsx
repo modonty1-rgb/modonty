@@ -10,7 +10,17 @@ import { openClientConsoleAction } from "../../actions/clients-actions/open-clie
  * Opens the client's console AS the client (admin handoff) in a new tab.
  * Inline button — sits beside Save in the form footer.
  */
-export function OpenClientConsoleButton({ clientId }: { clientId: string }) {
+export function OpenClientConsoleButton({
+  clientId,
+  compact,
+}: {
+  clientId: string;
+  /**
+   * صيغةٌ ضيّقةٌ لبطاقة الرفّ (٢٦٠px): أيقونةٌ وكلمتان بدل «Open Client Console».
+   * النصُّ الكامل يبقى في `title` ولمن يقرأ بقارئ شاشة.
+   */
+  compact?: boolean;
+}) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
@@ -34,6 +44,23 @@ export function OpenClientConsoleButton({ clientId }: { clientId: string }) {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (compact) {
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled={loading}
+        onClick={handleOpen}
+        title="Open Client Console"
+        className="h-6 shrink-0 gap-1 px-2 text-[10.5px]"
+      >
+        {loading ? <Loader2 className="size-3 animate-spin" /> : <ExternalLink className="size-3" />}
+        افتح حسابه
+      </Button>
+    );
   }
 
   return (

@@ -8,6 +8,7 @@ interface ClientsHeaderWrapperProps {
   clientCount: number;
   stats: ClientsStats;
   expiringThisMonth: number;
+  overdueRenewals: number;
   children: ReactNode;
 }
 
@@ -24,7 +25,13 @@ export function useSearchContext() {
   return context;
 }
 
-export function ClientsHeaderWrapper({ clientCount, stats, expiringThisMonth, children }: ClientsHeaderWrapperProps) {
+export function ClientsHeaderWrapper({
+  clientCount,
+  stats,
+  expiringThisMonth,
+  overdueRenewals,
+  children,
+}: ClientsHeaderWrapperProps) {
   const [search, setSearch] = useState("");
 
   return (
@@ -33,6 +40,7 @@ export function ClientsHeaderWrapper({ clientCount, stats, expiringThisMonth, ch
         clientCount={clientCount}
         stats={stats}
         expiringThisMonth={expiringThisMonth}
+        overdueRenewals={overdueRenewals}
         search={search}
         onSearchChange={setSearch}
       />

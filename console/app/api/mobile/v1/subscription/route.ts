@@ -49,7 +49,14 @@ export async function GET(request: NextRequest) {
   //     ينقل مبلغه من الجنيه إلى الريال والرقم لم يتغيّر.
   //   الدورة كانت من `billingCycle` — تقول «سنوي» والطلب يقول ٦ أشهر.
   //   السعر كان من كتالوجٍ حيّ — فتغييرُه اليوم يعيد كتابة ما دفعه العميل أمس.
-  const paidTotal = activeOrder ? arabicCurrency(activeOrder.totalMinor / 100, activeOrder.currency) : null;
+  // `CheckoutOrder.currency` نصٌّ في السكيما، و`arabicCurrency` تقبل «SAR|EGP» فقط.
+  // فعملةٌ غيرُهما لا تُطبع برمزٍ مُخمَّن — يسقط المبلغُ كلُّه، لأنّ رقماً بعملةٍ خاطئة
+  // أسوأُ من لا رقم (ممنوع التخمين في المال).
+  const knownCurrency = (c: string): c is "SAR" | "EGP" => c === "SAR" || c === "EGP";
+  const paidTotal =
+    activeOrder && knownCurrency(activeOrder.currency)
+      ? arabicCurrency(activeOrder.totalMinor / 100, activeOrder.currency)
+      : null;
   const termLabel = activeOrder
     ? `${activeOrder.paidMonths} شهر${activeOrder.bonusServiceMonths ? ` + ${activeOrder.bonusServiceMonths} هديّة` : ""}`
     : null;

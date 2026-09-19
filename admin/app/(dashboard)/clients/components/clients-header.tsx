@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, SlidersHorizontal, CalendarClock } from "lucide-react";
+import { Search, SlidersHorizontal, CalendarClock, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ClientsFilters } from "./clients-filters";
 import type { ClientsStats } from "../actions/clients-actions/types";
@@ -14,11 +14,20 @@ interface ClientsHeaderProps {
   clientCount: number;
   stats: ClientsStats;
   expiringThisMonth: number;
+  /** Live clients whose paid period already ended — counted by DATE, see expiredByDateWhere. */
+  overdueRenewals: number;
   search: string;
   onSearchChange: (value: string) => void;
 }
 
-export function ClientsHeader({ clientCount, stats, expiringThisMonth, search, onSearchChange }: ClientsHeaderProps) {
+export function ClientsHeader({
+  clientCount,
+  stats,
+  expiringThisMonth,
+  overdueRenewals,
+  search,
+  onSearchChange,
+}: ClientsHeaderProps) {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   return (
@@ -30,6 +39,32 @@ export function ClientsHeader({ clientCount, stats, expiringThisMonth, search, o
             Clients <span className="text-muted-foreground font-normal">({clientCount})</span>
           </h1>
           <div className="flex items-center gap-2 flex-wrap">
+            {/**
+              * Already overdue — the money that has ALREADY lapsed, ahead of the money
+              * about to. It hides itself at zero, so it only ever appears when someone
+              * is being served unpaid.
+              *
+              * It exists because neither surface on this page could show these clients:
+              * the `Expired` tab counts `subscriptionStatus`, which nothing in the
+              * repository ever writes, so it reads 0 with four clients overdue; and the
+              * renewals chip starts at the first of this month, so whoever lapsed in an
+              * earlier month fell through both (measured 2026-09-19: مركز فريق الإغاثة,
+              * ended 27 Aug, appeared nowhere).
+              */}
+            {overdueRenewals > 0 && (
+              <Link
+                href="/clients/segment/expired"
+                title="Their paid period has already ended — still live, renewal overdue"
+                className="inline-flex items-center gap-1.5 rounded-full border border-red-500/40 bg-red-500/15 px-3 py-1 text-xs font-bold text-red-600 transition-colors hover:bg-red-500/25 dark:text-red-400"
+              >
+                <AlertTriangle className="h-3.5 w-3.5" />
+                Overdue
+                <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-bold leading-none tabular-nums text-white">
+                  {overdueRenewals}
+                </span>
+              </Link>
+            )}
+
             {/* Renewals this month — money queue. Links to the full segment table. */}
             <Link
               href="/clients/segment/expiring-month"

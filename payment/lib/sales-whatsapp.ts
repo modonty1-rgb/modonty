@@ -1,3 +1,5 @@
+import { cacheTag } from "next/cache";
+
 import { db } from "@/lib/db";
 
 /**
@@ -22,7 +24,26 @@ export interface SalesContact {
   label: string;
 }
 
+/**
+ * **مكاشٌ بـ`"use cache"` — وإلّا سقط بناءُ صفحة السوق كلِّها.**
+ *
+ * الترويسةُ تُصيَّر في `/[market]` وهي صفحةٌ تُبنى مسبقاً (`generateStaticParams` للسوقين).
+ * وقراءةُ قاعدةٍ بلا كاشٍ داخل تصييرٍ مسبق توقف البناءَ بنصِّه:
+ *
+ *     Error: Route "/[market]": Next.js encountered uncached or runtime data during
+ *     prerendering …  at PayHeader (app/components/pay-header/PayHeader.tsx:22)
+ *
+ * وعلاجُه الموصى به في نفس الرسالة: «For uncached data (fetch, database calls): cache the
+ * access with "use cache"». وجارُها في نفس الترويسة (`getSiteChrome`) مكاشٌ بهذا النمط
+ * منذ البداية — فهذه كانت الشاذّة.
+ *
+ * و`cacheTag("settings")` هو نفسُ وسم `getSiteChrome`: الرقمُ يُقرأ من `Settings`، فتغييرُه
+ * من الأدمن يُبطل الاثنين معاً بإبطالٍ واحد.
+ */
 async function salesDigits(): Promise<string> {
+  "use cache";
+  cacheTag("settings");
+
   try {
     const s = await db.settings.findUnique({
       where: { singletonKey: "global" },

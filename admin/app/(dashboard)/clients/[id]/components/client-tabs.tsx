@@ -62,14 +62,6 @@ type ClientTabsProps = {
     subscriptionStartDate: Date | null;
     subscriptionEndDate: Date | null;
     articlesPerMonth: number | null;
-    subscriptionTierConfig?: {
-      id: string;
-      tier: string;
-      name: string;
-      articlesPerMonth: number;
-      price: number;
-      isPopular: boolean;
-    } | null;
     subscriptionStatus: string;
     contactType: string | null;
     addressStreet: string | null;
@@ -235,7 +227,7 @@ export function ClientTabs({
 }: ClientTabsProps) {
   // Delivery
   const promised =
-    client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0;
+    client.articlesPerMonth ?? 0;
   const deliveryRate = calculateDeliveryRate(promised, articlesThisMonth);
   const isBehind = articlesThisMonth < promised;
 
@@ -308,7 +300,7 @@ export function ClientTabs({
         </div>
       </div>
 
-      {/* ── Tab 0: Brief (the intake — heart of the page for a writer) ── */}
+      {/* -- Tab 0: Brief (the intake — heart of the page for a writer) -- */}
       <TabsContent value="brief">
         <IntakeBrief
           form={form}
@@ -318,7 +310,7 @@ export function ClientTabs({
         />
       </TabsContent>
 
-      {/* ── Tab 1: Overview ── */}
+      {/* -- Tab 1: Overview -- */}
       <TabsContent value="overview" className="space-y-4">
         {/* ① The deal — first, because «كم دفع ومتى» is the question this page never answered */}
         <ClientSubscriptionDeal activeOrder={activeOrder} orders={clientOrders} />
@@ -523,7 +515,7 @@ export function ClientTabs({
         </SectionCard>
       </TabsContent>
 
-      {/* ── Tab 2: Details ── */}
+      {/* -- Tab 2: Details -- */}
       <TabsContent value="details" className="space-y-4">
         <AddressTab client={client} />
         <LegalTab client={client} />
@@ -536,7 +528,7 @@ export function ClientTabs({
         <AdditionalTab client={client} />
       </TabsContent>
 
-      {/* ── Tab 3: Content ── */}
+      {/* -- Tab 3: Content -- */}
       <TabsContent value="content" className="space-y-4">
         <ClientAnalytics
           analytics={analytics}

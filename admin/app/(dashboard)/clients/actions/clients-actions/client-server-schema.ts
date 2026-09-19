@@ -95,7 +95,7 @@ export const clientServerSchema = z.object({
   salesRepId: z.string().optional().nullable(),
   editorId: z.string().optional().nullable(),
   parentOrganizationId: z.string().optional().nullable(),
-  subscriptionTierConfigId: z.string().optional().nullable(),
+  // (سقط `subscriptionTierConfigId` — ١٩ سبتمبر ٢٠٢٦: الباقةُ من الطلب الساري.)
   logoMediaId: z.string().optional().nullable(),
   heroImageMediaId: z.string().optional().nullable(),
 

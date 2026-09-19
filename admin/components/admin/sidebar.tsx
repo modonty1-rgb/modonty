@@ -112,6 +112,8 @@ interface MenuItem {
   label: string;
   href: string;
   exact?: boolean;
+  /** بندٌ مؤقّت: لا يُرسم إلّا إذا رُفع علمُه في `applyFlags` (اليومَ ترحيلُ الطلبات وحده). */
+  flag?: "ordersMigration";
 }
 
 // A nested submenu inside a group (2nd level) — e.g. Modonty → Pages / Page SEO,
@@ -152,7 +154,14 @@ const rawMenuGroups: MenuGroup[] = [
     defaultOpen: false,
     items: [
       { icon: Users2, label: "All Clients", href: "/clients", exact: true },
-      { icon: UserPlus, label: "New Client", href: "/clients/new" },
+      /**
+       * **«تفعيل عميل» لا «عميل جديد»** (خالد ١٩ سبتمبر ٢٠٢٦).
+       *
+       * الاسمُ القديم يَعِد بإنشاءٍ من الصفر، والبابُ في الحقيقة يفتح على عميلٍ **دفع
+       * بالفعل**: الباقةُ والسعرُ والمدّة مكتوبةٌ في طلبه، والمطلوبُ ختمُ موظّفٍ لا إدخالُ
+       * بيانات. واسمٌ يَعِد بغير ما يفعل يجعل الموظّف يبحث عن حقولٍ ليملأها.
+       */
+      { icon: UserCheck, label: "Activate Client", href: "/clients/activate" },
       { icon: PauseCircle, label: "Suspend Client", href: "/clients/suspend" },
       // تحت «Clients» لا تحت قسم مستقلّ: الإحالة يرفعها عميلٌ قائم عن مُرشَّح، فمصدرها
       // وصاحب مكافأتها كلاهما عميل — والفريق يفتحها وهو يفكّر في العملاء لا في التسويق.
@@ -363,7 +372,7 @@ const rawMenuGroups: MenuGroup[] = [
       // TEMPORARY — ترحيلُ الطلبات لمرّةٍ واحدة. يختفي من تلقائه متى امتلأ جدولُ
       // الطلبات على الإنتاج (`showOrdersMigration` يُقرأ في الخادم، `layout.tsx`)،
       // ويُحذف هذا السطرُ مع `app/(dashboard)/orders-migration/` بعد إتمامه.
-      { icon: ArrowRightLeft, label: "Orders Migration", href: "/orders-migration", flag: "ordersMigration" as const },
+      { icon: ArrowRightLeft, label: "Migrations", href: "/migrations", flag: "ordersMigration" as const },
       { icon: Images, label: "Default Images", href: "/settings/defaults" },
       { icon: Wrench, label: "Maintenance", href: "/maintenance" },
       { icon: MailOpen, label: "Email Templates", href: "/emails" },
@@ -401,7 +410,8 @@ function applyFlags(flags: { ordersMigration: boolean }) {
   return sortedMenuGroups.map((group) => ({
     ...group,
     items: group.items.filter((item) => {
-      const flag = (item as { flag?: keyof typeof flags }).flag;
+      // القوائمُ الفرعيّة لا تحمل علماً — لا يُرسم شرطٌ إلّا على البنود المفردة.
+      const flag = isSubMenu(item) ? undefined : item.flag;
       return !flag || flags[flag];
     }),
   }));

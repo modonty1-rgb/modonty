@@ -56,8 +56,6 @@ export async function createClient(data: ClientFormData) {
       }
     }
 
-    let articlesPerMonth = data.articlesPerMonth || null;
-    let subscriptionTierConfigId = data.subscriptionTierConfigId || null;
 
     /**
      * **منطقُ الكتالوج القديم سقط كلُّه (١٧ سبتمبر ٢٠٢٦).**
@@ -77,11 +75,13 @@ export async function createClient(data: ClientFormData) {
 
     const mappedData = mapFormDataToClientData(data);
 
-    const clientData: Record<string, unknown> = {
-      ...mappedData,
-      subscriptionTierConfigId: subscriptionTierConfigId,
-      articlesPerMonth: articlesPerMonth,
-    };
+    // **حقولُ المال لا تُولد من هنا (١٩ سبتمبر ٢٠٢٦).**
+    //
+    // اتّفاقُ خالد: كلُّ ما يخصّ المال مصدرُه واحد — الطلب. فالحالةُ والحصّةُ وتاريخا
+    // الاشتراك يكتبها `lib/orders/activate-from-order.ts` عند التفعيل، وتاريخُ النهاية
+    // يُعاد حسابُه من الطلبات المدفوعة (`lib/invoices/recompute-subscription-end.ts`).
+    // و`subscriptionStatus` يبدأ `PENDING` من السكيما نفسها — لا يُكتب هنا.
+    const clientData: Record<string, unknown> = { ...mappedData };
 
     // سقطت كتابةُ `openingBalance` (١٧ سبتمبر ٢٠٢٦): دفعةُ التأسيس صارت تعيش على
     // الطلب المدفوع — بمبلغه وعملته ويوم دفعه — وتقريرُ المبيعات يقرؤها من هناك.
@@ -133,10 +133,6 @@ export async function createClient(data: ClientFormData) {
       "keywords",
       "knowsLanguage",
       "organizationType",
-      "subscriptionStartDate",
-      "subscriptionEndDate",
-      "articlesPerMonth",
-      "subscriptionStatus",
       // سقطت من القائمة (١٧ سبتمبر ٢٠٢٦): `paymentStatus` تُشتقّ من الفواتير،
       // و`openingBalance` و`billingCycle` مكانُهما الطلب لا الكرت.
       "isFeatured",
@@ -198,14 +194,7 @@ export async function createClient(data: ClientFormData) {
     }
 
     // Handle relations — verify each ID exists before connecting
-    if (clientData.subscriptionTierConfigId) {
-      const tierConfig = await db.subscriptionTierConfig.findUnique({
-        where: { id: clientData.subscriptionTierConfigId as string },
-        select: { id: true },
-      });
-      if (!tierConfig) return { success: false as const, error: "Subscription tier not found" };
-      cleanData.subscriptionTierConfig = { connect: { id: tierConfig.id } };
-    }
+    // (سقط ربطُ `SubscriptionTierConfig` — ١٩ سبتمبر ٢٠٢٦: الباقةُ والحصّة من الطلب.)
     if (clientData.industryId) {
       const industry = await db.industry.findUnique({
         where: { id: clientData.industryId as string },

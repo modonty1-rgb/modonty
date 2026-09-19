@@ -73,13 +73,6 @@ enum TrafficSource {
   INTERNAL // same-site navigation (was misclassified as ORGANIC before 2026-07-07)
 }
 
-enum SubscriptionTier {
-  BASIC
-  STANDARD
-  PRO
-  PREMIUM
-}
-
 enum SubscriptionStatus {
   ACTIVE
   EXPIRED
@@ -548,7 +541,13 @@ model Client {
   sameAs String[] // LinkedIn, Twitter, Facebook URLs
 
   // Contact
-  email String
+  /// **اسمُ الدخول — فريدٌ إجباراً** (خالد ١٩ سبتمبر ٢٠٢٦: «صلّح»).
+  ///
+  /// كان بلا `@unique` بينما `User` و`Staff` فريدان (`schema.prisma:196 · 266`). ومقيسٌ
+  /// حيّاً: عميلان بنفس البريد ⇒ المصادقةُ تجد الأوّلَ وترفض كلمةَ الثاني، والرسالةُ
+  /// تقول «البريد أو كلمة المرور غير صحيحة» — فيُبحث عن العطب في كلمة المرور وهو في
+  /// البريد. والثاني لا يدخل حسابَه أبداً.
+  email String  @unique
   phone String? @unique
 
   // Security
@@ -643,8 +642,15 @@ model Client {
   ///
   /// ومونغو لا يحذف ما في المستندات حين يسقط الحقلُ من السكيما — القيمُ الاثنتان
   /// والأربعون باقيةٌ في القاعدة، مهجورةً، تُنظَّف في الترحيل.
-  subscriptionTierConfigId String? @db.ObjectId // Reference to tier config
-  subscriptionTierConfig SubscriptionTierConfig? @relation("ClientTierConfig", fields: [subscriptionTierConfigId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  /// **سقط الكتالوجُ القديم كلُّه (١٩ سبتمبر ٢٠٢٦):** `SubscriptionTier` و`SubscriptionTierConfig`
+  /// وحقلا الكرت. قيس قبل الحذف على **الإنتاج**: ٤٢ عميلاً، صفرٌ منهم يعتمد على الجدول
+  /// في حصّته (`articlesPerMonth` مكتوبةٌ على الكروت الـ٤٢ كلِّها)، والباقةُ تُقرأ من
+  /// `CheckoutOrder.planName`.
+  ///
+  /// ومونغو لا يحذف ما في المستندات: `subscriptionTierConfigId` وصفوفُ
+  /// `subscription_tier_configs` الأربعة باقيةٌ في القاعدة، ويتجاهلها Prisma
+  /// («If a model or field is not present in the Prisma schema, it is ignored»).
+  /// ويقرؤها ترحيلُ الطلبات وحدَه قراءةً خامّاً — فلا يفقد مصدرَه.
   /// **بداية احتساب الاشتراك** — من هذا اليوم تُعدّ المدّة المشتراة وأشهر الهدية.
   /// عرضٌ لا مصدر: تُنسخ من `CheckoutOrder.serviceStartedAt` للطلب الساري، لا من يوم التفعيل.
   ///
@@ -884,7 +890,17 @@ model Client {
   // NoAction on both, exactly like logoMedia/heroImageMedia above: Client→Media→Client is
   // a referential cycle, and Prisma refuses any other action on it.
   introVideoMedia      Media?  @relation("ClientIntroVideoMedia", fields: [introVideoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  verificationImageUrl String?             // صورة التوثيق (سجل/ترخيص) — from the client's media library (Bunny), displayed on page (admin-controlled)
+  /// صورةُ توثيقٍ واحدة — **مهجورةٌ لصالح `documents`** (خالد ١٩ سبتمبر ٢٠٢٦).
+  ///
+  /// كانت حقلاً مفرداً: رفعُ وثيقةٍ ثانيةٍ يمحو الأولى بلا أثر. والوثائقُ في الواقع
+  /// عدّة — سجلٌّ وترخيصٌ وشهادةُ ضريبةٍ وما لا نعرفه بعد.
+  ///
+  /// وهي **لا تُعرض على مدونتي**: تُستعمل شرطاً لإظهار بطاقة الثقة وحدها
+  /// (`client-trust-card.tsx:81`)، ولا تُرسم — صفرُ تطابقٍ في الصفحة الحيّة.
+  /// تبقى حتّى يُرحَّل محتواها إلى `documents`.
+  verificationImageUrl String?
+  /// وثائقُ العميل كلُّها في مكانٍ واحد — يرفعها هو من الكونسول ونرفعها نحن من الأدمن.
+  documents            ClientDocument[]
   services             ClientServiceItem[] // OfferCatalog
   teamMembers          ClientTeamMember[]  // employee: Person[]
   achievements         ClientAchievement[] // stats counters
@@ -1119,33 +1135,6 @@ model CampaignInterest {
 // SUBSCRIPTION TIER CONFIG
 // ============================================
 
-model SubscriptionTierConfig {
-  id              String          @id @default(auto()) @map("_id") @db.ObjectId
-
-  // ─── Step A (compatibility — تُحذف Step B بعد refactor الـ 52 ملف) ───
-  tier            SubscriptionTier @unique
-  price           Float
-  articlesPerMonth Int
-  name            String
-  isActive        Boolean          @default(true)
-  isPopular       Boolean          @default(false)
-  description     String?
-  createdAt       DateTime         @default(now())
-
-  // ─── Jbrseo integration (Round 6) ───
-  jbrseoId        String?         @unique          // "free" | "starter" | "growth" | "scale"
-  pricing         Json?                            // { SA: { mo, yr }, EG: { mo, yr } }
-  articleCounts   Json?                            // global mapping: { اسم الباقة: عدد المقالات }
-  syncedAtSA      DateTime?
-  syncedAtEG      DateTime?
-
-  updatedAt       DateTime        @updatedAt
-
-  // Relationships
-  clients         Client[]        @relation("ClientTierConfig")
-
-  @@map("subscription_tier_configs")
-}
 
 // ============================================
 // COMMERCIAL CATALOG — public plans and market-specific prices
@@ -1386,8 +1375,25 @@ model CheckoutOrder {
   buyerName    String
   buyerEmail   String
   buyerPhone   String // E.164 via shared/lib/phone
+  /// **اسمُ النشاط التجاريّ — لا وصفُه.** هذا ما يصير اسمَ العميل ورابطَه العامّ عند
+  /// التفعيل (`activateFromOrder`: `businessName?.trim() || buyerName`).
+  ///
+  /// كان للعمود معنيان: صفحةُ الدفع تكتب فيه الاسم («اسم النشاط — اختياري»،
+  /// `CheckoutForm.tsx:364`)، ونموذجُ الأدمن كان يكتب فيه وصفاً حرّاً («نوع النشاط»،
+  /// مثاله «عيادة أسنان»). فطلبٌ يدويٌّ لـ«حلويات النيل» كان يفتح حساباً اسمُه
+  /// «محل حلويات» ورابطُه `/clients/محل-حلويات` — مقيسٌ حيّاً ١٩ سبتمبر ٢٠٢٦.
   businessName String?
   country      String?
+
+  /// **حسابٌ لنا لا بيعٌ لغيرنا** — يُكتب على الطلب ويُنسخ إلى الكرت عند التفعيل.
+  ///
+  /// كان `isInternal` على `Client` وحده، ويُفرض من شاشة إنشاءٍ منفصلة — فصار لميلاد
+  /// العميل بابان: طلبٌ لمن يدفع، وفورمٌ لحساباتنا. وبابان يعنيان شاشتين تفترقان أوّلَ
+  /// ما يُضاف حقل (خالد ١٩ سبتمبر ٢٠٢٦: «الحسابات اللي تخصّنا نحن نوديها من هنا لصفحة
+  /// الطلب»). فالوسمُ ينزل إلى الطلب، ويصير البابُ واحداً: طلبٌ ← طابورٌ ← تفعيل.
+  ///
+  /// ويُقرأ في تقارير الإيراد كما يُقرأ على الكرت: حسابُنا لا يُعدّ بيعاً.
+  isInternal   Boolean?          @default(false)
 
   // ── Plan snapshot — deliberately NO relation: deleting the plan must not cascade here
   planId           String?           @db.ObjectId
@@ -4099,6 +4105,54 @@ enum YmylCategory {
   medical
   legal
   financial
+}
+
+/// مَن رفع الوثيقة. لا يُشتقّ من وجود `uploadedByStaffId`: موظّفٌ قد يرفع نيابةً عن
+/// العميل بعد أن يرسلها له واتساباً، والفرقُ بين «رفعها بنفسه» و«رفعناها عنه» يُقرأ
+/// حين يُسأل: مَن يضمن أنّ هذه ورقتُه؟
+enum ClientDocumentSource {
+  CLIENT
+  STAFF
+}
+
+/// **وثيقةٌ واحدةٌ من وثائق العميل.**
+///
+/// خالد (١٩ سبتمبر ٢٠٢٦): «نخلّيها في مكان واحد، العميل يرفع من الكونسول وإحنا لو
+/// عندنا أيّ حاجة نقدر نرفعها… والصفحة تكون زي الجاليري نقدر نشوف صوره — إحنا الآن
+/// ما نقدر نشوف صورة».
+///
+/// ── ما كان قبلها ──
+/// مكانان لا رابطَ بينهما: `Client.verificationImageUrl` حقلٌ **مفردٌ** نرفعه نحن
+/// (صفرُ تطابقٍ في `console/`)، و`ymylData.licenseImageUrl` مدفونٌ في JSON يرفعه العميل
+/// (`console/.../license-upload.tsx`). فمن يوثّق عميلاً طبّيّاً يرى رخصتَه في الكونسول
+/// ويرفع صورةً ثانيةً عندنا، ولا شاشةَ تجمعهما.
+model ClientDocument {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  /// اسمُ الوثيقة كما كتبه صاحبُها — **نصٌّ حرٌّ لا `enum`** (خالد: «نخلّيها مفتوحة…
+  /// ممكن تكون في أوراق ثانية احنا ما احنا عارفين إيش هي»). الواجهةُ تقترح المعروف
+  /// (سجلّ تجاريّ · ترخيص · شهادة ضريبيّة · هويّة) وتقبل غيرَه.
+  label String
+
+  /// الملفُّ على Bunny — نفسُ مسار `MediaPicker` الذي ترفع به بقيّةُ الصور.
+  url  String
+  note String?
+
+  /// تاريخُ انتهاء الصلاحيّة — رخصةٌ منتهيةٌ ليست توثيقاً. اختياريٌّ لأنّ السجلّ
+  /// التجاريّ قد لا ينتهي.
+  expiresAt DateTime?
+
+  source            ClientDocumentSource @default(CLIENT)
+  /// الموظّفُ الرافع حين يكون المصدر `STAFF` — للسؤال لاحقاً: مَن أدخل هذه؟
+  uploadedByStaffId String?              @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@map("client_documents")
 }
 
 /// A supported country. `code` (ISO 3166-1 alpha-2) is the value stored on

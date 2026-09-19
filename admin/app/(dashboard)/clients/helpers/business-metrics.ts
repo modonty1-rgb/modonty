@@ -5,9 +5,6 @@ import { SubscriptionStatus } from "@prisma/client";
  * Only requires the fields actually used by the functions
  */
 interface ClientWithRelations {
-  subscriptionTierConfig?: {
-    articlesPerMonth: number;
-  } | null;
   articles?: Array<{ datePublished: Date | null }>;
   articlesPerMonth?: number | null;
   subscriptionEndDate?: Date | null;
@@ -34,8 +31,18 @@ export function calculateDeliveryRate(
   rate: number;
   isBehind: boolean;
 } {
-  const promised =
-    client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0;
+  // **الحصّة من الطلب الساري وحده.**
+  //
+  // `Client.articlesPerMonth` نسخةُ عرضٍ يكتبها التفعيل من `CheckoutOrder.articlesPerMonth`
+  // (`activate-from-order.ts:163`) — وقيست يوم إسقاط الاحتياطيّ: **صفرُ اختلافٍ** بين
+  // النسخة والطلب في الـ٤٦ كلّهم.
+  //
+  // وسقط `?? subscriptionTierConfig?.articlesPerMonth` (خالد ١٩ سبتمبر ٢٠٢٦): جدولُ
+  // الباقات متقاعدٌ ولا يُكتب فيه، و٤٢ من ٤٦ عميلاً ما زالوا يحملون `subscriptionTierConfigId`
+  // مهجوراً — فالاحتياطيُّ مصدرُ مالٍ ثانٍ يعيش بعد الطلب: عميلٌ رُقّيت باقتُه وسقطت نسخةُ
+  // حصّته لأيّ سبب كان يُقاس على حصّةِ باقةٍ باعها أحدٌ قبل سنة. وبلا احتياطيّ تظهر الفجوة
+  // «—» بدل أن تُملأ برقمٍ من دفترٍ آخر.
+  const promised = client.articlesPerMonth ?? 0;
   const delivered = currentMonthArticles;
   const rate = promised > 0 ? Math.round((delivered / promised) * 100) : 0;
   const isBehind = delivered < promised;

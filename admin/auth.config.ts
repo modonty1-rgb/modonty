@@ -7,6 +7,9 @@ const AUTH_ERROR_CODES = {
   missingPassword: "NO_PASSWORD_SET",
 } as const;
 
+/** مهلةُ إعادة قراءة حالة الموظّف من القاعدة — دقيقةٌ واحدة. */
+const STAFF_RECHECK_MS = 60_000;
+
 export const authConfig = {
   pages: {
     signIn: "/login",
@@ -38,6 +41,9 @@ export const authConfig = {
                 password: staffRow.password,
                 role: staffRow.role as string,
                 isActive: staffRow.isActive,
+                // تُحمل من لحظة الدخول: التوكن هو مصدرُ حكم الـproxy، وبدونها تُحجب
+                // التقاريرُ عن صاحبها دقيقةً كاملةً حتى أوّل تحديثٍ للحالة.
+                canViewReports: staffRow.canViewReports,
               }
             : null;
 
@@ -109,13 +115,61 @@ export const authConfig = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
+    /**
+     * **حالةُ الموظّف تعيش في التوكن، وتُجدَّد بمهلة — لا استعلامَ على كلّ طلب.**
+     *
+     * خالد (١٩ سبتمبر ٢٠٢٦): «أبغى حلاًّ جذريّاً، ما أبغى مسكّنات».
+     *
+     * ── العطل الجذريّ ──
+     * كان `proxy.ts` يقرأ `db.staff.findUnique` في **كلّ طلبٍ محميّ** — أي استعلامٌ لكلّ
+     * نقرةٍ في الأدمن، من نسخةٍ سيرفرلس قد تكون باردة. وهذا أحدُ منابع استهلاك اتّصالات
+     * أطلس التي انتهت بـ«Connections above 80%» و`ReplicaSetNoPrimary` في الإنتاج.
+     *
+     * ── الحلّ ──
+     * الحالةُ (نشِط · الدور · صلاحيّةُ التقارير) تُحفظ في التوكن الموقَّع، ويُعاد قراءتُها
+     * من القاعدة **مرّةً كلَّ دقيقة** لا أكثر. فالـproxy يقرأ من التوكن وحده: **صفرُ
+     * استعلامٍ لكلّ طلب**، واستعلامٌ واحدٌ لكلّ موظّفٍ في الدقيقة على أسوأ تقدير.
+     *
+     * والنمطُ موثَّق: `jwt` «is called whenever a JSON Web Token is created or updated»
+     * (authjs.dev · reference)، ودليلُ تدوير الرموز عندهم يخزّن وقتاً في التوكن ويُجدّد
+     * عنده — وهو نفسُ ما يفعله `checkedAt` هنا.
+     *
+     * ── الثمن، مصرَّحاً به ──
+     * إيقافُ موظّفٍ أو سحبُ صلاحيّته يسري خلال **دقيقة**، لا في اللحظة. وهو ثمنٌ مقبولٌ
+     * لطاقمٍ داخليٍّ معروف، مقابل إسقاط استعلامٍ من كلّ طلب. ومَن أراد الأثرَ الفوريّ
+     * يخفّض `STAFF_RECHECK_MS` — والقاعدةُ تُدفع الثمنَ عندها استعلاماتٍ أكثر.
+     *
+     * ── وعند فشل القراءة ──
+     * تبقى القيمُ السابقة كما هي ويُعاد المحاولةُ في الطلب التالي. والقديمُ أنّ فشلاً
+     * واحداً كان يطرد الموظّفَ إلى صفحة الدخول — أي أنّ تعثّرَ القاعدة كان يُسقط الأدمن.
+     */
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        // Persist role in the signed token so the proxy (network boundary) can
-        // enforce ADMIN before any route renders — no DB read at the edge.
         token.role = (user as { role?: string }).role;
+        token.isActive = (user as { isActive?: boolean }).isActive !== false;
+        token.canViewReports = (user as { canViewReports?: boolean }).canViewReports === true;
+        token.checkedAt = Date.now();
+        return token;
+      }
+
+      const checkedAt = typeof token.checkedAt === "number" ? token.checkedAt : 0;
+      if (!token.id || Date.now() - checkedAt < STAFF_RECHECK_MS) return token;
+
+      try {
+        const fresh = await db.staff.findUnique({
+          where: { id: token.id as string },
+          select: { isActive: true, role: true, canViewReports: true },
+        });
+        // الصفُّ المحذوف = حسابٌ لم يعد قائماً: يُوسم غيرَ نشط فيسقط عند الحارس.
+        token.isActive = fresh ? fresh.isActive !== false : false;
+        token.role = fresh?.role ?? token.role;
+        token.canViewReports = fresh?.canViewReports === true;
+        token.checkedAt = Date.now();
+      } catch (error) {
+        // تعثُّرُ القاعدة لا يطرد أحداً — تبقى القيمُ السابقة وتُعاد المحاولة لاحقاً.
+        console.error("[Auth] تعذّر تحديثُ حالة الموظّف من القاعدة:", error);
       }
       return token;
     },
@@ -130,6 +184,9 @@ export const authConfig = {
         if (token?.role) {
           (session.user as { role?: string }).role = token.role as string;
         }
+        // تُمرَّر للـproxy وللصفحات: هي مصدرُ الحكم بدل استعلامِ كلّ طلب.
+        (session.user as { isActive?: boolean }).isActive = token.isActive !== false;
+        (session.user as { canViewReports?: boolean }).canViewReports = token.canViewReports === true;
       }
       return session;
     },

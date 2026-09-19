@@ -110,12 +110,9 @@ export function mapFormDataToClientData(data: ClientFormData) {
     priceRange: data.priceRange || null,
     openingHoursSpecification: data.openingHoursSpecification || null,
 
-    // Subscription Management
-    subscriptionTierConfigId: data.subscriptionTierConfigId || null,
-    subscriptionStartDate: data.subscriptionStartDate || null,
-    subscriptionEndDate: data.subscriptionEndDate || null,
-    articlesPerMonth: data.articlesPerMonth || null,
-    subscriptionStatus: data.subscriptionStatus || "PENDING",
+    // **بلا حقول اشتراك** (١٩ سبتمبر ٢٠٢٦): كانت خمسةُ مفاتيحَ تُحمَل من نموذج الملفّ
+    // إلى حمولة القاعدة — والشاشةُ لم تعد تسأل عن أيٍّ منها، فكانت تُحمَل بقيمةٍ فارغة.
+    // المصدرُ الواحد هو الطلب: التفعيلُ يكتبها، وإعادةُ الحساب تحدّث النهاية.
 
     // Featured/premium partner spotlight (admin toggle)
     isFeatured: data.isFeatured ?? false,

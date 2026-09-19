@@ -124,7 +124,6 @@ export async function getBriefDetail(clientId: string): Promise<BriefDetail | nu
       heroImageMedia: { select: { id: true } },
       industry: { select: { name: true } },
       // Quota only — `price` is deliberately NOT selected.
-      subscriptionTierConfig: { select: { articlesPerMonth: true } },
     },
   });
   if (!client) return null;
@@ -209,7 +208,8 @@ export async function getBriefDetail(clientId: string): Promise<BriefDetail | nu
     sameAs: client.sameAs ?? [],
     intake: client.intake,
     intakeUpdatedAt: client.intakeUpdatedAt,
-    monthlyQuota: client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0,
+    // الحصّة من الطلب وحده — سقط احتياطيُّ الجدول القديم (١٩ سبتمبر ٢٠٢٦).
+    monthlyQuota: client.articlesPerMonth ?? 0,
     publishedThisMonth,
     publishedTotal: published.length,
     recentArticles: recent.map((a) => ({

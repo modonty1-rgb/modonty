@@ -21,7 +21,10 @@ const isBoth  = !isLocal && !isProd; // default: both
 
 // Hardcoded PROD DB URL (user decision 2026-04-29) — to avoid env juggling.
 // ⚠️ Trade-off: URL credentials are in git history. Rotate Atlas password = update all 3 changelog scripts.
-const PRODUCTION_DATABASE_URL = "mongodb+srv://modonty-admin:2053712713@modonty-cluster.tgixa8h.mongodb.net/modonty?retryWrites=true&w=majority&appName=modonty-cluster";
+// **رابطُ الإنتاج من متغيّر بيئة** (١٩ سبتمبر ٢٠٢٦): كان مكتوباً هنا نصّاً باسم
+// المستخدم وكلمة المرور، فصار مكشوفاً لكلّ من فتح المستودع وفي تاريخ git للأبد.
+// يُضبط `PROD_SYNC_DATABASE_URL` في `.env.local` محلّيّاً — ولا يدخل المستودع أبداً.
+const PRODUCTION_DATABASE_URL = (process.env.PROD_SYNC_DATABASE_URL ?? "");
 
 const targets: Array<{ label: string; url: string | undefined }> = [];
 if (isBoth || isLocal) targets.push({ label: "LOCAL", url: process.env.DATABASE_URL });

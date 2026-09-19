@@ -18,7 +18,6 @@ interface BusinessBriefSectionProps {
 export function BusinessBriefSection({ form, showHeader = true, isEditMode = false }: BusinessBriefSectionProps) {
   const { setValue, watch, formState: { errors } } = form;
   const businessBrief = useWatch({ control: form.control, name: "businessBrief" }) || "";
-  const newsletterCtaText = watch("newsletterCtaText");
 
   return (
     <div className="space-y-4">
@@ -57,26 +56,16 @@ export function BusinessBriefSection({ form, showHeader = true, isEditMode = fal
             </div>
           </div>
         )}
-        <div>
-          <FormInput
-            name="newsletterCtaText"
-            label="Newsletter CTA Text"
-            value={newsletterCtaText || ""}
-            onChange={(e) => form.setValue("newsletterCtaText", e.target.value || null, { shouldValidate: true })}
-            error={errors.newsletterCtaText?.message}
-            placeholder="e.g., اشترك للحصول على أحدث المقالات في مجال الرعاية الصحية"
-            hint="Displayed in the newsletter subscription box on article pages."
-          />
-          {newsletterCtaText && (
-            <div className="mt-1">
-              <CharacterCounter
-                current={newsletterCtaText.length}
-                max={300}
-                aboveMaxHint="Exceeds limit (300 chars)."
-              />
-            </div>
-          )}
-        </div>
+        {/**
+          * **حقلُ نصّ النشرة سقط** (خالد ١٩ سبتمبر ٢٠٢٦: «الـCTA تبع النيوزليتر أخفيها
+          * من الـupdate… نبغى نشيل النيوزليتر هذه كاملة»).
+          *
+          * وهو حقلٌ **بلا قارئ**: تلميحُه يقول «يظهر في صندوق الاشتراك على صفحات
+          * المقالات»، ومقيسٌ حيّاً — صفرُ تطابقٍ لـ`newsletterCtaText` في `modonty/`
+          * كلِّه. فكنّا نكتب نصّاً لا يراه أحد.
+          *
+          * والعمودُ باقٍ حتّى يُحذف مع النشرة كاملةً (بندٌ في ملفّ التاسك).
+          */}
       </div>
     </div>
   );

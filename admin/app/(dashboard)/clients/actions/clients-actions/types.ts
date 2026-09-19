@@ -1,4 +1,4 @@
-import { SubscriptionTier, SubscriptionStatus } from "@prisma/client";
+import { SubscriptionStatus } from "@prisma/client";
 
 export interface ClientFilters {
   createdFrom?: Date;
@@ -83,11 +83,6 @@ export type ClientForList = {
     id: string;
     name: string | null;
   } | null;
-  subscriptionTierConfig: {
-    price: number;
-    articlesPerMonth: number;
-    tier: SubscriptionTier;
-  } | null;
   articles: Array<{
     id: string;
     datePublished: Date | null;
@@ -116,11 +111,6 @@ export interface ClientsStats {
     cancelled: number;
     pending: number;
     expiringSoon: number;
-  };
-  payment?: {
-    paid: number;
-    pending: number;
-    overdue: number;
   };
   delivery: {
     totalPromised: number;

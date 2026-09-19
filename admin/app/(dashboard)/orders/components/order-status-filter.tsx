@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { orderStatusCopy } from "../helpers/order-status-copy";
-import { orderProviderLabel } from "../helpers/order-provider-label";
+import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 
 const STATUSES: CheckoutOrderStatus[] = ["AWAITING_PAYMENT", "AWAITING_TRANSFER", "PAID", "FAILED", "CANCELLED", "REFUNDED"];
 const PROVIDERS: PaymentProvider[] = ["NGENIUS", "TAMARA", "BANK_TRANSFER", "INSTAPAY", "MIGRATED"];

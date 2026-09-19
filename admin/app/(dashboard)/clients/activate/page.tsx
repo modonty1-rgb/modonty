@@ -1,84 +1,108 @@
-import { CheckCircle2, Mail, Phone } from "lucide-react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { ArrowLeft, Inbox } from "lucide-react";
 
 import { db } from "@/lib/db";
+import { checkAdmin } from "@/lib/admin-guard";
+import { AWAITING_ACTIVATION } from "@/lib/orders/awaiting-activation";
+import { formatOrderAmount } from "@/lib/orders/format-order-amount";
+import { orderProviderLabel } from "@/lib/orders/order-provider-label";
+import { ActivationQueueTable, type QueueRow } from "./components/activation-queue-table";
 
-import { ActivateClientButton } from "../components/activate-client-button";
+/**
+ * **طابورُ التفعيل — من دفع ولم يُفتح له حسابٌ بعد.**
+ *
+ * خالد (١٩ سبتمبر ٢٠٢٦): «لما أضغط على تفعيل عميل، تجيني شاشة قبل تأسيس الشاشة
+ * الخاصّة بالعميل — جدولٌ فيه العملاء اللي دفعوا ولم يتمّ تفعيلهم، ولما أضغط عليهم
+ * يوديني لصفحة التفعيل».
+ *
+ * -- ولماذا بابٌ مستقلٌّ عن `/orders` --
+ * الوثيقةُ (`ACTIVATION-FLOW.html` §٢) استقرّت على «نافذةٍ في صفّ الطلب»، وكان ذلك
+ * صحيحاً يومَ كان مَن يقرأ المال هو مَن يفعّل. ثمّ فصل خالد الدورين (١٩ سبتمبر:
+ * «التفعيل دورُ موظّفٍ ثانٍ») — وموظّفُ التفعيل لا شأن له بالإيراد الشهريّ ولا
+ * بالاسترداد ولا بالفواتير. فصار له بابُه: قائمةٌ واحدةٌ لا تعرض إلّا ما ينتظره.
+ *
+ * -- والشرطُ نفسُه لا نسخةٌ منه --
+ * `AWAITING_ACTIVATION` هو ما يعدّه توجل «ينتظر التفعيل» في `/orders` وبطاقةُ اللوحة.
+ * فلو قال الطابورُ رقماً والتوجلُ غيرَه، لم يعرف أحدٌ أيَّهما يُصدَّق — ولهذا يُقرأ من
+ * `lib/orders/awaiting-activation.ts` وحدها.
+ *
+ * ولا يُفعَّل من هنا بضغطةٍ في الصفّ: الضغطةُ تفتح صفحةَ الطلب حيث تُقرأ بياناتُ المشتري
+ * كاملةً قبل فتح حساب — والحسابُ يُرسِل بريداً برابط دخول، فلا يُفتح بنظرةٍ عابرة.
+ */
+export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Activate Client - Modonty",
-};
-
-async function getPendingClients() {
-  return db.client.findMany({
-    where: { subscriptionStatus: "PENDING" },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      phone: true,
-      // اسمُ الباقة لا رمزُها: الشارة كانت تطبع «PRO» للموظّف — رمزَ enum لا اسمَ باقة.
-      subscriptionTierConfig: { select: { name: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 200,
-  });
-}
+export const metadata = { title: "Activate Client - Modonty" };
 
 export default async function ActivateClientPage() {
-  const clients = await getPendingClients();
+  const gate = await checkAdmin();
+  if (gate.status === "unauthenticated") redirect("/login");
+  if (gate.status === "forbidden") redirect("/");
+
+  const orders = await db.checkoutOrder.findMany({
+    where: AWAITING_ACTIVATION,
+    select: {
+      id: true, number: true, buyerName: true, businessName: true, buyerEmail: true, buyerPhone: true,
+      market: true, planName: true, paidMonths: true, bonusServiceMonths: true,
+      totalMinor: true, currency: true, paidAt: true, createdAt: true,
+      transactions: { select: { provider: true }, orderBy: { createdAt: "desc" }, take: 1 },
+    },
+    orderBy: { paidAt: "asc" },
+    take: 200,
+  });
+
+  const now = Date.now();
+  const rows: QueueRow[] = orders.map((o) => {
+    const paidAt = o.paidAt ?? o.createdAt;
+    return {
+      id: o.id,
+      number: o.number,
+      buyerName: o.businessName?.trim() || o.buyerName,
+      contact: o.buyerEmail,
+      phone: o.buyerPhone,
+      market: o.market === "EG" ? "مصر" : o.market === "AE" ? "الإمارات" : "السعودية",
+      planName: o.planName,
+      termLabel: o.bonusServiceMonths
+        ? `${o.paidMonths} + ${o.bonusServiceMonths}`
+        : String(o.paidMonths),
+      amountLabel: formatOrderAmount(o.totalMinor),
+      currency: o.currency,
+      providerLabel: o.transactions[0] ? orderProviderLabel(o.transactions[0].provider) : null,
+      paidAtLabel: paidAt.toLocaleDateString("ar-EG", { day: "2-digit", month: "2-digit", year: "2-digit" }),
+      /** كم يوماً والمالُ عندنا والخدمةُ لم تبدأ — وهو ترتيبُ الأولويّة نفسُه. */
+      waitingDays: Math.max(0, Math.floor((now - paidAt.getTime()) / 86_400_000)),
+    };
+  });
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-bold flex items-center gap-2">
-          Activate Client
-          <span className="text-[11px] px-2 py-0.5 rounded-full bg-muted-foreground/15 tabular-nums font-bold">
-            {clients.length}
-          </span>
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          العملاء المعلّقون (Pending) — اضغط Activate لتفعيل الحساب بعد التأكيد.
-        </p>
-      </div>
+    <main dir="rtl" className="mx-auto flex max-w-6xl flex-col gap-4 pb-8">
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="flex items-baseline gap-2 text-2xl font-semibold">
+            تفعيل عميل
+            <span className="text-base font-bold tabular-nums text-muted-foreground">{rows.length}</span>
+          </h1>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">
+            دفعوا ولم يُفتح لهم حسابٌ بعد. اضغط على الصفّ لتفتح طلبه وتفعّله.
+          </p>
+        </div>
+      </header>
 
-      {clients.length === 0 ? (
-        <div className="rounded-md border border-dashed bg-card px-4 py-10 text-center">
-          <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-500/70" />
-          <p className="mt-2 text-sm font-medium">ما فيه عملاء معلّقين</p>
-          <p className="text-xs text-muted-foreground">كل العملاء مفعّلين حالياً.</p>
+      {rows.length === 0 ? (
+        <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed py-14 text-center">
+          <Inbox className="size-7 text-muted-foreground/60" aria-hidden />
+          <p className="text-sm font-medium">لا أحدَ ينتظر التفعيل</p>
+          <p className="max-w-sm text-[12px] text-muted-foreground">
+            كلُّ من دفع صار له حساب. ويظهر هنا أيُّ طلبٍ يصل مالُه ولم يُفتح له حسابٌ بعد.
+          </p>
+          <Link href="/orders" className="mt-1 inline-flex items-center gap-1 text-[12px] text-primary hover:underline">
+            كلّ الاشتراكات
+            <ArrowLeft className="size-3.5 rtl:rotate-180" aria-hidden />
+          </Link>
         </div>
       ) : (
-        <ul className="space-y-2">
-          {clients.map((client) => (
-            <li
-              key={client.id}
-              className="rounded-md border bg-card px-4 py-3 flex items-center justify-between gap-3 flex-wrap"
-            >
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold truncate">{client.name}</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted-foreground/15 font-medium shrink-0">
-                    {client.subscriptionTierConfig?.name ?? "—"}
-                  </span>
-                </div>
-                <div className="mt-1 flex items-center gap-x-4 gap-y-1 flex-wrap text-xs text-muted-foreground">
-                  <span className="inline-flex items-center gap-1">
-                    <Mail className="h-3 w-3" />
-                    {client.email}
-                  </span>
-                  {client.phone && (
-                    <span className="inline-flex items-center gap-1" dir="ltr">
-                      <Phone className="h-3 w-3" />
-                      {client.phone}
-                    </span>
-                  )}
-                </div>
-              </div>
-              <ActivateClientButton clientId={client.id} clientName={client.name} />
-            </li>
-          ))}
-        </ul>
+        <ActivationQueueTable rows={rows} />
       )}
-    </div>
+    </main>
   );
 }

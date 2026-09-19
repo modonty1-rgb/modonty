@@ -392,7 +392,8 @@ async function seedClients(): Promise<SectionResult> {
   const c1 = await createClient({
     name: "عميل تست نوفا", slug: "test-client-nova", email: "test-nova@example.com", phone: "+966500000001",
     description: "عميل تجريبي لاختبار كل الفانكشنز", industryId: industry?.id || null,
-    subscriptionStatus: "ACTIVE" as const, paymentStatus: "PAID" as const,
+    // سقط `paymentStatus` (١٧ سبتمبر ٢٠٢٦): حالةُ الدفع تُحسب من الفواتير الآن.
+    subscriptionStatus: "ACTIVE" as const,
     seoTitle: "عميل تست نوفا", seoDescription: "وصف SEO عميل تجريبي.", addressCity: "الرياض", addressCountry: "SA",
     keywords: ["تست", "إلكترونيات"],
   });

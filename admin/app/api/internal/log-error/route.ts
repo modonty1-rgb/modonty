@@ -55,7 +55,20 @@ export async function POST(request: NextRequest) {
           body.revalidateReason ?? undefined
         );
 
-  await db.systemError.create({
+  /**
+   * **الكتابةُ محروسةٌ بـ`try/catch` — وإلّا صار السجلُّ يسجّل فشلَ نفسه.**
+   *
+   * قياسُ الإنتاج (١٨ سبتمبر ٢٠٢٦): **٤٣٤ من ٧٨٧ خطأً (٥٥٪) مصدرها هذا المسارُ نفسُه**.
+   * السلسلة: `systemError.create` يفشل (القاعدة مشغولة) ← يخرج الخطأ إلى الخادم ←
+   * `onRequestError` في `instrumentation.ts` يلتقطه ← يرسله إلى هذا المسار ← فيفشل ثانيةً.
+   * أطولُ سلسلةٍ متّصلة قيست: ٣٢ · والذروة ١٠٥ خطأً في الدقيقة.
+   *
+   * وتوثيقُ Next صريح: `onRequestError` «will be triggered when the Next.js server
+   * captures the error» — فالخطأُ **الممسوك** لا يصل الخادم، وتنكسر الحلقة عند أوّل حلقة.
+   * ولا يضيع شيء: الفشلُ يبقى في لوغات Vercel، وهي المكانُ الصحيح لفشل السجلّ نفسِه.
+   */
+  try {
+    await db.systemError.create({
     data: {
       message: String(body.message).slice(0, 1000),
       digest: body.digest ? String(body.digest) : null,
@@ -72,7 +85,12 @@ export async function POST(request: NextRequest) {
       city: body.city ? String(body.city).slice(0, 120) : null,
       userAgent: body.userAgent ? String(body.userAgent).slice(0, 500) : null,
     },
-  });
+    });
+  } catch (writeError) {
+    // لوغُ المنصّة فقط — لا رميَ ولا استدعاءَ ذاتيّ. `200` مقصودة: المرسِلُ لا يُعيد المحاولة.
+    console.error("[log-error] تعذّرت كتابةُ الخطأ في القاعدة:", writeError);
+    return NextResponse.json({ ok: false, stored: false });
+  }
 
   // The /system-errors page is statically cached — without this a freshly logged
   // error stays invisible until a manual delete/clear. Revalidate so it shows now.

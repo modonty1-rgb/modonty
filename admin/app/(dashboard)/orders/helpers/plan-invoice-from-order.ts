@@ -57,7 +57,7 @@ export async function planInvoiceFromOrder(orderId: string): Promise<InvoicePlan
 
   const client = await db.client.findUnique({
     where: { id: order.clientId },
-    select: { id: true, name: true, subscriptionEndDate: true, subscriptionTierConfig: { select: { name: true } }, _count: { select: { invoices: true } } },
+    select: { id: true, name: true, subscriptionEndDate: true, _count: { select: { invoices: true } } },
   });
   if (!client) return { ok: false, error: "العميل غير موجود" };
 
@@ -92,7 +92,8 @@ export async function planInvoiceFromOrder(orderId: string): Promise<InvoicePlan
       clientName: client.name,
       buyerEmail: order.buyerEmail,
       // اسمُ الباقة من الطلب أوّلاً: هو ما دفع عليه العميل، لا ما يقوله كرتُه اليوم.
-      tierName: order.planName || client.subscriptionTierConfig?.name || "—",
+      // الطلبُ يحمل اسمَ باقته — والجدولُ القديم سقط احتياطيّاً (١٩ سبتمبر ٢٠٢٦).
+      tierName: order.planName || "—",
       period: order.paidMonths === 1 ? "monthly" : "annual",
       currency: order.currency,
       subtotalMinor: order.subtotalMinor,

@@ -42,11 +42,6 @@ interface ClientAnalyticsProps {
     subscriptionStartDate: Date | null;
     subscriptionEndDate: Date | null;
     articlesPerMonth: number | null;
-    subscriptionTierConfig?: {
-      articlesPerMonth: number;
-      price: number;
-      tier: string;
-    } | null;
     _count: {
       articles: number;
     };
@@ -72,7 +67,7 @@ export function ClientAnalytics({ analytics, clientId, client, articlesThisMonth
 
   // Delivery metrics calculations
   const promisedArticles =
-    client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0;
+    client.articlesPerMonth ?? 0;
   const deliveredArticles = articlesThisMonth;
   const deliveryRate = calculateDeliveryRate(promisedArticles, deliveredArticles);
   const isBehind = deliveredArticles < promisedArticles;

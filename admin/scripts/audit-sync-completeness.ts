@@ -10,7 +10,10 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 
 import { MongoClient } from "mongodb";
 
-const PROD_URL = "mongodb+srv://modonty-admin:2053712713@modonty-cluster.tgixa8h.mongodb.net/modonty?retryWrites=true&w=majority&appName=modonty-cluster";
+// **رابطُ الإنتاج من متغيّر بيئة** (١٩ سبتمبر ٢٠٢٦): كان مكتوباً هنا نصّاً باسم
+// المستخدم وكلمة المرور، فصار مكشوفاً لكلّ من فتح المستودع وفي تاريخ git للأبد.
+// يُضبط `PROD_SYNC_DATABASE_URL` في `.env.local` محلّيّاً — ولا يدخل المستودع أبداً.
+const PROD_URL = (process.env.PROD_SYNC_DATABASE_URL ?? "");
 const localUrl = process.env.DATABASE_URL ?? "";
 
 if (!localUrl.includes("modonty_dev")) {

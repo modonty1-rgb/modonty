@@ -4,7 +4,7 @@ import { getSubscriptionStanding } from "@/app/(dashboard)/orders/helpers/get-su
 /**
  * الاشتراكاتُ المنتهية والمقترِبة — تعريفٌ واحد للبطاقة وللفلتر.
  *
- * الانتهاءُ يُحسب ولا يُخزَّن (`activatedAt` + شهور الخدمة)، فلا يمكن تصفيتُه في القاعدة:
+ * الانتهاءُ يُحسب ولا يُخزَّن (`serviceStartedAt` + شهور الخدمة)، فلا يمكن تصفيتُه في القاعدة:
  * تُجلب المدفوعةُ المفعَّلة ويُرشَّح المنتهي منها هنا — وهو نفسُ الحاسب الذي يلوّن الصفوف
  * في شاشة الاشتراكات، فلا تقول البطاقةُ رقماً يخالف الجدول.
  *
@@ -24,8 +24,9 @@ import { RENEWAL_SOON_DAYS } from "./renewal-window";
 
 export async function getRenewalsDue(): Promise<RenewalsDue> {
   const rows = await db.checkoutOrder.findMany({
-    where: { status: "PAID", NOT: [{ activatedAt: null }, { clientId: null }] },
-    select: { activatedAt: true, paidMonths: true, bonusServiceMonths: true },
+    // من بداية الخدمة — أوّلِ مقالٍ وصل العميل (خالد ١٩ سبتمبر ٢٠٢٦).
+    where: { status: "PAID", NOT: [{ serviceStartedAt: null }, { clientId: null }] },
+    select: { serviceStartedAt: true, paidMonths: true, bonusServiceMonths: true },
     take: 2000,
   });
 

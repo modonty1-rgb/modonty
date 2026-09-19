@@ -52,7 +52,7 @@ interface IntakeBriefProps {
   isYmyl: boolean;
 }
 
-// ─── helpers ──────────────────────────────────────────────────────────────────
+// --- helpers ------------------------------------------------------------------
 function getAtPath(obj: unknown, path: string): unknown {
   return path.split(".").reduce<unknown>(
     (acc, k) => (acc && typeof acc === "object" ? (acc as AnyObj)[k] : undefined),
@@ -156,7 +156,7 @@ export function IntakeBrief({ form, intake, intakeUpdatedAt, isYmyl }: IntakeBri
   );
 }
 
-// ─── one question row: label + formatted answer ───────────────────────────────
+// --- one question row: label + formatted answer -------------------------------
 function Row({ question, value }: { question: BriefQuestion; value: unknown }) {
   // Stacked, not side-by-side: most answers here are paragraphs the client wrote, and a
   // fixed label column squeezed them into a narrow strip with dead space beneath the

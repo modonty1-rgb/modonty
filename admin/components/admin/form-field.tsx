@@ -13,16 +13,37 @@ interface FormFieldProps {
   children: ReactNode;
 }
 
+/**
+ * **الكثافةُ المكتبيّة — ٤٧px للحقل لا ٧٢** (خالد ١٩ سبتمبر ٢٠٢٦: «الحقول مرتفعة
+ * جدّاً… الأدمن هذا ما بيشتغل إلّا على الـdesktop… حسّ فيه padding داخليّ هو اللي مكبّر
+ * المواضيع»).
+ *
+ * -- الرقمُ من الممارسات لا من الذوق --
+ * ٣٢px هو **الافتراضُ المكتبيّ** لا الاستثناء: Ant Design يجعله مقاسَه الأوسط (٤٠ عنده
+ * «كبير» و٢٤ «صغير»)، وCarbon يسمّيه `sm` ويعمل على `xs` أضيقَ منه. وMaterial يحذف
+ * ٤dp لكلّ درجةِ كثافة، ويقول صراحةً إنّ هدفَ اللمس ٤٨px يُحفَظ بحشوٍ **خارجيّ** — وهي
+ * قاعدةٌ لا تخصّنا أصلاً: هذا أدمنٌ يُستعمل بفأرةٍ على المكتب.
+ *
+ * -- والعلّةُ كانت الحشوَ الداخليَّ كما قال خالد --
+ * `input.tsx:11` يحمل `h-10 py-2` قيمةً واحدةً بلا مقاسات. فلمّا خُفِّض الارتفاعُ إلى
+ * ٣٦ بقي الحشوُ ٨px، فصار المطلوبُ `20 (سطر) + 8 + 8 + 1.3 (حدّ) = 37.3px` مضغوطاً في
+ * ٣٦ — صندوقٌ يقاتل محتواه. والصحيحُ أن يتّسع الصندوقُ لما فيه: `20 + 4 + 4 + 2 = 30`
+ * داخل `h-8` (٣٢) بفسحةٍ لا بتضارب.
+ *
+ * -- وهنا لا في كلّ شاشة --
+ * هذا **المصدرُ المشترك** لحقول الأدمن كلِّها، فالكثافةُ تتغيّر مرّةً وتسري على الجميع.
+ * و٤٠px يبقى مقاسَ صفّ الجدول (معيار الأدمن #٣): الجدولُ يُمسح بالعين، والنموذجُ يُملأ.
+ */
 export function FormField({ label, name, error, required, hint, children }: FormFieldProps) {
   return (
-    <div className="space-y-2">
-      <Label htmlFor={name} className="cursor-default">
+    <div className="space-y-1">
+      <Label htmlFor={name} className="block cursor-default text-[11px] font-medium leading-none text-muted-foreground">
         <span>{label}</span>
         {required && <span className="text-destructive ms-1">*</span>}
       </Label>
       {children}
-      {hint && <p className="text-[11px] text-amber-600 dark:text-amber-500 leading-tight">{hint}</p>}
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {hint && <p className="text-[11px] leading-tight text-amber-600 dark:text-amber-500">{hint}</p>}
+      {error && <p className="text-[11px] leading-tight text-destructive">{error}</p>}
     </div>
   );
 }
@@ -81,7 +102,7 @@ export function FormInput({
         autoComplete={autoComplete}
         maxLength={maxLength}
         dir={dir}
-        className={error ? "border-destructive" : ""}
+        className={`h-8 px-2.5 py-1 text-sm ${error ? "border-destructive" : ""}`}
       />
     </FormField>
   );
@@ -125,7 +146,7 @@ export function FormTextarea({
         onBlur={onBlur}
         disabled={disabled}
         rows={rows}
-        className={error ? "border-destructive" : ""}
+        className={`px-2.5 py-1.5 text-sm ${error ? "border-destructive" : ""}`}
       />
     </FormField>
   );
@@ -159,7 +180,7 @@ export function FormSelect({
   return (
     <FormField label={label} name={name} error={error} required={required} hint={hint}>
       <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-        <SelectTrigger className={error ? "border-destructive" : ""}>
+        <SelectTrigger className={`h-8 px-2.5 py-1 text-sm ${error ? "border-destructive" : ""}`}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>{children}</SelectContent>
@@ -201,7 +222,7 @@ export function FormNativeSelect({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+        className={`flex h-8 w-full rounded-md border border-input bg-background px-2.5 py-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
           error ? "border-destructive" : ""
         }`}
       >

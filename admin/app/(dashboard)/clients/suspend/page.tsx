@@ -8,20 +8,34 @@ export const metadata = {
   title: "Suspend Client - Modonty",
 };
 
+/**
+ * واسمُ الباقة من **الطلب الساري** (١٩ سبتمبر ٢٠٢٦)، لا من جدول الباقات القديم: ذاك
+ * متقاعدٌ لا يُكتب فيه، ويحمله العميلُ مهجوراً على كرته — فكانت الشارةُ قد تقول باقةً
+ * باعها أحدٌ قبل سنة لعميلٍ رُقّي بعدها. و`activeOrderId` بلا `@relation` في السكيما
+ * (مقصود)، فيُجلب بجلبةٍ واحدةٍ بالمعرّفات.
+ */
 async function getActiveClients() {
-  return db.client.findMany({
+  const clients = await db.client.findMany({
     where: { subscriptionStatus: "ACTIVE" },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      phone: true,
-      // اسمُ الباقة لا رمزُها: الشارة كانت تطبع «PRO» للموظّف — رمزَ enum لا اسمَ باقة.
-      subscriptionTierConfig: { select: { name: true } },
-    },
+    select: { id: true, name: true, email: true, phone: true, activeOrderId: true },
     orderBy: { createdAt: "desc" },
     take: 200,
   });
+
+  const orderIds = clients.map((c) => c.activeOrderId).filter((id): id is string => !!id);
+  const planName = new Map(
+    (
+      await db.checkoutOrder.findMany({
+        where: { id: { in: orderIds } },
+        select: { id: true, planName: true },
+      })
+    ).map((o) => [o.id, o.planName]),
+  );
+
+  return clients.map((c) => ({
+    ...c,
+    planName: (c.activeOrderId && planName.get(c.activeOrderId)) || null,
+  }));
 }
 
 export default async function SuspendClientPage() {
@@ -57,7 +71,7 @@ export default async function SuspendClientPage() {
                 <div className="flex items-center gap-2">
                   <span className="font-semibold truncate">{client.name}</span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted-foreground/15 font-medium shrink-0">
-                    {client.subscriptionTierConfig?.name ?? "—"}
+                    {client.planName ?? "—"}
                   </span>
                 </div>
                 <div className="mt-1 flex items-center gap-x-4 gap-y-1 flex-wrap text-xs text-muted-foreground">

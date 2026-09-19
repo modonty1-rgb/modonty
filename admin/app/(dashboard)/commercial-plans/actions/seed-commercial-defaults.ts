@@ -45,7 +45,6 @@ type SeedPlan = {
   hook?: string;
   ctaText?: string;
   featuredBadge?: string;
-  tier?: string;
   theme?: string;
   isPublished?: boolean;
   displayOrder?: number;
@@ -166,7 +165,6 @@ export async function seedCommercialDefaults(): Promise<
           hook: p.hook ?? null,
           ctaText: p.ctaText ?? null,
           featuredBadge: p.featuredBadge ?? null,
-          tier: (p.tier as never) ?? null,
           theme: (p.theme as never) ?? "NEUTRAL",
           isPublished: p.isPublished ?? false,
           displayOrder: p.displayOrder ?? 0,

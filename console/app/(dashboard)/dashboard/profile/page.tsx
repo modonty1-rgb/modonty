@@ -98,6 +98,7 @@ export default async function ProfilePage() {
         addressLatitude: true,
         addressLongitude: true,
         priceRange: true,
+        gbpProfileUrl: true,
         gbpPlaceId: true,
         businessActivityCode: true,
         numberOfEmployees: true,

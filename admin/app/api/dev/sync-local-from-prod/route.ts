@@ -5,9 +5,17 @@ import { auth } from "@/lib/auth";
 import { MongoClient, IndexDescription } from "mongodb";
 import { listRequiredRelations, scanOrphans } from "@/app/(dashboard)/database/actions/orphan-scan";
 
-// Hardcoded PROD URL (read-only source)
-const PROD_DATABASE_URL =
-  "mongodb+srv://modonty-admin:2053712713@modonty-cluster.tgixa8h.mongodb.net/modonty?retryWrites=true&w=majority&appName=modonty-cluster";
+/**
+ * **رابطُ الإنتاج من متغيّر بيئة — لا نصّاً في المستودع** (١٩ سبتمبر ٢٠٢٦).
+ *
+ * كان مكتوباً هنا حرفيّاً باسم المستخدم وكلمة المرور. وكلُّ من فتح المستودع — أو أيّ
+ * أداةٍ قرأته — رآهما، وهما في تاريخ git إلى الأبد. فالإخراجُ إلى متغيّرٍ يمنع تكرارَ
+ * الكشف، **ولا يُبطل ما مضى**: الكلمةُ القديمة تبقى مكشوفةً حتى تُدوَّر في أطلس.
+ *
+ * والغياب يعني التعطُّل لا الصمت: هذا مسارُ نسخٍ من الإنتاج، فتشغيلُه على رابطٍ خاطئ
+ * أسوأُ من عدم تشغيله.
+ */
+const PROD_DATABASE_URL = process.env.PROD_SYNC_DATABASE_URL ?? "";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -140,6 +148,17 @@ export async function POST(_req: NextRequest) {
       }
       if (dnsPromises.getServers().some(isLoopback)) {
         dnsPromises.setServers(["1.1.1.1", "8.8.8.8"]);
+      }
+
+      if (!PROD_DATABASE_URL) {
+        send({
+          type: "error",
+          message:
+            "PROD_SYNC_DATABASE_URL غير مضبوط — ضعه في ‎.env.local محلّيّاً. " +
+            "ولا يُوضع في المستودع: هذا رابطُ قاعدة الإنتاج.",
+        });
+        controller.close();
+        return;
       }
 
       const prodClient = new MongoClient(PROD_DATABASE_URL);

@@ -1,16 +1,14 @@
 "use server";
 
-import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { normalizePhone } from "@modonty/shared/lib/phone";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
+import { slugify } from "@/lib/utils";
 import { logAction } from "@/lib/audit/log-action";
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { sendClientWelcome } from "@/app/(dashboard)/clients/actions/clients-actions/send-client-welcome";
 
 /**
  * **تفعيلُ عميلٍ من طلبٍ مدفوع** — لا «إنشاء عميل».
@@ -32,21 +30,12 @@ import { sendClientWelcome } from "@/app/(dashboard)/clients/actions/clients-act
  */
 
 export type ActivateFromOrderResult =
-  | { ok: true; clientId: string; slug: string; emailSent: boolean; warning?: string }
+  | { ok: true; clientId: string; slug: string }
   | { ok: false; error: string };
 
-export async function activateFromOrder(input: {
-  orderId: string;
-  name: string;
-  slug: string;
-}): Promise<ActivateFromOrderResult> {
+export async function activateFromOrder(input: { orderId: string }): Promise<ActivateFromOrderResult> {
   const session = await auth();
   if (!(session?.user as { id?: string } | undefined)?.id) return { ok: false, error: "غير مصرح" };
-
-  const name = input.name?.trim();
-  const slug = input.slug?.trim();
-  if (!name) return { ok: false, error: "اسم العميل مطلوب" };
-  if (!slug) return { ok: false, error: "السلَج مطلوب" };
 
   const order = await db.checkoutOrder.findUnique({
     where: { id: input.orderId },
@@ -54,7 +43,8 @@ export async function activateFromOrder(input: {
       id: true, number: true, status: true, clientId: true,
       buyerName: true, buyerEmail: true, buyerPhone: true, businessName: true,
       planName: true, articlesPerMonth: true, salesRepId: true,
-      serviceStartedAt: true, leadId: true,
+      serviceStartedAt: true, isInternal: true,
+      country: true, market: true,
     },
   });
   if (!order) return { ok: false, error: "الطلب غير موجود" };
@@ -68,11 +58,29 @@ export async function activateFromOrder(input: {
   // سقط الحقل، فسقط الحارس: اسمُ الباقة (`planName`) هو ما يُقرأ في كل شاشة، وهو إلزاميّ
   // على الطلب أصلاً.
 
+  /**
+   * **الاسمُ من الطلب، والسلَجُ مؤقَّتٌ من رقمه** — ولا يُسأل الموظّفُ عن واحدٍ منهما.
+   *
+   * خالد (١٩ سبتمبر ٢٠٢٦): «خلّي حتى السلَق نعمله في التعديل». وموظّفُ التفعيل لا يعرف
+   * العميل، فكلُّ حقلٍ يُسأل عنه تخمينٌ يُكتب في القاعدة.
+   *
+   * والاسمُ من `businessName` أوّلاً: هو ما يظهر على مدونتي، و`buyerName` اسمُ مَن دفع
+   * وقد يكون محاسباً لا صاحبَ النشاط (`ACTIVATION-FLOW.html:515`).
+   *
+   * والسلَجُ مشتقٌّ من الاسم نفسِه (`slugify`)، ومعروضٌ كاملاً على صفحة التفعيل قبل
+   * الضغط — فما يراه الموظّفُ هو ما يُكتب حرفاً بحرف. ويُقفل بعدها، ويُصحَّح من صفحة
+   * العميل برمز تحقّق (`SlugChangeOtp` — البابُ مبنيٌّ منذ ما قبل اليوم).
+   */
+  const name = (order.businessName?.trim() || order.buyerName || "").trim();
+  if (!name) return { ok: false, error: "الطلب بلا اسمٍ للمشتري — صحّحه قبل التفعيل" };
+  const slug = slugify(name);
+  if (!slug) return { ok: false, error: "تعذّر اشتقاق الرابط العامّ من الاسم — صحّح اسم المشتري على الطلب" };
+
   const [slugTaken, emailOwner] = await Promise.all([
     db.client.findUnique({ where: { slug }, select: { id: true } }),
     db.client.findFirst({ where: { email: order.buyerEmail }, select: { id: true, name: true } }),
   ]);
-  if (slugTaken) return { ok: false, error: "السلَج مستخدمٌ لعميلٍ آخر" };
+  if (slugTaken) return { ok: false, error: `السلَج ${slug} مستخدمٌ لعميلٍ آخر — راجعه يدويّاً` };
   // بريدٌ معروف = تجديدٌ لا تأسيس. الطريق الصحيح «ربط بالعميل القائم» من تفاصيل الطلب،
   // وإلّا صار للعميل الواحد كرتان وانشقّ سجلّه الماليّ بينهما.
   if (emailOwner) {
@@ -120,7 +128,36 @@ export async function activateFromOrder(input: {
       slug,
       email: order.buyerEmail,
       phone,
-      password: await bcrypt.hash(DEFAULT_CLIENT_PASSWORD, 10),
+      /**
+       * **بلا كلمة مرور** (خالد ١٩ سبتمبر ٢٠٢٦: «خليه فاضي… هنعملها في التعديل»).
+       *
+       * كانت تُهشّ هنا من قيمةٍ افتراضيّة وتُرسَل في إيميل الترحيب. والتفعيلُ صار فتحَ
+       * ملفٍّ لا تسليمَ حساب: الدخولُ يُجهَّز من صفحة العميل حين تكتمل بياناتُه. و`password`
+       * اختياريٌّ في السكيما (`schema.prisma` — `password String?`) فلا يُكتب أصلاً.
+       */
+      // `isInternal` من الطلب لا يُسأل عنه الموظّف — حسابُنا لا يُعدّ بيعاً في التقارير.
+      isInternal: order.isInternal ?? false,
+      /**
+       * **الدولةُ من الطلب** (خالد ١٩ سبتمبر ٢٠٢٦: «انسخ الدولة في التفعيل»).
+       *
+       * كانت تُترك للموظّف يكتبها في صفحة التعديل، فبقيت فارغةً عند خمسةٍ من ٤٥ عميلاً
+       * (مقيسٌ على modonty_dev) — وواحدٌ خزّن «المملكة العربية السعودية» بدل `SA`، وهو
+       * الانحرافُ الذي جعل `ReferralLead` ترفض الاعتماد على هذا الحقل أصلاً
+       * (`schema.prisma:4155`: «حقلٌ غير نظيف»).
+       *
+       * وهي ليست زينةً: منها تُشتقّ جهاتُ ترخيص YMYL في الكونسول
+       * (`profile-actions.ts:268`)، وتُفتح حقولُ العنوان الوطنيّ السعوديّ
+       * (`profile-form.tsx:207`)، وتُطبع على صفحة العميل العامّة (`hero/utils.tsx:53`).
+       *
+       * ── ولماذا نسخاً لا قراءةً من الطلب ──
+       * أربعةُ مستهلكين يقرأونها من صفّ العميل، اثنان منهم على مدونتي مع كلّ زيارةِ
+       * صفحة — فالقراءةُ عبر `activeOrderId` تكلّف استعلاماً ثانياً لكلّ زيارة. والنسخةُ
+       * لا تنحرف ما دام لها **كاتبٌ واحد**: هذا السطر. ولذلك سقط الحقلُ من نموذج التعديل
+       * في نفس اليوم — الانحرافُ يأتي من تعدّد الكُتّاب لا من النسخ.
+       *
+       * و`market` رمزُ ISO نفسُه (SA · EG · AE) فيصلح احتياطاً بلا خريطة تحويل.
+       */
+      addressCountry: order.country?.trim() || order.market,
       // كلّها منسوخةٌ من الطلب — ولا واحدةٌ منها سُئل عنها الموظّف.
       // و`subscriptionTier` لم يعد يُكتب: كان هذا آخرَ كاتبٍ له في الأدمن كلّه.
       // اسمُ الباقة يُقرأ من الطلب الساري (`activeOrderId`) في كل شاشة.
@@ -140,48 +177,49 @@ export async function activateFromOrder(input: {
 
   await db.checkoutOrder.update({ where: { id: order.id }, data: { clientId: client.id, activatedAt } });
 
-  // نهايةُ الاشتراك تُشتقّ من هذا الطلب فوراً — وإلّا رأى العميلُ في بوّابته «بلا اشتراك»
-  // حتّى تُصدَر فاتورة، وقد لا تُصدر أبداً (`recompute-subscription-end.ts`).
+  /**
+   * **لا تُحسب نهايةُ الاشتراك هنا** (خالد ١٩ سبتمبر ٢٠٢٦: «المدّة تخصّ الطلب، ما تخصّ
+   * العميل»).
+   *
+   * المدّةُ واقعةٌ على الطلب: تفعيلُه + شهورُه. وكلُّ شاشةٍ تعرض حالَ الاشتراك تحسبه من
+   * هناك (`get-subscription-standing.ts`)، فنسخُه على الكرت رقمٌ ثانٍ يشيخ أوّلَ ما
+   * تُعدَّل المدّة. ومن احتاج التاريخَ محفوظاً يُعيد حسابه من الطلبات.
+   */
+
+  /**
+   * **ولا يُلمَس المحتمَل** (خالد ١٩ سبتمبر ٢٠٢٦: «هذا كلُّه يخصّ المبيعات — وجدولُ
+   * العملاء للعملاء الفعليّين»).
+   *
+   * كان التفعيلُ يختم بطاقةَ المحتمَل «مربوح» ويمسح موعدَ متابعتها. وختمُ صفقةٍ قرارُ
+   * مندوبٍ يعرف مسارَها، لا أثرٌ جانبيٌّ لفتح ملفّ.
+   */
+  /**
+   * **ولا يُرسَل بريدٌ من هنا** (خالد ١٩ سبتمبر ٢٠٢٦: «ما ترسل أيّ إيميلات من هنا —
+   * هذا كلُّه نسوّيه من التعديل»).
+   *
+   * إيميلُ الترحيب يحمل بياناتِ دخول، ولا دخولَ بعدُ: الحسابُ بلا كلمة مرور. وإرسالُه
+   * قبل اكتمال الملفّ يُدخل العميلَ على صفحةٍ ناقصة — فيُرسَل من صفحة العميل متى جهزت.
+   */
+
+  /**
+   * **ونهايةُ الاشتراك تُحسب هنا بالصيغة الواحدة** (١٩ سبتمبر ٢٠٢٦، بعد اختبار الفلو).
+   *
+   * كان التفعيلُ يتركها فارغةً عمداً — «المدّةُ تخصّ الطلب» — وهو صحيحٌ مفهوماً وخاطئٌ
+   * أثراً: أربعُ شاشاتٍ تقرأ `Client.subscriptionEndDate` ولا تعرف الطلبَ أصلاً —
+   * شريحتا «Overdue» و«Renewals» في قائمة العملاء · سيجمنتاتُ المال كلُّها (شرطُها
+   * `not: null`، فالحقلُ الغائبُ لا يطابق أيَّ شرط) · تنبيهاتُ الداشبورد · وشريطُ
+   * الاشتراك في كونسول العميل نفسِه (`console/app/(dashboard)/layout.tsx:149-152`).
+   *
+   * فكان العميلُ المفعَّل من طلبه **لا تراه أيُّ شاشةٍ ماليّة**، ويرى في بوّابته
+   * اشتراكاً بلا تاريخٍ ولا تقدّم. مقيسٌ على dev: عميلان كذلك، طلباهما يقولان
+   * ٢٠٢٧-٠٤-١٩ و٢٠٢٨-٠٣-١٩.
+   *
+   * ولا يخلق هذا مصدراً ثانياً: `recomputeSubscriptionEnd` **تشتقّ** التاريخَ من
+   * الطلبات المدفوعة (يوم التفعيل + الشهور + الهديّة، لأبعد طلب) ولا تقبل إدخالاً —
+   * فالكرتُ ذاكرةٌ للصيغة لا رأيٌ ثانٍ. وتُستدعى في كلّ نقطةٍ تتغيّر فيها المدّة:
+   * هنا · عند إصدار الفاتورة · عند ربط طلبٍ بعميل · وعند تعديل الطلب.
+   */
   await recomputeSubscriptionEnd(client.id);
-
-  // خطُّ الرحلة يُقفل هنا: محتمَل ← طلبٌ مدفوع ← عميل. والختم بأثرٍ غير مُسقِط —
-  // محتمَلٌ حُذف أو خُتم مسبقاً لا يُبطل تفعيلاً نجح.
-  if (order.leadId) {
-    try {
-      await db.salesLead.update({
-        where: { id: order.leadId },
-        // `stage: WON` وحدها — و`status` يبقى كما هو. لا قيمة «CLIENT» في
-        // `SalesLeadStatus` (PROSPECT · ACTIVE · ARCHIVED)، والأرشفةُ قرارُ فريقٍ لا أثرُ بيع.
-        // ورثت هذه القيم من `convertLeadToClient` المحذوفة: المرحلة تُربح، والمتابعة
-        // تُمسح لأنّ المحتمَل صار عميلاً فلا موعدَ اتّصالٍ بعده. و`status` يبقى ACTIVE —
-        // لا قيمة «CLIENT» في `SalesLeadStatus` (PROSPECT · ACTIVE · ARCHIVED).
-        data: {
-          convertedClientId: client.id,
-          convertedAt: new Date(),
-          stage: "WON",
-          status: "ACTIVE",
-          nextActionAt: null,
-          nextActionNote: null,
-        },
-      });
-      revalidatePath("/sales-leads");
-      revalidatePath(`/sales-leads/${order.leadId}`);
-    } catch {
-      // يُترك للمراجعة اليدويّة — الكرت والطلب مكتوبان وهما الأهمّ.
-    }
-  }
-
-  // إيميل الترحيب **بعد** الكتابتين وبأثرٍ غير مُسقِط: فشلُ البريد لا يلغي تفعيلاً
-  // نجح في قاعدة البيانات — يُبلَّغ به الموظّف ويُعاد إرساله من صفحة العميل.
-  let emailSent = false;
-  let warning: string | undefined;
-  try {
-    const r = await sendClientWelcome(client.id);
-    emailSent = r.success;
-    if (!r.success) warning = "فُعّل العميل، لكن إيميل الترحيب لم يُرسَل — أعِد إرساله من صفحة العميل.";
-  } catch {
-    warning = "فُعّل العميل، لكن إيميل الترحيب لم يُرسَل — أعِد إرساله من صفحة العميل.";
-  }
 
   await logAction("client.activate-from-order", {
     entity: "Client",
@@ -196,5 +234,5 @@ export async function activateFromOrder(input: {
   revalidatePath("/");
   await revalidateModontyTag("clients");
 
-  return { ok: true, clientId: client.id, slug: client.slug, emailSent, warning };
+  return { ok: true, clientId: client.id, slug: client.slug };
 }

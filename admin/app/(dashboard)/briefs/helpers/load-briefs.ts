@@ -65,8 +65,7 @@ export async function getBriefRows(): Promise<BriefRow[]> {
         logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
         industry: { select: { name: true } },
         // Quota only — the tier's PRICE is never selected here on purpose.
-        subscriptionTierConfig: { select: { articlesPerMonth: true } },
-      },
+        },
     }),
     db.article.groupBy({
       by: ["clientId"],
@@ -104,7 +103,8 @@ export async function getBriefRows(): Promise<BriefRow[]> {
         totalQuestions: questions.length,
         intakeUpdatedAt: c.intakeUpdatedAt?.toISOString() ?? null,
         publishedThisMonth: publishedByClient.get(c.id) ?? 0,
-        monthlyQuota: c.articlesPerMonth ?? c.subscriptionTierConfig?.articlesPerMonth ?? 0,
+        // الحصّة من الطلب وحده — سقط احتياطيُّ الجدول القديم (١٩ سبتمبر ٢٠٢٦).
+        monthlyQuota: c.articlesPerMonth ?? 0,
       };
     })
     // Emptiest brief first: those are the clients a writer is about to get stuck on.

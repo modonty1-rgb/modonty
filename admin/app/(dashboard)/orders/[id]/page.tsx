@@ -8,11 +8,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/db";
-import { linkOrderToClient } from "@/lib/orders/link-order-to-client";
 import { checkFinanceAdmin } from "@/lib/require-finance-admin";
-import { confirmOrderPaymentAction, getExistingClientForOrderEmail } from "../actions";
+import { confirmOrderPaymentAction } from "../actions";
 import { ConfirmTransferButton } from "../components/confirm-transfer-button";
-import { ActivateOrderButton } from "../components/activate-order-button";
 import { SendInvoiceButton } from "../components/send-invoice-button";
 import { RefundOrderButton } from "../components/refund-order-button";
 import { WhatsappInvoiceButton } from "../components/whatsapp-invoice-button";
@@ -20,10 +18,10 @@ import { OrderStatusBadge } from "../components/order-status-badge";
 import { formatOrderDate } from "../helpers/format-order-date";
 import { formatOrderDateTime } from "../helpers/format-order-date-time";
 import { formatMonths } from "../helpers/format-months";
-import { formatOrderMoney } from "../helpers/format-order-money";
+import { formatOrderMoney } from "@/lib/orders/format-order-money";
 import { humanFailureReason } from "../helpers/human-failure-reason";
 import { orderMarketLabel } from "../helpers/order-market-label";
-import { orderProviderLabel } from "../helpers/order-provider-label";
+import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { buildInvoiceWhatsappLink } from "../helpers/build-invoice-whatsapp-link";
 import { getOrderStatement } from "./helpers/get-order-statement";
 import { getSubscriptionStanding } from "../helpers/get-subscription-standing";
@@ -35,12 +33,11 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const order = await db.checkoutOrder.findUnique({ where: { id } });
   if (!order) notFound();
 
-  const [transactions, webhookEvents, attempts, financeGate, existingClient, invoice, salesRep] = await Promise.all([
+  const [transactions, webhookEvents, attempts, financeGate, invoice, salesRep] = await Promise.all([
     db.paymentTransaction.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     db.paymentWebhookEvent.findMany({ where: { orderId: id }, orderBy: { receivedAt: "desc" }, take: 20 }),
     db.paymentAttempt.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     checkFinanceAdmin(),
-    order.status === "PAID" && !order.clientId ? getExistingClientForOrderEmail(id) : Promise.resolve(null),
     order.invoiceId ? db.invoice.findUnique({ where: { id: order.invoiceId }, select: { number: true, emailSentAt: true, client: { select: { name: true } } } }) : Promise.resolve(null),
     // المندوبُ من الطلب نفسه: هو صاحبُ هذه الصفقة، لا مَن يتابع العميلَ اليوم.
     order.salesRepId ? db.staff.findUnique({ where: { id: order.salesRepId }, select: { name: true } }) : Promise.resolve(null),
@@ -195,28 +192,18 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               amountLabel={formatOrderMoney(order.totalMinor, order.currency)}
             />
           ) : null}
-          {order.status === "PAID" && !order.clientId ? (
-            existingClient ? (
-              <form action={linkOrderToClient.bind(null, order.id, existingClient.id)}>
-                <Button type="submit" size="sm">ربط بالعميل القائم — {existingClient.name}</Button>
-              </form>
-            ) : (
-              // كان يفتح `/clients/new?orderId=` — فورمٌ يعيد سؤال الموظّف عن الباقة والسعر
-              // والمدّة، وكلّها مكتوبةٌ في هذا الطلب. صار نافذةً تقرأ ولا تسأل.
-              <ActivateOrderButton
-                order={{
-                  id: order.id,
-                  number: order.number,
-                  buyerName: order.buyerName,
-                  businessName: order.businessName,
-                  buyerEmail: order.buyerEmail,
-                  planName: order.planName,
-                  totalLabel: formatOrderMoney(order.totalMinor, order.currency),
-                  termLabel: formatMonths(order.paidMonths) + (order.bonusServiceMonths ? ` + ${formatMonths(order.bonusServiceMonths)} هديّة` : ""),
-                }}
-              />
-            )
-          ) : null}
+          {/**
+            * **لا تفعيلَ من هنا** (خالد ١٩ سبتمبر ٢٠٢٦: «شيل التفعيل من الصفحة تبعت
+            * الـorder»).
+            *
+            * كان هنا زرّان: «فعّل» ينشئ حساباً، و«ربط بالعميل القائم» يربط تجديداً.
+            * وكلاهما انتقل إلى بابِ موظّف التفعيل (`/clients/activate`) بعد أن فُصل
+            * الدوران: مَن يقرأ المال غيرُ مَن يفتح الحسابات. وهذه الصفحة تبقى للمال —
+            * تأكيدُ حوالة · إصدارُ فاتورة · تسليمُها · استرداد.
+            *
+            * والطلبُ المدفوعُ بلا حساب لا يضيع: يظهر في الطابور، وفي توجل «ينتظر
+            * التفعيل» هنا، وكلاهما يقرأ `AWAITING_ACTIVATION` نفسَها.
+            */}
           {/* الإصدارُ صفحةٌ تُقرأ فيها الرسالةُ قبل حجز الرقم — ويختفي زرُّه متى صدرت،
               فتحلّ محلَّه قنواتُ التسليم. */}
           {order.status === "PAID" && order.clientId && !order.invoiceId && isFinanceAdmin ? (

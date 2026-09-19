@@ -1,3 +1,5 @@
+import { ArticleStatus } from "@prisma/client";
+
 import { db } from "@/lib/db";
 
 /**
@@ -65,7 +67,42 @@ export interface PlannedOrder {
  * نفسُ الدالّة تخدم الوضع الجافّ والتنفيذ، فما يُعرَض قبل الضغط هو ما يُكتب بعده
  * حرفاً بحرف. عرضٌ يُحسب بطريقٍ وكتابةٌ بطريقٍ آخر هو كيف يكذب جدولُ المعاينة.
  */
+/**
+ * **اسمُ الباقة القديم — يُقرأ خامّاً من مونغو لا عبر Prisma (١٩ سبتمبر ٢٠٢٦).**
+ *
+ * سقط `SubscriptionTierConfig` من السكيما، وبقيت مجموعتُه وقيمُه في القاعدة كما هي
+ * («If a model or field is not present in the Prisma schema, it is ignored» — توثيق
+ * Prisma للمونغو). والترحيلُ وحدَه يحتاجها: هي مصدرُ الربط بين باقة العميل القديمة
+ * وصفِّها في الكتالوج، ولا يُبنى بدونها على قاعدةٍ لم تُرحَّل بعد.
+ *
+ * فيُقرأ الجدولُ المهجورُ خامّاً، ويبقى هذا الراوتُ قادراً على العمل على الإنتاج بعد
+ * أن خرج الكتالوجُ من كلّ شيفرةٍ أخرى. وترجع خريطةُ `clientId → اسم الباقة`.
+ */
+async function legacyTierNameByClient(): Promise<Map<string, string>> {
+  type Raw = { _id: { $oid: string } | string; name?: string; subscriptionTierConfigId?: { $oid: string } | string };
+  const oid = (v: Raw["_id"]) => (typeof v === "string" ? v : v.$oid);
+
+  const [tierRows, clientRows] = await Promise.all([
+    db.$runCommandRaw({ find: "subscription_tier_configs", filter: {}, projection: { name: 1 }, batchSize: 500 }),
+    db.$runCommandRaw({ find: "clients", filter: {}, projection: { subscriptionTierConfigId: 1 }, batchSize: 1000 }),
+  ]);
+
+  const batch = (r: unknown): Raw[] =>
+    ((r as { cursor?: { firstBatch?: Raw[] } }).cursor?.firstBatch ?? []) as Raw[];
+
+  const nameByTierId = new Map(batch(tierRows).map((t) => [oid(t._id), t.name ?? ""]));
+  const out = new Map<string, string>();
+  for (const c of batch(clientRows)) {
+    const ref = c.subscriptionTierConfigId;
+    if (!ref) continue;
+    const name = nameByTierId.get(typeof ref === "string" ? ref : ref.$oid);
+    if (name) out.set(oid(c._id), name);
+  }
+  return out;
+}
+
 export async function planAll(): Promise<PlannedOrder[]> {
+  const legacyTierName = await legacyTierNameByClient();
   const [clients, plans, prices] = await Promise.all([
     db.client.findMany({
       select: {
@@ -76,7 +113,6 @@ export async function planAll(): Promise<PlannedOrder[]> {
         // المندوب»). كان يسقط، فتخرج ٤٢ صفقةً بلا صاحبٍ يُنسب إليه البيع، وتقريرُ
         // عمولات المندوبين يقرأ الطلبَ لا الكرت.
         salesRepId: true,
-        subscriptionTierConfig: { select: { name: true } },
       },
       orderBy: { createdAt: "asc" },
     }),
@@ -88,6 +124,27 @@ export async function planAll(): Promise<PlannedOrder[]> {
     }),
   ]);
 
+  /**
+   * **بدايةُ الخدمة = أوّلُ مقالٍ وصل العميل** (خالد ١٩ سبتمبر ٢٠٢٦: «المفروض من الترحيل
+   * تشوف أوّل أرتيكل»).
+   *
+   * كانت تُنسخ من `Client.subscriptionStartDate` — وهو حقلٌ قديمٌ يقول يومَ فتح الحساب،
+   * فيبدأ احتسابُ الاشتراك من يوم الدفع ويأكل من العميل مدّةَ التجهيز كلَّها.
+   *
+   * وللصفوف القديمة لا وجودَ لـ`firstDeliveredAt` (الحقلُ وُلد اليوم بلا تاريخ)، فيُقرأ
+   * أقدمُ أثرٍ يثبت وصولَ مقالٍ فعلاً: `MIN(datePublished)` للمنشور. ومَن لا مقالَ له
+   * تبقى بدايتُه فارغةً ويُوسَم — خدمتُه لم تبدأ، ولا يُخمَّن لها تاريخ.
+   */
+  const firstDelivery = new Map<string, Date>();
+  const delivered = await db.article.groupBy({
+    by: ["clientId"],
+    where: { status: ArticleStatus.PUBLISHED, datePublished: { not: null } },
+    _min: { datePublished: true },
+  });
+  for (const row of delivered) {
+    if (row.clientId && row._min.datePublished) firstDelivery.set(row.clientId, row._min.datePublished);
+  }
+
   return clients.map((c) => {
     const gaps: string[] = [];
 
@@ -97,12 +154,13 @@ export async function planAll(): Promise<PlannedOrder[]> {
     // في ٤٠ من ٤٢ واختلفا في صفر. والاسمُ هو الباقي في السكيما بعد سقوط `tier`، فهو
     // المعتمَد. والاثنان اللذان لا مقابلَ لهما باقتُهما «مجاني» — لا صفَّ لها في
     // الكتالوج أصلاً، فتُوسَم ولا تُخمَّن.
-    const tierName = c.subscriptionTierConfig?.name ?? null;
+    const tierName = legacyTierName.get(c.id) ?? null;
     const plan = tierName ? plans.find((p) => p.name === tierName) ?? null : null;
     if (!tierName) gaps.push("بلا باقة في الجدول القديم");
     else if (!plan) gaps.push(`باقة «${tierName}» بلا صفٍّ في الكتالوج`);
 
     if (c.articlesPerMonth == null) gaps.push("بلا حصّةٍ شهريّة");
+    if (!firstDelivery.has(c.id)) gaps.push("لم يصله مقالٌ بعد — ساعةُ الاشتراك لم تبدأ");
 
     const mc = marketForCountry(c.addressCountry);
     if (!mc) gaps.push(c.addressCountry ? `بلدٌ غير مفهوم: «${c.addressCountry}»` : "بلا بلد — العملة مجهولة");
@@ -173,7 +231,8 @@ export async function planAll(): Promise<PlannedOrder[]> {
       currency: mc?.currency ?? null,
       totalMinor,
       paidMonths: months ?? 12,
-      serviceStartedAt: c.subscriptionStartDate,
+      // فارغةٌ لمن لم يصله مقالٌ بعد — ساعتُه لم تبدأ، فلا نهايةَ تُحسب له.
+      serviceStartedAt: firstDelivery.get(c.id) ?? null,
       activatedAt: c.createdAt,
       monthsByCycle: months,
       monthsByAmount: monthsByAmount != null ? Number(monthsByAmount.toFixed(2)) : null,

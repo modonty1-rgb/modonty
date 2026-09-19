@@ -15,8 +15,11 @@ import { google } from "googleapis";
 dotenv.config({ path: path.join(__dirname, "../.env.local") });
 dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 
+// **رابطُ الإنتاج من متغيّر بيئة** (١٩ سبتمبر ٢٠٢٦): كان مكتوباً هنا نصّاً باسم
+// المستخدم وكلمة المرور، فصار مكشوفاً لكلّ من فتح المستودع وفي تاريخ git للأبد.
+// يُضبط `PROD_SYNC_DATABASE_URL` في `.env.local` محلّيّاً — ولا يدخل المستودع أبداً.
 const PROD_DATABASE_URL =
-  "mongodb+srv://modonty-admin:2053712713@modonty-cluster.tgixa8h.mongodb.net/modonty?retryWrites=true&w=majority&appName=modonty-cluster";
+  (process.env.PROD_SYNC_DATABASE_URL ?? "");
 
 const db = new PrismaClient({ datasources: { db: { url: PROD_DATABASE_URL } } });
 

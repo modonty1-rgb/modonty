@@ -9,13 +9,13 @@ import { MonthlyRevenueStrip, type CurrencyTotal } from "./components/monthly-re
 import { getMonthlyRevenue } from "./helpers/get-monthly-revenue";
 import { OrdersTable, type OrderRow } from "./components/orders-table";
 import { formatMonths } from "./helpers/format-months";
-import { formatOrderAmount } from "./helpers/format-order-amount";
+import { formatOrderAmount } from "@/lib/orders/format-order-amount";
 import { formatOrderDate } from "./helpers/format-order-date";
-import { formatOrderMoney } from "./helpers/format-order-money";
+import { formatOrderMoney } from "@/lib/orders/format-order-money";
 import { getFirstPublishedDates } from "./helpers/get-first-published-dates";
 import { getSubscriptionStanding } from "./helpers/get-subscription-standing";
 import { orderMarketLabel } from "./helpers/order-market-label";
-import { orderProviderLabel } from "./helpers/order-provider-label";
+import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { AWAITING_ACTIVATION } from "@/lib/orders/awaiting-activation";
 
 export const dynamic = "force-dynamic";
@@ -74,7 +74,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
 
   /** شرطُ الفلتر الواحد — يقود الجدولَ والإجماليَّ معاً فلا يقول أحدُهما غيرَ ما يقوله الآخر. */
   const filterWhere = isExpiredView
-    ? { status: "PAID" as const, NOT: [{ activatedAt: null }] }
+    ? { status: "PAID" as const, NOT: [{ serviceStartedAt: null }] }
     : isAwaitingView
       ? AWAITING_ACTIVATION
       : activeProvider
@@ -92,7 +92,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     db.checkoutOrder.findMany({
       where,
       select: {
-        id: true, number: true, createdAt: true, activatedAt: true, buyerName: true, market: true,
+        id: true, number: true, createdAt: true, activatedAt: true, serviceStartedAt: true, buyerName: true, market: true,
         planName: true, paidMonths: true, totalMinor: true, currency: true, status: true,
         // للتفعيل: `clientId` يقرّر ظهور الزرّ، والثلاثة الباقية تملأ النافذة بلا استعلامٍ ثانٍ.
         clientId: true, businessName: true, buyerEmail: true, bonusServiceMonths: true,
@@ -109,8 +109,10 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     // عدّادُ المنتهي — بنفس الحاسب الذي يلوّن الصفوف، فلا يقول الزرُّ رقماً يخالف الجدول.
     db.checkoutOrder
       .findMany({
-        where: { status: "PAID", NOT: [{ activatedAt: null }] },
-        select: { activatedAt: true, paidMonths: true, bonusServiceMonths: true },
+        // ساعةُ الاشتراك من بداية الخدمة (أوّل مقالٍ وصل العميل) لا من يوم التفعيل
+        // — خالد ١٩ سبتمبر ٢٠٢٦. ومن لم تبدأ خدمتُه لا يُعدّ منتهياً ولا قريبَ الانتهاء.
+        where: { status: "PAID", NOT: [{ serviceStartedAt: null }] },
+        select: { serviceStartedAt: true, paidMonths: true, bonusServiceMonths: true },
         take: 500,
       })
       .then((rows) => rows.filter((r) => getSubscriptionStanding(r).state === "expired").length),

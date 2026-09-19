@@ -170,13 +170,6 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
             name: true,
           },
         },
-        subscriptionTierConfig: {
-          select: {
-            price: true,
-            articlesPerMonth: true,
-            tier: true,
-          },
-        },
         articles: {
           where: {
             status: ArticleStatus.PUBLISHED,

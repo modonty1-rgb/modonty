@@ -128,7 +128,21 @@ const clientFormObject = z
 
     // Business Information — client-owned (filled from console profile), not required at admin create
     businessBrief: consoleOwnedText,
-    industryId: z.string().min(1, "Industry is required"),
+    /**
+     * **اختياريّةٌ كما يعاملها الخادم** (خالد ١٩ سبتمبر ٢٠٢٦: «الحفظ ما يشتغل»).
+     *
+     * كانت `min(1)` فتمنع حفظَ **أيّ** حقلٍ آخر في الصفحة: عميلٌ يُفتح ملفُّه بالتفعيل
+     * بلا صناعة، فيُصحَّح بريدُه أو تُولَّد كلمةُ مروره، فيُرفض الحفظُ كلُّه برسالة
+     * «Industry — this value isn't allowed» عن حقلٍ لا علاقةَ له بما غُيِّر.
+     *
+     * والبوّابةُ الحقيقيّة `clientServerSchema` تعاملها `optional().nullable()`
+     * (`client-server-schema.ts:94`) — فالاشتراطُ هنا كان أشدَّ من مصدرِ الحقيقة، وهو
+     * نفسُ السبب الذي وُلِد منه `clientSeoFormSchema` أسفلَ هذا الملفّ.
+     *
+     * والصناعةُ تبقى مطلوبةً **عملاً** لا **شكلاً**: سكورُ السيو يحسمها، وصفحةُ العميل
+     * تنقصها فئةٌ — لكنّ ذلك تنبيهٌ يُقرأ لا قفلٌ يمنع تصحيحَ سواها.
+     */
+    industryId: z.string().optional().nullable(),
     salesRepId: z.string().nullable().optional(),
     editorId: z.string().nullable().optional(),
     targetAudience: consoleOwnedText,
@@ -212,7 +226,7 @@ const clientFormObject = z
     ctaUrl: z.string().max(500, "Link must be less than 500 characters").optional().nullable().or(z.literal("")),
 
     // Subscription Management
-    subscriptionTierConfigId: z.string().optional().nullable(),
+    // (سقط `subscriptionTierConfigId` — ١٩ سبتمبر ٢٠٢٦: الباقةُ من الطلب الساري.)
     subscriptionStartDate: dateSchema,
     subscriptionEndDate: dateSchema,
     articlesPerMonth: z.number().int().min(0).max(100).optional().nullable(),
@@ -242,8 +256,14 @@ const clientFormObject = z
     // على الطلب المدفوع، لا على كرت العميل. ولا شاشةَ تجمعهما بعد اليوم.
   });
 
-/** القواعد التي لا تختلف بين إنشاءٍ وتعديل — تُستدعى من كليهما بلا نسخةٍ ثانية. */
-const refineShared: Parameters<typeof clientFormObject.superRefine>[0] = (data, ctx) => {
+/**
+ * القواعد التي لا تختلف بين إنشاءٍ وتعديل — تُستدعى من كليهما بلا نسخةٍ ثانية.
+ *
+ * والنوعُ مكتوبٌ صراحةً لا مشتقّاً بـ`Parameters<typeof …superRefine>[0]`: لـ`superRefine`
+ * تحميلان، والاشتقاقُ يلتقط غيرَ المتزامن منهما فيطالب بـ`Promise<void>` بينما هذه الدالّة
+ * تعيد `void` (TS2322).
+ */
+const refineShared = (data: z.infer<typeof clientFormObject>, ctx: z.RefinementCtx): void => {
     // LINK mode needs a destination; FORM/NONE don't.
     if (data.ctaMode === ClientCtaMode.LINK) {
       const url = (data.ctaUrl ?? "").trim();
@@ -296,7 +316,13 @@ export type ClientFormSchemaType = z.infer<typeof clientFormSchema>;
  *
  * والقواعد المشتركة تبقى كما هي عبر `refineShared`.
  */
-export const clientCreateFormSchema = clientFormObject.superRefine(refineShared);
+/**
+ * **سقط `clientCreateFormSchema` و`clientActivateFormSchema`** (خالد ١٩ سبتمبر ٢٠٢٦).
+ *
+ * كانا لشاشة إنشاءِ عميلٍ من الصفر. ثمّ صار ميلادُ العميل باباً واحداً — طلبٌ مدفوع
+ * يُفعَّل من طابوره بضغطةٍ لا فورم — فسقطت الشاشةُ ومخطّطاها معها. وما يُحرَّر بعد
+ * التفعيل يمرّ بـ`clientFormSchema` في صفحة التعديل.
+ */
 
 // ============================================
 // SEO SUB-FORM SCHEMA (the /clients/[id]/seo page)

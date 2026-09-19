@@ -4,7 +4,10 @@
  */
 import { PrismaClient } from "@prisma/client";
 
-const PROD_URL = "mongodb+srv://modonty-admin:2053712713@modonty-cluster.tgixa8h.mongodb.net/modonty?retryWrites=true&w=majority&appName=modonty-cluster";
+// **رابطُ الإنتاج من متغيّر بيئة** (١٩ سبتمبر ٢٠٢٦): كان مكتوباً هنا نصّاً باسم
+// المستخدم وكلمة المرور، فصار مكشوفاً لكلّ من فتح المستودع وفي تاريخ git للأبد.
+// يُضبط `PROD_SYNC_DATABASE_URL` في `.env.local` محلّيّاً — ولا يدخل المستودع أبداً.
+const PROD_URL = (process.env.PROD_SYNC_DATABASE_URL ?? "");
 console.log(`🌐 Target: ${PROD_URL.replace(/:[^:@/]+@/, ":***@")}\n`);
 
 const db = new PrismaClient({ datasources: { db: { url: PROD_URL } } });

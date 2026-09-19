@@ -117,20 +117,14 @@ export function CtaSection({ form, ctaPresets }: CtaSectionProps) {
 
   return (
     <div className="space-y-5">
-      {/* Header: what this controls */}
-      <div className="rounded-lg border bg-muted/30 p-4">
-        <div className="flex items-start gap-3">
-          <MousePointerClick className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-          <div className="space-y-1">
-            <p className="text-sm font-medium">Primary Action (CTA)</p>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              The single action a reader takes for this client — shown on the article, the client
-              page, and the clients listing. Buttons come from{" "}
-              <strong>Settings → Dropdown Lists → CTA Buttons</strong>.
-            </p>
-          </div>
-        </div>
-      </div>
+      {/**
+        * **سقط صندوقُ الشرح** (خالد ١٩ سبتمبر ٢٠٢٦: «الهنت اللي في الـPrimary CTA، شيله»).
+        *
+        * كان أربعةَ أسطرٍ تشرح ما يقوله الحقلُ الذي تحته: العنوانُ «Primary Action (CTA)»
+        * والقائمةُ تعرض الأزرارَ المتاحة. ومن يحرّر شاشةَ العميل كلَّ يومٍ لا يقرأ الشرحَ
+        * مرّتين — يقرؤه مرّةً ثمّ يتخطّاه بصرياً في كلّ زيارةٍ بعدها، فيبقى ارتفاعاً بلا فائدة.
+        */}
+      <p className="text-sm font-medium">Primary Action (CTA)</p>
 
       {!hasPresets ? (
         <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1.5">

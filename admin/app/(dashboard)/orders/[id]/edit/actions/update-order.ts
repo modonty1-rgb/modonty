@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
+import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
@@ -158,6 +160,47 @@ export async function updateOrderAction(
   if (changes.length === 0) return { ok: true };
 
   await db.checkoutOrder.update({ where: { id: d.orderId }, data: next });
+
+  /**
+   * **والحصّةُ تُنقل إلى الكرت متى كان هذا هو الطلبَ الساري.**
+   *
+   * `Client.articlesPerMonth` نسخةُ عرضٍ من الطلب، وكان كاتبُها **واحداً**: زرّ التفعيل
+   * (`lib/orders/activate-from-order.ts:163`). فتعديلُ حصّةِ طلبٍ مفعَّلٍ كان يغيّر الطلبَ
+   * ولا يمسّ الكرت — مقيسٌ حيّاً (١٩ سبتمبر ٢٠٢٦): رُفعت حصّةُ «حلويات النيل» إلى ٢٠ فصار
+   * الطلب يقول «٢٠/شهر × ٧ = ١٤٠» بينما عمود «This Month» في قائمة العملاء باقٍ على
+   * <code>0/8</code>. والعمودُ هو ما يُقاس عليه التسليم، فكان يحاسب فريقَ المحتوى على حصّةٍ
+   * لم تعد هي المتّفق عليها.
+   *
+   * والشرطُ `activeOrderId` ليس تجميلاً: العميل له طلباتٌ قديمةٌ في سجلّه بأسعارها وحصصها،
+   * وتصحيحُ رقمٍ في طلب السنة الماضية يجب ألّا يمسّ ما يحكمه اليوم.
+   */
+  /**
+   * **وتغيُّرُ المدّة يعيد حسابَ نهاية الاشتراك.**
+   *
+   * `Client.subscriptionEndDate` مشتقٌّ من (يوم التفعيل + الشهور + الهديّة) لأبعد طلبٍ
+   * مدفوع، وتقرؤه شرائحُ المال وسيجمنتاتُها وكونسولُ العميل. فتصحيحُ «الشهور المدفوعة»
+   * أو يومِ التفعيل على الطلب كان يترك تلك الشاشات على تاريخٍ سابق.
+   */
+  const termChanged =
+    next.paidMonths !== before.paidMonths ||
+    next.bonusServiceMonths !== before.bonusServiceMonths ||
+    (next.activatedAt?.getTime() ?? null) !== (before.activatedAt?.getTime() ?? null);
+
+  if (termChanged) {
+    const owner = await db.checkoutOrder.findUnique({ where: { id: d.orderId }, select: { clientId: true } });
+    if (owner?.clientId) {
+      await recomputeSubscriptionEnd(owner.clientId);
+      revalidatePath("/clients");
+    }
+  }
+
+  if (next.articlesPerMonth !== before.articlesPerMonth) {
+    const { count } = await db.client.updateMany({
+      where: { activeOrderId: d.orderId },
+      data: { articlesPerMonth: next.articlesPerMonth },
+    });
+    if (count > 0) revalidatePath("/clients");
+  }
 
   await logAction("order.update", {
     entity: "Order",

@@ -57,6 +57,8 @@ type ProfileInitial = {
   email?: string | null;
   phone?: string | null;
   contactType?: string | null;
+  priceRange?: string | null;
+  gbpProfileUrl?: string | null;
   addressStreet?: string | null;
   addressCity?: string | null;
   addressCountry?: string | null;
@@ -182,7 +184,21 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
     vatID: initial.vatID ?? "",
     taxID: initial.taxID ?? "",
     foundingDate: toDateStr(initial.foundingDate),
+    /**
+     * **أربعةٌ انتقلت من الأدمن إلى هنا** (خالد ١٩ سبتمبر ٢٠٢٦: «معلومات العميل هو
+     * يعرفها أكثر عن نفسه، إحنا ما نعرفها، فهو اللي مفروض يدخلها»).
+     *
+     * كانت تُعرض له صفوفَ قراءةٍ مقفلة، فيرى خطأَها ولا يملك تصحيحَه فيراسلنا. والخادمُ
+     * يكتبها أصلاً (`profile-actions.ts:88 · 95 · 97 · 117`) — فالناقصُ كان الحقلَ لا المسار.
+     */
+    url: initial.url ?? "",
+    phone: initial.phone ?? "",
+    contactType: initial.contactType ?? "",
+    priceRange: initial.priceRange ?? "",
+    gbpProfileUrl: initial.gbpProfileUrl ?? "",
   });
+  // `sameAs` مصفوفةٌ لا نصّ — محرّرُها سطرٌ لكلّ رابط.
+  const [sameAs, setSameAs] = useState<string[]>(initial.sameAs ?? []);
 
   const initialHours = readHours(initial.openingHoursSpecification);
   const [openTime, setOpenTime] = useState(initialHours.openTime);
@@ -223,8 +239,6 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
     ORGANIZATION_TYPES.find((o) => o.value === normalizeOrganizationType(initial.organizationType))?.ar ?? null;
   const legalFormLabel =
     LEGAL_FORMS.find((o) => o.value === normalizeLegalForm(initial.legalForm))?.ar ?? null;
-  const socialProfilesValue =
-    initial.sameAs && initial.sameAs.length ? initial.sameAs.join("، ") : null;
   const countryName = countries.find((c) => c.code === initial.addressCountry)?.nameAr ?? null;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -250,6 +264,14 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
         // Non-SA: single field lives in vatID; mirror it into taxID so JSON-LD stays complete.
         taxID: isSaudi ? form.taxID || null : form.vatID || null,
         foundingDate: form.foundingDate || null,
+        // الأربعةُ المنقولة — يقرؤها مولّدُ السيو كلَّها: `generate-client-seo-bundle.ts`
+        // (`url:117` · `contactType:126` · `sameAs:137`) و`telephone` في مخطّط المنظّمة.
+        url: form.url || null,
+        phone: form.phone || null,
+        contactType: form.contactType || null,
+        priceRange: form.priceRange || null,
+        gbpProfileUrl: form.gbpProfileUrl || null,
+        sameAs: sameAs.map((u) => u.trim()).filter(Boolean),
         // Build the 7-day spec from the simple model: only working days are emitted
         // (omitted days = closed in Schema.org). JSON-LD generator reads opens/closes.
         openingHoursSpecification: DAY_ORDER.filter((d) => workDays.has(d)).map((d) => ({
@@ -343,15 +365,11 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
             <CardContent className="grid gap-4 border-t p-6 pt-4 sm:grid-cols-2">
               {/* Digital identity */}
               <ReadonlyRow label={ar.settings.email} value={initial.email ?? null} hint="معرّف الدخول" ltr />
-              <ReadonlyRow label={ar.profile.url} value={initial.url ?? null} ltr />
-              <ReadonlyRow label={ar.profile.socialProfiles} value={socialProfilesValue} ltr />
               {/* Classification */}
               <ReadonlyRow label={ar.profile.industry} value={industryName} />
               <ReadonlyRow label={ar.profile.organizationType} value={orgTypeLabel} />
               <ReadonlyRow label={ar.profile.legalForm} value={legalFormLabel} />
               {/* Contact & location */}
-              <ReadonlyRow label={ar.settings.phone} value={initial.phone ?? null} ltr />
-              <ReadonlyRow label={ar.profile.contactType} value={initial.contactType ?? null} ltr />
               <ReadonlyRow label={ar.profile.addressCountry} value={countryName} />
             </CardContent>
           </CollapsibleContent>
@@ -415,6 +433,92 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
               hint: ar.profile.addressAdditionalNumberHint,
             })}
           {field("addressPostalCode", ar.profile.addressPostalCode, { type: "number" })}
+        </CardContent>
+      </Card>
+
+      {/**
+        * **قنواتُ التواصل — انتقلت من الأدمن** (خالد ١٩ سبتمبر ٢٠٢٦).
+        *
+        * كانت أربعةَ صفوفٍ مقفلةٍ يراها العميلُ ولا يملك تصحيحَها. وهي بياناتُ شركته هو:
+        * موقعُه ورقمُه وحساباتُه — ننقلها عنه بالسماع فتتقادم عندنا وهو يعرفها.
+        *
+        * وليست زينةً: الرقمُ يبني زرَّ واتساب ورابطَ `tel:` على صفحته العامّة
+        * (`contact-block.tsx:57,69`)، والأربعةُ يقرؤها مولّدُ السيو
+        * (`generate-client-seo-bundle.ts:117 · 126 · 137`) فتدخل الميتا والـJSON-LD
+        * لحظةَ الحفظ عبر `updateProfile → regenerateClientSeo`.
+        */}
+      <Card className="overflow-hidden p-0">
+        <CardContent className="grid gap-4 p-6 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
+          {field("url", ar.profile.url, { type: "url", placeholder: "https://example.com" })}
+          {field("phone", ar.settings.phone, { type: "tel", placeholder: "+966 5x xxx xxxx", hint: "يظهر على صفحتك زرَّ اتّصالٍ وواتساب" })}
+          <div className="space-y-1.5">
+            <Label htmlFor="contactType" className="text-sm">{ar.profile.contactType}</Label>
+            <select
+              id="contactType"
+              value={form.contactType}
+              onChange={(e) => update("contactType", e.target.value)}
+              disabled={loading}
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+            >
+              <option value="">—</option>
+              <option value="customer service">خدمة العملاء</option>
+              <option value="sales">المبيعات</option>
+              <option value="technical support">الدعم الفنّي</option>
+              <option value="billing support">الفواتير</option>
+              <option value="reservations">الحجوزات</option>
+              <option value="emergency">الطوارئ</option>
+            </select>
+          </div>
+          {field("gbpProfileUrl", "رابط ملفّك على جوجل بزنس", {
+            type: "url",
+            placeholder: "https://maps.google.com/…",
+            hint: "افتح ملفّك على خرائط جوجل وانسخ الرابط",
+          })}
+          {/**
+            * **نطاقُ السعر بلغةٍ يفهمها** (خالد ١٩ سبتمبر ٢٠٢٦: «عاملينها $ دولار و$
+            * دولارين، وهذه المفروض تكون بطريقة يفهمها الـuser»).
+            *
+            * schema.org يريد `$`…`$$$$`، وصاحبُ المطعم لا يعرف هذا ولا يجب أن يتعلّمه.
+            * فالمعروضُ كلمةٌ والمخزَّنُ رمز.
+            */}
+          <div className="space-y-1.5">
+            <Label htmlFor="priceRange" className="text-sm">مستوى الأسعار</Label>
+            <select
+              id="priceRange"
+              value={form.priceRange}
+              onChange={(e) => update("priceRange", e.target.value)}
+              disabled={loading}
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+            >
+              <option value="">—</option>
+              <option value="$">💰 اقتصاديّ — في المتناول</option>
+              <option value="$$">💰💰 متوسّط</option>
+              <option value="$$$">💰💰💰 مرتفع</option>
+              <option value="$$$$">💰💰💰💰 فاخر</option>
+            </select>
+            <p className="text-xs text-muted-foreground">يظهر لجوجل مؤشّراً على مستوى أسعارك.</p>
+          </div>
+
+          {/* `sameAs` مصفوفةٌ في القاعدة — سطرٌ لكلّ رابطٍ لا نصٌّ مفصولٌ بفواصل. */}
+          <div className="space-y-1.5 lg:col-span-2">
+            <Label className="text-sm">{ar.profile.socialProfiles}</Label>
+            {sameAs.map((u, i) => (
+              <div key={i} className="flex gap-2">
+                <Input
+                  value={u}
+                  onChange={(e) => setSameAs((p) => p.map((v, k) => (k === i ? e.target.value : v)))}
+                  disabled={loading}
+                  dir="ltr"
+                  className="text-start"
+                  placeholder="https://instagram.com/…"
+                />
+                <Button type="button" variant="ghost" size="sm" disabled={loading}
+                  onClick={() => setSameAs((p) => p.filter((_, k) => k !== i))}>حذف</Button>
+              </div>
+            ))}
+            <Button type="button" variant="outline" size="sm" disabled={loading}
+              onClick={() => setSameAs((p) => [...p, ""])}>+ إضافة حساب</Button>
+          </div>
         </CardContent>
       </Card>
 

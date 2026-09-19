@@ -84,6 +84,7 @@ export const ar = {
     leads: "العملاء المحتملون",
     mySite: "تصميم الموقع",
     profile: "بيانات نشاطك",
+    documents: "وثائقك",
     settings: "الإعدادات",
     invoices: "الفواتير",
     support: "الدعم",

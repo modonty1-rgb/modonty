@@ -38,7 +38,7 @@ export function SubscriptionHealthCard({ subscriptions, payments, expiring }: Su
     {
       label: "Expiring in 7 days",
       value: expiring.in7Days,
-      href: "/clients?filter=expiring",
+      href: "/clients/segment/expiring-soon",
       icon: <Clock className="h-3.5 w-3.5 text-amber-500" />,
       valueColor: expiring.in7Days > 0 ? "text-amber-600" : "text-muted-foreground",
       dimWhenZero: true,

@@ -197,7 +197,7 @@ export interface ClientFormData {
   subscriptionStartDate?: Date | null;
   subscriptionEndDate?: Date | null;
   articlesPerMonth?: number;
-  subscriptionTierConfigId?: string | null;
+  // (سقط `subscriptionTierConfigId` — ١٩ سبتمبر ٢٠٢٦: الباقةُ من الطلب الساري.)
   subscriptionStatus?: SubscriptionStatus;
   isFeatured?: boolean; // featured/premium partner spotlight (admin toggle)
   isVerified?: boolean; // شهادة فحص الأوراق الرسميّة — مصدر شارة التوثيق على مدونتي

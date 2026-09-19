@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>أرشيف المنجز — 144 بنداً</title>
+<title>أرشيف المنجز — 153 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -132,7 +132,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 .hidden{display:none!important}
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
-<header class="top"><div class="wrap"><h1>أرشيف المنجز — 144 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
+<header class="top"><div class="wrap"><h1>أرشيف المنجز — 153 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
 <div class="tools"><input id="q" type="search" placeholder="ابحث في المنجز…" aria-label="بحث"></div></div></header>
 <main class="wrap"><section class="grp"><div class="grid"><article class="card" data-id="G11" data-sev="normal" data-who="c" data-tab="done" data-board="seo" data-apps="admin modonty" data-n="113" data-audit="pass">
   <div class="hd"><span class="num" title="رقم البند — قل «بند 113» في الشات">113</span><span class="id">G11</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند G11">⧉</button></div>
@@ -4025,6 +4025,123 @@ admin/components/admin/sidebar.tsx                       — رابط «معاي
 ٢٢ توكناً قيست: مطابقة قيمةً بقيمة ✓</pre>
 <p><b>يبقى مفتوحاً:</b> المصدر ما زال ملفَّين — مدونتي تكتب و<code>pay-stage</code> يُولَّد. الأصحّ يوماً
 ملفُّ توكناتٍ واحد يقرأ منه التطبيقان، وهو بندٌ أكبر من هذا ولم يُفتح بعد.</p></div></details>
+</article>
+<article class="card" data-id="CLIENTS-LIST-MONEY" data-sev="ok" data-who="c" data-tab="done" data-board="bugs" data-apps="admin">
+  <div class="hd"><span class="id">CLIENTS-LIST-MONEY</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CLIENTS-LIST-MONEY">⧉</button></div>
+  
+  <div class="t">صفحة كلّ العملاء — أُغلقت: ستّةُ بنودٍ ماليّة، وسبعةُ ملفّاتٍ ميّتة حُذفت</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag">عيوب وإصلاحات</span><span>١٩ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الدليل الخام (modonty_dev · ٤٦ عميلاً · ١٩ سبتمبر ٢٠٢٦): ‎١) page.tsx كان يمرّر tiers إلى ClientsTabs ولا يقبلها (TS2322 يكسر البِلد) ومعه استعلامٌ على جدول الباقات المتقاعد في كلّ فتحة —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>الدليل الخام (modonty_dev · ٤٦ عميلاً · ١٩ سبتمبر ٢٠٢٦):</b><br>‎١) <code>page.tsx</code> كان يمرّر <code>tiers</code> إلى <code>ClientsTabs</code> ولا يقبلها (<code>TS2322</code> يكسر البِلد) ومعه استعلامٌ على جدول الباقات المتقاعد في كلّ فتحة — سقط الاثنان، وأخطاءُ هذه الصفحة في <code>tsc</code> صارت صفراً.<br>‎٢) <code>NOT_INTERNAL</code> انتقل إلى داخل <code>expiringThisMonthWhere()</code>: كان العدّاد يعدّ حساباتِنا الداخليّة وقائمتُه لا تعدّها (٦=٦ بالصدفة وحدها، لأنّ الحسابين لا ينتهيان هذا الشهر).<br>‎٣) شريحةُ <b>Overdue</b>: <code>Overdue 4</code> وقائمةُ <code>segment/expired</code> ٤ صفوف — فيها مركز فريق الإغاثة (انتهى ٢٧ أغسطس) الّذي كان ساقطاً من الشاشة كلِّها، لأنّ تبويب <code>Expired</code> يقرأ <code>subscriptionStatus</code> ولا أحد يكتبها.<br>‎٤) عمود «This Month»: سقط احتياطيُّ <code>subscriptionTierConfig</code>، والحصّة من الطلب الساري وحده — <code>15% delivery</code> لم تتغيّر و<b>صفرُ صفٍّ</b> فقد رقمَه (<code>0/8</code>·<code>0/12</code>·<code>0/4</code>).<br>‎٥) عمود «Subscription Plan» في <code>export-actions.ts</code> صار من <code>CheckoutOrder.planName</code>: التصدير الحيّ ٤٦ صفّاً تطبع «الانطلاقة»/«الزخم» بدل قراءةِ الجدول المتقاعد.<br>‎٦) حُذفت سبعةُ ملفّات: <code>activate-client.ts</code> (بابُ تفعيلٍ قديم يكتب <code>subscriptionStartDate = new Date()</code> بلا <code>activeOrderId</code>) · <code>activate-client-button.tsx</code> · <code>access-state.tsx</code> · <code>welcome-section.tsx</code> · وثلاثةُ سكربتات فحصٍ مؤقّتة.<br><b>باقٍ خارج الصفحة:</b> <code>subscriptionTierConfig</code> لا يزال في ~١٥ ملفّاً أخرى — يُغلق مع <code>PAY-R6</code>.</div></details>
+</article>
+<article class="card" data-id="ADMIN-TSC-ZERO" data-sev="ok" data-who="c" data-tab="done" data-board="bugs" data-apps="admin">
+  <div class="hd"><span class="id">ADMIN-TSC-ZERO</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ADMIN-TSC-ZERO">⧉</button></div>
+  
+  <div class="t">بناءُ الأدمن كان مكسوراً بستّة أخطاء — <code>tsc</code> صفرٌ الآن</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag">عيوب وإصلاحات</span><span>١٩ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">قياسٌ حيّ بعد الإصلاح: sales-leads/new يرسم «الانطلاقة ٢٬٣٩٤» و«الزخم ٧٬١٩٤» · /migrations ما زال في السايدبار (علمُه مرفوع) · /clients ١٠ صفوف بلا خطأ.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><code>npx tsc --noEmit</code> في <code>admin/</code>: <b>٦ أخطاء → ٠</b>. ولا <code>ignoreBuildErrors</code> في <code>next.config</code>، فكان <code>next build</code> يسقط بها.<br>ثلاثةٌ خلفتها إسقاطاتُ الفلوس: <code>seed-integration-test.ts:395</code> يكتب <code>paymentStatus</code> الساقط · <code>seed-commercial-defaults.ts:169</code> يكتب <code>tier</code> الساقط · <code>lead-form.tsx</code> كان ينسخ <code>PlanOption</code> ومعها <code>tier</code>، فاختلف شكلُه عن منتِجه وسقط تمريرُه من صفحتين (<code>sales-leads/new</code> · <code>[id]/edit</code>) — صار يستورد النوعَ من <code>helpers/get-plans</code>.<br>واثنان بنيويّان: <code>sidebar.tsx</code> كان يقرأ <code>flag</code> بكاستٍ خارج النوع (أُعلن في <code>MenuItem</code> مع حارسِ القائمة الفرعيّة) · <code>client-form-schema.ts:260</code> كان يشتقّ نوعَ <code>superRefine</code> فيلتقط تحميلَه غير المتزامن ويطالب بـ<code>Promise&lt;void&gt;</code>.<br><b>قياسٌ حيّ بعد الإصلاح:</b> <code>sales-leads/new</code> يرسم «الانطلاقة ٢٬٣٩٤» و«الزخم ٧٬١٩٤» · <code>/migrations</code> ما زال في السايدبار (علمُه مرفوع) · <code>/clients</code> ١٠ صفوف بلا خطأ.</div></details>
+</article>
+<article class="card" data-id="ORDER-QUOTA-SYNC" data-sev="ok" data-who="c" data-tab="done" data-board="bugs" data-apps="admin">
+  <div class="hd"><span class="id">ORDER-QUOTA-SYNC</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند ORDER-QUOTA-SYNC">⧉</button></div>
+  
+  <div class="t">تعديلُ حصّة طلبٍ مفعَّل ما كان يصل إلى الكرت — صار يصل</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag">عيوب وإصلاحات</span><span>١٩ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">السبب: Client.articlesPerMonth نسخةُ عرضٍ كاتبُها واحدٌ فقط — activate-from-order.ts:163 عند التفعيل. وupdate-order.ts كان فيه صفرُ db.client.update. · الإصلاح: متى تغيّرت الحصّة، تُنقل إلى الكرت بشرط activeOrderId = هذا الطلب —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>الحقنُ الحيّ (modonty_dev · طلب <code>ORD-2026-00393</code> · حلويات النيل):</b> رُفعت الحصّة ٨ ← ٢٠ من <code>orders/[id]/edit</code>، فقال الطلب «٢٠/شهر × ٧ = ١٤٠» وبقي عمود «This Month» في <code>/clients</code> على <code>0/8</code>.<br><b>السبب:</b> <code>Client.articlesPerMonth</code> نسخةُ عرضٍ كاتبُها واحدٌ فقط — <code>activate-from-order.ts:163</code> عند التفعيل. و<code>update-order.ts</code> كان فيه صفرُ <code>db.client.update</code>.<br><b>الإصلاح:</b> متى تغيّرت الحصّة، تُنقل إلى الكرت بشرط <code>activeOrderId = هذا الطلب</code> — فتصحيحُ رقمٍ في طلبٍ قديمٍ في السجلّ لا يمسّ ما يحكم العميلَ اليوم — مع <code>revalidatePath('/clients')</code>.<br><b>بعد الإصلاح:</b> نفس الحقن → العمود <code>0/20</code> فوراً، والإرجاع إلى ٨ → <code>0/8</code>. البيانات رجعت لأصلها.</div></details>
+</article>
+<article class="card" data-id="TIER-RETIRE" data-sev="ok" data-who="c" data-tab="done" data-board="bugs" data-apps="admin">
+  <div class="hd"><span class="id">TIER-RETIRE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند TIER-RETIRE">⧉</button></div>
+  
+  <div class="t">الكتالوج القديم <code>SubscriptionTier</code> — ٦٠ سطراً ← <b>٥</b>، ولم يبقَ له قارئُ مال</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag">عيوب وإصلاحات</span><span>١٩ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">القياس (نفس الأمر، بعد إسقاط أسطر التعليق): admin 60 → 35 → 5 · shared · payment · modonty · console = صفر. · قبل اللمس: صفرُ عميلٍ من ٤٦ يعتمد على الاحتياطيّ ({&quot;totalClients&quot;:46,&quot;clientsWithoutQuota&quot;:0,&quot;clientsRelyingOnFallback&quot;:…</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>القياس (نفس الأمر، بعد إسقاط أسطر التعليق):</b> admin <code>60 → 35 → 5</code> · shared · payment · modonty · console = صفر.<br><b>قبل اللمس:</b> صفرُ عميلٍ من ٤٦ يعتمد على الاحتياطيّ (<code>{"totalClients":46,"clientsWithoutQuota":0,"clientsRelyingOnFallback":0,"tierConfigRows":4}</code>).<br><b>ما سقط:</b> ستّةُ احتياطيّاتِ حصّة (<code>?? subscriptionTierConfig?.articlesPerMonth</code>) في البريفات وتحليلات العميل ومؤشّر التسليم وتبويباته · أربعةُ أسماءِ باقةٍ للعرض صارت من الطلب (<code>sales-report:225</code> من الطلب المؤسِّس · <code>suspend/page.tsx</code> من الطلب الساري · <code>plan-invoice-from-order:95</code> · وربطُ الكتالوج في <code>create-client</code>) · ومجلّد <code>subscription-tiers/</code> كلُّه (بلا مستهلكٍ واحد) · وأربعةُ حواملَ في المخطَّطات والأنواع.<br><b>الباقي خمسةُ أسطرٍ مشروعة:</b> <code>database-health</code> يعدّ صفوفَ الجداول، و<code>api/dev/rebuild-orders</code> يقرأ الجدولَ القديم بوصفه <b>مصدرَ الترحيل</b> ويرفض أيّ قاعدةٍ غير <code>modonty_dev</code>.<br><b>قياسٌ حيّ بعد الإسقاط:</b> صفحة الإيقاف ٤٤ صفّاً تطبع «الانطلاقة/الزخم» · تقرير المبيعات يرسم ١٥٩٬٥١٧ و٣٩٬٦٨٥ بلا خطأ · البريفات ١٥ صفّاً · صفحة العميل <code>0/8 · 3/8 · 1/8</code>.<br><b>ما لم يُنفَّذ بعد:</b> حذفُ الإنم والجدول والحقلين من السكيما — يحتاج ترحيلاً ويُنفَّذ بأمر خالد.</div></details>
+</article>
+<article class="card" data-id="DASH-DEAD-FILTER" data-sev="ok" data-who="c" data-tab="done" data-board="bugs" data-apps="admin">
+  <div class="hd"><span class="id">DASH-DEAD-FILTER</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند DASH-DEAD-FILTER">⧉</button></div>
+  
+  <div class="t">الداشبورد: رابطا تنبيهٍ يَعِدان بفلترةٍ لا تقع</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag">عيوب وإصلاحات</span><span>١٩ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">مقيسٌ حيّاً: فتحُ الرابط يعرض Clients (46) وAll 46 — أي القائمةَ كاملةً. · الإصلاح: «Expiring soon» ← /clients/segment/expiring-soon (نفس نافذة السبعة أيّام ونفس استثناء الحسابات الداخليّة) — الكرت يقول ٣ والقائمة تعرض ٣.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><code>/clients?filter=expiring</code> و<code>?filter=at-limit</code> في سبعة مواضعَ بأربعة ملفّات — و<code>clients/page.tsx</code> لا يقرأ <code>filter</code> أصلاً (يقرأ hasArticles · createdFrom/To · min/maxArticleCount). <b>مقيسٌ حيّاً:</b> فتحُ الرابط يعرض <code>Clients (46)</code> و<code>All 46</code> — أي القائمةَ كاملةً.<br><b>الإصلاح:</b> «Expiring soon» ← <code>/clients/segment/expiring-soon</code> (نفس نافذة السبعة أيّام ونفس استثناء الحسابات الداخليّة) — الكرت يقول ٣ والقائمة تعرض ٣. و«At article limit» ← <code>/clients</code> بلا وعدِ فلترة: لا سيجمنت له، والقائمةُ العامّة أصدقُ من باراميترٍ لا يُقرأ.</div></details>
+</article>
+<article class="card" data-id="TIER-SCHEMA-DROP" data-sev="ok" data-who="c" data-tab="done" data-board="bugs" data-apps="admin">
+  <div class="hd"><span class="id">TIER-SCHEMA-DROP</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند TIER-SCHEMA-DROP">⧉</button></div>
+  
+  <div class="t">الكتالوج القديم سقط من السكيما — الإنم والجدول وحقلا الكرت</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag">عيوب وإصلاحات</span><span>١٩ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">ما حُذف: enum SubscriptionTier · model SubscriptionTierConfig (subscription_tier_configs) · Client.subscriptionTierConfigId وعلاقتُه ClientTierConfig — ٧٢٩ بايتاً من schema.prisma.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>ما حُذف:</b> <code>enum SubscriptionTier</code> · <code>model SubscriptionTierConfig</code> (<code>subscription_tier_configs</code>) · <code>Client.subscriptionTierConfigId</code> وعلاقتُه <code>ClientTierConfig</code> — ٧٢٩ بايتاً من <code>schema.prisma</code>.<br><b>قياسُ الإنتاج قبل الحذف (قراءةٌ فقط على <code>modonty</code>):</b> <code>{clients:42, clientsWithNullQuota:0, clientsLosingQuotaDisplay:0, tierRows:4}</code> — فلا عميلَ واحدٌ يأخذ حصّتَه من الجدول.<br><b>ولا بيانات تضيع:</b> توثيق Prisma للمونغو — «If a model or field is not present in the Prisma schema, it is ignored»، و<code>Prisma Migrate is not supported for MongoDB</code>. المجموعةُ وقيمُ <code>subscriptionTierConfigId</code> باقيةٌ في المستندات، مهجورة.<br><b>والترحيلُ لم يفقد مصدرَه:</b> <code>rebuild-orders/plan.ts</code> صار يقرأ الجدولَ المهجور خامّاً (<code>$runCommandRaw</code> على <code>subscription_tier_configs</code> و<code>clients</code>) — فيبقى قادراً على العمل على الإنتاج. <b>مقيسٌ حيّاً بعد الحذف:</b> <code>GET /api/dev/rebuild-orders → 200 · planned: 46 · «شركة جبر سيو» ← «الزخم»</code>.<br><b>وبعد <code>prisma generate</code> (نجح بعد إيقاف السيرفرين — EPERM):</b> ثماني صفحاتٍ أدمن <code>200</code> ونظيفة (clients · suspend · sales-report · database · migrations · briefs · الرئيسيّة · segment/expired)، والكونسول <code>200</code> بصفر خطأٍ في صفحته.<br><b>و<code>tsc --noEmit</code> على المشاريع الأربعة: <code>admin 0 · console 0 · modonty 0 · payment 0</code>.</b> وكشف ثلاثةً لا علاقةَ لها بالحذف، أُصلحت: <code>my-documents.tsx:123</code> كان <code>return toast.error(...)</code> داخل <code>startTransition</code> فتصير الدالّة <code>Promise&lt;string|number&gt;</code> · <code>mobile/v1/subscription/route.ts:52</code> يمرّر <code>CheckoutOrder.currency</code> (نصّ) إلى دالّةٍ تقبل «SAR|EGP» — صار بحارسٍ يُسقط المبلغَ بدل طبعِه برمزٍ مُخمَّن · و<code>modonty/.next/dev/types/validator.ts</code> ملفٌّ مولَّدٌ <b>تالف</b> (سطر ١٠٧٠ ذيلُ كتلةٍ نُسخ فوقها جزئيّاً) — حُذف فرجع صفراً.</div></details>
+</article>
+<article class="card" data-id="CLIENTS-DEADCODE" data-sev="ok" data-who="c" data-tab="done" data-board="bugs" data-apps="admin">
+  <div class="hd"><span class="id">CLIENTS-DEADCODE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند CLIENTS-DEADCODE">⧉</button></div>
+  
+  <div class="t">جردُ مجلّد العملاء — ١٤ ملفّاً ميّتاً حُذفت (٤٣ كيلوبايت)</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag">عيوب وإصلاحات</span><span>١٩ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">الطريقة: مسحٌ آليٌّ لـ148 ملفّاً في clients/ عبر التطبيقات الخمسة، ثمّ فحصٌ ثانٍ بأسماء الصادرات — لأنّ مطابقةَ مسار الاستيراد وحدَها تكذب. · ما كشفه الفحصُ الثاني: rebake-client-site-canonicals.ts بدا يتيماً وهو حيٌّ —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>الطريقة:</b> مسحٌ آليٌّ لـ<code>148</code> ملفّاً في <code>clients/</code> عبر التطبيقات الخمسة، ثمّ <b>فحصٌ ثانٍ بأسماء الصادرات</b> — لأنّ مطابقةَ مسار الاستيراد وحدَها تكذب.<br><b>ما كشفه الفحصُ الثاني:</b> <code>rebake-client-site-canonicals.ts</code> بدا يتيماً وهو حيٌّ — يُستورَد <b>ديناميكيّاً</b> في <code>update-client.ts:148</code> (<code>await import("./rebake-client-site-canonicals")</code>). و<code>helpers/client-seo-config.ts</code> (٤٤ بايتاً) بدا حيّاً وهو ميّت: برميلٌ <code>export * from "./client-seo-config/index"</code> لا يستورده أحد — الثلاثةُ يستوردون من المجلّد مباشرةً.<br><b>المحذوف (صفرُ إشارةٍ لأسمائها في ٥ تطبيقات · وصفرُ <code>export default</code>):</b> <code>client-form-header</code> · <code>client-verification-modal</code> · <code>social-profiles-input</code> · <code>use-client-media-modal</code> · ستُّ أقسامِ نموذجٍ قديمة (<code>address</code> · <code>business</code> · <code>legal</code> · <code>options</code> · <code>subscription</code> · <code>section-wrapper</code>) · <code>client-seo-config.ts</code> · <code>client-seo-group-scores</code> · <code>sales-scope</code> · <code>client-delivery-metrics</code> — <b>٤٤٬٦٢٦ بايتاً</b>.<br><b>بعد الحذف:</b> <code>tsc admin = 0</code> · ١١ صفحةَ عملاءٍ <code>200</code> ونظيفة (القائمة · التعديل · التفصيل · الإيقاف · التقرير · التفعيل · السيو · السيجمنت · بيانات الدخول · النشر على موقعه · الوثائق) · وإعادةُ المسح: <code>134 ملفّاً · يتيمٌ واحد</code> وهو الحيُّ ديناميكيّاً.</div></details>
+</article>
+<article class="card" data-id="SERVICE-CLOCK" data-sev="ok" data-who="c" data-tab="done" data-board="bugs" data-apps="admin console">
+  <div class="hd"><span class="id">SERVICE-CLOCK</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند SERVICE-CLOCK">⧉</button></div>
+  
+  <div class="t">ساعةُ الاشتراك تبدأ بأوّل مقال — نُفِّذت في ستّة مواضع</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag app-console">console</span><span class="tag">عيوب وإصلاحات</span><span>١٩ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">قرار خالد (١٩ سبتمبر ٢٠٢٦): «المدّة تبدأ بعد أوّل أرتيكل». وكانت تُحسب من يوم التفعيل في موضعين ومن يوم فتح الحساب في الترحيل. · ما بُني: lib/orders/start-service-clock.ts يختم Article.firstDeliveredAt وCheckoutOrder.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>قرار خالد (١٩ سبتمبر ٢٠٢٦):</b> «المدّة تبدأ بعد أوّل أرتيكل». وكانت تُحسب من يوم التفعيل في موضعين ومن يوم فتح الحساب في الترحيل.<br><b>ما بُني:</b> <code>lib/orders/start-service-clock.ts</code> يختم <code>Article.firstDeliveredAt</code> و<code>CheckoutOrder.serviceStartedAt</code> مرّةً واحدة عند تسليم المقال (<code>gated-transition.ts:206</code>) — والحقلُ الأوّل كان في السكيما <b>بلا كاتبٍ واحد</b>. ثمّ وُحِّدت الصيغة: <code>recompute-subscription-end</code> · <code>get-subscription-standing</code> · <code>orders/page.tsx</code> · <code>renewals-due</code> · والترحيل (<code>serviceStartedAt = MIN(datePublished)</code> بدل حقل الكرت القديم).<br><b>الترحيل نُفِّذ على dev:</b> <code>clean:true · created:47 · failed:[] · verify{clients:47, orders:47, ordersLinked:47, clientsPointing:47}</code> — ٢٦ عميلاً بدأت خدمتُهم و٢١ لم تبدأ.<br><b>الشاشات تتّفق عدداً بعدد:</b> Overdue <code>1</code> = segment/expired <code>1</code> · Renewals <code>3</code> = segment/expiring-month <code>3</code>. وكانت ٤ و٦ بالساعة القديمة — أي اشتراكاتٌ تُعدّ منتهيةً ولم تبدأ أصلاً.<br><b>و<code>tsc</code> أمسك أربعةَ قرّاءٍ باقين على <code>activatedAt</code></b> فصُحِّحوا؛ والنتيجة <code>admin 0 · console 0 · modonty 0 · payment 0</code>، وعشرُ صفحاتِ أدمن <code>200</code> ونظيفة، وكونسولُ العميل يقول «الانطلاقة · ٢٬٣٩٤ ر.س · 6 شهر + 1 هديّة · نشط · مدفوع».</div></details>
+</article>
+<article class="card" data-id="PROD-MIGRATION-BLOCKED" data-sev="ok" data-who="c" data-tab="done" data-board="prod" data-apps="admin">
+  <div class="hd"><span class="id">PROD-MIGRATION-BLOCKED</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PROD-MIGRATION-BLOCKED">⧉</button></div>
+  
+  <div class="t">ترحيلُ الطلبات صار إضافيّاً — لا يمسح شيئاً، والمانعُ على الإنتاج سقط</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">هادئ</span><span class="tag app-admin">admin</span><span class="tag">إنتاج</span><span>١٩ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">أصلُ المشكلة: الترحيلُ كان يمسح الطلباتِ والفواتير والمعاملات كلَّها ثمّ يبني، وحارسُه يمنعه متى وُجد طلبٌ واحد. وقُرئ الإنتاج فوُجدت فيه ستّةُ طلبات —</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><b>أصلُ المشكلة:</b> الترحيلُ كان يمسح الطلباتِ والفواتير والمعاملات كلَّها ثمّ يبني، وحارسُه يمنعه متى وُجد طلبٌ واحد. وقُرئ الإنتاج فوُجدت فيه ستّةُ طلبات — لا من رفعنا، بل من <b>صفحة الدفع المنشورة منذ ١٥ سبتمبر</b>: اثنان فحصٌ داخليّ (<code>livetest-sa@modonty.test</code> · <code>livetest-eg@modonty.test</code>) و<b>أربعةٌ زوّارٌ حقيقيّون</b> (<code>fatenhassanin96@gmail.com</code> ×٢ · <code>superharfoush@yahoo.com</code> · <code>barkleyjakeem@gmail.com</code>) فتحوا الصفحة ولم يُكملوا (<code>clientId:null · paidAt:null</code>). فالحارسُ كان سيرفض الترحيلَ هناك للأبد، ويبقى ٤٢ عميلاً بلا طلبٍ ساري.<br><b>الحلّ المنفَّذ:</b> سقطت كتلةُ المسح الخمسة وصفعُ <code>activeOrderId = null</code>؛ صار الترحيل يقرأ مَن له طلبٌ ويتخطّاه ويبني للباقين. وسقط معه <code>orders > 0 → already-done</code> من الحارس — سببُه كان المسح. ومعيارُ النجاح صار «لا عميلَ بلا طلبٍ ساري» بدل <code>orders === clients</code> (طلباتُ الزوّار بلا عميل، والعميلُ قد يكون له طلبان).<br><b>والشاشةُ تقول الحقيقة:</b> الزرُّ «ابنِ الطلبات الناقصة (47 عميلاً)» بلا لونٍ أحمر، والتحذير «يُبنى طلبٌ لكلّ عميلٍ لا طلبَ له — ولا يُمسح شيء».<br><b>الدليل الحيّ:</b> <code>{"phase":"skip","total":47} · {"phase":"build","total":0,"skipped":47} · {"result","clean":true,"created":0,"failed":[],"clientsWithoutPointer":0}</code> — إعادةُ التشغيل بلا أثر. و<code>tsc</code>: <code>admin 0 · console 0 · modonty 0 · payment 0</code>.</div></details>
 </article></div></section></main>
 <script>
 (() => { const q = document.getElementById('q'); const cards = [...document.querySelectorAll('.card')];

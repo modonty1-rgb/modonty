@@ -42,7 +42,6 @@ export async function getDatabaseHealth(): Promise<DatabaseHealth> {
     leads,
     campaigns,
     settings,
-    subscriptionTiers,
   ] = await Promise.all([
     db.user.count(),
     db.client.count(),
@@ -66,7 +65,6 @@ export async function getDatabaseHealth(): Promise<DatabaseHealth> {
     db.leadScoring.count(),
     db.campaignTracking.count(),
     db.settings.count(),
-    db.subscriptionTierConfig.count(),
   ]);
 
   const tables: TableInfo[] = [
@@ -92,7 +90,6 @@ export async function getDatabaseHealth(): Promise<DatabaseHealth> {
     { name: "leads", label: "Leads", count: leads, group: "Analytics" },
     { name: "campaigns", label: "Campaigns", count: campaigns, group: "Analytics" },
     { name: "settings", label: "Settings", count: settings, group: "System" },
-    { name: "subscriptionTiers", label: "Subscription Plans", count: subscriptionTiers, group: "System" },
   ];
 
   const totalRecords = tables.reduce((sum, t) => sum + t.count, 0);

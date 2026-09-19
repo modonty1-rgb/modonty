@@ -160,9 +160,14 @@ export function RebuildOrdersPanel({ plan }: { plan: RebuildPlan }) {
         </div>
       )}
 
-      <Button variant="destructive" onClick={run} disabled={phase === "running"} className="w-full sm:w-auto">
+      {/**
+        * الزرُّ لم يعد مدمّراً (١٩ سبتمبر ٢٠٢٦): الترحيلُ صار إضافيّاً — لا يمسح طلباً ولا
+        * فاتورة، ويتخطّى كلَّ عميلٍ له طلبٌ بالفعل. فسقط عنه `variant="destructive"` ولفظُ
+        * «امسح»: زرٌّ أحمرُ يقول «امسح» وهو لا يمسح يُعلّم الموظّفَ ألّا يصدّق التحذيرات.
+        */}
+      <Button onClick={run} disabled={phase === "running"} className="w-full sm:w-auto">
         {phase === "running" && <Loader2 className="me-2 size-4 animate-spin" aria-hidden />}
-        {phase === "running" ? "جارٍ..." : `امسح وابنِ ${plan.clients} طلباً`}
+        {phase === "running" ? "جارٍ..." : `ابنِ الطلبات الناقصة (${plan.clients} عميلاً)`}
       </Button>
 
       {phase === "running" && progress && (

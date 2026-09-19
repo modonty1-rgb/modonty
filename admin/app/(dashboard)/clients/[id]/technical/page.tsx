@@ -143,7 +143,7 @@ export default async function ClientTechnicalPage({ params }: { params: Promise<
   return (
     <div dir="rtl" className="mx-auto max-w-4xl px-4 sm:px-6 pt-4 sm:pt-6 pb-24 space-y-4">
 
-      {/* ── Header ── */}
+      {/* -- Header -- */}
       <div className="flex items-center gap-3">
         <Link href={`/clients/${id}`}>
           <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -159,7 +159,7 @@ export default async function ClientTechnicalPage({ params }: { params: Promise<
         </div>
       </div>
 
-      {/* ── Score head ── */}
+      {/* -- Score head -- */}
       <div className="rounded-2xl border bg-card p-5">
         <div className="flex flex-wrap items-center gap-5">
           <div className="relative h-[132px] w-[132px] shrink-0">
@@ -190,7 +190,7 @@ export default async function ClientTechnicalPage({ params }: { params: Promise<
         </div>
       </div>
 
-      {/* ── Roadmap ── */}
+      {/* -- Roadmap -- */}
       {gaps.length > 0 ? (
         <div className="rounded-2xl border bg-blue-50 p-5 dark:bg-blue-950/30">
           <h3 className="text-[15px] font-extrabold">الطريق من {overall}% إلى 100%</h3>
@@ -220,7 +220,7 @@ export default async function ClientTechnicalPage({ params }: { params: Promise<
         </div>
       )}
 
-      {/* ── Data gaps (prominent) ── */}
+      {/* -- Data gaps (prominent) -- */}
       {dataGaps.length > 0 && (
         <section>
           <div className="mx-1 mb-3 mt-6 flex items-center gap-2.5">
@@ -237,7 +237,7 @@ export default async function ClientTechnicalPage({ params }: { params: Promise<
         </section>
       )}
 
-      {/* ── JSON-LD structural problem — kept in front ── */}
+      {/* -- JSON-LD structural problem — kept in front -- */}
       {systemFrontGaps.length > 0 && (
         <section>
           <div className="mx-1 mb-3 mt-6 flex items-center gap-2.5">
@@ -260,7 +260,7 @@ export default async function ClientTechnicalPage({ params }: { params: Promise<
         </section>
       )}
 
-      {/* ── Other minor system gaps (collapsed) ── */}
+      {/* -- Other minor system gaps (collapsed) -- */}
       {systemRestGaps.length > 0 && (
         <section className="mt-4">
           <details className="rounded-xl border bg-card">
@@ -277,7 +277,7 @@ export default async function ClientTechnicalPage({ params }: { params: Promise<
         </section>
       )}
 
-      {/* ── Passed ── */}
+      {/* -- Passed -- */}
       {passed.length > 0 && (
         <section>
           <div className="mx-1 mb-3 mt-6 flex items-center gap-2.5">
@@ -306,7 +306,7 @@ export default async function ClientTechnicalPage({ params }: { params: Promise<
         </section>
       )}
 
-      {/* ── Raw data ── */}
+      {/* -- Raw data -- */}
       <div className="mx-1 mb-3 mt-6 flex items-center gap-2.5">
         <h2 className="text-base font-extrabold">البيانات الفعلية للصفحة</h2>
         <span className="rounded-full border bg-card px-2.5 py-0.5 text-xs font-bold text-muted-foreground">
@@ -338,7 +338,7 @@ export default async function ClientTechnicalPage({ params }: { params: Promise<
   );
 }
 
-// ── Sub-components ───────────────────────────────────────────────────────────
+// -- Sub-components -----------------------------------------------------------
 
 function ScoreBar({ label, score }: { label: string; score: number }) {
   const t = tone(score);

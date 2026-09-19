@@ -182,6 +182,7 @@ export function ManualOrderForm({
   const [salesRepId, setSalesRepId] = useState(prefill?.salesRepId ?? "");
   const [paidAt, setPaidAt] = useState("");
   const [notes, setNotes] = useState("");
+  const [isInternal, setIsInternal] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitTried, setSubmitTried] = useState(false);
   const touch = (k: string) => setTouched((prev) => ({ ...prev, [k]: true }));
@@ -269,6 +270,7 @@ export function ManualOrderForm({
         status: "PAID",
         paidAt: paidAt || undefined,
         notes: notes || undefined,
+        isInternal,
         leadId,
       });
 
@@ -442,12 +444,21 @@ export function ManualOrderForm({
             <Input className="h-8 text-xs" value={buyerPhone} onChange={(e) => setBuyerPhone(e.target.value)} onBlur={() => touch("buyerPhone")} placeholder={market === "EG" ? "01012345678" : "0501234567"} />
           </Field>
           {/**
-            * نوع النشاط لا اسمه (خالد ١٥ سبتمبر ٢٠٢٦): وصفٌ حرّ يكتبه الموظّف ليعرف مع من
-            * يتعامل. و**الصناعة المعتمدة** تُحدّد عند تأسيس العميل من جدول `Industry` — لا هنا،
-            * لأنّ صفحة الدفع لا تسأل الزائر صناعته، فطلبها هنا يجعل المنفذَين يكتبان حقولاً مختلفة.
+            * **اسمُ النشاط لا وصفُه** (مقيسٌ حيّاً ١٩ سبتمبر ٢٠٢٦).
+            *
+            * كان الحقلُ «نوع النشاط» بمثال «عيادة أسنان» — وصفاً حرّاً للموظّف (خالد ١٥
+            * سبتمبر). لكنّه يُخزَّن في `businessName`، و`activateFromOrder` يقرأ هذا العمود
+            * **اسماً للعميل** ومنه يُشتقّ رابطُه العامّ. فطلبٌ يدويٌّ لـ«حلويات النيل» فتح
+            * حساباً اسمُه «محل حلويات» ورابطُه `/clients/محل-حلويات`.
+            *
+            * وصفحةُ الدفع تكتب في العمود نفسِه **الاسمَ** («اسم النشاط — اختياري»،
+            * `CheckoutForm.tsx:364`). فالعمودُ كان بمعنيين، والشاذُّ هذا الحقل.
+            *
+            * وقرارُ ١٥ سبتمبر محفوظ: **الصناعةُ المعتمدة** لا تُسأل هنا — تُحدَّد عند تأسيس
+            * العميل من جدول `Industry`، لأنّ صفحة الدفع لا تسأل الزائر صناعته.
             */}
-          <Field label="نوع النشاط">
-            <Input className="h-8 text-xs" value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="عيادة أسنان" />
+          <Field label="اسم النشاط">
+            <Input className="h-8 text-xs" value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="حلويات النيل — يُكتب على حساب العميل" />
           </Field>
           <Field label="المندوب">
             <Select value={salesRepId} onValueChange={setSalesRepId}>
@@ -483,6 +494,29 @@ export function ManualOrderForm({
             placeholder="مثلاً: حوّل نصف المبلغ والباقي بعد أسبوع"
           />
         </Field>
+
+        {/**
+          * **حسابٌ لنا** — مدونتي · جبر · بسيطة (خالد ١٩ سبتمبر ٢٠٢٦: «الحسابات اللي
+          * تخصّنا نحن نوديها من هنا لصفحة الطلب»).
+          *
+          * كان يُفرض من شاشة إنشاءٍ منفصلة، فصار لميلاد العميل بابان يفترقان أوّلَ ما
+          * يُضاف حقل. والوسمُ هنا ينزل على الطلب ويُنسخ إلى الكرت لحظةَ التفعيل، فيخرج
+          * الحسابُ من تقارير الإيراد كما كان يخرج — والبابُ واحد.
+          */}
+        <label className="flex cursor-pointer items-start gap-2 rounded-md border border-dashed px-3 py-2">
+          <input
+            type="checkbox"
+            checked={isInternal}
+            onChange={(e) => setIsInternal(e.target.checked)}
+            className="mt-0.5 size-4 accent-primary"
+          />
+          <span className="text-xs">
+            <span className="font-medium">حساب لنا — لا بيع</span>
+            <span className="mt-0.5 block text-[11px] text-muted-foreground">
+              مدونتي · جبر · بسيطة. يخرج من تقارير الإيراد، ويُفعَّل من الطابور كأيّ طلب.
+            </span>
+          </span>
+        </label>
       </Section>
 
       <div className="flex items-center gap-3">

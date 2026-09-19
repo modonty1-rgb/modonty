@@ -8,6 +8,7 @@ import { ArticleStatus } from "@prisma/client";
 import { buildArticleUrlForArticle } from "@/lib/seo/url-builders";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
+import { startServiceClockOnFirstDelivery } from "@/lib/orders/start-service-clock";
 import { logAction } from "@/lib/audit/log-action";
 import type { ValidationResult } from "@/lib/seo/article-validator";
 import { regenerateJsonLd, needsRegeneration } from "@/lib/seo/jsonld-storage";
@@ -199,6 +200,10 @@ export async function gatedTransitionAction(
       where: { id: articleId },
       data: { status: ArticleStatus.AWAITING_APPROVAL },
     });
+
+    // وهذا هو وصولُ المقال إلى العميل: منه تبدأ ساعةُ اشتراكه إن كان أوّلَ مقالٍ يصله
+    // (خالد ١٩ سبتمبر ٢٠٢٦: «المدّة تبدأ بعد أوّل أرتيكل»). والدالّةُ تُكتب مرّةً واحدة.
+    await startServiceClockOnFirstDelivery(articleId);
 
     // This one passed the SEO gate and the YMYL check — worth recording who put it through.
     await logAction("article.transition", {

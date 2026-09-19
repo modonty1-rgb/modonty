@@ -7,11 +7,10 @@ import { db } from "@/lib/db";
 import { checkAdmin } from "@/lib/admin-guard";
 import { getClients, getClientsStats, ClientFilters } from "./actions/clients-actions";
 import { ClientsHeaderWrapper } from "./components/clients-header-wrapper";
-import { getTierConfigs } from "../subscription-tiers/actions/tier-actions";
 import { ClientsTabs } from "./components/clients-tabs";
 import { RegenerateAllSeoButton } from "./components/regenerate-all-seo-button";
 import { getPlatformDefaults } from "../settings/defaults/actions/defaults-actions";
-import { expiringThisMonthWhere } from "./segment/segments";
+import { expiredByDateWhere, expiringThisMonthWhere } from "./segment/segments";
 
 function TableSkeleton() {
   return (
@@ -38,26 +37,34 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
   //
   // والاستدعاءُ وموضعُه في التفكيك يُحذفان معاً أو لا يُحذفان: إسقاطُ أحدهما وحده
   // يزيح كلَّ ما بعده بصمت — وهو ما أنتج «allClientEmails is not iterable» من قبل.
-  const [clients, stats, tiers, defaults, expiringThisMonth] = await Promise.all([
+  //
+  // وسقط `getTierConfigs()` (١٩ سبتمبر ٢٠٢٦): كان يُستعلَم في كل فتحةٍ للصفحة عن جدول
+  // الباقات المتقاعد، ونتيجتُه تُمرَّر إلى `ClientsTabs` — وهو لم يعد يقبلها منذ سقوط
+  // `TierDistribution`، فكان الاستعلامُ ثمناً يُدفع في كل زيارة لقيمةٍ لا يقرؤها أحد،
+  // وكسَرَ `tsc` معه (TS2322 على الخاصّيّة الزائدة). وهو المستهلك الوحيد للدالّة.
+  const [clients, stats, defaults, expiringThisMonth, overdueRenewals] = await Promise.all([
     getClients(filters),
     getClientsStats(),
-    getTierConfigs(),
     getPlatformDefaults(),
     // Renewals due this calendar month — money queue (same where as the segment list).
     db.client.count({ where: expiringThisMonthWhere() }),
+    // ومَن مضت نهايتُه فعلاً: تبويبُ `Expired` يقرأ `subscriptionStatus` ولا أحد يقلبها،
+    // فيقول صفراً بينما أربعةٌ متأخّرون — وواحدٌ منهم انتهى قبل هذا الشهر فلا يلتقطه
+    // عدّادُ التجديدات أيضاً، فكان ساقطاً من الشاشة كلِّها.
+    db.client.count({ where: expiredByDateWhere() }),
   ]);
 
   return (
-    <ClientsHeaderWrapper clientCount={clients.length} stats={stats} expiringThisMonth={expiringThisMonth}>
+    <ClientsHeaderWrapper
+      clientCount={clients.length}
+      stats={stats}
+      expiringThisMonth={expiringThisMonth}
+      overdueRenewals={overdueRenewals}
+    >
       <div className="mb-3 flex justify-end">
         <RegenerateAllSeoButton clients={clients} />
       </div>
-      <ClientsTabs
-        clientsCount={clients.length}
-        clients={clients}
-        defaultLogoUrl={defaults.LOGO}
-        tiers={tiers}
-      />
+      <ClientsTabs clientsCount={clients.length} clients={clients} defaultLogoUrl={defaults.LOGO} />
     </ClientsHeaderWrapper>
   );
 }

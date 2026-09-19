@@ -10,6 +10,7 @@ import {
   UserPlus,
   CalendarCheck,
   Building2,
+  FileText,
   Sparkles,
   HelpCircle,
   MessageCircleQuestion,
@@ -112,6 +113,8 @@ export function buildNavGroups(counts: NavCounts): NavGroupConfig[] {
           badgeLabel: counts.isYmyl ? "YMYL" : undefined,
           badgeVariant: counts.isYmyl ? (counts.ymylComplete ? "success" : "danger") : undefined,
         },
+        // وثائقُه بجانب بياناته: كلاهما «مَن أنا» — والوثيقةُ تثبت ما تقوله البيانات.
+        { href: "/dashboard/documents", icon: FileText, label: ar.nav.documents },
         { href: "/dashboard/seo", icon: Sparkles, label: ar.nav.seo },
         {
           href: "/dashboard/page-faq",
