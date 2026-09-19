@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>بعد الرفع — قائمةُ التنفيذ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f4f1; --card:#fff; --ink:#15151a; --muted:#6b6b76; --line:#e2e2dd; --sand:#efefe9;
+    --go:#0f6b45; --go-bg:#e6f4ec; --go-line:#9ed4ba;
+    --key:#1d4ed8; --key-bg:#e9effd; --key-line:#a9c0f7;
+    --warn:#8a5a00; --warn-bg:#fcf3e1; --warn-line:#e0bd76;
+    --stop:#b3271e; --stop-bg:#fdecea; --stop-line:#eda9a3;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#131316; --card:#1d1d21; --ink:#ededf1; --muted:#9e9eaa; --line:#32323a; --sand:#232329;
+      --go:#63d69c; --go-bg:#12301f; --go-line:#2b6b48;
+      --key:#8fb1ff; --key-bg:#161f38; --key-line:#2f4482;
+      --warn:#f0c264; --warn-bg:#33280f; --warn-line:#6d5622;
+      --stop:#ff8b80; --stop-bg:#37201d; --stop-line:#7a3b35;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.8 "Tajawal",-apple-system,"Segoe UI",system-ui,sans-serif;padding:26px 16px 90px}
+  .wrap{max-width:900px;margin:0 auto}
+  .eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.11em;color:var(--muted);margin:0 0 6px}
+  h1{font-size:clamp(25px,4.6vw,35px);font-weight:900;margin:0 0 10px;line-height:1.25}
+  .lede{font-size:17px;color:var(--muted);margin:0;max-width:64ch}
+  .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:22px 0 6px;
+    padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);
+    position:sticky;top:10px;z-index:5}
+  .bar b{font-size:15px}
+  .meter{flex:1;min-width:140px;height:8px;border-radius:99px;background:var(--sand);overflow:hidden}
+  .meter i{display:block;height:100%;width:0;background:var(--go);transition:width .25s}
+  .btn{border:1px solid var(--line);background:var(--sand);color:var(--ink);border-radius:9px;
+    padding:6px 11px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+  .btn:hover{background:var(--card)}
+  .phase{margin:38px 0 10px;font-size:13px;font-weight:900;letter-spacing:.06em;color:var(--muted)}
+  .step{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:16px 18px;margin:12px 0}
+  .step.done{opacity:.55}
+  .head{display:flex;align-items:flex-start;gap:11px}
+  .head input{width:20px;height:20px;margin-top:5px;accent-color:var(--go);cursor:pointer;flex:none}
+  .title{font-size:17px;font-weight:800;line-height:1.5;margin:0}
+  .step.done .title{text-decoration:line-through}
+  .who{font-size:11.5px;font-weight:800;border-radius:99px;padding:2px 9px;white-space:nowrap;
+    border:1px solid var(--line);background:var(--sand);color:var(--muted);margin-inline-start:6px}
+  .who.k{background:var(--key-bg);border-color:var(--key-line);color:var(--key)}
+  p{margin:9px 0 0;font-size:14.5px;color:var(--muted)}
+  p.ink{color:var(--ink)}
+  pre{margin:10px 0 0;background:var(--sand);border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;overflow:auto;font:13px/1.75 ui-monospace,Menlo,Consolas,monospace;direction:ltr;text-align:left}
+  code{background:var(--sand);border:1px solid var(--line);border-radius:6px;padding:1px 5px;
+    font:13px ui-monospace,Menlo,Consolas,monospace;direction:ltr;display:inline-block}
+  .pass{border-inline-start:3px solid var(--go-line);background:var(--go-bg);color:var(--go);
+    border-radius:0 8px 8px 0;padding:8px 11px;margin:10px 0 0;font-size:14px;font-weight:700}
+  .risk{border-inline-start:3px solid var(--stop-line);background:var(--stop-bg);color:var(--stop);
+    border-radius:0 8px 8px 0;padding:8px 11px;margin:10px 0 0;font-size:14px}
+  .note{border-inline-start:3px solid var(--warn-line);background:var(--warn-bg);color:var(--warn);
+    border-radius:0 8px 8px 0;padding:8px 11px;margin:10px 0 0;font-size:14px}
+  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+  a{color:var(--key)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">مدونتي · بعد الرفع</p>
+  <h1>قائمةُ التنفيذ عند الدفع</h1>
+  <p class="lede">
+    كلُّ ما نُفِّذ على <code>modonty_dev</code> لا يسري على الإنتاج من تلقائه. هذه الخطواتُ
+    بترتيبها، ولكلٍّ منها <b>شرطُ نجاحٍ يُقاس</b> لا رأيٌ يُقال. ما لم يتحقّق شرطُه لا يُشطب.
+  </p>
+
+  <div class="bar">
+    <b id="count">0 / 10</b>
+    <span class="meter"><i id="meter"></i></span>
+    <button class="btn" id="reset">تصفير</button>
+  </div>
+
+  <!-- ═════ قبل ═════ -->
+  <p class="phase">المرحلة ١ — قبل الدفع</p>
+
+  <div class="step" data-id="env">
+    <div class="head">
+      <input type="checkbox">
+      <p class="title">متغيّراتُ البيئة على Vercel <span class="who k">خالد</span></p>
+    </div>
+    <p class="ink">ثلاثةٌ يقرؤها كودٌ يعمل على الإنتاج، ووجودُها محلّيّاً لا يعني شيئاً — <code>.env.shared</code> لا يصل Vercel.</p>
+    <pre>CONSOLE_URL                    ← يقرؤه إرسالُ بيانات الدخول (رابط الكونسول في الرسالة)
+RESEND_FROM                    ← المرسِلُ في بريد الترحيب
+NEXT_PUBLIC_ARTICLES_API_BASE  ← تقرؤه شاشةُ «النشر على موقعه»</pre>
+    <p>تُفحص على <b>كلّ مشروعٍ من الأربعة</b> على حدة — المشتركُ لا يُورَّث تلقائيّاً.</p>
+    <div class="pass">الشرط: الثلاثةُ ظاهرةٌ في Settings → Environment Variables لمشروعِ كلِّ تطبيقٍ يحتاجها.</div>
+  </div>
+
+  <!-- ═════ الدفع ═════ -->
+  <p class="phase">المرحلة ٢ — الدفع</p>
+
+  <div class="step" data-id="push">
+    <div class="head">
+      <input type="checkbox">
+      <p class="title">دفعُ الكوميت <code>ea5a232</code> <span class="who k">خالد</span></p>
+    </div>
+    <p class="ink">١٥٧ ملفّاً · <code>+5,129 / −9,965</code>. الشجرةُ نظيفةٌ ولا متبقٍّ غيرُ مثبَّت.</p>
+    <div class="pass">الشرط: البناءُ ينجح على Vercel في الأربعة. وقد نجح محلّيّاً في الأربعة قبل الدفع.</div>
+    <div class="note">
+      وانتبه: <code>payment</code> كان بناؤه <b>مكسوراً قبل اليوم</b> (<code>/[market]</code> يقرأ القاعدةَ بلا كاش).
+      أُصلح في هذا الكوميت — فأيُّ نشرةٍ قبله كانت ستفشل.
+    </div>
+  </div>
+
+  <!-- ═════ بعد ═════ -->
+  <p class="phase">المرحلة ٣ — بعد الدفع مباشرةً (بالترتيب)</p>
+
+  <div class="step" data-id="dupes">
+    <div class="head">
+      <input type="checkbox">
+      <p class="title">قياسُ البريد المكرَّر <b>قبل</b> دفع السكيما <span class="who k">خالد</span></p>
+    </div>
+    <p class="ink">دفعُ الفهرس <b>يفشل</b> إن كان في الإنتاج بريدان متساويان. فيُقاس أوّلاً ويُصحَّح يدويّاً.</p>
+    <pre>db.client.groupBy({
+  by: ["email"], _count: true,
+  having: { email: { _count: { gt: 1 } } },
+})</pre>
+    <div class="pass">الشرط: النتيجةُ مصفوفةٌ فارغة.</div>
+    <div class="risk">
+      البريدُ اسمُ الدخول. فالمكرَّرُ يعني عميلاً <b>لا يدخل حسابَه أبداً</b> بينما الشاشةُ تقول
+      «كلمة المرور غير صحيحة» — وهو ما وقع فعلاً على dev قبل إنشاء الفهرس.
+    </div>
+  </div>
+
+  <div class="step" data-id="push-schema">
+    <div class="head">
+      <input type="checkbox">
+      <p class="title">دفعُ السكيما — فهرسا البريد والوثائق <span class="who k">خالد</span></p>
+    </div>
+    <pre>pnpm --filter shared prisma:push</pre>
+    <p class="ink">ينشئ اثنين لا ثالثَ لهما:</p>
+    <pre>clients_email_key            ← Client.email @unique  (schema.prisma:551)
+client_documents.clientId    ← ClientDocument @@index([clientId])</pre>
+    <p>
+      ولماذا لا يكفي التوليد: على مونغو يُنفَّذ <code>@unique</code> بفهرسٍ حقيقيٍّ في القاعدة،
+      والتوليدُ لا ينشئه. <b>مقيسٌ حيّاً:</b> بعد التوليد وحده بقيت الكتابةُ المكرّرة مقبولة،
+      ولم تُرفض إلّا بعد إنشاء الفهرس (خطأ <code>P2002</code>).
+    </p>
+    <div class="pass">الشرط: محاولةُ حفظِ عميلٍ ببريدٍ موجودٍ تُردّ برسالةٍ عربيّةٍ واضحة، لا تُقبل.</div>
+    <div class="note">وحذفُ الكتالوج القديم <b>لا يحتاج دفعاً</b>: مونغو يتجاهل ما ليس في السكيما (توثيق Prisma)، والمجموعةُ تبقى مهجورة.</div>
+  </div>
+
+  <div class="step" data-id="orders-migration">
+    <div class="head">
+      <input type="checkbox">
+      <p class="title">ترحيلُ الطلبات على الإنتاج — <b>الأهمّ</b> <span class="who k">خالد</span></p>
+    </div>
+    <p class="ink">
+      يُفتح <code>/migrations</code> ويُضغط «ابنِ الطلبات الناقصة». بدونه يبقى <b>٤٢ عميلاً بلا طلبٍ ساري</b> —
+      والباقةُ والحصّةُ والمدّةُ تُقرأ من الطلب، فشاشاتُ المال تبقى فارغةً هناك.
+    </p>
+    <p>
+      وصار <b>إضافيّاً</b>: لا يمسح طلباً ولا فاتورةً ولا معاملة، ويتخطّى كلَّ عميلٍ له طلب.
+      فالطلباتُ الستّةُ من صفحة الدفع (أربعةٌ منها زوّارٌ حقيقيّون لم يُكملوا) تبقى كما هي.
+    </p>
+    <pre>الدليلُ من إعادة التشغيل على dev:
+{"phase":"skip","total":47} · {"phase":"build","total":0,"skipped":47}
+{"result","clean":true,"created":0,"failed":[],"clientsWithoutPointer":0}</pre>
+    <div class="pass">الشرط: <code>clean:true</code> · <code>failed:[]</code> · <code>clientsWithoutPointer:0</code>.</div>
+    <div class="note">وبدايةُ الخدمة فيه من <b>أوّل مقالٍ منشور</b> لكلّ عميل — فمن لم يصله مقالٌ يبقى بلا تاريخ نهاية، وهذا صحيحٌ لا نقص.</div>
+  </div>
+
+  <div class="step" data-id="docs-migration">
+    <div class="head">
+      <input type="checkbox">
+      <p class="title">ترحيلُ وثائق العملاء <span class="who k">خالد</span></p>
+    </div>
+    <p class="ink">من نفس الصفحة <code>/migrations</code>. يضيف ولا يمسح، والتكرارُ يُمنع بالرابط نفسِه — فتشغيلُه مرّتين بلا ضرر.</p>
+    <p>ويُتوقَّع أن يجد روابطَ خارجَ مخزننا (وُجد واحدٌ على dev: <code>cspdf.net</code>) فتُرحَّل موسومةً في الملاحظة.</p>
+    <div class="pass">الشرط: العددُ المُرحَّل يساوي عددَ الروابط في الجرد، وصفرُ فشل.</div>
+  </div>
+
+  <div class="step" data-id="sales-phone">
+    <div class="head">
+      <input type="checkbox">
+      <p class="title">رقمُ الواتساب في الإعدادات — تقرؤه صفحةُ الدفع <span class="who k">خالد</span></p>
+    </div>
+    <p class="ink">
+      صار المصدرُ <code>Settings.salesPhone</code> بدل متغيّر البيئة (خالد ١٨ سبتمبر ٢٠٢٦: «رقم المبيعات
+      والإيميل هو نفسه اللي المفروض نستخدمه»). والسببُ أنّ المتغيّر <b>يُخبز في البناء</b>: تغييرُه
+      يحتاج نشرةً جديدة، والرقمُ القديم يبقى معروضاً للمشترين حتى تمرّ.
+    </p>
+    <pre>payment/lib/sales-whatsapp.ts:50   select: { salesPhone, orgContactTelephone }
+                        :52   salesPhone ?? orgContactTelephone ?? ENV_FALLBACK
+يُحرَّر من:  الأدمن → Settings → Business  (business-info-form.tsx)
+ويُطبع أيضاً في:  admin/lib/email/templates/invoice.ts:167,194  (الفاتورة)</pre>
+    <div class="pass">
+      الشرط: افتح <code>Settings → Business</code> على الإنتاج وتأكّد أنّ الرقم مكتوب — ثمّ افتح
+      صفحةَ الدفع وتحقّق أنّ زرّ الواتساب يفتح <b>نفسَ الرقم</b>.
+    </div>
+    <div class="risk">
+      <b>ولم يُنقل كلُّه:</b> ثلاثُ صفحاتٍ ما زالت تقرأ المتغيّرَ القديم مباشرةً —
+      <code>payment/app/error.tsx:33</code> · <code>checkout/failed/page.tsx:62</code> ·
+      <code>checkout/success/page.tsx:65</code>. فإن اختلف المتغيّرُ عن الإعدادات ظهر رقمان
+      مختلفان للمشتري نفسِه. يُوحَّدان في تاسكٍ مستقلّ، أو يُضبط المتغيّرُ على نفس الرقم مؤقّتاً.
+    </div>
+  </div>
+
+  <div class="step" data-id="business-name">
+    <div class="head">
+      <input type="checkbox">
+      <p class="title">تصحيحُ <code>businessName</code> للطلبات اليدويّة القديمة <span class="who k">خالد</span></p>
+    </div>
+    <p class="ink">
+      كان حقلُ «نوع النشاط» في نموذج الأدمن يُخزَّن في نفس العمود الذي يقرؤه التفعيل
+      <b>اسماً للعميل</b>. فطلبٌ قديمٌ فيه «عيادة أسنان» سيفتح حساباً بهذا الاسم ورابطاً عامّاً به.
+    </p>
+    <pre>db.checkoutOrder.findMany({
+  where: { status: "PAID", clientId: null },
+  select: { number: true, buyerName: true, businessName: true },
+})</pre>
+    <div class="pass">الشرط: كلُّ صفٍّ في القائمة اسمُه اسمُ نشاطٍ حقيقيّ — لا وصفُ مهنة. ويُصحَّح من صفحة تعديل الطلب قبل تفعيله.</div>
+  </div>
+
+  <div class="step" data-id="watch">
+    <div class="head">
+      <input type="checkbox">
+      <p class="title">مراقبةُ أطلس ٤٨ ساعة <span class="who k">خالد</span></p>
+    </div>
+    <p class="ink">
+      أُغلقت ثلاثةُ منابعَ للانقطاع: حلقةُ السجلّ (٥٥٪ من الأخطاء) · استعلامُ الـproxy في كلّ طلب ·
+      وسقفُ البِركة. والحكمُ بالشفاء <b>لا يُقال إلّا بعد الرفع ومراقبة</b>.
+    </p>
+    <pre>يُراقَب:  /system-errors  ← لا تعود «I/O error: received fatal alert»
+         Atlas Alerts    ← لا يعود «Connections above 80%»</pre>
+    <div class="pass">الشرط: ٤٨ ساعةً بلا واحدٍ منهما. والهدوءُ قبل الرفع لا يُحسب — الكتابُ نفسُه يقول: «الهدوء ليس إصلاحاً».</div>
+    <div class="risk">
+      وثلاثةٌ لم تُنفَّذ وتبقى خياراتٍ إن عاد العطل: مخزنٌ مشترك لذاكرات <code>archive-cache</code> التسع ·
+      ترقيةُ العنقود <code>Flex → M10</code> · كبحُ الزواحف على <code>/</code> و<code>/clients</code>.
+    </div>
+  </div>
+
+  <!-- ═════ مؤجَّل ═════ -->
+  <p class="phase">مؤجَّلٌ بقرارك — لا يدخل هذه القائمة</p>
+
+  <div class="step" data-id="rotate">
+    <div class="head">
+      <input type="checkbox">
+      <p class="title">تدويرُ كلمة مرور قاعدة الإنتاج <span class="who">مؤجَّل</span></p>
+    </div>
+    <p class="ink">خالد (١٩ سبتمبر ٢٠٢٦): «خلّيها زي ما هي طالما شغّالة، عشان لا نفتح باباً ما احنا فاضيين له».</p>
+    <p>
+      ما نُفِّذ: الرابطُ خرج من <b>ثمانية ملفّاتٍ متعقَّبة</b> إلى <code>PROD_SYNC_DATABASE_URL</code>،
+      فلا كشفَ جديد. وما لم يُنفَّذ: الكلمةُ القديمة باقيةٌ في تاريخ git — فأيُّ نسخةٍ قديمةٍ من
+      المستودع تفتح قاعدةَ الإنتاج بصلاحيّةٍ كاملة.
+    </p>
+    <div class="note">متى نُفِّذ: غيّر الكلمة في Atlas → Database Access، ثمّ حدّثها في Vercel للأربعة و<code>.env.shared</code> — بهذا الترتيب، وإلّا سقط الموقع.</div>
+  </div>
+
+  <footer>
+    مصدرُ البنود: <code>documents/tasks/ACTIVATION-FLOW.html</code> · تبويب «الحالي» —
+    وهذا الملفُّ نسخةُ التنفيذ: يُشطب سطراً سطراً يوم الرفع.
+    <br>الحالةُ محفوظةٌ في متصفّحك وحده، ولا تُرسَل لأحد.
+  </footer>
+</div>
+
+<script>
+(function () {
+  const KEY = "modonty-after-deploy-v1";
+  const steps = [...document.querySelectorAll(".step")];
+  const countEl = document.getElementById("count");
+  const meterEl = document.getElementById("meter");
+
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { state = {}; }
+
+  function paint() {
+    let done = 0;
+    for (const step of steps) {
+      const box = step.querySelector("input");
+      const on = !!state[step.dataset.id];
+      box.checked = on;
+      step.classList.toggle("done", on);
+      if (on) done++;
+    }
+    countEl.textContent = `${done} / ${steps.length}`;
+    meterEl.style.width = `${(done / steps.length) * 100}%`;
+  }
+
+  for (const step of steps) {
+    step.querySelector("input").addEventListener("change", (e) => {
+      state[step.dataset.id] = e.target.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
+      paint();
+    });
+  }
+
+  document.getElementById("reset").addEventListener("click", () => {
+    state = {};
+    try { localStorage.removeItem(KEY); } catch {}
+    paint();
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>

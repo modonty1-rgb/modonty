@@ -151,13 +151,13 @@ export async function POST(_req: NextRequest) {
       }
 
       if (!PROD_DATABASE_URL) {
+        // `fatal` هو نوعُ الحدث المعرَّف في `SseEvent` لرفضٍ يوقف المزامنة، وحقلُه `error`.
         send({
-          type: "error",
-          message:
+          type: "fatal",
+          error:
             "PROD_SYNC_DATABASE_URL غير مضبوط — ضعه في ‎.env.local محلّيّاً. " +
             "ولا يُوضع في المستودع: هذا رابطُ قاعدة الإنتاج.",
         });
-        controller.close();
         return;
       }
 
