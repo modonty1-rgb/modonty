@@ -16,7 +16,14 @@ export type RebuildPlan = {
   clients: number;
   clean: number;
   needsReview: number;
-  willDelete: { orders: number; invoices: number };
+  /**
+   * **ما هو قائمٌ الآن — ويبقى كما هو.**
+   *
+   * كان اسمُه `willDelete` يوم كان الترحيلُ يمسح ثمّ يبني. وسقط المسحُ (خالد ١٩ سبتمبر
+   * ٢٠٢٦) فصار الاسمُ يكذب على شاشةٍ فيها زرٌّ يُضغط مرّةً على مالٍ حقيقيّ — وهذا أسوأُ
+   * من كودٍ ميّت. فالعددان يُعرضان ليقولا «لن يُمسّا»، لا ليُنذرا.
+   */
+  existing: { orders: number; invoices: number };
   byCurrency: { currency: string; count: number; totalMinor: number }[];
   gapGroups: GapGroup[];
 };
@@ -51,7 +58,7 @@ export async function planRebuild(): Promise<RebuildPlan> {
     clients: planned.length,
     clean: planned.filter((p) => p.gaps.length === 0).length,
     needsReview: planned.filter((p) => p.gaps.length > 0).length,
-    willDelete: { orders, invoices },
+    existing: { orders, invoices },
     byCurrency: [...byCurrency].map(([currency, v]) => ({ currency, ...v })).sort((a, b) => b.count - a.count),
     gapGroups: [...groups].map(([gap, clients]) => ({ gap, clients })).sort((a, b) => b.clients.length - a.clients.length),
   };

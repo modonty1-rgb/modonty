@@ -30,6 +30,16 @@ export default function PayError({
     console.error("[pay] unhandled error:", error);
   }, [error]);
 
+  /**
+   * **وحدها هذه تبقى على المتغيّر — لا سهواً.**
+   *
+   * حدُّ الخطأ مكوّنُ عميل، ولا يقرأ `Settings` ولا يستقبل خصائص. وهو يُرسم غالباً حين
+   * تكون القاعدةُ نفسُها سببَ العطل، فقراءتُها هنا تعني زرّاً لا يظهر لمن يحتاجه أكثر.
+   *
+   * فالمقابلُ أن يُضبط `NEXT_PUBLIC_SALES_WHATSAPP` على **نفس** رقم
+   * `Settings.salesPhone` — وإلّا ظهر رقمان للمشتري نفسِه. وقيس على الإنتاج
+   * (١٩ سبتمبر ٢٠٢٦): المتغيّرُ ‎966541018020‎ والإعداداتُ ‎966560299034‎.
+   */
   const waNumber = process.env.NEXT_PUBLIC_SALES_WHATSAPP?.replace(/\D/g, "") ?? "";
   const waHref = waNumber
     ? `https://wa.me/${waNumber}?text=${encodeURIComponent(

@@ -68,7 +68,8 @@ export function RebuildOrdersPanel({ plan }: { plan: RebuildPlan }) {
             setProgress({
               done: 0,
               total: plan.clients,
-              name: p === "plan" ? "نحسب الخطّة..." : p === "wipe" ? "نمسح القديم..." : "نبني الطلبات...",
+              // المراحلُ التي يبثّها المسار: plan · skip · build. ولا مرحلةَ مسحٍ بعد اليوم.
+              name: p === "plan" ? "نحسب الخطّة..." : p === "skip" ? "نتخطّى مَن له طلب..." : "نبني الطلبات...",
             });
           } else if (msg.type === "progress") {
             setProgress({ done: msg.done as number, total: msg.total as number, name: msg.name as string });
@@ -111,8 +112,8 @@ export function RebuildOrdersPanel({ plan }: { plan: RebuildPlan }) {
             </span>
           ))}
           <span className="text-muted-foreground">
-            سيُمسح: <b className="tabular-nums">{plan.willDelete.orders}</b> طلباً و
-            <b className="tabular-nums"> {plan.willDelete.invoices}</b> فاتورة
+            يبقى كما هو: <b className="tabular-nums">{plan.existing.orders}</b> طلباً و
+            <b className="tabular-nums"> {plan.existing.invoices}</b> فاتورة
           </span>
         </div>
       </div>

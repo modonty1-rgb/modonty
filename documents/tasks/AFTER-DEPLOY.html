@@ -62,6 +62,9 @@
     border-radius:0 8px 8px 0;padding:8px 11px;margin:10px 0 0;font-size:14px}
   .note{border-inline-start:3px solid var(--warn-line);background:var(--warn-bg);color:var(--warn);
     border-radius:0 8px 8px 0;padding:8px 11px;margin:10px 0 0;font-size:14px}
+  .done-line{border-inline-start:3px solid var(--go-line);background:var(--go-bg);color:var(--go);
+    border-radius:0 8px 8px 0;padding:8px 11px;margin:10px 0 0;font-size:14px;font-weight:700}
+  .done-line b{font-weight:900}
   footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
   a{color:var(--key)}
 </style>
@@ -96,6 +99,7 @@ RESEND_FROM                    ← المرسِلُ في بريد الترحيب
 NEXT_PUBLIC_ARTICLES_API_BASE  ← تقرؤه شاشةُ «النشر على موقعه»</pre>
     <p>تُفحص على <b>كلّ مشروعٍ من الأربعة</b> على حدة — المشتركُ لا يُورَّث تلقائيّاً.</p>
     <div class="pass">الشرط: الثلاثةُ ظاهرةٌ في Settings → Environment Variables لمشروعِ كلِّ تطبيقٍ يحتاجها.</div>
+    <div class="done-line">✅ نُفِّذت ١٩ سبتمبر ٢٠٢٦ — <b>لا نقص</b>. <code>RESEND_FROM</code> موجودٌ ومربوطٌ بـadmin·modonty·console (وpayment لا يُرسل بريداً). و<code>CONSOLE_URL</code> و<code>NEXT_PUBLIC_ARTICLES_API_BASE</code> <b>لا يحتاجان Vercel أصلاً</b>: ثابتان في الكود بقيمة الإنتاج (<code>send-client-welcome.ts:9</code> · <code>client-site-section.tsx:56</code>). قُرئت بتصفّحٍ كامل: ٨٣ مفتاحاً مشتركاً على ٤ صفحات.</div>
   </div>
 
   <!-- ═════ الدفع ═════ -->
@@ -112,6 +116,7 @@ NEXT_PUBLIC_ARTICLES_API_BASE  ← تقرؤه شاشةُ «النشر على م�
       وانتبه: <code>payment</code> كان بناؤه <b>مكسوراً قبل اليوم</b> (<code>/[market]</code> يقرأ القاعدةَ بلا كاش).
       أُصلح في هذا الكوميت — فأيُّ نشرةٍ قبله كانت ستفشل.
     </div>
+    <div class="done-line">✅ الأربعةُ <code>READY</code>. أدمن على <code>44a6bde</code> (بعد إصلاح <code>TS2322</code>)، والثلاثةُ الأخرى <code>CANCELED</code> على نفس الكوميت لأنّ <code>ignoreCommand</code> عمل صحّ — وهي <code>READY</code> على <code>ea5a232</code>. الروابطُ الأربعة تردّ ٢٠٠.</div>
   </div>
 
   <!-- ═════ بعد ═════ -->
@@ -132,6 +137,7 @@ NEXT_PUBLIC_ARTICLES_API_BASE  ← تقرؤه شاشةُ «النشر على م�
       البريدُ اسمُ الدخول. فالمكرَّرُ يعني عميلاً <b>لا يدخل حسابَه أبداً</b> بينما الشاشةُ تقول
       «كلمة المرور غير صحيحة» — وهو ما وقع فعلاً على dev قبل إنشاء الفهرس.
     </div>
+    <div class="done-line">✅ <b>صفر مكرَّر</b> — قيست من جدول <code>/clients</code> الحيّ على الإنتاج: ٤٢ بريداً · ٤٢ فريداً.</div>
   </div>
 
   <div class="step" data-id="push-schema">
@@ -170,6 +176,7 @@ client_documents.clientId    ← ClientDocument @@index([clientId])</pre>
 {"result","clean":true,"created":0,"failed":[],"clientsWithoutPointer":0}</pre>
     <div class="pass">الشرط: <code>clean:true</code> · <code>failed:[]</code> · <code>clientsWithoutPointer:0</code>.</div>
     <div class="note">وبدايةُ الخدمة فيه من <b>أوّل مقالٍ منشور</b> لكلّ عميل — فمن لم يصله مقالٌ يبقى بلا تاريخ نهاية، وهذا صحيحٌ لا نقص.</div>
+    <div class="done-line">✅ نُفِّذ من <code>/migrations</code> على الإنتاج. الناتج الخام: <b>٤٨ طلباً · ٤٢ مربوطاً بعميل · ٤٢ من ٤٢ عميلاً يشير لطلبه · ٧٥٫٧ ثانية</b> — صفر فشل. والستّةُ القديمة لم تُمسّ (٢ لم يدفع · ٤ حوالة تنتظر التأكيد).<br>ودليلُ أنّ الساعةَ تبدأ بأوّل مقال: <code>ORD-2026-00034</code> — التفعيل ٢٧/٠٧ · أوّل مقال ١٥/٠٨ · الاشتراك «منتهٍ ٤ي» (١٥/٠٨ + شهر = ١٥/٠٩).</div>
   </div>
 
   <div class="step" data-id="docs-migration">
@@ -180,6 +187,7 @@ client_documents.clientId    ← ClientDocument @@index([clientId])</pre>
     <p class="ink">من نفس الصفحة <code>/migrations</code>. يضيف ولا يمسح، والتكرارُ يُمنع بالرابط نفسِه — فتشغيلُه مرّتين بلا ضرر.</p>
     <p>ويُتوقَّع أن يجد روابطَ خارجَ مخزننا (وُجد واحدٌ على dev: <code>cspdf.net</code>) فتُرحَّل موسومةً في الملاحظة.</p>
     <div class="pass">الشرط: العددُ المُرحَّل يساوي عددَ الروابط في الجرد، وصفرُ فشل.</div>
+    <div class="done-line">✅ <b>رُحِّلت ٢٧ وثيقة</b> من ٢٧ — صفر فشل.</div>
   </div>
 
   <div class="step" data-id="sales-phone">
@@ -206,6 +214,7 @@ client_documents.clientId    ← ClientDocument @@index([clientId])</pre>
       <code>checkout/success/page.tsx:65</code>. فإن اختلف المتغيّرُ عن الإعدادات ظهر رقمان
       مختلفان للمشتري نفسِه. يُوحَّدان في تاسكٍ مستقلّ، أو يُضبط المتغيّرُ على نفس الرقم مؤقّتاً.
     </div>
+    <div class="done-line">✅ <code>Settings → Business → Sales phone</code> كان <b>فارغاً</b> على الإنتاج، فكان المشتري يرى رقمين: ‎966560299034‎ (هاتف المؤسّسة، بديلُ السقوط) على صفحة الباقات، و‎966541018020‎ مخبوزاً في الحزمة على صفحتَي النجاح/الفشل. خالد (١٩ سبتمبر): الصحيح <b>‎966541018020‎</b> — كُتب وحُفظ، وصفحةُ الدفع الحيّة صارت <code>wa.me/966541018020</code>.<br>وأُصلح الجذر في الكود: <code>checkout/failed</code> و<code>checkout/success</code> صارتا تقرآن <code>salesWhatsappWithText()</code>؛ و<code>app/error.tsx</code> وحدها تبقى على المتغيّر لأنّها مكوّنُ عميلٍ يُرسم غالباً والقاعدةُ هي العطل.</div>
   </div>
 
   <div class="step" data-id="business-name">
@@ -222,6 +231,7 @@ client_documents.clientId    ← ClientDocument @@index([clientId])</pre>
   select: { number: true, buyerName: true, businessName: true },
 })</pre>
     <div class="pass">الشرط: كلُّ صفٍّ في القائمة اسمُه اسمُ نشاطٍ حقيقيّ — لا وصفُ مهنة. ويُصحَّح من صفحة تعديل الطلب قبل تفعيله.</div>
+    <div class="done-line">✅ <b>صفر طلبٍ مدفوعٍ بلا عميل</b> — الـ٤٢ المدفوعة كلُّها مربوطة، والستّةُ غيرُ المربوطة لا مدفوعَ فيها. فلا خطرَ <code>businessName</code>.</div>
   </div>
 
   <div class="step" data-id="watch">

@@ -16,7 +16,7 @@ export function isDevDatabase(): boolean {
 
 export type MigrationGate =
   | { allowed: true; isDev: boolean; orders: number }
-  | { allowed: false; reason: "unauthenticated" | "forbidden" | "already-done"; orders: number };
+  | { allowed: false; reason: "unauthenticated" | "forbidden"; orders: number };
 
 /**
  * المعيارُ **ما في الجدول** لا اسمُ القاعدة.

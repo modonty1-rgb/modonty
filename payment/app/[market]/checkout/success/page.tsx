@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { CheckCircle2, MailOpen, MessageCircle } from "lucide-react";
 
 import { db } from "@/lib/db";
+import { salesWhatsappWithText } from "@/lib/sales-whatsapp";
 import { formatCatalogMoneyMinor } from "@modonty/shared/lib/commercial/format-money";
 import { formatMonths } from "@modonty/shared/lib/commercial/arabic-months";
 import { getCachedPaySectionContent } from "../../../data/get-cached-catalog";
@@ -61,11 +62,8 @@ export default async function CheckoutSuccessPage({
   const totalDisplay = formatCatalogMoneyMinor(row.totalMinor, row.currency);
   const serviceMonths = row.paidMonths + row.bonusServiceMonths;
 
-  // نفس مصدر صفحة الفشل: رقمٌ من البيئة لا ثابتٌ مكتوبٌ في الصفحة.
-  const waNumber = process.env.NEXT_PUBLIC_SALES_WHATSAPP?.replace(/\D/g, "") ?? "";
-  const waHref = waNumber
-    ? `https://wa.me/${waNumber}?text=${encodeURIComponent(`مرحباً، طلبي ${row.number}`)}`
-    : null;
+  // نفس مصدر صفحة الفشل — و«نفس المصدر» صارت تعني `Settings` لا البيئة.
+  const waHref = await salesWhatsappWithText(`مرحباً، طلبي ${row.number}`);
 
   return (
     <>

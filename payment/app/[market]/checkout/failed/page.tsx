@@ -4,6 +4,7 @@ import { XCircle, RotateCcw, MessageCircle } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { resolveCheckoutReason } from "@/lib/checkout/resolve-checkout-reason";
+import { salesWhatsappWithText } from "@/lib/sales-whatsapp";
 import { CheckoutHeader } from "../components/checkout-header/CheckoutHeader";
 
 /**
@@ -59,9 +60,11 @@ export default async function CheckoutFailedPage({
   const canRetry = retryQuery.toString().length > 0;
   const retryHref = canRetry ? `/${slug}/checkout?${retryQuery.toString()}` : `/${slug}/plans`;
 
-  const waNumber = process.env.NEXT_PUBLIC_SALES_WHATSAPP?.replace(/\D/g, "") ?? "";
+  // مصدرٌ واحدٌ للرقم: `Settings` أوّلاً والمتغيّرُ آخرَ الخيارات (`lib/sales-whatsapp.ts`).
+  // وكانت تقرأ المتغيّرَ مباشرةً، فظهر للمشتري نفسِه رقمان: صفحةُ الباقات تعرض ما في
+  // الإعدادات، وهذه تعرض ما خُبز في البناء — وقيس ذلك حيّاً على الإنتاج (١٩ سبتمبر ٢٠٢٦).
   const waText = row ? `مرحباً، عندي مشكلة في دفع الطلب ${row.number}` : "مرحباً، عندي مشكلة في إتمام الدفع";
-  const waHref = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent(waText)}` : null;
+  const waHref = await salesWhatsappWithText(waText);
 
   return (
     <>
