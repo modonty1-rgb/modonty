@@ -20,7 +20,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Plus } from "lucide-react";
+import { AlertTriangle, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -192,6 +192,34 @@ export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
           <Plus className="size-3.5" aria-hidden />
           New Task
         </Button>
+      </div>
+
+      {/**
+       * **قاعدةُ العمل، على لوحة كلّ موظّفٍ لا على تقرير المدير** (خالد ٢٠ سبتمبر ٢٠٢٦:
+       * «بعض الموظّفين يهملون موضوع التاسكات… أبغاها قدّامهم في البورد تبعهم»).
+       *
+       * ── ودائمةٌ لا مشروطة ──
+       * وُضعت أوّلاً بشرط «اللوحة فارغة»، وهذا يخطئ هدفَها: المهمِلُ قد تكون لوحتُه
+       * فيها بطاقةٌ من الأسبوع الماضي، فلا يراها أبداً. والقاعدةُ سياسةٌ تُعرف لا
+       * تنبيهٌ يُطفأ، فمكانُها فوق الأعمدة دائماً.
+       *
+       * ── وفي `/tasks` وحدها ──
+       * `/daily-tasks` تقريرُ المدير، وهو يعرف القاعدة. المخاطَبُ بها مَن يُقاس يومُه.
+       *
+       * ── ونصُّها مرّ بثلاث صياغات في يومٍ واحد ──
+       * «غير محسوب يومه» قرأها خالد تهديداً، ثمّ «يُرجى الاهتمام بمهامك» قرأها رجاءً
+       * لا يُلزم أحداً. والمطلوبُ بينهما: التزامٌ معلومٌ وعاقبةٌ معلومة، بلا إهانة.
+       * فالجملةُ تقول الواجبَ أوّلاً ثمّ ما يترتّب على تركه — وهذا وحده ما يجعلها
+       * تُقرأ وتُنفَّذ.
+       *
+       * واللونُ يتبع المضمون: عاد كهرمانيّاً لأنّ فيه عاقبة. الأزرقُ كان صحيحاً
+       * للتذكير، وخطأً للالتزام.
+       */}
+      <div className="mb-2 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2.5">
+        <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
+        <p className="text-[13px] font-medium text-amber-900 dark:text-amber-200">
+          متابعة مهامك اليومية واجب وظيفي، وعدم الالتزام يُعرّضك لإجراء إداري.
+        </p>
       </div>
 
       <DndContext
