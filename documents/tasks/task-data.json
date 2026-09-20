@@ -117,19 +117,6 @@
   ],
   "tasks": [
     {
-      "id": "PUSHER-ENV-DEDUPE",
-      "b": "prod",
-      "app": [
-        "admin",
-        "console"
-      ],
-      "tab": "open",
-      "sev": "normal",
-      "who": "c",
-      "t": "مفاتيح Pusher مكرّرة: على الشارد وعلى المشروعين",
-      "d": "<b>نفس القيمة في مكانين، فأيُّ تدويرٍ للسرّ لاحقاً يحتاج تحديثاً مزدوجاً — وإن نُسي أحدُهما بقي القديمُ ساريًا بلا أن يظهر خطأ.</b> <br><br>أُضيفت أوّلاً على مشروعَي <code>modonty-admin</code> و<code>modonty-console</code> بالـCLI، لأنّ <code>vercel env</code> نطاقُه المشروع وحده. ثمّ أُنشئت على الشارد عبر <code>POST /v1/env</code> مربوطةً بـ<code>admin, console, modonty</code> على البيئات الثلاث — فصار الشارد هو المصدر، ونسخُ المشروعين زائدةً تطغى عليه. <br><br><b>المطلوب:</b> حذفُ النسخ الأربع من كلّ مشروع: <code>PUSHER_APP_ID</code> · <code>PUSHER_SECRET</code> · <code>NEXT_PUBLIC_PUSHER_KEY</code> · <code>NEXT_PUBLIC_PUSHER_CLUSTER</code>. الأمرُ <code>vercel env rm &lt;NAME&gt; production --yes</code> من مجلّد كلّ تطبيق — رُفض في جلسة ٢٠ سبتمبر بسياسة الأذونات، فيُنفَّذ بإذن خالد. <br><br><b>وبعده:</b> إعادةُ نشرٍ للأدمن، ثمّ قياسُ <code>/api/pusher/auth</code> على <code>admin.modonty.com</code> — يجب أن يبقى <code>200</code> بتوقيع. لو صار <code>503</code> فالشارد لم يصل البناء."
-    },
-    {
       "id": "USR-INDUSTRY-PICK",
       "b": "users",
       "app": [
