@@ -6,7 +6,7 @@ import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
-import { requireFinanceAdmin } from "@/lib/require-finance-admin";
+import { requireSalesDesk } from "@/lib/require-sales-desk";
 
 /**
  * تعديلُ طلبٍ قائم — مديرُ النظام وحده.
@@ -94,7 +94,7 @@ export async function updateOrderAction(
   _prev: { ok: boolean; error?: string } | null,
   formData: FormData,
 ): Promise<{ ok: boolean; error?: string }> {
-  await requireFinanceAdmin();
+  await requireSalesDesk();
 
   const parsed = schema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {

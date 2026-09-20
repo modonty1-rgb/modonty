@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
-import { checkFinanceAdmin } from "@/lib/require-finance-admin";
+import { checkSalesDesk } from "@/lib/require-sales-desk";
 import { OrderEditForm, type OrderForEdit } from "./components/order-edit-form";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +11,8 @@ export const dynamic = "force-dynamic";
 const day = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : null);
 
 export default async function EditOrderPage({ params }: { params: Promise<{ id: string }> }) {
-  const gate = await checkFinanceAdmin();
+  // الأدمن والمبيعات (خالد ٢٠ سبتمبر ٢٠٢٦) — والزرُّ في صفحة الطلب يحرس نفسَ البوّابة.
+  const gate = await checkSalesDesk();
   if (gate.status === "unauthenticated") redirect("/login");
   if (gate.status === "forbidden") redirect("/orders");
 

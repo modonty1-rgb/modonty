@@ -264,9 +264,11 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             <RefundOrderButton orderId={order.id} amountLabel={formatOrderMoney(order.totalMinor, order.currency)} buyerName={order.buyerName} />
           ) : null}
 
-          {/* التعديلُ بابٌ دائم لا خطوةٌ تمضي، فيتنحّى لآخر الصفّ. ولمدير النظام وحده:
-              الترحيل بنى الطلباتِ من بياناتٍ متناقضة فوُسمت، وتُصحَّح بيدٍ تعرف الحقيقة. */}
-          {isFinanceAdmin ? (
+          {/* التعديلُ بابٌ دائم لا خطوةٌ تمضي، فيتنحّى لآخر الصفّ.
+              كان لمدير النظام وحده — لأنّ الترحيل بنى طلباتٍ من بياناتٍ متناقضة فوُسمت.
+              وفُتح للمبيعات معه (خالد ٢٠ سبتمبر ٢٠٢٦): المندوبُ هو مَن أنشأ الطلبَ ومَن
+              يكتشف الخطأ فيه أوّلاً، وإرسالُه للأدمن ليصحّح رقماً كتبه هو تعطيلٌ لا ضبط. */}
+          {isSalesDesk ? (
             <Button asChild size="sm" variant={needsReview ? "default" : "outline"} className="ms-auto h-8 gap-1.5 px-2.5 text-[12px]">
               <Link href={`/orders/${order.id}/edit`} title={needsReview ? "الطلب مُرحَّل ويحتاج مراجعة" : undefined}>
                 <Pencil className="size-4" aria-hidden />
