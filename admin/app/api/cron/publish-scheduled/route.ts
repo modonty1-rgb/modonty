@@ -9,16 +9,19 @@ import { sendAdminTelegram, escapeTgHtml } from "@modonty/shared/lib/telegram/cl
  *
  * خالد (٢٠ سبتمبر ٢٠٢٦): «حالة الجدولة آخر مرحلة — المفروض إنّه ينضغط زرّ بَبلش».
  *
- * ── مَن يُنشر ──
- * `SCHEDULED` تعني في هذا النظام **«العميل وافق»** لا «له موعدٌ محدَّد»: الموافقةُ تكتب
- * الحالة وحدها (`console/lib/mobile-api/article-decisions.ts:26`)، و`scheduledAt` أداةُ
- * تأجيلٍ اختياريّة — وشاشةُ الطابور تقولها: «Publish them now manually **if you want to
- * skip the scheduled date**». فالموافَقُ بلا موعدٍ يُنشر، والمؤجَّلُ ينتظر موعده.
+ * ── مَن يُنشر: مَن له موعدٌ حلّ، لا غير ──
+ * خالد (٢٠ سبتمبر ٢٠٢٦): «الاسكيجوال هذي هي اللي المفروض يشتغل عليها الكرون، بس إنّ هذي
+ * خلاص أوريدي تمّت جدولتها».
  *
- * ── فخُّ مونغو في الاستعلام ──
- * الفرعان `null` و`isSet: false` ليسا تكراراً: توثيق Prisma للموصل يقول «a non-existing
- * field isn't equal to null»، وأغلبُ المقالات لا تحمل الحقل أصلاً. وبفرعٍ واحد يتخطّاها
- * الكرونُ كلَّها ويرجع صفراً صامتاً.
+ * وكان الاستعلامُ يشمل `scheduledAt: null` و`isSet: false` — أي أنّ ما وافق عليه العميل
+ * ولم يُحدَّد له موعدٌ يُنشر في أوّل دورة. وقد وقع: مقالٌ خرج للعالم ولم يجدوله أحد.
+ *
+ * فالموعدُ **شرطٌ** لا زينة: بلا `scheduledAt` لا يلمسه الكرون، ويبقى في الطابور حتّى
+ * يحدّد له موظّفٌ موعداً أو يضغط «Publish Now» بيده. والنشرُ للعالم لا يُسترجع، والصمتُ
+ * لا يصلح إذناً له.
+ *
+ * ولا حاجة لفرع `isSet: false` بعد اليوم: `{ lte: now }` مقارنةٌ لا مساواةٌ بـ`null`،
+ * والحقلُ الغائبُ لا يطابقها أصلاً — وهو المطلوب.
  *
  * ── ولماذا سقف ──
  * دورةٌ واحدة قد تصادف عشرات المقالات (أوّلُ تشغيلٍ خاصّة)، وكلُّ نشرٍ يولّد JSON-LD
@@ -45,11 +48,8 @@ export async function GET(request: Request) {
   const due = await db.article.findMany({
     where: {
       status: ArticleStatus.SCHEDULED,
-      OR: [
-        { scheduledAt: { lte: now } },
-        { scheduledAt: null },
-        { scheduledAt: { isSet: false } },
-      ],
+      // **الموعدُ شرطٌ لا زينة** — انظر التعليق أعلاه.
+      scheduledAt: { lte: now },
     },
     orderBy: { scheduledAt: "asc" },
     take: BATCH,
