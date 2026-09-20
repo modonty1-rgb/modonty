@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { forgotPasswordAction } from "./actions/forgot-password-action";
+import { IconEmail } from "@/lib/icons";
 
 export default function ForgotPasswordPage() {
   const [isPending, startTransition] = useTransition();
@@ -33,7 +34,7 @@ export default function ForgotPasswordPage() {
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <Card className="w-full max-w-md text-center">
           <CardHeader>
-            <div className="text-4xl mb-2">📬</div>
+            <IconEmail className="mx-auto mb-2 h-10 w-10 text-primary" aria-hidden />
             <CardTitle className="text-xl">تحقق من بريدك الإلكتروني</CardTitle>
             <CardDescription>
               إذا كان البريد الإلكتروني مرتبطاً بحساب، ستصل رسالة إعادة تعيين كلمة المرور خلال دقائق.

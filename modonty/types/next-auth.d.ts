@@ -9,7 +9,6 @@ declare module "next-auth" {
       name?: string | null;
       image?: string | null;
       hasPassword?: boolean;
-      role?: string;
       createdAt?: string;
     };
   }
@@ -22,7 +21,6 @@ declare module "next-auth/jwt" {
     name?: string | null;
     picture?: string | null;
     hasPassword?: boolean;
-    role?: string;
     createdAt?: string;
     accessToken?: string;
     provider?: string;

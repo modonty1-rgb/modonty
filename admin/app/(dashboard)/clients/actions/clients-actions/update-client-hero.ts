@@ -43,6 +43,9 @@ export async function updateClientHero(
 
     revalidatePath("/clients");
     revalidatePath(`/clients/${clientId}`);
+    // وصفحةُ التعديل مسارٌ آخر: إبطالُ `/clients/[id]` لا يشملها، فيرجع
+    // الرافعُ إليها ويراها بالشعار القديم.
+    revalidatePath(`/clients/${clientId}/edit`);
     revalidatePath("/articles", "layout");
 
     return { success: true };

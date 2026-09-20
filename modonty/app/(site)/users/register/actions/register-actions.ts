@@ -47,12 +47,28 @@ export async function registerUser(data: unknown) {
 
     const hashedPassword = await bcrypt.hash(input.password, 10);
 
+    /**
+     * **الموافقةُ تُحفظ بتاريخها، وفي الحقل القائم لا في حقلٍ جديد.**
+     *
+     * `User.notificationPreferences` حقلُ `Json?` موجودٌ في السكيما ويقرؤه بالفعل
+     * `users/profile/settings/api/[id]/route.ts:81` ويدمجه فوق الافتراضيّات. فالكتابةُ
+     * فيه تعني أنّ الصفحةَ نفسَها تعرض الخيار وتسمح بإيقافه — بلا `prisma db push` على
+     * الإنتاج ولا حقلٍ ثانٍ يقول نفسَ الشيء.
+     *
+     * و`marketingConsentAt` يُختم معها: «وافق» وحدها لا تكفي يوم يُسأل متى وافق.
+     * ومَن لم يوافق تُكتب له `false` صراحةً — لا غياباً يُقرأ لاحقاً على أنّه موافقة.
+     */
+    const consented = input.marketingConsent === true;
+
     const user = await db.user.create({
       data: {
         name: input.name ?? null,
         email: input.email,
         password: hashedPassword,
-        role: "EDITOR",
+        notificationPreferences: {
+          marketingEmails: consented,
+          marketingConsentAt: consented ? new Date().toISOString() : null,
+        },
       },
     });
 

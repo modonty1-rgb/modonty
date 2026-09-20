@@ -3840,8 +3840,16 @@ model SystemError {
 model AuditLog {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  // Who — both, for the reasons above.
-  userId    String  @db.ObjectId
+  /// **Who — وقد يكون النظام لا إنساناً.**
+  ///
+  /// كان `userId` إلزاميّاً، و`logAction` يخرج صامتاً بلا جلسة (`lib/audit/log-action.ts`).
+  /// فلمّا صار النشرُ المجدول يجري بكرون (خالد ٢٠ سبتمبر ٢٠٢٦) كان أخطرُ فعلٍ عندنا —
+  /// نشرٌ للعالم — سيجري **بلا سطرٍ واحد** في السجلّ، ويوم يُسأل «مَن نشر هذا؟» لا جواب.
+  ///
+  /// فصار اختياريّاً، و`userEmail` يبقى إلزاميّاً ويحمل الهويّة نصّاً: `system:cron`.
+  /// وبهذا يبقى السجلُّ **مكاناً واحداً** يُقرأ فيه فعلُ الإنسان وفعلُ النظام معاً — لا
+  /// نصفٌ هنا ونصفٌ في سجلّ الأخطاء.
+  userId    String? @db.ObjectId
   userEmail String
   userName  String? // Snapshot too — nice to read, but email is the one that must be there.
   userRole  String? // ADMIN · EDITOR — their role AT THE TIME, not today's.

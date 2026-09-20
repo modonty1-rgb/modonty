@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { IconError, IconSuccess } from "@/lib/icons";
 
 export default async function VerifyEmailPage({
   searchParams,
@@ -42,7 +43,9 @@ function VerifyResult({ success, message }: { success: boolean; message: string 
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md text-center space-y-4">
         <div className={`text-5xl ${success ? "text-green-500" : "text-destructive"}`}>
-          {success ? "✓" : "✗"}
+          {success
+              ? <IconSuccess className="h-10 w-10 text-emerald-600 dark:text-emerald-400" aria-hidden />
+              : <IconError className="h-10 w-10 text-destructive" aria-hidden />}
         </div>
         <h1 className="text-xl font-semibold">{success ? "تم تفعيل حسابك!" : "تعذّر التفعيل"}</h1>
         <p className="text-muted-foreground text-sm">{message}</p>

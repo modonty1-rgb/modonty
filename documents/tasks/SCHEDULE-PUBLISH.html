@@ -1,0 +1,281 @@
+<!-- ملفُّ قرار — النشر المجدول. يُقرأ ليُتَّخذ عليه قرارٌ لا ليُروى. -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>النشر المجدول — ملفّ قرار</title>
+<style>
+  :root{
+    --bg:#f4f4f1; --card:#fff; --ink:#15151a; --muted:#6b6b76; --line:#e2e2dd; --sand:#efefe9;
+    --go:#0f6b45; --go-bg:#e6f4ec; --go-line:#9ed4ba;
+    --key:#1d4ed8; --key-bg:#e9effd; --key-line:#a9c0f7;
+    --warn:#8a5a00; --warn-bg:#fcf3e1; --warn-line:#e0bd76;
+    --stop:#b3271e; --stop-bg:#fdecea; --stop-line:#eda9a3;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#131316; --card:#1d1d21; --ink:#ededf1; --muted:#9e9eaa; --line:#32323a; --sand:#232329;
+      --go:#63d69c; --go-bg:#12301f; --go-line:#2b6b48;
+      --key:#8fb1ff; --key-bg:#161f38; --key-line:#2f4482;
+      --warn:#f0c264; --warn-bg:#33280f; --warn-line:#6d5622;
+      --stop:#ff8b80; --stop-bg:#37201d; --stop-line:#7a3b35;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);direction:rtl;
+    font:16px/1.75 "Tajawal",-apple-system,"Segoe UI",system-ui,sans-serif;padding:26px 16px 90px}
+  .wrap{max-width:960px;margin:0 auto}
+  .eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.11em;color:var(--muted);margin:0 0 6px}
+  h1{font-size:clamp(25px,4.6vw,35px);font-weight:900;margin:0 0 10px;line-height:1.25}
+  .lede{font-size:17px;color:var(--muted);margin:0;max-width:66ch}
+  h2{font-size:14px;font-weight:900;letter-spacing:.05em;color:var(--muted);margin:38px 0 10px}
+  .card{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:16px 18px;margin:12px 0}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin:4px 0 0}
+  th,td{text-align:start;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;font-weight:800}
+  tr:last-child td{border-bottom:0}
+  .yes{color:var(--go);font-weight:800;white-space:nowrap}
+  .no{color:var(--stop);font-weight:800;white-space:nowrap}
+  code{background:var(--sand);border:1px solid var(--line);border-radius:6px;padding:1px 5px;
+    font:13px ui-monospace,Menlo,Consolas,monospace;direction:ltr;display:inline-block}
+  pre{margin:10px 0 0;background:var(--sand);border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;overflow:auto;font:13px/1.75 ui-monospace,Menlo,Consolas,monospace;direction:ltr;text-align:left}
+  p{margin:9px 0 0;font-size:14.5px;color:var(--muted)}
+  .quote{border-inline-start:3px solid var(--key-line);background:var(--key-bg);color:var(--key);
+    border-radius:0 8px 8px 0;padding:9px 12px;margin:10px 0 0;font-size:14px}
+  .risk{border-inline-start:3px solid var(--stop-line);background:var(--stop-bg);color:var(--stop);
+    border-radius:0 8px 8px 0;padding:9px 12px;margin:10px 0 0;font-size:14px}
+  .note{border-inline-start:3px solid var(--warn-line);background:var(--warn-bg);color:var(--warn);
+    border-radius:0 8px 8px 0;padding:9px 12px;margin:10px 0 0;font-size:14px}
+  .pass{border-inline-start:3px solid var(--go-line);background:var(--go-bg);color:var(--go);
+    border-radius:0 8px 8px 0;padding:9px 12px;margin:10px 0 0;font-size:14px;font-weight:700}
+  .step{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:0}
+  .num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--sand);border:1px solid var(--line);
+    display:grid;place-items:center;font-size:13px;font-weight:900;color:var(--muted)}
+  .step b{font-size:15px}
+  .opt{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0 0;background:var(--sand)}
+  .opt.pick{border-color:var(--go-line);background:var(--go-bg)}
+  .opt b{font-size:14.5px}
+  .tag{font-size:11px;font-weight:800;border-radius:99px;padding:2px 9px;border:1px solid var(--go-line);
+    background:var(--card);color:var(--go);margin-inline-start:6px}
+  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">مدونتي · الأدمن</p>
+  <h1>النشر المجدول — ملفّ قرار</h1>
+  <p class="lede">
+    الجدولة مبنيّةٌ إلّا قطعةً واحدة. هذا الملفّ يقول ما هو قائمٌ بدليله، وما ينقص،
+    وقراراً واحداً لا يُنفَّذ شيءٌ قبله.
+  </p>
+
+  <h2>الحكم</h2>
+  <div class="card">
+    <p class="pass">الموعد يُحفظ اليوم — ولا أحد يقرؤه لينشر. الناقص مسارُ كرونٍ واحد.</p>
+    <p>
+      فُحص كلُّ مستهلكي <code>scheduledAt</code> في الأدمن والكونسول: إنشاءٌ · تعديلٌ · عرضٌ في الجدول ·
+      تصديرٌ إلى CSV. ولا موضعَ واحد يقارنه بالوقت الحاليّ.
+    </p>
+    <div class="quote">
+      والكودُ نفسُه يعترف — <code>articles/workflow/actions/set-scheduled-date.ts:16</code>:<br>
+      «Sets <code>scheduledAt</code> — <b>does NOT publish</b> the article. Admin still has to either
+      (a) come back and click Publish Now, or (b) wait for a <b>future cron job</b> that auto-publishes
+      articles whose scheduledAt has passed.»
+    </div>
+  </div>
+
+  <h2>ما تعنيه «مجدول» — قُرئ من الكود لا من الاسم</h2>
+  <div class="card">
+    <p class="pass">«مجدول» = <b>العميل وافق والمقال جاهزٌ للنشر</b> — لا «له موعدٌ محدَّد».</p>
+    <table>
+      <tr><th>الدليل</th><th>ما يقوله</th></tr>
+      <tr><td><code>console/lib/mobile-api/article-decisions.ts:26</code></td>
+          <td>الموافقة تكتب <code>status: SCHEDULED</code> فقط — <b>ولا تكتب <code>scheduledAt</code></b></td></tr>
+      <tr><td><code>admin/…/article-status-machine.ts:4</code></td>
+          <td>«The only way an article reaches SCHEDULED… is the <b>client approving</b> it»</td></tr>
+      <tr><td><code>admin/…/workflow/lib/transitions.ts:83</code></td>
+          <td>«Publish them now manually <b>if you want to skip the scheduled date</b>»</td></tr>
+    </table>
+    <p>
+      ⇒ <code>scheduledAt</code> <b>أداةُ تأخيرٍ اختياريّة</b>، لا شرطٌ للنشر. والافتراضُ أنّ المقال يُنشر.
+      ولهذا لا يُنشئه أحدٌ عند الموافقة: أغلبُ المقالات لا تحتاج تأجيلاً.
+    </p>
+    <div class="note">
+      وهذا يُسقط ما كتبتُه سابقاً من أنّ «الكرون لن ينشر إلّا ما حُدِّد له موعدٌ بيد موظّف» — كان قراءةً
+      خاطئةً للاسم لا للكود. والصحيحُ أدناه.
+    </div>
+  </div>
+
+  <h2>ما هو قائمٌ الآن</h2>
+  <div class="card">
+    <table>
+      <tr><th>القطعة</th><th>الحالة</th><th>الدليل</th></tr>
+      <tr><td>حقل موعد النشر</td><td class="yes">موجود</td><td><code>schema.prisma:1952</code> — <code>scheduledAt DateTime?</code></td></tr>
+      <tr><td>حالة «مجدول» وانتقالاتها</td><td class="yes">موجودة</td><td><code>article-status-machine.ts:16</code> — <code>SCHEDULED → [PUBLISHED, PUBLISHED_ON_CLIENT_SITE, DRAFT]</code></td></tr>
+      <tr><td>حفظ الموعد + سجلّ تدقيق</td><td class="yes">يعمل</td><td><code>set-scheduled-date.ts</code> — <code>article.schedule</code></td></tr>
+      <tr><td>بوّابة النشر الكاملة</td><td class="yes">تعمل</td><td><code>transition-article.ts:84-176</code></td></tr>
+      <tr><td>شاشة الطابور</td><td class="yes">تعمل</td><td><code>/articles/workflow/scheduled-to-published</code> — السايدبار يعرض <b>٢</b></td></tr>
+      <tr><td>بنية كرون + سرّ</td><td class="yes">جاهزة</td><td><code>vercel.json → crons</code> · <code>CRON_SECRET</code> على مشروع الأدمن</td></tr>
+      <tr><td><b>مَن يقرأ الموعد وينشر</b></td><td class="no">لا أحد</td><td>—</td></tr>
+    </table>
+    <p>وبوّابةُ النشر ليست شكليّة: درجةُ سيو على JSON-LD الحيّ · فحصُ التزامٍ بكلمات العميل الممنوعة · توليدُ الميتا · إشعارُ IndexNow · تحديثُ كاش مدونتي.</p>
+  </div>
+
+  <h2>حدود المنصّة — من التوثيق الرسميّ</h2>
+  <div class="card">
+    <div class="quote">
+      «All plans support up to 100 cron jobs per project. The Hobby plan allows a minimum interval of
+      once per day… <b>Pro and Enterprise plans support a minimum interval of once per minute with
+      per-minute scheduling precision</b>.»<br>
+      — <code>vercel.com/docs/cron-jobs/usage-and-pricing</code>
+    </div>
+    <p>نحن على Pro ⇒ كلّ ربع ساعة متاحٌ بلا قيد. والمصادقة بالنمط الموثَّق نفسِه المستعمل عندنا في كرون النسخ الاحتياطيّ:</p>
+    <pre>const provided = request.headers.get("authorization")?.replace("Bearer ", "") ?? "";
+if (provided !== process.env.CRON_SECRET) return 401;
+// admin/app/api/cron/backup/route.ts:156-163</pre>
+  </div>
+
+  <h2>خطّة التنفيذ — خمس خطوات</h2>
+  <div class="card">
+    <div class="step"><span class="num">١</span><div>
+      <b>استخراج النشر إلى دالّة مشتركة.</b>
+      <p>منطق النشر اليوم داخل <code>transitionArticleAction</code> (سيرفر أكشن لا يُنادى من مسار). يُنقل إلى
+      <code>lib/articles/publish-article.ts</code>، فيناديه <b>الزرُّ والكرون معاً</b>.</p>
+      <div class="risk">هذا أهمّ بندٍ في الخطّة. لو نسخ الكرونُ المنطقَ لنفسه، صار للنشر بابان: واحدٌ يفحص السيو والالتزام، وآخر ينشر بلا فحصٍ عند منتصف الليل.</div>
+    </div></div>
+    <div class="step"><span class="num">٢</span><div>
+      <b>مسار <code>app/api/cron/publish-scheduled/route.ts</code>.</b>
+      <p>نفسُ حارس السرّ أعلاه. يقرأ ويُرتّب الأقدم أوّلاً بسقفٍ يمنع تجاوز المهلة:</p>
+      <pre>where: {
+  status: "SCHEDULED",
+  OR: [
+    { scheduledAt: { lte: new Date() } },   // له موعدٌ وقد حلّ
+    { scheduledAt: null },                  // بلا موعد — يُنشر فوراً
+    { scheduledAt: { isSet: false } },      // الحقل غائبٌ أصلاً
+  ],
+}
+orderBy: { scheduledAt: "asc" }
+take: 20</pre>
+      <div class="risk">
+        الفرعان الأخيران ليسا تكراراً: على مونغو <code>{ field: null }</code> لا يطابق وثيقةً لا تحمل الحقل
+        (توثيق Prisma: «a non-existing field isn't equal to null»). وأغلبُ المقالات لا تحمله — فبفرعٍ واحد
+        يتخطّاها الكرونُ كلَّها ولا ينشر شيئاً.
+      </div>
+    </div></div>
+    <div class="step"><span class="num">٣</span><div>
+      <b>لكلّ مقال: نداءُ الدالّة، والفشلُ لا يوقف البقيّة.</b>
+      <p>مقالٌ يسقط في بوّابة السيو أو فحص الالتزام لا يُنشر ناقصاً. ومصيرُه <b>القرار الثاني أدناه</b>.</p>
+    </div></div>
+    <div class="step"><span class="num">٤</span><div>
+      <b>سطرٌ في <code>vercel.json</code>.</b>
+      <pre>{ "path": "/api/cron/publish-scheduled", "schedule": "*/15 * * * *" }</pre>
+      <p>ربعُ ساعة لا دقيقة: القارئ لا يفرّق بين ١٠:٠٠ و١٠:١٤، وكلّ دورةٍ استعلامٌ على أطلس.</p>
+    </div></div>
+    <div class="step"><span class="num">٥</span><div>
+      <b>تحقّقٌ حيّ على <code>modonty_dev</code> قبل الإنتاج.</b>
+      <p>مقالٌ بموعدٍ في الماضي ← نداءٌ يدويّ للمسار بالسرّ ← يُقاس: الحالة <code>PUBLISHED</code> ·
+      <code>datePublished</code> مختوم · ظاهرٌ على مدونتي · IndexNow أُرسل.</p>
+    </div></div>
+  </div>
+
+  <h2>نتيجة تدقيق الكود — ٢٠ سبتمبر ٢٠٢٦</h2>
+  <div class="card">
+    <p class="ink"><b>قُرئ مسارُ النشر كلّه سطراً سطراً. ما يصلح للكرون كما هو:</b></p>
+    <table>
+      <tr><th>القطعة</th><th>صالحة؟</th><th>الدليل</th></tr>
+      <tr><td>بوّابة النشر</td><td class="yes">نعم</td><td><code>assert-article-publishable.ts:22</code> — تأخذ <code>articleId</code> فقط، بلا جلسة ولا أكشن</td></tr>
+      <tr><td>فحص الالتزام</td><td class="yes">نعم</td><td><code>lib/seo/pre-publish-audit</code> — دالّةٌ خالصة</td></tr>
+      <tr><td>توجيه مقال موقع العميل</td><td class="yes">نعم</td><td><code>transition-article.ts:62</code> — <code>isClientSiteArticle</code> يحوّل الوجهة لـ<code>PUBLISHED_ON_CLIENT_SITE</code> تلقائيّاً</td></tr>
+      <tr><td>IndexNow + تحديث كاش مدونتي</td><td class="yes">نعم</td><td><code>transition-article.ts:153-176</code> — كلٌّ في <code>try</code> مستقلّ</td></tr>
+      <tr><td>آلة الحالات</td><td class="yes">نعم</td><td><code>article-status-machine.ts:16</code></td></tr>
+    </table>
+    <p class="pass">والتوقيت سليمٌ أصلاً — القرارُ الذي كان معلّقاً سقط.</p>
+    <p>
+      <code>scheduled-row-actions.tsx:37</code> يعرض بـ<code>getHours()</code> المحلّيّة، و<code>:76</code> يحفظ
+      <code>new Date(v).toISOString()</code> — فالموظّف يرى توقيته ويُخزَّن UTC. لا تحويلَ ناقص ولا عملَ مطلوب.
+    </p>
+  </div>
+
+  <h2>ثلاثةُ عوائق تمنع الكرون اليوم</h2>
+  <div class="card">
+    <div class="step"><span class="num">١</span><div>
+      <b>النشر محبوسٌ خلف جلسة.</b>
+      <pre>const session = await auth();
+if (!session) return { success: false, error: "Unauthorized" };
+// transition-article.ts:31-32</pre>
+      <p>الكرون بلا جلسة ⇒ <b>الاستخراج إلى دالّةٍ مشتركة ليس تحسيناً بل شرطُ عمل</b>.</p>
+    </div></div>
+
+    <div class="step"><span class="num">٢</span><div>
+      <b>سجلّ التدقيق يصمت بلا جلسة.</b>
+      <pre>const userId = session?.user?.id;
+if (!userId) return;   // لا سطر ولا خطأ
+// lib/audit/log-action.ts:134-141</pre>
+      <div class="risk">فأخطرُ فعلٍ عندنا — نشرٌ للعالم — سيجري آليّاً <b>بلا أثرٍ واحد</b> في السجلّ. وهذا أسوأُ من غياب الكرون نفسِه.</div>
+    </div></div>
+
+    <div class="step"><span class="num">٣</span><div>
+      <b>الجدول لا يقبل فاعلاً نظاميّاً.</b>
+      <pre>userId    String  @db.ObjectId   // إلزاميّ
+userEmail String                 // إلزاميّ
+// schema.prisma:3844-3845</pre>
+      <p>فلا يمكن كتابة «النظام» فاعلاً بلا جعل <code>userId</code> اختياريّاً — وهو <b>تعديلُ سكيما يحتاج <code>prisma db push</code> على الإنتاج</b>.</p>
+    </div></div>
+  </div>
+
+  <h2>القرار الأوّل — أثرُ الكرون في سجلّ التدقيق</h2>
+  <div class="card">
+    <div class="opt">
+      <b>أ — تعديل السكيما: <code>userId String?</code> + <code>userEmail "system:cron"</code></b>
+      <p>السجلُّ يبقى مصدراً واحداً لكلّ فعل، بشريّاً كان أو آليّاً. الكلفةُ <code>prisma db push</code> على الإنتاج — وهي خطوةٌ نفّذناها اليوم بلا عطل.</p>
+    </div>
+    <div class="opt pick">
+      <b>ب — بلا تعديل سكيما: الكرون يكتب في <code>SystemError</code> بمستوى «معلومة» + تنبيه تلغرام<span class="tag">المرشَّح</span></b>
+      <p>لا لمسَ للإنتاج، وأثرٌ يبقى قابلاً للقراءة في <code>/system-errors</code>. وعيبُه أنّ أثر النشر يسكن مكانين.</p>
+    </div>
+    <div class="opt">
+      <b>ج — بلا أثرٍ إطلاقاً</b>
+      <p>مرفوض. نشرٌ للعالم بلا سطرٍ يقول متى ولماذا.</p>
+    </div>
+  </div>
+
+  <h2>القرار الثاني — المقال الذي يفشل في البوّابة</h2>
+  <div class="card">
+    <div class="opt">
+      <b>أ — يبقى مجدولاً ويُعاد كلّ ربع ساعة</b>
+      <p>لا يضيع الموعد، لكنّ نفس المقال يفشل ٩٦ مرّةً في اليوم — فيتحوّل التنبيه إلى ضجيجٍ يتجاهله الجميع، وهي نهايةُ كلّ طابورٍ يحاول بلا حدّ.</p>
+    </div>
+    <div class="opt pick">
+      <b>ب — يصير <code>DRAFT</code> بملاحظةٍ وتنبيهٍ واحد<span class="tag">المرشَّح</span></b>
+      <p>السببُ يُكتب في <code>revisionNotes</code>، وتنبيهُ تلغرام مرّةً واحدة (القناة قائمةٌ ومستعملةٌ في تسجيل المستخدمين). فيرى الموظّف عطلاً واحداً واضحاً بدل تسعٍ وتسعين تكراراً.</p>
+    </div>
+    <p><b>المطلوب منك:</b> اختر أ أو ب.</p>
+  </div>
+
+  <h2>ماذا يحدث فعليّاً بعد أوّل تشغيل</h2>
+  <div class="card">
+    <table>
+      <tr><th>حالة المقال</th><th>ما يفعله الكرون</th></tr>
+      <tr><td>وافق العميل، بلا موعد</td><td class="yes">يُنشر في أوّل دورة (خلال ١٥ دقيقة)</td></tr>
+      <tr><td>له موعدٌ مضى</td><td class="yes">يُنشر في أوّل دورة</td></tr>
+      <tr><td>له موعدٌ مستقبليّ</td><td>ينتظره</td></tr>
+      <tr><td>سقط في بوّابة السيو أو الالتزام</td><td class="no">لا يُنشر — القرار أدناه</td></tr>
+      <tr><td>لم يوافق عليه العميل بعد</td><td>لا يُمَسّ — ليس <code>SCHEDULED</code> أصلاً</td></tr>
+    </table>
+    <div class="risk">
+      <b>أوّلُ دورةٍ تنشر كلَّ ما وافق عليه العملاء ولم يُنشر بعد — دفعةً واحدة.</b> ولهذا يُقاس العددُ على
+      الإنتاج قبل التشغيل (القسم التالي)، ويُبدأ بسقفٍ منخفض إن كان كبيراً.
+    </div>
+  </div>
+
+  <h2>ما لم يُقس بعد</h2>
+  <div class="card">
+    <p><b>عددُ المقالات في <code>SCHEDULED</code> على الإنتاج</b> — وهو بالضبط عددُ ما سينشره الكرون في دورته الأولى. السايدبار المحلّيّ يعرض <b>٢</b>، وهذا رقمُ قاعدة التجارب لا الإنتاج.</p>
+  </div>
+
+  <footer>
+    مصدرُ البنود: قراءةُ الكود ٢٠ سبتمبر ٢٠٢٦ — <code>set-scheduled-date.ts</code> ·
+    <code>transition-article.ts</code> · <code>article-status-machine.ts</code> ·
+    <code>api/cron/backup/route.ts</code> · <code>vercel.json</code>.
+    وحدودُ المنصّة من توثيق Vercel الرسميّ.
+  </footer>
+</div>

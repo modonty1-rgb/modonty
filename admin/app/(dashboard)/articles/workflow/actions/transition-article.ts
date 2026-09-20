@@ -3,13 +3,10 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { submitToIndexNow } from "@/lib/indexnow";
 import { ArticleStatus } from "@prisma/client";
 import { isValidTransition } from "../../helpers/article-status-machine";
 import { logAction } from "@/lib/audit/log-action";
-import { assertArticlePublishable } from "@/lib/seo/assert-article-publishable";
-import { loadSiteUrl } from "@/lib/seo/site-url";
+import { publishArticle } from "@/lib/articles/publish-article";
 
 export interface TransitionResult {
   success: boolean;
@@ -81,98 +78,44 @@ export async function transitionArticleAction(
       };
     }
 
-    // Transition-to-PUBLISHED gates — quality checks that must pass before going live.
-    // Both destinations pass through them: an article on the client's domain is held to
-    // the same standard as one on ours, because our name is on it either way.
     const isGoingLive =
       toStatus === ArticleStatus.PUBLISHED || toStatus === ArticleStatus.PUBLISHED_ON_CLIENT_SITE;
-    if (isGoingLive) {
-      // Single publish gate: generate the live JSON-LD + metadata, then score THAT with the
-      // shared scorer (real SEO) — blocks a page whose real SEO fails, not just empty fields.
-      const gate = await assertArticlePublishable(articleId);
-      if (!gate.ok) {
-        return { success: false, error: gate.error };
-      }
 
-      if (article.clientId) {
-        const { checkCompliance } = await import("@/lib/seo/pre-publish-audit");
-        const client = await db.client.findUnique({
-          where: { id: article.clientId },
-          select: { forbiddenKeywords: true, forbiddenClaims: true, intake: true },
-        });
-        const compliance = checkCompliance(
-          {
-            title: article.title,
-            content: article.content,
-            seoTitle: article.seoTitle,
-            seoDescription: article.seoDescription,
-            excerpt: article.excerpt,
-          },
-          client
-        );
-        if (compliance.blocked) {
-          return {
-            success: false,
-            error: compliance.issues.map((i) => i.message).join(". "),
-          };
-        }
-      }
+    /**
+     * **النشرُ يخرج من هنا إلى `lib/articles/publish-article.ts`.**
+     *
+     * صار للنشر مناديان: هذا الزرّ، وكرونُ النشر المجدول (خالد ٢٠ سبتمبر ٢٠٢٦). ولو بقي
+     * المنطقُ هنا لنسخه الكرونُ لنفسه، فصار للنشر بابان يفترقان أوّلَ تعديلٍ يُجرى على
+     * أحدهما. فالدالّةُ واحدةٌ والفحوصُ فيها، وهذا الملفّ يبقى للانتقالات غير النشر.
+     */
+    if (isGoingLive) {
+      const published = await publishArticle(articleId, "staff");
+      if (!published.ok) return { success: false, error: published.error };
+      return { success: true };
     }
 
-    // Auto-set datePublished when moving directly to PUBLISHED.
-    // Clear revisionNotes when admin re-submits a NEEDS_REVISION article — the
-    // notes were already addressed; lingering them would clutter future cycles.
-    const data: { status: ArticleStatus; datePublished?: Date; revisionNotes?: null } = {
-      status: toStatus,
-    };
-    // datePublished is set by the publish gate (assertArticlePublishable) before it generates,
-    // so the stored JSON-LD carries the exact same publish date. Nothing to set here.
+    // Clear revisionNotes when admin re-submits a NEEDS_REVISION article — the notes
+    // were already addressed; lingering them would clutter future cycles.
+    const data: { status: ArticleStatus; revisionNotes?: null } = { status: toStatus };
     if (expectedFrom === ArticleStatus.NEEDS_REVISION && toStatus === ArticleStatus.DRAFT) {
       data.revisionNotes = null;
     }
 
-    await db.article.update({
-      where: { id: articleId },
-      data,
-    });
+    await db.article.update({ where: { id: articleId }, data });
 
-    // Publishing sends an article out to the world; every other move decides whose desk it
-    // sits on. Both are worth a name — log the move, not just the fact that it moved.
-    await logAction(isGoingLive ? "article.publish" : "article.transition", {
+    await logAction("article.transition", {
       entity: "Article",
       entityId: articleId,
       summary: article.title,
       metadata: { from: expectedFrom, to: toStatus },
     });
 
-    // PUBLISHED side effects: regenerate fresh JSON-LD + metadata, then notify search engines.
-    // Best-effort: each step is wrapped so failure of one doesn't block the others.
-    // IndexNow is deliberately NOT sent for a client-site article: the URL lives on
-    // their domain, and we are not the verified owner of it — the ping would be rejected
-    // at best and wrong at worst. Their sitemap on their host is what gets it indexed.
-    if (toStatus === ArticleStatus.PUBLISHED) {
-      // JSON-LD + metadata were already generated (indexable, with publish date) by the
-      // publish gate above — no need to regenerate here.
-      try {
-        // Was the literal host. IndexNow submits this exact string to Bing/Yandex, so a
-        // guessed host asks them to crawl an address we do not control.
-        const articleUrl = `${await loadSiteUrl()}/articles/${article.slug}`;
-        const indexNowResult = await submitToIndexNow([articleUrl]);
-        if (!indexNowResult.ok) {
-          console.warn("transitionArticleAction: IndexNow not ok", indexNowResult);
-        }
-      } catch (error) {
-        console.error("transitionArticleAction: IndexNow failed", error);
-      }
-    }
-
     revalidatePath("/articles");
     revalidatePath("/articles/workflow");
     revalidatePath(`/articles/${article.slug}`);
     revalidateTag("article-status-counts", "max");
-    if (toStatus === ArticleStatus.PUBLISHED) {
-      await revalidateModontyTag("articles");
-    }
+    // ولا تحديثَ لكاش مدونتي هنا: النشرُ يرجع مبكّراً من `publishArticle` أعلاه، وما
+    // يصل هذا السطرَ انتقالٌ داخليّ لا يراه زائر.
 
     return { success: true };
   } catch (error) {

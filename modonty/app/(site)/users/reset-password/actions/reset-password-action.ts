@@ -5,9 +5,11 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { z } from "zod";
 
+import { passwordField } from "@/lib/auth/password-rule";
+
 const schema = z.object({
   token: z.string().min(1),
-  password: z.string().min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل"),
+  password: passwordField,
 });
 
 export async function resetPasswordAction(formData: FormData) {

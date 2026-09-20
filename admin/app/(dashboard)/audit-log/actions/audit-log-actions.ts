@@ -5,7 +5,8 @@ import { auth } from "@/lib/auth";
 
 export interface AuditLogRow {
   id: string;
-  userId: string;
+  /** `null` حين يكون الفاعلُ النظامَ لا إنساناً — يُقرأ من `userEmail` (`system:cron`). */
+  userId: string | null;
   userEmail: string;
   userName: string | null;
   userRole: string | null;

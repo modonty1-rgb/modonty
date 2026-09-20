@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { requiresCrop } from "@/lib/media/media-specs";
 import { createMedia, getClients } from "../../../actions/media-actions";
+import { updateClientLogo, updateClientHero } from "@/app/(dashboard)/clients/actions/clients-actions";
 import { validateFile } from "../utils/file-validation";
 import { useBunnyUpload } from "./use-bunny-upload";
 import type { UploadFile, Client, SEOFormData, UploadZoneProps } from "../types";
@@ -362,9 +363,43 @@ export function useUploadZone({ onUploadComplete, initialClientId, coreClientId 
           )
         );
 
+        /**
+         * **والرفعُ يُنهي المهمّة — لا يقف عند المكتبة.**
+         *
+         * روان (٢٠ سبتمبر ٢٠٢٦): «اللوجو من أوّل مرّة ما يرفع، لازم ترفع مرّتين عشان
+         * يظهر». وقيس المسار حيّاً بضغطةٍ واحدة: `uploadImageToBunny` ثمّ `createMedia`
+         * نجحا معاً — والصورةُ ظهرت في نافذة الشعار فوراً. لكنّ `Client.logoMediaId`
+         * بقي على قيمته القديمة، وصفرُ استدعاءٍ لـ`updateClientLogo` في السجلّ كلّه.
+         *
+         * فالرفعُ لم يفشل قطّ؛ كان يضع الصورة في المكتبة ويتركها. فترجع روان ولا ترى
+         * شعاراً فتظنّ الرفع سقط وتُعيده — والناقصُ خطوةٌ أخرى اسمها «Save Logo».
+         *
+         * والصفحةُ تعرف كلَّ ما يلزم: `clientId` في الرابط، والدورُ اختاره المستخدم
+         * بيده. فتُنهى النيّةُ هنا بدل أن تُترك للمستخدم أن يخمّنها.
+         *
+         * وتُقصر على الدورين اللذين لهما حقلٌ واحدٌ على العميل — الشعار والغلاف.
+         * و`POST`/`GALLERY` وغيرُها لا وجهةَ مفردةً لها، فتبقى في المكتبة عن حقّ.
+         * والفشلُ هنا لا يُسقط الرفع: الصورةُ محفوظةٌ فعلاً، وغايةُ الأمر أن تُختار يدويّاً.
+         */
+        const assignTo = resolvedClientId && mediaResult.media.id
+          ? resolvedType === "LOGO" ? updateClientLogo
+            : resolvedType === "HERO" ? updateClientHero
+              : null
+          : null;
+
+        let assigned = false;
+        if (assignTo) {
+          const res = await assignTo(resolvedClientId as string, mediaResult.media.id);
+          assigned = res.success === true;
+        }
+
         toast({
-          title: "Media Saved",
-          description: `${uploadFile.file.name} has been saved to the media library.`,
+          title: assigned
+            ? resolvedType === "LOGO" ? "تم حفظ الشعار" : "تم حفظ صورة الغلاف"
+            : "Media Saved",
+          description: assigned
+            ? "الصورة رُفعت ورُبطت بالعميل — لا خطوة أخرى."
+            : `${uploadFile.file.name} has been saved to the media library.`,
         });
 
         onUploadComplete?.();

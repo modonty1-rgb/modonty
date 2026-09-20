@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { passwordField } from "@/lib/auth/password-rule";
+
 // `z.string().url()` alone ACCEPTS `data:` URIs (verified on zod 3.24.2) — that is how a
 // whole base64 image used to land inside User.image. Avatars must be a real hosted URL.
 const hostedImageUrl = z
@@ -15,12 +17,7 @@ export const profileSchema = z.object({
 
 export const passwordSchema = z.object({
   currentPassword: z.string().min(1, "كلمة المرور الحالية مطلوبة").optional(),
-  newPassword: z
-    .string()
-    .min(8, "كلمة المرور يجب أن تكون على الأقل 8 أحرف")
-    .regex(/[A-Z]/, "كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل")
-    .regex(/[a-z]/, "كلمة المرور يجب أن تحتوي على حرف صغير واحد على الأقل")
-    .regex(/[0-9]/, "كلمة المرور يجب أن تحتوي على رقم واحد على الأقل"),
+  newPassword: passwordField,
   confirmPassword: z.string().min(1, "تأكيد كلمة المرور مطلوب"),
 }).refine((data) => data.newPassword === data.confirmPassword, {
   message: "كلمات المرور غير متطابقة",
@@ -29,12 +26,7 @@ export const passwordSchema = z.object({
 
 export const createPasswordSchema = z
   .object({
-    password: z
-      .string()
-      .min(8, "كلمة المرور يجب أن تكون على الأقل 8 أحرف")
-      .regex(/[A-Z]/, "كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل")
-      .regex(/[a-z]/, "كلمة المرور يجب أن تحتوي على حرف صغير واحد على الأقل")
-      .regex(/[0-9]/, "كلمة المرور يجب أن تحتوي على رقم واحد على الأقل"),
+    password: passwordField,
     confirmPassword: z.string().min(1, "تأكيد كلمة المرور مطلوب"),
   })
   .refine((data) => data.password === data.confirmPassword, {

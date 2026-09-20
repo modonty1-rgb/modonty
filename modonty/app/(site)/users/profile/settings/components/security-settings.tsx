@@ -18,6 +18,7 @@ import {
 import { passwordSchema, type PasswordFormData } from "../helpers/schemas/settings-schemas";
 import { changePassword, disconnectOAuthProvider } from "../actions/settings-actions";
 import { useSession } from "@/components/providers/SessionContext";
+import { PASSWORD_HINT } from "@/lib/auth/password-rule";
 
 export function SecuritySettings() {
   const { data: session } = useSession();
@@ -180,7 +181,7 @@ export function SecuritySettings() {
                 <p className="text-sm text-destructive">{errors.newPassword.message}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير، حرف صغير، ورقم
+                {PASSWORD_HINT}
               </p>
             </div>
 

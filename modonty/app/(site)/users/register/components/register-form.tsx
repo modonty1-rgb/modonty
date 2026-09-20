@@ -10,16 +10,23 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { IconLoading, IconRegister, IconViews, IconEyeOff } from "@/lib/icons";
+import { IconLoading, IconRegister, IconViews, IconEyeOff, IconBell, IconSaved, IconGift } from "@/lib/icons";
 import { GoogleIcon } from "@/components/auth/google-icon";
 import { registerSchema, type RegisterFormData } from "../helpers/schemas/register-schema";
 import { registerUser } from "../actions/register-actions";
 import { trackSignupClient } from "@/app/(site)/users/register/helpers/track-signup-client";
+import { PASSWORD_HINT } from "@/lib/auth/password-rule";
 
+/**
+ * **أيقوناتُ السجلّ لا الإيموجي** (خالد ٢٠ سبتمبر ٢٠٢٦: «استخدم البراندينج أيكونز»).
+ *
+ * والإيموجي يُرسم بخطّ النظام: شكلُه يختلف بين ويندوز وآيفون وأندرويد، ولا يرث لونَ
+ * العلامة ولا حجمَها. وأيقونةُ السجلّ `currentColor` — فتتبع الثيم والوضع الليليّ معاً.
+ */
 const BENEFITS = [
-  { icon: "🔔", text: "جديد تخصصك" },
-  { icon: "🔖", text: "احفظ مقالاتك" },
-  { icon: "🎁", text: "عروض حصرية" },
+  { Icon: IconBell, text: "جديد تخصصك" },
+  { Icon: IconSaved, text: "احفظ مقالاتك" },
+  { Icon: IconGift, text: "عروض حصرية" },
 ] as const;
 
 export function RegisterForm() {
@@ -101,7 +108,7 @@ export function RegisterForm() {
           <ul className="grid grid-cols-3 gap-2 rounded-lg bg-muted/40 p-3 text-center">
             {BENEFITS.map((b) => (
               <li key={b.text} className="flex flex-col items-center gap-1.5">
-                <span className="text-xl leading-none">{b.icon}</span>
+                <b.Icon className="h-5 w-5 text-primary" aria-hidden />
                 <span className="text-xs leading-tight text-foreground/80">{b.text}</span>
               </li>
             ))}
@@ -159,7 +166,7 @@ export function RegisterForm() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
-                  placeholder="٨ أحرف على الأقل"
+                  placeholder={PASSWORD_HINT}
                   className="pe-10 max-md:h-11 max-md:pe-12"
                   {...register("password")}
                   disabled={isSubmitting}
@@ -176,6 +183,34 @@ export function RegisterForm() {
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
               )}
+            </div>
+
+            {/**
+              * موافقةُ الرسائل التسويقيّة — **فارغةٌ افتراضاً ولا تمنع التسجيل**.
+              *
+              * ومربّعٌ معبّأٌ سلفاً ليس موافقة، ورفضُه لا يُغلق الباب: من رفض التسويق
+              * يبقى له حسابٌ وتنبيهاتُ ردودٍ على تعليقاته — وهي ليست إعلاناً.
+              */}
+            {/**
+              * **`htmlFor` لا لفٌّ للمدخل داخل الوسم.**
+              *
+              * كان الـ`<label>` يلفّ الـ`<input>`، فالنقرةُ على المربّع تصعد إلى الوسم
+              * فيعيد الوسمُ تفعيلَ المربّع — تبديلان يلغي أحدهما الآخر. مقيس:
+              * «Clicking the checkbox did not change its state». والربطُ بـ`id`
+              * يعطي نفسَ اتّساع النقر بلا هذا التضاعف.
+              */}
+            <div className="flex items-start gap-2.5 rounded-lg border border-border/60 bg-muted/30 p-3">
+              <input
+                id="marketingConsent"
+                type="checkbox"
+                className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+                disabled={isSubmitting}
+                {...register("marketingConsent")}
+              />
+              <label htmlFor="marketingConsent" className="cursor-pointer text-xs leading-relaxed text-foreground/80">
+                أوافق على استقبال رسائل مدوّنتي — الجديد في تخصّصي والعروض الحصريّة —
+                على بريدي. <span className="text-muted-foreground">اختياريّ، ويمكنك إيقافه في أيّ وقت من إعدادات حسابك.</span>
+              </label>
             </div>
 
             <Button

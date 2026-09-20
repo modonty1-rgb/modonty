@@ -129,33 +129,50 @@ interface LogOptions {
   metadata?: Record<string, unknown> | null;
 }
 
-export async function logAction(action: AuditAction, options: LogOptions): Promise<void> {
+/**
+ * **فاعلٌ ليس إنساناً** — للمسارات التي تجري بلا جلسة (كرون Vercel).
+ *
+ * خالد (٢٠ سبتمبر ٢٠٢٦) اختار أن يبقى السجلُّ مكاناً واحداً: «مين نشره؟» سؤالٌ يُجاب من
+ * `/audit-log` سواءٌ نشره موظّفٌ أو النظام. فبدل شقّ الأثر بين جدولين، يُكتب هنا بهويّةٍ
+ * صريحةٍ لا تُخلط بإنسان — فلا `userId` لها، و`userEmail` يقولها نصّاً.
+ */
+export const SYSTEM_ACTOR = { email: "system:cron", name: "النشر المجدول" } as const;
+
+export async function logAction(
+  action: AuditAction,
+  options: LogOptions,
+  /** مرّره من مسارٍ بلا جلسة — وإلّا فالهويّة تُقرأ من الجلسة كما كانت. */
+  systemActor?: typeof SYSTEM_ACTOR,
+): Promise<void> {
   try {
-    const session = await auth();
+    const session = systemActor ? null : await auth();
     const userId = session?.user?.id;
 
     // No identity = no log. Every logged path is already behind auth(), so this only
     // fires if something calls us from outside a request — in which case a row claiming
-    // an unknown actor would be worse than no row.
-    if (!userId) return;
+    // an unknown actor would be worse than no row. A declared SYSTEM actor is the one
+    // exception: it is not an unknown actor, it is a named non-human one.
+    if (!userId && !systemActor) return;
 
-    const email = session.user?.email ?? null;
-    const name = session.user?.name ?? null;
+    const email = systemActor ? systemActor.email : (session?.user?.email ?? null);
+    const name = systemActor ? systemActor.name : (session?.user?.name ?? null);
 
     // The role is NOT in the session (auth.config only carries id/email/name), and it is
     // worth having: it records what this person WAS allowed to do at the time, not what
     // they are allowed to do today. Best-effort — a failure here must not cost us the row.
     let role: string | null = null;
-    try {
-      const staff = await db.staff.findUnique({ where: { id: userId }, select: { role: true } });
-      role = staff?.role ?? null;
-    } catch {
-      // leave null
+    if (userId) {
+      try {
+        const staff = await db.staff.findUnique({ where: { id: userId }, select: { role: true } });
+        role = staff?.role ?? null;
+      } catch {
+        // leave null
+      }
     }
 
     await db.auditLog.create({
       data: {
-        userId,
+        userId: userId ?? null,
         // Email is the snapshot that answers "who?" after the account is gone. If the
         // session somehow has none, say so plainly rather than write an empty string.
         userEmail: email ?? "(no email on session)",

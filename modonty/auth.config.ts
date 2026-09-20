@@ -106,7 +106,6 @@ export const authConfig = {
               image: true,
               avatar: true,
               bio: true,
-              role: true,
               createdAt: true,
               password: true,
             },
@@ -117,7 +116,6 @@ export const authConfig = {
             token.name = dbUser.name;
             token.picture = dbUser.image || dbUser.avatar;
             token.bio = dbUser.bio ?? null;
-            token.role = dbUser.role;
             token.createdAt = dbUser.createdAt.toISOString();
             token.hasPassword = !!dbUser.password;
           }
@@ -140,10 +138,14 @@ export const authConfig = {
         session.user.image = token.picture as string;
         // Add hasPassword flag
         (session.user as any).hasPassword = token.hasPassword as boolean;
-        // Add role if available (for authorization)
-        if (token.role) {
-          (session.user as any).role = token.role;
-        }
+        /**
+         * **ولا `role` في جلسة القارئ** (خالد ٢٠ سبتمبر ٢٠٢٦: «فصلنا الستاف تماماً عن
+         * التيبل تبع اليوزر — أيّ حاجة ما تخصّ اليوزر ألغها»).
+         *
+         * كان يُصدَّر «للتصريح»، ومستهلكُه الوحيد `api/revalidate/article` وقد صار
+         * يعتمد السرَّ وحده. وصلاحيّاتُ الموظّفين تُقرأ من `Staff` في الأدمن، فبقاؤه
+         * هنا لا يفيد ويغري بـ`role === "ADMIN"` في مدونتي يوماً ما.
+         */
         // Add createdAt for "joined date" display
         if (token.createdAt) {
           (session.user as any).createdAt = token.createdAt;

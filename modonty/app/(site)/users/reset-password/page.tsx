@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { resetPasswordAction } from "./actions/reset-password-action";
+import { PASSWORD_HINT, PASSWORD_MIN } from "@/lib/auth/password-rule";
+import { IconError, IconSuccess } from "@/lib/icons";
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
@@ -21,7 +23,7 @@ export default function ResetPasswordPage() {
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <Card className="w-full max-w-md text-center">
           <CardHeader>
-            <div className="text-4xl mb-2">❌</div>
+            <IconError className="mx-auto mb-2 h-10 w-10 text-destructive" aria-hidden />
             <CardTitle>رابط غير صحيح</CardTitle>
             <CardDescription>هذا الرابط غير صحيح أو منتهي الصلاحية.</CardDescription>
           </CardHeader>
@@ -43,7 +45,7 @@ export default function ResetPasswordPage() {
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <Card className="w-full max-w-md text-center">
           <CardHeader>
-            <div className="text-4xl mb-2">✅</div>
+            <IconSuccess className="mx-auto mb-2 h-10 w-10 text-emerald-600 dark:text-emerald-400" aria-hidden />
             <CardTitle>تم تغيير كلمة المرور</CardTitle>
             <CardDescription>يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.</CardDescription>
           </CardHeader>
@@ -79,7 +81,7 @@ export default function ResetPasswordPage() {
         <CardHeader>
           <CardTitle className="text-2xl text-center">كلمة مرور جديدة</CardTitle>
           <CardDescription className="text-center">
-            أدخل كلمة المرور الجديدة — 8 أحرف على الأقل
+            أدخل كلمة المرور الجديدة — {PASSWORD_HINT}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,7 +94,7 @@ export default function ResetPasswordPage() {
                 type="password"
                 className="max-md:h-11"
                 placeholder="••••••••"
-                minLength={8}
+                minLength={PASSWORD_MIN}
                 required
                 disabled={isPending}
               />
