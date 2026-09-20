@@ -17,7 +17,7 @@ import { getSubscriptionStanding } from "./helpers/get-subscription-standing";
 import { orderMarketLabel } from "./helpers/order-market-label";
 import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { AWAITING_ACTIVATION } from "@/lib/orders/awaiting-activation";
-import { checkFinanceAdmin } from "@/lib/require-finance-admin";
+import { checkSalesDesk } from "@/lib/require-sales-desk";
 
 export const dynamic = "force-dynamic";
 
@@ -89,8 +89,8 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   const where =
     filterWhere && searchWhere ? { AND: [filterWhere, searchWhere] } : (searchWhere ?? filterWhere);
 
-  const [financeGate, fetched, total, countRows, awaitingActivation, expiredCount, providerPairs, marketRows, sumRows] = await Promise.all([
-    checkFinanceAdmin(),
+  const [salesDeskGate, fetched, total, countRows, awaitingActivation, expiredCount, providerPairs, marketRows, sumRows] = await Promise.all([
+    checkSalesDesk(),
     db.checkoutOrder.findMany({
       where,
       select: {
@@ -126,7 +126,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     // إجماليّا السوقين — على الجدول كلِّه دائماً، لا على المشهد المفلتَر.
     db.checkoutOrder.groupBy({ by: ["market"], _sum: { totalMinor: true } }),
   ]);
-  const isFinanceAdmin = financeGate.status === "ok";
+  const isSalesDesk = salesDeskGate.status === "ok";
   const orders = isExpiredView ? fetched.filter((o) => getSubscriptionStanding(o).state === "expired") : fetched;
   const counts = Object.fromEntries(countRows.map((row) => [row.status, row._count._all])) as Partial<Record<CheckoutOrderStatus, number>>;
   const providerCounts: Partial<Record<PaymentProvider, number>> = {};
@@ -243,7 +243,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
           * فالسيلز يرى الزرّ، يضغطه، فتُصفعه صفحةُ خطأ. وهو عكسُ العطل الآخر في نفس
           * اليوم — هناك زرٌّ اختفى بلا سبب، وهنا زرٌّ يظهر ثمّ يرفض.
           */}
-        {isFinanceAdmin ? (
+        {isSalesDesk ? (
         <Link
           href="/orders/new"
           aria-label="اشتراك جديد"

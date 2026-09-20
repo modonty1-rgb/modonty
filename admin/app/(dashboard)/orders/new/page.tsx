@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { db } from "@/lib/db";
-import { requireFinanceAdmin } from "@/lib/require-finance-admin";
+import { requireSalesDesk } from "@/lib/require-sales-desk";
 
 import { ManualOrderForm } from "./components/manual-order-form";
 import { loadOrderFormData } from "./helpers/load-order-form-data";
@@ -17,7 +17,8 @@ export const dynamic = "force-dynamic";
  * سجلٌّ واحد. وذلك عملٌ يُراجَع قبل الحفظ، والحوار يضيق به ويُقفل بالخطأ.
  */
 export default async function NewOrderPage({ searchParams }: { searchParams: Promise<{ leadId?: string; renewFrom?: string }> }) {
-  await requireFinanceAdmin();
+  // الإنشاءُ اليدويّ شغلُ المندوب: هو مَن اتّفق مع المشتري وقبض (خالد ٢٠ سبتمبر ٢٠٢٦).
+  await requireSalesDesk();
   const { leadId, renewFrom } = await searchParams;
   const [data, lead, previous] = await Promise.all([
     loadOrderFormData(),

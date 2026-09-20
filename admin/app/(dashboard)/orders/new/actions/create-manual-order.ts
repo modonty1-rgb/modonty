@@ -9,7 +9,7 @@ import { vatRateBpForMarket } from "@modonty/shared/lib/payments/vat-rate";
 import { toE164 } from "@modonty/shared/lib/phone";
 
 import { db } from "@/lib/db";
-import { requireFinanceAdmin } from "@/lib/require-finance-admin";
+import { requireSalesDesk } from "@/lib/require-sales-desk";
 import { logAction } from "@/lib/audit/log-action";
 
 /**
@@ -96,7 +96,7 @@ export type CreateManualOrderResult =
   | { ok: false; error: string };
 
 export async function createManualOrder(input: CreateManualOrderInput): Promise<CreateManualOrderResult> {
-  await requireFinanceAdmin();
+  await requireSalesDesk();
 
   const parsed = Body.safeParse(input);
   if (!parsed.success) {

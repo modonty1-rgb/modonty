@@ -10,7 +10,6 @@ import {
   AlertTriangle,
   Plus,
 } from "lucide-react";
-import { ModontyPartnerMark } from "@modonty/shared/components/icons/modonty-partner-mark";
 
 export function QuickActions() {
   return (
@@ -26,13 +25,13 @@ export function QuickActions() {
               New Article
             </Link>
           </Button>
-          <Button asChild variant="outline" className="w-full justify-start text-sm">
-            {/* بابُ ميلاد العميل صار واحداً: طابورُ من دفع (خالد ١٩ سبتمبر ٢٠٢٦). */}
-            <Link href="/clients/activate">
-              <ModontyPartnerMark className="h-4 w-4 mr-2 flex-shrink-0" />
-              Activate Client
-            </Link>
-          </Button>
+          {/**
+            * **«تفعيل عميل» خرج من اختصارات اللوحة** (خالد ٢٠ سبتمبر ٢٠٢٦).
+            *
+            * صار مدخلُه **قائمة المبيعات** وحدها (`components/admin/sales-menu.tsx:49`)،
+            * وسقط من السايدبار ومن هنا في نفس اليوم. وثلاثةُ مداخلَ لشاشةٍ واحدة تجعل
+            * الموظّف يظنّها ثلاثَ شاشات، وتُبقي بابَ المال مفتوحاً في كلّ ما يفتحه.
+            */}
           <Button asChild variant="outline" className="w-full justify-start text-sm">
             <Link href="/clients/segment/expiring-soon">
               <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
