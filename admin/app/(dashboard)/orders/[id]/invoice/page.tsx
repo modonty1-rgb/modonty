@@ -9,6 +9,7 @@ import { formatOrderDate } from "../../helpers/format-order-date";
 import { renderOrderInvoiceEmail } from "./helpers/render-order-invoice-email";
 import { EmailPreviewFrame } from "./components/email-preview-frame";
 import { IssueInvoiceButton } from "./components/issue-invoice-button";
+import { SendInvoiceButton } from "../../components/send-invoice-button";
 
 export const dynamic = "force-dynamic";
 
@@ -97,13 +98,19 @@ export default async function OrderInvoicePage({ params }: { params: Promise<{ i
               صدرت برقم {invoice.number}
               {invoice.emailSentAt ? ` · أُرسلت ${formatOrderDate(invoice.emailSentAt)}` : ""}
             </span>
-            {/* الإرسالُ من صفحة الطلب لا من هنا (خالد ١٨ سبتمبر ٢٠٢٦): هذه الصفحةُ
-                تُصدر، وقنواتُ التسليم كلُّها تجلس في صفٍّ واحد هناك. */}
-            <Button asChild size="sm" variant="outline" className="h-8 gap-1.5 px-2.5 text-[12px]">
-              <Link href={`/orders/${order.id}`}>
-                <Mail className="size-4" aria-hidden />
-                إرسالها من صفحة الطلب
-              </Link>
+            {/**
+              * **الإرسالُ رجع إلى هنا — بعد المعاينة** (خالد ٢٠ سبتمبر ٢٠٢٦: «ضبط لي
+              * الإيميل إنّه يتعمل بروفيو ومن هناك يتمّ الإرسال»).
+              *
+              * كان من صفحة الطلب بضغطةٍ واحدة (١٨ سبتمبر)، فصار البريدُ يخرج قبل أن يرى
+              * أحدٌ ما فيه. والفاتورةُ مستندٌ ماليٌّ يصل مشترياً — وما يخرج منه لا يُسحب.
+              *
+              * فصار الزرّ تحت الإطار الذي يعرضها: تقرأ ثمّ ترسل، لا ترسل ثمّ تقرأ.
+              * وزرُّ واتساب يبقى في صفحة الطلب — ذاك يفتح تطبيقاً ولا يُرسل من عندنا.
+              */}
+            <SendInvoiceButton orderId={order.id} resend={!!invoice.emailSentAt} />
+            <Button asChild size="sm" variant="ghost" className="h-8 gap-1.5 px-2.5 text-[12px]">
+              <Link href={`/orders/${order.id}`}>رجوع للطلب</Link>
             </Button>
           </>
         ) : null}

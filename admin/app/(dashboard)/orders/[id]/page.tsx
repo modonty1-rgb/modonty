@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, FilePlus2, Pencil, ReceiptText, RefreshCw } from "lucide-react";
+import { AlertTriangle, ArrowRight, FilePlus2, Mail, Pencil, ReceiptText, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -223,7 +223,21 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               </Link>
             </Button>
           ) : null}
-          {invoice && isSalesDesk ? <SendInvoiceButton orderId={order.id} resend={!!invoice.emailSentAt} /> : null}
+          {/**
+            * **البريدُ يمرّ بالمعاينة** (خالد ٢٠ سبتمبر ٢٠٢٦): هذا الزرّ يفتح صفحة
+            * الفاتورة، وزرُّ الإرسال هناك تحت الإطار الذي يعرضها. فلا يخرج بريدٌ لمشترٍ
+            * قبل أن يرى أحدٌ ما فيه — وما خرج لا يُسحب.
+            *
+            * وواتساب يبقى هنا: ذاك يفتح التطبيق على جوّال الموظّف ولا يُرسل من عندنا.
+            */}
+          {invoice && isSalesDesk ? (
+            <Button asChild size="sm" variant={invoice.emailSentAt ? "outline" : "default"} className="h-8 gap-1.5 px-2.5 text-[12px]">
+              <Link href={`/orders/${order.id}/invoice`}>
+                <Mail className="size-4" aria-hidden />
+                {invoice.emailSentAt ? "إعادة إرسال الفاتورة" : "إرسال الفاتورة بالإيميل"}
+              </Link>
+            </Button>
+          ) : null}
           {invoice && whatsapp ? ("href" in whatsapp ? <WhatsappInvoiceButton href={whatsapp.href} orderId={order.id} /> : <Badge variant="destructive" className="text-[11px]">{whatsapp.error}</Badge>) : null}
 
           {/* التجديد: طلبٌ جديد بهويّة هذا الطلب وباقته — يظهر متى انقضت المدّة أو قاربت.
