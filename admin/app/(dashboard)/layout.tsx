@@ -4,6 +4,7 @@ import { checkOrdersMigrationGate } from "@/lib/orders-migration-gate";
 import { checkAdmin } from "@/lib/admin-guard";
 import { canSeeReports } from "@/lib/can-see-reports";
 import { db } from "@/lib/db";
+import { TASK_NOT_ARCHIVED } from "@/lib/tasks/not-archived";
 import { Sidebar } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
 import { DbBadge } from "@/components/admin/db-badge";
@@ -61,6 +62,21 @@ export default async function DashboardLayout({
     .findUnique({ where: { id: gate.userId }, select: { role: true, canViewReports: true } })
     .catch(() => null);
 
+  /**
+   * **عدّادُ مهامّي — على زرّ Tasks في الشريط** (خالد ٢٠ سبتمبر ٢٠٢٦: «حطّ لي بادج عند
+   * التاسكات فوق، أعرف كم تاسك عندي»).
+   *
+   * «عندي» = المُسنَدة إليّ أنا، لا كلُّ ما على اللوحة. و«مفتوحة» = ما لم يصل `DONE`:
+   * `TODO` و`IN_PROGRESS` و`REVIEW` كلُّها عملٌ لم ينتهِ. وعدٌّ يشمل المنتهي يجعل الرقم
+   * يكبر أبداً ولا يُنظر إليه.
+   *
+   * ويُقرأ هنا لا في المكوّن: الزرُّ عميلٌ (`"use client"`)، وقراءةُ القاعدة منه تعني
+   * نداءً من المتصفّح في كلّ صفحة. والتخطيطُ يُرسم مرّةً ويمرّره.
+   */
+  const myOpenTasks = await db.task
+    .count({ where: { assigneeId: gate.userId, status: { not: "DONE" }, ...TASK_NOT_ARCHIVED } })
+    .catch(() => 0);
+
   return (
     <SidebarProvider>
       <EssentialSeoDialog missing={missingSeoFields} />
@@ -73,6 +89,7 @@ export default async function DashboardLayout({
             dbBadge={<DbBadge />}
             canSyncLocal={(process.env.DATABASE_URL ?? "").includes("modonty_dev")}
             canViewReports={canSeeReports(reportViewer)}
+            myOpenTasks={myOpenTasks}
           />
           <main className="flex-1 overflow-y-auto scrollbar-thin p-4 sm:p-6">{children}</main>
         </div>

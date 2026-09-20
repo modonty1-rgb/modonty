@@ -3,6 +3,8 @@ import {
   MessageSquare,
   Megaphone,
   HelpCircle,
+  KanbanSquare,
+  ClipboardCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -39,6 +41,26 @@ const REGISTRY: Record<string, NotificationMeta> = {
     toneClasses: "bg-violet-100 text-violet-700 ring-violet-200",
     label: "Campaign lead",
     href: () => "/campaigns/leads",
+  },
+  /**
+   * مهمّةٌ أسندها إليك زميل (خالد ٢٠ سبتمبر ٢٠٢٦). ويفتح الصفّ اللوحةَ لا صفحةَ المهمّة:
+   * المهامُّ لا صفحاتِ تفصيلٍ لها، والبطاقةُ تُقرأ في عمودها.
+   */
+  task_assigned: {
+    icon: KanbanSquare,
+    toneClasses: "bg-amber-100 text-amber-700 ring-amber-200",
+    label: "مهمّة جديدة",
+    href: () => "/tasks",
+  },
+  /**
+   * مهمّةٌ أسندتَها أنت بلغت عمودَ المراجعة (خالد ٢٠ سبتمبر ٢٠٢٦). لونٌ أزرقُ لا كهرمانيّ:
+   * الكهرمانيُّ لـ«وصلتك مهمّة» — عملٌ عليك، وهذا «مهمّتك جاهزة» — قرارٌ منك.
+   */
+  task_review: {
+    icon: ClipboardCheck,
+    toneClasses: "bg-sky-100 text-sky-700 ring-sky-200",
+    label: "بانتظار مراجعتك",
+    href: () => "/tasks",
   },
   faq_reply: {
     icon: HelpCircle,
