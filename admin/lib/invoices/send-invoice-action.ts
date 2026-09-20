@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 import { sendEmailWithRetry, type SendEmailParams } from "@/lib/email/resend-client";
 import { buildInvoiceEmail, INVOICE_QR_CID } from "@/lib/invoices/build-invoice-email";
+import { requireSalesDesk } from "@/lib/require-sales-desk";
 
 interface SendInvoiceResult {
   ok: boolean;
@@ -25,6 +26,14 @@ interface SendInvoiceResult {
  * fields) keep the receipt layout unchanged.
  */
 export async function sendInvoiceAction(invoiceId: string): Promise<SendInvoiceResult> {
+  /**
+   * **حارسُ دورٍ لا مجرّدُ جلسة** (خالد ٢٠ سبتمبر ٢٠٢٦).
+   *
+   * كان الشرطُ `if (!session?.user)` وحده — أي **أيّ موظّفٍ مسجَّل**: كاتبٌ أو مصمّم.
+   * وزرُّ الإرسال كان محروساً بـ`isFinanceAdmin` في الشاشة، لكنّ السيرفر أكشن نقطةُ
+   * HTTP عامّة: الزرُّ المخفيُّ ليس حارساً، والفعلُ يُنادى بلا زرّ.
+   */
+  await requireSalesDesk();
   const session = await auth();
   if (!session?.user) return { ok: false, error: "Unauthorized" };
   if (!invoiceId) return { ok: false, error: "الفاتورة مطلوبة" };

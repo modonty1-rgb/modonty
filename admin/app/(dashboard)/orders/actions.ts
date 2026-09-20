@@ -11,7 +11,7 @@ import { nextInvoiceNumber } from "@/lib/invoices/next-invoice-number";
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 import { setActiveOrder } from "@/lib/orders/resolve-active-order";
 import { requireFinanceAdmin } from "@/lib/require-finance-admin";
-import { requireTransferConfirm } from "@/lib/require-transfer-confirm";
+import { requireSalesDesk } from "@/lib/require-sales-desk";
 import { notifyPaymentReceived } from "@modonty/shared/lib/payments/notify-payment-received";
 import { sendInvoiceAction } from "@/lib/invoices/send-invoice-action";
 import { planInvoiceFromOrder, type InvoicePlanResult } from "./helpers/plan-invoice-from-order";
@@ -41,7 +41,7 @@ const confirmTransferSchema = z.object({
  */
 export async function confirmOrderPaymentAction(orderId: string, form: FormData): Promise<void> {
   // إقرارٌ بما حدث في البنك — يراه المندوبُ قبل غيره. (خالد ٢٠ سبتمبر ٢٠٢٦)
-  await requireTransferConfirm();
+  await requireSalesDesk();
 
   const parsed = confirmTransferSchema.safeParse({
     transferReference: String(form.get("transferReference") ?? "").trim(),
@@ -135,7 +135,8 @@ export async function previewInvoiceFromOrderAction(orderId: string): Promise<In
  * المخزَّنة لا المعروضة — وهي نفسُها التي رُئيت، لأنّ المعاينة والإصدار حاسبٌ واحد.
  */
 export async function createInvoiceFromOrderAction(orderId: string): Promise<{ ok: true; number: string } | { ok: false; error: string }> {
-  await requireFinanceAdmin();
+  // الفاتورةُ متابعةُ صفقةٍ مع مشترٍ بعينه — الأدمن والمبيعات (خالد ٢٠ سبتمبر ٢٠٢٦).
+  await requireSalesDesk();
   const session = await auth();
   const userId = (session?.user as { id?: string } | undefined)?.id;
   if (!userId) return { ok: false, error: "غير مصرح" };

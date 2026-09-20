@@ -4,7 +4,7 @@ import { AlertTriangle, ArrowRight, CheckCircle2, Mail } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { checkFinanceAdmin } from "@/lib/require-finance-admin";
+import { checkSalesDesk } from "@/lib/require-sales-desk";
 import { formatOrderDate } from "../../helpers/format-order-date";
 import { renderOrderInvoiceEmail } from "./helpers/render-order-invoice-email";
 import { EmailPreviewFrame } from "./components/email-preview-frame";
@@ -27,7 +27,8 @@ export const dynamic = "force-dynamic";
  * أيّ لحظة تعرض الصحيحَ ولا تُصدر فاتورةً ثانية.
  */
 export default async function OrderInvoicePage({ params }: { params: Promise<{ id: string }> }) {
-  const gate = await checkFinanceAdmin();
+  // إصدارُ الفاتورة متابعةُ صفقة — الأدمن والمبيعات (خالد ٢٠ سبتمبر ٢٠٢٦).
+  const gate = await checkSalesDesk();
   if (gate.status === "unauthenticated") redirect("/login");
   if (gate.status === "forbidden") redirect("/orders");
 
