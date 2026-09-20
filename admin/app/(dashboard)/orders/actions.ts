@@ -123,7 +123,8 @@ export async function logInvoiceWhatsappAction(orderId: string): Promise<void> {
  */
 /** المرحلةُ الأولى: ما ستحمله الفاتورة — بلا كتابة. */
 export async function previewInvoiceFromOrderAction(orderId: string): Promise<InvoicePlanResult> {
-  await requireFinanceAdmin();
+  // معاينةُ الفاتورة جزءٌ من إصدارها — نفسُ الحارس (خالد ٢٠ سبتمبر ٢٠٢٦).
+  await requireSalesDesk();
   return planInvoiceFromOrder(orderId);
 }
 
@@ -196,7 +197,19 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<{ o
  * وبأثرٍ غير مُسقِط: الفاتورةُ مكتوبة، وفشلُ البريد لا يُلغيها.
  */
 export async function sendInvoiceForOrderAction(orderId: string): Promise<{ ok: boolean; error?: string }> {
-  await requireFinanceAdmin();
+  /**
+   * **الغلافُ كان أضيقَ من الفعل الذي يلفّه.**
+   *
+   * نُقل `sendInvoiceAction` في `lib/invoices/` إلى حارس مكتب المبيعات، وبقي هذا الغلافُ
+   * على `requireFinanceAdmin` — وهو الذي يناديه زرُّ «إرسال الفاتورة بالإيميل» في صفحة
+   * الطلب. فالزرُّ يظهر للمندوبة ثمّ يرفضها.
+   *
+   * مقيسٌ من سجلّ الأخطاء (`digest: 352758874`، ٢٠ سبتمبر ٢٠٢٦ ١٦:٥٢، القاهرة):
+   * `POST /orders/6aafc1875f7a51f3f5b555c0 · action` ونصُّه «هذه الصفحة مخصصة لمدير
+   * النظام فقط» — وهو نصُّ `requireFinanceAdmin` حرفيّاً. وحدُّ الخطأ ابتلعه فعرض
+   * «تعذّر تحميل الطلب»، فبدا عطلاً في الصفحة لا رفضَ صلاحيّة.
+   */
+  await requireSalesDesk();
   const order = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { invoiceId: true } });
   if (!order?.invoiceId) return { ok: false, error: "لا فاتورة لهذا الطلب بعد" };
   const result = await sendInvoiceAction(order.invoiceId);
