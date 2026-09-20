@@ -256,7 +256,21 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
                           day: "numeric",
                           hour: "2-digit",
                           minute: "2-digit",
-                        }).format(article.scheduledAt)}
+                          /**
+                           * **المنطقة صريحةٌ لأنّ هذا يُرسَم في الخادم.**
+                           *
+                           * بلا `timeZone` يطبع بتوقيت الخادم — وهو UTC على Vercel. بينما حقلُ
+                           * الإدخال بجواره (`scheduled-row-actions.tsx:37`) يعرض توقيت متصفّح
+                           * الموظّف. فيظهر نفسُ المقال بوقتين يفرقهما ثلاث ساعات: الحقل يقول
+                           * ١٢:١٥ والسطرُ فوقه ٠٩:١٥.
+                           *
+                           * قيس على الإنتاج ٢٠ سبتمبر ٢٠٢٦: مقالٌ معروضٌ «09:15» لم ينشره الكرون
+                           * الساعة ١١:٣١ بالرياض — وكان محقّاً، فموعدُه ١٢:١٥ بالرياض. والقراءةُ
+                           * وحدها كانت تقول إنّه متأخّر.
+                           */
+                          timeZone: "Asia/Riyadh",
+                        }).format(article.scheduledAt)}{" "}
+                        <span className="opacity-60">(الرياض)</span>
                       </span>
                     </>
                   )}
