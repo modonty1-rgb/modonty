@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
-import { requireFinanceAdmin } from "@/lib/require-finance-admin";
+import { requireTransferConfirm } from "@/lib/require-transfer-confirm";
 
 /**
  * **إلغاءُ طلبٍ لم يصل فيه مال** (خالد ٢٠ سبتمبر ٢٠٢٦: «ضيفها في الأوردر نفسه واعمل
@@ -43,7 +43,8 @@ export async function cancelOrderAction(
   _prev: { ok: boolean; error?: string } | null,
   formData: FormData,
 ): Promise<{ ok: boolean; error?: string }> {
-  await requireFinanceAdmin();
+  // لا مالَ في هذا الطلب بعد، وصاحبُه المندوبُ الذي يتابع المشتري.
+  await requireTransferConfirm();
 
   const parsed = schema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "بيانات غير صالحة" };

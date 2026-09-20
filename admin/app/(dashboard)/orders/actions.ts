@@ -11,6 +11,7 @@ import { nextInvoiceNumber } from "@/lib/invoices/next-invoice-number";
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 import { setActiveOrder } from "@/lib/orders/resolve-active-order";
 import { requireFinanceAdmin } from "@/lib/require-finance-admin";
+import { requireTransferConfirm } from "@/lib/require-transfer-confirm";
 import { notifyPaymentReceived } from "@modonty/shared/lib/payments/notify-payment-received";
 import { sendInvoiceAction } from "@/lib/invoices/send-invoice-action";
 import { planInvoiceFromOrder, type InvoicePlanResult } from "./helpers/plan-invoice-from-order";
@@ -39,7 +40,8 @@ const confirmTransferSchema = z.object({
  * already PAID (or never AWAITING_TRANSFER) and the caller sees why, not a false success.
  */
 export async function confirmOrderPaymentAction(orderId: string, form: FormData): Promise<void> {
-  await requireFinanceAdmin();
+  // إقرارٌ بما حدث في البنك — يراه المندوبُ قبل غيره. (خالد ٢٠ سبتمبر ٢٠٢٦)
+  await requireTransferConfirm();
 
   const parsed = confirmTransferSchema.safeParse({
     transferReference: String(form.get("transferReference") ?? "").trim(),

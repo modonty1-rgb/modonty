@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/db";
 import { checkFinanceAdmin } from "@/lib/require-finance-admin";
+import { checkTransferConfirm } from "@/lib/require-transfer-confirm";
 import { confirmOrderPaymentAction } from "../actions";
 import { ConfirmTransferButton } from "../components/confirm-transfer-button";
 import { SendInvoiceButton } from "../components/send-invoice-button";
@@ -34,16 +35,23 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const order = await db.checkoutOrder.findUnique({ where: { id } });
   if (!order) notFound();
 
-  const [transactions, webhookEvents, attempts, financeGate, invoice, salesRep] = await Promise.all([
+  const [transactions, webhookEvents, attempts, financeGate, transferGate, invoice, salesRep] = await Promise.all([
     db.paymentTransaction.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     db.paymentWebhookEvent.findMany({ where: { orderId: id }, orderBy: { receivedAt: "desc" }, take: 20 }),
     db.paymentAttempt.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     checkFinanceAdmin(),
+    checkTransferConfirm(),
     order.invoiceId ? db.invoice.findUnique({ where: { id: order.invoiceId }, select: { number: true, emailSentAt: true, client: { select: { name: true } } } }) : Promise.resolve(null),
     // المندوبُ من الطلب نفسه: هو صاحبُ هذه الصفقة، لا مَن يتابع العميلَ اليوم.
     order.salesRepId ? db.staff.findUnique({ where: { id: order.salesRepId }, select: { name: true } }) : Promise.resolve(null),
   ]);
   const isFinanceAdmin = financeGate.status === "ok";
+  /**
+   * تأكيدُ الحوالة وإلغاءُ طلبٍ لم يُدفع: الأدمن **والمبيعات**. وما عداهما — تسعيرٌ
+   * وفاتورةٌ واسترداد — يبقى للأدمن وحده (خالد ٢٠ سبتمبر ٢٠٢٦، بعد أن فتحت فاتن الطلب
+   * فلم ترَ الزرّين وظُنّ الأمرُ حجباً بحسب الدولة).
+   */
+  const canConfirmTransfer = transferGate.status === "ok";
   const needsReview = order.notes?.startsWith("⚠") ?? false;
   // بلا عميلٍ لا دفترَ أصلاً — فيُقال ذلك صراحةً بدل أصفارٍ تُقرأ حقيقةً.
   const statement = order.clientId ? await getOrderStatement(order.clientId, order) : null;
@@ -186,7 +194,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
         {/* ما يُفعَل الآن — يُفصَل عن الحقائق بخطّ، فلا يختلط ما يُقرأ بما يُضغط. */}
         <div className="flex flex-wrap items-center gap-2 border-t pt-2.5">
-          {order.status === "AWAITING_TRANSFER" && isFinanceAdmin ? (
+          {order.status === "AWAITING_TRANSFER" && canConfirmTransfer ? (
             <ConfirmTransferButton
               action={confirmOrderPaymentAction.bind(null, order.id)}
               buyerName={order.buyerName}
@@ -233,7 +241,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             * الإلغاء: لما لم يصل فيه مال. يظهر للحالتين وحدهما، ويختفي متى صدرت فاتورة
             * — فالرقمُ محجوزٌ والورقةُ عند المشتري، وبابُ ذاك الاستردادُ لا الإلغاء.
             */}
-          {(order.status === "AWAITING_PAYMENT" || order.status === "AWAITING_TRANSFER") && !order.invoiceId && isFinanceAdmin ? (
+          {(order.status === "AWAITING_PAYMENT" || order.status === "AWAITING_TRANSFER") && !order.invoiceId && canConfirmTransfer ? (
             <CancelOrderButton orderId={order.id} orderNumber={order.number} buyerName={order.buyerName} />
           ) : null}
 
