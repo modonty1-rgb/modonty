@@ -37,7 +37,15 @@ export interface InvoiceEmailParams {
   email: string;
   invoiceNumber: string;
   tierName: string;
-  periodLabel: string; // "شهري" | "سنوي" — legacy invoices only; tax invoices print the real duration
+  periodLabel: string; // المدّة كما بيعت — «٣ أشهر» · «شهر واحد» · «٦ أشهر + شهر هدية = ٧ أشهر»
+  /**
+   * **الخدمةُ لم تبدأ بعد** — لم يصل العميلَ مقالٌ أوّل.
+   *
+   * فلا تُطبع تواريخُ بدايةٍ ونهاية، بل يُقال ذلك صراحةً: المدّةُ معلومةٌ وبدايتُها
+   * معلَّقة. وإخفاءُ السطر وحده لا يكفي — العميل يدفع ويسأل «متى تبدأ؟»، والسكوتُ
+   * يجعله يفترض أنّها بدأت يوم الدفع.
+   */
+  serviceStartsWithFirstArticle?: boolean;
   amount: number;
   currency: "SAR" | "EGP";
   paymentMethodLabel?: string;
@@ -116,7 +124,9 @@ export async function invoiceEmail(p: InvoiceEmailParams): Promise<EmailContent>
 
   const parties = invoiceParties(p.seller, p.buyer, "مُدَوَّنَتِي", p.clientName);
 
-  const period = p.subscriptionStart && p.subscriptionEnd
+  const period = p.serviceStartsWithFirstArticle
+    ? "فترة الخدمة: تبدأ المدّة بعد نشر أوّل مقال"
+    : p.subscriptionStart && p.subscriptionEnd
     ? `فترة الخدمة: ${dateFmt.format(p.subscriptionStart)} — ${dateFmt.format(p.subscriptionEnd)}`
     : null;
 
@@ -139,8 +149,10 @@ export async function invoiceEmail(p: InvoiceEmailParams): Promise<EmailContent>
     : `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9f9f9;border:1px solid #ededed;border-radius:10px;margin:0 0 18px;font-size:13px;">
         ${detailRow("الباقة", `${p.tierName} (${p.periodLabel})`)}
         ${p.paymentMethodLabel ? detailRow("طريقة الدفع", p.paymentMethodLabel) : ""}
-        ${p.subscriptionStart ? detailRow("بداية الاشتراك", dateFmt.format(p.subscriptionStart)) : ""}
-        ${p.subscriptionEnd ? detailRow("نهاية الاشتراك", dateFmt.format(p.subscriptionEnd)) : ""}
+        ${p.serviceStartsWithFirstArticle
+          ? detailRow("بداية الاشتراك", "تبدأ المدّة بعد نشر أوّل مقال")
+          : `${p.subscriptionStart ? detailRow("بداية الاشتراك", dateFmt.format(p.subscriptionStart)) : ""}
+             ${p.subscriptionEnd ? detailRow("نهاية الاشتراك", dateFmt.format(p.subscriptionEnd)) : ""}`}
         ${detailRow("الإجمالي", money(p.amount, p.currency, 0))}
       </table>`;
 

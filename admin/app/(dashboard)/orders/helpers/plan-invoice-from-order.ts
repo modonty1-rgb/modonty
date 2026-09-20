@@ -24,8 +24,9 @@ export interface InvoicePlan {
   totalMinor: number;
   paidMonths: number;
   bonusServiceMonths: number;
-  subscriptionStart: Date;
-  subscriptionEnd: Date;
+  /** فارغان حتّى يصل العميلَ أوّلُ مقال — فالمدّةُ لم تبدأ ولا يُخترع لها تاريخ. */
+  subscriptionStart: Date | null;
+  subscriptionEnd: Date | null;
   /**
    * أهذه الفاتورةُ توثيقٌ لدفعةٍ محسوبةٍ سلفاً، أم مالٌ جديد؟ تقريرُ المبيعات نقديُّ
    * الأساس ويعدّ أوّلَ طلبٍ مدفوعٍ لكلّ عميل إيراداً تأسيسيّاً، فالفاتورةُ الصادرةُ من
@@ -82,7 +83,21 @@ export async function planInvoiceFromOrder(orderId: string): Promise<InvoicePlan
    * يومُ تفعيله، ثمّ يومُ دفعه — بهذا الترتيب، وكلُّها على الطلب لا على الكرت. فلا تتغيّر
    * فاتورةٌ صدرت لأنّ الكرتَ تغيّر بعدها، ولا يتداخل تجديدان في وصف مدّتهما.
    */
-  const anchor = order.serviceStartedAt ?? order.activatedAt ?? order.paidAt ?? new Date();
+  /**
+   * **وإن لم تبدأ الخدمةُ بعد، فلا تواريخَ أصلاً** (خالد ٢٠ سبتمبر ٢٠٢٦).
+   *
+   * قاعدةُ المدّة عندنا أنّها تبدأ **بأوّل مقالٍ يصل العميل** لا بيوم الدفع ولا بيوم
+   * التفعيل — ولهذا `recompute-subscription-end.ts` يتجاهل الطلبَ الذي `serviceStartedAt`
+   * فيه فارغ، وكرتُ العميل يبقى بلا تاريخ نهاية عن حقّ.
+   *
+   * وكانت الفاتورةُ تخالف ذلك: تسقط المرساةُ إلى `activatedAt` فتعلن مدّةً لم تبدأ.
+   * مقيسٌ على `ORD-2026-00050` (عبير): لم يصلها مقالٌ بعد، وخرجت الفاتورة تقول
+   * «بداية الاشتراك ٢٠ سبتمبر — نهاية الاشتراك ٢٠ ديسمبر». والكرتُ في نفس اللحظة
+   * يقول إنّ الاشتراك لم يبدأ. مستندٌ يخالف النظام، ويصل العميلَ بتاريخٍ يحاسبنا عليه.
+   *
+   * فصارت الفاتورة تقول الحقيقة: المدّةُ معلومة، وبدايتُها معلَّقة على أوّل مقال.
+   */
+  const anchor = order.serviceStartedAt ?? null;
   return {
     ok: true,
     plan: {
@@ -103,7 +118,7 @@ export async function planInvoiceFromOrder(orderId: string): Promise<InvoicePlan
       paidMonths: order.paidMonths,
       bonusServiceMonths: order.bonusServiceMonths,
       subscriptionStart: anchor,
-      subscriptionEnd: addMonths(anchor, order.paidMonths + order.bonusServiceMonths),
+      subscriptionEnd: anchor ? addMonths(anchor, order.paidMonths + order.bonusServiceMonths) : null,
       foundingInvoice: founding?.id === order.id && client._count.invoices === 0,
     },
   };

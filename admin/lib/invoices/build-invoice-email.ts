@@ -39,6 +39,35 @@ export type BuiltInvoiceEmail =
   | { ok: true; content: EmailContent; email: string; isTax: boolean; qrPng: Buffer | null }
   | { ok: false; error: string };
 
+/**
+ * **المدّة كما بيعت — لا ثنائيّة «شهري/سنوي».**
+ *
+ * خالد (٢٠ سبتمبر ٢٠٢٦) على فاتورة عبير `ORD-2026-00050`: «كاتب لك الباقة الانطلاقة
+ * سنوي وهي ثلاثة شهور». والتواريخُ في نفس الفاتورة تكذّبها: سبتمبر ← ديسمبر.
+ *
+ * والسببُ أنّ `Invoice.period` حقلٌ نصّيٌّ بقيمتين (`schema.prisma:3957` —
+ * `"monthly" | "annual"`)، فكلُّ ما ليس شهريّاً كان يُطبع «سنوي»: ثلاثةُ أشهر وستّةٌ
+ * وتسعة. والفاتورةُ الضريبيّة السعوديّة كانت تنجو لأنّها تطبع `serviceLabel` بالأشهر
+ * الحقيقيّة — أمّا المصريّة فتسقط في الثنائيّة، لأنّ `isTax` يشترط `currency === "SAR"`.
+ *
+ * فمتى عرف الصفُّ عددَ أشهره (وهو يعرفه في كلّ فاتورةٍ وُلدت من طلبِ دفع) طُبع العددُ
+ * نفسُه. و`period` يبقى احتياطاً للفواتير القديمة التي لا تحمل `paidMonths`.
+ */
+function durationLabel(
+  period: string,
+  paidMonths: number | null,
+  bonusServiceMonths: number | null,
+): string {
+  if (paidMonths == null || paidMonths <= 0) {
+    return period === "monthly" ? "شهري" : "سنوي";
+  }
+  const m = (n: number) => `${n} ${n === 1 ? "شهر" : "أشهر"}`;
+  const bonus = bonusServiceMonths ?? 0;
+  if (!bonus) return paidMonths === 1 ? "شهر واحد" : m(paidMonths);
+  const total = paidMonths + bonus;
+  return `${m(paidMonths)} + ${bonus === 1 ? "شهر هدية" : `${bonus} أشهر هدية`} = ${m(total)}`;
+}
+
 export async function buildInvoiceEmail(src: InvoiceEmailSource): Promise<BuiltInvoiceEmail> {
   const [client, contact] = await Promise.all([
     db.client.findUnique({
@@ -77,13 +106,19 @@ export async function buildInvoiceEmail(src: InvoiceEmailSource): Promise<BuiltI
     email: client.email,
     invoiceNumber: src.number,
     tierName: src.tierName,
-    periodLabel: src.period === "monthly" ? "شهري" : "سنوي",
+    periodLabel: durationLabel(src.period, src.paidMonths, src.bonusServiceMonths),
     amount: src.amount,
     currency,
     paymentStatus: src.paymentStatus === "PAID" ? "PAID" : "DUE",
     issuedAt: src.issuedAt,
     subscriptionStart: src.subscriptionStart,
     subscriptionEnd: src.subscriptionEnd,
+    /**
+     * بلا بدايةٍ مخزَّنة = الخدمةُ لم تبدأ بعد — و`plan-invoice-from-order.ts` صار يترك
+     * الحقلين فارغين عمداً بدل أن يخترع تاريخاً من يوم التفعيل. فيُشتقّ هنا مرّةً واحدة،
+     * فتسري الجملةُ على المعاينة والإصدار والإرسال بلا تمريرِ علَمٍ في ثلاثة مسارات.
+     */
+    serviceStartsWithFirstArticle: src.subscriptionStart == null,
     salesPhone: contact?.salesPhone?.trim() || contact?.orgContactTelephone?.trim() || null,
     salesEmail: contact?.salesEmail?.trim() || contact?.orgContactEmail?.trim() || null,
   };
