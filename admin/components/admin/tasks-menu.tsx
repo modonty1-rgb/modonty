@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Archive, KanbanSquare, LayoutGrid, UserCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { RealtimeEvent, staffChannel } from "@/lib/realtime/channels";
+import { useRealtime } from "@/lib/realtime/use-realtime";
 
 const ITEMS = [
   { href: "/tasks", label: "Board", icon: LayoutGrid, hint: "Four columns — where the work stands" },
@@ -34,8 +37,19 @@ const ITEMS = [
  * The trigger lights up whenever any of its pages is open, so the bar still says
  * where you are.
  */
-export function TasksMenu({ canViewReports = false }: { canViewReports?: boolean }) {
+export function TasksMenu({ canViewReports = false, myOpenTasks = 0 }: { canViewReports?: boolean; myOpenTasks?: number }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const staffId = (session?.user as { id?: string } | undefined)?.id ?? null;
+
+  /**
+   * الرقمُ يُحسب على السيرفر في `app/(dashboard)/layout.tsx`، و`revalidatePath` هناك
+   * يصل مَن نفّذ الحركة وحده. فمَن أُسنِدت إليه المهمّةُ يبقى على رقمه القديم حتّى
+   * ينتقل — إلّا أن يُخبَره أحد. هذا هو الإخبار: نبضةٌ تُبطِل ما رسمه السيرفر،
+   * فيُعاد الحسابُ من مونغو بلا أن يلمس الموظّفُ شيئاً.
+   */
+  useRealtime(staffId ? staffChannel(staffId) : null, RealtimeEvent.TASKS_CHANGED, () => router.refresh());
   // The Report link used to be filtered on `session.user.role === "ADMIN"`. It is now a
   // permission on the staff row (Khalid, 2026-09-04), and the session token does not carry
   // it — a token minted before the box was ticked would keep the link hidden until the next
@@ -55,7 +69,7 @@ export function TasksMenu({ canViewReports = false }: { canViewReports?: boolean
         <Button
           variant="ghost"
           size="sm"
-          aria-label="Tasks"
+          aria-label={myOpenTasks > 0 ? `Tasks — ${myOpenTasks} مفتوحة` : "Tasks"}
           className={cn(
             "h-8 gap-1.5 text-xs font-medium",
             active && "bg-accent text-accent-foreground",
@@ -63,6 +77,20 @@ export function TasksMenu({ canViewReports = false }: { canViewReports?: boolean
         >
           <KanbanSquare className="size-4" aria-hidden />
           <span className="hidden sm:inline">Tasks</span>
+          {/**
+            * **العدد على الزرّ لا داخل القائمة** (خالد ٢٠ سبتمبر ٢٠٢٦: «أعرف كم تاسك
+            * عندي»). ورقمٌ يحتاج فتحَ قائمةٍ ليُقرأ لا يُقرأ.
+            *
+            * ويختفي عند الصفر: شارةٌ تقول «٠» تشغل العينَ بلا خبر، والفراغُ نفسُه خبر.
+            */}
+          {myOpenTasks > 0 ? (
+            <span
+              className="ms-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold tabular-nums leading-none text-primary-foreground"
+              title={`${myOpenTasks} مهمّة مفتوحة مُسنَدة إليك`}
+            >
+              {myOpenTasks > 99 ? "99+" : myOpenTasks}
+            </span>
+          ) : null}
         </Button>
       </DropdownMenuTrigger>
 

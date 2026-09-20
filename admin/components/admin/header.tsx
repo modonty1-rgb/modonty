@@ -29,9 +29,12 @@ export function Header({
   dbBadge,
   canSyncLocal = false,
   canViewReports = false,
+  myOpenTasks = 0,
 }: {
   dbBadge?: React.ReactNode;
   canSyncLocal?: boolean;
+  /** مهامّي المفتوحة — تُقرأ في التخطيط وتُرسَم بادجاً على زرّ Tasks. */
+  myOpenTasks?: number;
   /** Computed on the server from the staff row — the session token does not carry it. */
   canViewReports?: boolean;
 }) {
@@ -58,7 +61,7 @@ export function Header({
 
         <div className="flex items-center gap-2">
           {/* Task management lives here, not in the sidebar (Khalid, 2026-09-02) */}
-          <TasksMenu canViewReports={canViewReports} />
+          <TasksMenu canViewReports={canViewReports} myOpenTasks={myOpenTasks} />
 
           {/* Sales followed Tasks out of the sidebar (Khalid, 2026-09-04) — Faten's
               whole day is these three pages, so they sit beside Tasks not under it. */}

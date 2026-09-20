@@ -9,6 +9,10 @@ import { auth } from "@/lib/auth";
 import { canSeeReports } from "@/lib/can-see-reports";
 import { db } from "@/lib/db";
 
+import { RealtimeEvent, staffChannel } from "@/lib/realtime/channels";
+import { publish } from "@/lib/realtime/publish";
+
+import { TASK_NOT_ARCHIVED } from "./not-archived";
 import { createTaskSchema, moveTaskSchema, updateTaskSchema } from "./task-schema";
 
 // Every action follows the same order: session → Zod → try/catch → revalidate.
@@ -18,10 +22,27 @@ import { createTaskSchema, moveTaskSchema, updateTaskSchema } from "./task-schem
 
 type Result = { success: true } | { success: false; error: string };
 
-/** `revalidatePath("/tasks", "layout")` — the layout owns the counters, and a
- *  card that moves changes TWO columns plus the header. The default page-only
- *  invalidation would refresh the board and leave the counts stale. */
-const revalidateBoard = () => revalidatePath("/tasks", "layout");
+/**
+ * **بطاقةٌ تتحرّك تُبطل لوحتَها وشريطَ الأدمن كلَّه.**
+ *
+ * كان `revalidatePath("/tasks", "layout")` وحده — فأعمدةُ اللوحة تتحدّث، وبادجُ «Tasks»
+ * في الشريط يبقى على رقمه القديم في كلّ صفحةٍ خارج `/tasks`. مقيس (خالد ٢٠ سبتمبر ٢٠٢٦):
+ * «التاسك لمّا نحرّكها العدّاد ما يتغيّر».
+ *
+ * والسببُ أنّ البادج يُحسب في `app/(dashboard)/layout.tsx` — تخطيطٌ يغطّي الأدمن كلَّه،
+ * لا تخطيطَ `/tasks`. فيُبطَل الجذرُ معه: `revalidatePath("/", "layout")` يشمل كلَّ ما
+ * تحته، فيُعاد حسابُ العدّاد أينما كان الموظّف واقفاً.
+ *
+ * ── ولا يكفي وحدَه حين يكون صاحبُ المهمّة شخصاً آخر ──
+ * `revalidatePath` يصل مَن نفّذ الحركة وحده: الصفحةُ التي يرسمها الخادمُ له الآن. أمّا
+ * صاحبُ المهمّة الجالسُ في متصفّحه فلا شيء يخبره حتّى ينتقل. فمعه نبضةٌ على قناته
+ * (`assigneeId`) يُعاد بها حسابُ بادجه من مونغو بلا أن يلمس شيئاً.
+ */
+const revalidateBoard = (assigneeId?: string) => {
+  revalidatePath("/tasks", "layout");
+  revalidatePath("/", "layout");
+  if (assigneeId) publish(staffChannel(assigneeId), RealtimeEvent.TASKS_CHANGED);
+};
 
 /** Empty string from a `<select>`/`<input>` means "not set", not "set to empty". */
 const orNull = (v: string | undefined) => (v && v.trim() ? v.trim() : null);
@@ -33,12 +54,11 @@ const orNull = (v: string | undefined) => (v && v.trim() ? v.trim() : null);
  * does NOT match an absent field. Measured: with a plain `archivedAt: null`
  * filter, `create` reported success and every card vanished on the next reload
  * — six rows were in the database and invisible.
+ *
+ * The condition itself moved to [TASK_NOT_ARCHIVED] once the header badge was
+ * measured counting archived cards — a second reader means it needs one home.
  */
-// NOT `as const`: that freezes `OR` into a readonly tuple, and Prisma's
-// `TaskWhereInput.OR` is a mutable array — three call sites failed to compile.
-const LIVE: Prisma.TaskWhereInput = {
-  OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
-};
+const LIVE: Prisma.TaskWhereInput = TASK_NOT_ARCHIVED;
 
 /** Task cards are private to their assignee. Enforce this on the server too:
  * hiding a card in the browser must not make its action endpoints public. */
@@ -68,6 +88,91 @@ function positionAt(siblings: { position: number }[], toIndex: number): number {
   if (toIndex <= 0) return siblings[0].position - 1000;
   if (toIndex >= siblings.length) return siblings[siblings.length - 1].position + 1000;
   return (siblings[toIndex - 1].position + siblings[toIndex].position) / 2;
+}
+
+/**
+ * **إشعارُ الجرس حين يُسنِد إليك أحدٌ مهمّة** (خالد ٢٠ سبتمبر ٢٠٢٦: «لمّا يجيني تاسك من
+ * شخص ثاني تجيني في النوتيفيكيشن اللي عند الجرس»).
+ *
+ * ── ولا يُشعَر مَن أسند لنفسه ──
+ * الموظّفُ يكتب مهامَّه بنفسه في الغالب (`createTask` يُسندها له افتراضاً)، فإشعارُه
+ * بما كتبه قبل ثانية ضجيجٌ يجعله يتجاهل الجرسَ كلَّه — وحينها يضيع الإشعارُ الذي يهمّ.
+ *
+ * ── ولا يُسقط المهمّة ──
+ * الكتابةُ نجحت، وفشلُ الإشعار لا يُلغيها. فالخطأ يُبلَّغ في السجلّ ويمضي — كما يفعل
+ * `logAction` بالضبط، وللسبب نفسِه.
+ *
+ * ── ولماذا `staffId` لا `userId` ──
+ * الصفُّ يقبل الاثنين (`schema.prisma:3636-3639`)، و`userId` لقرّاء مدونتي. والموظّفون
+ * في `Staff` منذ فُصل الجدولان، فهذا هو الحقلُ الذي يقرؤه جرسُ الأدمن.
+ */
+async function notifyAssignee(p: {
+  taskId: string;
+  title: string;
+  assigneeId: string;
+  actorId: string;
+}): Promise<void> {
+  if (p.assigneeId === p.actorId) return;
+  try {
+    const actor = await db.staff.findUnique({ where: { id: p.actorId }, select: { name: true, email: true } });
+    const from = actor?.name?.trim() || actor?.email?.trim() || "زميل";
+    await db.notification.create({
+      data: {
+        staffId: p.assigneeId,
+        type: "task_assigned",
+        title: `مهمّة جديدة من ${from}`,
+        body: p.title,
+        relatedId: p.taskId,
+      },
+    });
+    publish(staffChannel(p.assigneeId), RealtimeEvent.NOTIFICATION_NEW);
+  } catch (error) {
+    console.error("[tasks] notifyAssignee failed", error);
+  }
+}
+
+/**
+ * **إشعارُ صاحب الطلب حين تبلغ مهمّتُه عمودَ المراجعة** (خالد ٢٠ سبتمبر ٢٠٢٦: «جاني تاسك
+ * من روان وخلّصته ووديته على الريفيو… أبغى أرسل له إشعار إن التاسك محتاج المراجعة تبعتك»).
+ *
+ * ── إلى `createdById` لا إلى المُسنَد إليه ──
+ * المراجعُ هو مَن كتب المهمّة وأسندها، لا مَن نفّذها. والحقلُ مكتوبٌ منذ `createTask`
+ * (`schema.prisma:364`)، فلا حاجةَ لحقلٍ جديد.
+ *
+ * ── ولا يُشعَر مَن راجع نفسَه ──
+ * المهمّةُ التي كتبها الموظّفُ لنفسه `createdById === assigneeId`، فتحريكُها إلى
+ * `REVIEW` حدثٌ داخليٌّ لا يعني أحداً. نفسُ حارسِ [notifyAssignee] وللسبب نفسِه.
+ *
+ * ── ولا يُرسَل مرّتين على نفس الانتقال ──
+ * الشرطُ في نداءِ الدالّة: الحالةُ القديمة **ليست** `REVIEW`. وبدونه يُعيد كلُّ سحبٍ
+ * داخل عمود المراجعة (ترتيبٌ فقط، لا انتقال) إشعاراً جديداً.
+ *
+ * ── ولا يُسقط الحركة ──
+ * البطاقةُ تحرّكت فعلاً؛ فشلُ الإشعار يُسجَّل ويمضي، كما في [notifyAssignee].
+ */
+async function notifyReviewer(p: {
+  taskId: string;
+  title: string;
+  createdById: string | null;
+  actorId: string;
+}): Promise<void> {
+  if (!p.createdById || p.createdById === p.actorId) return;
+  try {
+    const actor = await db.staff.findUnique({ where: { id: p.actorId }, select: { name: true, email: true } });
+    const from = actor?.name?.trim() || actor?.email?.trim() || "زميل";
+    await db.notification.create({
+      data: {
+        staffId: p.createdById,
+        type: "task_review",
+        title: `مهمّة تنتظر مراجعتك من ${from}`,
+        body: p.title,
+        relatedId: p.taskId,
+      },
+    });
+    publish(staffChannel(p.createdById), RealtimeEvent.NOTIFICATION_NEW);
+  } catch (error) {
+    console.error("[tasks] notifyReviewer failed", error);
+  }
 }
 
 export async function createTask(raw: unknown): Promise<Result> {
@@ -107,7 +212,7 @@ export async function createTask(raw: unknown): Promise<Result> {
       orderBy: { position: "asc" },
     });
 
-    await db.task.create({
+    const created = await db.task.create({
       data: {
         title: data.title,
         description: orNull(data.description),
@@ -128,9 +233,13 @@ export async function createTask(raw: unknown): Promise<Result> {
         // — see `LIVE` above for what absent costs.
         archivedAt: null,
       },
+      select: { id: true, title: true },
     });
 
-    revalidateBoard();
+    await notifyAssignee({ taskId: created.id, title: created.title, assigneeId, actorId: userId });
+
+    // `assigneeId` لا `userId`: البطاقةُ قد تكون كُتبت لزميل، والبادجُ الذي تغيّر بادجُه هو.
+    revalidateBoard(assigneeId);
     return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "Could not create the task" };
@@ -151,7 +260,7 @@ export async function updateTask(raw: unknown): Promise<Result> {
   try {
     const existing = await db.task.findUnique({
       where: { id: data.id },
-      select: { id: true, status: true, completedAt: true, assigneeId: true },
+      select: { id: true, status: true, completedAt: true, assigneeId: true, createdById: true },
     });
     if (!existing) return { success: false, error: "Task not found" };
     if (existing.assigneeId !== userId) return { success: false, error: "Task not found" };
@@ -174,7 +283,16 @@ export async function updateTask(raw: unknown): Promise<Result> {
       },
     });
 
-    revalidateBoard();
+    if (data.status === "REVIEW" && existing.status !== "REVIEW") {
+      await notifyReviewer({
+        taskId: existing.id,
+        title: data.title,
+        createdById: existing.createdById,
+        actorId: userId,
+      });
+    }
+
+    revalidateBoard(userId);
     return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "Could not save the task" };
@@ -196,7 +314,7 @@ export async function moveTask(raw: unknown): Promise<Result> {
   try {
     const task = await db.task.findUnique({
       where: { id },
-      select: { id: true, status: true, completedAt: true, assigneeId: true },
+      select: { id: true, title: true, status: true, completedAt: true, assigneeId: true, createdById: true },
     });
     if (!task) return { success: false, error: "Task not found" };
     if (task.assigneeId !== userId) return { success: false, error: "Task not found" };
@@ -222,7 +340,16 @@ export async function moveTask(raw: unknown): Promise<Result> {
       },
     });
 
-    revalidateBoard();
+    if (status === "REVIEW" && task.status !== "REVIEW") {
+      await notifyReviewer({
+        taskId: task.id,
+        title: task.title,
+        createdById: task.createdById,
+        actorId: userId,
+      });
+    }
+
+    revalidateBoard(userId);
     return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "Could not move the task" };
@@ -252,7 +379,7 @@ export async function archiveTask(id: string): Promise<Result> {
     if (task.archivedAt) return { success: false, error: "Task is already archived" };
 
     await db.task.update({ where: { id: task.id }, data: { archivedAt: new Date() } });
-    revalidateBoard();
+    revalidateBoard(userId);
     return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "Could not archive the task" };
@@ -292,7 +419,7 @@ export async function restoreTask(id: string): Promise<Result> {
       data: { archivedAt: null, position: first ? first.position - 1000 : 1000 },
     });
 
-    revalidateBoard();
+    revalidateBoard(userId);
     return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "Could not restore the task" };

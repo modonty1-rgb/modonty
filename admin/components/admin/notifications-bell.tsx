@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Bell, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +17,21 @@ import {
   markAllNotificationsReadAction,
 } from "@/lib/notifications/actions";
 import { getNotificationMeta, type NotificationLike } from "@/lib/notifications/registry";
+import { RealtimeEvent, staffChannel } from "@/lib/realtime/channels";
+import { useRealtime } from "@/lib/realtime/use-realtime";
 
-const POLL_INTERVAL_MS = 30_000;
+/**
+ * **شبكةُ أمانٍ لا وسيلةَ تحديث.**
+ *
+ * كان ٣٠ ثانية — أي ١٢٬٤٨٠ نداءً يوميّاً من ١٣ موظّفاً، ٢٥ ألف استعلامٍ على مونغو،
+ * تسعةٌ وتسعون بالمئة منها ترجع «ما في جديد». (خالد ٢٠ سبتمبر ٢٠٢٦: «هذي كلها
+ * overload على Database و API Request».)
+ *
+ * صار البثُّ اللحظيُّ هو الطريق، وهذا يبقى لحالةٍ واحدة: أن يسقط Pusher أو تنفد
+ * حصّتُه. خمسُ دقائقَ تعني ١٦ نداءً في يوم الموظّف بدل ٩٦٠ — وتضمن أنّ أسوأَ ما
+ * يحدث تأخيرٌ، لا إشعارٌ يضيع.
+ */
+const FALLBACK_POLL_MS = 300_000;
 
 function timeAgo(date: Date): string {
   const diff = Date.now() - new Date(date).getTime();
@@ -37,6 +51,8 @@ function timeAgo(date: Date): string {
 
 export function NotificationsBell() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const staffId = (session?.user as { id?: string } | undefined)?.id ?? null;
   const [items, setItems] = useState<NotificationLike[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
@@ -50,9 +66,13 @@ export function NotificationsBell() {
 
   useEffect(() => {
     refresh();
-    const id = setInterval(refresh, POLL_INTERVAL_MS);
+    const id = setInterval(refresh, FALLBACK_POLL_MS);
     return () => clearInterval(id);
   }, []);
+
+  // البثُّ اللحظيّ: يصل الإشعارُ لفاتن في مصر وخالد في السعوديّة في نفس اللحظة.
+  // الحمولةُ إشارةٌ فقيرة — نعيد الجلبَ من مونغو، مصدرِ الحقيقة.
+  useRealtime(staffId ? staffChannel(staffId) : null, RealtimeEvent.NOTIFICATION_NEW, refresh);
 
   function handleRowClick(n: NotificationLike) {
     const meta = getNotificationMeta(n.type);
