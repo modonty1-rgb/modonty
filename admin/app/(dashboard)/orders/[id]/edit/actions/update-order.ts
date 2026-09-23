@@ -3,13 +3,14 @@
 import { revalidatePath } from "next/cache";
 
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
+import { vatRateBpForMarket } from "@modonty/shared/lib/payments/vat-rate";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
 import { requireSalesDesk } from "@/lib/require-sales-desk";
 
 /**
- * تعديلُ طلبٍ قائم — مديرُ النظام وحده.
+ * تعديلُ طلبٍ قائم — الأدمن والمبيعات (`requireSalesDesk`).
  *
  * وُجد لأنّ الترحيل بنى الطلباتِ من بياناتٍ متناقضة: `billingCycle` خالف المبلغَ في
  * ٢٣ من ٢٨ صفّاً، والتواريخُ خالفت الاثنين. فما خُمّنت المدّة — وُسمت، وتُصحَّح هنا بيدٍ
@@ -25,15 +26,13 @@ import { requireSalesDesk } from "@/lib/require-sales-desk";
 const schema = z.object({
   orderId: z.string().min(1),
   planName: z.string().trim().min(1, "اسم الباقة مطلوب").max(60),
-  planSlug: z.string().trim().min(1, "سلَق الباقة مطلوب").max(60),
   articlesPerMonth: z.coerce.number().int().min(0).max(200).nullable(),
+  salesRepId: z.string().trim().optional(),
   market: z.enum(["SA", "EG"]),
-  currency: z.enum(["SAR", "EGP"]),
   /** بالوحدة الكبرى كما يكتبها المحاسب — تُحوَّل للأصغر عند الحفظ. */
   total: z.coerce.number().min(0).max(10_000_000),
   paidMonths: z.coerce.number().int().min(1).max(60),
   bonusServiceMonths: z.coerce.number().int().min(0).max(24),
-  vatRateBp: z.coerce.number().int().min(0).max(10_000),
   serviceStartedAt: z.string().trim().optional(),
   activatedAt: z.string().trim().optional(),
   paidAt: z.string().trim().optional(),
@@ -67,10 +66,9 @@ function keepIfSameDay(incoming: Date | null, existing: Date | null | undefined)
 
 const LABEL: Record<string, string> = {
   planName: "الباقة",
-  planSlug: "سلَق الباقة",
   articlesPerMonth: "الحصّة الشهريّة",
+  salesRepId: "مندوب المبيعات",
   market: "السوق",
-  currency: "العملة",
   totalMinor: "المبلغ",
   paidMonths: "الشهور المدفوعة",
   bonusServiceMonths: "شهور الهدية",
@@ -105,13 +103,22 @@ export async function updateOrderAction(
   const before = await db.checkoutOrder.findUnique({
     where: { id: d.orderId },
     select: {
-      number: true, planName: true, planSlug: true, articlesPerMonth: true,
+      number: true, planName: true, articlesPerMonth: true, salesRepId: true,
       market: true, currency: true, totalMinor: true, paidMonths: true,
       bonusServiceMonths: true, vatRateBp: true, subtotalMinor: true, vatMinor: true,
       monthlyBaseMinor: true, serviceStartedAt: true, activatedAt: true, paidAt: true, notes: true,
     },
   });
   if (!before) return { ok: false, error: "الطلب غير موجود" };
+
+  const salesRepId = d.salesRepId || null;
+  if (salesRepId && salesRepId !== before.salesRepId) {
+    const salesRep = await db.staff.findFirst({
+      where: { id: salesRepId, role: "SALES" },
+      select: { id: true },
+    });
+    if (!salesRep) return { ok: false, error: "مندوب المبيعات المختار غير صالح" };
+  }
 
   /**
    * الضريبةُ تُشتقّ من الإجمالي، لا تُجمع فوقه.
@@ -121,21 +128,34 @@ export async function updateOrderAction(
    * يجعل الطلبَ يقول رقماً لم يُحصَّل.
    */
   const totalMinor = Math.round(d.total * 100);
-  const vatMinor = d.vatRateBp > 0 ? Math.round(totalMinor - totalMinor / (1 + d.vatRateBp / 10_000)) : 0;
-  const subtotalMinor = totalMinor - vatMinor;
+  /**
+   * ولا تُمسّ الضريبةُ إلّا إذا تغيّر ما تُشتقّ منه — السوقُ أو المبلغ.
+   *
+   * حفظُ ملاحظةٍ على طلبٍ قديمٍ نسبتُه غيرُ نسبة سوقه اليوم كان يعيد كتابة ضريبته
+   * وصافيه بصمت. فالنسبةُ المسجَّلة تبقى ما لم يتغيّر أساسُها، والعملةُ لا تتبع السوقَ
+   * إلّا حين يتغيّر السوق فعلاً.
+   */
+  const marketChanged = d.market !== before.market;
+  const moneyChanged = marketChanged || totalMinor !== before.totalMinor;
+  const vatRateBp = moneyChanged ? vatRateBpForMarket(d.market) : before.vatRateBp;
+  const currency = marketChanged ? (d.market === "EG" ? "EGP" : "SAR") : before.currency;
+  const vatMinor = moneyChanged
+    ? vatRateBp > 0 ? Math.round(totalMinor - totalMinor / (1 + vatRateBp / 10_000)) : 0
+    : before.vatMinor;
+  const subtotalMinor = moneyChanged ? totalMinor - vatMinor : before.subtotalMinor;
   const monthlyBaseMinor = d.paidMonths > 0 ? Math.round(totalMinor / d.paidMonths) : totalMinor;
 
   const next = {
     planName: d.planName,
-    planSlug: d.planSlug,
     articlesPerMonth: d.articlesPerMonth,
+    salesRepId,
     market: d.market,
-    currency: d.currency,
+    currency,
     country: d.market,
     totalMinor,
     subtotalMinor,
     vatMinor,
-    vatRateBp: d.vatRateBp,
+    vatRateBp,
     monthlyBaseMinor,
     paidMonths: d.paidMonths,
     bonusServiceMonths: d.bonusServiceMonths,

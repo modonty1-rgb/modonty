@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
+import { getSalesReps } from "@/app/(dashboard)/users/actions/users-actions";
 import { OrderEditForm, type OrderForEdit } from "./components/order-edit-form";
 
 export const dynamic = "force-dynamic";
@@ -21,9 +22,9 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
     where: { id },
     select: {
       id: true, number: true, buyerName: true, clientId: true,
-      planName: true, planSlug: true, articlesPerMonth: true,
-      market: true, currency: true, totalMinor: true, paidMonths: true,
-      bonusServiceMonths: true, vatRateBp: true,
+      planName: true, articlesPerMonth: true, salesRepId: true,
+      market: true, totalMinor: true, paidMonths: true,
+      bonusServiceMonths: true,
       serviceStartedAt: true, activatedAt: true, paidAt: true, notes: true,
     },
   });
@@ -35,12 +36,26 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
    * `clientId` على الطلب معرّفٌ مجرّد بلا `@relation` (حذفُ العميل يجب ألّا يجرّ
    * طلباته)، فالجلبُ باستعلامٍ مستقلّ لا بـ`include`.
    */
-  const firstArticle = order.clientId
-    ? await db.article.aggregate({
-        where: { clientId: order.clientId, NOT: [{ firstDeliveredAt: null }] },
-        _min: { firstDeliveredAt: true },
-      })
-    : null;
+  const [firstArticle, salesReps, assignedRep] = await Promise.all([
+    order.clientId
+      ? db.article.aggregate({
+          where: { clientId: order.clientId, NOT: [{ firstDeliveredAt: null }] },
+          _min: { firstDeliveredAt: true },
+        })
+      : Promise.resolve(null),
+    getSalesReps(),
+    order.salesRepId
+      ? db.staff.findUnique({
+          where: { id: order.salesRepId },
+          select: { id: true, name: true, email: true },
+        })
+      : Promise.resolve(null),
+  ]);
+
+  // المندوب السابق قد يكون أُوقف لاحقاً؛ نبقيه ظاهراً كي لا يلغيه حفظ تعديلٍ آخر بالخطأ.
+  const selectableSalesReps = assignedRep && !salesReps.some((rep) => rep.id === assignedRep.id)
+    ? [...salesReps, { id: assignedRep.id, name: assignedRep.name || assignedRep.email || "مندوب سابق" }]
+    : salesReps;
 
   const forEdit: OrderForEdit = {
     ...order,
@@ -50,12 +65,12 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
   };
 
   return (
-    <main dir="rtl" className="mx-auto flex max-w-3xl flex-col gap-4 pb-10">
-      <header className="flex flex-wrap items-end justify-between gap-2">
+    <main dir="rtl" className="mx-auto flex max-w-4xl flex-col gap-4 pb-10">
+      <header className="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
         <div>
           <h1 className="text-xl font-bold">تعديل الطلب {order.number}</h1>
           <p className="text-sm text-muted-foreground">
-            {order.buyerName} — كلُّ تعديلٍ يُسجَّل في سجلّ التدقيق بما تغيّر حقلاً حقلاً.
+            {order.buyerName} · تظهر فقط البيانات التي تحتاج إلى تعديل.
           </p>
         </div>
         <Link
@@ -67,7 +82,7 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
         </Link>
       </header>
 
-      <OrderEditForm order={forEdit} firstArticleAt={day(firstArticle?._min.firstDeliveredAt ?? null)} />
+      <OrderEditForm order={forEdit} firstArticleAt={day(firstArticle?._min.firstDeliveredAt ?? null)} salesReps={selectableSalesReps} />
     </main>
   );
 }

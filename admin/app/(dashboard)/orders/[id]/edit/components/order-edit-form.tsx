@@ -13,14 +13,12 @@ export interface OrderForEdit {
   number: string;
   buyerName: string;
   planName: string;
-  planSlug: string;
+  salesRepId: string | null;
   articlesPerMonth: number | null;
   market: string;
-  currency: string;
   totalMinor: number;
   paidMonths: number;
   bonusServiceMonths: number;
-  vatRateBp: number;
   serviceStartedAt: string | null;
   activatedAt: string | null;
   paidAt: string | null;
@@ -66,7 +64,15 @@ function Field({
   );
 }
 
-export function OrderEditForm({ order, firstArticleAt }: { order: OrderForEdit; firstArticleAt: string | null }) {
+export function OrderEditForm({
+  order,
+  firstArticleAt,
+  salesReps,
+}: {
+  order: OrderForEdit;
+  firstArticleAt: string | null;
+  salesReps: Array<{ id: string; name: string }>;
+}) {
   const [state, action, pending] = useActionState(updateOrderAction, null);
 
   return (
@@ -87,40 +93,36 @@ export function OrderEditForm({ order, firstArticleAt }: { order: OrderForEdit; 
       )}
 
       <section className="rounded-md border p-4">
-        <h2 className="mb-3 text-sm font-bold">الباقة</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <h2 className="mb-3 text-sm font-bold">الاشتراك والمسؤول</h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="اسم الباقة">
             <Input name="planName" defaultValue={order.planName} maxLength={60} required />
           </Field>
-          <Field label="سلَق الباقة" hint="المفتاح في رابط الدفع">
-            <Input name="planSlug" defaultValue={order.planSlug} maxLength={60} required dir="ltr" />
-          </Field>
           <Field label="الحصّة الشهريّة" hint="عدد المقالات">
             <Input name="articlesPerMonth" type="number" min={0} max={200} defaultValue={order.articlesPerMonth ?? ""} />
+          </Field>
+          <Field label="مندوب المبيعات">
+            <select name="salesRepId" defaultValue={order.salesRepId ?? ""} className="h-9 rounded-md border bg-background px-2 text-sm">
+              <option value="">غير محدد</option>
+              {salesReps.map((rep) => (
+                <option key={rep.id} value={rep.id}>{rep.name}</option>
+              ))}
+            </select>
           </Field>
         </div>
       </section>
 
       <section className="rounded-md border p-4">
-        <h2 className="mb-3 text-sm font-bold">المال</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <h2 className="mb-3 text-sm font-bold">قيمة ومدّة الطلب</h2>
+        <div className="grid gap-3 sm:grid-cols-3">
           <Field label="السوق">
             <select name="market" defaultValue={order.market} className="h-9 rounded-md border bg-background px-2 text-sm">
               <option value="SA">السعودية</option>
               <option value="EG">مصر</option>
             </select>
           </Field>
-          <Field label="العملة">
-            <select name="currency" defaultValue={order.currency} className="h-9 rounded-md border bg-background px-2 text-sm">
-              <option value="SAR">ريال سعودي</option>
-              <option value="EGP">جنيه مصري</option>
-            </select>
-          </Field>
-          <Field label="الإجمالي المحصَّل" hint="شاملاً الضريبة — كما دُفع فعلاً">
+          <Field label="قيمة الطلب" hint="شاملة الضريبة">
             <Input name="total" type="number" step="0.01" min={0} defaultValue={(order.totalMinor / 100).toString()} required dir="ltr" />
-          </Field>
-          <Field label="نسبة الضريبة" hint="نقطة أساس: ١٥٪ = 1500 · صفر = بلا ضريبة">
-            <Input name="vatRateBp" type="number" min={0} max={10000} defaultValue={order.vatRateBp} dir="ltr" />
           </Field>
           <Field label="الشهور المدفوعة">
             <Input name="paidMonths" type="number" min={1} max={60} defaultValue={order.paidMonths} required dir="ltr" />
@@ -130,7 +132,7 @@ export function OrderEditForm({ order, firstArticleAt }: { order: OrderForEdit; 
           </Field>
         </div>
         <p className="mt-2 text-[11px] text-muted-foreground">
-          السعر الشهريّ وقيمة الضريبة يُحسبان من الإجمالي والشهور — لا تُكتب يدويّاً كي لا تتناقض معه.
+          تُحسب الضريبة تلقائياً حسب السوق: ١٥٪ للسعودية، و٠٪ لمصر.
         </p>
       </section>
 

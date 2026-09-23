@@ -53,6 +53,9 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
    */
   const isSalesDesk = salesDeskGate.status === "ok";
   const needsReview = order.notes?.startsWith("⚠") ?? false;
+  // الترحيل سجلٌ تاريخيّ لا عمليةَ بوابة. عرضه تحت عنوان «ما جرى مع البوابة» يزعم
+  // للمحاسب أن بوابةً استقبلت المال، لذلك يُخفى هذا الكرت للطلب المُرحّل وحده.
+  const isMigratedOrder = transactions.some((transaction) => transaction.provider === "MIGRATED");
   // بلا عميلٍ لا دفترَ أصلاً — فيُقال ذلك صراحةً بدل أصفارٍ تُقرأ حقيقةً.
   const statement = order.clientId ? await getOrderStatement(order.clientId, order) : null;
   // حالُ الاشتراك — يقرّر ظهورَ زرّ التجديد، وهو نفسُ الحاسب الذي يلوّن صفوف الجدول.
@@ -183,7 +186,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               ما يُفعَل الآن (خالد ١٨ سبتمبر: «شيل البوتوم تبع كشف الحساب»). */}
           {order.clientId ? (
             <Link
-              href={`/clients/${order.clientId}/account`}
+              href={`/clients/${order.clientId}/account?fromOrder=${order.id}`}
               className="ms-auto inline-flex items-center gap-1.5 text-[12px] text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
               <ReceiptText className="size-3.5" aria-hidden />
@@ -329,7 +332,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         <div className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-2">
           <h2 className="text-[11px] font-semibold text-muted-foreground">كشف الحساب</h2>
           {order.clientId ? (
-            <Link href={`/clients/${order.clientId}/account`} className="text-[11px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+            <Link href={`/clients/${order.clientId}/account?fromOrder=${order.id}`} className="text-[11px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
               الكشف الكامل ←
             </Link>
           ) : null}
@@ -382,7 +385,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         * الطلب العاديّ فارغةٌ كلّها — ٣٦٠px من الشاشة تقول «لا شيء» ثلاث مرّات.
         * وصارت الفارغة سطراً واحداً، والعدّاد يقول ما فيها قبل فتح العين عليها.
         */}
-      <section className="rounded-lg border bg-card">
+      {!isMigratedOrder ? <section className="rounded-lg border bg-card">
         <h2 className="border-b px-4 py-2 text-[11px] font-semibold text-muted-foreground">سجلّ ما جرى مع البوابة</h2>
         <div className="divide-y">
           <LogBlock title="عمليات الدفع" count={transactions.length} empty="لم تُسجّل أي عملية دفع على هذا الطلب.">
@@ -458,7 +461,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             </Table>
           </LogBlock>
         </div>
-      </section>
+      </section> : null}
     </main>
   );
 }

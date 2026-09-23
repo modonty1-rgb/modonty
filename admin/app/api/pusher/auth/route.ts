@@ -1,7 +1,6 @@
-import Pusher from "pusher";
-
 import { auth } from "@/lib/auth";
 import { staffChannel } from "@/lib/realtime/channels";
+import { getRealtimeServer } from "@/lib/realtime/publish";
 
 /**
  * **مسارُ التصديق على القنوات الخاصّة.**
@@ -15,27 +14,14 @@ import { staffChannel } from "@/lib/realtime/channels";
  * المسموحةَ من `session.user.id` ثمّ نقارن. ولو قبلنا ما أرسله المتصفّح لصار كلُّ موظّفٍ
  * قادراً على سماع جرس زميله بتغيير حرفٍ في الطلب — وفي الجرس عناوينُ مهامَّ وأسماءُ مَن
  * أسندها.
- *
- * ── ولماذا نسخةٌ من عميل Pusher هنا ──
- * `lib/realtime/publish.ts` عميلُه خاصٌّ به ومعلَّمٌ `server-only` للنشر وحده. والتصديقُ
- * فعلٌ آخر (توقيعٌ لا بثّ)، فله عميلُه — ومفاتيحُهما واحدة.
  */
-
-function getPusher(): Pusher | null {
-  const appId = process.env.PUSHER_APP_ID;
-  const key = process.env.NEXT_PUBLIC_PUSHER_KEY;
-  const secret = process.env.PUSHER_SECRET;
-  const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
-  if (!appId || !key || !secret || !cluster) return null;
-  return new Pusher({ appId, key, secret, cluster, useTLS: true });
-}
 
 export async function POST(request: Request): Promise<Response> {
   const session = await auth();
   const staffId = (session?.user as { id?: string } | undefined)?.id;
   if (!staffId) return new Response("Unauthorised", { status: 401 });
 
-  const pusher = getPusher();
+  const pusher = getRealtimeServer();
   if (!pusher) return new Response("Realtime is not configured", { status: 503 });
 
   // Pusher يرسلها `application/x-www-form-urlencoded`، لا JSON.

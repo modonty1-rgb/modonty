@@ -1,5 +1,6 @@
 import "server-only";
 
+import { after } from "next/server";
 import Pusher from "pusher";
 
 import type { RealtimeEventName } from "./channels";
@@ -20,7 +21,7 @@ import type { RealtimeEventName } from "./channels";
  */
 let client: Pusher | null = null;
 
-function getClient(): Pusher | null {
+export function getRealtimeServer(): Pusher | null {
   if (client) return client;
 
   const appId = process.env.PUSHER_APP_ID;
@@ -34,11 +35,6 @@ function getClient(): Pusher | null {
   return client;
 }
 
-/** هل البثُّ مُهيّأ؟ يقرؤه مسارُ التصديق ليردَّ بوضوحٍ بدل أن يصمت. */
-export function isRealtimeConfigured(): boolean {
-  return getClient() !== null;
-}
-
 /**
  * ابثَّ إشارةً على قناة.
  *
@@ -48,19 +44,28 @@ export function isRealtimeConfigured(): boolean {
  * `notifyAssignee` بالضبط وللسبب نفسِه. وأسوأُ ما يحدث حينها: يرى الموظّفُ الإشعارَ
  * عند أوّل تنقّل بدل أن يراه فوراً.
  *
- * ── ولا يُنتظَر ──
- * الحمولةُ إشارةٌ فقيرة (انظر [channels.ts])، وانتظارُ ردِّ طرفٍ ثالثٍ يؤخّر ردَّ الخادم
- * على المستخدم. فنُطلقه ونلتقط سقوطَه.
+ * ── ولا يُنتظَر، ولا يُترك يتيماً ──
+ * انتظارُ ردِّ طرفٍ ثالثٍ يؤخّر ردَّ الخادم على المستخدم. لكنّ وعداً يُطلَق بلا صاحب قد
+ * لا يكتمل على Vercel: الدالّةُ تُجمَّد بعد إرسال الردّ. فيُسلَّم لـ`after()` — يعمل بعد
+ * الردّ ويُبقي الدالّةَ حيّةً حتى ينتهي (nextjs.org/docs/app/api-reference/functions/after).
+ * وخارج طلبٍ (سكربت أو اختبار) `after` يرمي، فيُطلَق مباشرةً.
  */
 export function publish(
   channel: string,
   event: RealtimeEventName,
   payload: Record<string, unknown> = {}
 ): void {
-  const c = getClient();
+  const c = getRealtimeServer();
   if (!c) return;
 
-  c.trigger(channel, event, payload).catch((error) => {
-    console.error("[realtime] publish failed", { channel, event, error });
-  });
+  const send = () =>
+    c.trigger(channel, event, payload).catch((error) => {
+      console.error("[realtime] publish failed", { channel, event, error });
+    });
+
+  try {
+    after(send);
+  } catch {
+    void send();
+  }
 }
