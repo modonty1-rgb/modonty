@@ -162,7 +162,8 @@ export default async function AccountsPage() {
                 fill
                 sizes="(max-width: 448px) 100vw, 448px"
                 className="object-cover"
-                priority
+                preload
+                loading="eager"
               />
             </div>
           ) : null}
@@ -171,7 +172,7 @@ export default async function AccountsPage() {
             href="/"
             className={`relative block size-[clamp(4.75rem,3.6rem+5.6vw,6rem)] overflow-hidden rounded-full border-4 border-background bg-white shadow-md ring-1 ring-border ${hero ? "-mt-[clamp(2.375rem,1.8rem+2.8vw,3rem)]" : "mt-6"}`}
           >
-            <OptimizedImage media={asMedia(LOGO_URL)} alt="مدونتي — الصفحة الرئيسية" fill sizes="96px" className="object-contain p-3" priority={!hero} />
+            <OptimizedImage media={asMedia(LOGO_URL)} alt="مدونتي — الصفحة الرئيسية" fill sizes="96px" className="object-contain p-3" preload={!hero} loading="eager" />
           </AccountLink>
           <h1 className="mt-3 inline-flex items-center gap-1.5 text-[clamp(1.25rem,0.85rem+2vw,1.625rem)] font-black leading-tight">
             {name}
