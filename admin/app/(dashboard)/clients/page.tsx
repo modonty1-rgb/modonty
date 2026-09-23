@@ -8,7 +8,6 @@ import { checkAdmin } from "@/lib/admin-guard";
 import { getClients, getClientsStats, ClientFilters } from "./actions/clients-actions";
 import { ClientsHeaderWrapper } from "./components/clients-header-wrapper";
 import { ClientsTabs } from "./components/clients-tabs";
-import { RegenerateAllSeoButton } from "./components/regenerate-all-seo-button";
 import { getPlatformDefaults } from "../settings/defaults/actions/defaults-actions";
 import { expiredByDateWhere, expiringThisMonthWhere } from "./segment/segments";
 
@@ -58,13 +57,14 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
     <ClientsHeaderWrapper
       clientCount={clients.length}
       stats={stats}
-      expiringThisMonth={expiringThisMonth}
-      overdueRenewals={overdueRenewals}
+      clients={clients}
     >
-      <div className="mb-3 flex justify-end">
-        <RegenerateAllSeoButton clients={clients} />
-      </div>
-      <ClientsTabs clientsCount={clients.length} clients={clients} defaultLogoUrl={defaults.LOGO} />
+      <ClientsTabs
+        clients={clients}
+        defaultLogoUrl={defaults.LOGO}
+        expiringThisMonth={expiringThisMonth}
+        overdueRenewals={overdueRenewals}
+      />
     </ClientsHeaderWrapper>
   );
 }

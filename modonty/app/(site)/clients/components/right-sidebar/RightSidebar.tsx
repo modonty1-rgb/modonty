@@ -7,11 +7,13 @@ import { IndustriesFilter } from "@/app/(site)/clients/components/industries-fil
 import { IconPlay, IconVolume2 } from "@/lib/icons";
 import type { IndustryFilterRow } from "@/app/(site)/clients/helpers/count-industries";
 import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
+import type { IndustryListItem } from "@/lib/types";
 
 const text = messages.clients.sidebars;
 
 interface RightSidebarProps {
   rows: IndustryFilterRow[];
+  industries: IndustryListItem[];
   total: number;
   query: PartnersQuery;
   className?: string;
@@ -21,15 +23,15 @@ interface RightSidebarProps {
 // homepage gives to «الشركاء والمجالات». Here the top card is the page's own trust card
 // and المجالات become the filter, because on this page the industry is how you narrow the
 // list, not somewhere else to go.
-export function RightSidebar({ rows, total, query, className }: RightSidebarProps) {
+export function RightSidebar({ rows, industries, total, query, className }: RightSidebarProps) {
   return (
     <StickyRail
       label={text.partnersRailAriaLabel}
       className={cn("hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block", className)}
     >
       <div className="space-y-4">
-        <TrustCard />
-        <IndustriesFilter rows={rows} total={total} query={query} />
+        <TrustCard showDirectoryAction={false} />
+        <IndustriesFilter rows={rows} industries={industries} total={total} query={query} />
         <LinkCard href="/reels" title={text.reelsCardTitle} description={text.reelsCardSubtitle} icon={IconPlay} />
         <LinkCard href="/audio" title={text.audioCardTitle} description={text.audioCardSubtitle} icon={IconVolume2} />
       </div>

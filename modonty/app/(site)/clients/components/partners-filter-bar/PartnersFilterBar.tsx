@@ -1,4 +1,4 @@
-import { IndustryCards } from "@/components/shared/industry-cards/IndustryCards";
+import { IndustryGrid } from "@/components/shared/industry-grid/IndustryGrid";
 import { buildPartnersHref } from "@/app/(site)/clients/helpers/build-partners-href";
 import { industryArtwork } from "@/lib/industry-artwork";
 import type { IndustryFilterRow } from "@/app/(site)/clients/helpers/count-industries";
@@ -29,7 +29,7 @@ export function PartnersFilterBar({ rows, industries, query }: PartnersFilterBar
   const artwork = new Map(industries.map((industry) => [industry.slug, industry]));
 
   return (
-    <IndustryCards
+    <IndustryGrid
       ariaLabel="تصفية بالمجال"
       items={rows.map((row) => ({
         name: row.name,

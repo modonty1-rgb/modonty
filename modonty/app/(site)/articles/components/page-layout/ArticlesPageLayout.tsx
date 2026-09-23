@@ -1,4 +1,4 @@
-import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
+import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
@@ -15,6 +15,7 @@ import { ResultsLine } from "../results-line/ResultsLine";
 import { FiltersBar } from "@/components/shared/archive-filters/FiltersBar";
 import { ReadingTimeBar } from "@/components/shared/archive-filters/ReadingTimeBar";
 import { ArticlesFeed } from "../articles-feed/ArticlesFeed";
+import { CategoriesNavRail } from "../categories-nav-rail/CategoriesNavRail";
 
 import type { ArchiveState } from "@/lib/articles/archive/build-archive-href";
 import type { ReadingTimeBucket } from "@/lib/articles/archive/reading-time-buckets";
@@ -57,9 +58,14 @@ export async function ArticlesPageLayout({
 
   return (
     <>
-    <TwoColumnLayout
+    <ThreeColumnLayout
       header={breadcrumb}
-      main={
+      right={
+        <StickyRail label="تصنيفات المقالات" className="hidden w-[220px] shrink-0 self-start min-[1240px]:block">
+          <CategoriesNavRail filters={filters} current={current} />
+        </StickyRail>
+      }
+      center={
         <>
           {/* The trust hint and the «مدونتي» bar were here on the phone until 22 Aug; Khalid
               removed both. They sat between the reader and the one thing this page asks him to
@@ -103,20 +109,19 @@ export async function ArticlesPageLayout({
           <ArticlesFeed articles={articles} current={current} />
         </>
       }
-      rail={
+      left={
         <StickyRail
           // تسمية الرَّف تحمل اسم الموقع — من الإعدادات لا من الكود.
           label={siteName ? `عن ${siteName}` : "عن المنصّة"}
-          className="w-full shrink-0 self-start lg:w-[300px] min-[1240px]:sticky"
+          className="hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block"
         >
           {/* MOBILE: this rail stacked BELOW twenty cards — 458px of trust copy starting at
               scroll 5,815, which nobody reaches (measured 21 Aug). Trust and «مدونتي» moved
               to the TOP of the main column instead; Modo is not repeated on a phone at all
               — the bottom bar already carries him (Khalid, 21 Aug). */}
           <div className="hidden space-y-3 min-[1240px]:block">
-            {/* Trust first: it is the question a visitor answers before he reads anything. */}
-            <TrustBox />
             <AboutCard />
+            <TrustBox />
             <div>
               <AskModo />
               <AiDisclaimer />

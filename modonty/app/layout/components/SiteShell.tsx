@@ -19,24 +19,9 @@ export async function SiteShell({ children }: { children: ReactNode }) {
        scopes the `:has()` to this subtree so the lookup never walks the whole document. */
     <div data-site-shell className="min-h-screen flex flex-col">
       <TopNav />
-      {/* The six doorway tabs, hanging from the navbar on EVERY modonty page (Khalid,
-          22 Aug evening: «to all page»). They were the homepage's alone until now, which
-          left «اسمع» and «الطلّات» reachable from one screen only once they left the
-          navbar row. Mounted here, beside the header they hang from, so no page has to
-          remember to render them and none can render them twice.
-          Same container as the header's row, so tab edges line up with the logo above. */}
-      {/* Sticky under the header, not scrolling away with the page (Khalid, 22 Aug: «مش
-          اتفقنا انها تكون تحت النافبار ثابته مع السكرول»). `top-14` = the header's own 56px,
-          and `z-30` keeps the strip under the header (`z-40`) so the tabs slide behind it,
-          never over it. The band needs a surface because the tabs hang from a 12px gap —
-          without one the feed shows through that gap as it scrolls past.
-          That surface is the HEADER'S material, not `bg-background` (measured 23 Aug: header
-          `card/90` + blur, band solid `background` — two tones on one 135px chrome block,
-          with a visible seam where the tabs weld on). Same bg tokens + `site-header-material`
-          (the 20px blur rule in globals.css), so header and band read as one sheet of glass
-          and the feed blurs through both alike. The scroll-edge fade (`after:`) lives HERE,
-          on the band's bottom — it is the band, not the header, that content meets. */}
-      <div className="container site-header-material sticky top-14 z-30 mx-auto max-w-[1128px] bg-slate-100/95 dark:bg-card/95 supports-[backdrop-filter]:bg-slate-100/90 dark:supports-[backdrop-filter]:bg-card/90 px-3 lg:hidden after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-3 after:bg-gradient-to-b after:from-foreground/[0.06] after:to-transparent">
+      {/* The section orbit is primary navigation, so on phones it lives in the thumb zone.
+          Page-specific actions stay beneath the header through MobileCtaBar. */}
+      <div className="container site-header-material fixed inset-x-0 bottom-0 z-40 mx-auto max-w-[1128px] border-t border-border bg-slate-100/95 px-3 pb-[env(safe-area-inset-bottom)] dark:bg-card/95 supports-[backdrop-filter]:bg-slate-100/90 dark:supports-[backdrop-filter]:bg-card/90 lg:hidden">
         {/* Two constraints OrbitQuickLinks must satisfy, both measured on this branch 1 Sep 2026:
             1. `PageSeoDefaults.siteName` is `string | undefined` and the prop is required (TS2322).
             2. It calls `usePathname()`, and under `cacheComponents` a client hook whose value is
@@ -50,7 +35,7 @@ export async function SiteShell({ children }: { children: ReactNode }) {
           <OrbitQuickLinks siteName={siteName ?? "مدونتي"} />
         </Suspense>
       </div>
-      <main id="main-content" className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1 pb-[calc(4.25rem+env(safe-area-inset-bottom))] lg:pb-0">{children}</main>
       <Footer />
     </div>
   );

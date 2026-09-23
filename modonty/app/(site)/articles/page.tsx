@@ -32,6 +32,7 @@ const TIMES: ReadingTimeBucket[] = ["short", "medium", "long"];
 interface ArticlesPageProps {
   searchParams: Promise<{
     industry?: string;
+    modonty?: string;
     category?: string;
     tag?: string;
     search?: string;
@@ -45,6 +46,7 @@ interface ArticlesPageProps {
 function readState(raw: Awaited<ArticlesPageProps["searchParams"]>): ArchiveState {
   const page = Number(raw.page);
   return {
+    modonty: raw.modonty === "1" ? true : undefined,
     industry: raw.industry?.trim() || undefined,
     category: raw.category?.trim() || undefined,
     tag: raw.tag?.trim() || undefined,
@@ -60,6 +62,7 @@ async function describeScope(
   state: ArchiveState,
   filters: Awaited<ReturnType<typeof getArticlesFilters>>
 ): Promise<string | null> {
+  if (state.modonty) return "مدونتي";
   const category = state.category && filters.categories.find((c) => c.slug === state.category)?.name;
   if (category) return category;
 
@@ -91,6 +94,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
     (state.page ?? 1) > 1 &&
     filterByReadingTime(
       await getArticlesArchive({
+        coreOnly: state.modonty,
         industrySlug: state.industry,
         categorySlug: state.category,
         tagSlug: state.tag,
@@ -180,6 +184,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
 
   const [subjectMatches, filters, wholeArchive] = await Promise.all([
     getArticlesArchive({
+      coreOnly: state.modonty,
       industrySlug: state.industry,
       categorySlug: state.category,
       tagSlug: state.tag,

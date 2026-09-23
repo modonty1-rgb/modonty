@@ -49,7 +49,7 @@ export function ScrollButtons() {
           className: `fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] start-4 z-40 h-12 w-12 rounded-full shadow-lg animate-scroll-reveal md:bottom-8 ${TIMELINE} ${REVEAL_AFTER} ${NO_SUPPORT}:hidden`,
         })}
       >
-        <IconScrollTop className="h-5 w-5" />
+        <IconScrollTop className="h-5 w-5 rotate-90" />
       </a>
     </>
   );

@@ -30,16 +30,11 @@ interface ReelActionsRailProps {
 
 const btn =
   "flex flex-col items-center gap-1 text-white transition active:scale-90";
-// 24 Aug 2026 — rebuilt against TikTok's own phone rail, which Khalid handed as the reference
-// («الأيقونز صغيرة، البادنق اللي حواليها ماكل نص المكان»). The mark was 20px inside a 44px
-// tinted circle: 45% glyph, 55% padding, and the circle WAS that padding. TikTok draws no
-// circle at all — a bare white glyph over the footage, kept legible by a drop shadow.
-//
-// So the 44 box stays (it is the tap target, and it is the one thing a thumb needs) but turns
-// transparent, and the glyph grows 20 → 32. Legibility over bright frames now comes from the
-// shadow, not from a plate behind it.
+// TikTok-style action rail: familiar bare symbols and counts keep the video primary. The
+// shadow is deliberately subtle — contrast support, never a visible UI surface.
 const iconWrap = "flex size-11 items-center justify-center rounded-full transition";
-const iconGlyph = "size-8 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]";
+const iconGlyph = "size-8 drop-shadow-[0_1px_2px_rgba(0,0,0,0.78)]";
+const actionLabel = "text-xs font-bold [text-shadow:0_1px_2px_rgba(0,0,0,0.82)]";
 
 export function ReelActionsRail({
   reelId,
@@ -135,12 +130,11 @@ export function ReelActionsRail({
           {hint}
         </div>
       )}
-      {/* Phone: overlaid on the clip. `bottom-36` clears the caption block (which now ends
-          ~96px up, above the bottom bar) — at `bottom-24` the share button sat on the byline.
-          From `md` up it steps OUT of the card (`-end-16`) and centres beside it, where
+      {/* Phone: overlaid on the clip near its lower edge. The caption reserves its inline end
+          for this rail; from `md` up it steps OUT of the card (`-end-16`) and centres beside it, where
           TikTok's desktop puts the same four counts; the card stops clipping at that same
           breakpoint, so nothing here is cut. */}
-      <div className="absolute bottom-36 end-3 z-10 flex flex-col items-center gap-4 md:bottom-auto md:-end-16 md:top-1/2 md:-translate-y-1/2 md:gap-6">
+      <div className="absolute bottom-4 end-3 z-10 flex flex-col items-center gap-4 md:bottom-auto md:-end-16 md:top-1/2 md:-translate-y-1/2 md:gap-6">
         {/* The READER's face heads the rail — the publisher is already named at the bottom of the
             reel, so this slot carries «طلّاتي» instead (Khalid, 24 Aug: «الأفاتار اللي فوق
             لليوزر اللي داخل على مدونتي»). No «+»: you do not follow yourself. */}
@@ -166,12 +160,7 @@ export function ReelActionsRail({
           <span className={`${iconWrap} ${liked ? "text-primary" : ""}`}>
             <ModontyLikeMark className={iconGlyph} aria-hidden />
           </span>
-          {/* The word until there is a number, then the number — TikTok's own rule. A zero is
-              still never drawn («٠» in Arabic-Indic is a DOT, and it read as dirt on the
-              screen), but hiding the line entirely left three buttons blank beside a fourth
-              carrying «مشاركة», so the column stood uneven on every reel with no counts yet
-              (Khalid saw it on the phone, 24 Aug). One line under all four, always. */}
-          <span className="text-xs font-bold">{likes > 0 ? likes.toLocaleString(SITE_LOCALE) : "إعجاب"}</span>
+          {likes > 0 && <span className={actionLabel}>{likes.toLocaleString(SITE_LOCALE)}</span>}
         </button>
         <button
           type="button"
@@ -184,7 +173,7 @@ export function ReelActionsRail({
           <span className={iconWrap}>
             <ModontyCommentMark className={iconGlyph} aria-hidden />
           </span>
-          <span className="text-xs font-bold">{commentsCount > 0 ? commentsCount.toLocaleString(SITE_LOCALE) : "تعليق"}</span>
+          {commentsCount > 0 && <span className={actionLabel}>{commentsCount.toLocaleString(SITE_LOCALE)}</span>}
         </button>
         <button
           type="button"
@@ -201,13 +190,12 @@ export function ReelActionsRail({
           <span className={`${iconWrap} ${saved ? "text-accent" : ""}`}>
             <ModontyBookmarkMark className={`${iconGlyph} ${saved ? "[&>rect]:fill-current" : ""}`} aria-hidden />
           </span>
-          <span className="text-xs font-bold">{saves > 0 ? saves.toLocaleString(SITE_LOCALE) : "حفظ"}</span>
+          {saves > 0 && <span className={actionLabel}>{saves.toLocaleString(SITE_LOCALE)}</span>}
         </button>
         <button type="button" onClick={handleShare} className={btn} aria-label="مشاركة">
           <span className={iconWrap}>
             <ModontyShareMark className={iconGlyph} aria-hidden />
           </span>
-          <span className="text-xs font-bold">مشاركة</span>
         </button>
       </div>
 

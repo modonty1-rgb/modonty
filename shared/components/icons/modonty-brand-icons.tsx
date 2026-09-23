@@ -187,16 +187,16 @@ export function ModontySettingsMark(props: SVGProps<SVGSVGElement>) {
 export function ModontyThemeLightMark(props: SVGProps<SVGSVGElement>) {
   return (
     <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <circle cx="60" cy="60" r="24" stroke="#0E065A" strokeWidth="8"></circle>
+    <circle cx="60" cy="60" r="24" stroke="currentColor" strokeWidth="8"></circle>
 
-    <path d="M60 14V26" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M60 94V106" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M14 60H26" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M94 60H106" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M27.5 27.5L36 36" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M84 84L92.5 92.5" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M84 36L92.5 27.5" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M27.5 92.5L36 84" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
+    <path d="M60 14V26" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
+    <path d="M60 94V106" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
+    <path d="M14 60H26" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
+    <path d="M94 60H106" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
+    <path d="M27.5 27.5L36 36" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
+    <path d="M84 84L92.5 92.5" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
+    <path d="M84 36L92.5 27.5" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
+    <path d="M27.5 92.5L36 84" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
 
     <rect fill="#00D8D8" height="20" rx="4" transform="rotate(45 60 60)" width="20" x="53" y="53"></rect>
     </svg>
@@ -206,7 +206,7 @@ export function ModontyThemeLightMark(props: SVGProps<SVGSVGElement>) {
 export function ModontyThemeDarkMark(props: SVGProps<SVGSVGElement>) {
   return (
     <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path clipRule="evenodd" d="M59.94 16.0 L53.26 16.9 L44.39 19.85 L36.94 24.22 L30.13 30.26 L25.25 36.68 L21.27 44.65 L19.08 52.48 L18.44 60.96 L19.47 69.44 L22.29 77.92 L26.79 85.76 L33.09 92.82 L39.0 97.32 L43.88 100.02 L47.6 101.56 L54.93 103.49 L63.66 104.0 L71.24 102.97 L76.25 101.43 L82.29 98.6 L88.71 94.11 L93.72 88.97 L97.19 83.96 L100.15 77.79 L101.56 72.27 L100.27 70.6 L98.48 70.47 L92.95 73.68 L89.1 74.97 L84.86 75.61 L78.82 75.22 L73.3 73.55 L69.06 71.24 L64.95 67.9 L62.12 64.69 L59.16 59.81 L56.98 53.13 L56.6 45.8 L57.75 40.15 L60.19 34.63 L63.28 30.26 L68.93 25.25 L74.71 22.29 L75.48 21.4 L75.74 19.85 L74.58 18.06 L71.37 17.03 L65.85 16.13 Z M60.19 20.11 L65.59 20.24 L68.29 20.88 L63.28 24.48 L58.39 29.87 L54.8 36.3 L53.13 41.56 L52.48 45.68 L52.87 53.38 L54.41 59.04 L57.49 65.2 L61.09 69.83 L64.56 73.04 L69.7 76.38 L74.32 78.31 L80.49 79.59 L86.14 79.59 L90.51 78.82 L96.04 76.89 L94.11 81.13 L91.02 85.76 L84.34 92.31 L79.33 95.52 L75.09 97.45 L69.57 99.12 L64.05 99.89 L55.95 99.5 L47.99 97.32 L41.44 93.98 L35.01 88.97 L30.0 83.19 L26.15 76.51 L23.32 67.9 L22.55 61.35 L23.19 52.87 L25.38 45.42 L28.72 38.87 L33.47 32.7 L39.51 27.43 L46.45 23.45 L54.28 20.88 Z" fill="#0E065A" fillRule="evenodd"></path>
+    <path clipRule="evenodd" d="M59.94 16.0 L53.26 16.9 L44.39 19.85 L36.94 24.22 L30.13 30.26 L25.25 36.68 L21.27 44.65 L19.08 52.48 L18.44 60.96 L19.47 69.44 L22.29 77.92 L26.79 85.76 L33.09 92.82 L39.0 97.32 L43.88 100.02 L47.6 101.56 L54.93 103.49 L63.66 104.0 L71.24 102.97 L76.25 101.43 L82.29 98.6 L88.71 94.11 L93.72 88.97 L97.19 83.96 L100.15 77.79 L101.56 72.27 L100.27 70.6 L98.48 70.47 L92.95 73.68 L89.1 74.97 L84.86 75.61 L78.82 75.22 L73.3 73.55 L69.06 71.24 L64.95 67.9 L62.12 64.69 L59.16 59.81 L56.98 53.13 L56.6 45.8 L57.75 40.15 L60.19 34.63 L63.28 30.26 L68.93 25.25 L74.71 22.29 L75.48 21.4 L75.74 19.85 L74.58 18.06 L71.37 17.03 L65.85 16.13 Z M60.19 20.11 L65.59 20.24 L68.29 20.88 L63.28 24.48 L58.39 29.87 L54.8 36.3 L53.13 41.56 L52.48 45.68 L52.87 53.38 L54.41 59.04 L57.49 65.2 L61.09 69.83 L64.56 73.04 L69.7 76.38 L74.32 78.31 L80.49 79.59 L86.14 79.59 L90.51 78.82 L96.04 76.89 L94.11 81.13 L91.02 85.76 L84.34 92.31 L79.33 95.52 L75.09 97.45 L69.57 99.12 L64.05 99.89 L55.95 99.5 L47.99 97.32 L41.44 93.98 L35.01 88.97 L30.0 83.19 L26.15 76.51 L23.32 67.9 L22.55 61.35 L23.19 52.87 L25.38 45.42 L28.72 38.87 L33.47 32.7 L39.51 27.43 L46.45 23.45 L54.28 20.88 Z" fill="currentColor" fillRule="evenodd"></path>
 
     <path d="M42.98 67.0 L34.24 76.12 L43.11 84.86 L51.97 75.99 Z" fill="#00D8D8"></path>
     </svg>

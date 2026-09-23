@@ -5,6 +5,38 @@ import { db } from "@/lib/db";
 
 import { REELS_PAGE_SIZE, type ReelFeedPage } from "./reels-feed-shapes";
 
+export interface ReelClientFilterOption {
+  name: string;
+  slug: string;
+  logoUrl: string | null;
+  reelCount: number;
+}
+
+/** Only partners with a public reel belong in the feed's client picker. */
+export async function getReelClientFilterOptions(): Promise<ReelClientFilterOption[]> {
+  "use cache";
+  cacheTag("reels", "clients");
+  cacheLife("minutes");
+
+  const clients = await db.client.findMany({
+    where: { media: { some: { inReels: true, reelStatus: "PUBLISHED" } } },
+    select: {
+      name: true,
+      slug: true,
+      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+      _count: { select: { media: { where: { inReels: true, reelStatus: "PUBLISHED" } } } },
+    },
+    orderBy: { name: "asc" },
+  });
+
+  return clients.map((client) => ({
+    name: client.name,
+    slug: client.slug,
+    logoUrl: mediaSrc(client.logoMedia),
+    reelCount: client._count.media,
+  }));
+}
+
 /**
  * Paginated public reels feed — PUBLISHED reels, newest first, cursor-based
  * (infinite scroll). Cached per page; per-user flags live in getUserReelFlags.
@@ -12,7 +44,7 @@ import { REELS_PAGE_SIZE, type ReelFeedPage } from "./reels-feed-shapes";
  * Lives here, not in the reels route: the homepage reads it too, and a route may never
  * import from a sibling route.
  */
-export async function getReelsFeedPage(cursor?: string | null): Promise<ReelFeedPage> {
+export async function getReelsFeedPage(cursor?: string | null, clientSlug?: string | null): Promise<ReelFeedPage> {
   "use cache";
   cacheTag("reels");
   cacheLife("minutes");
@@ -25,6 +57,7 @@ export async function getReelsFeedPage(cursor?: string | null): Promise<ReelFeed
       inReels: true,
       reelStatus: "PUBLISHED",
       client: { isNot: null },
+      ...(clientSlug ? { client: { slug: clientSlug } } : {}),
     },
     select: {
       id: true,

@@ -202,11 +202,13 @@
     "trustCard": {
       "title": "شركاء موثوقون",
       "subtitle": "ما نحط شريك هنا إلا بعد ما نشوف أوراقه الرسمية.",
-      "factPartners": "سجلّاً تجارياً",
+      "factPartners": "شريكًا موثوقًا",
+      "factArticles": "مقالاً منشوراً",
       "factIndustries": "مجالات",
       "factNamed": "بأسماء حقيقية",
       "namedValue": "١٠٠٪",
       "trustLine": "نتحقّق من الأوراق قبل النشر",
+      "discoverPartnersButton": "اكتشف الشركاء",
       "howWeVerifyButton": "كيف نتأكّد؟"
     },
     "industryFilter": {

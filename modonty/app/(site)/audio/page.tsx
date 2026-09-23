@@ -7,7 +7,7 @@ import { getContentPageRow } from "@/lib/seo/get-content-page-row";
 import { messages } from "@/lib/i18n/messages";
 import { IconVolume2 } from "@/lib/icons";
 
-import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
+import { ResizableTwoColumnLayout } from "@modonty/shared/components/column-layout/ResizableTwoColumnLayout";
 
 import { AudioTabs, AudioTabBar, AudioPanel } from "./components/audio-tabs/AudioTabs";
 import { ListenQueue } from "./components/listen-queue/ListenQueue";
@@ -74,7 +74,7 @@ export default async function AudioArticlesPage() {
           On a phone the same two columns stack, and the second one landed 25 screens down — so
           `AudioTabs` puts a switch between them there and ONLY there. See its own comment. */}
         <AudioTabs>
-        <TwoColumnLayout
+        <ResizableTwoColumnLayout
           header={
             <>
               {/* «اسمع» rather than «استمع» — nearer to how the word is actually said, and it carries
@@ -103,10 +103,10 @@ export default async function AudioArticlesPage() {
             <AudioPanel
               name="articles"
               as="aside"
-              className="w-full shrink-0 lg:w-[300px]"
+              className="w-full shrink-0"
               label={t.articlesRail.heading}
             >
-              <div className="sticky top-20 space-y-3">
+              <div className="space-y-3">
                 <h2 className="text-xs font-semibold uppercase text-muted-foreground">{t.articlesRail.heading}</h2>
                 {articles.length === 0 ? (
                   <p className="flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">

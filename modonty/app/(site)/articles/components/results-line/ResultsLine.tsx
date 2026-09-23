@@ -24,7 +24,7 @@ interface ResultsLineProps {
  * Plain text and one link — no client JavaScript, so it costs nothing.
  */
 export function ResultsLine({ total, scopeLabel, current }: ResultsLineProps) {
-  const activeCount = [current.industry, current.category, current.tag, current.search, current.time]
+  const activeCount = [current.modonty, current.industry, current.category, current.tag, current.search, current.time]
     .filter(Boolean).length;
 
   return (

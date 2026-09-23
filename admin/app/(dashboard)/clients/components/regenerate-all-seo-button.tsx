@@ -8,6 +8,9 @@ import type { ClientForList } from "../actions/clients-actions/types";
 
 interface RegenerateAllSeoButtonProps {
   clients: ClientForList[];
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
 }
 
 type ClientStatus = "pending" | "processing" | "success" | "error";
@@ -19,11 +22,13 @@ interface ClientProgress {
   error?: string;
 }
 
-export function RegenerateAllSeoButton({ clients }: RegenerateAllSeoButtonProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function RegenerateAllSeoButton({ clients, open, onOpenChange, hideTrigger = false }: RegenerateAllSeoButtonProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState<ClientProgress[]>([]);
   const [current, setCurrent] = useState(0);
+  const isOpen = open ?? internalOpen;
+  const setIsOpen = onOpenChange ?? setInternalOpen;
 
   const handleStart = async () => {
     const initial: ClientProgress[] = clients.map((c) => ({
@@ -74,7 +79,7 @@ export function RegenerateAllSeoButton({ clients }: RegenerateAllSeoButtonProps)
   const errors = progress.filter((p) => p.status === "error").length;
   const percentage = progress.length > 0 ? Math.round((current / progress.length) * 100) : 0;
 
-  if (!isOpen) {
+  if (!isOpen && !hideTrigger) {
     return (
       <Button
         variant="outline"
@@ -87,6 +92,8 @@ export function RegenerateAllSeoButton({ clients }: RegenerateAllSeoButtonProps)
       </Button>
     );
   }
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -201,4 +208,3 @@ export function RegenerateAllSeoButton({ clients }: RegenerateAllSeoButtonProps)
     </div>
   );
 }
-

@@ -97,6 +97,11 @@ export type ClientForList = {
     published: number;
     awaitingApproval: number;
   };
+  /** Reels live on the public feed vs. client uploads awaiting approval. */
+  reelStats: {
+    published: number;
+    pending: number;
+  };
 };
 
 export interface ClientsStats {

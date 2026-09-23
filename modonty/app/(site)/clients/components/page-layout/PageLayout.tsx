@@ -49,7 +49,7 @@ export function PageLayout({ partners, industries, query, userCard }: PageLayout
   return (
     <>
     <ThreeColumnLayout
-      right={<RightSidebar rows={industryRows} total={searched.length} query={query} />}
+      right={<RightSidebar rows={industryRows} industries={industries} total={searched.length} query={query} />}
       center={
         <>
           {/* MOBILE (<1240px): everything the rails carry is `hidden` there — so a phone

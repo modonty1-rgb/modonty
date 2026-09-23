@@ -3,12 +3,12 @@
 import { useState, createContext, useContext, ReactNode } from "react";
 import { ClientsHeader } from "./clients-header";
 import type { ClientsStats } from "../actions/clients-actions/types";
+import type { ClientForList } from "../actions/clients-actions/types";
 
 interface ClientsHeaderWrapperProps {
   clientCount: number;
   stats: ClientsStats;
-  expiringThisMonth: number;
-  overdueRenewals: number;
+  clients: ClientForList[];
   children: ReactNode;
 }
 
@@ -28,8 +28,7 @@ export function useSearchContext() {
 export function ClientsHeaderWrapper({
   clientCount,
   stats,
-  expiringThisMonth,
-  overdueRenewals,
+  clients,
   children,
 }: ClientsHeaderWrapperProps) {
   const [search, setSearch] = useState("");
@@ -39,8 +38,7 @@ export function ClientsHeaderWrapper({
       <ClientsHeader
         clientCount={clientCount}
         stats={stats}
-        expiringThisMonth={expiringThisMonth}
-        overdueRenewals={overdueRenewals}
+        clients={clients}
         search={search}
         onSearchChange={setSearch}
       />

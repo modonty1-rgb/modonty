@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { ArticleStatus, Prisma } from "@prisma/client";
+import { ArticleStatus, Prisma, ReelStatus } from "@prisma/client";
 import type { ClientFilters, ClientForList } from "./types";
 
 export async function getClients(filters?: ClientFilters): Promise<ClientForList[]> {
@@ -219,10 +219,30 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
       statsByClient.set(g.clientId, cur);
     }
 
+    // Reels are Media rows, not articles. Aggregate the two operational states once
+    // for the clients table: live on the feed, and waiting for an admin decision.
+    const reelGroups = await db.media.groupBy({
+      by: ["clientId", "reelStatus"],
+      where: {
+        inReels: true,
+        reelStatus: { in: [ReelStatus.PUBLISHED, ReelStatus.PENDING_APPROVAL] },
+      },
+      _count: { id: true },
+    });
+    const reelStatsByClient = new Map<string, { published: number; pending: number }>();
+    for (const group of reelGroups) {
+      if (!group.clientId) continue;
+      const current = reelStatsByClient.get(group.clientId) ?? { published: 0, pending: 0 };
+      if (group.reelStatus === ReelStatus.PUBLISHED) current.published = group._count.id;
+      if (group.reelStatus === ReelStatus.PENDING_APPROVAL) current.pending = group._count.id;
+      reelStatsByClient.set(group.clientId, current);
+    }
+
     return clients.map((c) => ({
       ...c,
       articleStats:
         statsByClient.get(c.id) ?? { total: 0, published: 0, awaitingApproval: 0 },
+      reelStats: reelStatsByClient.get(c.id) ?? { published: 0, pending: 0 },
     }));
   } catch (error) {
     console.error("Error fetching clients:", error);

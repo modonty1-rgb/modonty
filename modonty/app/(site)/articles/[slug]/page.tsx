@@ -393,7 +393,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           <ArticleCtaBar
             clientName={article.client.name}
             clientSlug={article.client.slug}
-            articleSlug={article.slug}
             clientPhone={article.client.phone ?? null}
             cta={{
               mode: article.client.ctaMode,

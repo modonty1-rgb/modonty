@@ -473,7 +473,12 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
       </div>
 
       {/* Room for the dock, so the last surahs are never hidden under it. */}
-      <ul className={cn("mt-4 grid grid-cols-1 gap-3 max-md:gap-2 sm:grid-cols-2 xl:grid-cols-3", surah && "pb-[calc(5rem+env(safe-area-inset-bottom))]")}>
+      <ul
+        className={cn(
+          "mt-4 grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-2",
+          surah && "pb-[calc(5rem+env(safe-area-inset-bottom))]"
+        )}
+      >
         {shown.map(({ s, i }) => {
           const isCurrent = i === index;
           const r = reciterFor(s.n);
@@ -481,11 +486,11 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
             <li
               key={s.n}
               className={cn(
-                "rounded-2xl border bg-card p-3 transition-colors max-md:p-2",
+                "rounded-xl border bg-card p-2.5 transition-colors",
                 isCurrent ? "border-action-listen bg-action-listen/5" : "border-border"
               )}
             >
-              <div className="flex items-start gap-3 max-md:items-center max-md:gap-2">
+              <div className="flex items-center gap-2">
                 <span
                   className={cn(
                     "grid size-10 shrink-0 place-items-center rounded-full text-xs font-bold tabular-nums",
@@ -501,17 +506,16 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                   </span>
                 </span>
 
-                {/* Phone: the card is ONE row, 60px instead of 129 — 114 of them was 17,589px of
-                    page. The reciter keeps its own button so the per-surah override survives, but
-                    it shows a letter rather than repeating the same name 114 times down the page.
-                    Both are 44px, and the label still says whose voice it is. */}
-                <span className="flex shrink-0 items-center gap-1 md:hidden">
+                {/* Every card stays one compact row. The reciter keeps its own button so the
+                    per-surah override survives, but it shows a letter rather than repeating the
+                    same name 114 times down the page. The accessible label still names the voice. */}
+                <span className="flex shrink-0 items-center gap-1">
                   <button
                     type="button"
                     onClick={() => setPicking(s.n)}
                     aria-label={`${labels.pickReciterForPrefix} ${s.name} — ${labels.currentPrefix} ${r.name}`}
                     className={cn(
-                      "grid size-11 shrink-0 place-items-center rounded-full text-sm font-bold motion-safe:transition-transform motion-safe:active:scale-95",
+                    "grid size-10 shrink-0 place-items-center rounded-full text-sm font-bold motion-safe:transition-transform motion-safe:active:scale-95",
                       choice[s.n] === undefined
                         ? "border border-border text-muted-foreground"
                         : "bg-action-listen/15 text-action-listen ring-1 ring-action-listen/40"
@@ -523,33 +527,13 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                     type="button"
                     onClick={() => playSurah(i)}
                     aria-label={`${labels.recitePrefix} ${s.name}`}
-                    className="grid size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground motion-safe:transition-transform motion-safe:active:scale-95"
+                    className="grid size-10 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground motion-safe:transition-transform motion-safe:active:scale-95"
                   >
                     {isCurrent && playing ? <IconPause className="size-4" /> : <IconPlay className="size-4" />}
                   </button>
                 </span>
               </div>
 
-              <div className="mt-3 flex items-center gap-2 max-md:hidden">
-                {/* The voice for THIS surah. One shared dialog does the picking. */}
-                <button
-                  type="button"
-                  onClick={() => setPicking(s.n)}
-                  aria-label={`${labels.pickReciterForPrefix} ${s.name} — ${labels.currentPrefix} ${r.name}`}
-                  className="flex h-11 min-w-0 flex-1 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold hover:bg-muted"
-                >
-                  <span className="truncate">{r.name}</span>
-                  <IconChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => playSurah(i)}
-                  aria-label={`${labels.recitePrefix} ${s.name}`}
-                  className="grid size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground transition-transform hover:scale-105"
-                >
-                  {isCurrent && playing ? <IconPause className="size-4" /> : <IconPlay className="size-4" />}
-                </button>
-              </div>
             </li>
           );
         })}

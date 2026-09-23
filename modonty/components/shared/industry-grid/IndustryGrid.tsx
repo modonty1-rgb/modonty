@@ -27,7 +27,7 @@ interface IndustryGridProps {
 export function IndustryGrid({ items, currentSlug, buildHref, clearHref, ariaLabel }: IndustryGridProps) {
   return (
     <nav aria-label={ariaLabel}>
-      <ul className="grid grid-cols-4 gap-2">
+      <ul className="grid grid-cols-3 items-start gap-2">
         {items.map((item) => {
           const isActive = item.slug === currentSlug;
           return (

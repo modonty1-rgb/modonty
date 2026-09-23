@@ -2,6 +2,8 @@ import type { ArchiveSort } from "./get-articles-archive";
 import type { ReadingTimeBucket } from "./reading-time-buckets";
 
 export interface ArchiveState {
+  /** Only articles published by Modonty's own core client. */
+  modonty?: boolean;
   industry?: string;
   category?: string;
   tag?: string;
@@ -25,6 +27,7 @@ export interface ArchiveState {
  */
 export function buildArchiveHref(state: ArchiveState): string {
   const params = new URLSearchParams();
+  if (state.modonty) params.set("modonty", "1");
   if (state.industry) params.set("industry", state.industry);
   if (state.category) params.set("category", state.category);
   if (state.tag) params.set("tag", state.tag);

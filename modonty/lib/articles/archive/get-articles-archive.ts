@@ -23,6 +23,7 @@ export type ArchiveArticle = FeedPost & {
 export type ArchiveSort = "newest" | "mostRead" | "mostEngaged";
 
 export interface ArchiveQuery {
+  coreOnly?: boolean;
   industrySlug?: string;
   categorySlug?: string;
   tagSlug?: string;
@@ -120,9 +121,10 @@ export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<Arch
 
   // One extra read per query (cached alongside the articles), so every card downstream —
   // including the ones infinite scroll fetches later — knows whether modonty wrote it.
-  const [coreClientId, articles] = await Promise.all([
-    getCoreClientId(),
-    db.article.findMany({
+  const coreClientId = await getCoreClientId();
+  if (query.coreOnly && !coreClientId) return [];
+
+  const articles = await db.article.findMany({
     where: {
       status: ArticleStatus.PUBLISHED,
       /**
@@ -144,6 +146,7 @@ export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<Arch
           : []),
       ],
       ...(query.categorySlug && { category: { slug: query.categorySlug } }),
+      ...(query.coreOnly && { clientId: coreClientId! }),
       ...(query.tagSlug && { tags: { some: { tag: { slug: query.tagSlug } } } }),
       ...(query.industrySlug && {
         client: {
@@ -155,8 +158,7 @@ export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<Arch
     select: archiveSelect,
     orderBy: orderFor(query.sort),
     take: MAX_ARCHIVE_ARTICLES,
-    }),
-  ]);
+  });
 
   return articles.map((a) => mapArchiveArticle(a, coreClientId));
 }

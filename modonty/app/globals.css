@@ -565,11 +565,20 @@ html[data-article-text="large"] .article-body {
    footer content stays ABOVE it (+ safe-area for notch/home-indicator devices).
    Reverts to normal padding on desktop (≥lg), where the bar is hidden. */
 footer[role="contentinfo"] {
-  padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
 }
 @media (min-width: 1024px) {
   footer[role="contentinfo"] {
     padding-bottom: 1rem;
+  }
+}
+
+/* Contextual page actions now sit beneath the phone header; navigation itself lives in the
+   bottom thumb zone. The bar is fixed, so reserve its exact row height only on pages that
+   render it — pages without a contextual action should not acquire a blank band. */
+@media (max-width: 1023px) {
+  [data-site-shell] main:has([data-mobile-cta-bar]) {
+    padding-top: 4.25rem;
   }
 }
 

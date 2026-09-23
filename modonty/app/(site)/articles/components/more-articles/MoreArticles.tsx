@@ -21,6 +21,7 @@ interface MoreArticlesProps {
 /** The query the endpoint needs, built from the same state the links are built from. */
 function toQuery(current: ArchiveState, page: number): string {
   const params = new URLSearchParams({ page: String(page) });
+  if (current.modonty) params.set("modonty", "1");
   if (current.industry) params.set("industry", current.industry);
   if (current.category) params.set("category", current.category);
   if (current.tag) params.set("tag", current.tag);

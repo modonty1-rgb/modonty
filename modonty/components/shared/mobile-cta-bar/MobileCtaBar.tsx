@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
 import { buttonVariants } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
@@ -20,7 +19,7 @@ interface CtaBarLink {
  * 21 Aug).
  */
 export const CTA_BAR_PRIMARY_CLASS = cn(
-  "min-h-12 min-w-0 flex-1 gap-2 rounded-se-none px-3 ring-1 ring-accent/35 focus-visible:ring-accent",
+  "min-h-12 min-w-0 flex-1 gap-2 rounded-lg px-3 ring-1 ring-accent/35 focus-visible:ring-accent",
   "bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground",
   "[--modonty-booking-accent:white] [--modonty-booking-check:hsl(var(--accent))] [--modonty-shopping-accent:white] [--modonty-shopping-hub:hsl(var(--accent))]",
 );
@@ -39,25 +38,20 @@ interface MobileCtaBarProps {
   primarySlot?: ReactNode;
   /** Soft wash button — the quieter second door. */
   secondary: CtaBarLink;
-  /**
-   * Where Modo opens. Defaults to a blank chat; a page that has a subject hands it over so the
-   * conversation starts knowing what the reader was looking at (Khalid, 21 Aug — the article was
-   * rendering its own second Modo card to achieve exactly this).
-   */
-  modoHref?: string;
 }
 
 /**
  * The mobile bottom bar, made page-agnostic (Khalid, 21 Aug 2026: same structure on
  * every page, only the two CTAs' text + link change — DRY). The homepage passes
- * احجز/تسوّق, `/modonty` passes صِر شريكاً/عن مدونتي, and so on. Modo in the middle is
- * part of the structure and never changes. Links only — a Server Component.
+ * احجز/تسوّق, `/modonty` passes صِر شريكاً/عن مدونتي, and so on. Modo already has a
+ * permanent shortcut in the sticky section bar, so repeating it here wastes the most valuable
+ * mobile space. Links only — a Server Component.
  *
  * Contrast is token-guaranteed (fixed 21 Aug after Khalid's phone screenshots):
  * primary = solid `accent` with its designed `accent-foreground`; secondary text uses
  * the text-grade teal `link-accent`, which carries its own dark-mode step.
  */
-export function MobileCtaBar({ ariaLabel, primary, primarySlot, secondary, modoHref = "/modo-chat" }: MobileCtaBarProps) {
+export function MobileCtaBar({ ariaLabel, primary, primarySlot, secondary }: MobileCtaBarProps) {
   const PrimaryIcon = primary?.icon;
   const SecondaryIcon = secondary.icon;
   return (
@@ -69,27 +63,10 @@ export function MobileCtaBar({ ariaLabel, primary, primarySlot, secondary, modoH
       // side by side at `lg`, so 768–1023 is still a single-column reading screen and still
       // wants the bar. It is a PAIR with `lg:pb-0` on the column layouts — the padding that
       // clears this bar has to end exactly where the bar does, or it covers the last block.
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] lg:hidden"
+      data-mobile-cta-bar
+      className="fixed inset-x-0 top-14 z-30 border-b border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/90 lg:hidden"
     >
-      <Link
-        href={modoHref}
-        aria-label="افتح مودو"
-        className={buttonVariants({
-          variant: "ghost",
-          className:
-            "absolute inset-x-0 bottom-[calc(1.875rem+env(safe-area-inset-bottom))] z-50 mx-auto h-12 w-14 flex-col gap-0.5 rounded-b-lg rounded-t-xl border-0 bg-background px-1 py-1 text-foreground shadow-none hover:bg-background hover:text-foreground focus-visible:ring-accent",
-        })}
-      >
-        <span className="pointer-events-none absolute inset-0 rounded-t-xl border-x border-t border-accent/35 bg-background" aria-hidden="true" />
-        <span className="relative z-10 flex shrink-0 items-center justify-center">
-          <span className="relative block size-7 shrink-0 overflow-hidden rounded-full">
-            <ModoCharacter sizes="28px" decorative />
-          </span>
-        </span>
-        <span className="relative z-10 text-[8px] font-normal leading-none text-link-accent">مودو</span>
-      </Link>
-
-      <div className="flex items-center px-3 py-2">
+      <div className="flex items-center gap-3 px-3 py-2">
         {primary && PrimaryIcon ? (
           <Link
             href={primary.href}
@@ -106,12 +83,10 @@ export function MobileCtaBar({ ariaLabel, primary, primarySlot, secondary, modoH
           primarySlot
         )}
 
-        <span className="w-14 shrink-0" aria-hidden="true" />
-
         <Link
           href={secondary.href}
           {...(secondary.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-          className={buttonVariants({ variant: "ghost", className: cn("min-h-12 min-w-0 flex-1 gap-2 rounded-ss-none px-3 ring-1 ring-accent/35 focus-visible:ring-accent", "bg-accent/10 text-link-accent hover:text-link-accent") })}
+          className={buttonVariants({ variant: "ghost", className: cn("min-h-12 min-w-0 flex-1 gap-2 rounded-lg px-3 ring-1 ring-accent/35 focus-visible:ring-accent", "bg-accent/10 text-link-accent hover:text-link-accent") })}
         >
           <SecondaryIcon // `!` needed: the Button's own `[&_svg]:size-4` rule outranks a plain class, which
           // pinned the mark at 16px next to a 14px/700 label. Material 3 puts the standard

@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   ChevronLeft,
   ChevronRight,
@@ -338,7 +339,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
     <div className="space-y-4">
       <div className="border rounded-lg bg-card">
         <Table className="table-fixed w-full">
-          <colgroup>{/* Name */}<col className="w-[240px]" />{/* Editor */}<col className="w-[130px]" />{/* Status */}<col className="w-[100px]" />{/* Received */}<col className="w-[86px]" />{/* Published */}<col className="w-[92px]" />{/* Awaiting */}<col className="w-[92px]" />{/* This month */}<col className="w-[92px]" />{/* SEO */}<col className="w-[66px]" />{/* Actions */}<col className="w-[76px]" /></colgroup>
+          <colgroup>{/* Name */}<col className="w-[240px]" />{/* Editor */}<col className="w-[130px]" />{/* Status */}<col className="w-[100px]" />{/* Received */}<col className="w-[86px]" />{/* Published */}<col className="w-[92px]" />{/* Awaiting */}<col className="w-[92px]" />{/* Reels */}<col className="w-[82px]" />{/* This month */}<col className="w-[92px]" />{/* SEO */}<col className="w-[66px]" />{/* Actions */}<col className="w-[76px]" /></colgroup>
           <TableHeader>
             <TableRow>
               <TableHead
@@ -366,6 +367,20 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
                   Received
                   {getSortIcon("articlesTotal")}
                 </div>
+              </TableHead>
+              <TableHead className="text-center px-1">
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button type="button" className="text-xs font-semibold decoration-dotted underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        Reels
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-56 text-xs" side="top">
+                      الأخضر: ريلز منشورة في الموقع. الأصفر: ريلز معلّقة بانتظار الاعتماد.
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50 text-center px-1"
@@ -406,7 +421,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={10} className="text-center text-muted-foreground py-8">
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-medium">No clients found</p>
                     <p className="text-xs">Try adjusting your search or filters</p>
@@ -535,6 +550,17 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, s
                       <span className={cn("text-sm font-semibold tabular-nums", client.articleStats.awaitingApproval > 0 ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground/40")}>
                         {client.articleStats.awaitingApproval}
                       </span>
+                    </TableCell>
+                    <TableCell className="text-center px-1">
+                      <div className="inline-flex items-center gap-1.5 text-sm font-semibold tabular-nums">
+                        <span title="Published reels" className={cn(client.reelStats.published > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground/40")}>
+                          {client.reelStats.published}
+                        </span>
+                        <span aria-hidden className="text-muted-foreground/40">·</span>
+                        <span title="Pending reel approval" className={cn(client.reelStats.pending > 0 ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground/40")}>
+                          {client.reelStats.pending}
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell className="text-center px-2">
                       {delivery.promised > 0 ? (

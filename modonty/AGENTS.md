@@ -23,6 +23,10 @@ original project from this workspace.
   unnecessary client-side JavaScript.
 - Never push, commit, delete material files, or connect to production data without
   fresh explicit user approval.
+- **Golden rule — local servers:** Start an app only from its own interactive terminal
+  with `pnpm dev -p <port>` (for example, `pnpm dev -p 3000` in `modonty`). Never
+  substitute the raw `next` binary, detached `Start-Process`, or a hidden background
+  server. Never stop or restart a user-run server unless the user explicitly asks.
 - Run type checks, builds, or browser automation only when the user says
   `تحقق`, `check`, `pl>`, or otherwise asks for verification.
 

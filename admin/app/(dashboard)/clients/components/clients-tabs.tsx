@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { Loader2, Video } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangle, CalendarClock, Loader2, Video } from "lucide-react";
 import { SubscriptionStatus } from "@prisma/client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
 import { ClientsPageClient } from "./clients-page-client";
@@ -69,20 +69,22 @@ const STATUS_TABS: Array<{ key: StatusFilterKey; label: string }> = [
  * `TierDistribution` (كان يُرسم في ذلك التبويب وحده) · و`clientByEmail` الذي لم
  * يكن إلّا لإخفاء مَن صار عميلاً من قائمة التحويل.
  *
- * والغلافُ `Tabs` باقٍ: صفُّ مرشِّحات الحالة مبنيٌّ داخله.
+ * تبويبُ «Clients» أُزيل أيضاً: كان يكرّر العدد الذي يظهر بجانب عنوان الصفحة،
+ * وصفُ مرشحات الحالة يعمل مستقلاً عنه.
  */
 interface Props {
-  clientsCount: number;
   clients: ClientForList[];
   defaultLogoUrl?: string | null;
+  expiringThisMonth: number;
+  overdueRenewals: number;
 }
 
 export function ClientsTabs({
-  clientsCount,
   clients,
   defaultLogoUrl,
+  expiringThisMonth,
+  overdueRenewals,
 }: Props) {
-  const [tab, setTab] = useState("clients");
   const [statusFilter, setStatusFilter] = useState<StatusFilterKey>("ALL");
   const [externalVideoOnly, setExternalVideoOnly] = useState(false);
   const [isFiltering, startFilter] = useTransition();
@@ -113,55 +115,66 @@ export function ClientsTabs({
 
 
   return (
-    <Tabs value={tab} onValueChange={setTab} className="w-full">
+    <div className="w-full">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <TabsList className="h-auto p-1 bg-muted/40 border">
-          <TabsTrigger value="clients" className="gap-2">
-            Clients
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted-foreground/15 tabular-nums font-bold">
-              {clientsCount}
-            </span>
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Status filter tabs — same row as the top tabs (clients tab only) */}
-        {tab === "clients" && (
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {STATUS_TABS.map((s) => (
-              <CountTab
-                key={s.key}
-                label={s.label}
-                count={statusCounts[s.key]}
-                active={statusFilter === s.key}
-                onClick={() => handleStatusFilter(s.key)}
-              />
-            ))}
-            {/* Operational follow-up list — separate from subscription status, so it
-                toggles on top of whichever status tab is selected. */}
-            {externalVideoCount > 0 && (
-              <button
-                type="button"
-                onClick={() => startFilter(() => setExternalVideoOnly((v) => !v))}
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
-                  externalVideoOnly
-                    ? "border-amber-500 bg-amber-500 text-white"
-                    : "border-amber-500/40 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400",
-                )}
-                title="عملاء فيديو التعريف عندهم رابط خارجي على قناة ما يملكونها"
-              >
-                <Video className="h-3.5 w-3.5" aria-hidden="true" />
-                فيديو خارجي
-                <span className="font-bold tabular-nums">{externalVideoCount}</span>
-              </button>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {overdueRenewals > 0 && (
+            <Link
+              href="/clients/segment/expired"
+              title="Their paid period has already ended — still live, renewal overdue"
+              className="inline-flex items-center gap-1.5 rounded-full border border-red-500/40 bg-red-500/15 px-2.5 py-1 text-xs font-bold text-red-600 transition-colors hover:bg-red-500/25 dark:text-red-400"
+            >
+              <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
+              Overdue <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] leading-none tabular-nums text-white">{overdueRenewals}</span>
+            </Link>
+          )}
+          <Link
+            href="/clients/segment/expiring-month"
+            title="Clients whose subscription ends this month — open the renewals list"
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold transition-colors",
+              expiringThisMonth > 0
+                ? "border-red-500/30 bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:text-red-400"
+                : "border-border bg-muted/40 text-muted-foreground hover:bg-muted",
             )}
-          </div>
-        )}
-
-
+          >
+            <CalendarClock className="h-3.5 w-3.5" aria-hidden />
+            Renewals this month <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] leading-none tabular-nums", expiringThisMonth > 0 ? "bg-red-500 text-white" : "bg-muted-foreground/20")}>{expiringThisMonth}</span>
+          </Link>
+        </div>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {STATUS_TABS.map((s) => (
+            <CountTab
+              key={s.key}
+              label={s.label}
+              count={statusCounts[s.key]}
+              active={statusFilter === s.key}
+              onClick={() => handleStatusFilter(s.key)}
+            />
+          ))}
+          {/* Operational follow-up list — separate from subscription status, so it
+              toggles on top of whichever status tab is selected. */}
+          {externalVideoCount > 0 && (
+            <button
+              type="button"
+              onClick={() => startFilter(() => setExternalVideoOnly((v) => !v))}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+                externalVideoOnly
+                  ? "border-amber-500 bg-amber-500 text-white"
+                  : "border-amber-500/40 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400",
+              )}
+              title="عملاء فيديو التعريف عندهم رابط خارجي على قناة ما يملكونها"
+            >
+              <Video className="h-3.5 w-3.5" aria-hidden="true" />
+              فيديو خارجي
+              <span className="font-bold tabular-nums">{externalVideoCount}</span>
+            </button>
+          )}
+        </div>
       </div>
 
-      <TabsContent value="clients" className="mt-3">
+      <div className="mt-3">
         <div className="relative">
           {isFiltering && (
             <div className="absolute inset-0 z-10 flex items-start justify-center rounded-lg bg-background/50 pt-20 backdrop-blur-[1px]">
@@ -180,8 +193,7 @@ export function ClientsTabs({
             />
           </div>
         </div>
-      </TabsContent>
-
-    </Tabs>
+      </div>
+    </div>
   );
 }

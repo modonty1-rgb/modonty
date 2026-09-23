@@ -24,6 +24,7 @@ export async function GET(request: Request) {
   const timeParam = params.get("time");
 
   const matches = await getArticlesArchive({
+    coreOnly: params.get("modonty") === "1",
     industrySlug: params.get("industry") ?? undefined,
     categorySlug: params.get("category") ?? undefined,
     tagSlug: params.get("tag") ?? undefined,

@@ -11,8 +11,8 @@ export interface LoadMoreResult {
   nextCursor: string | null;
 }
 
-export async function loadMoreReels(cursor: string): Promise<LoadMoreResult> {
-  const { items, nextCursor } = await getReelsFeedPage(cursor);
+export async function loadMoreReels(cursor: string, clientSlug?: string | null): Promise<LoadMoreResult> {
+  const { items, nextCursor } = await getReelsFeedPage(cursor, clientSlug);
 
   const session = await auth();
   const userId = session?.user?.id ?? null;

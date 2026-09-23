@@ -1,8 +1,7 @@
 import { Suspense } from "react";
 import type { ReactNode } from "react";
 import { CommerceActions } from "@/components/shared/commerce-actions/CommerceActions";
-import { LinkCard } from "@/components/shared/link-card/LinkCard";
-import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
+import { TrustCard } from "@/app/(site)/clients/components/trust-card/TrustCard";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { cn } from "@/lib/utils";
 
@@ -30,12 +29,7 @@ export function LeftSidebar({ className, userCard }: LeftSidebarProps) {
         {/* Trust strip right under the account (Khalid, 2026-08-16). It replaced a full ClientsCard,
             which was kept on disk "in case" until 24 Aug and then deleted — zero importers for
             eight days, and a file nothing imports is not a spare part, it is a lie about the map. */}
-        <LinkCard
-          href="/clients"
-          title="شركاء موثوقون"
-          description="كل شريك مفحوص بأوراقه الرسمية"
-          icon={ModontyTrustMark}
-        />
+        <TrustCard />
         {/* Booking/shop right under the trust strip: the visitor's own actions, one rail
             (Khalid, 2026-08-16 — moved here from the partners rail). */}
         <CommerceActions />

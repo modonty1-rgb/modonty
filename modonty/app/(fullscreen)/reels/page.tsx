@@ -4,14 +4,15 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getContentPageRow } from "@/lib/seo/get-content-page-row";
-import { ModontyLogoutMark } from "@/components/icons/modonty-logout-mark";
+import { IconHome } from "@/lib/icons";
 
 import { ReelsFeedClient } from "./components/reels-feed-client";
 import { ReelsNavRail } from "./components/reels-nav-rail";
-import { ReelsBottomBar } from "./components/reels-bottom-bar";
 import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
+import { getReelClientFilterOptions } from "@/lib/queries/get-reels-feed-page";
 import { getUserReelFlags } from "@/lib/queries/get-user-reel-flags";
 import { messages } from "@/lib/i18n/messages";
+import { ReelsClientFilter, ReelsClientFilterDesktop } from "./components/reels-client-filter";
 
 // Immersive feed: fixed full-viewport layer above the site chrome (header/footer).
 //
@@ -35,8 +36,17 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function ReelsPage() {
-  const { items, nextCursor } = await getReelsFeedPage();
+export default async function ReelsPage({ searchParams }: { searchParams: Promise<{ client?: string }> }) {
+  const params = await searchParams;
+  const selectedSlug = params.client?.trim() || null;
+  const [reelClients, firstPage] = await Promise.all([
+    getReelClientFilterOptions(),
+    getReelsFeedPage(null, selectedSlug),
+  ]);
+  // A stale or hand-typed filter must never turn the directory into a dead end.
+  const selectedClient = reelClients.find((client) => client.slug === selectedSlug) ?? null;
+  const activeSlug = selectedClient?.slug ?? null;
+  const { items, nextCursor } = selectedClient || !selectedSlug ? firstPage : await getReelsFeedPage();
 
   // Per-user state stays OUTSIDE the cached feed query.
   const session = await auth();
@@ -56,7 +66,7 @@ export default async function ReelsPage() {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-neutral-950 text-white">
         <p className="text-2xl font-bold">لا توجد ريلز بعد</p>
-        <p className="text-sm text-neutral-400">أول ريلز الشركاء في الطريق</p>
+        <p className="text-sm text-neutral-400">{selectedClient ? `لا توجد ريلز منشورة لـ ${selectedClient.name}` : "أول ريلز الشركاء في الطريق"}</p>
         <Link href="/" className="mt-4 rounded-full bg-white/10 px-6 py-2 text-sm hover:bg-white/20">
           العودة للرئيسية
         </Link>
@@ -73,33 +83,30 @@ export default async function ReelsPage() {
 
       {/* Floating header above the feed. `md:ps-*` keeps its title clear of the nav rail. */}
       <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4 md:ps-24 lg:ps-60">
-        <h1 className="rounded-full bg-black/40 px-4 py-1.5 text-sm font-bold text-white backdrop-blur">
-          الريلز
-        </h1>
-        {/* The way OUT of a full-screen layer has to be unmissable (Khalid, 23 Aug: «exit
-            button need more enhancement to be clear»): 44px tall, a solid dark pill with a
-            visible edge instead of a 40%-black wash that vanished over bright footage, the
-            brand logout mark instead of a bare «✕» text glyph, and bold text. */}
+        <div className="hidden min-w-0 items-center gap-2 md:flex">
+          <h1 className="shrink-0 rounded-full bg-black/40 px-4 py-1.5 text-sm font-bold text-white backdrop-blur">الريلز</h1>
+          <ReelsClientFilterDesktop clients={reelClients} selectedClient={selectedClient} />
+        </div>
+        <div className="md:hidden"><ReelsClientFilter clients={reelClients} selectedClient={selectedClient} /></div>
         <Link
           href="/"
-          aria-label="الخروج من الريلز"
-          className="pointer-events-auto flex min-h-11 items-center gap-2 rounded-full bg-black/70 px-4 text-sm font-bold text-white ring-1 ring-white/25 backdrop-blur transition hover:bg-black/90 hover:ring-white/40 motion-safe:active:scale-95 active:bg-black/90"
+          aria-label="الصفحة الرئيسية"
+          className="pointer-events-auto grid size-11 place-items-center rounded-full bg-black/70 text-white ring-1 ring-white/25 backdrop-blur transition hover:bg-black/90 hover:ring-white/40 motion-safe:active:scale-95 active:bg-black/90"
         >
-          <ModontyLogoutMark className="size-5" aria-hidden />
-          خروج
+          <IconHome className="size-5" aria-hidden />
         </Link>
       </header>
 
       <ReelsFeedClient
+        key={activeSlug ?? "all"}
         initialItems={withState}
         initialCursor={nextCursor}
+        clientSlug={activeSlug}
         isLoggedIn={!!userId}
         userImage={session?.user?.image ?? null}
         userName={session?.user?.name ?? "حسابي"}
       />
 
-      {/* The phone's counterpart to the rail — five destinations, hidden from `md` up. */}
-      <ReelsBottomBar />
     </div>
   );
 }

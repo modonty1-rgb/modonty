@@ -19,10 +19,11 @@ const text = messages.clients.trustCard;
  *
  * The numbers are the same live counts, read differently: here «٢٩» is not a headcount but
  * twenty-nine commercial registers actually on file — which is what this page's visitor is
- * asking about. The CTA still goes to `/trust`, where the process is spelled out.
+ * asking about. Outside the directory, its CTA leads into the verified partner list; inside
+ * that list, the action is intentionally absent because the visitor is already there.
  */
-export async function TrustCard() {
-  const { partners, industries } = await getPlatformCounts();
+export async function TrustCard({ showDirectoryAction = true }: { showDirectoryAction?: boolean }) {
+  const { partners, articles, industries } = await getPlatformCounts();
 
   return (
     <section aria-labelledby="trust-card-heading" className="rounded-lg bg-card p-3 ring-1 ring-primary/10 lg:p-4">
@@ -34,8 +35,8 @@ export async function TrustCard() {
 
       <div className="mt-2.5 grid grid-cols-3 gap-2 lg:mt-3">
         <Fact value={partners} label={text.factPartners} />
+        <Fact value={articles} label={text.factArticles} />
         <Fact value={industries} label={text.factIndustries} />
-        <Fact value={text.namedValue} label={text.factNamed} />
       </div>
 
       <p className="mt-2 flex items-center justify-center gap-1.5 text-[10px] leading-tight text-action-listen">
@@ -43,9 +44,11 @@ export async function TrustCard() {
         {text.trustLine}
       </p>
 
-      <Link href="/trust" className={buttonVariants({ variant: "outline", className: "mt-3 min-h-11 w-full lg:mt-4" })}>
-        {text.howWeVerifyButton}
-      </Link>
+      {showDirectoryAction ? (
+        <Link href="/clients" className={buttonVariants({ variant: "outline", className: "mt-3 min-h-11 w-full lg:mt-4" })}>
+          {text.discoverPartnersButton}
+        </Link>
+      ) : null}
     </section>
   );
 }

@@ -18,13 +18,15 @@ interface ReelsFeedClientProps {
   userImage: string | null;
   userName: string;
   initialCursor: string | null;
+  /** Kept on infinite-scroll requests so a client filter never leaks other reels in. */
+  clientSlug: string | null;
   isLoggedIn: boolean;
 }
 
 /** Mount a live <video> only for the reel on screen and its immediate neighbours. */
 const WINDOW = 1;
 
-export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn, userImage, userName }: ReelsFeedClientProps) {
+export function ReelsFeedClient({ initialItems, initialCursor, clientSlug, isLoggedIn, userImage, userName }: ReelsFeedClientProps) {
   const [items, setItems] = useState(initialItems);
   const [active, setActive] = useState(0);
   // Feeds must start muted or the browser refuses to autoplay; one tap turns sound on for all.
@@ -83,7 +85,7 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn, userI
         const s = stateRef.current;
         if (!entries[0].isIntersecting || s.loading || !s.cursor) return;
         s.loading = true;
-        loadMoreReels(s.cursor)
+        loadMoreReels(s.cursor, clientSlug)
           .then((res) => {
             setItems((prev) => [...prev, ...res.items]);
             s.cursor = res.nextCursor;
@@ -96,7 +98,7 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn, userI
     );
     io.observe(sentinel);
     return () => io.disconnect();
-  }, []);
+  }, [clientSlug]);
 
   const hasVideo = items.some((r) => r.isVideo);
 
@@ -231,10 +233,7 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn, userI
                   bottom edge, and outside it the square corners would poke past the radius
                   once `md` turns clipping off. `pe-16` only reserves room for the rail while
                   the rail is still overlaid — from `md` up it moved out, so the text is free. */}
-              {/* `pb-24` on the phone lifts the text clear of the 56px bottom bar (plus the
-                  safe-area it grows by); `md:pb-4` puts it back on the desktop card, which has
-                  no bar under it. */}
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 pb-24 pe-16 pt-20 md:pb-4 md:pe-4">
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 pe-16 pt-20 md:pe-4">
                 <Link
                   href={`/clients/${reel.clientSlug}`}
                   // `min-h-11`: the chip measured 142×36 (23 Aug) over moving footage — the
@@ -242,16 +241,16 @@ export function ReelsFeedClient({ initialItems, initialCursor, isLoggedIn, userI
                   // tap box grew, and it answers on touch-down.
                   className="pointer-events-auto mb-2 flex min-h-11 w-fit items-center gap-2 rounded-full bg-white/10 py-1 pe-4 ps-1 backdrop-blur transition hover:bg-white/20 active:bg-white/20 motion-safe:active:scale-95"
                 >
-                  <span className="relative block size-7 overflow-hidden rounded-full bg-white">
+                  <span className="relative block size-7 overflow-hidden rounded-lg bg-white p-0.5">
                     {reel.clientLogoUrl && (
                       <OptimizedImage media={asMedia(reel.clientLogoUrl)} alt="" fill sizes="28px" className="object-contain" />
                     )}
                   </span>
-                  <span className="text-sm font-bold text-white">{reel.clientName}</span>
+                  <span className="text-[clamp(0.75rem,3.5vw,0.875rem)] font-bold text-white">{reel.clientName}</span>
                 </Link>
-                <h2 className="text-lg font-extrabold text-white">{reel.title}</h2>
+                <h2 className="text-[clamp(0.9375rem,4.5vw,1.125rem)] font-extrabold leading-snug text-white">{reel.title}</h2>
                 {reel.description && (
-                  <p className="mt-1 line-clamp-2 text-sm text-neutral-300">{reel.description}</p>
+                  <p className="mt-1 line-clamp-2 text-[clamp(0.75rem,3.5vw,0.875rem)] leading-relaxed text-neutral-300">{reel.description}</p>
                 )}
                 </div>
               </div>

@@ -1,8 +1,7 @@
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { IndustryTile } from "@/components/shared/industry-tile/IndustryTile";
 import { formatCount } from "@/lib/i18n/messages";
+import { industryArtwork } from "@/lib/industry-artwork";
 import type { IndustryListItem } from "@/lib/types";
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 const INDUSTRY_COUNT = { one: "مجال واحد", two: "مجالين", few: "مجالات", many: "مجالاً" } as const;
 
@@ -23,24 +22,23 @@ export function IndustriesNavRail({ industries, currentSlug }: IndustriesNavRail
       <h2 className="mb-2 px-2 text-xs font-medium text-muted-foreground">
         {formatCount(industries.length, INDUSTRY_COUNT)}
       </h2>
-      <ul>
+      <ul className="grid grid-cols-2 gap-2" role="list">
         {industries.map((industry) => {
           const isActive = industry.slug === currentSlug;
           return (
             <li key={industry.slug}>
-              <Link
+              <IndustryTile
+                item={{
+                  name: industry.name,
+                  slug: industry.slug,
+                  count: industry.clientCount,
+                  image: industryArtwork(industry.socialImage),
+                  imageAlt: industry.socialImageAlt,
+                }}
                 href={`/industries/${encodeURIComponent(industry.slug)}`}
-                aria-current={isActive ? "page" : undefined}
-                className={cn(
-                  "flex min-h-9 items-center justify-between gap-2 rounded-full px-2 text-sm transition-colors sm:hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                  isActive ? "bg-primary/[.07] font-medium text-link" : "text-foreground",
-                )}
-              >
-                <span className="truncate">{industry.name}</span>
-                <span className={cn("shrink-0 text-xs", isActive ? "text-link" : "text-muted-foreground")}>
-                  {industry.clientCount.toLocaleString(SITE_LOCALE)}
-                </span>
-              </Link>
+                isActive={isActive}
+                variant="compact"
+              />
             </li>
           );
         })}

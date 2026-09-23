@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { ModontyMark } from "@/components/icons/modonty-mark";
 import { ModontyIndustriesMark } from "@/components/icons/modonty-industries-mark";
 import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
-import { ModontyReelsClosedClapperMark } from "@/components/icons/modonty-reels-closed-clapper-mark";
+import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
 import { ModontyArticlesMark } from "@/components/icons/modonty-articles-mark";
 import { ModontyAudioMark } from "@/components/icons/modonty-audio-mark";
 import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
@@ -57,7 +57,7 @@ const ORBIT_LINKS = [
   { href: "/modonty", label: null, icon: ModontyMark },
   { href: "/articles", label: "المقالات", icon: ModontyArticlesMark },
   { href: "/industries", label: "المجالات", icon: ModontyIndustriesMark },
-  { href: "/reels", label: "الطلّات", icon: ModontyReelsClosedClapperMark },
+  { href: "/reels", label: "الطلّات", icon: ModontyReelsMark },
   { href: "/clients", label: "الشركاء", icon: ModontyPartnerMark },
   { href: "/audio", label: "اسمع", icon: ModontyAudioMark },
   { href: "/modo-chat", label: "مودو", icon: ModoMark },
@@ -91,7 +91,6 @@ function getOrbitOffset(index: number, activeIndex: number): number {
 function OrbitLinkItem({ link, index, activeIndex, previousActiveIndex }: OrbitLinkItemProps) {
   const isActive = index === activeIndex;
   const Icon = link.icon;
-  const isModo = link.href === "/modo-chat";
   const isWrapping = Math.abs(getOrbitOffset(index, activeIndex) - getOrbitOffset(index, previousActiveIndex)) > ORBIT_SPACING * 2;
   const className = isActive
     ? "border-primary/80 bg-primary text-primary-foreground shadow-[0_0_28px_hsl(var(--primary)/0.55)]"
@@ -116,17 +115,20 @@ function OrbitLinkItem({ link, index, activeIndex, previousActiveIndex }: OrbitL
         }px)) translateY(${isActive ? 0 : 8}px) scale(${isActive ? 1 : 0.92})`,
       }}
     >
-      {/* The resting pills carry their name too (Khalid, 1 Sep 2026), one step smaller than
-          the active one — an icon ring where only the current item is named makes the other
-          six a memory test. Both stay inside their own circle: the row is 68px tall, so a
-          label hung underneath would be clipped. */}
+      {/* On the bottom bar, repeating seven tiny labels cost more clarity than they gave.
+          The current destination keeps its visible name; resting destinations spend that
+          reclaimed space on a recognisable mark. The link itself still supplies every name
+          through aria-label for assistive technology. */}
       <Link href={link.href} aria-current={isActive ? "page" : undefined} aria-label={link.label ?? undefined} className={`flex flex-col rounded-full border text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive ? "size-16" : "size-12"} items-center justify-center ${className}`}>
-        <Icon className={isModo ? (isActive ? "size-8" : "size-7") : isActive ? "size-6" : "size-5"} aria-hidden />
-        <span
-          className={`max-w-full truncate px-0.5 font-semibold leading-none ${isActive ? "mt-1 text-[10px]" : "mt-0.5 text-[7px] opacity-90"}`}
-        >
-          {link.label}
-        </span>
+        {/* The 48px resting target is intentionally generous for a thumb, but a 20px glyph
+            inside it read as accidental padding once the orbit moved to the bottom bar.
+            Enlarge the visible mark only; the target and its spacing stay stable. */}
+        <Icon className={isActive ? "size-9" : "size-8"} aria-hidden />
+        {isActive && (
+          <span className="mt-1 max-w-full truncate px-0.5 text-[10px] font-semibold leading-none">
+            {link.label}
+          </span>
+        )}
       </Link>
     </div>
   );
