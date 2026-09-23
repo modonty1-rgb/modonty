@@ -3,5 +3,5 @@
   "buildCommand": "pnpm --filter @modonty/console build",
   "installCommand": "pnpm install --filter @modonty/console...",
   "framework": "nextjs",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ./ ../shared ../pnpm-lock.yaml ../package.json"
+  "ignoreCommand": "[ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] && git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- ./ ../shared ../pnpm-lock.yaml ../package.json"
 }
