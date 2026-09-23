@@ -20,6 +20,7 @@ import { countIndustries } from "@/app/(site)/clients/helpers/count-industries";
 import type { ClientListItem } from "@/lib/queries/get-clients-list";
 import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
 import type { IndustryListItem } from "@/lib/types";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 
 interface PageLayoutProps {
   /** Every active partner, straight from the cached query. */
@@ -120,7 +121,7 @@ export function PageLayout({ partners, industries, query, userCard }: PageLayout
         and browsing by field. Filtering premium lives with the filters above. */}
     <MobileCtaBar
       ariaLabel="صِر شريكاً أو تصفّح المجالات"
-      primary={{ href: "https://www.jbrseo.com", label: "صِر شريكاً", icon: ModontyPartnerMark, external: true }}
+      primary={{ href: PARTNER_SIGNUP_URL, label: "صِر شريكاً", icon: ModontyPartnerMark, external: true }}
       secondary={{ href: "/industries", label: "المجالات", icon: ModontyIndustriesMark }}
     />
     </>

@@ -3,7 +3,7 @@ import type { ComponentType, SVGProps } from "react";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 
-import { LOGO_URL, SITE_URL } from "@/constants";
+import { LOGO_URL, PARTNER_SIGNUP_URL, SITE_URL } from "@/constants";
 import { jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getContentPageRow } from "@/lib/seo/get-content-page-row";
@@ -111,13 +111,9 @@ const CHANNEL_ICON: Record<string, Icon> = {
   telegram: IconTelegram,
 };
 
-/**
- * «صِر شريكاً» → صفحة الباقات على pay.modonty.com (خالد ٢٣ سبتمبر ٢٠٢٦: jbrseo أُوقف).
- *
- * بلا UTM عمداً: نطاقٌ فرعيٌّ من نفس الموقع، والوسمُ عليه يقطع زيارةَ الزائر إلى «حملة»
- * جديدة كما يفعل على الرابط الداخليّ. والضغطةُ نفسُها تُقاس بـ`cta_click` (`accounts:partner`).
- */
-const PARTNER_URL = "https://pay.modonty.com";
+// «صِر شريكاً» → PARTNER_SIGNUP_URL (constants/partner.ts) — the address every partner link on
+// the site shares. No UTM: it is a subdomain of this site, and a tag there would split the
+// visitor's own visit into a fake campaign. The tap is measured by `cta_click` instead.
 
 export default async function AccountsPage() {
   const [{ socials, salesWhatsapp, contactEmail }, row] = await Promise.all([getAccountsData(), getContentPageRow("accounts")]);
@@ -130,7 +126,7 @@ export default async function AccountsPage() {
    * every button shout the same — the visitor could not tell which one we meant.
    */
   const secondary: { id: string; href: string; label: string; icon: Icon; external: boolean }[] = [
-    { id: "partner", href: PARTNER_URL, label: "صِر شريكاً", icon: IconHandshake, external: true },
+    { id: "partner", href: PARTNER_SIGNUP_URL, label: "صِر شريكاً", icon: IconHandshake, external: true },
     ...(salesWhatsapp ? [{ id: "sales_whatsapp", href: salesWhatsapp, label: "واتساب المبيعات", icon: IconWhatsappBrand, external: true }] : []),
     // البريدُ من Settings → Business → Contact (orgContactEmail) — لا عنوانَ مكتوبٌ هنا.
     ...(contactEmail ? [{ id: "email", href: `mailto:${contactEmail}`, label: "راسلنا بالبريد", icon: IconEmail, external: true }] : []),

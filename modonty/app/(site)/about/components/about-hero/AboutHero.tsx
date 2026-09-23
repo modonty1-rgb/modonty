@@ -4,6 +4,7 @@ import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { buttonVariants } from "@/components/ui/button";
 import { IconArrowRight } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 
 const text = messages.about.hero;
 
@@ -36,7 +37,7 @@ export function AboutHero() {
           <IconArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
         </Link>
         <CtaTrackedLink
-          href="https://www.jbrseo.com"
+          href={PARTNER_SIGNUP_URL}
           target="_blank"
           rel="noopener noreferrer"
           label="About Hero — صِر شريكاً"

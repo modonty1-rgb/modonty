@@ -1,4 +1,5 @@
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 
 interface ClientFooterCtaProps {
   clientId?: string;
@@ -12,7 +13,7 @@ export function ClientFooterCta({ clientId }: ClientFooterCtaProps) {
         انضم لشركاء مدوّنتي واجعل Google يجلب لك العملاء — بلا إعلانات.
       </p>
       <CtaTrackedLink
-        href="https://www.jbrseo.com"
+        href={PARTNER_SIGNUP_URL}
         target="_blank"
         rel="noopener noreferrer"
         label="Client Page CTA — عملاء بلا إعلانات"

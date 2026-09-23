@@ -7,6 +7,7 @@ import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { getLegalEntity } from "@/lib/seo/organization-jsonld";
 import { IconEmail, IconPhone } from "@/lib/icons";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 // `max-lg:min-h-11` — the fingertip floor, on phones and tablets only (Khalid, 22 Aug: mobile
 // refactor). These links measured 16px tall on a phone: eighteen targets stacked two to a row,
 // each a third of a fingertip, in the one place a lost reader goes looking for a way out.
@@ -43,7 +44,7 @@ export async function Footer() {
       <div className="flex items-center gap-2 text-xs">
         <span className="text-muted-foreground">{messages.chrome.footer.ctaQuestion}</span>
         <CtaTrackedLink
-          href="https://www.jbrseo.com"
+          href={PARTNER_SIGNUP_URL}
           target="_blank"
           rel="noopener noreferrer"
           label="Footer CTA — جبر SEO"

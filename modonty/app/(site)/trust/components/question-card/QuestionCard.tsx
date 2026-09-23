@@ -4,6 +4,7 @@ import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { Card, CardContent } from "@/components/ui/card";
 import { messages } from "@/lib/i18n/messages";
 import { IconMessage } from "@/lib/icons";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 
 const text = messages.trust.question;
 
@@ -41,7 +42,7 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
             </Link>
           )}
           <CtaTrackedLink
-            href="https://www.jbrseo.com/pricing"
+            href={PARTNER_SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
             label="Trust Page CTA — شوف الباقات (جبر SEO)"

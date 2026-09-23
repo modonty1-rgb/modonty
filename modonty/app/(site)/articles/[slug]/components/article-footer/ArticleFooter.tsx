@@ -13,6 +13,7 @@ import { RoundSnapchat } from "@/components/icons/snapchat";
 import { IconChevronLeft } from "@/lib/icons";
 import type { SocialLink } from "@/lib/settings/get-platform-social-links";
 import type { ComponentType, SVGProps } from "react";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -192,7 +193,7 @@ export function ArticleFooter({
       <div className="mt-6 flex flex-col items-start justify-between gap-3 rounded-lg border border-primary/15 bg-primary/5 px-4 py-3.5 sm:flex-row sm:items-center">
         <p className="text-sm text-muted-foreground">تريد محتوى مثل هذا يجذب عملاء لنشاطك من جوجل؟</p>
         <CtaTrackedLink
-          href="https://www.jbrseo.com"
+          href={PARTNER_SIGNUP_URL}
           target="_blank"
           rel="noopener noreferrer"
           label="Article Footer CTA — عملاء بلا إعلانات"

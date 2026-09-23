@@ -1,6 +1,7 @@
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { IconAdd, IconChevronRight } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 
 const text = messages.becomePartner;
 
@@ -20,7 +21,7 @@ interface PartnerInviteCardProps {
 export function PartnerInviteCard({ source }: PartnerInviteCardProps) {
   return (
     <CtaTrackedLink
-      href="https://www.jbrseo.com"
+      href={PARTNER_SIGNUP_URL}
       target="_blank"
       rel="noopener noreferrer"
       label={`${source} — become a partner`}

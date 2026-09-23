@@ -29,6 +29,7 @@ import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
 import { buildShareTags } from "@/lib/seo/build-share-tags";
 import { reveal } from "./helpers/reveal";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 
 // كان هنا `const MODONTY_CLIENT_SLUG = "مدونتي"` والصفحة تبحث بالـslug نصّاً.
 // العمود الصحيح موجود منذ ٢٤ أغسطس (`Settings.coreClientId`) وخمسة مسارات تقرؤه —
@@ -233,7 +234,7 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
     <MobileCtaBar
       ariaLabel={messages.modonty.ctaBarLabel}
       primarySlot={<FollowCtaButton />}
-      secondary={{ href: "https://www.jbrseo.com", label: "صِر شريكاً", icon: IconHandshake, external: true }}
+      secondary={{ href: PARTNER_SIGNUP_URL, label: "صِر شريكاً", icon: IconHandshake, external: true }}
     />
     </>
   );

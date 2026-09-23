@@ -21,5 +21,6 @@ export {
 export { SAUDI_BUSINESS_VERIFY_URL, CR_CERTIFICATE_FALLBACK_IMAGE } from "./legal";
 
 export { CONTACT_EMAIL, NOREPLY_FROM } from "./contact";
+export { PARTNER_SIGNUP_URL } from "./partner";
 
 export { SHOW_ARTICLE_ENGAGEMENT_STATS, SHOW_CLIENT_ENGAGEMENT_STATS } from "./feature-flags";

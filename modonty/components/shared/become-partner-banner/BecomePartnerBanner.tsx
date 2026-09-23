@@ -3,6 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { IconAdd } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
 import { cn } from "@/lib/utils";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 
 const text = messages.becomePartner;
 
@@ -39,7 +40,7 @@ export function BecomePartnerBanner({ source, className }: BecomePartnerBannerPr
         </div>
       </div>
       <CtaTrackedLink
-        href="https://www.jbrseo.com"
+        href={PARTNER_SIGNUP_URL}
         target="_blank"
         rel="noopener noreferrer"
         label={`${source} — ${text.cta}`}

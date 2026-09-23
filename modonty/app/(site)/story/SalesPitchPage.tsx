@@ -35,6 +35,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 
 interface ManifestSection {
   id: string;
@@ -65,7 +66,6 @@ const SPEED_OPTIONS = [0.75, 1, 1.25] as const;
 
 const HIDDEN_FROM_MENU = new Set<string>(["18", "20"]);
 
-const JBRSEO_PRICING_URL = "https://www.jbrseo.com/pricing";
 
 const SALES_WHATSAPP = process.env.NEXT_PUBLIC_SALES_WHATSAPP || "966541018020";
 const SALES_WHATSAPP_DISPLAY =
@@ -1268,7 +1268,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName }: Sale
                     </m.button>
                     {/* Secondary CTA — outline/ghost (demoted from primary to reduce decision paralysis) */}
                     <a
-                      href={JBRSEO_PRICING_URL}
+                      href={PARTNER_SIGNUP_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group mb-1 flex items-center justify-between gap-2 px-3 py-2.5 max-md:min-h-11 rounded-lg border border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"

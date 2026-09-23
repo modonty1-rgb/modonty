@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { IconAdd, IconChevronRight } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 
 /**
  * The "dot" motif from the logo story (a dot → a brick → a building), as a faint grid
@@ -108,7 +109,7 @@ export function ModontyProfileHero({
             </p>
           </div>
           <CtaTrackedLink
-            href="https://www.jbrseo.com"
+            href={PARTNER_SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
             label="Modonty Hero — become a partner"
