@@ -368,6 +368,10 @@ model Task {
   // `updatedAt` so editing a finished task does not rewrite when it finished.
   completedAt DateTime?
 
+  /// ملاحظةُ المراجِع حين يُرجع المهمّة (خالد ٢٣ سبتمبر ٢٠٢٦). تُكتب بـ«رجّعها بملاحظة»،
+  /// وتُمسح حين ينقلها المنفّذُ إلى REVIEW من جديد أو يعتمدها المراجِع.
+  reviewNote String?
+
   // Archived, never deleted — Khalid, 2026-09-02: «مافي حذف، أرشفه بدل الحذف».
   //
   // A DATE on the task, not a fifth column: archiving is orthogonal to where the
@@ -384,6 +388,7 @@ model Task {
   // `status` would scan archived rows before discarding them.
   @@index([archivedAt, status, position])
   @@index([assigneeId])
+  @@index([createdById, status])
   @@index([dueDate])
   @@map("tasks")
 }

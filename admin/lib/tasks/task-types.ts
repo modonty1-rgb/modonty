@@ -21,4 +21,6 @@ export interface BoardTask {
   assignee: { id: string; name: string | null; image: string | null } | null;
   /** Present only when another staff member created this task for the assignee. */
   assignedBy: { name: string | null; email: string | null } | null;
+  /** The reviewer's note when they sent it back; cleared once it goes to REVIEW again. */
+  reviewNote?: string | null;
 }

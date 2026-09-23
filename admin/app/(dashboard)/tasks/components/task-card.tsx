@@ -124,6 +124,15 @@ export function TaskCard({
         </DropdownMenu>
       </div>
 
+      {/* The reviewer's note sits on the card itself: it is the instruction for the next step,
+          so it must be read where the work is picked up, not buried in the bell. */}
+      {task.reviewNote && (
+        <p dir="auto" className="mt-2 ms-5 rounded-md border border-rose-500/30 bg-rose-500/10 px-2 py-1.5 text-[12px] leading-snug text-rose-800 dark:text-rose-200">
+          <span className="font-semibold">ملاحظة المراجعة: </span>
+          {task.reviewNote}
+        </p>
+      )}
+
       <div className="mt-2 flex flex-wrap items-center gap-1.5 ps-5">
         {task.assignedBy && (
           <span className="inline-flex items-center gap-1 rounded bg-violet-500/15 px-1.5 py-0.5 text-[10px] font-medium text-violet-700 dark:text-violet-300">

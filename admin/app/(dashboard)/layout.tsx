@@ -5,6 +5,7 @@ import { checkAdmin } from "@/lib/admin-guard";
 import { canSeeReports } from "@/lib/can-see-reports";
 import { db } from "@/lib/db";
 import { TASK_NOT_ARCHIVED } from "@/lib/tasks/not-archived";
+import { countReviewQueue } from "@/lib/tasks/review-queue";
 import { Sidebar } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
 import { DbBadge } from "@/components/admin/db-badge";
@@ -76,6 +77,8 @@ export default async function DashboardLayout({
   const myOpenTasks = await db.task
     .count({ where: { assigneeId: gate.userId, status: { not: "DONE" }, ...TASK_NOT_ARCHIVED } })
     .catch(() => 0);
+  // مهامُّ أرسلتُها وأنهاها زميلٌ — تنتظر قراري، فهي عملٌ عليّ أنا أيضاً.
+  const pendingReviews = await countReviewQueue(gate.userId);
 
   return (
     <SidebarProvider>
@@ -90,6 +93,7 @@ export default async function DashboardLayout({
             canSyncLocal={(process.env.DATABASE_URL ?? "").includes("modonty_dev")}
             canViewReports={canSeeReports(reportViewer)}
             myOpenTasks={myOpenTasks}
+            pendingReviews={pendingReviews}
           />
           <main className="flex-1 overflow-y-auto scrollbar-thin p-4 sm:p-6">{children}</main>
         </div>

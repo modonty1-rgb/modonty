@@ -5,6 +5,8 @@ import {
   HelpCircle,
   KanbanSquare,
   ClipboardCheck,
+  CheckCircle2,
+  Undo2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -60,6 +62,20 @@ const REGISTRY: Record<string, NotificationMeta> = {
     icon: ClipboardCheck,
     toneClasses: "bg-sky-100 text-sky-700 ring-sky-200",
     label: "بانتظار مراجعتك",
+    href: () => "/tasks/reviews",
+  },
+  /** المراجِعُ اعتمد مهمّتك — انتهت (خالد ٢٣ سبتمبر ٢٠٢٦). */
+  task_approved: {
+    icon: CheckCircle2,
+    toneClasses: "bg-emerald-100 text-emerald-700 ring-emerald-200",
+    label: "اعتُمدت",
+    href: () => "/tasks",
+  },
+  /** المراجِعُ أرجعها بملاحظة — الملاحظةُ على البطاقة في لوحتك. */
+  task_returned: {
+    icon: Undo2,
+    toneClasses: "bg-rose-100 text-rose-700 ring-rose-200",
+    label: "رجعت بملاحظة",
     href: () => "/tasks",
   },
   faq_reply: {

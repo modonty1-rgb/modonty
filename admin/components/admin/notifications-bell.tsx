@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Bell, Check } from "lucide-react";
@@ -17,6 +17,7 @@ import {
   markAllNotificationsReadAction,
 } from "@/lib/notifications/actions";
 import { getNotificationMeta, type NotificationLike } from "@/lib/notifications/registry";
+import { playChime, primeChime } from "@/lib/notifications/chime";
 import { RealtimeEvent, staffChannel } from "@/lib/realtime/channels";
 import { useRealtime } from "@/lib/realtime/use-realtime";
 
@@ -58,11 +59,30 @@ export function NotificationsBell() {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
+  /**
+   * آخرُ عددٍ غير مقروء رأيناه. النغمةُ لزيادته فقط — لا لأوّل تحميل (`null`)، ولا حين
+   * ينقص بعد «Mark all read»، فلا يرنّ الجرسُ على إشعاراتٍ قديمة في كلّ صفحة.
+   */
+  const lastUnread = useRef<number | null>(null);
+
   async function refresh() {
     const res = await listMyNotificationsAction(20);
     setItems(res.items);
     setUnreadCount(res.unreadCount);
+    if (lastUnread.current !== null && res.unreadCount > lastUnread.current) playChime();
+    lastUnread.current = res.unreadCount;
   }
+
+  // المتصفّحُ لا يسمح بالصوت قبل أوّل تفاعل — نفتحه عند أوّل ضغطةٍ أو زرّ (انظر chime.ts).
+  useEffect(() => {
+    const unlock = () => primeChime();
+    window.addEventListener("pointerdown", unlock, { once: true });
+    window.addEventListener("keydown", unlock, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
+  }, []);
 
   useEffect(() => {
     refresh();

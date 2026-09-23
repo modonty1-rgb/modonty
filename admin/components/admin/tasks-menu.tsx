@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Archive, KanbanSquare, LayoutGrid, UserCheck } from "lucide-react";
+import { Archive, ClipboardCheck, KanbanSquare, LayoutGrid, UserCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,9 @@ import { useRealtime } from "@/lib/realtime/use-realtime";
 
 const ITEMS = [
   { href: "/tasks", label: "Board", icon: LayoutGrid, hint: "Four columns — where the work stands" },
+  // Tasks you sent to a colleague that they finished — waiting for your approval or your
+  // note (Khalid, 2026-09-23: «مراجعاتي… تكون موجودة عنده على طول»).
+  { href: "/tasks/reviews", label: "Reviews", icon: ClipboardCheck, hint: "Tasks you sent, waiting for your approval" },
   // «Report» said nothing about what is inside it — Khalid (2026-09-04): «الـdaily report
   // إنه بيشوفوا الـtasks اللي موجودة، فخلّي المصطلح يكون واضح». The name now states the
   // content: every person's tasks for a chosen day, next to «Board» which shows only stages.
@@ -37,7 +40,17 @@ const ITEMS = [
  * The trigger lights up whenever any of its pages is open, so the bar still says
  * where you are.
  */
-export function TasksMenu({ canViewReports = false, myOpenTasks = 0 }: { canViewReports?: boolean; myOpenTasks?: number }) {
+export function TasksMenu({
+  canViewReports = false,
+  myOpenTasks = 0,
+  pendingReviews = 0,
+}: {
+  canViewReports?: boolean;
+  myOpenTasks?: number;
+  /** Tasks I sent that a colleague moved to REVIEW — they wait on me, so they count as mine. */
+  pendingReviews?: number;
+}) {
+  const waiting = myOpenTasks + pendingReviews;
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
@@ -69,7 +82,7 @@ export function TasksMenu({ canViewReports = false, myOpenTasks = 0 }: { canView
         <Button
           variant="ghost"
           size="sm"
-          aria-label={myOpenTasks > 0 ? `Tasks — ${myOpenTasks} مفتوحة` : "Tasks"}
+          aria-label={waiting > 0 ? `Tasks — ${myOpenTasks} مفتوحة · ${pendingReviews} بانتظار مراجعتك` : "Tasks"}
           className={cn(
             "h-8 gap-1.5 text-xs font-medium",
             active && "bg-accent text-accent-foreground",
@@ -83,12 +96,12 @@ export function TasksMenu({ canViewReports = false, myOpenTasks = 0 }: { canView
             *
             * ويختفي عند الصفر: شارةٌ تقول «٠» تشغل العينَ بلا خبر، والفراغُ نفسُه خبر.
             */}
-          {myOpenTasks > 0 ? (
+          {waiting > 0 ? (
             <span
               className="ms-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold tabular-nums leading-none text-primary-foreground"
-              title={`${myOpenTasks} مهمّة مفتوحة مُسنَدة إليك`}
+              title={`${myOpenTasks} مهمّة مفتوحة مُسنَدة إليك · ${pendingReviews} بانتظار مراجعتك`}
             >
-              {myOpenTasks > 99 ? "99+" : myOpenTasks}
+              {waiting > 99 ? "99+" : waiting}
             </span>
           ) : null}
         </Button>
@@ -107,10 +120,15 @@ export function TasksMenu({ canViewReports = false, myOpenTasks = 0 }: { canView
                 className={cn("flex items-start gap-2", current && "bg-accent")}
               >
                 <Icon className="mt-0.5 size-4 shrink-0" aria-hidden />
-                <span className="flex min-w-0 flex-col">
+                <span className="flex min-w-0 flex-1 flex-col">
                   <span className="text-[13px] font-medium">{label}</span>
                   <span className="text-[11px] text-muted-foreground">{hint}</span>
                 </span>
+                {href === "/tasks/reviews" && pendingReviews > 0 ? (
+                  <span className="ms-auto grid h-5 min-w-5 place-items-center rounded-full bg-sky-600 px-1 text-[11px] font-bold tabular-nums text-white">
+                    {pendingReviews > 99 ? "99+" : pendingReviews}
+                  </span>
+                ) : null}
               </Link>
             </DropdownMenuItem>
           );

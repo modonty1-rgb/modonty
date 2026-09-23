@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { Session } from "next-auth";
 
 import type { Prisma } from "@prisma/client";
+import { z } from "zod";
 
 import { auth } from "@/lib/auth";
 import { canSeeReports } from "@/lib/can-see-reports";
@@ -170,8 +171,140 @@ async function notifyReviewer(p: {
       },
     });
     publish(staffChannel(p.createdById), RealtimeEvent.NOTIFICATION_NEW);
+    // عدّادُ «Reviews» عند المراجِع يُحسب من مونغو — نبضةٌ تُعيده بلا أن يلمس شيئاً.
+    publish(staffChannel(p.createdById), RealtimeEvent.TASKS_CHANGED);
   } catch (error) {
     console.error("[tasks] notifyReviewer failed", error);
+  }
+}
+
+/** سحبُ المنفّذِ مهمّتَه من REVIEW يُنقص طابورَ مراجِعها — فيُعاد حسابُ عدّاده. */
+function pingReviewer(createdById: string | null, actorId: string): void {
+  if (createdById && createdById !== actorId) publish(staffChannel(createdById), RealtimeEvent.TASKS_CHANGED);
+}
+
+/**
+ * **قرارُ المراجِع — اعتمادٌ أو إرجاعٌ بملاحظة** (خالد ٢٣ سبتمبر ٢٠٢٦).
+ *
+ * ── مَن يقرّر ──
+ * كاتبُ المهمّة وحده، ما دامت في REVIEW ومُسنَدةً لغيره. لوحةُ الموظّف خاصّةٌ به
+ * (`assigneeId !== userId` تُرفض في كلّ فعلٍ آخر هنا)، وهذا البابُ الوحيد الذي يلمس فيه
+ * غيرُ المنفّذ مهمّته — وبفعلين لا غير: لا يعدّل نصَّها ولا يحرّكها إلى عمودٍ ثالث.
+ *
+ * ── والمنفّذُ يعرف فوراً ──
+ * إشعارٌ في جرسه، ونبضةٌ تُعيد رسمَ لوحته وبادجه.
+ */
+async function loadForReview(id: string, reviewerId: string) {
+  const task = await db.task.findUnique({
+    where: { id },
+    select: { id: true, title: true, status: true, assigneeId: true, createdById: true, archivedAt: true },
+  });
+  if (
+    !task ||
+    task.archivedAt ||
+    task.createdById !== reviewerId ||
+    !task.assigneeId ||
+    task.assigneeId === reviewerId
+  ) {
+    return { error: "Task not found" } as const;
+  }
+  if (task.status !== "REVIEW") return { error: "This task is no longer waiting for review" } as const;
+  return { task: { ...task, assigneeId: task.assigneeId } } as const;
+}
+
+async function notifyDecision(p: { to: string; actorId: string; taskId: string; type: string; title: (from: string) => string; body: string }) {
+  try {
+    const actor = await db.staff.findUnique({ where: { id: p.actorId }, select: { name: true, email: true } });
+    const from = actor?.name?.trim() || actor?.email?.trim() || "زميل";
+    await db.notification.create({
+      data: { staffId: p.to, type: p.type, title: p.title(from), body: p.body, relatedId: p.taskId },
+    });
+    publish(staffChannel(p.to), RealtimeEvent.NOTIFICATION_NEW);
+  } catch (error) {
+    console.error("[tasks] notifyDecision failed", error);
+  }
+}
+
+/** أعلى العمود: القرارُ الأحدث يُرى أوّلاً في لوحة المنفّذ. */
+async function topOf(status: "DONE" | "IN_PROGRESS", assigneeId: string): Promise<number> {
+  const first = await db.task.findFirst({
+    where: { status, assigneeId, ...LIVE },
+    select: { position: true },
+    orderBy: { position: "asc" },
+  });
+  return first ? first.position - 1000 : 1000;
+}
+
+export async function approveTask(id: string): Promise<Result> {
+  const userId = sessionUserId(await auth());
+  if (!userId) return { success: false, error: "Not authorised" };
+  if (!id) return { success: false, error: "Task not found" };
+
+  try {
+    const loaded = await loadForReview(id, userId);
+    if ("error" in loaded) return { success: false, error: loaded.error as string };
+    const { task } = loaded;
+
+    await db.task.update({
+      where: { id: task.id },
+      data: { status: "DONE", completedAt: new Date(), reviewNote: null, position: await topOf("DONE", task.assigneeId) },
+    });
+    await notifyDecision({
+      to: task.assigneeId,
+      actorId: userId,
+      taskId: task.id,
+      type: "task_approved",
+      title: (from) => `اعتمد ${from} مهمّتك`,
+      body: task.title,
+    });
+
+    revalidateBoard(task.assigneeId);
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : "Could not approve the task" };
+  }
+}
+
+const returnTaskSchema = z.object({
+  id: z.string().min(1),
+  note: z.string().trim().min(3, "اكتب ملاحظتك — ثلاثة أحرف على الأقل").max(1000, "الملاحظة طويلة"),
+});
+
+export async function returnTask(raw: unknown): Promise<Result> {
+  const userId = sessionUserId(await auth());
+  if (!userId) return { success: false, error: "Not authorised" };
+
+  const parsed = returnTaskSchema.safeParse(raw);
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid note" };
+  const { id, note } = parsed.data;
+
+  try {
+    const loaded = await loadForReview(id, userId);
+    if ("error" in loaded) return { success: false, error: loaded.error as string };
+    const { task } = loaded;
+
+    await db.task.update({
+      where: { id: task.id },
+      data: {
+        status: "IN_PROGRESS",
+        completedAt: null,
+        reviewNote: note,
+        position: await topOf("IN_PROGRESS", task.assigneeId),
+      },
+    });
+    await notifyDecision({
+      to: task.assigneeId,
+      actorId: userId,
+      taskId: task.id,
+      type: "task_returned",
+      title: (from) => `أرجع ${from} مهمّتك بملاحظة`,
+      body: `${task.title} — ${note}`,
+    });
+
+    revalidateBoard(task.assigneeId);
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : "Could not send the task back" };
   }
 }
 
@@ -280,9 +413,12 @@ export async function updateTask(raw: unknown): Promise<Result> {
         // DONE clears it, so a reopened task does not claim a completion date.
         completedAt:
           data.status === "DONE" ? (existing.completedAt ?? new Date()) : null,
+        // تسليمٌ جديد للمراجعة يطوي ملاحظةَ الإرجاع السابقة — عولجت أو لا، فالمراجِعُ يحكم.
+        ...(data.status === "REVIEW" && existing.status !== "REVIEW" ? { reviewNote: null } : {}),
       },
     });
 
+    if (existing.status === "REVIEW" && data.status !== "REVIEW") pingReviewer(existing.createdById, userId);
     if (data.status === "REVIEW" && existing.status !== "REVIEW") {
       await notifyReviewer({
         taskId: existing.id,
@@ -337,9 +473,11 @@ export async function moveTask(raw: unknown): Promise<Result> {
         status,
         position: positionAt(siblings, toIndex),
         completedAt: status === "DONE" ? (task.completedAt ?? new Date()) : null,
+        ...(status === "REVIEW" && task.status !== "REVIEW" ? { reviewNote: null } : {}),
       },
     });
 
+    if (task.status === "REVIEW" && status !== "REVIEW") pingReviewer(task.createdById, userId);
     if (status === "REVIEW" && task.status !== "REVIEW") {
       await notifyReviewer({
         taskId: task.id,
