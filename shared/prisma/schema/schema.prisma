@@ -1047,6 +1047,29 @@ model BookingRequest {
   @@map("booking_requests")
 }
 
+/// One spin of a public lucky-wheel campaign — one row per SPIN. The server picks
+/// the prize and writes this row BEFORE the wheel animates, so the browser only plays back a
+/// result it cannot choose. The campaign identifier keeps the collection reusable: Techne is
+/// simply the first campaign, not a special schema branch.
+model LuckyWheel {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  campaign   String // e.g. "TECHNE_2026"
+  prizeCode  String? // server-picked code; null = «حظ أوفر» (the spin still counts)
+  prizeLabel String // human-readable snapshot of the outcome at the moment of the spin
+  name       String
+  phone      String // normalized digits, preserving an optional leading +
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // A phone may spin more than once (Khalid, 23 Sep 2026: «ممكن اديه اكثر من فرصه»). The cap
+  // lives in code (`SPINS_PER_PHONE`, lucky-wheel/prizes.ts) and is counted on this index.
+  @@index([campaign, phone])
+  @@index([campaign, createdAt])
+  @@map("lucky_wheels")
+}
+
 // ============================================
 // SEO INTAKE MODELS
 // ============================================
