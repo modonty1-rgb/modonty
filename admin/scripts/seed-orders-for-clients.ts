@@ -9,8 +9,12 @@
  * المبالغ تُحسب بـ`buildOrderSnapshot` نفسها التي تستعملها صفحة الدفع — لا حساب موازٍ،
  * وإلّا اختبرنا رياضياتٍ غير التي تعمل في الإنتاج.
  *
- *   pnpm exec tsx scripts/seed-orders-for-clients.ts          بذر
- *   pnpm exec tsx scripts/seed-orders-for-clients.ts --clean  حذف ما زُرع
+ *   pnpm exec tsx scripts/seed-orders-for-clients.ts --market=EG   بذرٌ بسوقٍ صريح (SA | EG)
+ *   pnpm exec tsx scripts/seed-orders-for-clients.ts --clean       حذف ما زُرع
+ *
+ * **السوقُ صريحٌ لا مخمَّن** (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد): كان يُستنتج من نصّ
+ * `addressCountry` بتعبيرٍ نمطيّ، وضريبتُه ١٥٪ ثابتة — فالطلبُ المصريّ المزروع يحمل ضريبةً
+ * ليست عليه. والعميلُ لا يحمل حقلَ سوق، فيُعطى السوقُ للتشغيلة، والضريبةُ من `vatRateBpForMarket`.
  *
  * كل صفٍّ يحمل `notes: SEED_TAG` ليُحذف بأمان، ولا يُمسّ طلبٌ لم يزرعه هذا السكربت.
  */
@@ -28,12 +32,14 @@ if (!/\/modonty_dev(\?|$)/.test(url)) throw new Error("refusing: DATABASE_URL is
 process.env.DATABASE_URL = url;
 
 const SEED_TAG = "seed:orders-for-clients";
-const VAT_RATE_BP = 1500;
+const MARKET = process.argv.find((a) => a.startsWith("--market="))?.slice("--market=".length).toUpperCase() ?? null;
 
 async function run() {
   const { db } = await import("../lib/db");
   const { buildOrderSnapshot } = await import("@modonty/shared/lib/payments/build-order-snapshot");
+  const { vatRateBpForMarket } = await import("@modonty/shared/lib/payments/vat-rate");
   const clean = process.argv.includes("--clean");
+  if (!clean && MARKET !== "SA" && MARKET !== "EG") throw new Error("حدّد السوق: --market=SA أو --market=EG");
 
   if (clean) {
     const seeded = await db.checkoutOrder.findMany({ where: { notes: SEED_TAG }, select: { id: true, clientId: true } });
@@ -86,8 +92,8 @@ async function run() {
   for (const [i, c] of targets.entries()) {
     const plan = plans[i % plans.length];
     const term = terms[i % terms.length];
-    const isEgypt = /مصر|egypt|\beg\b/i.test(c.addressCountry ?? "");
-    const price = plan.prices.find((p) => p.market === (isEgypt ? "EG" : "SA")) ?? plan.prices[0];
+    // سعرُ الباقة في سوق التشغيلة وحده — لا سعرَ سوقٍ آخر احتياطاً.
+    const price = plan.prices.find((p) => p.market === MARKET);
     if (!price) continue;
 
     // نفس الدالّة التي تستعملها صفحة الدفع — لا رياضيات موازية.
@@ -95,7 +101,7 @@ async function run() {
       plan: { id: plan.id, slug: plan.slug, name: plan.name, articlesPerMonth: plan.articlesPerMonth },
       price: { market: price.market, currency: price.currency, monthlyBase: price.monthlyBase },
       term: { paidMonths: term.paidMonths, bonusServiceMonths: term.bonusServiceMonths },
-      vatRateBp: VAT_RATE_BP,
+      vatRateBp: vatRateBpForMarket(price.market),
     });
 
     // تاريخ الدفع = يوم إنشاء العميل: هو أقرب ما نملك لواقعة الشراء.
@@ -109,7 +115,7 @@ async function run() {
         buyerEmail: c.email,
         buyerPhone: c.phone ?? "+966500000000",
         businessName: c.name,
-        country: c.addressCountry ?? (isEgypt ? "مصر" : "السعودية"),
+        country: c.addressCountry ?? (MARKET === "EG" ? "مصر" : "السعودية"),
         status: "PAID",
         paidAt,
         serviceStartedAt: paidAt,

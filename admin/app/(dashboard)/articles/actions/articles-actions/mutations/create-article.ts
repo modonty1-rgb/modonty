@@ -2,6 +2,7 @@
 
 import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { db } from "@/lib/db";
+import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus, Prisma } from "@prisma/client";
 import {
@@ -54,6 +55,19 @@ export async function createArticle(data: ArticleFormData) {
     // unchanged; it is spaces, slashes and stray punctuation that get normalised. Same
     // `parsed.data` pattern create-category.ts already follows.
     const slug = parsed.data.slug;
+
+    /**
+     * **لا مقالَ جديداً لاشتراكٍ منتهٍ** (خالد ٢٣ سبتمبر ٢٠٢٦: «ما نشيلهم من مدونتي، ولكن ما
+     * نكتب لهم»). الشاشةُ لا تعرضهم (`getWritableClients`)، وهذا الحارسُ لمن يرسل بلا شاشة.
+     * والحالةُ من الطلب الساري — نفسُ `getClientSubscriptions` التي تعدّ «منتهٍ» في كلّ مكان.
+     */
+    const sub = (await getClientSubscriptions({ id: data.clientId })).get(data.clientId);
+    if (sub && sub.status !== "ACTIVE") {
+      return {
+        success: false,
+        error: sub.status === "EXPIRED" ? "اشتراك هذا العميل منتهٍ — لا مقالات جديدة حتى يجدّد" : "هذا العميل ليس له اشتراكٌ ساري",
+      };
+    }
 
     // Validate slug uniqueness within client
     const existingArticle = await db.article.findFirst({

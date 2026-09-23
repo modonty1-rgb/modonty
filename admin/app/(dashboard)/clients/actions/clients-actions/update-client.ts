@@ -41,7 +41,7 @@ export async function updateClient(id: string, data: ClientFormData) {
     // Early security check: Verify client ID exists
     const clientExists = await db.client.findUnique({
       where: { id },
-      select: { id: true, articlesPerMonth: true },
+      select: { id: true },
     });
 
     if (!clientExists) {

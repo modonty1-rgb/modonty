@@ -10,6 +10,8 @@ export type TaskStatusKey = (typeof TASK_STATUSES)[number];
 
 interface StatusMeta {
   label: string;
+  /** للصفحات العربيّة (Assign Task) — من القائمة نفسِها لا بيدٍ في الصفحة. */
+  labelAr: string;
   /** URL segment, and what a drop zone reports. */
   slug: string;
   /** Semantic tone per the admin entity standard. */
@@ -20,24 +22,28 @@ interface StatusMeta {
 export const TASK_STATUS_META: Record<TaskStatusKey, StatusMeta> = {
   TODO: {
     label: "To Do",
+    labelAr: "لم تبدأ",
     slug: "todo",
     tone: "bg-slate-500/15 text-slate-600 dark:text-slate-400",
     dot: "bg-slate-500",
   },
   IN_PROGRESS: {
     label: "In Progress",
+    labelAr: "قيد التنفيذ",
     slug: "in-progress",
     tone: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
     dot: "bg-blue-500",
   },
   REVIEW: {
     label: "Review",
+    labelAr: "بانتظار الاعتماد",
     slug: "review",
     tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
     dot: "bg-amber-500",
   },
   DONE: {
     label: "Done",
+    labelAr: "منجَزة",
     slug: "done",
     tone: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
     dot: "bg-emerald-500",
@@ -46,11 +52,12 @@ export const TASK_STATUS_META: Record<TaskStatusKey, StatusMeta> = {
 
 export const TASK_PRIORITIES = ["LOW", "NORMAL", "HIGH", "URGENT"] as const;
 
-export const TASK_PRIORITY_META: Record<TaskPriority, { label: string; tone: string }> = {
-  LOW: { label: "Low", tone: "bg-slate-500/15 text-slate-600 dark:text-slate-400" },
-  NORMAL: { label: "Normal", tone: "bg-blue-500/15 text-blue-600 dark:text-blue-400" },
-  HIGH: { label: "High", tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
-  URGENT: { label: "Urgent", tone: "bg-red-500/15 text-red-600 dark:text-red-400" },
+/** `labelAr` لنافذة المهمّة العربيّة — الاسمان في قائمةٍ واحدة كي لا تُكتب الأولويّةُ بيدٍ في مكانٍ آخر. */
+export const TASK_PRIORITY_META: Record<TaskPriority, { label: string; labelAr: string; tone: string }> = {
+  LOW: { label: "Low", labelAr: "منخفضة", tone: "bg-slate-500/15 text-slate-600 dark:text-slate-400" },
+  NORMAL: { label: "Normal", labelAr: "عاديّة", tone: "bg-blue-500/15 text-blue-600 dark:text-blue-400" },
+  HIGH: { label: "High", labelAr: "عالية", tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
+  URGENT: { label: "Urgent", labelAr: "عاجلة", tone: "bg-red-500/15 text-red-600 dark:text-red-400" },
 };
 
 /** Sort order for priority — by severity, never alphabetically. */

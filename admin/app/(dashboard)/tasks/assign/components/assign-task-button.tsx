@@ -9,16 +9,19 @@ import {
   type TaskAssigneeOption,
 } from "@/components/tasks/task-dialog";
 
-/** The report is the team's shared view, so this is the one place a task can be
- * handed to another staff member. The task board itself remains personal. */
-export function ReportNewTaskButton({ assignees }: { assignees: TaskAssigneeOption[] }) {
+/**
+ * إسنادُ مهمّةٍ لزميل — صار في «Assign Task» (خالد ٢٣ سبتمبر ٢٠٢٦) بعد أن كان زرّاً داخل
+ * التقرير: التقريرُ يُقرأ، والإسنادُ فعل، وخلطُهما كان يخفي الإسنادَ داخل صفحةٍ اسمُها تقرير.
+ * اللوحةُ نفسُها تبقى شخصيّة.
+ */
+export function AssignTaskButton({ assignees }: { assignees: TaskAssigneeOption[] }) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
       <Button size="sm" className="h-8 gap-1.5 text-xs" onClick={() => setOpen(true)}>
         <Plus className="size-3.5" aria-hidden />
-        New task
+        إسناد مهمّة
       </Button>
       <TaskDialog
         task={null}

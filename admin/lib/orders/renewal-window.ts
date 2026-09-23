@@ -17,4 +17,5 @@
  * ويبقى رقماً في الكود لا في الإعدادات: لا شاشةَ ضبطٍ له اليوم، وإضافتُها بابٌ ثانٍ
  * للحقيقة. حين يُطلب، يُقرأ من `Settings` هنا وحدها فتتبعه الشاشاتُ كلُّها.
  */
-export const RENEWAL_SOON_DAYS = 30;
+// الرقمُ نفسُه صعد إلى `shared` (٢٣ سبتمبر ٢٠٢٦) — الكونسولُ يحسب المدّةَ به أيضاً.
+export { RENEWAL_SOON_DAYS } from "@modonty/shared/lib/subscription/subscription-term";

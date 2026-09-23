@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { updateOrderAction } from "../actions/update-order";
+import { getSubscriptionStanding } from "../../../helpers/get-subscription-standing";
+import { formatMonths } from "../../../helpers/format-months";
 
 export interface OrderForEdit {
   id: string;
@@ -28,6 +30,7 @@ export interface OrderForEdit {
   activatedAt: string | null;
   paidAt: string | null;
   notes: string | null;
+  isInternal: boolean;
 }
 
 const MARKETS = [
@@ -85,6 +88,19 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
+/** تاريخٌ للقراءة — بشكل الحقل نفسه، بإطارٍ متقطّع يقول «لا يُكتب هنا». */
+function ReadOnlyDate({ value, empty }: { value: string | null; empty: string }) {
+  return (
+    <div className="flex h-9 items-center rounded-md border border-dashed bg-muted/40 px-3 text-sm tabular-nums" dir="ltr">
+      {value ?? (
+        <span className="text-muted-foreground" dir="rtl">
+          {empty}
+        </span>
+      )}
+    </div>
+  );
+}
+
 export function OrderEditForm({
   order,
   isMigrated,
@@ -104,6 +120,8 @@ export function OrderEditForm({
   const [paidMonths, setPaidMonths] = useState(String(order.paidMonths));
   const [bonusMonths, setBonusMonths] = useState(String(order.bonusServiceMonths));
   const [notes, setNotes] = useState(order.notes ?? "");
+  const [internal, setInternal] = useState(order.isInternal);
+  const [startDate, setStartDate] = useState(order.serviceStartedAt ?? "");
   /** أيُّ تغييرٍ في الفورم — الحفظُ بلا تغيير ضغطةٌ لا تفعل شيئاً. */
   const [dirty, setDirty] = useState(false);
 
@@ -122,6 +140,14 @@ export function OrderEditForm({
   const paidNum = Number(paidMonths);
   const serviceMonths = paidNum + (Number(bonusMonths) || 0);
   const monthly = paidNum > 0 && Number.isFinite(totalNum) ? Math.round(totalNum / paidNum) : null;
+  const endsAt = startDate && paidNum > 0
+    ? getSubscriptionStanding({
+        serviceStartedAt: new Date(startDate),
+        paidMonths: paidNum,
+        bonusServiceMonths: Number(bonusMonths) || 0,
+      }).endsAt
+    : null;
+  const endDate = endsAt ? endsAt.toISOString().slice(0, 10) : null;
 
   return (
     <form action={action} onChange={() => setDirty(true)} className="flex flex-col gap-3">
@@ -175,8 +201,31 @@ export function OrderEditForm({
             </Select>
           </Field>
         </div>
+
+        {/* نفسُ مربّع شاشة الإنشاء (`new/components/manual-order-form.tsx`) — ويُعدَّل هنا
+            لأنّ الترحيل كتب طلباتِ حساباتنا «ليست لنا». */}
+        <label className="flex cursor-pointer items-start gap-2 rounded-md border border-dashed px-3 py-2">
+          <input
+            type="checkbox"
+            name="isInternal"
+            checked={internal}
+            onChange={(e) => setInternal(e.target.checked)}
+            className="mt-0.5 size-4 accent-primary"
+          />
+          <span className="text-xs">
+            <span className="font-medium">حساب لنا — لا بيع</span>
+            <span className="mt-0.5 block text-[11px] text-muted-foreground">
+              مدونتي · جبر · بسيطة. يخرج من تقارير الإيراد، ويتحدّث معه حساب العميل المربوط.
+            </span>
+          </span>
+        </label>
       </Section>
 
+      {/**
+        * حسابُنا لا يُباع، فلا مبلغَ ولا مدّةَ تُقرأ له (خالد ٢٣ سبتمبر ٢٠٢٦). يُخفى ولا يُزال:
+        * حقولُه تبقى في الفورم فتُرسل قيمَها كما هي، والأكشنُ لا يرى فرقاً ولا يمسح شيئاً.
+        */}
+      <div hidden={internal}>
       <Section
         title="المبلغ والمدّة"
         aside={
@@ -254,35 +303,48 @@ export function OrderEditForm({
           <span className="text-xs text-muted-foreground">
             · {vatLabel(market)}
             {monthly != null ? ` · ${monthly.toLocaleString()} ${currencyWord} للشهر` : null}
-            {paidNum > 0 ? ` · خدمة ${serviceMonths} شهراً` : null}
+            {paidNum > 0 ? ` · خدمة ${formatMonths(serviceMonths)}` : null}
           </span>
         </div>
       </Section>
+      </div>
 
       <Section title="التواريخ">
         <div className="grid gap-3 sm:grid-cols-3">
-          <Field label="يوم التفعيل" hint="العميل يُفعَّل يوم يدفع">
+          <Field label="تاريخ التفعيل" hint="يوم فتح حساب العميل">
             <Input name="activatedAt" type="date" defaultValue={order.activatedAt ?? ""} className="h-9" dir="ltr" />
           </Field>
           {/**
-            * أوّلُ مقال = بدايةُ الخدمة (`serviceStartedAt`) — منه تُحسب نهاية الاشتراك.
+            * بدايةُ الاشتراك = يومُ وصول أوّل مقال (`serviceStartedAt`) — منه تُحسب النهاية.
             *
             * يُختم وحده حين يصل أوّلُ مقالٍ للعميل (`lib/orders/start-service-clock.ts`)، فلا
             * يُعدَّل في الطلب العاديّ. والمُرحَّل استثناء (خالد ٢٣ سبتمبر ٢٠٢٦: «خليها مرنة»):
             * مقالاتُه سُلّمت قبل النظام، فلا يعرف تاريخَها إلّا من يكتبه.
             */}
           {isMigrated ? (
-            <Field label="أوّل مقال" hint="طلب مُرحَّل — منه تُحسب نهاية الاشتراك">
-              <Input name="serviceStartedAt" type="date" defaultValue={order.serviceStartedAt ?? ""} className="h-9" dir="ltr" />
+            <Field label="بداية الاشتراك" hint="يوم أوّل مقال — طلب مُرحَّل">
+              <Input
+                name="serviceStartedAt"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="h-9"
+                dir="ltr"
+              />
             </Field>
           ) : (
-            <Field label="أوّل مقال" hint="يُسجَّل وحده حين يصل أوّل مقال للعميل">
+            <Field label="بداية الاشتراك" hint="تُسجَّل وحدها مع أوّل مقال">
               <input type="hidden" name="serviceStartedAt" value={order.serviceStartedAt ?? ""} />
-              <div className="flex h-9 items-center rounded-md border border-dashed bg-muted/40 px-3 text-sm tabular-nums" dir="ltr">
-                {order.serviceStartedAt ?? <span className="text-muted-foreground" dir="rtl">لم يُسلَّم بعد</span>}
-              </div>
+              <ReadOnlyDate value={order.serviceStartedAt} empty="لم يصل أوّل مقال" />
             </Field>
           )}
+          {/* النهايةُ تُحسب ولا تُكتب — بنفس حاسب جدول الطلبات، وتتحدّث مع الشهور والبداية. */}
+          <Field
+            label="نهاية الاشتراك"
+            hint={paidNum > 0 ? `البداية + ${formatMonths(serviceMonths)}` : "تُحسب من البداية والشهور"}
+          >
+            <ReadOnlyDate value={endDate} empty="تُحسب بعد أوّل مقال" />
+          </Field>
         </div>
       </Section>
 

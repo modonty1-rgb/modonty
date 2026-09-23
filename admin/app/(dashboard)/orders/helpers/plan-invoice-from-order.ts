@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { addMonths } from "@/lib/invoices/add-months";
 import { findBlockingUnpaidInvoice } from "@/lib/invoices/find-blocking-unpaid-invoice";
+import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 
 /**
  * ما ستحمله الفاتورةُ لو صدرت الآن — يُحسب بلا أيّ كتابة.
@@ -58,12 +59,12 @@ export async function planInvoiceFromOrder(orderId: string): Promise<InvoicePlan
 
   const client = await db.client.findUnique({
     where: { id: order.clientId },
-    select: { id: true, name: true, subscriptionEndDate: true, _count: { select: { invoices: true } } },
+    select: { id: true, name: true, _count: { select: { invoices: true } } },
   });
   if (!client) return { ok: false, error: "العميل غير موجود" };
 
   const blocking = await findBlockingUnpaidInvoice(client.id);
-  if (blocking) return { ok: false, error: `فيه فاتورة غير مسدّدة (${blocking}) لهذا العميل — حدّدها مدفوعة أو أرشفها أولاً` };
+  if (blocking) return { ok: false, error: `فيه فاتورة ${INVOICE_STATUS_LABEL.DUE} (${blocking}) لهذا العميل — حدّدها ${INVOICE_STATUS_LABEL.PAID} أو أرشفها أولاً` };
 
   const founding = await db.checkoutOrder.findFirst({
     where: { clientId: client.id, status: "PAID", totalMinor: { gt: 0 } },

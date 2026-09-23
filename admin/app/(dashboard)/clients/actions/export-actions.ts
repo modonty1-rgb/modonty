@@ -1,9 +1,10 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { ArticleStatus, Prisma } from "@prisma/client";
 import { ClientFilters } from "./clients-actions";
-import { getPaymentStates, paymentStateLabel, NO_INVOICES } from "@/lib/clients/payment-state";
+import { getPaymentStates, paymentStateLabel, NO_PAYMENT_STATE } from "@/lib/clients/payment-state";
 
 function escapeCsvValue(value: string | null | undefined): string {
   if (!value) return "";
@@ -113,13 +114,15 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
     ];
 
     /**
-     * حالةُ الدفع تُحسب من الفواتير، لا من `Client.paymentStatus`.
-     *
-     * ذاك حقلٌ لا يُكتب فيه «متأخّر» في أيّ مسار، فكان التصديرُ يخرج بعمودٍ كلُّه
-     * «مسدَّد» — ومنهم ٢٦ عميلاً بلا فاتورةٍ واحدة. و«بلا فواتير» حالةٌ ثالثة لا
-     * تُطوى في «مسدَّد»: مَن لم تُصدَر له فاتورةٌ بعدُ ليس مسدِّداً ولا متأخّراً.
+     * حالةُ الدفع من الطلب الساري والمستحقّات، لا من `Client.paymentStatus`
+     * (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد) — نفسُ شارة صفحة العميل والشرائح:
+     * «عليه مستحقّات» · «مدفوع» · «مسترد» · «—».
      */
-    const paymentStates = await getPaymentStates(filteredClients.map((c) => c.id));
+    // والاشتراكُ من الطلب الساري — الحالة والبداية والنهاية والحصّة (مصدرٌ واحد، ٢٣ سبتمبر ٢٠٢٦).
+    const [paymentStates, subs] = await Promise.all([
+      getPaymentStates(filteredClients.map((c) => c.id)),
+      getClientSubscriptions({ id: { in: filteredClients.map((c) => c.id) } }),
+    ]);
 
     /**
      * واسمُ الباقة من **الطلب الساري**، لا من `SubscriptionTierConfig`.
@@ -152,11 +155,11 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
         escapeCsvValue(client.industry?.name),
         // اسمُ الباقة لا رمزُها: ملفّ التصدير يُفتح في إكسل ويُقرأ بشراً.
         escapeCsvValue((client.activeOrderId && planNames.get(client.activeOrderId)) || "بلا طلبٍ ساري"),
-        escapeCsvValue(client.subscriptionStatus),
-        escapeCsvValue(paymentStateLabel(paymentStates.get(client.id) ?? NO_INVOICES)),
-        formatDate(client.subscriptionStartDate),
-        formatDate(client.subscriptionEndDate),
-        (client.articlesPerMonth ?? "").toString(),
+        escapeCsvValue(subs.get(client.id)?.status ?? "PENDING"),
+        escapeCsvValue(paymentStateLabel(paymentStates.get(client.id) ?? NO_PAYMENT_STATE)),
+        formatDate(subs.get(client.id)?.startedAt ?? null),
+        formatDate(subs.get(client.id)?.endsAt ?? null),
+        (subs.get(client.id)?.articlesPerMonth ?? "").toString(),
         client._count.articles.toString(),
         escapeCsvValue(client.addressCity),
         escapeCsvValue(client.addressCountry),

@@ -3,6 +3,7 @@ import { ArticleStatus, ArticleFAQStatus, CommentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
+import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
 
 const subscriptionStatusLabels: Record<string, string> = { ACTIVE: "نشط", PENDING: "بانتظار التفعيل", EXPIRED: "منتهي", SUSPENDED: "معلّق", CANCELLED: "ملغي" };
 const positiveStatuses = new Set(["ACTIVE"]);
@@ -19,8 +20,9 @@ export async function GET(request: NextRequest) {
   const session = await mobileSessionFromRequest(request);
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
   const clientId = session.clientId;
-  const [client, pendingApproval, pendingQuestions, pendingComments, pendingVideos, pendingBookings, unreadNotifications] = await Promise.all([
-    db.client.findUnique({ where: { id: clientId }, select: { subscriptionStatus: true, subscriptionEndDate: true } }),
+  const [sub, pendingApproval, pendingQuestions, pendingComments, pendingVideos, pendingBookings, unreadNotifications] = await Promise.all([
+    // الحالةُ والأيّامُ من الطلب الساري — لا من نسخة الكرت.
+    getClientSubscription(clientId),
     db.article.count({ where: { clientId, status: ArticleStatus.AWAITING_APPROVAL } }),
     db.articleFAQ.count({ where: { article: { clientId }, status: ArticleFAQStatus.PENDING, OR: [{ source: "user" }, { source: "chatbot" }] } }),
     db.comment.count({ where: { article: { clientId }, status: CommentStatus.PENDING } }),
@@ -60,12 +62,12 @@ export async function GET(request: NextRequest) {
     }),
   ]);
 
-  const daysRemaining = client?.subscriptionEndDate ? Math.max(Math.ceil((client.subscriptionEndDate.getTime() - new Date().getTime()) / 86_400_000), 0) : null;
-  const subscription = client ? {
-    status: client.subscriptionStatus,
-    statusLabel: subscriptionStatusLabels[client.subscriptionStatus] ?? client.subscriptionStatus,
-    statusTone: positiveStatuses.has(client.subscriptionStatus) ? "positive" : dangerStatuses.has(client.subscriptionStatus) ? "danger" : "warning",
-  } : null;
+  const daysRemaining = sub.daysLeft === null ? null : Math.max(sub.daysLeft, 0);
+  const subscription = {
+    status: sub.status,
+    statusLabel: subscriptionStatusLabels[sub.status] ?? sub.status,
+    statusTone: positiveStatuses.has(sub.status) ? "positive" : dangerStatuses.has(sub.status) ? "danger" : "warning",
+  };
 
   /**
    * «مهام تحتاج إجراء» تحمل ما يحتاج إجراءً فعلاً — والصفر لا يحتاج.

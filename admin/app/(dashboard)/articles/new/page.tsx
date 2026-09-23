@@ -1,4 +1,4 @@
-import { getClients, getCategories, getAuthors, createArticle } from '../actions/articles-actions';
+import { getWritableClients, getCategories, getAuthors, createArticle } from '../actions/articles-actions';
 import { getTags } from '../../tags/actions/tags-actions';
 import { getAllSettings } from '../../settings/actions/settings-actions';
 import { getArticleDefaultsFromSettings } from '../../settings/helpers/get-article-defaults-from-settings';
@@ -23,7 +23,8 @@ export default async function NewArticlePage({
   const { clientSite } = await searchParams;
 
   const [clients, categories, authors, tags, settings, siteUrl] = await Promise.all([
-    getClients(),
+    // مَن اشتراكُه ساري وحده — المنتهي يبقى على الموقع ولا يُكتب له جديد (خالد ٢٣ سبتمبر ٢٠٢٦).
+    getWritableClients(),
     getCategories(),
     getAuthors(),
     getTags(),

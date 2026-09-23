@@ -9,7 +9,8 @@
 import { DocLayout } from "@/app/(public)/components/doc-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getMomentumPrice } from "@/lib/pricing/format-for-guideline";
+import { getFeaturedPlanPrice } from "@/lib/pricing/get-featured-plan-price";
+import { getPlaybookCatalogCopy } from "../helpers/get-playbook-catalog-copy";
 import {
   ShoppingBag,
   Stethoscope,
@@ -169,7 +170,7 @@ const tier2ICP = {
 
 // ─── 7 Pain Points (validated) ────────────────────────────────
 const sevenPains = [
-  { pain: "ما عندي وقت أكتب", solution: "فريق مدونتي يكتب نيابة عنك — كل المحتوى يدوي ومحترف، 8 مقالات شهرياً" },
+  { pain: "ما عندي وقت أكتب", solution: "فريق مدونتي يكتب نيابة عنك — كل المحتوى يدوي ومحترف، __ARTICLES__" },
   { pain: "ما عندي ميزانية وكالة", solution: "__BUDGET_SOLUTION__" },
   { pain: "ما أعرف السيو", solution: "البيانات المنظّمة + Meta + خريطة الموقع + البيانات المنظّمة — كلها تلقائية للظهور في محركات البحث + ملخّصات الذكاء الاصطناعي" },
   { pain: "ما أعرف هل المحتوى ينفع", solution: "ترتيب المهتمّين 0–100 لكل زائر + تحليلات تحليلات Google شفافة" },
@@ -191,15 +192,30 @@ const colorMap: Record<string, { border: string; bg: string; text: string; iconB
 };
 
 export default async function SegmentsPage() {
-  const m = await getMomentumPrice("SA");
-  const monthly = m?.monthly ?? "1,299";
+  /**
+   * السعر من كتالوج البيع وحده؛ وإن غاب (الباقة غير منشورة أو بلا سعرٍ سعودي) تُقال
+   * الجملة بلا رقم، كما في compare-section.tsx — لا رقمٌ احتياطيٌّ ليس معروضاً للبيع.
+   * ٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد.
+   */
+  const [m, { articles }] = await Promise.all([getFeaturedPlanPrice("SA"), getPlaybookCatalogCopy()]);
+  const monthly = m?.monthly ?? null;
+  // اسمُ الباقة المميَّزة من الكتالوج — لا «Momentum» مكتوبةً (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد).
+  const planName = m?.name ?? "الأكثر اختياراً";
   const wordpress = 18000;
-  const budgetSolution = `بأقل من 10% من سعر الوكالة (Momentum ${monthly} شهري مقابل ${wordpress.toLocaleString("en-GB")} شهري لفريق WordPress)`;
-  const discoveryQuestion = `2. هل يقدر يدفع ${monthly} ريال شهرياً (Momentum)؟`;
+  const budgetSolution = monthly
+    ? `بأقل من 10% من سعر الوكالة (${planName} ${monthly} شهري مقابل ${wordpress.toLocaleString("en-GB")} شهري لفريق WordPress)`
+    : `بأقل من 10% من سعر الوكالة (سعر باقة ${planName} الشهري مقابل ${wordpress.toLocaleString("en-GB")} شهري لفريق WordPress)`;
+  const discoveryQuestion = monthly
+    ? `2. هل يقدر يدفع ${monthly} ريال شهرياً (${planName})؟`
+    : `2. هل يقدر يدفع سعر الباقة الشهري (${planName})؟`;
 
   const resolvedPains = sevenPains.map((p) => ({
     ...p,
-    solution: p.solution === "__BUDGET_SOLUTION__" ? budgetSolution : p.solution,
+    solution:
+      p.solution === "__BUDGET_SOLUTION__"
+        ? budgetSolution
+        : // حصّةُ المقالات من الكتالوج لا «8» مكتوبة — `getPlaybookCatalogCopy`.
+          p.solution.replace("__ARTICLES__", articles ?? "مقالات كل شهر"),
   }));
 
   return (

@@ -1,3 +1,4 @@
+import { InvoicePaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { NOT_ARCHIVED } from "./not-archived";
 
@@ -11,7 +12,7 @@ import { NOT_ARCHIVED } from "./not-archived";
  */
 export async function findBlockingUnpaidInvoice(clientId: string): Promise<string | null> {
   const outstanding = await db.invoice.findFirst({
-    where: { clientId, paymentStatus: { not: "PAID" }, ...NOT_ARCHIVED },
+    where: { clientId, paymentStatus: { not: InvoicePaymentStatus.PAID }, ...NOT_ARCHIVED },
     orderBy: { issuedAt: "asc" },
     select: { number: true },
   });

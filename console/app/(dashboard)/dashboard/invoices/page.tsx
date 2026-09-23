@@ -1,39 +1,18 @@
+import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Receipt, CheckCircle2, Clock } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { formatCurrencyTotals } from "@/lib/payments";
+import { formatOrderMoney } from "@/lib/subscription/active-order";
 import { getClientInvoices } from "./helpers/invoice-queries";
 
 export const dynamic = "force-dynamic";
 
-function money(amount: number, currency: string | null) {
-  return `${new Intl.NumberFormat("en-US").format(amount)} ${currency ?? ""}`.trim();
-}
-
 function arDate(d: Date | null) {
   if (!d) return "—";
   return new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "long", year: "numeric" }).format(d);
-}
-
-const PERIOD_LABEL: Record<string, string> = { monthly: "شهري", annual: "سنوي" };
-
-/**
- * مدّةُ الفاتورة بالعربيّة.
- *
- * صارت تُشتقّ من `CheckoutOrder.paidMonths` (١٧ سبتمبر ٢٠٢٦) بدل `Client.billingCycle`
- * الذي كان يخالف المبلغَ المدفوع. فظهرت مُدَدٌ لا اسمَ لها: ثلاثةُ أشهر، ستّة. تُكتب
- * `3m` في القاعدة وتُقرأ هنا «٣ شهور» — وبلا هذه الدالّة يقرأ العميلُ «3m» في فاتورته.
- */
-function periodLabel(period: string): string {
-  const known = PERIOD_LABEL[period];
-  if (known) return known;
-  const months = /^(\d+)m$/.exec(period)?.[1];
-  if (!months) return period;
-  const n = Number(months);
-  if (n === 1) return "شهر واحد";
-  if (n === 2) return "شهران";
-  return n <= 10 ? `${n.toLocaleString("ar-EG")} شهور` : `${n.toLocaleString("ar-EG")} شهراً`;
 }
 
 export default async function InvoicesPage() {
@@ -41,8 +20,9 @@ export default async function InvoicesPage() {
   const clientId = (session as { clientId?: string })?.clientId;
   if (!clientId) redirect("/");
 
-  const { invoices, unpaidCount, unpaidAmount, paidAmount, currency } =
-    await getClientInvoices(clientId);
+  // المبالغُ لكلّ عملةٍ وحدها وبمنسّق الطلب نفسِه (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد):
+  // كانت رقماً واحداً بعملة أحدث فاتورة، فيُجمع الريالُ على الجنيه.
+  const { invoices, unpaidCount, unpaid, paid } = await getClientInvoices(clientId);
 
   return (
     <div className="space-y-6">
@@ -53,7 +33,8 @@ export default async function InvoicesPage() {
         </p>
       </header>
 
-      {invoices.length > 0 && (
+      {/* طلبٌ مدفوعٌ بلا فاتورةٍ بعد يُظهر الكروت أيضاً — المدفوعُ من الطلبات لا من الفواتير. */}
+      {(invoices.length > 0 || paid.length > 0) && (
         <div className="grid gap-3 sm:grid-cols-3">
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
@@ -62,12 +43,12 @@ export default async function InvoicesPage() {
               </span>
               <div>
                 <p className="text-lg font-bold tabular-nums leading-none">
-                  {money(unpaidAmount, currency)}
+                  {formatCurrencyTotals(unpaid) ?? "—"}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {unpaidCount === 0
                     ? "لا توجد مستحقات"
-                    : `${unpaidCount} ${unpaidCount === 1 ? "فاتورة" : "فواتير"} بانتظار السداد`}
+                    : `${unpaidCount} ${unpaidCount === 1 ? "فاتورة" : "فواتير"} ${INVOICE_STATUS_LABEL.DUE}`}
                 </p>
               </div>
             </CardContent>
@@ -79,7 +60,7 @@ export default async function InvoicesPage() {
               </span>
               <div>
                 <p className="text-lg font-bold tabular-nums leading-none">
-                  {money(paidAmount, currency)}
+                  {formatCurrencyTotals(paid) ?? "—"}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">إجمالي المدفوع</p>
               </div>
@@ -131,13 +112,13 @@ export default async function InvoicesPage() {
                       <td className="text-muted-foreground tabular-nums">{arDate(inv.issuedAt)}</td>
                       <td className="font-mono text-xs">{inv.number}</td>
                       <td className="text-muted-foreground">
-                        {inv.tierName} · {periodLabel(inv.period)}
+                        {inv.tierName} · {inv.termLabel ?? "—"}
                       </td>
                       <td className="text-muted-foreground tabular-nums">
                         {arDate(inv.subscriptionEnd)}
                       </td>
                       <td className="text-center font-semibold tabular-nums">
-                        {money(inv.amount, inv.currency)}
+                        {formatOrderMoney(inv.amountMinor, inv.currency)}
                       </td>
                       <td className="text-center">
                         {inv.isRefunded ? (
@@ -146,11 +127,11 @@ export default async function InvoicesPage() {
                           </span>
                         ) : inv.isPaid ? (
                           <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                            مدفوعة
+                            {INVOICE_STATUS_LABEL.PAID}
                           </span>
                         ) : (
                           <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
-                            بانتظار السداد
+                            {INVOICE_STATUS_LABEL.DUE}
                           </span>
                         )}
                       </td>

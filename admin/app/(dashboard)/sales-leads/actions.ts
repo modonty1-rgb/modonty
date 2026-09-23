@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
 import { findLeadByPhone } from "./helpers/find-lead-by-phone";
 import { leadSchema, type LeadInput } from "./helpers/lead-schema";
+import { resolveLeadDeal } from "./helpers/resolve-lead-deal";
 import { followUpSchema, lostSchema, type FollowUpInput, type LostInput } from "./helpers/follow-up-schema";
 import { syncLeadNextAction } from "./helpers/sync-lead-next-action";
 
@@ -108,10 +109,15 @@ export async function createLead(input: LeadInput): Promise<Result> {
     };
   }
 
+  // الباقة والمدّة والسعر من الكتالوج لا من الشاشة (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد).
+  const deal = await resolveLeadDeal(data);
+  if (!deal.ok) return { success: false, error: "راجع الصفقة — الباقة أو المدّة.", fieldErrors: deal.fieldErrors };
+
   try {
     const lead = await db.salesLead.create({
       data: {
         ...fields,
+        ...deal.data,
         industryId: await resolveIndustry(data.industryId),
         stage,
         status: STATUS_FROM_STAGE[stage] ?? "PROSPECT",
@@ -173,11 +179,15 @@ export async function updateLead(id: string, input: LeadInput): Promise<Result> 
     };
   }
 
+  const deal = await resolveLeadDeal(data);
+  if (!deal.ok) return { success: false, error: "راجع الصفقة — الباقة أو المدّة.", fieldErrors: deal.fieldErrors };
+
   try {
     await db.salesLead.update({
       where: { id },
       data: {
         ...fields,
+        ...deal.data,
         industryId: await resolveIndustry(data.industryId),
         stage,
         status: STATUS_FROM_STAGE[stage] ?? "PROSPECT",

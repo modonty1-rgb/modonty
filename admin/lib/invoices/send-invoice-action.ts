@@ -60,6 +60,9 @@ export async function sendInvoiceAction(invoiceId: string): Promise<SendInvoiceR
     amount: invoice.amount,
     paymentStatus: invoice.paymentStatus,
     issuedAt: invoice.issuedAt,
+    // احتياطٌ لفاتورةٍ بلا طلب وحدها: ذاتُ الطلب يقرأ `buildInvoiceEmail` مدّتَها من طلبها
+    // (`getSubscriptionTerm`)، فإعادةُ الإرسال تحمل التواريخ كما صارت، لا كما كانت يومَ الإصدار
+    // (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد). وفي البنّاء لا هنا، كي تطابق المعاينةُ الإرسال.
     subscriptionStart: invoice.subscriptionStart,
     subscriptionEnd: invoice.subscriptionEnd,
     clientId: invoice.clientId,

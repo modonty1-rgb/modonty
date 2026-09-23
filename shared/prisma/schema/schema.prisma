@@ -80,10 +80,13 @@ enum SubscriptionStatus {
   PENDING
 }
 
-enum PaymentStatus {
+/// حالةُ الفاتورة — enum لا نصّ (خالد ٢٣ سبتمبر ٢٠٢٦: «المفروض الحالة تكون enum نقرأ منها»).
+/// كان `Invoice.paymentStatus String` فكتبت كلُّ شاشةٍ اسمَها بيدها («مسدَّدة» هنا و«مدفوعة» هناك).
+/// والأسماءُ العربيّة في قائمةٍ واحدة: `shared/lib/payments/invoice-status-label.ts`.
+/// وسقط معه `enum PaymentStatus { PAID PENDING OVERDUE }` — يتيمٌ بلا حقلٍ منذ سقوط `Client.paymentStatus`.
+enum InvoicePaymentStatus {
   PAID
-  PENDING
-  OVERDUE
+  DUE
 }
 
 enum MediaType {
@@ -3986,7 +3989,7 @@ model Invoice {
   currency          String // "SAR" | "EGP"
   amount            Float
   paymentMethod     String? // deprecated — kept for old rows; not captured on new invoices
-  paymentStatus     String // "PAID" | "DUE"
+  paymentStatus     InvoicePaymentStatus
   subscriptionStart DateTime?
   subscriptionEnd   DateTime?
   issuedAt          DateTime         @default(now())

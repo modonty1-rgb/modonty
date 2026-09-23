@@ -1,5 +1,6 @@
 import { redirect, notFound } from "next/navigation";
 import { Metadata } from "next";
+import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 
 // MongoDB ObjectId = 24 hex chars. Guards against reserved words / garbage ids
 // (e.g. /clients/verify) hitting Prisma with a malformed id and crashing with a 500.
@@ -209,13 +210,27 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
 
   const publicBaseUrl = await loadSiteUrl();
 
+  /**
+   * **الحالةُ والبدايةُ والنهايةُ والحصّةُ من الطلب الساري** (٢٣ سبتمبر ٢٠٢٦ — مصدرٌ واحد).
+   * الترويسةُ والتحليلاتُ والتبويباتُ تقرأ هذه الحقولَ بأسمائها، فتُستبدل هنا مرّةً واحدة
+   * بدل أن يعرف كلُّ مكوّنٍ الطلب. ونسخةُ الكرت لا تصل الشاشة.
+   */
+  const sub = (await getClientSubscriptions({ id })).get(id);
+  const clientView = {
+    ...client,
+    subscriptionStatus: sub?.status ?? "PENDING",
+    subscriptionStartDate: sub?.startedAt ?? null,
+    subscriptionEndDate: sub?.endsAt ?? null,
+    articlesPerMonth: sub?.articlesPerMonth ?? null,
+  };
+
   return (
     <div className="space-y-4">
-      <ClientHeader client={client as any} publicBaseUrl={publicBaseUrl} seoScore={seoScore} />
+      <ClientHeader client={clientView as any} publicBaseUrl={publicBaseUrl} seoScore={seoScore} />
 
       <div>
         <ClientTabs
-          client={client as any}
+          client={clientView as any}
           articles={articles}
           articlesThisMonth={articlesThisMonth}
           analytics={analytics}

@@ -3,7 +3,6 @@ import {
   invoiceMinor,
   isCollectedOrder,
   isOutstandingInvoice,
-  isStandaloneCollectedInvoice,
 } from "@modonty/shared/lib/payments/collected";
 
 /**
@@ -18,11 +17,12 @@ import {
  */
 export interface OrderStatement {
   currency: string;
-  /** الطلباتُ المدفوعة + الفواتيرُ المسدَّدة بلا طلب — المالُ الذي دخل فعلاً. */
+  /** الطلباتُ المدفوعة وحدها — المالُ الذي دخل فعلاً. والفاتورةُ مستندٌ لا مال. */
   paidMinor: number;
-  /** فواتيرُ صدرت ولم تُسدَّد — دَينٌ على العميل. */
+  /** عددُ الطلبات المدفوعة التي جُمع منها `paidMinor` — لا عددُ الفواتير. */
+  paidOrderCount: number;
+  /** فواتيرُ لم تُدفع (`isOutstandingInvoice`) — دَينٌ على العميل. */
   dueMinor: number;
-  invoiceCount: number;
   /** حصّةُ المقالات المتَّفق عليها = الشهريّة × شهور الخدمة. `null` حين لا حصّة على الطلب. */
   articlesAgreed: number | null;
   /** ما سُلِّم فعلاً — المنشورُ لهذا العميل منذ بداية خدمته. */
@@ -59,14 +59,14 @@ export async function getOrderStatement(
   ]);
 
   const serviceMonths = order.paidMonths + order.bonusServiceMonths;
+  // الطلباتُ المدفوعة وحدها — الفاتورةُ مستندٌ لا مال (مصدرٌ واحد، ٢٣ سبتمبر ٢٠٢٦).
+  const collected = orders.filter(isCollectedOrder);
 
   return {
     currency: order.currency,
-    paidMinor:
-      orders.filter(isCollectedOrder).reduce((s, o) => s + o.totalMinor, 0) +
-      invoices.filter(isStandaloneCollectedInvoice).reduce((s, i) => s + invoiceMinor(i), 0),
+    paidMinor: collected.reduce((s, o) => s + o.totalMinor, 0),
+    paidOrderCount: collected.length,
     dueMinor: invoices.filter(isOutstandingInvoice).reduce((s, i) => s + invoiceMinor(i), 0),
-    invoiceCount: invoices.length,
     articlesAgreed: order.articlesPerMonth != null ? order.articlesPerMonth * serviceMonths : null,
     articlesDelivered: delivered,
     articlesPerMonth: order.articlesPerMonth,

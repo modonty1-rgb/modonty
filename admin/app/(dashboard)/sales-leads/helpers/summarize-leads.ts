@@ -70,7 +70,8 @@ export function summarizeLeads(rows: SalesLeadRow[]): LeadsSummary {
 
     const mkt = r.countryCode || NO_MARKET;
     s.byMarket[mkt] = (s.byMarket[mkt] ?? 0) + 1;
-    if (r.dealTotal) s.pipeline[r.currency === "EGP" ? "EGP" : "SAR"] += r.dealTotal;
+    // كل عملةٍ في خانتها من صفّ السعر، ولا تُحشر عملةٌ مجهولة في الريال (٢٣ سبتمبر ٢٠٢٦).
+    if (r.dealTotal && (r.currency === "SAR" || r.currency === "EGP")) s.pipeline[r.currency] += r.dealTotal;
 
     // نفس الدالّتين اللتين تكتبان النصّ في الصفّ — فلا يقول العدّاد شيئاً ويقول الصفّ غيره.
     const silence = describeSilence(r.lastTouchAt);

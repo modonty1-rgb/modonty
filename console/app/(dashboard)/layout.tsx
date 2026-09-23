@@ -4,7 +4,12 @@ import { ar } from "@/lib/ar";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";
-import { getActiveOrderForClient } from "@/lib/subscription/active-order";
+import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
+import {
+  formatCurrencyTotals,
+  getOutstandingInvoices,
+  resolveClientPayment,
+} from "@/lib/payments";
 import { isYmylClientComplete } from "@/lib/seo/ymyl-helpers";
 import {
   statusLabel,
@@ -52,7 +57,7 @@ export default async function DashboardLayout({
   const clientId = (session as { clientId?: string }).clientId!;
   const impersonated = (session as { impersonated?: boolean }).impersonated ?? false;
 
-  const [client, activeOrder, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientCanSeeSiteArticles] =
+  const [client, sub, outstanding, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientCanSeeSiteArticles] =
     await Promise.all([
       db.client.findUnique({
         where: { id: clientId },
@@ -70,26 +75,12 @@ export default async function DashboardLayout({
           // needs the same two fields the profile page uses to build it.
           canonicalUrl: true,
           slug: true,
-          // Feeds the account notice — it lives in the layout so it follows the client
-          // to every page, not just the dashboard home (Khalid 2026-07-24).
-          subscriptionEndDate: true,
-          // Feeds the plan block pinned in the sidebar foot — same fields the settings
-          // card reads, so the two can never show a different plan or a different count.
-          subscriptionStatus: true,
-          subscriptionStartDate: true,
-          invoices: {
-            // `archivedAt: null` matches nothing on Mongo for rows written before the
-            // field existed — it must be paired with `isSet: false` or the notice goes
-            // blank for every client with legacy invoices.
-            where: {
-              NOT: { paymentStatus: "PAID" },
-              OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
-            },
-            select: { amount: true, currency: true },
-          },
         },
       }),
-      getActiveOrderForClient(clientId),
+      // الاشتراكُ من الطلب الساري — نفسُ مصدر صفحة الإعدادات، فلا يختلف الشريطُ عنها.
+      getClientSubscription(clientId),
+      // المستحقّاتُ بقاعدة `collected.ts`، لكلّ عملةٍ وحدها — نفسُ مصدر الإعدادات والفواتير.
+      getOutstandingInvoices(clientId),
       getPendingArticlesCount(clientId),
       getPendingCommentsCount(clientId),
       getPendingQuestionsCount(clientId),
@@ -134,22 +125,19 @@ export default async function DashboardLayout({
   // Read the client name LIVE from the DB (same source as the dashboard greeting) so the
   // sidebar header + impersonation banner never show a stale name baked into the JWT at login.
   const clientName = client?.name ?? ar.common.clientFallback;
-  const openInvoices = client?.invoices ?? [];
+  // شارةُ الدفع من الطلب الساري والمستحقّات معاً — `resolveClientPayment`، نفسُ قاعدة الإعدادات
+  // (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد). والشريطُ يقول ما تقوله الإعدادات حرفاً — «مدفوع» معها.
+  const paymentKey = resolveClientPayment(sub.order, outstanding.count);
 
   // Derived on the server: the sidebar is a client component, and computing "days left"
   // there would let the rendered number depend on the visitor's clock.
   const subscription = {
     // اسم الباقة من الطلب الساري — لقطةٌ مجمّدة يوم الشراء لا الكتالوج الحيّ.
-    tierName: activeOrder?.planName ?? "—",
-    status: statusLabel(client?.subscriptionStatus ?? null),
-    // نفسُ قاعدة صفحة الإعدادات: الفاتورةُ القائمة هي الجواب، لا حقلُ الكرت الذي
-    // لا يُكتب فيه «متأخّر» أبداً. والفواتيرُ مجلوبةٌ أعلاه بنفس الشرط.
-    payment: paymentLabel((client?.invoices.length ?? 0) > 0 ? "UNPAID" : "PAID"),
-    progress: subscriptionProgress(
-      client?.subscriptionStartDate ?? null,
-      client?.subscriptionEndDate ?? null
-    ),
-    endDate: formatSubscriptionDate(client?.subscriptionEndDate ?? null),
+    tierName: sub.order?.planName ?? "—",
+    status: statusLabel(sub.status),
+    payment: paymentLabel(paymentKey),
+    progress: subscriptionProgress(sub.startedAt, sub.endsAt),
+    endDate: formatSubscriptionDate(sub.endsAt),
     siteArticlesEnabled: clientCanSeeSiteArticles,
   };
 
@@ -159,10 +147,9 @@ export default async function DashboardLayout({
       <DashboardLayoutClient
       accountNotice={
         <AccountNotice
-          endDate={client?.subscriptionEndDate ?? null}
-          unpaidCount={openInvoices.length}
-          unpaidAmount={openInvoices.reduce((s, i) => s + i.amount, 0)}
-          unpaidCurrency={openInvoices[0]?.currency ?? null}
+          endDate={sub.endsAt}
+          unpaidCount={outstanding.count}
+          unpaidTotal={formatCurrencyTotals(outstanding.totals, " و")}
         />
       }
       clientName={clientName}

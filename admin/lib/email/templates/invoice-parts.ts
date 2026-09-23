@@ -1,4 +1,6 @@
+import { InvoicePaymentStatus } from "@prisma/client";
 import { EMAIL_COLORS } from "@modonty/shared/lib/email";
+import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 
 /**
  * قطع الفاتورة الضريبية — مفصولةٌ عن `invoice.ts` كي يبقى القالب مقروءاً بعد إعادة تشكيله
@@ -30,7 +32,7 @@ export interface InvoiceHeroInput {
   issuedAtLabel: string;
   totalLabel: string;
   totalAmount: string;
-  paid: boolean;
+  paymentStatus: InvoicePaymentStatus;
 }
 
 /**
@@ -41,9 +43,12 @@ export interface InvoiceHeroInput {
  * الرجوع لا عند الفتح.
  */
 export function invoiceHero(h: InvoiceHeroInput): string {
-  const statusBg = h.paid ? "#ecfdf5" : "#fffbeb";
-  const statusFg = h.paid ? "#047857" : "#b45309";
-  const statusText = h.paid ? "مدفوعة" : "مستحقّة";
+  const paid = h.paymentStatus === InvoicePaymentStatus.PAID;
+  const statusBg = paid ? "#ecfdf5" : "#fffbeb";
+  const statusFg = paid ? "#047857" : "#b45309";
+  // اسمُ الحالة من القائمة الواحدة — كانت الرسالةُ تقول «مستحقّة» والشاشاتُ «بانتظار الدفع»
+  // لنفس القيمة (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد).
+  const statusText = INVOICE_STATUS_LABEL[h.paymentStatus];
 
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f7f7fb;border:1px solid ${border};border-radius:10px;margin:0 0 18px;">
     <tr>

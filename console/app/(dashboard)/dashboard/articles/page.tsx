@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { getActiveOrderForClient } from "@/lib/subscription/active-order";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import {
   getPendingArticles,
@@ -37,6 +38,7 @@ export default async function ArticlesPage({
     monthlyPublished,
     settings,
     client,
+    activeOrder,
   ] = await Promise.all([
     getPendingArticles(clientId),
     getPublishedArticles(clientId),
@@ -53,8 +55,10 @@ export default async function ArticlesPage({
     // those with the schema default (true), which is the behaviour they already have.
     db.client.findUnique({
       where: { id: clientId },
-      select: { showSchedule: true, canPublishToOwnSite: true, articlesPerMonth: true },
+      select: { showSchedule: true, canPublishToOwnSite: true },
     }),
+    // الحصّةُ من الطلب الساري — لا من نسخة الكرت (قاعدة المصدر الواحد).
+    getActiveOrderForClient(clientId),
   ]);
 
   const siteUrl = settings?.siteUrl ?? "";
@@ -88,7 +92,7 @@ export default async function ArticlesPage({
       canSeeSiteArticles={canSeeSiteArticles}
       pendingCount={pendingCount}
       monthlyPublished={monthlyPublished}
-      monthlyQuota={client?.articlesPerMonth ?? 0}
+      monthlyQuota={activeOrder?.articlesPerMonth ?? 0}
       quotaResetDate={quotaResetDate}
       initialTab={tab}
       siteUrl={siteUrl}

@@ -1,16 +1,18 @@
-import { db } from "@/lib/db";
-import { getSubscriptionStanding } from "@/app/(dashboard)/orders/helpers/get-subscription-standing";
+import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
+import { NOT_INTERNAL } from "@/app/(dashboard)/clients/segment/segments";
+import { RENEWAL_SOON_DAYS } from "./renewal-window";
 
 /**
  * الاشتراكاتُ المنتهية والمقترِبة — تعريفٌ واحد للبطاقة وللفلتر.
  *
- * الانتهاءُ يُحسب ولا يُخزَّن (`serviceStartedAt` + شهور الخدمة)، فلا يمكن تصفيتُه في القاعدة:
- * تُجلب المدفوعةُ المفعَّلة ويُرشَّح المنتهي منها هنا — وهو نفسُ الحاسب الذي يلوّن الصفوف
- * في شاشة الاشتراكات، فلا تقول البطاقةُ رقماً يخالف الجدول.
- *
  * وُجدت لأنّ الدائرة الماليّة كانت تنتهي بلا مَن يُخبر أحداً: مقيسٌ ١٨ سبتمبر ٢٠٢٦ —
  * ٣ اشتراكاتٍ منتهية و٩ تنتهي خلال شهر، ولا كرون ولا بريد ولا شاشة تقولها. فاشتراكٌ
  * يسقط بصمتٍ هو مالٌ يضيع بلا قرار.
+ *
+ * **العدُّ بالعميل من طلبه الساري** (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد). كانت تعدّ كلَّ طلبٍ
+ * مدفوع بمدّته هو، والتجديدُ ينقل المؤشّرَ إلى الطلب الجديد ويترك القديمَ بمدّته المنقضية —
+ * فعميلٌ جدّد يُعدّ «انتهى ولم يُجدَّد»، والحساباتُ الداخليّة معه. الآن: `getClientSubscriptions`
+ * بـ`NOT_INTERNAL` — نفسُ ما يعدّه «منتهٍ» في شريحة العملاء وفلتر الاشتراكات.
  */
 export interface RenewalsDue {
   expired: number;
@@ -20,27 +22,22 @@ export interface RenewalsDue {
   worstDaysPast: number | null;
 }
 
-import { RENEWAL_SOON_DAYS } from "./renewal-window";
-
 export async function getRenewalsDue(): Promise<RenewalsDue> {
-  const rows = await db.checkoutOrder.findMany({
-    // من بداية الخدمة — أوّلِ مقالٍ وصل العميل (خالد ١٩ سبتمبر ٢٠٢٦).
-    where: { status: "PAID", NOT: [{ serviceStartedAt: null }, { clientId: null }] },
-    select: { serviceStartedAt: true, paidMonths: true, bonusServiceMonths: true },
-    take: 2000,
-  });
+  const subs = await getClientSubscriptions(NOT_INTERNAL);
 
   let expired = 0;
   let soon = 0;
   let worst: number | null = null;
-  for (const r of rows) {
-    const s = getSubscriptionStanding(r);
-    if (s.daysLeft === null) continue;
-    if (s.daysLeft < 0) {
+  for (const s of subs.values()) {
+    if (s.status === "EXPIRED") {
       expired++;
-      const past = -s.daysLeft;
-      if (worst === null || past > worst) worst = past;
-    } else if (s.daysLeft <= RENEWAL_SOON_DAYS) soon++;
+      if (s.daysLeft !== null) {
+        const past = -s.daysLeft;
+        if (worst === null || past > worst) worst = past;
+      }
+    } else if (s.status === "ACTIVE" && s.daysLeft !== null && s.daysLeft <= RENEWAL_SOON_DAYS) {
+      soon++;
+    }
   }
   return { expired, soon, worstDaysPast: worst };
 }

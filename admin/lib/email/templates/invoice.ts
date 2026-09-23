@@ -1,4 +1,6 @@
-import { baseTemplate, badge, divider, heading, paragraph } from "@modonty/shared/lib/email";
+import { InvoicePaymentStatus } from "@prisma/client";
+import { baseTemplate, divider, heading, paragraph } from "@modonty/shared/lib/email";
+import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 import type { EmailContent } from "@modonty/shared/lib/email";
 import { invoiceHero, invoiceParties, invoiceLine, invoiceQr, invoiceContact } from "./invoice-parts";
 
@@ -49,7 +51,7 @@ export interface InvoiceEmailParams {
   amount: number;
   currency: "SAR" | "EGP";
   paymentMethodLabel?: string;
-  paymentStatus: "PAID" | "DUE";
+  paymentStatus: InvoicePaymentStatus;
   issuedAt: Date;
   subscriptionStart?: Date | null;
   subscriptionEnd?: Date | null;
@@ -116,8 +118,10 @@ function serviceLabel(t: InvoiceTaxDetail): string {
 }
 
 export async function invoiceEmail(p: InvoiceEmailParams): Promise<EmailContent> {
-  const paid = p.paymentStatus === "PAID";
-  const statusBadge = paid ? badge("مدفوعة", "#10b981") : badge("مستحقّة", "#f59e0b");
+  const paid = p.paymentStatus === InvoicePaymentStatus.PAID;
+  // اسمُ الحالة من `INVOICE_STATUS_LABEL` وحدها (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد) — سقطت
+  // شارةٌ ميّتة هنا كانت تكتب «مستحقّة» بيدها، والظاهرةُ في الرأس (`invoiceHero`).
+  const statusLabel = INVOICE_STATUS_LABEL[p.paymentStatus];
   const isTax = Boolean(p.tax);
   const t = p.tax;
   const vatPct = t ? `${t.vatRateBp / 100}٪` : "";
@@ -169,7 +173,7 @@ export async function invoiceEmail(p: InvoiceEmailParams): Promise<EmailContent>
         : `${paid ? "تاريخ الدفع" : "تاريخ الإصدار"}: ${dateFmt.format(p.issuedAt)}`,
       totalLabel: isTax ? "الإجمالي شامل الضريبة" : "الإجمالي",
       totalAmount: money(t ? t.total : p.amount, p.currency, isTax ? 2 : 0),
-      paid,
+      paymentStatus: p.paymentStatus,
     })}
     ${paragraph(`مرحباً ${p.clientName}، هذه ${isTax ? "الفاتورة الضريبية" : "فاتورة"} اشتراكك في مُدَوَّنَتِي.`)}
     ${parties}
@@ -195,11 +199,12 @@ export async function invoiceEmail(p: InvoiceEmailParams): Promise<EmailContent>
     // نفسُ حقول الجدول في النسخة النصّيّة: عميلُ بريدٍ يقرؤها وحدها يجب ألّا ينقصه حقلٌ ملزِم.
     t ? `الكمّيّة: ${t.paidMonths === 1 ? "شهر واحد" : `${t.paidMonths} أشهر`} · سعر الوحدة: ${money(t.paidMonths > 0 ? t.subtotal / t.paidMonths : t.subtotal, p.currency, 2)}` : null,
     p.paymentMethodLabel ? `طريقة الدفع: ${p.paymentMethodLabel}` : null,
-    p.subscriptionStart ? `بداية الاشتراك: ${dateFmt.format(p.subscriptionStart)}` : null,
-    p.subscriptionEnd ? `نهاية الاشتراك: ${dateFmt.format(p.subscriptionEnd)}` : null,
+    p.serviceStartsWithFirstArticle ? "بداية الاشتراك: تبدأ المدّة بعد نشر أوّل مقال" : null,
+    !p.serviceStartsWithFirstArticle && p.subscriptionStart ? `بداية الاشتراك: ${dateFmt.format(p.subscriptionStart)}` : null,
+    !p.serviceStartsWithFirstArticle && p.subscriptionEnd ? `نهاية الاشتراك: ${dateFmt.format(p.subscriptionEnd)}` : null,
     t ? `الصافي قبل الضريبة: ${money(t.subtotal, p.currency, 2)}` : null,
     t ? `ضريبة القيمة المضافة (${vatPct}): ${money(t.vat, p.currency, 2)}` : null,
-    `الحالة: ${paid ? "مدفوعة" : "مستحقّة"}`,
+    `الحالة: ${statusLabel}`,
     `${isTax ? "الإجمالي شامل الضريبة" : "الإجمالي"}: ${money(t ? t.total : p.amount, p.currency, isTax ? 2 : 0)}`,
     "",
     "شكراً لتعاملك مع مُدَوَّنَتِي.",

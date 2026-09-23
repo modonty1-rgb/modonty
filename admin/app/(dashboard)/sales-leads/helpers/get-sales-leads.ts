@@ -1,8 +1,9 @@
 import "server-only";
-import { PLAN_DURATIONS, priceForDuration, type PlanDuration } from "@modonty/shared/lib/pricing-durations";
 
 import { db } from "@/lib/db";
 import type { Stage } from "./funnel";
+import { getLeadCatalog, type LeadCatalog } from "./get-lead-catalog";
+import { priceLeadDeal } from "./price-lead-deal";
 
 export interface SalesLeadRow {
   id: string;
@@ -16,11 +17,11 @@ export interface SalesLeadRow {
   nextActionNote: string | null;
   lastContactAt: Date | null;
   expectedTier: string | null;
-  expectedMonthly: number | null;
   /** مدّة العرض — بدونها لا يُعرف إجماليّه، ويصير الرقم المعروض سعر شهرٍ واحد. */
   expectedMonths: number | null;
-  /** إجماليّ العرض للمدّة كلّها — هو الرقم الذي قيل للعميل، لا سعر الشهر. */
+  /** إجماليّ العرض للمدّة كلّها — من الكتالوج اليوم (`priceLeadDeal`)، لا سعر الشهر. */
   dealTotal: number | null;
+  /** عملة `dealTotal` من صفّ السعر — `null` حين لا صفقة مسعَّرة. */
   currency: string | null;
   industryName: string | null;
   ownerName: string | null;
@@ -62,9 +63,7 @@ const SELECT = {
   nextActionNote: true,
   lastContactAt: true,
   expectedTier: true,
-  expectedMonthly: true,
   expectedMonths: true,
-  currency: true,
   countryCode: true,
   source: true,
   isPaidAd: true,
@@ -93,33 +92,35 @@ type Raw = {
   followUps: { body: string; happenedAt: Date }[];
 } & Record<string, unknown>;
 
-const shape = (l: Raw): SalesLeadRow => {
+const shape = (l: Raw, catalog: LeadCatalog): SalesLeadRow => {
   const { industry, owner, createdBy, followUps, ...rest } = l;
 
   /**
-   * إجماليّ العرض — بالدالّة نفسها التي حسبته بها الشاشة، لا بضربٍ مكتوبٍ هنا.
+   * إجماليّ العرض — من الكتالوج بالدالّة نفسها التي تعرض بها الشاشة، لا بضربٍ مكتوبٍ هنا.
    *
    * كانت القائمة تعرض `expectedMonthly` وحده وتسمّيه «القيمة المتوقّعة»: المندوبة تقول للعميلة
-   * «٢٣٬٩٩٤» ثم يقرأ التقرير «٣٬٩٩٩» — نفس الصفقة برقمين يفترقان بمقدار المدّة. والباقات لا
-   * تُباع شهريّاً أصلاً؛ الشهريّ سعرُ وحدةٍ لا يُدفع وحده.
+   * «٢٣٬٩٩٤» ثم يقرأ التقرير «٣٬٩٩٩» — نفس الصفقة برقمين يفترقان بمقدار المدّة.
+   *
+   * ٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد. السعر والمدّة من `CommercialPlan`/`CommercialTermPolicy`
+   * لا من `modonty_plans` و`pricing-durations.ts`. و`l` من نوع `Record<string, unknown>`،
+   * فالتحويل صريحٌ عند حدّ القاعدة لا مبثوثٌ بعده.
    */
-  /**
-   * `l` من نوع `Record<string, unknown>`، فقيمه تصل `{}` لا أرقاماً — و`tsc` أمسكها بعد ما
-   * أُضيف `lastTouchAt` ووُسِّع نوع `Raw`. التحويل هنا صريحٌ عند حدّ القاعدة لا مبثوثٌ بعده.
-   */
-  const monthly = (l.expectedMonthly as number | null) ?? null;
-  const months = (l.expectedMonths as number | null) as PlanDuration | null;
-  const dealTotal =
-    monthly && months && (PLAN_DURATIONS as readonly number[]).includes(months)
-      ? priceForDuration(monthly, months).total
-      : monthly;
+  const deal = priceLeadDeal(
+    {
+      expectedTier: (l.expectedTier as string | null) ?? null,
+      expectedMonths: (l.expectedMonths as number | null) ?? null,
+      countryCode: (l.countryCode as string | null) ?? null,
+    },
+    catalog,
+  );
 
   return {
     ...(rest as unknown as Omit<
       SalesLeadRow,
-      "industryName" | "ownerName" | "lastNote" | "dealTotal" | "lastTouchAt"
+      "industryName" | "ownerName" | "lastNote" | "dealTotal" | "currency" | "lastTouchAt"
     >),
-    dealTotal,
+    dealTotal: deal.total,
+    currency: deal.currency,
     industryName: industry?.name ?? null,
     ownerName: owner?.name ?? createdBy?.name ?? null,
     lastNote: followUps[0]?.body ?? null,
@@ -145,7 +146,7 @@ export async function getSalesLeads(): Promise<{
   byStage: Record<string, number>;
   pipelineValue: { SAR: number; EGP: number };
 }> {
-  const [total, all, dueRaw] = await Promise.all([
+  const [total, all, dueRaw, catalog] = await Promise.all([
     db.salesLead.count(),
     db.salesLead.findMany({ orderBy: { createdAt: "desc" }, take: CEILING, select: SELECT }),
     /**
@@ -164,9 +165,10 @@ export async function getSalesLeads(): Promise<{
       take: 100,
       select: SELECT,
     }),
+    getLeadCatalog(),
   ]);
 
-  const rows = all.map((l) => shape(l as unknown as Raw));
+  const rows = all.map((l) => shape(l as unknown as Raw, catalog));
 
   const byStage: Record<string, number> = {};
   for (const r of rows) byStage[r.stage] = (byStage[r.stage] ?? 0) + 1;
@@ -181,13 +183,13 @@ export async function getSalesLeads(): Promise<{
   for (const r of rows) {
     if (r.stage === "WON" || r.stage === "LOST") continue;
     // الإجماليّ لا الشهريّ: قيمة الفانل هي مجموع ما سيُدفع، لا مجموع أسعار الشهر الأوّل.
+    // كل عملةٍ في خانتها، ولا تُجمع عملتان: عملةٌ ثالثة تُترك لا تُحشر في الريال.
     if (!r.dealTotal) continue;
-    const cur = r.currency === "EGP" ? "EGP" : "SAR";
-    pipelineValue[cur] += r.dealTotal;
+    if (r.currency === "SAR" || r.currency === "EGP") pipelineValue[r.currency] += r.dealTotal;
   }
 
   return {
-    due: dueRaw.map((l) => shape(l as unknown as Raw)),
+    due: dueRaw.map((l) => shape(l as unknown as Raw, catalog)),
     rows,
     total,
     truncated: total > rows.length,

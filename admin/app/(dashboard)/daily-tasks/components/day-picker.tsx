@@ -25,21 +25,23 @@ export function DayPicker() {
   const router = useRouter();
   const params = useSearchParams();
   const today = toInput(new Date());
-  const view = params.get("view") ?? "today";
+  const view = params.get("view") ?? "week";
   const from = params.get("from") ?? today;
   const to = params.get("to") ?? today;
   const [open, setOpen] = useState(false);
   const [draftFrom, setDraftFrom] = useState(from);
   const [draftTo, setDraftTo] = useState(to);
-  const setView = (next: "all" | "today") => {
+  // الأسبوعُ هو الافتراضيّ (بلا مُعامِل) — اليومُ والكلُّ تفاصيلُ.
+  const setView = (next: "week" | "today" | "all") => {
     if (next === "all") router.push("/daily-tasks?view=all");
+    else if (next === "today") router.push("/daily-tasks?view=today");
     else router.push("/daily-tasks");
   };
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       <div className="inline-flex rounded-md border p-0.5">
-        {([['today', 'اليوم'], ['all', 'الكل']] as const).map(([key, label]) => (
+        {([['week', 'الأسبوع'], ['today', 'اليوم'], ['all', 'الكل']] as const).map(([key, label]) => (
           <Button key={key} type="button" size="sm" variant={view === key ? "secondary" : "ghost"} className="h-7 px-2 text-xs" onClick={() => setView(key)}>{label}</Button>
         ))}
       </div>

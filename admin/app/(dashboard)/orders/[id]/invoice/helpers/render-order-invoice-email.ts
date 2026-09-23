@@ -1,3 +1,4 @@
+import { InvoicePaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { buildInvoiceEmail, INVOICE_QR_CID } from "@/lib/invoices/build-invoice-email";
 import { planInvoiceFromOrder } from "../../../helpers/plan-invoice-from-order";
@@ -47,7 +48,7 @@ export async function renderOrderInvoiceEmail(orderId: string): Promise<OrderInv
       period: p.period,
       currency: p.currency,
       amount: p.totalMinor / 100,
-      paymentStatus: "PAID",
+      paymentStatus: InvoicePaymentStatus.PAID,
       issuedAt: new Date(),
       subscriptionStart: p.subscriptionStart,
       subscriptionEnd: p.subscriptionEnd,

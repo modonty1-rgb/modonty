@@ -26,7 +26,7 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
       planName: true, articlesPerMonth: true, salesRepId: true,
       market: true, totalMinor: true, paidMonths: true,
       bonusServiceMonths: true,
-      serviceStartedAt: true, activatedAt: true, paidAt: true, notes: true,
+      serviceStartedAt: true, activatedAt: true, paidAt: true, notes: true, isInternal: true,
     },
   });
   if (!order) notFound();
@@ -52,6 +52,7 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
     serviceStartedAt: day(order.serviceStartedAt),
     activatedAt: day(order.activatedAt),
     paidAt: day(order.paidAt),
+    isInternal: order.isInternal ?? false,
   };
 
   return (

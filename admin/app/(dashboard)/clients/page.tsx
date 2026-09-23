@@ -46,11 +46,11 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
     getClientsStats(),
     getPlatformDefaults(),
     // Renewals due this calendar month — money queue (same where as the segment list).
-    db.client.count({ where: expiringThisMonthWhere() }),
+    expiringThisMonthWhere().then((where) => db.client.count({ where })),
     // ومَن مضت نهايتُه فعلاً: تبويبُ `Expired` يقرأ `subscriptionStatus` ولا أحد يقلبها،
     // فيقول صفراً بينما أربعةٌ متأخّرون — وواحدٌ منهم انتهى قبل هذا الشهر فلا يلتقطه
     // عدّادُ التجديدات أيضاً، فكان ساقطاً من الشاشة كلِّها.
-    db.client.count({ where: expiredByDateWhere() }),
+    expiredByDateWhere().then((where) => db.client.count({ where })),
   ]);
 
   return (

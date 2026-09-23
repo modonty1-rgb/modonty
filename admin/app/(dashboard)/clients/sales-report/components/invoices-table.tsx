@@ -1,5 +1,7 @@
 "use client";
 
+import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
+import { currencyLabel } from "@modonty/shared/lib/commercial/format-money";
 import { DataTable, type Column } from "@/components/admin/data-table";
 import type { RecentInvoice } from "../actions/get-sales-report";
 
@@ -13,8 +15,9 @@ function AmountBadge({ code, value }: { code: string; value: number }) {
       : "bg-emerald-500/10 text-emerald-600 ring-emerald-500/20 dark:text-emerald-400";
   return (
     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums ring-1 ring-inset ${cls}`}>
-      <span className="text-[9px] font-semibold opacity-70">{code}</span>
       {nf.format(Math.round(value))}
+      {/* بالعربية كبقيّة التقرير — «ج.م.» لا «EGP». */}
+      <span className="text-[9px] font-semibold opacity-70">{currencyLabel(code)}</span>
     </span>
   );
 }
@@ -41,11 +44,11 @@ const COLUMNS: Column<RecentInvoice>[] = [
   },
   { key: "tierName", header: "الباقة", render: (i) => <span className="text-muted-foreground">{i.tierName}</span> },
   {
-    key: "subType",
-    header: "النوع",
+    key: "term",
+    header: "المدّة",
     render: (i) => (
-      <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset ring-border">
-        {i.subType === "monthly" ? "شهري" : "سنوي"}
+      <span className="inline-flex items-center whitespace-nowrap rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset ring-border">
+        {i.term}
       </span>
     ),
   },
@@ -66,7 +69,7 @@ const COLUMNS: Column<RecentInvoice>[] = [
             : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
         }`}
       >
-        {i.paid ? "مدفوعة" : "مستحقّة"}
+        {INVOICE_STATUS_LABEL[i.status]}
       </span>
     ),
   },

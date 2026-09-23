@@ -34,7 +34,24 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
   const [logoOpen, setLogoOpen] = useState(false);
   const [heroOpen, setHeroOpen] = useState(false);
 
-  const isActive = client.subscriptionStatus === "ACTIVE";
+  /**
+   * الحالةُ من الطلب الساري (تُمرَّر من الصفحة) — وكلُّ حالةٍ باسمها: «منتهٍ» ليس «غير مفعّل».
+   * كان الوسمُ ثنائيّاً، فالعميلُ الذي انقضت مدّتُه يُقرأ كأنّه لم يُفعَّل قطّ.
+   */
+  const statusLabel =
+    client.subscriptionStatus === "ACTIVE"
+      ? "مفعّل"
+      : client.subscriptionStatus === "EXPIRED"
+        ? "منتهٍ"
+        : client.subscriptionStatus === "CANCELLED"
+          ? "ملغى"
+          : "غير مفعّل";
+  const statusTone =
+    client.subscriptionStatus === "ACTIVE"
+      ? "bg-emerald-500/12 text-emerald-600 dark:text-emerald-400"
+      : client.subscriptionStatus === "EXPIRED" || client.subscriptionStatus === "CANCELLED"
+        ? "bg-red-500/12 text-red-600 dark:text-red-400"
+        : "bg-amber-500/12 text-amber-600 dark:text-amber-500";
   const ymylLabel =
     client.isYmyl && client.ymylCategory
       ? YMYL_CATEGORIES[client.ymylCategory as YmylCategory]?.label.ar ?? null
@@ -103,12 +120,10 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
               <span
                 className={cn(
                   "inline-flex items-center gap-1.5 text-[11.5px] font-bold px-2.5 py-0.5 rounded-full",
-                  isActive
-                    ? "bg-emerald-500/12 text-emerald-600 dark:text-emerald-400"
-                    : "bg-amber-500/12 text-amber-600 dark:text-amber-500",
+                  statusTone,
                 )}
               >
-                ● {isActive ? "مفعّل" : "غير مفعّل"}
+                ● {statusLabel}
               </span>
               {ymylLabel && (
                 <span className="inline-flex items-center gap-1 text-[11.5px] font-bold px-2.5 py-0.5 rounded-full bg-violet-500/12 text-violet-600 dark:text-violet-400">

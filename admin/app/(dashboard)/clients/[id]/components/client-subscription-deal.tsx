@@ -6,6 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ExternalLink, Receipt } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isCollectedOrder } from "@modonty/shared/lib/payments/collected";
+import { currencyLabel } from "@modonty/shared/lib/commercial/format-money";
+import { formatMonths } from "@modonty/shared/lib/commercial/arabic-months";
+import { formatTermLabel } from "@modonty/shared/lib/commercial/term-label";
+import { orderStatusCopy } from "@/lib/orders/order-status-copy";
+import type { CheckoutOrderStatus } from "@prisma/client";
 import type { ActiveOrderSummary, ClientOrderRow } from "@/lib/orders/resolve-active-order";
 
 /**
@@ -18,23 +24,43 @@ import type { ActiveOrderSummary, ClientOrderRow } from "@/lib/orders/resolve-ac
 
 const money = (minor: number, currency: string) =>
   new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 0 }).format(minor / 100) +
-  " " + (currency === "EGP" ? "ج.م" : currency === "SAR" ? "ر.س" : currency);
+  " " + currencyLabel(currency);
 
 const day = (d: Date | string | null) =>
   d ? new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "short", year: "numeric" }).format(new Date(d)) : "—";
 
-const STATUS: Record<string, { label: string; tone: string }> = {
-  PAID: { label: "مدفوع", tone: "text-green-600 dark:text-green-500 border-green-500/40 bg-green-500/10" },
-  AWAITING_PAYMENT: { label: "بانتظار الدفع", tone: "text-amber-600 dark:text-amber-500 border-amber-500/30 bg-amber-500/10" },
-  AWAITING_TRANSFER: { label: "بانتظار التحويل", tone: "text-amber-600 dark:text-amber-500 border-amber-500/30 bg-amber-500/10" },
-  FAILED: { label: "فشل", tone: "text-muted-foreground border-border bg-muted/30" },
-  CANCELLED: { label: "ملغى", tone: "text-muted-foreground border-border bg-muted/30" },
-  REFUNDED: { label: "مسترد", tone: "text-red-600 dark:text-red-400 border-red-500/30 bg-red-500/10" },
+/**
+ * الألوانُ هنا وحدها — **والكلمةُ من `orderStatusCopy`** (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد).
+ * كانت لهذا الكرت قائمةُ كلماتٍ خاصّة: الطلبُ نفسُه «لم يدفع بعد» في صفحة الطلبات و«بانتظار
+ * الدفع» هنا (وهي كلمةُ الفاتورة لا الطلب)، والحوالةُ «بانتظار التحويل» — الاسمُ الذي استبدله
+ * خالد بـ«حوالة تنتظر تأكيدك» لأنّه لخبط الفريق.
+ */
+const TONE: Record<string, string> = {
+  PAID: "text-green-600 dark:text-green-500 border-green-500/40 bg-green-500/10",
+  AWAITING_PAYMENT: "text-amber-600 dark:text-amber-500 border-amber-500/30 bg-amber-500/10",
+  AWAITING_TRANSFER: "text-amber-600 dark:text-amber-500 border-amber-500/30 bg-amber-500/10",
+  REFUNDED: "text-red-600 dark:text-red-400 border-red-500/30 bg-red-500/10",
 };
 
 function OrderStatus({ status }: { status: string }) {
-  const s = STATUS[status] ?? { label: status, tone: "text-muted-foreground border-border bg-muted/30" };
-  return <Badge variant="outline" className={cn("text-[11px] font-medium", s.tone)}>{s.label}</Badge>;
+  const copy = orderStatusCopy(status as CheckoutOrderStatus);
+  return (
+    <Badge variant="outline" title={copy?.hint} className={cn("text-[11px] font-medium", TONE[status] ?? "text-muted-foreground border-border bg-muted/30")}>
+      {copy?.label ?? status}
+    </Badge>
+  );
+}
+
+/**
+ * عنوان خانة المبلغ يتبع حالة الطلب: «المدفوع» للطلب `PAID` وحده (isCollectedOrder)،
+ * و«المسترد» للمستردّ — الاسترداد لا يحرّك activeOrderId، فكان المبلغ يظهر «مدفوعاً»
+ * بجانب شارة «مسترد». وما سواهما مبلغُ طلبٍ لم يدخل بعد.
+ * ٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد.
+ */
+function amountLabel(status: string): string {
+  if (isCollectedOrder({ status })) return "المدفوع";
+  if (status === "REFUNDED") return "المسترد";
+  return "قيمة الطلب";
 }
 
 function Cell({ label, children }: { label: string; children: ReactNode }) {
@@ -102,19 +128,27 @@ export function ClientSubscriptionDeal({
       <div className="p-4 space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Cell label="الباقة">{activeOrder.planName}</Cell>
-          <Cell label="المدفوع">
-            <span className="tabular-nums">{money(activeOrder.totalMinor, activeOrder.currency)}</span>
-          </Cell>
-          <Cell label="المدّة">
-            <span className="tabular-nums">{activeOrder.paidMonths}</span> شهر
-            {activeOrder.bonusServiceMonths > 0 && (
-              <span className="text-green-600 dark:text-green-500">
-                {" "}+ <span className="tabular-nums">{activeOrder.bonusServiceMonths}</span> هديّة
+          <Cell label={amountLabel(activeOrder.status)}>
+            <span
+              className={cn(
+                "tabular-nums",
+                activeOrder.status === "REFUNDED" && "text-red-600 dark:text-red-400 line-through decoration-1",
+              )}
+            >
+              {money(activeOrder.totalMinor, activeOrder.currency)}
+            </span>
+            {activeOrder.status === "REFUNDED" && (
+              <span className="block text-xs font-normal text-red-600 dark:text-red-400">
+                رُدّ للعميل — لا يُحسب مدفوعاً
               </span>
             )}
+          </Cell>
+          {/* المدّةُ بصياغة `formatTermLabel` الواحدة — «٦ أشهر + شهر هدية» كالفاتورة والكونسول، لا «1 شهر». */}
+          <Cell label="المدّة">
+            {formatTermLabel(activeOrder.paidMonths, activeOrder.bonusServiceMonths)}
             {activeOrder.bonusServiceMonths > 0 && (
               <span className="block text-xs text-muted-foreground font-normal">
-                الإجمالي <span className="tabular-nums">{totalMonths}</span> شهراً
+                الإجمالي {formatMonths(totalMonths)}
               </span>
             )}
           </Cell>
@@ -190,7 +224,7 @@ export function ClientSubscriptionDeal({
                         <td className="py-2 px-2 text-muted-foreground">{o.planName}</td>
                         <td className="py-2 px-2 tabular-nums">{money(o.totalMinor, o.currency)}</td>
                         <td className="py-2 px-2 tabular-nums text-muted-foreground">
-                          {o.paidMonths}{o.bonusServiceMonths > 0 ? `+${o.bonusServiceMonths}` : ""} شهر
+                          {formatTermLabel(o.paidMonths, o.bonusServiceMonths)}
                         </td>
                         <td className="py-2 px-2 tabular-nums text-muted-foreground">
                           {day(o.paidAt ?? o.createdAt)}

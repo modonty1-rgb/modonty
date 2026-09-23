@@ -3,15 +3,19 @@
 import { Badge } from "@/components/ui/badge";
 import { CreditCard } from "lucide-react";
 
-import { paymentStateLabel, type ClientPaymentState } from "@/lib/clients/payment-state";
+// من ملفّ الكلمة لا من فهرس المجلّد: الفهرسُ يجرّ `db` إلى حزمة المتصفّح.
+import { paymentStateLabel, paymentStateTone } from "@/lib/clients/payment-state/payment-state-label";
+import type { ClientPaymentState } from "@/lib/clients/payment-state/get-payment-states";
 
 interface SettingsTabProps {
   client: {
     subscriptionStatus: string;
   };
-  /** محسوبةٌ من الفواتير على السيرفر — لا تُقرأ من `Client.paymentStatus`. */
+  /** محسوبةٌ على السيرفر من الطلب الساري والمستحقّات — لا تُقرأ من `Client.paymentStatus`. */
   paymentState: ClientPaymentState;
 }
+
+const TONE_VARIANT = { stop: "destructive", go: "default", muted: "secondary" } as const;
 
 export function SettingsTab({ client, paymentState }: SettingsTabProps) {
   return (
@@ -46,17 +50,8 @@ export function SettingsTab({ client, paymentState }: SettingsTabProps) {
                 <CreditCard className="h-4 w-4 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground">Payment Status</p>
               </div>
-              {/* من الفواتير لا من الكرت. الحقل المخزَّن كان يطبع «PAID» لعميلٍ عليه
-                  ثلاث فواتير غير مسدَّدة — ولا شيء يكتب فيه OVERDUE أصلاً. */}
-              <Badge
-                variant={
-                  paymentState.status === "UNPAID"
-                    ? "destructive"
-                    : paymentState.status === "PAID"
-                    ? "default"
-                    : "secondary"
-                }
-              >
+              {/* الكلمةُ واللونُ من `payment-state-label.ts` — نفسُ شارة الشرائح والتصدير. */}
+              <Badge variant={TONE_VARIANT[paymentStateTone(paymentState)]}>
                 {paymentStateLabel(paymentState)}
               </Badge>
             </div>

@@ -1,6 +1,9 @@
 "use server";
 
+
+import { InvoicePaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
+import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { subDays, addDays, startOfDay, startOfMonth, endOfMonth, format, parse, startOfWeek } from "date-fns";
 
 import { NOT_INTERNAL } from "../clients/segment/segments";
@@ -175,40 +178,42 @@ export async function getStatusBreakdown() {
 export async function getDashboardAlerts() {
   try {
     const now = new Date();
-    const sevenDaysFromNow = addDays(now, 7);
     const startOfCurrentMonth = startOfMonth(now);
 
-    const [
-      expiringSubscriptions,
-      overduePayments,
-      expiredSubscriptions,
-      clientsAtLimit,
-    ] = await Promise.all([
-      db.client.findMany({
-        where: {
-          subscriptionStatus: "ACTIVE",
-          subscriptionEndDate: {
-            gte: startOfDay(now),
-            lte: sevenDaysFromNow,
-            not: null,
-          },
-          ...NOT_INTERNAL, // platform/demo accounts never appear in a renewal alert
-        },
-        select: {
-          id: true,
-          name: true,
-          subscriptionEndDate: true,
-        },
-        orderBy: { subscriptionEndDate: "asc" },
-        take: 10,
-      }),
+    /**
+     * **الانتهاءُ والحصّةُ من الطلب الساري** (٢٣ سبتمبر ٢٠٢٦ — مصدرٌ واحد): كان التنبيهُ يقرأ
+     * `subscriptionEndDate` و`subscriptionStatus` و`articlesPerMonth` من الكرت، و«منتهٍ» فيه
+     * `status: EXPIRED` لا يكتبه أحد — فكان فارغاً دائماً والمنتهون الحقيقيّون أحد عشر.
+     * والحسابُ الداخليّ خارجُ تنبيه التجديد كما كان.
+     */
+    const [subs, names] = await Promise.all([
+      getClientSubscriptions(NOT_INTERNAL, now),
+      db.client.findMany({ where: NOT_INTERNAL, select: { id: true, name: true }, take: 5000 }),
+    ]);
+    const nameOf = new Map(names.map((c) => [c.id, c.name]));
+    const all = [...subs.values()];
+    const expiringSubscriptions = all
+      .filter((s) => s.status === "ACTIVE" && s.daysLeft !== null && s.daysLeft >= 0 && s.daysLeft <= 7)
+      .sort((a, b) => (a.endsAt?.getTime() ?? 0) - (b.endsAt?.getTime() ?? 0))
+      .slice(0, 10)
+      .map((s) => ({ id: s.clientId, name: nameOf.get(s.clientId) ?? "—", subscriptionEndDate: s.endsAt }));
+    const expiredSubscriptions = all
+      .filter((s) => s.status === "EXPIRED")
+      .slice(0, 10)
+      .map((s) => ({ id: s.clientId, name: nameOf.get(s.clientId) ?? "—", subscriptionStatus: s.status }));
+    const clientsAtLimit = all
+      .filter((s) => s.status === "ACTIVE" && s.articlesPerMonth !== null)
+      .slice(0, 20)
+      .map((s) => ({ id: s.clientId, name: nameOf.get(s.clientId) ?? "—", articlesPerMonth: s.articlesPerMonth }));
+
+    const [overduePayments] = await Promise.all([
       // Clients carrying an outstanding invoice. `Client.paymentStatus` is never written
       // OVERDUE by any code path, so filtering on it listed nobody — the invoices are the
       // truth (same rule as the counter, the Accounts page and the segment).
       db.invoice
         .findMany({
           where: {
-            NOT: { paymentStatus: "PAID" },
+            NOT: { paymentStatus: InvoicePaymentStatus.PAID },
             OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
           },
           select: { clientId: true },
@@ -224,27 +229,6 @@ export async function getDashboardAlerts() {
             take: 10,
           })
         ),
-      db.client.findMany({
-        where: { subscriptionStatus: "EXPIRED" },
-        select: {
-          id: true,
-          name: true,
-          subscriptionStatus: true,
-        },
-        take: 10,
-      }),
-      db.client.findMany({
-        where: {
-          subscriptionStatus: "ACTIVE",
-          articlesPerMonth: { not: null },
-        },
-        select: {
-          id: true,
-          name: true,
-          articlesPerMonth: true,
-        },
-        take: 20,
-      }),
     ]);
 
     const endOfCurrentMonth = endOfMonth(now);

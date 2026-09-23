@@ -1,7 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { SubscriptionStatus, ClientCtaMode, ArticleStatus } from "@prisma/client";
+import { ClientCtaMode, ArticleStatus, InvoicePaymentStatus } from "@prisma/client";
+import { clientIdsWhere, getClientSubscriptions, type ClientSubscription } from "@/lib/subscription/get-client-subscriptions";
 
 import { getClientIdsMissingCtaMode, getClientImageGaps, getClientDataGaps, NOT_INTERNAL } from "../clients/segment/segments";
 
@@ -98,20 +99,31 @@ export interface ClientStatusCounts {
 }
 
 export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
-  const inAWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const live = { subscriptionStatus: SubscriptionStatus.ACTIVE };
+  /**
+   * **الحالةُ والنهايةُ من الطلب الساري، لا من الكرت** (٢٣ سبتمبر ٢٠٢٦ — مصدرٌ واحد).
+   *
+   * كانت الخمسةُ تُعدّ بحقول الكرت: «نشط» = `subscriptionStatus: ACTIVE` ولا أحدَ يقلبه عند
+   * الانتهاء، فكان «النشطون» يضمّون المنتهين، و«المنتهي» يُكتشف بتاريخٍ على الكرت يخالف
+   * الطلبَ عند تسعةٍ من ٤٣. والآن كلُّها من `getClientSubscriptions` — نفسُ معادلة الكونسول.
+   */
+  const [all, billable, ymylIds] = await Promise.all([
+    getClientSubscriptions(),
+    getClientSubscriptions(NOT_INTERNAL),
+    db.client.findMany({ where: { isYmyl: true }, select: { id: true } }).then((r) => new Set(r.map((c) => c.id))),
+  ]);
+  const countOf = (subs: typeof all, test: (s: ClientSubscription) => boolean) => clientIdsWhere(subs, test).length;
+  const active = countOf(all, (s) => s.status === "ACTIVE");
+  const pending = countOf(billable, (s) => s.status === "PENDING");
+  const expiredStatus = countOf(all, (s) => s.status === "EXPIRED");
+  const cancelled = countOf(all, (s) => s.status === "CANCELLED");
+  const expiredByDate = countOf(billable, (s) => s.status === "EXPIRED");
+  // «خلال أسبوع» كما كان — نافذةُ التنبيه العاجل، لا نافذةُ التجديد (٣٠ يوماً).
+  const expiringSoon = countOf(billable, (s) => s.status === "ACTIVE" && s.daysLeft !== null && s.daysLeft <= 7);
+  const ymyl = countOf(all, (s) => s.status === "ACTIVE" && ymylIds.has(s.clientId));
 
-  const now = new Date();
   const [
     total,
-    active,
-    pending,
-    expiredStatus,
-    cancelled,
     overdue,
-    expiredByDate,
-    expiringSoon,
-    ymyl,
     form,
     link,
     none,
@@ -124,12 +136,6 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
     dataGaps,
   ] = await Promise.all([
       db.client.count(),
-      db.client.count({ where: live }),
-      db.client.count({ where: { subscriptionStatus: SubscriptionStatus.PENDING, ...NOT_INTERNAL } }),
-      // Kept ONLY for the status reconciliation below. Nobody flips ACTIVE→EXPIRED, so
-      // this flag is ~always 0 — the real expired clients are found by date, see next.
-      db.client.count({ where: { subscriptionStatus: SubscriptionStatus.EXPIRED } }),
-      db.client.count({ where: { subscriptionStatus: SubscriptionStatus.CANCELLED } }),
       // Clients carrying at least one unpaid invoice. This used to count
       // `paymentStatus === OVERDUE`, but nothing ever writes OVERDUE to that field —
       // «تحديد مدفوعة» only ever writes PAID — so the dashboard printed a reassuring 0
@@ -140,7 +146,7 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
           // `archivedAt: null` would match nothing on Mongo for invoices written before
           // the field existed — see NOT_ARCHIVED in the account billing helper.
           where: {
-            NOT: { paymentStatus: "PAID" },
+            NOT: { paymentStatus: InvoicePaymentStatus.PAID },
             OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
           },
           select: { clientId: true },
@@ -151,18 +157,6 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
           // Exclude platform/demo accounts — a free account never "owes money".
           return db.client.count({ where: { AND: [{ id: { in: ids } }, NOT_INTERNAL] } });
         }),
-      // Really expired = still flagged ACTIVE (live on the site) but the paid period
-      // ended in the PAST. The status flag never catches this, so we read the date.
-      // `not: null` is REQUIRED: on Mongo `{ lt: now }` also matches an ABSENT date
-      // (null sorts below any value), so without it the 10 no-date clients count as
-      // "expired" — the inverse of the null-vs-absent trap. Verified: 3, not 13.
-      db.client.count({
-        where: { ...live, subscriptionEndDate: { lt: now, not: null }, ...NOT_INTERNAL },
-      }),
-      db.client.count({
-        where: { ...live, subscriptionEndDate: { gte: now, lte: inAWeek }, ...NOT_INTERNAL },
-      }),
-      db.client.count({ where: { ...live, isYmyl: true } }),
       db.client.count({ where: { ctaMode: ClientCtaMode.FORM } }),
       db.client.count({ where: { ctaMode: ClientCtaMode.LINK } }),
       db.client.count({ where: { ctaMode: ClientCtaMode.NONE } }),
@@ -186,8 +180,7 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
 
   return {
     total,
-    // Reconciliation uses the STATUS flags (they are meant to be exhaustive). The
-    // date-expired clients are still flagged ACTIVE, so they are already inside `active`.
+    // الحالاتُ الأربع مشتقّةٌ من الطلب لكلّ عميل، فالمجموعُ يساوي العدد — والصفرُ هنا فحصٌ لا حشو.
     statusUnaccounted: Math.max(0, total - active - pending - expiredStatus - cancelled),
     needsYou: { overdue, expired: expiredByDate, expiringSoon, pending },
     portfolio: { active, ymyl, standard: active - ymyl, cancelled },

@@ -5,7 +5,8 @@ import { db } from "@/lib/db";
 import { arabicCurrency, arabicLongDateLatin } from "@/lib/mobile-api/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { getActiveOrderForClient } from "@/lib/subscription/active-order";
+import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
+import { formatTermLabel } from "@modonty/shared/lib/commercial/term-label";
 
 const statusLabels: Record<string, string> = { ACTIVE: "نشط", PENDING: "بانتظار التفعيل", EXPIRED: "منتهي", SUSPENDED: "معلّق", CANCELLED: "ملغي" };
 const positiveStatuses = new Set(["ACTIVE"]);
@@ -21,27 +22,18 @@ export async function GET(request: NextRequest) {
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
 
-  const [client, articlesPublishedThisMonth, activeOrder] = await Promise.all([
-    db.client.findUnique({
-      where: { id: session.clientId },
-      select: {
-        subscriptionStatus: true,
-        subscriptionStartDate: true,
-        subscriptionEndDate: true,
-        articlesPerMonth: true,
-        addressCountry: true,
-      },
-    }),
+  // الاشتراكُ كلُّه من الطلب الساري — البدايةُ والنهايةُ والحالةُ والحصّة معاً، لا من الكرت.
+  const [sub, articlesPublishedThisMonth] = await Promise.all([
+    getClientSubscription(session.clientId),
     db.article.count({ where: { clientId: session.clientId, status: ArticleStatus.PUBLISHED, createdAt: { gte: startOfMonth } } }),
-    getActiveOrderForClient(session.clientId),
   ]);
+  const activeOrder = sub.order;
 
   const screen = { screenTitle: "تفاصيل الاشتراك", backLabel: "رجوع إلى الرئيسية" };
   const empty = { title: "ما فيه اشتراك مفعّل", description: "اشتراكك ما بدأ بعد، فما فيه تفاصيل نعرضها.", actionLabel: "كلّم الدعم" };
 
-  if (!client) return fail("NOT_FOUND", "ما لقينا حسابك.");
-  // «غياب الاشتراك» = never activated: no start and no end date on the client row.
-  if (!client.subscriptionStartDate && !client.subscriptionEndDate) {
+  // «غياب الاشتراك» = لا طلبَ ساري — لم يُفعَّل بعد.
+  if (!activeOrder) {
     return ok({ ...screen, subscription: null, empty });
   }
 
@@ -59,17 +51,17 @@ export async function GET(request: NextRequest) {
     activeOrder && isCollectedOrder(activeOrder) && knownCurrency(activeOrder.currency)
       ? arabicCurrency(activeOrder.totalMinor / 100, activeOrder.currency)
       : null;
+  // «٦ أشهر + شهر هدية» — صياغةُ الفاتورة وكرت الإعدادات نفسُها (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد).
   const termLabel = activeOrder
-    ? `${activeOrder.paidMonths} شهر${activeOrder.bonusServiceMonths ? ` + ${activeOrder.bonusServiceMonths} هديّة` : ""}`
+    ? formatTermLabel(activeOrder.paidMonths, activeOrder.bonusServiceMonths)
     : null;
 
-  const today = new Date();
-  const daysRemaining = client.subscriptionEndDate ? Math.max(Math.ceil((client.subscriptionEndDate.getTime() - today.getTime()) / 86_400_000), 0) : null;
-  const durationDays = client.subscriptionStartDate && client.subscriptionEndDate
-    ? Math.max(Math.ceil((client.subscriptionEndDate.getTime() - client.subscriptionStartDate.getTime()) / 86_400_000), 0)
+  const daysRemaining = sub.daysLeft === null ? null : Math.max(sub.daysLeft, 0);
+  const durationDays = sub.startedAt && sub.endsAt
+    ? Math.max(Math.ceil((sub.endsAt.getTime() - sub.startedAt.getTime()) / 86_400_000), 0)
     : null;
 
-  const articlesPerMonth = client.articlesPerMonth ?? null;
+  const articlesPerMonth = sub.articlesPerMonth;
   const articlesRemaining = articlesPerMonth === null ? null : Math.max(articlesPerMonth - articlesPublishedThisMonth, 0);
 
   const planPaymentRows = [
@@ -78,8 +70,9 @@ export async function GET(request: NextRequest) {
     { label: "المدّة", value: termLabel ?? "—" },
   ];
   const periodRows = [
-    client.subscriptionStartDate ? { label: "تاريخ البداية", value: arabicLongDateLatin(client.subscriptionStartDate) } : null,
-    client.subscriptionEndDate ? { label: "تاريخ النهاية", value: arabicLongDateLatin(client.subscriptionEndDate) } : null,
+    // البدايةُ تُختم بوصول أوّل مقال — قبله يُقال ذلك صراحةً بدل خانةٍ ناقصة.
+    { label: "تاريخ البداية", value: sub.startedAt ? arabicLongDateLatin(sub.startedAt) : "مع أوّل مقال" },
+    sub.endsAt ? { label: "تاريخ النهاية", value: arabicLongDateLatin(sub.endsAt) } : null,
     durationDays === null ? null : { label: "مدة الاشتراك", value: `${durationDays} يوماً` },
   ].filter((row): row is { label: string; value: string } => row !== null);
 
@@ -87,9 +80,9 @@ export async function GET(request: NextRequest) {
     ...screen,
     empty: null,
     subscription: {
-      status: client.subscriptionStatus,
-      statusLabel: statusLabels[client.subscriptionStatus] ?? client.subscriptionStatus,
-      statusTone: positiveStatuses.has(client.subscriptionStatus) ? "positive" : dangerStatuses.has(client.subscriptionStatus) ? "danger" : "warning",
+      status: sub.status,
+      statusLabel: statusLabels[sub.status] ?? sub.status,
+      statusTone: positiveStatuses.has(sub.status) ? "positive" : dangerStatuses.has(sub.status) ? "danger" : "warning",
       daysRemainingLabel: daysRemaining === null ? null : `${daysRemaining} يوماً متبقياً`,
       planPayment: { title: "الباقة والدفع", rows: planPaymentRows },
       usage: articlesPerMonth === null || articlesRemaining === null ? null : {

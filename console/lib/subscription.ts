@@ -1,4 +1,5 @@
 import { ar } from "@/lib/ar";
+import type { ClientPaymentKey } from "@/lib/payments/resolve-client-payment";
 
 /**
  * Subscription state, derived once and read by both the settings card and the sidebar
@@ -8,7 +9,8 @@ import { ar } from "@/lib/ar";
 export interface SubscriptionData {
   tierName: string;
   status: string | null;
-  paymentStatus: string | null;
+  /** من `resolveClientPayment` — الطلبُ الساري والفواتيرُ القائمة معاً. */
+  paymentStatus: ClientPaymentKey;
   startDate: Date | null;
   endDate: Date | null;
   /**
@@ -47,14 +49,19 @@ export function statusLabel(status: string | null): SubscriptionBadge {
   return { label: s.statusInactive, classes: "bg-amber-100 text-amber-700 ring-amber-200" };
 }
 
-export function paymentLabel(payment: string | null): SubscriptionBadge {
+/**
+ * شارةُ الدفع — كلماتُ القاعدة ٥ (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد). و`NONE` بلا شارة:
+ * من لا طلبَ ساريَ له لا يُقال له «مدفوع» ولا غيرُه.
+ */
+export function paymentLabel(payment: ClientPaymentKey): SubscriptionBadge | null {
   const s = ar.settings;
-  const upper = String(payment || "").toUpperCase();
-  if (upper === "PAID")
+  if (payment === "OWES")
+    return { label: s.paymentOwes, classes: "bg-red-100 text-red-700 ring-red-200" };
+  if (payment === "PAID")
     return { label: s.paymentPaid, classes: "bg-emerald-100 text-emerald-700 ring-emerald-200" };
-  if (upper === "PENDING")
-    return { label: s.paymentPending, classes: "bg-amber-100 text-amber-700 ring-amber-200" };
-  return { label: s.paymentUnpaid, classes: "bg-red-100 text-red-700 ring-red-200" };
+  if (payment === "REFUNDED")
+    return { label: s.paymentRefunded, classes: "bg-slate-100 text-slate-600 ring-slate-200" };
+  return null;
 }
 
 export function subscriptionProgress(

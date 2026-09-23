@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ReferralLeadStatus } from "@prisma/client";
 import { Loader2 } from "lucide-react";
@@ -32,6 +33,28 @@ const DATE = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
 });
 const when = (d: Date | string | null) => (d ? DATE.format(new Date(d)) : null);
 
+const DAY = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", { day: "numeric", month: "short", year: "numeric" });
+
+/**
+ * «سدّد» يُعرض بالطلب المدفوع الذي يثبته (رقمه وتاريخ دفعه)؛ وختمٌ قديم بلا طلبٍ
+ * مدفوع يُوسم صراحةً بدل أن يبدو سداداً. ٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد.
+ */
+function PaidOrderProof({ row }: { row: ReferralRow }) {
+  if (!row.paidOrder) {
+    return <span className="text-destructive">بلا طلبٍ مدفوع</span>;
+  }
+  return (
+    <>
+      <Link href={`/orders/${row.paidOrder.id}`} dir="ltr" className="text-link hover:underline">
+        {row.paidOrder.number}
+      </Link>
+      {row.paidOrder.paidAt && (
+        <span dir="ltr" className="opacity-70">{DAY.format(new Date(row.paidOrder.paidAt))}</span>
+      )}
+    </>
+  );
+}
+
 /** السجلّ الزمني — أختامٌ فعلية فقط. الختم الغائب لا يُرسم، فالفراغ نفسه معلومة. */
 function Timeline({ row }: { row: ReferralRow }) {
   const steps = [
@@ -48,7 +71,11 @@ function Timeline({ row }: { row: ReferralRow }) {
         <li key={label} className="flex items-center gap-1.5">
           {i > 0 && <span aria-hidden>←</span>}
           <span>{label}</span>
-          <span dir="ltr" className="opacity-70">{when(at)}</span>
+          {label === "سدّد" ? (
+            <PaidOrderProof row={row} />
+          ) : (
+            <span dir="ltr" className="opacity-70">{when(at)}</span>
+          )}
         </li>
       ))}
     </ol>
@@ -67,6 +94,8 @@ export function ReferralsTable({ rows, clients }: { rows: ReferralRow[]; clients
   const needsNote = (s: ReferralLeadStatus) => s === "REJECTED" || s === "LOST";
   /** «اشترك» يطلب العميل الناتج — وهو ما يربط السداد لاحقاً بهذه الإحالة بالذات. */
   const needsClient = (s: ReferralLeadStatus) => s === "SUBSCRIBED";
+  /** «سدّد» والمكافأة يثبتهما طلبٌ مدفوع للعميل الناتج بعد الإحالة — والخادم يرفض بدونه أيضاً. */
+  const needsPaidOrder = (s: ReferralLeadStatus) => s === "PAID" || s === "REWARDED";
 
   function move(row: ReferralRow, next: ReferralLeadStatus) {
     if (needsNote(next) || needsClient(next)) {
@@ -132,11 +161,14 @@ export function ReferralsTable({ rows, clients }: { rows: ReferralRow[]; clients
                 <div className="flex flex-wrap items-center gap-1.5">
                   {next.map((s) => (
                     <Button key={s} size="sm" variant={s === "REJECTED" || s === "LOST" ? "outline" : "default"}
-                      disabled={pending} onClick={() => move(row, s)}>
+                      disabled={pending || (needsPaidOrder(s) && !row.paidOrder)} onClick={() => move(row, s)}>
                       {pending && <Loader2 className="size-3.5 animate-spin" />}
                       {STATUS_AR[s]}
                     </Button>
                   ))}
+                  {next.some(needsPaidOrder) && !row.paidOrder && (
+                    <span className="text-xs text-muted-foreground">لا طلبَ مدفوعاً للعميل بعد تاريخ الإحالة</span>
+                  )}
                   {IS_CLOSED(row.status) && (
                     <span className="text-xs text-muted-foreground">انتهى مسارها</span>
                   )}
@@ -157,7 +189,7 @@ export function ReferralsTable({ rows, clients }: { rows: ReferralRow[]; clients
             <DialogTitle>{target ? STATUS_AR[target.next] : ""}</DialogTitle>
             <DialogDescription>
               {target && needsClient(target.next)
-                ? "اختر العميل الذي صار منه المُرشَّح. هذا ما يجعل السداد يُحسب لصاحب الإحالة تلقائياً."
+                ? "اختر العميل الذي صار منه المُرشَّح. طلبه المدفوع هو ما يثبت «سدّد» لصاحب الإحالة."
                 : "اكتب السبب بخطّك — يظهر على الإحالة، وبلاه يصير التقرير أرقاماً بلا تفسير."}
             </DialogDescription>
           </DialogHeader>

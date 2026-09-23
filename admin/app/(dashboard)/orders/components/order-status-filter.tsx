@@ -2,8 +2,9 @@ import type { CheckoutOrderStatus, PaymentProvider } from "@prisma/client";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import { orderStatusCopy } from "../helpers/order-status-copy";
+import { orderStatusCopy } from "@/lib/orders/order-status-copy";
 import { orderProviderLabel } from "@/lib/orders/order-provider-label";
+import { OrderFilterMenu } from "./order-filter-menu";
 
 const STATUSES: CheckoutOrderStatus[] = ["AWAITING_PAYMENT", "AWAITING_TRANSFER", "PAID", "FAILED", "CANCELLED", "REFUNDED"];
 const PROVIDERS: PaymentProvider[] = ["NGENIUS", "TAMARA", "BANK_TRANSFER", "INSTAPAY", "MIGRATED"];
@@ -41,7 +42,10 @@ export function OrderStatusFilter({
   /** مدفوعٌ بلا حساب عميل — ليست حالةً في القاعدة بل غيابُ `clientId`. */
   awaitingActivation: number;
   isAwaitingView: boolean;
-  /** اشتراكٌ انقضت شهورُه — يُحسب من التفعيل + المدّة، ليس حالةً في القاعدة. */
+  /**
+   * عملاءُ انتهى اشتراكُهم — طلبٌ ساريٌ واحد لكلٍّ منهم، بلا الحسابات الداخليّة. نفسُ عدد
+   * `/clients/segment/expired` (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد)، لا طلباتٌ قديمة لعميلٍ جدّد.
+   */
   expired: number;
   isExpiredView: boolean;
   /** طلباتٌ لكلّ بوّابة — من `payment_transactions`؛ المُرحَّل له `MIGRATED`. */
@@ -57,43 +61,58 @@ export function OrderStatusFilter({
     // صفٌّ واحدٌ يمرّر أفقيّاً عند الضيق ولا يلتفّ (خالد ١٩ سبتمبر ٢٠٢٦: «كلّها تكون في
     // سطرٍ واحد»). الالتفافُ كان يُنزل «البوّابة» تحت «الاشتراك» على الشاشات الضيّقة، فيتغيّر
     // ترتيبُ المجموعات بعرض النافذة — والعينُ تتعلّم الموضعَ قبل أن تقرأ الاسم.
-    <div className="flex items-end gap-x-2 overflow-x-auto pb-0.5 [scrollbar-width:thin]" role="tablist" aria-label="فلاتر الاشتراكات">
-      <Group label="الاشتراك">
+    <div className="flex flex-wrap items-center gap-2" role="tablist" aria-label="فلاتر الاشتراكات">
+      {/* الظاهرُ ثلاثةٌ تعني عملاً الآن؛ والباقي في القائمة بجانبها. */}
+      <div className="flex items-center gap-1">
         <Pill href="/orders" label="الكل" count={total} isActive={nothingActive} />
         {/* الوحيد الذي يعني عملاً على الفريق الآن — مالٌ وصل وخدمةٌ لم تبدأ. */}
         <Pill href="/orders?view=awaiting-activation" label="ينتظر التفعيل" count={awaitingActivation} isActive={isAwaitingView} tone={awaitingActivation > 0 ? "alert" : undefined} />
         {/* منتهٍ = تجديدٌ مستحقّ. أحمرُ كصفوفه في الجدول. */}
         <Pill href="/orders?view=expired" label="منتهٍ" count={expired} isActive={isExpiredView} tone={expired > 0 ? "danger" : undefined} />
-      </Group>
-      <Group label="الحالة">
-        {STATUSES.map((status) => (
-          <Pill key={status} href={`/orders?status=${status}`} label={orderStatusCopy(status).label} title={orderStatusCopy(status).hint} count={counts[status] ?? 0} isActive={active === status} />
-        ))}
-      </Group>
-      <Group label="السوق">
-        {Object.keys(marketLabels).map((code) => (
-          <Pill key={code} href={`/orders?market=${code}`} label={marketLabels[code]} count={marketCounts[code] ?? 0} isActive={activeMarket === code} />
-        ))}
-      </Group>
-      <Group label="البوابة">
-        {PROVIDERS.map((provider) => (
-          <Pill key={provider} href={`/orders?provider=${provider}`} label={orderProviderLabel(provider)} count={providerCounts[provider] ?? 0} isActive={activeProvider === provider} />
-        ))}
-      </Group>
+      </div>
+      <OrderFilterMenu
+        sections={[
+          {
+            title: "الحالة",
+            items: STATUSES.map((status) => ({
+              href: `/orders?status=${status}`,
+              label: orderStatusCopy(status).label,
+              hint: orderStatusCopy(status).hint,
+              count: counts[status] ?? 0,
+              active: active === status,
+            })),
+          },
+          {
+            title: "السوق",
+            items: Object.keys(marketLabels).map((code) => ({
+              href: `/orders?market=${code}`,
+              label: marketLabels[code],
+              count: marketCounts[code] ?? 0,
+              active: activeMarket === code,
+            })),
+          },
+          {
+            title: "البوابة",
+            items: PROVIDERS.map((provider) => ({
+              href: `/orders?provider=${provider}`,
+              label: orderProviderLabel(provider),
+              count: providerCounts[provider] ?? 0,
+              active: activeProvider === provider,
+            })),
+          },
+        ]}
+      />
     </div>
   );
 }
 
-/** اسمُ المجموعة فوقها لا بجانبها (خالد ١٨ سبتمبر) — يوفّر عرضاً فتتّسع الثلاث في سطرٍ واحد. */
-function Group({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex shrink-0 flex-col gap-0.5">
-      <span className="ps-1 text-[9.5px] font-medium leading-none text-muted-foreground">{label}</span>
-      <div className="flex items-center gap-0.5 rounded-md border border-border/70 bg-muted/30 p-0.5">{children}</div>
-    </div>
-  );
-}
 
+/**
+ * حبّةٌ واحدة: اسمٌ وعدٌّ في شارةٍ مدوّرة داخلها — بلا خانتين ولا خطٍّ بينهما.
+ *
+ * كانت خانتين بإطارٍ فاصل، وخانةُ العدد لا تملأ ارتفاعَ الحبّة، فبدت «بوردر جوّه بوردر»
+ * (خالد ٢٣ سبتمبر ٢٠٢٦). والشكلُ الآن هو شكلُ زرّ «فلترة» بجانبها — لغةٌ واحدة للصفّ.
+ */
 function Pill({ href, label, count, isActive, tone, title }: { href: string; label: string; count: number; isActive: boolean; tone?: "alert" | "danger"; title?: string }) {
   const alert = tone === "alert" && !isActive;
   const danger = tone === "danger" && !isActive;
@@ -104,37 +123,27 @@ function Pill({ href, label, count, isActive, tone, title }: { href: string; lab
       aria-selected={isActive}
       title={title}
       className={cn(
-        // أصغر (خالد ١٨ سبتمبر): 10px وحشوٌ أضيق — أربع عشرة حبّة في صفّ العنوان.
-        // بلا بولد (خالد ١٨ سبتمبر): الوزنُ الثقيل على أربع عشرة حبّةٍ يجعل الصفَّ كلَّه
-        // يصرخ، فلا يبرز النشطُ منها. اللونُ وحده يميّز.
-        "inline-flex items-center overflow-hidden rounded-full border bg-card text-[10px] font-normal leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[12px] leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         isActive
-          ? "border-primary"
+          ? "border-primary bg-primary text-primary-foreground"
           : alert
-            ? "border-amber-500/50 hover:bg-amber-500/10"
+            ? "border-amber-500/50 bg-card text-amber-700 hover:bg-amber-500/10 dark:text-amber-400"
             : danger
-              ? "border-red-500/50 hover:bg-red-500/10"
-              : "border-border hover:bg-accent",
+              ? "border-red-500/50 bg-card text-red-700 hover:bg-red-500/10 dark:text-red-400"
+              : "bg-card text-foreground hover:bg-accent",
       )}
     >
+      {label}
       <span
         className={cn(
-          "px-1.5 py-1",
-          isActive ? "bg-primary text-primary-foreground" : alert ? "text-amber-700 dark:text-amber-500" : danger ? "text-red-700 dark:text-red-400" : "text-foreground",
-        )}
-      >
-        {label}
-      </span>
-      <span
-        className={cn(
-          "border-s px-1 py-1 tabular-nums",
+          "rounded-full px-1.5 py-0.5 text-[10px] tabular-nums",
           isActive
-            ? "border-primary-foreground/30 bg-primary-foreground text-primary"
+            ? "bg-primary-foreground/20"
             : alert
-              ? "border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-500"
+              ? "bg-amber-500/15"
               : danger
-                ? "border-red-500/40 bg-red-500/15 text-red-700 dark:text-red-400"
-                : "border-border bg-muted text-muted-foreground",
+                ? "bg-red-500/15"
+                : "bg-muted text-muted-foreground",
         )}
       >
         {count}

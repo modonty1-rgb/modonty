@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { ArticleStatus, type NotificationPriority } from "@prisma/client";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
@@ -116,7 +117,6 @@ export async function getBriefDetail(clientId: string): Promise<BriefDetail | nu
       sameAs: true,
       intake: true,
       intakeUpdatedAt: true,
-      articlesPerMonth: true,
       // Ids only. Which file is the logo is a relation ON THE CLIENT, not a value in
       // `Media.type` — without these the brand assets sit in the gallery labelled "عامة"
       // like any stock photo. The urls come from the gallery query itself.
@@ -208,8 +208,8 @@ export async function getBriefDetail(clientId: string): Promise<BriefDetail | nu
     sameAs: client.sameAs ?? [],
     intake: client.intake,
     intakeUpdatedAt: client.intakeUpdatedAt,
-    // الحصّة من الطلب وحده — سقط احتياطيُّ الجدول القديم (١٩ سبتمبر ٢٠٢٦).
-    monthlyQuota: client.articlesPerMonth ?? 0,
+    // الحصّة من الطلب الساري — لا من نسخة الكرت (مصدرٌ واحد، ٢٣ سبتمبر ٢٠٢٦).
+    monthlyQuota: (await getClientSubscriptions({ id: client.id })).get(client.id)?.articlesPerMonth ?? 0,
     publishedThisMonth,
     publishedTotal: published.length,
     recentArticles: recent.map((a) => ({

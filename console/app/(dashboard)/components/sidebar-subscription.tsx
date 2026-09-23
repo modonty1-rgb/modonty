@@ -7,7 +7,8 @@ import type { SubscriptionBadge, SubscriptionProgress } from "@/lib/subscription
 export interface SidebarSubscriptionProps {
   tierName: string;
   status: SubscriptionBadge;
-  payment: SubscriptionBadge;
+  /** null = لا شيء يُقال (مدفوع، أو لا طلبَ ساري) — الشارةُ للمستحقّ والمسترد وحدهما. */
+  payment: SubscriptionBadge | null;
   progress: SubscriptionProgress | null;
   endDate: string;
   /** Publishing to the client's own website is switched on. */
@@ -91,9 +92,9 @@ export function SidebarSubscription({
         </div>
       )}
 
-      {/* Payment only speaks up when it is not settled — a permanent green «مدفوع» is
-          noise, while «غير مدفوع» is the one thing the client must not miss. */}
-      {payment.label !== s.paymentPaid && (
+      {/* نفسُ شارة الإعدادات (`resolveClientPayment`) — قاعدةٌ واحدة وكلمةٌ واحدة في المكانين
+          (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد). والـlayout يمرّر null حين لا طلبَ ساريَ فقط. */}
+      {payment && (
         <span
           className={cn(
             "inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ring-1",

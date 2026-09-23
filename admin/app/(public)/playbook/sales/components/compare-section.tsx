@@ -1,10 +1,10 @@
-import { getMomentumPrice } from "@/lib/pricing/format-for-guideline";
+import { getFeaturedPlanPrice } from "@/lib/pricing/get-featured-plan-price";
 import { comparisonRows, sixBattles, whenNotFit } from "@/app/(public)/playbook/what-is-modonty-helpers/positioning";
 
 export async function CompareSection() {
-  const momentum = await getMomentumPrice("SA");
-  const edgePrice = momentum?.monthly
-    ? `نظام يعمل على مدار الساعة، ويتراكم مع كل شريك جديد، بسعر ${momentum.monthly} ريال شهريًا.`
+  const featured = await getFeaturedPlanPrice("SA");
+  const edgePrice = featured?.monthly
+    ? `نظام يعمل على مدار الساعة، ويتراكم مع كل شريك جديد، بسعر ${featured.monthly} ريال شهريًا.`
     : "نظام يعمل على مدار الساعة، ويتراكم مع كل شريك جديد، بسعر الباقة الشهري.";
   const wordpressYearly = `${(18000 * 12).toLocaleString("en-GB")}+ ريال سنويًا مع فريق تطوير وتصميم وكتابة وسيو بأقل الأسعار`;
   const battles = sixBattles.map((battle) => ({

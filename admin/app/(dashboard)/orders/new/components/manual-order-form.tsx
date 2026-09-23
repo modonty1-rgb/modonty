@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { formatMonths } from "../../helpers/format-months";
 import { useToast } from "@/hooks/use-toast";
 
 import { createManualOrder } from "../actions/create-manual-order";
@@ -422,7 +423,7 @@ export function ManualOrderForm({
               </span>
               <span className="text-xs font-semibold text-muted-foreground">{marketMeta.currencyWord}</span>
               <span className="text-[11px] text-muted-foreground">
-                · {vatLabel(market)} · خدمة {serviceMonths} شهراً
+                · {vatLabel(market)} · خدمة {formatMonths(serviceMonths)} تبدأ مع أوّل مقال
                 {isCustom ? " · اتفاق خاصّ" : null}
               </span>
             </>

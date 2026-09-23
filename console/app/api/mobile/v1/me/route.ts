@@ -3,7 +3,7 @@ import { SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { getActiveOrderForClient } from "@/lib/subscription/active-order";
+import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
 import { notificationToggles, readNotificationPreferences } from "./preference-groups";
 
 /**
@@ -23,7 +23,8 @@ const STATUS_LABELS: Record<SubscriptionStatus, string> = {
 export async function GET(request: NextRequest) {
   const session = await mobileSessionFromRequest(request);
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
-  const activeOrder = await getActiveOrderForClient(session.clientId);
+  const sub = await getClientSubscription(session.clientId);
+  const activeOrder = sub.order;
   const client = await db.client.findUnique({
     where: { id: session.clientId },
     select: { id: true, name: true, slug: true, email: true, notificationPreferences: true, subscriptionStatus: true, logoMedia: { select: { url: true, bunnyUrl: true, altText: true } } },
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
       name: client.name,
       email: client.email,
       // كان يطبع رمز الـenum نفسه («باقة PRO») في تطبيق الجوّال. الاسم الآن من الطلب.
-      planLabel: `${activeOrder ? "باقة " + activeOrder.planName : "بلا باقة"} ${STATUS_LABELS[client.subscriptionStatus]}`,
+      planLabel: `${activeOrder ? "باقة " + activeOrder.planName : "بلا باقة"} ${STATUS_LABELS[sub.status]}`,
       notifications: notificationToggles(preferences),
     },
     review: {

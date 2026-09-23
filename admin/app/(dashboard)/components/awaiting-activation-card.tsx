@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Wallet } from "lucide-react";
 
 import { getAwaitingActivationTotals } from "@/lib/orders/awaiting-activation";
+import { currencyLabel } from "@modonty/shared/lib/commercial/format-money";
 
 /**
  * Paid orders with no client account yet — the card that makes a sleeping order visible.
@@ -50,6 +51,5 @@ export async function AwaitingActivationCard() {
 
 function money(minor: number, currency: string) {
   const amount = new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 0 }).format(minor / 100);
-  const unit = currency === "EGP" ? "ج.م" : currency === "SAR" ? "ر.س" : currency;
-  return `${amount} ${unit}`;
+  return `${amount} ${currencyLabel(currency)}`;
 }

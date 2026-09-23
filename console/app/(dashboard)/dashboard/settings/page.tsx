@@ -11,7 +11,9 @@ import { PullAddressPanel } from "./components/pull-address-panel";
 import { SiteSeoCheck } from "./components/site-seo-check";
 import { TelegramCard } from "./components/telegram-card";
 import type { SubscriptionData } from "@/lib/subscription";
-import { getActiveOrderForClient, formatOrderMoney } from "@/lib/subscription/active-order";
+import { formatOrderMoney } from "@/lib/subscription/active-order";
+import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
+import { getOutstandingInvoices, resolveClientPayment } from "@/lib/payments";
 import type { NotificationPreferences } from "./actions/settings-actions";
 import type { TelegramEventPreferences } from "@/lib/telegram/events";
 
@@ -22,56 +24,44 @@ export default async function SettingsPage() {
   const clientId = (session as { clientId?: string })?.clientId;
   if (!clientId) redirect("/");
 
-  const client = await db.client.findUnique({
-    where: { id: clientId },
-    select: {
-      notificationPreferences: true,
-      subscriptionStatus: true,
-      subscriptionStartDate: true,
-      /**
-       * حالةُ الدفع تُحسب من الفواتير، لا من `Client.paymentStatus`.
-       *
-       * ذاك حقلٌ لا يكتب فيه أيُّ مسارٍ قيمةَ «متأخّر» إطلاقاً — يُكتب «مسدَّد» ويبقى.
-       * فقيس على بيانات الإنتاج: ٢٦ عميلاً بلا فاتورةٍ واحدة مكتوبٌ عليهم «مسدَّد»،
-       * وهي شارةٌ يراها العميلُ نفسُه في بوّابته.
-       *
-       * والفاتورةُ غيرُ المؤرشفة وغيرُ المسدَّدة هي الجواب. و`archivedAt: null` وحدها
-       * لا تطابق صفّاً كُتب قبل وجود الحقل في مونغو — فتُقرن بـ`isSet: false`.
-       */
-      invoices: {
-        where: {
-          NOT: { paymentStatus: "PAID" },
-          OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
-        },
-        select: { id: true },
-        take: 1,
+  const [client, sub, outstanding] = await Promise.all([
+    db.client.findUnique({
+      where: { id: clientId },
+      select: {
+        notificationPreferences: true,
+        telegramChatId: true,
+        telegramConnectedAt: true,
+        telegramEventPreferences: true,
+        // The pull addresses live here now: a developer sets them up once, which is a
+        // settings job, not something the articles list should carry every day.
+        canPublishToOwnSite: true,
+        articlesBaseUrl: true,
+        apiKeySuspended: true,
+        apiKeyLastUsedAt: true,
       },
-      subscriptionEndDate: true,
-      telegramChatId: true,
-      telegramConnectedAt: true,
-      telegramEventPreferences: true,
-      // The pull addresses live here now: a developer sets them up once, which is a
-      // settings job, not something the articles list should carry every day.
-      canPublishToOwnSite: true,
-      articlesBaseUrl: true,
-      apiKeySuspended: true,
-      apiKeyLastUsedAt: true,
-    },
-  });
+    }),
+    // الاشتراكُ كلُّه من الطلب الساري — الباقةُ والسعرُ والبدايةُ والنهايةُ والحالة (قاعدة المصدر الواحد).
+    getClientSubscription(clientId),
+    getOutstandingInvoices(clientId),
+  ]);
   if (!client) redirect("/");
 
   const s = ar.settings;
   const prefs =
     (client.notificationPreferences as NotificationPreferences | null) ?? null;
 
-  // اسم الباقة وسعرها من الطلب الساري — لا من الكتالوج الذي يتغيّر (قاعدة المصدر الواحد).
-  const order = await getActiveOrderForClient(clientId);
+  const order = sub.order;
   const subscription: SubscriptionData = {
     tierName: order?.planName ?? "—",
-    status: client.subscriptionStatus ?? null,
-    paymentStatus: client.invoices.length > 0 ? "UNPAID" : "PAID",
-    startDate: client.subscriptionStartDate ?? null,
-    endDate: client.subscriptionEndDate ?? null,
+    status: sub.status,
+    /**
+     * شارةُ الدفع من الطلب الساري والمستحقّات معاً (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد).
+     * كانت من الفواتير وحدها، فرأى «مدفوع» عميلٌ بلا طلب، وعميلٌ طلبُه مستردّ والكرتُ نفسُه
+     * يُخفي مبلغه. والقاعدةُ نفسُها في الشريط الجانبيّ (`layout.tsx`).
+     */
+    paymentStatus: resolveClientPayment(order, outstanding.count),
+    startDate: sub.startedAt,
+    endDate: sub.endsAt,
     paidTotal: order && isCollectedOrder(order) ? formatOrderMoney(order.totalMinor, order.currency) : null,
     paidMonths: order?.paidMonths ?? null,
     bonusServiceMonths: order?.bonusServiceMonths ?? null,

@@ -1,3 +1,4 @@
+import { InvoicePaymentStatus } from "@prisma/client";
 import { ArrowRight, ReceiptText } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -7,12 +8,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { db } from "@/lib/db";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
 import { formatOrderDate } from "@/app/(dashboard)/orders/helpers/format-order-date";
+import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
+import { orderStatusCopy } from "@/lib/orders/order-status-copy";
 import { formatOrderMoney } from "@/lib/orders/format-order-money";
 import {
   invoiceMinor,
   isCollectedOrder,
   isOutstandingInvoice,
-  isStandaloneCollectedInvoice,
 } from "@modonty/shared/lib/payments/collected";
 
 const isValidObjectId = (id: string) => /^[a-f\d]{24}$/i.test(id);
@@ -27,18 +29,7 @@ type CurrencySummary = {
 /** الطلباتُ التي لم يُتّفق فيها على شيء — لا تُجمع في «الطلبات». */
 const VOID_ORDER = new Set(["CANCELLED", "FAILED"]);
 
-const ORDER_STATUS_LABEL: Record<string, string> = {
-  PAID: "مدفوع",
-  AWAITING_PAYMENT: "بانتظار الدفع",
-  AWAITING_TRANSFER: "بانتظار التحويل",
-  FAILED: "فشل",
-  CANCELLED: "ملغى",
-  REFUNDED: "مُسترَد",
-};
 
-function paymentStatusLabel(status: string) {
-  return status === "PAID" ? "مسدَّدة" : "بانتظار السداد";
-}
 
 export default async function ClientAccountPage({
   params,
@@ -92,8 +83,8 @@ export default async function ClientAccountPage({
   for (const invoice of invoices) {
     const summary = summaryFor(invoice.currency);
     summary.invoices += 1;
+    // المستلمُ من الطلبات وحدها — الفاتورةُ مستندٌ لا مال (مصدرٌ واحد، ٢٣ سبتمبر ٢٠٢٦).
     if (isOutstandingInvoice(invoice)) summary.dueMinor += invoiceMinor(invoice);
-    else if (isStandaloneCollectedInvoice(invoice)) summary.receivedMinor += invoiceMinor(invoice);
   }
 
   const currencyRows = [...summaries.entries()].sort(([a], [b]) => a.localeCompare(b));
@@ -137,7 +128,7 @@ export default async function ClientAccountPage({
       <section className="overflow-hidden rounded-lg border bg-card">
         <div className="flex items-center justify-between gap-3 border-b px-4 py-2.5">
           <h2 className="text-sm font-bold">الحركة المالية</h2>
-          <span className="text-xs text-muted-foreground">المستلم = الطلبات المدفوعة والفواتير المسدَّدة بلا طلب</span>
+          <span className="text-xs text-muted-foreground">المستلم = الطلبات المدفوعة وحدها — الفاتورة مستند، لا مال</span>
         </div>
         {orders.length === 0 && standaloneInvoices.length === 0 ? (
           <p className="px-4 py-8 text-center text-sm text-muted-foreground">لا توجد حركة مالية لهذا العميل.</p>
@@ -168,7 +159,7 @@ export default async function ClientAccountPage({
                       <TableCell className="tabular-nums">{formatOrderMoney(order.totalMinor, order.currency)}</TableCell>
                       <TableCell className="tabular-nums text-emerald-600 dark:text-emerald-400">{formatOrderMoney(receivedMinor, order.currency)}</TableCell>
                       <TableCell className={dueMinor > 0 ? "tabular-nums text-destructive" : "tabular-nums text-muted-foreground"}>{formatOrderMoney(dueMinor, order.currency)}</TableCell>
-                      <TableCell><Badge variant={order.status === "PAID" ? "default" : "secondary"}>{ORDER_STATUS_LABEL[order.status] ?? order.status}</Badge></TableCell>
+                      <TableCell><Badge variant={order.status === "PAID" ? "default" : "secondary"}>{orderStatusCopy(order.status).label}</Badge></TableCell>
                       <TableCell className="whitespace-nowrap text-muted-foreground">{formatOrderDate(order.paidAt ?? order.createdAt)}</TableCell>
                     </TableRow>
                   );
@@ -180,11 +171,10 @@ export default async function ClientAccountPage({
                       <p className="text-xs text-muted-foreground">فاتورة تاريخية بلا طلب مرتبط</p>
                     </TableCell>
                     <TableCell className="tabular-nums">{formatOrderMoney(invoiceMinor(invoice), invoice.currency)}</TableCell>
-                    <TableCell className={isStandaloneCollectedInvoice(invoice) ? "tabular-nums text-emerald-600 dark:text-emerald-400" : "tabular-nums text-muted-foreground"}>
-                      {isStandaloneCollectedInvoice(invoice) ? formatOrderMoney(invoiceMinor(invoice), invoice.currency) : "—"}
-                    </TableCell>
-                    <TableCell className={invoice.paymentStatus === "PAID" ? "tabular-nums text-muted-foreground" : "tabular-nums text-destructive"}>{invoice.paymentStatus === "PAID" ? "—" : formatOrderMoney(invoiceMinor(invoice), invoice.currency)}</TableCell>
-                    <TableCell><Badge variant={invoice.paymentStatus === "PAID" ? "default" : "secondary"}>{paymentStatusLabel(invoice.paymentStatus)}</Badge></TableCell>
+                    {/* فاتورةٌ بلا طلب لا تُعدّ «مستلماً»: المالُ يُسجَّل بطلبٍ أوّلاً (مصدرٌ واحد). */}
+                    <TableCell className="tabular-nums text-muted-foreground">—</TableCell>
+                    <TableCell className={invoice.paymentStatus === InvoicePaymentStatus.PAID ? "tabular-nums text-muted-foreground" : "tabular-nums text-destructive"}>{invoice.paymentStatus === InvoicePaymentStatus.PAID ? "—" : formatOrderMoney(invoiceMinor(invoice), invoice.currency)}</TableCell>
+                    <TableCell><Badge variant={invoice.paymentStatus === InvoicePaymentStatus.PAID ? "default" : "secondary"}>{INVOICE_STATUS_LABEL[invoice.paymentStatus]}</Badge></TableCell>
                     <TableCell className="whitespace-nowrap text-muted-foreground">{formatOrderDate(invoice.issuedAt)}</TableCell>
                   </TableRow>
                 ))}

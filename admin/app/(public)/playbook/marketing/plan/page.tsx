@@ -1,6 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DocLayout } from "@/app/(public)/components/doc-layout";
+import { getPlaybookCatalogCopy } from "../../helpers/get-playbook-catalog-copy";
+import { getFeaturedPlanPrice } from "@/lib/pricing/get-featured-plan-price";
 import {
   Megaphone,
   Globe2,
@@ -32,8 +34,9 @@ const fiveMessages = [
   {
     num: 2,
     label: "Pricing CTA",
-    line: "ادفع 12 شهر، استلم 18 شهر. ROI ≈ 70× في السنة الأولى.",
-    why: "12=18 = ضمان نفسي (مش خصم). «70×» رقم محسوب من حاسبة العائد، يثبّت القيمة بأرقام. الـ Anti-Hook «أرخص» تم استبدالها بـ «ROI» (القاعدة 16).",
+    // «__ANNUAL__» يُملأ من صفّ مدّة الـ١٢ شهراً في الكتالوج — `getPlaybookCatalogCopy`.
+    line: "__ANNUAL__ ROI ≈ 70× في السنة الأولى.",
+    why: "__ANNUAL_WHY__ = ضمان نفسي (مش خصم). «70×» رقم محسوب من حاسبة العائد، يثبّت القيمة بأرقام. الـ Anti-Hook «أرخص» تم استبدالها بـ «ROI» (القاعدة 16).",
     when: "بعد ما ذكرت السعر · في slide pricing · لما العميل يقول «غالي»",
     dont: "«ادفع 99% أقل من الوكالات» (Anti-Hook «أقل» — يدمّر perceived value)",
   },
@@ -48,8 +51,9 @@ const fiveMessages = [
   {
     num: 4,
     label: "AI / Content Quality",
-    line: "8 مقالات شهرياً. كل مقال يجتاز 9 فحوصات. كل مقال الخبرة والمصداقية كامل. بدون فريق.",
-    why: "تثبت القيمة بأرقام (8 مقالات، 9 فحوصات) — مش وعود. «بدون فريق» تخاطب صاحب SMB اللي ما يقدر يدفع رواتب فريق.",
+    // «__ARTICLES__» حصّةُ الباقات المنشورة من الكتالوج — لا «8» مكتوبة (هي حصّة الانطلاقة وحدها).
+    line: "__ARTICLES__. كل مقال يجتاز 9 فحوصات. كل مقال الخبرة والمصداقية كامل. بدون فريق.",
+    why: "تثبت القيمة بأرقام (__ARTICLES__، 9 فحوصات) — مش وعود. «بدون فريق» تخاطب صاحب SMB اللي ما يقدر يدفع رواتب فريق.",
     when: "للعملاء اللي يقارنونك بـ ChatGPT أو فريلانسر · في الـ Discovery لما يذكر «أنا أكتب بنفسي»",
     dont: "«AI-powered content engine» (جوفاء)",
   },
@@ -189,7 +193,8 @@ const journey = [
     stage: "4. التحويل (Conversion)",
     icon: MousePointerClick,
     channel: "WhatsApp + استشارة فردية + Demo حي",
-    content: "عرض Momentum + قاعدة 12=18 + Telegram demo trick",
+    // الباقةُ المميَّزة وعرضُ السنة من الكتالوج — `fill` في الصفحة.
+    content: "عرض __FEATURED__ + قاعدة __ANNUAL_WHY__ + Telegram demo trick",
     kpi: "Free → Paid conversion (هدف 12%)",
     why: "اللحظة الفاصلة. القاعدة 22 (Telegram demo trick) تقفل 30%+ من الصفقات. اربطه على bot وأرسل event حقيقي.",
     color: "emerald",
@@ -252,7 +257,18 @@ const swot = {
   threats: ["WordPress + ChatGPT plugins", "HubSpot عربية محتملة", "منصات سعودية محلية ناشئة", "Google algorithm changes (AI Overviews)"],
 };
 
-export default function MarketingStrategyPage() {
+export default async function MarketingStrategyPage() {
+  // عرضُ السنة وحصّةُ المقالات من كتالوج البيع — وغيابُهما جملةٌ بلا رقم (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد).
+  const [{ annual, articles }, featured] = await Promise.all([getPlaybookCatalogCopy(), getFeaturedPlanPrice("SA")]);
+  const fill = (text: string) =>
+    text
+      .replace("__ANNUAL_WHY__", annual ? `${annual.paid}=${annual.total}` : "شهور الهدية")
+      .replace("__ANNUAL__", annual ? `ادفع ${annual.paid} شهر، استلم ${annual.total} شهر.` : "ادفع سنة، واستلم شهور هدية فوقها.")
+      .replaceAll("__ARTICLES__", articles ?? "مقالات كل شهر")
+      .replace("__FEATURED__", featured?.name ?? "الباقة الأكثر اختياراً");
+  const messages = fiveMessages.map((m) => ({ ...m, line: fill(m.line), why: fill(m.why) }));
+  const stages = journey.map((j) => ({ ...j, content: fill(j.content) }));
+
   return (
     <DocLayout
       parentHref="/playbook"
@@ -308,7 +324,7 @@ export default function MarketingStrategyPage() {
         </p>
 
         <div className="space-y-3">
-          {fiveMessages.map((m) => (
+          {messages.map((m) => (
             <Card key={m.num} className="border-violet-500/25 bg-violet-500/[0.03]">
               <CardContent className="p-5">
                 <div className="flex items-start gap-3 mb-3 flex-wrap">
@@ -492,7 +508,7 @@ export default function MarketingStrategyPage() {
         </p>
 
         <div className="space-y-2">
-          {journey.map((j, i) => {
+          {stages.map((j, i) => {
             const Icon = j.icon;
             const c = colorMap[j.color];
             return (
@@ -530,7 +546,7 @@ export default function MarketingStrategyPage() {
                     </div>
                   </CardContent>
                 </Card>
-                {i < journey.length - 1 && (
+                {i < stages.length - 1 && (
                   <div className="flex justify-center py-1">
                     <ArrowDown className="h-3 w-3 text-muted-foreground/40" />
                   </div>

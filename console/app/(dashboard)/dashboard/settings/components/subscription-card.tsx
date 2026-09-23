@@ -6,6 +6,7 @@ import {
   formatSubscriptionDate as formatDate,
   type SubscriptionData,
 } from "@/lib/subscription";
+import { formatTermLabel } from "@modonty/shared/lib/commercial/term-label";
 import {
   Card,
   CardContent,
@@ -40,13 +41,9 @@ export function SubscriptionCard({ data }: { data: SubscriptionData }) {
               <p className="text-xs text-muted-foreground tabular-nums">
                 {/* الإجماليّ المدفوع فعلاً، بعملته — لا سعر الكتالوج اليوم. */}
                 {data.paidTotal}
-                {data.paidMonths != null && (
-                  <>
-                    {" · "}
-                    {data.paidMonths} شهر
-                    {data.bonusServiceMonths ? ` + ${data.bonusServiceMonths} هديّة` : ""}
-                  </>
-                )}
+                {/* المدّةُ بصياغة الفاتورة نفسِها — `formatTermLabel` (٢٣ سبتمبر ٢٠٢٦). */}
+                {data.paidMonths != null &&
+                  ` · ${formatTermLabel(data.paidMonths, data.bonusServiceMonths)}`}
               </p>
             )}
           </div>
@@ -57,11 +54,14 @@ export function SubscriptionCard({ data }: { data: SubscriptionData }) {
               <BadgeCheck className="h-3 w-3" />
               {status.label}
             </span>
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ${payment.classes}`}
-            >
-              {payment.label}
-            </span>
+            {/* لا طلبَ ساري ← لا شارةَ دفع: لا يُقال «مدفوع» لمن لم يدفع شيئاً (القاعدة ٥). */}
+            {payment && (
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ${payment.classes}`}
+              >
+                {payment.label}
+              </span>
+            )}
           </div>
         </div>
 

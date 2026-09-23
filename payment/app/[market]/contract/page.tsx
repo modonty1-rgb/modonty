@@ -6,6 +6,7 @@ import { formatCatalogMoneyMinor } from "@modonty/shared/lib/commercial/format-m
 import { formatMonths } from "@modonty/shared/lib/commercial/arabic-months";
 import { buildPlanCommitments } from "@modonty/shared/lib/commercial/build-plan-commitments";
 import { TERM_PARAM, resolveTermFromParams } from "@modonty/shared/lib/commercial/resolve-term-from-params";
+import { vatRateBpForMarket } from "@modonty/shared/lib/payments/vat-rate";
 
 import { getCachedMarketCatalog } from "../../data/get-cached-catalog";
 import { getSellerLegal } from "../../data/get-seller-legal";
@@ -65,6 +66,12 @@ export default async function ContractPage({
   const serviceMonths = term.paidMonths + term.bonusServiceMonths;
   const totalMinor = Math.round(plan.monthlyBase * 100) * term.paidMonths;
   const commitments = buildPlanCommitments(plan.features, serviceMonths);
+  /**
+   * جملة الضريبة تتبع نسبة السوق لا نصّاً ثابتاً: مصر صفر (vat-rate.ts)، فلا يُقال
+   * للمشتري المصري «شاملةً الضريبة» ولا «فاتورة ضريبية» — وطلبه يُحفظ بضريبة صفر.
+   * ٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد.
+   */
+  const hasVat = vatRateBpForMarket(market) > 0;
   /**
    * لا تاريخ في هذه الصفحة (خالد ١٤ سبتمبر ٢٠٢٦).
    *
@@ -158,7 +165,7 @@ export default async function ContractPage({
               ))}
             </ul>
             <p className="mt-2 text-[12.5px]">
-              وهذه القائمة نفسها تُطبع في الفاتورة الضريبية، فلا يختلف ما وُعد به عمّا وُثِّق.
+              وهذه القائمة نفسها تُطبع في {hasVat ? "الفاتورة الضريبية" : "الفاتورة"}، فلا يختلف ما وُعد به عمّا وُثِّق.
             </p>
           </Clause>
 
@@ -168,10 +175,13 @@ export default async function ContractPage({
               <span className="font-extrabold text-foreground" dir="ltr">
                 {formatCatalogMoneyMinor(totalMinor, plan.currency)}
               </span>{" "}
-              شاملةً ضريبة القيمة المضافة، تُسدَّد دفعةً واحدة قبل بدء التنفيذ، أو تقسيطاً عبر
+              {hasVat ? "شاملةً ضريبة القيمة المضافة، " : ""}تُسدَّد دفعةً واحدة قبل بدء التنفيذ، أو تقسيطاً عبر
               مزوّد التقسيط المعتمد إن كان متاحاً للباقة.
             </p>
-            <p>تُصدر فاتورة ضريبية نظامية بعد تأكيد استلام المبلغ، وتُرسل إلى بريد الطرف الثاني.</p>
+            <p>
+              {hasVat ? "تُصدر فاتورة ضريبية نظامية" : "تُصدر فاتورة"} بعد تأكيد استلام المبلغ، وتُرسل إلى بريد
+              الطرف الثاني.
+            </p>
           </Clause>
 
           <Clause n={4} title="مدّة العقد وبدء التنفيذ">

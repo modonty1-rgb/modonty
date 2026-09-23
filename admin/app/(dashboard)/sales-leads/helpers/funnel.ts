@@ -1,3 +1,5 @@
+import { currencyLabel } from "@modonty/shared/lib/commercial/format-money";
+
 /**
  * الفانل الحقيقي — لا ثلاثة صناديق.
  *
@@ -94,23 +96,21 @@ export const CHANNEL_VERB: Record<Channel, string> = {
   NOTE: "ملاحظة على",
 };
 
-export const TIER_LABEL: Record<string, string> = {
-  BASIC: "الأساسية",
-  STANDARD: "المتوسّطة",
-  PRO: "الاحترافية",
-  PREMIUM: "المتميّزة",
-};
+// سقط `TIER_LABEL` (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد): أسماء باقاتٍ مكتوبة في الكود بلا
+// مستهلك. اسم الباقة من `CommercialPlan.name` وحده (`priceLeadDeal`).
 
-const CURRENCY_LABEL: Record<string, string> = { SAR: "ر.س", EGP: "ج.م" };
 
 /**
  * المبلغ بعملته — بـ`Intl.NumberFormat` لا بتنسيقٍ مكتوب بيد، وبلا كسور: المندوبة تقارن
  * أحجاماً لا تحاسب قروشاً، والكسر يزيد ثلاثة محارف في عمودٍ يُمسح بالعين.
+ *
+ * وبلا عملةٍ لا مبلغ (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد): العملة من صفّ السعر، وكان الغائب
+ * يُكتب ريالاً افتراضاً — رقمٌ بعملةٍ مخمَّنة.
  */
 export function formatMoney(amount: number | null | undefined, currency: string | null | undefined): string | null {
-  if (amount == null || amount === 0) return null;
+  if (amount == null || amount === 0 || !currency) return null;
   const n = new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 0 }).format(amount);
-  return `${n} ${CURRENCY_LABEL[currency ?? "SAR"] ?? currency ?? ""}`.trim();
+  return `${n} ${currencyLabel(currency)}`;
 }
 
 export type DueTone = "overdue" | "today" | "soon" | "later" | "none";

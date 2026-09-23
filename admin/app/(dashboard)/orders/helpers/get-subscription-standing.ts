@@ -13,7 +13,9 @@
  *
  * و«قرب الانتهاء» يُقرأ من `lib/orders/renewal-window.ts` — رقمٌ واحدٌ تتبعه كلُّ شاشة.
  */
-export type SubscriptionState = "active" | "expiring" | "expired" | "unknown";
+import { getSubscriptionTerm, type SubscriptionState } from "@modonty/shared/lib/subscription/subscription-term";
+
+export type { SubscriptionState };
 
 export interface SubscriptionStanding {
   state: SubscriptionState;
@@ -22,18 +24,11 @@ export interface SubscriptionStanding {
   daysLeft: number | null;
 }
 
-import { RENEWAL_SOON_DAYS } from "@/lib/orders/renewal-window";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-
+/** الحسابُ في `shared/lib/subscription/subscription-term.ts` — الأدمن والكونسول بمعادلةٍ واحدة. */
 export function getSubscriptionStanding(
   input: { serviceStartedAt: Date | null; paidMonths: number; bonusServiceMonths: number },
   now: Date = new Date(),
 ): SubscriptionStanding {
-  if (!input.serviceStartedAt) return { state: "unknown", endsAt: null, daysLeft: null };
-  const endsAt = new Date(input.serviceStartedAt);
-  endsAt.setMonth(endsAt.getMonth() + input.paidMonths + input.bonusServiceMonths);
-  const daysLeft = Math.ceil((endsAt.getTime() - now.getTime()) / DAY_MS);
-  const state: SubscriptionState = daysLeft < 0 ? "expired" : daysLeft <= RENEWAL_SOON_DAYS ? "expiring" : "active";
+  const { state, endsAt, daysLeft } = getSubscriptionTerm(input, now);
   return { state, endsAt, daysLeft };
 }

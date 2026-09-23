@@ -17,8 +17,11 @@ import { CalendarClock, Receipt, AlertCircle } from "lucide-react";
 interface AccountNoticeProps {
   endDate: Date | null;
   unpaidCount: number;
-  unpaidAmount: number;
-  unpaidCurrency: string | null;
+  /**
+   * المستحقّ نصّاً جاهزاً، كلُّ عملةٍ بمبلغها («٢٬٣٩٤ ر.س و٥٠٠ ج.م») — من `getOutstandingInvoices`.
+   * كان رقماً واحداً بعملة أوّل فاتورة، فيُجمع الريالُ على الجنيه (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد).
+   */
+  unpaidTotal: string | null;
 }
 
 /** Whole days from today to `d` — negative once the date has passed. */
@@ -44,7 +47,7 @@ const ICON_TONES = {
   attention: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
 } as const;
 
-export function AccountNotice({ endDate, unpaidCount, unpaidAmount, unpaidCurrency }: AccountNoticeProps) {
+export function AccountNotice({ endDate, unpaidCount, unpaidTotal }: AccountNoticeProps) {
   const left = endDate ? daysUntil(endDate) : null;
 
   // Ordered by consequence: a lapsed subscription first, then money, then the reminder.
@@ -68,15 +71,12 @@ export function AccountNotice({ endDate, unpaidCount, unpaidAmount, unpaidCurren
       cta: "تفاصيل الاشتراك",
     };
   } else if (unpaidCount > 0) {
-    const amount =
-      unpaidCurrency && unpaidAmount > 0
-        ? ` بقيمة ${new Intl.NumberFormat("en-US").format(unpaidAmount)} ${unpaidCurrency}`
-        : "";
+    const amount = unpaidTotal ? ` بقيمة ${unpaidTotal}` : "";
     notice = {
       tone: "attention",
       icon: Receipt,
-      title: unpaidCount === 1 ? "لديك فاتورة بانتظار السداد" : `لديك ${unpaidCount} فواتير بانتظار السداد`,
-      body: `الفاتورة${unpaidCount === 1 ? "" : " الإجمالية"}${amount} متاحة للاطّلاع. لو سدّدتها مؤخراً فتجاهل هذه الرسالة — قد لا يكون السداد قد سُجّل بعد.`,
+      title: unpaidCount === 1 ? "لديك فاتورة بانتظار الدفع" : `لديك ${unpaidCount} فواتير بانتظار الدفع`,
+      body: `${unpaidCount === 1 ? "الفاتورة" : "الفواتير"}${amount} متاحة للاطّلاع. لو دفعتها مؤخراً فتجاهل هذه الرسالة — قد لا يكون الدفع قد سُجّل بعد.`,
       href: "/dashboard/invoices",
       cta: "عرض الفواتير",
     };

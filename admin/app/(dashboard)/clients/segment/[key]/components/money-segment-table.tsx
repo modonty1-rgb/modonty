@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatOrderMoney } from "@/lib/orders/format-order-money";
 
 /**
  * The billing view of a segment. Same dense one-line-per-row rules as SegmentTable, but
@@ -33,8 +34,11 @@ export interface MoneySegmentClient {
   subscriptionStatus: string;
   subscriptionEndDate: string | null;
   unpaidCount: number;
-  unpaidAmount: number;
-  currency: string | null;
+  /**
+   * المستحقّ **لكلّ عملة** بالوحدة الصغرى — لا رقمٌ واحدٌ بعملة أوّل فاتورة
+   * (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد). من `getPaymentStates`، قاعدةِ `isOutstandingInvoice`.
+   */
+  owed: Array<{ currency: string; minor: number }>;
 }
 
 type SortKey = "name" | "unpaid" | "amount" | "ends";
@@ -43,9 +47,21 @@ function fmtDate(iso: string | null): string {
   return iso ? iso.slice(0, 10) : "—";
 }
 
-function money(amount: number, currency: string | null): string {
-  if (!currency || amount <= 0) return "—";
-  return `${new Intl.NumberFormat("en-US").format(amount)} ${currency}`;
+/** «ر.س.» و«ج.م.» من عملة الفاتورة نفسِها — كلُّ عملةٍ بمبلغها، ولا جمعَ بينهما. */
+function money(owed: MoneySegmentClient["owed"]): string {
+  return owed.length ? owed.map((o) => formatOrderMoney(o.minor, o.currency)).join(" · ") : "—";
+}
+
+/**
+ * ترتيبُ «المستحقّ»: العملةُ أوّلاً ثمّ المبلغ داخلها — مقارنةُ ألفِ ريالٍ بألفِ جنيهٍ رقماً
+ * برقم هي الجمعُ المختلطُ نفسُه في صورة ترتيب. ومن لا مستحقَّ عليه في الطرف الآخر.
+ */
+function compareOwed(a: MoneySegmentClient, b: MoneySegmentClient, dir: number): number {
+  const x = a.owed[0];
+  const y = b.owed[0];
+  if (!x || !y) return ((x ? 1 : 0) - (y ? 1 : 0)) * dir;
+  if (x.currency !== y.currency) return x.currency.localeCompare(y.currency);
+  return (x.minor - y.minor) * dir;
 }
 
 function isExpired(iso: string | null): boolean {
@@ -71,7 +87,7 @@ export function MoneySegmentTable({ clients }: { clients: MoneySegmentClient[] }
         case "unpaid":
           return (a.unpaidCount - b.unpaidCount) * dir;
         case "amount":
-          return (a.unpaidAmount - b.unpaidAmount) * dir;
+          return compareOwed(a, b, dir);
         case "ends":
           return (
             ((a.subscriptionEndDate ?? "").localeCompare(b.subscriptionEndDate ?? "")) * dir
@@ -165,8 +181,8 @@ export function MoneySegmentTable({ clients }: { clients: MoneySegmentClient[] }
                       )}
                     </TableCell>
                     <TableCell className="py-2 tabular-nums font-semibold">
-                      <span className={c.unpaidAmount > 0 ? "text-red-600 dark:text-red-400" : "text-muted-foreground"}>
-                        {money(c.unpaidAmount, c.currency)}
+                      <span className={c.owed.length > 0 ? "text-red-600 dark:text-red-400" : "text-muted-foreground"}>
+                        {money(c.owed)}
                       </span>
                     </TableCell>
                     <TableCell className="py-2">

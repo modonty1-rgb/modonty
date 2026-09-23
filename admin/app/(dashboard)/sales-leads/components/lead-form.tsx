@@ -26,10 +26,9 @@ import { MOBILE_HINT, type LeadInput } from "../helpers/lead-schema";
 import { MARKET_LABEL } from "../helpers/markets";
 import { AD_CHANNEL_LABEL } from "@/lib/ad-channel-label";
 import type { CampaignOption } from "../helpers/get-campaign-options";
-import {
-  FREE_MONTHS, PLAN_DURATIONS, RECOMMENDED_DURATION, priceForDuration,
-  type PlanDuration,
-} from "@modonty/shared/lib/pricing-durations";
+import { formatCount } from "../helpers/format-count";
+import { buildTermPricing } from "@modonty/shared/lib/commercial/term-pricing";
+import { formatMonths } from "@modonty/shared/lib/commercial/arabic-months";
 import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 
 /* `SOURCE_LABEL` حُذفت: القائمة صارت صفوفاً في القاعدة يحرّرها خالد من «Dropdown Lists»
@@ -47,8 +46,8 @@ const SOCIAL_LABEL: Record<string, string> = {
  * السوقان وما يتبعهما.
  *
  * الدولة أوّل سؤال في النموذج لأنها تحكم ما بعدها: العملة تُشتقّ منها فلا تُسأل مرّتين، وهي
- * التي ستُسعَّر بها الباقات حين يصل تسعير كل سوق من جبر سيو. سؤالها في الآخر — كما كانت —
- * يعني أن تُملأ الحقول ثم يتغيّر معناها.
+ * التي تُسعَّر بها الباقات من كتالوج سوقها. سؤالها في الآخر — كما كانت — يعني أن تُملأ
+ * الحقول ثم يتغيّر معناها.
  *
  * ولا عَلَم هنا: ويندوز لا يرسم رموز الأعلام، فيظهر «🇪🇬» حرفَين لاتينيَّين وسط سطر عربي.
  */
@@ -77,12 +76,15 @@ const SIDE_PLACEHOLDER = (
 );
 
 const MARKETS = [
-  { code: "SA", label: "السعودية", currency: "SAR", currencyLabel: "ر.س", currencyName: "بالريال السعودي" },
-  { code: "EG", label: "مصر", currency: "EGP", currencyLabel: "ج.م", currencyName: "بالجنيه المصري" },
+  { code: "SA", label: "السعودية", currency: "SAR" },
+  { code: "EG", label: "مصر", currency: "EGP" },
 ] as const;
 
+/** اسم العملة بجانب عنوان «الصفقة» — مفتاحه عملة صفّ السعر (`CommercialPlanPrice.currency`). */
+const CURRENCY_NAME: Record<string, string> = { SAR: "بالريال السعودي", EGP: "بالجنيه المصري" };
+
 /**
- * النوعُ من منتِجه (`helpers/get-plans`) لا نسخةً منه.
+ * النوعُ من منتِجه (`helpers/get-lead-catalog`) لا نسخةً منه.
  *
  * كانت هنا نسخةٌ بنفس الحقول زائداً `tier` — وقد سقط `tier` من الباقات، فصار الشكلان
  * لا يتطابقان: TypeScript يقارن بالبنية لا بالاسم، فرفض تمريرَ `Record<"SA"|"EG", PlanOption[]>`
@@ -90,13 +92,18 @@ const MARKETS = [
  *
  * و`import type` يُمحى عند البناء، فلا يجرّ `"server-only"` من الملفّ المصدر إلى العميل.
  */
-import type { PlanOption } from "../helpers/get-plans";
+import type { PlanOption, TermOption } from "../helpers/get-lead-catalog";
 
 interface Props {
   leadId?: string;
   industries: { id: string; name: string }[];
-  /** باقات كل سوق بأسعارها الحقيقية، من `Plan` — لا من قائمة في الكود. */
+  /** باقات كل سوق بأسعارها، من `CommercialPlan` + `CommercialPlanPrice` — لا من قائمة في الكود. */
   plans: Record<"SA" | "EG", PlanOption[]>;
+  /**
+   * المدد المفعّلة من `CommercialTermPolicy` — الأشهر المدفوعة وهديّتها و«الأنسب».
+   * كانت `3 · 6 · 12` وهديّتها مكتوبةً في `pricing-durations.ts` (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد).
+   */
+  terms: TermOption[];
   /** «العميل من فين جاي» — المفعَّل منها فقط، من `lead_source_options`. */
   leadSources: { value: string; label: string }[];
   /** الحملات المُطلَقة — تملأ قائمة «الحملة» حين يكون الوصول مدفوعاً. */
@@ -114,17 +121,19 @@ interface Props {
  * وما لا يُسأل في مكالمة (المدينة، الخرايط، ستّة حسابات) خلف طيّة واحدة — قِيس على الصفوف
  * السبعة عشر القادمة من النظام القديم: صفر من سبعة عشر في كلٍّ منها.
  */
-export function LeadForm({ leadId, industries, plans, leadSources, campaigns, initial }: Props) {
+export function LeadForm({ leadId, industries, plans, terms, leadSources, campaigns, initial }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const isEdit = Boolean(leadId);
+  // المدّة الافتراضية هي «الأنسب» في سياسة المدد — لا رقمٌ في الكود.
+  const recommendedTerm = terms.find((t) => t.isRecommended) ?? terms[0];
 
   const blank = (k: string) => (initial?.[k as keyof LeadInput] as string) ?? "";
   const [form, setForm] = useState<Record<string, string>>({
     name: blank("name"), company: blank("company"), phone: blank("phone"), email: blank("email"),
     stage: blank("stage") || "NEW",
-    expectedTier: blank("expectedTier"), expectedMonthly: blank("expectedMonthly"),
-    expectedMonths: blank("expectedMonths") || String(RECOMMENDED_DURATION),
+    expectedTier: blank("expectedTier"),
+    expectedMonths: blank("expectedMonths") || (recommendedTerm ? String(recommendedTerm.paidMonths) : ""),
     currency: blank("currency") || "SAR",
     city: blank("city"), website: blank("website"), googleLocation: blank("googleLocation"),
     // السعودية افتراضاً: هي السوق الأكبر، والافتراض الصامت يوفّر ضغطةً في الحالة الشائعة
@@ -181,7 +190,6 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
       countryCode: code,
       currency: m?.currency ?? f.currency,
       expectedTier: "",
-      expectedMonthly: "",
     }));
   };
 
@@ -189,19 +197,16 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
   const marketPlans = plans[market.code] ?? [];
 
   /**
-   * اختيار الباقة يكتب مبلغها.
+   * اختيار الباقة يكتب سلَقها وحده.
    *
    * لا خانة مبلغ يدوية بعد اليوم (خالد ٤ سبتمبر): «ما في مبلغ شهري بيتحدد هنا. في packages
-   * واضحة وثابتة». الرقم المكتوب بيد يخالف قائمة الأسعار بلا أن يلاحظ أحد، ثم يُبنى عليه
-   * تقرير. فالمبلغ نتيجةٌ للباقة، ومصدره صفّها في القاعدة.
+   * واضحة وثابتة». والمبلغ لا يمرّ من الشاشة أصلاً (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد): السيرفر
+   * يقرؤه من `CommercialPlanPrice` عند الحفظ (`resolveLeadDeal`).
    */
   const pickPlan = (p: PlanOption) => {
     const same = form.expectedTier === p.slug;
-    setForm((f) => ({
-      ...f,
-      expectedTier: same ? "" : p.slug,
-      expectedMonthly: same ? "" : String(p.priceMonthly),
-    }));
+    setForm((f) => ({ ...f, expectedTier: same ? "" : p.slug }));
+    if (errors.expectedTier?.length) setErrors((e) => ({ ...e, expectedTier: [] }));
   };
 
   /**
@@ -213,21 +218,27 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
   const money = (n: number) => new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 0 }).format(n);
 
   /**
-   * الإجمالي مشتقٌّ لا مخزَّن — بالدالّة نفسها التي يحسب بها موقع جبر سيو.
+   * الإجمالي مشتقٌّ لا مخزَّن — بـ`buildTermPricing` نفسها التي تحسب بها بطاقة `/pay`.
    *
    * الباقات لا تُباع شهريّاً، فالبطاقة تعرض إجمالي المدّة لا سعر الشهر: الرقم الذي يُقال
-   * للعميل في المكالمة هو ما يدفعه مرّةً واحدة.
-   */
-  const months = Number(form.expectedMonths || RECOMMENDED_DURATION) as PlanDuration;
-  const priceOf = (p: PlanOption) => priceForDuration(p.priceMonthly, months);
-
-  /**
-   * «٣ · ٦ · ١٢» — الرقم وحده (خالد ٤ سبتمبر: «المدة: ثلاثة، ستة، اتناشر… اختصر لي الدنيا»).
+   * للعميل في المكالمة هو ما يدفعه مرّةً واحدة = سعر الشهر × الأشهر المدفوعة.
    *
-   * «+ شهر مجاناً» خرجت من المفتاح: المكافأة داخلة أصلاً في «شهر خدمة» جواره وفي السعر تحته،
-   * فذكرها ثالثةً على الزرّ يكرّر نفس المعلومة ويطوّل صفّاً يُقرأ بنظرة.
+   * `Number(...)` لأن التعديل يمرّر المدّة المخزّنة رقماً لا نصّاً.
    */
-  const TERM_LABEL: Record<number, string> = { 3: "٣", 6: "٦", 12: "١٢" };
+  const term = terms.find((t) => t.paidMonths === Number(form.expectedMonths)) ?? null;
+  const totalOf = (p: PlanOption) =>
+    term
+      ? buildTermPricing({
+          monthlyBase: p.monthlyBase,
+          paidMonths: term.paidMonths,
+          bonusServiceMonths: term.bonusServiceMonths,
+        }).totalMinor / 100
+      : null;
+
+  /** باقةٌ محفوظة لم تعد منشورة في هذا السوق — تُقال بدل أن تختفي من الشاشة وتُرفض عند الحفظ. */
+  const stalePlan = Boolean(form.expectedTier) && !marketPlans.some((p) => p.slug === form.expectedTier);
+  const dealError = errors.expectedTier?.[0] ?? errors.expectedMonths?.[0];
+  const currencyName = CURRENCY_NAME[marketPlans[0]?.currency ?? ""];
 
   // التصنيف صار في البطاقة الأساسية، فلا يُحسب هنا — الطيّة للمدينة والموقع والحسابات وحدها.
   const [hasExtras] = useState(() =>
@@ -695,8 +706,8 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
           <CardTitle className="flex items-center gap-2 text-sm">
             <Wallet className="size-4 text-muted-foreground" aria-hidden />
             الصفقة
-            {/* العملة تتبع مفتاح الدولة، وتُعلَن هنا مرّةً لتُقرأ على كل رقمٍ تحتها. */}
-            <span className="text-xs font-normal text-muted-foreground">{market.currencyName}</span>
+            {/* عملة صفوف السعر نفسها، تُعلَن هنا مرّةً لتُقرأ على كل رقمٍ تحتها. */}
+            {currencyName ? <span className="text-xs font-normal text-muted-foreground">{currencyName}</span> : null}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 px-4 pb-3">
@@ -764,40 +775,61 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <div className="flex shrink-0 items-center gap-x-3">
             <Label className="text-xs tracking-[0.01em] text-muted-foreground">المدّة</Label>
-            <div role="radiogroup" aria-label="مدّة الاشتراك" className="inline-flex rounded border p-0.5">
-              {PLAN_DURATIONS.map((d) => {
-                const on = months === d;
-                return (
-                  <button
-                    key={d}
-                    type="button"
-                    role="radio"
-                    aria-checked={on}
-                    onClick={() => set("expectedMonths", String(d))}
-                    className={cn(
-                      "h-6 w-8 rounded-[3px] text-xs font-medium tabular-nums transition-[color,background-color,transform] duration-150 active:scale-[0.97]",
-                      TAP,
-                      on ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    {TERM_LABEL[d]}
-                  </button>
-                );
-              })}
-            </div>
-            {/* شهور الخدمة الفعلية — الرقم الذي يفرّق بين المدد، ويتغيّر أمام العين. */}
-            <span className="text-[11px] text-muted-foreground tabular-nums">
-              {priceForDuration(0, months).serviceMonths} شهر خدمة
-            </span>
+            {/**
+             * المدد من `CommercialTermPolicy` المفعّلة — الرقم وحده (خالد ٤ سبتمبر: «اختصر لي
+             * الدنيا»). وهديّة المدّة داخلة في «خدمة …» جواره وفي السعر تحته.
+             */}
+            {terms.length === 0 ? (
+              <span className="text-[11px] text-muted-foreground">لا مدّة مفعّلة — أضفها من «الباقات والأسعار»</span>
+            ) : (
+              <div
+                id="expectedMonths"
+                tabIndex={-1}
+                role="radiogroup"
+                aria-label="مدّة الاشتراك"
+                aria-invalid={errors.expectedMonths?.length ? true : undefined}
+                className={cn("inline-flex rounded border p-0.5", errors.expectedMonths?.length && "border-destructive")}
+              >
+                {terms.map((t) => {
+                  const on = term?.paidMonths === t.paidMonths;
+                  return (
+                    <button
+                      key={t.paidMonths}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      onClick={() => set("expectedMonths", String(t.paidMonths))}
+                      className={cn(
+                        "h-6 min-w-[2rem] rounded-[3px] px-1 text-xs font-medium tabular-nums transition-[color,background-color,transform] duration-150 active:scale-[0.97]",
+                        TAP,
+                        on ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {formatCount(t.paidMonths)}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            {/* شهور الخدمة الفعلية = المدفوعة + هديّة المدّة من السياسة — يتغيّر أمام العين. */}
+            {term ? (
+              <span className="text-[11px] text-muted-foreground tabular-nums">
+                خدمة {formatMonths(term.paidMonths + term.bonusServiceMonths)}
+              </span>
+            ) : null}
           </div>
 
           {marketPlans.length === 0 ? (
             <p className="text-xs text-muted-foreground">لا توجد باقات لهذا السوق.</p>
           ) : (
-            <div className="grid w-full grid-cols-3 gap-1">
+            <div
+              id="expectedTier"
+              tabIndex={-1}
+              className={cn("grid w-full grid-cols-3 gap-1", errors.expectedTier?.length && "rounded ring-1 ring-destructive")}
+            >
               {marketPlans.map((p) => {
                 const on = form.expectedTier === p.slug;
-                const price = priceOf(p);
+                const total = totalOf(p);
                 const tag = p.featuredBadge ?? p.badge;
                 const featured = Boolean(p.featuredBadge);
                 return (
@@ -824,13 +856,27 @@ export function LeadForm({ leadId, industries, plans, leadSources, campaigns, in
                           <span className="shrink-0 text-[10px] leading-none text-amber-700 dark:text-amber-400">✦</span>
                         )}
                       </span>
-                      <span className="text-xs font-semibold tabular-nums">{money(price.total)}</span>
+                      <span className="text-xs font-semibold tabular-nums">{total != null ? money(total) : "—"}</span>
                     </span>
                   </button>
                 );
               })}
             </div>
           )}
+
+          {stalePlan ? (
+            <p className="w-full text-[11px] text-amber-700 dark:text-amber-400">
+              الباقة المحفوظة «{form.expectedTier}» ليست منشورة في هذا السوق — اختاري باقة أو{" "}
+              <button type="button" onClick={() => set("expectedTier", "")} className={cn("underline", TAP)}>
+                امسحيها
+              </button>
+            </p>
+          ) : null}
+
+          {/* خطأ الصفقة من السيرفر (باقة غير منشورة · مدّة مطفأة) — حقلٌ يُرفض يقول ذلك. */}
+          {dealError ? (
+            <p aria-live="polite" className="w-full text-[11px] text-destructive">{dealError}</p>
+          ) : null}
           </div>
         </CardContent>
       </Card>

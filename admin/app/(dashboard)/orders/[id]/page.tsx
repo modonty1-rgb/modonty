@@ -27,6 +27,7 @@ import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { buildInvoiceWhatsappLink } from "../helpers/build-invoice-whatsapp-link";
 import { getOrderStatement } from "./helpers/get-order-statement";
 import { getSubscriptionStanding } from "../helpers/get-subscription-standing";
+import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const order = await db.checkoutOrder.findUnique({ where: { id } });
   if (!order) notFound();
 
-  const [transactions, webhookEvents, attempts, financeGate, salesDeskGate, invoice, salesRep] = await Promise.all([
+  const [transactions, webhookEvents, attempts, financeGate, salesDeskGate, invoice, salesRep, owner] = await Promise.all([
     db.paymentTransaction.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     db.paymentWebhookEvent.findMany({ where: { orderId: id }, orderBy: { receivedAt: "desc" }, take: 20 }),
     db.paymentAttempt.findMany({ where: { orderId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
@@ -44,6 +45,8 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     order.invoiceId ? db.invoice.findUnique({ where: { id: order.invoiceId }, select: { number: true, emailSentAt: true, client: { select: { name: true } } } }) : Promise.resolve(null),
     // المندوبُ من الطلب نفسه: هو صاحبُ هذه الصفقة، لا مَن يتابع العميلَ اليوم.
     order.salesRepId ? db.staff.findUnique({ where: { id: order.salesRepId }, select: { name: true } }) : Promise.resolve(null),
+    // الطلبُ الساري للعميل — هو وحده يُجدَّد؛ والطلبُ القديمُ بعد التجديد سجلٌّ لا اشتراك.
+    order.clientId ? db.client.findUnique({ where: { id: order.clientId }, select: { activeOrderId: true } }) : Promise.resolve(null),
   ]);
   const isFinanceAdmin = financeGate.status === "ok";
   /**
@@ -62,6 +65,12 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const standing = order.clientId ? getSubscriptionStanding(order) : null;
   // نهايةُ الاشتراك في كرت الاشتراك — نفسُ الحاسب، ولو لم يُربط الطلبُ بحسابٍ بعد.
   const term = standing ?? getSubscriptionStanding(order);
+  /**
+   * زرُّ التجديد على **الطلب الساري** وحده (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد). كان يُحكم بمدّة
+   * هذا الطلب نفسه، فعميلٌ جدّد يرى «تجديد — انتهى» على طلبه القديم، ودعوةً لتجديدٍ مكرَّر.
+   * واشتراكُ العميل = مدّةُ طلبه الساري (`get-client-subscriptions.ts`)، فالحكمُ هنا هو حكمُه.
+   */
+  const renewal = standing && owner?.activeOrderId === order.id ? standing : null;
   const serviceMonths = order.paidMonths + order.bonusServiceMonths;
 
   /**
@@ -242,11 +251,11 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
           {/* التجديد: طلبٌ جديد بهويّة هذا الطلب وباقته — يظهر متى انقضت المدّة أو قاربت.
               كان يعني كتابةَ كلّ شيءٍ من جديد ثمّ الربطَ يدويّاً، فيبقى المنتهي منتهياً. */}
-          {order.status === "PAID" && order.clientId && standing && (standing.state === "expired" || standing.state === "expiring") && isFinanceAdmin ? (
-            <Button asChild size="sm" variant={standing.state === "expired" ? "default" : "outline"} className="h-8 gap-1.5 px-2.5 text-[12px]">
+          {order.status === "PAID" && renewal && (renewal.state === "expired" || renewal.state === "expiring") && isFinanceAdmin ? (
+            <Button asChild size="sm" variant={renewal.state === "expired" ? "default" : "outline"} className="h-8 gap-1.5 px-2.5 text-[12px]">
               <Link href={`/orders/new?renewFrom=${order.id}`}>
                 <RefreshCw className="size-4" aria-hidden />
-                {standing.state === "expired" ? "تجديد — انتهى" : `تجديد — يبقى ${Math.abs(standing.daysLeft ?? 0)} يوم`}
+                {renewal.state === "expired" ? "تجديد — انتهى" : `تجديد — يبقى ${Math.abs(renewal.daysLeft ?? 0)} يوم`}
               </Link>
             </Button>
           ) : null}
@@ -301,12 +310,12 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             value={order.articlesPerMonth != null ? `${order.articlesPerMonth * serviceMonths} في ${formatMonths(serviceMonths)}` : "—"}
           />
           <Row
-            label="يوم التفعيل"
+            label="تاريخ التفعيل"
             value={order.activatedAt ? formatOrderDate(order.activatedAt) : "لم يُفعَّل بعد"}
             missing={noActivation}
           />
-          <Row label="أوّل مقال" value={order.serviceStartedAt ? formatOrderDate(order.serviceStartedAt) : "لم يُسلَّم بعد"} />
-          <Row label="نهاية الاشتراك" value={term.endsAt ? formatOrderDate(term.endsAt) : "تُحسب من أوّل مقال"} />
+          <Row label="بداية الاشتراك" value={order.serviceStartedAt ? formatOrderDate(order.serviceStartedAt) : "مع أوّل مقال"} />
+          <Row label="نهاية الاشتراك" value={term.endsAt ? formatOrderDate(term.endsAt) : "تُحسب بعد أوّل مقال"} />
         </Panel>
 
         {/* «الأسعار كما كانت يوم الشراء» — لقطةٌ لا تتبع الكتالوج إن تغيّر بعدها. */}
@@ -396,15 +405,15 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         ) : (
           <div className="grid gap-px bg-border sm:grid-cols-3">
             <StatCell
-              label="المسدَّد"
+              label="المستلم"
               value={formatOrderMoney(statement.paidMinor, statement.currency)}
-              note={`${statement.invoiceCount} ${statement.invoiceCount === 1 ? "فاتورة" : "فواتير"}`}
+              note={`${statement.paidOrderCount} ${statement.paidOrderCount === 1 ? "طلب مدفوع" : "طلبات مدفوعة"}`}
               tone={statement.paidMinor > 0 ? "good" : "muted"}
             />
             <StatCell
               label="المستحقّ"
               value={formatOrderMoney(statement.dueMinor, statement.currency)}
-              note={statement.dueMinor > 0 ? "فاتورةٌ صدرت ولم تُسدَّد" : "لا مستحقّات"}
+              note={statement.dueMinor > 0 ? `فاتورةٌ ${INVOICE_STATUS_LABEL.DUE}` : "لا مستحقّات"}
               tone={statement.dueMinor > 0 ? "bad" : "good"}
             />
             <StatCell

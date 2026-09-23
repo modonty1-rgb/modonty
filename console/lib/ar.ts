@@ -146,9 +146,6 @@ export const ar = {
     subStatusInactive: "غير نشط",
     subStatusExpired: "منتهي",
     subStatusCancelled: "ملغي",
-    paymentPaid: "مدفوع",
-    paymentUnpaid: "غير مدفوع",
-    paymentPending: "قيد الانتظار",
     perYear: "سنوياً",
     currencySar: "ريال سعودي",
     content: "المحتوى",
@@ -1375,9 +1372,11 @@ export const ar = {
     statusInactive: "غير نشط",
     statusExpired: "منتهي",
     statusCancelled: "ملغى",
+    // كلماتُ شارة الدفع — القاعدة ٥ (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد)، يقرؤها `paymentLabel`.
     paymentPaid: "مدفوع",
-    paymentUnpaid: "غير مدفوع",
-    paymentPending: "قيد الدفع",
+    paymentRefunded: "مسترد",
+    // العميلُ يقرؤها عن نفسه في بوّابته — «عليك» لا «عليه» (٢٣ سبتمبر ٢٠٢٦).
+    paymentOwes: "عليك مستحقّات",
 
     // Notifications
     notifications: "الإشعارات",

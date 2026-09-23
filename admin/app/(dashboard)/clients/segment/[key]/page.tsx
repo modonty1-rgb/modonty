@@ -6,8 +6,9 @@ import { db } from "@/lib/db";
 import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
 import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 import { hasStoredOgImage } from "@modonty/shared/lib/seo/client/meta-score";
-import { getPaymentStates, paymentStateLabel, NO_INVOICES } from "@/lib/clients/payment-state";
+import { getPaymentStates, paymentStateLabel, NO_PAYMENT_STATE } from "@/lib/clients/payment-state";
 import { getSegment } from "../segments";
+import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { SegmentTable, type SegmentClient } from "./components/segment-table";
 import { MoneySegmentTable, type MoneySegmentClient } from "./components/money-segment-table";
 
@@ -33,7 +34,11 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
   });
 
   // حالةُ الدفع لكلّ الصفّ دفعةً واحدة — استعلامٌ واحد لا واحدٌ لكلّ صفّ.
-  const payStates = await getPaymentStates(rows.map((c) => c.id));
+  // والاشتراكُ (الحالة · البداية · النهاية) من الطلب الساري، لا من نسخة الكرت.
+  const [payStates, subs] = await Promise.all([
+    getPaymentStates(rows.map((c) => c.id)),
+    getClientSubscriptions({ id: { in: rows.map((c) => c.id) } }),
+  ]);
 
   // Dates cross the server/client boundary as ISO strings — a Date instance would not.
   const clients: SegmentClient[] = rows.map((c) => ({
@@ -44,13 +49,12 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
     phone: c.phone,
     ctaMode: c.ctaMode,
     isYmyl: c.isYmyl,
-    subscriptionStatus: String(c.subscriptionStatus),
-    // من الفواتير لا من الكرت: `Client.paymentStatus` لا يُكتب فيه OVERDUE قطّ،
-    // فكان وسمُ «متأخّر» في هذا الجدول لا يظهر أبداً مهما بلغت المستحقّات.
-    paymentLabel: paymentStateLabel(payStates.get(c.id) ?? NO_INVOICES),
-    paymentBad: (payStates.get(c.id) ?? NO_INVOICES).status === "UNPAID",
-    subscriptionStartDate: c.subscriptionStartDate?.toISOString() ?? null,
-    subscriptionEndDate: c.subscriptionEndDate?.toISOString() ?? null,
+    subscriptionStatus: subs.get(c.id)?.status ?? "PENDING",
+    // من الطلب الساري والمستحقّات لا من الكرت — نفسُ شارة صفحة العميل والتصدير.
+    paymentLabel: paymentStateLabel(payStates.get(c.id) ?? NO_PAYMENT_STATE),
+    paymentBad: (payStates.get(c.id) ?? NO_PAYMENT_STATE).status === "OWES",
+    subscriptionStartDate: subs.get(c.id)?.startedAt?.toISOString() ?? null,
+    subscriptionEndDate: subs.get(c.id)?.endsAt?.toISOString() ?? null,
     articleCount: c._count.articles,
     // Same shared scorer the clients table, the client page and the console portal use.
     seoScore: computeClientSeoScore(clientToSeoInput(c as unknown as Record<string, unknown>)).score,
@@ -77,31 +81,13 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
   const isMoney = segment.action?.path === "account";
 
   if (isMoney) {
-    const ids = shown.map((c) => c.id);
-    // Outstanding = unpaid AND not archived. `archivedAt: null` alone matches nothing on
-    // Mongo for rows written before that field existed, so both forms are asked for.
-    const openInvoices = ids.length
-      ? await db.invoice.findMany({
-          where: {
-            clientId: { in: ids },
-            NOT: { paymentStatus: "PAID" },
-            OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
-          },
-          select: { clientId: true, amount: true, currency: true },
-          take: 1000,
-        })
-      : [];
-
-    const owed = new Map<string, { count: number; amount: number; currency: string }>();
-    for (const inv of openInvoices) {
-      const cur = owed.get(inv.clientId) ?? { count: 0, amount: 0, currency: inv.currency };
-      cur.count += 1;
-      cur.amount += inv.amount;
-      owed.set(inv.clientId, cur);
-    }
-
+    /**
+     * المستحقّ من `payStates` نفسِها — قاعدةُ `isOutstandingInvoice` + `invoiceMinor`، لكلّ عملةٍ
+     * وحدها (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد). كان هنا استعلامٌ ثانٍ يجمع `amount` كلَّ الفواتير
+     * تحت عملة أوّلها: عميلٌ عليه ريالٌ وجنيهٌ يُعرض رقماً واحداً مختلطاً.
+     */
     const moneyClients: MoneySegmentClient[] = shown.map((c) => {
-      const o = owed.get(c.id);
+      const pay = payStates.get(c.id) ?? NO_PAYMENT_STATE;
       return {
         id: c.id,
         name: c.name,
@@ -110,9 +96,8 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
         isYmyl: c.isYmyl,
         subscriptionStatus: c.subscriptionStatus,
         subscriptionEndDate: c.subscriptionEndDate,
-        unpaidCount: o?.count ?? 0,
-        unpaidAmount: o?.amount ?? 0,
-        currency: o?.currency ?? null,
+        unpaidCount: pay.unpaidCount,
+        owed: pay.unpaidByCurrency,
       };
     });
 

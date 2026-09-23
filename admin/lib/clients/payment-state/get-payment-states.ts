@@ -1,37 +1,36 @@
+import { CheckoutOrderStatus, InvoicePaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { NOT_ARCHIVED } from "@/lib/invoices/not-archived";
+import {
+  isCollectedOrder,
+  isOutstandingInvoice,
+  outstandingByCurrency,
+} from "@modonty/shared/lib/payments/collected";
 
 /**
- * **حالةُ الدفع مشتقّةً من الفواتير — لا مقروءةً من الكرت.**
+ * **شارةُ الدفع للعميل — من طلبه الساري، والمستحقّاتُ من فواتيره** (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد).
  *
- * `Client.paymentStatus` حقلٌ يحمل كلمةً كتبها أحدٌ مرّةً ونُسيت، ولا يعرف شيئاً عن فواتير
- * صاحبه. المقيس على `modonty_dev` (١٧ سبتمبر ٢٠٢٦):
+ * كانت تُشتقّ من الفواتير وحدها، فعميلٌ طلبُه `PAID` ولم تُصدَر فاتورتُه بعد (تُصدر يدويّاً
+ * بعد الدفع) يُقرأ «بلا فواتير»، ومن له ورقةٌ مدفوعة «مسدَّد». والمالُ في الطلب لا في الورقة
+ * (`shared/lib/payments/collected.ts`)، فالترتيب:
+ *   ١ فاتورةٌ غيرُ مدفوعة وغيرُ مؤرشفة (`isOutstandingInvoice`) ← `OWES` «عليه مستحقّات» — تتقدّم.
+ *   ٢ الطلبُ الساري `PAID` ← «مدفوع» · `REFUNDED` ← «مسترد».
+ *   ٣ لا طلبَ ساري (أو ساريٌ بغير الحالتين) ← `NONE` «—» بلا شارةٍ خضراء.
  *
- *     ٢٧ عميلاً من ٤٢ بلا أيّ فاتورة — و٢٦ منهم مكتوبٌ على كرتهم «PAID».
- *
- * ولا شيء يكتب `OVERDUE` فيه أصلاً («تحديد مدفوعة» يكتب `PAID` فقط)، فكرتُ عميلٍ عليه
- * ثلاث فواتير غير مسدَّدة كان يقرأ «مدفوع» ولا يمكن أن يعرض غير الصفر (خالد ٢٤ يوليو ٢٠٢٦).
- *
- * **دفعةً لا واحداً واحداً**: القوائم تعرض عشرات الصفوف، واستعلامٌ لكلّ صفٍّ يقتل الصفحة.
+ * `Client.paymentStatus` سقط قبلها: كلمةٌ كُتبت مرّةً ونُسيت (١٧ سبتمبر ٢٠٢٦).
+ * **دفعةً لا واحداً واحداً**: ثلاثة استعلاماتٍ مهما طال الجدول.
  */
-
 export type ClientPaymentState = {
-  /**
-   * `NO_INVOICES` حالةٌ ثالثة صريحة — لا تُطوى في «مدفوع». عميلٌ بلا فاتورة ليس مسدِّداً،
-   * وطيُّها في PAID هو بالضبط الكذبةُ التي أسقطت هذا الحقل.
-   */
-  status: "PAID" | "UNPAID" | "NO_INVOICES";
-  invoiceCount: number;
+  status: "OWES" | "PAID" | "REFUNDED" | "NONE";
   unpaidCount: number;
-  /** المتأخّر **لكلّ عملة** — جمعُ الريال على الجنيه هو الخطأ الذي بُنيت الورقة لمنعه. */
-  unpaidByCurrency: Array<{ currency: string; amount: number }>;
-  /** أقدم فاتورةٍ غير مسدَّدة — ومنها يُعرف كم صار لها. */
+  /** المستحقّ **لكلّ عملة** بالوحدة الصغرى — جمعُ الريال على الجنيه هو الخطأ الذي بُنيت الورقة لمنعه. */
+  unpaidByCurrency: Array<{ currency: string; minor: number }>;
+  /** أقدم فاتورةٍ غير مدفوعة — ومنها يُعرف كم صار لها. */
   oldestUnpaidAt: Date | null;
 };
 
-export const NO_INVOICES: ClientPaymentState = {
-  status: "NO_INVOICES",
-  invoiceCount: 0,
+export const NO_PAYMENT_STATE: ClientPaymentState = {
+  status: "NONE",
   unpaidCount: 0,
   unpaidByCurrency: [],
   oldestUnpaidAt: null,
@@ -41,40 +40,59 @@ export async function getPaymentStates(clientIds: string[]): Promise<Map<string,
   const out = new Map<string, ClientPaymentState>();
   if (clientIds.length === 0) return out;
 
-  // الأرشيف يخرج من العدّ لا من السجلّ: الفاتورة الملغاة تبقى في الدفتر ولا تُطالِب بشيء.
-  const invoices = await db.invoice.findMany({
-    where: { clientId: { in: clientIds } },
-    select: { clientId: true, paymentStatus: true, amount: true, currency: true, archivedAt: true, issuedAt: true },
-  });
+  // الأرشيف يخرج في الاستعلام: الفاتورة الملغاة تبقى في الدفتر ولا تُطالِب بشيء.
+  const [clients, invoices] = await Promise.all([
+    db.client.findMany({
+      where: { id: { in: clientIds } },
+      select: { id: true, activeOrderId: true },
+    }),
+    db.invoice.findMany({
+      where: { clientId: { in: clientIds }, ...NOT_ARCHIVED },
+      select: { clientId: true, paymentStatus: true, amount: true, totalMinor: true, currency: true, issuedAt: true },
+    }),
+  ]);
 
-  const counts = new Map<string, { total: number; unpaid: number; byCur: Map<string, number>; oldest: Date | null }>();
+  // الطلبُ بلا `@relation` على الكرت (مقصود)، فيُجلب بالمعرّفات دفعةً واحدة.
+  const orderIds = clients.flatMap((c) => (c.activeOrderId ? [c.activeOrderId] : []));
+  const orders = orderIds.length
+    ? await db.checkoutOrder.findMany({
+        where: { id: { in: orderIds } },
+        select: { id: true, clientId: true, status: true },
+      })
+    : [];
+  const orderById = new Map(orders.map((o) => [o.id, o]));
+
+  const invoicesByClient = new Map<string, typeof invoices>();
   for (const inv of invoices) {
-    const cur = counts.get(inv.clientId) ?? { total: 0, unpaid: 0, byCur: new Map<string, number>(), oldest: null };
-    cur.total += 1;
-    const archived = inv.archivedAt !== null && inv.archivedAt !== undefined;
-    if (!archived && inv.paymentStatus !== "PAID") {
-      cur.unpaid += 1;
-      cur.byCur.set(inv.currency, (cur.byCur.get(inv.currency) ?? 0) + inv.amount);
-      if (!cur.oldest || inv.issuedAt < cur.oldest) cur.oldest = inv.issuedAt;
-    }
-    counts.set(inv.clientId, cur);
+    const list = invoicesByClient.get(inv.clientId) ?? [];
+    list.push(inv);
+    invoicesByClient.set(inv.clientId, list);
   }
 
-  for (const id of clientIds) {
-    const c = counts.get(id);
-    if (!c || c.total === 0) { out.set(id, NO_INVOICES); continue; }
-    out.set(id, {
-      status: c.unpaid > 0 ? "UNPAID" : "PAID",
-      invoiceCount: c.total,
-      unpaidCount: c.unpaid,
-      unpaidByCurrency: [...c.byCur.entries()]
-        .map(([currency, amount]) => ({ currency, amount }))
-        .sort((a, b) => b.amount - a.amount),
-      oldestUnpaidAt: c.oldest,
+  for (const c of clients) {
+    const raw = c.activeOrderId ? orderById.get(c.activeOrderId) : undefined;
+    // مؤشّرٌ بقي من طلبٍ حُذف أو رُبط بغيره لا يُعدّ طلباً لهذا العميل — حارسُ `getClientSubscriptions` نفسُه.
+    const order = raw && raw.clientId === c.id ? raw : undefined;
+    const unpaid = (invoicesByClient.get(c.id) ?? []).filter(isOutstandingInvoice);
+
+    const status: ClientPaymentState["status"] =
+      unpaid.length > 0
+        ? "OWES"
+        : order && isCollectedOrder(order)
+          ? "PAID"
+          : order?.status === CheckoutOrderStatus.REFUNDED
+            ? "REFUNDED"
+            : "NONE";
+
+    out.set(c.id, {
+      status,
+      unpaidCount: unpaid.length,
+      unpaidByCurrency: outstandingByCurrency(unpaid),
+      oldestUnpaidAt: unpaid.reduce<Date | null>((min, inv) => (!min || inv.issuedAt < min ? inv.issuedAt : min), null),
     });
   }
   return out;
 }
 
 /** فحصٌ سريع: هل على هذا العميل فاتورةٌ تمنع إصدار التالية؟ يقرأ `NOT_ARCHIVED` نفسه. */
-export const UNPAID_INVOICE_WHERE = { paymentStatus: { not: "PAID" }, ...NOT_ARCHIVED } as const;
+export const UNPAID_INVOICE_WHERE = { paymentStatus: { not: InvoicePaymentStatus.PAID }, ...NOT_ARCHIVED } as const;

@@ -1,11 +1,9 @@
-import {
-  SubscriptionStatus,
-  ClientCtaMode,
+import { ClientCtaMode,
   ArticleStatus,
-  type Prisma,
-} from "@prisma/client";
+  type Prisma, InvoicePaymentStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
+import { clientIdsWhere, getClientSubscriptions, type ClientSubscription } from "@/lib/subscription/get-client-subscriptions";
 import { hasStoredOgImage } from "@modonty/shared/lib/seo/client/meta-score";
 
 /**
@@ -91,8 +89,6 @@ const SEO_ACTION: SegmentAction = { label: "Fix SEO", path: "seo" };
 const CTA_ACTION: SegmentAction = { label: "Fix CTA", path: "edit" };
 const IMAGE_ACTION: SegmentAction = { label: "Add image", path: "edit" };
 
-const live = { subscriptionStatus: SubscriptionStatus.ACTIVE };
-const inAWeek = () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
 /**
  * «Not a platform/demo account» — the money views must never show مدونتي/جبر/بسيطة as
@@ -109,7 +105,8 @@ export const NOT_INTERNAL: Prisma.ClientWhereInput = {
 
 /**
  * Active clients whose subscription ends within the current calendar month — the
- * renewal (money) queue. Shared by the clients-page counter chip and this segment's
+ * renewal (money) queue. **The end date is the active order's** (serviceStartedAt + months,
+ * `lib/subscription/get-client-subscriptions.ts`), not the card copy — 23 Sep 2026. Shared by the clients-page counter chip and this segment's
  * list, so the number and the table can never disagree.
  *
  * `NOT_INTERNAL` is INSIDE the function, not added by each caller (Khalid 2026-09-19).
@@ -118,15 +115,23 @@ export const NOT_INTERNAL: Prisma.ClientWhereInput = {
  * was fixed: 6 = 6, equal only because neither internal account happened to end this
  * month. A number that agrees by luck is not a number that agrees.
  */
-export function expiringThisMonthWhere(): Prisma.ClientWhereInput {
+export async function expiringThisMonthWhere(): Promise<Prisma.ClientWhereInput> {
   const n = new Date();
   const start = new Date(n.getFullYear(), n.getMonth(), 1);
   const end = new Date(n.getFullYear(), n.getMonth() + 1, 0, 23, 59, 59, 999);
-  return { AND: [{ ...live, subscriptionEndDate: { gte: start, lte: end } }, NOT_INTERNAL] };
+  const subs = await getClientSubscriptions(NOT_INTERNAL, n);
+  return {
+    id: {
+      in: clientIdsWhere(subs, (x) => x.status === "ACTIVE" && !!x.endsAt && x.endsAt >= start && x.endsAt <= end),
+    },
+  };
 }
 
 /**
  * Live clients whose paid period ALREADY ended — money owed, still being served.
+ *
+ * **Now derived from the active order** (23 Sep 2026): the card's end date disagreed with
+ * the order for 9 of 43 clients and its ACTIVE flag never flips, so the order decides.
  *
  * By DATE, not by the status flag: nothing in the repository ever flips ACTIVE→EXPIRED,
  * so `subscriptionStatus` stays ACTIVE while the end date slips into the past — which is
@@ -137,8 +142,9 @@ export function expiringThisMonthWhere(): Prisma.ClientWhereInput {
  * Disjoint from the renewal queue above (that one starts at the first of this month), so
  * a client who lapsed in an EARLIER month appears here and nowhere else.
  */
-export function expiredByDateWhere(): Prisma.ClientWhereInput {
-  return { AND: [{ ...live, subscriptionEndDate: { lt: new Date(), not: null } }, NOT_INTERNAL] };
+export async function expiredByDateWhere(): Promise<Prisma.ClientWhereInput> {
+  const subs = await getClientSubscriptions(NOT_INTERNAL);
+  return { id: { in: clientIdsWhere(subs, (x) => x.status === "EXPIRED") } };
 }
 
 /**
@@ -189,8 +195,6 @@ export async function getClientDataGaps(): Promise<Record<DataGapKey, string[]>>
     db.client.findMany({
       select: {
         id: true,
-        subscriptionStatus: true,
-        subscriptionEndDate: true,
         isInternal: true,
         addressCity: true,
         sameAs: true,
@@ -207,6 +211,8 @@ export async function getClientDataGaps(): Promise<Record<DataGapKey, string[]>>
   ]);
 
   const hasPublished = new Set(publishedGroups.map((g) => g.clientId));
+  // النهايةُ من الطلب الساري — لا من نسخة الكرت.
+  const subs = await getClientSubscriptions();
 
   const gaps: Record<DataGapKey, string[]> = {
     "no-end-date": [],
@@ -219,9 +225,10 @@ export async function getClientDataGaps(): Promise<Record<DataGapKey, string[]>>
     // A missing renewal date is only a PROBLEM once the client's content is live —
     // before the first published article the subscription hasn't started, so no date is
     // expected. This is the real admin failure: article published, but no invoice/date.
+    const sub = subs.get(r.id);
     if (
-      r.subscriptionStatus === SubscriptionStatus.ACTIVE &&
-      !r.subscriptionEndDate &&
+      sub?.status === "ACTIVE" &&
+      !sub.endsAt &&
       hasPublished.has(r.id) &&
       r.isInternal !== true // platform/demo accounts are free — no renewal date expected
     ) {
@@ -297,25 +304,25 @@ export async function getSegment(key: string): Promise<Segment | null> {
       title: "Subscription expired",
       description: "Still live on the site, but the paid period ended — a renewal is overdue.",
       // One definition, shared with the /clients overdue chip — see expiredByDateWhere.
-      where: expiredByDateWhere(),
+      where: {}, // resolved below from the active order
       action: MONEY_ACTION,
     },
     "expiring-soon": {
       title: "Expiring this week",
       description: "Call them before it lapses.",
-      where: { ...live, subscriptionEndDate: { gte: new Date(), lte: inAWeek() }, ...NOT_INTERNAL },
+      where: {}, // resolved below from the active order
       action: MONEY_ACTION,
     },
     "expiring-month": {
       title: "Expiring this month",
       description: "Subscription ends this month — renew before it lapses (money).",
-      where: expiringThisMonthWhere(),
+      where: {}, // resolved below from the active order
       action: MONEY_ACTION,
     },
     pending: {
       title: "Waiting to be activated",
       description: "Signed up, not switched on yet.",
-      where: { subscriptionStatus: SubscriptionStatus.PENDING, ...NOT_INTERNAL },
+      where: {}, // resolved below from the active order
       action: MONEY_ACTION,
     },
     form: {
@@ -343,21 +350,21 @@ export async function getSegment(key: string): Promise<Segment | null> {
       where: {},
       action: CTA_ACTION,
     },
-    active: { title: "Active", description: "Paying and live.", where: live },
+    active: { title: "Active", description: "Paying and live.", where: {} },
     ymyl: {
       title: "YMYL clients",
       description: "Medical, legal or financial — their booking form carries a liability disclaimer.",
-      where: { ...live, isYmyl: true },
+      where: {}, // resolved below: active (from the order) AND isYmyl
     },
     standard: {
       title: "Standard clients",
       description: "Everyone who is not YMYL.",
-      where: { ...live, isYmyl: false },
+      where: {}, // resolved below: active (from the order) AND not isYmyl
     },
     cancelled: {
       title: "Cancelled",
       description: "They left us.",
-      where: { subscriptionStatus: SubscriptionStatus.CANCELLED, ...NOT_INTERNAL },
+      where: {}, // resolved below — the one status still set by hand on the card
       action: MONEY_ACTION,
     },
     "no-articles": {
@@ -477,6 +484,36 @@ export async function getSegment(key: string): Promise<Segment | null> {
   const segment = segments[key as SegmentKey];
   if (!segment) return null;
 
+  /**
+   * **شرائحُ الاشتراك من الطلب الساري** (٢٣ سبتمبر ٢٠٢٦ — مصدرٌ واحد). كانت تقرأ
+   * `subscriptionStatus`/`subscriptionEndDate` من الكرت؛ والعدّادُ والقائمةُ يقرآن الآن نفسَ
+   * `getClientSubscriptions`، فلا يختلفان.
+   */
+  if (key === "expired") return { ...segment, where: await expiredByDateWhere() };
+  if (key === "expiring-month") return { ...segment, where: await expiringThisMonthWhere() };
+  if (key === "expiring-soon" || key === "pending" || key === "cancelled") {
+    const subs = await getClientSubscriptions(NOT_INTERNAL);
+    const test =
+      key === "expiring-soon"
+        ? (x: ClientSubscription) => x.status === "ACTIVE" && x.daysLeft !== null && x.daysLeft >= 0 && x.daysLeft <= 7
+        : key === "pending"
+          ? (x: ClientSubscription) => x.status === "PENDING"
+          : (x: ClientSubscription) => x.status === "CANCELLED";
+    return { ...segment, where: { id: { in: clientIdsWhere(subs, test) } } };
+  }
+  if (key === "active" || key === "ymyl" || key === "standard") {
+    const [subs, ymylRows] = await Promise.all([
+      getClientSubscriptions(),
+      db.client.findMany({ where: { isYmyl: true }, select: { id: true } }),
+    ]);
+    const ymyl = new Set(ymylRows.map((c) => c.id));
+    const ids = clientIdsWhere(
+      subs,
+      (x) => x.status === "ACTIVE" && (key === "active" || (key === "ymyl" ? ymyl.has(x.clientId) : !ymyl.has(x.clientId))),
+    );
+    return { ...segment, where: { id: { in: ids } } };
+  }
+
   if (key === "unset") {
     const ids = await getClientIdsMissingCtaMode();
     return { ...segment, where: { id: { in: ids } } };
@@ -488,7 +525,7 @@ export async function getSegment(key: string): Promise<Segment | null> {
   if (key === "overdue") {
     const rows = await db.invoice.findMany({
       where: {
-        NOT: { paymentStatus: "PAID" },
+        NOT: { paymentStatus: InvoicePaymentStatus.PAID },
         OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
       },
       select: { clientId: true },

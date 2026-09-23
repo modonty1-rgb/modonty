@@ -1,7 +1,14 @@
 import { db } from "@/lib/db";
 import { isCollectedOrder } from "@modonty/shared/lib/payments/collected";
 import { ArticleStatus, TrafficSource } from "@prisma/client";
-import { getActiveOrderForClient, formatOrderMoney } from "@/lib/subscription/active-order";
+import { formatOrderMoney } from "@/lib/subscription/active-order";
+import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
+import {
+  getOutstandingInvoices,
+  resolveClientPayment,
+  type ClientPaymentKey,
+  type CurrencyTotal,
+} from "@/lib/payments";
 
 export interface DashboardStats {
   subscription: {
@@ -10,13 +17,13 @@ export interface DashboardStats {
     paidTotal: string | null;
     articlesPerMonth: number;
     status: string;
-    paymentStatus: string;
+    paymentStatus: ClientPaymentKey;
     startDate: Date | null;
     endDate: Date | null;
     /** Open invoices — counted from the ledger, never from the stale client flag. */
     unpaidCount: number;
-    unpaidAmount: number;
-    unpaidCurrency: string | null;
+    /** المستحقّ لكلّ عملةٍ وحدها — لا رقمٌ واحدٌ يخلط الريال بالجنيه. */
+    unpaid: CurrencyTotal[];
   };
   content: {
     monthlyPublished: number;
@@ -115,11 +122,14 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
     interactions,
     conversions,
     engagementDuration,
-    activeOrder,
+    sub,
+    outstanding,
   ] = await Promise.all([
     db.client.findUnique({
       where: { id: clientId },
-      // لا `include` للكتالوج القديم: اسم الباقة وسعرها من الطلب الساري.
+      // لا `include` للكتالوج القديم: اسم الباقة وسعرها من الطلب الساري. ولا حقلَ يُقرأ من
+      // الكرت بعد الآن (الاشتراكُ من `getClientSubscription`) — فيكفي التحقّقُ من وجوده.
+      select: { id: true },
     }),
     db.article.count({
       where: {
@@ -228,8 +238,12 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
         id: true,
       },
     }),
-    getActiveOrderForClient(clientId),
+    // الاشتراكُ من الطلب الساري — الحصّةُ والحالةُ والتواريخ، لا نسخةُ الكرت.
+    getClientSubscription(clientId),
+    // المستحقّاتُ بقاعدة `collected.ts`، لكلّ عملةٍ وحدها — نفسُ مصدر الشريط والإعدادات.
+    getOutstandingInvoices(clientId),
   ]);
+  const activeOrder = sub.order;
 
   if (!client) {
     throw new Error("Client not found");
@@ -309,36 +323,23 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
   const conversionCount = conversions[0];
   const conversionRate = views30d > 0 ? (conversionCount / views30d) * 100 : 0;
 
-  // What the client actually owes — read from their invoices, not the stored flag on
-  // the client row (nothing keeps that flag in sync; it says PAID with invoices open).
-  const openInvoices = await db.invoice.findMany({
-    // Mongo: `archivedAt: null` does not match rows where the field is absent.
-    where: {
-      clientId,
-      NOT: { paymentStatus: "PAID" },
-      OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
-    },
-    select: { amount: true, currency: true },
-  });
-
   return {
     subscription: {
       tierName: activeOrder?.planName ?? "—",
       // المدفوعُ بقاعدة `collected.ts`: الطلبُ المستردُّ لا يُعرض مبلغُه مدفوعاً.
       paidTotal: activeOrder && isCollectedOrder(activeOrder) ? formatOrderMoney(activeOrder.totalMinor, activeOrder.currency) : null,
-      articlesPerMonth: client.articlesPerMonth ?? 0,
-      status: client.subscriptionStatus,
-      // من الفواتير القائمة (`openInvoices` أعلاه)، لا من حقلٍ لا يُكتب فيه «متأخّر».
-      paymentStatus: openInvoices.length > 0 ? "UNPAID" : "PAID",
-      startDate: client.subscriptionStartDate,
-      endDate: client.subscriptionEndDate,
-      unpaidCount: openInvoices.length,
-      unpaidAmount: openInvoices.reduce((s, i) => s + i.amount, 0),
-      unpaidCurrency: openInvoices[0]?.currency ?? null,
+      articlesPerMonth: sub.articlesPerMonth ?? 0,
+      status: sub.status,
+      // الطلبُ الساري والمستحقّاتُ معاً — نفسُ قاعدة الإعدادات والشريط (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد).
+      paymentStatus: resolveClientPayment(activeOrder, outstanding.count),
+      startDate: sub.startedAt,
+      endDate: sub.endsAt,
+      unpaidCount: outstanding.count,
+      unpaid: outstanding.totals,
     },
     content: {
       monthlyPublished,
-      monthlyQuota: client.articlesPerMonth ?? 0,
+      monthlyQuota: sub.articlesPerMonth ?? 0,
       totalArticles,
       totalSubscribers: subscribers,
       newSubscribersThisMonth,

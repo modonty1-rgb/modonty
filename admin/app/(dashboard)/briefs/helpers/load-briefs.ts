@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { ArticleStatus } from "@prisma/client";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
@@ -61,7 +62,6 @@ export async function getBriefRows(): Promise<BriefRow[]> {
         isYmyl: true,
         intake: true,
         intakeUpdatedAt: true,
-        articlesPerMonth: true,
         logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
         industry: { select: { name: true } },
         // Quota only — the tier's PRICE is never selected here on purpose.
@@ -79,6 +79,9 @@ export async function getBriefRows(): Promise<BriefRow[]> {
   );
 
   const sections = form?.sections ?? [];
+
+  // الحصّةُ لكلّ عميلٍ من طلبه الساري — دفعةً واحدة.
+  const subs = await getClientSubscriptions({ id: { in: clients.map((c) => c.id) } });
 
   return clients
     .map((c) => {
@@ -103,8 +106,8 @@ export async function getBriefRows(): Promise<BriefRow[]> {
         totalQuestions: questions.length,
         intakeUpdatedAt: c.intakeUpdatedAt?.toISOString() ?? null,
         publishedThisMonth: publishedByClient.get(c.id) ?? 0,
-        // الحصّة من الطلب وحده — سقط احتياطيُّ الجدول القديم (١٩ سبتمبر ٢٠٢٦).
-        monthlyQuota: c.articlesPerMonth ?? 0,
+        // الحصّة من الطلب الساري — لا من نسخة الكرت (مصدرٌ واحد، ٢٣ سبتمبر ٢٠٢٦).
+        monthlyQuota: subs.get(c.id)?.articlesPerMonth ?? 0,
       };
     })
     // Emptiest brief first: those are the clients a writer is about to get stuck on.

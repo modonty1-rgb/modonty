@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { currencyLabel } from "@modonty/shared/lib/commercial/format-money";
 
 /**
  * The deal that governs this client — the console's ONE source for plan name, price,
@@ -51,9 +52,8 @@ export async function getActiveOrderForClient(clientId: string): Promise<ActiveO
   return view;
 }
 
-/** «٢٬٣٩٤ ر.س» — العملة من الطلب، مجمّدةً يوم الشراء. */
+/** «٢٬٣٩٤ ر.س.» — العملة من الطلب، مجمّدةً يوم الشراء، ورمزُها من `currencyLabel` الواحد. */
 export function formatOrderMoney(minor: number, currency: string): string {
   const amount = new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 0 }).format(minor / 100);
-  const unit = currency === "EGP" ? "ج.م" : currency === "SAR" ? "ر.س" : currency;
-  return `${amount} ${unit}`;
+  return `${amount} ${currencyLabel(currency)}`;
 }

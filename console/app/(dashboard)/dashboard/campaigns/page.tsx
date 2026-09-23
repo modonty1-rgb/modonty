@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
+import { getActiveOrderForClient } from "@/lib/subscription/active-order";
 import { CampaignsTeaser } from "./components/campaigns-teaser";
 
 export const dynamic = "force-dynamic";
@@ -10,10 +10,8 @@ export default async function CampaignsPage() {
   const clientId = (session as { clientId?: string })?.clientId;
   if (!clientId) redirect("/");
 
-  const client = await db.client.findUnique({
-    where: { id: clientId },
-    select: { articlesPerMonth: true },
-  });
+  // الحصّةُ من الطلب الساري — لا من نسخة الكرت (قاعدة المصدر الواحد).
+  const activeOrder = await getActiveOrderForClient(clientId);
 
-  return <CampaignsTeaser monthlyQuota={client?.articlesPerMonth ?? 0} />;
+  return <CampaignsTeaser monthlyQuota={activeOrder?.articlesPerMonth ?? 0} />;
 }

@@ -21,21 +21,27 @@ import type { LeadDetail } from "../helpers/get-lead";
  */
 export function LeadDealRail({
   lead,
-  tierLabels,
+  planLabel,
   dealTotal,
+  dealCurrency,
   dealMonths,
 }: {
   lead: LeadDetail;
-  /** أسماء الباقات من `modonty_plans` — لا خريطةٌ مكتوبة في الكود. */
-  tierLabels: Record<string, string>;
-  /** إجماليّ الصفقة للمدّة كلّها، ومدّتها — محسوبان على السيرفر بنفس دالّة شاشة التأسيس. */
+  /**
+   * اسم الباقة من `CommercialPlan` — محلولٌ على السيرفر (`priceLeadDeal`)، فسلَقٌ قديم من
+   * `modonty_plans` يصل باسمه في الكتالوج (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد).
+   */
+  planLabel: string | null;
+  /** إجماليّ الصفقة للمدّة كلّها وعملتُه ومدّتها — من الكتالوج على السيرفر. */
   dealTotal: number | null;
+  /** عملة صفّ السعر، لا عملة العميل المخزّنة. */
+  dealCurrency: string | null;
   dealMonths: number | null;
 }) {
   const stage = lead.stage as Stage;
   const closed = stage === "WON" || stage === "LOST";
   const due = describeDue(lead.nextActionAt);
-  const money = formatMoney(dealTotal, lead.currency);
+  const money = formatMoney(dealTotal, dealCurrency);
 
   return (
     <div className="space-y-3">
@@ -83,8 +89,8 @@ export function LeadDealRail({
           <div>
             <div className="text-[11px] text-muted-foreground">الباقة التي يهتمّ بها</div>
             <div className="mt-0.5 text-[13px]">
-              {lead.expectedTier ? (
-                tierLabels[lead.expectedTier] ?? lead.expectedTier
+              {planLabel ? (
+                planLabel
               ) : (
                 <span className="text-muted-foreground">غير معروف بعد</span>
               )}

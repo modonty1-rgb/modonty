@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Archive, ClipboardCheck, KanbanSquare, LayoutGrid, UserCheck } from "lucide-react";
+import { Archive, ClipboardCheck, KanbanSquare, LayoutGrid, Send, UserCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +26,10 @@ const ITEMS = [
   // «Report» said nothing about what is inside it — Khalid (2026-09-04): «الـdaily report
   // إنه بيشوفوا الـtasks اللي موجودة، فخلّي المصطلح يكون واضح». The name now states the
   // content: every person's tasks for a chosen day, next to «Board» which shows only stages.
-  { href: "/daily-tasks", label: "Everyone's Tasks", icon: UserCheck, hint: "Every person's tasks, day by day" },
+  // خالد (٢٣ سبتمبر ٢٠٢٦): الصفحةُ كانت تخلط التقريرَ بالإسناد. فانقسمت: الإسنادُ ومتابعتُه في
+  // «Assign Task»، والتقريرُ أسبوعيٌّ «بمعنى الكلمة» — مَن أنجز ومَن تأخّر — لا قائمةَ مهامّ اليوم.
+  { href: "/tasks/assign", label: "Assign Task", icon: Send, hint: "Hand a task to a colleague and follow it" },
+  { href: "/daily-tasks", label: "Team Report", icon: UserCheck, hint: "Weekly: who finished what, who is late" },
   { href: "/tasks/archive", label: "Archive", icon: Archive, hint: "Taken off the board" },
 ] as const;
 
@@ -68,7 +71,8 @@ export function TasksMenu({
   // it — a token minted before the box was ticked would keep the link hidden until the next
   // sign-in. So the layout reads it on the server and passes it down.
   const items = ITEMS
-    .filter((item) => item.href !== "/daily-tasks" || canViewReports)
+    // الإسنادُ والتقريرُ لمن يرى التقارير — نفسُ حارس `createTask` وحارس الصفحتين.
+    .filter((item) => (item.href !== "/daily-tasks" && item.href !== "/tasks/assign") || canViewReports)
     .map((item) => item.href === "/tasks/archive" && canViewReports
       ? { ...item, label: "Team Archive", hint: "Archived tasks from everyone" }
       : item);

@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { ArticleStatus, Prisma, ReelStatus } from "@prisma/client";
 import type { ClientFilters, ClientForList } from "./types";
 
@@ -238,8 +239,18 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
       reelStatsByClient.set(group.clientId, current);
     }
 
+    /**
+     * **الحالةُ والنهايةُ والحصّةُ من الطلب الساري** (٢٣ سبتمبر ٢٠٢٦ — مصدرٌ واحد). الأسماءُ
+     * نفسُها فلا يتغيّر مستهلكٌ واحد (الجدول · التبويبات · الإحصاءات)، والقيمُ من
+     * `getClientSubscriptions` لا من نسخة الكرت التي خالفت الطلبَ عند ١١ عميلاً.
+     */
+    const subs = await getClientSubscriptions({ id: { in: clients.map((c) => c.id) } });
+
     return clients.map((c) => ({
       ...c,
+      subscriptionStatus: (subs.get(c.id)?.status ?? "PENDING") as typeof c.subscriptionStatus,
+      subscriptionEndDate: subs.get(c.id)?.endsAt ?? null,
+      articlesPerMonth: subs.get(c.id)?.articlesPerMonth ?? null,
       articleStats:
         statsByClient.get(c.id) ?? { total: 0, published: 0, awaitingApproval: 0 },
       reelStats: reelStatsByClient.get(c.id) ?? { published: 0, pending: 0 },

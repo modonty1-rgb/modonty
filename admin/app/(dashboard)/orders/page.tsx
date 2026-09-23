@@ -7,13 +7,17 @@ import { OrderStatusFilter } from "./components/order-status-filter";
 import { OrdersSearch } from "./components/orders-search";
 import { MonthlyRevenueStrip, type CurrencyTotal } from "./components/monthly-revenue-strip";
 import { getMonthlyRevenue } from "./helpers/get-monthly-revenue";
-import { OrdersTable, type OrderRow } from "./components/orders-table";
+import { OrdersTable, type ClientGroup, type GroupStanding, type OrderRow } from "./components/orders-table";
+
 import { formatMonths } from "./helpers/format-months";
 import { formatOrderAmount } from "@/lib/orders/format-order-amount";
 import { formatOrderDate } from "./helpers/format-order-date";
 import { formatOrderMoney } from "@/lib/orders/format-order-money";
 import { getFirstPublishedDates } from "./helpers/get-first-published-dates";
 import { getSubscriptionStanding } from "./helpers/get-subscription-standing";
+import { getExpiredActiveOrderIds } from "./helpers/get-expired-active-order-ids";
+import { getClientSubscriptions, type ClientSubscription } from "@/lib/subscription/get-client-subscriptions";
+import { REVENUE_ORDER } from "@/lib/orders/revenue-order";
 import { orderMarketLabel } from "./helpers/order-market-label";
 import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { AWAITING_ACTIVATION } from "@/lib/orders/awaiting-activation";
@@ -22,6 +26,43 @@ import { checkSalesDesk } from "@/lib/require-sales-desk";
 export const dynamic = "force-dynamic";
 
 const STATUSES: CheckoutOrderStatus[] = ["AWAITING_PAYMENT", "AWAITING_TRANSFER", "PAID", "FAILED", "CANCELLED", "REFUNDED"];
+/** مجموعةٌ قيد البناء — المالُ بعملاته قبل أن يُنسَّق نصّاً، والحالُ بعد اكتمال صفوفها. */
+type OrderGroup = Omit<ClientGroup, "paidLabel" | "standing"> & { paid: Map<string, number> };
+
+/**
+ * حالُ العميل في سطره — من طلبه الساري (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد)، نفسُ ما تعدّه
+ * شريحةُ «منتهٍ». بلا طلبٍ ساري ← «—»؛ والإلغاءُ اليدويّ يُقال «ملغى».
+ *
+ * و«حسابٌ لنا» لا يُقال منتهياً ولا يُصبغ (`NOT_INTERNAL` في `segments.ts`): العدّادُ يستثنيه،
+ * فلو صُبغ سطرُه لقال الجدولُ رقماً غيرَ رقم الحبّة. تبقى باقتُه، والاشتراكُ «—».
+ */
+function clientStanding(
+  sub: ClientSubscription | undefined,
+  card: { activeOrderId: string | null; isInternal: boolean | null } | undefined,
+): GroupStanding {
+  if (!sub) return { planName: null, state: "unknown", daysLeft: null, endsLabel: null, orderId: null };
+  if (card?.isInternal === true) return { planName: sub.planName, state: "unknown", daysLeft: null, endsLabel: null, orderId: null };
+  return {
+    planName: sub.planName,
+    state: sub.status === "CANCELLED" ? "cancelled" : (sub.state ?? "unknown"),
+    daysLeft: sub.daysLeft,
+    endsLabel: sub.endsAt ? formatOrderDate(sub.endsAt) : null,
+    orderId: sub.hasOrder ? (card?.activeOrderId ?? null) : null,
+  };
+}
+
+/** من لم يُفعَّل بعد لا طلبَ ساريَ له — فحالُه حالُ طلبه هو: أحدثُ مدفوع، وإلّا أحدثُ طلب. */
+function ownOrderStanding(rows: OrderRow[]): GroupStanding {
+  const own = rows.find((r) => r.status === "PAID") ?? rows[0];
+  return {
+    planName: own?.planName ?? null,
+    state: own?.subscriptionState ?? "unknown",
+    daysLeft: own?.subscriptionDaysLeft ?? null,
+    endsLabel: own?.subscriptionEndsLabel ?? null,
+    orderId: own?.id ?? null,
+  };
+}
+
 const PROVIDERS: PaymentProvider[] = ["NGENIUS", "TAMARA", "BANK_TRANSFER", "INSTAPAY", "MIGRATED"];
 /**
  * **الأسواقُ الثلاثة — والإجماليّ يُجمَع بالسوق لا بالعملة.**
@@ -54,9 +95,15 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   const activeProvider = PROVIDERS.find((candidate) => candidate === provider);
   // مشهدٌ لا حالة: «ينتظر التفعيل» = مدفوعٌ بلا `clientId`، وهو غيابُ حقلٍ لا قيمةُ status.
   const isAwaitingView = view === "awaiting-activation";
-  // «اشتراكٌ منتهٍ» يُحسب من التفعيل + شهور الخدمة ولا يُخزَّن، فلا يُفلتر في القاعدة:
-  // تُجلب المدفوعةُ المفعَّلة كلُّها ويُرشَّح المنتهي منها هنا.
   const isExpiredView = view === "expired";
+  /**
+   * «منتهٍ» = **الطلبُ الساري لعميلٍ انتهى اشتراكُه** (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد)، لا كلُّ
+   * طلبٍ مدفوعٍ انقضت مدّتُه: كان يعدّ الطلبَ القديم لعميلٍ جدّد، والحساباتِ الداخليّة. فالعدّادُ
+   * والقائمةُ = شريحةُ `/clients/segment/expired`. يُنتظر قبل الفلتر في مشهد «منتهٍ» وحده، وفي
+   * غيره يجري بالتوازي مع الباقي.
+   */
+  const expiredOrderIdsPromise = getExpiredActiveOrderIds();
+  const expiredOrderIds = isExpiredView ? await expiredOrderIdsPromise : null;
 
   /**
    * البحثُ يُضاف إلى الفلتر لا يحلّ محلَّه — فيقرأ «المصريّون الذين اسمُهم كذا».
@@ -74,8 +121,8 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     : null;
 
   /** شرطُ الفلتر الواحد — يقود الجدولَ والإجماليَّ معاً فلا يقول أحدُهما غيرَ ما يقوله الآخر. */
-  const filterWhere = isExpiredView
-    ? { status: "PAID" as const, NOT: [{ serviceStartedAt: null }] }
+  const filterWhere = expiredOrderIds
+    ? { id: { in: expiredOrderIds } }
     : isAwaitingView
       ? AWAITING_ACTIVATION
       : activeProvider
@@ -89,7 +136,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   const where =
     filterWhere && searchWhere ? { AND: [filterWhere, searchWhere] } : (searchWhere ?? filterWhere);
 
-  const [salesDeskGate, fetched, total, countRows, awaitingActivation, expiredCount, providerPairs, marketRows, sumRows] = await Promise.all([
+  const [salesDeskGate, orders, total, countRows, awaitingActivation, expiredCount, providerPairs, marketRows, sumRows] = await Promise.all([
     checkSalesDesk(),
     db.checkoutOrder.findMany({
       where,
@@ -108,26 +155,19 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     db.checkoutOrder.count(),
     db.checkoutOrder.groupBy({ by: ["status"], _count: { _all: true } }),
     db.checkoutOrder.count({ where: AWAITING_ACTIVATION }),
-    // عدّادُ المنتهي — بنفس الحاسب الذي يلوّن الصفوف، فلا يقول الزرُّ رقماً يخالف الجدول.
-    db.checkoutOrder
-      .findMany({
-        // ساعةُ الاشتراك من بداية الخدمة (أوّل مقالٍ وصل العميل) لا من يوم التفعيل
-        // — خالد ١٩ سبتمبر ٢٠٢٦. ومن لم تبدأ خدمتُه لا يُعدّ منتهياً ولا قريبَ الانتهاء.
-        where: { status: "PAID", NOT: [{ serviceStartedAt: null }] },
-        select: { serviceStartedAt: true, paidMonths: true, bonusServiceMonths: true },
-        take: 500,
-      })
-      .then((rows) => rows.filter((r) => getSubscriptionStanding(r).state === "expired").length),
+    // عدّادُ «منتهٍ» — نفسُ المعرّفات التي تُفلتر بها قائمتُه، فلا يقول الزرُّ رقماً يخالف الجدول.
+    expiredOrderIdsPromise.then((ids) => ids.length),
     // طلباتٌ لكلّ بوّابة — `distinct` على (الطلب، المزوّد) لأنّ الطلب الواحد قد يحمل
     // محاولاتٍ عدّة على نفس البوّابة، والعدّادُ يعدّ طلباتٍ لا محاولات.
     db.paymentTransaction.findMany({ select: { orderId: true, provider: true }, distinct: ["orderId", "provider"], take: 5000 }),
     // طلباتٌ لكلّ سوق — على الجدول كلِّه لا على الصفحة المعروضة.
     db.checkoutOrder.groupBy({ by: ["market"], _count: { _all: true } }),
-    // إجماليّا السوقين — على الجدول كلِّه دائماً، لا على المشهد المفلتَر.
-    db.checkoutOrder.groupBy({ by: ["market"], _sum: { totalMinor: true } }),
+    // إجماليّا السوقين — على الجدول كلِّه دائماً، لا على المشهد المفلتَر. **والمقبوضُ وحده**:
+    // كان يجمع كلَّ حالة، فبقي المستردُّ فيه (مقيسٌ ٢٣ سبتمبر ٢٠٢٦: «مصر ١١٤٬١٢٩» وفيه ٥٬٠٠٠
+    // مستردّة). و«حسابٌ لنا» خارجٌ كما يَعِد مربّعُه — نفسُ شرط `get-monthly-revenue.ts`.
+    db.checkoutOrder.groupBy({ by: ["market"], where: REVENUE_ORDER, _sum: { totalMinor: true } }),
   ]);
   const isSalesDesk = salesDeskGate.status === "ok";
-  const orders = isExpiredView ? fetched.filter((o) => getSubscriptionStanding(o).state === "expired") : fetched;
   const counts = Object.fromEntries(countRows.map((row) => [row.status, row._count._all])) as Partial<Record<CheckoutOrderStatus, number>>;
   const providerCounts: Partial<Record<PaymentProvider, number>> = {};
   for (const pair of providerPairs) providerCounts[pair.provider] = (providerCounts[pair.provider] ?? 0) + 1;
@@ -157,9 +197,23 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   const monthly = await getMonthlyRevenue();
 
   // يعتمد على الطلبات المجلوبة، فلا يدخل `Promise.all` أعلاه.
-  const firstArticleAt = await getFirstPublishedDates(
-    orders.flatMap((order) => (order.clientId ? [order.clientId] : [])),
-  );
+  const pageClientIds = [...new Set(orders.flatMap((order) => (order.clientId ? [order.clientId] : [])))];
+  const [firstArticleAt, clientCards, clientSubs] = await Promise.all([
+    getFirstPublishedDates(pageClientIds),
+    // اسمُ العميل من كرته لا من الطلب: المشتري قد يكون موظّفاً والحسابُ باسم المنشأة.
+    // ومؤشّرُ الطلب الساري و«حسابٌ لنا» — لحال سطره (`clientStanding`).
+    pageClientIds.length
+      ? db.client.findMany({
+          where: { id: { in: pageClientIds } },
+          select: { id: true, name: true, activeOrderId: true, isInternal: true },
+        })
+      : Promise.resolve([]),
+    // حالُ كلّ عميلٍ في الصفحة من طلبه الساري — لسطره في الجدول (الباقة · الاشتراك · الصبغة).
+    pageClientIds.length
+      ? getClientSubscriptions({ id: { in: pageClientIds } })
+      : Promise.resolve(new Map<string, ClientSubscription>()),
+  ]);
+  const clientById = new Map(clientCards.map((c) => [c.id, c]));
 
   /**
    * الصفوف تُنسَّق هنا وتُرسَل نصّاً: الجدولُ المشترك مكوّنُ عميل (بحث · فرز · ترقيم —
@@ -202,6 +256,34 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
       providerLabel: order.transactions[0] ? orderProviderLabel(order.transactions[0].provider) : null,
     };
   });
+
+  /**
+   * **الجدولُ بالعميل، وطلباتُه تحته** (خالد ٢٣ سبتمبر ٢٠٢٦: «الكنترول يكون في العميل…
+   * ماني قادر أعرف العميل»). التجديدُ طلبٌ جديد للعميل نفسِه، فكان العميلُ يتفرّق صفوفاً.
+   *
+   * المفتاحُ حسابُ العميل، ولمن لم يُفعَّل بعد بريدُ المشتري — طلبُه مدفوعٌ ولا كرتَ له،
+   * ويبقى ظاهراً لا يسقط من الجدول. والمجموعاتُ مرتّبةٌ بأحدث طلب (ترتيبُ الجلب نفسُه).
+   * والطلباتُ داخلها هي المعروضةُ بالفلتر الحاليّ — فلتر «مسترد» يُظهر المستردَّ وحده.
+   */
+  const groupMap = new Map<string, OrderGroup>();
+  orders.forEach((order, i) => {
+    const key = order.clientId ?? `buyer:${order.buyerEmail.toLowerCase()}`;
+    const group = groupMap.get(key) ?? {
+      key,
+      clientId: order.clientId,
+      name: (order.clientId && clientById.get(order.clientId)?.name) || order.businessName || order.buyerName,
+      paid: new Map<string, number>(),
+      rows: [],
+    };
+    group.rows.push(rows[i]);
+    if (order.status === "PAID") group.paid.set(order.currency, (group.paid.get(order.currency) ?? 0) + order.totalMinor);
+    groupMap.set(key, group);
+  });
+  const groups: ClientGroup[] = [...groupMap.values()].map(({ paid, ...g }) => ({
+    ...g,
+    paidLabel: paid.size ? [...paid].map(([currency, minor]) => formatOrderMoney(minor, currency)).join(" + ") : null,
+    standing: g.clientId ? clientStanding(clientSubs.get(g.clientId), clientById.get(g.clientId)) : ownOrderStanding(g.rows),
+  }));
 
   const emptyText = isExpiredView
     ? "لا اشتراكات منتهية — كلُّ المفعَّل ساري."
@@ -255,7 +337,9 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
         ) : null}
       </div>
 
-      <div className="min-w-0">
+      {/* الفلاترُ والإجماليّاتُ في صفٍّ واحد (خالد ٢٣ سبتمبر ٢٠٢٦: «جنب التوغلز عشان نستفيد
+          من المساحة») — الفلترُ في طرف القراءة، والأرقامُ في الطرف المقابل. */}
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-6 gap-y-2">
           <OrderStatusFilter
             counts={counts}
             total={total}
@@ -270,12 +354,11 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
             marketLabels={MARKET_LABEL}
             activeMarket={activeMarket}
           />
+          <MonthlyRevenueStrip data={monthly} totals={totals} />
         </div>
       </header>
 
-      <MonthlyRevenueStrip data={monthly} totals={totals} />
-
-      <OrdersTable rows={rows} emptyText={emptyText} />
+      <OrdersTable groups={groups} emptyText={emptyText} />
     </main>
   );
 }

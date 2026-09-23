@@ -1,6 +1,6 @@
 import { LeadForm } from "../components/lead-form";
 import { getIndustryOptions } from "../helpers/get-lead";
-import { getPlans } from "../helpers/get-plans";
+import { getLeadCatalog } from "../helpers/get-lead-catalog";
 import { getLeadSources } from "../helpers/get-lead-sources";
 import { getCampaignOptions } from "../helpers/get-campaign-options";
 
@@ -8,9 +8,10 @@ export const metadata = { title: "عميل محتمل جديد — أدمن مد
 
 export default async function NewLeadPage() {
   // متوازيان: لا يتوقّف أحدهما على الآخر، وتسلسلهما يضيف رحلةً إلى القاعدة بلا سبب.
-  const [industries, plans, leadSources, campaigns] = await Promise.all([
+  // الباقات والمدد من الكتالوج (`CommercialPlan` · `CommercialTermPolicy`) — ٢٣ سبتمبر ٢٠٢٦.
+  const [industries, catalog, leadSources, campaigns] = await Promise.all([
     getIndustryOptions(),
-    getPlans(),
+    getLeadCatalog(),
     getLeadSources(),
     getCampaignOptions(),
   ]);
@@ -19,7 +20,13 @@ export default async function NewLeadPage() {
   // ثلاثتها معاً كانت `72` بكسلاً فوق أوّل كلمة.
   return (
     <div dir="rtl">
-      <LeadForm industries={industries} plans={plans} leadSources={leadSources} campaigns={campaigns} />
+      <LeadForm
+        industries={industries}
+        plans={catalog.plans}
+        terms={catalog.terms}
+        leadSources={leadSources}
+        campaigns={campaigns}
+      />
     </div>
   );
 }

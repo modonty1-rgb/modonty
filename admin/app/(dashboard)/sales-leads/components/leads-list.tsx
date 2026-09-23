@@ -39,7 +39,15 @@ const SORTS = [
   {
     key: "value" as const,
     label: "الأعلى قيمة",
-    fn: (a: SalesLeadRow, b: SalesLeadRow) => (b.dealTotal ?? 0) - (a.dealTotal ?? 0),
+    /**
+     * القيمةُ داخل عملتها وحدها (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد): كان ٢٠٬٠٠٠ ج.م. يسبق
+     * ١٠٬٠٠٠ ر.س. لأنّ الرقمين قورنا مجرّدين. فتُجمع كلُّ عملةٍ معاً، والأعلى أوّلاً فيها،
+     * وما لا صفقةَ له آخرَ القائمة.
+     */
+    fn: (a: SalesLeadRow, b: SalesLeadRow) =>
+      Number(b.dealTotal != null) - Number(a.dealTotal != null) ||
+      (a.currency ?? "").localeCompare(b.currency ?? "") ||
+      (b.dealTotal ?? 0) - (a.dealTotal ?? 0),
   },
 ];
 

@@ -3,6 +3,7 @@ import { TrendingUp, Wallet, Clock, UserX, FileText, Package, CalendarX } from "
 
 import type { Money, SalesReport, Period } from "../actions/get-sales-report";
 import { InvoicesTable } from "./invoices-table";
+import { currencyLabel } from "@modonty/shared/lib/commercial/format-money";
 
 const nf = new Intl.NumberFormat("en-US");
 const money = (n: number) => nf.format(Math.round(n));
@@ -14,11 +15,12 @@ const CURRENCY_BADGE: Record<"SAR" | "EGP", string> = {
   EGP: "bg-blue-500/10 text-blue-600 ring-blue-500/20 dark:text-blue-400",
 };
 
+
 function CurBadge({ code, value }: { code: "SAR" | "EGP"; value: number }) {
   return (
     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums ring-1 ring-inset ${CURRENCY_BADGE[code]}`}>
-      <span className="text-[9px] font-semibold opacity-70">{code}</span>
       {money(value)}
+      <span className="text-[9px] font-semibold opacity-70">{currencyLabel(code)}</span>
     </span>
   );
 }
@@ -88,15 +90,18 @@ function SectionTitle({ icon: Icon, children }: { icon: typeof Wallet; children:
 
 const th = "px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground";
 
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
+const MONTHS = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
 const hasMoney = (m: Money) => m.paid > 0 || m.due > 0;
 
 export function SalesReportView({ report, period }: { report: SalesReport; period: Period }) {
   const { totals, invoiceCount, byTier, recent, reps, unassignedCount, monthlyTotals, yearTotal, expiredCount } = report;
+  /**
+   * العملةُ تُعرض حين يكون فيها مالٌ في الدفتر — لا عمودَ «ر.س. 0» في كلّ خانة والسوقُ
+   * السعوديّ بلا مبيعات. وإن خلا الدفترُ كلُّه يبقى الجنيه (٨٨٪ من الجمهور مصريّ).
+   */
+  const showSar = totals.sar.paid + totals.sar.due + yearTotal.sar > 0;
+  const showEgp = totals.egp.paid + totals.egp.due + yearTotal.egp > 0 || !showSar;
 
   return (
     <div className="space-y-5" dir="rtl">
@@ -113,59 +118,62 @@ export function SalesReportView({ report, period }: { report: SalesReport; perio
         </div>
       </div>
 
-      {/* Month filter — pro cards: month header + a split EGP | SAR footer, BOTH currencies
-          always shown even at zero (Khalid 2026-07-25). Full accounting figures, no K. */}
-      <div className="flex flex-wrap gap-2">
-        {[{ key: "all" as const, label: "All", sar: yearTotal.sar, egp: yearTotal.egp }, ...monthlyTotals.map((t, i) => ({ key: t.month, label: MONTHS[i], sar: t.sar, egp: t.egp }))].map(
-          (item) => {
-            const active = period === item.key;
-            const href = item.key === "all" ? "/clients/sales-report" : `/clients/sales-report?month=${item.key}`;
-            return (
-              <Link
-                key={item.label}
-                href={href}
-                className={`overflow-hidden rounded-lg border text-center transition-colors ${
-                  active ? "border-primary ring-1 ring-primary" : "border-input hover:border-primary/50"
-                }`}
-              >
-                <div
-                  className={`px-3 py-1 text-[11px] font-bold ${
-                    active ? "bg-primary text-primary-foreground" : "bg-muted/50 text-foreground"
-                  }`}
-                >
-                  {item.label}
-                </div>
-                <div className="flex divide-x divide-border">
-                  {([["EGP", item.egp], ["SAR", item.sar]] as const).map(([cur, val]) => {
-                    const tone =
-                      val === 0
-                        ? "text-muted-foreground/50"
-                        : cur === "SAR"
-                          ? "text-emerald-600 dark:text-emerald-400"
-                          : "text-blue-600 dark:text-blue-400";
-                    return (
-                      <div key={cur} className="min-w-[64px] px-2.5 py-1">
-                        <div className="text-[8px] font-bold uppercase tracking-wide text-muted-foreground">{cur}</div>
-                        <div className={`text-[11px] font-bold tabular-nums ${tone}`}>{money(val)}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </Link>
-            );
-          },
-        )}
+      {/**
+        * **الفترة: السنةُ كاملة، ثمّ شهورُها حتى الشهر الحاليّ** (خالد ٢٣ سبتمبر ٢٠٢٦: «الدول
+        * والأشهر فيها لخبطة كثير»). كانت ثلاثَ عشرةَ بطاقةً بأسماءٍ إنجليزيّة، في كلٍّ عملتان
+        * ولو صفراً، والشهورُ القادمة معروضةٌ بأصفارها — فتُقرأ الشاشةُ أصفاراً.
+        *
+        * الآن: شهرٌ عربيّ، ولا تظهر إلّا العملةُ التي فيها مال؛ والشهرُ الفارغ باهتٌ بشَرطة.
+        */}
+      <div className="flex flex-wrap gap-1.5">
+        {[
+          { key: "all" as const, label: `سنة ${new Date().getFullYear()}`, sar: yearTotal.sar, egp: yearTotal.egp },
+          ...monthlyTotals
+            .filter((t) => t.month <= new Date().getMonth() + 1)
+            .map((t) => ({ key: t.month, label: MONTHS[t.month - 1], sar: t.sar, egp: t.egp })),
+        ].map((item) => {
+          const active = period === item.key;
+          const empty = item.sar === 0 && item.egp === 0;
+          const href = item.key === "all" ? "/clients/sales-report" : `/clients/sales-report?month=${item.key}`;
+          return (
+            <Link
+              key={item.label}
+              href={href}
+              className={`flex min-w-[88px] flex-col items-center gap-0.5 rounded-lg border px-3 py-1.5 transition-colors ${
+                active ? "border-primary bg-primary/10" : "bg-card hover:border-primary/50"
+              } ${empty && !active ? "opacity-50" : ""}`}
+            >
+              <span className={`text-[12px] font-bold ${active ? "text-primary" : "text-foreground"}`}>{item.label}</span>
+              {empty ? (
+                <span className="text-[11px] text-muted-foreground">—</span>
+              ) : (
+                <>
+                  {showEgp && item.egp > 0 ? (
+                    <span className="text-[11px] font-semibold tabular-nums text-blue-600 dark:text-blue-400">
+                      {money(item.egp)} <span className="text-[9px] opacity-70">{currencyLabel("EGP")}</span>
+                    </span>
+                  ) : null}
+                  {showSar && item.sar > 0 ? (
+                    <span className="text-[11px] font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
+                      {money(item.sar)} <span className="text-[9px] opacity-70">{currencyLabel("SAR")}</span>
+                    </span>
+                  ) : null}
+                </>
+              )}
+            </Link>
+          );
+        })}
       </div>
 
       {/* KPIs — one compact strip */}
       <div className="flex flex-wrap items-stretch overflow-hidden rounded-xl border bg-card shadow-sm [&>*]:flex-1 [&>*]:min-w-[160px] [&>*:not(:first-child)]:border-s [&>*:not(:first-child)]:border-border">
         <Kpi icon={Wallet} label="المحصّل" accent="emerald">
-          <CurBadge code="SAR" value={totals.sar.paid} />
-          <CurBadge code="EGP" value={totals.egp.paid} />
+          {showEgp ? <CurBadge code="EGP" value={totals.egp.paid} /> : null}
+          {showSar ? <CurBadge code="SAR" value={totals.sar.paid} /> : null}
         </Kpi>
         <Kpi icon={Clock} label="المستحق" accent="amber">
-          <CurBadge code="SAR" value={totals.sar.due} />
-          <CurBadge code="EGP" value={totals.egp.due} />
+          {showEgp ? <CurBadge code="EGP" value={totals.egp.due} /> : null}
+          {showSar ? <CurBadge code="SAR" value={totals.sar.due} /> : null}
         </Kpi>
         <Kpi icon={CalendarX} label="منتهي" accent="red">
           <CountBadge value={expiredCount} danger />

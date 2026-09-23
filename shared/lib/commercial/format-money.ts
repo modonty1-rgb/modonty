@@ -31,9 +31,15 @@ export function formatCatalogMoneyMinor(minor: number, currency: string, fractio
  * تخزّن الرمز الدوليّ (`SAR`/`EGP`) وحده؛ وكيف يُكتب عربيّاً شأن العرض، فيبقى في الكود
  * لكن في **ملفّ واحد**.
  */
-const CURRENCY_LABEL: Record<string, string> = { SAR: "ر.س", EGP: "ج.م" };
+/**
+ * **بالنقطة الأخيرة — «ر.س.» و«ج.م.»** (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد). هي صيغةُ `Intl`
+ * نفسُها (`formatCatalogMoney` أعلاه وأدمن `formatOrderMoney`)؛ وكان الأدمن يكتبها بنقطة
+ * والكونسول بلا نقطة، وسبعُ خرائطَ مكتوبةٌ باليد في الشاشات — فالمبلغُ الواحد يُقرأ بصيغتين.
+ * كلُّها تقرأ من هنا الآن.
+ */
+const CURRENCY_LABEL: Record<string, string> = { SAR: "ر.س.", EGP: "ج.م." };
 
-/** «ر.س» · «ج.م» — أو الرمز الدوليّ كما هو لعملةٍ لم تُترجَم بعد. */
+/** «ر.س.» · «ج.م.» — أو الرمز الدوليّ كما هو لعملةٍ لم تُترجَم بعد. */
 export function currencyLabel(currency: string): string {
   return CURRENCY_LABEL[currency] ?? currency;
 }

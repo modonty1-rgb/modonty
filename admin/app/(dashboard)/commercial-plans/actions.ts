@@ -88,7 +88,7 @@ async function revalidateCatalog(planId?: string) {
   revalidatePath("/commercial-features");
   if (planId) revalidatePath(`/commercial-plans/${planId}`);
   /**
-   * وصفحات دليل الفريق معها (١٥ سبتمبر ٢٠٢٦): صار `get-tier-pricing.ts` يقرأ من
+   * وصفحات دليل الفريق معها (١٥ سبتمبر ٢٠٢٦): صار `get-featured-plan-pricing.ts` يقرأ من
    * الكتالوج، وهو مُكاش `unstable_cache` بساعة. ولم يكن أحدٌ يُبطل وسمه قطّ —
    * فتعدّل السعر هنا ويبقى فريق المبيعات يقرأ القديم ساعةً كاملة ويقوله للعميل.
    */

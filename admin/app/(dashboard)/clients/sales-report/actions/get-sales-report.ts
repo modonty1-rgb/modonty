@@ -1,18 +1,20 @@
-import { SubscriptionStatus } from "@prisma/client";
-
+import { InvoicePaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { NOT_INTERNAL } from "../../segment/segments";
-import { isStandaloneCollectedInvoice } from "@modonty/shared/lib/payments/collected";
+import { REVENUE_ORDER } from "@/lib/orders/revenue-order";
+import { clientIdsWhere, getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
+import { invoiceMinor, isOutstandingInvoice } from "@modonty/shared/lib/payments/collected";
+import { formatTermLabel } from "@modonty/shared/lib/commercial/term-label";
 
 /** "all" for the whole book, or a month number 1–12 (of the current year). */
 export type Period = "all" | number;
 
 export interface Money {
-  /** Collected — real cash in (paid invoices + opening balances). */
+  /** Collected — real cash in: PAID orders only (`isCollectedOrder` via `REVENUE_ORDER`). */
   paid: number;
-  /** Outstanding — raised but not yet collected (DUE invoices). NOT sales. */
+  /** Outstanding — `isOutstandingInvoice` + `invoiceMinor`, the one debt rule. NOT sales. */
   due: number;
-  /** Count of real invoices contributing (opening balances are not invoices). */
+  /** Count of invoices contributing (a PAID opening-balance document is not counted). */
   invoices: number;
 }
 
@@ -35,11 +37,13 @@ export interface RecentInvoice {
   number: string;
   clientName: string;
   tierName: string;
-  /** Billing type — "monthly" | "annual". */
-  subType: string;
+  /** مدّةُ الطلب — «٦ أشهر + شهر هدية» (`formatTermLabel`)، لا «شهري/سنوي». */
+  term: string;
   amount: number;
   currency: string;
   paid: boolean;
+  /** حالةُ الفاتورة كما في السكيما — اسمُها من `INVOICE_STATUS_LABEL`. */
+  status: InvoicePaymentStatus;
   issuedAt: string;
   /** Raw collection/issue date (ms) for client-side sorting. */
   dateMs: number;
@@ -86,7 +90,8 @@ function periodBounds(period: Period): { start: Date | null; end: Date | null } 
 // لأنّ `openingBalance` رقمٌ بلا عملة. وصار الإيرادُ يُقرأ من الطلب، والطلبُ يحمل
 // `currency` صريحةً — فسقط الاشتقاقُ ومعه احتمالُ أن يخطئ في بلدٍ مكتوبٍ بصيغةٍ غريبة.
 
-const dateFmt = new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "short", day: "numeric" });
+// عربيّ كبقيّة التقرير — «٢٠ سبتمبر ٢٠٢٦» لا «20 Sept 2026».
+const dateFmt = new Intl.DateTimeFormat("ar-EG", { year: "numeric", month: "long", day: "numeric" });
 
 /**
  * Sales / revenue report for the whole book, on a CASH basis (Khalid 2026-07-25).
@@ -98,9 +103,10 @@ const dateFmt = new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "shor
  * An invoice issued FROM an order (or flagged `fromOpeningBalance`) is a document of money
  * the order already carries, so its amount is EXCLUDED here to avoid double-counting.
  *
- * Collected (المحصّل) = PAID orders (by paidAt) + PAID invoices that no order carries (by paidAt)
- * — the one rule in `shared/lib/payments/collected.ts`, read by every money screen.
- * Outstanding (المستحق, DUE) is shown separately — it is a receivable, never counted as sales.
+ * Collected (المحصّل) = PAID orders (by paidAt) — an invoice is a document, never money —
+ * the one rule in `shared/lib/payments/collected.ts`, read by every money screen.
+ * Outstanding (المستحق) = `isOutstandingInvoice` + `invoiceMinor` from the same file — the
+ * account statement's rule — shown separately: a receivable, never counted as sales.
  * Money is split by currency (88% of the audience is Egyptian/EGP) — never summed across
  * SAR + EGP. Archived (void) invoices are excluded. Rep + tier breakdowns are secondary views.
  */
@@ -130,12 +136,26 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
    * - «الأوّل» مرتَّبٌ بـ`serviceStartedAt` صعوداً، ومونغو يضع الفارغ أوّلاً — فتجديدٌ لم
    *   تبدأ خدمتُه يُختار مكانَ الشراء الأصليّ.
    *
-   * والقاعدةُ الواحدة تُسقط الاثنين: كلُّ طلبٍ `PAID` مالٌ دخل، والفاتورةُ تُعدّ حين لا
-   * طلبَ يحملها. والمستردُّ `REFUNDED` خارجٌ من تلقائه.
+   * والقاعدةُ الواحدة تُسقط الاثنين: كلُّ طلبٍ `PAID` مالٌ دخل، والفاتورةُ مستندٌ لا مال.
+   * والمستردُّ `REFUNDED` خارجٌ من تلقائه.
+   */
+  /**
+   * **نفسُ شرط صفحة الطلبات** (`lib/orders/revenue-order.ts`) — فسهمُ «التفاصيل» من هناك لا
+   * يوصل إلى رقمٍ آخر (خالد ٢٣ سبتمبر ٢٠٢٦). كان يقرأ طلباتِ العملاء المفعَّلين وحدهم، فطلبٌ
+   * مدفوعٌ ينتظر التفعيل (مالٌ دخل) يُعدّ هناك ويسقط هنا.
+   *
+   * والحسابُ الداخليّ يُستثنى من الجهتين: وسمُ الطلب، ووسمُ العميل — الترحيلُ كتب طلباتِ
+   * حساباتنا `isInternal: false` وعملاؤها داخليّون.
    */
   const paidOrders = await db.checkoutOrder.findMany({
-    where: { clientId: { in: clientIds }, status: "PAID", totalMinor: { gt: 0 } },
-    select: { clientId: true, currency: true, totalMinor: true, paidAt: true, serviceStartedAt: true, createdAt: true, planName: true },
+    where: {
+      AND: [
+        REVENUE_ORDER,
+        { totalMinor: { gt: 0 } },
+        { OR: [{ clientId: { in: clientIds } }, { clientId: null }, { clientId: { isSet: false } }] },
+      ],
+    },
+    select: { clientId: true, salesRepId: true, currency: true, totalMinor: true, paidAt: true, serviceStartedAt: true, createdAt: true, planName: true },
   });
   /** يومُ الدفع إن وُجد، وإلّا يومُ بدء الخدمة — لا يومُ إنشاء الصفّ. */
   const orderDate = (o: (typeof paidOrders)[number]) => o.paidAt ?? o.serviceStartedAt ?? o.createdAt;
@@ -157,12 +177,15 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
           tierName: true,
           period: true,
           amount: true,
+          totalMinor: true,
           currency: true,
           paymentStatus: true,
           issuedAt: true,
           paidAt: true,
           fromOpeningBalance: true,
           orderId: true,
+          paidMonths: true,
+          bonusServiceMonths: true,
           archivedAt: true,
         },
         orderBy: { issuedAt: "desc" },
@@ -172,10 +195,34 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
   // Archived (void) invoices are excluded in code, NOT in the where — a Prisma/Mongo
   // `{archivedAt: null}` filter matches zero rows and would empty the whole report.
   const invoices = invoicesRaw.filter((inv) => !inv.archivedAt);
+  /**
+   * مدّةُ كلّ فاتورة من **طلبها** (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد). كانت «سنوي» لكلّ مدّةٍ غيرِ
+   * شهر: `Invoice.period` يُكتب `annual` لطلب ٣ أو ٦ أشهر (`plan-invoice-from-order.ts`).
+   */
+  const termOrderIds = [...new Set(invoices.map((inv) => inv.orderId).filter((id): id is string => !!id))];
+  const termByOrder = new Map(
+    (termOrderIds.length
+      ? await db.checkoutOrder.findMany({ where: { id: { in: termOrderIds } }, select: { id: true, paidMonths: true, bonusServiceMonths: true } })
+      : []
+    ).map((o) => [o.id, o]),
+  );
+  const invoiceTerm = (inv: (typeof invoices)[number]): string => {
+    const order = inv.orderId ? termByOrder.get(inv.orderId) : undefined;
+    if (order) return formatTermLabel(order.paidMonths, order.bonusServiceMonths);
+    // فاتورةٌ بلا طلب (قديمة) — مدّتُها المحفوظةُ عليها إن وُجدت، وإلّا لا نخمّن.
+    return inv.paidMonths ? formatTermLabel(inv.paidMonths, inv.bonusServiceMonths) : "—";
+  };
 
   const totals = { sar: emptyMoney(), egp: emptyMoney() };
   const tierMap = new Map<string, { sar: Money; egp: Money }>();
   const repMap = new Map<string, { sar: Money; egp: Money }>();
+  /**
+   * عددُ الصفقات لكلّ باقةٍ ومندوب — مفتاحُ الترتيب (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد). كان
+   * الترتيبُ يجمع الريالَ على الجنيه رقماً واحداً، فمندوبٌ بـ٢٠٬٠٠٠ ج.م. يسبق مندوباً بـ١٠٬٠٠٠ ر.س.
+   * والعددُ لا عملةَ له؛ وعند التعادل تُقارَن كلُّ عملةٍ وحدها.
+   */
+  const tierDeals = new Map<string, number>();
+  const repDeals = new Map<string, number>();
   const payingClients = new Set<string>();
 
   const ensure = (map: Map<string, { sar: Money; egp: Money }>, key: string) => {
@@ -202,39 +249,51 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
       if (isInvoice) m.invoices += 1;
     };
     apply(isEgp ? totals.egp : totals.sar);
-    const tier = ensure(tierMap, tierName || "—");
+    const tierKey = tierName || "—";
+    const tier = ensure(tierMap, tierKey);
     apply(isEgp ? tier.egp : tier.sar);
+    // صفقةٌ = طلبٌ مدفوع، أو فاتورةٌ مستحقّة للباقة — المدفوعةُ مستندٌ لطلبٍ عُدّ.
+    const isDeal = paid ? !isInvoice : true;
+    if (isDeal) tierDeals.set(tierKey, (tierDeals.get(tierKey) ?? 0) + 1);
     if (repId) {
       const rep = ensure(repMap, repId);
       apply(isEgp ? rep.egp : rep.sar);
+      if (paid && !isInvoice) repDeals.set(repId, (repDeals.get(repId) ?? 0) + 1);
     }
   };
+  /** العددُ أوّلاً، ثمّ الجنيهُ وحده، ثمّ الريالُ وحده — لا جمعَ بين عملتين أبداً. */
+  const byDealsThenCurrency =
+    <T extends { sar: Money; egp: Money }>(deals: Map<string, number>, key: (r: T) => string) =>
+    (x: T, y: T) =>
+      (deals.get(key(y)) ?? 0) - (deals.get(key(x)) ?? 0) || y.egp.paid - x.egp.paid || y.sar.paid - x.sar.paid;
 
   // 1) الطلباتُ المدفوعة — بعملتها وتاريخِ دفعها وباقتِها كما بيعت.
   for (const order of paidOrders) {
-    if (!order.clientId || !inPeriod(orderDate(order))) continue;
-    const client = clientById.get(order.clientId);
-    if (!client) continue;
-    payingClients.add(client.id);
-    fan(order.currency === "EGP", order.planName || "بلا باقة", client.salesRepId, order.totalMinor / 100, true, false);
+    if (!inPeriod(orderDate(order))) continue;
+    // بلا حساب = مدفوعٌ ينتظر التفعيل: مالُه يُعدّ، ولا يُعدّ «عميلاً دافعاً» قبل أن يُفتح له حساب.
+    const client = order.clientId ? clientById.get(order.clientId) : undefined;
+    if (client) payingClients.add(client.id);
+    // المندوبُ صاحبُ الصفقة من الطلب، لا مَن يتابع العميلَ اليوم.
+    fan(order.currency === "EGP", order.planName || "بلا باقة", order.salesRepId ?? client?.salesRepId, order.totalMinor / 100, true, false);
   }
 
-  // 2) Invoices — PAID ones add money only when no order carries it (renewals invoiced by hand);
-  //    an order's own invoice is still COUNTED as an invoice, with zero added. DUE is outstanding
-  //    on its issuedAt. fromOpeningBalance invoices document a migrated order's amount → skip.
+  /**
+   * 2) الفواتير — المدفوعةُ مستندٌ لطلبٍ يحمل مالَها: تُعدّ فاتورةً بلا مبلغ. وغيرُ المدفوعة دَينٌ
+   *    «مستحقّ» في شهر إصدارها — لا يدخل المحصَّل.
+   *
+   * المستحقّ بقاعدة كشف الحساب نفسِها (`isOutstandingInvoice` + `invoiceMinor`) — ٢٣ سبتمبر ٢٠٢٦
+   * · خالد: مصدرٌ واحد. كان هنا تعريفٌ ثالث: يُسقط فواتيرَ الرصيد الافتتاحيّ غيرَ المدفوعة ويقرأ
+   * `amount` العشريّ، فلا يساوي «المستحق» هنا مجموعَ «المستحق» في كشوف العملاء. ومستندُ الرصيد
+   * الافتتاحيّ **المدفوع** وحده يُتخطّى: لا مالَ فيه ولا فاتورةَ جديدة.
+   */
   for (const inv of invoices) {
-    if (inv.fromOpeningBalance) continue;
-    const paid = inv.paymentStatus === "PAID";
-    const when = paid ? inv.paidAt ?? inv.issuedAt : inv.issuedAt;
+    const outstanding = isOutstandingInvoice(inv);
+    if (inv.fromOpeningBalance && !outstanding) continue;
+    const when = outstanding ? inv.issuedAt : inv.paidAt ?? inv.issuedAt;
     if (!inPeriod(when)) continue;
     const isEgp = inv.currency === "EGP";
     const repId = clientById.get(inv.clientId)?.salesRepId;
-    if (paid && !isStandaloneCollectedInvoice(inv)) {
-      fan(isEgp, inv.tierName || "—", repId, 0, true, true);
-      continue;
-    }
-    if (paid) payingClients.add(inv.clientId);
-    fan(isEgp, inv.tierName || "—", repId, inv.amount, paid, true);
+    fan(isEgp, inv.tierName || "—", repId, outstanding ? invoiceMinor(inv) / 100 : 0, !outstanding, true);
   }
 
   // Rep rows — every client with a rep (even 0-invoice ones), name + client count.
@@ -259,18 +318,19 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
         egp: a.egp,
       };
     })
-    .sort((x, y) => y.sar.paid + y.egp.paid - (x.sar.paid + x.egp.paid));
+    .sort(byDealsThenCurrency<SalesRepRow>(repDeals, (r) => r.id));
 
   const byTier: TierRow[] = [...tierMap.entries()]
     .map(([tierName, v]) => ({ tierName, sar: v.sar, egp: v.egp }))
-    .sort((x, y) => y.sar.paid + y.egp.paid + y.sar.due + y.egp.due - (x.sar.paid + x.egp.paid + x.sar.due + x.egp.due));
+    .sort(byDealsThenCurrency<TierRow>(tierDeals, (r) => r.tierName));
 
   // Invoices for the active period — the report's table (sort/search/paginate client-side).
   // Opening-balance documents ARE shown (they were issued and belong in the ledger view) but
-  // tagged so it's clear they don't add new revenue — the totals above already exclude them.
+  // tagged so it's clear they don't add new revenue — no invoice adds to «collected»; an
+  // unpaid one (opening balance included) adds to «due» by `isOutstandingInvoice` above.
   // A paid invoice belongs to its collection month (paidAt); a due one to its issue month.
   const recent: RecentInvoice[] = invoices
-    .filter((inv) => inPeriod(inv.paymentStatus === "PAID" ? inv.paidAt ?? inv.issuedAt : inv.issuedAt))
+    .filter((inv) => inPeriod(inv.paymentStatus === InvoicePaymentStatus.PAID ? inv.paidAt ?? inv.issuedAt : inv.issuedAt))
     .map((inv) => {
       const when = inv.paidAt ?? inv.issuedAt;
       return {
@@ -278,10 +338,12 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
         number: inv.number,
         clientName: clientById.get(inv.clientId)?.name ?? "—",
         tierName: inv.tierName || "—",
-        subType: inv.period === "monthly" ? "monthly" : "annual",
-        amount: inv.amount,
+        term: invoiceTerm(inv),
+        // نفسُ مبلغ المستحقّ أعلاه (`invoiceMinor`): `totalMinor` أوّلاً، و`amount` للقديمة.
+        amount: invoiceMinor(inv) / 100,
         currency: inv.currency,
-        paid: inv.paymentStatus === "PAID",
+        paid: inv.paymentStatus === InvoicePaymentStatus.PAID,
+        status: inv.paymentStatus,
         issuedAt: dateFmt.format(when),
         dateMs: when.getTime(),
         fromOpeningBalance: !!inv.fromOpeningBalance,
@@ -292,21 +354,13 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
     where: { AND: [NOT_INTERNAL, { OR: [{ salesRepId: null }, { salesRepId: { isSet: false } }] }] },
   });
 
-  // Overdue renewals — same rule as the «expired» segment: an ACTIVE client whose paid
-  // period already lapsed. `not: null` is required — on Mongo `{ lt: now }` also matches an
-  // ABSENT date, which would drag in every client that never had an end date.
-  const expiredCount = await db.client.count({
-    where: {
-      AND: [
-        NOT_INTERNAL,
-        { subscriptionStatus: SubscriptionStatus.ACTIVE, subscriptionEndDate: { lt: new Date(), not: null } },
-      ],
-    },
-  });
+  // «منتهٍ» — نفسُ قاعدة شريحة «expired» وعدّاد العملاء: من الطلب الساري لا من نسخة الكرت
+  // (٢٣ سبتمبر ٢٠٢٦). كان `ACTIVE` + `subscriptionEndDate < الآن` على الكرت.
+  const expiredCount = clientIdsWhere(await getClientSubscriptions(NOT_INTERNAL), (x) => x.status === "EXPIRED").length;
 
-  // Monthly collected badges — cash in per month of the CURRENT year (paid orders by paidAt
-  // + paid invoices no order carries), independent of the active filter so every button
-  // shows its month's size at a glance. Archived + opening-balance documents excluded.
+  // Monthly collected badges — cash in per month of the CURRENT year (PAID orders by paidAt
+  // only; invoices are documents), independent of the active filter so every button
+  // shows its month's size at a glance.
   const year = new Date().getFullYear();
   const yearStart = new Date(year, 0, 1);
   const yearEnd = new Date(year + 1, 0, 1);
@@ -324,18 +378,13 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
     }
   };
   for (const order of paidOrders) {
-    if (!order.clientId || !clientById.has(order.clientId)) continue;
     addMonthly(orderDate(order), order.currency === "EGP", order.totalMinor / 100);
-  }
-  for (const inv of invoices) {
-    if (!isStandaloneCollectedInvoice(inv)) continue;
-    addMonthly(inv.paidAt ?? inv.issuedAt, inv.currency === "EGP", inv.amount);
   }
 
   return {
     totals,
     // Every issued (non-archived) invoice — opening-balance documents included: they exist in
-    // the ledger even though their amount is counted via the opening balance, not here.
+    // the ledger; a paid one carries no money (its migrated order does), an unpaid one is «due».
     invoiceCount: invoices.length,
     payingClients: payingClients.size,
     byTier,

@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { REVENUE_ORDER } from "@/lib/orders/revenue-order";
 import { getFxRates, toSarMinor } from "@/lib/money/get-fx-rates";
 
 /**
@@ -64,7 +65,7 @@ const monthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).pad
 export async function getMonthlyRevenue(now = new Date()): Promise<MonthlyRevenue> {
   const [rows, fx] = await Promise.all([
     db.checkoutOrder.findMany({
-      where: { status: "PAID" },
+      where: REVENUE_ORDER,
       select: {
         paidAt: true, serviceStartedAt: true, activatedAt: true,
         totalMinor: true, currency: true, paidMonths: true, bonusServiceMonths: true,

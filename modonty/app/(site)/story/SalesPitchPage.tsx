@@ -36,6 +36,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { PARTNER_SIGNUP_URL } from "@/constants";
+import { formatCounted, type CountedForms } from "@modonty/shared/lib/commercial/arabic-count";
+import type { StoryOffer } from "./helpers/story-offer";
 
 interface ManifestSection {
   id: string;
@@ -95,9 +97,31 @@ export interface SalesPitchProps {
    * العميل ثابتاً من الكود ولا يضرب القاعدة. غيابه يعني عموداً فارغاً، لا اسماً قديماً.
    */
   siteName?: string;
+  /** العرض وعدد الباقات من كتالوج البيع (`helpers/story-offer.ts`) — لا أرقام في هذا الملفّ. */
+  offer: StoryOffer;
 }
 
-export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName }: SalesPitchProps) {
+const arabicDigits = new Intl.NumberFormat("ar-SA");
+/** «٤ باقات شفافة» بتصريفٍ صحيح لأي عدد (arabic-count.ts). */
+const PLANS_COUNTED: CountedForms = {
+  one: "باقة شفافة",
+  two: "باقتان شفافتان",
+  few: "باقات شفافة",
+  many: "باقةً شفافة",
+};
+
+export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer }: SalesPitchProps) {
+  /**
+   * أرقام العرض والباقات تأتي من القاعدة؛ وغيابها يُقال بجملةٍ بلا رقم، لا برقمٍ قديم.
+   * ٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد.
+   */
+  const offerHook = offer.annualOffer
+    ? `ادفع ${arabicDigits.format(offer.annualOffer.paidMonths)} احصل على ${arabicDigits.format(offer.annualOffer.totalMonths)}`
+    : null;
+  const offerAria = offer.annualOffer
+    ? `عرض المؤسسين: ادفع ${arabicDigits.format(offer.annualOffer.paidMonths)} شهراً واحصل على ${arabicDigits.format(offer.annualOffer.totalMonths)} — انتقل لخطوتك الأولى مع البنيان`
+    : "عرض المؤسسين — انتقل لخطوتك الأولى مع البنيان";
+  const plansLine = offer.planCount ? formatCounted(offer.planCount, PLANS_COUNTED) : "باقات شفافة";
   const [manifest, setManifest] = useState<Manifest | null>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -722,7 +746,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName }: Sale
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="group relative w-full flex flex-col items-center gap-1 px-3 py-2.5 rounded-xl bg-gradient-to-l from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 transition-all shadow-md shadow-amber-500/30 hover:shadow-amber-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 focus-visible:ring-offset-card overflow-hidden"
-                    aria-label="عرض المؤسسين: ادفع ١٢ شهراً واحصل على ١٨ — انتقل لخطوتك الأولى مع البنيان"
+                    aria-label={offerAria}
                   >
                     {/* shine sweep on hover */}
                     <span
@@ -733,8 +757,12 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName }: Sale
                     <span className="relative flex items-center gap-1.5 text-[10px] font-bold tracking-wide text-amber-950/85">
                       <span aria-hidden>🎁</span>
                       <span>عرض المؤسسين</span>
-                      <span aria-hidden className="opacity-60">·</span>
-                      <span className="font-extrabold">ادفع ١٢ احصل على ١٨</span>
+                      {offerHook && (
+                        <>
+                          <span aria-hidden className="opacity-60">·</span>
+                          <span className="font-extrabold">{offerHook}</span>
+                        </>
+                      )}
                     </span>
                     {/* MAIN LINE */}
                     <span className="relative flex items-center gap-1.5 text-[13px] font-extrabold">
@@ -1271,15 +1299,15 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName }: Sale
                       href={PARTNER_SIGNUP_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group mb-1 flex items-center justify-between gap-2 px-3 py-2.5 max-md:min-h-11 rounded-lg border border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
-                      aria-label="افتح صفحة الباقات على جبر-سيو في تاب جديد"
+                      className="group mb-4 flex items-center justify-between gap-2 px-3 py-2.5 max-md:min-h-11 rounded-lg border border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                      aria-label="افتح صفحة الباقات في تاب جديد"
                     >
                       <span className="flex flex-col gap-0 min-w-0">
                         <span className="text-[12px] font-bold text-foreground/80 group-hover:text-foreground truncate transition-colors">
-                          شوف الباقات على جبر-سيو
+                          شوف الباقات
                         </span>
                         <span className="text-[10px] text-foreground/50 truncate">
-                          ٤ باقات شفافة
+                          {plansLine}
                         </span>
                       </span>
                       <span
@@ -1289,9 +1317,8 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName }: Sale
                         ▸
                       </span>
                     </a>
-                    <p className="mb-4 text-[10px] text-foreground/45 italic px-1">
-                      شريكنا التقني لإدارة الباقات والاشتراكات
-                    </p>
+                    {/* سقط سطر «شريكنا التقني لإدارة الباقات» (٢٣ سبتمبر ٢٠٢٦): كان عن jbrseo، وقد
+                        أُوقف والرابط صار pay.modonty.com — فالسطر يَنسب الباقات لجهةٍ ليست هي. */}
 
                     {/* Tertiary — compact contact links (no headers, no cards) */}
                     <div className="mb-5 pt-3 border-t border-border/40 space-y-1">

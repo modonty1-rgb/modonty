@@ -38,6 +38,8 @@ const schema = z.object({
   activatedAt: z.string().trim().optional(),
   paidAt: z.string().trim().optional(),
   notes: z.string().trim().max(1000).optional(),
+  /** مربّعُ اختيار: يُرسل «on» حين يُعلَّم، ولا يُرسل شيئاً حين لا. */
+  isInternal: z.literal("on").optional(),
 });
 
 /** حقلُ تاريخٍ فارغ يعني «لا تاريخ»، لا «اليوم». */
@@ -81,6 +83,7 @@ const LABEL: Record<string, string> = {
   activatedAt: "يوم التفعيل",
   paidAt: "يوم الدفع",
   notes: "الملاحظة",
+  isInternal: "حساب لنا",
 };
 
 function show(v: unknown): string {
@@ -108,6 +111,7 @@ export async function updateOrderAction(
       market: true, currency: true, totalMinor: true, paidMonths: true,
       bonusServiceMonths: true, vatRateBp: true, subtotalMinor: true, vatMinor: true,
       monthlyBaseMinor: true, serviceStartedAt: true, activatedAt: true, paidAt: true, notes: true,
+      isInternal: true, clientId: true,
     },
   });
   if (!before) return { ok: false, error: "الطلب غير موجود" };
@@ -173,13 +177,15 @@ export async function updateOrderAction(
     activatedAt: keepIfSameDay(toDate(d.activatedAt), before.activatedAt),
     paidAt: keepIfSameDay(toDate(d.paidAt), before.paidAt),
     notes: d.notes || null,
+    isInternal: d.isInternal === "on",
   };
 
   // ما تغيّر فعلاً — لا كلُّ حقلٍ أُرسل. سجلٌّ يقول «عُدّل» بلا فرقٍ هو ضجيج.
   const changes: string[] = [];
   for (const [key, value] of Object.entries(next)) {
     if (key === "country") continue; // يتبع السوق، لا يُذكر مرّتين
-    const old = (before as Record<string, unknown>)[key];
+    // غائبٌ في الصفوف القديمة = ليس لنا، فلا يُسجَّل «— ← لا» تغييراً.
+    const old = key === "isInternal" ? (before.isInternal ?? false) : (before as Record<string, unknown>)[key];
     const same =
       old instanceof Date && value instanceof Date
         ? old.getTime() === value.getTime()
@@ -224,6 +230,18 @@ export async function updateOrderAction(
       await recomputeSubscriptionEnd(owner.clientId);
       revalidatePath("/clients");
     }
+  }
+
+  /**
+   * **و«حسابٌ لنا» ينزل على العميل.**
+   *
+   * كان يُنسخ من الطلب إلى العميل مرّةً واحدة يومَ التفعيل (`lib/orders/activate-from-order.ts`)،
+   * والترحيلُ بنى طلباتِ الحسابات الداخليّة بـ`false` — فلا بابَ يصحّحها (خالد ٢٣ سبتمبر ٢٠٢٦).
+   * والتقاريرُ والسيجمنتات تقرأ العميل، فتصحيحُ الطلب وحده لا يُخرجه منها.
+   */
+  if (next.isInternal !== (before.isInternal ?? false) && before.clientId) {
+    await db.client.update({ where: { id: before.clientId }, data: { isInternal: next.isInternal } });
+    revalidatePath("/clients");
   }
 
   if (next.articlesPerMonth !== before.articlesPerMonth) {

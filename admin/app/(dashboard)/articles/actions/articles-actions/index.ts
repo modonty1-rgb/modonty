@@ -8,6 +8,7 @@ export { getArticlesForSelection } from "./queries/get-articles-for-selection";
 export { getArticleById, getArticleEngagementCounts, loadArticleOrProblem } from "./queries/get-article-by-id";
 export { getArticleBySlug } from "./queries/get-article-by-slug";
 export { getClients } from "./queries/get-articles-clients";
+export { getWritableClients } from "./queries/get-writable-clients";
 export { getCategories } from "./queries/get-articles-categories";
 export { getAuthors } from "./queries/get-articles-authors";
 export { createArticle } from "./mutations/create-article";

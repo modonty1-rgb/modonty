@@ -119,18 +119,22 @@ export const leadSchema = z.object({
   stage: z.enum(PICKABLE_STAGES).default("NEW"),
 
   // الصفقة — وهي ما كان الفورم كلّه لا يسأل عنه.
-  // سلَقُ الباقة من `modonty_plans`، لا قيمةٌ من إنم (١٧ سبتمبر ٢٠٢٦). القائمةُ المغلقة
-  // كانت تعني أنّ باقةً جديدةً في الكتالوج تُرفض هنا صامتةً حتى يُعدَّل هذا السطر.
+  // سلَقُ الباقة من `CommercialPlan`، لا قيمةٌ من إنم (١٧ سبتمبر ٢٠٢٦) ولا من `modonty_plans`
+  // (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد). والتحقّق من أنه منشورٌ في سوق العميل في
+  // `resolveLeadDeal` على السيرفر، لأن الكتالوج في القاعدة لا في هذا الملفّ.
+  //
+  // وسقط `expectedMonthly` من المدخلات: السعر لا يأتي من المتصفّح، يقرؤه السيرفر من
+  // `CommercialPlanPrice` ويكتبه — فما يُحفظ هو ما يبيعه الكتالوج لا ما أرسلته الشاشة.
   expectedTier: z.preprocess(blankToUndefined, z.string().max(40).optional()),
-  expectedMonthly: z.preprocess(
-    (v) => (v === "" || v == null ? undefined : Number(v)),
-    z.number().min(0, "المبلغ لا يصحّ أن يكون سالباً").max(1_000_000).optional(),
-  ),
 
-  /** ٣ · ٦ · ١٢ فقط — القائمة المغلقة نفسها التي في `pricing-durations.ts`. */
+  /**
+   * الأشهر المدفوعة — عددٌ صحيح هنا، والقائمة المغلقة هي مدد `CommercialTermPolicy` المفعّلة
+   * يفحصها `resolveLeadDeal`. كانت `3 | 6 | 12` مكتوبةً هنا من `pricing-durations.ts`، فمدّةٌ
+   * تُضاف أو تُطفأ في «الباقات والأسعار» لا يراها هذا الحارس.
+   */
   expectedMonths: z.preprocess(
     (v) => (v === "" || v == null ? undefined : Number(v)),
-    z.union([z.literal(3), z.literal(6), z.literal(12)]).optional(),
+    z.number().int().min(1).max(120).optional(),
   ),
   currency: z.preprocess(blankToUndefined, z.enum(["SAR", "EGP"]).optional()),
 

@@ -1,7 +1,9 @@
+import { InvoicePaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { invoiceEmail, type InvoiceEmailParams } from "@/lib/email/templates/invoice";
 import { renderInvoiceQrPng } from "@/lib/invoices/render-invoice-qr";
 import { buildZatcaQrTlvBase64 } from "@modonty/shared/lib/payments/zatca-qr-tlv";
+import { getSubscriptionTerm } from "@modonty/shared/lib/subscription/subscription-term";
 import type { EmailContent } from "@modonty/shared/lib/email";
 
 export const INVOICE_QR_CID = "zatca-qr";
@@ -13,7 +15,8 @@ export const INVOICE_QR_CID = "zatca-qr";
  * عشان السيلز يشوف بالضبط نفس اللي هيترسل للعميل». فالمعاينةُ ليست رسماً يشبه الرسالة —
  * هي الرسالةُ نفسُها مولَّدةً بنفس الدالّة. ولو بُنيت في مكانين لانحرف أحدهما بأوّل تعديل.
  *
- * والمصدرُ لقطةٌ من الفاتورة (أو من خطّة إصدارها قبل أن تُكتب)، لا من الكتالوج الحيّ.
+ * والمصدرُ لقطةٌ من الفاتورة (أو من خطّة إصدارها قبل أن تُكتب)، لا من الكتالوج الحيّ —
+ * إلّا تواريخَ الاشتراك: تلك من مدّة الطلب (انظر `subscriptionStart` أدناه).
  */
 export interface InvoiceEmailSource {
   number: string;
@@ -21,8 +24,14 @@ export interface InvoiceEmailSource {
   period: string;
   currency: string;
   amount: number;
-  paymentStatus: string;
+  paymentStatus: InvoicePaymentStatus;
   issuedAt: Date;
+  /**
+   * **احتياطٌ لفاتورةٍ بلا طلب وحدها.** ذاتُ الطلب تُقرأ مدّتُها من طلبها بـ`getSubscriptionTerm`
+   * (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد): اللقطةُ على الفاتورة تُكتب يومَ الإصدار ولا تتحرّك، فإعادةُ
+   * إرسال فاتورةٍ صدرت قبل أوّل مقال كانت تقول «تبدأ المدّة بعد نشر أوّل مقال» والخدمةُ بدأت،
+   * ولا يصلها تعديلُ مدّة الطلب.
+   */
   subscriptionStart: Date | null;
   subscriptionEnd: Date | null;
   clientId: string;
@@ -69,7 +78,7 @@ function durationLabel(
 }
 
 export async function buildInvoiceEmail(src: InvoiceEmailSource): Promise<BuiltInvoiceEmail> {
-  const [client, contact] = await Promise.all([
+  const [client, contact, order] = await Promise.all([
     db.client.findUnique({
       where: { id: src.clientId },
       select: { name: true, email: true, legalName: true, vatID: true, addressStreet: true, addressCity: true, addressCountry: true },
@@ -80,9 +89,21 @@ export async function buildInvoiceEmail(src: InvoiceEmailSource): Promise<BuiltI
       where: { singletonKey: "global" },
       select: { salesPhone: true, salesEmail: true, orgContactTelephone: true, orgContactEmail: true },
     }),
+    // الطلبُ مرّةً واحدة: مدّتُه للتواريخ، ورقمُه والتزاماتُه للفاتورة الضريبيّة.
+    src.orderId
+      ? db.checkoutOrder.findUnique({
+          where: { id: src.orderId },
+          select: { number: true, planCommitments: true, serviceStartedAt: true, paidMonths: true, bonusServiceMonths: true },
+        })
+      : Promise.resolve(null),
   ]);
   if (!client) return { ok: false, error: "العميل غير موجود" };
   if (!client.email) return { ok: false, error: "لا يوجد إيميل لهذا العميل" };
+
+  // مدّةُ الطلب إن وُجد طلب، ولقطةُ الفاتورة لما لا طلبَ له (فواتيرُ ما قبل نظام الطلبات).
+  const term = order ? getSubscriptionTerm(order) : null;
+  const subscriptionStart = term ? term.startedAt : src.subscriptionStart;
+  const subscriptionEnd = term ? term.endsAt : src.subscriptionEnd;
 
   const currency = src.currency === "EGP" ? "EGP" : "SAR";
   /**
@@ -109,29 +130,25 @@ export async function buildInvoiceEmail(src: InvoiceEmailSource): Promise<BuiltI
     periodLabel: durationLabel(src.period, src.paidMonths, src.bonusServiceMonths),
     amount: src.amount,
     currency,
-    paymentStatus: src.paymentStatus === "PAID" ? "PAID" : "DUE",
+    paymentStatus: src.paymentStatus,
     issuedAt: src.issuedAt,
-    subscriptionStart: src.subscriptionStart,
-    subscriptionEnd: src.subscriptionEnd,
+    subscriptionStart,
+    subscriptionEnd,
     /**
-     * بلا بدايةٍ مخزَّنة = الخدمةُ لم تبدأ بعد — و`plan-invoice-from-order.ts` صار يترك
-     * الحقلين فارغين عمداً بدل أن يخترع تاريخاً من يوم التفعيل. فيُشتقّ هنا مرّةً واحدة،
+     * بلا بداية = الخدمةُ لم تبدأ بعد (الطلبُ بلا `serviceStartedAt`). يُشتقّ هنا مرّةً واحدة،
      * فتسري الجملةُ على المعاينة والإصدار والإرسال بلا تمريرِ علَمٍ في ثلاثة مسارات.
      */
-    serviceStartsWithFirstArticle: src.subscriptionStart == null,
+    serviceStartsWithFirstArticle: subscriptionStart == null,
     salesPhone: contact?.salesPhone?.trim() || contact?.orgContactTelephone?.trim() || null,
     salesEmail: contact?.salesEmail?.trim() || contact?.orgContactEmail?.trim() || null,
   };
 
   let qrPng: Buffer | null = null;
   if (isTax) {
-    const [settings, order] = await Promise.all([
-      db.settings.findUnique({
-        where: { singletonKey: "global" },
-        select: { orgLegalName: true, orgVatNumber: true, orgCommercialRegistrationNumber: true, orgStreetAddress: true, orgAddressNeighborhood: true, orgAddressLocality: true, orgAddressCountry: true },
-      }),
-      src.orderId ? db.checkoutOrder.findUnique({ where: { id: src.orderId }, select: { number: true, planCommitments: true } }) : Promise.resolve(null),
-    ]);
+    const settings = await db.settings.findUnique({
+      where: { singletonKey: "global" },
+      select: { orgLegalName: true, orgVatNumber: true, orgCommercialRegistrationNumber: true, orgStreetAddress: true, orgAddressNeighborhood: true, orgAddressLocality: true, orgAddressCountry: true },
+    });
     const t = (v: string | null | undefined) => v?.trim() || null;
     /**
      * الأرقامُ الضريبيّة اختياريّة (خالد ١٨ سبتمبر ٢٠٢٦: «إذا في داتا تطلع، ما في داتا

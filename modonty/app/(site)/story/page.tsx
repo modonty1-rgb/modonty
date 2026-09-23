@@ -6,6 +6,7 @@ import { getLegalEntity, buildOrganizationJsonLd } from "@/lib/seo/organization-
 import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getStoryPageForMetadata } from "./helpers/story-metadata";
+import { getStoryOffer } from "./helpers/story-offer";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { jsonLdHtml } from "@/lib/seo";
 import storyManifest from "../../../public/help/audio/general-pitch/manifest.json";
@@ -62,7 +63,12 @@ function buildPodcastSeries(organization: Record<string, unknown>) {
 export default async function StoryPage() {
   // The legal entity is one cached read shared with /trust — never a second constant.
   // الاسم يُقرأ هنا (سيرفر) ويُمرَّر — فلا يحمل باندل العميل ثابتاً ولا يقرأ القاعدة.
-  const [entity, { siteName }] = await Promise.all([getLegalEntity(), getPageSeoDefaults()]);
+  // والعرض وعدد الباقات من كتالوج البيع بالطريقة نفسها (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد).
+  const [entity, { siteName }, offer] = await Promise.all([
+    getLegalEntity(),
+    getPageSeoDefaults(),
+    getStoryOffer(),
+  ]);
   const ORGANIZATION = buildOrganizationJsonLd(entity);
   const PODCAST_SERIES = buildPodcastSeries(ORGANIZATION);
 
@@ -98,6 +104,7 @@ export default async function StoryPage() {
         audioBase="/help/audio/general-pitch"
         legal={toLegalEntityDisplay(entity)}
         siteName={siteName}
+        offer={offer}
       />
       <section
         aria-labelledby="story-transcript-heading"

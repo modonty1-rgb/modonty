@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { ArticleStatus, SubscriptionStatus, TrafficSource } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
@@ -82,7 +83,7 @@ export async function getClientsStats() {
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
     const expiringSoonDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-    const [total, withArticles, withoutArticles, createdThisMonth, allClients, clientsWithRelations] =
+    const [total, withArticles, withoutArticles, createdThisMonth, allClients, clientsWithRelationsRaw] =
       await Promise.all([
         db.client.count(),
         db.client.count({
@@ -111,6 +112,18 @@ export async function getClientsStats() {
         }),
         safeFindClientsWithRelations(startOfMonth, endOfMonth),
       ]);
+
+    /**
+     * **الحالةُ والنهايةُ والحصّةُ من الطلب الساري** (٢٣ سبتمبر ٢٠٢٦ — مصدرٌ واحد) — نفسُ
+     * `getClientSubscriptions` التي يقرؤها الجدولُ بجانب هذه الأرقام، فلا يختلفان.
+     */
+    const statSubs = await getClientSubscriptions({ id: { in: clientsWithRelationsRaw.map((c) => c.id) } });
+    const clientsWithRelations = clientsWithRelationsRaw.map((c) => ({
+      ...c,
+      subscriptionStatus: (statSubs.get(c.id)?.status ?? "PENDING") as SubscriptionStatus,
+      subscriptionEndDate: statSubs.get(c.id)?.endsAt ?? null,
+      articlesPerMonth: statSubs.get(c.id)?.articlesPerMonth ?? null,
+    }));
 
     // Scored through the ONE shared client rubric, like every other surface.
     //

@@ -13,7 +13,62 @@ import { ReferralLeadStatus, Prisma } from "@prisma/client";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { REVENUE_ORDER } from "@/lib/orders/revenue-order";
 import { ALLOWED_NEXT, STATUS_AR, STATUS_STAMP } from "../helpers/referral-status";
+
+/** الطلب المدفوع الذي يثبت «سدّد» — يُعرض رقمه وتاريخه بجانب الحالة. */
+export interface ReferralPaidOrder {
+  id: string;
+  number: string;
+  paidAt: Date | null;
+}
+
+interface ReferralLeadRef {
+  id: string;
+  convertedClientId: string | null;
+  createdAt: Date;
+}
+
+/**
+ * «سدّد» يثبته طلبٌ مدفوع للعميل الناتج، لا ضغطةُ موظّف: `PAID` وليس حساباً داخلياً
+ * (REVENUE_ORDER — المستردّ خارج). ٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد.
+ *
+ * والدليلُ **أوّلُ** طلبٍ مدفوع للعميل، بشرط أن يكون بعد الإحالة: قائمةُ «اشترك» تعرض كلَّ
+ * العملاء، فعميلٌ قديم دفع قبل أن يُحال لم تُنتجه الإحالة — وطلبُه القديم لا يفتح مكافأة.
+ * `paidBefore` = إحالاتٌ عميلُها دفع قبلها، لتقول رسالةُ الرفض السببَ الصحيح.
+ */
+async function findReferralPaidOrders(
+  leads: ReadonlyArray<ReferralLeadRef>,
+): Promise<{ proof: Map<string, ReferralPaidOrder>; paidBefore: Set<string> }> {
+  const proof = new Map<string, ReferralPaidOrder>();
+  const paidBefore = new Set<string>();
+  const clientIds = [
+    ...new Set(leads.map((l) => l.convertedClientId).filter((id): id is string => Boolean(id))),
+  ];
+  if (clientIds.length === 0) return { proof, paidBefore };
+
+  const orders = await db.checkoutOrder.findMany({
+    where: { ...REVENUE_ORDER, clientId: { in: clientIds } },
+    orderBy: { createdAt: "asc" },
+    take: 1000,
+    select: { id: true, number: true, paidAt: true, createdAt: true, clientId: true },
+  });
+  const paidTime = (o: { paidAt: Date | null; createdAt: Date }) => (o.paidAt ?? o.createdAt).getTime();
+  const firstByClient = new Map<string, (typeof orders)[number]>();
+  for (const o of orders) {
+    if (!o.clientId) continue;
+    const seen = firstByClient.get(o.clientId);
+    if (!seen || paidTime(o) < paidTime(seen)) firstByClient.set(o.clientId, o);
+  }
+
+  for (const lead of leads) {
+    const first = lead.convertedClientId ? firstByClient.get(lead.convertedClientId) : undefined;
+    if (!first) continue;
+    if (paidTime(first) < lead.createdAt.getTime()) paidBefore.add(lead.id);
+    else proof.set(lead.id, { id: first.id, number: first.number, paidAt: first.paidAt });
+  }
+  return { proof, paidBefore };
+}
 
 export interface ReferralRow {
   id: string;
@@ -24,6 +79,8 @@ export interface ReferralRow {
   referrerName: string;
   referrerId: string;
   convertedClientId: string | null;
+  /** أوّل طلبٍ مدفوع للعميل الناتج بعد الإحالة — `null` = لا مال أنتجته، فلا «سدّد» ولا مكافأة. */
+  paidOrder: ReferralPaidOrder | null;
   consentConfirmedAt: Date;
   contactedAt: Date | null;
   subscribedAt: Date | null;
@@ -49,6 +106,8 @@ export async function getReferrals(): Promise<ReferralRow[]> {
     },
   });
 
+  const { proof: paidOrders } = await findReferralPaidOrders(rows);
+
   return rows.map((r) => ({
     id: r.id,
     candidateName: r.candidateName,
@@ -58,6 +117,7 @@ export async function getReferrals(): Promise<ReferralRow[]> {
     referrerName: r.referrerClient?.name ?? "—",
     referrerId: r.referrerClient?.id ?? "",
     convertedClientId: r.convertedClientId,
+    paidOrder: paidOrders.get(r.id) ?? null,
     consentConfirmedAt: r.consentConfirmedAt,
     contactedAt: r.contactedAt,
     subscribedAt: r.subscribedAt,
@@ -124,7 +184,10 @@ export async function setReferralStatus(
 
   const current = await db.referralLead.findUnique({
     where: { id },
-    select: { status: true, contactedAt: true, subscribedAt: true, paidAt: true, rewardedAt: true },
+    select: {
+      status: true, contactedAt: true, subscribedAt: true, paidAt: true, rewardedAt: true,
+      convertedClientId: true, createdAt: true,
+    },
   });
   if (!current) return { ok: false, error: "الإحالة غير موجودة." };
   if (current.status === next) return { ok: false, error: "الإحالة في هذه الحالة أصلاً." };
@@ -137,13 +200,41 @@ export async function setReferralStatus(
     return { ok: false, error: "اختر العميل الذي صار منه المُرشَّح — بلاه لا يُربط السداد بالإحالة." };
   }
 
+  /**
+   * «سدّد» والمكافأة بعده يشترطان طلباً مدفوعاً للعميل الناتج — يُفحص عند كليهما، فطلبٌ
+   * استُرد بعد «سدّد» يوقف المكافأة. ٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد.
+   */
+  let paidOrder: ReferralPaidOrder | null = null;
+  if (next === "PAID" || next === "REWARDED") {
+    if (!current.convertedClientId) {
+      return { ok: false, error: "الإحالة غير مربوطة بعميل — سجّل «اشترك» واختر العميل أوّلاً." };
+    }
+    const { proof, paidBefore } = await findReferralPaidOrders([
+      { id, convertedClientId: current.convertedClientId, createdAt: current.createdAt },
+    ]);
+    paidOrder = proof.get(id) ?? null;
+    if (!paidOrder) {
+      return {
+        ok: false,
+        error: paidBefore.has(id)
+          ? "هذا العميل دفع قبل تاريخ الإحالة — لم تُنتجه الإحالة، فلا «سدّد» ولا مكافأة."
+          : next === "PAID"
+            ? "لا يوجد طلبٌ مدفوع لهذا العميل — «سدّد» يثبته طلبٌ مدفوع في صفحة الطلبات، لا هذه الضغطة."
+            : "لا يوجد طلبٌ مدفوع لهذا العميل الآن (ربما استُرد) — لا تُمنح المكافأة بلا مالٍ دخل.",
+      };
+    }
+  }
+
   const data: Prisma.ReferralLeadUpdateInput = { status: next };
   if (input.convertedClientId) data.convertedClientId = input.convertedClientId;
 
   // الختم يُكتب مرّة واحدة. إعادة الدخول لنفس الحالة مستحيلة بالمسار أعلاه، لكن الحارس
   // يبقى: هو نفسه ما يمنع منح المكافأة مرّتين لو أُعيد استدعاء العملية.
+  // وختم «سدّد» هو تاريخ دفع الطلب نفسه، لا يوم الضغطة.
   const field = STATUS_STAMP[next];
-  if (field && current[field] === null) data[field] = new Date();
+  if (field && current[field] === null) {
+    data[field] = next === "PAID" && paidOrder?.paidAt ? paidOrder.paidAt : new Date();
+  }
 
   const note = input.closingNote?.trim();
   if (note) data.closingNote = note;

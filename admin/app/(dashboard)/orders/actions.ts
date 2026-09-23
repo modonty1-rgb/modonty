@@ -1,5 +1,7 @@
 "use server";
 
+
+import { InvoicePaymentStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
@@ -156,7 +158,7 @@ export async function createInvoiceFromOrderAction(orderId: string): Promise<{ o
       period: p.period,
       currency: p.currency,
       amount: p.totalMinor / 100,
-      paymentStatus: "PAID",
+      paymentStatus: InvoicePaymentStatus.PAID,
       paidAt: (await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { paidAt: true } }))?.paidAt ?? null,
       subscriptionStart: p.subscriptionStart,
       subscriptionEnd: p.subscriptionEnd,

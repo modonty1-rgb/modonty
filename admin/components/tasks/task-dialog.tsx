@@ -14,31 +14,30 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 import { createTask, updateTask } from "@/lib/tasks/task-actions";
 import type { BoardTask } from "@/lib/tasks/task-types";
-import {
-  TASK_PRIORITIES,
-  TASK_PRIORITY_META,
-  TASK_STATUS_META,
-  type TaskStatusKey,
-} from "@/lib/tasks/task-config";
+import { TASK_PRIORITIES, TASK_PRIORITY_META, type TaskStatusKey } from "@/lib/tasks/task-config";
 
 const UNASSIGNED = "__none__";
+const N = new Intl.NumberFormat("ar-EG");
+const dueFmt = new Intl.DateTimeFormat("ar-EG", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+});
 
 export interface TaskAssigneeOption {
   id: string;
   name: string | null;
   email: string | null;
+  /** حِملُه الآن — مهامُّه المفتوحة والمتأخّرة؛ يُعرض كي لا يُسند لمن غرق. اختياريّ. */
+  open?: number;
+  late?: number;
 }
 
 /** `Date` → `yyyy-mm-dd` in LOCAL time. `toISOString()` would shift the day for
@@ -47,6 +46,19 @@ function toDateInput(d: Date | null): string {
   if (!d) return "";
   const p = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+const plusDays = (n: number) => {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d;
+};
+
+/** آخرُ يوم عملٍ في الأسبوع — الخميس (الأحد–الخميس في السعوديّة ومصر). اليومُ نفسُه إن كان خميساً. */
+function endOfWorkWeek(): Date {
+  const d = new Date();
+  d.setDate(d.getDate() + ((4 - d.getDay() + 7) % 7));
+  return d;
 }
 
 interface FormState {
@@ -70,12 +82,19 @@ const emptyForm = (status: TaskStatusKey): FormState => ({
   assigneeId: UNASSIGNED,
 });
 
+const displayName = (a: TaskAssigneeOption) => a.name?.trim() || a.email || "بلا اسم";
+
 /**
- * One dialog for both create and edit.
+ * One dialog for both create and edit — and, with `assignees`, for handing a task to a colleague.
  *
  * `task` set = editing it; `createIn` set = a new card for that column. Two
  * dialogs would mean two copies of the same six fields, and the second copy is
  * always the one that misses a validation rule.
+ *
+ * **عربيّةٌ ومن اليمين** (خالد ٢٣ سبتمبر ٢٠٢٦: «الديالوج محتاج تحسين»). كانت إنجليزيّةً
+ * يساريّة والمهامُّ تُكتب بالعربيّة، فيُكتب العربيُّ في حقلٍ يساريّ. والترتيبُ ترتيبُ السؤال:
+ * لمن ← ماذا ← متى ← بأيّ أولويّة. والزميلُ يُختار ببطاقةٍ عليها حِملُه، والموعدُ بأزرارٍ سريعة،
+ * والأولويّةُ أربعةُ أزرارٍ ملوّنة بدل قائمة — وزرُّ الحفظ يسمّي الزميل.
  */
 export function TaskDialog({
   task,
@@ -93,6 +112,8 @@ export function TaskDialog({
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState<FormState>(emptyForm("TODO"));
+  // التفاصيلُ مطويّةٌ حتى تُطلب — أغلبُ المهامّ سطرٌ واحد، والحقلُ الفارغُ يطيل النافذة بلا داعٍ.
+  const [showDetails, setShowDetails] = useState(false);
 
   const open = Boolean(task || createIn);
   const isEdit = Boolean(task);
@@ -108,19 +129,37 @@ export function TaskDialog({
         dueDate: toDateInput(task.dueDate),
         assigneeId: task.assignee?.id ?? UNASSIGNED,
       });
+      setShowDetails(Boolean(task.description));
     } else if (createIn) {
       setForm(emptyForm(createIn));
+      setShowDetails(false);
     }
   }, [task, createIn]);
 
-  const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
-    setForm((f) => ({ ...f, [key]: value }));
+  const set = <K extends keyof FormState>(key: K, value: FormState[K]) => setForm((f) => ({ ...f, [key]: value }));
+
+  const chosen = assignees.find((a) => a.id === form.assigneeId) ?? null;
+
+  const quickDates = [
+    { label: "اليوم", value: toDateInput(new Date()) },
+    { label: "بكرة", value: toDateInput(plusDays(1)) },
+    { label: "بعد ٣ أيام", value: toDateInput(plusDays(3)) },
+    { label: "آخر الأسبوع", value: toDateInput(endOfWorkWeek()) },
+  ];
+
+  const dueLabel = (() => {
+    const [y, m, d] = form.dueDate.split("-").map(Number);
+    return y && m && d ? dueFmt.format(new Date(y, m - 1, d)) : "بلا موعد";
+  })();
+
+  const canSubmit = !isPending && form.title.trim().length >= 3 && (!canAssign || form.assigneeId !== UNASSIGNED);
 
   const submit = () => {
+    if (!canSubmit) return;
     const payload = {
       ...form,
-      // The select needs a non-empty sentinel (Radix forbids an empty value),
-      // and the server needs "" to mean unassigned. Translated here, once.
+      // The picker needs a non-empty sentinel, and the server needs "" to mean
+      // unassigned. Translated here, once.
       assigneeId: form.assigneeId === UNASSIGNED ? "" : form.assigneeId,
       ...(isEdit && task ? { id: task.id } : {}),
     };
@@ -129,123 +168,203 @@ export function TaskDialog({
       const result = isEdit ? await updateTask(payload) : await createTask(payload);
       if (result.success) {
         toast({
-          title: isEdit ? "Saved" : "Added",
-          description: `${form.title.trim()} ${isEdit ? "updated" : `added to ${TASK_STATUS_META[form.status].label}`}.`,
+          title: isEdit ? "حُفظت" : canAssign && chosen ? `أُسندت إلى ${displayName(chosen)}` : "أُضيفت",
+          description: form.title.trim(),
         });
         onClose();
         router.refresh();
       } else {
-        toast({ title: "Save failed", description: result.error, variant: "destructive" });
+        toast({
+          title: "لم تُحفظ",
+          description: result.error,
+          variant: "destructive",
+        });
       }
     });
   };
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent  className="max-w-lg">
-        <DialogHeader className="text-start">
-          <DialogTitle>{isEdit ? "Edit task" : "New task"}</DialogTitle>
-          <DialogDescription>
-            {isEdit
-              ? "Change what you need and save."
-              : canAssign
-                ? "Choose who owns this task, then set its priority and due date."
-                : "Write what is needed and when it is due."}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-3">
-          <div className="space-y-1.5">
-            <Label htmlFor="task-title">Task</Label>
-            <Input
-              id="task-title"
-              value={form.title}
-              onChange={(e) => set("title", e.target.value)}
-              placeholder="e.g. Review JBR SEO articles before publishing"
-              autoFocus
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {canAssign && (
-              <div className="col-span-2 space-y-1.5">
-                <Label htmlFor="task-assignee">Assign to</Label>
+      {/* جسمٌ يمرّر وحده وترويسةٌ وتذييلٌ ثابتان — فلا يُقصّ زرُّ الحفظ على الشاشة القصيرة. */}
+      <DialogContent dir="rtl" className="flex max-h-[90vh] max-w-lg flex-col gap-0 p-0">
+        {/* الترويسةُ سطرٌ واحدٌ يعمل: «إسناد مهمّة إلى [الزميل ▾]» (خالد ٢٣ سبتمبر ٢٠٢٦: «الهيدر مهلك…
+            يستفيد منه» · «بدل ما تكون ماخذة منطقة كاملة… أضغط عليها أختار الزميل»). `pe-12` يُبعدها عن ✕. */}
+        <DialogHeader className="border-b px-5 py-3 pe-12 text-start">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <DialogTitle>{isEdit ? "تعديل المهمّة" : canAssign ? "إسناد مهمّة" : "مهمّة جديدة"}</DialogTitle>
+            {canAssign ? (
+              <>
+                <span className="text-lg font-semibold text-muted-foreground">إلى</span>
                 <Select
-                  value={form.assigneeId}
+                  dir="rtl"
+                  value={form.assigneeId === UNASSIGNED ? "" : form.assigneeId}
                   onValueChange={(v) => set("assigneeId", v)}
                 >
-                  <SelectTrigger id="task-assignee">
-                    <SelectValue placeholder="Choose a user" />
+                  <SelectTrigger
+                    id="task-assignee"
+                    aria-label="الزميل"
+                    className={cn(
+                      "h-8 w-auto min-w-36 gap-2 rounded-full px-3 text-sm text-foreground",
+                      !chosen && "border-dashed border-primary text-primary"
+                    )}
+                  >
+                    <SelectValue placeholder="اختر الزميل" />
                   </SelectTrigger>
                   <SelectContent>
-                    {assignees.map((assignee) => (
-                      <SelectItem key={assignee.id} value={assignee.id}>
-                        {assignee.name?.trim() || assignee.email || "No name"}
+                    {assignees.map((a) => (
+                      <SelectItem key={a.id} value={a.id}>
+                        {/* `bdi` يعزل الاسمَ اللاتينيّ عن الأرقام العربيّة. والفاصلُ «—» و«،» لا «·»: النقطةُ
+                          بجانب رقمٍ عربيّ تُقرأ صفراً («٣ ·» تُرى «٣٠»). */}
+                        <bdi>{displayName(a)}</bdi>
+                        {a.open !== undefined ? (
+                          <span className="text-[12px] text-muted-foreground">
+                            {" — "}
+                            <bdi>{N.format(a.open)} مفتوحة</bdi>
+                            {a.late ? (
+                              <>
+                                {"، "}
+                                <bdi className="text-red-600 dark:text-red-400">{N.format(a.late)} متأخّرة</bdi>
+                              </>
+                            ) : null}
+                          </span>
+                        ) : null}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-            )}
+              </>
+            ) : null}
+          </div>
+          <DialogDescription className={canAssign ? "sr-only" : undefined}>
+            {isEdit
+              ? "غيّر ما تحتاج واحفظ."
+              : canAssign
+              ? "اختر الزميل، واكتب المهمّة وموعدها."
+              : "اكتب المطلوب وموعده."}
+          </DialogDescription>
+        </DialogHeader>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="task-due">Due date</Label>
+        <form
+          id="task-form"
+          className="flex-1 space-y-3 overflow-y-auto px-5 py-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit();
+          }}
+        >
+          <div className="space-y-1.5">
+            <Label htmlFor="task-title">المهمّة</Label>
+            <Input
+              id="task-title"
+              dir="auto"
+              value={form.title}
+              onChange={(e) => set("title", e.target.value)}
+              placeholder="مثلاً: مراجعة مقالات جبر سيو قبل النشر"
+              autoFocus={!canAssign}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="task-due">
+              الموعد <span className="font-normal text-muted-foreground">· {dueLabel}</span>
+            </Label>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {quickDates.map((q) => (
+                <button
+                  key={q.label}
+                  type="button"
+                  onClick={() => set("dueDate", q.value)}
+                  aria-pressed={form.dueDate === q.value}
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-xs transition-colors",
+                    form.dueDate === q.value ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted"
+                  )}
+                >
+                  {q.label}
+                </button>
+              ))}
               <Input
                 id="task-due"
                 type="date"
                 value={form.dueDate}
                 onChange={(e) => set("dueDate", e.target.value)}
+                className="h-8 w-auto text-xs"
+                dir="ltr"
               />
             </div>
+          </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="task-priority">Priority</Label>
-              <Select
-                value={form.priority}
-                onValueChange={(v) => set("priority", v as FormState["priority"])}
-              >
-                <SelectTrigger id="task-priority">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent >
-                  {TASK_PRIORITIES.map((p) => (
-                    <SelectItem key={p} value={p}>
-                      {TASK_PRIORITY_META[p].label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="flex items-center gap-3">
+            <span className="shrink-0 text-sm font-medium">الأولويّة</span>
+            <div role="radiogroup" aria-label="الأولويّة" className="grid flex-1 grid-cols-4 gap-1.5">
+              {TASK_PRIORITIES.map((p) => {
+                const selected = form.priority === p;
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => set("priority", p)}
+                    className={cn(
+                      "rounded-md border py-1.5 text-xs font-semibold transition-colors",
+                      selected
+                        ? cn(TASK_PRIORITY_META[p].tone, "border-current")
+                        : "text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    {TASK_PRIORITY_META[p].labelAr}
+                  </button>
+                );
+              })}
             </div>
-
-            {/* No column field either — Khalid, 2026-09-02. A card moves by
-                being dragged, or by "Move to" on its own menu; a select buried
-                in a dialog is a third way to do the same thing, and the one
-                nobody would look for. The form still SENDS the current status so
-                saving an edit does not move the card. */}
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="task-desc">Details (optional)</Label>
-            <Textarea
-              id="task-desc"
-              value={form.description}
-              onChange={(e) => set("description", e.target.value)}
-              rows={6}
-              placeholder="Anything that helps whoever does it"
-              className="resize-y"
-            />
-          </div>
-        </div>
+          {showDetails ? (
+            <div className="space-y-1.5">
+              <Label htmlFor="task-desc">
+                تفاصيل <span className="font-normal text-muted-foreground">(اختياريّ)</span>
+              </Label>
+              <Textarea
+                id="task-desc"
+                dir="auto"
+                value={form.description}
+                onChange={(e) => set("description", e.target.value)}
+                rows={3}
+                placeholder="أيّ شيءٍ يساعد مَن سيُنفّذها"
+                className="resize-y"
+                autoFocus
+              />
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowDetails(true)}
+              className="text-[13px] font-medium text-primary hover:underline"
+            >
+              + أضف تفاصيل
+            </button>
+          )}
 
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose} disabled={isPending}>
-            Cancel
+          {/* No column field either — Khalid, 2026-09-02. A card moves by being
+              dragged, or by "Move to" on its own menu. The form still SENDS the
+              current status so saving an edit does not move the card. */}
+        </form>
+
+        <DialogFooter className="gap-2 border-t px-5 py-3 sm:justify-start">
+          <Button type="submit" form="task-form" disabled={!canSubmit}>
+            {isPending
+              ? "جارٍ الحفظ…"
+              : isEdit
+              ? "حفظ"
+              : canAssign
+              ? chosen
+                ? `إسناد إلى ${displayName(chosen)}`
+                : "اختر الزميل أوّلاً"
+              : "إضافة"}
           </Button>
-          <Button
-            onClick={submit}
-            disabled={isPending || form.title.trim().length < 3 || (canAssign && form.assigneeId === UNASSIGNED)}
-          >
-            {isPending ? "Saving…" : isEdit ? "Save" : "Add"}
+          <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
+            إلغاء
           </Button>
         </DialogFooter>
       </DialogContent>
