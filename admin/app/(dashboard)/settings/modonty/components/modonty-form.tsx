@@ -35,10 +35,10 @@ function GroupHeader({ icon, title, note, tone }: { icon: string; title: string;
   );
 }
 
-// Fields owned by this form. The homepage form is now SEO-only — social links,
-// business info, the homepage banner, and the brand identity (description + logos)
-// each moved to their own settings area (/settings/social, /settings/business,
-// /settings/banner, /settings/brand).
+// Fields owned by this form. The homepage form is now SEO-only — business info, the
+// homepage banner and the brand identity (description + logos) each moved to their own
+// settings area (/settings/business, /settings/banner, /settings/brand), and the social
+// links to the /accounts page editor (Modonty → Pages → Accounts).
 const F = {
   // How the homepage looks in Google + when shared (meta + OG image).
   search: ["modontySeoTitle", "modontySeoDescription", "ogImageUrl"],

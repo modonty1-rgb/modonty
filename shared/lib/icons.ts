@@ -75,6 +75,14 @@ export { ModontyArrowMark as IconExternal } from '../components/icons/modonty-ar
 export { Linkedin as IconLinkedin } from '../components/icons/linkedin';
 export { Twitter as IconTwitter } from '../components/icons/twitter';
 export { SocialFacebookOutline as IconFacebook } from '../components/icons/facebook';
+// The rest of the social set — the files already existed (partner-site/social-links.tsx draws
+// them), only the registry entries were missing, so pages fell back to a generic arrow.
+export { Instagram as IconInstagram } from '../components/icons/instagram';
+export { Youtube as IconYoutube } from '../components/icons/youtube';
+export { TiktokLogoLight as IconTiktok } from '../components/icons/tiktok';
+export { RoundSnapchat as IconSnapchat } from '../components/icons/snapchat';
+export { Telegram as IconTelegram } from '../components/icons/telegram';
+export { Whatsapp as IconWhatsappBrand } from '../components/icons/whatsapp';
 export { ModontySupportMark as IconMessage } from '../components/icons/modonty-support-mark';
 export { ModontyLocationMark as IconMapPin     } from '../components/icons/modonty-location-mark';
 

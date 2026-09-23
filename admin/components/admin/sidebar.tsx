@@ -87,6 +87,7 @@ import {
   Users,
   Users2,
   Wrench,
+  AtSign,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
@@ -317,6 +318,8 @@ const rawMenuGroups: MenuGroup[] = [
           { icon: BookOpen, label: "Story", href: "/modonty/pages/story" },
           { icon: BookOpen, label: "Audio", href: "/modonty/pages/audio" },
           { icon: BookOpen, label: "Reels", href: "/modonty/pages/reels" },
+          // Link-in-bio page — its SEO, share/hero image and the social accounts it lists.
+          { icon: AtSign, label: "Accounts", href: "/modonty/pages/accounts" },
         ],
       },
       {

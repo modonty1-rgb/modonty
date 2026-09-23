@@ -93,6 +93,17 @@ export const PAGE_CONFIGS: PageConfig[] = [
     modontyPath: "/reels",
     seoOnly: true,
   },
+  {
+    // The link every social bio points to (Khalid, 2026-09-23: «الصفحة هذه مهمّة جداً في
+    // السوشيال ميديا وفي السيو»). Its body — buttons + the accounts from Settings → Social —
+    // is built in code; everything a search engine or a share card reads is edited here.
+    // The share image doubles as the page's hero image, so one upload serves both.
+    slug: "accounts",
+    label: "Accounts",
+    description: "Link-in-bio page — its accounts, bio links, SEO and the share/hero image",
+    modontyPath: "/accounts",
+    seoOnly: true,
+  },
 ];
 
 export function getPageConfig(slug: string): PageConfig | undefined {

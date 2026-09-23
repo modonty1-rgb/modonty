@@ -165,7 +165,9 @@ function resolveType(obj: unknown): string | undefined {
 // rule warned on it forever — the dashboard read «1 تحذير» on a page that was correct.
 // (FAQPage no longer earns a rich result: Google retired the FAQ feature 2026-05-07 and
 // removed its docs 2026-06-15. The markup stays valid, it just buys no rich result.)
-const PAGE_TYPES = ["CollectionPage", "FAQPage", "WebPage", "AboutPage", "ItemPage"];
+// ContactPage (/contact) and ProfilePage (/accounts) are WebPage subtypes too — the business
+// rule below used to accept only WebPage/AboutPage, so both pages failed «Missing WebPage».
+const PAGE_TYPES = ["CollectionPage", "FAQPage", "WebPage", "AboutPage", "ItemPage", "ContactPage", "ProfilePage"];
 
 /**
  * Is this graph the site HOME PAGE? Read from the page node's own `url`: the home page's
@@ -195,16 +197,15 @@ function validateModontyPageBusinessRules(jsonLd: object): ModontyValidationRepo
     errors.push("JSON-LD must contain @graph array");
     return { errors, warnings };
   }
-  const pageNode = graph.find((n: unknown) => {
-    const type = resolveType(n);
-    return type === "WebPage" || type === "AboutPage";
-  }) as Record<string, unknown> | undefined;
+  const pageNode = graph.find((n: unknown) => PAGE_TYPES.includes(resolveType(n) ?? "")) as
+    | Record<string, unknown>
+    | undefined;
   if (!pageNode) {
-    errors.push("Missing WebPage or AboutPage node in @graph");
+    errors.push("Missing a page node (WebPage or a subtype) in @graph");
     return { errors, warnings };
   }
   if (!pageNode.name && !pageNode.description) {
-    warnings.push("WebPage or AboutPage should have name or description");
+    warnings.push("The page node should have name or description");
   }
   return { errors, warnings };
 }

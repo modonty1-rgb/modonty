@@ -75,7 +75,21 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
   const imageUrl = (page.ogImage || page.socialImage || page.heroImage || "").trim();
   const absImageUrl = imageUrl ? absoluteImageUrl(imageUrl, siteUrl) : undefined;
   const pageConfig = getPageConfig(page.slug);
-  const pageType = page.slug === "about" ? "AboutPage" : page.slug === "contact" ? "ContactPage" : "WebPage";
+  /**
+   * `/accounts` is a ProfilePage: Google's markup for "a single person or organization that is
+   * affiliated with the overall website", with that organization as `mainEntity`
+   * (developers.google.com/search/docs/appearance/structured-data/profile-page). The
+   * Organization node above already carries `sameAs` — every account from Settings → Social —
+   * so this page states, in one graph, "these profiles are this organization".
+   */
+  const pageType =
+    page.slug === "about"
+      ? "AboutPage"
+      : page.slug === "contact"
+        ? "ContactPage"
+        : page.slug === "accounts"
+          ? "ProfilePage"
+          : "WebPage";
   const isAboutPage = pageType === "AboutPage";
   const inLang = page.inLanguage || "ar";
 
@@ -175,6 +189,9 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
   if (isAboutPage) {
     webPage.headline = name;
     webPage.about = { "@id": orgId };
+  }
+  if (pageType === "ProfilePage") {
+    webPage.mainEntity = { "@id": orgId };
   }
   if (absImageUrl) {
     webPage.primaryImageOfPage = {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { type ComponentProps } from "react";
+import { type ComponentProps, type ReactNode } from "react";
 import { PageForm } from "../../setting/components/page-form";
 
 interface PageFormWrapperProps {
@@ -14,9 +14,10 @@ interface PageFormWrapperProps {
   coreClientId: string | null;
   /** Page body is built in code — the form shows SEO only. */
   seoOnly?: boolean;
+  beforeFields?: ReactNode;
 }
 
-export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, settingsDefaults, coreClientId, seoOnly }: PageFormWrapperProps) {
+export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, settingsDefaults, coreClientId, seoOnly, beforeFields }: PageFormWrapperProps) {
   const router = useRouter();
 
   const rawOgLocaleAlternate = (pageData?.metaTags as Record<string, unknown> | undefined)?.ogLocaleAlternate ?? pageData?.ogLocaleAlternate;
@@ -36,6 +37,7 @@ export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, se
       settingsDefaults={settingsDefaults}
       coreClientId={coreClientId}
       seoOnly={seoOnly}
+      beforeFields={beforeFields}
     />
   );
 }

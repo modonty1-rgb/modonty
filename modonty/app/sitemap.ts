@@ -323,6 +323,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // recrawled rarely. Listing them here is how they get treated as first-class destinations.
     { url: new URL("/reels", baseUrl).href },
     { url: new URL("/audio", baseUrl).href },
+    // The link-in-bio page — a ProfilePage whose Organization lists every account (sameAs).
+    { url: new URL("/accounts", baseUrl).href },
     { url: new URL("/trust", baseUrl).href },
     { url: new URL("/booking", baseUrl).href },
     { url: new URL("/shop", baseUrl).href },

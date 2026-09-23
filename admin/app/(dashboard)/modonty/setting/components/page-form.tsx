@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,9 +41,11 @@ interface PageFormProps {
   coreClientId: string | null;
   /** Page body is built in code — edit its SEO here, not its content. */
   seoOnly?: boolean;
+  /** A page-specific block drawn under the header, before the SEO fields (/accounts: its accounts). */
+  beforeFields?: ReactNode;
 }
 
-export function PageForm({ slug, pageLabel, pageDescription, initialData, onRegenerated, settingsDefaults, coreClientId, seoOnly = false }: PageFormProps) {
+export function PageForm({ slug, pageLabel, pageDescription, initialData, onRegenerated, settingsDefaults, coreClientId, seoOnly = false, beforeFields }: PageFormProps) {
   const {
     formData,
     loading,
@@ -202,6 +205,8 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
           </Button>
         </div>
       </div>
+
+      {beforeFields ? <div className="mb-4">{beforeFields}</div> : null}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Left Column — Content + SEO */}

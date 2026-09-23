@@ -6,6 +6,11 @@ import { getPage } from "../../setting/actions/page-actions";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { PageFormWrapper } from "./page-form-wrapper";
+import { SocialLinksForm } from "./components/social-links-form";
+
+// The Accounts page carries the social-links form, whose save runs the settings cascade via
+// after() — the same budget /settings/social had before the form moved here.
+export const maxDuration = 800;
 
 export default async function ModontyPageEditPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -47,6 +52,9 @@ export default async function ModontyPageEditPage({ params }: { params: Promise<
           settingsDefaults={settingsDefaults}
           coreClientId={coreClientId}
           seoOnly={config.seoOnly ?? false}
+          // /accounts IS the list of our social accounts — they are the page, so they come
+          // first, right under the header, and the SEO/share-image fields follow.
+          beforeFields={slug === "accounts" ? <SocialLinksForm key="accounts-form" initialSettings={settings} /> : undefined}
         />
       </Suspense>
     </div>

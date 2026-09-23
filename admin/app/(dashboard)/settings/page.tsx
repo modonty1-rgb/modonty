@@ -3,7 +3,6 @@ import {
   Building2,
   Gem,
   Shield,
-  Share2,
   ImageIcon,
   ScrollText,
   Send,
@@ -22,16 +21,8 @@ interface CardSpec {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-// Organization — social presence + business facts. Both moved out of the
-// Modonty Homepage form into their own areas.
-const SOCIAL: CardSpec = {
-  href: "/settings/social",
-  title: "Social Links",
-  description:
-    "Social profile links shown in the footer + Organization sameAs, and X handles for share cards.",
-  icon: Share2,
-};
-
+// Organization — business facts. Social links left this page for the /accounts editor
+// (Modonty → Pages → Accounts, 2026-09-23): that page is the list of these accounts.
 const BUSINESS: CardSpec = {
   href: "/settings/business",
   title: "Business Info",
@@ -104,7 +95,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 export default function SettingsDashboardPage() {
   // Editable: Social, Business, Brand, JBR, Advertising Platforms, Reference, Default Images, Disclaimer, Telegram (9) + System (read-only).
-  const editableCount = 9;
+  const editableCount = 8;
   const total = editableCount + 1;
 
   return (
@@ -128,23 +119,9 @@ export default function SettingsDashboardPage() {
         </div>
       </header>
 
-      {/* ── Organization — social presence + business facts ── */}
+      {/* ── Organization — business facts ── */}
       <SectionLabel>Organization</SectionLabel>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-        <Link
-          href={SOCIAL.href}
-          title={SOCIAL.description}
-          className="group flex items-center gap-3.5 rounded-xl border bg-card px-4 py-3.5 transition-colors hover:bg-muted/30"
-        >
-          <div className="h-10 w-10 flex-none rounded-lg bg-muted text-muted-foreground grid place-items-center transition-colors group-hover:text-foreground">
-            <SOCIAL.icon className="h-5 w-5" />
-          </div>
-          <h3 className="text-sm font-bold truncate">{SOCIAL.title}</h3>
-          <span className="flex-none text-[9.5px] font-bold tracking-wide text-primary bg-primary/10 border border-primary/25 rounded-full px-2 py-0.5">
-            Footer · sameAs · X cards
-          </span>
-          <ArrowRight className="ms-auto h-4 w-4 flex-none text-muted-foreground/30 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all" />
-        </Link>
         <Link
           href={BUSINESS.href}
           title={BUSINESS.description}

@@ -1,12 +1,16 @@
 async function getModontyBaseUrl(baseUrl?: string | null): Promise<string | null> {
-  const u = baseUrl?.trim();
-  if (u) return u;
   // Dev: settings.siteUrl points to PRODUCTION (needed for correct canonical/JSON-LD
   // URLs even locally), so revalidation would hit prod. Locally, bust the local modonty
   // instead so admin edits actually reflect on localhost. Prod is unaffected.
+  //
+  // Checked BEFORE `baseUrl`: the settings save passes `siteUrl` in, so with the order
+  // reversed a dev save went to www.modonty.com with the dev secret — measured 23 Sep 2026,
+  // `401` on prod and the local page never rebuilt.
   if (process.env.NODE_ENV === "development") {
     return process.env.MODONTY_LOCAL_URL?.trim() || "http://localhost:3000";
   }
+  const u = baseUrl?.trim();
+  if (u) return u;
   // DB-first source of truth (matches loadSiteUrl semantics for revalidation target)
   const { getAllSettings } = await import("@/app/(dashboard)/settings/actions/settings-actions");
   const s = await getAllSettings();
@@ -83,6 +87,23 @@ export async function revalidateModontyTag(
         }
       }),
     );
+
+    /**
+     * `/accounts` — a STATIC page built from Settings (the social links, and the sales phone
+     * behind its WhatsApp button). Measured 23 Sep 2026: after a social link was saved the
+     * `settings` tag reached modonty (200) and the page still served the old list three
+     * requests later; only a path revalidation rebuilt it. So a Settings change also rebuilds
+     * that one path — on modonty only, where the page lives.
+     */
+    if (tag === "settings") {
+      const modonty = await getModontyBaseUrl(baseUrl);
+      if (modonty) {
+        const res = await fetch(`${modonty}/api/revalidate?path=${encodeURIComponent("/accounts")}&secret=${encodeURIComponent(secret)}`, {
+          method: "POST",
+        }).catch(() => null);
+        if (res && !res.ok) console.error(`[revalidateModontyTag] Failed to rebuild /accounts on ${modonty} — status ${res.status}`);
+      }
+    }
   } catch (error) {
     console.error(`[revalidateModontyTag] Network error revalidating tag "${tag}" — modonty may be down:`, error instanceof Error ? error.message : error);
   }

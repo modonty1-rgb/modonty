@@ -41,6 +41,8 @@ export async function getContentPageRow(slug: string) {
       twitterCreator: true,
       canonicalUrl: true,
       inLanguage: true,
+      // The graph the admin generated and validated — rendered as-is, like /about does.
+      jsonLdStructuredData: true,
     },
   });
 }
