@@ -140,7 +140,11 @@ export default async function InvoicesPage() {
                         {money(inv.amount, inv.currency)}
                       </td>
                       <td className="text-center">
-                        {inv.isPaid ? (
+                        {inv.isRefunded ? (
+                          <span className="rounded-full bg-slate-500/15 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-400">
+                            مُسترَدة
+                          </span>
+                        ) : inv.isPaid ? (
                           <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                             مدفوعة
                           </span>

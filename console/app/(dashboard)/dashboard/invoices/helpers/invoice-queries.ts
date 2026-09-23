@@ -15,6 +15,8 @@ export interface ClientInvoice {
   amount: number;
   currency: string;
   isPaid: boolean;
+  /** فاتورةُ طلبٍ استُرِدّ مالُه — لا تُعدّ مدفوعةً ولا مستحقّة. */
+  isRefunded: boolean;
   paidAt: Date | null;
   subscriptionEnd: Date | null;
 }
@@ -45,9 +47,22 @@ export async function getClientInvoices(clientId: string): Promise<InvoiceSummar
       paymentStatus: true,
       paidAt: true,
       subscriptionEnd: true,
+      orderId: true,
     },
     take: 100,
   });
+
+  /**
+   * الاستردادُ يغيّر حالةَ الطلب ولا يلمس فاتورتَه (`refund-order.ts`)، فتبقى «مدفوعة» —
+   * ويقرأ العميلُ مالاً رُدّ إليه على أنّه دفعه. فتُقرأ حالةُ الطلب هنا، بقاعدة
+   * `shared/lib/payments/collected.ts` التي يقرؤها الأدمنُ نفسُه.
+   */
+  const orderIds = [...new Set(rows.map((r) => r.orderId).filter((id): id is string => !!id))];
+  const refunded = new Set(
+    orderIds.length
+      ? (await db.checkoutOrder.findMany({ where: { id: { in: orderIds }, status: "REFUNDED" }, select: { id: true } })).map((o) => o.id)
+      : [],
+  );
 
   const invoices: ClientInvoice[] = rows.map((r) => ({
     id: r.id,
@@ -58,17 +73,18 @@ export async function getClientInvoices(clientId: string): Promise<InvoiceSummar
     amount: r.amount,
     currency: r.currency,
     isPaid: r.paymentStatus === "PAID",
+    isRefunded: !!r.orderId && refunded.has(r.orderId),
     paidAt: r.paidAt,
     subscriptionEnd: r.subscriptionEnd,
   }));
 
-  const unpaid = invoices.filter((i) => !i.isPaid);
+  const unpaid = invoices.filter((i) => !i.isPaid && !i.isRefunded);
 
   return {
     invoices,
     unpaidCount: unpaid.length,
     unpaidAmount: unpaid.reduce((s, i) => s + i.amount, 0),
-    paidAmount: invoices.filter((i) => i.isPaid).reduce((s, i) => s + i.amount, 0),
+    paidAmount: invoices.filter((i) => i.isPaid && !i.isRefunded).reduce((s, i) => s + i.amount, 0),
     currency: invoices[0]?.currency ?? null,
   };
 }

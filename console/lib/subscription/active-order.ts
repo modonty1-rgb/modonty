@@ -24,6 +24,8 @@ export type ActiveOrderView = {
   articlesPerMonth: number | null;
   paidAt: Date | null;
   serviceStartedAt: Date | null;
+  /** `REFUNDED` يبقى الطلبَ الحاكم (الاستردادُ لا يفكّ التفعيل) لكنّه لا يُعرض مدفوعاً. */
+  status: string;
 };
 
 export async function getActiveOrderForClient(clientId: string): Promise<ActiveOrderView | null> {
@@ -38,7 +40,7 @@ export async function getActiveOrderForClient(clientId: string): Promise<ActiveO
     select: {
       number: true, planName: true, currency: true, totalMinor: true,
       paidMonths: true, bonusServiceMonths: true, articlesPerMonth: true,
-      paidAt: true, serviceStartedAt: true, clientId: true,
+      paidAt: true, serviceStartedAt: true, clientId: true, status: true,
     },
   });
   // A pointer left behind by a deleted or re-linked order must not render as this

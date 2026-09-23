@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { isCollectedOrder } from "@modonty/shared/lib/payments/collected";
 import { ArticleStatus, TrafficSource } from "@prisma/client";
 import { getActiveOrderForClient, formatOrderMoney } from "@/lib/subscription/active-order";
 
@@ -323,7 +324,8 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
   return {
     subscription: {
       tierName: activeOrder?.planName ?? "—",
-      paidTotal: activeOrder ? formatOrderMoney(activeOrder.totalMinor, activeOrder.currency) : null,
+      // المدفوعُ بقاعدة `collected.ts`: الطلبُ المستردُّ لا يُعرض مبلغُه مدفوعاً.
+      paidTotal: activeOrder && isCollectedOrder(activeOrder) ? formatOrderMoney(activeOrder.totalMinor, activeOrder.currency) : null,
       articlesPerMonth: client.articlesPerMonth ?? 0,
       status: client.subscriptionStatus,
       // من الفواتير القائمة (`openInvoices` أعلاه)، لا من حقلٍ لا يُكتب فيه «متأخّر».

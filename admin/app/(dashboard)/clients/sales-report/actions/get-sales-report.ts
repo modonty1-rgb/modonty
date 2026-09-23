@@ -2,6 +2,7 @@ import { SubscriptionStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { NOT_INTERNAL } from "../../segment/segments";
+import { isStandaloneCollectedInvoice } from "@modonty/shared/lib/payments/collected";
 
 /** "all" for the whole book, or a month number 1–12 (of the current year). */
 export type Period = "all" | number;
@@ -90,15 +91,15 @@ const dateFmt = new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "shor
 /**
  * Sales / revenue report for the whole book, on a CASH basis (Khalid 2026-07-25).
  *
- * «تأسيسه معناه دفع»: a client pays at founding. That payment now lives on the client's
- * FIRST paid order — `totalMinor` with its own `currency` and `paidAt` — not on
- * `Client.openingBalance`, which was a bare number dated at the client's createdAt and
- * whose currency had to be guessed from the address (١٧ سبتمبر ٢٠٢٦).
+ * Every payment lives on a PAID order — `totalMinor` with its own `currency` and `paidAt` —
+ * not on `Client.openingBalance`, which was a bare number dated at the client's createdAt
+ * and whose currency had to be guessed from the address (١٧ سبتمبر ٢٠٢٦).
  *
- * An invoice generated FROM that balance is flagged `fromOpeningBalance` — a document,
- * not new money, so it is EXCLUDED here to avoid double-counting.
+ * An invoice issued FROM an order (or flagged `fromOpeningBalance`) is a document of money
+ * the order already carries, so its amount is EXCLUDED here to avoid double-counting.
  *
- * Collected (المحصّل) = founding orders (by paidAt) + PAID invoices (by paidAt).
+ * Collected (المحصّل) = PAID orders (by paidAt) + PAID invoices that no order carries (by paidAt)
+ * — the one rule in `shared/lib/payments/collected.ts`, read by every money screen.
  * Outstanding (المستحق, DUE) is shown separately — it is a receivable, never counted as sales.
  * Money is split by currency (88% of the audience is Egyptian/EGP) — never summed across
  * SAR + EGP. Archived (void) invoices are excluded. Rep + tier breakdowns are secondary views.
@@ -119,29 +120,25 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
   const clientIds = clients.map((c) => c.id);
 
   /**
-   * -- الإيرادُ التأسيسيّ يُقرأ من الطلب، لا من `Client.openingBalance` --
+   * -- الإيرادُ يُقرأ من الطلبات المدفوعة كلِّها، لا من «الطلب الأوّل» --
    *
-   * كان رقماً على الكرت مؤرَّخاً بيوم إنشاء العميل — وكلاهما تقريب: المبلغُ لا عملةَ
-   * معه (تُشتقّ من البلد)، والتاريخُ يومُ فتح الملفّ لا يومُ الدفع. وصار لكلّ عميلٍ
-   * طلبٌ يحمل الاثنين صريحين: `currency` و`paidAt`.
+   * كان التقريرُ يعدّ أوّلَ طلبٍ مدفوعٍ لكلّ عميل ويترك الباقي لفواتيره. وفيه عيبان
+   * (خالد ٢٣ سبتمبر ٢٠٢٦):
+   * - فاتورةُ الطلب الأوّل لا تُستثنى إلّا إن كانت أولى فواتير العميل
+   *   (`plan-invoice-from-order.ts` · `_count.invoices === 0`) — فعميلٌ له فاتورةٌ قديمة
+   *   يُعدّ طلبُه مرّتين: مرّةً طلباً ومرّةً فاتورة.
+   * - «الأوّل» مرتَّبٌ بـ`serviceStartedAt` صعوداً، ومونغو يضع الفارغ أوّلاً — فتجديدٌ لم
+   *   تبدأ خدمتُه يُختار مكانَ الشراء الأصليّ.
    *
-   * وقيس التطابقُ قبل التبديل (١٧ سبتمبر ٢٠٢٦): مجموعُ أرصدة عملاء مصر ١٠٤٬٣٣٥ =
-   * مجموعُ طلباتهم ١٠٤٬٣٣٥ — نفسُ الرقم، بمصدرٍ يعرف عملتَه وتاريخَه.
-   *
-   * ويُؤخذ الطلبُ الأوّل لكلّ عميل (`serviceStartedAt` صعوداً): هو الشراءُ المؤسِّس،
-   * وما بعده تجديداتٌ تأتي بفواتيرها.
+   * والقاعدةُ الواحدة تُسقط الاثنين: كلُّ طلبٍ `PAID` مالٌ دخل، والفاتورةُ تُعدّ حين لا
+   * طلبَ يحملها. والمستردُّ `REFUNDED` خارجٌ من تلقائه.
    */
-  const foundingOrders = await db.checkoutOrder.findMany({
+  const paidOrders = await db.checkoutOrder.findMany({
     where: { clientId: { in: clientIds }, status: "PAID", totalMinor: { gt: 0 } },
     select: { clientId: true, currency: true, totalMinor: true, paidAt: true, serviceStartedAt: true, createdAt: true, planName: true },
-    orderBy: [{ serviceStartedAt: "asc" }, { createdAt: "asc" }],
   });
-  const foundingByClient = new Map<string, (typeof foundingOrders)[number]>();
-  for (const o of foundingOrders) {
-    if (o.clientId && !foundingByClient.has(o.clientId)) foundingByClient.set(o.clientId, o);
-  }
   /** يومُ الدفع إن وُجد، وإلّا يومُ بدء الخدمة — لا يومُ إنشاء الصفّ. */
-  const foundingDate = (o: (typeof foundingOrders)[number]) => o.paidAt ?? o.serviceStartedAt ?? o.createdAt;
+  const orderDate = (o: (typeof paidOrders)[number]) => o.paidAt ?? o.serviceStartedAt ?? o.createdAt;
 
   const { start, end } = periodBounds(period);
   // Whether a contribution's date falls in the active period (whole-book = always).
@@ -165,6 +162,7 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
           issuedAt: true,
           paidAt: true,
           fromOpeningBalance: true,
+          orderId: true,
           archivedAt: true,
         },
         orderBy: { issuedAt: "desc" },
@@ -212,31 +210,30 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
     }
   };
 
-  // 1) الشراءُ المؤسِّس — من الطلب الأوّل، بعملته وتاريخِ دفعه. يُعدّ محصَّلاً دائماً.
-  for (const c of clients) {
-    const order = foundingByClient.get(c.id);
-    if (!order) continue;
-    if (!inPeriod(foundingDate(order))) continue;
-    // العملةُ من الطلب نفسه لا من بلد العميل — الطلبُ يحملها صريحةً.
-    const isEgp = order.currency === "EGP";
-    // اسمُ الباقة من **الطلب المؤسِّس نفسه** لا من جدول الباقات القديم (١٩ سبتمبر ٢٠٢٦):
-    // هذا السطرُ يعدّ إيرادَ ذلك الطلب، فاسمُ الباقة الصادق هو ما بيع فيه — لا ما صار
-    // على كرت العميل بعد ترقيةٍ أو تجديد. والاسمُ الناقص يُقال ناقصاً.
-    const tierName = order.planName || "بلا باقة";
-    payingClients.add(c.id);
-    fan(isEgp, tierName, c.salesRepId, order.totalMinor / 100, true, false);
+  // 1) الطلباتُ المدفوعة — بعملتها وتاريخِ دفعها وباقتِها كما بيعت.
+  for (const order of paidOrders) {
+    if (!order.clientId || !inPeriod(orderDate(order))) continue;
+    const client = clientById.get(order.clientId);
+    if (!client) continue;
+    payingClients.add(client.id);
+    fan(order.currency === "EGP", order.planName || "بلا باقة", client.salesRepId, order.totalMinor / 100, true, false);
   }
 
-  // 2) Invoices — PAID counts as collected on its paidAt; DUE is outstanding on its issuedAt.
-  //    fromOpeningBalance invoices only document the balance already counted above → skip.
+  // 2) Invoices — PAID ones add money only when no order carries it (renewals invoiced by hand);
+  //    an order's own invoice is still COUNTED as an invoice, with zero added. DUE is outstanding
+  //    on its issuedAt. fromOpeningBalance invoices document a migrated order's amount → skip.
   for (const inv of invoices) {
     if (inv.fromOpeningBalance) continue;
     const paid = inv.paymentStatus === "PAID";
     const when = paid ? inv.paidAt ?? inv.issuedAt : inv.issuedAt;
     if (!inPeriod(when)) continue;
     const isEgp = inv.currency === "EGP";
-    if (paid) payingClients.add(inv.clientId);
     const repId = clientById.get(inv.clientId)?.salesRepId;
+    if (paid && !isStandaloneCollectedInvoice(inv)) {
+      fan(isEgp, inv.tierName || "—", repId, 0, true, true);
+      continue;
+    }
+    if (paid) payingClients.add(inv.clientId);
     fan(isEgp, inv.tierName || "—", repId, inv.amount, paid, true);
   }
 
@@ -307,8 +304,8 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
     },
   });
 
-  // Monthly collected badges — cash in per month of the CURRENT year (opening balances by
-  // createdAt + paid invoices by paidAt), independent of the active filter so every button
+  // Monthly collected badges — cash in per month of the CURRENT year (paid orders by paidAt
+  // + paid invoices no order carries), independent of the active filter so every button
   // shows its month's size at a glance. Archived + opening-balance documents excluded.
   const year = new Date().getFullYear();
   const yearStart = new Date(year, 0, 1);
@@ -326,14 +323,12 @@ export async function getSalesReport(period: Period = "all"): Promise<SalesRepor
       yearTotal.sar += amount;
     }
   };
-  for (const c of clients) {
-    const order = foundingByClient.get(c.id);
-    if (!order) continue;
-    addMonthly(foundingDate(order), order.currency === "EGP", order.totalMinor / 100);
+  for (const order of paidOrders) {
+    if (!order.clientId || !clientById.has(order.clientId)) continue;
+    addMonthly(orderDate(order), order.currency === "EGP", order.totalMinor / 100);
   }
   for (const inv of invoices) {
-    if (inv.fromOpeningBalance) continue;
-    if (inv.paymentStatus !== "PAID") continue;
+    if (!isStandaloneCollectedInvoice(inv)) continue;
     addMonthly(inv.paidAt ?? inv.issuedAt, inv.currency === "EGP", inv.amount);
   }
 

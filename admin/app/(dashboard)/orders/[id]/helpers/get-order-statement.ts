@@ -1,4 +1,10 @@
 import { db } from "@/lib/db";
+import {
+  invoiceMinor,
+  isCollectedOrder,
+  isOutstandingInvoice,
+  isStandaloneCollectedInvoice,
+} from "@modonty/shared/lib/payments/collected";
 
 /**
  * كشفُ حساب العميل مختصراً — على كرت الطلب (خالد ١٨ سبتمبر ٢٠٢٦).
@@ -6,12 +12,13 @@ import { db } from "@/lib/db";
  * ثلاثة أسئلةٍ يسألها من يفتح طلباً: كم دُفع وكم بقي · كم مقالاً اتُّفق عليه وكم بقي منه
  * · وأين نحن من مدّة الاشتراك. وكانت إجاباتُها في ثلاث شاشات.
  *
- * **يُحسب ولا يُخزَّن:** الفواتير تقول المال، والمقالات تقول التسليم، والطلبُ يقول
- * المتّفق عليه. أيُّ رقمٍ يُخزَّن هنا يكذب أوّلَ ما تُصدَر فاتورةٌ أو يُنشر مقال.
+ * **يُحسب ولا يُخزَّن:** الطلباتُ المدفوعة تقول المال (بقاعدة `collected.ts` نفسِها
+ * التي يقرؤها كشفُ الحساب وتقريرُ المبيعات)، والفواتيرُ تقول الدَّين، والمقالاتُ تقول
+ * التسليم. أيُّ رقمٍ يُخزَّن هنا يكذب أوّلَ ما تُصدَر فاتورةٌ أو يُنشر مقال.
  */
 export interface OrderStatement {
   currency: string;
-  /** مجموعُ الفواتير المسدَّدة — المالُ الذي دخل فعلاً. */
+  /** الطلباتُ المدفوعة + الفواتيرُ المسدَّدة بلا طلب — المالُ الذي دخل فعلاً. */
   paidMinor: number;
   /** فواتيرُ صدرت ولم تُسدَّد — دَينٌ على العميل. */
   dueMinor: number;
@@ -28,11 +35,15 @@ export async function getOrderStatement(
   clientId: string,
   order: { articlesPerMonth: number | null; paidMonths: number; bonusServiceMonths: number; currency: string; serviceStartedAt: Date | null },
 ): Promise<OrderStatement> {
-  const [invoices, delivered] = await Promise.all([
+  const [orders, invoices, delivered] = await Promise.all([
+    db.checkoutOrder.findMany({
+      where: { clientId, currency: order.currency },
+      select: { status: true, totalMinor: true },
+    }),
     // المؤرشفةُ لاغية: تبقى في الدفتر للسجلّ ولا تطالب بشيء.
     db.invoice.findMany({
-      where: { clientId, OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }] },
-      select: { totalMinor: true, amount: true, paymentStatus: true },
+      where: { clientId, currency: order.currency, OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }] },
+      select: { totalMinor: true, amount: true, paymentStatus: true, orderId: true, fromOpeningBalance: true },
     }),
     /**
      * المنشورُ منذ بداية الخدمة — لا عمرُ العميل كلُّه: الحصّةُ تخصّ هذه الدورة، فعدُّ
@@ -47,14 +58,14 @@ export async function getOrderStatement(
     }),
   ]);
 
-  // `totalMinor` هو الأدقّ (بالهللة)، و`amount` احتياطٌ للفواتير القديمة التي سبقته.
-  const minor = (i: { totalMinor: number | null; amount: number }) => i.totalMinor ?? Math.round(i.amount * 100);
   const serviceMonths = order.paidMonths + order.bonusServiceMonths;
 
   return {
     currency: order.currency,
-    paidMinor: invoices.filter((i) => i.paymentStatus === "PAID").reduce((s, i) => s + minor(i), 0),
-    dueMinor: invoices.filter((i) => i.paymentStatus !== "PAID").reduce((s, i) => s + minor(i), 0),
+    paidMinor:
+      orders.filter(isCollectedOrder).reduce((s, o) => s + o.totalMinor, 0) +
+      invoices.filter(isStandaloneCollectedInvoice).reduce((s, i) => s + invoiceMinor(i), 0),
+    dueMinor: invoices.filter(isOutstandingInvoice).reduce((s, i) => s + invoiceMinor(i), 0),
     invoiceCount: invoices.length,
     articlesAgreed: order.articlesPerMonth != null ? order.articlesPerMonth * serviceMonths : null,
     articlesDelivered: delivered,

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { isCollectedOrder } from "@modonty/shared/lib/payments/collected";
 import { ar } from "@/lib/ar";
 import { Info } from "lucide-react";
 import { SettingsForm } from "./components/settings-form";
@@ -71,7 +72,7 @@ export default async function SettingsPage() {
     paymentStatus: client.invoices.length > 0 ? "UNPAID" : "PAID",
     startDate: client.subscriptionStartDate ?? null,
     endDate: client.subscriptionEndDate ?? null,
-    paidTotal: order ? formatOrderMoney(order.totalMinor, order.currency) : null,
+    paidTotal: order && isCollectedOrder(order) ? formatOrderMoney(order.totalMinor, order.currency) : null,
     paidMonths: order?.paidMonths ?? null,
     bonusServiceMonths: order?.bonusServiceMonths ?? null,
   };

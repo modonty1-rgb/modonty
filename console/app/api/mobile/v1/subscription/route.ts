@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { isCollectedOrder } from "@modonty/shared/lib/payments/collected";
 import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { arabicCurrency, arabicLongDateLatin } from "@/lib/mobile-api/arabic-format";
@@ -54,7 +55,8 @@ export async function GET(request: NextRequest) {
   // أسوأُ من لا رقم (ممنوع التخمين في المال).
   const knownCurrency = (c: string): c is "SAR" | "EGP" => c === "SAR" || c === "EGP";
   const paidTotal =
-    activeOrder && knownCurrency(activeOrder.currency)
+    // الطلبُ المستردُّ لا يُعرض مبلغُه «مدفوعاً» — قاعدةُ `shared/lib/payments/collected.ts`.
+    activeOrder && isCollectedOrder(activeOrder) && knownCurrency(activeOrder.currency)
       ? arabicCurrency(activeOrder.totalMinor / 100, activeOrder.currency)
       : null;
   const termLabel = activeOrder
