@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
+import { isMigratedOrder } from "@/lib/orders/is-migrated-order";
 import { getSalesReps } from "@/app/(dashboard)/users/actions/users-actions";
 import { OrderEditForm, type OrderForEdit } from "./components/order-edit-form";
 
@@ -21,7 +22,7 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
   const order = await db.checkoutOrder.findUnique({
     where: { id },
     select: {
-      id: true, number: true, buyerName: true, clientId: true,
+      id: true, number: true, buyerName: true,
       planName: true, articlesPerMonth: true, salesRepId: true,
       market: true, totalMinor: true, paidMonths: true,
       bonusServiceMonths: true,
@@ -30,19 +31,8 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
   });
   if (!order) notFound();
 
-  /**
-   * أوّلُ مقالٍ سُلِّم لصاحب هذا الطلب — يُقرأ ولا يُخزَّن.
-   *
-   * `clientId` على الطلب معرّفٌ مجرّد بلا `@relation` (حذفُ العميل يجب ألّا يجرّ
-   * طلباته)، فالجلبُ باستعلامٍ مستقلّ لا بـ`include`.
-   */
-  const [firstArticle, salesReps, assignedRep] = await Promise.all([
-    order.clientId
-      ? db.article.aggregate({
-          where: { clientId: order.clientId, NOT: [{ firstDeliveredAt: null }] },
-          _min: { firstDeliveredAt: true },
-        })
-      : Promise.resolve(null),
+  const [migrated, salesReps, assignedRep] = await Promise.all([
+    isMigratedOrder(order.id),
     getSalesReps(),
     order.salesRepId
       ? db.staff.findUnique({
@@ -70,7 +60,7 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
         <div>
           <h1 className="text-xl font-bold">تعديل الطلب {order.number}</h1>
           <p className="text-sm text-muted-foreground">
-            {order.buyerName} · تظهر فقط البيانات التي تحتاج إلى تعديل.
+            {order.buyerName}
           </p>
         </div>
         <Link
@@ -82,7 +72,7 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
         </Link>
       </header>
 
-      <OrderEditForm order={forEdit} firstArticleAt={day(firstArticle?._min.firstDeliveredAt ?? null)} salesReps={selectableSalesReps} />
+      <OrderEditForm order={forEdit} isMigrated={migrated} salesReps={selectableSalesReps} />
     </main>
   );
 }

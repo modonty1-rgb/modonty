@@ -8,6 +8,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
 import { requireSalesDesk } from "@/lib/require-sales-desk";
+import { isMigratedOrder } from "@/lib/orders/is-migrated-order";
 
 /**
  * تعديلُ طلبٍ قائم — الأدمن والمبيعات (`requireSalesDesk`).
@@ -111,6 +112,8 @@ export async function updateOrderAction(
   });
   if (!before) return { ok: false, error: "الطلب غير موجود" };
 
+  const migrated = await isMigratedOrder(d.orderId);
+
   const salesRepId = d.salesRepId || null;
   if (salesRepId && salesRepId !== before.salesRepId) {
     const salesRep = await db.staff.findFirst({
@@ -159,7 +162,14 @@ export async function updateOrderAction(
     monthlyBaseMinor,
     paidMonths: d.paidMonths,
     bonusServiceMonths: d.bonusServiceMonths,
-    serviceStartedAt: keepIfSameDay(toDate(d.serviceStartedAt), before.serviceStartedAt),
+    /**
+     * أوّلُ مقال (`serviceStartedAt`) يُكتب هنا للطلب المُرحَّل وحده (خالد ٢٣ سبتمبر ٢٠٢٦).
+     * غيرُه يختمه وصولُ أوّل مقال (`lib/orders/start-service-clock.ts`)، فما يُرسَل له يُهمَل
+     * — الشاشةُ تخفي الحقل، وهذا الحارسُ لمن يرسل بلا شاشة.
+     */
+    serviceStartedAt: migrated
+      ? keepIfSameDay(toDate(d.serviceStartedAt), before.serviceStartedAt)
+      : before.serviceStartedAt,
     activatedAt: keepIfSameDay(toDate(d.activatedAt), before.activatedAt),
     paidAt: keepIfSameDay(toDate(d.paidAt), before.paidAt),
     notes: d.notes || null,
@@ -204,6 +214,8 @@ export async function updateOrderAction(
   const termChanged =
     next.paidMonths !== before.paidMonths ||
     next.bonusServiceMonths !== before.bonusServiceMonths ||
+    // النهايةُ = بدايةُ الخدمة + الشهور (`recompute-subscription-end.ts`)، فتغيُّرُ البداية يغيّرها.
+    (next.serviceStartedAt?.getTime() ?? null) !== (before.serviceStartedAt?.getTime() ?? null) ||
     (next.activatedAt?.getTime() ?? null) !== (before.activatedAt?.getTime() ?? null);
 
   if (termChanged) {

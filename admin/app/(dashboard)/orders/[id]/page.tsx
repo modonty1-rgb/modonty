@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, FilePlus2, Mail, Pencil, ReceiptText, RefreshCw } from "lucide-react";
+import { AlertCircle, AlertTriangle, ArrowRight, FilePlus2, Mail, Pencil, ReceiptText, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -60,6 +60,28 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const statement = order.clientId ? await getOrderStatement(order.clientId, order) : null;
   // حالُ الاشتراك — يقرّر ظهورَ زرّ التجديد، وهو نفسُ الحاسب الذي يلوّن صفوف الجدول.
   const standing = order.clientId ? getSubscriptionStanding(order) : null;
+  // نهايةُ الاشتراك في كرت الاشتراك — نفسُ الحاسب، ولو لم يُربط الطلبُ بحسابٍ بعد.
+  const term = standing ?? getSubscriptionStanding(order);
+  const serviceMonths = order.paidMonths + order.bonusServiceMonths;
+
+  /**
+   * ما ينقص الطلب — يُحسب مرّةً ويقرؤه الصفُّ وعدّادُ كرته معاً، فلا يقول الكرتُ «٢ ناقص»
+   * وصفوفُه تُظهر ثلاثة.
+   */
+  const isPaid = order.status === "PAID";
+  const noQuota = order.articlesPerMonth == null;
+  const noActivation = !order.activatedAt && isPaid;
+  const noPaidAt = !order.paidAt && isPaid;
+  const noMethod = !transactions[0] && isPaid;
+  const showTransfer = order.status === "AWAITING_TRANSFER" || !!order.confirmedAt;
+  const noInvoice = !invoice;
+  const noAccount = !order.clientId;
+  const noRep = !salesRep;
+  const missing = {
+    subscription: [noQuota, noActivation].filter(Boolean).length,
+    money: [noPaidAt, noMethod, showTransfer && !order.confirmedAt, noInvoice, !!invoice && !invoice.emailSentAt].filter(Boolean).length,
+    client: [noAccount, noRep].filter(Boolean).length,
+  };
   const failure = humanFailureReason(order.failedReason);
   // PAY-E6: رسالةُ واتساب تُبنى هنا (الخادم) — والزرُّ يفتحها ويسجّل الضغطة فقط.
   const whatsapp = invoice
@@ -154,49 +176,24 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         * والمندوبُ من أهمّها (كان غائباً تماماً): بلا مندوبٍ لا تُنسب الصفقةُ لأحد،
         * ولا يقفل تقريرُ العمولات.
         */}
-      <section className="flex flex-col gap-2.5 rounded-lg border bg-card px-4 py-3">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <Fact
-            ok={!!order.clientId}
-            label="العميل"
-            value={order.clientId ? (invoice?.client.name ?? "مرتبط بحساب") : "لم يُنشأ بعد"}
-            href={order.clientId ? `/clients/${order.clientId}` : undefined}
-          />
-          <Fact ok={!!salesRep} label="المندوب" value={salesRep?.name ?? "غير محدَّد"} />
-          <Fact
-            ok={!!invoice}
-            label="الفاتورة"
-            value={invoice ? invoice.number : "لم تصدر"}
-            href={order.clientId ? `/orders/${order.id}/invoice` : undefined}
-          />
-          <Fact
-            ok={!!invoice?.emailSentAt}
-            label="التسليم"
-            value={invoice?.emailSentAt ? `أُرسلت ${formatOrderDate(invoice.emailSentAt)}` : invoice ? "لم تُرسل بعد" : "—"}
-            muted={!invoice}
-          />
-          {order.status === "AWAITING_TRANSFER" || order.confirmedAt ? (
-            <Fact
-              ok={!!order.confirmedAt}
-              label="التحويل"
-              value={order.confirmedAt ? `أُكّد ${formatOrderDate(order.confirmedAt)}${order.transferReference ? ` — ${order.transferReference}` : ""}` : "بانتظار التأكيد"}
-            />
-          ) : null}
-          {/* كشفُ الحساب رابطٌ في السطر لا زرّاً في آخر الشريط: قراءةٌ لا فعل، فلا يزاحم
-              ما يُفعَل الآن (خالد ١٨ سبتمبر: «شيل البوتوم تبع كشف الحساب»). */}
+      {/**
+        * الحقائقُ نزلت إلى كروتها (خالد ٢٣ سبتمبر ٢٠٢٦: «ليش ما تنحط في نفس الكروت»):
+        * الحسابُ والمندوبُ في «العميل»، والفاتورةُ وتسليمُها والتحويلُ في «المال». وبقي
+        * الشريطُ لما يُفعَل وحده — فلا يُقرأ الشيءُ في مكانين.
+        */}
+      <section className="rounded-lg border bg-card px-4 py-2.5">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* كشفُ الحساب رابطٌ لا زرّ: قراءةٌ لا فعل، فلا يزاحم ما يُفعَل الآن
+              (خالد ١٨ سبتمبر: «شيل البوتوم تبع كشف الحساب»). */}
           {order.clientId ? (
             <Link
               href={`/clients/${order.clientId}/account?fromOrder=${order.id}`}
-              className="ms-auto inline-flex items-center gap-1.5 text-[12px] text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              className="order-last inline-flex items-center gap-1.5 text-[12px] text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
               <ReceiptText className="size-3.5" aria-hidden />
               كشف الحساب
             </Link>
           ) : null}
-        </div>
-
-        {/* ما يُفعَل الآن — يُفصَل عن الحقائق بخطّ، فلا يختلط ما يُقرأ بما يُضغط. */}
-        <div className="flex flex-wrap items-center gap-2 border-t pt-2.5">
           {order.status === "AWAITING_TRANSFER" && isSalesDesk ? (
             <ConfirmTransferButton
               action={confirmOrderPaymentAction.bind(null, order.id)}
@@ -283,29 +280,83 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       </section>
 
       {/**
-        * عمودان بصفوف «تسمية ← قيمة» بدل شبكةٍ ثلاثية على عرض الصفحة: الشبكة كانت
-        * تعطي كل قيمةٍ خانةً بعرض ٣٣٠px لنصٍّ طوله ٦٠px، فتتباعد العين بين القيمة
-        * وتسميتها. والصفّ يضع الاثنين على سطرٍ واحد، والأرقام تنتظم على حافّةٍ واحدة.
+        * ثلاثةُ كروتٍ، لكلٍّ سؤالُه (خالد ٢٣ سبتمبر ٢٠٢٦: «حط كل حاجة في مكانها الصحيح»):
+        * **الاشتراك** ماذا اشترى وكم يستمرّ · **المال** كم دفع ومتى وكيف · **العميل** من هو.
+        * كان المالُ مخلوطاً بالباقة، والدفعُ والمدّةُ تحت بيانات العميل.
+        *
+        * والناقصُ يُصبغ كهرمانيّاً كشريط الحالة فوق، فيُرى النقصُ قبل أن يُسأل عنه.
         */}
-      <div className="grid gap-3 md:grid-cols-2">
-        {/**
-          * «تفاصيل الاشتراك» لا «لقطة الطلب» (خالد ١٦ سبتمبر ٢٠٢٦: «المصطلحات غير
-          * منطقية»). و«اللقطة» ترجمةُ `snapshot` من لغة الكود، تصف كيف خزّنّا الحقول
-          * لا ما يراه القارئ — وما يراه هو تفاصيل اشتراكٍ اشتراه عميل.
-          */}
-        <Panel title="تفاصيل الاشتراك" hint="الأسعار محفوظة كما كانت يوم الشراء">
+      <div className="grid gap-3 md:grid-cols-3">
+        <Panel title="الاشتراك" missing={missing.subscription}>
           <Row label="الباقة" value={order.planName} />
-          <Row label="سعر الشهر" value={formatOrderMoney(order.monthlyBaseMinor, order.currency)} />
+          <Row
+            label="الحصّة الشهريّة"
+            value={order.articlesPerMonth != null ? `${order.articlesPerMonth} مقال/شهر` : "بلا حصّة"}
+            missing={noQuota}
+          />
           <Row label="المدّة المدفوعة" value={formatMonths(order.paidMonths)} />
           <Row label="أشهر مجّانية" value={formatMonths(order.bonusServiceMonths)} />
+          <Row
+            label="المقالات المتّفق عليها"
+            value={order.articlesPerMonth != null ? `${order.articlesPerMonth * serviceMonths} في ${formatMonths(serviceMonths)}` : "—"}
+          />
+          <Row
+            label="يوم التفعيل"
+            value={order.activatedAt ? formatOrderDate(order.activatedAt) : "لم يُفعَّل بعد"}
+            missing={noActivation}
+          />
+          <Row label="أوّل مقال" value={order.serviceStartedAt ? formatOrderDate(order.serviceStartedAt) : "لم يُسلَّم بعد"} />
+          <Row label="نهاية الاشتراك" value={term.endsAt ? formatOrderDate(term.endsAt) : "تُحسب من أوّل مقال"} />
+        </Panel>
+
+        {/* «الأسعار كما كانت يوم الشراء» — لقطةٌ لا تتبع الكتالوج إن تغيّر بعدها. */}
+        <Panel title="المال" hint="الأسعار كما كانت يوم الشراء" missing={missing.money}>
+          <Row label="سعر الشهر" value={formatOrderMoney(order.monthlyBaseMinor, order.currency)} />
           <Row label="المبلغ قبل الضريبة" value={formatOrderMoney(order.subtotalMinor, order.currency)} />
           <Row label={`الضريبة (${order.vatRateBp / 100}٪)`} value={formatOrderMoney(order.vatMinor, order.currency)} />
           <Row label="الإجمالي المدفوع" value={formatOrderMoney(order.totalMinor, order.currency)} strong />
+          <Row label="يوم الدفع" value={order.paidAt ? formatOrderDate(order.paidAt) : "غير مسجَّل"} missing={noPaidAt} />
+          <Row
+            label="طريقة الدفع"
+            value={transactions[0] ? orderProviderLabel(transactions[0].provider) : "غير مسجَّلة"}
+            missing={noMethod}
+          />
+          {showTransfer ? (
+            <Row
+              label="التحويل"
+              value={
+                order.confirmedAt
+                  ? `أُكّد ${formatOrderDate(order.confirmedAt)}${order.transferReference ? ` — ${order.transferReference}` : ""}`
+                  : "بانتظار التأكيد"
+              }
+              missing={!order.confirmedAt}
+            />
+          ) : null}
+          <Row
+            label="الفاتورة"
+            value={invoice ? invoice.number : "لم تصدر"}
+            href={order.clientId ? `/orders/${order.id}/invoice` : undefined}
+            missing={noInvoice}
+          />
+          {/* التسليمُ لا يُسأل عنه قبل أن تصدر فاتورةٌ أصلاً — فلا يُصبغ نقصاً. */}
+          <Row
+            label="إرسال الفاتورة"
+            value={invoice?.emailSentAt ? `أُرسلت ${formatOrderDate(invoice.emailSentAt)}` : invoice ? "لم تُرسل بعد" : "—"}
+            missing={!!invoice && !invoice.emailSentAt}
+          />
         </Panel>
 
-        <Panel title="بيانات العميل">
+        <Panel title="العميل" missing={missing.client}>
+          <Row
+            label="الحساب"
+            value={order.clientId ? (invoice?.client.name ?? "مرتبط بحساب") : "لم يُنشأ بعد"}
+            href={order.clientId ? `/clients/${order.clientId}` : undefined}
+            missing={noAccount}
+          />
+          {/* المندوبُ صاحبُ الصفقة: بلا مندوبٍ لا تُنسب لأحد، ولا يقفل تقريرُ العمولات. */}
+          <Row label="المندوب" value={salesRep?.name ?? "غير محدَّد"} missing={noRep} />
           <Row label="الاسم" value={order.buyerName} />
-          <Row label="الإيميل" value={<span dir="ltr">{order.buyerEmail}</span>} />
+          <Row label="الإيميل" value={<span dir="ltr" className="break-all">{order.buyerEmail}</span>} />
           <Row label="الجوال" value={<span dir="ltr">{order.buyerPhone}</span>} />
           <Row label="اسم المنشأة" value={order.businessName || "—"} />
           {/**
@@ -467,35 +518,6 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 }
 
 /** لوحٌ بترويسةٍ نحيفة — العنوان تسميةٌ لا عنوانٌ رئيسيّ، فلا يأخذ حجم `text-2xl`. */
-/**
- * حقيقةٌ واحدة في شريط الحالة: علامةٌ · تسميةٌ · قيمة.
- *
- * العلامةُ واللونُ يقولان «مكتمل» أو «ناقص» قبل أن تُقرأ الكلمات، فتقف العينُ على
- * الكهرمانيّ وحده. واللونُ لا يحمل المعلومة منفرداً: «✓» و«!» محرفان يُقرآن لمن لا
- * يميّز الألوان، والقيمةُ مكتوبةٌ صراحةً («غير محدَّد» لا خانةٌ فارغة).
- *
- * و`muted` لما لا يُسأل عنه بعد — «التسليم» قبل أن تصدر فاتورةٌ أصلاً: ليس نقصاً
- * يُلام عليه أحد، فلا يُصبغ كهرمانيّاً.
- */
-function Fact({ ok, label, value, href, muted }: { ok: boolean; label: string; value: string; href?: string; muted?: boolean }) {
-  const tone = muted ? "text-muted-foreground" : ok ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400";
-  const body = (
-    <>
-      <span className={cn("text-[11px] font-bold leading-none", tone)} aria-hidden>
-        {muted ? "–" : ok ? "✓" : "!"}
-      </span>
-      <span className="text-[11px] text-muted-foreground">{label}</span>
-      <span className={cn("text-[12px] font-medium", muted && "text-muted-foreground")}>{value}</span>
-    </>
-  );
-  return href ? (
-    <Link href={href} className="flex items-center gap-1.5 underline-offset-4 transition-opacity hover:underline hover:opacity-80">
-      {body}
-    </Link>
-  ) : (
-    <span className="flex items-center gap-1.5">{body}</span>
-  );
-}
 
 /** خانةُ رقمٍ في كشف الحساب: تسميةٌ صغيرة · الرقم كبيراً · سطرٌ يفسّره. */
 function StatCell({ label, value, note, tone }: { label: string; value: string; note: string; tone: "good" | "bad" | "warn" | "muted" }) {
@@ -513,12 +535,18 @@ function StatCell({ label, value, note, tone }: { label: string; value: string; 
   );
 }
 
-function Panel({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
+function Panel({ title, hint, missing = 0, children }: { title: string; hint?: string; missing?: number; children: ReactNode }) {
   return (
-    <section className="rounded-lg border bg-card">
+    <section className={cn("rounded-lg border bg-card", missing > 0 && "border-amber-500/40")}>
       <div className="flex flex-wrap items-baseline gap-x-2 border-b px-4 py-2">
         <h2 className="text-[11px] font-semibold text-muted-foreground">{title}</h2>
         {hint ? <span className="text-[10px] text-muted-foreground/70">{hint}</span> : null}
+        {/* عدّادُ الناقص في رأس الكرت — تقف عليه العينُ قبل أن تقرأ الصفوف. */}
+        {missing > 0 ? (
+          <span className="ms-auto rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-700 ring-1 ring-amber-500/30 dark:text-amber-300">
+            {missing.toLocaleString("ar-EG")} ناقص
+          </span>
+        ) : null}
       </div>
       <dl className="px-4">{children}</dl>
     </section>
@@ -526,14 +554,44 @@ function Panel({ title, hint, children }: { title: string; hint?: string; childr
 }
 
 /** صفٌّ واحد: التسمية عند حافّة القراءة، والقيمة عند الحافّة المقابلة فتنتظم الأرقام. */
-function Row({ label, value, strong }: { label: string; value: ReactNode; strong?: boolean }) {
+function Row({
+  label,
+  value,
+  strong,
+  missing,
+  href,
+}: {
+  label: string;
+  value: ReactNode;
+  strong?: boolean;
+  /** ناقصٌ يُنتظر — شارةٌ كهرمانيّة بأيقونة، لا لونُ نصٍّ يضيع بين الصفوف. */
+  missing?: boolean;
+  href?: string;
+}) {
+  const body = missing ? (
+    <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/15 px-1.5 py-0.5 text-amber-700 ring-1 ring-amber-500/30 dark:text-amber-300">
+      <AlertCircle className="size-3.5 shrink-0" aria-hidden />
+      {value}
+    </span>
+  ) : (
+    value
+  );
   return (
     <div className="flex items-center justify-between gap-4 border-b py-1.5 last:border-0">
       <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className={cn("text-[13px] tabular-nums", strong ? "font-bold" : "font-medium")}>{value}</dd>
+      <dd className={cn("text-[13px] tabular-nums", strong ? "font-bold" : "font-medium")}>
+        {href ? (
+          <Link href={href} className="underline-offset-4 hover:underline">
+            {body}
+          </Link>
+        ) : (
+          body
+        )}
+      </dd>
     </div>
   );
 }
+
 
 /** سجلٌّ فرعيّ: عدّادٌ يقول ما فيه، وجدولٌ لا يُرسم إلا إن كان فيه صفوف. */
 function LogBlock({ title, count, empty, children }: { title: string; count: number; empty: string; children: ReactNode }) {

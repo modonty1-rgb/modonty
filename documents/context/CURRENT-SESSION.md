@@ -12,10 +12,10 @@
 
 | | |
 |---|---|
-| الفرع · آخر كوميت | `main` · `8672262` |
+| الفرع · آخر كوميت | `main` · `ddf267a` (روابط الشراكة) |
 | غير مثبَّت | لا شيء · `origin/main...main = 0 0` |
 | tsc (مصدر) | admin 0 · console 0 · modonty 0 — قيس هذه الجلسة |
-| Vercel | الأربعة READY على `8672262` — قيس |
+| Vercel | الأربعة READY على `8672262`؛ ثمّ `ddf267a`: modonty READY والبقيّة CANCELED (لم تتغيّر) — قيس |
 | db push إنتاج | نُفِّذ بإذن خالد: `tasks_createdById_status_idx` · `lucky_wheels_campaign_phone_idx` · `lucky_wheels_campaign_createdAt_idx` |
 
 ## ما أُنجز (مرفوع)
