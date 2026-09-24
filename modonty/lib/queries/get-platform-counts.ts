@@ -1,8 +1,8 @@
 import { cacheTag, cacheLife } from "next/cache";
-import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
+import { ArticleStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
-import { getCoreClientId } from "@/lib/settings/get-core-client-id";
+import { getActivePartnerWhere } from "./get-active-partner-where";
 
 export interface PlatformCounts {
   /** Verified partners — modonty itself excluded. */
@@ -34,11 +34,8 @@ export async function getPlatformCounts(): Promise<PlatformCounts> {
   cacheTag("clients", "articles", "settings");
   cacheLife("hours");
 
-  const coreClientId = await getCoreClientId();
-  const activePartner = {
-    subscriptionStatus: SubscriptionStatus.ACTIVE,
-    ...(coreClientId ? { id: { not: coreClientId } } : {}),
-  };
+  // «الشريك» من شرطه الواحد — يقرؤه أيضاً «انضمّوا حديثاً» (`get-latest-partners.ts`).
+  const activePartner = await getActivePartnerWhere();
 
   const [partners, articles, industries] = await Promise.all([
     db.client.count({ where: activePartner }),

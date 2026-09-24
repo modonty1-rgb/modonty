@@ -33,6 +33,9 @@ export async function getMoreArticles(
       ...(clientSlug && { client: clientSlug }),
       ...(view === "audio" && { hasAudio: true }),
       ...(view === "popular" && { sortBy: "popular" as const }),
+      // الرئيسيةُ بلا فلتر: اختياراتُ الأدمن أوّلاً — نفسُ ترتيب صفحتها الأولى (`home-feed-shapes.ts`)،
+      // وإلّا تداخلت الصفحةُ الثانية مع الأولى أو سقط منها مقال.
+      ...(!categorySlug && !clientSlug && (view === undefined || view === "latest") && { sortBy: "homepage" as const }),
     });
 
     const posts: FeedPost[] = articles.map((article: ArticleResponse) => ({

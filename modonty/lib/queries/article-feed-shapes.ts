@@ -132,9 +132,14 @@ export async function getArticlesCached(filters: ArticleFilters = {}) {
   // `id` is the final, unique tie-breaker — without it, rows sharing featured+datePublished
   // (notably the datePublished:null ties) reshuffle between requests, so offset pagination
   // (skip/take) overlaps page boundaries → the same article appears on two pages (duplicate key).
+  // `featured` = «اختيارات الرئيسية» من الأدمن (خالد ٢٤ سبتمبر ٢٠٢٦: أغلبُ الشركاء أطبّاء فتبدو
+  // المنصّةُ طبّيّة؛ فيختار المحرّرُ ما يتصدّر الرئيسية). يتقدّم في `homepage` وحده — الرئيسيةُ
+  // وصفحاتُها التالية. وبقيّةُ القوائم (المقالات · التصنيفات · الرائج) بالأحدث، لا يمسّها الاختيار.
   const orderBy =
-    sortBy === "oldest"
-      ? [{ featured: "desc" as const }, { datePublished: "asc" as const }, { id: "asc" as const }]
+    sortBy === "homepage"
+      ? [{ featured: "desc" as const }, { datePublished: "desc" as const }, { id: "desc" as const }]
+      : sortBy === "oldest"
+      ? [{ datePublished: "asc" as const }, { id: "asc" as const }]
       : sortBy === "title"
         ? [{ title: "asc" as const }, { id: "asc" as const }]
         : // «الأكثر قراءة». Added 22 Aug 2026 so an infinite feed can keep scrolling under a
@@ -145,7 +150,7 @@ export async function getArticlesCached(filters: ArticleFilters = {}) {
           // offset paging never overlaps.
           sortBy === "popular"
           ? [{ viewsCount: "desc" as const }, { id: "desc" as const }]
-          : [{ featured: "desc" as const }, { datePublished: "desc" as const }, { id: "desc" as const }];
+          : [{ datePublished: "desc" as const }, { id: "desc" as const }];
 
   const where: Prisma.ArticleWhereInput = {
     status,

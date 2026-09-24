@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { getPlatformCounts } from "@/lib/queries/get-platform-counts";
 import { ArticleStatus, CommentStatus } from "@prisma/client";
 import { cacheTag, cacheLife } from "next/cache";
 import { FooterStats } from "./footer-stats-types";
@@ -29,9 +30,9 @@ export async function getFooterStats(): Promise<FooterStats> {
     clientReviews,
   ] = await Promise.all([
     db.article.count({ where: publishedFilter }),
-    // الشريكُ مَن نُشر له مقال (خالد ٢٤ سبتمبر ٢٠٢٦: «اللي عندهم أرتكلز — طالما هو موجود
-    // فهو شريك»). كان `subscriptionStatus: ACTIVE` على الكرت، وهو مفتاحُ ظهورٍ لا شراكة.
-    db.article.findMany({ where: publishedFilter, distinct: ["clientId"], select: { clientId: true } }).then((r) => r.length),
+    // الشريكُ كلُّ عميلٍ ظاهرٍ على الموقع، نُشر له مقالٌ أم لا (خالد ٢٤ سبتمبر ٢٠٢٦) — من
+    // `getPlatformCounts` الواحد الذي يقرؤه كرتُ «شركاء موثوقون» وتطابقه قائمةُ `/clients`.
+    getPlatformCounts().then((c) => c.partners),
     db.articleView.count(),
     db.clientView.count(),
     db.pageView.count(),

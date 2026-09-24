@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { getGa4FooterStats } from "@/lib/analytics/ga4";
 import { getSearchConsoleTotals } from "@/lib/analytics/search-console-totals";
+import { getPlatformCounts } from "@/lib/queries/get-platform-counts";
 import { getFooterStats } from "@/app/layout/helpers/get-footer-stats";
 import {
   IconArticle,
@@ -48,19 +49,20 @@ function formatHero(n: number): string {
   return n.toLocaleString(SITE_LOCALE);
 }
 
-const SECONDARY_COLS: Record<number, string> = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-3", 4: "sm:grid-cols-4" };
+const SECONDARY_COLS: Record<number, string> = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-3", 4: "sm:grid-cols-4", 5: "sm:grid-cols-5" };
 
 /**
  * **الفوتر بأرقامٍ تصمد أمام الفحص** (خالد ٢٤ سبتمبر ٢٠٢٦: «العميل العربي بالذات الأرقام الكبيرة
  * تغيّر في اتخاذ قراره» — فرقمٌ كبيرٌ صادق، لا رقمٌ منفوخ).
  *
- * الكبير: ظهورُ مدونتي في بحث جوجل (Search Console). والبقيّة: زياراتٌ من البحث · مشاهداتُ
- * الصفحات · فتحُ المقالات (GA4) · الشركاء = مَن نُشر له مقال (القاعدة). وتحت كلّ رقمٍ مصدرُه.
+ * الكبير: ظهورُ مدونتي في بحث جوجل (Search Console). والبقيّة: زياراتٌ من البحث (Search Console) ·
+ * مشاهداتُ الصفحات (GA4) · المقالاتُ المنشورة والشركاءُ والمجالات (`getPlatformCounts` — نفسُ ما يقرؤه
+ * كرتُ «شركاء موثوقون» قبل أن تنتقل أرقامُه إلى هنا). وتحت كلّ رقمٍ مصدرُه.
  * سقط «الأثر الرقمي» (مجموعٌ فيه عدٌّ مكرَّر) و«نشاط» (٦٠٪ قياسُ أداء) و«زيارات» GA4
  * (جلساتُ السيرفر الوهميّة) و«تفاعلات» (أغلبها نقرٌ داخليّ) — تفصيلُها في `lib/analytics/ga4.ts`.
  */
 export async function FooterStats() {
-  const [ga4, gsc, stats] = await Promise.all([getGa4FooterStats(), getSearchConsoleTotals(), getFooterStats()]);
+  const [ga4, gsc, platform] = await Promise.all([getGa4FooterStats(), getSearchConsoleTotals(), getPlatformCounts()]);
 
   if (ga4 || gsc) {
     const hero = gsc
@@ -69,8 +71,9 @@ export async function FooterStats() {
     const cells = [
       gsc ? { value: gsc.clicks, label: "زيارة من بحث جوجل", source: "Search Console" } : null,
       ga4 && gsc ? { value: ga4.pageViews, label: "مشاهدة صفحة", source: "Analytics" } : null,
-      ga4 ? { value: ga4.articleViews, label: "مشاهدة مقال", source: "Analytics" } : null,
-      { value: stats.partners, label: "شريكاً", source: "مدونتي" },
+      { value: platform.articles, label: "مقالاً منشوراً", source: "مدونتي" },
+      { value: platform.partners, label: "شريكاً موثوقاً", source: "مدونتي" },
+      { value: platform.industries, label: "مجالات", source: "مدونتي" },
     ].filter((c): c is { value: number; label: string; source: string } => c !== null);
 
     return (
@@ -84,9 +87,10 @@ export async function FooterStats() {
               <span className="mt-1.5 text-[11px] font-medium text-white/80">{hero.label}</span>
               <span className="mt-0.5 text-[9.5px] text-white/40">{hero.source}</span>
             </div>
-            <div className={`grid flex-1 grid-cols-2 divide-x divide-x-reverse divide-white/[0.06] ${SECONDARY_COLS[cells.length] ?? "sm:grid-cols-4"}`}>
+            {/* الجوّال: صفوفٌ من ثلاثة والأخيرُ في المنتصف (٥ أرقام = ٣ + ٢)؛ ومن `sm` شبكةٌ بعدد الأرقام. */}
+            <div className={`flex flex-1 flex-wrap justify-center sm:grid sm:divide-x sm:divide-x-reverse sm:divide-white/[0.06] ${SECONDARY_COLS[cells.length] ?? "sm:grid-cols-5"}`}>
               {cells.map((c) => (
-                <div key={c.label} className="flex flex-col items-center justify-center px-1 py-5 text-center">
+                <div key={c.label} className="flex w-1/3 flex-col items-center justify-center px-1 py-5 text-center sm:w-auto">
                   <span className="text-lg font-black leading-none text-white/85 sm:text-xl">{c.value.toLocaleString(SITE_LOCALE)}</span>
                   <span className="mt-1.5 text-[11px] font-medium text-white/70">{c.label}</span>
                   <span className="mt-0.5 text-[9.5px] text-white/40">{c.source}</span>
@@ -118,6 +122,7 @@ export async function FooterStats() {
   }
 
   // Fallback — live DB record counts (GA4 and Search Console both unavailable).
+  const stats = await getFooterStats();
   return (
     <div className="w-full rounded-lg bg-primary overflow-hidden shadow-sm">
       <div className="grid grid-cols-3 sm:grid-cols-5 divide-x divide-x-reverse divide-primary-foreground/15">

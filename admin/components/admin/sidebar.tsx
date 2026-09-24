@@ -88,6 +88,7 @@ import {
   Users2,
   Wrench,
   AtSign,
+  Star,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
@@ -178,6 +179,9 @@ const rawMenuGroups: MenuGroup[] = [
     items: [
       { icon: FileText, label: "All Articles", href: "/articles", exact: true },
       { icon: FilePlus, label: "New Article", href: "/articles/new" },
+      // Which articles lead the modonty homepage — most partners are doctors, so an unpicked
+      // homepage reads as a medical site (Khalid, 2026-09-24).
+      { icon: Star, label: "Homepage Picks", href: "/articles/homepage" },
       // Its own entry, not a filter on «All Articles»: these are published on the
       // CLIENT's domain and never on modonty. The section IS the destination — an
       // article created from there is marked for the client's site at birth.

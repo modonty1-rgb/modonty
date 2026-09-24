@@ -10,27 +10,34 @@ interface DesktopNavItemProps {
   tone?: "accent";
 }
 
+/**
+ * **مثل شريط الجوّال** (خالد ٢٤ سبتمبر ٢٠٢٦ — `components/shared/quick-links/OrbitQuickLinks.tsx`):
+ * المكانُ الحاليّ دائرةٌ كبيرةٌ بلون البراند وتوهّجه وعليها اسمُه، والباقي دوائرُ أصغر بأيقونةٍ فقط.
+ * بلا دوران: الترتيبُ ثابتٌ على الديسكتوب — تحرّكُ المواضع تحت الفأرة يُضيّع الزائر، والإصبعُ على
+ * الجوّال هو ما تناسبه الحلقة. والاسمُ يبقى في `aria-label` وفي تلميح الوقوف — فالأيقونةُ
+ * وحدها لا تُفهم دائماً، والفأرةُ تسأل حيث يجرّب الإصبع. الكبيرة ٥٦px = ارتفاعُ الشريط (`h-14`)
+ * فلا تخرج من حافته.
+ */
 export function DesktopNavItem({ icon: Icon, label, href, active = false, tone }: DesktopNavItemProps) {
   return (
     <Link
       href={href}
-      // The active item is marked by colour and a bottom border only, which a screen reader cannot
-      // perceive. `aria-current="page"` is what announces "you are here" — same attribute MobileMenu
-      // already carries, so the two navs now behave alike.
+      // `aria-current="page"` announces "you are here" to a screen reader — the size and colour
+      // alone cannot. Same attribute MobileMenu and the orbit bar carry.
       aria-current={active ? "page" : undefined}
       aria-label={label}
-      title={active ? undefined : label}
       className={cn(
-        "group relative grid h-14 w-12 shrink-0 place-items-center rounded-lg border-b-2 p-0 transition-colors duration-150 hover:bg-muted/50 hover:text-link",
+        "group relative flex shrink-0 flex-col items-center justify-center rounded-full border transition-[width,height,background-color,box-shadow,opacity] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         active
-          ? "grid-rows-[24px_12px] content-center gap-1 text-link border-primary bg-primary/[0.07]"
-          : tone === "accent"
-            ? "text-link-accent border-transparent"
-            : "text-muted-foreground border-transparent",
+          ? "size-14 border-primary/80 bg-primary text-primary-foreground shadow-[0_0_24px_hsl(var(--primary)/0.5)]"
+          : cn(
+              "size-11 border-border/80 bg-card/90 opacity-80 hover:border-primary/65 hover:opacity-100",
+              tone === "accent" ? "text-link-accent" : "text-foreground",
+            ),
       )}
-      >
-      <Icon className={cn("h-6 w-6", active && "self-end")} />
-      {active && <span className="self-start text-[11px] font-semibold leading-none">{label}</span>}
+    >
+      <Icon className={active ? "size-6" : "size-[22px]"} />
+      {active && <span className="mt-0.5 max-w-full truncate px-1 text-[10px] font-bold leading-none">{label}</span>}
       {!active && (
         <span role="tooltip" className="pointer-events-none absolute left-1/2 top-[calc(100%+0.35rem)] z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-border/70 bg-popover px-2 py-1 text-xs font-medium text-popover-foreground opacity-0 shadow-md transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100">
           {label}
@@ -39,4 +46,3 @@ export function DesktopNavItem({ icon: Icon, label, href, active = false, tone }
     </Link>
   );
 }
-

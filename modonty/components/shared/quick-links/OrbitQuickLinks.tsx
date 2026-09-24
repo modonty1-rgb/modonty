@@ -11,6 +11,7 @@ import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
 import { ModontyArticlesMark } from "@/components/icons/modonty-articles-mark";
 import { ModontyAudioMark } from "@/components/icons/modonty-audio-mark";
 import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
+import { getOrbitSteps as getOrbitStepsIn } from "@/lib/nav/get-orbit-steps";
 
 interface OrbitQuickLinksProps {
   siteName: string;
@@ -63,11 +64,8 @@ const ORBIT_LINKS = [
   { href: "/modo-chat", label: "مودو", icon: ModoMark },
 ] satisfies readonly OrbitLink[];
 
-/** How many slots away this link sits from the active one, signed: negative = the other side. */
-function getOrbitSteps(index: number, activeIndex: number): number {
-  const distance = (index - activeIndex + ORBIT_LINKS.length) % ORBIT_LINKS.length;
-  return distance > ORBIT_LINKS.length / 2 ? distance - ORBIT_LINKS.length : distance;
-}
+/** How many slots away this link sits from the active one — the shared ring maths (`lib/nav/get-orbit-steps.ts`). */
+const getOrbitSteps = (index: number, activeIndex: number): number => getOrbitStepsIn(index, activeIndex, ORBIT_LINKS.length);
 
 /**
  * Extra breathing room pushed OUTWARD from the active pill, so the ring parts around it

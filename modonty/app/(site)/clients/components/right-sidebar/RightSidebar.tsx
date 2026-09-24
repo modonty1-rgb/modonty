@@ -30,7 +30,7 @@ export function RightSidebar({ rows, industries, total, query, className }: Righ
       className={cn("hidden w-[300px] shrink-0 self-start min-[1240px]:sticky min-[1240px]:block", className)}
     >
       <div className="space-y-4">
-        <TrustCard showDirectoryAction={false} />
+        <TrustCard variant="directory" />
         <IndustriesFilter rows={rows} industries={industries} total={total} query={query} />
         <LinkCard href="/reels" title={text.reelsCardTitle} description={text.reelsCardSubtitle} icon={IconPlay} />
         <LinkCard href="/audio" title={text.audioCardTitle} description={text.audioCardSubtitle} icon={IconVolume2} />

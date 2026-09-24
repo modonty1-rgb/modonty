@@ -80,11 +80,10 @@ async function call(method: "runReport" | "runRealtimeReport", body: unknown): P
  * كان يعرض الجلسات والأحداث والتفاعلات: الجلساتُ ٣٤٬٨٤٧ وحقيقيّتها (`session_start`) ٦٬٣٢٩ —
  * أحداثُ السيرفر تفتح جلساتٍ بلا زائر؛ والأحداثُ ٦٠٪ منها `web_vitals`؛ و«التفاعلات» ٨٩٪ منها
  * `outbound_click` وأغلبها نقرُ كارت مقالٍ داخل مدونتي. بقي ما يطابق فعلاً:
- * مشاهداتُ الصفحات (`screenPageViews`) وفتحُ المقالات (`article_view`).
+ * مشاهداتُ الصفحات (`page_view`). وعددُ المقالات والشركاء والمجالات من القاعدة (`getPlatformCounts`).
  */
 export interface Ga4FooterStats {
   pageViews: number;
-  articleViews: number;
 }
 
 export async function getGa4FooterStats(): Promise<Ga4FooterStats | null> {
@@ -97,19 +96,14 @@ export async function getGa4FooterStats(): Promise<Ga4FooterStats | null> {
       dateRanges: [{ startDate: SINCE, endDate: "today" }],
       dimensions: [{ name: "eventName" }],
       metrics: [{ name: "eventCount" }],
-      dimensionFilter: {
-        filter: { fieldName: "eventName", inListFilter: { values: ["page_view", "article_view"] } },
-      },
+      dimensionFilter: { filter: { fieldName: "eventName", stringFilter: { matchType: "EXACT", value: "page_view" } } },
     });
 
-    const count = (name: string) =>
-      Number(report.rows?.find((r) => r.dimensionValues?.[0]?.value === name)?.metricValues?.[0]?.value ?? 0);
-    const pageViews = count("page_view");
-    const articleViews = count("article_view");
+    const pageViews = Number(report.rows?.[0]?.metricValues?.[0]?.value ?? 0);
 
     // No usable data → let the footer fall back to DB counts.
-    if (!pageViews && !articleViews) return null;
-    return { pageViews, articleViews };
+    if (!pageViews) return null;
+    return { pageViews };
   } catch {
     return null;
   }
