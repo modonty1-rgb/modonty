@@ -7,7 +7,7 @@ import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row
 import { messages } from "@/lib/i18n/messages";
 
 import { CookiePolicyBody } from "./components/cookie-policy-body/CookiePolicyBody";
-import { CookiePolicyFallback } from "./components/cookie-policy-fallback/CookiePolicyFallback";
+import { LegalPageSkeleton } from "@/components/shared/legal-page-skeleton/LegalPageSkeleton";
 import { getCookiePolicyPageForMetadata } from "./helpers/cookie-policy-metadata";
 import { getCookiePolicyPageContent } from "./helpers/cookie-policy-content";
 
@@ -83,7 +83,7 @@ async function CookiePolicyContent() {
 
 export default function CookiePolicyPage() {
   return (
-    <Suspense fallback={<CookiePolicyFallback />}>
+    <Suspense fallback={<LegalPageSkeleton crumbs={3} />}>
       <CookiePolicyContent />
     </Suspense>
   );

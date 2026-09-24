@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Column<T> {
@@ -192,7 +192,22 @@ export function DataTable<T extends { id: string }>({
                     sortKey === String(column.key) ? (sortDirection === "asc" ? "ascending" : "descending") : undefined
                   }
                 >
-                  <div className="flex items-center">{column.header}</div>
+                  {/* السهمُ يقول أنّ العمود يُفرز وبأيّ اتّجاه (خالد ٢٤ سبتمبر ٢٠٢٦: «فين السورت؟») —
+                      كان الفرزُ يعمل بالنقر ولا شيءَ على الشاشة يدلّ عليه. باهتٌ حتى يُفرز. */}
+                  <div className="group/sort flex items-center gap-1">
+                    {column.header}
+                    {column.sortable !== false ? (
+                      sortKey === String(column.key) ? (
+                        sortDirection === "asc" ? (
+                          <ArrowUp className="size-3 shrink-0" aria-hidden />
+                        ) : (
+                          <ArrowDown className="size-3 shrink-0" aria-hidden />
+                        )
+                      ) : (
+                        <ArrowUpDown className="size-3 shrink-0 opacity-30 group-hover/sort:opacity-70" aria-hidden />
+                      )
+                    ) : null}
+                  </div>
                 </TableHead>
               ))}
             </TableRow>

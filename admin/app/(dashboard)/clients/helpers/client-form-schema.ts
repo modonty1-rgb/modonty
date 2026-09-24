@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CLIENT_PASSWORD_MIN_LENGTH } from "@modonty/shared/lib/constants/client-password";
 import { SubscriptionStatus, ClientCtaMode } from "@prisma/client";
 import { LEGAL_FORM_VALUES, ORGANIZATION_TYPE_VALUES } from "@modonty/shared/lib/constants/client-classification";
 
@@ -97,11 +98,10 @@ const clientFormObject = z
         (val) => {
           // Allow empty, null, or undefined
           if (!val || val.trim() === "") return true;
-          // If provided, must be at least 8 characters
-          return val.length >= 8;
+          return val.length >= CLIENT_PASSWORD_MIN_LENGTH;
         },
         {
-          message: "Password must be at least 8 characters",
+          message: `Password must be at least ${CLIENT_PASSWORD_MIN_LENGTH} characters`,
         }
       ),
     contactType: z

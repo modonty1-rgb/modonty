@@ -145,7 +145,11 @@ export async function getArticlesArchive(query: ArchiveQuery = {}): Promise<Arch
             ]
           : []),
       ],
-      ...(query.categorySlug && { category: { slug: query.categorySlug } }),
+      // A main category brings its sub-categories' articles with it — its count in the rail
+      // already includes them (`get-articles-filters.ts`), so the list must match the number.
+      ...(query.categorySlug && {
+        category: { OR: [{ slug: query.categorySlug }, { parent: { is: { slug: query.categorySlug } } }] },
+      }),
       ...(query.coreOnly && { clientId: coreClientId! }),
       ...(query.tagSlug && { tags: { some: { tag: { slug: query.tagSlug } } } }),
       ...(query.industrySlug && {

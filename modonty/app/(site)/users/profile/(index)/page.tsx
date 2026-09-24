@@ -5,10 +5,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { IconUser, IconEmail, IconSettings } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { ProfileTabs } from "./components/profile-tabs";
-import { ActivityFeed } from "./components/activity-feed";
-import { getProfileStats, getProfileBio } from "./helpers/profile-stats";
-import { getProfileActivity } from "./helpers/profile-activity";
+import { ProfileTabs } from "../components/profile-tabs";
+import { ActivityFeed } from "../components/activity-feed";
+import { getProfileStats, getProfileBio } from "../helpers/profile-stats";
+import { getProfileActivity } from "../helpers/profile-activity";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ProfilePageProps {

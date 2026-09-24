@@ -17,7 +17,7 @@ import {
 } from "@modonty/shared/lib/constants/client-classification";
 
 import { SlugChangeDialog } from "../slug-change-dialog";
-import { PasswordActions } from "./password-actions";
+import { PasswordField } from "./password-field";
 import { YmylSection } from "../form-sections/ymyl-section";
 import { ClientOption } from "../form-sections/client-option";
 import { CtaSection } from "../form-sections/cta-section";
@@ -234,8 +234,12 @@ export function ClientEditWorkspace({
               * `password` يصل من الخادم مهشوشاً أو فارغاً، والحقلُ يبدأ فارغاً في
               * الحالتين: فارغٌ يعني «لا تغيّرها» لمن له كلمة، و«لا يستطيع الدخول» لمن
               * فُتح ملفُّه بالتفعيل بلا كلمة.
+              *
+              * سطرٌ لكلٍّ منهما دائماً: `sm:grid-cols-2` كان يقسم بعرض الشاشة لا بعرض البطاقة،
+              * فمع السايدبار مفتوحاً (بطاقة ~٥٩٠px) ضاق حقلُ الكلمة إلى ~٨٥px بجانب «ولّد»
+              * (خالد، ٢٤ سبتمبر ٢٠٢٦).
               */}
-            <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 p-4">
               <FormInput
                 name="email"
                 type="email"
@@ -245,25 +249,13 @@ export function ClientEditWorkspace({
                 error={errors.email?.message}
                 required
               />
-              {/* type="password", never "text": this field carries a live client's credential.
-                  As plain text it renders on screen, lands in browser autofill, and survives in
-                  any screenshot, recording, or shared screen (card PWPLAIN, 24 Aug). */}
-              <div className="flex items-end gap-2">
-                <div className="min-w-0 flex-1">
-                  <FormInput
-                    name="password"
-                    type="password"
-                    label="Password"
-                    value={password || ""}
-                    onChange={(e) => setValue("password", e.target.value, { shouldValidate: true })}
-                    error={errors.password?.message}
-                  />
-                </div>
-                <PasswordActions
-                  draftPassword={password || ""}
-                  onGenerate={(pw) => setValue("password", pw, { shouldValidate: true, shouldDirty: true })}
-                />
-              </div>
+              <PasswordField
+                value={password || ""}
+                onChange={(pw, opts) =>
+                  setValue("password", pw, { shouldValidate: true, shouldDirty: opts?.generated ? true : undefined })
+                }
+                error={errors.password?.message}
+              />
             </div>
 
             {/**

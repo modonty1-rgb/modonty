@@ -7,7 +7,7 @@ import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row
 import { messages } from "@/lib/i18n/messages";
 
 import { UserAgreementBody } from "./components/user-agreement-body/UserAgreementBody";
-import { UserAgreementFallback } from "./components/user-agreement-fallback/UserAgreementFallback";
+import { LegalPageSkeleton } from "@/components/shared/legal-page-skeleton/LegalPageSkeleton";
 import { getUserAgreementPageForMetadata } from "./helpers/user-agreement-metadata";
 import { getUserAgreementPageContent } from "./helpers/user-agreement-content";
 
@@ -81,7 +81,7 @@ async function UserAgreementContent() {
 
 export default function UserAgreementPage() {
   return (
-    <Suspense fallback={<UserAgreementFallback />}>
+    <Suspense fallback={<LegalPageSkeleton crumbs={3} />}>
       <UserAgreementContent />
     </Suspense>
   );

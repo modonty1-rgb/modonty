@@ -7,7 +7,7 @@ import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row
 import { messages } from "@/lib/i18n/messages";
 
 import { TermsBody } from "./components/terms-body/TermsBody";
-import { TermsFallback } from "./components/terms-fallback/TermsFallback";
+import { LegalPageSkeleton } from "@/components/shared/legal-page-skeleton/LegalPageSkeleton";
 import { getTermsPageForMetadata } from "./helpers/terms-metadata";
 import { getTermsPageContent } from "./helpers/terms-content";
 
@@ -82,7 +82,7 @@ async function TermsContent() {
 
 export default function TermsPage() {
   return (
-    <Suspense fallback={<TermsFallback />}>
+    <Suspense fallback={<LegalPageSkeleton crumbs={2} />}>
       <TermsContent />
     </Suspense>
   );

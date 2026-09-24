@@ -1,4 +1,5 @@
 import { cacheTag, cacheLife } from "next/cache";
+import { HOMEPAGE_ARTICLE_ORDER } from "@modonty/shared/lib/articles/homepage-article-order";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
@@ -78,11 +79,8 @@ export async function getHomeFeedArticlesCached(): Promise<FeedPost[]> {
       OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
     },
     select: homeFeedSelect,
-    orderBy: [
-      { featured: "desc" as const },
-      { datePublished: "desc" as const },
-      { id: "desc" as const },
-    ],
+    // اختياراتُ الأدمن بترتيبها ثم الأحدث — `HOMEPAGE_ARTICLE_ORDER` الواحد.
+    orderBy: HOMEPAGE_ARTICLE_ORDER,
     take: FEED_PAGE_SIZE,
   });
 

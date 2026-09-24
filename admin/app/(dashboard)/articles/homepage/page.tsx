@@ -1,149 +1,123 @@
 import Link from "next/link";
+import { Search } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
+import { HOMEPAGE_ARTICLE_ORDER, HOMEPAGE_PICK_LIMIT } from "@modonty/shared/lib/articles/homepage-article-order";
+import { HomepagePanel } from "./components/homepage-panel";
 import { PickToggle } from "./components/pick-toggle";
+import { IndustryFilter } from "./components/industry-filter";
 
 export const metadata = { title: "Homepage Picks" };
 
-/** صفحةُ رئيسية مدونتي الأولى — `FEED_PAGE_SIZE` في `modonty/lib/queries/feed-constants.ts`. */
-const HOMEPAGE_FIRST_PAGE = 10;
-const dateFmt = new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "short", year: "numeric" });
+const dateFmt = new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "short" });
 const N = new Intl.NumberFormat("ar-EG");
 
 /**
  * **اختياراتُ الرئيسية** (خالد ٢٤ سبتمبر ٢٠٢٦: «أغلب عملائي دكاترة، فالزائر يفكّر إنها منصّة طبّية —
- * أبغى أختار الأرتيكلز اللي تظهر في الصفحة الأولى»).
+ * أبغى أختار الأرتيكلز اللي تظهر في الصفحة الأولى» · «أبغى أتحكّم في ترتيبها»).
  *
- * المختارُ يتصدّر رئيسيةَ مدونتي، وبعده البقيّة بالأحدث؛ وقائمةُ المقالات والتصنيفات بالأحدث لا
- * يمسّها الاختيار (`modonty/lib/queries/article-feed-shapes.ts` · `sortBy: "homepage"`). وأعلى
- * الصفحة ما يراه الزائرُ الآن مقسوماً بالمجال — فيُرى الميلُ الطبّيّ قبل الاختيار وبعده.
+ * عمودان: يميناً «الرئيسية» — الاختياراتُ وحدها بترتيبها وعدّادُ «كم باقي» من العشر (`HomepagePanel`)؛
+ * ويساراً المكتبةُ للبحث والاختيار. كانت ثلاثة أعمدة وقائمتان لنفس الشيء (خالد: «حشو كتير… تكون
+ * وحدة»). والترتيبُ هنا وفي الرئيسية واحد (`HOMEPAGE_ARTICLE_ORDER`).
  */
 export default async function HomepagePicksPage({
   searchParams,
 }: {
-  searchParams: Promise<{ industry?: string; show?: string }>;
+  searchParams: Promise<{ industry?: string; show?: string; q?: string }>;
 }) {
-  const { industry, show } = await searchParams;
+  const { industry, show, q } = await searchParams;
   const now = new Date();
-  const published = {
-    status: "PUBLISHED" as const,
-    OR: [{ datePublished: null }, { datePublished: { lte: now } }],
-  };
-  const select = {
-    id: true,
-    title: true,
-    featured: true,
-    datePublished: true,
-    client: { select: { name: true, industry: { select: { id: true, name: true } } } },
-  } as const;
-  const homepageOrder = [{ featured: "desc" as const }, { datePublished: "desc" as const }, { id: "desc" as const }];
-
-  const [firstPage, all] = await Promise.all([
-    db.article.findMany({ where: published, orderBy: homepageOrder, take: HOMEPAGE_FIRST_PAGE, select }),
-    db.article.findMany({ where: published, orderBy: homepageOrder, take: 500, select }),
-  ]);
+  const all = await db.article.findMany({
+    where: { status: "PUBLISHED", OR: [{ datePublished: null }, { datePublished: { lte: now } }] },
+    orderBy: HOMEPAGE_ARTICLE_ORDER,
+    take: 500,
+    select: {
+      id: true,
+      title: true,
+      featured: true,
+      datePublished: true,
+      client: { select: { name: true, industry: { select: { id: true, name: true } } } },
+    },
+  });
 
   const industryOf = (a: (typeof all)[number]) => a.client?.industry?.name ?? "بلا مجال";
-  const tally = (rows: typeof all) => {
-    const m = new Map<string, number>();
-    for (const a of rows) m.set(industryOf(a), (m.get(industryOf(a)) ?? 0) + 1);
-    return [...m.entries()].sort((x, y) => y[1] - x[1]);
-  };
+  const slot = (a: (typeof all)[number]) => ({ id: a.id, title: a.title, industry: industryOf(a) });
+  const picks = all.filter((a) => a.featured);
+  const full = picks.length >= HOMEPAGE_PICK_LIMIT;
   const industries = [...new Map(all.filter((a) => a.client?.industry).map((a) => [a.client!.industry!.id, a.client!.industry!.name])).entries()];
-  const pickedCount = all.filter((a) => a.featured).length;
+  const needle = q?.trim().toLowerCase() ?? "";
   const rows = all.filter(
-    (a) => (!industry || a.client?.industry?.id === industry) && (show !== "picked" || a.featured),
+    (a) =>
+      (!industry || a.client?.industry?.id === industry) &&
+      (show !== "picked" || a.featured) &&
+      (!needle || a.title.toLowerCase().includes(needle) || (a.client?.name ?? "").toLowerCase().includes(needle)),
   );
+
   const href = (next: { industry?: string | null; show?: string | null }) => {
     const p = new URLSearchParams();
     const ind = next.industry === undefined ? industry : next.industry;
     const sh = next.show === undefined ? show : next.show;
     if (ind) p.set("industry", ind);
     if (sh) p.set("show", sh);
-    const q = p.toString();
-    return `/articles/homepage${q ? `?${q}` : ""}`;
+    if (q) p.set("q", q);
+    const s = p.toString();
+    return `/articles/homepage${s ? `?${s}` : ""}`;
   };
   const chip = (active: boolean) =>
-    cn("rounded-full border px-2.5 py-1 text-xs transition-colors", active ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted");
+    cn("rounded-full border px-2 py-0.5 text-[11.5px] transition-colors", active ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted");
 
   return (
-    <div className="space-y-4 p-4 sm:p-6" dir="rtl">
-      <header>
-        <h1 className="text-lg font-bold sm:text-xl">اختيارات الرئيسية</h1>
-        <p className="mt-0.5 text-sm text-muted-foreground">
-          المقالاتُ المختارة تتصدّر رئيسيةَ مدونتي، وبعدها البقيّةُ بالأحدث. صفحةُ المقالات والتصنيفات لا تتأثّر.
-        </p>
-      </header>
+    <div dir="rtl" className="space-y-3 px-4 pb-4 sm:px-5">
+      <h1 className="text-base font-bold">اختيارات الرئيسية</h1>
 
-      {/* ما يراه الزائرُ الآن — أوّلُ صفحةٍ في الرئيسية، مقسومةً بالمجال */}
-      <section className="rounded-xl border bg-card p-4">
-        <h2 className="text-sm font-bold">أوّل {N.format(HOMEPAGE_FIRST_PAGE)} مقالات في الرئيسية الآن</h2>
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {tally(firstPage).map(([name, n]) => (
-            <span key={name} className="rounded-full border bg-muted/40 px-2.5 py-1 text-xs">
-              {name} <b className="tabular-nums">{N.format(n)}</b>
-            </span>
-          ))}
+      <div className="grid items-start gap-4 lg:grid-cols-[340px_minmax(0,1fr)]">
+        <div className="lg:sticky lg:top-4">
+          <HomepagePanel picks={picks.map(slot)} slots={HOMEPAGE_PICK_LIMIT} />
         </div>
-        <ol className="mt-3 grid gap-1 text-[13px] sm:grid-cols-2">
-          {firstPage.map((a, i) => (
-            <li key={a.id} className="flex items-center gap-2 truncate">
-              <span className="w-5 shrink-0 text-muted-foreground tabular-nums">{N.format(i + 1)}</span>
-              {a.featured ? <span className="text-primary" aria-label="مختار">★</span> : null}
-              <span className="truncate">{a.title}</span>
-              <span className="shrink-0 text-[11px] text-muted-foreground">· {industryOf(a)}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
 
-      <div className="flex flex-wrap items-center gap-1.5">
-        <Link href={href({ show: null })} className={chip(show !== "picked")}>الكل</Link>
-        <Link href={href({ show: "picked" })} className={chip(show === "picked")}>
-          المختارة <b className="tabular-nums">{N.format(pickedCount)}</b>
-        </Link>
-        <span className="mx-1 h-5 w-px bg-border" aria-hidden />
-        <Link href={href({ industry: null })} className={chip(!industry)}>كل المجالات</Link>
-        {industries.map(([id, name]) => (
-          <Link key={id} href={href({ industry: id })} className={chip(industry === id)}>{name}</Link>
-        ))}
-      </div>
+        <section aria-label="المكتبة" className="min-w-0 space-y-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <form action="/articles/homepage" className="relative min-w-[220px] flex-1">
+              {industry ? <input type="hidden" name="industry" value={industry} /> : null}
+              {show ? <input type="hidden" name="show" value={show} /> : null}
+              <Search className="pointer-events-none absolute start-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" aria-hidden />
+              <input
+                type="search"
+                name="q"
+                defaultValue={q ?? ""}
+                placeholder="ابحث بالعنوان أو الشريك"
+                className="h-8 w-full rounded-md border bg-card ps-8 pe-2 text-[12.5px] outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              />
+            </form>
+            <Link href={href({ show: null })} className={chip(show !== "picked")}>الكل</Link>
+            <Link href={href({ show: "picked" })} className={chip(show === "picked")}>المختارة</Link>
+            <IndustryFilter industries={industries} />
+            <span className="text-[11px] text-muted-foreground tabular-nums">{N.format(rows.length)} مقال</span>
+          </div>
 
-      {rows.length === 0 ? (
-        <p className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">لا مقالات بهذا الفلتر.</p>
-      ) : (
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <table className="w-full text-[13px]">
-            <thead>
-              <tr className="border-b bg-muted/60 text-[12px] font-bold">
-                <th className="px-3 py-2 text-right">المقال</th>
-                <th className="px-3 py-2 text-right">الشريك</th>
-                <th className="px-3 py-2 text-right">المجال</th>
-                <th className="px-3 py-2 text-right">النشر</th>
-                <th className="px-3 py-2 text-right">الرئيسية</th>
-              </tr>
-            </thead>
-            <tbody>
+          {rows.length === 0 ? (
+            <p className="rounded-lg border border-dashed p-6 text-center text-[13px] text-muted-foreground">لا نتائج.</p>
+          ) : (
+            <ul className="divide-y rounded-lg border bg-card">
               {rows.map((a) => (
-                <tr key={a.id} className={cn("border-b last:border-0", a.featured && "bg-primary/[0.05]")}>
-                  <td className="max-w-[420px] px-3 py-2 font-medium">
-                    <Link href={`/articles/${a.id}`} className="line-clamp-2 hover:underline">{a.title}</Link>
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-2">{a.client?.name ?? "—"}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{industryOf(a)}</td>
-                  <td className="whitespace-nowrap px-3 py-2 tabular-nums text-muted-foreground">
-                    {a.datePublished ? dateFmt.format(a.datePublished) : "—"}
-                  </td>
-                  <td className="px-3 py-2">
-                    <PickToggle articleId={a.id} picked={a.featured} />
-                  </td>
-                </tr>
+                <li key={a.id} className={cn("flex items-center gap-3 px-3 py-2", a.featured && "bg-primary/[0.05]")}>
+                  <div className="min-w-0 flex-1">
+                    <Link href={`/articles/${a.id}`} className="block truncate text-[13px] font-medium hover:underline">
+                      {a.title}
+                    </Link>
+                    <p className="truncate text-[11px] text-muted-foreground">
+                      {a.client?.name ?? "—"} · {industryOf(a)}
+                      {a.datePublished ? ` · ${dateFmt.format(a.datePublished)}` : ""}
+                    </p>
+                  </div>
+                  <PickToggle articleId={a.id} picked={a.featured} full={full} />
+                </li>
               ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+            </ul>
+          )}
+        </section>
+      </div>
     </div>
   );
 }

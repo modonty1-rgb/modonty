@@ -1,6 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
+import { CLIENT_PASSWORD_MIN_LENGTH } from "@modonty/shared/lib/constants/client-password";
 import { db } from "@/lib/db";
 import { clientWelcomeEmail } from "@/lib/email/templates/client-welcome";
 import { sendEmailWithRetry } from "@/lib/email/resend-client";
@@ -44,7 +45,7 @@ export async function sendClientWelcome(clientId: string, plainPassword: string)
      * ولو وُلِّدت هنا لأرسلنا غيرَ ما عُرض — وهو نفسُ عطب `admin123` الذي أصلحناه.
      */
     const plain = (plainPassword ?? "").trim();
-    if (plain.length < 8) {
+    if (plain.length < CLIENT_PASSWORD_MIN_LENGTH) {
       return { success: false, error: "كلمةُ المرور غير صالحة — افتح صفحة الترحيب من جديد." };
     }
 

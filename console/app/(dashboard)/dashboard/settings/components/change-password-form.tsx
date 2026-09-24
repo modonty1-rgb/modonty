@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { CLIENT_PASSWORD_MIN_LENGTH } from "@modonty/shared/lib/constants/client-password";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
 import {
@@ -51,7 +52,7 @@ export function ChangePasswordForm() {
       toast.error(s.passwordsMismatch);
       return;
     }
-    if (newPassword.length < 8) {
+    if (newPassword.length < CLIENT_PASSWORD_MIN_LENGTH) {
       toast.error(s.passwordMinLength);
       return;
     }

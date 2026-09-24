@@ -3,8 +3,8 @@ import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { messages } from "@/lib/i18n/messages";
-import { HelpHeader } from "./components/help-header/HelpHeader";
-import { HelpLinks } from "./components/help-links/HelpLinks";
+import { HelpHeader } from "../components/help-header/HelpHeader";
+import { HelpLinks } from "../components/help-links/HelpLinks";
 
 const text = messages.help;
 

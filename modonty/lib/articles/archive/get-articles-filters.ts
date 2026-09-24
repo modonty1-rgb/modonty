@@ -13,6 +13,11 @@ export interface FilterOption {
 export interface CategoryOption extends FilterOption {
   /** Industry slugs this category actually appears under — derived, never stored. */
   industrySlugs: string[];
+  /**
+   * Its sub-categories (`Category.parentId`), busiest first. On a main category `count` already
+   * includes them — picking the parent shows their articles too (`get-articles-archive.ts`).
+   */
+  children: CategoryOption[];
 }
 
 export interface ArchiveFilters {
@@ -52,13 +57,14 @@ export async function getArticlesFilters(): Promise<ArchiveFilters> {
       OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
     },
     select: {
-      category: { select: { name: true, slug: true } },
+      category: { select: { name: true, slug: true, parent: { select: { name: true, slug: true } } } },
       client: { select: { industry: { select: { name: true, slug: true } } } },
     },
   });
 
   const industries = new Map<string, FilterOption>();
   const categories = new Map<string, CategoryOption>();
+  const childSlugs = new Set<string>();
 
   for (const row of rows) {
     const industry = row.client?.industry ?? null;
@@ -70,19 +76,13 @@ export async function getArticlesFilters(): Promise<ArchiveFilters> {
     }
 
     if (row.category) {
-      const current = categories.get(row.category.slug);
-      if (current) {
-        current.count += 1;
-        if (industry && !current.industrySlugs.includes(industry.slug)) {
-          current.industrySlugs.push(industry.slug);
-        }
-      } else {
-        categories.set(row.category.slug, {
-          name: row.category.name,
-          slug: row.category.slug,
-          count: 1,
-          industrySlugs: industry ? [industry.slug] : [],
-        });
+      // A sub-category's article counts on the sub-category AND on its main category.
+      const own = tally(categories, row.category, industry?.slug);
+      const parent = row.category.parent;
+      if (parent) {
+        const main = tally(categories, parent, industry?.slug);
+        if (!main.children.includes(own)) main.children.push(own);
+        childSlugs.add(own.slug);
       }
     }
   }
@@ -91,9 +91,29 @@ export async function getArticlesFilters(): Promise<ArchiveFilters> {
   // list buries the only entries most visitors want.
   const byCount = <T extends FilterOption>(list: T[]) => list.sort((a, b) => b.count - a.count);
 
+  // Main categories at the top level, each carrying its sub-categories — until 24 Sep 2026 the
+  // list was flat, so «سوالف وأخبار» sat beside «ترند مدونتي» as a peer instead of under it.
+  const roots = byCount([...categories.values()].filter((c) => !childSlugs.has(c.slug)));
+  for (const root of roots) byCount(root.children);
+
   return {
     industries: byCount([...industries.values()]),
-    categories: byCount([...categories.values()]),
+    categories: roots,
     total: rows.length,
   };
+}
+
+function tally(
+  map: Map<string, CategoryOption>,
+  category: { name: string; slug: string },
+  industrySlug: string | undefined,
+): CategoryOption {
+  let option = map.get(category.slug);
+  if (!option) {
+    option = { name: category.name, slug: category.slug, count: 0, industrySlugs: [], children: [] };
+    map.set(category.slug, option);
+  }
+  option.count += 1;
+  if (industrySlug && !option.industrySlugs.includes(industrySlug)) option.industrySlugs.push(industrySlug);
+  return option;
 }

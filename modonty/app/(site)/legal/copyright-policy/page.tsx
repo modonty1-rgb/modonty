@@ -7,7 +7,7 @@ import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row
 import { messages } from "@/lib/i18n/messages";
 
 import { CopyrightPolicyBody } from "./components/copyright-policy-body/CopyrightPolicyBody";
-import { CopyrightPolicyFallback } from "./components/copyright-policy-fallback/CopyrightPolicyFallback";
+import { LegalPageSkeleton } from "@/components/shared/legal-page-skeleton/LegalPageSkeleton";
 import { getCopyrightPolicyPageForMetadata } from "./helpers/copyright-policy-metadata";
 import { getCopyrightPolicyPageContent } from "./helpers/copyright-policy-content";
 
@@ -83,7 +83,7 @@ async function CopyrightPolicyContent() {
 
 export default function CopyrightPolicyPage() {
   return (
-    <Suspense fallback={<CopyrightPolicyFallback />}>
+    <Suspense fallback={<LegalPageSkeleton crumbs={3} />}>
       <CopyrightPolicyContent />
     </Suspense>
   );

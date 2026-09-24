@@ -6,13 +6,13 @@ import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row
 import { getContentPageRow } from "@/lib/seo/get-content-page-row";
 import { IconHome } from "@/lib/icons";
 
-import { ReelsFeedClient } from "./components/reels-feed-client";
-import { ReelsNavRail } from "./components/reels-nav-rail";
+import { ReelsFeedClient } from "../components/reels-feed-client";
+import { ReelsNavRail } from "../components/reels-nav-rail";
 import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
 import { getReelClientFilterOptions } from "@/lib/queries/get-reels-feed-page";
 import { getUserReelFlags } from "@/lib/queries/get-user-reel-flags";
 import { messages } from "@/lib/i18n/messages";
-import { ReelsClientFilter, ReelsClientFilterDesktop } from "./components/reels-client-filter";
+import { ReelsClientFilter, ReelsClientFilterDesktop } from "../components/reels-client-filter";
 
 // Immersive feed: fixed full-viewport layer above the site chrome (header/footer).
 //

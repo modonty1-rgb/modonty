@@ -1,4 +1,6 @@
 import { db } from "@/lib/db";
+import { articlesAgreed } from "@/lib/orders/articles-agreed";
+import { deliveredArticlesWhere } from "@/lib/orders/delivered-articles-where";
 import {
   invoiceMinor,
   isCollectedOrder,
@@ -49,13 +51,7 @@ export async function getOrderStatement(
      * المنشورُ منذ بداية الخدمة — لا عمرُ العميل كلُّه: الحصّةُ تخصّ هذه الدورة، فعدُّ
      * مقالات دورةٍ سابقة فيها يجعل المتبقّي سالباً بلا ذنب.
      */
-    db.article.count({
-      where: {
-        clientId,
-        status: { in: ["PUBLISHED", "PUBLISHED_ON_CLIENT_SITE"] },
-        ...(order.serviceStartedAt ? { datePublished: { gte: order.serviceStartedAt } } : {}),
-      },
-    }),
+    db.article.count({ where: deliveredArticlesWhere(clientId, order.serviceStartedAt) }),
   ]);
 
   const serviceMonths = order.paidMonths + order.bonusServiceMonths;
@@ -67,7 +63,7 @@ export async function getOrderStatement(
     paidMinor: collected.reduce((s, o) => s + o.totalMinor, 0),
     paidOrderCount: collected.length,
     dueMinor: invoices.filter(isOutstandingInvoice).reduce((s, i) => s + invoiceMinor(i), 0),
-    articlesAgreed: order.articlesPerMonth != null ? order.articlesPerMonth * serviceMonths : null,
+    articlesAgreed: articlesAgreed(order),
     articlesDelivered: delivered,
     articlesPerMonth: order.articlesPerMonth,
     serviceMonths,

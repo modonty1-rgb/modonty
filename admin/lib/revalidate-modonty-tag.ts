@@ -54,7 +54,9 @@ export async function revalidateModontyTag(
   // serving stale data. That is exactly what "pages" did until 25 Aug 2026.
   // "commercial-catalog" is the exception: its route lives in payment/, see PAYMENT_TAGS.
   tag: "articles" | "settings" | "categories" | "clients" | "tags" | "industries" | "faqs" | "authors" | "reels" | "pages" | "ai-prompts" | "commercial-catalog" | "staff",
-  baseUrl?: string | null
+  baseUrl?: string | null,
+  /** `immediate`: يطلب انتهاءً فوريّاً بدل «max» (القديمُ مرّةً ثم الجديد) — لتغييرٍ يفتح المحرّرُ الموقعَ ليراه. */
+  options?: { immediate?: boolean },
 ): Promise<void> {
   try {
     const targets = PAYMENT_TAGS.has(tag)
@@ -80,7 +82,7 @@ export async function revalidateModontyTag(
         const res = await fetch(`${url}/api/revalidate/tag`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ tag, secret }),
+          body: JSON.stringify({ tag, secret, ...(options?.immediate && { immediate: true }) }),
         });
         if (!res.ok) {
           console.error(`[revalidateModontyTag] Failed to revalidate tag "${tag}" on ${url} — status ${res.status}`);

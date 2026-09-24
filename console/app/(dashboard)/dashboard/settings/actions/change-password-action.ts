@@ -1,6 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
+import { CLIENT_PASSWORD_MIN_LENGTH } from "@modonty/shared/lib/constants/client-password";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
@@ -32,10 +33,10 @@ export async function changePassword(
       field: "currentPassword",
     };
   }
-  if (next.length < 8) {
+  if (next.length < CLIENT_PASSWORD_MIN_LENGTH) {
     return {
       success: false,
-      error: "كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل",
+      error: `كلمة المرور الجديدة يجب أن تكون ${CLIENT_PASSWORD_MIN_LENGTH} أحرف على الأقل`,
       field: "newPassword",
     };
   }

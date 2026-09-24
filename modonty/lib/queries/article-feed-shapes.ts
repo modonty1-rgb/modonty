@@ -1,4 +1,5 @@
 import { cache } from 'react';
+import { HOMEPAGE_ARTICLE_ORDER } from "@modonty/shared/lib/articles/homepage-article-order";
 import { cacheTag, cacheLife } from 'next/cache';
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
@@ -137,7 +138,7 @@ export async function getArticlesCached(filters: ArticleFilters = {}) {
   // وصفحاتُها التالية. وبقيّةُ القوائم (المقالات · التصنيفات · الرائج) بالأحدث، لا يمسّها الاختيار.
   const orderBy =
     sortBy === "homepage"
-      ? [{ featured: "desc" as const }, { datePublished: "desc" as const }, { id: "desc" as const }]
+      ? HOMEPAGE_ARTICLE_ORDER
       : sortBy === "oldest"
       ? [{ datePublished: "asc" as const }, { id: "asc" as const }]
       : sortBy === "title"

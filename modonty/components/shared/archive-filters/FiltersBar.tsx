@@ -57,17 +57,23 @@ export function FiltersBar({ filters, current }: FiltersBarProps) {
           label="كل التصنيفات"
           active={nothingPicked}
         />
-        {filters.categories.map((category) => (
-          <Chip
-            key={category.slug}
-            href={withArchiveChange(current, {
-              industry: undefined,
-              category: current.category === category.slug ? undefined : category.slug,
-            })}
-            label={category.name}
-            active={current.category === category.slug}
-          />
-        ))}
+        {filters.categories.flatMap((category) => {
+          // Sub-categories open after their main category once it (or one of them) is picked —
+          // a single scrolling row cannot indent, and showing them always made them read as peers.
+          const open =
+            current.category === category.slug || category.children.some((c) => c.slug === current.category);
+          return [category, ...(open ? category.children : [])].map((option) => (
+            <Chip
+              key={option.slug}
+              href={withArchiveChange(current, {
+                industry: undefined,
+                category: current.category === option.slug ? undefined : option.slug,
+              })}
+              label={option === category ? option.name : `↳ ${option.name}`}
+              active={current.category === option.slug}
+            />
+          ));
+        })}
       </nav>
     </div>
   );

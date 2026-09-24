@@ -5,7 +5,7 @@ import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { messages } from "@/lib/i18n/messages";
 
-import { LegalIndexBody } from "./components/legal-index-body/LegalIndexBody";
+import { LegalIndexBody } from "../components/legal-index-body/LegalIndexBody";
 
 const text = messages.legalIndex;
 

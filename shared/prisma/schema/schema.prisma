@@ -1982,6 +1982,10 @@ model Article {
   status        ArticleStatus @default(WRITING)
   scheduledAt   DateTime?
   featured      Boolean       @default(false)
+  /// ترتيبُ المقال بين «اختيارات الرئيسية» — ١ يتصدّر (خالد ٢٤ سبتمبر ٢٠٢٦: «أبغى أتحكّم في
+  /// ترتيبها»). يُكتب مع `featured: true` من أدمن /articles/homepage، ويُفرَّغ حين يُرفع الاختيار.
+  /// `null` خارج الاختيارات. الرئيسيةُ: featured ↓ ثم هذا ↑ ثم الأحدث.
+  featuredOrder Int?
   revisionNotes String? // Client's feedback when requesting changes (status=NEEDS_REVISION)
 
   /// متى وصل هذا المقال العميلَ أوّل مرّة — أي أوّل ما صارت حالته `AWAITING_APPROVAL`.

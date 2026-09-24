@@ -7,7 +7,7 @@ import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row
 import { messages } from "@/lib/i18n/messages";
 
 import { PrivacyPolicyBody } from "./components/privacy-policy-body/PrivacyPolicyBody";
-import { PrivacyPolicyFallback } from "./components/privacy-policy-fallback/PrivacyPolicyFallback";
+import { LegalPageSkeleton } from "@/components/shared/legal-page-skeleton/LegalPageSkeleton";
 import { getPrivacyPolicyPageForMetadata } from "./helpers/privacy-policy-metadata";
 import { getPrivacyPolicyPageContent } from "./helpers/privacy-policy-content";
 
@@ -83,7 +83,7 @@ async function PrivacyPolicyContent() {
 
 export default function PrivacyPolicyPage() {
   return (
-    <Suspense fallback={<PrivacyPolicyFallback />}>
+    <Suspense fallback={<LegalPageSkeleton crumbs={3} />}>
       <PrivacyPolicyContent />
     </Suspense>
   );

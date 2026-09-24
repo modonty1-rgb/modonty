@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/tooltip";
 import {
   Archive,
+  BookUser,
   BadgeCheck,
   BarChart3,
   BookOpen,
@@ -182,6 +183,9 @@ const rawMenuGroups: MenuGroup[] = [
       // Which articles lead the modonty homepage — most partners are doctors, so an unpicked
       // homepage reads as a medical site (Khalid, 2026-09-24).
       { icon: Star, label: "Homepage Picks", href: "/articles/homepage" },
+      // Every client's quota, delivered and remaining, and activation day — so the content
+      // team knows who is owed what without opening each order (Khalid, 2026-09-24).
+      { icon: BookUser, label: "Clients Articles", href: "/articles/clients-guide" },
       // Its own entry, not a filter on «All Articles»: these are published on the
       // CLIENT's domain and never on modonty. The section IS the destination — an
       // article created from there is marked for the client's site at birth.

@@ -16,7 +16,7 @@ const ALLOWED_TAGS = ["articles", "settings", "categories", "clients", "tags", "
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { tag, secret } = body;
+    const { tag, secret, immediate } = body;
 
     if (!tag || !ALLOWED_TAGS.includes(tag)) {
       return NextResponse.json(
@@ -45,7 +45,11 @@ export async function POST(req: NextRequest) {
     // أو مرّتين ويحدّث في الخلفية. وهو مقبولٌ لكل وسمٍ هنا — مقالٌ أو إعداد يظهر بعد
     // طلبٍ أو اثنين ولا يضرّ. الحالة التي لا تحتمله (السعر) خرجت إلى حزمة `payment`
     // ومعها `{ expire: 0 }`، انظر PAY-S4.
-    revalidateTag(tag, "max");
+    //
+    // `immediate` — للمحرّر الذي يغيّر شيئاً ويفتح الموقع ليراه (خالد ٢٤ سبتمبر ٢٠٢٦: اختياراتُ
+    // الرئيسية). مقيسٌ على «max»: اختيارٌ في الأدمن والرئيسيةُ تعرض ما قبله بخطوتين. فيُطلب
+    // انتهاءٌ فوريّ لهذا النداء وحده، والبقيّةُ على «max» كما هي.
+    revalidateTag(tag, immediate === true ? { expire: 0 } : "max");
 
     return NextResponse.json({
       success: true,

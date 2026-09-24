@@ -1390,7 +1390,7 @@ export const ar = {
 
     // Password
     passwordCard: "كلمة المرور",
-    passwordHint: "اختر كلمة قوية لا تقل عن 8 أحرف، ولا تشاركها مع أحد.",
+    passwordHint: "اختر كلمة قوية لا تقل عن 6 أحرف، ولا تشاركها مع أحد.",
     changePassword: "تغيير كلمة المرور",
     currentPassword: "كلمة المرور الحالية",
     newPassword: "كلمة المرور الجديدة",
@@ -1400,7 +1400,7 @@ export const ar = {
     passwordChanged: "تم تغيير كلمة المرور بنجاح.",
     wrongPassword: "كلمة المرور الحالية غير صحيحة",
     passwordsMismatch: "كلمة المرور الجديدة وتأكيدها لا تتطابقان",
-    passwordMinLength: "كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل",
+    passwordMinLength: "كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل",
     strengthWeak: "ضعيفة",
     strengthMedium: "متوسطة",
     strengthStrong: "قوية",

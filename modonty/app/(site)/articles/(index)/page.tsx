@@ -13,16 +13,16 @@ import { SITE_URL } from "@/constants";
 
 import { getArticlesArchive, type ArchiveSort } from "@/lib/articles/archive/get-articles-archive";
 import { getArticlesFilters } from "@/lib/articles/archive/get-articles-filters";
-import { getTagName } from "./data/get-tag-name";
+import { getTagName } from "../data/get-tag-name";
 import { buildArchiveHref, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
-import { ARCHIVE_PAGE_SIZE } from "./helpers/archive-page-size";
+import { ARCHIVE_PAGE_SIZE } from "../helpers/archive-page-size";
 import {
   countByReadingTime,
   filterByReadingTime,
   READING_TIME_BUCKETS,
   type ReadingTimeBucket,
 } from "@/lib/articles/archive/reading-time-buckets";
-import { ArticlesPageLayout } from "./components/page-layout/ArticlesPageLayout";
+import { ArticlesPageLayout } from "../components/page-layout/ArticlesPageLayout";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { messages } from "@/lib/i18n/messages";
 
@@ -63,7 +63,9 @@ async function describeScope(
   filters: Awaited<ReturnType<typeof getArticlesFilters>>
 ): Promise<string | null> {
   if (state.modonty) return "مدونتي";
-  const category = state.category && filters.categories.find((c) => c.slug === state.category)?.name;
+  const category =
+    state.category &&
+    [...filters.categories, ...filters.categories.flatMap((c) => c.children)].find((c) => c.slug === state.category)?.name;
   if (category) return category;
 
   const industry = state.industry && filters.industries.find((i) => i.slug === state.industry)?.name;
