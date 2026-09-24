@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import { getGa4FooterStats } from "@/lib/analytics/ga4";
+import { getSearchConsoleTotals } from "@/lib/analytics/search-console-totals";
 import { getFooterStats } from "@/app/layout/helpers/get-footer-stats";
 import {
   IconArticle,
@@ -39,43 +40,58 @@ function Stat({
   );
 }
 
-export async function FooterStats() {
-  const ga4 = await getGa4FooterStats();
+/** «+٣٩٦ ألف» — يُقطع للأسفل لا يُقرَّب، فالـ«+» صادقة دائماً (الرقم الحقيقيّ أكبر أو يساوي). */
+function formatHero(n: number): string {
+  const f = (v: number) => v.toLocaleString(SITE_LOCALE, { maximumFractionDigits: 1 });
+  if (n >= 1_000_000) return `+${f(Math.floor(n / 100_000) / 10)} مليون`;
+  if (n >= 10_000) return `+${f(Math.floor(n / 1000))} ألف`;
+  return n.toLocaleString(SITE_LOCALE);
+}
 
-  if (ga4) {
-    const grandTotal = ga4.sessions + ga4.pageViews + ga4.events + ga4.interactions;
+const SECONDARY_COLS: Record<number, string> = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-3", 4: "sm:grid-cols-4" };
+
+/**
+ * **الفوتر بأرقامٍ تصمد أمام الفحص** (خالد ٢٤ سبتمبر ٢٠٢٦: «العميل العربي بالذات الأرقام الكبيرة
+ * تغيّر في اتخاذ قراره» — فرقمٌ كبيرٌ صادق، لا رقمٌ منفوخ).
+ *
+ * الكبير: ظهورُ مدونتي في بحث جوجل (Search Console). والبقيّة: زياراتٌ من البحث · مشاهداتُ
+ * الصفحات · فتحُ المقالات (GA4) · الشركاء = مَن نُشر له مقال (القاعدة). وتحت كلّ رقمٍ مصدرُه.
+ * سقط «الأثر الرقمي» (مجموعٌ فيه عدٌّ مكرَّر) و«نشاط» (٦٠٪ قياسُ أداء) و«زيارات» GA4
+ * (جلساتُ السيرفر الوهميّة) و«تفاعلات» (أغلبها نقرٌ داخليّ) — تفصيلُها في `lib/analytics/ga4.ts`.
+ */
+export async function FooterStats() {
+  const [ga4, gsc, stats] = await Promise.all([getGa4FooterStats(), getSearchConsoleTotals(), getFooterStats()]);
+
+  if (ga4 || gsc) {
+    const hero = gsc
+      ? { value: formatHero(gsc.impressions), label: "ظهور في بحث جوجل", source: "Search Console" }
+      : { value: formatHero(ga4!.pageViews), label: "مشاهدة صفحة", source: "Analytics" };
+    const cells = [
+      gsc ? { value: gsc.clicks, label: "زيارة من بحث جوجل", source: "Search Console" } : null,
+      ga4 && gsc ? { value: ga4.pageViews, label: "مشاهدة صفحة", source: "Analytics" } : null,
+      ga4 ? { value: ga4.articleViews, label: "مشاهدة مقال", source: "Analytics" } : null,
+      { value: stats.partners, label: "شريكاً", source: "مدونتي" },
+    ].filter((c): c is { value: number; label: string; source: string } => c !== null);
 
     return (
       <div className="w-full overflow-hidden rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-[#0d1424] to-[#111827] shadow-[0_0_40px_rgba(99,102,241,0.08)]">
         <div className="flex divide-x divide-x-reverse divide-white/[0.06]">
 
-          {/* Stats: grand-total hero + 4 secondary */}
-          <div className="flex flex-1 divide-x divide-x-reverse divide-white/[0.06]">
-            {/* Hero — الأثر الرقمي (grand total) */}
+          <div className="flex flex-1 flex-col divide-y divide-white/[0.06] sm:flex-row sm:divide-x sm:divide-y-0 sm:divide-x-reverse">
+            {/* الرقم الكبير — أكبرُ رقمٍ صادق */}
             <div className="flex flex-col items-center justify-center px-6 py-5">
-              <span className="text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
-                {grandTotal.toLocaleString(SITE_LOCALE)}
-              </span>
-              <span className="mt-1.5 text-[11px] font-medium text-white/75">الأثر الرقمي</span>
+              <span className="text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">{hero.value}</span>
+              <span className="mt-1.5 text-[11px] font-medium text-white/80">{hero.label}</span>
+              <span className="mt-0.5 text-[9.5px] text-white/40">{hero.source}</span>
             </div>
-            {/* Secondary */}
-            <div className="grid flex-1 grid-cols-2 divide-x divide-x-reverse divide-white/[0.06] sm:grid-cols-4">
-              <div className="flex flex-col items-center justify-center py-5">
-                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.events.toLocaleString(SITE_LOCALE)}</span>
-                <span className="mt-1.5 text-[11px] font-medium text-white/70">نشاط</span>
-              </div>
-              <div className="flex flex-col items-center justify-center py-5">
-                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.sessions.toLocaleString(SITE_LOCALE)}</span>
-                <span className="mt-1.5 text-[11px] font-medium text-white/70">زيارات</span>
-              </div>
-              <div className="hidden sm:flex flex-col items-center justify-center py-5">
-                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.pageViews.toLocaleString(SITE_LOCALE)}</span>
-                <span className="mt-1.5 text-[11px] font-medium text-white/70">مشاهدات</span>
-              </div>
-              <div className="hidden sm:flex flex-col items-center justify-center py-5">
-                <span className="text-lg font-black leading-none text-white/80 sm:text-xl">{ga4.interactions.toLocaleString(SITE_LOCALE)}</span>
-                <span className="mt-1.5 text-[11px] font-medium text-white/70">تفاعلات</span>
-              </div>
+            <div className={`grid flex-1 grid-cols-2 divide-x divide-x-reverse divide-white/[0.06] ${SECONDARY_COLS[cells.length] ?? "sm:grid-cols-4"}`}>
+              {cells.map((c) => (
+                <div key={c.label} className="flex flex-col items-center justify-center px-1 py-5 text-center">
+                  <span className="text-lg font-black leading-none text-white/85 sm:text-xl">{c.value.toLocaleString(SITE_LOCALE)}</span>
+                  <span className="mt-1.5 text-[11px] font-medium text-white/70">{c.label}</span>
+                  <span className="mt-0.5 text-[9.5px] text-white/40">{c.source}</span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -89,7 +105,7 @@ export async function FooterStats() {
             </svg>
             <p className="text-center text-[10px] leading-tight text-white/45">
               موثّق من<br />
-              <span className="font-semibold text-white/65">Google Analytics</span>
+              <span className="font-semibold text-white/65">Analytics · Search Console</span>
             </p>
             <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold text-emerald-400">
               ✓ بيانات حقيقية
@@ -101,8 +117,7 @@ export async function FooterStats() {
     );
   }
 
-  // Fallback — live DB record counts (GA4 unavailable).
-  const stats = await getFooterStats();
+  // Fallback — live DB record counts (GA4 and Search Console both unavailable).
   return (
     <div className="w-full rounded-lg bg-primary overflow-hidden shadow-sm">
       <div className="grid grid-cols-3 sm:grid-cols-5 divide-x divide-x-reverse divide-primary-foreground/15">

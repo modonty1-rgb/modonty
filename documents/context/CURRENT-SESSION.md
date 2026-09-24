@@ -1,63 +1,74 @@
 # الجلسة الحاليّة
 
-**٢٣ سبتمبر ٢٠٢٦ — مصدرٌ واحد للمال · عجلة الحظ · مسار مراجعة المهامّ · صفحة /accounts**
+**٢٣–٢٤ سبتمبر ٢٠٢٦ — مصدرٌ واحد للمال والاشتراكات والباقات في كلّ التطبيقات · الطلبات بالعميل · تقرير الفريق وإسناد المهامّ**
 
 ## وقفنا عند
 
-كلُّ شيءٍ مرفوع ومبنيّ على الإنتاج. **الخطوة التالية (بيد خالد):** في أدمن الإنتاج
-← Modonty → Pages → **Accounts**: العنوان والسيو وصورة الغلاف (1200×630) ثمّ Save،
-وتنظيف رابط لينكدإن من `?viewAsMember=true`، ولصق روابط البايو في كلّ منصّة.
+مراجعة `documents/HTML/GA4-BOARD.html` (تقرير التتبّع، ٣ سبتمبر) مقابل الكود الحاليّ — قُطعت
+في منتصفها. **الخطوة التالية:** إكمال التقرير لخالد: ما صُلح وما بقي من بنوده.
+مقيس حتى الآن (للقراءة فقط): توحيد الهويّة **لم يُنفَّذ** (`modonty/lib/analytics/visitor-cookie.ts:35`
+ما زال يفكّ `_ga` بـregex، ولا جسر `mdy_ga`، ولا صفّ انتظار في `WebVitals.tsx`) · الأسماء
+الرسميّة (`sign_up`/`login`/`search`) **لم تُنفَّذ** · `/users/register` **بلا h1** (كوداً وإنتاجاً) ·
+`/reels` صار فيه h1 · على الإنتاج: `gtag` غير معرَّف، و`fbq/ttq/snaptr` غير محمّلة، وdataLayer
+فيه `gtm.dom/gtm.load` فقط. لا commits على `lib/analytics` منذ ٣ سبتمبر.
+خالد كان يبحث عن تقريرٍ آخر («تقرير العميل في الكونسول من GA4 حسب الدولة والمقال») — لم
+يوجد في المستودع ولا الـArtifacts ولا الجلسات المحفوظة (تبدأ ١٢ سبتمبر). عُرض عليه كتابتُه.
 
 ## الحالة التقنيّة
 
 | | |
 |---|---|
-| الفرع · آخر كوميت | `main` · `ddf267a` (روابط الشراكة) |
-| غير مثبَّت | لا شيء · `origin/main...main = 0 0` |
-| tsc (مصدر) | admin 0 · console 0 · modonty 0 — قيس هذه الجلسة |
-| Vercel | الأربعة READY على `8672262`؛ ثمّ `ddf267a`: modonty READY والبقيّة CANCELED (لم تتغيّر) — قيس |
-| db push إنتاج | نُفِّذ بإذن خالد: `tasks_createdById_status_idx` · `lucky_wheels_campaign_phone_idx` · `lucky_wheels_campaign_createdAt_idx` |
+| الفرع · آخر كوميت | `main` · `5caf380` (١٣٢ ملفّاً) — مرفوع |
+| غير مثبَّت | لا شيء |
+| tsc | admin 0 · console 0 · modonty 0 · payment 0 — قيس قبل الدفع |
+| Vercel | الأربعة `success` على `5caf380` (payment 20:52 · modonty 20:54 · console 20:55 · admin 20:57) — قيس |
+| دخان الإنتاج | modonty `/` و`/story` · pay `/sa` («٣٩٩ ر.س.») و`/sa/contract` = 200 — قيس. أدمن/كونسول الإنتاج لم يُفحصا |
 
-## ما أُنجز (مرفوع)
+## ما أُنجز (مرفوع في `5caf380`)
 
-- **المال — مصدرٌ واحد** `shared/lib/payments/collected.ts`: الطلبُ PAID مالٌ، والفاتورةُ
-  تُعدّ حين لا طلبَ يحملها، والمستردُّ خارج. يقرؤه كشفُ الحساب وكرتُ الطلب وتقريرُ
-  المبيعات والكونسول (فواتير «مُسترَدة»، الإعدادات، API الجوّال).
-- **عجلة الحظ** `modonty/app/(site)/lucky-wheel/` + `app/api/lucky-wheel/`: السيرفر
-  يختار ويحفظ قبل الدوران، `SPINS_PER_PHONE = 3`، تطبيعُ الرقم، حدٌّ للشبكة، والجوّال:
-  زرٌّ تحت العجلة + نافذة الاسم والجوال. الرابط `/lucky-wheel`.
-- **مراجعة المهامّ**: `admin/lib/tasks/review-queue.ts` · `approveTask/returnTask` في
-  `task-actions.ts` · `/tasks/reviews` · عنصر «Reviews» بعدّاد · `Task.reviewNote` ·
-  إشعارا `task_approved/task_returned` · نغمة الجرس `admin/lib/notifications/chime.ts`.
-- **/accounts** `modonty/app/(fullscreen)/accounts/`: بروفايل + زرّ رئيسيّ + (صِر شريكاً
-  → pay.modonty.com · واتساب المبيعات · البريد · نموذج التواصل) + بطاقات الحسابات +
-  «شارك» + خطٌّ مرن `clamp(rem+vw)` · ProfilePage/sameAs · في الـsitemap.
-- **أدمن Accounts**: `PAGE_CONFIGS` + السايدبار + فورم الحسابات منقول من
-  `/settings/social` (يحوّل الآن) مع حالة كلّ حساب وروابط البايو للنسخ.
-- **«صِر شريكاً» كلّه → `PARTNER_SIGNUP_URL`** (`modonty/constants/partner.ts` = pay.modonty.com)
-  في ١٢ ملفّاً؛ لا رابط jbrseo باقٍ في مدونتي.
-- **إصلاحات**: بنترست لم يُقرأ · مدقّق JSON-LD رفض Contact/ProfilePage · حفظُ الإعدادات
-  يعيد بناء `/accounts` · الأدمن المحلّيّ كان يرسل الإبطال للإنتاج · `ignoreCommand`
-  صار يقارن بـ`VERCEL_GIT_PREVIOUS_SHA` (دفعةٌ من كوميتين أسقطت نشر الأدمن).
+- **المال = الطلبات المدفوعة وحدها**: `admin/lib/orders/revenue-order.ts` (REVENUE_ORDER) ·
+  `shared/lib/payments/collected.ts` (isCollectedOrder · isOutstandingInvoice · outstandingByCurrency)؛
+  الفاتورة مستند. تقرير المبيعات = صفحة الطلبات (مصر ١١٥٬١٠٦).
+- **الاشتراك من الطلب الساري**: `shared/lib/subscription/subscription-term.ts` ·
+  `admin/lib/subscription/get-client-subscriptions.ts` · `console/lib/subscription/get-client-subscription.ts`.
+  منتهٍ ١١ · يقترب ٣ — مطابق لحسابٍ مستقلّ.
+- **حالة الفاتورة enum** `InvoicePaymentStatus {PAID, DUE}` في السكيما + `shared/lib/payments/invoice-status-label.ts`.
+  نسخة الإنتاج: كلّ الفواتير `PAID` (١٦).
+- **كلمات حالة الطلب** نُقلت إلى `admin/lib/orders/order-status-copy.ts`.
+- **رمز العملة واحد بالنقطة** `currencyLabel` في `shared/lib/commercial/format-money.ts` («ر.س.»/«ج.م.»)؛
+  المدّة `shared/lib/commercial/term-label.ts` (formatTermLabel).
+- **الطلبات**: جدول رئيسيّ بالعميل + فرعيّ، فلاتر في منيو، إجماليّات بجانب الفلاتر، تعديل الطلب
+  (حساب لنا · تواريخ · أوّل مقال للمرحَّل فقط)، زرّ التجديد على الطلب الساري وحده، «المستلم».
+- **الكونسول**: المدفوع من الطلبات، شارة الدفع قاعدة واحدة (`console/lib/payments/`)، «عليك مستحقّات»،
+  الشريط يقول «مدفوع» كالإعدادات.
+- **الكتالوج**: العملاء المحتملون · /story (`story-offer.ts`) · دليل الفريق
+  (`admin/app/(public)/playbook/helpers/get-playbook-catalog-copy.ts` · `admin/lib/pricing/get-featured-plan-*.ts`
+  — الباقة المميَّزة بدل سلَق `zakham`) · العقد يذكر الضريبة للسعوديّة فقط.
+- **المهامّ**: `/tasks/assign` (Assign Task) · `/daily-tasks` تقرير أسبوعيّ (Team Report) ·
+  `admin/components/tasks/task-dialog.tsx` عربيّة: الزميل قائمة منسدلة في الترويسة · `admin/components/ui/dialog.tsx`
+  زرّ الإغلاق `end-4` والترويسة `sm:text-start` (يصلح كلّ النوافذ العربيّة).
+- **حُذفت** (بلا مستورِد): `get-plans` · `get-tier-labels` · `shared/lib/pricing-durations` ·
+  `advance-referral-on-payment` · `console/lib/subscription/term-label`.
 
 ## قرارات فاعلة
 
-- «كم دفع العميل» = الطلب، لا الإيصال. الإيصالُ سجلُّ بوّابة.
-- روابط البايو تحمل الـUTM؛ روابطُ الصفحة الداخليّة والمشاركة بلا UTM.
-- لا تقييمات عامّة على /accounts (سياسة قوقل self-serving). مقترح معلّق: سؤالُ ملاحظة
-  واحد — ينتظر اختيار خالد («وش تبغى تقرأ؟» أو «وش جابك؟»).
-- البند ٥ (المبيعات يعدّل مبلغ الطلب ومندوبه) بقي كما قرّره خالد.
+- المال = طلبٌ PAID؛ الفاتورة مستند؛ المستحقّ = فاتورة غير مدفوعة، لكلّ عملةٍ وحدها.
+- المنتهي يبقى ظاهراً على مدونتي ولا يُكتب له مقال (الإنشاء يُرفض لغير ACTIVE).
+- `Client.subscriptionStatus` باقٍ مفتاحَ ظهورٍ يدويّ فقط (CANCELLED).
+- /story نصٌّ مكتوب يدويّاً بقرار خالد (التسجيل الصوتيّ يقول ١٢←١٨).
+- سلَق الباقات في الإنتاج هاش (`plan-f1854bef`)؛ **لا يُغيَّر** الآن (يكسر روابط `?plan=` القديمة).
+- لا بيانات إنتاج تُمسّ؛ `admin/.env.local` فيه `PROD_SYNC_DATABASE_URL` (للقراءة، مُتجاهَل في git).
 
-## عوائق ومفتوح
+## مفتوح
 
-- بيانات اختبار على `modonty_dev`: طلبا `00579/00580` مستردّان، فاتورة `MOD-2026-00023`،
-  مهامّ «فحص…»، لفّات عجلة، كلمة «مركز الأمل» `Test-Console-2026!` (في الذاكرة).
-- دخول الكونسول بتذكرة الأدمن يفشل محلّيّاً (كوكي مشترك على localhost) — استعمل البريد
-  وكلمة المرور.
-- `.next/dev/types` قد تتلف حين يُقتل سيرفر التطوير أثناء الكتابة — أخطاءُ tsc هناك ليست من المصدر.
-- بانر Vercel «Payment failed» — يخصّ خالد.
+- **ذكّر خالد:** نقاش معرض Techne الإسكندريّة ٣–٥ أكتوبر (مؤجَّل بطلبه).
+- دار التعافي: الطلب ١٬٥٠٠ مقابل الفاتورة ٣٬٥٩٧ — خالد يراجع بالإكسل.
+- بيانات اختبار على `modonty_dev`: مهامّ «تجربة…» (٤)، كلمة سمايل تاون `Local-Check-2026!`
+  (بريد `mohamedsheno96@gmail.com`)، حساب `claude-check@modonty.local`.
+- دخول الكونسول يُسقط جلسة الأدمن محلّيّاً (كوكي مشترك) — متوقّع.
+- `admin/scripts/seed-orders-for-clients.ts` يتطلّب الآن `--market=SA|EG`.
+- سيرفر الدفع المحلّيّ على 3003 شُغّل في هذه الجلسة.
 
 ## مؤجَّلٌ بقرار خالد
 
-تدويرُ كلمة مرور قاعدة الإنتاج · النيوزليتر · `contentPriorities` (لا تُحذف) · ترقية
-Flex → M10 · كبحُ الزواحف.
+تدويرُ كلمة مرور قاعدة الإنتاج · النيوزليتر · `contentPriorities` · ترقية Flex → M10 · كبحُ الزواحف.

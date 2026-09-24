@@ -65,6 +65,24 @@
   <b>كل رقم منسوخ من الشاشة أو من قياس شُغِّل بنفسي — ولا رقم مستنتَج.</b>
 </p>
 
+<div class="card" style="border:2px solid #22c55e;background:rgba(34,197,94,.06)">
+  <p style="margin:0 0 8px"><b>✅ ٢٤ سبتمبر ٢٠٢٦ — السبب الحقيقي لـ«<code>_ga</code> مش موجود» و«<code>gtag</code> غير معرّف»: مُصلَح (<code>d89c01e</code>)</b></p>
+  <p style="margin:0 0 8px">إعادة الهيكلة <code>3aef68c</code> نقلت مجلّد <code>dataLayer/</code> إلى <code>shared/</code>، والاستبدال الجماعيّ غيّر
+  أيضاً اسم متغيّر جوجل في مقطع GTM إلى <code>'shared'</code> — فحدث <code>gtm.js</code> ذهب إلى <code>window.shared</code> ولم يُطلق أيّ وسم «All Pages»:
+  لا GA4 من المتصفّح ولا البكسلات. أوّل نشرٍ حمله للإنتاج: <b>٣١ أغسطس</b> (<code>eb8516a</code>) — لا نشرَ لمدونتي بين ١٣ و٣١ أغسطس.
+  أي أنّ قياسَ هذه اللوحة (٣ سبتمبر) كان يرى هذا العطل وعمرُه يومان.</p>
+  <table>
+    <tr><th>القياس</th><th>قبل (٢٤ سبتمبر ٠٥:١٠)</th><th>بعد النشر (٠٥:٢٥)</th></tr>
+    <tr><td>dataLayer على الصفحة</td><td><code>gtm.dom · gtm.load</code></td><td><code>gtm.js · gtm.dom · gtm.load</code></td></tr>
+    <tr><td>حاويات</td><td><code>GTM-MNRR2NS9</code> وحدها</td><td><code>GTM-MNRR2NS9 · G-V25C2PSHNB</code></td></tr>
+    <tr><td>كوكي</td><td>لا <code>_ga</code></td><td><code>_ga · _ga_V25C2PSHNB</code></td></tr>
+    <tr><td>GA4 Realtime</td><td>page_view 0 · session_start 0</td><td>page_view 1 · session_start 1 · first_visit 1</td></tr>
+  </table>
+  <p style="margin:8px 0 0">أُصلح في المواضع الثلاثة: <code>modonty/app/layout/components/gtm/GTMContainer.tsx</code> · <code>admin/components/gtm/GTMContainer.tsx</code> ·
+  <code>console/components/gtm/GTMContainer.tsx</code>. الفترة ٣١ أغسطس – ٢٤ سبتمبر ناقصةٌ في GA4 للأبد (لا تسجيل بأثر رجعيّ).
+  <b>ما زال مفتوحاً:</b> توحيد الهويّة (البند ١ أدناه) · البكسلات لم تُقَس بعد الإصلاح · h1 صفحة التسجيل.</p>
+</div>
+
 <div class="tabs" role="tablist">
   <button role="tab" data-pane="explain" aria-selected="true">📘 الشرح والمصطلحات<span class="n" id="n-explain"></span></button>
   <button role="tab" data-pane="problems" aria-selected="false">🔴 المشاكل<span class="n" id="n-problems"></span></button>

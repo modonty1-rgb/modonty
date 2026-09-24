@@ -36,6 +36,8 @@ export const mainNavItems: MainNavItem[] = [
   // «عن مدونتي» — a first-time visitor (and a prospective partner) must find what the
   // platform is from the top bar, not only from the footer (Khalid, 2026-08-15).
   // Teal at rest so it stands apart from the section links (Khalid, 2026-08-16).
-  { icon: ModontyMark, label: label.about, href: "/about", tone: "accent" },
+  // Opens مدونتي's own client page (`/modonty`, read from `Settings.coreClientId`), not
+  // `/about` — the platform introduces itself the way every partner does (Khalid, 2026-09-24).
+  { icon: ModontyMark, label: label.about, href: "/modonty", tone: "accent" },
 ];
 

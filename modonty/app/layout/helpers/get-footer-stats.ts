@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
+import { ArticleStatus, CommentStatus } from "@prisma/client";
 import { cacheTag, cacheLife } from "next/cache";
 import { FooterStats } from "./footer-stats-types";
 
@@ -29,7 +29,9 @@ export async function getFooterStats(): Promise<FooterStats> {
     clientReviews,
   ] = await Promise.all([
     db.article.count({ where: publishedFilter }),
-    db.client.count({ where: { subscriptionStatus: SubscriptionStatus.ACTIVE } }),
+    // الشريكُ مَن نُشر له مقال (خالد ٢٤ سبتمبر ٢٠٢٦: «اللي عندهم أرتكلز — طالما هو موجود
+    // فهو شريك»). كان `subscriptionStatus: ACTIVE` على الكرت، وهو مفتاحُ ظهورٍ لا شراكة.
+    db.article.findMany({ where: publishedFilter, distinct: ["clientId"], select: { clientId: true } }).then((r) => r.length),
     db.articleView.count(),
     db.clientView.count(),
     db.pageView.count(),

@@ -14,9 +14,9 @@
  * Docs: https://developers.google.com/analytics/devguides/reporting/data/v1
  */
 
-import { createSign } from "node:crypto";
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
+import { getGoogleServiceToken } from "./google-service-token";
 
 const PROPERTY_ID = process.env.GA4_PROPERTY_ID;
 const CLIENT_EMAIL = process.env.GA4_CLIENT_EMAIL;
@@ -52,37 +52,10 @@ function getPrivateKey(): string | null {
   return null;
 }
 
-function base64url(data: string | Buffer): string {
-  const buf = typeof data === "string" ? Buffer.from(data) : data;
-  return buf.toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-}
-
-let cachedToken: { token: string; expiresAt: number } | null = null;
-
 async function getAccessToken(): Promise<string> {
-  if (cachedToken && cachedToken.expiresAt > Date.now() + 60_000) return cachedToken.token;
   const privateKey = getPrivateKey();
   if (!privateKey || !CLIENT_EMAIL) throw new Error("GA4: missing credentials");
-
-  const now = Math.floor(Date.now() / 1000);
-  const header = base64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
-  const payload = base64url(
-    JSON.stringify({ iss: CLIENT_EMAIL, scope: SCOPE, aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 }),
-  );
-  const toSign = `${header}.${payload}`;
-  const signer = createSign("RSA-SHA256");
-  signer.update(toSign);
-  const jwt = `${toSign}.${base64url(signer.sign(privateKey))}`;
-
-  const resp = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion: jwt }),
-  });
-  const data = (await resp.json()) as { access_token?: string; expires_in?: number };
-  if (!resp.ok || !data.access_token) throw new Error(`GA4 token HTTP ${resp.status}`);
-  cachedToken = { token: data.access_token, expiresAt: Date.now() + (data.expires_in ?? 3600) * 1000 };
-  return data.access_token;
+  return getGoogleServiceToken(CLIENT_EMAIL, privateKey, SCOPE);
 }
 
 interface ReportResponse {
@@ -101,12 +74,17 @@ async function call(method: "runReport" | "runRealtimeReport", body: unknown): P
   return (await resp.json()) as ReportResponse;
 }
 
+/**
+ * **ما يعرضه الفوتر من GA4 — رقمان يُدافَع عنهما** (خالد ٢٤ سبتمبر ٢٠٢٦).
+ *
+ * كان يعرض الجلسات والأحداث والتفاعلات: الجلساتُ ٣٤٬٨٤٧ وحقيقيّتها (`session_start`) ٦٬٣٢٩ —
+ * أحداثُ السيرفر تفتح جلساتٍ بلا زائر؛ والأحداثُ ٦٠٪ منها `web_vitals`؛ و«التفاعلات» ٨٩٪ منها
+ * `outbound_click` وأغلبها نقرُ كارت مقالٍ داخل مدونتي. بقي ما يطابق فعلاً:
+ * مشاهداتُ الصفحات (`screenPageViews`) وفتحُ المقالات (`article_view`).
+ */
 export interface Ga4FooterStats {
-  sessions: number;
   pageViews: number;
-  events: number;
-  interactions: number;
-  avgSessionSeconds: number;
+  articleViews: number;
 }
 
 export async function getGa4FooterStats(): Promise<Ga4FooterStats | null> {
@@ -115,40 +93,23 @@ export async function getGa4FooterStats(): Promise<Ga4FooterStats | null> {
   cacheLife("minutes");
 
   try {
-    const [totals, events] = await Promise.all([
-      call("runReport", {
-        dateRanges: [{ startDate: SINCE, endDate: "today" }],
-        metrics: [
-          { name: "sessions" },
-          { name: "screenPageViews" },
-          { name: "eventCount" },
-          { name: "averageSessionDuration" },
-        ],
-      }),
-      call("runReport", {
-        dateRanges: [{ startDate: SINCE, endDate: "today" }],
-        dimensions: [{ name: "eventName" }],
-        metrics: [{ name: "eventCount" }],
-        limit: 100,
-      }),
-    ]);
+    const report = await call("runReport", {
+      dateRanges: [{ startDate: SINCE, endDate: "today" }],
+      dimensions: [{ name: "eventName" }],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: {
+        filter: { fieldName: "eventName", inListFilter: { values: ["page_view", "article_view"] } },
+      },
+    });
 
-    const t = totals.rows?.[0]?.metricValues ?? [];
-    const sessions = Number(t[0]?.value ?? 0);
-    const pageViews = Number(t[1]?.value ?? 0);
-    const eventsTotal = Number(t[2]?.value ?? 0);
-    const avgSessionSeconds = Math.round(Number(t[3]?.value ?? 0));
-
-    let interactions = 0;
-    for (const row of events.rows ?? []) {
-      const name = row.dimensionValues?.[0]?.value ?? "";
-      if (ENGAGEMENT_EVENTS.has(name)) interactions += Number(row.metricValues?.[0]?.value ?? 0);
-    }
+    const count = (name: string) =>
+      Number(report.rows?.find((r) => r.dimensionValues?.[0]?.value === name)?.metricValues?.[0]?.value ?? 0);
+    const pageViews = count("page_view");
+    const articleViews = count("article_view");
 
     // No usable data → let the footer fall back to DB counts.
-    if (!sessions && !pageViews) return null;
-
-    return { sessions, pageViews, events: eventsTotal, interactions, avgSessionSeconds };
+    if (!pageViews && !articleViews) return null;
+    return { pageViews, articleViews };
   } catch {
     return null;
   }

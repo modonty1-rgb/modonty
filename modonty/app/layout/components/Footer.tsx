@@ -40,20 +40,18 @@ export async function Footer() {
         <FooterStats />
       </Suspense>
 
-      {/* jbr SEO CTA */}
-      <div className="flex items-center gap-2 text-xs">
-        <span className="text-muted-foreground">{messages.chrome.footer.ctaQuestion}</span>
-        <CtaTrackedLink
-          href={PARTNER_SIGNUP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          label="Footer CTA — جبر SEO"
-          type="LINK"
-          className="font-semibold text-link hover:underline max-lg:active:underline inline-flex max-lg:min-h-11 items-center gap-0.5"
-        >
-          {messages.chrome.footer.ctaBrand} <span aria-hidden="true">↗</span>
-        </CtaTrackedLink>
-      </div>
+      {/* الجملةُ كلُّها رابطُ الشراكة — «جبر SEO» سقط منها (خالد ٢٤ سبتمبر ٢٠٢٦): الشراكةُ
+          صارت على pay.modonty.com، واسمُ جبر كان يعِد بوجهةٍ غير التي يفتحها الرابط. */}
+      <CtaTrackedLink
+        href={PARTNER_SIGNUP_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        label="Footer CTA — صِر شريكاً"
+        type="LINK"
+        className="text-xs font-semibold text-link hover:underline max-lg:active:underline inline-flex max-lg:min-h-11 items-center gap-1"
+      >
+        {messages.chrome.footer.ctaQuestion} <span aria-hidden="true">↗</span>
+      </CtaTrackedLink>
 
       {/* Quick links */}
       <nav
