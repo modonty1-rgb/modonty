@@ -41,6 +41,7 @@ const ROLE_LABELS: Record<string, string> = {
   LOGO: "شعار",
   GALLERY: "معرض",
   HERO: "غلاف",
+  HERO_MOBILE: "غلاف الجوّال",
   OGIMAGE: "صورة مشاركة",
   POST: "صورة مقال",
   GENERAL: "عامة",

@@ -27,6 +27,10 @@ export async function getClientById(id: string) {
             height: true,
           },
         },
+        // The phone image (26 Sep 2026) — the header's «Mobile» door reads it.
+        mobileHeroImageMedia: {
+          select: { id: true, url: true, bunnyUrl: true, blurDataURL: true, altText: true },
+        },
         industry: {
           select: {
             id: true,

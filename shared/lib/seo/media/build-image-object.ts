@@ -112,6 +112,7 @@ export type MediaTypeName =
   | "OGIMAGE"
   | "TWITTER_IMAGE"
   | "HERO"
+  | "HERO_MOBILE"
   | "GENERAL"
   | "GALLERY"
   | "CLIENT_MINI";
@@ -164,6 +165,7 @@ function composeImageName(ctx: ImageAttributionContext): string | undefined {
     case "LOGO":
       return client ? `شعار ${client}` : ctx.altText?.trim() || undefined;
     case "HERO":
+    case "HERO_MOBILE":
     case "CLIENT_MINI":
       return client || ctx.altText?.trim() || undefined;
     case "POST":

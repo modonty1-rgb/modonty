@@ -95,6 +95,7 @@ enum MediaType {
   OGIMAGE // Social share image (og:image) — reserved for future use
   TWITTER_IMAGE
   HERO
+  HERO_MOBILE // Client page cover on phones (1536×768 · 2:1, transparent) — `Client.mobileHeroImageMedia`
   GENERAL
   GALLERY // Client-page gallery image (ImageObject[])
   CLIENT_MINI // Client mini/card image (1200×630 · 1.91:1) — sidebar slider + article client card
@@ -544,6 +545,11 @@ model Client {
   logoMedia        Media?  @relation("ClientLogoMedia", fields: [logoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   heroImageMediaId String? @db.ObjectId
   heroImageMedia   Media?  @relation("ClientHeroImageMedia", fields: [heroImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  /// صورة الجوّال — تظهر أعلى صفحة العميل على الجوّال بدل الغلاف العريض (٦:١) الذي صُمّم
+  /// للديسكتوب. اختياريّة: بغيابها تُعرض صورة الغلاف. تُختار من مكتبة الوسائط في الأدمن
+  /// (خالد، ٢٦ سبتمبر ٢٠٢٦: «الصور نرفعها في الميديا لايبراري… صورة للديسكتوب وصورة للموبايل»).
+  mobileHeroImageMediaId String? @db.ObjectId
+  mobileHeroImageMedia   Media?  @relation("ClientMobileHeroImageMedia", fields: [mobileHeroImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Schema.org Organization - Social profiles
   sameAs String[] // LinkedIn, Twitter, Facebook URLs
@@ -2302,6 +2308,7 @@ model Media {
   // Primary client media roles (centralized; many clients can share same media)
   logoClients      Client[] @relation("ClientLogoMedia")
   heroImageClients Client[] @relation("ClientHeroImageMedia")
+  mobileHeroImageClients Client[] @relation("ClientMobileHeroImageMedia")
   introVideoClients Client[] @relation("ClientIntroVideoMedia")
   // Modonty Core (T2): back-relations for the six platform entities
   authorImages        Author[]   @relation("AuthorImageMedia")

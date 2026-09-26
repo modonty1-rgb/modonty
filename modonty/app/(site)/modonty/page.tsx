@@ -5,6 +5,7 @@ import { getModontyArticles } from "@/app/(site)/modonty/data/get-modonty-articl
 import { getModontyGallery } from "@/app/(site)/modonty/data/get-modonty-gallery";
 import { getModontyReels } from "@/app/(site)/modonty/data/get-modonty-reels";
 import { getModontyPhone } from "@/app/(site)/modonty/data/get-modonty-phone";
+import { getModontyMobileHero } from "@/app/(site)/modonty/data/get-modonty-mobile-hero";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { getLegalEntity } from "@/lib/seo/organization-jsonld";
@@ -14,14 +15,12 @@ import { ModontyArticlesFeed } from "@/app/(site)/modonty/components/articles-fe
 import { FEED_VIEWS, type FeedView } from "@/app/(site)/modonty/components/articles-feed/feed-views";
 import { ModontyRightRail } from "@/app/(site)/modonty/components/right-rail/ModontyRightRail";
 import { SectorRow } from "@/app/(site)/modonty/components/sector-row/SectorRow";
+import { ModontyMobileLanding } from "@/app/(site)/modonty/components/mobile-landing/ModontyMobileLanding";
 import { ModontyLeftRail } from "@/app/(site)/modonty/components/left-rail/ModontyLeftRail";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
-import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
-import { FollowCtaButton } from "@/components/shared/mobile-cta-bar/FollowCtaButton";
-import { IconHandshake } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
 import type { FeedPost } from "@/lib/types";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
@@ -30,7 +29,6 @@ import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
 import { buildShareTags } from "@/lib/seo/build-share-tags";
 import { reveal } from "./helpers/reveal";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
-import { PARTNER_SIGNUP_URL } from "@/constants";
 
 // كان هنا `const MODONTY_CLIENT_SLUG = "مدونتي"` والصفحة تبحث بالـslug نصّاً.
 // العمود الصحيح موجود منذ ٢٤ أغسطس (`Settings.coreClientId`) وخمسة مسارات تقرؤه —
@@ -129,12 +127,13 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
   ]);
   const profile = partners.find((partner) => partner.id === coreClientId);
   if (!profile) notFound();
-  const [articles, gallery, reels, legalEntity, whatsappPhone] = await Promise.all([
+  const [articles, gallery, reels, legalEntity, whatsappPhone, mobileHero] = await Promise.all([
     getModontyArticles(profile.id),
     getModontyGallery(profile.id),
     getModontyReels(profile.id),
     getLegalEntity(),
     getModontyPhone(profile.id),
+    getModontyMobileHero(profile.id),
   ]);
   const legal = toLegalEntityDisplay(legalEntity);
   const visibleArticles = applyView(articles, view);
@@ -171,18 +170,24 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
     <ThreeColumnLayout
       header={
         <div className={`space-y-4 max-lg:space-y-0 ${reveal(0)}`}>
+          {/* Phones (26 Sep 2026 design): the landing block replaces the trail and the profile
+              hero; the BreadcrumbList JSON-LD above still ships for every size. */}
           <Breadcrumb
+            className="max-lg:hidden"
             items={[
               { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
               { label: siteName ?? "" },
             ]}
           />
-          <ModontyProfileHero
-            name={profile.name}
-            logo={profile.logo}
-            heroImage={profile.heroImage}
-            services={profile.services}
-          />
+          <div className="max-lg:hidden">
+            <ModontyProfileHero
+              name={profile.name}
+              logo={profile.logo}
+              heroImage={profile.heroImage}
+              services={profile.services}
+            />
+          </div>
+          <ModontyMobileLanding hero={mobileHero} />
         </div>
       }
       right={
@@ -225,19 +230,9 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
         </StickyRail>
       }
     />
-    {/* Same shared bottom bar as the homepage — only this page's two asks change
-        (Khalid, 21 Aug 2026): become a partner, or read who modonty is. */}
-    {/* The two asks swapped on 22 Aug. «صِر شريكاً» held the solid button — 65px of every
-        screen pointing a READER off the site into a sales funnel. The main ask on a
-        reader's page is the one thing that turns them into someone who comes back, so
-        «تابع مدونتي» takes it and the partner door keeps the quieter second slot
-        (jbrseo.com, same destination as before — Khalid, 21 Aug: the funnel is there,
-        not on /story). */}
-    <MobileCtaBar
-      ariaLabel={messages.modonty.ctaBarLabel}
-      primarySlot={<FollowCtaButton />}
-      secondary={{ href: PARTNER_SIGNUP_URL, label: "صِر شريكاً", icon: IconHandshake, external: true }}
-    />
+    {/* The fixed follow / partner bar moved INTO the phone landing on 26 Sep 2026 (Khalid's
+        design puts the pair under the search) — `ModontyMobileLanding` renders it inline, so
+        nothing is pinned under the header on this page any more. */}
     </>
   );
 }

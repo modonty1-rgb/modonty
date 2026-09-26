@@ -14,7 +14,34 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { MediaPicker } from "@/components/shared/media-picker";
 import { updateClientHero } from "../actions/clients-actions";
+import { updateClientMobileHero } from "../actions/clients-actions/update-client-mobile-hero";
 import { useToast } from "@/hooks/use-toast";
+
+/**
+ * One picker for both page images (26 Sep 2026): the desktop cover and the phone image. Only
+ * the save action and the copy differ, so a `kind` prop instead of a second near-identical modal.
+ */
+const KIND = {
+  cover: {
+    save: updateClientHero,
+    specType: "HERO",
+    title: "Edit Hero Image",
+    description: "Upload a hero image for this client. Recommended: 2400×400px (6:1 ratio).",
+    label: "Hero Image",
+    saved: "Hero image updated successfully",
+    cta: "Save Hero Image",
+  },
+  mobile: {
+    save: updateClientMobileHero,
+    specType: "HERO_MOBILE",
+    title: "Edit Mobile Image",
+    description:
+      "Shown at the top of the page on phones. Recommended: 1536×768px (2:1), transparent WebP/PNG. Empty = the hero image is used.",
+    label: "Mobile Image",
+    saved: "Mobile image updated successfully",
+    cta: "Save Mobile Image",
+  },
+} as const;
 
 interface ClientHeroModalProps {
   open: boolean;
@@ -22,6 +49,8 @@ interface ClientHeroModalProps {
   clientId: string;
   initialHeroUrl?: string | null;
   initialHeroMediaId?: string | null;
+  /** `cover` (default) = the desktop hero · `mobile` = the phone image. */
+  kind?: keyof typeof KIND;
 }
 
 export function ClientHeroModal({
@@ -30,7 +59,9 @@ export function ClientHeroModal({
   clientId,
   initialHeroUrl,
   initialHeroMediaId,
+  kind = "cover",
 }: ClientHeroModalProps) {
+  const copy = KIND[kind];
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -41,13 +72,13 @@ export function ClientHeroModal({
   const handleSave = async () => {
     setLoading(true);
     setError(null);
-    const result = await updateClientHero(clientId, mediaId);
+    const result = await copy.save(clientId, mediaId);
     if (result.success) {
-      toast({ title: "Hero image updated successfully" });
+      toast({ title: copy.saved });
       router.refresh();
       onOpenChange(false);
     } else {
-      setError(result.error || "Failed to save hero image");
+      setError(result.error || `Failed to save ${copy.label.toLowerCase()}`);
     }
     setLoading(false);
   };
@@ -63,10 +94,8 @@ export function ClientHeroModal({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Edit Hero Image</DialogTitle>
-          <DialogDescription>
-            Upload a hero image for this client. Recommended: 2400×400px (6:1 ratio).
-          </DialogDescription>
+          <DialogTitle>{copy.title}</DialogTitle>
+          <DialogDescription>{copy.description}</DialogDescription>
         </DialogHeader>
 
         {error && (
@@ -94,7 +123,8 @@ export function ClientHeroModal({
             setMediaId(null);
             setMediaUrl("");
           }}
-          label="Hero Image"
+          label={copy.label}
+          specType={copy.specType}
         />
 
         <DialogFooter className="flex gap-2 justify-end pt-4">
@@ -103,7 +133,7 @@ export function ClientHeroModal({
           </Button>
           <Button type="button" onClick={handleSave} disabled={loading} className="gap-2">
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {loading ? "Saving..." : "Save Hero Image"}
+            {loading ? "Saving..." : copy.cta}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -17,6 +17,7 @@ export const ACTION_LABEL: Record<string, string> = {
   "client.seo": "Edited client SEO",
   "client.logo": "Changed client logo",
   "client.hero": "Changed client cover",
+  "client.mobileHero": "Changed client mobile cover",
   "client.verification": "Updated client verification",
   "client.slugChange": "Changed client link",
   "category.create": "Created category",
@@ -61,7 +62,7 @@ export function actionTone(action: string): string {
     return "bg-blue-500/15 text-blue-600 dark:text-blue-300";
   if (action === "client.activate") return "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300";
   if (action === "client.suspend") return "bg-red-500/15 text-red-600 dark:text-red-300";
-  if (["client.seo", "client.logo", "client.hero", "client.verification", "client.slugChange", "media.seo"].includes(action))
+  if (["client.seo", "client.logo", "client.hero", "client.mobileHero", "client.verification", "client.slugChange", "media.seo"].includes(action))
     return "bg-blue-500/15 text-blue-600 dark:text-blue-300";
   if (action.endsWith(".delete")) return "bg-red-500/15 text-red-600 dark:text-red-300";
   if (/\.(publish|transition|schedule|resetStatus)$/.test(action))

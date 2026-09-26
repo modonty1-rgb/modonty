@@ -38,6 +38,13 @@ interface MobileCtaBarProps {
   primarySlot?: ReactNode;
   /** Soft wash button — the quieter second door. */
   secondary: CtaBarLink;
+  /**
+   * `fixed` (default): pinned under the header, and it reserves its own room through the
+   * `[data-mobile-cta-bar]` hooks in globals.css. `inline`: the same two buttons as a row in
+   * the page's flow — `/modonty`'s phone landing puts them under its search (Khalid, 26 Sep
+   * 2026 design). Inline drops the data hook, so no top padding and no sticky offset.
+   */
+  placement?: "fixed" | "inline";
 }
 
 /**
@@ -51,9 +58,10 @@ interface MobileCtaBarProps {
  * primary = solid `accent` with its designed `accent-foreground`; secondary text uses
  * the text-grade teal `link-accent`, which carries its own dark-mode step.
  */
-export function MobileCtaBar({ ariaLabel, primary, primarySlot, secondary }: MobileCtaBarProps) {
+export function MobileCtaBar({ ariaLabel, primary, primarySlot, secondary, placement = "fixed" }: MobileCtaBarProps) {
   const PrimaryIcon = primary?.icon;
   const SecondaryIcon = secondary.icon;
+  const inline = placement === "inline";
   return (
     // The marks' diamonds default to the brand accent here; the solid button below flips
     // them to white, where accent-on-accent would vanish.
@@ -63,10 +71,14 @@ export function MobileCtaBar({ ariaLabel, primary, primarySlot, secondary }: Mob
       // side by side at `lg`, so 768–1023 is still a single-column reading screen and still
       // wants the bar. It is a PAIR with `lg:pb-0` on the column layouts — the padding that
       // clears this bar has to end exactly where the bar does, or it covers the last block.
-      data-mobile-cta-bar
-      className="fixed inset-x-0 top-14 z-30 border-b border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/90 lg:hidden"
+      {...(inline ? {} : { "data-mobile-cta-bar": "" })}
+      className={
+        inline
+          ? "lg:hidden"
+          : "fixed inset-x-0 top-14 z-30 border-b border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/90 lg:hidden"
+      }
     >
-      <div className="flex items-center gap-3 px-3 py-2">
+      <div className={cn("flex items-center gap-3", inline ? "" : "px-3 py-2")}>
         {primary && PrimaryIcon ? (
           <Link
             href={primary.href}

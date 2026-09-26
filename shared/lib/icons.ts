@@ -32,6 +32,10 @@ export { ModontyEducationMark as IconEducation } from '../components/icons/modon
 export { ModontyHealthMark as IconHealth } from '../components/icons/modonty-sector-marks';
 export { ModontyQuranMark as IconQuran } from '../components/icons/modonty-sector-marks';
 export { ModontyLuckyWheelMark as IconLuckyWheel } from '../components/icons/modonty-sector-marks';
+// The `/modonty` phone landing's value row (اكتشف · تعلّم · تطوّر). «تطوّر» reuses the markets
+// bars on purpose — the approved design draws the same glyph — under its own name.
+export { ModontyIdeaMark as IconIdea } from '../components/icons/modonty-sector-marks';
+export { ModontyMarketsMark as IconGrowth } from '../components/icons/modonty-sector-marks';
 export { ModontyCategoriesMark as IconCategories } from '../components/icons/modonty-categories-mark';
 export { ModontyTagsMark  as IconCategory      } from '../components/icons/modonty-tags-mark';
 export { ModontyPartnerMark as IconClients } from '../components/icons/modonty-partner-mark';

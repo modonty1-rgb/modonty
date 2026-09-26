@@ -7,6 +7,7 @@ import { messages } from "@/lib/messages";
 import { requiresCrop } from "@/lib/media/media-specs";
 import { createMedia, getClients } from "../../../actions/media-actions";
 import { updateClientLogo, updateClientHero } from "@/app/(dashboard)/clients/actions/clients-actions";
+import { updateClientMobileHero } from "@/app/(dashboard)/clients/actions/clients-actions/update-client-mobile-hero";
 import { validateFile } from "../utils/file-validation";
 import { useBunnyUpload } from "./use-bunny-upload";
 import type { UploadFile, Client, SEOFormData, UploadZoneProps } from "../types";
@@ -377,14 +378,15 @@ export function useUploadZone({ onUploadComplete, initialClientId, coreClientId 
          * والصفحةُ تعرف كلَّ ما يلزم: `clientId` في الرابط، والدورُ اختاره المستخدم
          * بيده. فتُنهى النيّةُ هنا بدل أن تُترك للمستخدم أن يخمّنها.
          *
-         * وتُقصر على الدورين اللذين لهما حقلٌ واحدٌ على العميل — الشعار والغلاف.
+         * وتُقصر على الأدوار التي لها حقلٌ واحدٌ على العميل — الشعار وغلافا الديسكتوب والجوّال.
          * و`POST`/`GALLERY` وغيرُها لا وجهةَ مفردةً لها، فتبقى في المكتبة عن حقّ.
          * والفشلُ هنا لا يُسقط الرفع: الصورةُ محفوظةٌ فعلاً، وغايةُ الأمر أن تُختار يدويّاً.
          */
         const assignTo = resolvedClientId && mediaResult.media.id
           ? resolvedType === "LOGO" ? updateClientLogo
             : resolvedType === "HERO" ? updateClientHero
-              : null
+              : resolvedType === "HERO_MOBILE" ? updateClientMobileHero
+                : null
           : null;
 
         let assigned = false;
@@ -395,7 +397,9 @@ export function useUploadZone({ onUploadComplete, initialClientId, coreClientId 
 
         toast({
           title: assigned
-            ? resolvedType === "LOGO" ? "تم حفظ الشعار" : "تم حفظ صورة الغلاف"
+            ? resolvedType === "LOGO" ? "تم حفظ الشعار"
+              : resolvedType === "HERO_MOBILE" ? "تم حفظ غلاف الجوّال"
+                : "تم حفظ غلاف الديسكتوب"
             : "Media Saved",
           description: assigned
             ? "الصورة رُفعت ورُبطت بالعميل — لا خطوة أخرى."

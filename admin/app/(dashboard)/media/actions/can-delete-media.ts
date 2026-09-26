@@ -32,6 +32,7 @@ export async function canDeleteMedia(id: string, clientId?: string) {
     const { clientUsage } = usage;
     const logoClients = (clientUsage?.logoClients as Array<{ name: string }>) ?? [];
     const heroClients = (clientUsage?.heroImageClients as Array<{ name: string }>) ?? [];
+    const mobileHeroClients = (clientUsage?.mobileHeroImageClients as Array<{ name: string }>) ?? [];
 
     if (logoClients.length > 0) {
       const names = logoClients.map((c) => c.name).join(", ");
@@ -46,6 +47,14 @@ export async function canDeleteMedia(id: string, clientId?: string) {
       return {
         canDelete: false,
         reason: `This media is used as hero image for client(s): ${names}. Please change the client's media settings first.`,
+        usage: { clientUsage },
+      };
+    }
+    if (mobileHeroClients.length > 0) {
+      const names = mobileHeroClients.map((c) => c.name).join(", ");
+      return {
+        canDelete: false,
+        reason: `This media is used as mobile cover for client(s): ${names}. Please change the client's media settings first.`,
         usage: { clientUsage },
       };
     }

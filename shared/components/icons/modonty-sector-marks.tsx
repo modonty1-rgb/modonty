@@ -98,6 +98,21 @@ export function ModontyLuckyWheelMark(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+/**
+ * تعلّم — a light bulb, the diamond as its spark (added 26 Sep 2026, for the value row on the
+ * `/modonty` phone landing). The registry's `IconLightbulb` is the AI mark under another name,
+ * so it could not stand for "learn" next to the real AI tile.
+ */
+export function ModontyIdeaMark(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 120 120" fill="none" width="1em" height="1em" aria-hidden="true" {...props}>
+      <path d="M44 78C35 71 30 61 30 51C30 34 43 22 60 22C77 22 90 34 90 51C90 61 85 71 76 78V86H44Z" {...stroke} />
+      <path d="M46 98H74M52 108H68" {...stroke} />
+      <rect x="53" y="41" width="14" height="14" rx="3" transform="rotate(45 60 48)" fill={accent} />
+    </svg>
+  );
+}
+
 /** الصحة والجمال — a heart carrying a pulse, the diamond at the pulse's peak. */
 export function ModontyHealthMark(props: SVGProps<SVGSVGElement>) {
   return (

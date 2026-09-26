@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dialog";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { ImageIcon, X, Upload, Pencil } from "lucide-react";
+import type { MediaType } from "@prisma/client";
+import { MEDIA_SPECS } from "@/lib/media/media-specs";
 import { MediaPickerDialog } from "./media-picker-dialog";
 
 interface MediaPickerProps {
@@ -31,6 +33,8 @@ interface MediaPickerProps {
   showUrlField?: boolean;
   showAltOverlay?: boolean;
   mediaId?: string;
+  /** The role this slot holds — its recommended size is read from `MEDIA_SPECS`, not typed here. */
+  specType?: MediaType;
 }
 
 export function MediaPicker({
@@ -47,6 +51,7 @@ export function MediaPicker({
   showUrlField = true,
   showAltOverlay = false,
   mediaId,
+  specType,
 }: MediaPickerProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [altTextDialogOpen, setAltTextDialogOpen] = useState(false);
@@ -112,8 +117,11 @@ export function MediaPicker({
   const isValidUrl = imageUrl !== null;
   const isDisabled = disabled || !clientId;
 
-  const isLogo = label?.toLowerCase().includes("logo");
+  const isLogo = specType ? specType === "LOGO" : label?.toLowerCase().includes("logo");
   const imageHeight = isLogo ? "h-32" : "h-40";
+  // Was a hardcoded pair (500×500 or 2400×400) — so every non-logo slot, article images and the
+  // phone cover included, claimed 6:1. Now the slot names its role and the size comes from the spec.
+  const spec = specType ? MEDIA_SPECS[specType] : isLogo ? MEDIA_SPECS.LOGO : null;
 
   return (
     <div className="space-y-2">
@@ -121,15 +129,11 @@ export function MediaPicker({
         <Label>
           {label}
           {required && <span className="text-destructive ml-1">*</span>}
-          {isLogo ? (
+          {spec?.width && spec.height ? (
             <span className="text-[10px] text-muted-foreground ml-2">
-              (Recommended: 500×500px — 1:1)
+              (Recommended: {spec.width}×{spec.height}px — {spec.ratioLabel})
             </span>
-          ) : (
-            <span className="text-[10px] text-muted-foreground ml-2">
-              (Recommended: 2400×400px — 6:1)
-            </span>
-          )}
+          ) : null}
         </Label>
       )}
 

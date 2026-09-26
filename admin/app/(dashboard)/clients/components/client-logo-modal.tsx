@@ -95,6 +95,7 @@ export function ClientLogoModal({
             setMediaUrl("");
           }}
           label="Logo"
+          specType="LOGO"
         />
 
         <DialogFooter className="flex gap-2 justify-end pt-4">

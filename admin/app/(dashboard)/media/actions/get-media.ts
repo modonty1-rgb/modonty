@@ -108,6 +108,7 @@ export async function getMedia(filters?: MediaFilters) {
               featuredArticles: true,
               logoClients: true,
               heroImageClients: true,
+              mobileHeroImageClients: true,
             },
           },
         },

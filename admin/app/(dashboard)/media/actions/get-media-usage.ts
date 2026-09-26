@@ -43,6 +43,7 @@ export async function getMediaUsage(id: string, clientId?: string) {
             slug: true,
           },
         },
+        mobileHeroImageClients: { select: { id: true, name: true, slug: true } },
       },
     });
 
@@ -69,6 +70,7 @@ export async function getMediaUsage(id: string, clientId?: string) {
       clientUsage: {
         logoClients: media.logoClients,
         heroImageClients: media.heroImageClients,
+        mobileHeroImageClients: media.mobileHeroImageClients,
       },
     };
 

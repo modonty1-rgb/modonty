@@ -79,6 +79,7 @@ export type AuditAction =
   | "client.seo"
   | "client.logo"
   | "client.hero"
+  | "client.mobileHero"
   | "client.verification"
   | "client.slugChange"
   // 🖼️ Media (images)

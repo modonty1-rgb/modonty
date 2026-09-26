@@ -48,8 +48,10 @@ export function ModontyProfileHero({
         // it is texture, and it pushed the name and the promise further down a screen that
         // already spends 135px on chrome. Desktop keeps it: the column is wide enough that
         // 6:1 reads as a cover, not a stripe.
+        // `1px` below lg: display:none still downloads an eager <img>, and "1096px" made a phone
+        // (dpr 3) fetch the 3840w candidate for nothing, racing its own phone hero (26 Sep 2026).
         <div className="relative aspect-[6/1] w-full overflow-hidden rounded-lg bg-muted ring-1 ring-border after:absolute after:inset-0 after:bg-gradient-to-t after:from-background/70 after:to-transparent max-lg:hidden">
-          <OptimizedImage media={asMedia(heroImage, name)} alt="" fill sizes="1096px" preload className="object-cover" />
+          <OptimizedImage media={asMedia(heroImage, name)} alt="" fill sizes="(max-width: 1023px) 1px, 1096px" preload className="object-cover" />
         </div>
       )}
       {/* `relative` so the name paints ABOVE the positioned cover when it overlaps its edge. */}

@@ -62,6 +62,7 @@ const MEDIA_TYPE_FOLDER: Record<string, string> = {
   OGIMAGE: "og",
   TWITTER_IMAGE: "twitter",
   HERO: "hero",
+  HERO_MOBILE: "hero-mobile",
   GENERAL: "general",
   GALLERY: "gallery",
   CLIENT_MINI: "client-mini",

@@ -101,6 +101,7 @@ export function MediaSection({
           }}
           onAltTextUpdate={handleLogoAltTextUpdate}
           label="Logo"
+          specType="LOGO"
         />
       </div>
 
@@ -126,6 +127,7 @@ export function MediaSection({
           }}
           onAltTextUpdate={handleHeroImageAltTextUpdate}
           label="Hero Image"
+          specType="HERO"
         />
       </div>
     </div>

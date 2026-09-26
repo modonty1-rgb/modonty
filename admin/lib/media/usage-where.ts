@@ -9,6 +9,7 @@ import { MediaType } from "@prisma/client";
  *   - articleGallery    → ArticleMedia (the gallery inside an article)
  *   - logoClients       → Client.logoMediaId
  *   - heroImageClients  → Client.heroImageMediaId
+ *   - mobileHeroImageClients → Client.mobileHeroImageMediaId (the phone cover, 26 Sep 2026)
  *   - it's a client-owned GALLERY / CLIENT_MINI image (clientId + type) — these are
  *     consumed by `client.media where type=…`, NOT via a back-relation.
  *
@@ -36,6 +37,7 @@ export const MEDIA_USED_WHERE: Prisma.MediaWhereInput = {
     { articleGallery: { some: {} } },
     { logoClients: { some: {} } },
     { heroImageClients: { some: {} } },
+    { mobileHeroImageClients: { some: {} } },
     { AND: [{ clientId: { not: null } }, { type: { in: CLIENT_TYPE_USED } }] },
   ],
 };
@@ -46,6 +48,7 @@ export const MEDIA_UNUSED_WHERE: Prisma.MediaWhereInput = {
     { articleGallery: { none: {} } },
     { logoClients: { none: {} } },
     { heroImageClients: { none: {} } },
+    { mobileHeroImageClients: { none: {} } },
     // negation of the client GALLERY/CLIENT_MINI used-clause (De Morgan)
     { OR: [{ clientId: null }, { type: { notIn: CLIENT_TYPE_USED } }] },
   ],

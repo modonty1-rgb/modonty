@@ -22,6 +22,8 @@ interface ClientHeaderProps {
     url: string | null;
     logoMedia: { id?: string; url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
     heroImageMedia: { id?: string; url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
+    /** The phone image (26 Sep 2026) — optional; the public page falls back to the cover. */
+    mobileHeroImageMedia?: { id?: string; url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
     subscriptionStatus: string;
     isYmyl: boolean;
     ymylCategory: string | null;
@@ -33,6 +35,7 @@ interface ClientHeaderProps {
 export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderProps) {
   const [logoOpen, setLogoOpen] = useState(false);
   const [heroOpen, setHeroOpen] = useState(false);
+  const [mobileHeroOpen, setMobileHeroOpen] = useState(false);
 
   /**
    * الحالةُ من الطلب الساري (تُمرَّر من الصفحة) — وكلُّ حالةٍ باسمها: «منتهٍ» ليس «غير مفعّل».
@@ -75,15 +78,31 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
             preload
           />
         )}
-        <button
-          type="button"
-          onClick={() => setHeroOpen(true)}
-          className="absolute top-2.5 end-2.5 inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-background/80 backdrop-blur border hover:bg-background transition-colors"
-          aria-label="Change cover image"
-        >
-          <ImageIcon className="h-3.5 w-3.5" />
-          Cover
-        </button>
+        {/* Two images, two doors (26 Sep 2026): the desktop cover and the phone image. The
+            «Mobile» chip says «set» when one exists, so an empty slot is visible at a glance. */}
+        <div className="absolute top-2.5 end-2.5 flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => setMobileHeroOpen(true)}
+            className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-background/80 backdrop-blur border hover:bg-background transition-colors"
+            aria-label="Change mobile image"
+          >
+            <ImageIcon className="h-3.5 w-3.5" />
+            Mobile
+            {client.mobileHeroImageMedia?.url ? (
+              <span className="size-1.5 rounded-full bg-emerald-500" aria-label="set" />
+            ) : null}
+          </button>
+          <button
+            type="button"
+            onClick={() => setHeroOpen(true)}
+            className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-background/80 backdrop-blur border hover:bg-background transition-colors"
+            aria-label="Change cover image"
+          >
+            <ImageIcon className="h-3.5 w-3.5" />
+            Cover
+          </button>
+        </div>
       </div>
 
       {/* Identity row */}
@@ -181,6 +200,14 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
         clientId={client.id}
         initialHeroUrl={mediaSrc(client.heroImageMedia)}
         initialHeroMediaId={client.heroImageMedia?.id ?? null}
+      />
+      <ClientHeroModal
+        kind="mobile"
+        open={mobileHeroOpen}
+        onOpenChange={setMobileHeroOpen}
+        clientId={client.id}
+        initialHeroUrl={mediaSrc(client.mobileHeroImageMedia)}
+        initialHeroMediaId={client.mobileHeroImageMedia?.id ?? null}
       />
     </div>
   );

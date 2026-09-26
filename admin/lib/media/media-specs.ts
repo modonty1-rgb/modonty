@@ -47,8 +47,8 @@ export const MEDIA_SPECS: Record<MediaType, MediaSpec> = {
     note: "العنصر المهم في المنتصف — الأطراف تُقص في القوائم.",
   },
   HERO: {
-    label: "Client Cover",
-    hint: "غلاف صفحة العميل",
+    label: "Cover — Desktop",
+    hint: "غلاف صفحة العميل على الديسكتوب",
     ratio: 6 / 1,
     ratioLabel: "6:1",
     width: 2400,
@@ -58,6 +58,21 @@ export const MEDIA_SPECS: Record<MediaType, MediaSpec> = {
     formats: "WebP / JPG",
     transparent: false,
     note: "لا تضع نصوصاً داخل الصورة — المهم في المنتصف دائماً.",
+  },
+  // The phone image (26 Sep 2026) — `Client.mobileHeroImageMedia`. Empty = the page falls
+  // back to the desktop cover, so this role is optional per client.
+  HERO_MOBILE: {
+    label: "Cover — Mobile",
+    hint: "غلاف صفحة العميل على الجوّال",
+    ratio: 2 / 1,
+    ratioLabel: "2:1",
+    width: 1536,
+    height: 768,
+    minWidth: 1024,
+    minHeight: 512,
+    formats: "WebP / PNG (transparent)",
+    transparent: true,
+    note: "خلفية شفافة — المهم في المنتصف، بلا نصوص داخل الصورة.",
   },
   LOGO: {
     label: "Client Logo",
@@ -153,6 +168,7 @@ export const MEDIA_SPECS: Record<MediaType, MediaSpec> = {
 export const MEDIA_TYPE_ORDER: MediaType[] = [
   "POST",
   "HERO",
+  "HERO_MOBILE",
   "CLIENT_MINI",
   "LOGO",
   "GENERAL",
