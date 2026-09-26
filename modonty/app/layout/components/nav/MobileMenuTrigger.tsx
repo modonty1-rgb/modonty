@@ -16,7 +16,7 @@ export function MobileMenuTrigger({ onClick, open, controls, label }: MobileMenu
     <Button
       variant="navigation"
       size="mobileIcon"
-      className="rounded-xl md:hidden motion-safe:transition-transform motion-safe:active:scale-95"
+      className="rounded-xl lg:hidden motion-safe:transition-transform motion-safe:active:scale-95"
       type="button"
       aria-label={label}
       aria-haspopup="dialog"

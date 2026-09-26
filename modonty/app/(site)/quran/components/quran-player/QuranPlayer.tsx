@@ -11,10 +11,11 @@ import {
   IconChevronDown,
   IconAlertTriangle,
   IconClose,
+  IconUser,
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
-import { hushOtherAudio } from "../../helpers/hush-other-audio";
+import { hushOtherAudio } from "@/lib/audio/hush-other-audio";
 import { RECITERS, DEFAULT_RECITER, RIWAYA, SOURCE, surahFile } from "../../data/quran-reciters";
 import { SURAHS } from "../../data/quran-surahs";
 
@@ -34,16 +35,6 @@ const JUMP = 15;
 
 /** «سُورَةُ ٱلْكَهۡفِ» → «ٱلْكَهۡفِ». The word «سورة» on every chip is six characters of nothing. */
 const shortName = (name: string) => name.replace(/^\S+\s+/, "");
-
-/**
- * The six people actually come for.
- *
- * A phone list of 114 puts سورة الملك twenty-two screens down, and searching means stopping,
- * typing, and reading — three steps for something someone already decided before opening the page.
- * These six cover the overwhelming share of what is asked for in Saudi Arabia and Egypt: the
- * opening, the one recited on Friday, the two of the evening, and the two longest habits.
- */
-const QUICK = [1, 2, 18, 36, 55, 67] as const;
 
 /** Where the last recitation stopped, kept in this browser only. */
 const RESUME_KEY = "modonty.audio.quran.last";
@@ -254,6 +245,18 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
 
   const pickingSurah = typeof picking === "number" ? SURAHS.find((s) => s.n === picking) ?? null : null;
   const pickingOpen = picking !== null;
+
+  // Esc closes the reciter dialog (WAI-ARIA APG, dialog pattern: «Escape: Closes the dialog»).
+  // It had no key handler at all — measured 26 Sep 2026: Esc left it open over the page.
+  useEffect(() => {
+    if (!pickingOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPicking(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [pickingOpen]);
+
   const pickedReciterId = pickingSurah ? choice[pickingSurah.n] ?? defaultReciter : defaultReciter;
   const defaultReciterName = RECITERS.find((r) => r.id === defaultReciter)?.name ?? RECITERS[0].name;
 
@@ -281,21 +284,30 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
   );
 
   return (
-    // Flex on phones for one reason: the attribution moves to the bottom there (see below).
-    <section aria-labelledby="quran-heading" className="max-md:flex max-md:flex-col">
-      {/* The section had no heading at all: a screen reader met 114 cards with nothing telling it
-          what they were, and the page's outline jumped from «استمع» straight to «المقالات». */}
-      {/* On a phone the active tab already reads «القرآن», so the heading is spoken but not drawn —
-          the outline stays intact for a screen reader without spending 58px saying it twice. */}
-      <h2 id="quran-heading" className="text-xl font-bold leading-tight max-md:sr-only">
+    // Flex at every size for one reason: the attribution moves to the bottom (see below).
+    <section aria-labelledby="quran-heading" className="flex flex-col">
+      {/* Spoken, never drawn, since `/quran` became its own page (26 Sep 2026): the page's h1
+          «القرآن الكريم» is the visible title, and a second heading under it read as the
+          hierarchy upside down (intro line → heading → fine print, on desktop). */}
+      <h2 id="quran-heading" className="sr-only">
         {labels.heading}
       </h2>
 
       {/* Provenance on the page, not in the code (Khalid: «المصدر لازم يكون موجود»). The riwaya is
-          named because a recitation without one is unattributed. */}
-      <p className="mt-2 rounded-2xl border border-border bg-card p-4 text-[11px] leading-relaxed text-muted-foreground max-md:order-last max-md:mt-6 max-md:p-3">
+          named because a recitation without one is unattributed.
+          Now the page's one subtitle, right under the title (Khalid, 26 Sep: «حشو كثير، تكرار
+          كثير… الهنت اللي تحت شوف لها مكان أحسن»). It used to say the same facts twice — an
+          intro line up top AND a bordered box of fine print at the bottom. One unboxed line
+          holds the facts and the credit; the «we don't host it» explanation moved into the
+          reciter dialog, where the question of whose voice this is actually comes up. */}
+      <p className="mb-4 text-sm leading-relaxed text-muted-foreground [text-wrap:balance] max-md:mb-3 max-md:text-xs">
         <span className="font-semibold text-foreground">{labels.provenanceLead}</span> {labels.provenanceRiwaya}{" "}
-        <span className="font-semibold text-foreground">{RIWAYA}</span> {labels.provenanceMiddle}{" "}
+        <span className="font-semibold text-foreground">{RIWAYA}</span>
+        {/* On a phone the line breaks here on purpose — between «what» and «who/where from» —
+            instead of wherever it happens to, which left «·» opening the second line. */}
+        <span className="max-md:hidden"> · </span>
+        <br className="md:hidden" />
+        {labels.provenanceMiddle.replace(/^·\s*/, "")}{" "}
         <a
           href={SOURCE.url}
           target="_blank"
@@ -305,25 +317,48 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
         >
           {SOURCE.name}
         </a>
-        {/* The credit is owed and stays at every size. The explanation behind it is worth 150px of
-            a 664px phone screen only once, and this is not it. */}
-        <span className="max-md:hidden">{labels.provenanceDisclaimer}</span>
       </p>
 
-      {/* Phone only, all three: the page-wide voice, the six surahs people ask for, and the
-          bookmark. Each is `md:hidden`, so the desktop column is byte-identical to what it was. */}
-      <div className="mt-3 flex items-center gap-2 md:hidden">
-        <span className="shrink-0 text-xs text-muted-foreground">{labels.reciterLabel}</span>
-        <button
-          type="button"
-          onClick={() => setPicking("default")}
-          aria-label={`${labels.pickReciterAll} — ${labels.currentPrefix} ${defaultReciterName}`}
-          className="flex h-11 min-w-0 flex-1 items-center justify-between gap-2 rounded-xl border border-border bg-card px-3 text-sm font-bold motion-safe:transition-transform motion-safe:active:scale-95"
-        >
-          <span className="truncate">{defaultReciterName}</span>
-          <IconChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-        </button>
+      {/* The controls, on ONE row from `md` up: the page-wide voice and the surah search are the
+          two things you do before anything else, so they sit side by side instead of stacking
+          into 104px of form above the list. Stacked on phones.
+          The reciter is shown at EVERY size since 26 Sep 2026 — it was phone-only, so on desktop
+          the only way to change the voice was one surah at a time, 114 times. */}
+      <div className="flex flex-col gap-3 md:flex-row md:items-center">
+        <div className="flex items-center gap-2 md:w-80 md:shrink-0">
+          <span className="shrink-0 text-xs text-muted-foreground">{labels.reciterLabel}</span>
+          <button
+            type="button"
+            onClick={() => setPicking("default")}
+            aria-label={`${labels.pickReciterAll} — ${labels.currentPrefix} ${defaultReciterName}`}
+            className="flex h-11 min-w-0 flex-1 items-center justify-between gap-2 rounded-xl border border-border bg-card px-3 text-sm font-bold motion-safe:transition-transform motion-safe:active:scale-95"
+          >
+            <span className="truncate">{defaultReciterName}</span>
+            <IconChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+          </button>
+        </div>
+        {/* Seventeen thousand pixels of page on a phone, and the only way to سورة الكهف was to
+            scroll past seventeen others. Filtering by name — with the search-friendly forms folded
+            in, since «الفاتحة» is typed far more often than «سُورَةُ ٱلْفَاتِحَةِ». */}
+        <div className="min-w-0 flex-1">
+          <label htmlFor="surah-search" className="sr-only">
+            {labels.searchLabel}
+          </label>
+          <input
+            id="surah-search"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={labels.searchPlaceholder}
+            className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm"
+          />
+        </div>
       </div>
+      {query && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          {toArabic(shown.length)} {labels.searchCountOf} {toArabic(SURAHS.length)} {labels.searchCountUnit}
+        </p>
+      )}
 
       {resume && (
         <button
@@ -346,23 +381,6 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
         </button>
       )}
 
-      <div className="mt-3 flex gap-2 overflow-x-auto pb-1 md:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {QUICK.map((n) => {
-          const i = SURAHS.findIndex((s) => s.n === n);
-          if (i === -1) return null;
-          return (
-            <button
-              key={n}
-              type="button"
-              onClick={() => playSurah(i)}
-              aria-label={`${labels.recitePrefix} ${SURAHS[i].name}`}
-              className="h-11 shrink-0 rounded-full border border-border bg-card px-4 text-xs font-bold motion-safe:transition-transform motion-safe:active:scale-95"
-            >
-              {shortName(SURAHS[i].name)}
-            </button>
-          );
-        })}
-      </div>
 
       {/* Docked at the bottom in one row, the way every music player people already know does it —
           Spotify, Apple Music, YouTube Music, SoundCloud. It was a 152px block pinned under the
@@ -450,32 +468,13 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
         </div>
       )}
 
-      {/* Seventeen thousand pixels of page on a phone, and the only way to سورة الكهف was to
-          scroll past seventeen others. Filtering by name — with the search-friendly forms folded
-          in, since «الفاتحة» is typed far more often than «سُورَةُ ٱلْفَاتِحَةِ». */}
-      <div className="mt-4">
-        <label htmlFor="surah-search" className="sr-only">
-          {labels.searchLabel}
-        </label>
-        <input
-          id="surah-search"
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={labels.searchPlaceholder}
-          className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
-        />
-        {query && (
-          <p className="mt-1 text-xs text-muted-foreground">
-            {toArabic(shown.length)} {labels.searchCountOf} {toArabic(SURAHS.length)} {labels.searchCountUnit}
-          </p>
-        )}
-      </div>
-
       {/* Room for the dock, so the last surahs are never hidden under it. */}
       <ul
         className={cn(
-          "mt-4 grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-2",
+          // 13rem → 18rem: at 1096px that was five 212px columns and every name truncated to
+          // «سُورَةُ …»; at four (268px) the name fit but the verse·juz line still cut. Three of
+          // ~360px, with the repeated «سورة» dropped from the card.
+          "mt-4 grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-2",
           surah && "pb-[calc(5rem+env(safe-area-inset-bottom))]"
         )}
       >
@@ -500,28 +499,36 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                   {toArabic(s.n)}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[15px] font-bold">{s.name}</span>
-                  <span className="text-xs text-muted-foreground">
+                  {/* The name without «سُورَةُ»: the page is the mushaf, so the word repeated
+                      114 times carried nothing and cost every card its width (desktop showed
+                      «سُورَةُ …» on all of them). The full name stays in every aria-label. */}
+                  <span className="block truncate text-base font-bold">{shortName(s.name)}</span>
+                  <span className="block truncate text-xs text-muted-foreground">
                     {toArabic(s.a)} {labels.verseUnit} · {s.p} · {labels.juzPrefix} {toArabic(s.j)}
                   </span>
+                  {/* The override is now SEEN on the card, not only in the button's aria-label. */}
+                  {choice[s.n] !== undefined && (
+                    <span className="block truncate text-xs font-semibold text-action-listen">{r.name}</span>
+                  )}
                 </span>
 
-                {/* Every card stays one compact row. The reciter keeps its own button so the
-                    per-surah override survives, but it shows a letter rather than repeating the
-                    same name 114 times down the page. The accessible label still names the voice. */}
+                {/* Every card stays one compact row. The per-surah reciter button showed the first
+                    letter of the voice — «م» on 114 cards, which nobody could read as "reciter". A
+                    person mark says what it is; the override itself shows as the name above. */}
                 <span className="flex shrink-0 items-center gap-1">
                   <button
                     type="button"
                     onClick={() => setPicking(s.n)}
                     aria-label={`${labels.pickReciterForPrefix} ${s.name} — ${labels.currentPrefix} ${r.name}`}
+                    title={`${labels.pickReciterForPrefix} — ${r.name}`}
                     className={cn(
-                    "grid size-10 shrink-0 place-items-center rounded-full text-sm font-bold motion-safe:transition-transform motion-safe:active:scale-95",
+                    "grid size-10 shrink-0 place-items-center rounded-full motion-safe:transition-transform motion-safe:active:scale-95",
                       choice[s.n] === undefined
-                        ? "border border-border text-muted-foreground"
+                        ? "border border-border text-muted-foreground hover:border-action-listen/60 hover:text-foreground"
                         : "bg-action-listen/15 text-action-listen ring-1 ring-action-listen/40"
                     )}
                   >
-                    {r.name.trim().charAt(0)}
+                    <IconUser className="size-4" aria-hidden />
                   </button>
                   <button
                     type="button"
@@ -594,6 +601,15 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                 );
               })}
             </ul>
+            {/* Moved here from the page (26 Sep 2026): «we don't host or edit the recitation» is
+                an answer to "whose voice is this?", which is the question this dialog asks. */}
+            <p className="mt-3 border-t border-border pt-3 text-xs leading-relaxed text-muted-foreground">
+              {labels.provenanceMiddle.replace(/^·\s*/, "")}{" "}
+              <a href={SOURCE.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-link hover:underline" dir="ltr">
+                {SOURCE.name}
+              </a>
+              {labels.provenanceDisclaimer}
+            </p>
           </div>
         </div>
       )}

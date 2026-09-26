@@ -61,8 +61,11 @@ export function ModontyProfileHero({
           float 16px into nothing. */}
       {/* Phone padding cut 24 → 16 on all four sides (Khalid, 22 Aug: «كميه مساحات فاضيه
           كثيره»): the block stands 141px tall there and was spending 48 of them on its own
-          padding. Desktop keeps 24 — it has the room and the cover to sit under. */}
-      <div className={`relative px-5 pb-6 max-lg:px-4 max-lg:pb-4 sm:px-6 ${heroImage ? "-mt-4 sm:-mt-10 max-lg:mt-0 max-lg:pt-4" : "pt-6 max-lg:pt-4"}`}>
+          padding. Desktop keeps 24 — it has the room and the cover to sit under.
+          Top and bottom cut again 16 → 4 (Khalid, 24 Sep: «المساحات الفاضية اللي فوق
+          قلصها»): the sector grid below now has to fit the rest of the first screen, and
+          every pixel here is taken from it. */}
+      <div className={`relative px-5 pb-6 max-lg:px-4 max-lg:pb-1 sm:px-6 ${heroImage ? "-mt-4 sm:-mt-10 max-lg:mt-0 max-lg:pt-1" : "pt-6 max-lg:pt-1"}`}>
         <div className="flex items-end gap-4">
           {/* Hidden on phones (Khalid, 22 Aug): the navbar already carries the mark and the
               active tab already says «مدونتي» — an 80px logo here was the brand's third
@@ -103,8 +106,16 @@ export function ModontyProfileHero({
                 untouched in the DB and keeps serving the metadata and the partner card,
                 where the audience really is a client. */}
             {/* The promise is the most important sentence on the page — on a phone it gets
-                its full length (no clamp), a readable 15px, and 85% ink instead of 75%. */}
-            <p className="min-w-0 text-[15px] leading-[1.75] text-foreground/85 max-lg:ps-3 line-clamp-none sm:text-foreground/75 sm:line-clamp-2 sm:ps-0 sm:text-[15px] sm:leading-relaxed">
+                its full length (no clamp), a readable 15px, and 85% ink instead of 75%.
+                Fluid below 640px (Khalid, 24 Sep: «خلي الخطوط دايناميك» — «وقتك» fell to a
+                line of its own). Measured in a VISIBLE browser window — headless draws this
+                Arabic 8% narrower (315px vs 341px at 15px) and a formula fitted to it wrapped
+                on screen at 390. Room is `100vw − 56px`; the line is 341px at 15px, so
+                `(100vw − 56px) / 23.5` (2% safety over the exact 22.7) gives ≈12.9 at 360 ·
+                13.6 at 375 · 14.2 at 390, and the 15px cap from ~410. Below ~340px the 12px
+                floor wins and `balance` splits the sentence evenly. Change the sentence and
+                these numbers must be re-measured in a headed window. */}
+            <p className="min-w-0 text-[clamp(12px,calc((100vw-56px)/23.5),15px)] leading-[1.75] [text-wrap:balance] text-foreground/85 max-lg:ps-3 line-clamp-none sm:text-foreground/75 sm:line-clamp-2 sm:ps-0 sm:text-[15px] sm:leading-relaxed">
               {messages.modonty.readerPromise}
             </p>
           </div>

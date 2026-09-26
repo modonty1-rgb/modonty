@@ -23,6 +23,15 @@
 // ── Navigation ───────────────────────────────────────────────────────────────
 export { ModontyHomeMark  as IconHome          } from '../components/icons/modonty-home-mark';
 export { ModontyTrendingMark as IconTrending   } from '../components/icons/modonty-trending-mark';
+
+// ── Sectors (/modonty «اكتشف القطاعات») — drafts, not yet in the master icon file ──
+export { ModontyFootballMark as IconFootball } from '../components/icons/modonty-sector-marks';
+export { ModontyMarketsMark as IconMarkets } from '../components/icons/modonty-sector-marks';
+export { ModontyEntertainmentMark as IconEntertainment } from '../components/icons/modonty-sector-marks';
+export { ModontyEducationMark as IconEducation } from '../components/icons/modonty-sector-marks';
+export { ModontyHealthMark as IconHealth } from '../components/icons/modonty-sector-marks';
+export { ModontyQuranMark as IconQuran } from '../components/icons/modonty-sector-marks';
+export { ModontyLuckyWheelMark as IconLuckyWheel } from '../components/icons/modonty-sector-marks';
 export { ModontyCategoriesMark as IconCategories } from '../components/icons/modonty-categories-mark';
 export { ModontyTagsMark  as IconCategory      } from '../components/icons/modonty-tags-mark';
 export { ModontyPartnerMark as IconClients } from '../components/icons/modonty-partner-mark';

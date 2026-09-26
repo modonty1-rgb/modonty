@@ -12,6 +12,7 @@ import { ModontyArticlesMark } from "@/components/icons/modonty-articles-mark";
 import { ModontyAudioMark } from "@/components/icons/modonty-audio-mark";
 import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
 import { getOrbitSteps as getOrbitStepsIn } from "@/lib/nav/get-orbit-steps";
+import { getNavSectionPath } from "@/lib/nav/get-nav-section-path";
 
 interface OrbitQuickLinksProps {
   siteName: string;
@@ -91,7 +92,7 @@ function OrbitLinkItem({ link, index, activeIndex, previousActiveIndex }: OrbitL
   const Icon = link.icon;
   const isWrapping = Math.abs(getOrbitOffset(index, activeIndex) - getOrbitOffset(index, previousActiveIndex)) > ORBIT_SPACING * 2;
   const className = isActive
-    ? "border-primary/80 bg-primary text-primary-foreground shadow-[0_0_28px_hsl(var(--primary)/0.55)]"
+    ? "border-primary/80 bg-primary text-primary-foreground shadow-[0_4px_16px_hsl(var(--primary)/0.45)]"
     : "border-border/80 bg-card/90 hover:border-primary/65";
 
   return (
@@ -110,18 +111,28 @@ function OrbitLinkItem({ link, index, activeIndex, previousActiveIndex }: OrbitL
         // scale .92 (not .84): 48px × .84 = 40px, under the 44px minimum for a touch target.
         transform: `translateX(calc(${getOrbitSteps(index, activeIndex)} * var(--orbit-gap, ${ORBIT_SPACING}px) + ${
           Math.sign(getOrbitSteps(index, activeIndex)) * ACTIVE_CLEARANCE
-        }px)) translateY(${isActive ? 0 : 8}px) scale(${isActive ? 1 : 0.92})`,
+        }px)) translateY(${isActive ? 6 : 10}px) scale(${isActive ? 1 : 0.92})`,
       }}
     >
       {/* On the bottom bar, repeating seven tiny labels cost more clarity than they gave.
           The current destination keeps its visible name; resting destinations spend that
           reclaimed space on a recognisable mark. The link itself still supplies every name
           through aria-label for assistive technology. */}
-      <Link href={link.href} aria-current={isActive ? "page" : undefined} aria-label={link.label ?? undefined} className={`flex flex-col rounded-full border text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive ? "size-16" : "size-12"} items-center justify-center ${className}`}>
+      {/* Active 64 → 56 and every pill centred in the 68px bar (Khalid, 26 Sep: «الأيكون
+          الأكتف لاصقة في الحدود»). At 64 from `top-0` the active pill left 0px above and 4px
+          below — it touched the bar's top border and its glow was cut off by the nav's clip.
+          Now: active 6px · 56 · 6px; resting 48 (drawn at 44 by the .92 scale) sits at 10,
+          so both share one centre line. 56 stays well over the 44px touch minimum. */}
+      <Link href={link.href} aria-current={isActive ? "page" : undefined} aria-label={link.label ?? undefined} className={`flex flex-col rounded-full border text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive ? "size-14" : "size-12"} items-center justify-center ${className}`}>
         {/* The 48px resting target is intentionally generous for a thumb, but a 20px glyph
             inside it read as accidental padding once the orbit moved to the bottom bar.
             Enlarge the visible mark only; the target and its spacing stay stable. */}
-        <Icon className={isActive ? "size-9" : "size-8"} aria-hidden />
+        {/* `-my-1.5` on the active mark only: the marks are drawn inside a 64-unit viewBox
+            with ~6px of empty air above and below the ink at 28px. With the name stacked
+            under it, that air plus `mt-1` made a 9px gap under a 17px mark, and pushed the
+            pair off-centre (13 above · 7 below). Trimming the air leaves a 4px gap and an
+            evenly centred pair (Khalid, 26 Sep: «مسافة كبيرة بين الاسم والشعار»). */}
+        <Icon className={isActive ? "size-7 -my-1.5" : "size-8"} aria-hidden />
         {isActive && (
           <span className="mt-1 max-w-full truncate px-0.5 text-[10px] font-semibold leading-none">
             {link.label}
@@ -134,7 +145,9 @@ function OrbitLinkItem({ link, index, activeIndex, previousActiveIndex }: OrbitL
 
 export function OrbitQuickLinks({ siteName }: OrbitQuickLinksProps) {
   const pathname = usePathname();
-  const section = pathname?.split("/")[1] ?? "";
+  // A page without its own tab takes its parent section's (`/quran` → مدونتي) — explicit, not
+  // the accident of «مدونتي» being slot 0, which is what lit it before.
+  const section = pathname ? getNavSectionPath(pathname).split("/")[1] ?? "" : "";
   const links = ORBIT_LINKS.map((link) => ({
     ...link,
     label: link.label ?? siteName,
@@ -149,7 +162,10 @@ export function OrbitQuickLinks({ siteName }: OrbitQuickLinksProps) {
   return (
     <nav
       aria-label="أقسام الموقع"
-      className="relative h-[68px] overflow-hidden [--orbit-gap:46px] sm:[--orbit-gap:54px]"
+      // `overflow-x-clip`, not `overflow-hidden`: the ring still hides the pills that wrap
+      // past either side, but the active pill's glow may now spill up over the border
+      // instead of being sliced flat against it.
+      className="relative h-[68px] overflow-x-clip [--orbit-gap:46px] sm:[--orbit-gap:54px]"
     >
       {links.map((link, index) => <OrbitLinkItem key={link.href} link={link} index={index} activeIndex={activeIndex} previousActiveIndex={previousActiveIndex} />)}
     </nav>

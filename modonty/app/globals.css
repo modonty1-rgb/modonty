@@ -286,12 +286,16 @@
   html {
     scroll-behavior: smooth;
     /* Clears the sticky chrome so an anchor never lands underneath it.
-       Desktop: the 56px header alone. Below `lg` the tab strip became sticky too on
-       22 Aug — 56px header + 79px strip (56 tab + 12 reserved overhang + border) — so the
-       phone needs 135px or every in-page link drops the reader behind the tabs.
-       One number, two places: `--sticky-chrome` is also what the two other sticky bars
-       offset themselves by, so they can never drift apart from this again. */
-    --sticky-chrome: 8.4375rem; /* 135px */
+       One number, three places: `--sticky-chrome` is also what the article's reading-progress
+       bar and its sticky section bar offset themselves by, so they can never drift apart.
+       It was 135px below `lg` — header 56 + the 79px tab strip that was sticky under it on
+       22 Aug. That strip moved to the BOTTOM of the screen on 1 Sep, and the number stayed:
+       measured 26 Sep 2026 on an article at 390, the progress bar and the sticky bar hung at
+       135 while the chrome above them ended at 121, a 14px slit of text between; and on
+       `/quran`, which has no bar under the header, 135px of empty page. Now it is what is
+       actually there: the 56px header alone, plus the 65px follow/partner bar only on pages
+       that render one (`[data-mobile-cta-bar]`, fixed at `top-14`, 56 → 121 measured). */
+    --sticky-chrome: 3.5rem; /* 56px */
     scroll-padding-top: var(--sticky-chrome);
     /* The page's own scrollbar, in brand colour. Left at `auto` it rendered as the grey
        Windows bar with stepper arrows on every page — the one piece of chrome that still
@@ -300,10 +304,11 @@
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--primary) / 0.45) transparent;
   }
-  @media (min-width: 1024px) {
-    /* The strip is `lg:hidden`, so from here up the header is the only sticky chrome. */
-    html {
-      --sticky-chrome: 3.5rem;
+  /* Below `lg` only: the bar is `lg:hidden`, so from `lg` up the header is the only chrome
+     and the 3.5rem above stands. */
+  @media (max-width: 1023.98px) {
+    html:has([data-mobile-cta-bar]) {
+      --sticky-chrome: 7.5625rem; /* 121px = header 56 + bar 65 */
     }
   }
 

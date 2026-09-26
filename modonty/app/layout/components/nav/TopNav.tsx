@@ -47,7 +47,7 @@ export function TopNav() {
             a bordered field with the mark and a placeholder reads as "type here" at a
             glance, where a lone magnifier asks the reader to recognise a symbol first.
             It is still a link, not an input — the field lives on `/search`. */}
-        <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-2 px-2 md:hidden">
+        <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-2 px-2 lg:hidden">
           <LogoNav variant="mark" />
           {/* The desktop's own `compact` search box, uncapped so it fills the column —
               same component, so the two headers can never drift apart. */}

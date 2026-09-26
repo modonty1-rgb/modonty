@@ -1,0 +1,513 @@
+<title>قطاعات مدونتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap">
+<style>
+:root{
+  --navy:#0E065A; --blue:#3030FF; --teal:#00D8D8;
+  --bg:#F3F2EF; --card:#FFFFFF; --ink:#0E065A; --muted:#5B5B5B; --line:#DBDBDB;
+  --soft:#EEF0FF; --tealsoft:#DDF7F7; --ok:#0F8A5F; --okbg:#E3F5EC; --warn:#A15C00; --warnbg:#FFF1DC; --bad:#B42318; --badbg:#FDE7E5;
+  --phone:#0B0B12; --shadow:0 1px 2px rgba(14,6,90,.06),0 8px 24px rgba(14,6,90,.08);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#15151B; --card:#1F1F27; --ink:#F4F4FA; --muted:#A3A8B8; --line:#2F2F3A;
+    --soft:#23234A; --tealsoft:#123838; --ok:#4FD39A; --okbg:#143428; --warn:#F2B866; --warnbg:#3A2A12; --bad:#FF8A80; --badbg:#3D1A18;
+    --blue:#6B6BFF; --phone:#000; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15151B; --card:#1F1F27; --ink:#F4F4FA; --muted:#A3A8B8; --line:#2F2F3A;
+  --soft:#23234A; --tealsoft:#123838; --ok:#4FD39A; --okbg:#143428; --warn:#F2B866; --warnbg:#3A2A12; --bad:#FF8A80; --badbg:#3D1A18;
+  --blue:#6B6BFF; --phone:#000; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,"Segoe UI",Tahoma,sans-serif;font-size:16px;line-height:1.7;direction:rtl;padding-inline:16px;padding-block:32px 64px}
+.wrap{max-width:1120px;margin-inline:auto;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.3}
+h1{font-size:clamp(30px,5vw,44px);font-weight:800}
+h2{font-size:24px;font-weight:800;display:flex;align-items:center;gap:10px}
+h2::before{content:"";width:10px;height:10px;background:var(--teal);transform:rotate(45deg);border-radius:2px;flex:none}
+h3{font-size:17px;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-size:13px;font-weight:700;color:var(--blue);letter-spacing:.02em}
+.num{font-variant-numeric:tabular-nums}
+section{display:flex;flex-direction:column;gap:18px}
+
+/* intro */
+.intro{display:flex;flex-direction:column;gap:14px;max-width:760px}
+.intro .lead{font-size:19px}
+.three{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.three li{display:flex;gap:10px;align-items:flex-start}
+.three b{color:var(--blue)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--teal);margin-top:10px;flex:none}
+
+/* flow */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px;position:relative}
+.step .n{font-size:13px;font-weight:800;color:var(--blue)}
+.step p{font-size:14px;color:var(--muted)}
+@media (max-width:820px){.flow{grid-template-columns:1fr 1fr}}
+@media (max-width:460px){.flow{grid-template-columns:1fr}}
+
+/* stage with phones */
+.stage{display:flex;flex-wrap:wrap;gap:40px;justify-content:center;align-items:flex-start}
+.phone-col{display:flex;flex-direction:column;gap:12px;align-items:center;max-width:100%}
+.phone-cap{font-size:14px;color:var(--muted);text-align:center;max-width:360px}
+.phone{width:360px;max-width:100%;background:var(--phone);border-radius:44px;padding:12px;box-shadow:var(--shadow)}
+.screen{background:#F3F2EF;color:#0E065A;border-radius:34px;overflow:hidden;height:740px;overflow-y:auto;position:relative;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+:root[data-theme="dark"] .screen{background:#F3F2EF}
+
+/* in-phone UI (always the site's light theme) */
+.s-head{display:flex;align-items:center;gap:8px;padding:12px 14px;background:#fff;position:sticky;top:0;z-index:2;border-bottom:1px solid #ececec}
+.logo{font-weight:800;color:#3030FF;font-size:26px;line-height:1}
+.search{flex:1;background:#F1F1F1;border-radius:999px;padding:7px 14px;font-size:12px;color:#888}
+.burger{width:18px;height:12px;border-block:2px solid #0E065A;position:relative}
+.burger::after{content:"";position:absolute;inset-inline:0;top:3px;border-top:2px solid #0E065A}
+.ctas{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px;background:#fff}
+.cta{border-radius:10px;padding:9px;text-align:center;font-weight:700;font-size:13px}
+.cta.a{background:#00D8D8;color:#0E065A}
+.cta.b{background:#DDF7F7;color:#0E065A;border:1px solid #9CEAEA}
+.crumb{font-size:12px;color:#777;padding:12px 16px 0}
+.crumb b{color:#0E065A}
+.hero{padding:10px 16px 6px}
+.hero .t{font-size:28px;font-weight:800;border-inline-start:4px solid #00D8D8;padding-inline-start:10px;line-height:1.2}
+.hero .s{font-size:13px;color:#555;margin-top:6px}
+
+.new{margin:12px 10px;border:2px dashed #3030FF;border-radius:16px;padding:12px 6px 10px;position:relative;background:rgba(48,48,255,.04)}
+.new-tag{position:absolute;top:-11px;inset-inline-start:12px;background:#3030FF;color:#fff;font-size:11px;font-weight:700;padding:1px 10px;border-radius:999px}
+.row-title{display:flex;justify-content:space-between;align-items:baseline;padding:0 8px 8px;font-size:14px;font-weight:800}
+.row-title span{font-size:11px;color:#3030FF;font-weight:700}
+.sectors{display:flex;gap:10px;overflow-x:auto;padding:2px 8px 4px;scrollbar-width:none}
+.sectors::-webkit-scrollbar{display:none}
+.sec{flex:none;width:66px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11.5px;font-weight:700;text-align:center;line-height:1.25}
+.ring{width:58px;height:58px;border-radius:50%;background:#fff;border:1px solid #E1E1E8;display:grid;place-items:center;position:relative}
+.ring svg{width:28px;height:28px}
+.ring.live::after{content:"";position:absolute;top:3px;inset-inline-end:3px;width:10px;height:10px;border-radius:50%;background:#E5484D;border:2px solid #fff}
+.sec.on .ring{background:#0E065A;border-color:#0E065A;color:#fff}
+.sec.on .ring svg{color:#fff}
+
+.feed-h{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 8px}
+.feed-h b{font-size:17px;font-weight:800}
+.chip{font-size:11px;border:1px solid #d8d8d8;border-radius:999px;padding:3px 10px;background:#fff;color:#0E065A;white-space:nowrap}
+.acard{background:#fff;margin:0 12px 10px;border-radius:14px;border:1px solid #e6e6e6;padding:10px;display:flex;gap:10px}
+.acard .img{width:96px;height:72px;border-radius:10px;flex:none;background:linear-gradient(135deg,#0E065A,#3030FF 60%,#00D8D8)}
+.acard .tt{font-size:13px;font-weight:700;line-height:1.45}
+.acard .meta{font-size:11px;color:#777;margin-top:4px}
+.dock{position:sticky;bottom:0;background:#fff;border-top:1px solid #ececec;display:flex;justify-content:space-around;padding:8px 6px 10px}
+.dock i{width:34px;height:34px;border-radius:50%;border:1px solid #e4e4e4;display:block}
+.dock i.m{background:#3030FF;border-color:#3030FF}
+
+/* sector page */
+.sp-hero{background:#0E065A;color:#fff;padding:16px 16px 14px;display:flex;flex-direction:column;gap:6px}
+.sp-hero .top{display:flex;align-items:center;gap:10px}
+.sp-hero .ic{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.1);display:grid;place-items:center}
+.sp-hero .ic svg{width:24px;height:24px;color:#00D8D8}
+.sp-hero .t{font-size:24px;font-weight:800}
+.sp-hero .u{font-size:11.5px;color:#BFC2FF;display:flex;align-items:center;gap:6px}
+.pulse{width:7px;height:7px;border-radius:50%;background:#00D8D8}
+.tabs{display:flex;gap:6px;padding:10px 12px;overflow-x:auto;background:#fff;border-bottom:1px solid #eee;scrollbar-width:none;position:sticky;top:53px;z-index:1}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;background:#F1F1F4;color:#0E065A}
+.tab.on{background:#3030FF;color:#fff}
+.blk{padding:14px 12px 4px;display:flex;flex-direction:column;gap:8px}
+.blk-h{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;font-weight:800;padding-inline:4px}
+.blk-h span{font-size:11px;color:#3030FF;font-weight:700}
+.demo{font-size:10.5px;font-weight:700;color:#A15C00;background:#FFF1DC;border-radius:6px;padding:2px 8px;align-self:flex-start}
+.real{font-size:10.5px;font-weight:700;color:#0F8A5F;background:#E3F5EC;border-radius:6px;padding:2px 8px;align-self:flex-start}
+.match{background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;font-size:13px;font-weight:700}
+.match .sc{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;background:#F3F2EF;border-radius:8px;padding:2px 10px;direction:ltr}
+.match .st{grid-column:1/-1;text-align:center;font-size:10.5px;color:#888;font-weight:500;margin-top:-2px}
+.match .l{text-align:start}.match .r{text-align:end}
+.tbl{background:#fff;border:1px solid #e6e6e6;border-radius:12px;overflow:hidden;font-size:12.5px}
+.tbl table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.tbl th{font-size:10.5px;color:#888;font-weight:700;padding:7px 8px;text-align:center;background:#FAFAFB}
+.tbl td{padding:7px 8px;text-align:center;border-top:1px solid #f0f0f0}
+.tbl td.tm{text-align:start;font-weight:700}
+.tbl th.tm{text-align:start}
+.news{background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.news .h{font-size:13px;font-weight:700;line-height:1.5}
+.news .src{font-size:10.5px;color:#777;display:flex;gap:6px;align-items:center}
+.news .src b{color:#0E065A}
+.ext{margin-inline-start:auto;color:#3030FF;font-weight:700}
+.ours{background:#DDF7F7;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.ours .h{font-size:13px;font-weight:700}
+.ours .by{font-size:10.5px;color:#0E065A;opacity:.7}
+
+/* tables & cards on the doc */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow-x:auto}
+.panel table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:760px}
+.panel th{font-size:12.5px;color:var(--muted);font-weight:700;text-align:start;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.panel td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.panel tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.pill.ok{color:var(--ok);background:var(--okbg)}
+.pill.warn{color:var(--warn);background:var(--warnbg)}
+.pill.bad{color:var(--bad);background:var(--badbg)}
+.pill.no{color:var(--muted);background:var(--bg);border:1px solid var(--line)}
+.sname{display:flex;align-items:center;gap:10px;font-weight:800;white-space:nowrap}
+.sname svg{width:22px;height:22px;color:var(--blue)}
+.small{font-size:13px;color:var(--muted)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;background:var(--soft);padding:1px 6px;border-radius:6px;direction:ltr;unicode-bidi:embed}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.note{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.note h3{display:flex;align-items:center;gap:8px}
+.note p{font-size:14.5px;color:var(--muted)}
+.decide{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none;counter-reset:d}
+.decide li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;counter-increment:d}
+.decide li::before{content:counter(d);width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+:root[data-theme="dark"] .decide li::before{background:var(--blue)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .decide li::before{background:var(--blue)}}
+.decide b{display:block}
+.decide span{font-size:14px;color:var(--muted)}
+.foot{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:4px}
+.foot a{color:var(--blue)}
+
+/* five sector pages */
+.stage.many{gap:28px}
+.stage.many .phone{width:340px}
+.screen.short{height:660px}
+.kpi{background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center}
+.kpi .v{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;direction:ltr}
+.kpi .d{font-size:12px;font-weight:800;color:#0F8A5F;background:#E3F5EC;border-radius:6px;padding:2px 8px;direction:ltr}
+.kpi .lbl{font-size:12px;color:#666}
+.rows{background:#fff;border:1px solid #e6e6e6;border-radius:12px;overflow:hidden}
+.rw{display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:13px;font-weight:700}
+.rw+.rw{border-top:1px solid #f0f0f0}
+.rw .rk{width:22px;height:22px;border-radius:7px;background:#EEF0FF;color:#3030FF;display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.rw .sub{font-size:10.5px;color:#888;font-weight:500;margin-inline-start:auto;white-space:nowrap}
+.rw .up{color:#0F8A5F;direction:ltr;font-variant-numeric:tabular-nums;font-weight:800}
+.rw .dn{color:#B42318;direction:ltr;font-variant-numeric:tabular-nums;font-weight:800}
+.evt{display:flex;gap:10px;background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:10px}
+.evt .dt{width:46px;flex:none;border-radius:10px;background:#0E065A;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;padding:6px 0}
+.evt .dt b{font-size:18px}
+.evt .dt small{font-size:10px;color:#BFC2FF}
+.evt .tt{font-size:13px;font-weight:700}
+.evt .mt{font-size:10.5px;color:#777}
+.stat{background:#0E065A;color:#fff;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.stat .v{font-size:26px;font-weight:800;color:#00D8D8;font-variant-numeric:tabular-nums}
+.stat .t{font-size:12px;color:#DADCFF}
+.stat .bar{height:6px;border-radius:99px;background:rgba(255,255,255,.15);overflow:hidden}
+.stat .bar i{display:block;height:100%;background:#00D8D8;border-radius:99px}
+.stat .src{font-size:10px;color:#9EA2E0}
+.skel{background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.skel i{display:block;height:9px;border-radius:5px;background:#E9E9EE}
+.skel i.w1{width:92%}
+.skel i.w2{width:64%}
+.skel i.w3{width:34%;height:7px;background:#F0F0F4}
+.empty{border:1.5px dashed #9CEAEA;background:#F4FEFE;border-radius:12px;padding:14px;text-align:center;display:flex;flex-direction:column;gap:4px;align-items:center}
+.empty b{font-size:13px}
+.empty span{font-size:11px;color:#555}
+.cap-list{font-size:12.5px;color:var(--muted);text-align:start;max-width:360px;display:flex;flex-direction:column;gap:2px}
+.cap-list b{color:var(--ink)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-sport" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.8 2.8-1.5 4.4H9.7L8.2 10.3z"/><path d="M12 3v4.5M20.6 9.4l-4.8.9M17.3 19.4l-3-4.7M6.7 19.4l3-4.7M3.4 9.4l4.8.9"/></g><circle cx="19.5" cy="4.5" r="1.6" fill="#00D8D8"/></symbol>
+    <symbol id="i-health" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.4-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.6-7.5 10-7.5 10z"/><path d="M7 12h2.5l1.3-2.2 2 4.4 1.3-2.2H17"/></g><circle cx="19.5" cy="4.5" r="1.6" fill="#00D8D8"/></symbol>
+    <symbol id="i-women" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="4.5"/><path d="M12 13v8M9 18h6"/></g><circle cx="19.5" cy="4.5" r="1.6" fill="#00D8D8"/></symbol>
+    <symbol id="i-ai" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2.5"/><path d="M9.5 14.5l1.5-5 1.5 5M10 13h2M15 9.5v5M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></g><circle cx="20" cy="4" r="1.6" fill="#00D8D8"/></symbol>
+    <symbol id="i-money" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M5 15l4.5-4.5 3 3L19 7"/><path d="M15 7h4v4"/></g><circle cx="5" cy="5" r="1.6" fill="#00D8D8"/></symbol>
+    <symbol id="i-edu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z"/><path d="M6.5 11.5V16c0 1.2 2.5 2.8 5.5 2.8s5.5-1.6 5.5-2.8v-4.5"/><path d="M21.5 9.5V15"/></g><circle cx="21.5" cy="17.5" r="1.6" fill="#00D8D8"/></symbol>
+    <symbol id="i-fun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h16v10a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5z"/><path d="M4 8.5l1.2-3.6 14.3 1-.3 2.6M8.5 5.2l1.8 3.3M13.3 5.5l1.8 3"/><path d="M10.5 12.2v4.6l3.8-2.3z"/></g><circle cx="20" cy="4" r="1.6" fill="#00D8D8"/></symbol>
+    <symbol id="i-game" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10a4 4 0 0 1 4 4.3l-.4 3.4a2.2 2.2 0 0 1-3.9 1.1L15 14.5H9l-1.7 2.3a2.2 2.2 0 0 1-3.9-1.1L3 12.3A4 4 0 0 1 7 8z"/><path d="M8 10.5v3M6.5 12h3"/></g><circle cx="16" cy="11.2" r="1" fill="currentColor"/><circle cx="17.8" cy="13" r="1" fill="#00D8D8"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <header class="intro">
+    <span class="eyebrow">تصوّر · مدونتي <code>/modonty</code> · قبل Techne Summit الإسكندرية ٣–٥ أكتوبر</span>
+    <h1>قطاعات مدونتي</h1>
+    <ul class="three">
+      <li><span class="dot"></span><p><b>صفّ أيقونات قطاعات</b> يظهر أعلى صفحة مدونتي: الكورة، الذكاء الاصطناعي، المال، الترفيه، التعليم والوظائف، الصحة والجمال.</p></li>
+      <li><span class="dot"></span><p><b>كلّ أيقونة تفتح صفحة حيّة لقطاعها</b>، وتتحدّث كل ساعة من مصادر خارجية (API وRSS). في صفحة الكورة مثلاً: النتائج، وجدول الدوري، والأخبار.</p></li>
+      <li><span class="dot"></span><p><b>مقالاتنا تظهر داخل كلّ قطاع</b>، فيتنوّع ما يراه الزائر الشاب ويرجع لنا كل يوم، ولا نعتمد على ما نكتبه وحده.</p></li>
+    </ul>
+  </header>
+
+  <section>
+    <h2>كيف تشتغل</h2>
+    <div class="flow">
+      <div class="step"><span class="n">١ · المصدر</span><h3>API أو RSS خارجي</h3><p>نتائج مباريات، وأخبار عربية مرتّبة حسب القطاع.</p></div>
+      <div class="step"><span class="n">٢ · عندنا</span><h3>نحفظ ونحدّث كل ساعة</h3><p>كاش على السيرفر، فلا يُطلب المصدر مع كل زائر ولا نتجاوز حدّ الطلبات.</p></div>
+      <div class="step"><span class="n">٣ · صفحة القطاع</span><h3><code>/modonty/football</code></h3><p>بياناته الحيّة، وتحتها مقالاتنا في نفس القطاع.</p></div>
+      <div class="step"><span class="n">٤ · المصدر الأصلي</span><h3>عنوان وسطر ورابط</h3><p>لا ننسخ الخبر كاملاً. الضغط على الخبر يفتح موقع ناشره.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>صفحة مدونتي وصفحة الكورة</h2>
+    <div class="stage">
+
+      <div class="phone-col">
+        <div class="phone" role="img" aria-label="صفحة مدونتي مع صف القطاعات الجديد">
+          <div class="screen">
+            <div class="s-head"><span class="logo">m</span><span class="search">بحث متقدم</span><span class="burger"></span></div>
+            <div class="ctas"><span class="cta a">تابع مدونتي</span><span class="cta b">صِر شريكاً</span></div>
+            <div class="crumb">الرئيسية › <b>مدونتي</b></div>
+            <div class="hero"><div class="t">مدونتي</div><div class="s">مقالات تستاهل وقتك — من أهل التخصص.</div></div>
+
+            <div class="new">
+              <span class="new-tag">جديد</span>
+              <div class="row-title">اكتشف القطاعات <span>يتحدّث كل ساعة</span></div>
+              <div class="sectors">
+                <div class="sec on"><span class="ring live"><svg><use href="#i-sport"/></svg></span>الكورة</div>
+                <div class="sec"><span class="ring"><svg style="color:#0E065A"><use href="#i-ai"/></svg></span>الذكاء الاصطناعي</div>
+                <div class="sec"><span class="ring"><svg style="color:#0E065A"><use href="#i-money"/></svg></span>المال</div>
+                <div class="sec"><span class="ring"><svg style="color:#0E065A"><use href="#i-fun"/></svg></span>الترفيه</div>
+                <div class="sec"><span class="ring"><svg style="color:#0E065A"><use href="#i-edu"/></svg></span>التعليم والوظائف</div>
+                <div class="sec"><span class="ring"><svg style="color:#0E065A"><use href="#i-health"/></svg></span>الصحة والجمال</div>
+              </div>
+            </div>
+
+            <div class="feed-h"><b>من قلمنا</b><span class="chip">تصفية</span></div>
+            <div class="acard"><div class="tt">التجارة الإلكترونية في السعودية وش اللي يخلي العميل يشتري من متجر ويترك الثاني؟<div class="meta">سبتمبر ٢٠٢٦</div></div><div class="img"></div></div>
+            <div class="acard"><div class="tt">مشاركة مدونتي في Techne Summit 2026 وأبرز القطاعات المرتقبة في الإيفنت<div class="meta">سبتمبر ٢٠٢٦</div></div><div class="img"></div></div>
+            <div class="acard"><div class="tt">دليل منصة دروب للدورات طرق التسجيل والحصول على الشهادات<div class="meta">سبتمبر ٢٠٢٦</div></div><div class="img"></div></div>
+            <div class="dock"><i></i><i></i><i></i><i class="m"></i><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <p class="phone-cap"><b>١. صفحة مدونتي.</b> يضاف صفّ القطاعات بين العنوان و«من قلمنا»، ويُسحب أفقياً. النقطة الحمراء تعني أن في القطاع حدثاً جارياً الآن، مثل مباراة.</p>
+      </div>
+
+      <div class="phone-col">
+        <div class="phone" role="img" aria-label="صفحة قطاع الكورة">
+          <div class="screen">
+            <div class="s-head"><span class="logo">m</span><span class="search">بحث متقدم</span><span class="burger"></span></div>
+            <div class="crumb" style="padding-bottom:10px;background:#fff">الرئيسية › مدونتي › <b>الكورة</b></div>
+            <div class="sp-hero">
+              <div class="top"><span class="ic"><svg><use href="#i-sport"/></svg></span><span class="t">الكورة</span></div>
+              <div class="u"><span class="pulse"></span>آخر تحديث قبل ٢٠ دقيقة · دوري روشن السعودي</div>
+            </div>
+            <div class="tabs"><span class="tab on">المباريات</span><span class="tab">الترتيب</span><span class="tab">الأخبار</span><span class="tab">من مدونتي</span></div>
+
+            <div class="blk">
+              <div class="blk-h">مباريات الجولة <span>كل المباريات</span></div>
+              <span class="demo">نتائج توضيحية للشكل فقط — ليست حقيقية</span>
+              <div class="match"><span class="l">الهلال</span><span class="sc">2 - 1</span><span class="r">الحزم</span><span class="st">انتهت</span></div>
+              <div class="match"><span class="l">النصر</span><span class="sc">0 - 0</span><span class="r">الاتحاد</span><span class="st">الدقيقة ٦٧</span></div>
+              <div class="match"><span class="l">الأهلي</span><span class="sc">٩:٠٠ م</span><span class="r">الشباب</span><span class="st">اليوم</span></div>
+            </div>
+
+            <div class="blk">
+              <div class="blk-h">الترتيب <span>الجدول كامل</span></div>
+              <span class="demo">أرقام توضيحية</span>
+              <div class="tbl"><table>
+                <thead><tr><th>#</th><th class="tm">الفريق</th><th>لعب</th><th>+/-</th><th>نقاط</th></tr></thead>
+                <tbody>
+                  <tr><td>١</td><td class="tm">الهلال</td><td>٤</td><td>+٧</td><td><b>١٠</b></td></tr>
+                  <tr><td>٢</td><td class="tm">الاتحاد</td><td>٤</td><td>+٥</td><td><b>٩</b></td></tr>
+                  <tr><td>٣</td><td class="tm">النصر</td><td>٤</td><td>+٤</td><td><b>٨</b></td></tr>
+                  <tr><td>٤</td><td class="tm">الأهلي</td><td>٤</td><td>+٢</td><td><b>٧</b></td></tr>
+                </tbody>
+              </table></div>
+            </div>
+
+            <div class="blk">
+              <div class="blk-h">آخر الأخبار <span>المزيد</span></div>
+              <span class="real">عناوين حقيقية من الصحف (٢٤ سبتمبر) — مصدر التغذية لم يُحدَّد</span>
+              <div class="news"><span class="h">نجوم دوري روشن يتوشحون بالزي التراثي احتفاءً باليوم الوطني للمملكة</span><span class="src"><b>صحيفة سبورت السعودية</b>· اليوم<span class="ext">المصدر ↗</span></span></div>
+              <div class="news"><span class="h">اقتصاديات دوري روشن.. من الإنفاق إلى العائد</span><span class="src"><b>جريدة الرياض</b>· ٢٢ سبتمبر<span class="ext">المصدر ↗</span></span></div>
+              <div class="news"><span class="h">محليون يتصدرون قائمة صناعة الفرص في دوري روشن</span><span class="src"><b>عكاظ</b>· ١٩ سبتمبر<span class="ext">المصدر ↗</span></span></div>
+            </div>
+
+            <div class="blk" style="padding-bottom:16px">
+              <div class="blk-h">من مدونتي</div>
+              <div class="ours"><span class="h">الدوري السعودي موسم 2026-2027 دوري روشن</span><span class="by">مقال مدونتي</span></div>
+              <div class="ours"><span class="h">كأس العالم 2026 كرة القدم</span><span class="by">مقال مدونتي</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="phone-cap"><b>٢. صفحة قطاع الكورة.</b> فيها أربعة تبويبات: المباريات والترتيب من API-Football، والأخبار من RSS الصحف مباشرة، و«من مدونتي» من قاعدتنا.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>صفحات القطاعات الخمسة الباقية</h2>
+    <p class="small">القطاعات كلّها على قالب واحد، بهذا الترتيب: رأس القطاع، ثم التبويبات، ثم وحدة «الآن» الحيّة الخاصّة بكلّ قطاع، ثم الأخبار من RSS الصحف، ثم «من مدونتي». الوسم <b>الأخضر</b> يعني بيانات حقيقية من مصدرها، و<b>البرتقالي</b> يعني توضيحياً للشكل فقط. مكان الأخبار رمادي لأن مصدرها لم يُحدَّد بعد.</p>
+    <div class="stage many">
+
+      <div class="phone-col">
+        <div class="phone" role="img" aria-label="صفحة قطاع الذكاء الاصطناعي"><div class="screen short">
+          <div class="s-head"><span class="logo">m</span><span class="search">بحث متقدم</span><span class="burger"></span></div>
+          <div class="sp-hero"><div class="top"><span class="ic"><svg><use href="#i-ai"/></svg></span><span class="t">الذكاء الاصطناعي</span></div><div class="u"><span class="pulse"></span>أدوات وأخبار وشروحات · يتحدّث كل ساعة</div></div>
+          <div class="tabs"><span class="tab on">الأدوات</span><span class="tab">الأخبار</span><span class="tab">شروحات</span><span class="tab">من مدونتي</span></div>
+          <div class="blk">
+            <div class="blk-h">الأكثر بحثاً في السعودية</div>
+            <span class="real">حقيقي · فئة «التكنولوجيا» في بحث جوجل ٢٠٢٥</span>
+            <div class="rows">
+              <div class="rw"><span class="rk">١</span>Gemini<span class="sub">Google</span></div>
+              <div class="rw"><span class="rk">٢</span>DeepSeek<span class="sub">مساعد محادثة</span></div>
+              <div class="rw"><span class="rk">٣</span>Hailuo AI<span class="sub">توليد فيديو</span></div>
+            </div>
+          </div>
+          <div class="blk"><div class="blk-h">آخر الأخبار <span>المزيد</span></div>
+            <div class="skel"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
+            <div class="skel"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
+          </div>
+          <div class="blk" style="padding-bottom:16px"><div class="blk-h">من مدونتي</div>
+            <div class="ours"><span class="h">دليل أدوات الذكاء الاصطناعي: أفضل المواقع والبرامج حسب الاستخدام</span><span class="by">مقال مدونتي</span></div>
+            <div class="ours"><span class="h">دليل التصميم بالذكاء الاصطناعي أهم الأدوات لإنشاء الصور والتصاميم</span><span class="by">مقال مدونتي</span></div>
+          </div>
+        </div></div>
+        <div class="cap-list"><span><b>الوحدة الحيّة:</b> ترتيب الأدوات الأكثر بحثاً.</span><span><b>مقالاتنا:</b> ٤ تقريباً.</span></div>
+      </div>
+
+      <div class="phone-col">
+        <div class="phone" role="img" aria-label="صفحة قطاع المال والاستثمار"><div class="screen short">
+          <div class="s-head"><span class="logo">m</span><span class="search">بحث متقدم</span><span class="burger"></span></div>
+          <div class="sp-hero"><div class="top"><span class="ic"><svg><use href="#i-money"/></svg></span><span class="t">المال والاستثمار</span></div><div class="u"><span class="pulse"></span>السوق السعودي · يتحدّث أثناء التداول</div></div>
+          <div class="tabs"><span class="tab on">السوق</span><span class="tab">الأخبار</span><span class="tab">تعلّم</span><span class="tab">من مدونتي</span></div>
+          <div class="blk">
+            <div class="blk-h">مؤشّر السوق الرئيسي</div>
+            <span class="demo">أرقام توضيحية — المصدر لم يُختر</span>
+            <div class="kpi"><div><div class="lbl">تاسي</div><div class="v">11,240.50</div></div><span class="d">+0.62%</span></div>
+            <div class="rows">
+              <div class="rw">شركة أ<span class="sub up">+3.1%</span></div>
+              <div class="rw">شركة ب<span class="sub up">+2.4%</span></div>
+              <div class="rw">شركة ج<span class="sub dn">-1.8%</span></div>
+            </div>
+          </div>
+          <div class="blk"><div class="blk-h">آخر الأخبار <span>المزيد</span></div>
+            <div class="skel"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
+          </div>
+          <div class="blk" style="padding-bottom:16px"><div class="blk-h">من مدونتي</div>
+            <div class="ours"><span class="h">تداول الأسهم للمبتدئين في السعودية: كيف تبدأ خطوة بخطوة؟</span><span class="by">مقال مدونتي</span></div>
+            <div class="ours"><span class="h">توزيعات أرباح الأسهم السعودية كيف تعمل وكيف تحسب العائد؟</span><span class="by">مقال مدونتي</span></div>
+          </div>
+        </div></div>
+        <div class="cap-list"><span><b>الوحدة الحيّة:</b> المؤشّر، والأكثر ارتفاعاً وانخفاضاً.</span><span><b>مقالاتنا:</b> ٦ تقريباً.</span><span><b>تنبيه:</b> معلومات فقط، ولا توصيات.</span></div>
+      </div>
+
+      <div class="phone-col">
+        <div class="phone" role="img" aria-label="صفحة قطاع الترفيه"><div class="screen short">
+          <div class="s-head"><span class="logo">m</span><span class="search">بحث متقدم</span><span class="burger"></span></div>
+          <div class="sp-hero"><div class="top"><span class="ic"><svg><use href="#i-fun"/></svg></span><span class="t">الترفيه</span></div><div class="u"><span class="pulse"></span>فعاليات · مسلسلات · سينما</div></div>
+          <div class="tabs"><span class="tab on">الفعاليات</span><span class="tab">المسلسلات</span><span class="tab">السينما</span><span class="tab">من مدونتي</span></div>
+          <div class="blk">
+            <div class="blk-h">هذا الأسبوع <span>كل الفعاليات</span></div>
+            <span class="demo">فعاليات توضيحية — المصدر لم يُختر</span>
+            <div class="evt"><span class="dt"><b>٢٦</b><small>سبتمبر</small></span><div><div class="tt">فعالية في الرياض</div><div class="mt">الرياض · مساءً</div></div></div>
+            <div class="evt"><span class="dt"><b>٢٨</b><small>سبتمبر</small></span><div><div class="tt">حفل في جدة</div><div class="mt">جدة · ٩:٠٠ م</div></div></div>
+          </div>
+          <div class="blk">
+            <div class="blk-h">المسلسلات الأكثر بحثاً</div>
+            <span class="real">حقيقي · فئة «المسلسلات» في بحث جوجل السعودية ٢٠٢٥</span>
+            <div class="rows"><div class="rw"><span class="rk">١</span>شارع الأعشى</div><div class="rw"><span class="rk">٢</span>شباب البومب ١٣</div></div>
+          </div>
+          <div class="blk" style="padding-bottom:16px"><div class="blk-h">من مدونتي</div>
+            <div class="ours"><span class="h">صيف الرياض 2026: لا تفوتك أقوى فعاليات موسم الرياض في البوليفارد</span><span class="by">مقال مدونتي</span></div>
+          </div>
+        </div></div>
+        <div class="cap-list"><span><b>الوحدة الحيّة:</b> فعاليات الأسبوع بالتاريخ والمدينة.</span><span><b>مقالاتنا:</b> ١ تقريباً.</span></div>
+      </div>
+
+      <div class="phone-col">
+        <div class="phone" role="img" aria-label="صفحة قطاع التعليم والوظائف"><div class="screen short">
+          <div class="s-head"><span class="logo">m</span><span class="search">بحث متقدم</span><span class="burger"></span></div>
+          <div class="sp-hero"><div class="top"><span class="ic"><svg><use href="#i-edu"/></svg></span><span class="t">التعليم والوظائف</span></div><div class="u"><span class="pulse"></span>مواعيد · وظائف · دورات</div></div>
+          <div class="tabs"><span class="tab on">المواعيد</span><span class="tab">الوظائف</span><span class="tab">الدورات</span><span class="tab">من مدونتي</span></div>
+          <div class="blk">
+            <div class="blk-h">المنصّات الأكثر بحثاً</div>
+            <span class="real">حقيقي · أعلى ما بحث عنه السعوديون في ٢٠٢٥ (Google)</span>
+            <div class="rows"><div class="rw"><span class="rk">١</span>منصة قبول</div><div class="rw"><span class="rk">٢</span>تسجيل الحرس الوطني</div><div class="rw"><span class="rk">٣</span>مركز قياس</div></div>
+          </div>
+          <div class="blk">
+            <div class="blk-h">مواعيد قريبة</div>
+            <span class="demo">مواعيد توضيحية</span>
+            <div class="evt"><span class="dt"><b>١</b><small>أكتوبر</small></span><div><div class="tt">فتح التسجيل في اختبار</div><div class="mt">يُغلق بعد ١٠ أيام</div></div></div>
+          </div>
+          <div class="blk" style="padding-bottom:16px"><div class="blk-h">من مدونتي</div>
+            <div class="ours"><span class="h">تخصصات المستقبل في سوق العمل السعودي حتى 2030</span><span class="by">مقال مدونتي</span></div>
+            <div class="ours"><span class="h">أفضل دورات مجانية بشهادات معتمدة وطريقة التحقق من الاعتماد</span><span class="by">مقال مدونتي</span></div>
+          </div>
+        </div></div>
+        <div class="cap-list"><span><b>الوحدة الحيّة:</b> مواعيد التسجيل مع عدّ تنازلي.</span><span><b>مقالاتنا:</b> ٦ تقريباً.</span></div>
+      </div>
+
+      <div class="phone-col">
+        <div class="phone" role="img" aria-label="صفحة قطاع الصحة والجمال"><div class="screen short">
+          <div class="s-head"><span class="logo">m</span><span class="search">بحث متقدم</span><span class="burger"></span></div>
+          <div class="sp-hero"><div class="top"><span class="ic"><svg><use href="#i-health"/></svg></span><span class="t">الصحة والجمال</span></div><div class="u"><span class="pulse"></span>لياقة · تغذية · عناية</div></div>
+          <div class="tabs"><span class="tab on">اللياقة</span><span class="tab">التغذية</span><span class="tab">العناية</span><span class="tab">من مدونتي</span></div>
+          <div class="blk">
+            <div class="blk-h">المملكة تتحرّك</div>
+            <div class="stat"><span class="v">٥٩٫١٪</span><span class="t">ممن أعمارهم ١٨ فأكثر يمارسون نشاطاً بدنياً ١٥٠ دقيقة في الأسبوع</span><span class="bar"><i style="width:59.1%"></i></span><span class="src">حقيقي · الهيئة العامة للإحصاء ٢٠٢٥ · الرجال ٦٦٫٥٪ · النساء ٤٣٫١٪</span></div>
+          </div>
+          <div class="blk"><div class="blk-h">آخر الأخبار <span>المزيد</span></div>
+            <div class="skel"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
+            <div class="skel"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
+          </div>
+          <div class="blk" style="padding-bottom:16px"><div class="blk-h">من مدونتي</div>
+            <div class="empty"><b>أول مقال في هذا القطاع قريباً</b><span>تابع مدونتي ليصلك أول ما يُنشر</span></div>
+          </div>
+        </div></div>
+        <div class="cap-list"><span><b>الوحدة الحيّة:</b> رقم وطني ثابت، يتحدّث مع كلّ إصدار من الإحصاء.</span><span><b>مقالاتنا:</b> ٠، لذلك تظهر حالة «قريباً».</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>على الديسكتوب</h2>
+    <div class="grid2">
+      <div class="note"><h3>صفحة مدونتي</h3><p>يأتي صفّ القطاعات في العمود الأوسط، بين العنوان و«من قلمنا»، وتظهر الأيقونات الستّ كلّها في سطر واحد بلا سحب. العمودان الجانبيّان يبقيان كما هما.</p></div>
+      <div class="note"><h3>صفحة القطاع</h3><p>تُبنى على نفس القالب الحالي بثلاثة أعمدة. في الوسط المباريات والأخبار، وفي عمود جانبي الترتيب ومقالاتنا، فلا يحتاج الزائر للتبويبات.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>القطاعات الستّة: لماذا هي، ومن أين بياناتها</h2>
+    <div class="panel"><table>
+      <thead><tr><th>القطاع</th><th>لماذا (دليل رسمي)</th><th>ما تعرضه الصفحة</th><th>المصدر الحيّ المرشّح</th><th>حالته</th><th>مقالاتنا</th></tr></thead>
+      <tbody>
+        <tr><td><span class="sname"><svg><use href="#i-sport"/></svg>الكورة</span></td><td>محسومة. والكورة من أكبر محاور بحث السعوديين في عشر سنوات <span class="small">(Google)</span></td><td>مباريات · ترتيب · أخبار</td><td>API-Football + RSS الصحف الرياضية</td><td><span class="pill warn">لم يُفحص</span></td><td class="num">٢</td></tr>
+        <tr><td><span class="sname"><svg><use href="#i-ai"/></svg>الذكاء الاصطناعي</span></td><td><b class="num">٤٥٫٢٪</b> من مستخدمي الإنترنت يستخدمون أدواته · Gemini أوّل فئة «التكنولوجيا» في بحث ٢٠٢٥ <span class="small">(هيئة الاتصالات · Google)</span></td><td>أدوات جديدة · أخبار · شروحات</td><td>RSS مواقع التقنية العربية</td><td><span class="pill no">لم يُختر</span></td><td class="num">٤</td></tr>
+        <tr><td><span class="sname"><svg><use href="#i-money"/></svg>المال والاستثمار</span></td><td>أكثر من <b class="num">١٣ مليون</b> محفظة أفراد في تداول، الربع الأول ٢٠٢٥ <span class="small">(واس)</span></td><td>مؤشّر تاسي · أخبار السوق</td><td>API أسعار + RSS الصحف الاقتصادية</td><td><span class="pill no">لم يُختر</span></td><td class="num">٦</td></tr>
+        <tr><td><span class="sname"><svg><use href="#i-fun"/></svg>الترفيه</span></td><td><b class="num">٦٧٪</b> حضروا فعالية ترفيهية في ٢٠٢٥ · «المسلسلات» فئة مستقلة في بحث جوجل السعودية <span class="small">(الإحصاء · Google)</span></td><td>فعاليات المواسم · مسلسلات · سينما</td><td>يُبحث</td><td><span class="pill no">لم يُختر</span></td><td class="num">١</td></tr>
+        <tr><td><span class="sname"><svg><use href="#i-edu"/></svg>التعليم والوظائف</span></td><td>قبول وقياس وتسجيل الحرس الوطني في أعلى بحث ٢٠٢٥ · «التعليم والعمل» من أكبر محاور العشر سنوات <span class="small">(Google)</span></td><td>مواعيد التسجيل · وظائف · دورات</td><td>يُبحث</td><td><span class="pill no">لم يُختر</span></td><td class="num">٦</td></tr>
+        <tr><td><span class="sname"><svg><use href="#i-health"/></svg>الصحة والجمال</span></td><td><b class="num">٥٩٫١٪</b> يمارسون الرياضة (الرجال ٦٦٫٥٪ · النساء ٤٣٫١٪) <span class="small">(الإحصاء)</span> · ٦١٪ ينوون الإنفاق على الصحة والجمال <span class="small">(PwC، لم أقرأ الأصل)</span></td><td>لياقة · تغذية · عناية</td><td>يُبحث</td><td><span class="pill no">لم يُختر</span></td><td class="num">٠</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">عدد «مقالاتنا» تقدير من عناوين ٤٠ مقالاً منشوراً على قاعدة dev. لا يوجد مصدر رسمي يقسم الاهتمامات على الفئة ٢٠–٥٠ بالضبط، والبيانات سعودية في أغلبها. «المرأة» لم تظهر قطاعاً مستقلاً في أي مصدر، فهي حاضرة داخل الصحة والجمال والترفيه. <b>الألعاب</b> استُبعدت: ٥٩٪ من لاعبيها بين ١٥ و٢٤ سنة، أي أصغر من الفئة المستهدفة.</p>
+  </section>
+
+  <section>
+    <h2>ما قِيس، وما يحتاج قراراً</h2>
+    <div class="grid2">
+      <div class="note"><h3><span class="pill bad">مقيس</span> RSS أخبار Google ممنوع علينا</h3><p>نصّ الملف نفسه: «made available solely for … personal, non-commercial use. Any other use of the feed is expressly prohibited». البديل: RSS كلّ صحيفة مباشرة.</p></div>
+      <div class="note"><h3><span class="pill warn">مؤشّر</span> روابط RSS واس المنشورة لا تعمل</h3><p><code>spa.gov.sa/rss7.xml</code> يرجع <code>200 text/html</code> بحجم الصفحة الرئيسية نفسه. لم نتحقّق هل عند واس RSS بعنوان آخر.</p></div>
+      <div class="note"><h3><span class="pill warn">لم يُفحص</span> RSS الصحف السعودية</h3><p>عكاظ والرياض وسبق وغيرها: هل عندها RSS يعمل، وهل شروطها تسمح بعرض العنوان مع رابط. يُفحص لكلّ صحيفة على حدة.</p></div>
+      <div class="note"><h3><span class="pill warn">لم يُفحص</span> API-Football للموسم الحالي</h3><p>مقارنات منشورة تقول إن الخطة المجانية ١٠٠ طلب يومياً والمدفوعة من ١٩$ شهرياً. صفحتهم الرسمية تمنع القراءة الآلية. يُفحص بمفتاح تجريبي.</p></div>
+      <div class="note"><h3>السيو</h3><p>أخبار منقولة لا ترفعنا في جوجل. الذي يرفعنا هو ما نضيفه فوقها: الجدول، ومقالاتنا، وجمل تعريف بالقطاع نكتبها بأنفسنا.</p></div>
+      <div class="note"><h3>الحقوق</h3><p>من كلّ خبر نعرض العنوان والمصدر والتاريخ ورابطاً للأصل فقط. لا نسخ للنصّ، ولا صور من المصدر إلا بإذن.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>مطلوب قرارك</h2>
+    <ol class="decide">
+      <li><div><b>القطاعات الستّة</b><span>الكورة · الذكاء الاصطناعي · المال · الترفيه · التعليم والوظائف · الصحة والجمال.</span></div></li>
+      <li><div><b>قبل المعرض: قطاع واحد كامل</b><span>الكورة أولاً، ونشغّلها حيّة على الجوّال. بعدها نكرّر القالب للبقية.</span></div></li>
+      <li><div><b>مفتاح API-Football</b><span>نفتح حساباً مجانياً للتجربة، ولا ندفع قبل أن نرى النتائج الحقيقية.</span></div></li>
+      <li><div><b>الرابط</b><span><code>/modonty/football</code> تحت مدونتي، أو <code>/sectors/football</code> مستقلّ.</span></div></li>
+    </ol>
+  </section>
+
+  <footer class="foot">
+    <span>المصادر: <a href="https://www.technesummit.com/2026">Techne Summit 2026</a> · <a href="https://trends.withgoogle.com/en-gb/year-in-search/2025/sa/">Google Year in Search 2025 — السعودية</a> · <a href="https://blog.google/intl/en-mena/product-updates/explore-get-answers/search-saudi-national-day-google/">Google — عشر سنوات من البحث</a> · <a href="https://www.cst.gov.sa/en/media-center/news/N2026071901">هيئة الاتصالات — تقرير الإنترنت 2025</a> · <a href="https://www.stats.gov.sa/ar/w/news/108">الإحصاء — النشاط البدني 2025</a> · <a href="https://www.stats.gov.sa/ar/w/report-of-household-culture-and-entertainment-survey-statistics">الإحصاء — الثقافة والترفيه 2025</a> · <a href="https://www.spa.gov.sa/N2374117">واس — محافظ الأفراد</a> · <a href="https://www.google.com/intl/en_us/terms_google_news.html">شروط أخبار Google</a></span>
+    <span>٢٤ سبتمبر ٢٠٢٦ · التصوّر فقط، لم يُكتب أي كود.</span>
+  </footer>
+
+</div>

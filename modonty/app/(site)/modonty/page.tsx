@@ -13,6 +13,7 @@ import { ModontyProfileHero } from "@/app/(site)/modonty/components/profile-hero
 import { ModontyArticlesFeed } from "@/app/(site)/modonty/components/articles-feed/ModontyArticlesFeed";
 import { FEED_VIEWS, type FeedView } from "@/app/(site)/modonty/components/articles-feed/feed-views";
 import { ModontyRightRail } from "@/app/(site)/modonty/components/right-rail/ModontyRightRail";
+import { SectorRow } from "@/app/(site)/modonty/components/sector-row/SectorRow";
 import { ModontyLeftRail } from "@/app/(site)/modonty/components/left-rail/ModontyLeftRail";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
@@ -169,7 +170,7 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
     />
     <ThreeColumnLayout
       header={
-        <div className={`space-y-4 max-lg:space-y-2 ${reveal(0)}`}>
+        <div className={`space-y-4 max-lg:space-y-0 ${reveal(0)}`}>
           <Breadcrumb
             items={[
               { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
@@ -202,7 +203,8 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
         </StickyRail>
       }
       center={
-        <div className={reveal(1)}>
+        <div className={`space-y-6 max-lg:space-y-5 ${reveal(1)}`}>
+          <SectorRow />
           <ModontyArticlesFeed
             articles={visibleArticles}
             page={page}

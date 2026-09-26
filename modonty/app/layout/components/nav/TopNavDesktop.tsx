@@ -8,7 +8,7 @@ import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
 
 export function TopNavDesktop() {
   return (
-    <div className="hidden md:grid md:grid-cols-[1fr_4.5fr_1fr] h-14 items-center gap-4 px-4">
+    <div className="hidden lg:grid lg:grid-cols-[1fr_4.5fr_1fr] h-14 items-center gap-4 px-4">
       <div className="flex items-center gap-2 flex-1">
         <LogoNav />
       </div>

@@ -6,6 +6,7 @@ import { SearchLink } from "@/app/layout/components/nav/SearchLink";
 import { DesktopNavItem } from "@/app/layout/components/nav/DesktopNavItem";
 import { mainNavItems } from "@/app/layout/helpers/nav-config";
 import { getOrbitSteps } from "@/lib/nav/get-orbit-steps";
+import { getNavSectionPath } from "@/lib/nav/get-nav-section-path";
 
 /** Distance between two slots on the ring (px) — a 44px circle plus breathing room. */
 const ORBIT_GAP = 54;
@@ -14,8 +15,10 @@ const ACTIVE_CLEARANCE = 10;
 /** The ring's box: every slot from the far left to the far right, plus the active clearance. */
 const RING_WIDTH = (mainNavItems.length - 1) * ORBIT_GAP + 56 + ACTIVE_CLEARANCE * 2;
 
-function activeIndexFor(pathname: string | null): number {
-  if (pathname === null) return 0;
+function activeIndexFor(rawPathname: string | null): number {
+  if (rawPathname === null) return 0;
+  // A page without its own tab takes its parent section's (`/quran` → مدونتي).
+  const pathname = getNavSectionPath(rawPathname);
   // Home matches the exact root only; others match their path prefix (e.g. /clients/[slug]).
   const i = mainNavItems.findIndex((item) => (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)));
   return Math.max(0, i);

@@ -1,56 +1,15 @@
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { IconFileQuestion, IconHome, IconFolder } from "@/lib/icons";
-import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { SiteShell } from "@/app/layout/components/SiteShell";
+import { NotFoundContent } from "@/components/shared/not-found/NotFoundContent";
 
 /**
- * The ONE not-found for the whole app: unmatched URLs and every notFound() call
- * (modonty pages and partner slugs alike) land here, rendered inside the root layout —
- * so it mounts modonty's shell itself; the root layout carries no chrome.
+ * The not-found for URLs that match NO route. The root layout carries no chrome, so this one
+ * mounts modonty's shell itself. A `notFound()` thrown from a modonty page is caught earlier, by
+ * `app/(site)/not-found.tsx`, which already sits inside the shell.
  */
 export default function GlobalNotFound() {
   return (
     <SiteShell>
-    <div className="container mx-auto max-w-[1128px] px-4 py-16">
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <IconFileQuestion className="h-16 w-16 text-muted-foreground" />
-            </div>
-            <CardTitle className="text-3xl">الصفحة غير موجودة</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-6">
-            <p className="text-muted-foreground text-lg">
-              عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              يرجى التحقق من الرابط أو العودة إلى الصفحة الرئيسية.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Link href="/">
-                <Button variant="default" className="gap-2">
-                  <IconHome className="h-4 w-4" />
-                  الصفحة الرئيسية
-                </Button>
-              </Link>
-              <Link href="/categories">
-                <Button variant="outline" className="gap-2">
-                  <IconFolder className="h-4 w-4" />
-                  الفئات
-                </Button>
-              </Link>
-              <Link href="/clients">
-                <Button variant="ghost" className="gap-2">
-                  <ModontyPartnerMark className="h-4 w-4" />
-                  الشركاء
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-    </div>
+      <NotFoundContent />
     </SiteShell>
   );
 }

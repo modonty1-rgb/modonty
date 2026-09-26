@@ -16,7 +16,7 @@ import {
 import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { cn } from "@/lib/utils";
 
-import { hushOtherAudio } from "../../helpers/hush-other-audio";
+import { hushOtherAudio } from "@/lib/audio/hush-other-audio";
 import type { AudioArticle } from "../../data/get-audio-articles";
 
 /** أشكال العدد (واحد/اثنان/جمع) تصل جاهزة من `messages/ar.json` عبر الصفحة — لا نصّ في العميل. */

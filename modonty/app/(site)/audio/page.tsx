@@ -7,32 +7,21 @@ import { getContentPageRow } from "@/lib/seo/get-content-page-row";
 import { messages } from "@/lib/i18n/messages";
 import { IconVolume2 } from "@/lib/icons";
 
-import { ResizableTwoColumnLayout } from "@modonty/shared/components/column-layout/ResizableTwoColumnLayout";
-
-import { AudioTabs, AudioTabBar, AudioPanel } from "./components/audio-tabs/AudioTabs";
 import { ListenQueue } from "./components/listen-queue/ListenQueue";
-import { QuranPlayer } from "./components/quran-player/QuranPlayer";
 import { getAudioArticles } from "./data/get-audio-articles";
 
 /**
- * Through the shared builder like every other public page.
+ * The spoken articles, and only them. Until 26 Sep 2026 this page also carried the whole
+ * mushaf as its first tab; the recitation moved to `/quran` (Khalid: «افصل القرآن براوت مستقل
+ * بذاته»), so the two-column shell and the phone tab switch that sat between them are gone.
  *
- * The `noindex` that used to sit here was correct while the page was an empty state — an empty
- * page in the index earns a thin-content mark that outlives the emptiness. It is wrong now: the
- * page carries the complete mushaf, 114 surahs by twenty reciters, which is the most searched
- * subject on this whole site in Saudi Arabia and Egypt. Keeping it hidden was pure waste.
- *
- * The title and description were about something else entirely — «النسخ الصوتية من المقالات …
- * قيد التجهيز» — so anyone searching for a recitation could never have found us. They name the
- * recitation first now, because that is what the page actually is.
+ * The page's admin row (`/modonty/pages/audio`) still titles it after the Quran on
+ * `modonty_dev` — «استمع للقرآن الكريم كاملاً…» — and the row wins over any fallback here, so
+ * that title has to be rewritten in the admin; code cannot fix it without overriding the row.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  // The copy now comes from the page's own row in the admin (`/modonty/pages/audio`); the
-  // literals below are only the seed for a row that has not been saved yet.
   return buildMetadataFromPageRow(await getContentPageRow("audio"), {
     path: "/audio",
-    // لا احتياط للعنوان: صفّ `/audio` يحمله، والفارغ غداً يجب أن يُرى لا أن يُغطّى.
-    // الوصف يبقى مؤقّتاً — صفّ هذه الصفحة بلا وصف اليوم (مقيس)، فحذفه يُسقط وسماً حيّاً.
     fallbackDescription: messages.seo.audio.description,
   });
 }
@@ -40,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AudioArticlesPage() {
   const articles = await getAudioArticles();
   // كل نصّ عربي يراه الزائر في هذه الصفحة يمرّ على messages/ar.json ويُقرأ هنا (سيرفر)
-  // ثم يُمرَّر للمكوّنين العميلين كخصائص — صفر جافاسكربت إضافي للرسائل.
+  // ثم يُمرَّر للمكوّن العميل كخصائص — صفر جافاسكربت إضافي للرسائل.
   const t = messages.audio;
 
   return (
@@ -56,71 +45,29 @@ export default async function AudioArticlesPage() {
           ),
         }}
       />
-
-      {/* The site chrome is sticky and overlays the document on phones. Unlike the other
-          listing pages, this page starts with controls rather than a hero, so it had no natural
-          breathing room and the controls painted through the orbit strip at the top. */}
-      <div className="pt-[var(--sticky-chrome)] lg:pt-0">
+      {/* No `--sticky-chrome` top padding any more: the header is `sticky` (it holds its own
+          space), and the 135px that variable assumes was the icon strip, now the bottom bar. */}
+      <div>
         <Breadcrumb
           items={[
             { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
             { label: t.breadcrumbLabel },
           ]}
         />
-
-      {/* Two columns on desktop, not two tabs (Khalid, 20 Aug): the recitation is the page, and the
-          articles sit beside it. The shared shell rather than a hand-rolled grid — same container,
-          same gaps as every other two-column page on the site.
-          On a phone the same two columns stack, and the second one landed 25 screens down — so
-          `AudioTabs` puts a switch between them there and ONLY there. See its own comment. */}
-        <AudioTabs>
-        <ResizableTwoColumnLayout
-          header={
-            <>
-              {/* «اسمع» rather than «استمع» — nearer to how the word is actually said, and it carries
-                  both halves of the page without flattering either. No single clever line tries to
-                  cover recitation and marketing articles at once: one would cheapen the first or
-                  inflate the second. A neutral verb, then a line that names them separately. */}
-              {/* Off the screen, not out of the page (Khalid, 22 Aug): the breadcrumb above already
-                  says «استمع» and the tabs below name both halves, so drawing it a third time was
-                  a wasted 38px. The tag stays — this page is meant to rank for recitation searches,
-                  and an h1-less page hands that away for nothing. */}
-              <h1 className="sr-only">{t.srTitle}</h1>
-              {/* On a phone the two buttons directly below say the same thing in four words, and
-                  this line cost 90px of a 664px screen to repeat them. */}
-              <p className="mt-2 text-muted-foreground max-md:hidden">{t.intro}</p>
-              {/* «متعة الروح» غيّرت القاعدة: التبويبان صارا يقولان وش تكسب، لا وش نوع المحتوى.
-                  «مقالات مدونتي» كان تصنيفاً واقفاً جنب وعد — والروح يقابلها العقل. */}
-              <AudioTabBar labels={t.tabs} />
-            </>
-          }
-          main={
-            <AudioPanel name="quran">
-              <QuranPlayer labels={t.player} />
-            </AudioPanel>
-          }
-          rail={
-            <AudioPanel
-              name="articles"
-              as="aside"
-              className="w-full shrink-0"
-              label={t.articlesRail.heading}
-            >
-              <div className="space-y-3">
-                <h2 className="text-xs font-semibold uppercase text-muted-foreground">{t.articlesRail.heading}</h2>
-                {articles.length === 0 ? (
-                  <p className="flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
-                    <IconVolume2 className="mt-0.5 size-4 shrink-0" aria-hidden />
-                    {t.articlesRail.empty}
-                  </p>
-                ) : (
-                  <ListenQueue articles={articles} compact labels={t.queue} />
-                )}
-              </div>
-            </AudioPanel>
-          }
-        />
-        </AudioTabs>
+        <div className="container mx-auto max-w-[1128px] px-3 py-3 sm:px-4 sm:py-6">
+          <div className="mx-auto max-w-3xl">
+            <h1 className="text-xl font-bold text-foreground">{t.articlesRail.heading}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">{t.intro}</p>
+            {articles.length === 0 ? (
+              <p className="mt-6 flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-4 text-sm leading-relaxed text-muted-foreground">
+                <IconVolume2 className="mt-0.5 size-4 shrink-0" aria-hidden />
+                {t.articlesRail.empty}
+              </p>
+            ) : (
+              <ListenQueue articles={articles} labels={t.queue} />
+            )}
+          </div>
+        </div>
       </div>
     </>
   );

@@ -166,9 +166,14 @@ export default async function AccountsPage() {
           <AccountLink
             id="logo"
             href="/"
-            className={`relative block size-[clamp(4.75rem,3.6rem+5.6vw,6rem)] overflow-hidden rounded-full border-4 border-background bg-white shadow-md ring-1 ring-border ${hero ? "-mt-[clamp(2.375rem,1.8rem+2.8vw,3rem)]" : "mt-6"}`}
+            // A capsule, not a circle (Khalid, 26 Sep 2026: «اللوجو دائري والكلمة طويلة… نكبّر
+            // الشعار»). The logo is the whole wordmark at 4.2 : 1 (96×23); in a 79px circle with
+            // 12px padding it rendered 13px tall. The capsule is sized to the word — 56–64px tall,
+            // 176–208px wide — so the mark stands ~30px tall and reads at a glance. `sizes` rises
+            // with it, or the browser would keep fetching the 96px file and blur it.
+            className={`relative block h-[clamp(3.5rem,3rem+2.5vw,4rem)] w-[clamp(11rem,9.5rem+7vw,13rem)] overflow-hidden rounded-full border-4 border-background bg-white shadow-md ring-1 ring-border ${hero ? "-mt-[clamp(1.75rem,1.5rem+1.25vw,2rem)]" : "mt-6"}`}
           >
-            <OptimizedImage media={asMedia(LOGO_URL)} alt="مدونتي — الصفحة الرئيسية" fill sizes="96px" className="object-contain p-3" preload={!hero} loading="eager" />
+            <OptimizedImage media={asMedia(LOGO_URL)} alt="مدونتي — الصفحة الرئيسية" fill sizes="208px" className="object-contain px-5 py-2.5" preload={!hero} loading="eager" />
           </AccountLink>
           <h1 className="mt-3 inline-flex items-center gap-1.5 text-[clamp(1.25rem,0.85rem+2vw,1.625rem)] font-black leading-tight">
             {name}
