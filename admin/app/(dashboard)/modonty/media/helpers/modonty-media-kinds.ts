@@ -14,6 +14,8 @@ export const MODONTY_MEDIA_KINDS = [
   // View only — article images upload from Articles › Media (see modonty-upload.tsx).
   { value: "articles", label: "Articles", role: null },
   { value: "brand", label: "Brand", role: "LOGO" },
+  // Sector page heroes (27 Sep 2026). The phone image uploads from the sector's own screen.
+  { value: "sectors", label: "Sector pages", role: "SECTOR_HERO" },
   { value: "gallery", label: "Gallery", role: null },
   { value: "reels", label: "Reels", role: null },
 ] as const satisfies ReadonlyArray<{ value: string; label: string; role: MediaType | null }>;
@@ -34,6 +36,14 @@ export function modontyKindWhere(kind: ModontyMediaKind, siteUrls: string[]): Pr
           { logoClients: { some: {} } },
           { heroImageClients: { some: {} } },
           { mobileHeroImageClients: { some: {} } },
+        ],
+      };
+    case "sectors":
+      return {
+        OR: [
+          { type: { in: ["SECTOR_HERO", "SECTOR_HERO_MOBILE"] } },
+          { sectorHeroImages: { some: {} } },
+          { sectorHeroMobileImages: { some: {} } },
         ],
       };
     case "gallery":

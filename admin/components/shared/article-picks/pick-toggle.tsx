@@ -6,11 +6,18 @@ import { Loader2 } from "lucide-react";
 
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { setHomepagePick } from "../actions";
+import type { PickResult } from "./picks-panel";
 
-/** زرُّ «في الرئيسية» لكلّ مقال — يتبدّل فوراً ويُرجَع إن رفض الخادم. */
-/** `full`: اكتملت الخانات — «اختر» يُعطَّل ويقول لماذا، والمختارُ يبقى قابلاً للإزالة. */
-export function PickToggle({ articleId, picked, full = false }: { articleId: string; picked: boolean; full?: boolean }) {
+interface PickToggleProps {
+  articleId: string;
+  picked: boolean;
+  /** اكتملت الخانات — «اختر» يُعطَّل ويقول لماذا، والمختارُ يبقى قابلاً للإزالة. */
+  full?: boolean;
+  onPick: (input: { articleId: string; picked: boolean }) => Promise<PickResult>;
+}
+
+/** زرُّ «مختار» لكلّ مقال — يتبدّل فوراً ويُرجَع إن رفض الخادم. */
+export function PickToggle({ articleId, picked, full = false, onPick }: PickToggleProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -19,7 +26,7 @@ export function PickToggle({ articleId, picked, full = false }: { articleId: str
   const toggle = () =>
     startTransition(async () => {
       setOptimistic(!optimistic);
-      const res = await setHomepagePick({ articleId, picked: !optimistic });
+      const res = await onPick({ articleId, picked: !optimistic });
       if (!res.success) toast({ title: "لم يُحفظ", description: res.error, variant: "destructive" });
       router.refresh();
     });
@@ -29,7 +36,7 @@ export function PickToggle({ articleId, picked, full = false }: { articleId: str
       type="button"
       onClick={toggle}
       disabled={isPending || (full && !optimistic)}
-      title={full && !optimistic ? "اكتملت الخانات العشر — أزل مقالاً أوّلاً" : undefined}
+      title={full && !optimistic ? "اكتملت الخانات — أزل مقالاً أوّلاً" : undefined}
       aria-pressed={optimistic}
       aria-busy={isPending}
       className={cn(

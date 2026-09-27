@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { passwordField } from "@/lib/auth/password-rule";
+import { ALERT_TOPIC_IDS } from "@/lib/users/alert-topics";
 
 export const registerSchema = z.object({
   // Optional — collected later in the user profile, or derived from Google.
@@ -24,6 +25,9 @@ export const registerSchema = z.object({
    * يبدأ **فارغاً**: المربّعُ المعبّأ سلفاً لا يُعدّ قبولاً في أيّ معيارٍ للخصوصيّة.
    */
   marketingConsent: z.boolean().optional().default(false),
+
+  /** The topic the reader ticked «نبّهني» for, when a page sent them here with `?alert=<id>`. */
+  alertTopic: z.enum(ALERT_TOPIC_IDS).optional(),
 });
 
 export type RegisterFormData = z.infer<typeof registerSchema>;

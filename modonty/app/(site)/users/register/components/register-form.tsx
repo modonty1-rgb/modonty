@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import { registerSchema, type RegisterFormData } from "../helpers/schemas/regist
 import { registerUser } from "../actions/register-actions";
 import { trackSignupClient } from "@/app/(site)/users/register/helpers/track-signup-client";
 import { PASSWORD_HINT } from "@/lib/auth/password-rule";
+import { ALERT_TOPICS } from "@/lib/users/alert-topics";
 
 /**
  * **أيقوناتُ السجلّ لا الإيموجي** (خالد ٢٠ سبتمبر ٢٠٢٦: «استخدم البراندينج أيكونز»).
@@ -31,6 +32,15 @@ const BENEFITS = [
 
 export function RegisterForm() {
   const router = useRouter();
+  // Where to land after signing up: a page that sent the reader here (`?callbackUrl=`), internal
+  // paths only — `//evil.com` would be an open redirect. Without one, the home page as before.
+  const params = useSearchParams();
+  const requested = params.get("callbackUrl");
+  const callbackUrl = requested && requested.startsWith("/") && !requested.startsWith("//") ? requested : "/";
+  // A page that invites readers to an alert sends them with `?alert=<id>`: one box, and ticking it
+  // is the whole subscription (Khalid, 27 Sep 2026: «حيسجل ويدينا التشيك بوكس خلاص»).
+  const alertTopic = ALERT_TOPICS.find((t) => t.id === params.get("alert"));
+  const [alertOn, setAlertOn] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +63,7 @@ export function RegisterForm() {
     setError(null);
     trackSignupClient("start", "google", "page");
     try {
-      await signIn("google", { callbackUrl: "/" });
+      await signIn("google", { callbackUrl });
     } catch {
       setError("تعذّر التسجيل بحساب Google. حاول مرة أخرى.");
       setIsSubmitting(false);
@@ -66,7 +76,7 @@ export function RegisterForm() {
     trackSignupClient("start", "email", "page");
 
     try {
-      const result = await registerUser(data);
+      const result = await registerUser({ ...data, alertTopic: alertOn ? alertTopic?.id : undefined });
 
       if (!result.success) {
         setError(result.error || "فشل إنشاء الحساب");
@@ -81,7 +91,7 @@ export function RegisterForm() {
       });
 
       if (signInResult?.ok) {
-        router.push("/");
+        router.push(callbackUrl);
         router.refresh();
       } else {
         setError("تم إنشاء الحساب بنجاح، لكن فشل تسجيل الدخول. يرجى تسجيل الدخول يدوياً.");
@@ -199,6 +209,22 @@ export function RegisterForm() {
               * «Clicking the checkbox did not change its state». والربطُ بـ`id`
               * يعطي نفسَ اتّساع النقر بلا هذا التضاعف.
               */}
+            {alertTopic && (
+              <div className="flex items-start gap-2.5 rounded-lg border border-primary/40 bg-primary/5 p-3">
+                <input
+                  id="alertConsent"
+                  type="checkbox"
+                  checked={alertOn}
+                  onChange={(e) => setAlertOn(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+                  disabled={isSubmitting}
+                />
+                <label htmlFor="alertConsent" className="cursor-pointer text-sm font-medium leading-relaxed">
+                  {alertTopic.consent}
+                </label>
+              </div>
+            )}
+
             <div className="flex items-start gap-2.5 rounded-lg border border-border/60 bg-muted/30 p-3">
               <input
                 id="marketingConsent"
@@ -236,7 +262,7 @@ export function RegisterForm() {
           <div className="text-center text-sm">
             <span className="text-muted-foreground">لديك حساب بالفعل؟ </span>
             <Link
-              href="/users/login"
+              href={callbackUrl === "/" ? "/users/login" : `/users/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
               className="text-primary hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-2"
             >
               تسجيل الدخول

@@ -1,3 +1,4 @@
+import { getPageConfig } from "./page-config";
 /**
  * Build meta tags object from a page-like object. Shared by generate-modonty-page-seo and get-live-preview-seo.
  */
@@ -253,7 +254,11 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
   const ogImageType = defaultOgImageType?.trim() || FALLBACK_OG_IMAGE_TYPE;
   const charsetValue = defaultCharset?.trim() || FALLBACK_CHARSET;
 
-  const canonicalUrl = ensureAbsoluteUrl(pageLike.canonicalUrl, siteUrl) || absoluteUrl(`/${pageLike.slug}`, siteUrl);
+  // The page's real path (see generate-modonty-page-jsonld.ts) — `/${slug}` was wrong for
+  // /legal/* and /modonty/<sector>.
+  const canonicalUrl =
+    ensureAbsoluteUrl(pageLike.canonicalUrl, siteUrl) ||
+    absoluteUrl(getPageConfig(pageLike.slug)?.modontyPath ?? `/${pageLike.slug}`, siteUrl);
   const ogUrlResolved = pageLike.ogUrl?.trim() ? ensureAbsoluteUrl(pageLike.ogUrl, siteUrl) : null;
   const openGraphUrl = ogUrlResolved || canonicalUrl;
 

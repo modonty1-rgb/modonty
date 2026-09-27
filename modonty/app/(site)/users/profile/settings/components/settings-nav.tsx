@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { IconUser, IconShield, IconSettings } from "@/lib/icons";
+import { IconUser, IconShield, IconSettings, IconBell } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 // Three sections only — the reader-account standard (Khalid 2026-08-20, best-practice
@@ -11,6 +11,9 @@ import { cn } from "@/lib/utils";
 // setting that promises and does nothing is what scares a subscriber off.
 export const SETTINGS_SECTIONS = [
   { id: "profile", label: "الملف الشخصي", icon: IconUser },
+  // «التنبيهات» is back (27 Sep 2026) with a real reader: the football prediction alerts. It was
+  // removed on 20 Aug because nothing read its toggles; these are read by the football page.
+  { id: "alerts", label: "التنبيهات", icon: IconBell },
   { id: "security", label: "الأمان", icon: IconShield },
   // IconSettings, not the trash can: the nav icon is the section's face, and a trash icon
   // reads as «delete my account» before the reader even opens it (Khalid 2026-08-21).

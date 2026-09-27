@@ -4,8 +4,9 @@ import { Search } from "lucide-react";
 import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
 import { HOMEPAGE_ARTICLE_ORDER, HOMEPAGE_PICK_LIMIT } from "@modonty/shared/lib/articles/homepage-article-order";
-import { HomepagePanel } from "./components/homepage-panel";
-import { PickToggle } from "./components/pick-toggle";
+import { PicksPanel } from "@/components/shared/article-picks/picks-panel";
+import { PickToggle } from "@/components/shared/article-picks/pick-toggle";
+import { reorderHomepagePicks, setHomepagePick } from "./actions";
 import { IndustryFilter } from "./components/industry-filter";
 
 export const metadata = { title: "Homepage Picks" };
@@ -42,7 +43,7 @@ export default async function HomepagePicksPage({
   });
 
   const industryOf = (a: (typeof all)[number]) => a.client?.industry?.name ?? "بلا مجال";
-  const slot = (a: (typeof all)[number]) => ({ id: a.id, title: a.title, industry: industryOf(a) });
+  const slot = (a: (typeof all)[number]) => ({ id: a.id, title: a.title, meta: industryOf(a) });
   const picks = all.filter((a) => a.featured);
   const full = picks.length >= HOMEPAGE_PICK_LIMIT;
   const industries = [...new Map(all.filter((a) => a.client?.industry).map((a) => [a.client!.industry!.id, a.client!.industry!.name])).entries()];
@@ -73,7 +74,7 @@ export default async function HomepagePicksPage({
 
       <div className="grid items-start gap-4 lg:grid-cols-[340px_minmax(0,1fr)]">
         <div className="lg:sticky lg:top-4">
-          <HomepagePanel picks={picks.map(slot)} slots={HOMEPAGE_PICK_LIMIT} />
+          <PicksPanel title="الرئيسية" picks={picks.map(slot)} slots={HOMEPAGE_PICK_LIMIT} onPick={setHomepagePick} onReorder={reorderHomepagePicks} />
         </div>
 
         <section aria-label="المكتبة" className="min-w-0 space-y-2">
@@ -111,7 +112,7 @@ export default async function HomepagePicksPage({
                       {a.datePublished ? ` · ${dateFmt.format(a.datePublished)}` : ""}
                     </p>
                   </div>
-                  <PickToggle articleId={a.id} picked={a.featured} full={full} />
+                  <PickToggle articleId={a.id} picked={a.featured} full={full} onPick={setHomepagePick} />
                 </li>
               ))}
             </ul>

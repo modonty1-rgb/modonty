@@ -33,6 +33,35 @@ export interface MediaSpec {
 export const RATIO_TOLERANCE = 0.02;
 
 export const MEDIA_SPECS: Record<MediaType, MediaSpec> = {
+  // Sector page heroes (27 Sep 2026) — `SectorPage.heroMedia` / `heroMobileMedia`. The headline and
+  // button are live text over the image, never baked in (Arabic in generated images comes out wrong,
+  // and Google cannot read it).
+  SECTOR_HERO: {
+    label: "Sector Hero — Desktop",
+    hint: "صورة أعلى صفحة القطاع على الديسكتوب",
+    ratio: 8 / 3,
+    ratioLabel: "8:3",
+    width: 2048,
+    height: 768,
+    minWidth: 1600,
+    minHeight: 600,
+    formats: "WebP / JPG",
+    transparent: false,
+    note: "العنوان والزر يُكتبان فوقها يميناً — اترك النصف الأيمن هادئاً وبلا كتابة.",
+  },
+  SECTOR_HERO_MOBILE: {
+    label: "Sector Hero — Mobile",
+    hint: "صورة أعلى صفحة القطاع على الجوّال",
+    ratio: 1,
+    ratioLabel: "1:1",
+    width: 1080,
+    height: 1080,
+    minWidth: 800,
+    minHeight: 800,
+    formats: "WebP / JPG",
+    transparent: false,
+    note: "العنوان والزر يُكتبان فوقها أعلى الصورة — اترك النصف العلوي هادئاً وبلا كتابة.",
+  },
   POST: {
     label: "Article Image",
     hint: "صورة المقال الرئيسية",

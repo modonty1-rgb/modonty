@@ -2,6 +2,7 @@
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
+import { LIVE_SECTORS } from "@modonty/shared/lib/sectors/live-sectors";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { SITE_URL } from "@/constants";
 
@@ -296,6 +297,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: new URL("/articles", baseUrl).href, lastModified: lastArticleModified },
     { url: new URL("/trending", baseUrl).href, lastModified: lastArticleModified },
     { url: new URL("/modonty", baseUrl).href, lastModified: lastArticleModified },
+    // Live sector pages (/modonty/football …) — from the one list admin and modonty share.
+    ...LIVE_SECTORS.map((s) => ({ url: new URL(`/modonty/${s.slug}`, baseUrl).href })),
     { url: new URL("/categories", baseUrl).href, lastModified: lastCategoryModified },
     { url: new URL("/clients", baseUrl).href, lastModified: lastClientModified },
     { url: new URL("/tags", baseUrl).href, lastModified: lastTagModified },

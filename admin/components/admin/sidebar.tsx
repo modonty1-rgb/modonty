@@ -18,7 +18,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import {
+import { Trophy,
   Archive,
   BookUser,
   CalendarClock,
@@ -92,6 +92,7 @@ import {
   AtSign,
   Star,
 } from "lucide-react";
+import { LIVE_SECTORS } from "@modonty/shared/lib/sectors/live-sectors";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
@@ -340,6 +341,13 @@ const rawMenuGroups: MenuGroup[] = [
           // Link-in-bio page — its SEO, share/hero image and the social accounts it lists.
           { icon: AtSign, label: "Accounts", href: "/modonty/pages/accounts" },
         ],
+      },
+      // Modonty's live sector pages (/modonty/football …), one entry each — every control for a
+      // sector page lives on its own screen here, not scattered under Articles (Khalid, 27 Sep 2026:
+      // «جوا السايد بار تبع مدونتي تكون فيها… السيكتورز… والكنترول يكون من هناك»).
+      {
+        subMenu: "Sectors",
+        items: LIVE_SECTORS.map((s) => ({ icon: Trophy, label: s.adminLabel, href: `/modonty/sectors/${s.slug}` })),
       },
       {
         subMenu: "Master Pages",

@@ -2872,23 +2872,18 @@ UPSTASH_REDIS_REST_URL · UPSTASH_REDIS_REST_TOKEN</pre>
 <article class="card" data-id="PAY-F3" data-sev="critical" data-who="c" data-tab="open" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
   <div class="hd"><span class="id">PAY-F3</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-F3">⧉</button></div>
   
-  <div class="t">pay.modonty.com — النطاق على Vercel، ورابط الويب هوك عند المزوّد، وروابط العودة من البيئة</div>
-  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 34 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-open">مفتوح</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>١١ سبتمبر ٢٠٢٦</span></div>
+  <div class="t">N-Genius إلى الحي — مؤجَّل حتى تصل بيانات الحساب الحي من الشركة</div>
+  <div class="meta"><span class="tag step-tag" title="ترتيب إجباري — لا تبدأ هذه قبل ما قبلها">الخطوة 34 من 43</span><span class="tag agent">🤖 وكيل Sonnet</span><span class="tag tab-open">مفتوح</span><span class="tag">حرج</span><span class="tag app-modonty">modonty</span><span class="tag">جبر سيو</span><span>٢٧ سبتمبر ٢٠٢٦</span></div>
   
   
   
   
-  <p class="sum">العمل: ١ مشروع Vercel جديد على مجلّد payment/ في نفس المستودع installCommand يُفلتر بـ --filter @modonty/payment... ٢ ربط pay.modonty.com به (خالد أو بإذنه) — بعد التحقّق أن النطاق مسجَّل ٣ PAY_PUBLIC_URL في بيئة الحزمة —</p>
+  <p class="sum">مؤجَّل (خالد ٢٧ سبتمبر): ننتظر بيانات الحساب الحي من N-Genius. تمارا تبقى كما هي حتى تصل بياناتها. · مقيس حيّاً ٢٧ سبتمبر: pay.modonty.com/sa/checkout يحمّل ⇒ https://paypage.sandbox.ksa.ngenius-payments.com/hosted-sessions/sdk.</p>
   
-  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>⚠ أُعيدت كتابتها في <code>PAY-S3</code> (١٤ سبتمبر ٢٠٢٦):</b> كانت تقول إن <code>/pay</code> يعيش داخل تطبيق مدونتي، فيُربط النطاق الفرعي بالمشروع نفسه ويُعاد كتابة جذره. لم يعد ذلك صحيحاً: الدفع حزمة مستقلّة، ومدونتي فيها صفر سطر دفع.</p>
-<p><b>العمل:</b></p>
-<pre>١ مشروع Vercel جديد على مجلّد payment/ في نفس المستودع
-   installCommand يُفلتر بـ --filter @modonty/payment...
-٢ ربط pay.modonty.com به (خالد أو بإذنه) — بعد التحقّق أن النطاق مسجَّل
-٣ PAY_PUBLIC_URL في بيئة الحزمة — كل رابط عودة وإشعار يُبنى منه، لا ثابت في كود
-٤ رابط الويبهوك عند N-Genius وتمارا ⇒ https://pay.modonty.com/api/webhooks/…
-   (المسار نفسه لم يتغيّر — النطاق وحده. وهذا ما وفّره إلغاء basePath في PAY-S2.)</pre>
-<p><b>يُغلق بـ:</b> <code>pay.modonty.com/pay/sa</code> ⇒ ٢٠٠ · و<code>POST</code> بلا توقيع على عنوان الويبهوك العام ⇒ ٤٠١ (<code>PAY-S6</code>).</p></div></details>
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>مؤجَّل (خالد ٢٧ سبتمبر):</b> ننتظر بيانات الحساب الحي من N-Genius. تمارا تبقى كما هي حتى تصل بياناتها.</p><p><b>مقيس حيّاً ٢٧ سبتمبر:</b></p><pre>pay.modonty.com/sa/checkout يحمّل ⇒ https://paypage.sandbox.ksa.ngenius-payments.com/hosted-sessions/sdk.js
+Vercel (modonty-payment · production): NEXT_PUBLIC_NGENIUS_SDK_URL غير موجود · لا TAMARA_*
+POST /api/checkout/tamara ⇒ 503 {"error":"tamara-not-configured"}
+قاعدة الإنتاج: payment_webhook_events = 0</pre><p><b>الكود:</b> مطابق لجبر ومحسَّن (حارس المبلغ · مهلة ١٢ث · orderReference). لا عائق كود.</p><p><b>عند وصول البيانات:</b></p><ol><li>في Vercel (إنتاج): NGENIUS_API_BASE · NGENIUS_TOKEN_URL · NGENIUS_API_KEY · NGENIUS_OUTLET_ID · NEXT_PUBLIC_NGENIUS_HOSTED_SESSION_API_KEY · <b>NEXT_PUBLIC_NGENIUS_SDK_URL</b> (جديد) · NGENIUS_WEBHOOK_SECRET.</li><li>تسجيل الويبهوك في بوابة N-Genius الحية: <code>https://pay.modonty.com/api/webhooks/n-genius</code> + ترويسة <code>x-ngenius-webhook-secret</code>.</li><li>إعادة نشر (NEXT_PUBLIC تُكتب وقت البناء).</li><li>دفعة صغيرة ⇒ الطلب PAID · حدث في payment_webhook_events · المبلغ مطابق.</li></ol><p><b>تعديلان مقترحان بانتظار موافقة خالد:</b> (أ) فشلٌ صريح في الإنتاج عند غياب متغيّر بدل السقوط للساندبوكس — <code>payment/lib/ngenius/get-ngenius-access-token.ts:10</code> · <code>CardField.tsx:65</code>. (ب) حذف السقوط إلى <code>reference</code> — <code>payment/app/api/checkout/create-payment/route.ts:227</code>.</p></div></details>
 </article>
 <article class="card" data-id="PAY-F4" data-sev="critical" data-who="c" data-tab="open" data-board="jbrseo" data-apps="modonty" data-agent="Sonnet" data-area="jbrseo">
   <div class="hd"><span class="id">PAY-F4</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند PAY-F4">⧉</button></div>

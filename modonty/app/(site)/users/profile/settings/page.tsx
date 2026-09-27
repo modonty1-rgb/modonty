@@ -18,6 +18,10 @@ const SecuritySettings = dynamic(
   () => import("./components/security-settings").then((m) => ({ default: m.SecuritySettings })),
   { ssr: false }
 );
+const AlertsSettings = dynamic(
+  () => import("./components/alerts-settings").then((m) => ({ default: m.AlertsSettings })),
+  { ssr: false }
+);
 const AccountSettings = dynamic(
   () => import("./components/account-settings").then((m) => ({ default: m.AccountSettings })),
   { ssr: false }
@@ -25,6 +29,7 @@ const AccountSettings = dynamic(
 
 const SECTION_BODIES: Record<(typeof SETTINGS_SECTIONS)[number]["id"], React.ComponentType> = {
   profile: ProfileSettings,
+  alerts: AlertsSettings,
   security: SecuritySettings,
   account: AccountSettings,
 };

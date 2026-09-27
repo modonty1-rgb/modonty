@@ -104,6 +104,8 @@ enum MediaType {
   GENERAL
   GALLERY // Client-page gallery image (ImageObject[])
   CLIENT_MINI // Client mini/card image (1200×630 · 1.91:1) — sidebar slider + article client card
+  SECTOR_HERO // Sector page hero on desktop (2048×768 · 8:3) — `SectorPage.heroMedia` (27 Sep 2026)
+  SECTOR_HERO_MOBILE // Sector page hero on phones (1080×1080 · 1:1) — `SectorPage.heroMobileMedia`
 }
 
 enum MediaScope {
@@ -209,6 +211,10 @@ model User {
 
   // Email notification preferences (USR-R3)
   notificationPreferences Json? // { commentReply: true, faqReply: true, newsletter: true }
+  /// الجوال بصيغة E.164 (+9665… · +201…) — لتنبيهات واتساب وSMS فقط، ولا يُطلب إلا لمن اختار إحداهما
+  /// (خالد ٢٧ سبتمبر ٢٠٢٦: البروفايل أساس ما سيُبنى عليه). يُكتب من قسم «التنبيهات» في الإعدادات
+  /// بعد `toE164`، والموافقة مختومة بتاريخها في `notificationPreferences.topics`.
+  phone                   String?
 
   // Links to clients (for client users)
   clientAccess String[] @db.ObjectId // Array of client IDs this user can access
@@ -1997,6 +2003,9 @@ model Article {
   /// ترتيبها»). يُكتب مع `featured: true` من أدمن /articles/homepage، ويُفرَّغ حين يُرفع الاختيار.
   /// `null` خارج الاختيارات. الرئيسيةُ: featured ↓ ثم هذا ↑ ثم الأحدث.
   featuredOrder Int?
+  /// Sector pages this article is picked for (`/modonty/football` …). Separate from `featured`,
+  /// which belongs to the homepage alone.
+  sectorPicks   SectorPick[]
   revisionNotes String? // Client's feedback when requesting changes (status=NEEDS_REVISION)
 
   /// متى وصل هذا المقال العميلَ أوّل مرّة — أي أوّل ما صارت حالته `AWAITING_APPROVAL`.
@@ -2322,6 +2331,8 @@ model Media {
   tagSocialImages     Tag[]      @relation("TagSocialImageMedia")
   industrySocialImages Industry[] @relation("IndustrySocialImageMedia")
   modontyHeroImages   Modonty[]  @relation("ModontyHeroImageMedia")
+  sectorHeroImages       SectorPage[] @relation("SectorHeroMedia")
+  sectorHeroMobileImages SectorPage[] @relation("SectorHeroMobileMedia")
   modontySocialImages Modonty[]  @relation("ModontySocialImageMedia")
 
   // ── Reels (merged 2026-08-05 — the `Reel` table is gone) ─────────────────
@@ -5236,4 +5247,64 @@ model AiPrompt {
 
   @@index([app])
   @@map("ai_prompts")
+}
+
+/// آخر نسخة جُلبت من مصدر خارجي — واحدة لكل مفتاح.
+///
+/// لماذا في القاعدة لا في كاش Next: `use cache` يعيش في ذاكرة كل نسخة سيرفر («Cache not
+/// persisting across requests or server restarts» — توثيق Next 16.3.4، use-cache-remote.md)،
+/// ومصادرنا بحدٍّ يومي: API-Football المجاني ١٠٠ طلب/يوم. فكل نسخة سيرفر تطلب لنفسها
+/// تستهلك الحصّة وتوقف الصفحة. هنا الحصّة تُحرس على مستوى الموقع كلّه: لا طلب للمصدر ما دام
+/// `fetchedAt` أحدث من عمر النسخة.
+///
+/// `key` يسمّي المصدر وما طُلب منه: `football:fixtures:2026-09-27` · `football:standings`.
+/// و`payload` هو الناتج بعد التنقية (دوري واحد لا ١١٥٥ مباراة)، لا ردّ المصدر الخام.
+model FeedSnapshot {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  key       String   @unique
+  payload   Json
+  fetchedAt DateTime
+  /// آخر فشلٍ في الجلب — يبقى الـpayload السابق معروضاً، ويُسجَّل السبب هنا.
+  lastError String?
+  updatedAt DateTime @updatedAt
+
+  @@map("feed_snapshots")
+}
+
+/// مقالٌ اختاره المحرّر لصفحة قطاع، بترتيبه (خالد ٢٧ سبتمبر ٢٠٢٦: «المفروض احنا من الادمن في صفحة
+/// الكورة نحدد المقالات اللي تطلع فيها»).
+///
+/// لماذا موديلٌ لا حقلان على المقال كاختيارات الرئيسية (`featured` + `featuredOrder`): تلك خانةٌ
+/// واحدة لصفحةٍ واحدة. القطاعات ستّ، والمقال قد يُختار لأكثر من واحد بترتيبٍ مختلف في كلٍّ.
+/// `sector` هو slug الصفحة (`football` …) من `shared/lib/sectors/live-sectors.ts`.
+model SectorPick {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  sector    String
+  articleId String   @db.ObjectId
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  /// ١ يتصدّر. يُكتب مع كل اختيار، فلا يبقى مختارٌ بلا رقم.
+  order     Int
+  createdAt DateTime @default(now())
+
+  @@unique([sector, articleId])
+  @@index([sector, order])
+  @@map("sector_picks")
+}
+
+/// محتوى صفحة القطاع الظاهر فوق — الهيرو: صورتا الديسكتوب والجوّال من ميديا مدونتي، والعنوان والسطر
+/// تحته. كلّه من الأدمن (Modonty › Sectors › <القطاع>)، لا في الكود (خالد ٢٧ سبتمبر ٢٠٢٦: «نرفع الميديا
+/// لايبراري ونظبط باقي الأمور كاملة… ما نشتغل هارد كودد»). السيو يبقى في `Modonty` بنفس الـslug.
+model SectorPage {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  /// slug القطاع من `shared/lib/sectors/live-sectors.ts` (football …)
+  sector            String   @unique
+  heroTitle         String?
+  heroSubtitle      String?
+  heroMediaId       String?  @db.ObjectId
+  heroMedia         Media?   @relation("SectorHeroMedia", fields: [heroMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  heroMobileMediaId String?  @db.ObjectId
+  heroMobileMedia   Media?   @relation("SectorHeroMobileMedia", fields: [heroMobileMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updatedAt         DateTime @updatedAt
+
+  @@map("sector_pages")
 }

@@ -5,7 +5,7 @@ import { PAGE_CONFIGS } from "../../setting/helpers/page-config";
 import { getPage } from "../../setting/actions/page-actions";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { getCoreClientId } from "@modonty/shared/lib/core-client";
-import { PageFormWrapper } from "./page-form-wrapper";
+import { PageFormWrapper } from "../../components/page-form-wrapper";
 import { SocialLinksForm } from "./components/social-links-form";
 
 // The Accounts page carries the social-links form, whose save runs the settings cascade via

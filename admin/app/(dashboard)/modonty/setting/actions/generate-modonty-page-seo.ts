@@ -4,6 +4,7 @@ import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { db } from "@/lib/db";
 import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { getAllSettings, getSameAsFromSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { generateModontyPageJsonLd, type ModontySiteConfig } from "../helpers/generate-modonty-page-jsonld";
 import { validateModontyPageJsonLdComplete } from "../helpers/modonty-jsonld-validator";
@@ -182,6 +183,9 @@ export async function generateModontyPageSEO(slug: string) {
     });
 
     revalidatePath("/modonty/pages", "layout");
+    revalidatePath("/modonty/sectors", "layout");
+    // Same as updatePage: clear the «pages» tag the page's row is cached under, not only its path.
+    await revalidateModontyTag("pages", undefined, { immediate: true }).catch(() => {});
     const pageConfig = getPageConfig(slug);
     if (pageConfig?.modontyPath) {
       const modontyUrl = requireSiteUrl(settings.siteUrl);

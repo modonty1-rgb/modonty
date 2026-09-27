@@ -2,7 +2,7 @@
 
 import { useSession } from "@/components/providers/SessionContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { RegisterForm } from "./components/register-form";
 
 export default function RegisterPage() {
@@ -23,5 +23,11 @@ export default function RegisterPage() {
     return null;
   }
 
-  return <RegisterForm />;
+  // Suspense: the form reads `?callbackUrl=` with useSearchParams, which a prerendered page must
+  // wrap in a boundary.
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
+  );
 }

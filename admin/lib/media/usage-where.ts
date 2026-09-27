@@ -38,6 +38,9 @@ const SITE_LINKS = [
   "tagSocialImages",
   "industrySocialImages",
   "modontyHeroImages",
+  // Sector page heroes (27 Sep 2026) — /modonty/<sector>.
+  "sectorHeroImages",
+  "sectorHeroMobileImages",
   "modontySocialImages",
   "introVideoClients",
 ] as const;

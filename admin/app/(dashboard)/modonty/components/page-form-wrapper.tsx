@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { type ComponentProps, type ReactNode } from "react";
-import { PageForm } from "../../setting/components/page-form";
+import { PageForm } from "../setting/components/page-form";
 
 interface PageFormWrapperProps {
   slug: string;
@@ -15,9 +15,10 @@ interface PageFormWrapperProps {
   /** Page body is built in code — the form shows SEO only. */
   seoOnly?: boolean;
   beforeFields?: ReactNode;
+  withPreview?: boolean;
 }
 
-export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, settingsDefaults, coreClientId, seoOnly, beforeFields }: PageFormWrapperProps) {
+export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, settingsDefaults, coreClientId, seoOnly, beforeFields, withPreview }: PageFormWrapperProps) {
   const router = useRouter();
 
   const rawOgLocaleAlternate = (pageData?.metaTags as Record<string, unknown> | undefined)?.ogLocaleAlternate ?? pageData?.ogLocaleAlternate;
@@ -38,6 +39,7 @@ export function PageFormWrapper({ slug, pageLabel, pageDescription, pageData, se
       coreClientId={coreClientId}
       seoOnly={seoOnly}
       beforeFields={beforeFields}
+      withPreview={withPreview}
     />
   );
 }

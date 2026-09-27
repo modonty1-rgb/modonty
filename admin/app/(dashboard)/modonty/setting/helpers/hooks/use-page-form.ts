@@ -10,6 +10,7 @@ import { generateModontyPageSEO } from "../../actions/generate-modonty-page-seo"
 import { pageSchema, type PageFormData } from "../page-schema";
 import { PAGE_CONFIGS } from "../page-config";
 import type { SettingsDefaults } from "../../components/page-form";
+import { getPageConfig } from "../page-config";
 
 function deriveInLanguageFromOgLocale(ogLocale: string | null | undefined): string {
   return (ogLocale ?? "ar_SA").split("_")[0] || "ar";
@@ -118,7 +119,9 @@ interface UsePageFormParams {
 }
 
 function buildFormData(slug: string, initialData: PageInitialData | undefined, settingsDefaults: SettingsDefaults): PageFormData {
-  const defaultCanonical = absoluteUrl(`/${slug}`, settingsDefaults.siteUrl);
+  // The page's real path, not `/${slug}`: this default is what gets saved as the canonical, and it
+  // stored https://www.modonty.com/football for /modonty/football (measured 27 Sep 2026).
+  const defaultCanonical = absoluteUrl(getPageConfig(slug)?.modontyPath ?? `/${slug}`, settingsDefaults.siteUrl);
   const m = (initialData?.metaTags as Record<string, unknown> | undefined)?.organizationSeo as PageFormData["organizationSeo"] | undefined;
   const defaultLogo = settingsDefaults.logoUrl ?? "";
 
@@ -228,7 +231,7 @@ export function usePageForm({ slug, initialData, settingsDefaults, onRegenerated
       }
 
       const derivedInLanguage = deriveInLanguageFromOgLocale(formData.ogLocale);
-      const fallbackCanonical = formData.canonicalUrl || absoluteUrl(`/${slug}`, settingsDefaults.siteUrl);
+      const fallbackCanonical = formData.canonicalUrl || absoluteUrl(getPageConfig(slug)?.modontyPath ?? `/${slug}`, settingsDefaults.siteUrl);
       const derivedAlternateLanguages = deriveAlternateLanguages(
         formData.ogLocaleAlternate,
         fallbackCanonical,

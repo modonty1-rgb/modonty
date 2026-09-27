@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { LIVE_SECTORS } from "@modonty/shared/lib/sectors/live-sectors";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ComingSoon } from "@/components/shared/coming-soon/ComingSoon";
 import { fill, messages } from "@/lib/i18n/messages";
@@ -16,7 +17,9 @@ import { SECTORS } from "../helpers/sectors";
  * nextConfig.cacheComponents», Next 16 docs), so an unknown slug is rejected with `notFound()`.
  */
 const SECTOR_PREFIX = "/modonty/";
-const sectorsHere = SECTORS.filter((s) => s.href.startsWith(SECTOR_PREFIX));
+/** Sectors whose live page is built — each has its own folder, so this placeholder must not claim them. */
+const BUILT = new Set<string>(LIVE_SECTORS.map((s) => s.slug));
+const sectorsHere = SECTORS.filter((s) => s.href.startsWith(SECTOR_PREFIX) && !BUILT.has(s.slug));
 const findSector = (slug: string) => sectorsHere.find((s) => s.href === `${SECTOR_PREFIX}${slug}`);
 
 export function generateStaticParams() {

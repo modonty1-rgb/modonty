@@ -69,12 +69,14 @@ function absoluteImageUrl(url: string | null | undefined, siteUrl: string): stri
 
 export function generateModontyPageJsonLd(config: ModontySiteConfig, page: ModontyPageForJsonLd): object {
   const siteUrl = config.siteUrl.replace(/\/$/, "");
-  const pageUrl = ensureAbsoluteUrl(page.canonicalUrl, siteUrl) || absoluteUrl(`/${page.slug}`, siteUrl);
+  const pageConfig = getPageConfig(page.slug);
+  // The page's real path, not `/${slug}`: `user-agreement` lives at /legal/user-agreement and a
+  // sector at /modonty/football — the slug alone pointed their graphs at addresses that 404.
+  const pageUrl = ensureAbsoluteUrl(page.canonicalUrl, siteUrl) || absoluteUrl(pageConfig?.modontyPath ?? `/${page.slug}`, siteUrl);
   const name = (page.seoTitle || page.title || "").trim() || "Modonty";
   const description = (page.seoDescription || "").trim();
   const imageUrl = (page.ogImage || page.socialImage || page.heroImage || "").trim();
   const absImageUrl = imageUrl ? absoluteImageUrl(imageUrl, siteUrl) : undefined;
-  const pageConfig = getPageConfig(page.slug);
   /**
    * `/accounts` is a ProfilePage: Google's markup for "a single person or organization that is
    * affiliated with the overall website", with that organization as `mainEntity`
@@ -190,6 +192,9 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
     webPage.headline = name;
     webPage.about = { "@id": orgId };
   }
+  if (pageConfig?.about) {
+    webPage.about = pageConfig.about;
+  }
   if (pageType === "ProfilePage") {
     webPage.mainEntity = { "@id": orgId };
   }
@@ -222,10 +227,16 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
           name: "الرئيسية",
           item: { "@id": siteUrl },
         },
+        ...(pageConfig.breadcrumbParents ?? []).map((crumb, i) => ({
+          "@type": "ListItem",
+          position: 2 + i,
+          name: crumb.name,
+          item: { "@id": absoluteUrl(crumb.path, siteUrl) },
+        })),
         {
           "@type": "ListItem",
-          position: 2,
-          name: pageConfig.label || name,
+          position: 2 + (pageConfig.breadcrumbParents?.length ?? 0),
+          name: pageConfig.breadcrumbLabel || pageConfig.label || name,
           item: { "@id": pageUrl },
         },
       ],

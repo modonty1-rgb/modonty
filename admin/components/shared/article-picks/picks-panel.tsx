@@ -6,28 +6,40 @@ import { ChevronDown, ChevronUp, Loader2, X } from "lucide-react";
 
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { reorderHomepagePicks, setHomepagePick } from "../actions";
 
 export interface SlotRow {
   id: string;
   title: string;
-  industry: string;
+  /** The grey line under the title — the industry on the homepage, the partner on a sector. */
+  meta: string;
+}
+
+export type PickResult = { success: boolean; error?: string };
+
+interface PicksPanelProps {
+  /** Where the picks appear: «الرئيسية» · «الكورة». */
+  title: string;
+  picks: SlotRow[];
+  slots: number;
+  /** Server actions, bound to their page (a sector is bound with `.bind(null, sector)`). */
+  onPick: (input: { articleId: string; picked: boolean }) => Promise<PickResult>;
+  onReorder: (input: { articleIds: string[] }) => Promise<PickResult>;
 }
 
 const N = new Intl.NumberFormat("ar-EG");
 
 /**
- * **الرئيسية — اختياراتي وحدها، بعدّاد** (خالد ٢٤ سبتمبر ٢٠٢٦: «المفروض يجيني بس الأربعة… كلّ ما
- * أختار تضيف، أوصل لعشرة تديني مسج أو عدّاد كم باقي لي»). ما يملؤه الأحدثُ تلقائيّاً خرج من اللوحة،
- * وكذلك تقسيمُ المجالات. والعدّادُ من خانات الصفحة الأولى (`slots`)، والخادمُ يرفض الحادي عشر.
+ * **اختياراتُ صفحةٍ وحدها، بعدّاد** — لوحة الرئيسية (خالد ٢٤ سبتمبر ٢٠٢٦: «أوصل لعشرة تديني مسج أو
+ * عدّاد كم باقي لي»)، وصارت تخدم صفحات القطاعات أيضاً (٢٧ سبتمبر). العدّادُ من خانات الصفحة
+ * (`slots`)، والخادمُ يرفض الزائد.
  */
-export function HomepagePanel({ picks, slots }: { picks: SlotRow[]; slots: number }) {
+export function PicksPanel({ title, picks, slots, onPick, onReorder }: PicksPanelProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [rows, setRows] = useOptimistic(picks);
 
-  const run = (next: SlotRow[], action: () => Promise<{ success: boolean; error?: string }>) =>
+  const run = (next: SlotRow[], action: () => Promise<PickResult>) =>
     startTransition(async () => {
       setRows(next);
       const res = await action();
@@ -40,18 +52,18 @@ export function HomepagePanel({ picks, slots }: { picks: SlotRow[]; slots: numbe
     if (j < 0 || j >= rows.length) return;
     const next = [...rows];
     [next[i], next[j]] = [next[j], next[i]];
-    run(next, () => reorderHomepagePicks({ articleIds: next.map((r) => r.id) }));
+    run(next, () => onReorder({ articleIds: next.map((r) => r.id) }));
   };
-  const remove = (id: string) => run(rows.filter((r) => r.id !== id), () => setHomepagePick({ articleId: id, picked: false }));
+  const remove = (id: string) => run(rows.filter((r) => r.id !== id), () => onPick({ articleId: id, picked: false }));
 
   const left = Math.max(0, slots - rows.length);
   const full = left === 0;
 
   return (
-    <section aria-label="الرئيسية" aria-busy={isPending} className="rounded-xl border bg-card">
+    <section aria-label={title} aria-busy={isPending} className="rounded-xl border bg-card">
       <header className="space-y-1.5 border-b px-3 py-2">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="text-sm font-bold">الرئيسية</h2>
+          <h2 className="text-sm font-bold">{title}</h2>
           {isPending ? (
             <span role="status" className="flex items-center gap-1 text-[11px] font-semibold text-primary">
               <Loader2 className="size-3.5 animate-spin" aria-hidden />
@@ -72,7 +84,7 @@ export function HomepagePanel({ picks, slots }: { picks: SlotRow[]; slots: numbe
         </div>
         {full ? (
           <p role="status" className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-            اكتملت الخانات العشر — أزل مقالاً لتضيف غيره.
+            اكتملت الخانات ({N.format(slots)}) — أزل مقالاً لتضيف غيره.
           </p>
         ) : null}
       </header>
@@ -88,7 +100,7 @@ export function HomepagePanel({ picks, slots }: { picks: SlotRow[]; slots: numbe
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[12.5px] font-medium">{r.title}</span>
-                <span className="block truncate text-[10.5px] text-muted-foreground">{r.industry}</span>
+                <span className="block truncate text-[10.5px] text-muted-foreground">{r.meta}</span>
               </span>
               <button type="button" onClick={() => move(i, -1)} disabled={i === 0} aria-label="أعلى" className="grid size-6 place-items-center rounded hover:bg-muted disabled:opacity-25">
                 <ChevronUp className="size-3.5" />
@@ -96,7 +108,7 @@ export function HomepagePanel({ picks, slots }: { picks: SlotRow[]; slots: numbe
               <button type="button" onClick={() => move(i, 1)} disabled={i === rows.length - 1} aria-label="أسفل" className="grid size-6 place-items-center rounded hover:bg-muted disabled:opacity-25">
                 <ChevronDown className="size-3.5" />
               </button>
-              <button type="button" onClick={() => remove(r.id)} aria-label="إزالة من الرئيسية" className="grid size-6 place-items-center rounded text-muted-foreground hover:bg-muted hover:text-destructive">
+              <button type="button" onClick={() => remove(r.id)} aria-label={`إزالة من ${title}`} className="grid size-6 place-items-center rounded text-muted-foreground hover:bg-muted hover:text-destructive">
                 <X className="size-3.5" />
               </button>
             </li>

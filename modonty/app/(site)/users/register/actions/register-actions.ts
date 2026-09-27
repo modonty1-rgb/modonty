@@ -13,6 +13,7 @@ import { welcomeEmail } from "@modonty/shared/lib/email/templates/welcome";
 import { emailVerificationEmail } from "@modonty/shared/lib/email/templates/email-verification";
 import { sendAdminTelegram, escapeTgHtml } from "@modonty/shared/lib/telegram/client";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { startTopicAlert } from "@/lib/users/start-topic-alert";
 
 export async function registerUser(data: unknown) {
   // A server action is a public HTTP endpoint: the form's zodResolver only ever
@@ -68,6 +69,7 @@ export async function registerUser(data: unknown) {
         notificationPreferences: {
           marketingEmails: consented,
           marketingConsentAt: consented ? new Date().toISOString() : null,
+          ...(input.alertTopic && { topics: { [input.alertTopic]: startTopicAlert() } }),
         },
       },
     });

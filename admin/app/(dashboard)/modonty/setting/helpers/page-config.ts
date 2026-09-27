@@ -1,3 +1,5 @@
+import { LIVE_SECTORS } from "@modonty/shared/lib/sectors/live-sectors";
+
 export interface PageConfig {
   slug: string;
   label: string;
@@ -9,7 +11,18 @@ export interface PageConfig {
    * no box: it invites the team to write something that silently goes nowhere.
    */
   seoOnly?: boolean;
+  /** Crumbs between «الرئيسية» and this page — a sector sits under «مدونتي» (/modonty). */
+  breadcrumbParents?: { name: string; path: string }[];
+  /** The page's own crumb, in Arabic. `label` is the admin's English name and must not reach Google. */
+  breadcrumbLabel?: string;
+  /** What the page is about, as a schema.org node on the page's `about`. */
+  about?: Record<string, unknown>;
 }
+
+/** What each live sector page is about, for its JSON-LD. */
+const SECTOR_ABOUT: Record<string, Record<string, unknown>> = {
+  football: { "@type": "SportsOrganization", name: "دوري روشن السعودي", alternateName: "Saudi Pro League", sport: "Soccer" },
+};
 
 export const PAGE_CONFIGS: PageConfig[] = [
   {
@@ -104,6 +117,19 @@ export const PAGE_CONFIGS: PageConfig[] = [
     modontyPath: "/accounts",
     seoOnly: true,
   },
+  // Sector pages (/modonty/football …): body built in code, every SEO field edited from the
+  // sector's own admin screen — Modonty › Sectors (Khalid, 27 Sep 2026: «كل سيكتور عنده الصورة
+  // الخاصة فيه… والتايتل… حتى الجيسون ال دي تبعه»). One entry per live sector, from the shared list.
+  ...LIVE_SECTORS.map((s): PageConfig => ({
+    slug: s.slug,
+    label: s.adminLabel,
+    description: `${s.adminLabel} sector page SEO (page body is built in code)`,
+    modontyPath: `/modonty/${s.slug}`,
+    seoOnly: true,
+    breadcrumbParents: [{ name: "مدونتي", path: "/modonty" }],
+    breadcrumbLabel: s.label,
+    ...(SECTOR_ABOUT[s.slug] ? { about: SECTOR_ABOUT[s.slug] } : {}),
+  })),
 ];
 
 export function getPageConfig(slug: string): PageConfig | undefined {

@@ -14,6 +14,7 @@ import { RichTextEditor } from "@/app/(dashboard)/articles/components/rich-text-
 import { Save, Loader2, RefreshCw, Eye, FileText, Clock } from "lucide-react";
 import { useState } from "react";
 import { usePageForm, type PageInitialData } from "../helpers/hooks/use-page-form";
+import { getPageConfig } from "../helpers/page-config";
 
 export interface SettingsDefaults {
   siteUrl: string;
@@ -43,9 +44,11 @@ interface PageFormProps {
   seoOnly?: boolean;
   /** A page-specific block drawn under the header, before the SEO fields (/accounts: its accounts). */
   beforeFields?: ReactNode;
+  /** The Google/Facebook/Twitter preview dialog. Off on a sector page (Khalid, 28 Sep 2026: «ما نحتاجه»). */
+  withPreview?: boolean;
 }
 
-export function PageForm({ slug, pageLabel, pageDescription, initialData, onRegenerated, settingsDefaults, coreClientId, seoOnly = false, beforeFields }: PageFormProps) {
+export function PageForm({ slug, pageLabel, pageDescription, initialData, onRegenerated, settingsDefaults, coreClientId, seoOnly = false, beforeFields, withPreview = true }: PageFormProps) {
   const {
     formData,
     loading,
@@ -61,7 +64,8 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
 
   const seoTitle = formData.seoTitle || formData.title || "Page title";
   const seoDesc = formData.seoDescription || "Page description";
-  const canonicalUrl = formData.canonicalUrl || absoluteUrl(`/${slug}`, settingsDefaults.siteUrl);
+  // The page's real path — `/${slug}` saved /football for /modonty/football (measured 27 Sep 2026).
+  const canonicalUrl = formData.canonicalUrl || absoluteUrl(getPageConfig(slug)?.modontyPath ?? `/${slug}`, settingsDefaults.siteUrl);
   const displayUrl = canonicalUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
   const previewImage = formData.socialImage || formData.ogImage || formData.heroImage || "";
 
@@ -81,6 +85,7 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
         </div>
         <div className="flex items-center gap-2">
           {/* Preview Dialog */}
+          {withPreview && (
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -186,6 +191,7 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
             </Tabs>
           </DialogContent>
         </Dialog>
+          )}
 
           {/* Regenerate SEO */}
           <Button

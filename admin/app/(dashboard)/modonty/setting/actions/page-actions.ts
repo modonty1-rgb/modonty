@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { getPageConfig } from "../helpers/page-config";
 import type { PageFormData } from "../helpers/page-schema";
@@ -149,6 +150,10 @@ export async function updatePage(slug: string, data: PageFormData) {
 
     const pageConfig = getPageConfig(slug);
     revalidatePath("/modonty/pages", "layout");
+    revalidatePath("/modonty/sectors", "layout");
+    // The page reads its row through `getContentPageRow`, cached under the «pages» tag for hours —
+    // the path ping below never cleared it, so a save showed only after the cache expired.
+    await revalidateModontyTag("pages", undefined, { immediate: true }).catch(() => {});
 
     if (pageConfig) {
       try {

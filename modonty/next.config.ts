@@ -116,6 +116,14 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
+      // API-Football club crests (/modonty/football). Their docs: «Calls to logos/images do not
+      // count towards your daily quota» but are rate-limited and should be kept on our side —
+      // which the image optimizer's cache does. Teams path only.
+      {
+        protocol: "https",
+        hostname: "media.api-sports.io",
+        pathname: "/football/teams/**",
+      },
       // illustrated avatars (team carousel privacy fallback)
       {
         protocol: "https",
