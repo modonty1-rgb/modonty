@@ -1,7 +1,7 @@
-import { getMedia, getClients, getMediaStats, type MediaFilters } from "./actions/media-actions";
-import { MediaFilters as MediaFiltersComponent } from "./components/media-filters";
-import { MediaPageClient } from "./components/media-page-client";
-import { MediaStats } from "./components/media-stats";
+import { getMedia, getClients, getMediaStats, deleteMedia, canDeleteMedia, type MediaFilters } from "./actions/media-actions";
+import { MediaFilters as MediaFiltersComponent } from "@/components/shared/media-library/media-filters";
+import { MediaPageClient } from "@/components/shared/media-library/media-page-client";
+import { MediaStats } from "@/components/shared/media-library/media-stats";
 
 export default async function MediaPage({
   searchParams,
@@ -63,6 +63,8 @@ export default async function MediaPage({
         media={transformedMedia}
         sortBy={params.sort || "newest"}
         searchQuery={params.search || ""}
+        deleteAction={deleteMedia}
+        canDeleteAction={canDeleteMedia}
         pagination={{
           page: mediaResult.page,
           totalPages: mediaResult.totalPages,

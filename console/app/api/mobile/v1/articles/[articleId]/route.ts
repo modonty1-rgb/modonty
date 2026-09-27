@@ -6,7 +6,7 @@ import { fail, ok } from "@/lib/mobile-api/http";
 import { CLIENT_READABLE_STATUSES } from "@/lib/articles/client-visible-statuses";
 import { arabicCount, arabicMetaLine, arabicNumber } from "@/lib/mobile-api/arabic-format";
 
-const statusLabels: Record<string, string> = { AWAITING_APPROVAL: "بانتظار قرارك", NEEDS_REVISION: "طلبت تعديله", SCHEDULED: "مجدول للنشر", PUBLISHED: "منشور", PUBLISHED_ON_CLIENT_SITE: "منشور على موقعك" };
+const statusLabels: Record<string, string> = { AWAITING_APPROVAL: "بانتظار قرارك", NEEDS_REVISION: "طلبت تعديله", APPROVED: "وافقت عليه — بانتظار الموعد", SCHEDULED: "مجدول للنشر", PUBLISHED: "منشور", PUBLISHED_ON_CLIENT_SITE: "منشور على موقعك" };
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ articleId: string }> }) {
   const session = await mobileSessionFromRequest(request);

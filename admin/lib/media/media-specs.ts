@@ -174,6 +174,12 @@ export const MEDIA_TYPE_ORDER: MediaType[] = [
   "GENERAL",
 ];
 
+/**
+ * The roles Clients › Media uploads (Khalid, 26 Sep 2026): one per client page slot, no
+ * «General» (that stays in the main library). Gallery keeps its own upload in Client Galleries.
+ */
+export const CLIENT_UPLOAD_ROLES: MediaType[] = ["HERO", "HERO_MOBILE", "CLIENT_MINI", "LOGO"];
+
 export function getMediaSpec(type: MediaType): MediaSpec {
   return MEDIA_SPECS[type];
 }
@@ -204,6 +210,11 @@ export function specSummary(type: MediaType): string {
   return `${size}${spec.ratioLabel} · ${spec.formats}`;
 }
 
+/** True when the only thing wrong is the file format — fixable in place by re-encoding. */
+export function isFormatIssue(issue: string): boolean {
+  return / — should be (PNG or )?WebP$/.test(issue);
+}
+
 export interface ComplianceResult {
   /** true = the stored image matches its role spec on every checked dimension. */
   ok: boolean;
@@ -225,6 +236,10 @@ export function checkMediaCompliance(input: {
   width: number | null;
   height: number | null;
 }): ComplianceResult {
+  // A video (a reel) has no image role: WebP, ratio and resolution are image rules. Checking
+  // it here painted every reel red with «Format should be WebP» (26 Sep 2026).
+  if (input.mimeType.startsWith("video/")) return { ok: true, issues: [] };
+
   const spec = MEDIA_SPECS[input.type];
   const issues: string[] = [];
 
@@ -233,10 +248,13 @@ export function checkMediaCompliance(input: {
 
   // Format — the whole site standard is WebP, EXCEPT logos which legitimately
   // stay PNG (transparent). Applies to every role (free roles included).
+  // The message names the current format too («PNG — should be WebP»): «should be WebP»
+  // alone left the reader to open the file to learn what it actually was (26 Sep 2026).
+  const actual = (input.mimeType.split("/")[1] || input.filename.split(".").pop() || "?").replace("jpeg", "jpg").toUpperCase();
   if (spec.transparent) {
-    if (!isPng && !isWebp) issues.push("Format should be PNG or WebP");
+    if (!isPng && !isWebp) issues.push(`${actual} — should be PNG or WebP`);
   } else if (!isWebp) {
-    issues.push("Format should be WebP");
+    issues.push(`${actual} — should be WebP`);
   }
 
   // Ratio + resolution — only fixed-ratio roles enforce a size.

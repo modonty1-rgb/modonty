@@ -17,16 +17,16 @@ interface EditorState {
   fileName: string;
 }
 
-export function useUploadZone({ onUploadComplete, initialClientId, coreClientId }: UploadZoneProps) {
+export function useUploadZone({ onUploadComplete, initialClientId, coreClientId, clientOnly, initialRole }: UploadZoneProps) {
   const { toast } = useToast();
   // Modonty Core (T2): owner toggle [Client | Modonty]. Default is Client — that's the
   // frequent path (Khalid 2026-07-31). Entity forms link here with clientId=core, which
   // opens directly on Modonty mode.
   const [ownerMode, setOwnerMode] = useState<"modonty" | "client">(() =>
-    initialClientId && initialClientId === coreClientId ? "modonty" : "client"
+    !clientOnly && initialClientId && initialClientId === coreClientId ? "modonty" : "client"
   );
   const [clientId, setClientId] = useState<string>(initialClientId || "");
-  const [mediaType, setMediaType] = useState<MediaType | "">("");
+  const [mediaType, setMediaType] = useState<MediaType | "">(initialRole ?? "");
   const [clients, setClients] = useState<Client[]>([]);
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [editorState, setEditorState] = useState<EditorState | null>(null);
@@ -70,7 +70,7 @@ export function useUploadZone({ onUploadComplete, initialClientId, coreClientId 
   // Load clients on mount
   useEffect(() => {
     const loadClients = async () => {
-      const clientsList = await getClients();
+      const clientsList = await getClients({ anyStatus: !!clientOnly });
       setClients(clientsList);
       if (initialClientId && clientsList.some((c) => c.id === initialClientId)) {
         setClientId(initialClientId);
@@ -79,7 +79,7 @@ export function useUploadZone({ onUploadComplete, initialClientId, coreClientId 
       setIsLoadingClients(false);
     };
     loadClients();
-  }, [initialClientId]);
+  }, [initialClientId, clientOnly]);
 
   const handleFiles = useCallback(
     (fileList: FileList | File[]) => {

@@ -6,8 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { db } from "@/lib/db";
 import { checkAdmin } from "@/lib/admin-guard";
 import { getClients, getClientsStats, ClientFilters } from "./actions/clients-actions";
-import { ClientsHeaderWrapper } from "./components/clients-header-wrapper";
-import { ClientsTabs } from "./components/clients-tabs";
+// «Advanced Table» (Khalid, 27 Sep 2026) — replaces the header wrapper + tabs + table here.
+// The old components stay in the repo until the team confirms the new page.
+import { ClientsBoard } from "./components/clients-board";
 import { getPlatformDefaults } from "../settings/defaults/actions/defaults-actions";
 import { expiredByDateWhere, expiringThisMonthWhere } from "./segment/segments";
 
@@ -54,18 +55,13 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
   ]);
 
   return (
-    <ClientsHeaderWrapper
-      clientCount={clients.length}
-      stats={stats}
+    <ClientsBoard
       clients={clients}
-    >
-      <ClientsTabs
-        clients={clients}
-        defaultLogoUrl={defaults.LOGO}
-        expiringThisMonth={expiringThisMonth}
-        overdueRenewals={overdueRenewals}
-      />
-    </ClientsHeaderWrapper>
+      stats={stats}
+      defaultLogoUrl={defaults.LOGO}
+      expiringThisMonth={expiringThisMonth}
+      overdueRenewals={overdueRenewals}
+    />
   );
 }
 

@@ -70,10 +70,23 @@ export const TRANSITIONS = {
       "The article will move from Needs Revision back to Draft. The Quality Gate will run again before you can send it to the client.",
     successMessage: "Article re-submitted to Draft",
   },
-  // NOTE: there is intentionally NO "approval-to-scheduled" admin lane. Moving an
-  // article from AWAITING_APPROVAL → SCHEDULED is the CLIENT's approval action,
-  // performed on the console (`approveArticle`). The admin must never advance past
-  // the client. From AWAITING_APPROVAL the admin can only request revision.
+  // NOTE: there is intentionally NO "awaiting-to-approved" admin lane. Moving an article
+  // from AWAITING_APPROVAL → APPROVED is the CLIENT's approval action, performed on the
+  // console (`approveArticle`). The admin must never advance past the client.
+  // What the team does after that is pick the date — the lane below (27 Sep 2026).
+  "approved-to-scheduled": {
+    from: ArticleStatus.APPROVED,
+    to: ArticleStatus.SCHEDULED,
+    fromLabel: "Approved",
+    toLabel: "Scheduled",
+    pageTitle: "Approved → Scheduled",
+    pageDescription:
+      "The client approved these. Pick the publish date — saving it schedules the article, and it goes live on its own at that time.",
+    actionLabel: "Schedule",
+    confirmTitle: "Schedule this article?",
+    confirmDescription: "The article will go live on its own at the chosen date and time.",
+    successMessage: "Article scheduled",
+  },
   "scheduled-to-published": {
     from: ArticleStatus.SCHEDULED,
     to: ArticleStatus.PUBLISHED,

@@ -28,6 +28,7 @@ export async function exportArticlesToCSV(filters?: ArticleFilters): Promise<str
       ArticleStatus.WRITING,
       ArticleStatus.DRAFT,
       ArticleStatus.AWAITING_APPROVAL,
+      ArticleStatus.APPROVED,
       ArticleStatus.NEEDS_REVISION,
       ArticleStatus.SCHEDULED,
       ArticleStatus.PUBLISHED,

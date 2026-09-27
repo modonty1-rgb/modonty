@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,6 +26,12 @@ interface MediaToolbarProps {
   onSearchChange: (value: string) => void;
   onSearchSubmit: () => void;
   onSearchClear: () => void;
+  uploadHref?: string;
+  /** Page-specific controls placed after the search (Clients › Media: client + usage). */
+  extra?: ReactNode;
+  showGroup?: boolean;
+  /** Replaces the Upload link — Clients › Media opens its upload window instead of navigating. */
+  uploadSlot?: ReactNode;
 }
 
 export function MediaToolbar({
@@ -41,6 +47,10 @@ export function MediaToolbar({
   onSearchChange,
   onSearchSubmit,
   onSearchClear,
+  uploadHref = "/media/upload",
+  extra,
+  showGroup = true,
+  uploadSlot,
 }: MediaToolbarProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -71,6 +81,8 @@ export function MediaToolbar({
           </button>
         )}
       </div>
+
+      {extra}
 
       {/* View Toggle */}
       <div className="flex items-center gap-0.5 border rounded-md p-0.5">
@@ -104,6 +116,7 @@ export function MediaToolbar({
       </div>
 
       {/* Group by client toggle */}
+      {showGroup && (
       <Button
         variant={groupByClient ? "default" : "outline"}
         size="sm"
@@ -114,6 +127,7 @@ export function MediaToolbar({
         <FolderTree className="h-4 w-4" />
         <span className="hidden sm:inline">Group</span>
       </Button>
+      )}
 
       {/* Sort */}
       {mounted ? (
@@ -137,12 +151,14 @@ export function MediaToolbar({
       )}
 
       {/* Upload Button */}
-      <Link href="/media/upload">
+      {uploadSlot ?? (
+      <Link href={uploadHref}>
         <Button size="sm" className="h-9 gap-1.5">
           <Upload className="h-4 w-4" />
           Upload
         </Button>
       </Link>
+      )}
     </div>
   );
 }

@@ -22,6 +22,11 @@ import { transitionArticleAction } from "../actions/transition-article";
 import { setScheduledDateAction } from "../actions/set-scheduled-date";
 
 interface Props {
+  /**
+   * `approved` — the client said yes and there is no date yet: the only action is to pick
+   * one («Schedule»). `scheduled` — dated already: move the date, or publish now.
+   */
+  mode?: "approved" | "scheduled";
   /** Where this one lands — the copy must not promise modonty for a client's article. */
   clientSiteUrl?: string | null;
   articleId: string;
@@ -38,15 +43,24 @@ function toLocalDatetimeInput(date: Date): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-export function ScheduledRowActions({ articleId, articleTitle, scheduledAt, clientSiteUrl }: Props) {
+/** Tomorrow 09:00 in the browser's time — a sane first pick, never «now» (27 Sep 2026). */
+function tomorrowNine(): Date {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(9, 0, 0, 0);
+  return d;
+}
+
+export function ScheduledRowActions({ articleId, articleTitle, scheduledAt, clientSiteUrl, mode = "scheduled" }: Props) {
   const { toast } = useToast();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   // Track which specific button is loading so the spinner only shows on the right one.
   const [activeAction, setActiveAction] = useState<"publish" | "schedule" | null>(null);
 
-  // Default value: existing scheduledAt OR right now (today + current time).
-  const initialDate = scheduledAt ? new Date(scheduledAt) : new Date();
+  // Default: the saved date, else tomorrow 09:00. It was «right now» — one click on Save
+  // without touching the field scheduled a past time, i.e. publish on the next cron tick.
+  const initialDate = scheduledAt ? new Date(scheduledAt) : tomorrowNine();
   const [datetimeValue, setDatetimeValue] = useState(toLocalDatetimeInput(initialDate));
 
   const handlePublishNow = () => {
@@ -73,13 +87,18 @@ export function ScheduledRowActions({ articleId, articleTitle, scheduledAt, clie
       return;
     }
     // Convert local datetime input to ISO; new Date() reads it as local time.
-    const isoDate = new Date(datetimeValue).toISOString();
+    const picked = new Date(datetimeValue);
+    if (picked.getTime() <= Date.now()) {
+      toast({ title: "اختر وقتاً في المستقبل", description: "للنشر الآن استخدم «Publish Now».", variant: "destructive" });
+      return;
+    }
+    const isoDate = picked.toISOString();
     setActiveAction("schedule");
     startTransition(async () => {
       const res = await setScheduledDateAction(articleId, isoDate);
       if (res.success) {
         toast({
-          title: "تم حفظ الموعد",
+          title: mode === "approved" ? "تمت الجدولة" : "تم حفظ الموعد",
           description: "العميل سيرى الموعد الجديد في console.",
         });
         router.refresh();
@@ -112,6 +131,8 @@ export function ScheduledRowActions({ articleId, articleTitle, scheduledAt, clie
           className="rounded-md border bg-background px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
         />
       </div>
+      {/* Approved lane: no «Publish Now» — the team's step there is to give it a date. */}
+      {mode === "scheduled" ? (
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button
@@ -160,6 +181,7 @@ export function ScheduledRowActions({ articleId, articleTitle, scheduledAt, clie
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      ) : null}
       <Button
         type="button"
         size="sm"
@@ -172,7 +194,7 @@ export function ScheduledRowActions({ articleId, articleTitle, scheduledAt, clie
         ) : (
           <CalendarCheck className="h-4 w-4" />
         )}
-        Save Schedule
+        {mode === "approved" ? "Schedule" : "Save Schedule"}
       </Button>
     </div>
   );

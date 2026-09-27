@@ -23,7 +23,9 @@ export async function approveAwaitingArticle(articleId: string, clientId: string
   const now = new Date();
   await db.article.update({
     where: { id: articleId },
-    data: { status: ArticleStatus.SCHEDULED, ogArticleModifiedTime: now, lastReviewed: now },
+    // APPROVED, not SCHEDULED (27 Sep 2026): the client's yes is not a date. The team
+    // schedules it from the admin; the cron only publishes an article that has a date.
+    data: { status: ArticleStatus.APPROVED, ogArticleModifiedTime: now, lastReviewed: now },
   });
   return { ok: true, articleId, articleTitle: article.title, clientName: article.client.name, editorName: editorName(article.client.editor) };
 }

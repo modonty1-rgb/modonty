@@ -22,6 +22,7 @@ export const getArticleStatusCounts = unstable_cache(
       WRITING: 0,
       DRAFT: 0,
       AWAITING_APPROVAL: 0,
+      APPROVED: 0,
       NEEDS_REVISION: 0,
       SCHEDULED: 0,
       PUBLISHED: 0,

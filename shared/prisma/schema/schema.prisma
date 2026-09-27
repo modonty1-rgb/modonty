@@ -52,6 +52,11 @@ enum ArticleStatus {
   WRITING
   DRAFT
   AWAITING_APPROVAL
+  // The client approved it; no publish date yet. Only the team sets the date (admin
+  // → SCHEDULED). Before 27 Sep 2026 approval wrote SCHEDULED straight away, and the
+  // cron's `scheduledAt <= now` matched the missing date — articles went live within
+  // 15 minutes of approval with nobody scheduling them (Tarek's report).
+  APPROVED
   NEEDS_REVISION
   SCHEDULED
   PUBLISHED

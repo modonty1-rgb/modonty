@@ -8,7 +8,7 @@ import { ArticleFormLayout } from '../components/article-form-layout';
 import { ArticleFormTabs } from '../components/article-form-tabs';
 
 /**
- * `?clientSite=<clientId>` is how the «Client Articles» section hands the destination
+ * `?clientSite=<clientId>` is how the «Client-Site Articles» section hands the destination
  * over — there is no checkbox anywhere and no button that moves an article between
  * sections. The section IS the destination (Khalid 2026-08-08), so an article started
  * from there is marked for the client's own website at birth and gets its canonical

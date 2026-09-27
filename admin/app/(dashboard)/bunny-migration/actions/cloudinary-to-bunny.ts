@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
 import { uploadToBunny, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
-import { generateBlurDataUrl } from "@/app/(dashboard)/media/actions/generate-blur";
+import { generateBlurDataUrl } from "@/lib/media/generate-blur";
 
 /**
  * ONE-TIME migration: retire Cloudinary from every stored field.
@@ -507,7 +507,7 @@ export async function runScopeBatch(
 
     case "featuredCrops": {
       const { generateAspectCrops } = await import(
-        "@/app/(dashboard)/media/actions/generate-aspect-crops"
+        "@/lib/media/generate-aspect-crops"
       );
       const zone = process.env.BUNNY_STORAGE_ZONE_NAME;
       const key = process.env.BUNNY_STORAGE_PASSWORD;

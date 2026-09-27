@@ -107,7 +107,7 @@ export async function createArticle(data: ArticleFormData) {
     });
 
     // An article destined for the client's own website can only exist for a client we
-    // can actually build URLs for. The «Client Articles» section only lists eligible
+    // can actually build URLs for. The «Client-Site Articles» section only lists eligible
     // clients, but that is a UI convenience — this is the rule.
     const isClientSiteArticle = data.isClientSiteArticle === true;
     if (isClientSiteArticle) {

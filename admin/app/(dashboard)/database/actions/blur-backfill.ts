@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { generateBlurDataUrlFromUrl } from "@/app/(dashboard)/media/actions/generate-blur";
+import { generateBlurDataUrlFromUrl } from "@/lib/media/generate-blur";
 
 /**
  * Backfill `Media.blurDataURL` for rows that slipped through.

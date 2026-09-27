@@ -26,7 +26,7 @@ import { Loader2, Search, Upload, RefreshCw } from "lucide-react";
 import { getMedia, type MediaFilters } from "@/app/(dashboard)/media/actions/media-actions";
 import Link from "next/link";
 import { MediaType } from "@prisma/client";
-import { getMediaTypeLabel, getMediaTypeBadgeVariant } from "@/app/(dashboard)/media/helpers/media-utils";
+import { getMediaTypeLabel, getMediaTypeBadgeVariant } from "@/lib/media/media-utils";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/shared/lib/justify-rows";
 

@@ -285,8 +285,9 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
                     actionLabel={config.actionLabel}
                     hasErrors={(seoResults[idx]?.failedCount ?? 0) > 0}
                   />
-                ) : transition === "scheduled-to-published" ? (
+                ) : transition === "scheduled-to-published" || transition === "approved-to-scheduled" ? (
                   <ScheduledRowActions
+                    mode={transition === "approved-to-scheduled" ? "approved" : "scheduled"}
                     articleId={article.id}
                     articleTitle={article.title}
                   clientSiteUrl={

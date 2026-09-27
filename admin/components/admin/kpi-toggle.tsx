@@ -29,6 +29,7 @@ export function KpiToggle({
   icon: Icon,
   disabled = false,
   trailing,
+  variant = "row",
 }: {
   meta: KpiMeta;
   /** Pre-formatted so Arabic screens can pass Arabic-Indic digits. */
@@ -40,7 +41,39 @@ export function KpiToggle({
   disabled?: boolean;
   /** Rendered beside the toggle, never inside it — a button cannot nest a button. */
   trailing?: React.ReactNode;
+  /**
+   * `row` (default) — the compact strip every entity screen uses. `tile` — a large square for
+   * a header that gives the numbers their own panel (Client Quotas, 27 Sep 2026): same data,
+   * same filter behaviour, only the drawing changes.
+   */
+  variant?: "row" | "tile";
 }) {
+  if (variant === "tile") {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={disabled}
+        aria-pressed={active}
+        title={disabled ? meta.label : `${meta.label} — اضغط للتصفية`}
+        className={cn(
+          // A big number, not a tall card: the tile is as short as a filter row pair, so the
+          // header does not grow for it (Khalid: «تستغل المساحة… مش نهدر»).
+          "flex items-center gap-2.5 rounded-lg border bg-card px-3 py-1.5 text-start transition-all",
+          active && `ring-2 ${meta.ring} border-transparent`,
+          disabled ? "cursor-default opacity-60" : "hover:bg-accent/40 active:scale-[0.99]",
+        )}
+      >
+        {/* One line: icon · number · description (Khalid, 27 Sep 2026). */}
+        <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-md", meta.tone)}>
+          <Icon className="h-4 w-4" />
+        </span>
+        <span className="text-xl font-bold leading-none tabular-nums">{value}</span>
+        <span className="min-w-0 truncate text-sm text-muted-foreground" dir="auto">{meta.label}</span>
+      </button>
+    );
+  }
+
   return (
     <div
       className={cn(

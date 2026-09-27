@@ -51,7 +51,7 @@ function evaluateTechnicalHealth(a: TechnicalArticleRow) {
 export default async function TechnicalReviewListPage() {
   const articles = (await db.article.findMany({
     where: {
-      status: { in: [ArticleStatus.DRAFT, ArticleStatus.AWAITING_APPROVAL, ArticleStatus.SCHEDULED, ArticleStatus.PUBLISHED] },
+      status: { in: [ArticleStatus.DRAFT, ArticleStatus.AWAITING_APPROVAL, ArticleStatus.APPROVED, ArticleStatus.SCHEDULED, ArticleStatus.PUBLISHED] },
     },
     orderBy: [{ status: "asc" }, { updatedAt: "desc" }],
     take: 200,

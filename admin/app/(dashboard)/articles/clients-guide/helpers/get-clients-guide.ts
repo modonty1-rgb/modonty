@@ -16,6 +16,27 @@ export interface ClientGuideRow {
   /** عند العميل في كونسوله ولم يوافق بعد (`AWAITING_APPROVAL`) — حالتُه الآن، لا دورتُه. */
   awaitingApproval: number;
   activatedAt: Date | null;
+  /** The content writer on the client (`Client.editorId`) — null when nobody is assigned. */
+  writerId: string | null;
+  writerName: string | null;
+  /** The two halves of `serviceMonths` — for the row's detail panel. */
+  paidMonths: number;
+  bonusMonths: number;
+  serviceStartedAt: Date | null;
+  /**
+   * Articles in each stage before «published», counted as they stand now (like
+   * `awaitingApproval`) — the full pipeline in the row's detail (Khalid, 27 Sep 2026:
+   * «ايش قاعد تكتب له، ايش معلّق… البروجرس كامل»).
+   */
+  pipeline: { writing: number; draft: number; withClient: number; approved: number; changes: number; scheduled: number };
+}
+
+export interface GuideWriter {
+  /** Staff id, or `"none"` for the clients no writer is assigned to. */
+  id: string;
+  name: string;
+  /** Clients this writer carries — the pill's counter. */
+  clients: number;
 }
 
 export interface GuidePlan {
@@ -33,9 +54,9 @@ export interface GuidePlan {
  * والحصّةُ والمُسلَّم من `lib/orders/` — الملفّان نفساهما اللذان يقرؤهما كرتُ الطلب.
  * العميلُ بلا طلبٍ سارٍ يظهر بشَرطة: لا حصّةَ تُحسب له.
  */
-export async function getClientsGuide(): Promise<{ rows: ClientGuideRow[]; plans: GuidePlan[] }> {
+export async function getClientsGuide(): Promise<{ rows: ClientGuideRow[]; plans: GuidePlan[]; writers: GuideWriter[] }> {
   const clients = await db.client.findMany({
-    select: { id: true, name: true, activeOrderId: true },
+    select: { id: true, name: true, activeOrderId: true, editor: { select: { id: true, name: true } } },
     orderBy: { name: "asc" },
     take: 500,
   });
@@ -46,6 +67,7 @@ export async function getClientsGuide(): Promise<{ rows: ClientGuideRow[]; plans
         where: { id: { in: orderIds } },
         select: {
           id: true,
+          clientId: true,
           planName: true,
           articlesPerMonth: true,
           paidMonths: true,
@@ -56,26 +78,34 @@ export async function getClientsGuide(): Promise<{ rows: ClientGuideRow[]; plans
       })
     : [];
   const orderById = new Map(orders.map((o) => [o.id, o]));
+  // Same rule as `getClientSubscriptions` (the one source for subscriptions): a pointer to an
+  // order that belongs to another client is not this client's subscription. Measured 27 Sep
+  // 2026: 0 of 43 — the guard keeps this page and the Clients page from ever disagreeing.
+  const orderOf = (c: { id: string; activeOrderId: string | null }) => {
+    const o = c.activeOrderId ? orderById.get(c.activeOrderId) : undefined;
+    return o && o.clientId === c.id ? o : undefined;
+  };
 
 
-  const withOrder = clients.filter((c) => c.activeOrderId && orderById.has(c.activeOrderId));
+  const withOrder = clients.filter((c) => !!orderOf(c));
   const deliveredCounts = await Promise.all(
     withOrder.map((c) =>
-      db.article.count({ where: deliveredArticlesWhere(c.id, orderById.get(c.activeOrderId!)!.serviceStartedAt) }),
+      db.article.count({ where: deliveredArticlesWhere(c.id, orderOf(c)!.serviceStartedAt) }),
     ),
   );
   const deliveredById = new Map(withOrder.map((c, i) => [c.id, deliveredCounts[i]]));
 
-  // عدٌّ واحدٌ مجمَّع لكل العملاء — الحالةُ الآن لا تتقيّد ببداية الخدمة.
-  const awaiting = await db.article.groupBy({
-    by: ["clientId"],
-    where: { status: "AWAITING_APPROVAL" },
+  // عدٌّ واحدٌ مجمَّع لكل العملاء ولكل مرحلة — الحالةُ الآن لا تتقيّد ببداية الخدمة.
+  const stages = await db.article.groupBy({
+    by: ["clientId", "status"],
+    where: { status: { in: ["WRITING", "DRAFT", "AWAITING_APPROVAL", "APPROVED", "NEEDS_REVISION", "SCHEDULED"] } },
     _count: { _all: true },
   });
-  const awaitingById = new Map(awaiting.map((a) => [a.clientId, a._count._all]));
+  const stageCount = new Map(stages.map((g) => [`${g.clientId}:${g.status}`, g._count._all]));
+  const stageOf = (clientId: string, status: string) => stageCount.get(`${clientId}:${status}`) ?? 0;
 
   const rows = clients.map((c) => {
-    const order = c.activeOrderId ? orderById.get(c.activeOrderId) : undefined;
+    const order = orderOf(c);
     const agreed = order ? articlesAgreed(order) : null;
     const delivered = order ? (deliveredById.get(c.id) ?? 0) : null;
     return {
@@ -88,7 +118,20 @@ export async function getClientsGuide(): Promise<{ rows: ClientGuideRow[]; plans
       delivered,
       remaining: agreed != null && delivered != null ? agreed - delivered : null,
       activatedAt: order?.activatedAt ?? null,
-      awaitingApproval: awaitingById.get(c.id) ?? 0,
+      awaitingApproval: stageOf(c.id, "AWAITING_APPROVAL"),
+      pipeline: {
+        writing: stageOf(c.id, "WRITING"),
+        draft: stageOf(c.id, "DRAFT"),
+        withClient: stageOf(c.id, "AWAITING_APPROVAL"),
+        approved: stageOf(c.id, "APPROVED"),
+        changes: stageOf(c.id, "NEEDS_REVISION"),
+        scheduled: stageOf(c.id, "SCHEDULED"),
+      },
+      writerId: c.editor?.id ?? null,
+      writerName: c.editor ? c.editor.name?.trim() || "Unnamed" : null,
+      paidMonths: order?.paidMonths ?? 0,
+      bonusMonths: order?.bonusServiceMonths ?? 0,
+      serviceStartedAt: order?.serviceStartedAt ?? null,
     };
   });
 
@@ -122,5 +165,23 @@ export async function getClientsGuide(): Promise<{ rows: ClientGuideRow[]; plans
       .map((d) => ({ name: d.name, articlesPerMonth: d.articlesPerMonth, clients: clientsByPlan.get(d.name)! })),
     ...[...orphanQuotas.keys()].map((name) => ({ name, articlesPerMonth: planQuota(name), clients: clientsByPlan.get(name)! })),
   ];
-  return { rows, plans };
+  /**
+   * The writers above the table (Khalid, 27 Sep 2026: «أسامي الكتّاب تكون فوق… نفلتر عليها»):
+   * each writer with how many clients they carry, busiest first, then the unassigned ones —
+   * a client with nobody on it is the gap this row should make visible.
+   */
+  const byWriter = new Map<string, GuideWriter>();
+  let unassigned = 0;
+  for (const c of clients) {
+    if (!c.editor) { unassigned++; continue; }
+    const w = byWriter.get(c.editor.id) ?? { id: c.editor.id, name: c.editor.name?.trim() || "Unnamed", clients: 0 };
+    w.clients++;
+    byWriter.set(c.editor.id, w);
+  }
+  const writers: GuideWriter[] = [
+    ...[...byWriter.values()].sort((a, b) => b.clients - a.clients || a.name.localeCompare(b.name, "ar")),
+    ...(unassigned ? [{ id: "none", name: "No writer", clients: unassigned }] : []),
+  ];
+
+  return { rows, plans, writers };
 }

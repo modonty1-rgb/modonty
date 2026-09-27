@@ -3,7 +3,7 @@
 import type { MediaType } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
-import { uploadImageToBunny } from "../../../actions/upload-image-to-bunny";
+import { uploadImageToBunny } from "@/lib/media/upload-image-to-bunny";
 import type { UploadFile } from "../types";
 
 interface UseBunnyUploadProps {

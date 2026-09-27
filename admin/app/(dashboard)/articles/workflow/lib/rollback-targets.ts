@@ -22,10 +22,11 @@ export const STAGE_RANK: Record<ArticleStatus, number> = {
   DRAFT: 1,
   NEEDS_REVISION: 2,
   AWAITING_APPROVAL: 3,
-  SCHEDULED: 4,
-  PUBLISHED: 5,
-  PUBLISHED_ON_CLIENT_SITE: 5, // same stage as PUBLISHED — live, just on another domain
-  ARCHIVED: 6,
+  APPROVED: 4,
+  SCHEDULED: 5,
+  PUBLISHED: 6,
+  PUBLISHED_ON_CLIENT_SITE: 6, // same stage as PUBLISHED — live, just on another domain
+  ARCHIVED: 7,
 };
 
 /** Valid rollback targets for a given current status (earlier DRAFT/WRITING stages). */

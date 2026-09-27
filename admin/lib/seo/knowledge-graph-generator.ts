@@ -45,7 +45,7 @@ import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
 /** height = width x this, for each of Google's 3 article aspect ratios. */
 const ASPECT_HEIGHT_FACTOR = { "1:1": 1, "4:3": 3 / 4, "16:9": 9 / 16 } as const;
 
-/** Bunny crops are pre-generated at this width — media/actions/generate-aspect-crops.ts:16-20. */
+/** Bunny crops are pre-generated at this width — lib/media/generate-aspect-crops.ts:16-20. */
 const BUNNY_CROP_WIDTH = 1200;
 
 /** A url plus the size of the file it actually points at — absent when nothing measured it. */

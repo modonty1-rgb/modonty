@@ -22,7 +22,7 @@ export interface AddGalleryInput {
   height?: number | null;
   fileSize?: number | null;
   altText?: string | null;
-  /** Blur placeholder from the uploader — see `media/actions/generate-blur.ts`. */
+  /** Blur placeholder from the uploader — see `lib/media/generate-blur.ts`. */
   blurDataURL?: string | null;
 }
 

@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
-import { generateBlurDataUrlFromUrl } from "@/app/(dashboard)/media/actions/generate-blur";
+import { generateBlurDataUrlFromUrl } from "@/lib/media/generate-blur";
 import type { MediaType } from "@prisma/client";
 
 // The 3 platform default roles. Each is a single PLATFORM-scope media with no client.

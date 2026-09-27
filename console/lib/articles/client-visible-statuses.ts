@@ -14,6 +14,8 @@ import { ArticleStatus } from "@prisma/client";
  *
  * ولماذا هذه الأربع تحديداً (قرار خالد ٣ سبتمبر):
  *  · `AWAITING_APPROVAL` و`NEEDS_REVISION` — بانتظار فعلٍ منه، فإخفاؤها يوقف العمل.
+ *  · `APPROVED` — وافق عليه وينتظر موعداً يحدّده الفريق (أُضيفت ٢٧ سبتمبر ٢٠٢٦ — كانت
+ *    الموافقةُ تكتب `SCHEDULED` مباشرة، فيراها العميل «مجدولة» بلا موعد).
  *  · `SCHEDULED` — متّفقٌ عليه وله موعد؛ رؤيته تطمئنه أن شغله ماشٍ.
  *  · `PUBLISHED` — منشور على مدونتي.
  * وتبقى مخفيّة: `WRITING` و`DRAFT` (شغلٌ نصفه مكتوب) و`ARCHIVED` (خرج من الخطّة).
@@ -27,6 +29,7 @@ import { ArticleStatus } from "@prisma/client";
 export const CLIENT_VISIBLE_STATUSES = [
   ArticleStatus.AWAITING_APPROVAL,
   ArticleStatus.NEEDS_REVISION,
+  ArticleStatus.APPROVED,
   ArticleStatus.SCHEDULED,
   ArticleStatus.PUBLISHED,
 ] as const;

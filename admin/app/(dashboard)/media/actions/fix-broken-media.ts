@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { generateBlurDataUrlFromUrl } from "./generate-blur";
+import { generateBlurDataUrlFromUrl } from "@/lib/media/generate-blur";
 
 export interface FixBrokenMediaResult {
   ok: boolean;

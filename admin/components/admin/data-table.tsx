@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { Fragment, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, Minus, Plus, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Column<T> {
@@ -32,6 +32,14 @@ interface DataTableProps<T> {
   emptyText?: string;
   /** يُلحق بعنصر `<table>` — لحجم خطٍّ أصغر في جدولٍ عريض الأعمدة مثلاً. */
   className?: string;
+  /**
+   * A row that opens (Client Quotas, 27 Sep 2026 — the same «+» as the orders table): the main
+   * row keeps the basics, this renders the detail under it. A leading «+» column appears; the
+   * row itself toggles too. One open at a time, so a detail never reads under the wrong row.
+   */
+  renderExpanded?: (item: T) => React.ReactNode;
+  /** Names the «+» for screen readers — e.g. `Quota details of ${name}`. */
+  expandLabel?: (item: T) => string;
 }
 
 type SortDirection = "asc" | "desc" | null;
@@ -47,7 +55,12 @@ export function DataTable<T extends { id: string }>({
   rowClassName,
   emptyText = "No data found",
   className,
+  renderExpanded,
+  expandLabel,
 }: DataTableProps<T>) {
+  const [openId, setOpenId] = useState<string | null>(null);
+  const toggleOpen = (id: string) => setOpenId((prev) => (prev === id ? null : id));
+  const colCount = columns.length + (renderExpanded ? 1 : 0);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -174,6 +187,7 @@ export function DataTable<T extends { id: string }>({
         >
           <TableHeader>
             <TableRow>
+              {renderExpanded ? <TableHead className="w-[1%] !px-2" aria-label="Details" /> : null}
               {columns.map((column) => (
                 <TableHead
                   key={String(column.key)}
@@ -215,17 +229,45 @@ export function DataTable<T extends { id: string }>({
           <TableBody className="[&>tr:nth-child(even)]:bg-muted/20">
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center text-muted-foreground">
+                <TableCell colSpan={colCount} className="text-center text-muted-foreground">
                   {emptyText}
                 </TableCell>
               </TableRow>
             ) : (
-              paginatedData.map((item) => (
+              paginatedData.map((item) => {
+                const isOpen = !!renderExpanded && openId === item.id;
+                return (
+                <Fragment key={item.id}>
                 <TableRow
-                  key={item.id}
-                  onClick={() => onRowClick?.(item)}
-                  className={cn("h-10", onRowClick && "cursor-pointer", rowClassName?.(item))}
+                  onClick={() => (onRowClick ? onRowClick(item) : renderExpanded ? toggleOpen(item.id) : undefined)}
+                  aria-expanded={renderExpanded ? isOpen : undefined}
+                  className={cn(
+                    "h-10",
+                    (onRowClick || renderExpanded) && "cursor-pointer",
+                    // The open row takes its detail's tint and edge, so the two read as one block.
+                    isOpen && "border-b-0 !bg-primary/[0.07] [&>td:first-child]:border-s-2 [&>td:first-child]:border-s-primary",
+                    rowClassName?.(item),
+                  )}
                 >
+                  {renderExpanded ? (
+                    <TableCell className="w-[1%] !px-2">
+                      <button
+                        type="button"
+                        aria-label={expandLabel?.(item) ?? (isOpen ? "Hide details" : "Show details")}
+                        aria-expanded={isOpen}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleOpen(item.id);
+                        }}
+                        className={cn(
+                          "inline-flex size-6 items-center justify-center rounded-md border transition-colors",
+                          isOpen ? "border-primary/40 bg-primary/10 text-primary" : "bg-background text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        {isOpen ? <Minus className="size-3.5" /> : <Plus className="size-3.5" />}
+                      </button>
+                    </TableCell>
+                  ) : null}
                   {columns.map((column) => (
                     <TableCell key={String(column.key)} className={column.className}>
                       {column.render
@@ -234,7 +276,16 @@ export function DataTable<T extends { id: string }>({
                     </TableCell>
                   ))}
                 </TableRow>
-              ))
+                {isOpen ? (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell colSpan={colCount} className="whitespace-normal border-s-2 border-s-primary bg-primary/[0.04] !py-3">
+                      {renderExpanded!(item)}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                </Fragment>
+                );
+              })
             )}
           </TableBody>
         </Table>
@@ -250,7 +301,7 @@ export function DataTable<T extends { id: string }>({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              onClick={() => { setOpenId(null); setCurrentPage((p) => Math.max(1, p - 1)); }}
               disabled={currentPage === 1}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -261,7 +312,7 @@ export function DataTable<T extends { id: string }>({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => { setOpenId(null); setCurrentPage((p) => Math.min(totalPages, p + 1)); }}
               disabled={currentPage === totalPages}
             >
               <ChevronRight className="h-4 w-4" />

@@ -17,7 +17,7 @@ import { FileDropZone } from "./components/file-drop-zone";
 import { FilePreview } from "./components/file-preview";
 import { UploadProgress } from "./components/upload-progress";
 import { UploadSuccess } from "./components/upload-success";
-import { ImageEditorModal } from "./components/image-editor-modal";
+import { ImageEditorModal } from "@/components/shared/media-upload/image-editor-modal";
 import type { UploadZoneProps } from "./types";
 
 function StepHeader({ n, title, hint }: { n: number; title: string; hint?: string }) {
@@ -163,7 +163,12 @@ export function UploadZone(props: UploadZoneProps) {
       {/* STEP 1 — Owner toggle [Modonty | Client] (Modonty Core T2, always visible) */}
       {!hasSaved && (
         <section className="space-y-3">
-          <StepHeader n={1} title="Who owns this media?" hint="Client is the default — flip to Modonty for platform images (tags, categories, pages)" />
+          {props.clientOnly ? (
+            <StepHeader n={1} title="For which client?" hint="The file is saved to this client and linked to its page when the role has a slot" />
+          ) : (
+            <StepHeader n={1} title="Who owns this media?" hint="Client is the default — flip to Modonty for platform images (tags, categories, pages)" />
+          )}
+          {!props.clientOnly && (
           <div className="flex flex-wrap items-center gap-3">
             <div className="inline-flex rounded-lg border bg-muted/40 p-1">
               <button
@@ -179,6 +184,7 @@ export function UploadZone(props: UploadZoneProps) {
                 <Users className="h-3.5 w-3.5" />
                 Client
               </button>
+              {!props.clientOnly && (
               <button
                 type="button"
                 disabled={isUploading || !props.coreClientId}
@@ -192,6 +198,7 @@ export function UploadZone(props: UploadZoneProps) {
                 <Crown className="h-3.5 w-3.5" />
                 Modonty
               </button>
+              )}
             </div>
             {ownerMode === "modonty" && props.coreClientId && (
               <span className="text-xs text-muted-foreground">
@@ -199,12 +206,14 @@ export function UploadZone(props: UploadZoneProps) {
               </span>
             )}
           </div>
+          )}
           {ownerMode === "client" && (
             <ClientSelector
               clients={clients}
               clientId={clientId}
               onClientChange={setClientId}
               isLoading={isLoadingClients}
+              allowGeneral={!props.clientOnly}
             />
           )}
         </section>
@@ -216,7 +225,7 @@ export function UploadZone(props: UploadZoneProps) {
           <StepHeader n={2} title="Pick image role" hint="Sets the required crop ratio, size & format" />
           <Card>
             <CardContent className="pt-6">
-              <MediaTypeSelector value={mediaType} onChange={handleMediaTypeChange} disabled={isUploading} />
+              <MediaTypeSelector value={mediaType} onChange={handleMediaTypeChange} disabled={isUploading} types={props.roles} />
             </CardContent>
           </Card>
         </section>

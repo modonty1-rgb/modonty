@@ -28,6 +28,33 @@ import { MediaType } from "@prisma/client";
  * that is safe to delete.
  */
 
+// Modonty's own pages and taxonomy use images too (27 Sep 2026): an industry's share image
+// read «Unused» and the delete guard let it go, leaving the industry pointing at nothing
+// (these relations are onDelete: NoAction). Measured on dev: 8 industry images.
+const SITE_LINKS = [
+  "authorImages",
+  "authorSocialImages",
+  "categorySocialImages",
+  "tagSocialImages",
+  "industrySocialImages",
+  "modontyHeroImages",
+  "modontySocialImages",
+  "introVideoClients",
+] as const;
+
+/** A file on one of Modonty's own pages (author, category, tag, industry, a site page). */
+export const MEDIA_SITE_USED_WHERE: Prisma.MediaWhereInput = {
+  OR: SITE_LINKS.map((k) => ({ [k]: { some: {} } })),
+};
+
+/**
+ * The three platform defaults (Settings › Defaults) — the logo, article image and cover a
+ * client shows while it has none of its own. Found by their stable filename, never by a
+ * relation (defaults-actions.ts), so nothing above saw them: Modonty › Media listed all three
+ * as «Unused» with a live delete button (27 Sep 2026).
+ */
+export const PLATFORM_DEFAULT_PREFIX = "platform-default-";
+
 // Types owned by a client and consumed purely by clientId + type (no back-relation).
 const CLIENT_TYPE_USED = [MediaType.GALLERY, MediaType.CLIENT_MINI];
 
@@ -38,6 +65,8 @@ export const MEDIA_USED_WHERE: Prisma.MediaWhereInput = {
     { logoClients: { some: {} } },
     { heroImageClients: { some: {} } },
     { mobileHeroImageClients: { some: {} } },
+    ...SITE_LINKS.map((k) => ({ [k]: { some: {} } })),
+    { filename: { startsWith: PLATFORM_DEFAULT_PREFIX } },
     { AND: [{ clientId: { not: null } }, { type: { in: CLIENT_TYPE_USED } }] },
   ],
 };
@@ -49,6 +78,9 @@ export const MEDIA_UNUSED_WHERE: Prisma.MediaWhereInput = {
     { logoClients: { none: {} } },
     { heroImageClients: { none: {} } },
     { mobileHeroImageClients: { none: {} } },
+    ...SITE_LINKS.map((k) => ({ [k]: { none: {} } })),
+    // filename is required, so NOT is safe here (no missing-field trap)
+    { NOT: { filename: { startsWith: PLATFORM_DEFAULT_PREFIX } } },
     // negation of the client GALLERY/CLIENT_MINI used-clause (De Morgan)
     { OR: [{ clientId: null }, { type: { notIn: CLIENT_TYPE_USED } }] },
   ],

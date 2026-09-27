@@ -81,7 +81,7 @@ export default async function ArticlesPage({
   // reach the browser at all.
   const visibleArticles = showSchedule
     ? allArticles
-    : allArticles.filter((a) => a.status !== "SCHEDULED");
+    : allArticles.filter((a) => a.status !== "SCHEDULED" && a.status !== "APPROVED");
 
   return (
     <ArticlesPageClient

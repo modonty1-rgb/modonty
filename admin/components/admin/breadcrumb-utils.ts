@@ -59,6 +59,9 @@ const routeLabels: Record<string, string> = {
   new: 'New',
   edit: 'Edit',
   preview: 'Preview',
+  // The two article pages renamed on 27 Sep 2026 — the crumb read «Clients-guide» from the URL.
+  'clients-guide': 'Client Quotas',
+  'client-articles': 'Client-Site Articles',
   // الحملات الإعلانية شاشة عربية بالكامل (تقارير Meta ولوحة الحملات) — نفس منطق
   // sales-leads تحت: الكسرة الإنجليزية الوحيدة فوق شاشة عربية بالكامل.
   campaigns: 'الحملات الإعلانية',

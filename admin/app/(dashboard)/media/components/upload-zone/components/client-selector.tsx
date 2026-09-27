@@ -17,6 +17,8 @@ interface ClientSelectorProps {
   clientId: string;
   onClientChange: (clientId: string) => void;
   isLoading: boolean;
+  /** false on a client-only upload (Clients › Media): «General» belongs to the main library. */
+  allowGeneral?: boolean;
 }
 
 export function ClientSelector({
@@ -24,6 +26,7 @@ export function ClientSelector({
   clientId,
   onClientChange,
   isLoading,
+  allowGeneral = true,
 }: ClientSelectorProps) {
   return (
     <Card>
@@ -41,7 +44,7 @@ export function ClientSelector({
                 <SelectValue placeholder="Select a client (required)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">General — no client (visible to all)</SelectItem>
+                {allowGeneral && <SelectItem value="none">General — no client (visible to all)</SelectItem>}
                 {clients.map((client) => (
                   <SelectItem key={client.id} value={client.id}>
                     {client.name}
@@ -50,9 +53,11 @@ export function ClientSelector({
               </SelectContent>
             </Select>
           )}
-          <p className="text-xs text-muted-foreground">
-            General images appear in all client media pickers. Client images appear only for that client.
-          </p>
+          {allowGeneral && (
+            <p className="text-xs text-muted-foreground">
+              General images appear in all client media pickers. Client images appear only for that client.
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

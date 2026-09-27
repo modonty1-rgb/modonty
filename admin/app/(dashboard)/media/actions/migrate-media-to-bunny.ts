@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { mirrorImageToBunny } from "./bunny-mirror-core";
+import { mirrorImageToBunny } from "@/lib/media/bunny-mirror-core";
 
 // A row still needs migrating when bunnyUrl is null OR the field is absent.
 // (Mongo trap: `{ bunnyUrl: null }` alone misses rows created before the field existed.)

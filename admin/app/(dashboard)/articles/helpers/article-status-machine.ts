@@ -1,9 +1,11 @@
 import type { ArticleStatus } from "@prisma/client";
 
 // Client approval is a MANDATORY gate, not an optional shortcut. The only way an
-// article reaches SCHEDULED (and then PUBLISHED) is the client approving it on the
-// console (`approveArticle` → AWAITING_APPROVAL → SCHEDULED, a direct DB write that
-// does NOT pass through this admin machine). Admin can never self-advance past the
+// article reaches APPROVED is the client approving it on the console (`approveArticle`
+// → AWAITING_APPROVAL → APPROVED, a direct DB write that does NOT pass through this admin
+// machine). The team then picks the date (APPROVED → SCHEDULED, set-scheduled-date) and the
+// cron — or «Publish Now» — takes it live (27 Sep 2026: approval used to write SCHEDULED
+// directly, and undated articles went live on the next cron tick). Admin can never self-advance past the
 // client: from AWAITING_APPROVAL the admin may only bounce the article back for
 // revision. This closes the historical bypass where DRAFT/WRITING/AWAITING_APPROVAL
 // could jump straight to SCHEDULED/PUBLISHED (added open in v0.18, never re-closed
@@ -12,6 +14,7 @@ const VALID_TRANSITIONS: Record<ArticleStatus, ArticleStatus[]> = {
   WRITING: ["DRAFT"],
   DRAFT: ["WRITING", "AWAITING_APPROVAL"],
   AWAITING_APPROVAL: ["NEEDS_REVISION"],
+  APPROVED: ["SCHEDULED", "DRAFT"],
   NEEDS_REVISION: ["WRITING", "DRAFT"],
   SCHEDULED: ["PUBLISHED", "PUBLISHED_ON_CLIENT_SITE", "DRAFT"],
   PUBLISHED: ["ARCHIVED", "DRAFT"],

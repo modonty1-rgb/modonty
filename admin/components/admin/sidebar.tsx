@@ -21,6 +21,7 @@ import {
 import {
   Archive,
   BookUser,
+  CalendarClock,
   BadgeCheck,
   BarChart3,
   BookOpen,
@@ -104,6 +105,7 @@ const HREF_TO_STATUS: Record<string, keyof ArticleStatusCounts> = {
   "/articles/workflow/writing-to-draft": "WRITING",
   "/articles/workflow/draft-to-approval": "DRAFT",
   "/articles/workflow/approval-to-revision": "AWAITING_APPROVAL",
+  "/articles/workflow/approved-to-scheduled": "APPROVED",
   "/articles/workflow/revision-to-draft": "NEEDS_REVISION",
   "/articles/workflow/scheduled-to-published": "SCHEDULED",
 };
@@ -157,6 +159,9 @@ const rawMenuGroups: MenuGroup[] = [
     defaultOpen: false,
     items: [
       { icon: Users2, label: "All Clients", href: "/clients", exact: true },
+      // Clients › Media (Khalid, 26 Sep 2026): the Media library page narrowed to what clients
+      // own. The main Media library below stays as it is — General images live there.
+      { icon: Images, label: "Media", href: "/clients/media" },
       /**
        * **«تفعيل عميل» خرج من السايدبار** (خالد ٢٠ سبتمبر ٢٠٢٦: «نبغى نشيله، خلاص موجود
        * في المبيعات»).
@@ -180,16 +185,20 @@ const rawMenuGroups: MenuGroup[] = [
     items: [
       { icon: FileText, label: "All Articles", href: "/articles", exact: true },
       { icon: FilePlus, label: "New Article", href: "/articles/new" },
+      // Articles › Media (Khalid, 26 Sep 2026): featured images and article galleries, same page as Clients › Media.
+      { icon: Images, label: "Media", href: "/articles/media" },
       // Which articles lead the modonty homepage — most partners are doctors, so an unpicked
       // homepage reads as a medical site (Khalid, 2026-09-24).
       { icon: Star, label: "Homepage Picks", href: "/articles/homepage" },
       // Every client's quota, delivered and remaining, and activation day — so the content
       // team knows who is owed what without opening each order (Khalid, 2026-09-24).
-      { icon: BookUser, label: "Clients Articles", href: "/articles/clients-guide" },
+      { icon: BookUser, label: "Client Quotas", href: "/articles/clients-guide" },
+      // Names (Khalid, 27 Sep 2026): «Clients Articles» and «Client Articles» sat one letter
+      // apart for two unrelated pages — quotas per client, and articles for the client's site.
       // Its own entry, not a filter on «All Articles»: these are published on the
       // CLIENT's domain and never on modonty. The section IS the destination — an
       // article created from there is marked for the client's site at birth.
-      { icon: Globe, label: "Client Articles", href: "/client-articles" },
+      { icon: Globe, label: "Client-Site Articles", href: "/client-articles" },
       // Sits with the writing tools, not under Clients: the audience is the content team,
       // and a writer looking for "who am I writing for" should not have to open the
       // clients admin to find it.
@@ -202,6 +211,8 @@ const rawMenuGroups: MenuGroup[] = [
           { icon: FileClock, label: "Draft → Approval", href: "/articles/workflow/draft-to-approval" },
           { icon: FileX, label: "Approval → Revision", href: "/articles/workflow/approval-to-revision" },
           { icon: FileEdit, label: "Revision → Draft", href: "/articles/workflow/revision-to-draft" },
+          // The client approved; the team picks the date here (27 Sep 2026).
+          { icon: CalendarClock, label: "Approved → Scheduled", href: "/articles/workflow/approved-to-scheduled" },
           { icon: CheckCircle2, label: "Scheduled → Published", href: "/articles/workflow/scheduled-to-published" },
         ],
       },
@@ -347,6 +358,8 @@ const rawMenuGroups: MenuGroup[] = [
       // شخصية المساعد وتعليماته ليست إعداداً من إعدادات الصفحات — هي ما يقوله لكل زائر.
       { icon: Bot, label: "Modo AI", href: "/modonty/modo" },
       { icon: UserPen, label: "Authors", href: "/authors" },
+      // Modonty's own files — site pages, articles, brand, gallery, reels (27 Sep 2026).
+      { icon: Images, label: "Media", href: "/modonty/media" },
       // Visible homepage content (not SEO) — future home for landing/hero options.
       { icon: PanelTop, label: "Homepage Banner", href: "/settings/banner" },
     ],

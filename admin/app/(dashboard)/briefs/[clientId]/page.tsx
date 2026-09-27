@@ -399,6 +399,7 @@ function statusLabel(status: string): string {
     WRITING: "قيد الكتابة",
     DRAFT: "مسودة",
     AWAITING_APPROVAL: "بانتظار العميل",
+    APPROVED: "وافق العميل — بانتظار الموعد",
     NEEDS_REVISION: "تحتاج تعديل",
     SCHEDULED: "مجدول",
     ARCHIVED: "مؤرشف",

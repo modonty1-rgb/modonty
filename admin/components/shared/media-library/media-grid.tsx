@@ -7,9 +7,9 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { format } from "date-fns";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { useRouter } from "next/navigation";
-import { Edit, Trash2, Info, Copy, ChevronDown, ImageOff, Check, AlertTriangle } from "lucide-react";
+import { Edit, Trash2, Info, Copy, ChevronDown, ImageOff, Check, AlertTriangle, Clapperboard, Play, Wand2, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { checkMediaCompliance } from "@/lib/media/media-specs";
+import { checkMediaCompliance, isFormatIssue } from "@/lib/media/media-specs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Dialog,
@@ -21,7 +21,7 @@ import { computeMediaSeoScore } from "@modonty/shared/lib/seo/media/seo-score";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { MediaType } from "@prisma/client";
-import { getMediaTypeLabel } from "../helpers/media-utils";
+import { getMediaTypeLabel } from "@/lib/media/media-utils";
 
 interface Media {
   id: string;
@@ -41,6 +41,14 @@ interface Media {
   cloudinaryPublicId?: string | null;
   cloudinaryVersion?: string | null;
   isUsed?: boolean;
+  roleLabel?: string;
+  reelHref?: string;
+  /** Bunny Stream poster for videos — every reel row carries one. */
+  thumbnailUrl?: string | null;
+  scope?: string | null;
+  clientId?: string | null;
+  /** A workflow state that says more than «In use» (a reel: Pending · Published · Rejected). */
+  status?: { label: string; tone: "ok" | "warn" | "bad" | "muted" };
   client?: {
     id: string;
     name: string;
@@ -56,6 +64,17 @@ interface MediaGridProps {
   groupByClient?: boolean;
   onDelete?: (id: string) => void;
   isDeleting?: boolean;
+  /**
+   * Disable Delete on files in use, with the reason on hover — instead of letting the click
+   * through to a «Cannot delete» dialog. Opt-in: the Media library keeps its behaviour.
+   */
+  lockUsedDelete?: boolean;
+  /** The page hosting this grid — the editor returns here after Save/Cancel. */
+  backPath?: string;
+  /** Re-encode a wrong-format image to WebP in place. Omit to hide the button. */
+  onConvert?: (id: string) => void;
+  /** The id being converted right now (spinner on its button). */
+  convertingId?: string | null;
 }
 
 export function MediaGrid({
@@ -65,6 +84,10 @@ export function MediaGrid({
   groupByClient = false,
   onDelete,
   isDeleting = false,
+  lockUsedDelete = false,
+  backPath,
+  onConvert,
+  convertingId = null,
 }: MediaGridProps) {
   const router = useRouter();
   const { toast } = useToast();
@@ -88,6 +111,30 @@ export function MediaGrid({
       return false;
     }
   };
+
+  const deleteLocked = (item: Media) => lockUsedDelete && !!item.isUsed;
+  const editHref = (item: Media) =>
+    `/media/${item.id}/edit${backPath ? `?back=${encodeURIComponent(backPath)}` : ""}`;
+  const STATUS_TONE = { ok: "text-emerald-600", warn: "text-amber-600", bad: "text-red-600", muted: "text-muted-foreground" } as const;
+  // Only a format problem is fixable in one click; a wrong ratio or size needs a new crop.
+  const canConvert = (item: Media) =>
+    !!onConvert && item.mimeType.startsWith("image/") && checkMediaCompliance(item).issues.some(isFormatIssue);
+  const convertButton = (item: Media, compact: boolean) =>
+    canConvert(item) ? (
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); onConvert?.(item.id); }}
+        disabled={!!convertingId}
+        title="Convert to WebP — same file, same links"
+        className={compact
+          ? "inline-flex h-5 items-center gap-1 rounded-full bg-amber-500 px-2 text-[10px] font-semibold text-white shadow-sm ring-2 ring-background hover:bg-amber-600 disabled:opacity-60"
+          : "inline-flex h-8 items-center gap-1.5 rounded-md border border-amber-500/50 px-3 text-xs font-medium text-amber-700 hover:bg-amber-500/10 disabled:opacity-60 dark:text-amber-400"}
+      >
+        {convertingId === item.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />}
+        {convertingId === item.id ? "Converting…" : compact ? "WebP" : "Convert to WebP"}
+      </button>
+    ) : null;
+  const deleteTitle = (item: Media) => (deleteLocked(item) ? "In use — change it on the client first" : "Delete");
 
   const copyUrl = async (item: Media) => {
     try {
@@ -182,7 +229,7 @@ export function MediaGrid({
               <div className="space-y-3 text-sm">
                 <div className="flex items-center justify-between py-1.5 border-b border-border/50">
                   <span className="text-muted-foreground">Type</span>
-                  <span className="font-medium">{getMediaTypeLabel(infoMedia.type)}</span>
+                  <span className="font-medium">{infoMedia.roleLabel ?? getMediaTypeLabel(infoMedia.type)}</span>
                 </div>
                 <div className="flex items-center justify-between py-1.5 border-b border-border/50">
                   <span className="text-muted-foreground">Format</span>
@@ -249,6 +296,27 @@ export function MediaGrid({
                   );
                 })()}
               </div>
+              {/* Act from here instead of closing and hunting the card again. */}
+              <div className="mt-5 flex flex-wrap gap-2 border-t border-border/50 pt-4">
+                {convertButton(infoMedia, false)}
+                <button type="button" onClick={() => copyUrl(infoMedia)} className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium hover:bg-muted"><Copy className="h-3.5 w-3.5" />Copy URL</button>
+                {infoMedia.reelHref ? (
+                  <button type="button" onClick={() => router.push(infoMedia.reelHref!)} className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium hover:bg-muted"><Clapperboard className="h-3.5 w-3.5" />Open reel</button>
+                ) : (
+                  <button type="button" onClick={() => router.push(editHref(infoMedia))} className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium hover:bg-muted"><Edit className="h-3.5 w-3.5" />Edit</button>
+                )}
+                {onDelete && !infoMedia.reelHref && (
+                  <button
+                    type="button"
+                    onClick={() => { const id = infoMedia.id; setInfoMedia(null); onDelete(id); }}
+                    disabled={isDeleting || deleteLocked(infoMedia)}
+                    title={deleteTitle(infoMedia)}
+                    className="inline-flex h-8 items-center gap-1.5 rounded-md border border-destructive/40 px-3 text-xs font-medium text-destructive hover:bg-destructive/10 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />{deleteLocked(infoMedia) ? "In use — can't delete" : "Delete"}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -270,6 +338,8 @@ export function MediaGrid({
             <div className="relative w-10 h-10 rounded overflow-hidden bg-muted shrink-0">
               {isImage(item.mimeType) && isHostAllowed(getImageUrl(item)) ? (
                 <OptimizedImage media={asMedia(getImageUrl(item), item.altText || item.filename)} alt={item.altText || item.filename} fill className="object-cover" sizes="40px" />
+              ) : item.thumbnailUrl ? (
+                <OptimizedImage media={asMedia(item.thumbnailUrl, item.filename)} alt="" fill className="object-cover" sizes="40px" />
               ) : isImage(item.mimeType) ? (
                 <div className="flex h-full items-center justify-center"><ImageOff className="h-4 w-4 text-muted-foreground" /></div>
               ) : (
@@ -278,7 +348,12 @@ export function MediaGrid({
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{item.filename}</p>
-              {item.altText && <p className="text-[11px] text-muted-foreground truncate">{item.altText}</p>}
+              {/* Whose file it is — «cover.webp» alone says nothing in a list of 37 covers. */}
+              {(!groupByClient && item.client?.name) || item.altText ? (
+                <p className="text-[11px] text-muted-foreground truncate">
+                  {[!groupByClient ? item.client?.name : null, item.altText].filter(Boolean).join(" · ")}
+                </p>
+              ) : null}
             </div>
             {item.width && item.height && (
               <span className="text-[11px] text-muted-foreground hidden md:block shrink-0">{item.width}×{item.height}</span>
@@ -286,15 +361,19 @@ export function MediaGrid({
             <span className="text-[11px] text-muted-foreground hidden sm:block shrink-0 w-16 text-end">{formatFileSize(item.fileSize)}</span>
             <div className="shrink-0 hidden lg:block">
               <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${item.isUsed ? "bg-emerald-500/15 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
-                {getMediaTypeLabel(item.type)}{item.isUsed ? " · In Use" : " · Unused"}
+                {item.roleLabel ?? getMediaTypeLabel(item.type)}{item.status ? ` · ${item.status.label}` : item.isUsed ? " · In Use" : " · Unused"}
               </span>
             </div>
             <div className="flex items-center gap-0.5 shrink-0">
-              <button type="button" onClick={() => copyUrl(item)} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Copy URL"><Copy className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={() => setInfoMedia(item)} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Details"><Info className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={() => router.push(`/media/${item.id}/edit`)} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
-              {onDelete && (
-                <button type="button" onClick={() => onDelete(item.id)} disabled={isDeleting} className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors" title="Delete"><Trash2 className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={() => copyUrl(item)} className="inline-flex size-6 items-center justify-center rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Copy URL"><Copy className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={() => setInfoMedia(item)} className="inline-flex size-6 items-center justify-center rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Details"><Info className="h-3.5 w-3.5" /></button>
+              {item.reelHref ? (
+                <button type="button" onClick={() => router.push(item.reelHref!)} className="inline-flex size-6 items-center justify-center rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Open reel"><Clapperboard className="h-3.5 w-3.5" /></button>
+              ) : (
+                <button type="button" onClick={() => router.push(editHref(item))} className="inline-flex size-6 items-center justify-center rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
+              )}
+              {onDelete && !item.reelHref && (
+                <button type="button" onClick={() => onDelete(item.id)} disabled={isDeleting || deleteLocked(item)} className="inline-flex size-6 items-center justify-center rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors disabled:cursor-not-allowed disabled:opacity-40" title={deleteTitle(item)} aria-label={deleteTitle(item)}><Trash2 className="h-3.5 w-3.5" /></button>
               )}
             </div>
           </div>
@@ -361,6 +440,14 @@ export function MediaGrid({
               className="object-contain p-2"
               sizes={cardSizes}
             />
+          ) : item.thumbnailUrl ? (
+            <>
+              {/* Decorative: the filename is on the card already. A poster Bunny has not generated yet (a pending reel 404s) then leaves just the play mark, not its alt text spilling over the card. */}
+              <OptimizedImage media={asMedia(item.thumbnailUrl, item.filename)} alt="" fill className="object-contain p-2" sizes={cardSizes} />
+              <span className="pointer-events-none absolute inset-0 m-auto flex size-10 items-center justify-center rounded-full bg-black/55 text-white" aria-hidden>
+                <Play className="ms-0.5 size-4 fill-current" />
+              </span>
+            </>
           ) : isImage(item.mimeType) ? (
             <div className="flex h-full flex-col items-center justify-center gap-1 p-2 text-center">
               <ImageOff className="h-5 w-5 text-muted-foreground" />
@@ -396,21 +483,24 @@ export function MediaGrid({
                 </TooltipContent>
               </Tooltip>
             )}
-            <span
-              className={`h-2.5 w-2.5 rounded-full ring-2 ring-background ${item.isUsed ? "bg-emerald-500" : "bg-muted-foreground/50"}`}
-              title={item.isUsed ? "In use" : "Unused"}
-            />
+            {convertButton(item, true)}
           </div>
 
-          {/* Type badge (top-end) */}
+          {/* Role + usage (top-end). Usage used to be a second green dot next to the green spec
+              check — two identical marks meaning different things; it reads as a word now. */}
           <span className="absolute top-2 end-2 z-10 rounded-md bg-background/85 px-1.5 py-0.5 text-[10px] font-medium text-foreground/80 backdrop-blur-sm">
-            {getMediaTypeLabel(item.type)}
+            {item.roleLabel ?? getMediaTypeLabel(item.type)}
+            {item.status ? (
+              <span className={STATUS_TONE[item.status.tone]}> · {item.status.label}</span>
+            ) : (
+              <span className={item.isUsed ? "text-emerald-600" : "text-muted-foreground"}>{item.isUsed ? " · In use" : " · Unused"}</span>
+            )}
           </span>
 
           {/* Client name strip — flat view only, so you know whose image it is at a
               glance. Fades out on hover to reveal the actions overlay below. */}
           {!groupByClient && item.client?.name && (
-            <div className="absolute inset-x-0 bottom-0 z-[5] bg-gradient-to-t from-black/75 to-transparent px-2 pb-1.5 pt-4 transition-opacity duration-200 group-hover:opacity-0">
+            <div className="absolute inset-x-0 bottom-0 z-[5] bg-gradient-to-t from-black/75 to-transparent px-2 pb-1.5 pt-4 transition-opacity duration-200 group-hover:opacity-0 group-focus-within:opacity-0">
               <p className="truncate text-[11px] font-medium text-white/90" title={item.client.name}>
                 {item.client.name}
               </p>
@@ -418,7 +508,7 @@ export function MediaGrid({
           )}
 
           {/* Hover overlay: gradient + name + actions */}
-          <div className="absolute inset-0 z-10 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          <div className="absolute inset-0 z-10 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-within:opacity-100">
             <div className="space-y-1 p-2">
               <p className="truncate text-[11px] font-medium text-white/90" title={item.filename}>{item.filename}</p>
               <div className="flex items-center justify-between gap-1">
@@ -426,11 +516,15 @@ export function MediaGrid({
                   {[item.width && item.height ? `${item.width}×${item.height}` : null, item.fileSize ? formatFileSize(item.fileSize) : null].filter(Boolean).join(" · ")}
                 </span>
                 <div className="flex shrink-0 items-center gap-0.5">
-                  <button type="button" onClick={() => copyUrl(item)} className="rounded p-1 text-white/80 transition-colors hover:bg-white/20 hover:text-white" title="Copy URL"><Copy className="h-3.5 w-3.5" /></button>
-                  <button type="button" onClick={() => setInfoMedia(item)} className="rounded p-1 text-white/80 transition-colors hover:bg-white/20 hover:text-white" title="Details"><Info className="h-3.5 w-3.5" /></button>
-                  <button type="button" onClick={() => router.push(`/media/${item.id}/edit`)} className="rounded p-1 text-white/80 transition-colors hover:bg-white/20 hover:text-white" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
-                  {onDelete && (
-                    <button type="button" onClick={() => onDelete(item.id)} disabled={isDeleting} className="rounded p-1 text-white/80 transition-colors hover:bg-red-500/30 hover:text-white" title="Delete"><Trash2 className="h-3.5 w-3.5" /></button>
+                  <button type="button" onClick={() => copyUrl(item)} className="inline-flex size-6 items-center justify-center rounded text-white/80 transition-colors hover:bg-white/20 hover:text-white" title="Copy URL"><Copy className="h-3.5 w-3.5" /></button>
+                  <button type="button" onClick={() => setInfoMedia(item)} className="inline-flex size-6 items-center justify-center rounded text-white/80 transition-colors hover:bg-white/20 hover:text-white" title="Details"><Info className="h-3.5 w-3.5" /></button>
+                  {item.reelHref ? (
+                    <button type="button" onClick={() => router.push(item.reelHref!)} className="inline-flex size-6 items-center justify-center rounded text-white/80 transition-colors hover:bg-white/20 hover:text-white" title="Open reel"><Clapperboard className="h-3.5 w-3.5" /></button>
+                  ) : (
+                    <button type="button" onClick={() => router.push(editHref(item))} className="inline-flex size-6 items-center justify-center rounded text-white/80 transition-colors hover:bg-white/20 hover:text-white" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
+                  )}
+                  {onDelete && !item.reelHref && (
+                    <button type="button" onClick={() => onDelete(item.id)} disabled={isDeleting || deleteLocked(item)} className="inline-flex size-6 items-center justify-center rounded text-white/80 transition-colors hover:bg-red-500/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-40" title={deleteTitle(item)} aria-label={deleteTitle(item)}><Trash2 className="h-3.5 w-3.5" /></button>
                   )}
                 </div>
               </div>

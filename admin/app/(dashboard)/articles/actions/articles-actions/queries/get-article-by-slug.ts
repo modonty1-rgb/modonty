@@ -75,6 +75,7 @@ export async function getArticleBySlug(slug: string, clientId?: string) {
       ArticleStatus.WRITING,
       ArticleStatus.DRAFT,
       ArticleStatus.AWAITING_APPROVAL,
+      ArticleStatus.APPROVED,
       ArticleStatus.NEEDS_REVISION,
       ArticleStatus.SCHEDULED,
       ArticleStatus.PUBLISHED,

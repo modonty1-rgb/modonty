@@ -3,8 +3,8 @@ import { Suspense } from "react";
 import { getArticles, getClients, getCategories, getAuthors, ArticleFilters } from "./actions/articles-actions";
 import { getArticleStatusCounts } from "@/app/(dashboard)/actions/article-status-counts";
 import { ArticleStatus } from "@prisma/client";
-import { ArticlesPageClient } from "./components/articles-page-client";
-import { ArticlesHeaderWrapper } from "./components/articles-header-wrapper";
+// «Advanced Table» (Khalid, 27 Sep 2026) — replaces the old header wrapper + table on this page.
+import { ArticlesBoard } from "./components/articles-board";
 import ArticlesLoading from "./loading";
 
 interface ArticlesContentProps {
@@ -21,14 +21,13 @@ async function ArticlesContent({ filters }: ArticlesContentProps) {
   ]);
 
   return (
-    <ArticlesHeaderWrapper
+    <ArticlesBoard
+      articles={articles}
       clients={clients}
       categories={categories}
       authors={authors}
       statusCounts={statusCounts}
-    >
-      <ArticlesPageClient articles={articles} />
-    </ArticlesHeaderWrapper>
+    />
   );
 }
 

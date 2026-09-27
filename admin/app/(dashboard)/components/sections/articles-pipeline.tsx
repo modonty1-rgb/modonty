@@ -26,6 +26,8 @@ const STAGES: Array<{
 }> = [
   { status: ArticleStatus.AWAITING_APPROVAL, key: "awaiting-approval", label: "Waiting approval", tier: "warm", icon: FileCheck },
   { status: ArticleStatus.NEEDS_REVISION, key: "needs-revision", label: "Need revision", tier: "warm", icon: FileX },
+  // Client approved, no date yet — the team owes it a date (27 Sep 2026).
+  { status: ArticleStatus.APPROVED, key: "approved", label: "Approved — needs date", tier: "warm", icon: FileCheck },
   { status: ArticleStatus.DRAFT, key: "draft", label: "Drafts", tier: "plain", icon: FileText },
   { status: ArticleStatus.WRITING, key: "writing", label: "Being written", tier: "plain", icon: FileText },
   { status: ArticleStatus.SCHEDULED, key: "scheduled", label: "Scheduled", tier: "plain", icon: FileText },

@@ -36,7 +36,9 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [confirmApprove, setConfirmApprove] = useState(false);
   const isPending = article.status === "AWAITING_APPROVAL";
-  const isScheduled = article.status === "SCHEDULED";
+  // Approved-without-a-date shares the scheduled banner — its «no date yet» branch was
+  // written for exactly that (scheduledHint: «المحرر سيختار موعد النشر قريباً»).
+  const isScheduled = article.status === "SCHEDULED" || article.status === "APPROVED";
   const isPublished = article.status === "PUBLISHED";
   // Live on the client's own domain — so the «view» button must point there, never at
   // `${siteUrl}/articles/...`, which for these articles is an address that does not exist.

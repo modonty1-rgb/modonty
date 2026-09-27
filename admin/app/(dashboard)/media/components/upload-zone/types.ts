@@ -1,3 +1,5 @@
+import type { MediaType } from "@prisma/client";
+
 export interface UploadFile {
   id: string;
   file: File;
@@ -25,6 +27,12 @@ export interface UploadZoneProps {
   initialClientId?: string | null;
   /** Modonty Core (T2): the Client row that IS the platform. Default upload target. */
   coreClientId?: string | null;
+  /** Narrowed upload: only these roles are offered (default: every upload role). */
+  roles?: MediaType[];
+  /** Owner fixed to «Client» — the Modonty side of the toggle is not offered. */
+  clientOnly?: boolean;
+  /** Opens with this role already picked — a «missing mobile cover» link lands on the crop step. */
+  initialRole?: MediaType | null;
 }
 
 export interface Client {

@@ -25,6 +25,7 @@ export async function getArticles(filters?: ArticleFilters) {
       ArticleStatus.WRITING,
       ArticleStatus.DRAFT,
       ArticleStatus.AWAITING_APPROVAL,
+      ArticleStatus.APPROVED,
       ArticleStatus.NEEDS_REVISION,
       ArticleStatus.SCHEDULED,
       ArticleStatus.PUBLISHED,
@@ -33,7 +34,7 @@ export async function getArticles(filters?: ArticleFilters) {
 
     const where: Prisma.ArticleWhereInput = {};
 
-    // Articles written for a client's own website live in «Client Articles» and nowhere
+    // Articles written for a client's own website live in «Client-Site Articles» and nowhere
     // else — showing them here too is how a writer opens one thinking it is a modonty
     // piece.
     //

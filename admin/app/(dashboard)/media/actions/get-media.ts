@@ -1,22 +1,9 @@
 "use server";
 
-import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
 import { MEDIA_USED_WHERE, MEDIA_UNUSED_WHERE } from "@/lib/media/usage-where";
+import { listMedia, DEFAULT_MEDIA_PER_PAGE } from "@/lib/media/list-media";
 import type { MediaFilters } from "./types";
-
-const DEFAULT_PER_PAGE = 20;
-
-function buildSortOrder(sort?: string): Prisma.MediaOrderByWithRelationInput {
-  switch (sort) {
-    case "oldest": return { createdAt: "asc" };
-    case "name-asc": return { filename: "asc" };
-    case "name-desc": return { filename: "desc" };
-    case "size-asc": return { fileSize: "asc" };
-    case "size-desc": return { fileSize: "desc" };
-    default: return { createdAt: "desc" };
-  }
-}
 
 export async function getMedia(filters?: MediaFilters) {
   try {
@@ -84,47 +71,9 @@ export async function getMedia(filters?: MediaFilters) {
     const where: Prisma.MediaWhereInput =
       whereConditions.length > 0 ? { AND: whereConditions } : {};
 
-    const page = Math.max(1, filters?.page ?? 1);
-    const perPage = filters?.perPage ?? DEFAULT_PER_PAGE;
-    const skip = (page - 1) * perPage;
-
-    const [items, total] = await Promise.all([
-      db.media.findMany({
-        where,
-        orderBy: buildSortOrder(filters?.sort),
-        skip,
-        take: perPage,
-        include: {
-          client: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-              logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
-            },
-          },
-          _count: {
-            select: {
-              featuredArticles: true,
-              logoClients: true,
-              heroImageClients: true,
-              mobileHeroImageClients: true,
-            },
-          },
-        },
-      }),
-      db.media.count({ where }),
-    ]);
-
-    return {
-      items,
-      total,
-      page,
-      perPage,
-      totalPages: Math.ceil(total / perPage),
-    };
+    return await listMedia(where, { sort: filters?.sort, page: filters?.page, perPage: filters?.perPage });
   } catch (error) {
     console.error("Error fetching media:", error);
-    return { items: [], total: 0, page: 1, perPage: DEFAULT_PER_PAGE, totalPages: 0 };
+    return { items: [], total: 0, page: 1, perPage: DEFAULT_MEDIA_PER_PAGE, totalPages: 0 };
   }
 }

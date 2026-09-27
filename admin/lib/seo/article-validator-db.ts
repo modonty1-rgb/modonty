@@ -119,7 +119,7 @@ export function validateArticleFromDb(article: DbArticleInput): ValidationResult
 // ═══ Group 1: Indexability ═══
 
 function pushStatusCheck(checks: ValidationCheck[], a: DbArticleInput) {
-  const ok = a.status === "DRAFT" || a.status === "AWAITING_APPROVAL" || a.status === "SCHEDULED" || a.status === "PUBLISHED";
+  const ok = a.status === "DRAFT" || a.status === "AWAITING_APPROVAL" || a.status === "APPROVED" || a.status === "SCHEDULED" || a.status === "PUBLISHED";
   checks.push({
     id: "status-indexable",
     label: "Article status is publishable",

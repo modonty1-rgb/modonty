@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteCloudinaryAsset } from "@/lib/utils/cloudinary-delete";
+import { deleteBunnyUrl } from "@modonty/shared/lib/bunny";
 import { generateClientSEO } from "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo";
 import { generateAndSaveJsonLd } from "@/lib/seo/jsonld-storage";
 import { generateAndSaveNextjsMetadata } from "@/lib/seo/metadata-storage";
@@ -51,7 +52,7 @@ export async function saveOptimizedImage(
   try {
     const existing = await db.media.findUnique({
       where: { id: mediaId },
-      select: { id: true, clientId: true, cloudinaryPublicId: true },
+      select: { id: true, clientId: true, cloudinaryPublicId: true, bunnyUrl: true },
     });
     if (!existing) return { success: false, error: "الصورة غير موجودة" };
 
@@ -143,8 +144,18 @@ export async function saveOptimizedImage(
     // blob that failed to rebuild still carries the old address, so deleting the file
     // under it would turn a stale link into a dead one. It stays until the next run —
     // one billed orphan is cheaper than a 404 inside published JSON-LD.
+    // And only from a production server: the Cloudinary account is shared by dev and prod (see
+    // the header), and Clients › Media now calls this from a card button — a click on a local
+    // admin must never delete a legacy asset a production row may still name (26 Sep 2026).
+    // The old Bunny file too — same rule: only once every blob rebuilt. Outside production the
+    // storage lock (assertWritable) refuses anything not under _dev/, so a dev click cannot
+    // remove a file production still serves; that refusal is expected and swallowed here.
+    if (existing.bunnyUrl && existing.bunnyUrl !== url && seoFailures.length === 0) {
+      await deleteBunnyUrl("clients", existing.bunnyUrl).catch(() => {});
+    }
+
     const oldPublicId = existing.cloudinaryPublicId;
-    if (oldPublicId && oldPublicId !== input.publicId && seoFailures.length === 0) {
+    if (process.env.NODE_ENV === "production" && oldPublicId && oldPublicId !== input.publicId && seoFailures.length === 0) {
       await deleteCloudinaryAsset(oldPublicId, "image").catch(() => {});
     }
 

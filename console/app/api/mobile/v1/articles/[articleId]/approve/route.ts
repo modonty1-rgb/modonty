@@ -16,5 +16,5 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     notifyArticleDecision({ kind: "approved", articleId, articleTitle: result.articleTitle, clientName: result.clientName, editorName: result.editorName }),
     sendPushToClient({ clientId: session.clientId, event: "ARTICLE_APPROVED", title: "تمت الموافقة على المقال", body: "سيحدد فريق مدونتي موعد النشر قريبًا.", data: { articleId } }),
   ]));
-  return ok({ articleId, status: "SCHEDULED", message: "تمت الموافقة. سيحدد فريق مدونتي موعد النشر." });
+  return ok({ articleId, status: "APPROVED", message: "تمت الموافقة. سيحدد فريق مدونتي موعد النشر." });
 }

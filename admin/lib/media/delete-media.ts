@@ -107,6 +107,9 @@ export async function deleteMedia(id: string, clientId?: string) {
     });
 
     revalidatePath("/media");
+    revalidatePath("/clients/media");
+    revalidatePath("/articles/media");
+    revalidatePath("/modonty/media");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete media";

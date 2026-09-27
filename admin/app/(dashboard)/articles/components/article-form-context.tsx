@@ -208,7 +208,7 @@ const initialFormData: ArticleFormData = {
   status: "WRITING",
   featured: false,
   scheduledAt: null,
-  // Modonty is the default destination; only the «Client Articles» section flips it,
+  // Modonty is the default destination; only the «Client-Site Articles» section flips it,
   // by seeding initialData.
   isClientSiteArticle: false,
 

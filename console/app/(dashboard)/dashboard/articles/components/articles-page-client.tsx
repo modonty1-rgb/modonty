@@ -47,7 +47,7 @@ export function ArticlesPageClient({
 }: ArticlesPageClientProps) {
   const [activeTab, setActiveTab] = useState(initialTab);
 
-  const scheduledArticles = allArticles.filter((a) => a.status === "SCHEDULED");
+  const scheduledArticles = allArticles.filter((a) => a.status === "SCHEDULED" || a.status === "APPROVED");
 
   const tabs = [
     {

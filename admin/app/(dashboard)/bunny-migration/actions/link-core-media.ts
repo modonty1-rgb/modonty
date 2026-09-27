@@ -14,7 +14,7 @@
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
 import { getCoreClientId } from "@modonty/shared/lib/core-client";
-import { generateBlurDataUrlFromUrl } from "@/app/(dashboard)/media/actions/generate-blur";
+import { generateBlurDataUrlFromUrl } from "@/lib/media/generate-blur";
 import {
   BRAND_LOGO_URL,
   BRAND_CHARACTER_URL,

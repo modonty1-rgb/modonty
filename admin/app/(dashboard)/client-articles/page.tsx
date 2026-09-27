@@ -1,7 +1,7 @@
 import { ClientArticlesTable } from "./components/client-articles-table";
 import { getClientSiteRows } from "./helpers/load-client-articles";
 
-// «Client Articles» — articles we write that get published on the CLIENT's own domain,
+// «Client-Site Articles» — articles we write that get published on the CLIENT's own domain,
 // never on modonty.com.
 //
 // The list is of CLIENTS, not articles (Khalid 2026-08-08). The destination is a
@@ -21,7 +21,7 @@ export default async function ClientArticlesPage() {
     <div className="mx-auto max-w-[1180px] space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Client Articles</h1>
+          <h1 className="text-xl font-semibold">Client-Site Articles</h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
             Clients whose articles are published on their own website — never on modonty.com.
           </p>

@@ -8,9 +8,8 @@ import { Wand2, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { formatBytes } from "@modonty/shared/lib/utils";
-import { compressToWebP } from "@/lib/compress-image";
 import { saveOptimizedImage } from "../../actions/optimize-image";
-import { uploadImageToBunny } from "../../actions/upload-image-to-bunny";
+import { reencodeToWebP } from "@/lib/media/reencode-to-webp";
 import type { OptimizableImage } from "../helpers/optimizable";
 
 function fmt(mime: string): string {
@@ -20,43 +19,7 @@ function fmt(mime: string): string {
   return sub.toUpperCase();
 }
 
-// Bunny-primary (2026-07-29): fetch → compress (browser Canvas) → upload the optimized
-// WebP to Bunny (same type/client folder as the original) → return stored fields.
-async function reencodeToWebP(image: OptimizableImage) {
-  const resp = await fetch(image.url, { mode: "cors" });
-  if (!resp.ok) throw new Error("تعذّر جلب الصورة الأصلية");
-  const blob = await resp.blob();
-  const source = new File([blob], image.filename || "image", { type: blob.type || image.mimeType });
-
-  const webp = await compressToWebP(source);
-  const bmp = await createImageBitmap(webp);
-  const width = bmp.width;
-  const height = bmp.height;
-  bmp.close();
-
-  const webpName = (image.filename || "image").replace(/\.[^.]+$/, "") + ".webp";
-  const formData = new FormData();
-  formData.append("file", new File([webp], webpName, { type: "image/webp" }));
-  formData.append("filename", webpName);
-  if (image.type) formData.append("type", image.type);
-  formData.append("scope", image.scope || "GENERAL");
-  if (image.clientId) formData.append("clientId", image.clientId);
-
-  const up = await uploadImageToBunny(formData);
-  if (!up.success || !up.url) throw new Error(up.error || "فشل رفع النسخة المحسّنة إلى Bunny");
-
-  return {
-    url: up.url,
-    publicId: null as string | null,
-    mimeType: "image/webp",
-    fileSize: webp.size,
-    width,
-    height,
-    // The file changed, so the old placeholder now describes an image that no longer exists.
-    // The uploader already built a fresh one from the re-encoded buffer — carry it through.
-    blurDataURL: up.blurDataURL ?? null,
-  };
-}
+// The re-encode itself lives in lib/media/reencode-to-webp (shared with Clients › Media).
 
 /**
  * ⛔ RETIRED (2026-07-29, tripwire rule) — the old re-upload-to-Cloudinary step, kept as

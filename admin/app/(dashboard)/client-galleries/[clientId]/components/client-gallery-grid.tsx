@@ -28,7 +28,7 @@ import {
   addClientGalleryImage,
   deleteClientGalleryImage,
 } from "../../actions/gallery-mutations";
-import { uploadImageToBunny } from "@/app/(dashboard)/media/actions/upload-image-to-bunny";
+import { uploadImageToBunny } from "@/lib/media/upload-image-to-bunny";
 import type { GalleryImageRow } from "../../helpers/load-galleries";
 
 interface Props {

@@ -20,8 +20,11 @@ import { sendAdminTelegram, escapeTgHtml } from "@modonty/shared/lib/telegram/cl
  * يحدّد له موظّفٌ موعداً أو يضغط «Publish Now» بيده. والنشرُ للعالم لا يُسترجع، والصمتُ
  * لا يصلح إذناً له.
  *
- * ولا حاجة لفرع `isSet: false` بعد اليوم: `{ lte: now }` مقارنةٌ لا مساواةٌ بـ`null`،
- * والحقلُ الغائبُ لا يطابقها أصلاً — وهو المطلوب.
+ * **وكان ذلك الافتراضُ خطأ** (قيس ٢٧ سبتمبر ٢٠٢٦): `{ lte: now }` وحدها **تطابق** `null`
+ * على MongoDB — القيمةُ الفارغة أصغرُ من كلّ تاريخ في ترتيبه. على قاعدة التطوير أرجعت 288
+ * مقالاً منها 254 بلا موعد، ونشر الكرونُ في الإنتاج ثلاثةَ مقالات بلا موعد بعد ذلك الإصلاح
+ * (٢٢ و٢٣ سبتمبر، ودقائقُها دقائقُ الكرون). فالشرطُ صريح: `not: null` **و** `lte: now` —
+ * أرجعت 34 كلُّها بموعدٍ فات، و0 بلا موعد.
  *
  * ── ولماذا سقف ──
  * دورةٌ واحدة قد تصادف عشرات المقالات (أوّلُ تشغيلٍ خاصّة)، وكلُّ نشرٍ يولّد JSON-LD
@@ -49,7 +52,8 @@ export async function GET(request: Request) {
     where: {
       status: ArticleStatus.SCHEDULED,
       // **الموعدُ شرطٌ لا زينة** — انظر التعليق أعلاه.
-      scheduledAt: { lte: now },
+      // `not: null` is the guard — `lte` alone matches a null date on MongoDB (see above).
+      scheduledAt: { not: null, lte: now },
     },
     orderBy: { scheduledAt: "asc" },
     take: BATCH,

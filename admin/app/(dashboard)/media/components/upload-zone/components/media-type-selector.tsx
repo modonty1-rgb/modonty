@@ -10,6 +10,8 @@ interface MediaTypeSelectorProps {
   value: MediaType | "";
   onChange: (type: MediaType) => void;
   disabled?: boolean;
+  /** The roles to offer — a narrowed upload (Clients › Media) passes its own list. */
+  types?: MediaType[];
 }
 
 // Fit the true aspect-ratio rectangle inside a fixed 110×40 preview box so the
@@ -29,10 +31,10 @@ function ratioBoxStyle(ratio: number | null): CSSProperties {
   return { width: Math.round(w), height: Math.round(h) };
 }
 
-export function MediaTypeSelector({ value, onChange, disabled }: MediaTypeSelectorProps) {
+export function MediaTypeSelector({ value, onChange, disabled, types = MEDIA_TYPE_ORDER }: MediaTypeSelectorProps) {
   return (
     <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-      {MEDIA_TYPE_ORDER.map((type) => {
+      {types.map((type) => {
         const spec = MEDIA_SPECS[type];
         const isSelected = value === type;
         return (

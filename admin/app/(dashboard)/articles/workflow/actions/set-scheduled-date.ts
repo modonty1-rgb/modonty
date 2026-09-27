@@ -12,10 +12,14 @@ export interface SetScheduledResult {
 }
 
 /**
- * Save a scheduled publish date for an article currently in SCHEDULED status.
- * Sets `scheduledAt` — does NOT publish the article. Admin still has to either
- * (a) come back and click Publish Now, or (b) wait for a future cron job that
- * auto-publishes articles whose scheduledAt has passed.
+ * Give an article its publish date — the team's step after the client approves.
+ *
+ * APPROVED (client said yes, no date) → SCHEDULED with `scheduledAt`; an already
+ * SCHEDULED article just moves its date. Does NOT publish: the cron takes it live once the
+ * date passes, or someone clicks «Publish Now».
+ *
+ * The date must be in the future (27 Sep 2026): a past date meant «publish on the next
+ * cron tick», which is «Publish Now» without its confirm dialog.
  */
 export async function setScheduledDateAction(
   articleId: string,
@@ -29,6 +33,9 @@ export async function setScheduledDateAction(
     if (isNaN(date.getTime())) {
       return { success: false, error: "Invalid date format" };
     }
+    if (date.getTime() <= Date.now()) {
+      return { success: false, error: "Pick a time in the future — to publish now, use «Publish Now»." };
+    }
 
     const article = await db.article.findUnique({
       where: { id: articleId },
@@ -37,16 +44,16 @@ export async function setScheduledDateAction(
     });
 
     if (!article) return { success: false, error: "Article not found" };
-    if (article.status !== ArticleStatus.SCHEDULED) {
+    if (article.status !== ArticleStatus.APPROVED && article.status !== ArticleStatus.SCHEDULED) {
       return {
         success: false,
-        error: `Article must be SCHEDULED — it's currently ${article.status}.`,
+        error: `Only a client-approved article can be scheduled — it's currently ${article.status}.`,
       };
     }
 
     await db.article.update({
       where: { id: articleId },
-      data: { scheduledAt: date },
+      data: { scheduledAt: date, status: ArticleStatus.SCHEDULED },
     });
 
     // A schedule decides WHEN the world sees it — same weight as publishing.
@@ -54,10 +61,11 @@ export async function setScheduledDateAction(
       entity: "Article",
       entityId: articleId,
       summary: article.title,
-      metadata: { scheduledAt: date.toISOString() },
+      metadata: { scheduledAt: date.toISOString(), from: article.status, to: ArticleStatus.SCHEDULED },
     });
 
     revalidatePath("/articles/workflow/scheduled-to-published");
+    revalidatePath("/articles/workflow/approved-to-scheduled");
     revalidatePath(`/articles/${article.slug}`);
     return { success: true };
   } catch (error) {

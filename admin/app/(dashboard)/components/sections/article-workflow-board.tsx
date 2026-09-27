@@ -55,6 +55,14 @@ const STATUS_CARDS: StatusCardConfig[] = [
       "border-red-500/30 bg-red-500/[0.04] text-red-600 dark:text-red-400",
   },
   {
+    key: "APPROVED",
+    label: "Approved",
+    hint: "Needs a publish date",
+    icon: CalendarClock,
+    toneClasses:
+      "border-teal-500/30 bg-teal-500/[0.04] text-teal-600 dark:text-teal-400",
+  },
+  {
     key: "SCHEDULED",
     label: "Scheduled",
     hint: "Future publish date",

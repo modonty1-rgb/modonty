@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Upload, X, Save } from "lucide-react";
 import { updateMedia } from "../../actions/media-actions";
-import { uploadImageToBunny } from "../../actions/upload-image-to-bunny";
+import { uploadImageToBunny } from "@/lib/media/upload-image-to-bunny";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
@@ -25,7 +25,7 @@ import { formatBytes } from "@modonty/shared/lib/utils";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getMediaSpec, requiresCrop } from "@/lib/media/media-specs";
 import { validateFile } from "../../components/upload-zone/utils/file-validation";
-import { ImageEditorModal } from "../../components/upload-zone/components/image-editor-modal";
+import { ImageEditorModal } from "@/components/shared/media-upload/image-editor-modal";
 
 interface Media {
   id: string;
@@ -68,9 +68,11 @@ interface Client {
 interface EditMediaFormProps {
   media: Media;
   clients: Client[];
+  /** Where Back, Cancel and Save return — the page the editor was opened from. */
+  backHref?: string;
 }
 
-export function EditMediaForm({ media, clients }: EditMediaFormProps) {
+export function EditMediaForm({ media, clients, backHref = "/media" }: EditMediaFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
@@ -242,7 +244,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
       if (result.success) {
         toast({ title: messages.success.updated, description: messages.descriptions.media_metadata_updated, variant: "success" });
         router.refresh();
-        router.push("/media");
+        router.push(backHref);
       } else {
         throw new Error(result.error || "Failed to update media");
       }
@@ -271,7 +273,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
 
       {/* Header */}
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" onClick={() => router.push("/media")}>
+        <Button variant="ghost" size="sm" onClick={() => router.push(backHref)}>
           <ArrowLeft className="h-4 w-4 me-1.5" />
           Back
         </Button>
@@ -480,7 +482,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
                       <Save className="h-4 w-4" />
                       {isSaving ? "Saving..." : "Save Changes"}
                     </Button>
-                    <Button type="button" variant="outline" className="w-full" onClick={() => router.push("/media")}>
+                    <Button type="button" variant="outline" className="w-full" onClick={() => router.push(backHref)}>
                       Cancel
                     </Button>
                   </div>
