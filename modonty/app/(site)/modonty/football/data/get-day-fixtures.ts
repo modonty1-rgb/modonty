@@ -24,6 +24,8 @@ interface ApiFixture {
 }
 
 async function loadDay(date: string): Promise<Match[]> {
+  // Set on Vercel (project modonty-modonty, Production) since 28 Sep 2026; locally in
+  // modonty/.env.local. A variable added on Vercel takes effect only with a new build.
   const key = process.env.API_FOOTBALL_KEY;
   if (!key) throw new Error("API_FOOTBALL_KEY is not set");
 
