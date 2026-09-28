@@ -34,6 +34,13 @@ export const ALERT_TOPICS = [
     hint: "نذكّرك قبل الإجازات ومواعيد الاختبارات والقبول",
     consent: "ذكّرني قبل الإجازات ومواعيد الاختبارات والقبول",
   },
+  // The entertainment page's family guide (28 Sep 2026): consent collected now, sending built later.
+  {
+    id: "entertainment",
+    label: "جديد النزهات العائلية",
+    hint: "أماكن وتجارب جديدة للعائلة في مدينتك",
+    consent: "أرسل لي الجديد من أماكن النزهات العائلية",
+  },
 ] as const;
 
 export type AlertTopicId = (typeof ALERT_TOPICS)[number]["id"];

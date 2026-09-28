@@ -2,7 +2,7 @@ import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { fill, messages } from "@/lib/i18n/messages";
 
 import { taskLabel } from "../../helpers/task-label";
-import { GoogleTranslateBadge } from "../translation-credit/GoogleTranslateBadge";
+import { GoogleTranslateBadge } from "../../../components/translation-credit/GoogleTranslateBadge";
 import type { AiModel } from "../../helpers/types";
 
 const t = messages.modonty.ai;

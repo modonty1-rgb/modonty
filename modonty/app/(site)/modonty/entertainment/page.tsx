@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { IconAi } from "@/lib/icons";
-import { fill, messages } from "@/lib/i18n/messages";
+import { IconEntertainment } from "@/lib/icons";
+import { messages } from "@/lib/i18n/messages";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getContentPageRow } from "@/lib/seo/get-content-page-row";
 import { generateBreadcrumbStructuredData, generateStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
@@ -14,21 +13,24 @@ import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { SectorAlertBody } from "../components/sector-alert/SectorAlertBody";
 import { SectorArticles } from "../components/sector-articles/SectorArticles";
 import { SectorHeroBanner, heroLineClass } from "../components/sector-hero/SectorHeroBanner";
+import { TranslationCredit } from "../components/translation-credit/TranslationCredit";
 import { getSectorArticles } from "../data/get-sector-articles";
 import { getSectorHero } from "../data/get-sector-hero";
-import { ModelsCard } from "./components/models-card/ModelsCard";
-import { PapersCard } from "./components/papers-card/PapersCard";
-import { ReposCard } from "./components/repos-card/ReposCard";
-import { TranslationCredit } from "../components/translation-credit/TranslationCredit";
-import { getAiPage } from "./data/get-ai-page";
+import { CityGuide } from "./components/city-guide/CityGuide";
+import { getCityOptions } from "./data/get-city-options";
+import { getCityPlaces } from "./data/get-city-places";
+import { getHiddenPlaces } from "./data/get-hidden-places";
 
-const t = messages.modonty.ai;
-const PATH = "/modonty/ai";
-const ABOUT = { "@type": "Thing", name: "الذكاء الاصطناعي", alternateName: "Artificial intelligence", sameAs: "https://www.wikidata.org/wiki/Q11660" };
+const t = messages.modonty.entertainment;
+const PATH = "/modonty/entertainment";
+const ABOUT = { "@type": "Thing", name: "الترفيه", alternateName: "Entertainment", sameAs: "https://www.wikidata.org/wiki/Q173799" };
+const STA = "https://open.data.gov.sa/ar/publishers/acf00fb7-22fb-4cbc-b3e3-7bc5f160bafb";
+const GEA = "https://open.data.gov.sa/ar/datasets/view/f739ffa0-6ba2-491c-84f6-b80bc5f58922";
+const LICENSE = "https://open.data.gov.sa/ar/pages/policies/license";
 
-/** SEO lives in the admin (Modonty › Sectors › AI), like football's; these fill in until it is saved. */
+/** SEO lives in the admin (Modonty › Sectors › Entertainment), like the other sectors; these fill in until it is saved. */
 export async function generateMetadata(): Promise<Metadata> {
-  return buildMetadataFromPageRow(await getContentPageRow("ai"), {
+  return buildMetadataFromPageRow(await getContentPageRow("entertainment"), {
     path: PATH,
     fallbackTitle: t.metaTitle,
     fallbackDescription: t.metaDescription,
@@ -36,25 +38,21 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * `/modonty/ai` — the second live sector page (28 Sep 2026), on football's template. Three open
- * sources whose terms allow a commercial site to list them: the Hugging Face Hub (trending and
- * Arabic models), arXiv (papers on Arabic, metadata CC0) and GitHub (rising open projects). Plan
- * and evidence: `../documentation/SECTORS-PLAN.html`.
+ * `/modonty/entertainment` — the fifth live sector page (28 Sep 2026): a family outings guide per
+ * city, not cinema or concerts (Khalid: «ما حاروج لحاجه فيها شبهة»). هيئة السياحة's places,
+ * experiences and restaurants, and هيئة الترفيه's family venues; the editor hides any place from the
+ * admin. The busiest city is in the HTML; the others load when picked.
  */
-export default async function AiPage() {
-  const [page, articles, hero, { siteName }, seoRow] = await Promise.all([
-    getAiPage(),
-    getSectorArticles("ai"),
-    getSectorHero("ai"),
+export default async function EntertainmentPage() {
+  const [articles, hero, { siteName }, seoRow, hidden] = await Promise.all([
+    getSectorArticles("entertainment"),
+    getSectorHero("entertainment"),
     getPageSeoDefaults(),
-    getContentPageRow("ai"),
+    getContentPageRow("entertainment"),
+    getHiddenPlaces(),
   ]);
-
-  const updated = page.updatedAt
-    ? fill(t.updated, {
-        time: new Intl.DateTimeFormat(SITE_LOCALE, { timeZone: "Asia/Riyadh", hour: "numeric", minute: "2-digit" }).format(new Date(page.updatedAt)),
-      })
-    : null;
+  const cities = getCityOptions(hidden);
+  const first = cities[0];
 
   const header = (
     <>
@@ -67,13 +65,10 @@ export default async function AiPage() {
       />
       <div className="mt-4">
         <h1 className="flex items-center gap-2.5 text-3xl font-bold">
-          <IconAi aria-hidden className="size-8 text-primary" />
+          <IconEntertainment aria-hidden className="size-8 text-primary" />
           {t.title}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t.lead}
-          {updated && ` · ${updated}`}
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">{t.lead}</p>
       </div>
     </>
   );
@@ -92,10 +87,11 @@ export default async function AiPage() {
       description: t.metaDescription,
       url: PATH,
       inLanguage: "ar",
-      ...(page.updatedAt ? { dateModified: page.updatedAt } : {}),
       about: ABOUT,
     }),
   ];
+
+  const link = "text-link underline-offset-2 hover:underline";
 
   return (
     <>
@@ -108,8 +104,7 @@ export default async function AiPage() {
         header={header}
         main={
           <>
-            {/* The weekly digest invitation streams in per reader, like football's alert (28 Sep 2026). */}
-            <SectorHeroBanner hero={hero} headingId="ai-hero" title={hero.title || t.heroTitle}>
+            <SectorHeroBanner hero={hero} headingId="entertainment-hero" title={hero.title || t.heroTitle}>
               <Suspense
                 fallback={
                   <>
@@ -118,33 +113,30 @@ export default async function AiPage() {
                   </>
                 }
               >
-                <SectorAlertBody topic="ai" path={PATH} guestLine={hero.subtitle || t.heroLine} memberLine={t.alerts.memberBody} onLine={t.alerts.onBody} />
+                <SectorAlertBody topic="entertainment" path={PATH} guestLine={hero.subtitle || t.heroLine} memberLine={t.alerts.memberBody} onLine={t.alerts.onBody} />
               </Suspense>
             </SectorHeroBanner>
-            <ModelsCard id="ai-trending" title={t.trendingTitle} note={t.trendingNote} models={page.trending} />
-            {/* Our articles within the first two screens, right after the first live card (NN/g 2018). */}
+            {first && <CityGuide cities={cities} initial={getCityPlaces(first.key, hidden)} labels={t.guide} />}
+            {/* Our articles within the first two screens, right after the live card (NN/g 2018). */}
             <SectorArticles articles={articles} />
-            <ModelsCard id="ai-arabic" title={t.arabicTitle} note={t.arabicNote} models={page.arabic} />
-            <PapersCard papers={page.papers} />
           </>
         }
         rail={
           <aside className="w-full shrink-0 space-y-4 lg:w-[300px]">
-            <ReposCard repos={page.repos} />
             <p className="px-1 text-xs leading-relaxed text-muted-foreground">
               {t.sourcesLabel}{" "}
-              <a href="https://huggingface.co" target="_blank" rel="noopener noreferrer" className="text-link underline-offset-2 hover:underline">
-                Hugging Face
+              <a href={STA} target="_blank" rel="noopener noreferrer" className={link}>
+                {t.staName}
               </a>{" "}
               ·{" "}
-              <a href="https://arxiv.org" target="_blank" rel="noopener noreferrer" className="text-link underline-offset-2 hover:underline">
-                arXiv
+              <a href={GEA} target="_blank" rel="noopener noreferrer" className={link}>
+                {t.geaName}
               </a>{" "}
-              ·{" "}
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-link underline-offset-2 hover:underline">
-                GitHub
+              · {t.portalName} (
+              <a href={LICENSE} target="_blank" rel="noopener noreferrer" className={link}>
+                {t.licenseName}
               </a>
-              . {t.englishNote}
+              ).
             </p>
             <TranslationCredit note={t.translatedNote} />
           </aside>

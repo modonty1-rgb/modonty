@@ -5304,6 +5304,8 @@ model SectorPage {
   heroMedia         Media?   @relation("SectorHeroMedia", fields: [heroMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   heroMobileMediaId String?  @db.ObjectId
   heroMobileMedia   Media?   @relation("SectorHeroMobileMedia", fields: [heroMobileMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  /// أماكن أخفاها المحرّر من دليل القطاع (ids من `shared/lib/sectors/entertainment-places.json`)
+  hiddenPlaces      String[] @default([])
   updatedAt         DateTime @updatedAt
 
   @@map("sector_pages")

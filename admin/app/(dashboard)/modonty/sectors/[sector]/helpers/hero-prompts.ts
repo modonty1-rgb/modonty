@@ -18,6 +18,7 @@ const RULES = "No text, no letters, no numbers except the \"? - ?\" on the score
 const AI_RULES = "No text, no letters, no numbers, no company logos, no robots with human faces, no people.";
 const BUSINESS_RULES = "No text, no letters, no numbers, no currency symbols, no company logos, no people's faces.";
 const EDUCATION_RULES = "No text, no letters, no numbers, no writing on the book pages, no logos, no people.";
+const OUTING_RULES = "No text, no letters, no numbers, no logos, no people, no musical instruments, no stages or screens.";
 const PALETTE = "Color palette: deep navy #0E065A as the dominant background, electric blue #3030FF and bright teal #00D8D8 accents.";
 
 export const HERO_PROMPTS: Record<string, { desktop: HeroPrompt; mobile: HeroPrompt }> = {
@@ -89,6 +90,24 @@ export const HERO_PROMPTS: Record<string, { desktop: HeroPrompt; mobile: HeroPro
         "بلا كتابة ولا حروف ولا أرقام ولا شعارات",
       ],
       prompt: `Create an image: square mobile hero, 1080x1080 (1:1), same scene and style as the wide banner. A stack of open books with a glowing graduation cap on top, placed small in the BOTTOM quarter, fully inside the frame (not cropped). Keep the TOP 60% calm, dark navy with a soft glow — an Arabic headline and a line of text will be placed there. ${PALETTE} ${EDUCATION_RULES}`,
+    },
+  },
+  entertainment: {
+    desktop: {
+      keys: [
+        "النصف الأيمن فاضي وهادئ — عليه العنوان والسطر",
+        "في الثلث الأيسر: منظر نزهة عائلية — نخيل وحديقة وأضواء وخريطة بدبوس مكان · بلا أشخاص",
+        "بلا كتابة ولا حروف ولا أرقام ولا شعارات ولا آلات موسيقية",
+      ],
+      prompt: `Create an image: wide cinematic hero banner, 2048x768 (8:3 landscape), for an Arabic right-to-left page about family outings in Saudi cities. In the LEFT third, a calm evening park scene with palm trees, soft string lights and a glowing map pin floating above a winding path, in sharp focus. ${PALETTE} Keep the RIGHT half calm, dark and uncluttered — an Arabic headline and one line of text will be placed there. ${OUTING_RULES} Premium, calm, modern, high contrast, subtle depth of field.`,
+    },
+    mobile: {
+      keys: [
+        "النصف العلوي كاملاً فاضي وهادئ — عليه العنوان والسطر",
+        "النخيل ودبوس المكان المضيء في الربع السفلي، صغيرة ومكتملة غير مقصوصة",
+        "بلا كتابة ولا حروف ولا أرقام ولا شعارات ولا آلات موسيقية",
+      ],
+      prompt: `Create an image: square mobile hero, 1080x1080 (1:1), same scene and style as the wide banner. Palm trees, soft string lights and a glowing map pin above a winding path, placed small in the BOTTOM quarter, fully inside the frame (not cropped). Keep the TOP 60% calm, dark navy with a soft glow — an Arabic headline and a line of text will be placed there. ${PALETTE} ${OUTING_RULES}`,
     },
   },
 };

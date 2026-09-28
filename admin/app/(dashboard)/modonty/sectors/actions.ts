@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { LIVE_SECTORS, SECTOR_PICK_LIMIT } from "@modonty/shared/lib/sectors/live-sectors";
 import { isCoreClient } from "@modonty/shared/lib/core-client";
+import { entertainmentPlaces } from "@modonty/shared/lib/sectors/entertainment-places";
 
 const objectId = z.string().regex(/^[a-f0-9]{24}$/);
 const sectorInput = z.enum(LIVE_SECTORS.map((s) => s.slug) as [string, ...string[]]);
@@ -132,6 +133,38 @@ export async function saveSectorHero(sector: string, raw: unknown): Promise<Resu
 
     revalidatePath("/modonty/sectors", "layout");
     // The page reads its hero under the «pages» tag.
+    await revalidateModontyTag("pages", undefined, { immediate: true });
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "تعذّر الحفظ" };
+  }
+}
+
+const placeInput = z.object({ placeId: z.string().min(3).max(200), hidden: z.boolean() });
+
+/**
+ * **إخفاءُ مكانٍ من دليل الترفيه — أو إرجاعُه** (خالد ٢٨ سبتمبر ٢٠٢٦: «ما حاروج لحاجه فيها شبهة»). ما
+ * لم يلتقطه فلتر الاستيراد يخفيه المحرّر من هنا. يُقبل المعرّف الموجود في الدليل فقط.
+ */
+export async function setPlaceHidden(raw: unknown): Promise<Result> {
+  try {
+    const session = await auth();
+    if (!session) return { success: false, error: "غير مصرح" };
+
+    const parsed = placeInput.safeParse(raw);
+    if (!parsed.success) return { success: false, error: "طلب غير صالح" };
+    const { placeId, hidden } = parsed.data;
+    if (!entertainmentPlaces.places.some((p) => p.id === placeId)) return { success: false, error: "المكان غير موجود في الدليل" };
+
+    const row = await db.sectorPage.findUnique({ where: { sector: "entertainment" }, select: { hiddenPlaces: true } });
+    const current = new Set(row?.hiddenPlaces ?? []);
+    if (hidden) current.add(placeId);
+    else current.delete(placeId);
+    const hiddenPlaces = [...current];
+    await db.sectorPage.upsert({ where: { sector: "entertainment" }, create: { sector: "entertainment", hiddenPlaces }, update: { hiddenPlaces } });
+
+    revalidatePath("/modonty/sectors", "layout");
+    // The guide reads the hidden list under the «pages» tag, like the hero.
     await revalidateModontyTag("pages", undefined, { immediate: true });
     return { success: true };
   } catch (error) {

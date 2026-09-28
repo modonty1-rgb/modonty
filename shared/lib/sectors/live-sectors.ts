@@ -10,6 +10,7 @@ export const LIVE_SECTORS = [
   { slug: "ai", label: "الذكاء الاصطناعي", adminLabel: "AI" },
   { slug: "entrepreneurship", label: "ريادة الأعمال", adminLabel: "Entrepreneurship" },
   { slug: "education", label: "التعليم", adminLabel: "Education" },
+  { slug: "entertainment", label: "الترفيه", adminLabel: "Entertainment" },
 ] as const;
 
 export type LiveSectorSlug = (typeof LIVE_SECTORS)[number]["slug"];

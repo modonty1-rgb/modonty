@@ -15,6 +15,7 @@ import { getPageConfig } from "../../setting/helpers/page-config";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { PageFormWrapper } from "../../components/page-form-wrapper";
 import { SectorHeroForm } from "./components/sector-hero-form";
+import { PlacesPanel } from "./components/places-panel";
 import { SECTOR_TABS, SectorTabs, type SectorTab } from "./components/sector-tabs";
 
 const dateFmt = new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "short" });
@@ -22,7 +23,7 @@ const N = new Intl.NumberFormat("ar-EG");
 
 interface SectorPageProps {
   params: Promise<{ sector: string }>;
-  searchParams: Promise<{ q?: string; tab?: string }>;
+  searchParams: Promise<{ q?: string; tab?: string; city?: string }>;
 }
 
 export async function generateMetadata({ params }: SectorPageProps) {
@@ -39,10 +40,12 @@ export async function generateMetadata({ params }: SectorPageProps) {
  * بترتيب المحرّر). يُرسم القسم المفتوح فقط.
  */
 export default async function SectorAdminPage({ params, searchParams }: SectorPageProps) {
-  const [{ sector: slug }, { q, tab: rawTab }] = await Promise.all([params, searchParams]);
+  const [{ sector: slug }, { q, tab: rawTab, city }] = await Promise.all([params, searchParams]);
   const sector = LIVE_SECTORS.find((s) => s.slug === slug);
   if (!sector) notFound();
-  const tab: SectorTab = SECTOR_TABS.find((t) => t === rawTab) ?? "page";
+  // «الأماكن» only where the sector has a guide to curate.
+  const tabs = sector.slug === "entertainment" ? SECTOR_TABS : SECTOR_TABS.filter((t) => t !== "places");
+  const tab: SectorTab = tabs.find((t) => t === rawTab) ?? "page";
   const base = `/modonty/sectors/${sector.slug}`;
 
   // Modonty's own articles only (Khalid, 27 Sep 2026): «اعرض الارتكل بس اللي تخص العميل اللي اسمه مدونتي
@@ -71,6 +74,7 @@ export default async function SectorAdminPage({ params, searchParams }: SectorPa
         heroSubtitle: true,
         heroMedia: { select: { id: true, url: true, bunnyUrl: true } },
         heroMobileMedia: { select: { id: true, url: true, bunnyUrl: true } },
+        hiddenPlaces: true,
       },
     }),
   ]);
@@ -91,6 +95,7 @@ export default async function SectorAdminPage({ params, searchParams }: SectorPa
   const status = {
     page: { text: heroDone && seoDone ? "جاهزة" : "ناقصة", done: heroDone && seoDone },
     articles: { text: `${N.format(picks.length)} من ${N.format(SECTOR_PICK_LIMIT)}`, done: picks.length > 0 },
+    places: { text: `مخفي ${N.format(sectorPage?.hiddenPlaces.length ?? 0)}`, done: true },
   };
 
   return (
@@ -108,7 +113,9 @@ export default async function SectorAdminPage({ params, searchParams }: SectorPa
         </a>
       </div>
 
-      <SectorTabs base={base} active={tab} status={status} />
+      <SectorTabs base={base} active={tab} tabs={tabs} status={status} />
+
+      {tab === "places" && <PlacesPanel base={base} city={city ?? ""} q={q ?? ""} hidden={sectorPage?.hiddenPlaces ?? []} />}
 
       {tab === "page" &&
         (coreClientId ? (

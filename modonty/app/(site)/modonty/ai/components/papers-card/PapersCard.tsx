@@ -1,7 +1,7 @@
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { messages } from "@/lib/i18n/messages";
 
-import { GoogleTranslateBadge } from "../translation-credit/GoogleTranslateBadge";
+import { GoogleTranslateBadge } from "../../../components/translation-credit/GoogleTranslateBadge";
 import type { Paper } from "../../helpers/types";
 
 const t = messages.modonty.ai;
