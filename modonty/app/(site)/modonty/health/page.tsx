@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
+import { isSectorPaused } from "@modonty/shared/lib/sectors/live-sectors";
 import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
+import { ComingSoon } from "@/components/shared/coming-soon/ComingSoon";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { IconHealth } from "@/lib/icons";
-import { messages } from "@/lib/i18n/messages";
+import { fill, messages } from "@/lib/i18n/messages";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getContentPageRow } from "@/lib/seo/get-content-page-row";
 import { generateBreadcrumbStructuredData, generateStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
@@ -26,9 +28,13 @@ const SFDA = "https://open.data.gov.sa/ar/publishers/ce4b4b1f-e50e-40a0-82f3-442
 const CBAHI = "https://open.data.gov.sa/ar/publishers/5c2c5dc0-243c-464d-93c9-d958e9a40bd6";
 const CHI = "https://open.data.gov.sa/ar/publishers/86ca88f0-1c3a-4eb7-9274-178582a51a68";
 const LICENSE = "https://open.data.gov.sa/ar/pages/policies/license";
+/** Off until the data reaches Vercel — see `shared/lib/sectors/live-sectors.ts`. */
+const PAUSED = isSectorPaused("health");
 
 /** SEO lives in the admin (Modonty › Sectors › Health), like the other sectors; these fill in until it is saved. */
 export async function generateMetadata(): Promise<Metadata> {
+  // «قريباً» is thin content — out of the index while the sector is paused.
+  if (PAUSED) return { title: fill(messages.modonty.soon.title, { name: t.title }), robots: { index: false, follow: true } };
   return buildMetadataFromPageRow(await getContentPageRow("health"), {
     path: PATH,
     fallbackTitle: t.metaTitle,
@@ -44,6 +50,20 @@ export async function generateMetadata(): Promise<Metadata> {
  * والدواء's approval — its site's terms forbid copying (Khalid: «اي حاجه فيها مخاطره ابعدنا عنها»).
  */
 export default async function HealthPage() {
+  if (PAUSED) {
+    return (
+      <>
+        <Breadcrumb
+          items={[
+            { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
+            { label: "مدونتي", href: "/modonty" },
+            { label: t.title },
+          ]}
+        />
+        <ComingSoon name={t.title} blurb={messages.modonty.soon.blurbs.health} icon={IconHealth} />
+      </>
+    );
+  }
   const [articles, hero, { siteName }, seoRow] = await Promise.all([
     getSectorArticles("health"),
     getSectorHero("health"),
