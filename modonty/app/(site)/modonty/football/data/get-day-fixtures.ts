@@ -1,5 +1,5 @@
 import type { Match, MatchState } from "../helpers/types";
-import { readSnapshot, type Snapshot } from "./read-snapshot";
+import { readSnapshot, type Snapshot } from "../../data/read-snapshot";
 
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;

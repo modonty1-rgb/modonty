@@ -22,6 +22,7 @@ export interface PageConfig {
 /** What each live sector page is about, for its JSON-LD. */
 const SECTOR_ABOUT: Record<string, Record<string, unknown>> = {
   football: { "@type": "SportsOrganization", name: "دوري روشن السعودي", alternateName: "Saudi Pro League", sport: "Soccer" },
+  ai: { "@type": "Thing", name: "الذكاء الاصطناعي", alternateName: "Artificial intelligence", sameAs: "https://www.wikidata.org/wiki/Q11660" },
 };
 
 export const PAGE_CONFIGS: PageConfig[] = [

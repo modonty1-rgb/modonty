@@ -4,9 +4,16 @@
 
 ## وقفنا عند
 
-سلّمت خالد ملف تصوّر القطاعات الخمسة `modonty/app/(site)/modonty/documentation/SECTORS-PLAN.html`، وهو منشور كصفحة خاصّة على https://claude.ai/artifact/Xz6zqBp5M3MkCa8RJ9HBwS.
+صفحة الذكاء الاصطناعي `/modonty/ai` مبنيّة ومختبرة على dev (٣٢/٣٢)، **غير مدفوعة** بطلب خالد. كرت `AI-1` في اللوحة فيه التفاصيل.
 
-**الخطوة التالية:** ننتظر قرارات خالد الثلاثة في الملف، وبعدها نبني أوّل قطاع حسب الترتيب المقترح، وأوّله المال.
+**الخطوة التالية:** خالد يرفع صورتي هيرو الذكاء الاصطناعي، ثم `push>`. قبل الدفع: tsc وbuild (آخر tsc نجح بعد كتابة الصفحة، وبعده تعديلات صغيرة مقيسة حيّاً). بعد الدفع على الإنتاج: نسخ صفّ السيو `ai` والمقالات الثلاث كما في الكورة.
+
+## ملاحظات هذه الخطوة
+
+- نُقل المشترك بين القطاعين إلى `modonty/app/(site)/modonty/`: `data/read-snapshot.ts` · `data/get-sector-hero.ts` · `data/get-sector-articles.ts` · `components/sector-articles/SectorArticles.tsx` · `components/sector-hero/SectorHeroBanner.tsx`.
+- كاش Turbopack القديم نُقل (لا حذف — `rm` ممنوع): `modonty/.next/cache-stale-*`. ومجلد فارغ باقٍ `football/components/football-articles` (git لا يتتبّعه).
+- فلتر نماذج غير مناسبة في `ai/data/load-hub-models.ts`.
+- الرفع من داخل نافذة المكتبة دُفع في `7418536`.
 
 ## المنجز في الجلسة
 
@@ -37,8 +44,7 @@
 **التصوّر `SECTORS-PLAN.html`**
 - مسموح للموقع التجاري بعد قراءة الشروط: ExchangeRate-API (بشرط رابط الإسناد)، والبنك الدولي (CC BY 4.0).
 - ممنوع علينا تجارياً: TMDB وOpen-Meteo وWAQI وWHO وTwelve Data المجاني.
-- Hugging Face وGitHub: النداءات تعمل، لكن شروطهما لم تُقرأ.
-- arXiv: رجع 406 من جهازنا.
+- الذكاء الاصطناعي: Hugging Face وGitHub وarXiv تعمل وشروطها تسمح (قُرئت ٢٨ سبتمبر؛ الـ406 كان من مكتبة بايثون).
 
 ## قرارات خالد المفتوحة
 
@@ -62,8 +68,8 @@
 
 ## Git
 
-- الفرع `main`، والفرق مع `origin/main` = `0 0`، وآخر كوميت `de87435`.
-- غير مثبّت: `documents/tasks/TASK.html` و`task-data.json` (تحديث كرت FOOTBALL-1)، و`SECTORS-PLAN.html` (جديد).
+- الفرع `main`، آخر كوميت مدفوع `7418536`.
+- غير مثبّت: كل عمل صفحة الذكاء الاصطناعي والنقل للمجلد الأب + اللوحة + هذا الملف.
 
 ## ملاحظات تشغيل
 

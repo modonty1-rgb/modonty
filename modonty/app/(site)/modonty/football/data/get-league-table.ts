@@ -6,7 +6,7 @@ import { seasonArticleTitle } from "../helpers/season-article-title";
 import { shortClubName } from "../helpers/short-club-name";
 import type { LeagueTable, Scorer, TableRow } from "../helpers/types";
 import { WIKI_USER_AGENT } from "../helpers/wiki-user-agent";
-import { readSnapshot, type Snapshot } from "./read-snapshot";
+import { readSnapshot, type Snapshot } from "../../data/read-snapshot";
 
 const HOUR = 60 * 60 * 1000;
 

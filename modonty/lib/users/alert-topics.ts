@@ -13,6 +13,13 @@ export const ALERT_TOPICS = [
     hint: "نبلّغك أول ما تنفتح التوقّعات على مباريات دوري روشن",
     consent: "نبّهني أول ما تنفتح مسابقة توقّعات الكورة",
   },
+  // The AI page's weekly digest (Khalid, 28 Sep 2026): consent collected now, sending built later.
+  {
+    id: "ai",
+    label: "ملخّص الذكاء الاصطناعي الأسبوعي",
+    hint: "أهم النماذج والأبحاث الجديدة بالعربي، كل أسبوع على إيميلك",
+    consent: "أرسل لي ملخّص الذكاء الاصطناعي كل أسبوع",
+  },
 ] as const;
 
 export type AlertTopicId = (typeof ALERT_TOPICS)[number]["id"];

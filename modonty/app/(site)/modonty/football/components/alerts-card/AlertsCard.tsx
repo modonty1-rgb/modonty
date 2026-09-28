@@ -3,12 +3,14 @@ import Link from "next/link";
 import { messages } from "@/lib/i18n/messages";
 import { IconBell, IconCheck } from "@/lib/icons";
 
-import { enableFootballAlert } from "../../actions";
-import { LOGIN_FOR_ALERT, REGISTER_FOR_ALERT } from "../../helpers/alert-links";
-import { getAlertState } from "../../helpers/get-alert-state";
-import { NotifyButton } from "../notify-button/NotifyButton";
+import { enableTopicAlert } from "../../../actions";
+import { NotifyButton } from "../../../components/notify-button/NotifyButton";
+import { alertLinks } from "../../../helpers/alert-links";
+import { getAlertState } from "../../../helpers/get-alert-state";
 
 const t = messages.modonty.football.alerts;
+const shared = messages.modonty.sectorPage.alerts;
+const links = alertLinks("football", "/modonty/football");
 const primary = "inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90";
 
 /**
@@ -19,16 +21,16 @@ const primary = "inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm
  * «نبّهني»; one who has sees they are in.
  */
 export async function AlertsCard() {
-  const state = await getAlertState();
+  const state = await getAlertState("football");
 
   if (state.kind === "guest") {
     return (
       <Shell title={t.guestTitle} body={t.guestBody}>
-        <Link href={REGISTER_FOR_ALERT} className={primary}>
-          {t.register}
+        <Link href={links.register} className={primary}>
+          {shared.register}
         </Link>
-        <Link href={LOGIN_FOR_ALERT} className="inline-flex h-9 items-center rounded-md px-3 text-sm font-medium text-link hover:underline">
-          {t.login}
+        <Link href={links.login} className="inline-flex h-9 items-center rounded-md px-3 text-sm font-medium text-link hover:underline">
+          {shared.login}
         </Link>
       </Shell>
     );
@@ -37,14 +39,14 @@ export async function AlertsCard() {
   if (state.kind === "member") {
     return (
       <Shell title={t.guestTitle} body={t.memberBody}>
-        <form action={enableFootballAlert}>
-          <NotifyButton label={t.notify} className={primary} />
+        <form action={enableTopicAlert.bind(null, "football")}>
+          <NotifyButton label={shared.notify} className={primary} />
         </form>
       </Shell>
     );
   }
 
-  return <Shell title={t.onTitle} body={t.onBody} done />;
+  return <Shell title={shared.onTitle} body={t.onBody} done />;
 }
 
 function Shell({ title, body, done = false, children }: { title: string; body: string; done?: boolean; children?: React.ReactNode }) {

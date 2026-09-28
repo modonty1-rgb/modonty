@@ -5,7 +5,10 @@
  * them), and the admin's sector-picks screen shows one tab per entry. Adding a sector page means
  * one line here, not two edits that can drift.
  */
-export const LIVE_SECTORS = [{ slug: "football", label: "الكورة", adminLabel: "Football" }] as const;
+export const LIVE_SECTORS = [
+  { slug: "football", label: "الكورة", adminLabel: "Football" },
+  { slug: "ai", label: "الذكاء الاصطناعي", adminLabel: "AI" },
+] as const;
 
 export type LiveSectorSlug = (typeof LIVE_SECTORS)[number]["slug"];
 

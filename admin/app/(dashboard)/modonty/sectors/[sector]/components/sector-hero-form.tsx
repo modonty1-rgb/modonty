@@ -73,7 +73,7 @@ export function SectorHeroForm({ sector, sectorLabel, coreClientId, initial }: S
   return (
     <section aria-label="الهيرو" className="space-y-4">
       <p className="text-[12.5px] text-muted-foreground">
-        أعلى صفحة {sectorLabel} في الأيام اللي ما فيها مباريات. العنوان والأزرار تنكتب فوق الصورة، فالصورة بدون كتابة.
+        أعلى صفحة {sectorLabel}. العنوان والسطر ينكتبان فوق الصورة، فالصورة بدون كتابة.
       </p>
 
       {/* Images and text side by side — the SEO editor below spans the full width, and a narrower

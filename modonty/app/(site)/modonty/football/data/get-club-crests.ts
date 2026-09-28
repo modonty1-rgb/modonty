@@ -1,4 +1,4 @@
-import { readSnapshot, type Snapshot } from "./read-snapshot";
+import { readSnapshot, type Snapshot } from "../../data/read-snapshot";
 
 const DAY = 24 * 60 * 60 * 1000;
 

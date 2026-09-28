@@ -14,14 +14,14 @@ import { Suspense } from "react";
 
 import { AlertsCard, AlertsCardSkeleton } from "./components/alerts-card/AlertsCard";
 import { FixturesCard } from "./components/fixtures-card/FixturesCard";
-import { FootballArticles } from "./components/football-articles/FootballArticles";
 import { MatchHero } from "./components/match-hero/MatchHero";
 import { PromoHero } from "./components/promo-hero/PromoHero";
 import { SeasonFacts } from "./components/season-facts/SeasonFacts";
 import { StandingsCard } from "./components/standings-card/StandingsCard";
-import { getFootballArticles } from "./data/get-football-articles";
 import { getFootballPage } from "./data/get-football-page";
-import { getSectorHero } from "./data/get-sector-hero";
+import { SectorArticles } from "../components/sector-articles/SectorArticles";
+import { getSectorArticles } from "../data/get-sector-articles";
+import { getSectorHero } from "../data/get-sector-hero";
 
 const t = messages.modonty.football;
 const PATH = "/modonty/football";
@@ -50,7 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function FootballPage() {
   const [page, articles, { siteName }, seoRow] = await Promise.all([
     getFootballPage(),
-    getFootballArticles(),
+    getSectorArticles("football"),
     getPageSeoDefaults(),
     getContentPageRow("football"),
   ]);
@@ -134,6 +134,8 @@ export default async function FootballPage() {
             <PromoHero hero={hero} />
           ) : null}
           <FixturesCard days={page.days} crests={page.crests} />
+          {/* Our articles within the first two screens, right after the first live card (NN/g 2018). */}
+          <SectorArticles articles={articles} />
           <StandingsCard rows={page.table?.rows ?? null} crests={page.crests} />
         </>
       }
@@ -143,7 +145,6 @@ export default async function FootballPage() {
               goals while Thmanyah and ESPN both said 5. ScorersCard stays in the folder; it returns
               with a source that is right — API-Football's paid plan. */}
           <SeasonFacts rows={page.table?.rows ?? null} crests={page.crests} />
-          <FootballArticles articles={articles} />
           <p className="px-1 text-xs leading-relaxed text-muted-foreground">
             {t.wikiSource}{" "}
             {/* One unbreakable LTR token: inside Arabic text «CC BY-SA» wrapped as «CC BY-» / «SA» on a 360px phone. */}
