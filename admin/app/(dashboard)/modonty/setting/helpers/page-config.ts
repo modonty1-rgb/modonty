@@ -24,6 +24,7 @@ const SECTOR_ABOUT: Record<string, Record<string, unknown>> = {
   football: { "@type": "SportsOrganization", name: "دوري روشن السعودي", alternateName: "Saudi Pro League", sport: "Soccer" },
   ai: { "@type": "Thing", name: "الذكاء الاصطناعي", alternateName: "Artificial intelligence", sameAs: "https://www.wikidata.org/wiki/Q11660" },
   entrepreneurship: { "@type": "Thing", name: "ريادة الأعمال", alternateName: "Entrepreneurship", sameAs: "https://www.wikidata.org/wiki/Q3908516" },
+  education: { "@type": "Thing", name: "التعليم", alternateName: "Education", sameAs: "https://www.wikidata.org/wiki/Q8434" },
 };
 
 export const PAGE_CONFIGS: PageConfig[] = [

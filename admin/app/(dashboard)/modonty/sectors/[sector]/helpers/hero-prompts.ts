@@ -17,6 +17,7 @@ const BALL = "a realistic modern match football with clean, symmetrical, correct
 const RULES = "No text, no letters, no numbers except the \"? - ?\" on the scoreboard, no logos, no club badges, no real team kits, no people's faces.";
 const AI_RULES = "No text, no letters, no numbers, no company logos, no robots with human faces, no people.";
 const BUSINESS_RULES = "No text, no letters, no numbers, no currency symbols, no company logos, no people's faces.";
+const EDUCATION_RULES = "No text, no letters, no numbers, no writing on the book pages, no logos, no people.";
 const PALETTE = "Color palette: deep navy #0E065A as the dominant background, electric blue #3030FF and bright teal #00D8D8 accents.";
 
 export const HERO_PROMPTS: Record<string, { desktop: HeroPrompt; mobile: HeroPrompt }> = {
@@ -70,6 +71,24 @@ export const HERO_PROMPTS: Record<string, { desktop: HeroPrompt; mobile: HeroPro
         "بلا كتابة ولا أرقام ولا رموز عملات ولا شعارات",
       ],
       prompt: `Create an image: square mobile hero, 1080x1080 (1:1), same scene and style as the wide banner. A small modern glowing storefront with a luminous upward growth arrow behind it, placed small in the BOTTOM quarter, fully inside the frame (not cropped). Keep the TOP 60% calm, dark navy with a soft glow — an Arabic headline and a line of text will be placed there. ${PALETTE} ${BUSINESS_RULES}`,
+    },
+  },
+  education: {
+    desktop: {
+      keys: [
+        "النصف الأيمن فاضي وهادئ — عليه العنوان والسطر",
+        "في الثلث الأيسر: كتب مفتوحة وقبعة تخرّج مضيئة · بلا أشخاص",
+        "بلا كتابة ولا حروف ولا أرقام ولا شعارات",
+      ],
+      prompt: `Create an image: wide cinematic hero banner, 2048x768 (8:3 landscape), for an Arabic right-to-left page about school and university education. In the LEFT third, a stack of open books with a glowing graduation cap resting on top and soft light rising from the pages, in sharp focus. ${PALETTE} Keep the RIGHT half calm, dark and uncluttered — an Arabic headline and one line of text will be placed there. ${EDUCATION_RULES} Premium, calm, modern, high contrast, subtle depth of field.`,
+    },
+    mobile: {
+      keys: [
+        "النصف العلوي كاملاً فاضي وهادئ — عليه العنوان والسطر",
+        "الكتب وقبعة التخرّج في الربع السفلي، صغيرة ومكتملة غير مقصوصة",
+        "بلا كتابة ولا حروف ولا أرقام ولا شعارات",
+      ],
+      prompt: `Create an image: square mobile hero, 1080x1080 (1:1), same scene and style as the wide banner. A stack of open books with a glowing graduation cap on top, placed small in the BOTTOM quarter, fully inside the frame (not cropped). Keep the TOP 60% calm, dark navy with a soft glow — an Arabic headline and a line of text will be placed there. ${PALETTE} ${EDUCATION_RULES}`,
     },
   },
 };

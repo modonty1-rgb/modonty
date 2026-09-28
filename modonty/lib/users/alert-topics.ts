@@ -27,6 +27,13 @@ export const ALERT_TOPICS = [
     hint: "مقالات وأدوات تساعدك في مشروعك، كل أسبوع على إيميلك",
     consent: "أرسل لي جديد ريادة الأعمال كل أسبوع",
   },
+  // The education page (28 Sep 2026): reminders before the calendar's dates; sending built later.
+  {
+    id: "education",
+    label: "تذكير بمواعيد الدراسة",
+    hint: "نذكّرك قبل الإجازات ومواعيد الاختبارات والقبول",
+    consent: "ذكّرني قبل الإجازات ومواعيد الاختبارات والقبول",
+  },
 ] as const;
 
 export type AlertTopicId = (typeof ALERT_TOPICS)[number]["id"];

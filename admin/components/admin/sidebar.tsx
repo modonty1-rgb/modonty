@@ -21,6 +21,7 @@ import {
 import { Trophy,
   BrainCircuit,
   Rocket,
+  GraduationCap,
   Archive,
   BookUser,
   CalendarClock,
@@ -103,7 +104,7 @@ import pkg from "@/package.json";
 
 /** Each live sector's own icon — one icon for all made AI read as a trophy (Khalid, 28 Sep 2026). A
  *  record keyed by the slug type, so a new sector without an icon fails to compile. */
-const SECTOR_ICONS: Record<LiveSectorSlug, typeof Trophy> = { football: Trophy, ai: BrainCircuit, entrepreneurship: Rocket };
+const SECTOR_ICONS: Record<LiveSectorSlug, typeof Trophy> = { football: Trophy, ai: BrainCircuit, entrepreneurship: Rocket, education: GraduationCap };
 
 // Maps a workflow href → the ArticleStatus whose count should appear as a badge.
 // From AWAITING_APPROVAL the admin can only request revision; advancing to SCHEDULED

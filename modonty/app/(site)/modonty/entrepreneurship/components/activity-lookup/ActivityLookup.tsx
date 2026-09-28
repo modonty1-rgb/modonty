@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { Input } from "@/components/ui/input";
 import { fill } from "@/lib/i18n/fill";
 
+import { useDebouncedSearch } from "../../../helpers/use-debounced-search";
 import type { ActivitySearch, CompetitionLevel } from "../../helpers/types";
 
 export interface ActivityLookupLabels {
@@ -25,14 +26,11 @@ export interface ActivityLookupLabels {
 }
 
 const N = new Intl.NumberFormat(SITE_LOCALE);
-const DEBOUNCE_MS = 300;
 const LEVEL_CLASS: Record<CompetitionLevel, string> = {
   busy: "text-destructive",
   medium: "text-foreground/80",
   quiet: "text-primary",
 };
-
-type State = { kind: "idle" } | { kind: "loading" } | { kind: "error" } | { kind: "done"; data: ActivitySearch };
 
 /**
  * «كم منافس في نشاطك؟» — the reader types an activity and sees how many commercial registrations
@@ -41,30 +39,7 @@ type State = { kind: "idle" } | { kind: "loading" } | { kind: "error" } | { kind
  */
 export function ActivityLookup({ labels: t }: { labels: ActivityLookupLabels }) {
   const [query, setQuery] = useState("");
-  const [state, setState] = useState<State>({ kind: "idle" });
-
-  useEffect(() => {
-    const q = query.trim();
-    if (q.length < 2) {
-      setState({ kind: "idle" });
-      return;
-    }
-    const controller = new AbortController();
-    const timer = setTimeout(async () => {
-      setState({ kind: "loading" });
-      try {
-        const res = await fetch(`/modonty/entrepreneurship/api?q=${encodeURIComponent(q)}`, { signal: controller.signal });
-        if (!res.ok) throw new Error(String(res.status));
-        setState({ kind: "done", data: (await res.json()) as ActivitySearch });
-      } catch {
-        if (!controller.signal.aborted) setState({ kind: "error" });
-      }
-    }, DEBOUNCE_MS);
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [query]);
+  const state = useDebouncedSearch<ActivitySearch>("/modonty/entrepreneurship/api", query);
 
   return (
     <section aria-labelledby="activity-lookup" className="rounded-lg bg-card p-5 ring-1 ring-border">

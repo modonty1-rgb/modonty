@@ -1,5 +1,5 @@
 import type { ActivityMatch, CompetitionLevel } from "../helpers/types";
-import { normalizeArabic } from "../helpers/normalize-arabic";
+import { normalizeArabic } from "../../helpers/normalize-arabic";
 import raw from "./activities.json";
 
 /**

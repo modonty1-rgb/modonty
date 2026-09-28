@@ -1,5 +1,5 @@
 import type { ActivityMatch, ActivitySearch } from "../helpers/types";
-import { normalizeArabic } from "../helpers/normalize-arabic";
+import { normalizeArabic } from "../../helpers/normalize-arabic";
 import { activities } from "./activities";
 
 const LIMIT = 6;
