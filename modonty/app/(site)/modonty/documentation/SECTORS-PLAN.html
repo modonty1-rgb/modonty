@@ -1,0 +1,406 @@
+<title>خطة قطاعات مدونتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  :root {
+    --ground: #f5f5fb;
+    --paper: #ffffff;
+    --ink: #16133b;
+    --muted: #5c5a78;
+    --line: #dddcec;
+    --navy: #0e065a;
+    --blue: #3030ff;
+    --teal: #00a8a8;
+    --tint: #ececfb;
+    --ok: #0d7a53;
+    --ok-bg: #e2f4ec;
+    --no: #b3261e;
+    --no-bg: #fbe7e5;
+    --warn: #8a5300;
+    --warn-bg: #fdf0da;
+    --wire: #e7e6f4;
+    --wire-live: #d9f3f3;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0c0a24; --paper: #15123a; --ink: #ecebfb; --muted: #a7a5c6; --line: #2c2960;
+      --navy: #c9c6ff; --blue: #8c8cff; --teal: #3fd8d8; --tint: #1d1a4d;
+      --ok: #5fd3a3; --ok-bg: #123a2c; --no: #ff8f86; --no-bg: #3d1614; --warn: #f4c06b; --warn-bg: #3a2a0c;
+      --wire: #211e55; --wire-live: #0f3b44;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0c0a24; --paper: #15123a; --ink: #ecebfb; --muted: #a7a5c6; --line: #2c2960;
+    --navy: #c9c6ff; --blue: #8c8cff; --teal: #3fd8d8; --tint: #1d1a4d;
+    --ok: #5fd3a3; --ok-bg: #123a2c; --no: #ff8f86; --no-bg: #3d1614; --warn: #f4c06b; --warn-bg: #3a2a0c;
+    --wire: #211e55; --wire-live: #0f3b44;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font: 400 16px/1.75 "Tajawal", "Segoe UI", Tahoma, sans-serif;
+    direction: rtl;
+  }
+  .wrap { max-width: 1080px; margin-inline: auto; padding-inline: 20px; padding-block: 28px 64px; }
+  h1, h2, h3 { text-wrap: balance; line-height: 1.3; margin: 0; color: var(--navy); }
+  h1 { font-size: clamp(28px, 4.2vw, 40px); font-weight: 800; }
+  h2 { font-size: 24px; font-weight: 800; }
+  h3 { font-size: 17px; font-weight: 700; }
+  p { margin: 0; }
+  a { color: var(--blue); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
+  .num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+  .muted { color: var(--muted); }
+  .eyebrow { font-size: 13px; letter-spacing: .04em; color: var(--muted); font-weight: 500; }
+
+  header.top { display: grid; gap: 10px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+  header.top .lede { max-width: 70ch; font-size: 17px; }
+
+  nav.jump { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--ground); padding-block: 12px; display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--line); }
+  nav.jump a { text-decoration: none; color: var(--ink); background: var(--paper); border: 1px solid var(--line); padding: 4px 12px; border-radius: 999px; font-size: 14px; font-weight: 500; }
+  nav.jump a:hover { border-color: var(--blue); color: var(--blue); }
+
+  section.block { display: grid; gap: 16px; padding-top: 40px; scroll-margin-top: 64px; }
+  .intro { max-width: 72ch; }
+
+  .table-box { overflow-x: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 14.5px; }
+  th, td { text-align: start; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 13px; color: var(--muted); font-weight: 700; background: var(--tint); }
+  tr:last-child td { border-bottom: 0; }
+  td strong { color: var(--navy); }
+
+  .chip { display: inline-block; font-size: 12.5px; font-weight: 700; padding: 1px 9px; border-radius: 999px; white-space: nowrap; }
+  .chip.ok { color: var(--ok); background: var(--ok-bg); }
+  .chip.no { color: var(--no); background: var(--no-bg); }
+  .chip.warn { color: var(--warn); background: var(--warn-bg); }
+
+  /* Page skeleton drawings — the football layout: main column and a rail */
+  .wire { display: grid; grid-template-columns: minmax(0, 1fr) 34%; gap: 10px; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  .wire .col { display: grid; gap: 8px; align-content: start; }
+  .wire .box { background: var(--wire); border-radius: 6px; padding: 8px 10px; font-size: 13px; line-height: 1.5; }
+  .wire .box b { display: block; font-size: 13.5px; color: var(--navy); }
+  .wire .box.live { background: var(--wire-live); }
+  .wire .box.hero { background: var(--navy); color: #fff; min-height: 64px; }
+  .wire .box.hero b { color: #fff; }
+  .wire .head { grid-column: 1 / -1; border-bottom: 1px dashed var(--line); padding-bottom: 8px; font-size: 13px; }
+  .wire .head b { color: var(--navy); font-size: 15px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-inline-end: 6px; vertical-align: -1px; background: var(--wire); }
+  .legend .l-live::before { background: var(--wire-live); }
+  .legend .l-hero::before { background: var(--navy); }
+
+  .sector { display: grid; gap: 18px; padding: 22px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; }
+  .sector-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+  .sector-head .path { font-size: 13px; color: var(--muted); }
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .facts { display: grid; gap: 8px; }
+  .facts div { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 10px; font-size: 14.5px; }
+  .facts dt, .facts .k { color: var(--muted); }
+  .sector .table-box { border-radius: 8px; }
+  .note { font-size: 14px; background: var(--tint); border-radius: 8px; padding: 10px 14px; }
+
+  .quote { font-size: 14px; direction: ltr; text-align: left; unicode-bidi: isolate; color: var(--muted); font-style: italic; }
+
+  ol.decide { margin: 0; padding-inline-start: 22px; display: grid; gap: 12px; }
+  ol.decide li { padding-inline-start: 4px; }
+  ol.decide b { color: var(--navy); }
+
+  footer.src { font-size: 13px; color: var(--muted); display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 18px; margin-top: 40px; }
+  footer.src a { word-break: break-all; }
+
+  @media (max-width: 760px) {
+    .two { grid-template-columns: minmax(0, 1fr); }
+    .wire { grid-template-columns: minmax(0, 1fr); }
+    .facts div { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .sector { padding: 16px; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">مدونتي · /modonty · ٢٨ سبتمبر ٢٠٢٦ · تصوّر فقط، لم يُكتب كود</p>
+    <h1>القطاعات الخمسة بعد الكورة</h1>
+    <p class="lede">كل قطاع يُبنى على قالب صفحة الكورة اللي صارت حيّة. هنا لكل قطاع: من وين بياناته، وهل مصدرها يسمح لموقع تجاري، وكيف تنقسم صفحته، ووش يتحكّم فيه المحرّر من الأدمن. كل رقم هنا مأخوذ من نداءٍ فعلي أو من نصّ شروط المصدر نفسه.</p>
+  </header>
+
+  <nav class="jump" aria-label="أقسام الملف">
+    <a href="#verdict">الخلاصة</a>
+    <a href="#template">القالب</a>
+    <a href="#ai">الذكاء الاصطناعي</a>
+    <a href="#markets">المال والأعمال</a>
+    <a href="#entertainment">الترفيه</a>
+    <a href="#education">التعليم</a>
+    <a href="#health">الصحة والجمال</a>
+    <a href="#rejected">مصادر ممنوعة</a>
+    <a href="#decide">قراراتك</a>
+  </nav>
+
+  <!-- Verdict -->
+  <section class="block" id="verdict">
+    <h2>الخلاصة</h2>
+    <p class="intro">قطاعان جاهزان ببيانات حيّة مسموحة الآن (الذكاء الاصطناعي، والمال بدون مؤشّر تاسي). قطاعان يعيشان على جدول يملؤه المحرّر لأن جهاتهما ما عندها واجهة بيانات مفتوحة (الترفيه، التعليم). والصحة أرقامها رسمية جاهزة، لكن ما عندنا فيها ولا مقال.</p>
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr><th>القطاع</th><th>الوحدة الحيّة (أعلى الصفحة)</th><th>مصدرها</th><th>الشروط</th><th>مقالاتنا</th><th>الترتيب المقترح</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>المال والأعمال</strong></td><td>محوّل الريال + أرقام الاقتصاد</td><td>ExchangeRate-API · البنك الدولي</td><td><span class="chip ok">مسموح · مقروء</span></td><td class="num">6</td><td>١</td></tr>
+          <tr><td><strong>الذكاء الاصطناعي</strong></td><td>النماذج الرائجة + النماذج العربية</td><td>Hugging Face · GitHub</td><td><span class="chip ok">مسموح · مقروء</span></td><td class="num">4</td><td>٢</td></tr>
+          <tr><td><strong>التعليم</strong></td><td>مواعيد التسجيل بعدّ تنازلي</td><td>جدول المحرّر + روابط رسمية</td><td><span class="chip ok">لا مصدر خارجي</span></td><td class="num">6</td><td>٣</td></tr>
+          <tr><td><strong>الترفيه</strong></td><td>فعاليات الأسبوع</td><td>جدول المحرّر + روابط رسمية</td><td><span class="chip ok">لا مصدر خارجي</span></td><td class="num">1</td><td>٤</td></tr>
+          <tr><td><strong>الصحة والجمال</strong></td><td>صحة السعودية بالأرقام</td><td>البنك الدولي · الإحصاء</td><td><span class="chip ok">مسموح · مقروء</span></td><td class="num">0</td><td>٥</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:14px">الترتيب = جاهزية البيانات + عدد مقالاتنا في القطاع (من دراسة ٢٤ سبتمبر على قاعدة dev). «مسموح · مقروء» يعني قرأنا نصّ الشروط بأنفسنا ويسمح بالاستخدام التجاري.</p>
+  </section>
+
+  <!-- Template -->
+  <section class="block" id="template">
+    <h2>القالب الواحد — نفس صفحة الكورة</h2>
+    <p class="intro">كل قطاع يأخذ نفس الهيكل ونفس أدوات الأدمن. المتغيّر الوحيد هو «الوحدة الحيّة» وبطاقات العمود الجانبي.</p>
+    <div class="wire" aria-label="رسم هيكل صفحة قطاع على الديسكتوب">
+      <div class="head"><b>الرأس</b> — اسم القطاع (h1) · سطر تعريف · «آخر تحديث»</div>
+      <div class="col">
+        <div class="box hero"><b>الهيرو</b>صورة وعنوان وسطر من الأدمن — يظهر لما ما فيه حدث حيّ</div>
+        <div class="box live"><b>الوحدة الحيّة</b>الشي اللي يتغيّر: مباريات، أسعار، مواعيد…</div>
+        <div class="box"><b>البطاقة الثانية</b>جدول أو قائمة تكمّل الوحدة الحيّة</div>
+      </div>
+      <div class="col">
+        <div class="box"><b>أرقام رسمية</b>٣–٤ أرقام ثابتة بمصدرها وسنتها</div>
+        <div class="box"><b>من مدونتي</b>حتى ٤ مقالات يختارها المحرّر</div>
+        <div class="box"><b>مصدر البيانات</b>سطر الإسناد اللي يشترطه المصدر</div>
+      </div>
+    </div>
+    <div class="legend"><span class="l-hero">من الأدمن</span><span class="l-live">بيانات حيّة</span><span>ثابت أو شبه ثابت</span></div>
+    <div class="table-box">
+      <table>
+        <thead><tr><th>الجزء</th><th>كيف يشتغل</th><th>موجود من الكورة؟</th></tr></thead>
+        <tbody>
+          <tr><td>الهيرو</td><td>صورتان (ديسكتوب ٢٠٤٨×٧٦٨ وجوّال ١٠٨٠×١٠٨٠) وعنوان وسطر، مع برومبت الصورة جنب كل صورة</td><td><span class="chip ok">نعم</span></td></tr>
+          <tr><td>السيو</td><td>عنوان ووصف وصورة مشاركة وJSON-LD من محرّر صفحات مدونتي، في تبويب «الصفحة»</td><td><span class="chip ok">نعم</span></td></tr>
+          <tr><td>من مدونتي</td><td>مقالات عميل مدونتي فقط، بترتيب المحرّر، في تبويب «المقالات»</td><td><span class="chip ok">نعم</span></td></tr>
+          <tr><td>نسخة البيانات</td><td>صفّ واحد لكل مصدر في <code>feed_snapshots</code> يحمي حصّة الطلبات، ويعرض آخر نسخة لو فشل المصدر</td><td><span class="chip ok">نعم</span></td></tr>
+          <tr><td>جدول المحرّر</td><td>قائمة عناصر بتاريخ بداية ونهاية ورابط رسمي، تختفي لحالها بعد انتهائها — تخدم الترفيه والتعليم وأدوات الذكاء الاصطناعي</td><td><span class="chip warn">جديد · يُبنى مرة ويُستعمل في ٣ قطاعات</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">السيو في كل قطاع: <b>WebPage + BreadcrumbList</b> مع <b>about</b> يسمّي موضوع القطاع، زي الكورة. ولا نضع علامة لشي غير ظاهر في الصفحة (قاعدة جوجل).</p>
+  </section>
+
+  <!-- AI -->
+  <section class="block" id="ai">
+    <article class="sector">
+      <div class="sector-head"><h2>الذكاء الاصطناعي</h2><span class="path num">/modonty/ai</span></div>
+      <p>الزائر يلقى إيش الجديد هذا الأسبوع في النماذج والأدوات، ومعه الزاوية المحلية: النماذج العربية والسعودية.</p>
+      <div class="wire" aria-label="هيكل صفحة الذكاء الاصطناعي">
+        <div class="head"><b>الذكاء الاصطناعي</b> — الجديد في النماذج والأدوات، بالعربي</div>
+        <div class="col">
+          <div class="box hero"><b>الهيرو</b>من الأدمن</div>
+          <div class="box live"><b>الرائج هذا الأسبوع</b>أعلى ٥ نماذج في Hugging Face: الاسم · الجهة · نوعه · رابط</div>
+          <div class="box live"><b>نماذج عربية وسعودية</b>ALLaM من HUMAIN وأخواته</div>
+          <div class="box"><b>أدوات يبحث عنها السعوديون</b>جدول المحرّر: Gemini · DeepSeek · Hailuo…</div>
+        </div>
+        <div class="col">
+          <div class="box live"><b>مشاريع مفتوحة صاعدة</b>GitHub</div>
+          <div class="box"><b>من مدونتي</b>٤ مقالات</div>
+          <div class="box"><b>مصدر البيانات</b></div>
+        </div>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>المصدر</th><th>ماذا نأخذ</th><th>الدليل (نداء ٢٨ سبتمبر)</th><th>الشروط</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Hugging Face API</strong></td><td>النماذج الرائجة، ونتائج البحث عن ALLaM</td><td>200 · الأول <span class="num">convaiinnovations/laya</span> · ALLaM: <span class="num">humain-ai/ALLaM-7B-Instruct-preview</span></td><td><span class="chip ok">«open endpoints»</span> · ٥٠٠ طلب كل ٥ دقائق بلا حساب · الشروط لا تمنع عرض الأسماء والروابط</td></tr>
+            <tr><td><strong>GitHub Search API</strong></td><td>أعلى المشاريع المفتوحة في موضوع النماذج اللغوية</td><td>200 · <span class="num">70,635</span> مشروعاً · الأول <span class="num">NousResearch/hermes-agent</span></td><td><span class="chip ok">مسموح</span> «do not restrict lawful access to or use of the contents of public repositories by third parties»</td></tr>
+            <tr><td><strong>arXiv API</strong></td><td>أحدث الأبحاث عن اللغة العربية: عنوان ورابط</td><td>200 عبر curl (الـ406 كان من مكتبة بايثون) · أحدثها «Muslim: A Deployed Arabic Voice AI Platform…»</td><td><span class="chip ok">البيانات الوصفية CC0 · طلب كل ٣ ثوانٍ</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two">
+        <dl class="facts">
+          <div><dt>يتحدّث</dt><dd>مرة كل ٦ ساعات — الرائج ما يتغيّر كل دقيقة</dd></div>
+          <div><dt>الأدمن</dt><dd>الهيرو · السيو · المقالات · جدول «الأدوات»</dd></div>
+          <div><dt>about في JSON-LD</dt><dd>«الذكاء الاصطناعي» مع رابط ويكي داتا</dd></div>
+        </dl>
+        <p class="note">حُسم ٢٨ سبتمبر: المصادر الثلاثة تعمل وشروطها تسمح. الأسماء والعناوين تأتي بالإنجليزي كما هي، والتصنيف والشرح بالعربي منّا.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- Markets -->
+  <section class="block" id="markets">
+    <article class="sector">
+      <div class="sector-head"><h2>المال والأعمال</h2><span class="path num">/modonty/markets</span></div>
+      <p>نبدأ باللي بياناته مسموحة اليوم: محوّل الريال مقابل العملات اللي تهمّ جمهورنا (الدولار، الجنيه، الدرهم…)، وأرقام الاقتصاد السعودي الرسمية. مؤشّر تاسي ينتظر قرارك.</p>
+      <div class="wire" aria-label="هيكل صفحة المال والأعمال">
+        <div class="head"><b>المال والأعمال</b> — الريال والاقتصاد السعودي، بلغة يفهمها الكل</div>
+        <div class="col">
+          <div class="box live"><b>محوّل الريال</b>تكتب المبلغ وتختار العملة · يتحدّث يومياً</div>
+          <div class="box live"><b>الريال اليوم</b>جدول ٦–٨ عملات مقابل الريال</div>
+          <div class="box"><b>مؤشّر تاسي</b>مكان محجوز — حسب قرارك</div>
+        </div>
+        <div class="col">
+          <div class="box"><b>الاقتصاد بالأرقام</b>النمو · التضخّم · البطالة</div>
+          <div class="box"><b>من مدونتي</b>٤ مقالات</div>
+          <div class="box"><b>تنبيه</b>معلومات فقط، ولا توصيات</div>
+        </div>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>المصدر</th><th>ماذا نأخذ</th><th>الدليل</th><th>الشروط</th></tr></thead>
+          <tbody>
+            <tr><td><strong>ExchangeRate-API</strong> (الوصول المفتوح)</td><td>أسعار العملات مقابل الريال</td><td>200 · ١ ريال = <span class="num">0.266667</span> دولار · = <span class="num">13.800737</span> جنيه · آخر تحديث <span class="num">27 Sep 2026 00:02 UTC</span></td><td><span class="chip ok">تجاري مسموح</span> بشرط رابط «Rates By Exchange Rate API» · تحديث مرة يومياً</td></tr>
+            <tr><td><strong>البنك الدولي API</strong></td><td>النمو · التضخّم · البطالة</td><td>نمو <span class="num">4.5%</span> (2025) · تضخّم <span class="num">2.1%</span> (2025) · بطالة <span class="num">3.0%</span> (2025)</td><td><span class="chip ok">CC BY 4.0 · تجاري مسموح</span> بذكر المصدر</td></tr>
+            <tr><td><strong>مؤشّر تاسي</strong></td><td>قيمة المؤشّر ونسبة التغيّر</td><td>موقع تداول رجع <span class="num">403</span> على صفحة الشروط · Twelve Data المجاني «non-display»</td><td><span class="chip no">لا مصدر مجاني مسموح وجدناه</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two">
+        <dl class="facts">
+          <div><dt>يتحدّث</dt><dd>العملات مرة يومياً · أرقام الاقتصاد مرة شهرياً</dd></div>
+          <div><dt>الأدمن</dt><dd>الهيرو · السيو · المقالات · قائمة العملات المعروضة</dd></div>
+          <div><dt>about في JSON-LD</dt><dd>«اقتصاد السعودية»</dd></div>
+        </dl>
+        <p class="note">محوّل «الريال مقابل الجنيه» سؤال يبحث عنه الناس يومياً، ويرجّع الزائر للصفحة بدون ما ننتظر مؤشّر السوق.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- Entertainment -->
+  <section class="block" id="entertainment">
+    <article class="sector">
+      <div class="sector-head"><h2>الترفيه</h2><span class="path num">/modonty/entertainment</span></div>
+      <p>فعاليات الأسبوع في المدن الكبيرة، بتاريخها ومدينتها ورابط الحجز الرسمي. المصدر المجاني المشهور للأفلام (TMDB) يمنع المواقع التجارية، فالقطاع يعيش على جدول المحرّر.</p>
+      <div class="wire" aria-label="هيكل صفحة الترفيه">
+        <div class="head"><b>الترفيه</b> — وش فيه هالأسبوع</div>
+        <div class="col">
+          <div class="box hero"><b>الهيرو</b>من الأدمن — موسم الرياض مثلاً</div>
+          <div class="box live"><b>فعاليات الأسبوع</b>جدول المحرّر: التاريخ · المدينة · الرابط · تختفي بعد انتهائها</div>
+          <div class="box"><b>المسلسلات الأكثر بحثاً</b>جدول المحرّر من «بحث جوجل» السنوي</div>
+        </div>
+        <div class="col">
+          <div class="box"><b>الترفيه بالأرقام</b>٦٧٪ حضروا فعالية في ٢٠٢٥ (الإحصاء)</div>
+          <div class="box"><b>من مدونتي</b>مقال واحد اليوم</div>
+        </div>
+      </div>
+      <div class="two">
+        <dl class="facts">
+          <div><dt>المصدر</dt><dd>المحرّر، مع رابط رسمي لكل فعالية (webook، موسم الرياض…)</dd></div>
+          <div><dt>واجهات برمجية</dt><dd>webook وموسم الرياض: <span class="chip warn">لم يُفحص</span></dd></div>
+          <div><dt>الأدمن</dt><dd>الهيرو · السيو · المقالات · جدول الفعاليات</dd></div>
+          <div><dt>JSON-LD</dt><dd>WebPage فقط — علامة Event تكون لاحقاً في صفحة لكل فعالية</dd></div>
+        </dl>
+        <p class="note">الشغل هنا على المحرّر: الفعاليات تتغيّر أسبوعياً. لو ما فيه أحد يحدّثها، الصفحة تفرغ لحالها لأن كل فعالية تختفي بعد تاريخها.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- Education -->
+  <section class="block" id="education">
+    <article class="sector">
+      <div class="sector-head"><h2>التعليم</h2><span class="path num">/modonty/education</span></div>
+      <p>المواعيد اللي يدوّر عليها الطالب وأهله: فتح القبول، اختبارات قياس، بداية الفصل. كل موعد بعدّ تنازلي ورابط الجهة الرسمية.</p>
+      <div class="wire" aria-label="هيكل صفحة التعليم">
+        <div class="head"><b>التعليم</b> — مواعيد القبول والاختبارات</div>
+        <div class="col">
+          <div class="box live"><b>مفتوح الآن</b>المواعيد اللي تسجيلها مفتوح · «يُغلق بعد ٥ أيام»</div>
+          <div class="box live"><b>قريباً</b>المواعيد القادمة · «يفتح بعد ١٢ يوم»</div>
+          <div class="box"><b>المنصّات الأكثر بحثاً</b>قبول · قياس · …</div>
+        </div>
+        <div class="col">
+          <div class="box"><b>التعليم بالأرقام</b>الالتحاق بالتعليم العالي ٨٣٫٩٪</div>
+          <div class="box"><b>من مدونتي</b>٤ مقالات</div>
+        </div>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>المصدر</th><th>ماذا نأخذ</th><th>الدليل</th><th>الشروط</th></tr></thead>
+          <tbody>
+            <tr><td><strong>جدول المحرّر</strong></td><td>الجهة · الحدث · يفتح · يُغلق · رابط رسمي</td><td>الحالة تُحسب لحالها من التاريخ</td><td><span class="chip ok">لا مصدر خارجي</span></td></tr>
+            <tr><td><strong>البنك الدولي API</strong></td><td>نسبة الالتحاق بالتعليم العالي</td><td><span class="num">83.9%</span> (2024)</td><td><span class="chip ok">CC BY 4.0</span></td></tr>
+            <tr><td><strong>قبول · قياس · الوزارة</strong></td><td>المواعيد نفسها</td><td>واجهات بيانات مفتوحة: <span class="chip warn">لم يُفحص</span></td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">الموعد الغلط في هذا القطاع يضرّ القارئ مباشرة. كل موعد يُكتب مع رابط الجهة، والصفحة تعرض «تأكّد من الموقع الرسمي» جنب كل تاريخ.</p>
+    </article>
+  </section>
+
+  <!-- Health -->
+  <section class="block" id="health">
+    <article class="sector">
+      <div class="sector-head"><h2>الصحة والجمال</h2><span class="path num">/modonty/health</span></div>
+      <p>أرقام صحّة السعودية من مصادر رسمية، ونصيحة أسبوعية بمصدرها. جوجل يعامل محتوى الصحة بتدقيق أعلى، فلا نصيحة بدون مرجع، ولا تشخيص.</p>
+      <div class="wire" aria-label="هيكل صفحة الصحة والجمال">
+        <div class="head"><b>الصحة والجمال</b> — لياقة · تغذية · عناية</div>
+        <div class="col">
+          <div class="box hero"><b>الهيرو</b>من الأدمن</div>
+          <div class="box live"><b>صحة السعودية بالأرقام</b>متوسط العمر · الوزن الزائد · السكري · النشاط البدني</div>
+          <div class="box"><b>نصيحة الأسبوع</b>جدول المحرّر + رابط وزارة الصحة</div>
+        </div>
+        <div class="col">
+          <div class="box"><b>من مدونتي</b>«قريباً» — ما عندنا مقال</div>
+          <div class="box"><b>مصدر البيانات</b></div>
+        </div>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>المؤشّر</th><th>القيمة</th><th>السنة</th><th>المصدر</th></tr></thead>
+          <tbody>
+            <tr><td>متوسط العمر المتوقّع عند الولادة</td><td class="num">79.0</td><td class="num">2024</td><td>البنك الدولي · <span class="chip ok">CC BY 4.0</span></td></tr>
+            <tr><td>البالغون بوزن زائد</td><td class="num">71.8%</td><td class="num">2022</td><td>البنك الدولي</td></tr>
+            <tr><td>السكري (٢٠–٧٩ سنة)</td><td class="num">23.1%</td><td class="num">2024</td><td>البنك الدولي</td></tr>
+            <tr><td>الإنفاق على الصحة من الناتج</td><td class="num">5.7%</td><td class="num">2023</td><td>البنك الدولي</td></tr>
+            <tr><td>يمارسون ١٥٠ دقيقة نشاط أسبوعياً</td><td class="num">59.1%</td><td class="num">2025</td><td>الهيئة العامة للإحصاء</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">هذا القطاع آخر الترتيب لأن مقالاتنا فيه صفر. الأرقام جاهزة، لكن الصفحة بدون محتوى مكتوب تبقى رقيقة في نظر جوجل.</p>
+    </article>
+  </section>
+
+  <!-- Rejected -->
+  <section class="block" id="rejected">
+    <h2>مصادر مجانية ممنوعة علينا</h2>
+    <p class="intro">كلها مشهورة ومجانية، وكلها تمنع الموقع التجاري في نصّ شروطها. مدونتي فيها إعلانات واشتراكات، فتنطبق علينا.</p>
+    <div class="table-box">
+      <table>
+        <thead><tr><th>المصدر</th><th>كان للقطاع</th><th>نصّ الشروط</th></tr></thead>
+        <tbody>
+          <tr><td><strong>TMDB</strong></td><td>الترفيه — الأفلام والمسلسلات</td><td><p class="quote">"does not permit any commercial use of TMDB, the TMDB APIs, or TMDB Content."</p></td></tr>
+          <tr><td><strong>Open-Meteo</strong></td><td>الصحة — الطقس والحرارة</td><td><p class="quote">"You may only use the free API services for non-commercial purposes." — including sites that "display advertisements".</p></td></tr>
+          <tr><td><strong>WAQI (aqicn)</strong></td><td>الصحة — جودة الهواء</td><td><p class="quote">"The data can not be used in paid applications or services."</p></td></tr>
+          <tr><td><strong>WHO (منظمة الصحة العالمية)</strong></td><td>الصحة — المؤشّرات</td><td><p class="quote">"Datasets shall not be used for or in conjunction with the promotion of a commercial enterprise…"</p></td></tr>
+          <tr><td><strong>Twelve Data (المجاني)</strong></td><td>المال — الأسهم</td><td><p class="quote">Basic plan: "Internal non-display usage".</p></td></tr>
+          <tr><td><strong>أخبار جوجل RSS</strong></td><td>كل القطاعات — الأخبار</td><td><p class="quote">"personal, non-commercial use. Any other use of the feed is expressly prohibited" (دراسة ٢٤ سبتمبر)</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Decisions -->
+  <section class="block" id="decide">
+    <h2>قراراتك</h2>
+    <ol class="decide">
+      <li><b>مؤشّر تاسي:</b> نسأل TradingView عن شروط الودجت المجاني لموقع تجاري (صفحتهم تقول «تواصل معنا»)، أو ترخيص مدفوع من مزوّد بيانات، أو نطلق المال بدون مؤشّر.</li>
+      <li><b>ترتيب الإطلاق:</b> المقترح المال ← الذكاء الاصطناعي ← التعليم ← الترفيه ← الصحة.</li>
+      <li><b>جدول المحرّر:</b> من يحدّث فعاليات الترفيه ومواعيد التعليم كل أسبوع؟ بدونه يفرغ القطاعان.</li>
+      <li><b>الأخبار:</b> RSS كل صحيفة سعودية يُفحص على حدة (يعمل؟ وشروطه تسمح بعنوان ورابط؟) — مفتوح من دراسة ٢٤ سبتمبر.</li>
+    </ol>
+  </section>
+
+  <footer class="src">
+    <p><b>المصادر</b> — كلها قُرئت أو نُوديت في ٢٨ سبتمبر ٢٠٢٦:</p>
+    <p>شروط TMDB: <a href="https://www.themoviedb.org/api-terms-of-use">themoviedb.org/api-terms-of-use</a> · شروط Open-Meteo: <a href="https://open-meteo.com/en/terms">open-meteo.com/en/terms</a> · شروط WAQI: <a href="https://aqicn.org/api/">aqicn.org/api</a> · شروط WHO: <a href="https://www.who.int/about/policies/publishing/data-policy/terms-and-conditions">who.int/…/terms-and-conditions</a> · أسعار Twelve Data: <a href="https://twelvedata.com/pricing">twelvedata.com/pricing</a></p>
+    <p>ExchangeRate-API: <a href="https://www.exchangerate-api.com/docs/free">exchangerate-api.com/docs/free</a> · رخصة البنك الدولي: <a href="https://datacatalog.worldbank.org/public-licenses">datacatalog.worldbank.org/public-licenses</a> · arXiv: <a href="https://info.arxiv.org/help/api/tou.html">info.arxiv.org/help/api/tou.html</a> · TradingView: <a href="https://www.tradingview.com/widget-docs/faq/general/">tradingview.com/widget-docs/faq/general</a></p>
+    <p>النداءات: open.er-api.com/v6/latest/SAR · huggingface.co/api/models · api.github.com/search/repositories · api.worldbank.org/v2/country/SAU · export.arxiv.org (406). أرقام الإحصاء (٥٩٫١٪ و٦٧٪) وقائمة «بحث جوجل» من دراسة ٢٤ سبتمبر <code>SECTORS-CONCEPT.html</code>.</p>
+  </footer>
+</div>

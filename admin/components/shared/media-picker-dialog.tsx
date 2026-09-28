@@ -29,6 +29,7 @@ import { MediaType } from "@prisma/client";
 import { getMediaTypeLabel, getMediaTypeBadgeVariant } from "@/lib/media/media-utils";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { justifyRows, tileAspectRatio, shouldContainTile } from "@modonty/shared/lib/justify-rows";
+import { UploadMediaDialog, type UploadTarget } from "@/components/shared/media-upload/upload-media-dialog";
 
 /** DialogContent is `max-w-4xl` (896px) minus padding. Only decides tiles-per-row —
  *  the widths come back as percentages, so the row fills its parent at any size. */
@@ -61,6 +62,10 @@ interface MediaPickerDialogProps {
   /** Modonty Core (T2): hard-lock the picker to this client's own library — no General
    *  fallback. Used by platform entity forms (Tag/Category/…). */
   lockClient?: boolean;
+  /** When set, «Upload» opens the upload window right here — cropped to this role — and the new
+   *  file is picked straight into the slot, instead of leaving for /media/upload (Khalid, 28 Sep
+   *  2026: «عملية الابلود انها تكون كلها من مكان واحد», as articles and clients already do). */
+  uploadTarget?: UploadTarget;
 }
 
 // PLATFORM source mode removed (T2 decision 1, 2026-07-31): platform images live in
@@ -71,12 +76,14 @@ export function MediaPickerDialog({
   clientId,
   onSelect,
   lockClient = false,
+  uploadTarget,
 }: MediaPickerDialogProps) {
   const router = useRouter();
   const [media, setMedia] = useState<Media[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<MediaType | "all">("all");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (open && clientId) {
@@ -118,6 +125,32 @@ export function MediaPickerDialog({
     });
     onOpenChange(false);
   };
+
+  // The upload window hands back only the new row's id — read it from its role's list and pick it.
+  const pickUploaded = async (mediaId: string) => {
+    if (!clientId || !uploadTarget) return { linked: false };
+    const result = await getMedia({ clientId, mimeType: "image", type: uploadTarget.role, perPage: 100 });
+    const item = (result.items as Media[]).find((m) => m.id === mediaId);
+    if (!item) return { linked: false };
+    handleSelect(item);
+    return { linked: true };
+  };
+
+  const uploadButton = (className: string, label: string) =>
+    uploadTarget ? (
+      <Button type="button" variant="outline" size="sm" className={className} onClick={() => setUploading(true)}>
+        <Upload className="h-3.5 w-3.5" />
+        {label}
+      </Button>
+    ) : (
+      // `rel` مع `target="_blank"`: بدونه تملك الصفحة المفتوحة مرجعاً إلى نافذتنا عبر `window.opener`.
+      <Link href={`/media/upload?clientId=${clientId}`} target="_blank" rel="noopener noreferrer" className="shrink-0">
+        <Button type="button" variant="outline" size="sm" className={className}>
+          <Upload className="h-3.5 w-3.5" />
+          {label}
+        </Button>
+      </Link>
+    );
 
   const filteredMedia = search
     ? media.filter(
@@ -175,6 +208,7 @@ export function MediaPickerDialog({
   }
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col p-0">
         <DialogHeader className="px-6 pt-6 pb-4 border-b">
@@ -214,19 +248,7 @@ export function MediaPickerDialog({
                 </SelectContent>
               </Select>
             </div>
-            {/* `rel` مع `target="_blank"`: بدونه تملك الصفحة المفتوحة مرجعاً إلى نافذتنا
-                عبر `window.opener` وتقدر تعيد توجيهها. */}
-            <Link
-              href={`/media/upload?clientId=${clientId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0"
-            >
-              <Button type="button" variant="outline" size="sm" className="h-9 gap-1.5">
-                <Upload className="h-3.5 w-3.5" />
-                Upload
-              </Button>
-            </Link>
+            {uploadButton("h-9 shrink-0 gap-1.5", "Upload")}
             <Button
               type="button"
               variant="outline"
@@ -253,12 +275,7 @@ export function MediaPickerDialog({
                     ? `No ${getMediaTypeLabel(typeFilter).toLowerCase()} media available for this client.`
                     : "No media available for this client."}
               </p>
-              <Link href={`/media/upload?clientId=${clientId}`}>
-                <Button variant="outline" size="sm" className="mt-2">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload Media
-                </Button>
-              </Link>
+              {uploadButton("mt-2 gap-1.5", "Upload Media")}
             </div>
           ) : (
             <>
@@ -346,5 +363,13 @@ export function MediaPickerDialog({
         </div>
       </DialogContent>
     </Dialog>
+    {/* Always mounted: picking the new file closes the library (and may drop `uploadTarget`)
+        while the upload window is still finishing — it must close, not unmount mid-save. */}
+    <UploadMediaDialog
+      target={uploading && uploadTarget ? uploadTarget : null}
+      onOpenChange={(o) => !o && setUploading(false)}
+      link={pickUploaded}
+    />
+    </>
   );
 }

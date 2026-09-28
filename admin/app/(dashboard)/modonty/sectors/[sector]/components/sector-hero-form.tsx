@@ -29,15 +29,16 @@ interface SectorHeroFormProps {
 }
 
 const SLOTS = [
-  { key: "desktop", label: "صورة الديسكتوب", size: "2048×768", thumb: "h-12 w-32" },
-  { key: "mobile", label: "صورة الجوّال", size: "1080×1080", thumb: "size-12" },
+  { key: "desktop", role: "SECTOR_HERO", label: "صورة الديسكتوب", size: "2048×768", thumb: "h-12 w-32" },
+  { key: "mobile", role: "SECTOR_HERO_MOBILE", label: "صورة الجوّال", size: "1080×1080", thumb: "size-12" },
 ] as const;
 
 /**
  * The top of the sector page — two images and two lines of text, all from here (Khalid, 27 Sep 2026:
  * «ما نشتغل هارد كودد»). One row per image, then the text and one save (Khalid, 28 Sep 2026: the
  * stacked pickers, hints and prompt panels were «تشويش بصري»). The image itself opens the media
- * library, as every picker in the system does — no separate upload here.
+ * library, as every picker in the system does; its «Upload» opens the upload window in place, cropped
+ * to the slot, and the new file lands in the slot (28 Sep 2026: no leaving for /media/upload).
  * Nothing reaches the page until «حفظ».
  */
 export function SectorHeroForm({ sector, sectorLabel, coreClientId, initial }: SectorHeroFormProps) {
@@ -50,6 +51,7 @@ export function SectorHeroForm({ sector, sectorLabel, coreClientId, initial }: S
   const [picking, setPicking] = useState<SlotKey | null>(null);
 
   const prompts = HERO_PROMPTS[sector];
+  const pickingSlot = SLOTS.find((s) => s.key === picking);
   const setSlot = (key: SlotKey, slot: Slot) => setSlots((s) => ({ ...s, [key]: slot }));
 
   const save = () =>
@@ -150,6 +152,11 @@ export function SectorHeroForm({ sector, sectorLabel, coreClientId, initial }: S
         onOpenChange={(open) => !open && setPicking(null)}
         clientId={coreClientId}
         lockClient
+        uploadTarget={
+          pickingSlot
+            ? { clientId: coreClientId, clientName: "مدونتي", role: pickingSlot.role, contextLabel: `${pickingSlot.label} — ${sectorLabel}` }
+            : undefined
+        }
         onSelect={(m) => {
           if (picking) setSlot(picking, { mediaId: m.mediaId, url: m.bunnyUrl || m.url });
           setPicking(null);
