@@ -41,6 +41,13 @@ export const ALERT_TOPICS = [
     hint: "أماكن وتجارب جديدة للعائلة في مدينتك",
     consent: "أرسل لي الجديد من أماكن النزهات العائلية",
   },
+  // The health page (28 Sep 2026): consent collected now, sending built later.
+  {
+    id: "health",
+    label: "جديد الصحة والجمال",
+    hint: "مقالات وتنبيهات عن الأدوية ومستحضرات التجميل",
+    consent: "أرسل لي الجديد في الصحة والجمال",
+  },
 ] as const;
 
 export type AlertTopicId = (typeof ALERT_TOPICS)[number]["id"];

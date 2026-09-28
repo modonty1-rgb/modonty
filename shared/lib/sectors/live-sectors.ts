@@ -1,9 +1,8 @@
 /**
  * Sector pages that are live on modonty — each has its own route under `/modonty/<slug>`.
  *
- * Two readers, one list: modonty's `[sector]` placeholder skips these (their own folder serves
- * them), and the admin's sector-picks screen shows one tab per entry. Adding a sector page means
- * one line here, not two edits that can drift.
+ * Read by modonty's sitemap and by the admin, which gives each entry its sector screen and sidebar
+ * item. Adding a sector page means one line here plus its own folder in modonty.
  */
 export const LIVE_SECTORS = [
   { slug: "football", label: "الكورة", adminLabel: "Football" },
@@ -11,6 +10,7 @@ export const LIVE_SECTORS = [
   { slug: "entrepreneurship", label: "ريادة الأعمال", adminLabel: "Entrepreneurship" },
   { slug: "education", label: "التعليم", adminLabel: "Education" },
   { slug: "entertainment", label: "الترفيه", adminLabel: "Entertainment" },
+  { slug: "health", label: "الصحة والجمال", adminLabel: "Health" },
 ] as const;
 
 export type LiveSectorSlug = (typeof LIVE_SECTORS)[number]["slug"];
