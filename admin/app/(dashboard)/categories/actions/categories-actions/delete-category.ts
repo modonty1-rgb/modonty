@@ -3,7 +3,6 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { deleteOldImage } from "../../../actions/delete-image";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 
@@ -48,8 +47,6 @@ export async function deleteCategory(id: string) {
         )}. Please delete or reassign them first.`,
       };
     }
-
-    await deleteOldImage("categories", category.id);
 
     await db.category.delete({ where: { id: category.id } });
 

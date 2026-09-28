@@ -1,7 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { MEDIA_USED_WHERE, MEDIA_UNUSED_WHERE } from "@/lib/media/usage-where";
+import { linkedWhere, mediaUsedWhere, mediaUnusedWhere } from "@/lib/media/usage-where";
+import { getMediaLinks } from "@/lib/media/media-links";
 
 function normalizeImageTypeCounts(
   imageTypesRaw: Array<{ mimeType: string; _count: { _all: number } }>
@@ -36,19 +37,20 @@ function normalizeImageTypeCounts(
 }
 
 function normalizeMediaTypeCounts(
-  mediaTypesRaw: Array<{ type: string | null }>
+  mediaTypesRaw: Array<{ type: string | null; _count: { _all: number } }>
 ) {
   return mediaTypesRaw.reduce(
     (acc, item) => {
       const type = item.type || "NULL";
-      if (type === "GENERAL") acc.GENERAL += 1;
-      else if (type === "LOGO") acc.LOGO += 1;
-      else if (type === "OGIMAGE") acc.OGIMAGE += 1;
-      else if (type === "CLIENT_MINI") acc.CLIENT_MINI += 1;
-      else if (type === "POST") acc.POST += 1;
-      else if (type === "TWITTER_IMAGE") acc.TWITTER_IMAGE += 1;
+      const n = item._count._all;
+      if (type === "GENERAL") acc.GENERAL += n;
+      else if (type === "LOGO") acc.LOGO += n;
+      else if (type === "OGIMAGE") acc.OGIMAGE += n;
+      else if (type === "CLIENT_MINI") acc.CLIENT_MINI += n;
+      else if (type === "POST") acc.POST += n;
+      else if (type === "TWITTER_IMAGE") acc.TWITTER_IMAGE += n;
       else if (type === "NULL") {
-        acc.NULL = (acc.NULL || 0) + 1;
+        acc.NULL = (acc.NULL || 0) + n;
       }
       return acc;
     },
@@ -73,24 +75,7 @@ export async function getMediaStats() {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    // Get Cloudinary usage info (don't block if it fails)
-    const { getCloudinaryUsage } = await import("@/lib/utils/cloudinary-usage");
-    const cloudinaryUsage = await getCloudinaryUsage().catch((error) => {
-      // Log error even when caught to help with debugging
-      if (process.env.NODE_ENV === "development" || process.env.CLOUDINARY_DEBUG === "true") {
-        console.error("Failed to fetch Cloudinary usage in getMediaStats:", {
-          message: error?.message,
-          error: error,
-        });
-      }
-      return {
-        success: false,
-        usedStorage: undefined,
-        totalStorage: undefined,
-        remainingStorage: undefined,
-        details: undefined,
-      };
-    });
+    const links = await getMediaLinks();
 
     const [
       total,
@@ -114,9 +99,9 @@ export async function getMediaStats() {
       // Videos
       db.media.count({ where: { ...SCOPE_FILTER, mimeType: { startsWith: "video/" } } }),
       // Used (linked via featured, logo, OR hero — single source of truth)
-      db.media.count({ where: { AND: [SCOPE_FILTER, MEDIA_USED_WHERE] } }),
+      db.media.count({ where: { AND: [SCOPE_FILTER, mediaUsedWhere(links)] } }),
       // Unused (not linked via featured, logo, NOR hero — single source of truth)
-      db.media.count({ where: { AND: [SCOPE_FILTER, MEDIA_UNUSED_WHERE] } }),
+      db.media.count({ where: { AND: [SCOPE_FILTER, mediaUnusedWhere(links)] } }),
       // Created this month
       db.media.count({ where: { ...SCOPE_FILTER, createdAt: { gte: startOfMonth } } }),
       // Total file size
@@ -128,20 +113,20 @@ export async function getMediaStats() {
         _count: { _all: true },
       }),
       // Media type breakdown (GENERAL, LOGO, OGIMAGE, etc.)
-      db.media.findMany({ where: SCOPE_FILTER, select: { type: true } }),
+      db.media.groupBy({ by: ["type"], where: SCOPE_FILTER, _count: { _all: true } }),
       // Detailed usage breakdown: Media featured in an article or inside its gallery
       db.media.count({
         where: {
           AND: [
             SCOPE_FILTER,
-            { OR: [{ featuredArticles: { some: {} } }, { articleGallery: { some: {} } }] },
+            linkedWhere(links, "featuredArticles", "articleGallery"),
           ],
         },
       }),
       // Detailed usage breakdown: Media used as client logos
-      db.media.count({ where: { ...SCOPE_FILTER, logoClients: { some: {} } } }),
+      db.media.count({ where: { AND: [SCOPE_FILTER, linkedWhere(links, "logoClients")] } }),
       // Detailed usage breakdown: Media used as hero images
-      db.media.count({ where: { ...SCOPE_FILTER, heroImageClients: { some: {} } } }),
+      db.media.count({ where: { AND: [SCOPE_FILTER, linkedWhere(links, "heroImageClients")] } }),
     ]);
 
     const imageTypeCounts = normalizeImageTypeCounts(imageTypesRaw);
@@ -149,9 +134,7 @@ export async function getMediaStats() {
 
     // Union of every usage type — one media can be used in several ways. Uses the shared
     // clause so it cannot drift from the filter or the delete guard.
-    const totalUsedUnique = await db.media.count({
-      where: { AND: [SCOPE_FILTER, MEDIA_USED_WHERE] },
-    });
+    const totalUsedUnique = used;
 
     // Unused = total - totalUsedUnique
     const unusedDetailed = total - totalUsedUnique;
@@ -166,10 +149,6 @@ export async function getMediaStats() {
       totalSize: totalSize._sum.fileSize || 0,
       imageTypes: imageTypeCounts,
       mediaTypes: mediaTypeCounts,
-      cloudinaryUsed: cloudinaryUsage.usedStorage,
-      cloudinaryTotal: cloudinaryUsage.totalStorage,
-      cloudinaryRemaining: cloudinaryUsage.remainingStorage,
-      cloudinaryDetails: cloudinaryUsage.details || undefined,
       usageBreakdown: {
         inArticles,
         asLogos,
@@ -203,10 +182,6 @@ export async function getMediaStats() {
         POST: 0,
         TWITTER_IMAGE: 0,
       },
-      cloudinaryUsed: undefined,
-      cloudinaryTotal: undefined,
-      cloudinaryRemaining: undefined,
-      cloudinaryDetails: undefined,
       usageBreakdown: {
         inArticles: 0,
         asLogos: 0,

@@ -1,20 +1,10 @@
-import { Skeleton } from "@/components/ui/skeleton";
-
+/**
+ * The root boundary shows while the dashboard layout reads its session and badges — before
+ * the sidebar exists. It drew four dashboard cards with no sidebar, then the page's own
+ * skeleton replaced it inside the real frame: two different skeletons on every full load
+ * (Khalid, 28 Sep 2026: «في اكثر من سكيلتون بيتعرض»). Only the background here; the one
+ * skeleton the team sees is the page's, inside the sidebar and header.
+ */
 export default function Loading() {
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="container mx-auto max-w-[1128px] space-y-6 p-6">
-        <div>
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-4 w-64 mt-1" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Skeleton className="h-32" />
-          <Skeleton className="h-32" />
-          <Skeleton className="h-32" />
-          <Skeleton className="h-32" />
-        </div>
-      </div>
-    </div>
-  );
+  return <div className="min-h-screen bg-background" role="status" aria-busy="true" aria-label="Loading" />;
 }

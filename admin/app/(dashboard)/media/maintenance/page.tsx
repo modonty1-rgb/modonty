@@ -2,7 +2,8 @@ import Link from "next/link";
 import { ChevronRight, ImageOff } from "lucide-react";
 
 import { db } from "@/lib/db";
-import { MEDIA_UNUSED_WHERE } from "@/lib/media/usage-where";
+import { mediaUnusedWhere } from "@/lib/media/usage-where";
+import { getMediaLinks } from "@/lib/media/media-links";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatBytes } from "@modonty/shared/lib/utils";
@@ -16,7 +17,7 @@ import { BunnyMigrationSection } from "./components/bunny-migration-section";
 // Housekeeping tools moved off the library browse surface (2026-07-21): unused-files
 // review + broken-image scan. Both are maintenance actions, not part of browsing.
 export default async function MediaMaintenancePage() {
-  const UNUSED_WHERE = { AND: [{ scope: { not: "PLATFORM" as const } }, MEDIA_UNUSED_WHERE] };
+  const UNUSED_WHERE = { AND: [{ scope: { not: "PLATFORM" as const } }, mediaUnusedWhere(await getMediaLinks())] };
 
   const [unusedItems, unusedCount, unusedSize, optimizable, bunnyStats] = await Promise.all([
     db.media.findMany({

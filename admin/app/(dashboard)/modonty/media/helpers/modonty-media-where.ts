@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
-import { MEDIA_USED_WHERE, MEDIA_UNUSED_WHERE } from "@/lib/media/usage-where";
+import { mediaUsedWhere, mediaUnusedWhere, type MediaLinks } from "@/lib/media/usage-where";
+import { mediaSearchWhere } from "@/lib/media/media-search-where";
 import { REEL_LIVE_WHERE, REEL_NOT_LIVE_WHERE } from "@/lib/media/reel-where";
 import { modontyKindWhere, type ModontyMediaKind } from "./modonty-media-kinds";
 
@@ -20,20 +21,20 @@ export interface ModontyMediaQuery {
  * «Used» = the shared clause + live reels + a site setting holding the file's URL; «Unused» is
  * its exact complement, spelled out (MongoDB `NOT {in}` drops rows missing the field).
  */
-export function modontyMediaWhere(coreClientId: string, siteUrls: string[], query: ModontyMediaQuery): Prisma.MediaWhereInput {
+export function modontyMediaWhere(coreClientId: string, siteUrls: string[], links: MediaLinks, query: ModontyMediaQuery): Prisma.MediaWhereInput {
   const and: Prisma.MediaWhereInput[] = [
     { OR: [{ clientId: coreClientId }, { AND: [{ clientId: null }, { scope: "PLATFORM" }] }] },
   ];
 
-  if (query.kind) and.push(modontyKindWhere(query.kind, siteUrls));
+  if (query.kind) and.push(modontyKindWhere(query.kind, siteUrls, links));
   if (query.issueIds) and.push({ id: { in: query.issueIds } });
 
   const inSettings: Prisma.MediaWhereInput = { OR: [{ url: { in: siteUrls } }, { bunnyUrl: { in: siteUrls } }] };
-  if (query.used === true) and.push({ OR: [MEDIA_USED_WHERE, REEL_LIVE_WHERE, inSettings] });
+  if (query.used === true) and.push({ OR: [mediaUsedWhere(links), REEL_LIVE_WHERE, inSettings] });
   if (query.used === false) {
     and.push({
       AND: [
-        MEDIA_UNUSED_WHERE,
+        mediaUnusedWhere(links),
         REEL_NOT_LIVE_WHERE,
         { url: { notIn: siteUrls } },
         { OR: [{ bunnyUrl: { isSet: false } }, { bunnyUrl: null }, { bunnyUrl: { notIn: siteUrls } }] },
@@ -41,15 +42,7 @@ export function modontyMediaWhere(coreClientId: string, siteUrls: string[], quer
     });
   }
 
-  if (query.search) {
-    and.push({
-      OR: [
-        { filename: { contains: query.search, mode: "insensitive" } },
-        { altText: { contains: query.search, mode: "insensitive" } },
-        { title: { contains: query.search, mode: "insensitive" } },
-      ],
-    });
-  }
+  if (query.search) and.push(mediaSearchWhere(query.search));
 
   return { AND: and };
 }

@@ -24,6 +24,11 @@ export interface ClientGuideRow {
   bonusMonths: number;
   serviceStartedAt: Date | null;
   /**
+   * The first article counted in «Published» — the earliest `datePublished` since the service
+   * started (Khalid, 28 Sep 2026: «نبغى نضيف تاريخ أول مقال نشر»). `null` while none is out.
+   */
+  firstPublishedAt: Date | null;
+  /**
    * Articles in each stage before «published», counted as they stand now (like
    * `awaitingApproval`) — the full pipeline in the row's detail (Khalid, 27 Sep 2026:
    * «ايش قاعد تكتب له، ايش معلّق… البروجرس كامل»).
@@ -88,12 +93,19 @@ export async function getClientsGuide(): Promise<{ rows: ClientGuideRow[]; plans
 
 
   const withOrder = clients.filter((c) => !!orderOf(c));
-  const deliveredCounts = await Promise.all(
+  // One read per client gives both the «Published» count and the first of those articles —
+  // the same set, so the date and the number can never describe different articles.
+  const delivered = await Promise.all(
     withOrder.map((c) =>
-      db.article.count({ where: deliveredArticlesWhere(c.id, orderOf(c)!.serviceStartedAt) }),
+      db.article.aggregate({
+        where: deliveredArticlesWhere(c.id, orderOf(c)!.serviceStartedAt),
+        _count: { _all: true },
+        _min: { datePublished: true },
+      }),
     ),
   );
-  const deliveredById = new Map(withOrder.map((c, i) => [c.id, deliveredCounts[i]]));
+  const deliveredById = new Map(withOrder.map((c, i) => [c.id, delivered[i]._count._all]));
+  const firstPublishedById = new Map(withOrder.map((c, i) => [c.id, delivered[i]._min.datePublished]));
 
   // عدٌّ واحدٌ مجمَّع لكل العملاء ولكل مرحلة — الحالةُ الآن لا تتقيّد ببداية الخدمة.
   const stages = await db.article.groupBy({
@@ -132,6 +144,7 @@ export async function getClientsGuide(): Promise<{ rows: ClientGuideRow[]; plans
       paidMonths: order?.paidMonths ?? 0,
       bonusMonths: order?.bonusServiceMonths ?? 0,
       serviceStartedAt: order?.serviceStartedAt ?? null,
+      firstPublishedAt: firstPublishedById.get(c.id) ?? null,
     };
   });
 

@@ -1,8 +1,10 @@
 import "server-only";
 
 import { db } from "@/lib/db";
+import { startOfThisMonth } from "@/lib/media/start-of-this-month";
 import { CLIENT_MEDIA_KINDS, type ClientMediaKind } from "./client-media-kinds";
-import { clientsMediaWhere, type ClientsMediaQuery } from "./clients-media-where";
+import type { ClientsMediaQuery } from "./clients-media-where";
+import type { ClientsMediaUniverse } from "./get-clients-media-universe";
 
 /**
  * The number on each filter, counted WITH the other filters that are on — so a number is
@@ -15,29 +17,27 @@ import { clientsMediaWhere, type ClientsMediaQuery } from "./clients-media-where
  * showed 32 cards under «All 258» — the same mismatch one filter over.
  */
 export async function getClientsMediaCounts(
-  coreClientId: string | null,
+  { where, issueIds }: ClientsMediaUniverse,
   active: Pick<ClientsMediaQuery, "clientId" | "kind" | "used" | "search">,
-  /** The universe's triangle files, and whether the «Issues» filter is on. */
-  issues: { ids: string[]; on: boolean },
+  /** Whether the «Issues» filter is on. */
+  issuesOn: boolean,
 ) {
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const { clientId, kind, used, search } = active;
-  const issueIds = issues.on ? issues.ids : undefined;
-  const perClient = clientsMediaWhere(coreClientId, { clientId });
+  const onlyIssues = issuesOn ? issueIds : undefined;
+  const count = (q: ClientsMediaQuery) => db.media.count({ where: where(q) });
 
   const [kinds, all, usedN, unusedN, createdThisMonth, reelsPending, issuesN] = await Promise.all([
     // type counts: client + usage
-    Promise.all(CLIENT_MEDIA_KINDS.map((k) => db.media.count({ where: clientsMediaWhere(coreClientId, { clientId, search, used, issueIds, kind: k.value }) }))),
-    db.media.count({ where: clientsMediaWhere(coreClientId, { clientId, search, used, issueIds }) }),
+    Promise.all(CLIENT_MEDIA_KINDS.map((k) => count({ clientId, search, used, issueIds: onlyIssues, kind: k.value }))),
+    count({ clientId, search, used, issueIds: onlyIssues }),
     // usage counts: client + type
-    db.media.count({ where: clientsMediaWhere(coreClientId, { clientId, search, kind, issueIds, used: true }) }),
-    db.media.count({ where: clientsMediaWhere(coreClientId, { clientId, search, kind, issueIds, used: false }) }),
-    db.media.count({ where: { AND: [perClient, { createdAt: { gte: startOfMonth } }] } }),
+    count({ clientId, search, kind, issueIds: onlyIssues, used: true }),
+    count({ clientId, search, kind, issueIds: onlyIssues, used: false }),
+    db.media.count({ where: { AND: [where({ clientId }), { createdAt: { gte: startOfThisMonth() } }] } }),
     // same filters as the Reels number beside it — «Reels 0 · 2 pending» was the badge ignoring search
-    db.media.count({ where: { AND: [clientsMediaWhere(coreClientId, { clientId, search, used, issueIds, kind: "reels" }), { reelStatus: "PENDING_APPROVAL" }] } }),
+    db.media.count({ where: { AND: [where({ clientId, search, used, issueIds: onlyIssues, kind: "reels" }), { reelStatus: "PENDING_APPROVAL" }] } }),
     // issues: client + type + usage
-    db.media.count({ where: clientsMediaWhere(coreClientId, { clientId, search, kind, used, issueIds: issues.ids }) }),
+    count({ clientId, search, kind, used, issueIds }),
   ]);
 
   const byKind = Object.fromEntries(CLIENT_MEDIA_KINDS.map((k, i) => [k.value, kinds[i]])) as Record<ClientMediaKind, number>;

@@ -27,7 +27,7 @@ export const followUpSchema = z.object({
     z.date(),
   ),
 
-  body: z.string().trim().min(2, "اكتبي ما حدث").max(4000),
+  body: z.string().trim().min(2, "ما حدث مطلوب").max(4000),
 
   nextActionAt: z.preprocess(dayToDate, z.date().optional()),
   nextActionNote: z.preprocess(blankToUndefined, z.string().trim().max(200).optional()),
@@ -41,11 +41,3 @@ export const followUpSchema = z.object({
 });
 
 export type FollowUpInput = z.input<typeof followUpSchema>;
-
-/** سبب الخسارة — حوارٌ مستقلّ لأنه ينقل العميل إلى مرحلةٍ طرفية لا رجعة منها بضغطة. */
-export const lostSchema = z.object({
-  reason: z.enum(["PRICE", "COMPETITOR", "NO_RESPONSE", "NOT_NOW", "NOT_A_FIT", "OTHER"]),
-  note: z.preprocess(blankToUndefined, z.string().trim().max(600).optional()),
-});
-
-export type LostInput = z.input<typeof lostSchema>;

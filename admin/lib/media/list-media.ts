@@ -48,14 +48,8 @@ export async function listMedia(
             logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
           },
         },
-        _count: {
-          select: {
-            featuredArticles: true,
-            logoClients: true,
-            heroImageClients: true,
-            mobileHeroImageClients: true,
-          },
-        },
+        // No `_count` of the usage relations: on MongoDB each one is a `$lookup` per row.
+        // Callers read usage from `getMediaLinks()` (28 Sep 2026).
       },
     }),
     db.media.count({ where }),

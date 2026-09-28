@@ -1,5 +1,5 @@
 import type { MediaType, Prisma } from "@prisma/client";
-import { MEDIA_SITE_USED_WHERE } from "@/lib/media/usage-where";
+import { linkedWhere, mediaSiteUsedWhere, type MediaLinks } from "@/lib/media/usage-where";
 
 /**
  * The kinds of file Modonty owns on Modonty › Media (27 Sep 2026). Matched by LINK first, like
@@ -22,28 +22,28 @@ export const MODONTY_MEDIA_KINDS = [
 
 export type ModontyMediaKind = (typeof MODONTY_MEDIA_KINDS)[number]["value"];
 
-/** A kind's rows. `siteUrls` = the image URLs site settings hold (see getSiteImageUrls). */
-export function modontyKindWhere(kind: ModontyMediaKind, siteUrls: string[]): Prisma.MediaWhereInput {
+/**
+ * A kind's rows. `siteUrls` = the image URLs site settings hold (see getSiteImageUrls);
+ * `links` = the files each pointer holds, so no kind runs a `$lookup` per row.
+ */
+export function modontyKindWhere(kind: ModontyMediaKind, siteUrls: string[], links: MediaLinks): Prisma.MediaWhereInput {
   switch (kind) {
     case "site":
-      return { OR: [MEDIA_SITE_USED_WHERE, { url: { in: siteUrls } }, { bunnyUrl: { in: siteUrls } }] };
+      return { OR: [mediaSiteUsedWhere(links), { url: { in: siteUrls } }, { bunnyUrl: { in: siteUrls } }] };
     case "articles":
-      return { OR: [{ type: "POST" }, { featuredArticles: { some: {} } }, { articleGallery: { some: {} } }] };
+      return { OR: [{ type: "POST" }, linkedWhere(links, "featuredArticles", "articleGallery")] };
     case "brand":
       return {
         OR: [
           { type: { in: ["LOGO", "HERO", "HERO_MOBILE", "CLIENT_MINI"] } },
-          { logoClients: { some: {} } },
-          { heroImageClients: { some: {} } },
-          { mobileHeroImageClients: { some: {} } },
+          linkedWhere(links, "logoClients", "heroImageClients", "mobileHeroImageClients"),
         ],
       };
     case "sectors":
       return {
         OR: [
           { type: { in: ["SECTOR_HERO", "SECTOR_HERO_MOBILE"] } },
-          { sectorHeroImages: { some: {} } },
-          { sectorHeroMobileImages: { some: {} } },
+          linkedWhere(links, "sectorHeroImages", "sectorHeroMobileImages"),
         ],
       };
     case "gallery":

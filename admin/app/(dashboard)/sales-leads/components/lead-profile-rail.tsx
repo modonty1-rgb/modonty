@@ -66,7 +66,7 @@ export function LeadProfileRail({
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex size-6 items-center justify-center rounded-full text-emerald-600 transition-colors hover:bg-emerald-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-emerald-400"
-                    aria-label="افتح واتساب"
+                    aria-label="فتح واتساب"
                   >
                     <MessageCircle className="size-4" aria-hidden />
                   </a>

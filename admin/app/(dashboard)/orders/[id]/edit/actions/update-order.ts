@@ -9,6 +9,7 @@ import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
 import { requireSalesDesk } from "@/lib/require-sales-desk";
 import { isMigratedOrder } from "@/lib/orders/is-migrated-order";
+import { storeOrderReceipt } from "../helpers/store-order-receipt";
 
 /**
  * تعديلُ طلبٍ قائم — الأدمن والمبيعات (`requireSalesDesk`).
@@ -111,7 +112,7 @@ export async function updateOrderAction(
       market: true, currency: true, totalMinor: true, paidMonths: true,
       bonusServiceMonths: true, vatRateBp: true, subtotalMinor: true, vatMinor: true,
       monthlyBaseMinor: true, serviceStartedAt: true, activatedAt: true, paidAt: true, notes: true,
-      isInternal: true, clientId: true,
+      isInternal: true, clientId: true, status: true, transferReceiptPath: true,
     },
   });
   if (!before) return { ok: false, error: "الطلب غير موجود" };
@@ -193,9 +194,26 @@ export async function updateOrderAction(
     if (!same) changes.push(`${LABEL[key] ?? key}: ${show(old)} ← ${show(value)}`);
   }
 
+  /**
+   * سند الإيصال — يُحفظ مع التعديل لا وحده (خالد ٢٨ سبتمبر ٢٠٢٦: «من ضمن حفظ التعديلات»).
+   * صورةٌ اختياريّة للطلب المدفوع؛ تصل مصغّرةً من المتصفّح في خانة `receipt`.
+   */
+  const receipt = formData.get("receipt");
+  let receiptPath: string | null = null;
+  if (receipt instanceof File && receipt.size > 0) {
+    if (before.status !== "PAID") return { ok: false, error: "السند يُرفع للطلب المدفوع فقط" };
+    const stored = await storeOrderReceipt(d.orderId, receipt);
+    if (!stored.ok) return { ok: false, error: stored.error };
+    receiptPath = stored.path;
+    changes.push(before.transferReceiptPath ? "سند الإيصال: استُبدل" : "سند الإيصال: رُفع");
+  }
+
   if (changes.length === 0) return { ok: true };
 
-  await db.checkoutOrder.update({ where: { id: d.orderId }, data: next });
+  await db.checkoutOrder.update({
+    where: { id: d.orderId },
+    data: receiptPath ? { ...next, transferReceiptPath: receiptPath } : next,
+  });
 
   /**
    * **والحصّةُ تُنقل إلى الكرت متى كان هذا هو الطلبَ الساري.**

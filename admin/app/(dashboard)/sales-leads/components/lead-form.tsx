@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Check, ChevronDown, Loader2, Save, Wallet } from "lucide-react";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -29,7 +29,6 @@ import type { CampaignOption } from "../helpers/get-campaign-options";
 import { formatCount } from "../helpers/format-count";
 import { buildTermPricing } from "@modonty/shared/lib/commercial/term-pricing";
 import { formatMonths } from "@modonty/shared/lib/commercial/arabic-months";
-import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 
 /* `SOURCE_LABEL` حُذفت: القائمة صارت صفوفاً في القاعدة يحرّرها خالد من «Dropdown Lists»
    (`/settings/reference-data`)، وتصل هنا في `leadSources`. */
@@ -60,20 +59,6 @@ const SOCIAL_LABEL: Record<string, string> = {
  * هذه القيمة قبل أن تغادر الحدّ.
  */
 const OTHER_INDUSTRY = "__other__";
-
-/**
- * عمودٌ جانبيّ محجوزٌ بعرضه وفارغٌ من محتواه.
- *
- * الصدفة لا تعطي الطرفين عرضاً — تمرّرهما كما تصل (تعليقها: «تملك العرض والفجوات فقط»)، وفي
- * مدونتي يصلانها ملفوفَين في `w-[300px]`. فحجزُ العرض هنا يجعل الوسط يستقرّ على مقاسه النهائي
- * من الآن، فلا يقفز حين يُملأ الطرفان.
- *
- * و`sticky top-0` عليهما لأن المطلوب: الوسط يتحرّك والأطراف تثبت. ويختفيان تحت `lg` حيث
- * تنهار الأعمدة إلى واحد — عمودٌ جانبيّ فارغ فوق النموذج على الجوّال حشوٌ لا تخطيط.
- */
-const SIDE_PLACEHOLDER = (
-  <div aria-hidden className="hidden w-[220px] shrink-0 lg:sticky lg:top-0 lg:block" />
-);
 
 const MARKETS = [
   { code: "SA", label: "السعودية", currency: "SAR" },
@@ -149,7 +134,7 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
     ...Object.fromEntries(SOCIALS.map((s) => [s, blank(s)])),
   });
 
-  const [saving, setSaving] = useState<null | "one" | "next">(null);
+  const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
   /**
@@ -161,7 +146,11 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
    *
    * ولا يعترض على الحفظ نفسه: `saving` يرفعه، لأن الانتقال بعد النجاح انتقالٌ مقصود.
    */
-  const dirty = Boolean(form.name || form.phone || form.company || form.email || form.note);
+  // «لم يُحفظ» = اختلف عمّا فُتح عليه، لا «فيه اسم»: التعديل يُفتح والاسم معبّأ، فكانت كل
+  // مغادرةٍ لصفحة التعديل تسأل «متأكّد؟» ولو لم يُلمس حرف (مقيس ٢٨ سبتمبر ٢٠٢٦).
+  const pristine = useRef<string | null>(null);
+  if (pristine.current === null) pristine.current = JSON.stringify(form);
+  const dirty = JSON.stringify(form) !== pristine.current;
   useEffect(() => {
     if (!dirty || saving) return;
     const warn = (e: BeforeUnloadEvent) => e.preventDefault();
@@ -245,13 +234,13 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
     ["city", "website", "googleLocation", ...SOCIALS].some((k) => blank(k).trim() !== ""),
   );
 
-  const submit = async (mode: "one" | "next") => {
-    setSaving(mode);
+  const submit = async () => {
+    setSaving(true);
     setErrors({});
     const result = isEdit ? await updateLead(leadId!, form as LeadInput) : await createLead(form as LeadInput);
 
     if (!result.success) {
-      setSaving(null);
+      setSaving(false);
       if (result.fieldErrors) setErrors(result.fieldErrors);
       toast({ title: result.error, variant: "destructive" });
 
@@ -274,21 +263,6 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
     }
 
     toast({ title: isEdit ? "تم الحفظ" : `تمت إضافة ${form.name}`, variant: "success" });
-    if (mode === "next") {
-      // نفس الشاشة فاضية، والتركيز على الاسم. بعد جلسة اتصالات تُسجَّل خمسة وراء بعض،
-      // ودورة «حفظ ← رجوع ← إضافة» تكلّف ثلاث نقرات وانتظار صفحتين في كل مرّة.
-      setForm((f) => ({
-        ...Object.fromEntries(Object.keys(f).map((k) => [k, ""])),
-        stage: "NEW",
-        currency: f.currency,
-        countryCode: f.countryCode,
-        expectedMonths: f.expectedMonths,
-      }));
-      setSaving(null);
-      router.refresh();
-      document.getElementById("name")?.focus();
-      return;
-    }
     /**
      * الحفظ يرجع للقائمة (خالد ٤ سبتمبر) — **ومعه معرّف الجديد**.
      *
@@ -444,126 +418,30 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
   );
 
   /**
-   * ── عمودان، والقسمة ليست نصفين ────────────────────────────────────────────────────────
+   * ── عمودٌ واحد (خالد ٢٨ سبتمبر ٢٠٢٦: «أحسّها معقّدة، محتاجة ترتيب UI/UX») ──────────────
    *
-   * قِيست البطاقات على ١٢٨٠: بيانات `284` · مجال `109` · صفقة `85` · ملاحظة `131`، والمجموع
-   * `726` في شاشةٍ ارتفاعها `495` — أي تمريرٌ إجباريّ، بينما `272` بكسلاً من العرض فارغة.
-   *
-   * فاليمين بطاقة البيانات وحدها (`284`)، والشمال الثلاث الباقية (`341`): فرقٌ سبعةٌ وخمسون
-   * بكسلاً لا عمودٌ نصفه فراغ — وهو العيب الذي هدمنا لأجله التخطيط السابق (٤٥٣ فارغة).
-   *
-   * وثلاثة أعمدة مرفوضة بالقياس لا بالذوق: العمود يصير ~`340`، وصفّ الصفقة يحتاج `220` لمفتاح
-   * المدّة و`145` لكل بطاقة باقة — فينكسر.
-   *
-   * والمعنى يتبع الشكل: يمينٌ يُكتب بالحروف (مَن هو)، وشمالٌ يُختار بالضغط (مجاله · صفقته)
-   * وينتهي بأوّل ما قاله.
+   * كانت ثلاثة أعمدة — الصفقة وطريقة الوصول يميناً، البيانات وسطاً، الملاحظة يساراً — فتقفز العين
+   * بين ثلاث جهاتٍ لإضافة اسمٍ ورقم، ولم يكن في الشاشة زرُّ «حفظ» ظاهر. صارت: كرتٌ واحد بما يُقال
+   * في أوّل المكالمة (الدولة · الاسم · الجوّال · المصدر · ملاحظة)، وكلُّ ما عداه مطويٌّ تحت
+   * «تفاصيل أكثر»، والحفظ في شريطٍ ثابتٍ أسفل. الفريق لم يبدأ استعمالها بعد، فالبساطة الآن.
    */
-  const identity = (
-    <>
-      {/* ① مين — أوّل عشر ثوانٍ في المكالمة */}
-      {/* `rounded-md` بدل `rounded-lg` الافتراضي، و`px-4` بدل `p-6`: البطاقة إطارٌ يفصل، لا
-          صندوقٌ يُعرَض. */}
-      {/**
-       * بلا رأسٍ داخل البطاقة (خالد ٤ سبتمبر: «شيله وخليه فوق بدل عميل محتمل»).
-       *
-       * «عميل محتمل جديد» و«بيانات العميل» كانا يقولان الشيء نفسه على بُعد ٢٤ بكسلاً: عنوانٌ
-       * للصفحة وعنوانٌ لبطاقتها الوحيدة. فبقي واحدٌ فوق، وكسبنا سطراً كاملاً.
-       *
-       * وبلا سطر شرح كذلك: النجمة على «الاسم» و«الجوّال» تقول إنهما الإلزاميّان، وغيابها عن
-       * الباقي يقول إنه اختياريّ.
-       */}
-      <Card className="rounded-md">
-        <CardContent className="space-y-2 p-4">
-          {/**
-           * سطر السياق: مِن أين هو · ومِن أين جاءنا.
-           *
-           * الدولة أوّلاً لأنها تحكم العملة والباقات، فسؤالها بعدهما يعني تغيير معنى ما كُتب.
-           * ومصدر العميل بجانبها لا تحتها: كلاهما ظرفُ العميل لا هويّته، وكلاهما اختيارٌ من
-           * قائمة مغلقة — فيُقرآن سطراً واحداً («proximity implies relationship»).
-           *
-           * وهو يسدّ فراغين قِيسا على الشاشة: ~٥١٠ بكسلاً خالية بجانب مفتاح الدولة، و٣٣٧
-           * بجانب «مصدر العميل» وحيداً في سطره.
-           */}
-          <div className="grid items-end gap-2 sm:grid-cols-2">
-            <div>
-              <Label className="text-xs tracking-[0.01em]">الدولة</Label>
-              <div
-                role="radiogroup"
-                aria-label="الدولة"
-                className="mt-0.5 inline-flex rounded border p-0.5"
-              >
-                {/* بلا قراءة «العملة ر.س» بجانبه: العملة تظهر ملتصقةً بكل سعرٍ يُعرض، فإعلانها
-                    هنا يشرح شيئاً لم يُسأل عنه بعد. */}
-                {MARKETS.map((m) => (
-                  <button
-                    key={m.code}
-                    type="button"
-                    role="radio"
-                    aria-checked={form.countryCode === m.code}
-                    onClick={() => pickMarket(m.code)}
-                    className={cn(
-                      // `active:scale` — الاستجابة على الضغط لا على الإفلات. بدونها يبقى
-                      // الانتقال لوناً فقط، والضغطة بلا ردّ فعل لحظيّ تُقرأ «ميّتة».
-                      "h-7 rounded-[3px] px-3 text-xs font-medium transition-[color,background-color,transform] duration-150 active:scale-[0.97]",
-                      TAP,
-                      form.countryCode === m.code
-                        ? "bg-foreground text-background"
-                        : "text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    {m.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-          </div>
-
-
-          {/**
-           * الاسم والجوّال أوّلاً — وهما وحدهما الإلزاميّان.
-           *
-           * الجوّال صار مطلوباً بالقياس: **٢٠ من ٢٠** صفّاً في القاعدة فيها رقم، وعميلٌ محتمل
-           * بلا رقم ليس صفّاً ناقصاً — هو صفٌّ لا يمكن العمل عليه أصلاً، لأن كل ما بعده
-           * (متابعة · مكالمة · عرض) يبدأ من الرقم. فكونه اختيارياً كان يسمح بإنشاء سجلٍّ ميت.
-           */}
-          <div className="grid gap-2 border-t pt-2 sm:grid-cols-2">
-            {field("name", "الاسم *", { placeholder: "د. محمد الشناوي…" })}
-            {/* المثال يتبع الدولة: نموذجٌ يطلب رقماً ويعرض مثالاً من سوقٍ آخر يعلّم الغلط. */}
-            {field("phone", "الجوّال *", { ltr: true, placeholder: `${MOBILE_HINT[market.code]}…` })}
-            {field("company", "الشركة")}
-            {field("email", "الإيميل", { type: "email", ltr: true })}
-          </div>
-
-          {/**
-           * المجال داخل بطاقة البيانات (خالد ٤ سبتمبر: «ممكن ندخله جوا بيانات العميل»).
-           *
-           * وهو صحيحٌ: المجال صفةٌ للعميل نفسه لا موضوعٌ مستقلّ — «عيادة أسنان» تُقرأ مع اسمه
-           * وشركته، لا في بطاقةٍ لها عنوانٌ ورأس. وبطاقةٌ لحقلٍ واحد تكلّف رأساً وحشوةً
-           * وحدّاً (مقيس: `109` بكسلاً لخانةٍ ارتفاعها `32`).
-           *
-           * وخطٌّ فاصل لا بطاقة: يفصل الهويّة عن التصنيف دون أن يجعلهما موضوعين.
-           */}
-          <div className="grid items-start gap-2 border-t pt-2 sm:grid-cols-2">
-            {select(
-              "industryId",
-              "المجال",
-              [
-                ...industries.map((i) => ({ v: i.id, l: i.name })),
-                { v: OTHER_INDUSTRY, l: "مجال آخر — غير موجود بالقائمة" },
-              ],
-              "غير محدّد",
-            )}
-
-            {form.industryId === OTHER_INDUSTRY
-              ? field("industryOther", "اكتبي مجاله", { placeholder: "عيادة بيطرية · مركز تدريب…" })
-              : null}
-          </div>
-        </CardContent>
-      </Card>
-    </>
+  /** ما لا يُسأل في أوّل المكالمة — يُملأ حين يُعرف، ولا يعترض الإضافة السريعة. */
+  const moreAbout = (
+    <section aria-label="عن العميل" className="space-y-2">
+      <h3 className="text-xs font-semibold text-muted-foreground">عن العميل</h3>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {field("company", "الشركة")}
+        {field("email", "الإيميل", { type: "email", ltr: true })}
+        {select(
+          "industryId",
+          "المجال",
+          [...industries.map((i) => ({ v: i.id, l: i.name })), { v: OTHER_INDUSTRY, l: "مجال آخر — غير موجود بالقائمة" }],
+          "غير محدّد",
+        )}
+        {form.industryId === OTHER_INDUSTRY ? field("industryOther", "مجاله", { placeholder: "عيادة بيطرية · مركز تدريب…" }) : null}
+      </div>
+    </section>
   );
-
 
   const howTheyCame = (
     /**
@@ -575,11 +453,11 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
      * جملةً واحدة — «مدفوع · انستقرام · رمضان-٢٠٢٦» — ووضعها مع الاسم والتليفون كان يخلط
      * هويّة العميل بقناة وصوله، وهما سؤالان لا سؤال.
      */
-    <Card className="rounded-md">
-      <CardHeader className="px-4 pb-1.5 pt-3">
-        <CardTitle className="text-sm">طريقة الوصول</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2 px-4 pb-3">
+    // «من أين عرفنا؟» و«طبيعي · مدفوع» وتفصيلهما مجموعةٌ واحدة في الكرت الأساسي (خالد ٢٨ سبتمبر
+    // ٢٠٢٦: «الاثنين مرتبطين ببعض») — كانت القائمة فوق والمفتاح مطويّاً تحت «تفاصيل أكثر».
+    <section aria-label="المصدر" className="space-y-3">
+      <div className="grid items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+          {select("source", "من أين عرفنا؟", leadSources.map((s) => ({ v: s.value, l: s.label })), "غير محدّد")}
           {/**
            * «طبيعي · مدفوع» — `utm_medium`، أوّل سؤالٍ في البطاقة لأنه يحكم خانتها الأخيرة.
            *
@@ -629,6 +507,7 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
               ))}
             </div>
           </div>
+      </div>
         {/**
          * المصدر ثم تفصيله — واحدٌ تحت الآخر لا جنباً إلى جنب.
          *
@@ -640,8 +519,8 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
          * يُجمَّع عليه («رمضان جابت كام عميل؟»)، والثانية نصٌّ يُقرأ ولا يُعدّ. وخلطهما في
          * عمودٍ واحد يعني تقريراً يحسب جملةً مكتوبةً بيد كأنها اسم حملة.
          */}
-        <div className="grid items-start gap-2 border-t pt-2">
-          {select("source", "مصدر العميل", leadSources.map((s) => ({ v: s.value, l: s.label })), "غير محدّد")}
+        <div className="grid items-start gap-2">
+          {/* ما يفصّل المصدر: الحملة للمدفوع، والملاحظة للطبيعي. */}
 
           {/**
            * الحملة اختيارٌ من صفٍّ قائم لا نصٌّ يُكتب (خالد ٥ سبتمبر).
@@ -675,18 +554,76 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
               </div>
             )
           ) : (
-            field("sourceNote", "ملاحظة", { placeholder: "شاهدنا في ريل عن تقويم الأسنان…" })
+            field("sourceNote", "كيف وصلنا؟", { placeholder: "شاهدنا في ريل عن تقويم الأسنان…" })
           )}
         </div>
-      </CardContent>
-    </Card>
+    </section>
   );
 
+  /** الدولة — أوّل ما في سطر الصفقة: تحكم العملة وأسعار الباقات بجانبها ومثال الجوّال تحتها. */
+  const countryToggle = (
+    <div className="flex flex-wrap items-center gap-2">
+      <Label className="text-xs tracking-[0.01em]">الدولة</Label>
+      <div role="radiogroup" aria-label="الدولة" className="inline-flex rounded border p-0.5">
+        {MARKETS.map((m) => (
+          <button
+            key={m.code}
+            type="button"
+            role="radio"
+            aria-checked={form.countryCode === m.code}
+            onClick={() => pickMarket(m.code)}
+            className={cn(
+              "h-7 rounded-[3px] px-3 text-xs font-medium transition-[color,background-color,transform] duration-150 active:scale-[0.97]",
+              TAP,
+              form.countryCode === m.code ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  /** المرحلة — في التعديل وحده، لتصحيح مرحلةٍ سُجّلت خطأً؛ حركتها الطبيعيّة من المتابعة. */
+  const stageSection = isEdit ? (
+    <section aria-label="المرحلة" className="space-y-2">
+        {/**
+         * المرحلة في التعديل وحده (خالد ٤ سبتمبر: «هذا المفروض يكون في متابعة»).
+         *
+         * العميل الجديد مرحلته «جديد» بالتعريف، فاختيارها عند الإنشاء سؤالٌ جوابه معروف.
+         * وهي تتحرّك **نتيجة** تواصل، والتواصل يُسجَّل في المتابعة — فحركتها هناك تحمل معها
+         * سببها وتاريخها. ويبقى هذا الصفّ في التعديل لتصحيح مرحلةٍ سُجّلت خطأً، لا لتحريكها.
+         */}
+          <div>
+            <Label className="text-xs">المرحلة</Label>
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              {PICKABLE_STAGES.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => set("stage", s)}
+                  aria-pressed={form.stage === s}
+                  className={cn(
+                    "inline-flex h-9 items-center gap-2 rounded-full border px-3 text-xs font-medium transition-[color,background-color,border-color,transform] duration-150 active:scale-[0.97]",
+                    TAP,
+                    form.stage === s
+                      ? "border-foreground bg-foreground text-background"
+                      : "border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground",
+                  )}
+                >
+                  <span className={cn("size-1.5 rounded-full", STAGE_DOT[s as Stage])} aria-hidden />
+                  {STAGE_LABEL[s as Stage]}
+                </button>
+              ))}
+            </div>
+          </div>
+    </section>
+  ) : null;
+
   /**
-   * الصفقة وحدها في العمود الشمال (خالد ٤ سبتمبر: «الصفقة حطها على الشمال»).
-   *
-   * وهي المرشّح الصحيح للطرف: لا تُكتب بالحروف بل تُضغط، ولا تُملأ إلا حين يكون هناك ما
-   * يُعرض — فبقاؤها في مجال النظر بينما تُملأ البيانات يذكّر بالسؤال دون أن يعترض الكتابة.
+   * الصفقة أعلى الكرت الأساسي، في سطر الدولة (خالد ٢٨ سبتمبر ٢٠٢٦: «تكون فوق جنب التوجلز
+   * تبعت البلد») — الدولة والمدّة والباقة قرارٌ واحد: الدولة تسعّر الباقات، والمدّة تحرّك أرقامها.
    */
   const deal = (
     <>
@@ -701,49 +638,8 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
        * وهذا هو الفرق بينها وبين المدينة والحسابات (١/٢٠ · ١/١٢٠): تلك حقولٌ **موجودة منذ
        * النظام القديم**، فصفرها قياسٌ حقيقيّ — ولذلك بقيت وحدها في التعديل.
        */}
-      <Card className="rounded-md">
-        <CardHeader className="px-4 pb-1.5 pt-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Wallet className="size-4 text-muted-foreground" aria-hidden />
-            الصفقة
-            {/* عملة صفوف السعر نفسها، تُعلَن هنا مرّةً لتُقرأ على كل رقمٍ تحتها. */}
-            {currencyName ? <span className="text-xs font-normal text-muted-foreground">{currencyName}</span> : null}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2 px-4 pb-3">
-          {/**
-           * المرحلة في التعديل وحده (خالد ٤ سبتمبر: «هذا المفروض يكون في متابعة»).
-           *
-           * العميل الجديد مرحلته «جديد» بالتعريف، فاختيارها عند الإنشاء سؤالٌ جوابه معروف.
-           * وهي تتحرّك **نتيجة** تواصل، والتواصل يُسجَّل في المتابعة — فحركتها هناك تحمل معها
-           * سببها وتاريخها. ويبقى هذا الصفّ في التعديل لتصحيح مرحلةٍ سُجّلت خطأً، لا لتحريكها.
-           */}
-          {isEdit && (
-            <div>
-              <Label className="text-xs">المرحلة</Label>
-              <div className="mt-1.5 flex flex-wrap gap-1.5">
-                {PICKABLE_STAGES.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => set("stage", s)}
-                    aria-pressed={form.stage === s}
-                    className={cn(
-                      "inline-flex h-9 items-center gap-2 rounded-full border px-3 text-xs font-medium transition-[color,background-color,border-color,transform] duration-150 active:scale-[0.97]",
-                      TAP,
-                      form.stage === s
-                        ? "border-foreground bg-foreground text-background"
-                        : "border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground",
-                    )}
-                  >
-                    <span className={cn("size-1.5 rounded-full", STAGE_DOT[s as Stage])} aria-hidden />
-                    {STAGE_LABEL[s as Stage]}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
+      <section aria-label="الصفقة" className="space-y-2">
+        <div className="space-y-2">
           {/**
            * الباقات بطاقاتٌ لا قائمة منسدلة.
            *
@@ -773,6 +669,7 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
            * لأطولها «الريادة ١٧٬٩٩٤».
            */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          {countryToggle}
           <div className="flex shrink-0 items-center gap-x-3">
             <Label className="text-xs tracking-[0.01em] text-muted-foreground">المدّة</Label>
             {/**
@@ -815,6 +712,7 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
             {term ? (
               <span className="text-[11px] text-muted-foreground tabular-nums">
                 خدمة {formatMonths(term.paidMonths + term.bonusServiceMonths)}
+                {currencyName ? ` · ${currencyName}` : ""}
               </span>
             ) : null}
           </div>
@@ -866,9 +764,9 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
 
           {stalePlan ? (
             <p className="w-full text-[11px] text-amber-700 dark:text-amber-400">
-              الباقة المحفوظة «{form.expectedTier}» ليست منشورة في هذا السوق — اختاري باقة أو{" "}
+              الباقة المحفوظة «{form.expectedTier}» ليست منشورة في هذا السوق — يلزم اختيار باقة أو{" "}
               <button type="button" onClick={() => set("expectedTier", "")} className={cn("underline", TAP)}>
-                امسحيها
+                مسحها
               </button>
             </p>
           ) : null}
@@ -878,152 +776,117 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
             <p aria-live="polite" className="w-full text-[11px] text-destructive">{dealError}</p>
           ) : null}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </section>
 
     </>
   );
 
-  const firstNote = (
-    <>
-      {/**
-       * ③ الملاحظة الأولى — في التأسيس وحده.
-       *
-       * المسار كان مكتوباً وتنقصه خانته: `createLead` يكتب `note` **صفَّ متابعةٍ** لا عموداً
-       * على العميل، فيبدأ تاريخه من السطر الأوّل بدل أن يبدأ فارغاً. وهذا هو الفرق عن عمود
-       * `notes` القديم الذي كان كل حفظٍ يمسح ما قبله.
-       *
-       * ولا تظهر في التعديل: `updateLead` لا يكتب `note` عمداً، وإلّا لأنشأ سطر تاريخٍ جديداً
-       * كلّما صُحّح رقم تليفون — فيمتلئ سجلّ العميل بأحداث لم تقع.
-       */}
-      {!isEdit && (
-        <Card className="flex h-full max-h-full min-h-[260px] flex-col rounded-md">
-          <CardHeader className="px-4 pb-1.5 pt-3">
-            <CardTitle className="text-sm">
-              ملاحظة أولى
-              <span className="ms-2 text-xs font-normal text-muted-foreground">
-                أوّل سطر في تاريخه — اختيارية
-              </span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-1 flex-col px-4 pb-3">
+  const main = (
+    <Card className="rounded-md">
+      <CardContent className="space-y-3 p-4">
+        {deal}
+
+        {/* الاسم والجوّال وحدهما الإلزاميّان — عميلٌ بلا رقم لا يُعمل عليه. */}
+        <div className="grid gap-3 sm:grid-cols-2">
+          {field("name", "الاسم *", { placeholder: "د. محمد الشناوي…" })}
+          {field("phone", "الجوّال *", { ltr: true, placeholder: `${MOBILE_HINT[market.code]}…` })}
+        </div>
+
+        {howTheyCame}
+
+        {/* الملاحظة الأولى في الإضافة وحدها: `createLead` يكتبها أوّل سطرٍ في سجلّه، و`updateLead`
+            لا يكتبها عمداً كي لا يصير كل تصحيحِ رقمٍ حدثاً في التاريخ. */}
+        {!isEdit && (
+          <div>
+            <Label htmlFor="note" className="text-xs tracking-[0.01em]">
+              ملاحظة <span className="font-normal text-muted-foreground">— اختيارية</span>
+            </Label>
             <Textarea
               id="note"
               value={form.note ?? ""}
               onChange={(e) => set("note", e.target.value)}
-              rows={2}
+              rows={3}
               placeholder="يريد يعرف الأسعار أولاً، وقال نتواصل معه بعد رجوعه من السفر…"
-              className="min-h-[120px] flex-1 resize-none rounded text-sm"
+              className="mt-0.5 resize-none rounded text-sm"
             />
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 
-      {/**
-       * ③ التفاصيل الإضافية — في التعديل وحده.
-       *
-       * أحد عشر حقلاً مقابل **أربع قيم** في القاعدة كلّها: المدينة ١/٢٠ · الموقع ١/٢٠ ·
-       * الخرائط ٠/٢٠ · وحسابات التواصل الستّة **١ من ١٢٠ خانة**. هذه ليست حقولاً تُملأ في
-       * مكالمة، إنما إثراءٌ لملفّ عميلٍ صار حقيقيّاً — فمكانه التعديل.
-       */}
-      {isEdit && (
-      <details className="group rounded-md border bg-card" open={hasExtras}>
-        <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-2.5 text-sm font-medium">
-          <span>
-            تفاصيل إضافية
-            <span className="ms-2 text-xs font-normal text-muted-foreground">
-              المدينة · الموقع · الخرائط · حسابات التواصل
-            </span>
+
+  /**
+   * المدينة والموقع والخرائط وحسابات التواصل — في التعديل وحده: إثراءٌ لملفّ عميلٍ صار حقيقيّاً،
+   * لا حقولٌ تُملأ في مكالمة (قِيست على النظام القديم: ١/٢٠ · ١/٢٠ · ٠/٢٠ · ١ من ١٢٠ خانة).
+   */
+  const profile = isEdit ? (
+    <section aria-label="الموقع والحسابات" className="space-y-2">
+      <h3 className="text-xs font-semibold text-muted-foreground">الموقع والحسابات</h3>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {field("city", "المدينة")}
+        {field("website", "الموقع", { ltr: true, placeholder: "clinic.com…" })}
+        <div className="sm:col-span-2">{field("googleLocation", "الموقع على خرائط جوجل", { ltr: true })}</div>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-3">{SOCIALS.map((s) => field(s, SOCIAL_LABEL[s], { ltr: true }))}</div>
+    </section>
+  ) : null;
+
+  /**
+   * «تفاصيل أكثر» — مطويّةٌ في الإضافة، ومفتوحةٌ في التعديل حين يكون فيها ما يُقرأ: عميلٌ حُفظت
+   * شركته أو صفقته يُفتح ملفّه على ما كُتب، لا على طيّةٍ تُخفيه.
+   */
+  const [moreOpen] = useState(() =>
+    isEdit &&
+    (hasExtras ||
+      ["company", "email", "industryId", "industryOther", "expectedTier", "campaignId", "sourceNote"].some((k) => blank(k).trim() !== "") ||
+      Boolean(initial?.isPaidAd)),
+  );
+  const more = (
+    <details className="group rounded-md border bg-card" open={moreOpen}>
+      <summary className={cn("flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3", TAP)}>
+        <span className="text-sm font-medium">
+          تفاصيل أكثر
+          <span className="ms-2 text-xs font-normal text-muted-foreground">
+            اختيارية — الشركة · الإيميل · المجال{isEdit ? " · المرحلة · الحسابات" : ""}
           </span>
-          <ChevronDown className="size-4 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
-        </summary>
-        <div className="space-y-3 border-t px-4 py-3">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {field("city", "المدينة")}
-            {field("website", "الموقع", { ltr: true, placeholder: "clinic.com…" })}
-            <div className="sm:col-span-2">{field("googleLocation", "الموقع على خرائط جوجل", { ltr: true })}</div>
-          </div>
-          <div>
-            <div className="grid gap-2 sm:grid-cols-3">
-              {SOCIALS.map((s) => field(s, SOCIAL_LABEL[s], { ltr: true }))}
-            </div>
-          </div>
-        </div>
-      </details>
-      )}
-    </>
+        </span>
+        <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
+      </summary>
+      <div className="space-y-5 border-t px-4 py-4">
+        {moreAbout}
+        {stageSection}
+        {profile}
+      </div>
+    </details>
   );
 
   /**
-   * الحفظ تحت العمودين معاً لا داخل أحدهما.
-   *
-   * كان في عمودٍ جانبي ينتهي عند `518` بينما آخر خانة عند `977` — زرُّ حفظٍ فوق `459` بكسلاً
-   * من نموذجٍ لم يُملأ. وداخل عمودٍ من الاثنين يعود العيب نفسه: يقع بجانب بطاقةٍ لم تُقرأ بعد.
-   * فهو صفٌّ يعبر العرض كلّه، بعد آخر ما يُكتب في أيٍّ من العمودين.
+   * زرُّ حفظٍ واحد في آخر النموذج. كان النموذج يُحفظ بـEnter وحده، ثم صار «حفظ» بجانب
+   * «حفظ وإضافة آخر» — وخالد (٢٨ سبتمبر ٢٠٢٦): «في عدم منطقية هنا». فبقي واحد يرجع للقائمة
+   * والجديد أوّلها.
    */
   const actions = (
-    <div className="sticky bottom-0 z-10 -mx-1 flex flex-wrap items-center gap-2 border-t bg-background/95 px-1 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        {!isEdit && (
-          <Button
-            type="button"
-            disabled={saving !== null}
-            onClick={() => submit("next")}
-            className="h-8 gap-2 rounded"
-          >
-            {saving === "next" ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
-            {saving === "next" ? "جارٍ الحفظ…" : "حفظ وإضافة آخر"}
-          </Button>
-        )}
-        <Button type="button" variant="ghost" asChild className="ms-auto h-8 rounded">
-          <Link href={isEdit ? `/sales-leads/${leadId}` : "/sales-leads"}>إلغاء</Link>
-        </Button>
+    // In the flow, not sticky: pinned to the bottom it sat over «تفاصيل أكثر» once that opened,
+    // and its see-through backing let the fields show through it (Khalid, 28 Sep 2026).
+    <div className="flex flex-wrap items-center gap-2 pt-1">
+      <Button type="submit" disabled={saving} className="h-9 gap-2 rounded px-5">
+        {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+        {saving ? "جارٍ الحفظ…" : "حفظ"}
+      </Button>
+      <Button type="button" variant="ghost" asChild className="ms-auto h-9 rounded">
+        <Link href={isEdit ? `/sales-leads/${leadId}` : "/sales-leads"}>إلغاء</Link>
+      </Button>
     </div>
   );
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); submit("one"); }}>
-      {/**
-       * الصدفة المشتركة `ThreeColumnLayout` — الشكل نفسه الذي تستعمله صفحات مدونتي.
-       *
-       * كل البطاقات في **الوسط** الآن (خالد ٤ سبتمبر)، والطرفان فارغان حتى يحدّد ما يسكنهما.
-       * والوسط هو ما يمرّر، والطرفان يثبتان — ولذلك يُمرَّران ملفوفَين في `sticky` لا خامَين:
-       * الصدفة تملك العرض والفجوات فقط، ولا تعرف شيئاً عن الثبات (تعليقها الخاصّ يقول ذلك).
-       *
-       * و`sticky` بلا `StickyRail`: تلك تحسب `top` من `window.innerHeight`، وهو صحيحٌ في
-       * مدونتي حيث تمرّر الصفحة — أمّا هنا فالحاوية المُمرِّرة `main` (`overflow-y: auto`،
-       * مقيس: `client 439 · scroll 567`)، فحسابها يعطي `top` غلطاً.
-       */}
-      {/**
-       * `!p-0` على الصدفة، والهامش يُبتلع في الهيدر نفسه.
-       *
-       * الصدفة مكتوبةٌ لصفحات مدونتي حيث الفراغ مقصود؛ وفي الأدمن يحمل `main` حشوته بنفسه
-       * (`24`، مقيس). فاجتمعت ثلاثٌ: حشوة `main` وحشوة الصفحة وحشوة الصدفة، ومعها `mb-6` تحت
-       * الهيدر — `72` بكسلاً قبل أوّل كلمة، وعنوانٌ ينزل من `57` إلى `131`.
-       *
-       * والتعديل من هنا لا من الملف المشترك: تلك الأرقام صحيحةٌ لصفحاتها، وتغييرها يكسر أربع
-       * صفحاتٍ في مدونتي لأجل شاشةٍ في الأدمن.
-       */}
-      <ThreeColumnLayout
-        className="!px-0 !py-0"
-        header={<div className="-mb-4">{header}</div>}
-        right={
-          <aside aria-label="الصفقة وطريقة الوصول" className="w-full shrink-0 space-y-3 lg:sticky lg:top-0 lg:w-[260px]">
-            {deal}
-            {howTheyCame}
-          </aside>
-        }
-        center={
-          <div className="space-y-2">
-            {identity}
-            {actions}
-          </div>
-        }
-        left={
-          <aside aria-label="ملاحظات وتفاصيل إضافية" className="flex w-full shrink-0 flex-col overflow-hidden lg:sticky lg:top-0 lg:!h-[284px] lg:!max-h-[284px] lg:w-[260px]">
-            {firstNote}
-          </aside>
-        }
-      />
+    <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="mx-auto max-w-[720px] space-y-3">
+      {header}
+      {main}
+      {more}
+      {actions}
     </form>
   );
 }

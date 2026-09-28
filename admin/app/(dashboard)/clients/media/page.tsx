@@ -3,12 +3,11 @@ import { canDeleteMedia } from "@/lib/media/can-delete-media";
 import { deleteMedia } from "@/lib/media/delete-media";
 // The in-place swap still lives with the Media section; it rebuilds client SEO through the
 // clients actions, so it cannot move to lib/ without them. One cross-route import, noted.
-import { findIssueMediaIds } from "@/lib/media/find-issue-media-ids";
-import { clientsMediaWhere } from "./helpers/clients-media-where";
 import { saveOptimizedImage } from "@/app/(dashboard)/media/actions/optimize-image";
 import { MEDIA_SPECS } from "@/lib/media/media-specs";
 import { MediaPageClient } from "@/components/shared/media-library/media-page-client";
 import { CLIENT_MEDIA_KINDS, type ClientMediaKind } from "./helpers/client-media-kinds";
+import { getClientsMediaUniverse } from "./helpers/get-clients-media-universe";
 import { getClientsMedia } from "./helpers/get-clients-media";
 import { getClientsMediaCounts } from "./helpers/get-clients-media-counts";
 import { getClientMediaSlots } from "./helpers/get-client-media-slots";
@@ -31,9 +30,19 @@ export default async function ClientsMediaPage({
 
   const kind = CLIENT_MEDIA_KINDS.find((k) => k.value === params.kind);
   const clientId = params.clientId && params.clientId !== "all" && params.clientId !== coreClientId ? params.clientId : undefined;
+
+  // The page's links and triangle files beside the picked client's page images; every query
+  // below filters with them. A picked client's page images sit in the box above the grid. With no type or search on,
+  // the grid shows the REST of its files (gallery, reels, old or unused) — not the same four
+  // again (Khalid, 26 Sep 2026: «العميل هذا فوق في الصور… وتحت برضو… تكرار»).
+  const [universe, slots] = await Promise.all([
+    getClientsMediaUniverse(coreClientId),
+    clientId ? getClientMediaSlots(clientId) : null,
+  ]);
+
   // The triangle files of the whole page (every client) — the «Issues» toggle and its count.
   const issuesOn = params.issues === "1";
-  const issueIds = await findIssueMediaIds(clientsMediaWhere(coreClientId, {}));
+  const issueIds = universe.issueIds;
   const query = {
     clientId,
     issueIds: issuesOn ? issueIds : undefined,
@@ -44,16 +53,12 @@ export default async function ClientsMediaPage({
     page: params.page ? Math.max(1, parseInt(params.page, 10) || 1) : 1,
   };
 
-  // A picked client's page images sit in the box above the grid. With no type or search on,
-  // the grid shows the REST of its files (gallery, reels, old or unused) — not the same four
-  // again (Khalid, 26 Sep 2026: «العميل هذا فوق في الصور… وتحت برضو… تكرار»).
-  const slots = clientId ? await getClientMediaSlots(clientId) : null;
   const othersOnly = !!slots && !kind && !query.search && !issuesOn;
 
   const [result, clients, counts] = await Promise.all([
-    getClientsMedia(coreClientId, { ...query, excludeIds: othersOnly ? slots.shownIds : undefined }),
-    getMediaOwnerClients(coreClientId, { kind: query.kind, used: query.used, search: query.search, issueIds: query.issueIds }),
-    getClientsMediaCounts(coreClientId, { clientId, kind: query.kind, used: query.used, search: query.search }, { ids: issueIds, on: issuesOn }),
+    getClientsMedia(universe, { ...query, excludeIds: othersOnly ? slots.shownIds : undefined }),
+    getMediaOwnerClients(coreClientId, universe, { kind: query.kind, used: query.used, search: query.search, issueIds: query.issueIds }),
+    getClientsMediaCounts(universe, { clientId, kind: query.kind, used: query.used, search: query.search }, issuesOn),
   ]);
 
   const uploadBase = `/media/upload?for=clients${clientId ? `&clientId=${clientId}` : ""}`;
@@ -115,7 +120,7 @@ export default async function ClientsMediaPage({
           ariaLabel="Client"
         />
         <MediaKindToggles
-          kinds={CLIENT_MEDIA_KINDS}
+          kinds={CLIENT_MEDIA_KINDS.map(({ value, label }) => ({ value, label }))}
           total={counts.all}
           byKind={counts.byKind}
           issues={counts.issues}

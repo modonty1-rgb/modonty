@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { updateOrderAction } from "../actions/update-order";
+import { ReceiptField } from "./receipt-field";
 import { getSubscriptionStanding } from "../../../helpers/get-subscription-standing";
 import { formatMonths } from "../../../helpers/format-months";
 
@@ -105,10 +106,13 @@ export function OrderEditForm({
   order,
   isMigrated,
   salesReps,
+  receipt,
 }: {
   order: OrderForEdit;
   isMigrated: boolean;
   salesReps: Array<{ id: string; name: string }>;
+  /** للطلب المدفوع وحده — `null` يُخفي قسم السند. */
+  receipt: { hasReceipt: boolean; version: number } | null;
 }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -347,6 +351,17 @@ export function OrderEditForm({
           </Field>
         </div>
       </Section>
+
+      {receipt ? (
+        <Section title="سند الإيصال" aside={<span className="text-[11px] text-muted-foreground">اختياري</span>}>
+          <ReceiptField
+            orderId={order.id}
+            hasReceipt={receipt.hasReceipt}
+            version={receipt.version}
+            onChange={() => setDirty(true)}
+          />
+        </Section>
+      ) : null}
 
       <Section title="ملاحظة داخلية">
         <Textarea

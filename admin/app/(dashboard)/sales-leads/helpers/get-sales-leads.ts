@@ -17,6 +17,8 @@ export interface SalesLeadRow {
   nextActionNote: string | null;
   lastContactAt: Date | null;
   expectedTier: string | null;
+  /** اسم الباقة من الكتالوج — `expectedTier` معرّفٌ مخزَّن (`plan-f1854bef`) لا يُعرض. */
+  planName: string | null;
   /** مدّة العرض — بدونها لا يُعرف إجماليّه، ويصير الرقم المعروض سعر شهرٍ واحد. */
   expectedMonths: number | null;
   /** إجماليّ العرض للمدّة كلّها — من الكتالوج اليوم (`priceLeadDeal`)، لا سعر الشهر. */
@@ -29,6 +31,8 @@ export interface SalesLeadRow {
   createdAt: Date;
   convertedClientId: string | null;
   lastNote: string | null;
+  /** آخر ثلاثة تواصلات، الأحدث أوّلاً — تُقرأ تحت «+» قبل المكالمة بلا فتح صفحة العميل. */
+  recent: { channel: string; body: string; happenedAt: Date }[];
 
   /** من أين جاء — معبّأ في **٨٥٪** من المفتوحين ولم يكن يُجلَب أصلاً. */
   source: string | null;
@@ -75,13 +79,13 @@ const SELECT = {
   owner: { select: { name: true } },
   createdBy: { select: { name: true } },
   /**
-   * آخر سطر في السجلّ. صفٌّ واحد لكل عميل لا الجدول كلّه — القائمة تعرض سطراً، وجرّ التاريخ
-   * كاملاً لعشرين عميلاً يقرأ مئات الصفوف لعرض عشرين سطراً.
+   * آخر ثلاثة أسطر في السجلّ لا الجدول كلّه — القائمة تعرض آخر سطر تحت الاسم والثلاثة تحت «+»،
+   * وجرّ التاريخ كاملاً لعشرين عميلاً يقرأ مئات الصفوف لعرض ستّين سطراً.
    */
   followUps: {
     select: { body: true, channel: true, happenedAt: true },
     orderBy: { happenedAt: "desc" as const },
-    take: 1,
+    take: 3,
   },
 } as const;
 
@@ -89,7 +93,7 @@ type Raw = {
   industry: { name: string | null } | null;
   owner: { name: string | null } | null;
   createdBy: { name: string | null } | null;
-  followUps: { body: string; happenedAt: Date }[];
+  followUps: { body: string; channel: string; happenedAt: Date }[];
 } & Record<string, unknown>;
 
 const shape = (l: Raw, catalog: LeadCatalog): SalesLeadRow => {
@@ -117,13 +121,15 @@ const shape = (l: Raw, catalog: LeadCatalog): SalesLeadRow => {
   return {
     ...(rest as unknown as Omit<
       SalesLeadRow,
-      "industryName" | "ownerName" | "lastNote" | "dealTotal" | "currency" | "lastTouchAt"
+      "industryName" | "ownerName" | "lastNote" | "dealTotal" | "currency" | "lastTouchAt" | "planName" | "recent"
     >),
     dealTotal: deal.total,
     currency: deal.currency,
+    planName: deal.plan?.name ?? null,
     industryName: industry?.name ?? null,
     ownerName: owner?.name ?? createdBy?.name ?? null,
     lastNote: followUps[0]?.body ?? null,
+    recent: followUps,
     lastTouchAt:
       followUps[0]?.happenedAt ?? (l.lastContactAt as Date | null) ?? (l.createdAt as Date),
   };

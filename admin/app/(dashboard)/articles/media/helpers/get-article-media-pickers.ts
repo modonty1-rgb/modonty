@@ -1,45 +1,44 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-import { articlesMediaWhere, type ArticlesMediaQuery } from "./articles-media-where";
+import type { ArticlesMediaQuery } from "./articles-media-where";
+import type { ArticlesMediaUniverse } from "./get-articles-media-universe";
 
 /**
- * The two searchable pickers on Articles › Media, each row with how many article files it has
- * under the filters that are on:
- * - clients — every client, Modonty included (its articles are articles too);
- * - articles — of the picked client, or all of them; the client's name is the second line.
- * Both counts run the page's own filters (type, usage, search, Issues), so a row's number is
- * the number of cards picking it shows — the article counts ignored them until 27 Sep 2026.
- * Counted by tallying one column, not `groupBy` — Prisma's MongoDB groupBy panicked on this
- * filter shape (26 Sep 2026).
+ * The client and article pickers on Articles › Media, each option with how many files it has
+ * under the type/usage/search filters that are on. Clients with files first; articles
+ * newest-edited first, narrowed to the picked client.
+ *
+ * Per client: a `groupBy` inside the database. Per article: the article's featured image and
+ * gallery (the picker lists every article anyway) against the ids of the matching files —
+ * ids only, where the old read carried a `$lookup` of both relations for every file.
  */
 export async function getArticleMediaPickers(
+  { where }: ArticlesMediaUniverse,
   active: Pick<ArticlesMediaQuery, "clientId" | "kind" | "used" | "search" | "issueIds">,
 ) {
   const filters = { kind: active.kind, used: active.used, search: active.search, issueIds: active.issueIds };
-  const [clients, articles, fileClients, articleFiles] = await Promise.all([
+  const [clients, articles, gallery, fileClients, matching] = await Promise.all([
     db.client.findMany({ select: { id: true, name: true } }),
     db.article.findMany({
       where: active.clientId ? { clientId: active.clientId } : {},
-      select: { id: true, title: true, client: { select: { name: true } } },
+      select: { id: true, title: true, featuredImageId: true, client: { select: { name: true } } },
       orderBy: { updatedAt: "desc" },
     }),
-    db.media.findMany({ where: articlesMediaWhere(filters), select: { clientId: true } }),
-    db.media.findMany({
-      where: articlesMediaWhere({ ...filters, clientId: active.clientId }),
-      select: { featuredArticles: { select: { id: true } }, articleGallery: { select: { articleId: true } } },
-    }),
+    // Every gallery row, not `article: { clientId }` — that is a relation filter again; rows of
+    // other clients' articles find no entry in `filesOf` below and drop out.
+    db.articleMedia.findMany({ select: { articleId: true, mediaId: true } }),
+    db.media.groupBy({ by: ["clientId"], where: where(filters), _count: { _all: true } }),
+    db.media.findMany({ where: where({ ...filters, clientId: active.clientId }), select: { id: true } }),
   ]);
 
-  const perClient = new Map<string, number>();
-  for (const r of fileClients) if (r.clientId) perClient.set(r.clientId, (perClient.get(r.clientId) ?? 0) + 1);
+  const perClient = new Map(fileClients.map((g) => [g.clientId, g._count._all]));
 
-  // One file counts once per article, even if it is both the featured image and in the gallery.
-  const perArticle = new Map<string, number>();
-  for (const f of articleFiles) {
-    const ids = new Set([...f.featuredArticles.map((a) => a.id), ...f.articleGallery.map((g) => g.articleId)]);
-    for (const id of ids) perArticle.set(id, (perArticle.get(id) ?? 0) + 1);
-  }
+  const matched = new Set(matching.map((m) => m.id));
+  const filesOf = new Map<string, Set<string>>();
+  for (const a of articles) filesOf.set(a.id, new Set(a.featuredImageId ? [a.featuredImageId] : []));
+  for (const g of gallery) filesOf.get(g.articleId)?.add(g.mediaId);
+  const countOf = (articleId: string) => [...(filesOf.get(articleId) ?? [])].filter((id) => matched.has(id)).length;
 
   return {
     clients: clients
@@ -49,7 +48,7 @@ export async function getArticleMediaPickers(
       id: a.id,
       name: a.title.trim() || "(untitled)",
       hint: a.client?.name,
-      count: perArticle.get(a.id) ?? 0,
+      count: countOf(a.id),
     })),
   };
 }

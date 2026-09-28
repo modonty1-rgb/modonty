@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BadgeCheck, CalendarClock, Eye, Receipt, ShieldAlert, TrendingUp, UserPlus, Users2, UsersRound, Wallet } from "lucide-react";
+import { BadgeCheck, Eye, Receipt, ShieldAlert, TrendingUp, UserPlus, Users2, UsersRound, Wallet } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -55,7 +55,6 @@ const GROUPS: SalesGroup[] = [
     items: [
       { href: "/sales-leads/new", label: "إضافة عميل محتمل", icon: UserPlus },
       { href: "/sales-leads", label: "إدارة العملاء المحتملين", icon: UsersRound },
-      { href: "/sales-leads/follow-ups", label: "متابعة العملاء", icon: CalendarClock },
     ],
   },
   {

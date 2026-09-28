@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeftRight, CalendarClock, Pencil, Receipt, Wallet } from "lucide-react";
 
-import { LostDialog, ReopenButton } from "./lost-dialog";
+import { DeleteLeadDialog } from "./delete-lead-dialog";
+import { ReopenButton } from "./reopen-button";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -46,7 +47,7 @@ export function LeadDealRail({
   return (
     <div className="space-y-3">
       {/* الموعد أوّلاً — هو السؤال الوحيد الذي يتحرّك كل يوم، والباقي ثابت.
-          ويختفي كلّه على المقفول: نموذج المتابعة نفسه مخفيّ هناك، فبطاقةٌ تقول «سجّلي متابعة»
+          ويختفي كلّه على المقفول: نموذج المتابعة نفسه مخفيّ هناك، فبطاقةٌ تقول «تسجيل متابعة»
           تأمر بفعلٍ لا باب له في الشاشة. */}
       {!closed && (
       <Card
@@ -71,7 +72,7 @@ export function LeadDealRail({
               // لا رابط هنا: الموعد يُكتب مع سبب في نموذج المتابعة بالوسط، وبابٌ ثانٍ يكتبه
               // بلا سببه يعيد الثقب الذي أُغلق حين حُذف شريط المراحل.
               <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                سجّلي متابعة كي لا يضيع
+                تسجيل متابعة يحفظه من الضياع
               </p>
             )
           )}
@@ -142,7 +143,13 @@ export function LeadDealRail({
                 </Link>
               </Button>
             ) : (
-              stage === "LOST" && <ReopenButton leadId={lead.id} className="w-full" />
+              // A lead closed as lost before delete replaced it: bring it back, or delete it now.
+              stage === "LOST" && (
+                <div className="flex gap-2">
+                  <ReopenButton leadId={lead.id} className="flex-1" />
+                  <DeleteLeadDialog leadId={lead.id} leadName={lead.name} className="flex-1" />
+                </div>
+              )
             )}
           </CardContent>
         </Card>
@@ -165,7 +172,7 @@ export function LeadDealRail({
                 <Pencil className="size-3.5" aria-hidden /> تعديل
               </Link>
             </Button>
-            <LostDialog leadId={lead.id} leadName={lead.name} className="flex-1" />
+            <DeleteLeadDialog leadId={lead.id} leadName={lead.name} className="flex-1" />
           </div>
         </div>
       )}

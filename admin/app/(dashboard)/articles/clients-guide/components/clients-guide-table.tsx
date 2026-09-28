@@ -190,6 +190,10 @@ function QuotaDetails({ r }: { r: ClientGuideRow }) {
         <FactGroup key="dates" title="Dates">
           <Fact label="Activated" value={r.activatedAt ? DATE.format(r.activatedAt) : "—"} />
           <Fact label="Started" value={r.serviceStartedAt ? DATE.format(r.serviceStartedAt) : <span className="text-muted-foreground">Not yet</span>} />
+          <Fact
+            label="First published"
+            value={r.firstPublishedAt ? DATE.format(r.firstPublishedAt) : <span className="text-muted-foreground">Not yet</span>}
+          />
         </FactGroup>,
       ]}
       footer={
@@ -310,7 +314,7 @@ export function ClientsGuideTable({
       */}
       {/* Filters take exactly their pills' width (no empty tail); the four cards share the rest. */}
       <div className="grid gap-3 lg:grid-cols-[auto_minmax(0,1fr)]">
-        <section aria-label="Filters" className="flex flex-col justify-center gap-2 rounded-lg border bg-card/40 px-4 py-2.5">
+        <section aria-label="Filters" className="flex flex-col justify-center gap-2 rounded-lg border bg-card px-4 py-2.5">
           {writers.length ? (
             <FilterRow label="Writer">
               <CountTab label="All" count={N.format(rows.length)} active={!writer} onClick={() => setParam("writer", null)} />

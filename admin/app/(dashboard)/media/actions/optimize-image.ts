@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { deleteCloudinaryAsset } from "@/lib/utils/cloudinary-delete";
 import { deleteBunnyUrl } from "@modonty/shared/lib/bunny";
 import { generateClientSEO } from "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo";
 import { generateAndSaveJsonLd } from "@/lib/seo/jsonld-storage";
@@ -152,11 +151,6 @@ export async function saveOptimizedImage(
     // remove a file production still serves; that refusal is expected and swallowed here.
     if (existing.bunnyUrl && existing.bunnyUrl !== url && seoFailures.length === 0) {
       await deleteBunnyUrl("clients", existing.bunnyUrl).catch(() => {});
-    }
-
-    const oldPublicId = existing.cloudinaryPublicId;
-    if (process.env.NODE_ENV === "production" && oldPublicId && oldPublicId !== input.publicId && seoFailures.length === 0) {
-      await deleteCloudinaryAsset(oldPublicId, "image").catch(() => {});
     }
 
     // Only rebuild the public pages whose blob actually rebuilt — pushing a rebuild on top

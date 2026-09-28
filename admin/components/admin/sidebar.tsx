@@ -42,7 +42,6 @@ import { Trophy,
   Clapperboard,
   ClipboardList,
   Cloud,
-  CloudUpload,
   ArrowRightLeft,
   Cookie,
   Copyright,
@@ -408,9 +407,6 @@ const rawMenuGroups: MenuGroup[] = [
       { icon: Download, label: "Export Data", href: "/export-data" },
       { icon: Database, label: "Database", href: "/database" },
       { icon: Cloud, label: "Bunny", href: "/bunny" },
-      // TEMPORARY — one-time Cloudinary → Bunny migration. Delete this line together with
-      // `app/(dashboard)/bunny-migration/` once every asset is on Bunny and verified.
-      { icon: CloudUpload, label: "Bunny Migration", href: "/bunny-migration" },
       // TEMPORARY — ترحيلُ الطلبات لمرّةٍ واحدة. يختفي من تلقائه متى امتلأ جدولُ
       // الطلبات على الإنتاج (`showOrdersMigration` يُقرأ في الخادم، `layout.tsx`)،
       // ويُحذف هذا السطرُ مع `app/(dashboard)/orders-migration/` بعد إتمامه.

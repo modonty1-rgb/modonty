@@ -4,11 +4,13 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
+import { logAction } from "@/lib/audit/log-action";
 import { findLeadByPhone } from "./helpers/find-lead-by-phone";
 import { leadSchema, type LeadInput } from "./helpers/lead-schema";
 import { resolveLeadDeal } from "./helpers/resolve-lead-deal";
-import { followUpSchema, lostSchema, type FollowUpInput, type LostInput } from "./helpers/follow-up-schema";
+import { followUpSchema, type FollowUpInput } from "./helpers/follow-up-schema";
 import { syncLeadNextAction } from "./helpers/sync-lead-next-action";
+import { isNoAnswer } from "./helpers/no-answer";
 
 type Result =
   | { success: true; id: string }
@@ -36,7 +38,7 @@ async function parse(input: LeadInput): Promise<ParseFail | ParseOk> {
     return {
       fail: {
         success: false as const,
-        error: "راجع الحقول المعلّمة بالأحمر.",
+        error: "الحقول المعلّمة بالأحمر تحتاج مراجعة.",
         fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
       },
     };
@@ -66,10 +68,9 @@ async function resolveIndustry(id?: string): Promise<string | null> {
   return found?.id ?? null;
 }
 
-/** يُعاد بناء صفحات العميل الثلاث معاً — الصفّ يظهر في القائمة وصفحته وقائمة المتابعة. */
+/** يُعاد بناء صفحتَي العميل معاً — الصفّ يظهر في الجدول وفي صفحته. */
 function revalidateLead(id?: string) {
   revalidatePath("/sales-leads");
-  revalidatePath("/sales-leads/follow-ups");
   if (id) revalidatePath(`/sales-leads/${id}`);
 }
 
@@ -111,7 +112,7 @@ export async function createLead(input: LeadInput): Promise<Result> {
 
   // الباقة والمدّة والسعر من الكتالوج لا من الشاشة (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد).
   const deal = await resolveLeadDeal(data);
-  if (!deal.ok) return { success: false, error: "راجع الصفقة — الباقة أو المدّة.", fieldErrors: deal.fieldErrors };
+  if (!deal.ok) return { success: false, error: "الصفقة تحتاج مراجعة — الباقة أو المدّة.", fieldErrors: deal.fieldErrors };
 
   try {
     const lead = await db.salesLead.create({
@@ -153,7 +154,7 @@ export async function createLead(input: LeadInput): Promise<Result> {
     revalidateLead();
     return { success: true, id: lead.id };
   } catch {
-    return { success: false, error: "ما قدرنا نحفظ. حاول مرة ثانية." };
+    return { success: false, error: "ما قدرنا نحفظ. يُرجى المحاولة مرة ثانية." };
   }
 }
 
@@ -180,7 +181,7 @@ export async function updateLead(id: string, input: LeadInput): Promise<Result> 
   }
 
   const deal = await resolveLeadDeal(data);
-  if (!deal.ok) return { success: false, error: "راجع الصفقة — الباقة أو المدّة.", fieldErrors: deal.fieldErrors };
+  if (!deal.ok) return { success: false, error: "الصفقة تحتاج مراجعة — الباقة أو المدّة.", fieldErrors: deal.fieldErrors };
 
   try {
     await db.salesLead.update({
@@ -197,7 +198,7 @@ export async function updateLead(id: string, input: LeadInput): Promise<Result> 
     revalidateLead(id);
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرنا نحفظ. حاول مرة ثانية." };
+    return { success: false, error: "ما قدرنا نحفظ. يُرجى المحاولة مرة ثانية." };
   }
 }
 
@@ -219,26 +220,42 @@ export async function addFollowUp(leadId: string, input: FollowUpInput): Promise
   if (!parsed.success) {
     return {
       success: false,
-      error: "راجع الحقول المعلّمة بالأحمر.",
+      error: "الحقول المعلّمة بالأحمر تحتاج مراجعة.",
       fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
     };
   }
   const d = parsed.data;
 
-  const lead = await db.salesLead.findUnique({ where: { id: leadId }, select: { id: true } });
+  const lead = await db.salesLead.findUnique({ where: { id: leadId }, select: { id: true, stage: true } });
   if (!lead) return { success: false, error: "العميل غير موجود." };
 
+  /**
+   * المرحلة تتحرّك وحدها (خالد ٢٨ سبتمبر ٢٠٢٦): أوّل تواصلٍ حقيقيّ مع «جديد» يجعله «تواصلنا» —
+   * الملاحظة الداخليّة ليست تواصلاً. و«عرض سعر» اختيارٌ صريح (`stageAfter`)، ولا يرجع أحدٌ للخلف.
+   */
+  // «ما ردّ» is an attempt, not contact: the lead stays «جديد» (helpers/no-answer.ts).
+  const nextStage =
+    d.stageAfter ??
+    (lead.stage === "NEW" && d.channel !== "NOTE" && !isNoAnswer(d.body) ? "CONTACTED" : undefined);
+
   try {
-    // تُقرأ الصفوف ثم يُقفل ما استحقّ منها في الكود لا في `updateMany`: الشرط يقارن حقلاً
+    // تُقرأ الصفوف ثم يُقفل المفتوح منها في الكود لا في `updateMany`: الشرط يقارن حقلاً
     // اختيارياً بـ`null`، وهو في مونجو غائبٌ لا فارغ — والمقارنة تسقط الصفوف بصمت.
+    //
+    // كل موعدٍ مفتوح يُقفل لا المستحقّ وحده (٢٨ سبتمبر ٢٠٢٦، اختبار ١٠ متابعات): آخر تسجيلٍ هو
+    // الخطّة. كان موعد «بكرة» يبقى مفتوحاً بعد مكالمة اليوم «نكلّمه بعد أسبوع»، فيظهر العميل
+    // غداً في «عليّ اليوم» والسطر يقول «بعد أسبوع».
     const open = await db.salesLeadFollowUp.findMany({
       where: { leadId },
       select: { id: true, nextActionAt: true, doneAt: true },
       take: 500,
     });
-    const staleIds = open
-      .filter((r) => r.nextActionAt != null && r.doneAt == null && r.nextActionAt <= d.happenedAt)
-      .map((r) => r.id);
+    // …except after an unanswered attempt with no new date: «ما ردّ» changes nothing about the
+    // plan, so next week's call stays booked (measured 28 Sep 2026: «بعد ٧ أيام» → «بدون موعد»).
+    const keepPlan = isNoAnswer(d.body) && !d.nextActionAt;
+    const staleIds = keepPlan
+      ? []
+      : open.filter((r) => r.nextActionAt != null && r.doneAt == null).map((r) => r.id);
     if (staleIds.length) {
       await db.salesLeadFollowUp.updateMany({
         where: { id: { in: staleIds } },
@@ -255,16 +272,16 @@ export async function addFollowUp(leadId: string, input: FollowUpInput): Promise
         nextActionAt: d.nextActionAt ?? null,
         nextActionNote: d.nextActionNote ?? null,
         doneAt: null,
-        stageAfter: d.stageAfter ?? null,
+        stageAfter: nextStage ?? null,
         createdById: gate.userId,
       },
       select: { id: true },
     });
 
-    if (d.stageAfter) {
+    if (nextStage) {
       await db.salesLead.update({
         where: { id: leadId },
-        data: { stage: d.stageAfter, status: STATUS_FROM_STAGE[d.stageAfter] ?? "ACTIVE" },
+        data: { stage: nextStage, status: STATUS_FROM_STAGE[nextStage] ?? "ACTIVE" },
       });
     }
 
@@ -272,7 +289,7 @@ export async function addFollowUp(leadId: string, input: FollowUpInput): Promise
     revalidateLead(leadId);
     return { success: true, id: row.id };
   } catch {
-    return { success: false, error: "ما قدرنا نسجّل المتابعة. حاولي مرة ثانية." };
+    return { success: false, error: "ما قدرنا نسجّل المتابعة. يُرجى المحاولة مرة ثانية." };
   }
 }
 
@@ -291,7 +308,7 @@ export async function completeFollowUp(id: string): Promise<Result> {
     revalidateLead(row.leadId);
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرنا نقفل الموعد. حاولي مرة ثانية." };
+    return { success: false, error: "ما قدرنا نقفل الموعد. يُرجى المحاولة مرة ثانية." };
   }
 }
 
@@ -321,7 +338,7 @@ export async function snoozeFollowUp(id: string, days: number): Promise<Result> 
     revalidateLead(current.leadId);
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرنا نأجّل. حاولي مرة ثانية." };
+    return { success: false, error: "ما قدرنا نأجّل. يُرجى المحاولة مرة ثانية." };
   }
 }
 
@@ -340,68 +357,52 @@ export async function setLeadStage(
     revalidateLead(id);
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرنا نحدّث. حاولي مرة ثانية." };
+    return { success: false, error: "ما قدرنا نحدّث. يُرجى المحاولة مرة ثانية." };
   }
 }
 
 /**
- * الخسارة — مرحلةٌ طرفية، فلها فعلها الخاصّ الذي يسأل عن السبب.
+ * **حذفُ العميل المحتمل نهائياً** — حلّ محلّ «خسرناه» (خالد ٢٨ سبتمبر ٢٠٢٦: «بدل خسرناه نعملها
+ * حذف، لأن كل ما خسرناه هذا أساساً ما له داعي»).
  *
- * والسبب هو كل الفائدة: بدونه «خسرنا ٤٠ صفقة» رقمٌ ميت، ومعه يُعرف إن كان السعر يطرد الناس
- * أم المتابعة تتأخّر. ويُكتب صفَّ سجلٍّ كذلك كي لا ينتهي تاريخ العميل بلا سطرٍ أخير.
+ * يُحذف الصفّ وسجلُّ متابعاته معاً. ويُرفض في حالتين لأنّ الصفّ فيهما ليس عميلاً محتملاً فقط:
+ * - **صار عميلاً** (`convertedClientId`): هو السجلّ الوحيد لكيف وصل العميل (السكيما تنصّ عليه).
+ * - **عليه طلبُ اشتراك** (`CheckoutOrder.leadId`): الطلبُ ماليّ ويشير إليه بلا علاقة، فحذفُه
+ *   يترك طلباً يشير إلى لا شيء. يُلغى الطلب أوّلاً إن كان خطأً.
+ * ويُكتب في سجلّ التدقيق مَن حذف مَن — الأثرُ الوحيد بعد أن يذهب الصفّ.
  */
-export async function markLost(id: string, input: LostInput): Promise<Result> {
+export async function deleteLead(id: string): Promise<Result> {
   const gate = await requireAdmin();
   if ("error" in gate) return { success: false, error: gate.error };
 
-  const parsed = lostSchema.safeParse(input);
-  if (!parsed.success) return { success: false, error: "اختاري السبب." };
-  const { reason, note } = parsed.data;
+  const lead = await db.salesLead.findUnique({
+    where: { id },
+    select: { id: true, name: true, phone: true, stage: true, convertedClientId: true },
+  });
+  if (!lead) return { success: false, error: "العميل المحتمل غير موجود — ربما حُذف." };
+  if (lead.convertedClientId) {
+    return { success: false, error: "صار عميلاً عندنا — لا يُحذف، فهو سجلّ كيف وصلنا." };
+  }
+  const order = await db.checkoutOrder.findFirst({ where: { leadId: id }, select: { number: true } });
+  if (order) {
+    return { success: false, error: `عليه طلب اشتراك ${order.number} — ألغي الطلب أوّلاً إن كان خطأً.` };
+  }
 
   try {
-    const now = new Date();
-    await db.salesLead.update({
-      where: { id },
-      data: {
-        stage: "LOST",
-        status: "ARCHIVED",
-        lostReason: reason,
-        lostNote: note ?? null,
-        lostAt: now,
-        // الموعد يُمسح: عميلٌ خسرناه لا يظهر في «مَن عليّا النهارده».
-        nextActionAt: null,
-        nextActionNote: null,
-      },
+    await db.$transaction([
+      db.salesLeadFollowUp.deleteMany({ where: { leadId: id } }),
+      db.salesLead.delete({ where: { id } }),
+    ]);
+    await logAction("lead.delete", {
+      entity: "SalesLead",
+      entityId: id,
+      summary: `حُذف العميل المحتمل «${lead.name}»`,
+      metadata: { name: lead.name, phone: lead.phone, stage: lead.stage },
     });
-
-    const open = await db.salesLeadFollowUp.findMany({
-      where: { leadId: id },
-      select: { id: true, doneAt: true, nextActionAt: true },
-      take: 500,
-    });
-    const openIds = open.filter((r) => r.nextActionAt != null && r.doneAt == null).map((r) => r.id);
-    if (openIds.length) {
-      await db.salesLeadFollowUp.updateMany({ where: { id: { in: openIds } }, data: { doneAt: now } });
-    }
-
-    await db.salesLeadFollowUp.create({
-      data: {
-        leadId: id,
-        channel: "NOTE",
-        happenedAt: now,
-        body: note?.trim() || "أُغلق كخسارة.",
-        nextActionAt: null,
-        nextActionNote: null,
-        doneAt: now,
-        stageAfter: "LOST",
-        createdById: gate.userId,
-      },
-    });
-
-    revalidateLead(id);
+    revalidateLead();
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرنا نقفله. حاولي مرة ثانية." };
+    return { success: false, error: "ما قدرنا نحذفه. يُرجى المحاولة مرة ثانية." };
   }
 }
 
@@ -417,7 +418,7 @@ export async function reopenLead(id: string): Promise<Result> {
     revalidateLead(id);
     return { success: true, id };
   } catch {
-    return { success: false, error: "ما قدرنا نرجّعه. حاولي مرة ثانية." };
+    return { success: false, error: "ما قدرنا نرجّعه. يُرجى المحاولة مرة ثانية." };
   }
 }
 

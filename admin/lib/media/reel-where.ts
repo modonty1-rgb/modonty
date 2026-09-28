@@ -1,4 +1,6 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma, ReelStatus } from "@prisma/client";
+
+const REEL_LIVE_STATUSES: ReelStatus[] = ["DRAFT", "PENDING_APPROVAL", "APPROVED", "PUBLISHED"];
 
 /**
  * A reel the delete guard still protects — the same two tests as `canDeleteMedia`
@@ -6,8 +8,13 @@ import type { Prisma } from "@prisma/client";
  * «you cannot delete this» never disagree.
  */
 export const REEL_LIVE_WHERE: Prisma.MediaWhereInput = {
-  OR: [{ inReels: true }, { reelStatus: { in: ["DRAFT", "PENDING_APPROVAL", "APPROVED", "PUBLISHED"] } }],
+  OR: [{ inReels: true }, { reelStatus: { in: REEL_LIVE_STATUSES } }],
 };
+
+/** `REEL_LIVE_WHERE` over a row already read; its negation is `REEL_NOT_LIVE_WHERE`. */
+export function isReelLive(m: { inReels: boolean | null; reelStatus: ReelStatus | null }): boolean {
+  return m.inReels === true || (m.reelStatus !== null && REEL_LIVE_STATUSES.includes(m.reelStatus));
+}
 
 /**
  * The exact complement of `REEL_LIVE_WHERE`, spelled out — NOT `{ NOT: REEL_LIVE_WHERE }`.

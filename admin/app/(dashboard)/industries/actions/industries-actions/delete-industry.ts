@@ -3,7 +3,6 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { deleteOldImage } from "../../../actions/delete-image";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 
@@ -22,8 +21,6 @@ export async function deleteIndustry(id: string) {
         error: `Cannot delete industry. It is used by ${industry._count.clients} client(s).`,
       };
     }
-
-    await deleteOldImage("industries", id);
 
     await db.industry.delete({ where: { id } });
 

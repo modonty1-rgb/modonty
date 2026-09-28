@@ -16,7 +16,7 @@ export function DetailCard({
   footer?: React.ReactNode;
 }) {
   return (
-    <div className="ms-8 space-y-3 rounded-md border bg-background/70 p-3 shadow-sm">
+    <div className="ms-8 space-y-3 rounded-md border bg-card p-3 shadow-sm">
       <div className={`grid gap-4 lg:items-start ${columns}`}>
         {groups.map((g, i) => (
           <Fragment key={i}>

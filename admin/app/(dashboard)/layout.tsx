@@ -33,13 +33,25 @@ export default async function DashboardLayout({
     return <NotAuthorized />;
   }
 
-  // Fetch article status counts once at layout level → passed to Sidebar as a prop
-  // so workflow nav items can show live count badges. Cached 60s via unstable_cache.
-  const articleStatusCounts = await getArticleStatusCounts().catch(() => null);
-
-  // Essential SEO/brand fields live in Settings (single source of truth). If any is
-  // empty, alert the admin with a clear dialog instead of silently using a fallback.
-  const missingSeoFields = await getMissingEssentialSeoFields().catch(() => []);
+  // Everything below is independent — read side by side, not one after another. Measured
+  // 28 Sep 2026: seven reads in a row held the sidebar ~850 ms behind the root skeleton on
+  // every full page load; in parallel the wait is the slowest one (the orders gate, ~340 ms).
+  const [articleStatusCounts, missingSeoFields, ordersOpen, pendingDocs, reportViewer, myOpenTasks, pendingReviews] = await Promise.all([
+    // Article status counts once at layout level → passed to Sidebar as a prop
+    // so workflow nav items can show live count badges. Cached 60s via unstable_cache.
+    getArticleStatusCounts().catch(() => null),
+    // Essential SEO/brand fields live in Settings (single source of truth). If any is
+    // empty, alert the admin with a clear dialog instead of silently using a fallback.
+    getMissingEssentialSeoFields().catch(() => []),
+    checkOrdersMigrationGate().then((g) => g.allowed).catch(() => false),
+    planDocuments().then((p) => p.candidates.length).catch(() => 0),
+    db.staff.findUnique({ where: { id: gate.userId }, select: { role: true, canViewReports: true } }).catch(() => null),
+    db.task
+      .count({ where: { assigneeId: gate.userId, status: { not: "DONE" }, ...TASK_NOT_ARCHIVED } })
+      .catch(() => 0),
+    // مهامُّ أرسلتُها وأنهاها زميلٌ — تنتظر قراري، فهي عملٌ عليّ أنا أيضاً.
+    countReviewQueue(gate.userId),
+  ]);
 
   // Whether to show the Report link. Read on the SERVER because the permission now lives
   // on the staff row, and the session token carries only the role — a token minted before
@@ -53,15 +65,7 @@ export default async function DashboardLayout({
    * صفحةٍ واحدة). وكان الشرطُ ترحيلَ الطلبات وحده، فلمّا تمّ اختفى البندُ ومعه ترحيلُ
    * الوثائق الذي لم يُجرَ بعد — رابطٌ يموت وفيه عملٌ باق.
    */
-  const [ordersOpen, pendingDocs] = await Promise.all([
-    checkOrdersMigrationGate().then((g) => g.allowed).catch(() => false),
-    planDocuments().then((p) => p.candidates.length).catch(() => 0),
-  ]);
   const ordersMigrationOpen = ordersOpen || pendingDocs > 0;
-
-  const reportViewer = await db.staff
-    .findUnique({ where: { id: gate.userId }, select: { role: true, canViewReports: true } })
-    .catch(() => null);
 
   /**
    * **عدّادُ مهامّي — على زرّ Tasks في الشريط** (خالد ٢٠ سبتمبر ٢٠٢٦: «حطّ لي بادج عند
@@ -73,12 +77,8 @@ export default async function DashboardLayout({
    *
    * ويُقرأ هنا لا في المكوّن: الزرُّ عميلٌ (`"use client"`)، وقراءةُ القاعدة منه تعني
    * نداءً من المتصفّح في كلّ صفحة. والتخطيطُ يُرسم مرّةً ويمرّره.
+   * (يُقرأ `myOpenTasks` في القراءة المتوازية أعلاه.)
    */
-  const myOpenTasks = await db.task
-    .count({ where: { assigneeId: gate.userId, status: { not: "DONE" }, ...TASK_NOT_ARCHIVED } })
-    .catch(() => 0);
-  // مهامُّ أرسلتُها وأنهاها زميلٌ — تنتظر قراري، فهي عملٌ عليّ أنا أيضاً.
-  const pendingReviews = await countReviewQueue(gate.userId);
 
   return (
     <SidebarProvider>

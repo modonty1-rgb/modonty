@@ -1,4 +1,4 @@
-import type { MediaType } from "@prisma/client";
+import type { MediaType, Prisma } from "@prisma/client";
 
 /**
  * SINGLE SOURCE OF TRUTH for image specs per media role.
@@ -298,4 +298,42 @@ export function checkMediaCompliance(input: {
   }
 
   return { ok: issues.length === 0, issues };
+}
+
+/**
+ * `!checkMediaCompliance(row).ok` as a MongoDB aggregation expression — the «Issues» filter
+ * runs it inside the database, so finding the triangle files no longer reads every row
+ * (28 Sep 2026: that read grew with the library, 0.17 ms per file).
+ *
+ * The same three rules, read from the same `MEDIA_SPECS` numbers: a video passes; the format
+ * (WebP, or PNG for a transparent role); then, for a fixed-ratio role, known dimensions, the
+ * ratio within `RATIO_TOLERANCE`, the minimum size. Change a rule above → change it here.
+ * `$cond` keeps the division from running on a missing or zero height, as the JS `else if`.
+ */
+export function mediaIssueExpr(): Prisma.InputJsonObject {
+  const matches = (field: string, regex: string, options = "") => ({ $regexMatch: { input: field, regex, options } });
+  const isWebp = { $or: [{ $eq: ["$mimeType", "image/webp"] }, matches("$filename", "\\.webp$", "i")] };
+  const isPng = { $or: [{ $eq: ["$mimeType", "image/png"] }, matches("$filename", "\\.png$", "i")] };
+  const noDims = { $or: [{ $not: ["$width"] }, { $not: ["$height"] }] };
+
+  const failsFor = (spec: MediaSpec) => {
+    const badFormat = spec.transparent ? { $and: [{ $not: [isPng] }, { $not: [isWebp] }] } : { $not: [isWebp] };
+    if (spec.ratio === null) return badFormat;
+    const badRatio = { $gt: [{ $abs: { $subtract: [{ $divide: ["$width", "$height"] }, spec.ratio] } }, RATIO_TOLERANCE] };
+    const badSize = { $or: [{ $lt: ["$width", spec.minWidth] }, { $lt: ["$height", spec.minHeight] }] };
+    return { $or: [badFormat, { $cond: [noDims, true, { $or: [badRatio, badSize] }] }] };
+  };
+
+  return {
+    $cond: [
+      matches("$mimeType", "^video/"),
+      false,
+      {
+        $switch: {
+          branches: (Object.keys(MEDIA_SPECS) as MediaType[]).map((type) => ({ case: { $eq: ["$type", type] }, then: failsFor(MEDIA_SPECS[type]) })),
+          default: failsFor(MEDIA_SPECS.GENERAL),
+        },
+      },
+    ],
+  };
 }

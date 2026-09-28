@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { Loader2, XCircle } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 
 import {
   AlertDialog, AlertDialogCancel, AlertDialogContent,
@@ -9,34 +9,27 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cancelOrderAction } from "../actions/cancel-order";
+import { deleteOrderAction } from "../actions/delete-order";
 
 /**
- * إلغاءُ طلبٍ لم يصل فيه مال — يطلب سبباً **ورقمَ الطلب مكتوباً باليد**.
- *
- * خالد (٢٠ سبتمبر ٢٠٢٦): «اعمل عليها التأكيد بحيث إنّه يدخل رقم الأوردر أو آخر أربع
- * أرقام». والفرقُ ليس شكليّاً: حوارٌ يُغلق بضغطةٍ واحدة يُضغط سهواً بالتمرير أو
- * بالإنتر، وحوارٌ يطلب نسخَ رقمٍ من الشاشة لا يُغلق إلّا بقصد.
- *
- * ورقمُ الطلب **يُعرض في الحوار** لا يُطلب من الذاكرة: الحمايةُ من السهو لا من النسيان،
- * وإخفاؤه يحوّل الحارسَ إلى امتحان.
- *
- * **والحوارُ يُغلَق بالنجاح وحده** — لا بالضغطة (نفسُ علّة `refund-order-button.tsx`:
- * زرُّ `AlertDialogAction` يغلق الحوار لحظةَ النقر، فتُعرض رسالةُ الرفض في حوارٍ اختفى،
- * فيقرأ الموظّفُ الصمتَ نجاحاً).
+ * حذفُ الطلب نهائياً — للأدمن وحده، من صفحة الطلب نفسها (خالد ٢٨ سبتمبر ٢٠٢٦).
+ * نفس حارس «إلغاء الطلب»: رقم الطلب يُكتب باليد، وبعد النجاح يعود السيرفر إلى جدول الطلبات.
  */
-export function CancelOrderButton({
+export function DeleteOrderButton({
   orderId,
   orderNumber,
   buyerName,
+  invoiceNumber,
 }: {
   orderId: string;
   orderNumber: string;
   buyerName: string;
+  invoiceNumber: string | null;
 }) {
-  const [state, action, pending] = useActionState(cancelOrderAction, null);
+  const [state, action, pending] = useActionState(deleteOrderAction, null);
   const [open, setOpen] = useState(false);
 
+  // Success redirects on the server (actions/delete-order.ts); this only closes on a stale reply.
   useEffect(() => {
     if (state?.ok) setOpen(false);
   }, [state]);
@@ -47,18 +40,19 @@ export function CancelOrderButton({
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button type="button" size="sm" variant="outline" className="h-8 gap-1.5 px-2.5 text-[12px] text-destructive hover:text-destructive">
-          <XCircle className="size-4" aria-hidden />
-          إلغاء الطلب
+          <Trash2 className="size-4" aria-hidden />
+          حذف الطلب
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent dir="rtl">
         <form action={action}>
           <input type="hidden" name="orderId" value={orderId} />
           <AlertDialogHeader>
-            <AlertDialogTitle>إلغاء الطلب {orderNumber} لـ«{buyerName}»؟</AlertDialogTitle>
+            <AlertDialogTitle>حذف الطلب {orderNumber} لـ«{buyerName}» نهائياً؟</AlertDialogTitle>
             <AlertDialogDescription>
-              يصير «ملغى» ويسقط من الطابور. ولا يُمسّ شيءٌ آخر: لا فاتورةَ ولا حساب عميل.
-              ولا يُلغى ما وصل فيه مال — لذاك بابُ الاسترداد.
+              يُرفع من جدول الطلبات مع عمليّات الدفع
+              {invoiceNumber ? <> وفاتورته <b className="font-mono">{invoiceNumber}</b></> : null}، ولا يمكن إرجاعه.
+              العميل لا يُمسّ.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="space-y-3 py-3">
@@ -67,10 +61,6 @@ export function CancelOrderButton({
                 {state.error}
               </p>
             )}
-            <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">
-              سبب الإلغاء
-              <Input name="reason" required minLength={3} maxLength={300} placeholder="مثال: زائرٌ فتح الصفحة ولم يُكمل" />
-            </label>
             <label className="flex flex-col gap-1.5 text-xs font-medium text-muted-foreground">
               للتأكيد اكتب <b className="font-mono text-foreground">{orderNumber}</b> أو آخر أربعة أرقام{" "}
               <b className="font-mono text-foreground">{last4}</b>
@@ -81,7 +71,7 @@ export function CancelOrderButton({
             <AlertDialogCancel type="button" disabled={pending}>تراجع</AlertDialogCancel>
             <Button type="submit" variant="destructive" disabled={pending}>
               {pending && <Loader2 className="me-2 size-4 animate-spin" aria-hidden />}
-              تأكيد الإلغاء
+              احذفه نهائياً
             </Button>
           </AlertDialogFooter>
         </form>

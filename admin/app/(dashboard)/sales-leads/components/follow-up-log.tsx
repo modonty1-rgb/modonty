@@ -3,31 +3,23 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Check, Clock, Loader2, Mail, MapPin, MessageCircle, Phone, Send, StickyNote, Users,
+  Check, Clock, Loader2, StickyNote,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { addFollowUp, completeFollowUp, snoozeFollowUp } from "../actions";
+import { completeFollowUp, snoozeFollowUp } from "../actions";
+import { CHANNEL_ICON } from "../helpers/channel-icon";
+import { LogForm } from "./log-form";
+import { NoAnswerButton } from "./no-answer-button";
 import { formatCount } from "../helpers/format-count";
 import {
-  CHANNELS, CHANNEL_LABEL, DUE_TONE, PICKABLE_STAGES, STAGE_DOT, STAGE_LABEL,
+  CHANNEL_LABEL, DUE_TONE, STAGE_DOT, STAGE_LABEL,
   describeDue, type Channel, type Stage,
 } from "../helpers/funnel";
 
-const CHANNEL_ICON: Record<Channel, typeof Phone> = {
-  CALL: Phone,
-  WHATSAPP: MessageCircle,
-  EMAIL: Mail,
-  MEETING: Users,
-  VISIT: MapPin,
-  NOTE: StickyNote,
-};
 
 const dayFmt = new Intl.DateTimeFormat("ar-EG", {
   day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Riyadh",
@@ -35,20 +27,6 @@ const dayFmt = new Intl.DateTimeFormat("ar-EG", {
 const timeFmt = new Intl.DateTimeFormat("ar-EG", {
   hour: "2-digit", minute: "2-digit", timeZone: "Asia/Riyadh",
 });
-
-/** `YYYY-MM-DD` محلّياً — `toISOString` تحوّل إلى UTC فيقفز اليوم في توقيت الرياض. */
-function isoDay(offsetDays: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + offsetDays);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
-const WHEN_PRESETS = [
-  { label: "غداً", days: 1 },
-  { label: "بعد ٣ أيام", days: 3 },
-  { label: "الأسبوع القادم", days: 7 },
-  { label: "بعد أسبوعين", days: 14 },
-] as const;
 
 export interface FollowUpRow {
   id: string;
@@ -84,35 +62,6 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
   const [pending, start] = useTransition();
   const [busyRow, setBusyRow] = useState<string | null>(null);
 
-  const [channel, setChannel] = useState<Channel>("CALL");
-  const [body, setBody] = useState("");
-  const [when, setWhen] = useState("");
-  const [whenNote, setWhenNote] = useState("");
-  const [stageAfter, setStageAfter] = useState("");
-
-  const submit = () =>
-    start(async () => {
-      const r = await addFollowUp(leadId, {
-        channel,
-        happenedAt: new Date(),
-        body,
-        nextActionAt: when || undefined,
-        nextActionNote: whenNote || undefined,
-        stageAfter: stageAfter || undefined,
-      });
-      if (!r.success) {
-        toast({ title: r.error, variant: "destructive" });
-        return;
-      }
-      setBody("");
-      setWhen("");
-      setWhenNote("");
-      setStageAfter("");
-      setChannel("CALL");
-      toast({ title: "سُجِّلت", variant: "success" });
-      router.refresh();
-    });
-
   const rowAction = (id: string, fn: () => Promise<{ success: boolean; error?: string }>, okText: string) =>
     start(async () => {
       setBusyRow(id);
@@ -130,125 +79,18 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
     <div className="space-y-4">
       {!closed && (
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">سجّلي ما حدث</CardTitle>
-            <CardDescription>كل مكالمة أو رسالة تُسجَّل هنا، وتبقى في تاريخه للأبد.</CardDescription>
+          {/**
+           * أقلّ ما يكفي (خالد ٢٨ سبتمبر ٢٠٢٦: «في حشو كتير… يكلموا بكرة أو بعد ثلاثة أيام، هذا
+           * العميل يحددها»): القناة · ما حدث · الموعد القادم إن وُجد · تسجيل. والمرحلة تتحرّك وحدها على السيرفر.
+           * أُزيلت أزرار «غداً · بعد ٣ أيام…» وخانة «لماذا؟» — السبب يُكتب في «ما حدث» نفسه.
+           * وبصيغةٍ محايدة لا مؤنّثة: الشاشة لكل الفريق.
+           */}
+          <CardHeader className="flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-base">تسجيل ما حدث</CardTitle>
+            <NoAnswerButton leadId={leadId} />
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-wrap gap-1.5">
-              {CHANNELS.map((c) => {
-                const Icon = CHANNEL_ICON[c];
-                return (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setChannel(c)}
-                    aria-pressed={channel === c}
-                    className={cn(
-                      "inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition-colors",
-                      channel === c
-                        ? "border-foreground bg-foreground text-background"
-                        : "border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground",
-                    )}
-                  >
-                    <Icon className="size-3.5" aria-hidden />
-                    {CHANNEL_LABEL[c]}
-                  </button>
-                );
-              })}
-            </div>
-
-            <Textarea
-              id="followUpBody"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              rows={3}
-              placeholder="قال إنه سيراجع العرض مع شريكه ويردّ الأسبوع القادم."
-              aria-label="ما حدث"
-            />
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <Label className="text-xs">متى أكلّمه مرة ثانية؟</Label>
-                <div className="mt-1.5 grid grid-cols-2 gap-1.5">
-                  {WHEN_PRESETS.map((p) => {
-                    const value = isoDay(p.days);
-                    return (
-                      <button
-                        key={p.label}
-                        type="button"
-                        onClick={() => setWhen(when === value ? "" : value)}
-                        aria-pressed={when === value}
-                        className={cn(
-                          "h-9 rounded-full border px-2 text-xs font-medium transition-colors",
-                          when === value
-                            ? "border-amber-500 bg-amber-500 text-background"
-                            : "border-border text-muted-foreground hover:border-amber-500/50 hover:text-foreground",
-                        )}
-                      >
-                        {p.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                <Input
-                  type="date"
-                  value={when}
-                  onChange={(e) => setWhen(e.target.value)}
-                  dir="ltr"
-                  aria-label="أو تاريخ آخر"
-                  className="mt-1.5 h-9"
-                />
-                {/* الخانة الأصلية تكتب شكلها بلغة المتصفّح (`mm/dd/yyyy` على شاشة عربية) ولا
-                    يملك المتصفّح واجهةً لتغييره — فالمقروء يُكتب تحتها بالعربي. */}
-                <p className="mt-1 text-[11px] text-muted-foreground">
-                  {when
-                    ? new Intl.DateTimeFormat("ar-EG", { weekday: "long", day: "numeric", month: "long" })
-                        .format(new Date(`${when}T09:00:00`))
-                    : "بدون موعد، العميل يُنسى"}
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <Label htmlFor="whenNote" className="text-xs">لماذا؟</Label>
-                  <Input
-                    id="whenNote"
-                    value={whenNote}
-                    onChange={(e) => setWhenNote(e.target.value)}
-                    placeholder="سيردّ بعد ما يكلّم شريكه"
-                    className="mt-1 h-9"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs">ينتقل إلى مرحلة أخرى؟</Label>
-                  <div className="mt-1.5 flex flex-wrap gap-1.5">
-                    {PICKABLE_STAGES.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => setStageAfter(stageAfter === s ? "" : s)}
-                        aria-pressed={stageAfter === s}
-                        className={cn(
-                          "inline-flex h-8 items-center gap-1.5 rounded-full border px-2.5 text-xs transition-colors",
-                          stageAfter === s
-                            ? "border-foreground bg-foreground text-background"
-                            : "border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground",
-                        )}
-                      >
-                        <span className={cn("size-1.5 rounded-full", STAGE_DOT[s])} aria-hidden />
-                        {STAGE_LABEL[s]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Button onClick={submit} disabled={pending || body.trim().length < 2} className="gap-2">
-              {pending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4 rtl:rotate-180" />}
-              {pending ? "جارٍ التسجيل…" : "سجّلي"}
-            </Button>
+          <CardContent>
+            <LogForm leadId={leadId} />
           </CardContent>
         </Card>
       )}
@@ -267,7 +109,7 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
         <CardContent>
           {rows.length === 0 ? (
             <p className="py-6 text-center text-sm text-muted-foreground">
-              لا يوجد شيء مسجَّل بعد. أول مكالمة تكتبينها ستظهر هنا.
+              لا يوجد شيء مسجَّل بعد. أول مكالمة تُسجَّل تظهر هنا.
             </p>
           ) : (
             <ol className="relative space-y-0">
@@ -298,14 +140,16 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
                       </div>
                       <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{r.body}</p>
 
-                      {r.nextActionAt && (
+                      {/* Only an open appointment is shown. A closed one read «متأخّر ٣٣ يوم»
+                          struck through — a finished step that looked like a missed one. */}
+                      {owed && (
                         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                          <span className={cn("inline-flex items-center gap-1.5", owed ? DUE_TONE[due.tone] : "text-muted-foreground line-through")}>
+                          <span className={cn("inline-flex items-center gap-1.5", DUE_TONE[due.tone])}>
                             <Clock className="size-3.5" aria-hidden />
                             {due.text}
                             {r.nextActionNote ? ` — ${r.nextActionNote}` : ""}
                           </span>
-                          {owed && !closed && (
+                          {!closed && (
                             <>
                               <Button
                                 type="button"
@@ -330,7 +174,7 @@ export function FollowUpLog({ leadId, rows, total, closed = false }: Props) {
                                 disabled={pending}
                                 onClick={() => rowAction(r.id, () => snoozeFollowUp(r.id, 3), "تأجيل ٣ أيام")}
                               >
-                                أجّليه ٣ أيام
+                                تأجيل ٣ أيام
                               </Button>
                             </>
                           )}

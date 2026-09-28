@@ -1,8 +1,7 @@
 import "server-only";
 
-import { db } from "@/lib/db";
-import { MEDIA_USED_WHERE, PLATFORM_DEFAULT_PREFIX } from "@/lib/media/usage-where";
-import { REEL_LIVE_WHERE } from "@/lib/media/reel-where";
+import { isMediaUsed, PLATFORM_DEFAULT_PREFIX, type MediaLinks } from "@/lib/media/usage-where";
+import { isReelLive } from "@/lib/media/reel-where";
 import { REEL_STATUS, REEL_VIEW } from "@/lib/media/reel-status";
 import { listMedia } from "@/lib/media/list-media";
 import { getMediaTypeLabel } from "@/lib/media/media-utils";
@@ -21,81 +20,45 @@ const SITE_LABELS = [
 
 /**
  * One page of Modonty › Media, shaped for the shared media grid. Like Clients › Media, a
- * card says what the file IS (from its link) and whether it is used by the same clause the
- * «Used» filter runs — here that clause also knows Modonty's own pages and site settings.
+ * card says what the file IS (from its link) and whether it is used by the same rule the
+ * «Used» filter runs — here that rule also knows Modonty's own pages and site settings.
+ * Both come from the links already read, not from two more queries per page.
  */
 export async function getModontyMedia(
   coreClientId: string,
   siteUrls: string[],
+  links: MediaLinks,
   query: ModontyMediaQuery & { sort?: string; page?: number },
 ) {
-  const result = await listMedia(modontyMediaWhere(coreClientId, siteUrls, query), { sort: query.sort, page: query.page });
-  const ids = result.items.map((m) => m.id);
-  const inSettings = { OR: [{ url: { in: siteUrls } }, { bunnyUrl: { in: siteUrls } }] };
-
-  const [usedRows, linkRows] = ids.length
-    ? await Promise.all([
-        db.media.findMany({
-          where: { AND: [{ id: { in: ids } }, { OR: [MEDIA_USED_WHERE, REEL_LIVE_WHERE, inSettings] }] },
-          select: { id: true },
-        }),
-        db.media.findMany({
-          where: { id: { in: ids } },
-          select: {
-            id: true,
-            url: true,
-            bunnyUrl: true,
-            inReels: true,
-            reelStatus: true,
-            _count: {
-              select: {
-                industrySocialImages: true,
-                categorySocialImages: true,
-                tagSocialImages: true,
-                authorImages: true,
-                authorSocialImages: true,
-                modontyHeroImages: true,
-                modontySocialImages: true,
-                articleGallery: true,
-              },
-            },
-          },
-        }),
-      ])
-    : [[], []];
-
-  const used = new Set(usedRows.map((r) => r.id));
-  const links = new Map(linkRows.map((r) => [r.id, r]));
+  const result = await listMedia(modontyMediaWhere(coreClientId, siteUrls, links, query), { sort: query.sort, page: query.page });
   const settingUrls = new Set(siteUrls);
 
   const items = result.items.map((m) => {
-    const l = links.get(m.id);
-    const isReel = !!l && (l.inReels || l.reelStatus !== null);
-    const site = l ? SITE_LABELS.find(([k]) => l._count[k] > 0)?.[1] : undefined;
-    const inSetting = !!l && (settingUrls.has(l.url) || (!!l.bunnyUrl && settingUrls.has(l.bunnyUrl)));
+    const isReel = m.inReels === true || m.reelStatus !== null;
+    const site = SITE_LABELS.find(([k]) => links[k].has(m.id))?.[1];
+    const inSetting = settingUrls.has(m.url) || (!!m.bunnyUrl && settingUrls.has(m.bunnyUrl));
     const roleLabel = m.filename.startsWith(PLATFORM_DEFAULT_PREFIX)
       ? "Platform default"
       : isReel
       ? "Reel"
       : site ?? (inSetting
         ? "Site setting"
-        : m._count.featuredArticles > 0 || (l?._count.articleGallery ?? 0) > 0
+        : links.featuredArticles.has(m.id) || links.articleGallery.has(m.id)
           ? getMediaTypeLabel("POST")
-          : m._count.logoClients > 0
+          : links.logoClients.has(m.id)
             ? getMediaTypeLabel("LOGO")
-            : m._count.heroImageClients > 0
+            : links.heroImageClients.has(m.id)
               ? getMediaTypeLabel("HERO")
-              : m._count.mobileHeroImageClients > 0
+              : links.mobileHeroImageClients.has(m.id)
                 ? getMediaTypeLabel("HERO_MOBILE")
                 : getMediaTypeLabel(m.type));
-    const reelStatus = l?.reelStatus ?? null;
     return {
       ...m,
       client: m.client || undefined,
-      isUsed: used.has(m.id),
+      isUsed: isMediaUsed(m, links) || isReelLive(m) || inSetting,
       roleLabel,
-      reelHref: isReel ? `/reels/${REEL_VIEW[reelStatus ?? ""] ?? "pending"}` : undefined,
-      status: isReel ? REEL_STATUS[reelStatus ?? ""] ?? { label: "In reels", tone: "muted" as const } : undefined,
+      reelHref: isReel ? `/reels/${REEL_VIEW[m.reelStatus ?? ""] ?? "pending"}` : undefined,
+      status: isReel ? REEL_STATUS[m.reelStatus ?? ""] ?? { label: "In reels", tone: "muted" as const } : undefined,
     };
   });
 

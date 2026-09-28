@@ -161,7 +161,9 @@ export function DataTable<T extends { id: string }>({
                   setSearch(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="ps-10"
+                // The card colour, not transparent: in light mode a see-through input took the
+                // beige page colour between white panels (Khalid, 28 Sep 2026: contrast).
+                className="bg-card ps-10"
               />
             </div>
           )}

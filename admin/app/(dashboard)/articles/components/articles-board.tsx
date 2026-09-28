@@ -283,7 +283,7 @@ export function ArticlesBoard({
       {/* Two panels: what you choose on the left, what needs attention on the right. */}
       {/* The cards keep a fixed 460px so their Arabic labels never truncate; the filters take the rest. */}
       <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_460px]">
-        <section aria-label="Filters" className="flex flex-col justify-center gap-2 rounded-lg border bg-card/40 px-4 py-2.5">
+        <section aria-label="Filters" className="flex flex-col justify-center gap-2 rounded-lg border bg-card px-4 py-2.5">
           <FilterRow label="Writer">
             <CountTab label="All" count={N.format(articles.length)} active={!writer} onClick={() => setParam("writer", null)} />
             {writers.list.map((w) => (

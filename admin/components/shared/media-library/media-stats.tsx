@@ -26,27 +26,6 @@ interface MediaStatsProps {
       TWITTER_IMAGE: number;
       NULL?: number;
     };
-    cloudinaryUsed?: number;
-    cloudinaryTotal?: number;
-    cloudinaryRemaining?: number;
-    cloudinaryDetails?: {
-      plan?: string;
-      credits?: {
-        usage?: number;
-        limit?: number;
-        used_percent?: number;
-      };
-      storage?: {
-        usage?: number;
-        limit?: number;
-        credits_usage?: number;
-      };
-      bandwidth?: {
-        usage?: number;
-        credits_usage?: number;
-      };
-      resources?: number;
-    };
     usageBreakdown?: {
       inArticles: number;
       asLogos: number;

@@ -1,12 +1,15 @@
 "use server";
 
 import { Prisma } from "@prisma/client";
-import { MEDIA_USED_WHERE, MEDIA_UNUSED_WHERE } from "@/lib/media/usage-where";
+import { mediaUsedWhere, mediaUnusedWhere } from "@/lib/media/usage-where";
+import { getMediaLinks } from "@/lib/media/media-links";
+import { mediaSearchWhere } from "@/lib/media/media-search-where";
 import { listMedia, DEFAULT_MEDIA_PER_PAGE } from "@/lib/media/list-media";
 import type { MediaFilters } from "./types";
 
 export async function getMedia(filters?: MediaFilters) {
   try {
+    const links = await getMediaLinks();
     const whereConditions: Prisma.MediaWhereInput[] = [];
 
     if (filters?.scope) {
@@ -61,7 +64,7 @@ export async function getMedia(filters?: MediaFilters) {
     }
 
     if (filters?.used !== undefined) {
-      whereConditions.push(filters.used ? MEDIA_USED_WHERE : MEDIA_UNUSED_WHERE);
+      whereConditions.push(filters.used ? mediaUsedWhere(links) : mediaUnusedWhere(links));
     }
 
     // Client-gallery images are managed in their own /client-galleries route — never
@@ -71,7 +74,14 @@ export async function getMedia(filters?: MediaFilters) {
     const where: Prisma.MediaWhereInput =
       whereConditions.length > 0 ? { AND: whereConditions } : {};
 
-    return await listMedia(where, { sort: filters?.sort, page: filters?.page, perPage: filters?.perPage });
+    const result = await listMedia(where, { sort: filters?.sort, page: filters?.page, perPage: filters?.perPage });
+    // The library card's «In use»: featured image, client logo, desktop or phone cover — the
+    // four relations its old `_count` read, now from the links already in hand.
+    const items = result.items.map((m) => ({
+      ...m,
+      isUsed: [links.featuredArticles, links.logoClients, links.heroImageClients, links.mobileHeroImageClients].some((s) => s.has(m.id)),
+    }));
+    return { ...result, items };
   } catch (error) {
     console.error("Error fetching media:", error);
     return { items: [], total: 0, page: 1, perPage: DEFAULT_MEDIA_PER_PAGE, totalPages: 0 };

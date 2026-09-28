@@ -14,14 +14,20 @@ export const STAGES = ["NEW", "CONTACTED", "QUOTED", "NEGOTIATING", "WON", "LOST
 export type Stage = (typeof STAGES)[number];
 
 /** المراحل التي تُختار بيد المندوبة — بلا `WON` (يقرّره التحويل) ولا `LOST` (له حواره). */
-export const PICKABLE_STAGES = ["NEW", "CONTACTED", "QUOTED", "NEGOTIATING"] as const;
+/**
+ * ثلاث مراحل لا ستّ (خالد ٢٨ سبتمبر ٢٠٢٦ — تبسيط رحلة العميل قبل أن يبدأ الفريق):
+ * جديد ← تواصلنا ← تمّ. ولا «عرض سعر» ولا «تفاوض»: «ما عندنا عروض أسعار، عندنا باقات واضحة»،
+ * و«خسارة» صارت حذفاً. والقيم القديمة تبقى في الـenum لا في الاختيار — لا ترحيلَ بيانات، وصفٌّ
+ * قديمٌ عليها يُقرأ «تواصلنا». وكلّها تتحرّك وحدها: أوّل تواصل ← «تواصلنا»، وتفعيل الطلب ← «تمّ».
+ */
+export const PICKABLE_STAGES = ["NEW", "CONTACTED"] as const;
 
 export const STAGE_LABEL: Record<Stage, string> = {
   NEW: "جديد",
-  CONTACTED: "تم التواصل",
-  QUOTED: "عرض سعر مُرسل",
-  NEGOTIATING: "تفاوض",
-  WON: "تم الإغلاق",
+  CONTACTED: "تواصلنا",
+  QUOTED: "تواصلنا",
+  NEGOTIATING: "تواصلنا",
+  WON: "تمّ",
   LOST: "خسارة",
 };
 
@@ -126,16 +132,18 @@ export function describeDue(at: Date | null | undefined, now = new Date()): { te
   if (!at) return { text: "بدون موعد", tone: "none" };
   const day = (d: Date) => Math.floor(new Date(d).setHours(0, 0, 0, 0) / 86_400_000);
   const diff = day(at) - day(now);
+  // Arabic digits like every other number on the screen — «بعد 7 أيام» sat beside «٢٨ سبتمبر».
+  const num = (n: number) => new Intl.NumberFormat("ar-EG").format(n);
 
   if (diff < 0) {
     const n = Math.abs(diff);
-    const text = n === 1 ? "متأخّر يوم" : n === 2 ? "متأخّر يومين" : `متأخّر ${n} يوم`;
+    const text = n === 1 ? "متأخّر يوم" : n === 2 ? "متأخّر يومين" : `متأخّر ${num(n)} ${n <= 10 ? "أيام" : "يوماً"}`;
     return { text, tone: "overdue" };
   }
   if (diff === 0) return { text: "اليوم", tone: "today" };
   if (diff === 1) return { text: "غداً", tone: "soon" };
   if (diff === 2) return { text: "بعد غد", tone: "soon" };
-  if (diff <= 7) return { text: `بعد ${diff} أيام`, tone: "soon" };
+  if (diff <= 7) return { text: `بعد ${num(diff)} أيام`, tone: "soon" };
   return {
     text: new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "long" }).format(at),
     tone: "later",

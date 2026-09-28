@@ -4,7 +4,6 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { canDeleteMedia } from "./can-delete-media";
-import { deleteCloudinaryAsset } from "@/lib/utils/cloudinary-delete";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 import { deleteBunnyUrl, bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
@@ -51,22 +50,10 @@ export async function deleteMedia(id: string, clientId?: string) {
       return { success: false, error: "Media not found or access denied" };
     }
 
-    // Delete from Cloudinary if public_id exists
-    if (media.cloudinaryPublicId) {
-      const resourceType = media.mimeType.startsWith("image/") ? "image" : "video";
-      const cloudinaryResult = await deleteCloudinaryAsset(media.cloudinaryPublicId, resourceType);
-
-      if (!cloudinaryResult.success) {
-        // Return error to prevent database deletion if Cloudinary deletion fails
-        return {
-          success: false,
-          error: `Failed to delete from Cloudinary: ${cloudinaryResult.error}. The file was not deleted from the database.`,
-        };
-      }
-    } else {
-      // Log warning if no Cloudinary public_id (might be old record)
-      console.warn("Media record has no cloudinaryPublicId, skipping Cloudinary deletion");
-    }
+    // No Cloudinary call (Khalid, 28 Sep 2026: «اوقف لي كلاودينري تماما احنا شغلنا كله على بني»).
+    // Every file is served from Bunny (prod: 1227 of 1227). The old step deleted the Cloudinary
+    // copy FIRST and refused the whole delete when that call failed — 504 production files
+    // carried a publicId, so an unreachable Cloudinary would have locked every one of them.
 
     // Delete the Bunny mirror — best-effort, must never block the DB deletion (P2-3).
     // Article images also have 3 aspect crops next to the base → remove them too.

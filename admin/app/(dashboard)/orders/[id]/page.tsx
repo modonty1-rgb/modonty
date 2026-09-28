@@ -14,7 +14,8 @@ import { confirmOrderPaymentAction } from "../actions";
 import { ConfirmTransferButton } from "../components/confirm-transfer-button";
 import { SendInvoiceButton } from "../components/send-invoice-button";
 import { RefundOrderButton } from "../components/refund-order-button";
-import { CancelOrderButton } from "../components/cancel-order-button";
+import { DeleteOrderButton } from "../components/delete-order-button";
+import { OrderReceipt } from "../components/order-receipt";
 import { WhatsappInvoiceButton } from "../components/whatsapp-invoice-button";
 import { OrderStatusBadge } from "../components/order-status-badge";
 import { formatOrderDate } from "../helpers/format-order-date";
@@ -28,6 +29,7 @@ import { buildInvoiceWhatsappLink } from "../helpers/build-invoice-whatsapp-link
 import { getOrderStatement } from "./helpers/get-order-statement";
 import { getSubscriptionStanding } from "../helpers/get-subscription-standing";
 import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
+import { OrderInternalNote } from "@/components/shared/order-internal-note";
 
 export const dynamic = "force-dynamic";
 
@@ -260,13 +262,8 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             </Button>
           ) : null}
 
-          {/**
-            * الإلغاء: لما لم يصل فيه مال. يظهر للحالتين وحدهما، ويختفي متى صدرت فاتورة
-            * — فالرقمُ محجوزٌ والورقةُ عند المشتري، وبابُ ذاك الاستردادُ لا الإلغاء.
-            */}
-          {(order.status === "AWAITING_PAYMENT" || order.status === "AWAITING_TRANSFER") && !order.invoiceId && isSalesDesk ? (
-            <CancelOrderButton orderId={order.id} orderNumber={order.number} buyerName={order.buyerName} />
-          ) : null}
+          {/* «إلغاء الطلب» (يكتب CANCELLED) شِيل بطلب خالد (٢٨ سبتمبر ٢٠٢٦): الطلب المعلّق يُحذف
+              نهائياً بزرّ الأدمن تحت، لا يُحوَّل إلى «ملغى». */}
 
           {/* الاسترداد: تسجيلُ ما حصل في البنك — يُخرج الطلب من الإيراد ولا يفكّ التفعيل. */}
           {order.status === "PAID" && isFinanceAdmin ? (
@@ -284,6 +281,16 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                 {needsReview ? "مراجعة وتعديل ⚠" : "تعديل الطلب"}
               </Link>
             </Button>
+          ) : null}
+
+          {/* الحذف النهائيّ — للأدمن وحده، جنب التعديل (خالد ٢٨ سبتمبر ٢٠٢٦: «أبغى أشيله من التيبل»). */}
+          {isFinanceAdmin ? (
+            <DeleteOrderButton
+              orderId={order.id}
+              orderNumber={order.number}
+              buyerName={order.buyerName}
+              invoiceNumber={invoice?.number ?? null}
+            />
           ) : null}
         </div>
       </section>
@@ -353,6 +360,19 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             value={invoice?.emailSentAt ? `أُرسلت ${formatOrderDate(invoice.emailSentAt)}` : invoice ? "لم تُرسل بعد" : "—"}
             missing={!!invoice && !invoice.emailSentAt}
           />
+          {/* سند الإيصال — عرضٌ فقط، والرفع من «تعديل الطلب» (خالد ٢٨ سبتمبر ٢٠٢٦). */}
+          {order.status === "PAID" ? (
+            <Row
+              label="سند الإيصال"
+              value={
+                order.transferReceiptPath && isSalesDesk ? (
+                  <OrderReceipt orderId={order.id} version={order.updatedAt.getTime()} />
+                ) : (
+                  "لم يُرفع"
+                )
+              }
+            />
+          ) : null}
         </Panel>
 
         <Panel title="العميل" missing={missing.client}>
@@ -378,6 +398,9 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           <Row label="الدولة" value={order.country ? orderMarketLabel(order.country) : "—"} />
         </Panel>
       </div>
+
+      {/* الملاحظة الداخلية تحت الكروت — كانت تُرى في شاشة التعديل وحدها (خالد ٢٨ سبتمبر ٢٠٢٦). */}
+      {order.notes?.trim() ? <OrderInternalNote note={order.notes.trim()} /> : null}
 
       {/**
         * كشفُ الحساب مختصراً — تحت الطلب (خالد ١٨ سبتمبر ٢٠٢٦): «إذا في كشف حساب

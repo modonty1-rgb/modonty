@@ -61,7 +61,9 @@ export function KpiToggle({
           // header does not grow for it (Khalid: «تستغل المساحة… مش نهدر»).
           "flex items-center gap-2.5 rounded-lg border bg-card px-3 py-1.5 text-start transition-all",
           active && `ring-2 ${meta.ring} border-transparent`,
-          disabled ? "cursor-default opacity-60" : "hover:bg-accent/40 active:scale-[0.99]",
+          // Fade the content, not the tile: `opacity` on the whole tile let the beige page show
+          // through the white card in light mode, so an empty tile read as a grey one (28 Sep 2026).
+          disabled ? "cursor-default [&>*]:opacity-50" : "hover:bg-accent/40 active:scale-[0.99]",
         )}
       >
         {/* One line: icon · number · description (Khalid, 27 Sep 2026). */}

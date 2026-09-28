@@ -1,6 +1,8 @@
 import "server-only";
 
 import { db } from "@/lib/db";
+import type { MediaLinks } from "@/lib/media/usage-where";
+import { startOfThisMonth } from "@/lib/media/start-of-this-month";
 import { MODONTY_MEDIA_KINDS, type ModontyMediaKind } from "./modonty-media-kinds";
 import { modontyMediaWhere, type ModontyMediaQuery } from "./modonty-media-where";
 
@@ -11,6 +13,7 @@ import { modontyMediaWhere, type ModontyMediaQuery } from "./modonty-media-where
 export async function getModontyMediaCounts(
   coreClientId: string,
   siteUrls: string[],
+  links: MediaLinks,
   active: Omit<ModontyMediaQuery, "issueIds">,
   /** The universe's triangle files, and whether the «Issues» filter is on. */
   issues: { ids: string[]; on: boolean },
@@ -18,16 +21,14 @@ export async function getModontyMediaCounts(
   const { kind, used } = active;
   const search = active.search;
   const issueIds = issues.on ? issues.ids : undefined;
-  const w = (q: ModontyMediaQuery) => modontyMediaWhere(coreClientId, siteUrls, q);
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const w = (q: ModontyMediaQuery) => modontyMediaWhere(coreClientId, siteUrls, links, q);
 
   const [kinds, all, usedN, unusedN, createdThisMonth, reelsPending, issuesN] = await Promise.all([
     Promise.all(MODONTY_MEDIA_KINDS.map((k) => db.media.count({ where: w({ search, used, issueIds, kind: k.value }) }))),
     db.media.count({ where: w({ search, used, issueIds }) }),
     db.media.count({ where: w({ search, kind, issueIds, used: true }) }),
     db.media.count({ where: w({ search, kind, issueIds, used: false }) }),
-    db.media.count({ where: { AND: [w({}), { createdAt: { gte: startOfMonth } }] } }),
+    db.media.count({ where: { AND: [w({}), { createdAt: { gte: startOfThisMonth() } }] } }),
     db.media.count({ where: { AND: [w({ search, used, issueIds, kind: "reels" }), { reelStatus: "PENDING_APPROVAL" }] } }),
     db.media.count({ where: w({ search, kind, used, issueIds: issues.ids }) }),
   ]);

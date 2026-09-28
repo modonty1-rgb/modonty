@@ -5,9 +5,8 @@ import { deleteMedia } from "@/lib/media/delete-media";
 import { saveOptimizedImage } from "@/app/(dashboard)/media/actions/optimize-image";
 import { MediaPageClient } from "@/components/shared/media-library/media-page-client";
 import { MediaKindToggles, MediaUsageSelect, UrlSearchPicker } from "@/components/shared/media-library/media-filter-bar";
-import { findIssueMediaIds } from "@/lib/media/find-issue-media-ids";
-import { articlesMediaWhere } from "./helpers/articles-media-where";
 import { ARTICLE_MEDIA_KINDS, type ArticleMediaKind } from "./helpers/article-media-kinds";
+import { getArticlesMediaUniverse } from "./helpers/get-articles-media-universe";
 import { getArticlesMedia } from "./helpers/get-articles-media";
 import { getArticlesMediaCounts } from "./helpers/get-articles-media-counts";
 import { getArticleMediaPickers } from "./helpers/get-article-media-pickers";
@@ -30,9 +29,14 @@ export default async function ArticlesMediaPage({
   const kind = ARTICLE_MEDIA_KINDS.find((k) => k.value === params.kind);
   const clientId = params.clientId && params.clientId !== "all" ? params.clientId : undefined;
   const articleId = params.articleId || undefined;
+
+  // The page's links and triangle files beside the picked article's box; every query below
+  // filters with them.
+  const [universe, box] = await Promise.all([getArticlesMediaUniverse(articleId), articleId ? getArticleBox(articleId) : null]);
+
   // The triangle files of the whole page — the «Issues» toggle and its count.
   const issuesOn = params.issues === "1";
-  const issueIds = await findIssueMediaIds(articlesMediaWhere({}));
+  const issueIds = universe.issueIds;
   const query = {
     clientId,
     articleId,
@@ -45,13 +49,12 @@ export default async function ArticlesMediaPage({
   };
 
   // The featured image sits in the box; with no type or search on, the grid shows the rest.
-  const box = articleId ? await getArticleBox(articleId) : null;
   const othersOnly = !!box?.featured && !kind && !query.search && !issuesOn;
 
-  const [result, counts, pickers] = await Promise.all([
-    getArticlesMedia({ ...query, excludeIds: othersOnly && box?.featured ? [box.featured.id] : undefined }),
-    getArticlesMediaCounts({ clientId, articleId, kind: query.kind, used: query.used, search: query.search }, { ids: issueIds, on: issuesOn }),
-    getArticleMediaPickers({ clientId, kind: query.kind, used: query.used, search: query.search, issueIds: query.issueIds }),
+  const [result, pickers, counts] = await Promise.all([
+    getArticlesMedia(universe, { ...query, excludeIds: othersOnly && box?.featured ? [box.featured.id] : undefined }),
+    getArticleMediaPickers(universe, { clientId, kind: query.kind, used: query.used, search: query.search, issueIds: query.issueIds }),
+    getArticlesMediaCounts(universe, { clientId, articleId, kind: query.kind, used: query.used, search: query.search }, issuesOn),
   ]);
 
   const uploadClientId = box?.clientId ?? clientId;
@@ -100,7 +103,7 @@ export default async function ArticlesMediaPage({
             ariaLabel="Article"
             className="w-[300px]"
           />
-          <MediaKindToggles kinds={ARTICLE_MEDIA_KINDS} total={counts.all} byKind={counts.byKind} issues={counts.issues} />
+          <MediaKindToggles kinds={ARTICLE_MEDIA_KINDS.map(({ value, label }) => ({ value, label }))}total={counts.all} byKind={counts.byKind} issues={counts.issues} />
         </div>
 
         {box ? <ArticleBox article={box} /> : null}

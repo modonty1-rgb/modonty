@@ -36,6 +36,9 @@ export type AuditAction =
   | "industry.merge"
   | "media.delete"
   | "contactMessage.delete"
+  // A sales lead removed for good (Khalid, 28 Sep 2026: delete replaces «خسرناه») — the row
+  // and its log are gone, so this entry is the only trace of who removed whom.
+  | "lead.delete"
   // 🔴 Goes public / decides responsibility
   | "article.publish"
   | "article.transition"
@@ -65,6 +68,7 @@ export type AuditAction =
   | "order.refund" // تسجيلُ استردادٍ حصل — يسحب مالاً من الإيراد، فيُقيَّد بمن ومتى ولماذا
   | "order.cancel" // إلغاءُ طلبٍ لم يصل فيه مال — يُسقطه من الطابور، فيُقيَّد بمن ومتى ولماذا
   | "order.update"
+  | "order.delete" // حذفُ طلبٍ نهائياً مع دفعاته وفاتورته — للأدمن وحده، ويُقيَّد بلقطةٍ لما حُذف
   /**
    * طلبُ اشتراكٍ يسجّله الموظّف بيده لا العميل بنفسه — فالسؤال بعد شهر سيكون
    * «من أدخل هذا الطلب ومتى»، ولا جواب له إلا هذا السطر.
@@ -110,6 +114,7 @@ export type AuditEntity =
   | "Tag"
   | "Media"
   | "ContactMessage"
+  | "SalesLead"
   | "User"
   | "Staff"
   | "Invoice"

@@ -56,7 +56,7 @@ export async function resolveLeadDeal(input: {
   if (!plan) {
     return {
       ok: false,
-      fieldErrors: { expectedTier: ["الباقة ليست منشورة في هذا السوق — اختاري باقة"] },
+      fieldErrors: { expectedTier: ["الباقة ليست منشورة في هذا السوق — يلزم اختيار باقة"] },
     };
   }
 
@@ -64,7 +64,7 @@ export async function resolveLeadDeal(input: {
   if (!term) {
     return {
       ok: false,
-      fieldErrors: { expectedMonths: ["المدّة غير مفعّلة في «الباقات والأسعار» — اختاري مدّة"] },
+      fieldErrors: { expectedMonths: ["المدّة غير مفعّلة في «الباقات والأسعار» — يلزم اختيار مدّة"] },
     };
   }
 

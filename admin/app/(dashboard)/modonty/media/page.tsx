@@ -15,8 +15,8 @@ import { MODONTY_MEDIA_KINDS, type ModontyMediaKind } from "./helpers/modonty-me
 import { getSiteImageUrls } from "./helpers/get-site-image-urls";
 import { getModontyMedia } from "./helpers/get-modonty-media";
 import { getModontyMediaCounts } from "./helpers/get-modonty-media-counts";
-import { modontyMediaWhere } from "./helpers/modonty-media-where";
 import { findIssueMediaIds } from "@/lib/media/find-issue-media-ids";
+import { getMediaLinks } from "@/lib/media/media-links";
 import { ModontyUploadButton, ModontyUploadProvider } from "./components/modonty-upload";
 
 /**
@@ -48,7 +48,8 @@ export default async function ModontyMediaPage({
   const kind = MODONTY_MEDIA_KINDS.find((k) => k.value === params.kind);
   // The triangle files of the whole page — the «Issues» toggle and its count.
   const issuesOn = params.issues === "1";
-  const issueIds = await findIssueMediaIds(modontyMediaWhere(coreClientId, siteUrls, {}));
+  // Every triangle file in the library; each query ANDs them with this page's own where.
+  const [issueIds, links] = await Promise.all([findIssueMediaIds(), getMediaLinks()]);
   const query = {
     issueIds: issuesOn ? issueIds : undefined,
     kind: kind?.value as ModontyMediaKind | undefined,
@@ -59,8 +60,8 @@ export default async function ModontyMediaPage({
   };
 
   const [result, counts] = await Promise.all([
-    getModontyMedia(coreClientId, siteUrls, query),
-    getModontyMediaCounts(coreClientId, siteUrls, { kind: query.kind, used: query.used, search: query.search }, { ids: issueIds, on: issuesOn }),
+    getModontyMedia(coreClientId, siteUrls, links, query),
+    getModontyMediaCounts(coreClientId, siteUrls, links, { kind: query.kind, used: query.used, search: query.search }, { ids: issueIds, on: issuesOn }),
   ]);
 
   const kindSpec = kind?.role ? MEDIA_SPECS[kind.role] : null;

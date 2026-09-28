@@ -27,6 +27,7 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
       market: true, totalMinor: true, paidMonths: true,
       bonusServiceMonths: true,
       serviceStartedAt: true, activatedAt: true, paidAt: true, notes: true, isInternal: true,
+      status: true, transferReceiptPath: true, updatedAt: true,
     },
   });
   if (!order) notFound();
@@ -47,8 +48,9 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
     ? [...salesReps, { id: assignedRep.id, name: assignedRep.name || assignedRep.email || "مندوب سابق" }]
     : salesReps;
 
+  const { status, transferReceiptPath, updatedAt, ...editable } = order;
   const forEdit: OrderForEdit = {
-    ...order,
+    ...editable,
     serviceStartedAt: day(order.serviceStartedAt),
     activatedAt: day(order.activatedAt),
     paidAt: day(order.paidAt),
@@ -73,7 +75,12 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
         </Link>
       </header>
 
-      <OrderEditForm order={forEdit} isMigrated={migrated} salesReps={selectableSalesReps} />
+      <OrderEditForm
+        order={forEdit}
+        isMigrated={migrated}
+        salesReps={selectableSalesReps}
+        receipt={status === "PAID" ? { hasReceipt: Boolean(transferReceiptPath), version: updatedAt.getTime() } : null}
+      />
     </main>
   );
 }

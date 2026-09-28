@@ -3,7 +3,6 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { deleteOldImage } from "../../actions/delete-image";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 import { tagServerSchema } from "./tag-server-schema";
@@ -370,9 +369,6 @@ export async function deleteTag(id: string) {
         error: `Cannot delete tag. This tag has ${tag._count.articles} article(s). Please delete or reassign the articles first.`,
       };
     }
-
-    // Delete Cloudinary image before database deletion (non-blocking)
-    await deleteOldImage("tags", id);
 
     await db.tag.delete({ where: { id } });
 

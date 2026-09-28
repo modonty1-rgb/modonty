@@ -1,10 +1,17 @@
-import { DueToday } from "./components/due-today";
-import { LeadsBoard } from "./components/leads-board";
+import { LeadsTable } from "./components/leads-table";
 import { formatCount } from "./helpers/format-count";
 import { getLeadSourceLabels } from "./helpers/get-lead-source-labels";
 import { getLeadSources } from "./helpers/get-lead-sources";
 import { getSalesLeads } from "./helpers/get-sales-leads";
-import { summarizeLeads } from "./helpers/summarize-leads";
+
+/**
+ * The table reads the newest 2,000; a lead due today but older than that would vanish from
+ * «عليّ اليوم». The due query is uncapped by age, so its rows are added when missing.
+ */
+function withDue<T extends { id: string }>(rows: T[], due: T[]): T[] {
+  const seen = new Set(rows.map((r) => r.id));
+  return [...rows, ...due.filter((r) => !seen.has(r.id))];
+}
 
 export const metadata = { title: "العملاء المحتملون — أدمن مدونتي" };
 
@@ -21,21 +28,9 @@ export default async function SalesLeadsPage() {
     getLeadSources(),
   ]);
 
-  // الحساب على السيرفر: الصفوف كلّها هنا أصلاً، وحسابها في المتصفّح يعيد المرور عليها في كل رسمة.
-  const summary = summarizeLeads(rows);
-
   return (
-    <div dir="rtl" className="space-y-4 p-4 sm:p-6">
-      <DueToday leads={due} />
-
-      {/* العنوان والزرّ يُمرَّران إلى اللوحة لأن الإشارات تجلس بينهما في صفٍّ واحد. */}
-      <LeadsBoard
-        rows={rows}
-        summary={summary}
-        sourceLabels={sourceLabels}
-        activeSources={activeSources}
-        title="العملاء المحتملون"
-      />
+    <div dir="rtl" className="space-y-3 px-4 pb-6 sm:px-5">
+      <LeadsTable rows={withDue(rows, due)} sourceLabels={sourceLabels} activeSources={activeSources} />
 
       {truncated && (
         <p className="text-xs text-muted-foreground">

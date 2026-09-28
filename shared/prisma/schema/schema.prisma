@@ -1525,6 +1525,10 @@ model CheckoutOrder {
   notes             String?
   transferReference String?
   transferDate      DateTime?
+  /// صورة سند الإيصال — مسارها في مخزن Bunny الخاصّ (`modonty-backups`، بلا Pull Zone فلا رابط عامّ)،
+  /// تُرفع مع «حفظ التعديل» وتُعرض من الأدمن وحده عبر `/orders/[id]/receipt`. اختياريّة، للمدفوع (خالد ٢٨ سبتمبر ٢٠٢٦).
+  /// مَن رفعها ومتى: في سطر `order.update` («سند الإيصال: رُفع/استُبدل»).
+  transferReceiptPath String?
   confirmedByUserId String?   @db.ObjectId
   confirmedAt       DateTime?
 

@@ -1,7 +1,8 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-import { clientsMediaWhere, type ClientsMediaQuery } from "./clients-media-where";
+import type { ClientsMediaQuery } from "./clients-media-where";
+import type { ClientsMediaUniverse } from "./get-clients-media-universe";
 
 /**
  * The client picker on Clients › Media: every client except Modonty, whatever its
@@ -9,23 +10,24 @@ import { clientsMediaWhere, type ClientsMediaQuery } from "./clients-media-where
  * many files it has under the type/usage/search filters that are on — clients with files
  * first, so the list opens on the ones worth picking.
  *
- * Counted by tallying one `clientId` column instead of a `groupBy`: Prisma's MongoDB groupBy
- * panicked on this filter shape (26 Sep 2026, «Option::unwrap() on a None value»).
+ * Tallied by a `groupBy` inside the database: one row per client comes back, not one per file.
+ * (It panicked on 26 Sep 2026 — «Option::unwrap() on a None value» — while the filter carried
+ * relation clauses; the filter is plain fields and `id in` now.)
  */
 export async function getMediaOwnerClients(
   coreClientId: string | null,
+  { where }: ClientsMediaUniverse,
   active: Pick<ClientsMediaQuery, "kind" | "used" | "search" | "issueIds">,
 ) {
-  const [clients, rows] = await Promise.all([
+  const [clients, groups] = await Promise.all([
     db.client.findMany({
       where: coreClientId ? { id: { not: coreClientId } } : {},
       select: { id: true, name: true },
     }),
-    db.media.findMany({ where: clientsMediaWhere(coreClientId, active), select: { clientId: true } }),
+    db.media.groupBy({ by: ["clientId"], where: where(active), _count: { _all: true } }),
   ]);
 
-  const perClient = new Map<string, number>();
-  for (const r of rows) if (r.clientId) perClient.set(r.clientId, (perClient.get(r.clientId) ?? 0) + 1);
+  const perClient = new Map(groups.map((g) => [g.clientId, g._count._all]));
 
   return clients
     .map((c) => ({ id: c.id, name: c.name.trim(), files: perClient.get(c.id) ?? 0 }))
