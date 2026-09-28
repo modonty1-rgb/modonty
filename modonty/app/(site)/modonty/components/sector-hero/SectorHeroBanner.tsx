@@ -19,8 +19,13 @@ export function SectorHeroBanner({ hero, headingId, title, children }: { hero: S
   const tall = hero.mobile || hero.desktop ? "min-h-[420px] md:min-h-[300px]" : "";
   return (
     <section aria-labelledby={headingId} className="relative isolate overflow-hidden rounded-xl bg-brand-navy text-white">
+      {/* The phone image is square; the box is taller (420, room for the text). Filling the box with
+          `object-cover` cut the image's sides — 62px each side at 320 (Khalid, 28 Sep 2026: «مقصوصة»).
+          So it sits whole at the bottom, full width, and its top edge fades into the navy above. */}
       {hero.mobile && (
-        <Image src={hero.mobile.src} alt={hero.mobile.alt} fill priority sizes="100vw" {...blurOf(hero.mobile)} className="-z-10 object-cover md:hidden" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 aspect-square [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_18%)] [mask-image:linear-gradient(to_bottom,transparent,black_18%)] md:hidden">
+          <Image src={hero.mobile.src} alt={hero.mobile.alt} fill priority sizes="100vw" {...blurOf(hero.mobile)} className="object-cover" />
+        </div>
       )}
       {/* 864 = the main column at 1280 (measured 27 Sep 2026); 800 made the browser fetch a smaller file than it paints. */}
       {hero.desktop && (
