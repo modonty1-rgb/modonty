@@ -15,6 +15,7 @@ import { uploadImageToBunny } from "@/lib/media/upload-image-to-bunny";
 import { createMedia } from "@/lib/media/create-media";
 import { findAltClash } from "@/lib/media/find-alt-clash";
 import { altToFileBase } from "@modonty/shared/lib/seo/media/alt-to-filename";
+import { fitToSpec } from "./fit-to-spec";
 import { ImageEditorModal } from "./image-editor-modal";
 
 /** What the window was opened for: one client and one role, both known before it opens. */
@@ -132,7 +133,7 @@ export function UploadMediaDialog({ target, onOpenChange, link }: UploadMediaDia
       toast({ title: "Alt text is required", description: "Describe the image before saving.", variant: "destructive" });
       return;
     }
-    const back: Step = source ? (requiresCrop(target.role) ? "crop" : "preview") : "pick";
+    const back: Step = source ? (requiresCrop(target.role) && !pending ? "crop" : "preview") : "pick";
     setStep("saving");
     try {
       const dup = alt.trim()
@@ -193,7 +194,7 @@ export function UploadMediaDialog({ target, onOpenChange, link }: UploadMediaDia
       setStep(back);
       toast({ title: "Upload failed", description: e instanceof Error ? e.message : "Try again.", variant: "destructive" });
     }
-  }, [target, link, toast, onOpenChange, router, source, alt, altMissing]);
+  }, [target, link, toast, onOpenChange, router, source, pending, alt, altMissing]);
 
   const takeFile = async (file: File | undefined) => {
     if (!file || !target) return;
@@ -204,6 +205,16 @@ export function UploadMediaDialog({ target, onOpenChange, link }: UploadMediaDia
     const role = MEDIA_SPECS[target.role];
     if (role.ratio !== null) {
       const fit = await largestCrop(file, role.ratio);
+      // Already the role's ratio (the hero prompts ask for it): nothing to crop, so no editor —
+      // scaled here to the exact size. The editor shrank such a file into a corner when the window
+      // was short (28 Sep 2026); see fitToSpec.
+      if (fit && role.width && role.height && fit.srcW >= role.width && Math.abs(fit.srcW / fit.srcH - role.ratio) < 0.005) {
+        const ready = await fitToSpec(file, role.width, role.height);
+        setSource({ url: URL.createObjectURL(ready), name: ready.name, size: ready.size });
+        setPending(ready);
+        setStep("preview");
+        return;
+      }
       if (fit && (fit.w < role.minWidth || fit.h < role.minHeight)) {
         toast({
           title: "Image too small",
@@ -224,8 +235,9 @@ export function UploadMediaDialog({ target, onOpenChange, link }: UploadMediaDia
   };
 
   const withCrop = !!target && requiresCrop(target.role);
-  const cropping = !!source && withCrop && (step === "crop" || step === "saving");
-  const previewing = !!source && !withCrop && (step === "preview" || step === "saving");
+  // A file that needed no crop arrives with `pending` already set, and shows as a preview.
+  const cropping = !!source && withCrop && !pending && (step === "crop" || step === "saving");
+  const previewing = !!source && !!pending && (step === "preview" || step === "saving");
   const blocked = altMissing || !!clash;
 
   return (
