@@ -39,7 +39,4 @@ export function formatCount(count: number, forms: CountForms): string {
   return count <= 10 ? `${digits} ${forms.few}` : `${digits} ${forms.many}`;
 }
 
-/** Fills `{name}` placeholders — the only templating a message file needs. */
-export function fill(template: string, values: Record<string, string>): string {
-  return template.replace(/\{(\w+)\}/g, (match, key: string) => values[key] ?? match);
-}
+export { fill } from "./fill";

@@ -81,6 +81,8 @@ const nextConfig: NextConfig = {
   // Retired /whats-new (merged into /news). ASCII path → safe to redirect (no Arabic-slug corruption).
   redirects: async () => [
     { source: "/whats-new", destination: "/news", permanent: true },
+    // «المال والأعمال» became «ريادة الأعمال» (28 Sep 2026) — its «قريباً» address was already shared.
+    { source: "/modonty/markets", destination: "/modonty/entrepreneurship", permanent: true },
   ],
   headers: async () => [
     {

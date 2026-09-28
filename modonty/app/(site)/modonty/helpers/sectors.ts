@@ -17,7 +17,7 @@ export type SectorSlug =
   | "modoLink"
   | "football"
   | "ai"
-  | "markets"
+  | "entrepreneurship"
   | "entertainment"
   | "education"
   | "health";
@@ -41,6 +41,8 @@ interface Sector {
  * Year in Search 2025, the CST internet report and GASTAT; evidence in
  * `documentation/SECTORS-CONCEPT.html`. They open `/modonty/<slug>`, not built yet.
  * Nothing was dropped for the new doors (Khalid: «خلي الباقي موجود لحد ما نفلتر»).
+ * «المال والأعمال» became «ريادة الأعمال» (28 Sep 2026): stock prices need a paid licence from the
+ * exchange, so the page serves the one starting a business instead.
  *
  * Labels are in `messages.modonty.sectors`, keyed by slug.
  */
@@ -50,7 +52,7 @@ export const SECTORS: readonly Sector[] = [
   { slug: "modoLink", href: "/modo-link", icon: IconLink, featured: true },
   { slug: "football", href: "/modonty/football", icon: IconFootball },
   { slug: "ai", href: "/modonty/ai", icon: IconAi },
-  { slug: "markets", href: "/modonty/markets", icon: IconMarkets },
+  { slug: "entrepreneurship", href: "/modonty/entrepreneurship", icon: IconMarkets },
   { slug: "entertainment", href: "/modonty/entertainment", icon: IconEntertainment },
   { slug: "education", href: "/modonty/education", icon: IconEducation },
   { slug: "health", href: "/modonty/health", icon: IconHealth },

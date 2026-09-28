@@ -16,6 +16,7 @@ export interface HeroPrompt {
 const BALL = "a realistic modern match football with clean, symmetrical, correctly shaped panels (no warped, melted or irregular patterns)";
 const RULES = "No text, no letters, no numbers except the \"? - ?\" on the scoreboard, no logos, no club badges, no real team kits, no people's faces.";
 const AI_RULES = "No text, no letters, no numbers, no company logos, no robots with human faces, no people.";
+const BUSINESS_RULES = "No text, no letters, no numbers, no currency symbols, no company logos, no people's faces.";
 const PALETTE = "Color palette: deep navy #0E065A as the dominant background, electric blue #3030FF and bright teal #00D8D8 accents.";
 
 export const HERO_PROMPTS: Record<string, { desktop: HeroPrompt; mobile: HeroPrompt }> = {
@@ -51,6 +52,24 @@ export const HERO_PROMPTS: Record<string, { desktop: HeroPrompt; mobile: HeroPro
         "بلا كتابة ولا حروف ولا شعارات شركات",
       ],
       prompt: `Create an image: square mobile hero, 1080x1080 (1:1), same scene and style as the wide banner. An abstract glowing neural network sphere above a sleek chip, placed small in the BOTTOM quarter, fully inside the frame (not cropped). Keep the TOP 60% calm, dark navy with a soft glow — an Arabic headline and a line of text will be placed there. ${PALETTE} ${AI_RULES}`,
+    },
+  },
+  entrepreneurship: {
+    desktop: {
+      keys: [
+        "النصف الأيمن فاضي وهادئ — عليه العنوان والسطر",
+        "في الثلث الأيسر: متجر صغير مضيء وسهم نمو صاعد · بلا أشخاص",
+        "بلا كتابة ولا أرقام ولا رموز عملات ولا شعارات",
+      ],
+      prompt: `Create an image: wide cinematic hero banner, 2048x768 (8:3 landscape), for an Arabic right-to-left page about entrepreneurship and small business. In the LEFT third, a small modern glowing storefront with an open door, and a luminous upward growth arrow rising behind it like a path of light, in sharp focus. ${PALETTE} Keep the RIGHT half calm, dark and uncluttered — an Arabic headline and one line of text will be placed there. ${BUSINESS_RULES} Premium, calm, modern, high contrast, subtle depth of field.`,
+    },
+    mobile: {
+      keys: [
+        "النصف العلوي كاملاً فاضي وهادئ — عليه العنوان والسطر",
+        "المتجر المضيء وسهم النمو في الربع السفلي، صغيرين ومكتملين غير مقصوصين",
+        "بلا كتابة ولا أرقام ولا رموز عملات ولا شعارات",
+      ],
+      prompt: `Create an image: square mobile hero, 1080x1080 (1:1), same scene and style as the wide banner. A small modern glowing storefront with a luminous upward growth arrow behind it, placed small in the BOTTOM quarter, fully inside the frame (not cropped). Keep the TOP 60% calm, dark navy with a soft glow — an Arabic headline and a line of text will be placed there. ${PALETTE} ${BUSINESS_RULES}`,
     },
   },
 };

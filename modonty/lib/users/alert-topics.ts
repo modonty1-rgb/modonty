@@ -20,6 +20,13 @@ export const ALERT_TOPICS = [
     hint: "أهم النماذج والأبحاث الجديدة بالعربي، كل أسبوع على إيميلك",
     consent: "أرسل لي ملخّص الذكاء الاصطناعي كل أسبوع",
   },
+  // The entrepreneurship page's weekly news (28 Sep 2026): consent collected now, sending built later.
+  {
+    id: "entrepreneurship",
+    label: "جديد ريادة الأعمال الأسبوعي",
+    hint: "مقالات وأدوات تساعدك في مشروعك، كل أسبوع على إيميلك",
+    consent: "أرسل لي جديد ريادة الأعمال كل أسبوع",
+  },
 ] as const;
 
 export type AlertTopicId = (typeof ALERT_TOPICS)[number]["id"];
