@@ -31,6 +31,7 @@ export function Header({
   canViewReports = false,
   myOpenTasks = 0,
   pendingReviews = 0,
+  pendingBriefs = 0,
 }: {
   dbBadge?: React.ReactNode;
   canSyncLocal?: boolean;
@@ -38,6 +39,8 @@ export function Header({
   myOpenTasks?: number;
   /** مهامّ أرسلتُها وتنتظر اعتمادي — عنصرُ «Reviews» في قائمة Tasks. */
   pendingReviews?: number;
+  /** بريفات حملات بانتظار الموافقة — بادجٌ على قائمة الحملات. */
+  pendingBriefs?: number;
   /** Computed on the server from the staff row — the session token does not carry it. */
   canViewReports?: boolean;
 }) {
@@ -69,7 +72,7 @@ export function Header({
           {/* Sales followed Tasks out of the sidebar (Khalid, 2026-09-04) — Faten's
               whole day is these three pages, so they sit beside Tasks not under it. */}
           <SalesMenu />
-          <CampaignsMenu />
+          <CampaignsMenu pendingBriefs={pendingBriefs} />
 
           {/* الـPlaybook في الشريط نفسه لا داخل قائمة الأفاتار (خالد، ١١ سبتمبر ٢٠٢٦):
               مرجع يُفتح كل يوم لا يُخبّأ خلف نقرتين. */}

@@ -58,23 +58,7 @@ export const STAGE_DOT: Record<Stage, string> = {
   LOST: "bg-rose-500/60",
 };
 
-/**
- * لماذا سقط — السؤال الذي كانت «مؤرشف» تبتلعه.
- *
- * بلا جوابه يبقى الخاسرون رقماً ميتاً؛ ومعه يُعرف إن كان السعر يطرد الناس أم المتابعة تتأخّر
- * أم السوق غلط. وهذه القائمة قصيرة عمداً: خمسة أسباب تُختار في ثانية، والسادس يكتب نفسه.
- */
-export const LOST_REASONS = ["PRICE", "COMPETITOR", "NO_RESPONSE", "NOT_NOW", "NOT_A_FIT", "OTHER"] as const;
-export type LostReason = (typeof LOST_REASONS)[number];
-
-export const LOST_LABEL: Record<LostReason, string> = {
-  PRICE: "السعر",
-  COMPETITOR: "منافس",
-  NO_RESPONSE: "لا يوجد ردّ",
-  NOT_NOW: "ليس الآن",
-  NOT_A_FIT: "غير مناسب",
-  OTHER: "سبب آخر",
-};
+export { LOST_REASONS, LOST_LABEL, type LostReason } from "@/lib/sales/lost-reason";
 
 /**
  * قنوات التواصل — ترتيبها ترتيب استعمالها لا ترتيب الحروف: التليفون والواتساب أوّلاً لأنهما

@@ -37,7 +37,7 @@ export function formatCatalogMoneyMinor(minor: number, currency: string, fractio
  * والكونسول بلا نقطة، وسبعُ خرائطَ مكتوبةٌ باليد في الشاشات — فالمبلغُ الواحد يُقرأ بصيغتين.
  * كلُّها تقرأ من هنا الآن.
  */
-const CURRENCY_LABEL: Record<string, string> = { SAR: "ر.س.", EGP: "ج.م." };
+const CURRENCY_LABEL: Record<string, string> = { SAR: "ر.س.", EGP: "ج.م.", AED: "د.إ.", KWD: "د.ك." };
 
 /** «ر.س.» · «ج.م.» — أو الرمز الدوليّ كما هو لعملةٍ لم تُترجَم بعد. */
 export function currencyLabel(currency: string): string {

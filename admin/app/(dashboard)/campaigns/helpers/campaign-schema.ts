@@ -8,70 +8,64 @@ const CHANNELS = [
 ] as const;
 
 const OBJECTIVES = ["LEADS", "SALES", "TRAFFIC", "ENGAGEMENT", "AWARENESS"] as const;
-const STATUSES = ["DRAFT", "ACTIVE", "PAUSED", "ENDED"] as const;
 
 /** خانةٌ فارغة تصل `""` لا `undefined` — فتُترجَم عند الحدّ مرّةً بدل أن تُفحص في كل حقل. */
 const optionalText = z.string().trim().transform((v) => (v === "" ? null : v)).nullable();
+const optionalMoney = (message: string) =>
+  z.preprocess(
+    (v) => (v === "" || v == null ? null : v),
+    z.coerce.number({ message }).positive(message).nullable(),
+  );
 
 /**
- * رسائل المنع تسمّي الحقل والعطل — لا «تحقّق من البيانات».
+ * بريف الحملة — ما يكتبه الميديا باير قبل أن يبني الإعلان، وعليه يوافق الأدمن (خالد ٢٩ سبتمبر
+ * ٢٠٢٦: «الميديا باير قبل ما يسوي الإعلان يديني توصيف للإعلان والهدف منه، أنا أدي الأبروف»).
  *
- * البوّابة تبقى مقفلة، والذي يُصلَح هو الرسالة: مَن يُمنع ولا يُقال له أين، يجرّب حتى يملّ ثم
- * يكتب في الملاحظات ما كان يجب أن يكتبه في خانته.
+ * الموافقة على **الهدف وسقف الميزانية** لا على تفاصيل المنصّة: المجموعات الإعلانية وتجارب A/B
+ * يبنيها في ميتا كما يشاء، والأرقام تُسحب من هناك. فالإجباريّ هنا ما يُتّخذ عليه القرار:
+ * الاسم · السوق · القناة · الهدف · البريف · سقف الميزانية · البداية.
+ *
+ * رسائل المنع تسمّي الحقل والعطل — لا «تحقّق من البيانات».
  */
 export const campaignSchema = z
   .object({
     name: z.string().trim().min(2, "اسم الحملة ناقص — اكتب اسماً يعرفه مَن يقرؤه بعد شهرين"),
+    countryCode: z.enum(["SA", "EG", "AE", "KW"], { message: "اختر السوق — منه تجيء العملة" }),
+    site: z.enum(["MODONTY", "JBRSEO"]).default("MODONTY"),
+    channel: z.enum(CHANNELS, { message: "اختر القناة" }),
+    objective: z.enum(OBJECTIVES, { message: "اختر هدف الإعلان — عليه تُعطى الموافقة" }),
+    brief: z.string().trim().min(10, "اكتب وصف الإعلان: العرض أو الرسالة، في جملة أو جملتين"),
+    targetAudience: optionalText,
 
-    countryCode: z.enum(["SA", "EG"], { message: "اختر السوق — منه تجيء العملة" }),
-    site: z.enum(["MODONTY", "JBRSEO"], { message: "اختر الموقع الذي يوصّل إليه الإعلان" }),
-    channel: z.enum(CHANNELS, { message: "اختر القناة — منها يُبنى وسم الرابط" }),
-    objective: z.enum(OBJECTIVES, { message: "اختر هدف الحملة كما ضُبط في المنصّة" }),
-    status: z.enum(STATUSES).default("DRAFT"),
+    spendCap: z.preprocess(
+      (v) => (v === "" || v == null ? undefined : v),
+      z.coerce
+        .number({ message: "سقف الميزانية إجباريّ — هو ما توافق عليه" })
+        .positive("سقف الميزانية لازم يكون أكبر من صفر"),
+    ),
+    targetCostPerLead: optionalMoney("الرقم المستهدف رقمٌ أكبر من صفر"),
+    destination: z.enum(["WEBSITE", "WHATSAPP", "PLATFORM_FORM"], { message: "اختر وين يروح العميل بعد الضغط" }),
+    creativeUrl: z.preprocess(
+      (v) => (v === "" || v == null ? null : v),
+      z.string().trim().url("رابط التصاميم غير صحيح — انسخه كاملاً من Drive أو Figma").nullable(),
+    ),
 
     startAt: z.coerce.date({ message: "تاريخ البداية غير مقروء" }),
-    endAt: z.coerce.date({ message: "تاريخ النهاية إلزاميّ — منه يُحسب عدد الأيام" }),
+    /** فارغة = مستمرّة حتى يُوقفها أحد. */
+    endAt: z.preprocess(
+      (v) => (v === "" || v == null ? null : v),
+      z.coerce.date({ message: "تاريخ النهاية غير مقروء" }).nullable(),
+    ),
 
-    dailyBudget: z.coerce
-      .number({ message: "ميزانية اليوم رقمٌ لا نصّ" })
-      .positive("ميزانية اليوم لازم تكون أكبر من صفر"),
-
-    spendCap: z
-      .union([z.literal(""), z.coerce.number().positive("سقف الصرف لازم يكون أكبر من صفر")])
-      .transform((v) => (v === "" ? null : (v as number)))
-      .nullable(),
-
-    /** نيّة الحملة — نصٌّ حرّ بقرار خالد، يُقرأ عند المراجعة ولا يُجمَّع في تقرير. */
-    targetRegion: optionalText,
-    targetAge: optionalText,
-    targetAudience: optionalText,
     landingPath: optionalText,
-
-    platformCampaignId: optionalText,
-
-    utmCampaign: z
-      .string()
-      .trim()
-      .min(3, "وسم الرابط ناقص")
-      // لاتينيّ صغير بشرطات: العربيّ يصل مرمَّزاً بالنسبة المئوية فلا يُقرأ في أيّ تقرير.
-      .regex(/^[a-z0-9-]+$/, "وسم الرابط بحروفٍ لاتينية صغيرة وأرقامٍ وشرطات فقط"),
-
     note: optionalText,
   })
   /**
-   * النهاية بعد البداية — والحارس هنا لا في الشاشة وحدها.
-   *
-   * نهايةٌ قبل بدايةٍ تُخرج عدد أيامٍ سالباً، فيصير الإجماليّ المعروض سالباً وتكلفةُ العميل
-   * المحسوبة عليه كذلك. والحدّ هو المكان الوحيد الذي لا يُتجاوَز.
+   * النهاية بعد البداية — والحارس هنا لا في الشاشة وحدها: نهايةٌ قبل بدايةٍ تُخرج مدّةً سالبة.
    */
-  .refine((v) => v.endAt.getTime() >= v.startAt.getTime(), {
+  .refine((v) => v.endAt === null || v.endAt.getTime() >= v.startAt.getTime(), {
     path: ["endAt"],
     message: "النهاية قبل البداية — راجع التاريخين",
-  })
-  /** سقفٌ أقلّ من ميزانية يومٍ واحد يوقف الحملة قبل أن تبدأ. */
-  .refine((v) => v.spendCap === null || v.spendCap >= v.dailyBudget, {
-    path: ["spendCap"],
-    message: "سقف الصرف أقلّ من ميزانية يوم واحد",
   });
 
 export type CampaignInput = z.input<typeof campaignSchema>;

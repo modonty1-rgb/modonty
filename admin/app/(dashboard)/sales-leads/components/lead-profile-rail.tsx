@@ -117,8 +117,11 @@ export function LeadProfileRail({
           </DetailRow>
 
           {/* يظهر الموجود منهما فقط — فلا يقرأ أحد صفّاً لا يعنيه. */}
-          {lead.isPaidAd && lead.campaign && (
-            <DetailRow icon={Globe} label="الحملة">{lead.campaign}</DetailRow>
+          {/* The linked campaign first; the old free-text `campaign` only for rows saved before the link. */}
+          {lead.isPaidAd && (lead.adCampaign?.name || lead.campaign) && (
+            <DetailRow icon={Globe} label="الحملة">
+              {lead.adCampaign ? `${lead.adCampaign.code ? `${lead.adCampaign.code} · ` : ""}${lead.adCampaign.name}` : lead.campaign}
+            </DetailRow>
           )}
           {!lead.isPaidAd && lead.sourceNote && (
             <DetailRow icon={StickyNote} label="ملاحظة على المصدر">{lead.sourceNote}</DetailRow>

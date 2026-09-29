@@ -47,6 +47,18 @@ async function parse(input: LeadInput): Promise<ParseFail | ParseOk> {
 }
 
 /**
+ * الحملة المُسندة للعميل: بريفٌ موافَقٌ عليه فقط — نفس شرط القائمة، على الخادم (خالد ٢٩ سبتمبر ٢٠٢٦).
+ * القائمة تُخفي غير الموافَق؛ هذا يمنع من يرسل المعرّف بيده. و`keep` يُبقي ربطاً قائماً على عميلٍ
+ * قديم وإن لم يكن بريفه موافَقاً (حملات ما قبل البريف) — حفظُ تعديلٍ آخر لا يمسح نسبته بصمت.
+ */
+async function resolveCampaign(id?: string | null, keep?: string | null): Promise<string | null> {
+  if (!id || !/^[0-9a-fA-F]{24}$/.test(id)) return null;
+  if (keep && id === keep) return id;
+  const found = await db.adCampaign.findFirst({ where: { id, approval: "APPROVED" }, select: { id: true } });
+  return found?.id ?? null;
+}
+
+/**
  * An industry id that matches nothing means the dropdown and the database have drifted.
  * Writing it anyway leaves a row pointing at an industry that is not there — the orphan
  * that drops a whole query in Mongo, not just its own row.
@@ -120,6 +132,7 @@ export async function createLead(input: LeadInput): Promise<Result> {
         ...fields,
         ...deal.data,
         industryId: await resolveIndustry(data.industryId),
+        campaignId: await resolveCampaign(data.campaignId),
         stage,
         status: STATUS_FROM_STAGE[stage] ?? "PROSPECT",
         // مَن سجّلته يتابعه، حتى تُنقل المسؤولية صراحةً. البديل — تركه فارغاً — يجعل العميل
@@ -182,6 +195,7 @@ export async function updateLead(id: string, input: LeadInput): Promise<Result> 
 
   const deal = await resolveLeadDeal(data);
   if (!deal.ok) return { success: false, error: "الصفقة تحتاج مراجعة — الباقة أو المدّة.", fieldErrors: deal.fieldErrors };
+  const current = await db.salesLead.findUnique({ where: { id }, select: { campaignId: true } });
 
   try {
     await db.salesLead.update({
@@ -190,6 +204,7 @@ export async function updateLead(id: string, input: LeadInput): Promise<Result> 
         ...fields,
         ...deal.data,
         industryId: await resolveIndustry(data.industryId),
+        campaignId: await resolveCampaign(data.campaignId, current?.campaignId),
         stage,
         status: STATUS_FROM_STAGE[stage] ?? "PROSPECT",
         ownerId: ownerId ?? undefined,
@@ -343,6 +358,28 @@ export async function snoozeFollowUp(id: string, days: number): Promise<Result> 
 }
 
 /** تحريك المرحلة وحدها — من البطاقة أو الجدول، بلا فتح نموذج المتابعة. */
+/**
+ * جودة العميل بعد أوّل تواصل — ضغطةٌ واحدة من المندوب (خالد ٢٩ سبتمبر ٢٠٢٦): مناسب · ضعيف · مو صالح.
+ * هي ما يحكم به الميديا باير على بريفه: كم عميلاً «مناسباً» جاب، لا كم رقماً. `null` يمسحها.
+ */
+export async function setLeadQuality(id: string, quality: "GOOD" | "WEAK" | "INVALID" | null): Promise<Result> {
+  const gate = await requireAdmin();
+  if ("error" in gate) return { success: false, error: gate.error };
+  if (quality !== null && !["GOOD", "WEAK", "INVALID"].includes(quality)) return { success: false, error: "قيمة غير معروفة." };
+  try {
+    await db.salesLead.update({
+      where: { id },
+      data: { quality, qualityAt: quality ? new Date() : null },
+      select: { campaignId: true },
+    });
+    revalidateLead(id);
+    revalidatePath("/campaigns");
+    return { success: true, id };
+  } catch {
+    return { success: false, error: "ما قدرنا نحفظ. يُرجى المحاولة مرة ثانية." };
+  }
+}
+
 export async function setLeadStage(
   id: string,
   stage: "NEW" | "CONTACTED" | "QUOTED" | "NEGOTIATING",

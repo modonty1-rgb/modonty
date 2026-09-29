@@ -46,6 +46,10 @@ export interface SalesLeadRow {
   isPaidAd: boolean;
   /** اسم الحملة — يُعرض تحت «مدفوع»، وهو ما يجيب «أي حملة تستحقّ ميزانيّتها». */
   campaign: string | null;
+  /** The linked `AdCampaign` — the campaign card opens the table filtered on it. */
+  campaignId: string | null;
+  /** The rep verdict after first contact — the sales feedback a brief is judged on. */
+  quality: "GOOD" | "WEAK" | "INVALID" | null;
   /**
    * آخر لمسة — آخر متابعة مسجّلة، أو `lastContactAt`، أو تاريخ الإنشاء.
    *
@@ -63,6 +67,7 @@ const SELECT = {
   email: true,
   stage: true,
   lostReason: true,
+  quality: true,
   nextActionAt: true,
   nextActionNote: true,
   lastContactAt: true,
@@ -72,6 +77,8 @@ const SELECT = {
   source: true,
   isPaidAd: true,
   campaign: true,
+  campaignId: true,
+  adCampaign: { select: { name: true, code: true } },
   createdAt: true,
   convertedClientId: true,
   industry: { select: { name: true } },
@@ -94,10 +101,11 @@ type Raw = {
   owner: { name: string | null } | null;
   createdBy: { name: string | null } | null;
   followUps: { body: string; channel: string; happenedAt: Date }[];
+  adCampaign: { name: string; code: string | null } | null;
 } & Record<string, unknown>;
 
 const shape = (l: Raw, catalog: LeadCatalog): SalesLeadRow => {
-  const { industry, owner, createdBy, followUps, ...rest } = l;
+  const { industry, owner, createdBy, followUps, adCampaign, ...rest } = l;
 
   /**
    * إجماليّ العرض — من الكتالوج بالدالّة نفسها التي تعرض بها الشاشة، لا بضربٍ مكتوبٍ هنا.
@@ -127,6 +135,9 @@ const shape = (l: Raw, catalog: LeadCatalog): SalesLeadRow => {
     currency: deal.currency,
     planName: deal.plan?.name ?? null,
     industryName: industry?.name ?? null,
+    // The linked campaign's name; the old free-text column only for rows saved before the link.
+    // The brief code leads (Khalid, 29 Sep 2026) — it is the same code in the Meta campaign name.
+    campaign: adCampaign ? `${adCampaign.code ? `${adCampaign.code} · ` : ""}${adCampaign.name}` : ((rest as { campaign?: string | null }).campaign ?? null),
     ownerName: owner?.name ?? createdBy?.name ?? null,
     lastNote: followUps[0]?.body ?? null,
     recent: followUps,

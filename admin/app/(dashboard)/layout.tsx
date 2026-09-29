@@ -36,7 +36,7 @@ export default async function DashboardLayout({
   // Everything below is independent — read side by side, not one after another. Measured
   // 28 Sep 2026: seven reads in a row held the sidebar ~850 ms behind the root skeleton on
   // every full page load; in parallel the wait is the slowest one (the orders gate, ~340 ms).
-  const [articleStatusCounts, missingSeoFields, ordersOpen, pendingDocs, reportViewer, myOpenTasks, pendingReviews] = await Promise.all([
+  const [articleStatusCounts, missingSeoFields, ordersOpen, pendingDocs, reportViewer, myOpenTasks, pendingReviews, pendingBriefs] = await Promise.all([
     // Article status counts once at layout level → passed to Sidebar as a prop
     // so workflow nav items can show live count badges. Cached 60s via unstable_cache.
     getArticleStatusCounts().catch(() => null),
@@ -51,6 +51,8 @@ export default async function DashboardLayout({
       .catch(() => 0),
     // مهامُّ أرسلتُها وأنهاها زميلٌ — تنتظر قراري، فهي عملٌ عليّ أنا أيضاً.
     countReviewQueue(gate.userId),
+    // بريفات حملات تنتظر الموافقة — بادجٌ على «بانتظار الموافقة» في قائمة الحملات (خالد ٢٩ سبتمبر ٢٠٢٦).
+    db.adCampaign.count({ where: { approval: "PENDING" } }).catch(() => 0),
   ]);
 
   // Whether to show the Report link. Read on the SERVER because the permission now lives
@@ -94,6 +96,7 @@ export default async function DashboardLayout({
             canViewReports={canSeeReports(reportViewer)}
             myOpenTasks={myOpenTasks}
             pendingReviews={pendingReviews}
+            pendingBriefs={pendingBriefs}
           />
           <main className="flex-1 overflow-y-auto scrollbar-thin p-4 sm:p-6">{children}</main>
         </div>

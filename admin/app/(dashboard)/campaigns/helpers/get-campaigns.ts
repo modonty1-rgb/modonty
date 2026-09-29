@@ -27,9 +27,19 @@ export async function getCampaigns() {
       landingPath: true,
       platformCampaignId: true,
       utmCampaign: true,
+      code: true,
+      brief: true,
+      approval: true,
+      decidedAt: true,
+      decisionNote: true,
+      targetCostPerLead: true,
+      destination: true,
+      creativeUrl: true,
+      createdBy: { select: { name: true } },
       _count: { select: { leads: true } },
     },
-    orderBy: [{ startAt: "desc" }],
+    // Newest brief first — the one waiting for a decision is the one just written.
+    orderBy: [{ createdAt: "desc" }],
     take: 200,
   });
 }

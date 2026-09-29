@@ -538,7 +538,7 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
                 "الحملة",
                 campaigns.map((c) => ({
                   v: c.id,
-                  l: `${c.name} — ${MARKET_LABEL[c.countryCode] ?? c.countryCode} · ${AD_CHANNEL_LABEL[c.channel] ?? c.channel}`,
+                  l: `${c.code ? `${c.code} · ` : ""}${c.name} — ${MARKET_LABEL[c.countryCode] ?? c.countryCode} · ${AD_CHANNEL_LABEL[c.channel] ?? c.channel}`,
                 })),
                 "غير محدّدة",
               )
@@ -546,9 +546,9 @@ export function LeadForm({ leadId, industries, plans, terms, leadSources, campai
               <div>
                 <Label className="text-xs tracking-[0.01em]">الحملة</Label>
                 <p className="mt-1 text-[11px] text-muted-foreground">
-                  ما في حملة شغّالة.{" "}
+                  ما في بريف موافَق عليه.{" "}
                   <Link href="/campaigns/new" className="underline hover:text-foreground">
-                    أسّس واحدة
+                    اكتب بريف جديد
                   </Link>
                 </p>
               </div>

@@ -8,6 +8,8 @@ export async function getLead(id: string) {
       industry: { select: { id: true, name: true } },
       createdBy: { select: { name: true, email: true } },
       owner: { select: { id: true, name: true } },
+      // The linked campaign — its name is what the page shows (29 Sep 2026).
+      adCampaign: { select: { name: true, code: true } },
       /**
        * السجلّ كاملاً، الأحدث أوّلاً — وهو صلب الصفحة لا ملحقٌ بها: خالد (٤ سبتمبر) «العميل
        * ممكن يكون فيه قصة حياته كاملة في الـfollow up».

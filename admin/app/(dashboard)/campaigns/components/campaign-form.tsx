@@ -3,33 +3,31 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Loader2, Save } from "lucide-react";
-import type { AdCampaignStatus, AdChannel, AdObjective, AdSite } from "@prisma/client";
+import { AlertTriangle, ArrowRight, Loader2, Save } from "lucide-react";
+import type { AdApproval, AdCampaignStatus, AdChannel, AdObjective, AdSite } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { AD_CHANNEL_LABEL } from "@/lib/ad-channel-label";
-import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 
 import { createCampaign, updateCampaign } from "../actions";
-import {
-  CHANNELS_BY_MARKET, MARKETS, OBJECTIVE_LABEL, SITES, STATUS_DOT, STATUS_LABEL,
-  campaignDays, marketOf, suggestUtm, totalBudget, trackedUrl,
-} from "../helpers/channels";
+import { MARKETS, OBJECTIVE_LABEL, channelsFor, marketOf, trackedUrl } from "../helpers/channels";
 import type { CampaignInput } from "../helpers/campaign-schema";
+import { DESTINATIONS, DESTINATION_HINT, DESTINATION_LABEL, type Destination } from "../helpers/destination-label";
+import { TARGET_METRIC_LABEL } from "../helpers/target-metric-label";
+import { platformCampaignName } from "../helpers/platform-campaign-name";
+import { STAGE_LABEL, STAGE_TONE, briefStage, isStopped } from "../helpers/brief-stage";
+import { CodeInstruction } from "./code-instruction";
 
-/** السوقان — نوعٌ ضيّق لا `string`، وإلّا تسرّبت قيمةٌ لا تقابل سوقاً إلى حالة الشاشة. */
-type Market = "SA" | "EG";
+/** الأسواق — نوعٌ ضيّق لا `string`، وإلّا تسرّبت قيمةٌ لا تقابل سوقاً إلى حالة الشاشة. */
+type Market = "SA" | "EG" | "AE" | "KW";
+const MARKET_DOT: Record<Market, string> = { SA: "bg-emerald-500", EG: "bg-red-500", AE: "bg-sky-500", KW: "bg-amber-500" };
 
-const STATUSES: AdCampaignStatus[] = ["DRAFT", "ACTIVE", "PAUSED", "ENDED"];
 const OBJECTIVES: AdObjective[] = ["LEADS", "SALES", "TRAFFIC", "ENGAGEMENT", "AWARENESS"];
 
 /** نفس مقادير نموذج العميل المحتمل: الشاشتان أختان، واختلاف الإيقاع يكلّف إعادة توجيهٍ بصريّ. */
@@ -40,43 +38,33 @@ const TAP =
   "motion-reduce:transition-none motion-reduce:active:scale-100";
 
 /**
- * التاريخ بأجزائه المحلّية لا بـ`toISOString`.
- *
- * تلك تحوّل إلى التوقيت العالميّ أوّلاً، فآخر الشهر محلّياً (٣٠ سبتمبر ٠٠:٠٠ بتوقيت +٣) يصير
- * ٢٩ سبتمبر ٢١:٠٠ عالمياً — فتُقصّ الحملة يوماً كاملاً في الافتراضيّ. مقيس حيّاً: الصفّ
- * المحفوظ حمل `endAt: 2026-09-29` بينما الشاشة قصدت ٣٠.
+ * التاريخ بأجزائه المحلّية لا بـ`toISOString` — تلك تحوّل إلى التوقيت العالميّ فتُقصّ يوماً
+ * (مقيس: ٣٠ سبتمبر محلّياً صار ٢٩ عالمياً).
  */
 const isoDay = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-const ar = new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 0 });
 
-/**
- * ما تُحمَّل به الشاشة عند التعديل — نوعٌ خاصٌّ بها، لا `Partial<CampaignInput>`.
- *
- * الاثنان ليسا الشيء نفسه: السكيما تستقبل `Date` للتاريخين (`z.coerce.date`)، والشاشة تُغذّي
- * `<input type="date">` الذي لا يقبل إلا `YYYY-MM-DD`. فاستعارةُ نوع السكيما أجبرتني على
- * `as string` فوق كل تاريخ، وهو تحويلٌ يخفي الفرق ولا يحلّه — و`tsc` رفضه بحقّ
- * (`TS2352: Conversion of type 'Date' to type 'string' may be a mistake`).
- */
+/** ما تُحمَّل به الشاشة عند التعديل — التاريخان `YYYY-MM-DD` كما تقرؤهما خانة التاريخ. */
 export interface CampaignInitial {
   name?: string;
   countryCode?: Market;
   site?: AdSite;
   channel?: AdChannel;
-  objective?: AdObjective;
-  status?: AdCampaignStatus;
-  /** `YYYY-MM-DD` — كما تقرؤه خانة التاريخ، لا `Date`. */
+  objective?: AdObjective | null;
+  brief?: string | null;
+  targetAudience?: string | null;
   startAt?: string;
   endAt?: string;
-  dailyBudget?: number | null;
   spendCap?: number | null;
-  targetRegion?: string | null;
-  targetAge?: string | null;
-  targetAudience?: string | null;
+  targetCostPerLead?: number | null;
   landingPath?: string | null;
-  platformCampaignId?: string | null;
-  utmCampaign?: string;
   note?: string | null;
+  code?: string | null;
+  approval?: AdApproval;
+  status?: AdCampaignStatus;
+  decisionNote?: string | null;
+  destination?: string | null;
+  creativeUrl?: string | null;
 }
 
 interface Props {
@@ -85,84 +73,51 @@ interface Props {
 }
 
 /**
- * تأسيس الحملة — الشاشة التي تُصرف بعدها فلوس.
+ * بريف الحملة — يكتبه الميديا باير قبل أن يبني الإعلان، وعليه يوافق الأدمن (خالد ٢٩ سبتمبر
+ * ٢٠٢٦: «يديني توصيف للإعلان والهدف منه، أنا أدي الأبروف، يشتغل في المنصّة، وأنا أسحب البيانات
+ * منها»).
  *
- * ما ليس فيها مقصودٌ كوجود ما فيها: الجمهور والإبداع وهدف التحسين تعيش على `ad set` و`ad` في
- * المنصّة، وحملةٌ واحدة قد تحوي خمس مجموعاتٍ بخمسة جماهير — فحقلٌ لها هنا لا جواب صحيح له.
- * هذه **وحدةُ إسنادٍ وتكلفة**، لا نسخةٌ أسوأ من مدير إعلانات ميتا.
+ * لا مجموعاتٍ إعلانية ولا استهداف تفصيليّ ولا ميزانية يومية: تلك يبنيها في المنصّة كما يشاء،
+ * وتُسحب أرقامها من هناك. هنا ما يُتّخذ عليه القرار — الهدف والرسالة والسقف والتكلفة المستهدفة.
  */
 export function CampaignForm({ campaignId, initial }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const isEdit = Boolean(campaignId);
-
   const today = new Date();
-  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
   const [form, setForm] = useState({
     name: initial?.name ?? "",
     countryCode: (initial?.countryCode ?? "SA") as Market,
-    site: (initial?.site ?? "") as AdSite | "",
+    site: (initial?.site ?? "MODONTY") as AdSite,
     channel: (initial?.channel ?? "") as AdChannel | "",
     objective: (initial?.objective ?? "") as AdObjective | "",
-    status: initial?.status ?? "DRAFT",
-    startAt: initial?.startAt ? isoDay(new Date(initial.startAt)) : isoDay(today),
-    endAt: initial?.endAt ? isoDay(new Date(initial.endAt)) : isoDay(monthEnd),
-    dailyBudget: initial?.dailyBudget != null ? String(initial.dailyBudget) : "",
-    spendCap: initial?.spendCap != null ? String(initial.spendCap) : "",
-    targetRegion: initial?.targetRegion ?? "",
-    targetAge: initial?.targetAge ?? "",
+    brief: initial?.brief ?? "",
     targetAudience: initial?.targetAudience ?? "",
+    startAt: initial?.startAt ? isoDay(new Date(initial.startAt)) : isoDay(today),
+    endAt: initial?.endAt ? isoDay(new Date(initial.endAt)) : "",
+    spendCap: initial?.spendCap != null ? String(initial.spendCap) : "",
+    targetCostPerLead: initial?.targetCostPerLead != null ? String(initial.targetCostPerLead) : "",
     landingPath: initial?.landingPath ?? "",
-    platformCampaignId: initial?.platformCampaignId ?? "",
-    utmCampaign: initial?.utmCampaign ?? "",
     note: initial?.note ?? "",
+    destination: (initial?.destination ?? "") as Destination | "",
+    creativeUrl: initial?.creativeUrl ?? "",
   });
-
-  /** الوسم يُقترح ما لم يُلمس — فمَن كتبه بيده لا يُسحب من تحته عند تغيير الاسم. */
-  const [utmTouched, setUtmTouched] = useState(Boolean(initial?.utmCampaign));
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
-  const set = (k: string, v: string | boolean) => {
+  const set = (k: keyof typeof form, v: string) => {
     setForm((f) => ({ ...f, [k]: v }));
     if (errors[k]) setErrors((e) => ({ ...e, [k]: [] }));
   };
 
   const market = marketOf(form.countryCode);
-  const channels = CHANNELS_BY_MARKET[form.countryCode] ?? CHANNELS_BY_MARKET.SA;
-
-  const utm = utmTouched
-    ? form.utmCampaign
-    : form.channel
-      ? suggestUtm(form.countryCode, form.channel, form.name, new Date(form.startAt))
-      : "";
-
-  /**
-   * اليوميّ هو المصدر، والإجماليّ مشتقٌّ منه (خالد ٥ سبتمبر) — والمفتاح بينهما أُلغي.
-   *
-   * لو كان الإجماليّ هو المخزَّن لَما ظهر العطل إلا بعد شهر: مدُّ الحملة أسبوعاً يُبقيه على
-   * حاله ويخفض اليوميَّ سرّاً إلى رقمٍ لم يضبطه أحد في أيّ منصّة، ثم يُبنى عليه تقرير.
-   */
-  const money = useMemo(() => {
-    const s = new Date(form.startAt);
-    const e = new Date(form.endAt);
-    if (Number.isNaN(s.getTime()) || Number.isNaN(e.getTime())) return null;
-    const daily = Number(form.dailyBudget) || 0;
-    return { days: campaignDays(s, e), total: totalBudget(daily, s, e) };
-  }, [form.startAt, form.endAt, form.dailyBudget]);
-
-  /** الإجماليّ يُكتب فيه فيُترجَم فوراً إلى يوميّ — يُحفظ الثاني ويُعرض الأوّل. */
-  const setTotal = (v: string) => {
-    const days = money?.days ?? 1;
-    const per = (Number(v) || 0) / days;
-    set("dailyBudget", String(Math.round(per * 100) / 100));
-  };
+  const channelGroups = channelsFor(form.countryCode, form.objective);
 
   const submit = async () => {
     setSaving(true);
     setErrors({});
-    const payload = { ...form, utmCampaign: utm } as unknown as CampaignInput;
+    const payload = form as unknown as CampaignInput;
     const r = isEdit ? await updateCampaign(campaignId!, payload) : await createCampaign(payload);
     setSaving(false);
 
@@ -180,7 +135,7 @@ export function CampaignForm({ campaignId, initial }: Props) {
       return;
     }
 
-    toast({ title: isEdit ? "تم الحفظ" : `تأسّست حملة ${form.name}`, variant: "success" });
+    toast({ title: isEdit ? "تم الحفظ" : "أُرسل البريف — بانتظار الموافقة", variant: "success" });
     router.push("/campaigns");
     router.refresh();
   };
@@ -192,528 +147,370 @@ export function CampaignForm({ campaignId, initial }: Props) {
       </p>
     ) : null;
 
-  const seg = (
-    name: string,
-    value: string,
-    options: { v: string; l: string; dot?: string }[],
-    onPick: (v: string) => void,
-    wide = false,
-  ) => (
-    <div role="radiogroup" aria-label={name} className={cn("mt-0.5 rounded border p-0.5", wide ? "flex" : "inline-flex")}>
-      {options.map((o) => (
-        <button
-          key={o.v}
-          type="button"
-          role="radio"
-          aria-checked={value === o.v}
-          onClick={() => onPick(o.v)}
-          className={cn(
-            "h-7 rounded-[3px] px-3 text-xs font-medium transition-[color,background-color,transform] duration-150 active:scale-[0.97]",
-            wide && "flex-1 px-2",
-            TAP,
-            value === o.v ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
-          )}
-        >
-          {o.dot && <span className={cn("me-1.5 inline-block size-1.5 rounded-full align-middle", o.dot)} aria-hidden />}
-          {o.l}
-        </button>
-      ))}
-    </div>
-  );
+  /** Pills shared by market, channel and objective — one control the eye learns once. */
+  const pill = (active: boolean) =>
+    cn(
+      "inline-flex h-7 items-center gap-1 rounded-full border px-2.5 text-[11px] font-medium transition-colors",
+      TAP,
+      active ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground hover:text-foreground",
+    );
+  /** Example text inside a field reads as an example, not as something already typed (29 Sep 2026). */
+  const HINT = "placeholder:text-muted-foreground/45";
 
-  const header = (
-    <div className="flex items-center gap-2">
-      <Button variant="ghost" size="icon" type="button" asChild className="size-8">
-        <Link href="/campaigns" aria-label="رجوع">
-          <ArrowRight className="size-4 rtl:rotate-180" />
-        </Link>
-      </Button>
-      <h1 className="text-lg font-semibold tracking-[-0.01em]">{isEdit ? "تعديل الحملة" : "حملة جديدة"}</h1>
-    </div>
-  );
-
-  /**
-   * قائمةٌ لافتتُها **داخلها** لا فوقها (خالد ٥ سبتمبر: «عشان نستفيد من المساحات»).
-   *
-   * ثلاث لافتاتٍ فوق ثلاث قوائم تكلّف ثلاثة أسطر في رَيلٍ عرضه ٢٦٠ — والاسم والقيمة يسعان
-   * سطراً واحداً.
-   *
-   * ── ولماذا ليس «خيارًا أوّل معطَّلاً» كما اقترحتَ ────────────────────────────────────────
-   * لأنه يختفي لحظة الاختيار: تضغط «سناب شات» فيغيب اسم الحقل، فمَن يعود للشاشة بعد دقيقة
-   * يرى ثلاث قوائم بثلاث قيمٍ بلا ما يقول أيُّها القناة وأيُّها الهدف. وقارئ الشاشة يفقد
-   * اسم الحقل معه (WCAG 4.1.2 — لكل عنصرٍ اسمٌ برمجيّ). والاسم هنا **يبقى ظاهراً دائماً**
-   * بجانب القيمة، ويُعلَن لقارئ الشاشة بـ`aria-label` — نفس المساحة المكسوبة بلا الثمن.
-   */
-  const pick = (
-    id: string,
-    label: string,
-    value: string,
-    onPick: (v: string) => void,
-    options: { v: string; l: string }[],
-  ) => (
-    <div className="flex items-center gap-2">
-      {/* اللافتة خارج الزنّاد لا داخله: `SelectTrigger` يفرض على أبنائه المباشرين تنسيقه
-          (`display: flow-root` مقيس)، فيسقط أيّ `flex` نضعه بالداخل ويلتصق الاسم بالقيمة.
-          وبعرضٍ ثابت `w-12` تصطفّ القوائم الثلاث على خطٍّ واحد. */}
-      <label htmlFor={id} className="w-12 shrink-0 text-xs text-muted-foreground">{label}</label>
-      <Select value={value} onValueChange={onPick}>
-        <SelectTrigger id={id} aria-label={label} className={cn(FIELD, "mt-0 flex-1 text-sm")}>
-          <SelectValue placeholder={`اختر ${label}`} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {options.map((o) => (
-              <SelectItem key={o.v} value={o.v}>{o.l}</SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </div>
-  );
-
-  /**
-   * الحالة فوق «مكان النشر» في الرَيل (خالد ٥ سبتمبر) — لا داخل بطاقة الحملة.
-   *
-   * وهي أوّل ما يُقرأ عند فتح الشاشة: «هذي شغّالة ولّا موقوفة؟» سؤالٌ يسبق كلَّ تفصيل، ووضعها
-   * وسط الحقول كان يدفنها بين التواريخ والميزانية.
-   *
-   * وشبكةٌ من عمودين لا صفٌّ واحد: أربعة مفاتيح بنقاطها لا تسع ٢٦٠ بكسلاً في سطر.
-   */
-  const statusCard = (
-    <Card className="rounded-md">
-      <CardContent className="space-y-1.5 p-3">
-        <span className="text-xs text-muted-foreground">الحالة</span>
-        <div role="radiogroup" aria-label="الحالة" className="grid grid-cols-2 gap-1">
-          {STATUSES.map((v) => (
-            <button
-              key={v}
-              type="button"
-              role="radio"
-              aria-checked={form.status === v}
-              onClick={() => set("status", v)}
-              className={cn(
-                "flex h-7 items-center gap-1.5 rounded border px-2 text-xs font-medium transition-[color,background-color,border-color,transform] duration-150 active:scale-[0.97]",
-                TAP,
-                form.status === v
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border text-muted-foreground hover:text-foreground",
-              )}
-            >
-              <span className={cn("size-1.5 shrink-0 rounded-full", STATUS_DOT[v])} aria-hidden />
-              {STATUS_LABEL[v]}
-            </button>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  // ── يمين: أين تُنشر — ظرف الحملة، يُختار بالضغط لا بالحروف ─────────────────────────────
-  const placement = (
-    <Card className="rounded-md">
-      <CardHeader className="px-4 pb-2 pt-3">
-        <CardTitle className="text-sm">مكان النشر</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-1.5 px-4 pb-3">
-        {/**
-         * السوق صفٌّ واحد: الاسم ثم المفتاحان — لا لافتةً فوق ومفتاحين تحت.
-         *
-         * وكان في صفّ العنوان فتجاوز حدّ البطاقة: «مكان النشر» ومفتاحان بعرض ١٢٠ لا يجتمعان
-         * في ٢٦٠ ناقص الحشوة، فانكسر العنوان سطرين وقُصّ المفتاح. مقيس على الشاشة.
-         */}
-        <div className="flex items-center gap-2">
-          <span className="w-12 shrink-0 text-xs text-muted-foreground">السوق</span>
-          <span className="ms-auto">
-            {seg(
-              "السوق",
-              form.countryCode,
-              MARKETS.map((m) => ({
-                v: m.code,
-                l: m.label,
-                dot: m.code === "SA" ? "bg-emerald-500" : "bg-red-500",
-              })),
-              (v) => {
-                const code = v as Market;
-                const next = CHANNELS_BY_MARKET[code] ?? CHANNELS_BY_MARKET.SA;
-                setForm((f) => ({
-                  ...f,
-                  countryCode: code,
-                  channel: f.channel && next.includes(f.channel) ? f.channel : "",
-                }));
-              },
-            )}
-          </span>
-        </div>
-
-        {pick("site", "الموقع", form.site, (v) => set("site", v),
-          SITES.map((x) => ({ v: x.code, l: x.label })))}
-        {pick("channel", "القناة", form.channel, (v) => set("channel", v),
-          channels.map((c) => ({ v: c, l: AD_CHANNEL_LABEL[c] })))}
-        {pick("objective", "الهدف", form.objective, (v) => set("objective", v),
-          OBJECTIVES.map((x) => ({ v: x, l: OBJECTIVE_LABEL[x] })))}
-      </CardContent>
-    </Card>
-  );
-
-  /**
-   * الميزانية **داخل بطاقة الحملة** لا في رَيلٍ جانبيّ (خالد ٥ سبتمبر: «من الحاجات المهمة
-   * جدًا»).
-   *
-   * والموضع يتبع الحساب: الإجماليّ مشتقٌّ من المدّة التي فوقه مباشرةً، فوضعُهما في عمودين
-   * متقابلين كان يفرّق السبب عن النتيجة — تُعدّل تاريخاً في الوسط وينفعل رقمٌ في الطرف خارج
-   * مجال نظرك.
-   *
-   * ثلاث خاناتٍ في صفٍّ واحد: الوسط ٦٠٠ بكسل يعطي كلَّ واحدةٍ ~١٩٠ — بينما الرَيل ٢٦٠ كان
-   * يجبرها على صفّين ونصف.
-   */
-  const budget = (
-    <div className="space-y-1.5 border-t pt-2">
-      <div className="flex items-baseline gap-2">
-        <span className="text-xs font-medium">الميزانية</span>
-        <span className="text-[11px] text-muted-foreground">{market.currencyName}</span>
-      </div>
-
-      {/**
-       * الرقمان مفرودان معاً (خالد ٥ سبتمبر: «الـtotals هذي حتلخبطني، افرد لي هم قدام
-       * عيني»). المنصّة تقبل واحداً، وهذا لا يمنع الشاشة من عرض الاثنين.
-       *
-       * و`placeholder` صفرٌ لا مبلغ (خالد ٥ سبتمبر: «الـmedia buyer حيخرب بيتي، ما تدّي
-       * فكرة إنه يحطّ أرقام… حطّ صفر»). المبلغ الباهت في خانة فلوس يُقرأ توصيةً لا مثالاً.
-       */}
-      <div className="grid gap-2 sm:grid-cols-3">
-        <div>
-          <Label htmlFor="dailyBudget" className="text-xs">في اليوم *</Label>
-          <Input
-            id="dailyBudget"
-            inputMode="decimal"
-            dir="ltr"
-            value={form.dailyBudget}
-            onChange={(e) => set("dailyBudget", e.target.value)}
-            placeholder="0"
-            className={cn(FIELD, errors.dailyBudget?.length && "border-destructive")}
-          />
-        </div>
-        <div>
-          <Label htmlFor="totalBudget" className="text-xs">إجمالي المدّة</Label>
-          <Input
-            id="totalBudget"
-            inputMode="numeric"
-            dir="ltr"
-            value={money && form.dailyBudget ? String(Math.round(money.total)) : ""}
-            onChange={(e) => setTotal(e.target.value)}
-            placeholder="0"
-            className={cn(FIELD)}
-          />
-        </div>
-        <div>
-          <Label htmlFor="spendCap" className="text-xs">
-            سقف الصرف <span className="text-muted-foreground">اختياري</span>
-          </Label>
-          <Input
-            id="spendCap"
-            inputMode="numeric"
-            dir="ltr"
-            value={form.spendCap}
-            onChange={(e) => set("spendCap", e.target.value)}
-            placeholder="0"
-            className={cn(FIELD, errors.spendCap?.length && "border-destructive")}
-          />
-        </div>
-      </div>
-      {err("dailyBudget")}
-      {err("spendCap")}
-    </div>
-  );
-
-  /**
-   * الاستهداف في الرَيل مع الميزانية (خالد ٥ سبتمبر) — والقرابة صحيحة.
-   *
-   * «كم صرفنا» و«على مَن صرفنا» سؤالٌ واحدٌ في المراجعة، والفصل بينهما كان يضع نصفَه في
-   * الوسط ونصفَه في الطرف. والوسط بقي لما يخصّ الحملة نفسها: اسمها ومدّتها وحالتها ووصلها.
-   *
-   * وعمودٌ واحد لا عمودان: الرَيل ٢٦٠ بكسلاً، فصفٌّ من خانتين يعطي ١١٥ لكلٍّ — أضيق من أن
-   * يُقرأ فيه «الرياض · جدة».
-   *
-   * والمنطقة والجمهور خانتان ممتدّتان (خالد ٥ سبتمبر: «يقدر يكتب فيها براحته») — الجمهور
-   * الحقيقيّ جملةٌ لا كلمة: «أصحاب عيادات أسنان · مشابه ٢٪ من قائمة عملائنا». وسطرٌ واحد
-   * يقصّ ما بعد الكلمة الثالثة فلا يُقرأ عند المراجعة، وهي كلّ الغرض منه.
-   *
-   * والعمر بقي سطراً: «٢٥ – ٤٥» لا يطول أبداً، وخانةٌ ممتدّة له فراغٌ يُحجز ولا يُملأ.
-   */
-  const targeting = (
-    <Card className="rounded-md">
-      <CardHeader className="px-4 pb-1.5 pt-3">
-        <CardTitle className="text-sm">
-          الاستهداف
-          <span className="ms-2 text-xs font-normal text-muted-foreground">على مَن كانت</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2 px-4 pb-3">
-        <div>
-          <Label htmlFor="targetRegion" className="text-xs">المنطقة</Label>
-          <Textarea
-            id="targetRegion"
-            rows={2}
-            value={form.targetRegion}
-            onChange={(e) => set("targetRegion", e.target.value)}
-            placeholder="الرياض · جدة · الدمام"
-            className="mt-0.5 rounded text-sm"
-          />
-        </div>
-        <div>
-          <Label htmlFor="targetAge" className="text-xs">العمر</Label>
-          <Input
-            id="targetAge"
-            value={form.targetAge}
-            onChange={(e) => set("targetAge", e.target.value)}
-            placeholder="٢٥ – ٤٥"
-            className={cn(FIELD)}
-          />
-        </div>
-        <div>
-          <Label htmlFor="targetAudience" className="text-xs">الجمهور</Label>
-          <Textarea
-            id="targetAudience"
-            rows={4}
-            value={form.targetAudience}
-            onChange={(e) => set("targetAudience", e.target.value)}
-            placeholder="أصحاب عيادات أسنان · مهتمّون بالتسويق الرقمي · مشابه ٢٪ من قائمة عملائنا"
-            className="mt-0.5 rounded text-sm"
-          />
-        </div>
-      </CardContent>
-    </Card>
+  const code = initial?.code ?? null;
+  // Stopped by an admin — the copy-the-name bar has nothing to ask until it is turned back on.
+  const ended = initial?.status ? isStopped(initial.status) : false;
+  const url = useMemo(
+    () =>
+      code && form.channel
+        ? trackedUrl({ site: form.site, landingPath: form.landingPath, channel: form.channel, utmCampaign: code.toLowerCase(), platformCampaignId: "" })
+        : null,
+    [code, form.site, form.landingPath, form.channel],
   );
 
   return (
     /**
-     * `dir="rtl"` على النموذج نفسه — الأدمن إنجليزيّ الاتجاه، وهذه شاشةٌ عربية.
-     *
-     * بدونه كان الاتجاه `ltr` فينقلب كلّ ما يعتمد المنطقيّ: العمودان يتبادلان مكانيهما (مكان
-     * النشر يسار والميزانية يمين — مقيس `x: 113` و`x: 965`)، و`ms-auto` تدفع الزرّ إلى الجهة
-     * الخطأ، و`text-start` تصير يساراً. نفس ما تفعله شاشات العملاء المحتملين في صفحاتها.
+     * عمودان مضغوطان بترتيب القرار (خالد ٢٩ سبتمبر ٢٠٢٦: «اليو اي مش مظبوط» · «عمودين عشان أشوف
+     * كل حاجة» · «كومباكت»): البلد والهدف والقناة ثم الميزانية يميناً، والبريف ثم وجهة العميل يساراً.
+     * والقناة أزرارٌ ظاهرة تتبدّل مع البلد والهدف، لا قائمة منسدلة.
      */
-    <form dir="rtl" onSubmit={(e) => { e.preventDefault(); submit(); }}>
-      <ThreeColumnLayout
-        className="!px-0 !py-0"
-        header={<div className="-mb-4">{header}</div>}
-        right={
-          <aside
-            aria-label="الحالة ومكان النشر"
-            className="w-full shrink-0 space-y-2 lg:sticky lg:top-0 lg:w-[260px]"
-          >
-            {statusCard}
-            {placement}
-          </aside>
-        }
-        center={
-          <div className="space-y-2">
-            <Card className="rounded-md">
-              <CardContent className="space-y-2 p-4">
-                <div>
-                  <Label htmlFor="name" className="text-xs">اسم الحملة *</Label>
-                  <Input
-                    id="name"
-                    value={form.name}
-                    onChange={(e) => set("name", e.target.value)}
-                    placeholder="تقويم الأسنان — سبتمبر"
-                    className={cn(FIELD, errors.name?.length && "border-destructive")}
-                  />
-                  {err("name")}
+    <form dir="rtl" onSubmit={(e) => { e.preventDefault(); submit(); }} className="mx-auto max-w-6xl space-y-2 pb-6">
+      <header className="flex items-center gap-2">
+        <Button variant="ghost" size="icon" type="button" asChild className="size-8">
+          <Link href="/campaigns" aria-label="رجوع">
+            <ArrowRight className="size-4 rtl:rotate-180" />
+          </Link>
+        </Button>
+        <h1 className="text-lg font-semibold tracking-[-0.01em]">
+          {isEdit ? "تعديل البريف" : "بريف حملة جديدة"}
+          {code ? <span dir="ltr" className="ms-2 font-mono text-sm text-muted-foreground">{code}</span> : null}
+        </h1>
+        {/* All campaigns run for Modonty (Khalid, 29 Sep 2026) — said once here, not asked in a field. */}
+        <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">على مدونتي</span>
+      </header>
+
+      {/* The code note under the title, not at the bottom of card 4 (Khalid, 29 Sep 2026: «يكون فوق
+          في التايتل عشان يكون واضح»): the one rule the media buyer must not miss. */}
+      {code && !ended ? (
+        <CodeInstruction
+          name={platformCampaignName({ code, channel: form.channel, objective: form.objective, countryCode: form.countryCode, startAt: form.startAt })}
+        />
+      ) : code ? null : (
+        <p className="flex items-center gap-1.5 rounded-md border border-amber-500/60 bg-amber-500/10 px-3 py-2 text-xs text-amber-900 dark:text-amber-200">
+          <AlertTriangle className="size-4 shrink-0" aria-hidden />
+          <span>
+            بعد الإرسال يأخذ البريف كوداً مثل <b dir="ltr" className="font-mono">B-012</b> — ولازم يُكتب في اسم الحملة في المنصّة، وإلّا ما يُحسب صرفها هنا.
+          </span>
+        </p>
+      )}
+
+      {isEdit && initial?.approval ? (
+        <Card className="rounded-md">
+          <CardContent className="space-y-1 p-3">
+            <p className={cn("text-sm font-semibold", STAGE_TONE[briefStage({ approval: initial.approval, status: initial.status ?? "DRAFT" })])}>
+              {STAGE_LABEL[briefStage({ approval: initial.approval, status: initial.status ?? "DRAFT" })]}
+            </p>
+            {initial.decisionNote ? <p className="text-xs text-muted-foreground">{initial.decisionNote}</p> : null}
+            {initial.approval === "APPROVED" && !ended ? (
+              <p className="text-[11px] text-muted-foreground">تغيير الهدف أو الوصف أو السقف يعيده «بانتظار الموافقة».</p>
+            ) : null}
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {/* Two columns so the whole brief is in view (Khalid, 29 Sep 2026): where and how much on
+          one side, what it says and where it lands on the other. */}
+      <div className="grid gap-2 lg:grid-cols-2 lg:items-start">
+        <div className="space-y-2">
+          {/* ١ · أين */}
+          <Card className="rounded-md">
+            <CardHeader className="px-3 pb-1 pt-2.5">
+              <CardTitle className="text-sm">١ · البلد والهدف والقناة</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 px-3 pb-3">
+              <div>
+                <p className="mb-1 text-xs">البلد *</p>
+                <div role="radiogroup" aria-label="البلد" className="flex flex-wrap gap-1.5">
+                  {MARKETS.map((m) => (
+                    <button
+                      key={m.code}
+                      type="button"
+                      role="radio"
+                      aria-checked={form.countryCode === m.code}
+                      onClick={() => set("countryCode", m.code)}
+                      className={pill(form.countryCode === m.code)}
+                    >
+                      <span className={cn("size-1.5 rounded-full", MARKET_DOT[m.code as Market])} aria-hidden />
+                      {m.label}
+                    </button>
+                  ))}
                 </div>
-
-                <div className="grid gap-2 border-t pt-2 sm:grid-cols-3">
-                  <div>
-                    <Label htmlFor="startAt" className="text-xs">تبدأ *</Label>
-                    <Input
-                      id="startAt"
-                      type="date"
-                      dir="ltr"
-                      value={form.startAt}
-                      onChange={(e) => set("startAt", e.target.value)}
-                      className={cn(FIELD, errors.startAt?.length && "border-destructive")}
-                    />
-                    {err("startAt")}
-                  </div>
-                  <div>
-                    <Label htmlFor="endAt" className="text-xs">تنتهي *</Label>
-                    <Input
-                      id="endAt"
-                      type="date"
-                      dir="ltr"
-                      value={form.endAt}
-                      onChange={(e) => set("endAt", e.target.value)}
-                      className={cn(FIELD, errors.endAt?.length && "border-destructive")}
-                    />
-                    {err("endAt")}
-                  </div>
-
-                  {/**
-                   * المدّة خانةً ثالثة في صفّ التاريخين (خالد ٥ سبتمبر: «ليش تهدر المسافات؟»).
-                   *
-                   * كانت شريطاً بعرض البطاقة كاملاً تحتهما — ٣٣ بكسلاً لرقمٍ من ثلاثة محارف،
-                   * بينما صفُّ التاريخين يترك ثلثه فارغاً. وهي نتيجتهما فمكانها بينهما، لا
-                   * سطراً مستقلّاً يعلن نفسه موضوعاً ثالثاً.
-                   *
-                   * وقراءةٌ لا خانة: `div` بارتفاع `h-8` نفسه كي يستوي الصفّ، بلا حدٍّ يوحي
-                   * بالكتابة فيه.
-                   */}
-                  <div>
-                    <Label className="text-xs text-muted-foreground">المدّة</Label>
-                    <div className="mt-0.5 flex h-8 items-center rounded bg-muted/50 px-2.5">
-                      <b className="text-[13px] tabular-nums">{ar.format(money?.days ?? 0)} يوماً</b>
-                    </div>
-                  </div>
+              </div>
+              <div>
+                <p className="mb-1 text-xs">الهدف *</p>
+                <div role="radiogroup" aria-label="الهدف" id="objective" tabIndex={-1} className="flex flex-wrap gap-1.5">
+                  {OBJECTIVES.map((o) => (
+                    <button key={o} type="button" role="radio" aria-checked={form.objective === o} onClick={() => set("objective", o)} className={pill(form.objective === o)}>
+                      {OBJECTIVE_LABEL[o]}
+                    </button>
+                  ))}
                 </div>
-
-                {budget}
-
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-md">
-              <CardHeader className="px-4 pb-1.5 pt-3">
-                <CardTitle className="text-sm">
-                  الوصل بالمبيعات
-                  <span className="ms-2 text-xs font-normal text-muted-foreground">
-                    مفتاحان — بهما يُعرف مَن جاء منها
+                {err("objective")}
+              </div>
+              <div>
+                <p className="mb-1 text-xs">
+                  القناة *{" "}
+                  <span className="text-muted-foreground">
+                    {form.objective ? `— الأنسب لـ«${OBJECTIVE_LABEL[form.objective]}» أوّلاً` : "— اختر الهدف أوّلاً لترتيب القنوات"}
                   </span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 px-4 pb-3">
-                {/* صفحة الوصول هنا لا في «الاستهداف»: هي جزءٌ من الرابط تحتها، وتغييرها
-                    يغيّره أمام العين. */}
+                </p>
+                {/* Channels follow the objective (29 Sep 2026): the best for it first, then every other
+                    channel — none hidden, the media buyer decides. */}
+                <div role="radiogroup" aria-label="القناة" id="channel" tabIndex={-1} className="space-y-2">
+                  <div className="flex flex-wrap gap-1.5">
+                    {channelGroups.best.map((c) => (
+                      <button key={c} type="button" role="radio" aria-checked={form.channel === c} onClick={() => set("channel", c)} className={pill(form.channel === c)}>
+                        {AD_CHANNEL_LABEL[c]}
+                      </button>
+                    ))}
+                  </div>
+                  {form.objective && channelGroups.other.length > 0 ? (
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="text-[11px] text-muted-foreground">قنوات أخرى:</span>
+                      {channelGroups.other.map((c) => (
+                        <button
+                          key={c}
+                          type="button"
+                          role="radio"
+                          aria-checked={form.channel === c}
+                          onClick={() => set("channel", c)}
+                          className={cn(pill(form.channel === c), "h-7 border-dashed px-2.5 text-[11px]")}
+                        >
+                          {AD_CHANNEL_LABEL[c]}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+                {err("channel")}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* ٣ · الميزانية */}
+          <Card className="rounded-md">
+            <CardHeader className="px-3 pb-1 pt-2.5">
+              <CardTitle className="text-sm">
+                ٣ · الميزانية <span className="ms-2 text-xs font-normal text-muted-foreground">{market.currencyName}</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 px-3 pb-3">
+              <div className="grid gap-2 sm:grid-cols-2">
                 <div>
-                  <Label htmlFor="landingPath" className="text-xs">صفحة الوصول</Label>
+                  <Label htmlFor="spendCap" className="text-xs">سقف الميزانية *</Label>
+                  <Input
+                    id="spendCap"
+                    inputMode="decimal"
+                    dir="ltr"
+                    value={form.spendCap}
+                    onChange={(e) => set("spendCap", e.target.value)}
+                    placeholder="0"
+                    className={cn(FIELD, HINT, errors.spendCap?.length && "border-destructive")}
+                  />
+                  {err("spendCap")}
+                </div>
+                <div>
+                  <Label htmlFor="targetCostPerLead" className="text-xs">
+                    {form.objective ? TARGET_METRIC_LABEL[form.objective] : "الرقم المستهدف"}{" "}
+                    <span className="text-muted-foreground">— اختياري</span>
+                  </Label>
+                  <Input
+                    id="targetCostPerLead"
+                    inputMode="decimal"
+                    dir="ltr"
+                    value={form.targetCostPerLead}
+                    onChange={(e) => set("targetCostPerLead", e.target.value)}
+                    placeholder="0"
+                    className={cn(FIELD, HINT, errors.targetCostPerLead?.length && "border-destructive")}
+                  />
+                  {err("targetCostPerLead")}
+                </div>
+                <div>
+                  <Label htmlFor="startAt" className="text-xs">تبدأ *</Label>
+                  <Input
+                    id="startAt"
+                    type="date"
+                    dir="ltr"
+                    value={form.startAt}
+                    onChange={(e) => set("startAt", e.target.value)}
+                    className={cn(FIELD, errors.startAt?.length && "border-destructive")}
+                  />
+                  {err("startAt")}
+                </div>
+                <div>
+                  <Label htmlFor="endAt" className="text-xs">
+                    تنتهي <span className="text-muted-foreground">— فارغة = مستمرّة</span>
+                  </Label>
+                  <Input
+                    id="endAt"
+                    type="date"
+                    dir="ltr"
+                    value={form.endAt}
+                    onChange={(e) => set("endAt", e.target.value)}
+                    className={cn(FIELD, errors.endAt?.length && "border-destructive")}
+                  />
+                  {err("endAt")}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+        </div>
+        <div className="space-y-2">
+          {/* ٢ · البريف */}
+          <Card className="rounded-md">
+            <CardHeader className="px-3 pb-1 pt-2.5">
+              <CardTitle className="text-sm">
+                ٢ · البريف <span className="ms-2 text-xs font-normal text-muted-foreground">عليه تُعطى الموافقة</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 px-3 pb-3">
+              <div>
+                <Label htmlFor="name" className="text-xs">اسم الحملة *</Label>
+                <Input
+                  id="name"
+                  value={form.name}
+                  onChange={(e) => set("name", e.target.value)}
+                  placeholder="مثال: تقويم الأسنان — أكتوبر"
+                  className={cn(FIELD, HINT, errors.name?.length && "border-destructive")}
+                />
+                {err("name")}
+              </div>
+              <div>
+                <Label htmlFor="brief" className="text-xs">وصف الإعلان *</Label>
+                <Textarea
+                  id="brief"
+                  rows={2}
+                  value={form.brief}
+                  onChange={(e) => set("brief", e.target.value)}
+                  placeholder="مثال: أوّل شهر بنصف السعر لعيادات الأسنان — فيديو ريل ١٥ ثانية"
+                  className={cn("mt-0.5 min-h-0 rounded py-1.5 text-sm", HINT, errors.brief?.length && "border-destructive")}
+                />
+                {err("brief")}
+              </div>
+              <div>
+                <Label htmlFor="targetAudience" className="text-xs">
+                  الجمهور المقصود <span className="text-muted-foreground">— اختياري</span>
+                </Label>
+                <Textarea
+                  id="targetAudience"
+                  rows={1}
+                  value={form.targetAudience}
+                  onChange={(e) => set("targetAudience", e.target.value)}
+                  placeholder="مثال: أصحاب عيادات أسنان في الرياض وجدة"
+                  className={cn("mt-0.5 min-h-0 rounded py-1.5 text-sm", HINT)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="creativeUrl" className="text-xs">
+                  رابط التصاميم <span className="text-muted-foreground">— اختياري، يراه الأدمن قبل الموافقة</span>
+                </Label>
+                <Input
+                  id="creativeUrl"
+                  dir="ltr"
+                  value={form.creativeUrl}
+                  onChange={(e) => set("creativeUrl", e.target.value)}
+                  placeholder="https://drive.google.com/…"
+                  className={cn(FIELD, HINT, "text-xs", errors.creativeUrl?.length && "border-destructive")}
+                />
+                {err("creativeUrl")}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* ٤ · الرابط والكود */}
+          <Card className="rounded-md">
+            <CardHeader className="px-3 pb-1 pt-2.5">
+              <CardTitle className="text-sm">٤ · وين يروح العميل *</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 px-3 pb-3 text-xs">
+              {/* The destination decides how a lead is attributed: only the website carries the
+                  code in its link (Khalid, 29 Sep 2026 — most ads here go to WhatsApp). */}
+              <div>
+                <div role="radiogroup" aria-label="وين يروح العميل" id="destination" tabIndex={-1} className="flex flex-wrap gap-1.5">
+                  {DESTINATIONS.map((d) => (
+                    <button key={d} type="button" role="radio" aria-checked={form.destination === d} onClick={() => set("destination", d)} className={pill(form.destination === d)}>
+                      {DESTINATION_LABEL[d]}
+                    </button>
+                  ))}
+                </div>
+                {err("destination")}
+                {form.destination ? <p className="mt-1.5 text-[11px] text-muted-foreground">{DESTINATION_HINT[form.destination]}</p> : null}
+              </div>
+              {form.destination === "WEBSITE" ? (
+                <div>
+                  <Label htmlFor="landingPath" className="text-xs">
+                    صفحة الوصول <span className="text-muted-foreground">— اختياري، فارغة = الرئيسية</span>
+                  </Label>
                   <Input
                     id="landingPath"
                     dir="ltr"
                     value={form.landingPath}
                     onChange={(e) => set("landingPath", e.target.value)}
                     placeholder="/pricing"
-                    className={cn(FIELD, "font-mono text-xs")}
+                    className={cn(FIELD, HINT, "font-mono text-xs")}
                   />
                 </div>
-
-                <div>
-                  <Label htmlFor="platformCampaignId" className="text-xs">معرّف الحملة في المنصّة</Label>
-                  <Input
-                    id="platformCampaignId"
-                    dir="ltr"
-                    value={form.platformCampaignId}
-                    onChange={(e) => set("platformCampaignId", e.target.value)}
-                    placeholder="120210000000123456"
-                    className={cn(FIELD, "font-mono text-xs")}
-                  />
+              ) : null}
+              {url && form.destination === "WEBSITE" ? (
+                <div className="flex items-center gap-2">
+                  <p dir="ltr" className="min-w-0 flex-1 truncate rounded border bg-background px-2 py-1 font-mono text-[11px]" title={url}>{url}</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-7 shrink-0 px-2 text-[11px]"
+                    onClick={() => {
+                      navigator.clipboard.writeText(url);
+                      toast({ title: "اتنسخ الرابط", variant: "success" });
+                    }}
+                  >
+                    نسخ الرابط
+                  </Button>
                 </div>
+              ) : null}
+            </CardContent>
+          </Card>
 
-                <div>
-                  <Label htmlFor="utmCampaign" className="text-xs">وسم الرابط</Label>
-                  <Input
-                    id="utmCampaign"
-                    dir="ltr"
-                    value={utm}
-                    onChange={(e) => { setUtmTouched(true); set("utmCampaign", e.target.value); }}
-                    className={cn(FIELD, "font-mono text-xs", errors.utmCampaign?.length && "border-destructive")}
-                  />
-                  {err("utmCampaign")}
-                </div>
+        </div>
+      </div>
 
-                <TrackedLink
-                  site={form.site}
-                  landingPath={form.landingPath}
-                  channel={form.channel}
-                  utmCampaign={utm}
-                  platformCampaignId={form.platformCampaignId}
-                />
-              </CardContent>
-            </Card>
+      {/* The note on its own full-width card (Khalid, 29 Sep 2026) — free text, not part of any step. */}
+      <Card className="rounded-md">
+        <CardContent className="px-3 py-2.5">
+          <Label htmlFor="note" className="text-xs">
+            ملاحظة <span className="text-muted-foreground">— اختيارية</span>
+          </Label>
+          <Textarea
+            id="note"
+            rows={2}
+            value={form.note}
+            onChange={(e) => set("note", e.target.value)}
+            placeholder="مثال: جرّبنا نفس الإعلان في أغسطس وجاب ٧ عملاء"
+            className={cn("mt-0.5 min-h-0 rounded py-1.5 text-sm", HINT)}
+          />
+        </CardContent>
+      </Card>
 
-            <Card className="rounded-md">
-              <CardHeader className="px-4 pb-1.5 pt-3">
-                <CardTitle className="text-sm">
-                  ملاحظة <span className="ms-2 text-xs font-normal text-muted-foreground">اختيارية</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 pb-3">
-                <Textarea
-                  id="note"
-                  rows={2}
-                  value={form.note}
-                  onChange={(e) => set("note", e.target.value)}
-                  placeholder="جرّبنا نفس الإعلان في أغسطس وجاب ٧ عملاء…"
-                  className="rounded text-sm"
-                />
-              </CardContent>
-            </Card>
-
-            <div className="flex flex-wrap items-center gap-2 border-t pt-3">
-              <Button type="submit" disabled={saving} className="h-8 gap-2 rounded">
-                {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
-                {saving ? "جارٍ الحفظ…" : isEdit ? "حفظ التعديلات" : "حفظ"}
-              </Button>
-              <Button type="button" variant="ghost" asChild className="ms-auto h-8 rounded">
-                <Link href="/campaigns">إلغاء</Link>
-              </Button>
-            </div>
-          </div>
-        }
-        left={
-          <aside aria-label="الاستهداف" className="w-full shrink-0 lg:sticky lg:top-0 lg:w-[260px]">
-            {targeting}
-          </aside>
-        }
-      />
+      <div className="flex items-center gap-2">
+        <Button type="submit" disabled={saving} className="h-9 gap-2 rounded">
+          {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+          {saving ? "جارٍ الحفظ…" : isEdit ? "حفظ التعديلات" : "إرسال للموافقة"}
+        </Button>
+        <Button type="button" variant="ghost" asChild className="ms-auto h-9 rounded">
+          <Link href="/campaigns">إلغاء</Link>
+        </Button>
+      </div>
     </form>
-  );
-}
-
-/**
- * الرابط الجاهز — يُقرأ ويُنسخ، فليس خانة إدخال.
- *
- * وبلا معرّف المنصّة يخرج ناقصاً مفتاحه الثاني، ويُقال ذلك في سطرٍ عربيٍّ تحته — لا بدسّ كلمة
- * عربية داخل نصٍّ لاتينيّ حيث تُقرأ معكوسة.
- */
-function TrackedLink({
-  site, landingPath, channel, utmCampaign, platformCampaignId,
-}: {
-  site: AdSite | ""; landingPath: string; channel: AdChannel | "";
-  utmCampaign: string; platformCampaignId: string;
-}) {
-  const { toast } = useToast();
-  const url = useMemo(
-    () => site && channel
-      ? trackedUrl({ site, landingPath, channel, utmCampaign: utmCampaign || "…", platformCampaignId })
-      : null,
-    [site, landingPath, channel, utmCampaign, platformCampaignId],
-  );
-
-
-  return (
-    <div className="border-t pt-2">
-      <Label className="text-xs">الرابط الجاهز</Label>
-      <p dir="ltr" className="mt-0.5 break-all rounded border bg-background px-2 py-1.5 font-mono text-[11px] leading-relaxed">
-        {url ?? "اختر الموقع والقناة لتجهيز الرابط"}
-      </p>
-      {url && !platformCampaignId.trim() && (
-        <p className="mt-0.5 text-[11px] text-muted-foreground">
-          ناقصه معرّف المنصّة — أضفه فوق ليكتمل المفتاح الثاني.
-        </p>
-      )}
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        className="mt-1.5 h-7 rounded px-2 text-[11px]"
-        disabled={!url}
-        onClick={() => {
-          if (!url) return;
-          navigator.clipboard.writeText(url);
-          toast({ title: "اتنسخ", variant: "success" });
-        }}
-      >
-        نسخ الرابط
-      </Button>
-    </div>
   );
 }

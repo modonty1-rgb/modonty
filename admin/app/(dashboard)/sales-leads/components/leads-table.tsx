@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { DeleteLeadDialog } from "./delete-lead-dialog";
 import { LogForm } from "./log-form";
 import { NoAnswerButton } from "./no-answer-button";
+import { QUALITY_LABEL, QUALITY_TEXT, QualityPicker } from "./quality-picker";
 import { CHANNEL_ICON } from "../helpers/channel-icon";
 import { SILENCE_TONE, describeSilence } from "../helpers/describe-silence";
 import { formatCount } from "../helpers/format-count";
@@ -96,6 +97,7 @@ function buildColumns(sourceLabels: Record<string, string>): Column<Row>[] {
         <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
           <span className={cn("size-2 rounded-full", STAGE_DOT[r.stage as Stage])} aria-hidden />
           <span className={cn("text-xs font-medium", STAGE_TEXT[r.stage as Stage])}>{STAGE_LABEL[r.stage as Stage]}</span>
+          {r.quality ? <span className={cn("text-[11px]", QUALITY_TEXT[r.quality])}>{QUALITY_LABEL[r.quality]}</span> : null}
         </span>
       ),
     },
@@ -240,6 +242,7 @@ function LeadDetails({ r, onLogged }: { r: Row; onLogged: () => void }) {
                 </a>
               </Button>
             ) : null}
+            <QualityPicker leadId={r.id} value={r.quality} />
             <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
               <Link href={`/sales-leads/${r.id}`}>
                 <ExternalLink className="size-3.5" aria-hidden /> متابعة العميل
@@ -321,6 +324,8 @@ export function LeadsTable({
   const stage = params.get("stage") as Stage | null;
   const market = params.get("market");
   const source = params.get("source");
+  // From a campaign card's «N عميل محتمل» (29 Sep 2026): the table narrowed to that campaign.
+  const campaignFilter = params.get("campaign");
   const kpiParam = params.get("kpi") as KpiKey | null;
   const justCreated = params.get("new");
   /**
@@ -356,7 +361,8 @@ export function LeadsTable({
   );
 
   // من الأعرض إلى الأضيق — السوق (بجانب العنوان) ثم المرحلة ثم المصدر، وكلٌّ يعدّ داخل ما قبله.
-  const byMarket = market ? base.filter((r) => (r.countryCode || NO_MARKET) === market) : base;
+  const byCampaign = campaignFilter ? base.filter((r) => r.campaignId === campaignFilter) : base;
+  const byMarket = market ? byCampaign.filter((r) => (r.countryCode || NO_MARKET) === market) : byCampaign;
   const byStage = stage ? byMarket.filter((r) => r.stage === stage) : byMarket;
   const bySource = source ? byStage.filter((r) => (r.source || NO_SOURCE) === source) : byStage;
   // Opens on «عليّ اليوم» when someone is due; with no one due it would open on an empty table,
@@ -424,7 +430,49 @@ export function LeadsTable({
                 />
               ) : null}
             </div>
+            {/* The stage beside the market (Khalid, 28 Sep 2026): three pills since the funnel
+                became جديد ← تواصلنا, not worth a row of their own — the filter box keeps the
+                source alone, one line instead of two. */}
+            <div role="group" aria-label="المرحلة" className="flex flex-wrap items-center gap-1.5 border-s ps-3">
+              <CountTab label="كل المراحل" count={formatCount(byMarket.length)} active={!stage} onClick={() => setParam("stage", null)} />
+              {PICKABLE_STAGES.map((s) => {
+                const n = count(byMarket, (r) => r.stage === s);
+                return (
+                  <CountTab
+                    key={s}
+                    label={
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className={cn("size-1.5 rounded-full", STAGE_DOT[s])} aria-hidden />
+                        {STAGE_LABEL[s]}
+                      </span>
+                    }
+                    count={formatCount(n)}
+                    active={stage === s}
+                    disabled={n === 0 && stage !== s}
+                    onClick={() => setParam("stage", stage === s ? null : s)}
+                  />
+                );
+              })}
+            </div>
           </div>
+          {campaignFilter ? (
+            <p className="mt-1 inline-flex items-center gap-2 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+              حملة: {byCampaign[0]?.campaign ?? "—"} · {formatCount(byCampaign.length)}
+              <button
+                type="button"
+                onClick={() => {
+                  const next = new URLSearchParams(params.toString());
+                  next.delete("campaign");
+                  const qs = next.toString();
+                  router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+                }}
+                aria-label="إزالة فلتر الحملة"
+                className="hover:text-foreground"
+              >
+                ✕
+              </button>
+            </p>
+          ) : null}
           <p className="mt-0.5 text-xs text-muted-foreground">
             {formatCount(base.length)} عميل مفتوح{pipeline ? ` · قيمة الصفقات المعروضة: ${pipeline}` : ""}
           </p>
@@ -440,27 +488,6 @@ export function LeadsTable({
           width and wrap, the four tiles keep a fixed share — «auto» squeezed them to a sliver. */}
       <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)]">
         <section aria-label="المرشّحات" className="flex flex-col justify-center gap-2 rounded-lg border bg-card px-4 py-2.5">
-          <FilterRow label="المرحلة">
-            <CountTab label="المفتوح" count={formatCount(byMarket.length)} active={!stage} onClick={() => setParam("stage", null)} />
-            {PICKABLE_STAGES.map((s) => {
-              const n = count(byMarket, (r) => r.stage === s);
-              return (
-                <CountTab
-                  key={s}
-                  label={
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className={cn("size-1.5 rounded-full", STAGE_DOT[s])} aria-hidden />
-                      {STAGE_LABEL[s]}
-                    </span>
-                  }
-                  count={formatCount(n)}
-                  active={stage === s}
-                  disabled={n === 0 && stage !== s}
-                  onClick={() => setParam("stage", stage === s ? null : s)}
-                />
-              );
-            })}
-          </FilterRow>
           {sourceKeys.length > 1 ? (
             <FilterRow label="المصدر">
               <CountTab label="الكل" count={formatCount(byStage.length)} active={!source} onClick={() => setParam("source", null)} />
