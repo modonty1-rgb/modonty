@@ -13,6 +13,7 @@ import { clientServerSchema } from "./client-server-schema";
 import { normalizeOrganizationType } from "@modonty/shared/lib/constants/client-classification";
 import { normalizePhone } from "@modonty/shared/lib/phone";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
+import { slugify } from "@/lib/utils";
 import bcrypt from "bcryptjs";
 
 export async function createClient(data: ClientFormData) {
@@ -27,13 +28,17 @@ export async function createClient(data: ClientFormData) {
       return { success: false as const, error: firstError.message };
     }
 
-    // Validate slug uniqueness
+    // ONE slug — normalised once, then both checked and stored (29 Sep 2026 slug audit). The check
+    // ran on `slug.trim()` while the row stored the raw form value, so «عيادة نور » passed the check
+    // and landed with a space in the public URL. Same fix the article paths got.
+    const slug = slugify(parsed.data.slug);
+    if (!slug) return { success: false as const, error: "الرابط المختصر فارغ بعد التنظيف — اكتب اسماً بحروف أو أرقام" };
     const existingClient = await db.client.findUnique({
-      where: { slug: parsed.data.slug.trim() },
+      where: { slug },
       select: { id: true },
     });
     if (existingClient) {
-      return { success: false as const, error: "This slug is already in use" };
+      return { success: false as const, error: "هذا الرابط المختصر مستخدم لعميل آخر — غيّره" };
     }
 
     // Email + phone must be globally unique. App-level guard (the DB index may not be synced).
@@ -81,7 +86,7 @@ export async function createClient(data: ClientFormData) {
     // الاشتراك يكتبها `lib/orders/activate-from-order.ts` عند التفعيل، وتاريخُ النهاية
     // يُعاد حسابُه من الطلبات المدفوعة (`lib/invoices/recompute-subscription-end.ts`).
     // و`subscriptionStatus` يبدأ `PENDING` من السكيما نفسها — لا يُكتب هنا.
-    const clientData: Record<string, unknown> = { ...mappedData };
+    const clientData: Record<string, unknown> = { ...mappedData, slug };
 
     // سقطت كتابةُ `openingBalance` (١٧ سبتمبر ٢٠٢٦): دفعةُ التأسيس صارت تعيش على
     // الطلب المدفوع — بمبلغه وعملته ويوم دفعه — وتقريرُ المبيعات يقرؤها من هناك.

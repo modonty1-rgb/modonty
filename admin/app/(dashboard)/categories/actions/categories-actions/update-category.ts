@@ -54,7 +54,7 @@ export async function updateCategory(
       select: { id: true },
     });
     if (existing) {
-      return { success: false, error: "This slug is already in use. Try a different one." };
+      return { success: false, error: "هذا الرابط المختصر مستخدم — جرّب رابطاً آخر" };
     }
 
     const updateData: {

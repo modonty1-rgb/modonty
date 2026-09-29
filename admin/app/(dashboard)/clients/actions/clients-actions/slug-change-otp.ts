@@ -112,7 +112,7 @@ export async function verifyAndChangeSlug(
     where: { slug: newSlug, id: { not: clientId } },
     select: { id: true },
   });
-  if (existing) return { success: false, error: "This slug is already in use by another client" };
+  if (existing) return { success: false, error: "هذا الرابط المختصر مستخدم لعميل آخر — غيّره" };
 
   const oldClient = await db.client.findUnique({
     where: { id: clientId },

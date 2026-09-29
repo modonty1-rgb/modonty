@@ -109,25 +109,24 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       }
     }
 
-    // Validate slug uniqueness within client when slug changed
-    // The schema's normalised slug, not the raw input — same fix as create-article.ts, and
-    // applied here because a create-only fix would leave every EDIT able to reintroduce the
-    // untrimmed slug the create path now rejects.
+    // Slug unique across ALL articles when it changes — same rule and reason as create-article.ts
+    // (the public URL has no client in it). The schema's normalised slug, not the raw input, and
+    // applied here because a create-only fix would leave every EDIT able to reintroduce it.
     const slug = parsed.data.slug;
 
     if (slug && slug !== existingArticle.slug) {
       const existingSlug = await db.article.findFirst({
-        where: {
-          clientId: data.clientId || existingArticle.clientId,
-          slug,
-          id: { not: articleId },
-        },
-        select: { id: true },
+        where: { slug, id: { not: articleId } },
+        select: { id: true, clientId: true, client: { select: { name: true } } },
       });
       if (existingSlug) {
+        const ownClient = data.clientId || existingArticle.clientId;
         return {
           success: false,
-          error: "هذا الرابط المختصر مستخدم بالفعل لهذا العميل",
+          error:
+            existingSlug.clientId === ownClient
+              ? "هذا الرابط المختصر مستخدم بالفعل لهذا العميل"
+              : `هذا الرابط المختصر مستخدم في مقالة لعميل آخر (${existingSlug.client?.name ?? "—"}) — غيّره`,
         };
       }
     }

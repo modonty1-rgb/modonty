@@ -37,7 +37,7 @@ export async function updateIndustry(
 
     // Slug uniqueness check (exclude current)
     const existingSlug = await db.industry.findFirst({ where: { slug: normalizedData.slug, id: { not: id } }, select: { id: true } });
-    if (existingSlug) return { success: false, error: "This slug is already in use. Try a different one." };
+    if (existingSlug) return { success: false, error: "هذا الرابط المختصر مستخدم — جرّب رابطاً آخر" };
 
     const updateData: {
       name: string;

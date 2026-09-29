@@ -176,7 +176,7 @@ export async function createTag(data: {
 
     // Slug uniqueness check
     const existing = await db.tag.findFirst({ where: { slug: normalizedData.slug }, select: { id: true } });
-    if (existing) return { success: false, error: "This slug is already in use. Try a different one." };
+    if (existing) return { success: false, error: "هذا الرابط المختصر مستخدم — جرّب رابطاً آخر" };
 
     // Canonical derived from the slug, same rule as the update path.
     const tag = await db.tag.create({
@@ -243,7 +243,7 @@ export async function updateTag(
 
     // Slug uniqueness check (exclude current)
     const existingSlug = await db.tag.findFirst({ where: { slug: normalizedData.slug, id: { not: id } }, select: { id: true } });
-    if (existingSlug) return { success: false, error: "This slug is already in use. Try a different one." };
+    if (existingSlug) return { success: false, error: "هذا الرابط المختصر مستخدم — جرّب رابطاً آخر" };
 
     const updateData: {
       name: string;

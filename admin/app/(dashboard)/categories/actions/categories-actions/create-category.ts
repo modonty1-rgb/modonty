@@ -38,7 +38,7 @@ export async function createCategory(data: {
     // Slug uniqueness check
     const existing = await db.category.findFirst({ where: { slug: normalizedData.slug }, select: { id: true } });
     if (existing) {
-      return { success: false, error: "This slug is already in use. Try a different one." };
+      return { success: false, error: "هذا الرابط المختصر مستخدم — جرّب رابطاً آخر" };
     }
 
     const category = await db.category.create({

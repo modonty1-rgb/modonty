@@ -69,15 +69,21 @@ export async function createArticle(data: ArticleFormData) {
       };
     }
 
-    // Validate slug uniqueness within client
+    // Slug unique across ALL articles, not per client (Khalid, 29 Sep 2026). The public URL is
+    // `/articles/[slug]` with no client in it, and the page reads `findFirst({ slug })` — two clients
+    // on one slug means one of the two articles can never be opened (Prisma: «you get one of them, in
+    // no guaranteed order»). The OTP slug change already checked it this way; create and edit did not.
     const existingArticle = await db.article.findFirst({
-      where: { clientId: data.clientId, slug },
-      select: { id: true },
+      where: { slug },
+      select: { id: true, clientId: true, client: { select: { name: true } } },
     });
     if (existingArticle) {
       return {
         success: false,
-        error: "هذا الرابط المختصر مستخدم بالفعل لهذا العميل",
+        error:
+          existingArticle.clientId === data.clientId
+            ? "هذا الرابط المختصر مستخدم بالفعل لهذا العميل"
+            : `هذا الرابط المختصر مستخدم في مقالة لعميل آخر (${existingArticle.client?.name ?? "—"}) — غيّره`,
       };
     }
 
