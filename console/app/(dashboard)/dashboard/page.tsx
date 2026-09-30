@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth";
 import { ar } from "@/lib/ar";
 import { db } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { getGoogleReportUrl } from "@/lib/google/get-google-report-url";
+import { GoogleIcon } from "@modonty/shared/components/icons/google-icon";
 import { getTrafficSources, getRecentActivity } from "./helpers/dashboard-queries";
 import { getPendingArticlesCount } from "./articles/helpers/article-queries";
 import { getPendingCommentsCount } from "./comments/helpers/comment-queries";
@@ -54,7 +56,19 @@ export default async function DashboardPage({
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
           {d.greetingFor.replace("{name}", clientName)}
         </h1>
-        <PeriodFilter value={days} />
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Google's own report, not ours — so the client can check every number at the source. */}
+          <a
+            href={getGoogleReportUrl(clientId)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-9 items-center gap-2 rounded-md border bg-background px-3 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted max-md:h-11"
+          >
+            <GoogleIcon />
+            {d.googleReportButton}
+          </a>
+          <PeriodFilter value={days} />
+        </div>
       </header>
 
       <AttentionStrip pendingArticles={pendingArticlesCount} pendingComments={pendingCommentsCount} newSupport={newSupportCount} />

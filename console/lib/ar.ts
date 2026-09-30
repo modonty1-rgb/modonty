@@ -141,6 +141,7 @@ export const ar = {
     googlePosition: "متوسط ترتيبك",
     googlePositionHint: "كل ما قلّ الرقم كنت أعلى في النتائج",
     googleTopQueries: "كلمات البحث اللي طلّعتك",
+    googleReportButton: "تأكّد من أرقامك في تقرير جوجل",
     googleEmpty: "لسّا ما ظهرت صفحاتك في جوجل خلال آخر {days} يوماً — بيانات جوجل تبدأ بعد أيام من نشر المقال.",
     googleUnavailable: "تعذّر الوصول لبيانات جوجل الآن — جرّب بعد قليل.",
     performanceTitle: "الأداء",

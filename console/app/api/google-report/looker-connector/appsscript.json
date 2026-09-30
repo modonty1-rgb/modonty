@@ -1,0 +1,15 @@
+{
+  "timeZone": "Asia/Riyadh",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "urlFetchWhitelist": ["https://console.modonty.com/"],
+  "dataStudio": {
+    "name": "مدونتي — أداء جوجل",
+    "company": "Modonty",
+    "companyUrl": "https://www.modonty.com",
+    "logoUrl": "https://www.modonty.com/apple-icon.png",
+    "addonUrl": "https://www.modonty.com",
+    "supportUrl": "https://www.modonty.com",
+    "description": "أرقام ظهور صفحات العميل ومقالاته في بحث جوجل، من سيرش كونسل مدونتي."
+  }
+}

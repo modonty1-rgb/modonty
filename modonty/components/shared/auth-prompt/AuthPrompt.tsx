@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-import { GoogleIcon } from "@/components/auth/google-icon";
+import { GoogleIcon } from "@modonty/shared/components/icons/google-icon";
 import { IconLoading, IconLike, IconSaved, IconComment, IconBell } from "@/lib/icons";
 
 interface AuthPromptProps {

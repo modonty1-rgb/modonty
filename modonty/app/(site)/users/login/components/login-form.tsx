@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IconEmail } from "@/lib/icons";
-import { GoogleIcon } from "@/components/auth/google-icon";
+import { GoogleIcon } from "@modonty/shared/components/icons/google-icon";
 import { trackLoginClient } from "@/app/(site)/users/login/helpers/track-login-client";
 
 interface LoginFormProps {

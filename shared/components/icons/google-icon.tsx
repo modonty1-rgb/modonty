@@ -1,5 +1,5 @@
 // Official Google "G" — 4-color, per Google branding guidelines (never recolor/resize).
-// Shared by the register form and the login page.
+// Shared by modonty sign-in (login · register · auth prompt) and the console's Google report button.
 export function GoogleIcon() {
   return (
     <svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true" className="shrink-0">
