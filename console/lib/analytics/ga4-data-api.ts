@@ -2,11 +2,13 @@
  * GA4 Data API — server-side report fetching.
  *
  * Auth: service account JWT (GA4_PRIVATE_KEY_BASE64 or fallback to GA4_PRIVATE_KEY).
- * Endpoints: runReport, runRealtimeReport.
+ * Endpoint: runReport. (No Realtime: it rejects event-scoped custom dimensions such as
+ * customEvent:client_id — «Event-scoped custom dimensions aren't supported in the Realtime API»,
+ * developers.google.com/analytics/devguides/reporting/data/v1/realtime-api-schema — so it cannot be
+ * narrowed to one client.)
  *
  * Docs verified via Context7:
  * - https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport
- * - https://developers.google.com/analytics/devguides/reporting/data/v1/realtime-basics
  */
 
 import { createSign } from "node:crypto";
@@ -98,18 +100,9 @@ interface RunReportResponse {
   rowCount?: number;
 }
 
-interface RunRealtimeReportRequest {
-  dimensions?: Array<{ name: string }>;
-  metrics: Array<{ name: string }>;
-  dimensionFilter?: DimensionFilter;
-  orderBys?: Array<{ metric?: { metricName: string }; desc?: boolean }>;
-  limit?: number;
-  minuteRanges?: Array<{ startMinutesAgo: number; endMinutesAgo?: number; name?: string }>;
-}
-
 // ─── Core API call ───────────────────────────────────────────────────────────
 
-async function callAnalyticsAPI<TReq, TResp>(method: "runReport" | "runRealtimeReport", body: TReq): Promise<TResp> {
+async function callAnalyticsAPI<TReq, TResp>(method: "runReport", body: TReq): Promise<TResp> {
   if (!PROPERTY_ID) throw new Error("GA4_PROPERTY_ID not set");
   const token = await getAccessToken();
   const url = `https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:${method}`;
@@ -129,10 +122,6 @@ export async function runReport(body: RunReportRequest): Promise<RunReportRespon
   return callAnalyticsAPI<RunReportRequest, RunReportResponse>("runReport", body);
 }
 
-export async function runRealtimeReport(body: RunRealtimeReportRequest): Promise<RunReportResponse> {
-  return callAnalyticsAPI<RunRealtimeReportRequest, RunReportResponse>("runRealtimeReport", body);
-}
-
 // ─── Helpers — typed query builders ──────────────────────────────────────────
 
 const OUR_EVENTS = [
@@ -144,33 +133,27 @@ const OUR_EVENTS = [
 ];
 
 export interface ClientOverview {
-  activeUsers30Min: number;
-  totalEvents7d: number;
-  totalEvents28d: number;
-  uniqueUsers7d: number;
-  uniqueUsers28d: number;
-  topEvents: Array<{ name: string; count: number }>;
+  /** null = that one report failed; the others still show. */
+  totalEvents7d: number | null;
+  totalEvents28d: number | null;
+  uniqueUsers7d: number | null;
+  uniqueUsers28d: number | null;
+  topEvents: Array<{ name: string; count: number }> | null;
 }
 
 /**
- * Get overview KPIs for a specific client (filtered by client_id).
- * Cached for 60s to reduce API quota usage.
+ * Overview KPIs for one client (filtered by client_id). Cached for 60s to reduce API quota usage.
+ *
+ * The three reports settle independently: one rejected request used to blank the whole card
+ * (30 Sep 2026 — a Realtime query rejected the filter and took the 7- and 28-day numbers with it).
  */
 export const getClientOverview = unstable_cache(
   async (clientId: string): Promise<ClientOverview> => {
     const clientFilter: DimensionFilter = {
       filter: { fieldName: "customEvent:client_id", stringFilter: { matchType: "EXACT", value: clientId } },
     };
-    const ourEventsFilter: DimensionFilter = {
-      filter: { fieldName: "eventName", stringFilter: { matchType: "EXACT", value: "" } },
-    };
 
-    // 4 queries in parallel
-    const [realtime, last7d, last28d, topEvents] = await Promise.all([
-      runRealtimeReport({
-        metrics: [{ name: "activeUsers" }],
-        dimensionFilter: clientFilter,
-      }),
+    const [last7d, last28d, topEvents] = await Promise.allSettled([
       runReport({
         dateRanges: [{ startDate: "7daysAgo", endDate: "today" }],
         metrics: [{ name: "eventCount" }, { name: "totalUsers" }],
@@ -191,19 +174,24 @@ export const getClientOverview = unstable_cache(
       }),
     ]);
 
+    const failed = [last7d, last28d, topEvents].filter((r) => r.status === "rejected");
+    if (failed.length === 3) throw (failed[0] as PromiseRejectedResult).reason;
+    for (const f of failed) console.error("[getClientOverview]", (f as PromiseRejectedResult).reason);
+
+    const metric = (r: PromiseSettledResult<RunReportResponse>, i: number) =>
+      r.status === "fulfilled" ? Number(r.value.rows?.[0]?.metricValues?.[i]?.value ?? 0) : null;
     return {
-      activeUsers30Min: Number(realtime.rows?.[0]?.metricValues?.[0]?.value ?? 0),
-      totalEvents7d: Number(last7d.rows?.[0]?.metricValues?.[0]?.value ?? 0),
-      uniqueUsers7d: Number(last7d.rows?.[0]?.metricValues?.[1]?.value ?? 0),
-      totalEvents28d: Number(last28d.rows?.[0]?.metricValues?.[0]?.value ?? 0),
-      uniqueUsers28d: Number(last28d.rows?.[0]?.metricValues?.[1]?.value ?? 0),
-      topEvents: (topEvents.rows ?? []).map((r) => ({
-        name: r.dimensionValues[0].value,
-        count: Number(r.metricValues[0].value),
-      })),
+      totalEvents7d: metric(last7d, 0),
+      uniqueUsers7d: metric(last7d, 1),
+      totalEvents28d: metric(last28d, 0),
+      uniqueUsers28d: metric(last28d, 1),
+      topEvents:
+        topEvents.status === "fulfilled"
+          ? (topEvents.value.rows ?? []).map((r) => ({ name: r.dimensionValues[0].value, count: Number(r.metricValues[0].value) }))
+          : null,
     };
   },
-  ["ga4-client-overview"],
+  ["ga4-client-overview-v2"],
   { revalidate: 60, tags: ["ga4-overview"] },
 );
 

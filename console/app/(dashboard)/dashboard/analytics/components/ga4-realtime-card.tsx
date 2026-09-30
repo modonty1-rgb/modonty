@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Users, Eye, Sparkles } from "lucide-react";
+import { Activity, AlertTriangle, Users, Eye, Sparkles } from "lucide-react";
 import { getClientOverview } from "@/lib/analytics/ga4-data-api";
 
 const EVENT_LABEL_AR: Record<string, string> = {
@@ -30,8 +30,9 @@ function arLabel(name: string): string {
   return EVENT_LABEL_AR[name] ?? name;
 }
 
-function formatNumber(n: number): string {
-  return new Intl.NumberFormat("ar-SA").format(n);
+/** null = that report failed on Google's side; the card shows a dash instead of a false zero. */
+function formatNumber(n: number | null): string {
+  return n === null ? "—" : new Intl.NumberFormat("ar-SA").format(n);
 }
 
 async function GA4Stats({ clientId }: { clientId: string }) {
@@ -39,31 +40,19 @@ async function GA4Stats({ clientId }: { clientId: string }) {
   try {
     data = await getClientOverview(clientId);
   } catch (err) {
+    // The raw Google error goes to the server log, not to the client's screen.
+    console.error("[GA4Stats]", err);
     return (
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-        <strong>⚠️ تعذّر الاتصال بـ Google Analytics:</strong>{" "}
-        {err instanceof Error ? err.message : "خطأ غير معروف"}.
-        <div className="mt-2 text-xs">
-          تأكّد من إعداد GA4 env vars في Vercel: GA4_PROPERTY_ID, GA4_CLIENT_EMAIL, GA4_PRIVATE_KEY_BASE64.
-        </div>
+      <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+        <span>تعذّر جلب بيانات Google Analytics الآن — جرّب بعد قليل.</span>
       </div>
     );
   }
 
   return (
     <>
-      <div className="grid gap-3 md:grid-cols-4">
-        <div className="rounded-lg border bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-4">
-          <div className="flex items-center gap-2 text-emerald-700">
-            <Activity className="h-4 w-4" />
-            <span className="text-xs font-medium">نشط الآن</span>
-          </div>
-          <div className="mt-2 text-2xl font-bold text-emerald-900">
-            {formatNumber(data.activeUsers30Min)}
-          </div>
-          <div className="text-xs text-emerald-700/70">آخر 30 دقيقة</div>
-        </div>
-
+      <div className="grid gap-3 md:grid-cols-3">
         <div className="rounded-lg border bg-gradient-to-br from-blue-50 to-blue-100/50 p-4">
           <div className="flex items-center gap-2 text-blue-700">
             <Eye className="h-4 w-4" />
@@ -96,18 +85,18 @@ async function GA4Stats({ clientId }: { clientId: string }) {
             <span className="text-xs font-medium">أنواع الأحداث</span>
           </div>
           <div className="mt-2 text-2xl font-bold text-amber-900">
-            {data.topEvents.length}
+            {formatNumber(data.topEvents?.length ?? null)}
           </div>
           <div className="text-xs text-amber-700/70">حدث مختلف نشط</div>
         </div>
       </div>
 
-      {data.topEvents.length > 0 && (
+      {data.topEvents && data.topEvents.length > 0 && (
         <div className="mt-4 rounded-lg border bg-card p-4">
           <h4 className="mb-3 text-sm font-semibold text-foreground">أهم الأحداث (7 أيام)</h4>
           <div className="space-y-2">
             {data.topEvents.slice(0, 5).map((evt) => {
-              const max = data.topEvents[0]?.count || 1;
+              const max = data.topEvents?.[0]?.count || 1;
               const pct = (evt.count / max) * 100;
               return (
                 <div key={evt.name} className="space-y-1">
@@ -135,8 +124,8 @@ async function GA4Stats({ clientId }: { clientId: string }) {
 
 function LoadingSkeleton() {
   return (
-    <div className="grid gap-3 md:grid-cols-4">
-      {[1, 2, 3, 4].map((i) => (
+    <div className="grid gap-3 md:grid-cols-3">
+      {[1, 2, 3].map((i) => (
         <div key={i} className="h-24 animate-pulse rounded-lg border bg-muted/30" />
       ))}
     </div>
@@ -152,9 +141,9 @@ export function GA4RealtimeCard({ clientId }: { clientId: string }) {
             <Activity className="h-4 w-4 text-emerald-700" />
           </div>
           <div>
-            <CardTitle className="text-base">إحصائيات Google Analytics المباشرة</CardTitle>
+            <CardTitle className="text-base">إحصائيات Google Analytics</CardTitle>
             <CardDescription className="text-xs">
-              بيانات فعلية من زوّار موقعك على مودونتي · تُحدَّث كل دقيقة
+              بيانات فعلية من زوّار صفحاتك على مدونتي · آخر ٧ و٢٨ يوماً
             </CardDescription>
           </div>
         </div>
