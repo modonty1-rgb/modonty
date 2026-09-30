@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { LUCKY_WHEEL_CAMPAIGN, LUCKY_WHEEL_PRIZES, SPINS_PER_PHONE } from "@/app/(site)/lucky-wheel/prizes";
 import { isWheelRateLimited } from "./is-wheel-rate-limited";
+import { normalizeWheelPhone } from "./normalize-wheel-phone";
 
 /**
  * One spin: the visitor sends name + phone, the SERVER picks the slice and stores it, and only
@@ -15,20 +16,6 @@ const spinSchema = z.object({
   name: z.string().trim().min(2, "اكتب الاسم كاملًا.").max(100),
   phone: z.string().trim().min(7, "اكتب رقم جوال صحيحًا.").max(24).regex(/^[+\d\s()-]+$/, "اكتب رقم جوال صحيحًا."),
 });
-
-/**
- * One number, one spelling — the phone IS the one-spin limit, so «+966 50…», «00966 50…»,
- * «966 50…», «050…» and «50…» must all land on the same row. Measured: with a `+` kept, the
- * same number spun twice. Saudi numbers fold to the local `05…` form (the event is in Riyadh);
- * anything else keeps its digits with the international `00`/`+` stripped.
- */
-function normalizePhone(phone: string) {
-  let digits = phone.replace(/\D/g, "");
-  if (digits.startsWith("00")) digits = digits.slice(2);
-  if (digits.startsWith("966") && digits.length === 12) digits = `0${digits.slice(3)}`;
-  if (digits.startsWith("5") && digits.length === 9) digits = `0${digits}`;
-  return digits;
-}
 
 function indexOfCode(code: string | null) {
   const index = LUCKY_WHEEL_PRIZES.findIndex((prize) => prize.code === code);
@@ -49,7 +36,7 @@ export async function POST(request: NextRequest) {
   }
 
   const { name } = parsed.data;
-  const phone = normalizePhone(parsed.data.phone);
+  const phone = normalizeWheelPhone(parsed.data.phone);
   if (phone.length < 7) {
     return NextResponse.json({ success: false, error: "اكتب رقم جوال صحيحًا." }, { status: 400 });
   }
