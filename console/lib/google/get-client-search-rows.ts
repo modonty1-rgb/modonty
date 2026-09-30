@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 
 import { getClientPagePaths } from "./get-client-page-paths";
-import { queryModontySearch } from "./query-modonty-search";
+import { queryModontySearch } from "@modonty/shared/lib/google/query-modonty-search";
 
 export type ReportDimension = "date" | "page" | "query";
 

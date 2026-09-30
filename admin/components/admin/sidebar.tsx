@@ -95,6 +95,8 @@ import { Trophy,
   Wrench,
   AtSign,
   Star,
+  Target,
+  PenLine,
 } from "lucide-react";
 import { LIVE_SECTORS, type LiveSectorSlug } from "@modonty/shared/lib/sectors/live-sectors";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
@@ -311,6 +313,16 @@ const rawMenuGroups: MenuGroup[] = [
       // deletes and sets roles and avatars for staff.
       { icon: Users2, label: "Staff", href: "/users" },
     ],
+  },
+  // KPI (Khalid, 30 Sep 2026): «في السايد بار كي بي اي… الكي بي اي للكونتنت، للجرافيك، للسيلز وهكذا».
+  // One page per team; Content first — its writers measured by Google. Graphics and Sales join
+  // here as their pages are built (no placeholder links until then).
+  {
+    title: "KPI",
+    icon: Target,
+    section: "Core work",
+    defaultOpen: false,
+    items: [{ icon: PenLine, label: "Content", href: "/kpi/content" }],
   },
   {
     title: "Analytics & Channels",

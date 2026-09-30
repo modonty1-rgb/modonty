@@ -6276,12 +6276,25 @@
       "app": [
         "console"
       ],
-      "tab": "open",
+      "tab": "done",
       "sev": "high",
       "who": "c",
       "date": "٣٠ سبتمبر ٢٠٢٦",
-      "t": "صفحة إحصائيات الكونسول: بطاقة Google Analytics كانت تسقط كاملةً بخطأ 400 · مُصلَح محلّياً ينتظر الرفع",
-      "d": "<p><b>ببساطة:</b> العميل يفتح «الإحصائيات» فيرى خطأ جوجل بالإنجليزي بدل أرقامه. السبب طلب «النشطون الآن»: جوجل لا تقبل فلتر العميل فيه، وسقوطه كان يُسقط الأرقام الأخرى معه.</p><p><b>الدليل:</b> لقطة خالد من console.modonty.com/dashboard/analytics: «GA4 runRealtimeReport HTTP 400 … customEvent:client_id is not a valid dimension». توثيق جوجل (realtime-api-schema): «Event-scoped custom dimensions aren't supported in the Realtime API».</p><p><b>الإصلاح:</b> <code>console/lib/analytics/ga4-data-api.ts</code> — حُذف طلب Realtime (مستدعٍ واحد) و<code>Promise.all</code> صار <code>allSettled</code>؛ الرقم الفاشل يظهر «—». <code>ga4-realtime-card.tsx</code> — ثلاث بطاقات بدل أربع، ورسالة عربية بدل نصّ جوجل الخام وتلميح env المضلِّل.</p><p><b>مقيس محلّياً (localhost:3002، شركة جبر سيو):</b> الأحداث ٧ أيام ٧٦ · ٢٨ يوماً ٣٣٩ · زوّار ٦٩ / ٢٣٢ · أهم الأحداث: مشاهدة مقال ٥٦. <b>المتبقّي:</b> الرفع ثم فحص الإنتاج.</p>"
+      "t": "صفحة إحصائيات الكونسول: بطاقة Google Analytics لم تعد تسقط بخطأ 400",
+      "d": "<p><b>ببساطة:</b> العميل يفتح «الإحصائيات» فيرى خطأ جوجل بالإنجليزي بدل أرقامه. السبب طلب «النشطون الآن»: جوجل لا تقبل فلتر العميل فيه، وسقوطه كان يُسقط الأرقام الأخرى معه.</p><p><b>الدليل:</b> لقطة خالد من console.modonty.com/dashboard/analytics: «GA4 runRealtimeReport HTTP 400 … customEvent:client_id is not a valid dimension». توثيق جوجل (realtime-api-schema): «Event-scoped custom dimensions aren't supported in the Realtime API».</p><p><b>الإصلاح:</b> <code>console/lib/analytics/ga4-data-api.ts</code> — حُذف طلب Realtime (مستدعٍ واحد) و<code>Promise.all</code> صار <code>allSettled</code>؛ الرقم الفاشل يظهر «—». <code>ga4-realtime-card.tsx</code> — ثلاث بطاقات بدل أربع، ورسالة عربية بدل نصّ جوجل الخام وتلميح env المضلِّل.</p><p><b>مقيس محلّياً (localhost:3002، شركة جبر سيو):</b> الأحداث ٧ أيام ٧٦ · ٢٨ يوماً ٣٣٩ · زوّار ٦٩ / ٢٣٢ · أهم الأحداث: مشاهدة مقال ٥٦.</p><p><b>الإنتاج (502a6ef، Vercel Ready):</b> console.modonty.com/dashboard/analytics لعميلة اللقطة نفسها «دكتور أمل زكريا» — الأحداث ٧ أيام ٢٩ · ٢٨ يوماً ٣٦ · زوّار ٢٦ / ٢٩ · أهم حدث: مشاهدة مقال ١٩ · نصّ الخطأ 400 غير موجود في الصفحة.</p>"
+    },
+    {
+      "id": "KPI-CONTENT",
+      "b": "projects",
+      "app": [
+        "admin"
+      ],
+      "tab": "open",
+      "sev": "med",
+      "who": "c",
+      "date": "٣٠ سبتمبر ٢٠٢٦",
+      "t": "قسم KPI في الأدمن · صفحة Content: كرت لكل كاتب بأداء عملائه في جوجل · محلّي ينتظر الرفع",
+      "d": "<p><b>ببساطة:</b> تحت «KPI» في السايدبار صفحة «Content»: كرت لكل كاتب (EDITOR) مرتّب بالنقرات — ظهور · نقرات · نسبة النقر · متوسّط الترتيب · التغيّر عن الفترة السابقة · كم مقال ظهر في جوجل من المنشورة · أقوى مقال · وتفصيل عميل عميل. فلتر ٧/٢٨/٩٠ يوماً. للأدمن فقط. Graphics وSales تُضاف لاحقاً في نفس القسم.</p><p><b>المطلب (خالد ٣٠ سبتمبر):</b> «اهم حاجه عندي جوجل… طارق ماسك عملاء حتلاقي عنده الظهور والنقرات» · «في السايد بار كي بي اي… للكونتنت للجرافيك للسيلز».</p><p><b>الملفّات:</b> <code>admin/app/(dashboard)/kpi/content/</code> (page · loading · components/writer-card · helpers/get-content-kpis) · <code>shared/lib/google/query-modonty-search.ts</code> (انتقل من console، يستعمله التطبيقان) · <code>admin/components/admin/sidebar.tsx</code>.</p><p><b>مقيس محلّياً (localhost:3001، قاعدة dev + سيرش كونسل الحقيقي، ٢٨ يوماً):</b> tarek elafifi ٥ عملاء ٣٠٢٬٥٥٠ / ٢٬٢٩٠ · yasmeen elsayed ١٤ عميلاً ٥٣٬٦٠٣ / ٣٦٥ · maya ahmed ٢٠ عميلاً ٢٨٬٧٨٧ / ١٧٢ · شركة جبر سيو داخل كرت طارق ٥٬١٣٦ / ٣٤ = نفس لوحة الكونسول. خطأ «٦٠ من ٥٧ مقالاً» أُصلح بعدّ المسارات المميّزة (٥٦/٥٧).</p><p><b>قرار خالد (٣٠ سبتمبر):</b> لا يُستبعد أي عميل — «مدونتي» عميلٌ كغيره ويُحسب لكاتبه («ما تستبعد أي حاجة»).</p><p><b>إضافتان (٣٠ سبتمبر):</b> «Impressions by country» في كل كرت + «Top country» لكل عميل · زرّ «All time» في الفلتر (سيرش كونسل يحفظ ١٦ شهراً: ٢٠٢٥-٠٥-٣٠ → اليوم، بلا مقارنة). <b>قيد من جوجل مقيس:</b> حين تُقسَّم الصفحات بالدولة يُسقط جوجل الظهور المحجوب للخصوصية — مقال واحد ١٩٥٬٩٣٩ بالصفحة مقابل ١١٨٬٧٥٥ بالصفحة+الدولة؛ على الموقع كله ٣٩١٬٠٢٨ مقابل ٢٠٤٬٤٣٠. الكرت يكتب النسبة المغطّاة (طارق ٦٠٪ · ياسمين ٢٦٪ · مايا ٢٨٪ في ٢٨ يوماً).</p>"
     }
   ],
   "reports": []

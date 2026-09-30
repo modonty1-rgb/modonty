@@ -1,4 +1,4 @@
-import { getGoogleServiceToken } from "@modonty/shared/lib/google/get-google-service-token";
+import { getGoogleServiceToken } from "./get-google-service-token";
 
 const SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
 const PROPERTY = process.env.GSC_MODONTY_PROPERTY ?? "sc-domain:modonty.com";
@@ -13,7 +13,8 @@ export interface SearchRow {
 }
 
 /**
- * One Search Analytics query over all of modonty.com, every page of results.
+ * One Search Analytics query over all of modonty.com, every page of results. Shared by the console
+ * (client dashboard + Looker connector endpoint) and the admin (KPI pages).
  *
  * Every partner's page and article lives on modonty.com, so the one property holds all clients;
  * callers keep only a client's own URLs. `final` (Google's default dataState): finalized numbers,

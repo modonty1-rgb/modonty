@@ -1,4 +1,4 @@
-import { queryModontySearch, type SearchRow } from "@/lib/google/query-modonty-search";
+import { queryModontySearch, type SearchRow } from "@modonty/shared/lib/google/query-modonty-search";
 
 export type { SearchRow };
 
