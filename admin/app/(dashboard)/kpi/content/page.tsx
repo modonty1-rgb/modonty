@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { checkFinanceAdmin } from "@/lib/require-finance-admin";
 import { cn } from "@/lib/utils";
 
 import { WriterCard } from "./components/writer-card";
@@ -14,14 +13,10 @@ const PERIODS = [7, 28, 90, ALL_TIME] as const;
 /**
  * **KPI › Content** (Khalid, 30 Sep 2026) — the first page of the KPI section; Graphics, Sales and
  * the rest follow as their own pages. One card per writer, ranked by the clicks Google sent to his
- * clients. Staff performance, so ADMIN only.
+ * clients. Open to every signed-in staff member (Khalid, 30 Sep 2026: «ابغاه يكون مفتوح عادي اي احد
+ * يقدر يشوفه») — the admin panel itself is behind the staff login.
  */
 export default async function ContentKpiPage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
-  const gate = await checkFinanceAdmin();
-  if (gate.status !== "ok") {
-    return <p className="px-5 py-10 text-sm text-muted-foreground">This page is for admins only.</p>;
-  }
-
   const raw = Number((await searchParams).period);
   const days = (PERIODS as readonly number[]).includes(raw) ? raw : 28;
 

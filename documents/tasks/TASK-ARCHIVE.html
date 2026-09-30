@@ -1,5 +1,5 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>أرشيف المنجز — 159 بنداً</title>
+<title>أرشيف المنجز — 160 بنداً</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1013;--panel:#17181d;--card:#1d1e24;--line:#2c2d36;--fg:#f3f4f6;--mut:#9aa3b2;--dim:#6b7280;
@@ -132,7 +132,7 @@ summary::before{content:"▸";transition:transform .15s}details[open]>summary::b
 .hidden{display:none!important}
 footer{color:var(--dim);font-size:12px;padding:20px 16px;text-align:center}
 </style></head><body>
-<header class="top"><div class="wrap"><h1>أرشيف المنجز — 159 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
+<header class="top"><div class="wrap"><h1>أرشيف المنجز — 160 بنداً <span style="color:var(--dim);font-weight:500;font-size:13px">· اللوحة المفتوحة: <a href="TASK.html">TASK.html</a></span></h1>
 <div class="tools"><input id="q" type="search" placeholder="ابحث في المنجز…" aria-label="بحث"></div></div></header>
 <main class="wrap"><section class="grp"><div class="grid"><article class="card" data-id="USR-SETTINGS-MARKETING-TOGGLE" data-sev="high" data-who="c" data-tab="done" data-board="users" data-apps="modonty">
   <div class="hd"><span class="id">USR-SETTINGS-MARKETING-TOGGLE</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند USR-SETTINGS-MARKETING-TOGGLE">⧉</button></div>
@@ -4220,6 +4220,19 @@ admin/components/admin/sidebar.tsx                       — رابط «معاي
   <p class="sum">ببساطة: العميل يفتح «الإحصائيات» فيرى خطأ جوجل بالإنجليزي بدل أرقامه. السبب طلب «النشطون الآن»: جوجل لا تقبل فلتر العميل فيه، وسقوطه كان يُسقط الأرقام الأخرى معه. · الدليل: لقطة خالد من console.modonty.</p>
   
   <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>ببساطة:</b> العميل يفتح «الإحصائيات» فيرى خطأ جوجل بالإنجليزي بدل أرقامه. السبب طلب «النشطون الآن»: جوجل لا تقبل فلتر العميل فيه، وسقوطه كان يُسقط الأرقام الأخرى معه.</p><p><b>الدليل:</b> لقطة خالد من console.modonty.com/dashboard/analytics: «GA4 runRealtimeReport HTTP 400 … customEvent:client_id is not a valid dimension». توثيق جوجل (realtime-api-schema): «Event-scoped custom dimensions aren't supported in the Realtime API».</p><p><b>الإصلاح:</b> <code>console/lib/analytics/ga4-data-api.ts</code> — حُذف طلب Realtime (مستدعٍ واحد) و<code>Promise.all</code> صار <code>allSettled</code>؛ الرقم الفاشل يظهر «—». <code>ga4-realtime-card.tsx</code> — ثلاث بطاقات بدل أربع، ورسالة عربية بدل نصّ جوجل الخام وتلميح env المضلِّل.</p><p><b>مقيس محلّياً (localhost:3002، شركة جبر سيو):</b> الأحداث ٧ أيام ٧٦ · ٢٨ يوماً ٣٣٩ · زوّار ٦٩ / ٢٣٢ · أهم الأحداث: مشاهدة مقال ٥٦.</p><p><b>الإنتاج (502a6ef، Vercel Ready):</b> console.modonty.com/dashboard/analytics لعميلة اللقطة نفسها «دكتور أمل زكريا» — الأحداث ٧ أيام ٢٩ · ٢٨ يوماً ٣٦ · زوّار ٢٦ / ٢٩ · أهم حدث: مشاهدة مقال ١٩ · نصّ الخطأ 400 غير موجود في الصفحة.</p></div></details>
+</article>
+<article class="card" data-id="KPI-CONTENT" data-sev="med" data-who="c" data-tab="done" data-board="projects" data-apps="admin">
+  <div class="hd"><span class="id">KPI-CONTENT</span><button class="copy" type="button" title="نسخ مرجع البند (للّصق في الشات)" aria-label="نسخ مرجع البند KPI-CONTENT">⧉</button></div>
+  
+  <div class="t">قسم KPI في الأدمن · صفحة Content: كرت لكل كاتب بأداء عملائه في جوجل (مع الدول و All time)</div>
+  <div class="meta"><span class="tag tab-done">منجز</span><span class="tag">med</span><span class="tag app-admin">admin</span><span class="tag">To Do</span><span>٣٠ سبتمبر ٢٠٢٦</span></div>
+  
+  
+  
+  
+  <p class="sum">ببساطة: تحت «KPI» في السايدبار صفحة «Content»: كرت لكل كاتب (EDITOR) مرتّب بالنقرات — ظهور · نقرات · نسبة النقر · متوسّط الترتيب · التغيّر عن الفترة السابقة · كم مقال ظهر في جوجل من المنشورة · أقوى مقال · وتفصيل عميل عميل.</p>
+  
+  <details><summary>التفاصيل الكاملة</summary><div class="full"><p><b>ببساطة:</b> تحت «KPI» في السايدبار صفحة «Content»: كرت لكل كاتب (EDITOR) مرتّب بالنقرات — ظهور · نقرات · نسبة النقر · متوسّط الترتيب · التغيّر عن الفترة السابقة · كم مقال ظهر في جوجل من المنشورة · أقوى مقال · وتفصيل عميل عميل. فلتر ٧/٢٨/٩٠ يوماً. للأدمن فقط. Graphics وSales تُضاف لاحقاً في نفس القسم.</p><p><b>المطلب (خالد ٣٠ سبتمبر):</b> «اهم حاجه عندي جوجل… طارق ماسك عملاء حتلاقي عنده الظهور والنقرات» · «في السايد بار كي بي اي… للكونتنت للجرافيك للسيلز».</p><p><b>الملفّات:</b> <code>admin/app/(dashboard)/kpi/content/</code> (page · loading · components/writer-card · helpers/get-content-kpis) · <code>shared/lib/google/query-modonty-search.ts</code> (انتقل من console، يستعمله التطبيقان) · <code>admin/components/admin/sidebar.tsx</code>.</p><p><b>مقيس محلّياً (localhost:3001، قاعدة dev + سيرش كونسل الحقيقي، ٢٨ يوماً):</b> tarek elafifi ٥ عملاء ٣٠٢٬٥٥٠ / ٢٬٢٩٠ · yasmeen elsayed ١٤ عميلاً ٥٣٬٦٠٣ / ٣٦٥ · maya ahmed ٢٠ عميلاً ٢٨٬٧٨٧ / ١٧٢ · شركة جبر سيو داخل كرت طارق ٥٬١٣٦ / ٣٤ = نفس لوحة الكونسول. خطأ «٦٠ من ٥٧ مقالاً» أُصلح بعدّ المسارات المميّزة (٥٦/٥٧).</p><p><b>قرار خالد (٣٠ سبتمبر):</b> لا يُستبعد أي عميل — «مدونتي» عميلٌ كغيره ويُحسب لكاتبه («ما تستبعد أي حاجة»).</p><p><b>إضافتان (٣٠ سبتمبر):</b> «Impressions by country» في كل كرت + «Top country» لكل عميل · زرّ «All time» في الفلتر (سيرش كونسل يحفظ ١٦ شهراً: ٢٠٢٥-٠٥-٣٠ → اليوم، بلا مقارنة). <b>قيد من جوجل مقيس:</b> حين تُقسَّم الصفحات بالدولة يُسقط جوجل الظهور المحجوب للخصوصية — مقال واحد ١٩٥٬٩٣٩ بالصفحة مقابل ١١٨٬٧٥٥ بالصفحة+الدولة؛ على الموقع كله ٣٩١٬٠٢٨ مقابل ٢٠٤٬٤٣٠. الكرت يكتب النسبة المغطّاة (طارق ٦٠٪ · ياسمين ٢٦٪ · مايا ٢٨٪ في ٢٨ يوماً).</p><p><b>الإنتاج (94a805b):</b> admin.modonty.com/kpi/content?period=28 — #1 tarek elafifi عميلان ٣٠٢٬٧٤٣ / ٢٬٢٩١ (٦١/٦٥ مقالاً ظهر) · #2 yasmeen elsayed ١٤ عميلاً ٥٤٬٢٩٥ / ٣٧٤ (٥٩/٦٤) · #3 maya ahmed ٢٢ عميلاً ٢٩٬٦٣٩ / ١٧٩ (٩٨/١٠٢) · Unassigned ٨ عملاء. الجدول صار صفوفاً بلا سكرول جانبي (العرض الزائد صفر في الكروت الأربعة محلّياً).</p></div></details>
 </article></div></section></main>
 <script>
 (() => { const q = document.getElementById('q'); const cards = [...document.querySelectorAll('.card')];
