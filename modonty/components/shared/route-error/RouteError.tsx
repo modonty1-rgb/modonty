@@ -138,7 +138,7 @@ export function RouteError({ error, retry, what, back }: RouteErrorProps) {
             <div className="w-full rounded-md bg-muted p-3 text-start" dir="ltr">
               <p className="font-mono text-xs text-destructive">{error.message}</p>
               {error.digest && (
-                <p className="mt-1 font-mono text-[11px] text-muted-foreground">digest: {error.digest}</p>
+                <p className="mt-1 font-mono text-xs text-muted-foreground">digest: {error.digest}</p>
               )}
             </div>
           )}

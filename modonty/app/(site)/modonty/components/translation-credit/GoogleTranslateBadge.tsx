@@ -5,7 +5,7 @@
  */
 export function GoogleTranslateBadge() {
   return (
-    <a href="http://translate.google.com" target="_blank" rel="noopener noreferrer" className="mt-3 inline-block" aria-label="powered by Google Translate">
+    <a href="http://translate.google.com" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-11 items-center" aria-label="powered by Google Translate">
       {/* eslint-disable-next-line @next/next/no-img-element -- Google's own badge, shown unaltered at its size */}
       <img src="/attribution/google-translate-greyscale.svg" alt="powered by Google Translate" width={176} height={16} className="dark:hidden" />
       {/* eslint-disable-next-line @next/next/no-img-element -- the white version for the dark theme */}

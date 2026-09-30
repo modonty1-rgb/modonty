@@ -5,7 +5,7 @@ import { formatRelativeTime } from "@/lib/utils";
 import { IconComment, IconLike, IconSaved, IconUsers } from "@/lib/icons";
 
 interface ActivityItemProps {
-  type: "comment" | "like_comment" | "favorite_article" | "follow_client";
+  type: "comment" | "like_article" | "like_comment" | "favorite_article" | "follow_client";
   content: string;
   link?: string;
   timestamp: Date;
@@ -14,6 +14,7 @@ interface ActivityItemProps {
 export function ActivityItem({ type, content, link, timestamp }: ActivityItemProps) {
   const icons = {
     comment: <IconComment className="h-5 w-5 text-primary" />,
+    like_article: <IconLike className="h-5 w-5 text-primary" />,
     like_comment: <IconLike className="h-5 w-5 text-primary" />,
     favorite_article: <IconSaved className="h-5 w-5 text-accent" />,
     follow_client: <IconUsers className="h-5 w-5 text-primary" />,

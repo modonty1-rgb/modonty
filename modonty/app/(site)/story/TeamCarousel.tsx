@@ -104,7 +104,7 @@ function TeamCarouselImpl() {
             <p className="text-sm md:text-base font-extrabold text-foreground leading-tight">
               من خلف البنيان
             </p>
-            <p className="text-[10px] md:text-[11px] text-foreground/65 leading-tight">
+            <p className="text-xs md:text-xs text-foreground/65 leading-tight">
               ١٣ متخصّصاً يشتغلون معك
             </p>
           </div>
@@ -160,7 +160,7 @@ function TeamCarouselImpl() {
                         </div>
                         {/* dept badge floating */}
                         <span
-                          className={`absolute -bottom-1 left-1/2 -translate-x-1/2 inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold border ${style.chip} shadow-md whitespace-nowrap`}
+                          className={`absolute -bottom-1 left-1/2 -translate-x-1/2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-extrabold border ${style.chip} shadow-md whitespace-nowrap`}
                         >
                           {style.label}
                         </span>
@@ -171,13 +171,13 @@ function TeamCarouselImpl() {
                         <p className="text-[13px] md:text-sm font-extrabold text-foreground leading-tight">
                           {member.name}
                         </p>
-                        <p className="text-[10px] md:text-[11px] font-bold text-foreground/70 leading-tight">
+                        <p className="text-xs md:text-xs font-bold text-foreground/70 leading-tight">
                           {member.role}
                         </p>
                       </div>
 
                       {/* BIO */}
-                      <p className="text-[10px] md:text-[11px] text-foreground/65 leading-relaxed px-1 line-clamp-2">
+                      <p className="text-xs md:text-xs text-foreground/65 leading-relaxed px-1 line-clamp-2">
                         {member.bio}
                       </p>
                     </m.div>

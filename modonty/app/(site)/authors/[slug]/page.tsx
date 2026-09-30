@@ -357,7 +357,7 @@ export default async function AuthorPage({ params, searchParams }: AuthorPagePro
                         href={s.href}
                         target="_blank"
                         rel="me noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
+                        className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-xs font-medium max-md:min-h-11 text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
                       >
                         <Icon className="h-3.5 w-3.5" />
                         {s.label}

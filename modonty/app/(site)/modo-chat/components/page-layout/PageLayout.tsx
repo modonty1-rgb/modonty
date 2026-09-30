@@ -24,7 +24,7 @@ const BETA_BADGE = (
   <span
     role="status"
     aria-label="تجريبي"
-    className="shrink-0 rounded px-2 py-0.5 text-[10px] font-medium text-primary bg-primary/10"
+    className="shrink-0 rounded px-2 py-0.5 text-xs font-medium text-primary bg-primary/10"
   >
     تجريبي
   </span>

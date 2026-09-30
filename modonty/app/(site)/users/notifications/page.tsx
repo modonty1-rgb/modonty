@@ -84,6 +84,9 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
   let selectedNotification = null;
   let contactMessage = null;
   let faqReply: { question: string; answer: string | null; article: { title: string; slug: string } } | null = null;
+  // Written by the console when the partner approves a comment (QA finding #11, 29 Sep 2026):
+  // `comment_*` points at an article Comment, `reel_comment_*` at a reel's MediaComment.
+  let commentNotice: { content: string; href: string; where: string } | null = null;
   let notificationsList = notifications;
 
   if (selectedId) {
@@ -91,7 +94,19 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
       where: { id: selectedId, userId },
     });
     if (selectedNotification?.relatedId) {
-      if (selectedNotification.type === "faq_reply") {
+      if (selectedNotification.type.startsWith("comment_")) {
+        const c = await db.comment.findUnique({
+          where: { id: selectedNotification.relatedId },
+          select: { id: true, content: true, article: { select: { title: true, slug: true } } },
+        });
+        if (c) commentNotice = { content: c.content, href: `/articles/${c.article.slug}#comment-${c.id}`, where: c.article.title };
+      } else if (selectedNotification.type.startsWith("reel_comment_")) {
+        const c = await db.mediaComment.findUnique({
+          where: { id: selectedNotification.relatedId },
+          select: { content: true, media: { select: { title: true, reelSlug: true } } },
+        });
+        if (c?.media.reelSlug) commentNotice = { content: c.content, href: `/reels/${c.media.reelSlug}`, where: c.media.title ?? "الريل" };
+      } else if (selectedNotification.type === "faq_reply") {
         faqReply = await db.articleFAQ.findFirst({
           where: { id: selectedNotification.relatedId },
           select: {
@@ -119,7 +134,7 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
     }
   }
 
-  const showDetail = selectedNotification && (contactMessage || faqReply);
+  const showDetail = selectedNotification && (contactMessage || faqReply || commentNotice);
 
   const filteredList =
     tab === TAB_NEW
@@ -218,6 +233,25 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
               <p className="text-center text-sm text-muted-foreground py-12">
                 اختر رسالة لعرض التفاصيل
               </p>
+            ) : commentNotice ? (
+              <div className="space-y-4">
+                <p className="font-medium text-foreground">{selectedNotification?.title}</p>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">المكان</p>
+                  <Link
+                    href={commentNotice.href}
+                    className="text-sm text-primary underline hover:opacity-80 transition-opacity max-md:inline-flex max-md:min-h-11 max-md:items-center"
+                  >
+                    {commentNotice.where}
+                  </Link>
+                </div>
+                <div className="border-t border-border pt-4">
+                  <p className="text-sm text-muted-foreground mb-2">التعليق</p>
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{commentNotice.content}</p>
+                  </div>
+                </div>
+              </div>
             ) : faqReply ? (
               <div className="space-y-4">
                 {client && (

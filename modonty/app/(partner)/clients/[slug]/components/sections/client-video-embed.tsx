@@ -106,7 +106,7 @@ export function ClientVideoEmbed({ url, poster, label }: ClientVideoEmbedProps) 
         <IconPlay className="h-6 w-6 ms-0.5 fill-current" />
       </span>
       {label && (
-        <span className="absolute bottom-3 inline-flex items-center gap-1.5 rounded-md bg-primary/80 px-2.5 py-1 text-[11px] font-bold text-white start-3">
+        <span className="absolute bottom-3 inline-flex items-center gap-1.5 rounded-md bg-primary/80 px-2.5 py-1 text-xs font-bold text-white start-3">
           {label}
         </span>
       )}

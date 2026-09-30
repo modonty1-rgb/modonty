@@ -74,7 +74,7 @@ export function ClientContactSection({
               <b className="block text-[13px] font-extrabold text-foreground">
                 بطاقة العمل على Google
               </b>
-              <span className="text-[11.5px] text-muted-foreground">{clientName}</span>
+              <span className="text-xs text-muted-foreground">{clientName}</span>
             </div>
           </div>
           <div className="flex gap-2.5">

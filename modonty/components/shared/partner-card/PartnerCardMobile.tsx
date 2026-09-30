@@ -96,7 +96,7 @@ export function PartnerCardMobile({ partner }: PartnerCardMobileProps) {
                 </>
               )}
             </h2>
-            <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
+            <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
               {partner.industry?.name && <span className="truncate font-medium text-link-accent">{partner.industry.name}</span>}
               {partner.city && (
                 <span className="inline-flex items-center gap-0.5">
@@ -121,7 +121,7 @@ export function PartnerCardMobile({ partner }: PartnerCardMobileProps) {
         {/* The proof line: rating, then what he actually PUBLISHED. A partner with output
             shows it; a partner without shows nothing rather than a row of zeros. */}
         {(partner.rating || partner.articleCount > 0 || partner.reelCount > 0) && (
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
             {partner.rating && <RatingStars average={partner.rating.average} count={partner.rating.count} />}
             {partner.articleCount > 0 && (
               <span className="inline-flex items-center gap-1">
@@ -142,7 +142,7 @@ export function PartnerCardMobile({ partner }: PartnerCardMobileProps) {
           {/* His services fill the space beside the action — tap-free context, two at most. */}
           <div className="flex min-w-0 flex-1 flex-wrap gap-1">
             {services.map((service) => (
-              <span key={service} className="truncate rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+              <span key={service} className="truncate rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                 {service}
               </span>
             ))}

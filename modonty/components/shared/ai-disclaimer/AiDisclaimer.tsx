@@ -20,7 +20,7 @@ import Link from "next/link";
  */
 export function AiDisclaimer() {
   return (
-    <p className="mt-2 text-center text-[11px] leading-relaxed text-muted-foreground" dir="rtl">
+    <p className="mt-2 text-center text-xs leading-relaxed text-muted-foreground" dir="rtl">
       مودو مساعد ذكاء اصطناعي — ممكن يخطئ، وكلامه <b className="font-medium">ليس استشارة مهنية</b>.
       راجِع الشريك المختصّ قبل أي قرار.{" "}
       <Link href="/terms" className="underline underline-offset-2 hover:text-foreground">

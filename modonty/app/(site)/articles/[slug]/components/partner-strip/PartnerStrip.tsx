@@ -66,7 +66,7 @@ export function PartnerStrip({ client, cta }: PartnerStripProps) {
             {client.isVerified && <VerifiedBadge className="size-3.5" label="شريك موثّق" />}
           </Link>
           {credential && (
-            <p className="mt-0.5 line-clamp-1 text-[11px] leading-tight text-muted-foreground">
+            <p className="mt-0.5 line-clamp-1 text-xs leading-tight text-muted-foreground">
               {credential}
             </p>
           )}

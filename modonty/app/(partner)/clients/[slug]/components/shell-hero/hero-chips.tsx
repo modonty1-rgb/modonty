@@ -20,7 +20,7 @@ export function HeroChips({ client }: HeroChipsProps) {
 
   return (
     <div className="mt-2.5 flex flex-wrap gap-1.5">
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-2.5 py-1 text-[11.5px] text-muted-foreground">
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-2.5 py-1 text-xs text-muted-foreground">
         🗓️ تأسست {foundingYear}
       </span>
     </div>

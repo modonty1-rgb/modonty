@@ -86,7 +86,7 @@ export function PartnerCard({ partner }: PartnerCardProps) {
         <PartnerAvatar media={partner.logo ? asMedia(partner.logo, partner.name) : null} name={partner.name} size="small" />
         <div className="min-w-0 flex-1">
           <h2 className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-            <Link href={href} className="truncate rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:hover:text-link">
+            <Link href={href} className="truncate rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:hover:text-link max-md:-my-3 max-md:min-w-11 max-md:py-3">
               {partner.name}
             </Link>
             {/* The mark is the whole promise of this page: this one was checked. It draws

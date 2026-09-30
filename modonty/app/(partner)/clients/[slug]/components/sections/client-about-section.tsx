@@ -36,7 +36,7 @@ function LegalRow({ icon, label, value }: { icon: string; label: string; value: 
         {icon}
       </span>
       <div>
-        <span className="block text-[10.5px] font-bold text-muted-foreground">{label}</span>
+        <span className="block text-xs font-bold text-muted-foreground">{label}</span>
         <span className="text-[13px] font-bold text-foreground">{value}</span>
       </div>
     </div>
@@ -94,7 +94,7 @@ export function ClientAboutSection({
           {credentials.map((cred, i) => (
             <span
               key={`${cred.name}-${i}`}
-              className="inline-flex items-center gap-1.5 rounded-md border border-star/30 bg-star/10 px-[11px] py-1.5 text-[11.5px] font-bold text-foreground/80"
+              className="inline-flex items-center gap-1.5 rounded-md border border-star/30 bg-star/10 px-[11px] py-1.5 text-xs font-bold text-foreground/80"
             >
               🏅 {cred.name}
               {cred.authority && <span> · {cred.authority}</span>}

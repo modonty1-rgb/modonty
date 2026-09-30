@@ -7,6 +7,7 @@ import { CommentStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
 
 import type { CommentKind } from "../helpers/comment-queries";
+import { notifyCommentApproved } from "../helpers/notify-comment-approved";
 
 /**
  * Moderation for both comment tables (ق10, 2026-08-05).
@@ -86,6 +87,7 @@ async function setStatus(
     if (wasApproved !== isApproved) {
       await bumpCounter(kind, owned.parentId, isApproved ? 1 : -1);
     }
+    if (isApproved && !wasApproved) await notifyCommentApproved(kind, commentId);
 
     revalidatePath("/dashboard/comments");
     if (kind === "reel") revalidatePath("/dashboard/reels");

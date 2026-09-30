@@ -131,7 +131,7 @@ export function ClientHeroV2({
             )}
 
             {featured && (
-              <span className="absolute top-3.5 start-4 inline-flex items-center gap-1.5 rounded-full border border-accent/55 bg-black/35 px-3 py-1 text-[11px] font-extrabold text-white backdrop-blur-sm">
+              <span className="absolute top-3.5 start-4 inline-flex items-center gap-1.5 rounded-full border border-accent/55 bg-black/35 px-3 py-1 text-xs font-extrabold text-white backdrop-blur-sm">
                 ⭐ شريك مميّز
               </span>
             )}

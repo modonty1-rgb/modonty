@@ -1,0 +1,365 @@
+[
+  {
+    "n": 1,
+    "name": "الرئيسية — زائر",
+    "url": "/",
+    "at": 1790718315126,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 30,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "01.png",
+    "full": "01-full.png"
+  },
+  {
+    "n": 2,
+    "name": "القائمة الجانبية",
+    "url": "/",
+    "at": 1790718322249,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 47,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "02.png"
+  },
+  {
+    "n": 3,
+    "name": "المقالة — أعلى",
+    "url": "/articles/التجارة-الإلكترونية-في-السعودية-كيف-يختار-العميل",
+    "at": 1790718327712,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 25,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "03.png",
+    "full": "03-full.png"
+  },
+  {
+    "n": 4,
+    "name": "المقالة — شريط التفاعل",
+    "url": "/articles/التجارة-الإلكترونية-في-السعودية-كيف-يختار-العميل",
+    "at": 1790718343065,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 25,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "04.png",
+    "full": "04-full.png"
+  },
+  {
+    "n": 5,
+    "name": "أعجبني وأنا زائر → نافذة الدخول",
+    "url": "/articles/التجارة-الإلكترونية-في-السعودية-كيف-يختار-العميل",
+    "at": 1790718355049,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 27,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "05.png"
+  },
+  {
+    "n": 6,
+    "name": "تسجيل الدخول",
+    "url": "/users/login",
+    "at": 1790718362653,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 38,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "06.png",
+    "full": "06-full.png"
+  },
+  {
+    "n": 7,
+    "name": "كلمة مرور غلط",
+    "url": "/users/login",
+    "at": 1790718367014,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 38,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "07.png",
+    "full": "07-full.png"
+  },
+  {
+    "n": 8,
+    "name": "إنشاء حساب",
+    "url": "/users/register",
+    "at": 1790718372059,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 40,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "08.png",
+    "full": "08-full.png"
+  },
+  {
+    "n": 9,
+    "name": "الريلز",
+    "url": "/reels",
+    "at": 1790718376571,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 21,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "09.png",
+    "full": "09-full.png"
+  },
+  {
+    "n": 10,
+    "name": "قائمة الشركاء",
+    "url": "/clients",
+    "at": 1790718389820,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 35,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "10.png",
+    "full": "10-full.png"
+  },
+  {
+    "n": 11,
+    "name": "صفحة الشريك — زائر",
+    "url": "/clients/شركة-جبر-سيو",
+    "at": 1790718397788,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 14,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "11.png",
+    "full": "11-full.png"
+  },
+  {
+    "n": 12,
+    "name": "صفحة تقييمات الشريك",
+    "url": "/clients/شركة-جبر-سيو/reviews",
+    "at": 1790718407718,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 25,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "12.png",
+    "full": "12-full.png"
+  },
+  {
+    "n": 13,
+    "name": "مدونتي — صفحة الشركاء",
+    "url": "/modonty",
+    "at": 1790718412832,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 37,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "13.png",
+    "full": "13-full.png"
+  },
+  {
+    "n": 14,
+    "name": "عجلة الحظ",
+    "url": "/lucky-wheel",
+    "at": 1790718420211,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 33,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "14.png",
+    "full": "14-full.png"
+  },
+  {
+    "n": 15,
+    "name": "— دخول qa-sub-03 —",
+    "url": "/users/login",
+    "at": 1790718425578
+  },
+  {
+    "n": 16,
+    "name": "المقالة — مسجّل",
+    "url": "/articles/التجارة-الإلكترونية-في-السعودية-كيف-يختار-العميل",
+    "at": 1790718434968,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 25,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "16.png",
+    "full": "16-full.png"
+  },
+  {
+    "n": 17,
+    "name": "حوار التعليق",
+    "url": "/articles/التجارة-الإلكترونية-في-السعودية-كيف-يختار-العميل",
+    "at": 1790718448536,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 28,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "17.png"
+  },
+  {
+    "n": 18,
+    "name": "صفحة الشريك — مسجّل",
+    "url": "/clients/شركة-جبر-سيو",
+    "at": 1790718456006,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 14,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "18.png",
+    "full": "18-full.png"
+  },
+  {
+    "n": 19,
+    "name": "البروفايل",
+    "url": "/users/profile",
+    "at": 1790718463869,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 47,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "19.png",
+    "full": "19-full.png"
+  },
+  {
+    "n": 20,
+    "name": "الإعدادات",
+    "url": "/users/profile/settings",
+    "at": 1790718469165,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 27,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "20.png",
+    "full": "20-full.png"
+  },
+  {
+    "n": 21,
+    "name": "الإشعارات",
+    "url": "/users/notifications",
+    "at": 1790718476876,
+    "audit": {
+      "vw": 390,
+      "overflowPx": 0,
+      "wide": [],
+      "tapsChecked": 35,
+      "under44": 0,
+      "tiny": [],
+      "near": [],
+      "smallText": []
+    },
+    "file": "21.png",
+    "full": "21-full.png"
+  }
+]

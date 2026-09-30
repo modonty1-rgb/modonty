@@ -49,7 +49,7 @@ export function ClientDiscussionsSection({ comments }: Props) {
                 <span className="text-[12.5px] font-extrabold text-foreground">
                   {c.author.name || "زائر"}
                 </span>
-                <span className="ms-auto text-[10px] text-muted-foreground">
+                <span className="ms-auto text-xs text-muted-foreground">
                   {fmtDate(c.createdAt)}
                 </span>
               </div>
@@ -59,7 +59,7 @@ export function ClientDiscussionsSection({ comments }: Props) {
               {c.article && (
                 <Link
                   href={`/articles/${c.article.slug}`}
-                  className="text-[10.5px] font-bold text-[hsl(var(--primary-ink,var(--primary)))] hover:underline"
+                  className="text-xs font-bold text-[hsl(var(--primary-ink,var(--primary)))] hover:underline"
                 >
                   على مقال: {c.article.title} ›
                 </Link>

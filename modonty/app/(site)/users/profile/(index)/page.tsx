@@ -36,9 +36,11 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
 
   const statsEntries = [
     { href: "/users/profile/comments", label: "تعليق", value: stats.commentsCount },
-    { href: "/users/profile/liked", label: "إعجاب", value: stats.commentLikesCount },
+    // «إعجاب» and «إعجاب بمقال» side by side read as the same number twice (QA finding #10,
+    // 29 Sep 2026) — each now names what it counts, and the article likes open the liked tab.
+    { href: "/users/profile/liked", label: "إعجاب بتعليق", value: stats.commentLikesCount },
     { href: "/users/profile/favorites", label: "مقال محفوظ", value: stats.favoritesCount },
-    { href: "/users/profile/favorites", label: "إعجاب بمقال", value: stats.articleLikesCount },
+    { href: "/users/profile/liked", label: "إعجاب بمقال", value: stats.articleLikesCount },
     { href: "/users/profile/following", label: "عميل متابَع", value: stats.followingCount },
   ];
 
@@ -143,7 +145,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
                     className="flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-border bg-card p-2"
                   >
                     <span className="text-lg font-bold leading-none">{arabicCount.format(stat.value)}</span>
-                    <span className="text-[11px] text-muted-foreground">{stat.label}</span>
+                    <span className="text-xs text-muted-foreground">{stat.label}</span>
                   </Link>
                 ))}
               </div>
@@ -171,7 +173,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
                     href={stat.href}
                     className="flex flex-col items-center gap-0.5 hover:text-primary transition-colors group"
                   >
-                    <span className="text-xl font-bold leading-none">{stat.value}</span>
+                    <span className="text-xl font-bold leading-none">{arabicCount.format(stat.value)}</span>
                     <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors">
                       {stat.label}
                     </span>

@@ -22,7 +22,7 @@ import { ModontyTrustMark } from "@/components/icons/modonty-trust-mark";
  */
 export function TrustHint() {
   return (
-    <p className="flex items-center justify-center gap-1.5 text-[11px] leading-4 text-muted-foreground">
+    <p className="flex items-center justify-center gap-1.5 text-xs leading-4 text-muted-foreground">
       <ModontyTrustMark className="size-4 shrink-0" aria-hidden />
       مكتوب عندنا، ومعتمَد من الشريك المختصّ قبل النشر.
     </p>

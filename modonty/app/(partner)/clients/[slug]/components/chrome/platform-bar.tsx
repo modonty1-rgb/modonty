@@ -5,10 +5,13 @@ import Link from "next/link";
 import { LogoNav } from "@/app/layout/components/nav/LogoNav";
 import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
 import { UserMenu } from "@/app/layout/components/user-menu/UserMenu";
+import { PlatformBarActionsIsland } from "./platform-bar-actions-island";
 
 interface PlatformBarProps {
   /** True when the partner has papers on file (CR / legal name / verification image). */
   isVerified: boolean;
+  /** For follow and share — the reader's actions on this partner. */
+  clientSlug: string;
 }
 
 /**
@@ -18,7 +21,7 @@ interface PlatformBarProps {
  */
 // الماركة لم تعد تُكتب هنا إطلاقاً — لا اسماً ولا رمزاً. `LogoNav` يقرأ الشعار الرسمي
 // من الإعدادات، فسقط سبب العطل القديم: أربع تهجئات للاسم وُلدت من كتابته بيدٍ في كل مكوّن.
-export async function PlatformBar({ isVerified }: PlatformBarProps) {
+export async function PlatformBar({ isVerified, clientSlug }: PlatformBarProps) {
   // الخطّ: 12px على الجوّال كان تحت أصغر مقاس مقروء؛ صار 14 هناك و12 على الديسكتوب
   // حيث المسافة إلى العين أقصر.
   return (
@@ -40,15 +43,20 @@ export async function PlatformBar({ isVerified }: PlatformBarProps) {
                   والشارة كانت أصلاً أوّل ما تقع عليه العين. */}
               <Link
                 href="/trust"
-                className="flex items-center gap-1 whitespace-nowrap hover:text-white max-md:min-h-11"
+                className="relative flex items-center gap-1 whitespace-nowrap hover:text-white max-md:min-h-11 max-md:after:absolute max-md:after:left-1/2 max-md:after:top-1/2 max-md:after:size-11 max-md:after:-translate-x-1/2 max-md:after:-translate-y-1/2 max-md:after:content-['']"
                 aria-label="شريك موثّق — كيف نتأكّد؟"
               >
                 <VerifiedBadge className="h-3.5 w-3.5" label="شريك موثّق" />
-                شريك موثّق
+                {/* Badge alone on the phone — the words cost the room follow/share need. */}
+                <span className="max-md:sr-only">شريك موثّق</span>
               </Link>
             </>
           ) : null}
-          <span className="ms-auto flex items-center gap-3">
+          <span className="ms-auto flex items-center gap-2 md:gap-3">
+            {/* Same size as the two phone icons / desktop buttons, so nothing shifts when it lands. */}
+            <Suspense fallback={<span className="inline-block h-7 w-[150px] max-md:h-9 max-md:w-[78px]" aria-hidden />}>
+              <PlatformBarActionsIsland clientSlug={clientSlug} />
+            </Suspense>
             {/* من `md` فأعلى: على الجوّال لا مكان له، والزائر يصل قائمة الشركاء من مدونتي نفسها. */}
             <Link href="/clients" className="hidden whitespace-nowrap hover:text-white md:inline">تصفّح الشركاء</Link>
             <ThemeToggle labels={messages.chrome.theme} />

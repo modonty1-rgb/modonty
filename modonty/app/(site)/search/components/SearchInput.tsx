@@ -85,7 +85,7 @@ export function SearchInput({
       <fieldset className="flex flex-col gap-2 max-w-md" aria-label="نطاق البحث">
         <legend className="text-sm font-medium text-foreground">نطاق البحث</legend>
         <div className="flex flex-wrap gap-4">
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer max-md:min-h-11">
             <input
               type="radio"
               name="searchScope"
@@ -96,7 +96,7 @@ export function SearchInput({
             />
             <span className="text-sm text-foreground">الكل</span>
           </label>
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer max-md:min-h-11">
             <input
               type="radio"
               name="searchScope"
@@ -107,7 +107,7 @@ export function SearchInput({
             />
             <span className="text-sm text-foreground">المقالات</span>
           </label>
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer max-md:min-h-11">
             <input
               type="radio"
               name="searchScope"

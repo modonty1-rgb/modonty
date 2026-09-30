@@ -30,9 +30,9 @@ export function ClientTeamSection({ teamMembers }: Props) {
               )}
             </div>
             <h4 className="text-[12.5px] font-extrabold text-foreground">{m.name}</h4>
-            {m.role?.trim() && <span className="text-[11px] text-muted-foreground">{m.role}</span>}
+            {m.role?.trim() && <span className="text-xs text-muted-foreground">{m.role}</span>}
             {m.bio?.trim() && (
-              <p className="mt-1.5 text-[10.5px] leading-[1.45] text-muted-foreground">{m.bio}</p>
+              <p className="mt-1.5 text-xs leading-[1.45] text-muted-foreground">{m.bio}</p>
             )}
           </div>
         ))}

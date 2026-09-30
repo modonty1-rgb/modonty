@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 
 export type ActivityType =
   | "comment"
+  | "like_article"
   | "like_comment"
   | "favorite_article"
   | "follow_client";
@@ -26,8 +27,8 @@ export interface ProfileActivity {
 }
 
 /**
- * Reads directly on the server — the old /api endpoint was removed — merges 4 activity
- * sources (comments, comment-likes, article favorites, client follows), sorts
+ * Reads directly on the server — the old /api endpoint was removed — merges 5 activity
+ * sources (comments, article likes, comment-likes, article favorites, client follows), sorts
  * by timestamp desc, then paginates. Not cached (per-request) because the
  * profile page is `noindex` and the data is highly user-specific.
  */
@@ -36,9 +37,16 @@ export async function getProfileActivity(
   page = 1,
   limit = 10,
 ): Promise<ProfileActivity> {
-  const [comments, commentLikes, favorites, following] = await Promise.all([
+  // A pending comment is listed too, marked as waiting — the reader wrote it and should see it
+  // here; only a rejected one is left out. Article likes were missing altogether (QA #10).
+  const [comments, articleLikes, commentLikes, favorites, following] = await Promise.all([
     db.comment.findMany({
-      where: { authorId: userId, status: "APPROVED" },
+      where: { authorId: userId, status: { in: ["APPROVED", "PENDING"] } },
+      include: { article: { select: { title: true, slug: true } } },
+      orderBy: { createdAt: "desc" },
+    }),
+    db.articleLike.findMany({
+      where: { userId },
       include: { article: { select: { title: true, slug: true } } },
       orderBy: { createdAt: "desc" },
     }),
@@ -56,7 +64,8 @@ export async function getProfileActivity(
       include: { article: { select: { title: true, slug: true } } },
       orderBy: { createdAt: "desc" },
     }),
-    db.clientFavorite.findMany({
+    // Follows live in ClientLike — same table the follow button writes (QA #9, 29 Sep 2026).
+    db.clientLike.findMany({
       where: { userId },
       include: { client: { select: { name: true, slug: true } } },
       orderBy: { createdAt: "desc" },
@@ -68,9 +77,24 @@ export async function getProfileActivity(
   comments.forEach((comment) => {
     activities.push({
       type: "comment",
-      content: `علقت على "${comment.article.title}"`,
-      link: `/articles/${comment.article.slug}#comment-${comment.id}`,
+      content:
+        comment.status === "PENDING"
+          ? `علقت على "${comment.article.title}" — بانتظار مراجعة الشريك`
+          : `علقت على "${comment.article.title}"`,
+      link:
+        comment.status === "PENDING"
+          ? `/articles/${comment.article.slug}`
+          : `/articles/${comment.article.slug}#comment-${comment.id}`,
       timestamp: comment.createdAt,
+    });
+  });
+
+  articleLikes.forEach((like) => {
+    activities.push({
+      type: "like_article",
+      content: `أعجبك مقال "${like.article.title}"`,
+      link: `/articles/${like.article.slug}`,
+      timestamp: like.createdAt,
     });
   });
 

@@ -37,7 +37,7 @@ export function DesktopNavItem({ icon: Icon, label, href, active = false, tone }
       )}
     >
       <Icon className={active ? "size-6" : "size-[22px]"} />
-      {active && <span className="mt-0.5 max-w-full truncate px-1 text-[10px] font-bold leading-none">{label}</span>}
+      {active && <span className="mt-0.5 max-w-full truncate px-1 text-xs font-bold leading-none">{label}</span>}
       {!active && (
         <span role="tooltip" className="pointer-events-none absolute left-1/2 top-[calc(100%+0.35rem)] z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-border/70 bg-popover px-2 py-1 text-xs font-medium text-popover-foreground opacity-0 shadow-md transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100">
           {label}

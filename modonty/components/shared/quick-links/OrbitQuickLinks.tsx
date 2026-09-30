@@ -134,7 +134,7 @@ function OrbitLinkItem({ link, index, activeIndex, previousActiveIndex }: OrbitL
             evenly centred pair (Khalid, 26 Sep: «مسافة كبيرة بين الاسم والشعار»). */}
         <Icon className={isActive ? "size-7 -my-1.5" : "size-8"} aria-hidden />
         {isActive && (
-          <span className="mt-1 max-w-full truncate px-0.5 text-[10px] font-semibold leading-none">
+          <span className="mt-1 max-w-full truncate px-0.5 text-xs font-semibold leading-none">
             {link.label}
           </span>
         )}

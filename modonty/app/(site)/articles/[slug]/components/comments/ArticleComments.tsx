@@ -138,7 +138,9 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
 
   const CommentItem = ({ comment }: { comment: Comment }) => {
     const [showReplyForm, setShowReplyForm] = useState(false);
-    
+    // A reply waits for review too — say it arrived instead of closing the form silently.
+    const [replySent, setReplySent] = useState(false);
+
     const likesCount = comment._count?.likes || 0;
     const userLiked = comment.likes && comment.likes.length > 0;
 
@@ -217,6 +219,12 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
               )}
             </div>
 
+            {replySent && !showReplyForm && (
+              <p role="status" className="mt-3 rounded-md bg-primary/10 p-2 text-xs font-medium text-primary">
+                وصل ردّك — يظهر بعد مراجعة الشريك.
+              </p>
+            )}
+
             {/* Reply form */}
             {showReplyForm && userId && (
               <div className="mt-3 pt-3 border-t">
@@ -224,6 +232,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                   onSubmit={(content) => handleReplySubmit(content, comment.id)}
                   onSuccess={() => {
                     setShowReplyForm(false);
+                    setReplySent(true);
                   }}
                   placeholder="اكتب ردك..."
                   submitLabel="رد"
@@ -261,12 +270,12 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                         {author.image ? (
                           <>
                             <AvatarImage src={author.image} alt={author.name ?? undefined} />
-                            <AvatarFallback className="text-[10px] bg-secondary text-secondary-foreground font-semibold">
+                            <AvatarFallback className="text-xs bg-secondary text-secondary-foreground font-semibold">
                               {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
                             </AvatarFallback>
                           </>
                         ) : (
-                          <AvatarFallback className="text-[10px] bg-secondary text-secondary-foreground font-semibold">
+                          <AvatarFallback className="text-xs bg-secondary text-secondary-foreground font-semibold">
                             {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
                           </AvatarFallback>
                         )}

@@ -100,7 +100,7 @@ export function Composer({
           <IconSend className="h-4 w-4" />
         </button>
       </div>
-      <p className="mt-2 text-center text-[11px] text-muted-foreground">
+      <p className="mt-2 text-center text-xs text-muted-foreground">
         إنتر يرسل · شِفت مع إنتر يبدأ سطراً جديداً
       </p>
     </form>

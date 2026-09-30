@@ -25,11 +25,13 @@ const buttonVariants = cva(
           "text-muted-foreground hover:bg-primary/10 hover:text-foreground active:bg-primary/15",
         link: "text-primary underline-offset-4 hover:underline",
       },
+      // `max-md:` 44px — the fingertip floor on phones (Apple HIG 44pt). Measured 29 Sep 2026:
+      // «إرسال التعليق»/«حفظ التغييرات» were 40, «تصفية» 36. Desktop sizes are unchanged.
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 px-3",
+        default: "h-10 px-4 py-2 max-md:h-11",
+        sm: "h-9 px-3 max-md:h-11",
         lg: "h-11 px-8",
-        icon: "h-10 w-10",
+        icon: "h-10 w-10 max-md:size-11",
         mobileDefault: "h-11 px-4 py-2 md:h-10 md:px-4 md:py-2",
         mobileIcon:
           "h-11 w-11 p-3 [&_svg]:size-5 md:h-10 md:w-10 md:p-2.5",

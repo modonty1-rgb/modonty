@@ -89,12 +89,12 @@ export function EntityCard({
           )}
 
           {showTrending && (
-            <span className="absolute top-2 start-2 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-amber-900">
+            <span className="absolute top-2 start-2 rounded-full bg-amber-400 px-2 py-0.5 text-xs font-bold text-amber-900">
               🔥 رائج
             </span>
           )}
 
-          <span className="absolute top-2 end-2 inline-flex items-center gap-1 rounded-full bg-black/40 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
+          <span className="absolute top-2 end-2 inline-flex items-center gap-1 rounded-full bg-black/40 px-2 py-0.5 text-xs font-bold text-white backdrop-blur-sm">
             {type === "industry" ? (
               <ModontyIndustriesMark className="h-2.5 w-2.5" aria-hidden />
             ) : (
@@ -126,7 +126,7 @@ export function EntityCard({
                     />
                   ))}
                   {overflowCount > 0 && (
-                    <div className="-ms-2 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary ring-2 ring-card">
+                    <div className="-ms-2 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary ring-2 ring-card">
                       +{overflowCount}
                     </div>
                   )}

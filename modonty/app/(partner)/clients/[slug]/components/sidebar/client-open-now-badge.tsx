@@ -89,7 +89,7 @@ export function ClientOpenNowBadge({ specs }: ClientOpenNowBadgeProps) {
 
   if (status.kind === "open") {
     return (
-      <span className="mb-[11px] inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-[11.5px] font-extrabold text-success">
+      <span className="mb-[11px] inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-xs font-extrabold text-success">
         <span className="relative grid h-[7px] w-[7px] place-items-center">
           <span className="absolute h-[7px] w-[7px] animate-ping rounded-full bg-success/60" />
           <span className="h-[7px] w-[7px] rounded-full bg-success shadow-[0_0_0_3px_hsl(var(--success)/0.2)]" />
@@ -100,7 +100,7 @@ export function ClientOpenNowBadge({ specs }: ClientOpenNowBadgeProps) {
   }
 
   return (
-    <span className="mb-[11px] inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-2.5 py-1 text-[11.5px] font-extrabold text-muted-foreground">
+    <span className="mb-[11px] inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-2.5 py-1 text-xs font-extrabold text-muted-foreground">
       <span className="h-[7px] w-[7px] rounded-full bg-muted-foreground/50" />
       مغلق الآن
     </span>

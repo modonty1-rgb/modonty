@@ -130,7 +130,7 @@ export function BookingForm({
           }}
         />
         {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
-        <p className="text-[11px] text-muted-foreground">رقمك للحجز فقط — بلا رسائل تسويقية.</p>
+        <p className="text-xs text-muted-foreground">رقمك للحجز فقط — بلا رسائل تسويقية.</p>
       </div>
 
       {/* Submit */}
@@ -183,7 +183,7 @@ export function BookingForm({
       )}
 
       {/* sign-in wrap consent — conspicuous, non-blocking; the click = agreement */}
-      <p className="flex items-start gap-1.5 text-[11px] leading-relaxed text-muted-foreground">
+      <p className="flex items-start gap-1.5 text-xs leading-relaxed text-muted-foreground">
         <span aria-hidden>ℹ️</span>
         <span>
           بمتابعتك، أنت توافق على{" "}

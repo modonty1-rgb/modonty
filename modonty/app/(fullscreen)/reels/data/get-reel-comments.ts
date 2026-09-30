@@ -16,20 +16,13 @@ export interface ReelComment {
 
 /**
  * Approved comments for one reel, replies resolved, oldest first — the same contract as
- * article comments (dev shows the moderation pipeline, production shows APPROVED only).
+ * article comments: APPROVED only, on dev exactly as on production (QA finding #14, 29 Sep 2026).
  * Per-user like state is folded in here because the sheet is the single reader and always
  * loads lazily after the feed paints — nothing cached depends on this query.
  */
 export async function getReelComments(mediaId: string, userId: string | null): Promise<ReelComment[]> {
-  const isDev = process.env.NODE_ENV === "development";
-
   const comments = await db.mediaComment.findMany({
-    where: {
-      mediaId,
-      ...(isDev
-        ? { status: { not: CommentStatus.DELETED } }
-        : { status: CommentStatus.APPROVED }),
-    },
+    where: { mediaId, status: CommentStatus.APPROVED },
     orderBy: { createdAt: "asc" },
     take: 200,
     select: {

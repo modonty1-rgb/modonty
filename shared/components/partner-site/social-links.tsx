@@ -57,7 +57,7 @@ export function SocialLinks({ urls, className, size = 20, inert = false }: Socia
             {inert ? (
               <span className="block text-muted-foreground" title={label}>{icon}</span>
             ) : (
-              <a href={url} target="_blank" rel="noopener noreferrer" aria-label={label} className="block text-muted-foreground transition-colors hover:text-foreground">
+              <a href={url} target="_blank" rel="noopener noreferrer" aria-label={label} className="-m-3 block p-3 text-muted-foreground transition-colors hover:text-foreground">
                 {icon}
               </a>
             )}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -53,6 +54,8 @@ const ASKED_FOR = {
 export function AuthPrompt({ open, onOpenChange, action }: AuthPromptProps) {
   const [busy, setBusy] = useState(false);
   const { Icon, line } = ASKED_FOR[action];
+  // Both email links bring the reader back to this page — login and register both honour it.
+  const back = `?callbackUrl=${encodeURIComponent(usePathname() || "/")}`;
 
   const withGoogle = () => {
     setBusy(true);
@@ -86,11 +89,19 @@ export function AuthPrompt({ open, onOpenChange, action }: AuthPromptProps) {
           تابع بحساب Google
         </Button>
 
-        <DialogFooter className="sm:justify-center">
+        {/* An email account holder had no way in from here — only «أنشئ حساباً», which invites a
+            duplicate sign-up (QA finding #12, 29 Sep 2026). */}
+        <DialogFooter className="flex-col gap-1 sm:flex-col sm:justify-center">
           <p className="text-center text-[12px] text-muted-foreground">
-            تفضّل الإيميل؟{" "}
-            <Link href="/users/register" className="font-semibold text-link hover:underline">
-              أنشئ حساباً
+            عندك حساب بالإيميل؟{" "}
+            <Link href={`/users/login${back}`} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline">
+              سجّل دخولك
+            </Link>
+          </p>
+          <p className="text-center text-[12px] text-muted-foreground">
+            جديد هنا؟{" "}
+            <Link href={`/users/register${back}`} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline">
+              أنشئ حساباً بالإيميل
             </Link>
           </p>
         </DialogFooter>

@@ -105,7 +105,7 @@ export function ClientContactSheet({
 
           {/* Divider between the CTA and the direct contact channels */}
           {hasCta && hasContact && (
-            <div className="my-4 flex items-center gap-3 text-[11px] font-semibold text-muted-foreground">
+            <div className="my-4 flex items-center gap-3 text-xs font-semibold text-muted-foreground">
               <span className="h-px flex-1 bg-border" />
               أو تواصل مباشرة
               <span className="h-px flex-1 bg-border" />
@@ -131,7 +131,7 @@ export function ClientContactSheet({
                   </span>
                   <span className="min-w-0">
                     <b className="block text-[13.5px] font-bold text-foreground">واتساب</b>
-                    <span className="block text-[11.5px] text-muted-foreground">رد سريع عبر المحادثة</span>
+                    <span className="block text-xs text-muted-foreground">رد سريع عبر المحادثة</span>
                   </span>
                 </CtaTrackedLink>
               )}
@@ -149,7 +149,7 @@ export function ClientContactSheet({
                   </span>
                   <span className="min-w-0 flex-1">
                     <b className="block text-[13.5px] font-bold text-foreground">اتصال هاتفي</b>
-                    <span dir="ltr" className="block truncate text-[11.5px] text-muted-foreground">
+                    <span dir="ltr" className="block truncate text-xs text-muted-foreground">
                       {phone}
                     </span>
                   </span>
@@ -169,7 +169,7 @@ export function ClientContactSheet({
                   </span>
                   <span className="min-w-0 flex-1">
                     <b className="block text-[13.5px] font-bold text-foreground">أرسل بريدًا</b>
-                    <span className="block truncate text-[11.5px] text-muted-foreground">{email}</span>
+                    <span className="block truncate text-xs text-muted-foreground">{email}</span>
                   </span>
                 </CtaTrackedLink>
               )}

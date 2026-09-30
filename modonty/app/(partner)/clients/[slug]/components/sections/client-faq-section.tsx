@@ -39,7 +39,7 @@ export function ClientFaqSection({ faqs, slug }: ClientFaqSectionProps) {
     <SectionCard id="faq" icon="❓" title="الأسئلة الشائعة">
       {hasFaqs ? (
         <>
-          <p className="mb-3 text-[11.5px] text-muted-foreground">
+          <p className="mb-3 text-xs text-muted-foreground">
             أجبنا على{" "}
             <b className="font-extrabold text-foreground">
               {answeredCountLabel(faqs.length)}

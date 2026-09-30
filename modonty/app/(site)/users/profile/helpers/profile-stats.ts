@@ -35,7 +35,9 @@ export async function getProfileStats(userId: string): Promise<ProfileStats> {
     db.articleLike.count({ where: { userId } }),
     db.commentDislike.count({ where: { userId } }),
     db.articleFavorite.count({ where: { userId } }),
-    db.clientFavorite.count({ where: { userId } }),
+    // Following a partner writes ClientLike (clients/[slug]/api/follow) — the following tab and
+    // the partner's follower count read it too; ClientFavorite here showed 0 after a follow (QA #9).
+    db.clientLike.count({ where: { userId } }),
     db.bookingRequest.count({ where: { userId } }),
     db.user.findUnique({
       where: { id: userId },

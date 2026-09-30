@@ -36,7 +36,7 @@ function Stat({
       <span className="text-xl font-extrabold tabular-nums leading-none text-primary-foreground">
         {value}
       </span>
-      <span className="text-[11px] font-medium text-primary-foreground/70 leading-tight">{label}</span>
+      <span className="text-xs font-medium text-primary-foreground/70 leading-tight">{label}</span>
     </div>
   );
 }
@@ -84,16 +84,16 @@ export async function FooterStats() {
             {/* الرقم الكبير — أكبرُ رقمٍ صادق */}
             <div className="flex flex-col items-center justify-center px-6 py-5">
               <span className="text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">{hero.value}</span>
-              <span className="mt-1.5 text-[11px] font-medium text-white/80">{hero.label}</span>
-              <span className="mt-0.5 text-[9.5px] text-white/40">{hero.source}</span>
+              <span className="mt-1.5 text-xs font-medium text-white/80">{hero.label}</span>
+              <span className="mt-0.5 text-xs text-white/40">{hero.source}</span>
             </div>
             {/* الجوّال: صفوفٌ من ثلاثة والأخيرُ في المنتصف (٥ أرقام = ٣ + ٢)؛ ومن `sm` شبكةٌ بعدد الأرقام. */}
             <div className={`flex flex-1 flex-wrap justify-center sm:grid sm:divide-x sm:divide-x-reverse sm:divide-white/[0.06] ${SECONDARY_COLS[cells.length] ?? "sm:grid-cols-5"}`}>
               {cells.map((c) => (
                 <div key={c.label} className="flex w-1/3 flex-col items-center justify-center px-1 py-5 text-center sm:w-auto">
                   <span className="text-lg font-black leading-none text-white/85 sm:text-xl">{c.value.toLocaleString(SITE_LOCALE)}</span>
-                  <span className="mt-1.5 text-[11px] font-medium text-white/70">{c.label}</span>
-                  <span className="mt-0.5 text-[9.5px] text-white/40">{c.source}</span>
+                  <span className="mt-1.5 text-xs font-medium text-white/70">{c.label}</span>
+                  <span className="mt-0.5 text-xs text-white/40">{c.source}</span>
                 </div>
               ))}
             </div>
@@ -107,11 +107,11 @@ export async function FooterStats() {
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
-            <p className="text-center text-[10px] leading-tight text-white/45">
+            <p className="text-center text-xs leading-tight text-white/45">
               موثّق من<br />
               <span className="font-semibold text-white/65">Analytics · Search Console</span>
             </p>
-            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold text-emerald-400">
+            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-400">
               ✓ بيانات حقيقية
             </span>
           </div>

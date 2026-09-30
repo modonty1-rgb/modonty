@@ -32,7 +32,7 @@ const VARIANT = {
   solid:
     "h-11 gap-2 rounded-full bg-[#25D366] px-5 text-sm font-bold text-white shadow-[0_10px_20px_-12px_rgba(37,211,102,.9)] transition-[background-color,transform] sm:hover:bg-[#1EBE5A] sm:hover:-translate-y-px",
   quiet:
-    "h-9 gap-2 rounded-full bg-[#25D366]/10 px-4 text-sm font-medium text-[#0F7B45] ring-1 ring-inset ring-[#25D366]/30 transition-colors sm:hover:bg-[#25D366]/20 dark:text-[#4BE08A]",
+    "h-9 max-md:h-11 gap-2 rounded-full bg-[#25D366]/10 px-4 text-sm font-medium text-[#0F7B45] ring-1 ring-inset ring-[#25D366]/30 transition-colors sm:hover:bg-[#25D366]/20 dark:text-[#4BE08A]",
   // 44 — a fingertip. It was 36, and it sits in rows beside other small controls.
   icon: "size-11 rounded-full bg-[#25D366]/10 text-[#0F7B45] ring-1 ring-inset ring-[#25D366]/30 transition-colors sm:hover:bg-[#25D366]/20 dark:text-[#4BE08A]",
   dock: "size-11 rounded-xl bg-[#25D366] text-white shadow-[0_6px_12px_-8px_rgba(37,211,102,.55)] transition-transform active:scale-[0.98]",

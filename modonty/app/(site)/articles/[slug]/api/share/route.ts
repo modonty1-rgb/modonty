@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { SharePlatform, ArticleStatus } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
@@ -81,11 +82,13 @@ export async function POST(
 
     const sharePlatform = platformMap[platform] || SharePlatform.OTHER;
 
-    // Track share — include sessionId for rate limiting + analytics
+    // Track share — include sessionId for rate limiting + analytics, and the reader when signed in.
+    const session = await auth();
     await db.share.create({
       data: {
         articleId: article.id,
         clientId: article.clientId,
+        userId: session?.user?.id ?? undefined,
         platform: sharePlatform,
         sessionId: sessionId ?? undefined,
       },

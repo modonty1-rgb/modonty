@@ -1,5 +1,6 @@
 "use client";
 
+import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { useState } from "react";
 
 import { CommentFormDialog } from "@/app/(site)/articles/[slug]/components/comment-form/CommentFormDialog";
@@ -78,7 +79,7 @@ export function ArticleTopEngagementBar({
   // rendered at 9px, under the ~11px floor both platform guidelines set for the smallest text.
   // A badge reads at 11px and costs no width, because it overhangs the tab instead of sharing it.
   const badge = size === "compact"
-    ? "absolute end-0.5 top-0.5 min-w-[16px] rounded-full bg-background px-1 text-[11px] leading-[16px] text-foreground shadow ring-1 ring-border tabular-nums"
+    ? "absolute end-0.5 top-0.5 min-w-[16px] rounded-full bg-background px-1 text-xs leading-[16px] text-foreground shadow ring-1 ring-border tabular-nums"
     : "tabular-nums";
 
   // The glyph shrinks in the bar so the count can sit inside the tab instead of hanging off its
@@ -107,6 +108,13 @@ export function ArticleTopEngagementBar({
   const handleShare = async () => {
     const result = await shareArticle();
     if (result === "cancelled") return;
+    // Record it — this button used to share without a trace, so the article's and the client's
+    // share counts stayed at zero however often readers shared (QA finding #6, 29 Sep 2026).
+    fetch(`/articles/${encodeURIComponent(articleSlug)}/api/share`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ platform: result === "copied" ? "COPY_LINK" : "OTHER" }),
+    }).catch(() => {});
     setShared(true);
     setTimeout(() => setShared(false), 2000);
   };
@@ -172,8 +180,8 @@ export function ArticleTopEngagementBar({
       // 44 — the same face as the listen tab it sits beside (Khalid, 21 Aug): two sizes in one
       // row read as two kinds of control. It is also the fingertip floor, so no invisible hit
       // area is needed any more. The outline title truncates to make room; the controls do not.
-      ? "size-11 rounded-lg text-[9px]"
-      : "size-12 rounded-xl text-[10px] lg:size-10",
+      ? "size-11 rounded-lg text-xs"
+      : "size-12 rounded-xl text-xs lg:size-10",
     size === "compact" ? "" : attached
       // Hanging from the navbar (Khalid, 19 Aug): the radius is flipped — square where it meets
       // the bar so it reads as cut from it, rounded at the loose bottom edge. `-mt-px` closes
@@ -201,11 +209,11 @@ export function ArticleTopEngagementBar({
         <>
           <button type="button" onClick={handleLike} disabled={busy === "like"} className={cn(item, "bg-action-like text-action-like-foreground")} aria-pressed={liked} aria-label={labels.like}>
             <IconLike className={cn(glyph, liked && "fill-current")} />
-            {likeN > 0 && <span className={badge}>{likeN}</span>}
+            {likeN > 0 && <span className={badge}>{likeN.toLocaleString(SITE_LOCALE)}</span>}
           </button>
           <button type="button" onClick={handleSave} disabled={busy === "save"} className={cn(item, "bg-action-save text-action-save-foreground")} aria-pressed={saved} aria-label={labels.save}>
             <IconSaved className={cn(glyph, saved && "fill-current")} />
-            {favN > 0 && <span className={badge}>{favN}</span>}
+            {favN > 0 && <span className={badge}>{favN.toLocaleString(SITE_LOCALE)}</span>}
           </button>
           <CommentFormDialog
             articleId={articleId}

@@ -21,7 +21,7 @@ export function ContactDetails({ email, telephone, address }: ContactDetailsProp
       {email && (
         <li className="flex items-center gap-2">
           <IconEmail className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-          <a href={`mailto:${email}`} dir="ltr" className="hover:text-primary">
+          <a href={`mailto:${email}`} dir="ltr" className="inline-flex min-h-11 items-center hover:text-primary">
             {email}
           </a>
         </li>
@@ -29,7 +29,7 @@ export function ContactDetails({ email, telephone, address }: ContactDetailsProp
       {telephone && (
         <li className="flex items-center gap-2">
           <IconPhone className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-          <a href={`tel:${telephone}`} dir="ltr" className="hover:text-primary">
+          <a href={`tel:${telephone}`} dir="ltr" className="inline-flex min-h-11 items-center hover:text-primary">
             {telephone}
           </a>
         </li>

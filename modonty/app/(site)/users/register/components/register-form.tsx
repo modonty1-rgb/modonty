@@ -44,6 +44,9 @@ export function RegisterForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // The account exists and the session is live — say so before leaving the page, or the reader
+  // lands on the home page with no sign that anything happened (QA finding #1, 29 Sep 2026).
+  const [welcomed, setWelcomed] = useState(false);
 
   const {
     register,
@@ -90,9 +93,13 @@ export function RegisterForm() {
         redirect: false,
       });
 
-      if (signInResult?.ok) {
-        router.push(callbackUrl);
-        router.refresh();
+      // next-auth v5 returns ok:true on a rejected sign-in too — the failure is in `error`.
+      if (signInResult?.ok && !signInResult.error) {
+        setWelcomed(true);
+        setTimeout(() => {
+          router.push(callbackUrl);
+          router.refresh();
+        }, 1400);
       } else {
         setError("تم إنشاء الحساب بنجاح، لكن فشل تسجيل الدخول. يرجى تسجيل الدخول يدوياً.");
         setIsSubmitting(false);
@@ -124,6 +131,12 @@ export function RegisterForm() {
             ))}
           </ul>
 
+          {welcomed && (
+            <div role="status" className="rounded-md bg-primary/10 p-3 text-center text-sm font-medium text-primary">
+              أهلاً بك في مدوّنتي — حسابك جاهز، نرجّعك لمكانك…
+            </div>
+          )}
+
           {error && (
             <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
               {error}
@@ -153,6 +166,21 @@ export function RegisterForm() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">الاسم</Label>
+              <Input
+                id="name"
+                autoComplete="name"
+                className="max-md:h-11"
+                placeholder="يظهر على تعليقاتك"
+                {...register("name")}
+                disabled={isSubmitting}
+              />
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name.message}</p>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">البريد الإلكتروني</Label>
               <Input

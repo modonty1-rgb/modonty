@@ -27,7 +27,7 @@ export function ReelsBottomBar() {
           href={item.href}
           // 56 tall, and the whole cell is the target — five cells across 390px give 78px each,
           // comfortably past the 44 floor in both directions.
-          className={`flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-bold transition active:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary ${
+          className={`flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-bold transition active:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary ${
             item.tone === "accent" ? "text-accent" : "text-white/80"
           }`}
         >

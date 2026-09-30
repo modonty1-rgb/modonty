@@ -405,7 +405,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
 
             <div className="min-w-0 w-[26%] shrink-0 sm:w-[22%]">
               <p className="truncate text-xs font-bold leading-tight">{surah.name}</p>
-              <p className="truncate text-[11px] leading-tight text-muted-foreground">
+              <p className="truncate text-xs leading-tight text-muted-foreground">
                 {failed ? (
                   <span className="flex items-center gap-1 text-destructive">
                     <IconAlertTriangle className="size-3 shrink-0" aria-hidden />
@@ -435,7 +435,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
               className="h-1 min-w-0 flex-1 cursor-pointer appearance-none rounded-full bg-border accent-action-listen"
             />
 
-            <span className="hidden shrink-0 text-[11px] tabular-nums text-muted-foreground sm:block" dir="ltr">
+            <span className="hidden shrink-0 text-xs tabular-nums text-muted-foreground sm:block" dir="ltr">
               {clock(current)} / {clock(duration)}
             </span>
 
@@ -492,7 +492,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
-                    "grid size-10 shrink-0 place-items-center rounded-full text-xs font-bold tabular-nums",
+                    "grid size-10 max-md:size-11 shrink-0 place-items-center rounded-full text-xs font-bold tabular-nums",
                     isCurrent ? "bg-action-listen text-action-listen-foreground" : "border border-border text-muted-foreground"
                   )}
                 >
@@ -522,7 +522,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                     aria-label={`${labels.pickReciterForPrefix} ${s.name} — ${labels.currentPrefix} ${r.name}`}
                     title={`${labels.pickReciterForPrefix} — ${r.name}`}
                     className={cn(
-                    "grid size-10 shrink-0 place-items-center rounded-full motion-safe:transition-transform motion-safe:active:scale-95",
+                    "grid size-10 max-md:size-11 shrink-0 place-items-center rounded-full motion-safe:transition-transform motion-safe:active:scale-95",
                       choice[s.n] === undefined
                         ? "border border-border text-muted-foreground hover:border-action-listen/60 hover:text-foreground"
                         : "bg-action-listen/15 text-action-listen ring-1 ring-action-listen/40"
@@ -534,7 +534,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                     type="button"
                     onClick={() => playSurah(i)}
                     aria-label={`${labels.recitePrefix} ${s.name}`}
-                    className="grid size-10 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground motion-safe:transition-transform motion-safe:active:scale-95"
+                    className="grid size-10 max-md:size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground motion-safe:transition-transform motion-safe:active:scale-95"
                   >
                     {isCurrent && playing ? <IconPause className="size-4" /> : <IconPlay className="size-4" />}
                   </button>

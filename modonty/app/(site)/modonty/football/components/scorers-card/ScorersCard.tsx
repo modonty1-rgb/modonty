@@ -27,7 +27,7 @@ export function ScorersCard({ scorers, crests }: { scorers: Scorer[] | null; cre
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium">{s.player}</span>
                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <TeamMark name={s.club} crest={crests[s.club]} className="size-4 text-[9px]" />
+                  <TeamMark name={s.club} crest={crests[s.club]} className="size-4 text-xs" />
                   {s.club}
                 </span>
               </span>

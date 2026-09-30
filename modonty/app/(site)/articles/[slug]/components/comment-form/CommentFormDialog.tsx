@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { trackCtaClick } from "@/lib/analytics/cta-tracking";
 
 import { CommentForm } from "@/components/shared/comment-form/CommentForm";
@@ -27,6 +28,10 @@ interface CommentFormDialogProps {
 
 export function CommentFormDialog({ articleId, articleSlug, userId, clientId, trigger }: CommentFormDialogProps) {
   const [open, setOpen] = useState(false);
+  // The comment waits for review, so it does not appear on the page. Closing the dialog silently
+  // left the reader under «ما فيه تعليقات لحد الآن» thinking it was lost (QA finding #8, 29 Sep
+  // 2026) — the dialog now says it arrived, like the reel does.
+  const [sent, setSent] = useState(false);
   const router = useRouter();
 
   // Signed out there is no comment box to show, so the trigger opens the one sign-in dialog the
@@ -50,6 +55,7 @@ export function CommentFormDialog({ articleId, articleSlug, userId, clientId, tr
           trackCtaClick({ type: "FORM", label: "أضف تعليق", targetUrl: "#", articleId, clientId });
         }
         setOpen(next);
+        if (!next) setSent(false);
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -58,15 +64,26 @@ export function CommentFormDialog({ articleId, articleSlug, userId, clientId, tr
           <DialogTitle>أضف تعليق</DialogTitle>
           <DialogDescription>اكتب تعليقك على المقال وسيظهر بعد المراجعة.</DialogDescription>
         </DialogHeader>
-        <CommentForm
-          onSubmit={(content) => submitComment(articleId, articleSlug, content)}
-          onSuccess={() => {
-            setOpen(false);
-            router.refresh();
-          }}
-          placeholder="اكتب تعليقك هنا..."
-          submitLabel="إرسال التعليق"
-        />
+        {sent ? (
+          <div role="status" className="space-y-3 text-center">
+            <p className="rounded-md bg-primary/10 p-3 text-sm font-medium text-primary">
+              وصل تعليقك — يظهر بعد مراجعة الشريك.
+            </p>
+            <Button variant="outline" className="w-full" onClick={() => setOpen(false)}>
+              تمام
+            </Button>
+          </div>
+        ) : (
+          <CommentForm
+            onSubmit={(content) => submitComment(articleId, articleSlug, content)}
+            onSuccess={() => {
+              setSent(true);
+              router.refresh();
+            }}
+            placeholder="اكتب تعليقك هنا..."
+            submitLabel="إرسال التعليق"
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -145,7 +145,7 @@ function MobilePostCardContent({ post, hideClient, hero }: MobilePostCardContent
               <ModontyArticlesMark className="size-10 text-muted-foreground/40" aria-hidden />
             </span>
           )}
-          <span className="absolute start-2.5 top-2.5 rounded-full bg-black/55 px-2 py-1 text-[11px] font-bold text-white backdrop-blur">
+          <span className="absolute start-2.5 top-2.5 rounded-full bg-black/55 px-2 py-1 text-xs font-bold text-white backdrop-blur">
             الأحدث
           </span>
         </div>

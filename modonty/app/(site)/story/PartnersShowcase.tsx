@@ -56,7 +56,7 @@ function PartnersShowcaseImpl() {
           <p className="text-sm md:text-base font-extrabold text-foreground leading-tight">
             يثقون بنا في السعودية ومصر
           </p>
-          <p className="text-[10px] md:text-[11px] text-foreground/65 leading-tight">
+          <p className="text-xs md:text-xs text-foreground/65 leading-tight">
             ٥ شركاء أوائل اختاروا مدونتي
           </p>
         </div>
@@ -113,7 +113,7 @@ function PartnersShowcaseImpl() {
                 ) : (
                   <div title={partner.name}>{card}</div>
                 )}
-                <p className="mt-1.5 text-[9px] md:text-[10px] text-center text-foreground/65 font-bold truncate px-1">
+                <p className="mt-1.5 text-xs md:text-xs text-center text-foreground/65 font-bold truncate px-1">
                   {partner.name}
                 </p>
               </div>
@@ -123,7 +123,7 @@ function PartnersShowcaseImpl() {
       </div>
 
       {/* FOOTER NOTE */}
-      <p className="text-[10px] md:text-[11px] text-center text-foreground/55 px-3 leading-relaxed">
+      <p className="text-xs md:text-xs text-center text-foreground/55 px-3 leading-relaxed">
         شركاء فعليون مع مدونتي منذ ٢٠٢٤
       </p>
     </div>

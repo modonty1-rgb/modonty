@@ -97,7 +97,7 @@ function Vision2030SpotlightImpl({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.85 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-emerald-600/95 text-white text-[9px] font-extrabold whitespace-nowrap shadow-md"
+                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-emerald-600/95 text-white text-xs font-extrabold whitespace-nowrap shadow-md"
                   >
                     ١.٧ مليون منشأة
                   </m.div>
@@ -156,7 +156,7 @@ function Vision2030SpotlightImpl({
                 style={{ transform: "scale(1.65)" }}
               />
             </div>
-            <p className="text-[10px] font-extrabold text-primary/90 tracking-widest mt-2">
+            <p className="text-xs font-extrabold text-primary/90 tracking-widest mt-2">
               مدونتي
             </p>
           </m.div>

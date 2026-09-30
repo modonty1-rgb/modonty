@@ -15,7 +15,7 @@ export function VerifiedBadge({ light = false, className }: { light?: boolean; c
     <span
       title="شريك موثَّق في مدونتي"
       className={cn(
-        "flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] font-medium",
+        "flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-medium",
         light ? "border-white/25 text-white/85" : "border-border text-muted-foreground",
         className,
       )}

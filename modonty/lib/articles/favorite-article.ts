@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 
 import { isPublicArticle } from "./is-public-article";
 import { fireEngagement } from "./fire-engagement";
+import { incrementCounters } from "@/lib/counters/increment-counters";
 
 export async function favoriteArticle(articleId: string, articleSlug: string) {
   try {
@@ -28,28 +29,24 @@ export async function favoriteArticle(articleId: string, articleSlug: string) {
       select: { id: true },
     });
 
-    let updated;
+    // Same rule as likes (like-article.ts): the counter moves only when a row really changed,
+    // with one atomic `$inc` outside any transaction (incrementCounters).
     if (existing) {
-      await db.articleFavorite.delete({ where: { id: existing.id } }).catch(() => {});
-      updated = await db.article.update({
-        where: { id: articleId },
-        data: { favoritesCount: { decrement: 1 } },
-        select: { favoritesCount: true },
-      });
+      const { count: removed } = await db.articleFavorite.deleteMany({ where: { id: existing.id } });
+      await incrementCounters("articles", articleId, { favoritesCount: -removed });
     } else {
-      await db.articleFavorite.create({
-        data: { articleId, userId },
-      }).catch((e: unknown) => {
-        const err = e as { code?: string; message?: string };
-        const isUnique = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
-        if (!isUnique) throw e;
-      });
-      updated = await db.article.update({
-        where: { id: articleId },
-        data: { favoritesCount: { increment: 1 } },
-        select: { favoritesCount: true },
-      });
+      const created = await db.articleFavorite
+        .create({ data: { articleId, userId } })
+        .then(() => true)
+        .catch((e: unknown) => {
+          const err = e as { code?: string; message?: string };
+          const isUnique = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
+          if (!isUnique) throw e;
+          return false;
+        });
+      await incrementCounters("articles", articleId, { favoritesCount: created ? 1 : 0 });
     }
+    const updated = await db.article.findUniqueOrThrow({ where: { id: articleId }, select: { favoritesCount: true } });
 
     revalidatePath(`/articles/${articleSlug}`);
     if (!existing) {

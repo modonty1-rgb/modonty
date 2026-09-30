@@ -29,7 +29,10 @@ export function SecuritySettings() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [connectedAccounts, setConnectedAccounts] = useState<any[]>([]);
-  const [hasPassword, setHasPassword] = useState(false);
+  // Start from the session's flag, not `false`: when the accounts fetch failed (a 404 on dev,
+  // QA finding #4/#5, 29 Sep 2026) the current-password field stayed hidden while the server
+  // still required it — no way to change the password at all.
+  const [hasPassword, setHasPassword] = useState<boolean>(Boolean((session?.user as { hasPassword?: boolean } | undefined)?.hasPassword));
 
   const {
     register,
@@ -138,7 +141,7 @@ export function SecuritySettings() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-md:size-11"
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   >
                     {showCurrentPassword ? (
@@ -167,7 +170,7 @@ export function SecuritySettings() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-md:size-11"
                   onClick={() => setShowNewPassword(!showNewPassword)}
                 >
                   {showNewPassword ? (
@@ -198,7 +201,7 @@ export function SecuritySettings() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-md:size-11"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (

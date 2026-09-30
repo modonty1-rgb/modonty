@@ -25,7 +25,7 @@ export function IndustryContextStrip({ industryName, articlesCount, partnersCoun
   const info = (
     <div className="min-w-0 flex-1">
       <p className="truncate text-[15px] font-black text-foreground">{industryName}</p>
-      <p className="mt-0.5 text-[11px] text-muted-foreground">
+      <p className="mt-0.5 text-xs text-muted-foreground">
         {formatArticlesCount(articlesCount)} · {formatClientsCount(partnersCount)}
       </p>
     </div>
@@ -43,7 +43,7 @@ export function IndustryContextStrip({ industryName, articlesCount, partnersCoun
           hide there so the same partners never render twice; the strip stays info-only. */}
       <summary className="flex min-h-12 cursor-pointer list-none items-center gap-3 px-3 py-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary lg:pointer-events-none [&::-webkit-details-marker]:hidden">
         {info}
-        <span className={cn("flex shrink-0 items-center gap-1 rounded-full px-3 py-2 text-[11px] font-black lg:hidden", tone.chip)}>
+        <span className={cn("flex shrink-0 items-center gap-1 rounded-full px-3 py-2 text-xs font-black lg:hidden", tone.chip)}>
           شركاء المجال
           <IconChevronDown className="size-3.5 transition-transform group-open:rotate-180" aria-hidden />
         </span>

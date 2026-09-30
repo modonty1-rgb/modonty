@@ -523,7 +523,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
       >
         {position !== undefined && (
           <span
-            className={`text-[10px] font-bold shrink-0 px-1.5 py-0.5 rounded tabular-nums mt-0.5 max-md:mt-0 ${
+            className={`text-xs font-bold shrink-0 px-1.5 py-0.5 rounded tabular-nums mt-0.5 max-md:mt-0 ${
               isActive ? "bg-white/25 text-primary-foreground" : "bg-muted text-muted-foreground"
             }`}
           >
@@ -540,7 +540,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
         </span>
         {isDraft && (
           <span
-            className="text-[9px] font-bold shrink-0 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 mt-0.5 max-md:mt-0"
+            className="text-xs font-bold shrink-0 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 mt-0.5 max-md:mt-0"
             aria-label="مسوّدة"
           >
             مسوّدة
@@ -597,7 +597,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       className="object-contain"
                       unoptimized
                     />
-                    <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 tracking-[0.1em]">
+                    <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 tracking-[0.1em]">
                       نساهم في رؤية المملكة ٢٠٣٠
                     </span>
                     <span
@@ -682,11 +682,11 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                           className="w-full flex items-center gap-1.5 px-2 py-1.5 max-md:min-h-11 rounded-md hover:bg-muted/60 active:bg-muted transition-colors group sticky top-0 bg-gradient-to-b from-card to-card/85 backdrop-blur z-10 -mx-2"
                         >
                           {cat.emoji && <span className="text-base shrink-0" aria-hidden>{cat.emoji}</span>}
-                          <span className="text-[10px] uppercase tracking-wider font-extrabold text-foreground/85 flex-1 text-start">
+                          <span className="text-xs uppercase tracking-wider font-extrabold text-foreground/85 flex-1 text-start">
                             {cat.label}
                           </span>
                           {count > 0 && (
-                            <span className="text-[9px] font-bold tabular-nums px-1.5 py-0.5 rounded-full bg-muted text-foreground/65 group-hover:bg-background">
+                            <span className="text-xs font-bold tabular-nums px-1.5 py-0.5 rounded-full bg-muted text-foreground/65 group-hover:bg-background">
                               {count}
                             </span>
                           )}
@@ -708,7 +708,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                             >
                               <div className="flex flex-col gap-1 pt-1 pb-1">
                                 {cat.sectionIds.length === 0 && (
-                                  <p className="text-[11px] text-muted-foreground/70 italic px-3 py-2 border border-dashed border-border rounded-lg">
+                                  <p className="text-xs text-muted-foreground/70 italic px-3 py-2 border border-dashed border-border rounded-lg">
                                     قريباً…
                                   </p>
                                 )}
@@ -754,7 +754,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       className="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-l from-transparent via-white/40 to-transparent"
                     />
                     {/* HOOK STRIP */}
-                    <span className="relative flex items-center gap-1.5 text-[10px] font-bold tracking-wide text-amber-950/85">
+                    <span className="relative flex items-center gap-1.5 text-xs font-bold tracking-wide text-amber-950/85">
                       <span aria-hidden>🎁</span>
                       <span>عرض المؤسسين</span>
                       {offerHook && (
@@ -781,7 +781,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
             >
               <div className="border-b border-border bg-muted/30 px-3 md:px-5 py-2 shrink-0">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <div className="flex items-center gap-x-3 gap-y-1 text-[10px] md:text-[11px] text-foreground/75 flex-wrap">
+                  <div className="flex items-center gap-x-3 gap-y-1 text-xs md:text-xs text-foreground/75 flex-wrap">
                     <span className="inline-flex items-center gap-1">
                       <span aria-hidden className="text-amber-500">⏱</span>
                       <span>خمس دقائق فقط</span>
@@ -808,7 +808,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                     <DialogTrigger asChild>
                       <button
                         type="button"
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 max-md:min-h-11 max-md:px-4 rounded-full border border-border bg-background/40 hover:bg-muted/40 text-[11px] font-bold text-foreground/75 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 max-md:min-h-11 max-md:px-4 rounded-full border border-border bg-background/40 hover:bg-muted/40 text-xs font-bold text-foreground/75 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                         title="اقرأ النص الكامل للمقطع الحالي"
                         aria-label="افتح نص المقطع الحالي"
                       >
@@ -842,7 +842,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                 <button
                   type="button"
                   onClick={() => setAutoplay((v) => !v)}
-                  className="inline-flex items-center gap-1.5 max-md:min-h-11 max-md:px-2 text-[11px] font-medium text-foreground/80 hover:text-foreground transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded"
+                  className="inline-flex items-center gap-1.5 max-md:min-h-11 max-md:px-2 text-xs font-medium text-foreground/80 hover:text-foreground transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded"
                   role="switch"
                   aria-checked={autoplay}
                   aria-label="تشغيل تلقائي للمقاطع التالية"
@@ -980,7 +980,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
                       transition={{ duration: 0.25 }}
-                      className="flex items-center justify-center gap-2 text-[11px] font-bold text-primary/90 -mt-1 mb-1"
+                      className="flex items-center justify-center gap-2 text-xs font-bold text-primary/90 -mt-1 mb-1"
                     >
                       <m.span
                         aria-hidden
@@ -1163,7 +1163,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.1 }}
-                      className="text-[11px] md:text-xs uppercase tracking-[0.35em] font-bold text-amber-400/90 mb-4"
+                      className="text-xs md:text-xs uppercase tracking-[0.35em] font-bold text-amber-400/90 mb-4"
                     >
                       الفصل التالي
                     </m.p>
@@ -1205,7 +1205,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                           setNextChapter(null);
                           handleSectionClick(target);
                         }}
-                        className="text-[11px] text-white/85 hover:text-white transition-colors underline decoration-dotted underline-offset-4 max-md:inline-flex max-md:items-center max-md:min-h-11 max-md:px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded"
+                        className="text-xs text-white/85 hover:text-white transition-colors underline decoration-dotted underline-offset-4 max-md:inline-flex max-md:items-center max-md:min-h-11 max-md:px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded"
                         aria-label="ابدأ الفصل التالي الآن"
                       >
                         ابدأ الآن ▸
@@ -1219,7 +1219,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                           }
                           setNextChapter(null);
                         }}
-                        className="text-[11px] text-white/50 hover:text-white/80 transition-colors max-md:inline-flex max-md:items-center max-md:min-h-11 max-md:px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded"
+                        className="text-xs text-white/50 hover:text-white/80 transition-colors max-md:inline-flex max-md:items-center max-md:min-h-11 max-md:px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded"
                         aria-label="إلغاء الانتقال التلقائي والبقاء في هذا المقطع"
                       >
                         ابقَ هنا ✕
@@ -1306,7 +1306,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                         <span className="text-[12px] font-bold text-foreground/80 group-hover:text-foreground truncate transition-colors">
                           شوف الباقات
                         </span>
-                        <span className="text-[10px] text-foreground/50 truncate">
+                        <span className="text-xs text-foreground/50 truncate">
                           {plansLine}
                         </span>
                       </span>
@@ -1361,7 +1361,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                     >
                       {/* Row 1: Brand/DBA + verification cluster (نشط badge + تحقّق link) */}
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-[10px] leading-snug min-w-0 flex-1">
+                        <p className="text-xs leading-snug min-w-0 flex-1">
                           <span className="font-bold text-foreground/95">{siteName}</span>
                           {legal.legalName && (
                             <span className="text-foreground/65"> · تحت مظلة {legal.legalName}</span>
@@ -1372,8 +1372,8 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                             <span
                               className={
                                 legal.isRegistrationActive
-                                  ? "inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded"
-                                  : "inline-flex items-center gap-1 text-[9px] font-bold text-foreground/60 bg-foreground/10 px-1.5 py-0.5 rounded"
+                                  ? "inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded"
+                                  : "inline-flex items-center gap-1 text-xs font-bold text-foreground/60 bg-foreground/10 px-1.5 py-0.5 rounded"
                               }
                             >
                               {/* The shield is a claim of good standing — it goes with the
@@ -1389,7 +1389,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                               href={SAUDI_BUSINESS_VERIFY_URL}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[10px] font-bold text-primary hover:underline whitespace-nowrap max-md:inline-flex max-md:items-center max-md:justify-center max-md:min-h-11 max-md:min-w-11 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
+                              className="text-xs font-bold text-primary hover:underline whitespace-nowrap max-md:inline-flex max-md:items-center max-md:justify-center max-md:min-h-11 max-md:min-w-11 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
                               aria-label={`ابحث بالرقم ${legal.cr} في وزارة التجارة`}
                             >
                               تحقّق
@@ -1400,7 +1400,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       </div>
 
                       {/* Row 2: Credentials strip — wrap-safe, balanced weight, Latin year for numeric consistency */}
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px]">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                         {legal.cr && (
                           <span className="inline-flex items-center gap-1">
                             <span className="text-emerald-500" aria-hidden>
@@ -1408,7 +1408,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                             </span>
                             <span className="text-foreground/65">سجل</span>
                             <span
-                              className="font-mono font-bold text-foreground text-[11px] tracking-tight"
+                              className="font-mono font-bold text-foreground text-xs tracking-tight"
                               dir="ltr"
                             >
                               {legal.cr}
@@ -1421,17 +1421,17 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                             aria-label={`رأس المال ${legal.capital} ${CAPITAL_CURRENCY_LABEL}`}
                           >
                             <IconWallet className="w-3 h-3 text-amber-600 dark:text-amber-400 self-center" aria-hidden />
-                            <span className="text-foreground/65 text-[9px]" aria-hidden>
+                            <span className="text-foreground/65 text-xs" aria-hidden>
                               رأس المال
                             </span>
                             <span
-                              className="font-mono font-bold text-amber-600 dark:text-amber-400 text-[11px] tracking-tight"
+                              className="font-mono font-bold text-amber-600 dark:text-amber-400 text-xs tracking-tight"
                               dir="ltr"
                               aria-hidden
                             >
                               {legal.capital}
                             </span>
-                            <span className="font-bold text-amber-600/85 dark:text-amber-400/85 text-[10px]" aria-hidden>
+                            <span className="font-bold text-amber-600/85 dark:text-amber-400/85 text-xs" aria-hidden>
                               {CAPITAL_CURRENCY_LABEL}
                             </span>
                           </span>
@@ -1469,7 +1469,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                         }
                         transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
                       />
-                      <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-amber-500/90">
+                      <span className="text-xs uppercase tracking-[0.2em] font-bold text-amber-500/90">
                         يُعرض الآن
                       </span>
                     </div>
@@ -1662,7 +1662,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                                 ) : (
                                   <span
                                     aria-hidden
-                                    className="inline-block text-amber-500/70 shrink-0 mt-0.5 text-[11px]"
+                                    className="inline-block text-amber-500/70 shrink-0 mt-0.5 text-xs"
                                   >
                                     ✓
                                   </span>
@@ -1677,14 +1677,14 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                     )}
 
                     <div className="mt-auto">
-                      <div className="pt-3 border-t border-border/40 text-[11px] text-foreground/60 flex items-center justify-between">
+                      <div className="pt-3 border-t border-border/40 text-xs text-foreground/60 flex items-center justify-between">
                         <span>{corePositionLabel}</span>
                         <span className="font-mono">
                           {formatTime(currentTime)} / {formatTime(duration)}
                         </span>
                       </div>
                       <div className="mt-2.5 pt-2.5 border-t border-border/25 flex items-center justify-between gap-2">
-                        <p className="text-[10px] text-foreground/65 truncate">
+                        <p className="text-xs text-foreground/65 truncate">
                           <span className="font-bold text-foreground/85">فريق المبيعات</span>
                         </p>
                         <div className="flex items-center gap-1.5 shrink-0">

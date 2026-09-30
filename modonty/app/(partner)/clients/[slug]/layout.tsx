@@ -135,7 +135,7 @@ async function PartnerChrome({ params, slot }: PartnerChromeProps) {
       />
       {/* One sticky block: slides up by the bar's height on scroll-down, so the partner header stays. */}
       <StickyChrome>
-        <PlatformBar isVerified={isVerified} />
+        <PlatformBar isVerified={isVerified} clientSlug={site.slug} />
         <div data-partner-theme>
           <Header data={header} />
         </div>

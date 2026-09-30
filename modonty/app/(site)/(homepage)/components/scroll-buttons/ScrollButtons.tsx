@@ -26,8 +26,11 @@ export function ScrollButtons() {
           top edge (measured 23 Aug: track y=56, band y=56–123). The homepage never has an
           active tab, so its band is always 56 (tab) + 12 (reserved overhang) − 1 (`-mt-px`)
           = 7.75rem − 1px below the 3.5rem header. `lg:top-14`: the band is `lg:hidden`,
-          so the desktop line stays exactly where it was. */}
-      <div className={`fixed inset-x-0 top-[calc(7.75rem-1px)] lg:top-14 z-40 h-1 bg-muted ${NO_SUPPORT}:hidden motion-reduce:hidden`}>
+          so the desktop line stays exactly where it was.
+          29 Sep 2026: the phone's tabs band is gone — measured header bottom=56 at the top and
+          after scrolling, no band under it — so 123px left the line cutting through the search
+          box mid-page. Back under the header on every width. */}
+      <div className={`fixed inset-x-0 top-14 z-40 h-1 bg-muted ${NO_SUPPORT}:hidden motion-reduce:hidden`}>
         <div className={`h-full origin-right bg-accent animate-scroll-fill ${TIMELINE}`} />
       </div>
 

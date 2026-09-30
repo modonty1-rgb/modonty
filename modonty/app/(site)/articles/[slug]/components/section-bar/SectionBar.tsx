@@ -52,7 +52,7 @@ export function SectionBar({ title, count, open, onToggle, id, controls, end, cl
         <span className="flex min-w-0 items-center gap-2">
           <span className="truncate text-sm font-bold text-foreground">{title}</span>
           {typeof count === "number" && count > 0 && (
-            <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-bold tabular-nums text-primary">
+            <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold tabular-nums text-primary">
               {count.toLocaleString(SITE_LOCALE)}
             </span>
           )}

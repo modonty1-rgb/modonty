@@ -90,8 +90,8 @@ function ReelPreviewTile({ item, layout, itemCount }: ReelPreviewTileProps) {
         <IconPlay className={cn(layout === "feed" ? "size-3.5 lg:size-4" : "size-4")} aria-hidden />
       </span>
       <span className={cn("absolute inset-x-2 bottom-2", layout === "feed" && "hidden lg:block")}>
-        <span className={cn("line-clamp-1 block font-normal drop-shadow-sm", layout === "feed" ? "text-[11px] leading-4 lg:line-clamp-2 lg:text-xs lg:leading-5" : "text-xs leading-5")}>{item.title}</span>
-        <span className="mt-0.5 hidden truncate text-[10px] text-white/80 lg:block">{item.clientName}</span>
+        <span className={cn("line-clamp-1 block font-normal drop-shadow-sm", layout === "feed" ? "text-xs leading-4 lg:line-clamp-2 lg:text-xs lg:leading-5" : "text-xs leading-5")}>{item.title}</span>
+        <span className="mt-0.5 hidden truncate text-xs text-white/80 lg:block">{item.clientName}</span>
       </span>
     </Link>
   );

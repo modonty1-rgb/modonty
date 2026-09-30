@@ -118,7 +118,7 @@ export function MyReelsSheet({ open, onOpenChange }: MyReelsSheetProps) {
                   )}
                   {/* The partner's name, not the title: on a 33vw tile the title clamps to
                       nothing useful, while the name is what the reader recognises. */}
-                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-1.5 text-[10px] font-bold leading-tight text-white line-clamp-2">
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-1.5 text-xs font-bold leading-tight text-white line-clamp-2">
                     {r.clientName}
                   </span>
                 </Link>

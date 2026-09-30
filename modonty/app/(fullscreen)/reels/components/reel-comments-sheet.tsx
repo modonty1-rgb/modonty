@@ -149,12 +149,12 @@ export function ReelCommentsSheet({
                       <span className="text-xs font-bold text-neutral-300">
                         {comment.author?.name || "ضيف"}
                       </span>
-                      <span className="text-[11px] text-neutral-500">
+                      <span className="text-xs text-neutral-500">
                         <RelativeTime date={comment.createdAt} dateTime={comment.createdAt.toISOString()} />
                       </span>
                     </div>
                     {comment.replyingTo && (
-                      <p className="mt-0.5 flex items-center gap-1 text-[11px] text-neutral-500">
+                      <p className="mt-0.5 flex items-center gap-1 text-xs text-neutral-500">
                         <IconReply className="size-3" aria-hidden />
                         رداً على @{comment.replyingTo.authorName}
                       </p>

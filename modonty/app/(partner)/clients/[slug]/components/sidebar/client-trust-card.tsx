@@ -123,7 +123,7 @@ export function ClientTrustCard({
             {messages.shared.badges.verifiedPartnerLabel}
           </h4>
           {commercialRegistrationNumber && (
-            <p className="mt-0.5 text-[11.5px] text-muted-foreground">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               سجل تجاري {commercialRegistrationNumber} · نشط
             </p>
           )}
@@ -133,7 +133,7 @@ export function ClientTrustCard({
               <Button
                 variant="ghost"
                 size="sm"
-                className="mt-1.5 h-auto p-0 text-[11.5px] font-extrabold text-[hsl(var(--primary-ink,var(--primary)))] hover:bg-transparent hover:underline"
+                className="mt-1.5 h-auto p-0 text-xs font-extrabold text-[hsl(var(--primary-ink,var(--primary)))] hover:bg-transparent hover:underline"
               >
                 عرض التوثيق ›
               </Button>
@@ -149,7 +149,7 @@ export function ClientTrustCard({
                   <DialogTitle className="text-sm font-black text-white">
                     توثيق {name}
                   </DialogTitle>
-                  <DialogDescription className="text-[11px] text-white/85">
+                  <DialogDescription className="text-xs text-white/85">
                     بيانات رسمية موثّقة من مدوّنتي
                   </DialogDescription>
                 </div>
@@ -174,7 +174,7 @@ export function ClientTrustCard({
                 )}
 
                 {verifiedDate && (
-                  <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-success">
+                  <div className="mt-3 flex items-center justify-center gap-1.5 text-xs text-success">
                     <ShieldIcon className="h-[13px] w-[13px] shrink-0" />
                     تحقّقت مدوّنتي من هذه البيانات بتاريخ {verifiedDate}
                   </div>

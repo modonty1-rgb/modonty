@@ -77,7 +77,7 @@ export function PageLayout({ partners, industries, query, userCard }: PageLayout
                 <ModontyPartnerMark className="h-6 w-6 shrink-0" aria-hidden />
                 <span className="min-w-0">
                   <span className="block text-xs font-bold leading-tight">كل الشركاء</span>
-                  <span className="mt-0.5 block text-[10px] leading-none opacity-80">{formatClientsCount(searched.length)}</span>
+                  <span className="mt-0.5 block text-xs leading-none opacity-80">{formatClientsCount(searched.length)}</span>
                 </span>
               </Link>
               <Link
@@ -93,7 +93,7 @@ export function PageLayout({ partners, industries, query, userCard }: PageLayout
                 <ModontyFeaturedMark className="h-6 w-6 shrink-0" aria-hidden />
                 <span className="min-w-0">
                   <span className="block text-xs font-bold leading-tight">المميّزون</span>
-                  <span className="mt-0.5 block text-[10px] leading-none text-amber-800">نخبة الشركاء</span>
+                  <span className="mt-0.5 block text-xs leading-none text-amber-800">نخبة الشركاء</span>
                 </span>
               </Link>
             </div>

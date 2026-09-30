@@ -79,13 +79,13 @@ export function IndustryTile({ item, isActive, href, variant = "default" }: Indu
       <span
         className={cn(
           "flex min-h-0 items-end justify-center gap-1 leading-[1.3] text-foreground min-[1240px]:min-h-[2.6em]",
-          variant === "compact" ? "min-[1240px]:text-[10px]" : "min-[1240px]:text-[11px]"
+          variant === "compact" ? "min-[1240px]:text-xs" : "min-[1240px]:text-xs"
         )}
       >
-        <span className="truncate whitespace-nowrap text-[clamp(0.5625rem,2.4vw,0.75rem)] font-bold min-[1240px]:line-clamp-2 min-[1240px]:whitespace-normal min-[1240px]:[font-size:inherit]">
+        <span className="truncate whitespace-nowrap text-xs font-bold min-[1240px]:line-clamp-2 min-[1240px]:whitespace-normal min-[1240px]:[font-size:inherit]">
           {item.name}
         </span>
-        <span className="mb-px hidden shrink-0 items-center rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-bold tabular-nums text-muted-foreground min-[1240px]:inline-flex">
+        <span className="mb-px hidden shrink-0 items-center rounded-full bg-muted px-1.5 py-0.5 text-xs font-bold tabular-nums text-muted-foreground min-[1240px]:inline-flex">
           {item.count.toLocaleString("ar-SA")}
         </span>
       </span>

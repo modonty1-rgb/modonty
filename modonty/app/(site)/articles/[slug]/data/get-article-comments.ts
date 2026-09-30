@@ -15,12 +15,13 @@ const commentSelect = {
 
 /** Approved comments for an article, ordered oldest first. Loaded after the page paints. */
 export async function getArticleComments(articleId: string) {
-  const isDev = process.env.NODE_ENV === "development";
+  // Same rule on dev as on production — dev used to show every comment, so a test saw pending
+  // comments no reader can see, and a subscriber replied to one (QA finding #14, 29 Sep 2026).
   const article = await db.article.findFirst({
     where: { id: articleId, status: ArticleStatus.PUBLISHED },
     select: {
       comments: {
-        where: isDev ? {} : { status: CommentStatus.APPROVED },
+        where: { status: CommentStatus.APPROVED },
         orderBy: { createdAt: "asc" as const },
         select: commentSelect,
       },

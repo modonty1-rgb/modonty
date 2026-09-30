@@ -197,7 +197,7 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
                   slug={article.slug}
                   durationSeconds={article.audioDurationSeconds}
                   // Sized to the tools beside it, not to the old 48px tab row.
-                  tabClassName="relative flex size-11 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl text-[9px] font-semibold leading-none shadow-sm transition-transform active:scale-[0.94] motion-reduce:active:scale-100"
+                  tabClassName="relative flex size-11 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold leading-none shadow-sm transition-transform active:scale-[0.94] motion-reduce:active:scale-100"
                 />
               </span>
             }

@@ -82,7 +82,7 @@ export default async function ReelWatchPage({ params }: ReelPageProps) {
       <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4">
         <Link
           href="/reels"
-          className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-black/40 px-4 py-1.5 text-sm font-bold text-white backdrop-blur transition hover:bg-black/60"
+          className="pointer-events-auto relative flex items-center gap-1.5 rounded-full bg-black/40 px-4 py-1.5 after:absolute after:-inset-2 after:content-[''] text-sm font-bold text-white backdrop-blur transition hover:bg-black/60"
         >
           <IconVideo className="size-4" aria-hidden />
           كل الريلز
@@ -98,7 +98,7 @@ export default async function ReelWatchPage({ params }: ReelPageProps) {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 mx-auto max-w-[420px] bg-gradient-to-t from-black/85 via-black/40 to-transparent p-5 pt-20">
         <Link
           href={`/clients/${reel.clientSlug}`}
-          className="pointer-events-auto mb-2 flex w-fit items-center gap-2 rounded-full bg-white/10 py-1 pe-4 ps-1 backdrop-blur transition hover:bg-white/20"
+          className="pointer-events-auto relative mb-2 flex w-fit items-center gap-2 rounded-full bg-white/10 after:absolute after:-inset-2 after:content-[''] py-1 pe-4 ps-1 backdrop-blur transition hover:bg-white/20"
         >
           <span className="text-sm font-bold text-white">{reel.clientName}</span>
         </Link>

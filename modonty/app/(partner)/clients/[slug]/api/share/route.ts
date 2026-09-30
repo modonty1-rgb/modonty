@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { SharePlatform } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
@@ -73,9 +74,11 @@ export async function POST(
 
     const sharePlatform = PLATFORM_MAP[platform] ?? SharePlatform.OTHER;
 
+    const session = await auth();
     await db.share.create({
       data: {
         clientId: client.id,
+        userId: session?.user?.id ?? undefined,
         platform: sharePlatform,
         sessionId,
       },

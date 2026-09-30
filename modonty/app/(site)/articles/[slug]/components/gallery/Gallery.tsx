@@ -84,7 +84,7 @@ export function Gallery({ images, fallbackText, clientName }: GalleryProps) {
           </div>
         )}
       </div>
-      <p className="px-3 pb-3 text-[11px] text-muted-foreground">{count} صور · اضغط مصغّرة للتكبير</p>
+      <p className="px-3 pb-3 text-xs text-muted-foreground">{count} صور · اضغط مصغّرة للتكبير</p>
     </Card>
   );
 }

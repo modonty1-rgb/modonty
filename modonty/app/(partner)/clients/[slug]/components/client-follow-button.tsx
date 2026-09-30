@@ -13,6 +13,8 @@ interface ClientFollowButtonProps {
   variant?: "default" | "outline";
   size?: "default" | "sm" | "lg";
   className?: string;
+  /** Icon only below `md`, with the words kept for screen readers — for the phone's platform bar. */
+  compact?: boolean;
 }
 
 export function ClientFollowButton({
@@ -22,6 +24,7 @@ export function ClientFollowButton({
   variant = "outline",
   size = "default",
   className = "",
+  compact = false,
 }: ClientFollowButtonProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -105,7 +108,8 @@ export function ClientFollowButton({
       variant={isFollowing ? "default" : variant}
       onClick={handleFollow}
       disabled={loading}
-      className={`gap-2 group transition-colors ${
+      aria-label={compact ? (isFollowing ? "إلغاء المتابعة" : "متابعة") : undefined}
+      className={`gap-2 group transition-colors ${compact ? "max-md:size-9 max-md:px-0 max-md:[&_span]:hidden" : ""} ${
         isFollowing
           ? "bg-accent text-accent-foreground border-accent hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
           : ""

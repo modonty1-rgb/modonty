@@ -4,8 +4,9 @@ import { passwordField } from "@/lib/auth/password-rule";
 import { ALERT_TOPIC_IDS } from "@/lib/users/alert-topics";
 
 export const registerSchema = z.object({
-  // Optional — collected later in the user profile, or derived from Google.
-  name: z.string().max(100, "الاسم طويل جداً").optional(),
+  // Asked on the form: without it the account had no name and the header showed the first letter
+  // of the email (QA finding #2, 29 Sep 2026). Google sign-ups still get theirs from Google.
+  name: z.string().trim().min(2, "اكتب اسمك (حرفان على الأقل)").max(100, "الاسم طويل جداً"),
   email: z.string().email("البريد الإلكتروني غير صحيح"),
   /**
    * **ستّة لا ثمانية** (خالد ٢٠ سبتمبر ٢٠٢٦: «ثمانية حروف مرّة كثيرة، سهّلها»).

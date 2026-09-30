@@ -19,7 +19,7 @@ export function TrustStripMobile() {
       <ModontyTrustMark className="h-6 w-6 shrink-0" aria-hidden />
       <span className="min-w-0">
         <span className="block text-xs font-bold leading-tight text-foreground">{text.title}</span>
-        <span className="mt-0.5 block text-[10px] leading-none text-muted-foreground">{text.howWeVerifyButton}</span>
+        <span className="mt-0.5 block text-xs leading-none text-muted-foreground">{text.howWeVerifyButton}</span>
       </span>
     </Link>
   );

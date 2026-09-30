@@ -71,7 +71,7 @@ export function CityGuide({ cities, initial, labels: t }: { cities: CityOption[]
             type="button"
             onClick={() => pick(c.key)}
             aria-pressed={c.key === data.city}
-            className={`rounded-full px-3 py-1 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+            className={`rounded-full px-3 py-1 text-xs font-semibold max-md:min-h-11 max-md:min-w-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
               c.key === data.city ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-muted/70"
             }`}
           >
@@ -91,7 +91,7 @@ export function CityGuide({ cities, initial, labels: t }: { cities: CityOption[]
               setTab(x);
               setShown(PAGE);
             }}
-            className={`-mb-px border-b-2 pb-2 text-sm font-semibold ${x === tab ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+            className={`-mb-px border-b-2 pb-2 text-sm font-semibold max-md:min-h-11 ${x === tab ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
           >
             {t.tabs[x]} <span className="text-xs font-normal text-muted-foreground">({data[x].length})</span>
           </button>

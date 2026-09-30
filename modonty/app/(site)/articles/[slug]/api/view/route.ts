@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { incrementCounters } from "@/lib/counters/increment-counters";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
 import { ArticleStatus } from "@prisma/client";
@@ -103,11 +104,9 @@ export async function POST(
           city,
         },
       }),
-      db.article.update({
-        where: { id: article.id },
-        data: { viewsCount: { increment: 1 } },
-        select: { id: true },
-      }),
+      // Atomic `$inc` outside a transaction — 50 readers opening one article at once made the
+      // transactional update abort 49 times on write conflicts (29 Sep 2026). See incrementCounters.
+      incrementCounters("articles", article.id, { viewsCount: 1 }),
     ]);
 
     if (article.clientId) {

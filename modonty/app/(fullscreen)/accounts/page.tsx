@@ -216,7 +216,7 @@ export default async function AccountsPage() {
         {/* ── Accounts ── each on its brand colour, with the handle a visitor recognises. */}
         {socials.length > 0 && (
           <section aria-labelledby="accounts-socials" className="mt-9">
-            <h2 id="accounts-socials" className="mb-3 text-[clamp(0.6875rem,0.6rem+0.45vw,0.8125rem)] font-bold text-muted-foreground">
+            <h2 id="accounts-socials" className="mb-3 text-[clamp(0.75rem,0.6rem+0.45vw,0.8125rem)] font-bold text-muted-foreground">
               تابعنا
             </h2>
             <ul className="flex flex-col gap-2">

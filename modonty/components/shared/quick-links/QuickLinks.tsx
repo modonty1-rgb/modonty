@@ -92,7 +92,7 @@ export async function QuickLinks() {
         >
           <Icon className="size-5" aria-hidden />
           {/* Five tabs on a 390px row: the label may need to shrink a hair rather than wrap. */}
-          <span className="text-[10px] font-semibold leading-none sm:text-[11px]">{label ?? siteName}</span>
+          <span className="text-xs font-semibold leading-none sm:text-xs">{label ?? siteName}</span>
         </Link>
       ))}
     </nav>

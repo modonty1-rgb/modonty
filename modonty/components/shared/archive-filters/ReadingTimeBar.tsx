@@ -89,7 +89,7 @@ export function ReadingTimeBar({ counts, current }: ReadingTimeBarProps) {
               {/* Parentheses, NOT a middot, before the count: in Arabic-Indic numerals the
                   zero IS a dot, so «١٦ ·» read as «١٦٠» — Khalid caught it on the live
                   screen (23 Aug) as a wrong number, not a separator. */}
-              <span className={cn("block whitespace-nowrap text-[10px]", active ? "opacity-80" : "text-muted-foreground")}>
+              <span className={cn("block whitespace-nowrap text-xs", active ? "opacity-80" : "text-muted-foreground")}>
                 {bucket.hint} ({count.toLocaleString(SITE_LOCALE)})
               </span>
             </span>

@@ -37,7 +37,7 @@ export function ClientQuickContact({ phone, email, clientId }: ClientQuickContac
               <IconPhone className="h-[18px] w-[18px]" />
             </span>
             <span className="min-w-0">
-              <b className="block text-[9.5px] font-bold text-muted-foreground">اتصال</b>
+              <b className="block text-xs font-bold text-muted-foreground">اتصال</b>
               <span className="block truncate text-[12.5px] font-bold text-foreground">{phone}</span>
             </span>
           </CtaTrackedLink>
@@ -58,7 +58,7 @@ export function ClientQuickContact({ phone, email, clientId }: ClientQuickContac
               <IconEmail className="h-[18px] w-[18px]" />
             </span>
             <span className="min-w-0">
-              <b className="block text-[9.5px] font-bold text-muted-foreground">البريد</b>
+              <b className="block text-xs font-bold text-muted-foreground">البريد</b>
               <span className="block truncate text-[12.5px] font-bold text-foreground">{email}</span>
             </span>
           </CtaTrackedLink>

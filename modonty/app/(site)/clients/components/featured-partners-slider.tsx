@@ -156,12 +156,12 @@ function PartnerSlide({ partner, priority }: { partner: FeaturedPartner; priorit
       {/* scrim — keeps the bottom caption legible over any cover */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
-      <span className="absolute top-3.5 start-4 inline-flex items-center gap-1.5 rounded-full bg-amber-500 px-3 py-1 text-[11.5px] font-black text-amber-950 shadow sm:top-4 sm:start-6">
+      <span className="absolute top-3.5 start-4 inline-flex items-center gap-1.5 rounded-full bg-amber-500 px-3 py-1 text-xs font-black text-amber-950 shadow sm:top-4 sm:start-6">
         ⭐ شريك مميّز
       </span>
 
       {partner.articleCount === 0 && (
-        <span className="absolute top-3.5 end-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-3 py-1 text-[11.5px] font-black text-white shadow ring-1 ring-white/30 sm:top-4 sm:end-6">
+        <span className="absolute top-3.5 end-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-3 py-1 text-xs font-black text-white shadow ring-1 ring-white/30 sm:top-4 sm:end-6">
           ✨ قريباً
         </span>
       )}
@@ -186,7 +186,7 @@ function PartnerSlide({ partner, priority }: { partner: FeaturedPartner; priorit
               )}
             </h3>
             {partner.industry && (
-              <span className="mt-1.5 inline-flex rounded-full border border-white/25 bg-white/15 px-2.5 py-0.5 text-[11px] font-bold text-white backdrop-blur-sm">
+              <span className="mt-1.5 inline-flex rounded-full border border-white/25 bg-white/15 px-2.5 py-0.5 text-xs font-bold text-white backdrop-blur-sm">
                 {partner.industry.name}
               </span>
             )}

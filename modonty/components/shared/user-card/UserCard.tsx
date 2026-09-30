@@ -37,7 +37,7 @@ export async function UserCard() {
         <p className="mt-1 text-xs leading-5 text-muted-foreground">{text.guestSubtitle}</p>
         <ul className="mt-2.5 grid grid-cols-2 gap-x-3 gap-y-1.5 lg:mt-3 lg:gap-y-2">
           {accountBenefits.map((benefit) => (
-            <li key={benefit} className="flex items-start gap-1.5 text-[11px] font-normal leading-4 text-foreground/90">
+            <li key={benefit} className="flex items-start gap-1.5 text-xs font-normal leading-4 text-foreground/90">
               <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden />
               {benefit}
             </li>

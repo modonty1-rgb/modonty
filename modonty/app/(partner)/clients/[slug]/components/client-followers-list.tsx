@@ -67,7 +67,7 @@ export function ClientFollowersList({ clientId, followers }: ClientFollowersList
                 <span className="text-sm font-medium truncate max-w-[160px] md:max-w-xs">
                   {follower.name}
                 </span>
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   متابع لهذا العميل
                 </span>
               </div>
@@ -78,7 +78,7 @@ export function ClientFollowersList({ clientId, followers }: ClientFollowersList
                 label="View follower profile"
                 type="LINK"
                 clientId={clientId}
-                className="text-xs text-[hsl(var(--primary-ink,var(--primary)))] hover:underline whitespace-nowrap"
+                className="inline-flex min-h-11 items-center text-xs text-[hsl(var(--primary-ink,var(--primary)))] hover:underline whitespace-nowrap"
               >
                 عرض الملف
               </CtaTrackedLink>

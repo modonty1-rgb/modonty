@@ -30,8 +30,8 @@ export function FreeLearningCard({ courses }: { courses: FreeCourse[] | null }) 
           <h3 className="mt-4 text-sm font-bold">{t.microsoftTitle}</h3>
           <ul className="mt-2 grid gap-3 sm:grid-cols-2">
             {courses.map((c) => (
-              <li key={c.url} className="rounded-md bg-muted/40 p-3">
-                <a href={c.url} target="_blank" rel="noopener noreferrer" className="text-sm font-bold leading-snug hover:text-link">
+              <li key={c.url} className="relative rounded-md bg-muted/40 p-3">
+                <a href={c.url} target="_blank" rel="noopener noreferrer" className="text-sm font-bold leading-snug hover:text-link after:absolute after:inset-0 after:content-['']">
                   {c.title}
                 </a>
                 {c.summary && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-foreground/80">{c.summary}</p>}

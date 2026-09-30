@@ -184,7 +184,7 @@ function TrustStrip() {
           <li key={step} className="relative flex min-w-0 flex-col items-center gap-2 text-center">
             <span
               aria-hidden
-              className="grid size-6 shrink-0 place-items-center rounded-full bg-card text-[11px] font-medium text-link-accent ring-1 ring-accent/50"
+              className="grid size-6 shrink-0 place-items-center rounded-full bg-card text-xs font-medium text-link-accent ring-1 ring-accent/50"
             >
               {(index + 1).toLocaleString(SITE_LOCALE)}
             </span>

@@ -4,6 +4,7 @@ import { updateTag } from "next/cache";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { incrementCounters } from "@/lib/counters/increment-counters";
 import { trackReelLike, trackReelFavorite } from "@/lib/analytics/events-registry";
 import type { MediaReactionKind } from "@prisma/client";
 
@@ -39,25 +40,22 @@ async function toggleReaction(mediaId: string, kind: MediaReactionKind): Promise
     const field = kind === "LIKE" ? "likesCount" : "favoritesCount";
     let updated: { likesCount: number; favoritesCount: number };
 
+    // The counter moves only when a row really changed, with one atomic `$inc` outside any
+    // transaction (incrementCounters) — same fix as article likes (29 Sep 2026).
     if (existing) {
-      await db.mediaReaction.delete({ where: { id: existing.id } }).catch(() => {});
-      updated = await db.media.update({
-        where: { id: mediaId },
-        data: { [field]: { decrement: 1 } },
-        select: { likesCount: true, favoritesCount: true },
-      });
+      const { count: removed } = await db.mediaReaction.deleteMany({ where: { id: existing.id } });
+      await incrementCounters("media", mediaId, { [field]: -removed });
     } else {
-      await db.mediaReaction
+      const created = await db.mediaReaction
         .create({ data: { mediaId, kind, userId, sessionId: `user:${userId}` } })
+        .then(() => true)
         .catch((e: unknown) => {
           if (!isUniqueViolation(e)) throw e;
+          return false;
         });
-      updated = await db.media.update({
-        where: { id: mediaId },
-        data: { [field]: { increment: 1 } },
-        select: { likesCount: true, favoritesCount: true },
-      });
+      await incrementCounters("media", mediaId, { [field]: created ? 1 : 0 });
     }
+    updated = await db.media.findUniqueOrThrow({ where: { id: mediaId }, select: { likesCount: true, favoritesCount: true } });
 
     // Read-your-own-writes: expire the cached feed so counters reflect immediately.
     updateTag("reels");

@@ -75,7 +75,7 @@ function Kpi({ icon: Icon, label, value, sub }: { icon: React.ComponentType<{ cl
       <Icon className="h-4 w-4 text-primary" />
       <span className="text-2xl font-extrabold tabular-nums leading-none">{value}</span>
       <span className="text-xs text-muted-foreground">{label}</span>
-      {sub ? <span className="text-[11px] text-muted-foreground/70">{sub}</span> : null}
+      {sub ? <span className="text-xs text-muted-foreground/70">{sub}</span> : null}
     </div>
   );
 }
@@ -85,7 +85,7 @@ function Panel({ title, hint, children }: { title: string; hint?: string; childr
     <section className="rounded-xl border bg-card p-5">
       <div className="mb-4 flex items-baseline justify-between gap-2">
         <h2 className="text-sm font-bold">{title}</h2>
-        {hint ? <span className="text-[11px] text-muted-foreground">{hint}</span> : null}
+        {hint ? <span className="text-xs text-muted-foreground">{hint}</span> : null}
       </div>
       {children}
     </section>
@@ -120,7 +120,7 @@ function TimeSeries({ data }: { data: Array<{ date: string; sessions: number; pa
           <div key={i} className="group relative flex-1 rounded-t bg-accent/80 hover:bg-accentary" style={{ height: `${Math.max(2, (d.pageViews / max) * 100)}%` }} title={`${prettyDate(d.date)} — ${ar(d.pageViews)} مشاهدة · ${ar(d.sessions)} زيارة`} />
         ))}
       </div>
-      <div className="mt-2 flex justify-between text-[11px] text-muted-foreground" dir="ltr">
+      <div className="mt-2 flex justify-between text-xs text-muted-foreground" dir="ltr">
         <span>{prettyDate(data[0]?.date ?? "")}</span>
         <span>{prettyDate(data[data.length - 1]?.date ?? "")}</span>
       </div>
@@ -166,7 +166,7 @@ export default async function AnalyticsPage() {
           rel="noopener noreferrer"
           className="mt-4 inline-flex items-center gap-2 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold shadow-sm transition-colors hover:bg-muted max-md:min-h-11"
         >
-          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[conic-gradient(at_center,_#ea4335,_#fbbc05,_#34a853,_#4285f4,_#ea4335)] text-[10px] font-black text-white">G</span>
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[conic-gradient(at_center,_#ea4335,_#fbbc05,_#34a853,_#4285f4,_#ea4335)] text-xs font-black text-white">G</span>
           شاهد الأرقام مباشرة على Google
           <span aria-hidden>↗</span>
         </a>
@@ -251,7 +251,7 @@ export default async function AnalyticsPage() {
         </Panel>
       </div>
 
-      <p className="mt-8 text-center text-[11px] text-muted-foreground">
+      <p className="mt-8 text-center text-xs text-muted-foreground">
         المصدر: Google Analytics · النطاق: كامل منصة مدوّنتي · يُحدّث دوريًا.
       </p>
     </main>

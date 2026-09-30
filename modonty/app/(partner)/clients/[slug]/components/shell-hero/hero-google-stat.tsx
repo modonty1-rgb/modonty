@@ -37,7 +37,7 @@ export function HeroGoogleStat({ value, size = "md", className }: HeroGoogleStat
       <b className={cn("font-black leading-none tabular-nums text-white", sm ? "text-[15px]" : "text-[20px]")}>
         {arNum.format(value)}
       </b>
-      <span className={cn("flex items-center gap-1 font-medium text-white/60", sm ? "text-[9px]" : "text-[10px]")}>
+      <span className={cn("flex items-center gap-1 font-medium text-white/60", sm ? "text-xs" : "text-xs")}>
         الأثر الرقمي
         <span className="font-extrabold text-emerald-400" aria-hidden="true">✓</span>
       </span>

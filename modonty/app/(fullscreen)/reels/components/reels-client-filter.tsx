@@ -34,7 +34,7 @@ export function ReelsClientFilterDesktop({ clients, selectedClient }: ReelsClien
           aria-label={`تصفية الريلز: ${label}`}
           className="pointer-events-auto inline-flex h-9 items-center gap-1 rounded-full bg-white/10 pe-2 ps-0.5 text-white backdrop-blur transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
-          <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full text-[10px] font-bold">
+          <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full text-xs font-bold">
             {selectedClient?.logoUrl ? (
               <OptimizedImage media={asMedia(selectedClient.logoUrl)} alt="" fill sizes="32px" className="object-contain" />
             ) : (
@@ -46,7 +46,7 @@ export function ReelsClientFilterDesktop({ clients, selectedClient }: ReelsClien
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="max-h-[min(60dvh,26rem)] w-64 overflow-y-auto bg-neutral-950 text-white" style={{ direction: "rtl" }}>
         <DropdownMenuItem onSelect={() => select()} className="min-h-11 cursor-pointer gap-2.5 text-white focus:bg-white/10 focus:text-white">
-          <span className="grid size-7 shrink-0 place-items-center rounded-full bg-white/10 text-[10px] font-black">م</span>
+          <span className="grid size-7 shrink-0 place-items-center rounded-full bg-white/10 text-xs font-black">م</span>
           <span className="flex-1">كل الريلز</span>
           {!selectedClient && <IconCheck className="size-4 text-primary" aria-label="محدد" />}
         </DropdownMenuItem>
@@ -59,7 +59,7 @@ export function ReelsClientFilterDesktop({ clients, selectedClient }: ReelsClien
               onSelect={() => select(client.slug)}
               className="min-h-11 cursor-pointer gap-2.5 text-white focus:bg-white/10 focus:text-white"
             >
-              <span className="relative grid size-7 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 text-[10px] font-bold">
+              <span className="relative grid size-7 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 text-xs font-bold">
                 {client.logoUrl ? <OptimizedImage media={asMedia(client.logoUrl)} alt="" fill sizes="28px" className="object-contain" /> : client.name.slice(0, 1)}
               </span>
               <span className="min-w-0 flex-1 truncate">{client.name}</span>

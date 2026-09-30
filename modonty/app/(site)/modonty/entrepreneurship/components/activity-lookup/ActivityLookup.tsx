@@ -67,7 +67,7 @@ export function ActivityLookup({ labels: t }: { labels: ActivityLookupLabels }) 
             key={ex}
             type="button"
             onClick={() => setQuery(ex)}
-            className="rounded-full bg-muted px-2.5 py-1 font-medium hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="rounded-full bg-muted px-2.5 py-1 font-medium hover:bg-muted/70 max-md:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             {ex}
           </button>

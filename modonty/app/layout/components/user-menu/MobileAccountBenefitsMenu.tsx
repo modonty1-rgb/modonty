@@ -107,7 +107,7 @@ export function MobileAccountBenefitsMenu({ hint = true }: { hint?: boolean } = 
           >
             <ModontyLoginMark aria-hidden="true" />
             {hint && !isOpen && (
-              <span className="pointer-events-none absolute inset-x-0 bottom-1 whitespace-nowrap text-center text-[10px] font-bold leading-none text-link-accent motion-safe:animate-pulse">
+              <span className="pointer-events-none absolute inset-x-0 bottom-1 whitespace-nowrap text-center text-xs font-bold leading-none text-link-accent motion-safe:animate-pulse">
                 المتعة هنا
               </span>
             )}

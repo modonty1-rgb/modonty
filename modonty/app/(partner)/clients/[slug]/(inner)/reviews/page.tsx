@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { IconMessage } from "@/lib/icons";
+import { auth } from "@/lib/auth";
+import { ClientReviewForm } from "../../components/sections/client-review-form";
 
 interface ClientReviewsPageProps {
   params: Promise<{ slug: string }>;
@@ -32,5 +34,19 @@ export async function generateMetadata({ params }: ClientReviewsPageProps): Prom
 /** Rendered from the shared block registry — same components the partner previewed in the console. */
 export default async function Page({ params }: ClientReviewsPageProps) {
   const { slug } = await params;
-  return <PageBlocks slug={slug} blocks={REVIEWS_BLOCKS} titlePrefix="تقييمات" />;
+  const session = await auth();
+  // The partner's review blocks show what readers wrote, but nothing let a reader write one —
+  // the form existed unmounted (subscriber QA finding #9, 29 Sep 2026).
+  return (
+    <>
+      <PageBlocks slug={slug} blocks={REVIEWS_BLOCKS} titlePrefix="تقييمات" />
+      <section className="mx-auto max-w-[1216px] px-4 pb-12" aria-label="اكتب تقييمك">
+        <div className="rounded-xl border bg-card p-5">
+          <h2 className="text-lg font-bold">جرّبت خدماتهم؟</h2>
+          <p className="mt-1 text-sm text-muted-foreground">تقييمك يساعد غيرك يختار — ويظهر بعد مراجعة الشريك.</p>
+          <ClientReviewForm slug={decodeURIComponent(slug)} isLoggedIn={Boolean(session?.user)} />
+        </div>
+      </section>
+    </>
+  );
 }

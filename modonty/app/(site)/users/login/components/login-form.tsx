@@ -47,7 +47,8 @@ export function LoginForm({ callbackUrl, initialError }: LoginFormProps) {
         password,
         redirect: false,
       });
-      if (result?.ok) {
+      // next-auth v5 returns ok:true on a rejected password too — the failure is in `error`.
+      if (result?.ok && !result.error) {
         router.push(callbackUrl);
         router.refresh();
       } else {
