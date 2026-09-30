@@ -4,8 +4,9 @@ import { createSign } from "node:crypto";
  * Access token for a Google service account — signed JWT → OAuth token, cached per
  * account + scope until a minute before it expires.
  *
- * GA4 (`ga4.ts`) and Search Console (`search-console-totals.ts`) use different accounts
- * and scopes; one signer for both instead of two copies of the same crypto.
+ * GA4 and Search Console use different accounts and scopes; one signer for all of them instead
+ * of copies of the same crypto. Shared since 30 Sep 2026: modonty (footer totals, GA4) and the
+ * console (each client's Google performance) both sign with it.
  * No `googleapis` here on purpose: the whole SDK for one POST is weight the public site
  * does not need.
  */

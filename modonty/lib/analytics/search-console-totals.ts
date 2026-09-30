@@ -1,6 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 
-import { getGoogleServiceToken } from "./google-service-token";
+import { getGoogleServiceToken } from "@modonty/shared/lib/google/get-google-service-token";
 
 const SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
 const PROPERTY = process.env.GSC_MODONTY_PROPERTY ?? "sc-domain:modonty.com";

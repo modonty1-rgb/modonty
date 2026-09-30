@@ -16,7 +16,7 @@
 
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
-import { getGoogleServiceToken } from "./google-service-token";
+import { getGoogleServiceToken } from "@modonty/shared/lib/google/get-google-service-token";
 
 const PROPERTY_ID = process.env.GA4_PROPERTY_ID;
 const CLIENT_EMAIL = process.env.GA4_CLIENT_EMAIL;
