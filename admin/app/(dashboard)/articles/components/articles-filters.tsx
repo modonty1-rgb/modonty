@@ -119,36 +119,36 @@ export function ArticlesFilters({
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <Filter className="h-4 w-4" />
-          Filters
+          الفلاتر
           {hasActiveFilters && (
-            <span className="ml-1 h-2 w-2 rounded-full bg-primary" />
+            <span className="ms-1 h-2 w-2 rounded-full bg-primary" />
           )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[600px] p-4" align="start">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm">Filters</h3>
+            <h3 className="font-semibold text-sm">الفلاتر</h3>
             {hasActiveFilters && (
               <Button variant="ghost" size="sm" onClick={clearFilters} disabled={isPending}>
-                <X className="h-4 w-4 mr-1" />
-                Clear All
+                <X className="h-4 w-4 me-1" />
+                امسح الكل
               </Button>
             )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="client">Client</Label>
+              <Label htmlFor="client">العميل</Label>
               <Select
                 value={localFilters.clientId || "all"}
                 onValueChange={(value) => updateLocalFilter("clientId", value)}
                 disabled={isPending}
               >
                 <SelectTrigger id="client">
-                  <SelectValue placeholder="All clients" />
+                  <SelectValue placeholder="كل العملاء" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All clients</SelectItem>
+                  <SelectItem value="all">كل العملاء</SelectItem>
                   {clients.map((client) => (
                     <SelectItem key={client.id} value={client.id}>
                       {client.name}
@@ -159,17 +159,17 @@ export function ArticlesFilters({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">الفئة</Label>
               <Select
                 value={localFilters.categoryId || "all"}
                 onValueChange={(value) => updateLocalFilter("categoryId", value)}
                 disabled={isPending}
               >
                 <SelectTrigger id="category">
-                  <SelectValue placeholder="All categories" />
+                  <SelectValue placeholder="كل الفئات" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All categories</SelectItem>
+                  <SelectItem value="all">كل الفئات</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
@@ -180,17 +180,17 @@ export function ArticlesFilters({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="author">Author</Label>
+              <Label htmlFor="author">الكاتب</Label>
               <Select
                 value={localFilters.authorId || "all"}
                 onValueChange={(value) => updateLocalFilter("authorId", value)}
                 disabled={isPending}
               >
                 <SelectTrigger id="author">
-                  <SelectValue placeholder="All authors" />
+                  <SelectValue placeholder="كل الكتّاب" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All authors</SelectItem>
+                  <SelectItem value="all">كل الكتّاب</SelectItem>
                   {authors.map((author) => (
                     <SelectItem key={author.id} value={author.id}>
                       {author.name}
@@ -203,7 +203,7 @@ export function ArticlesFilters({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="createdFrom">Created From</Label>
+              <Label htmlFor="createdFrom">أُنشئ من</Label>
               <Input
                 id="createdFrom"
                 type="date"
@@ -214,7 +214,7 @@ export function ArticlesFilters({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="createdTo">Created To</Label>
+              <Label htmlFor="createdTo">أُنشئ إلى</Label>
               <Input
                 id="createdTo"
                 type="date"
@@ -225,7 +225,7 @@ export function ArticlesFilters({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="publishedFrom">Published From</Label>
+              <Label htmlFor="publishedFrom">نُشر من</Label>
               <Input
                 id="publishedFrom"
                 type="date"
@@ -236,7 +236,7 @@ export function ArticlesFilters({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="publishedTo">Published To</Label>
+              <Label htmlFor="publishedTo">نُشر إلى</Label>
               <Input
                 id="publishedTo"
                 type="date"
@@ -255,8 +255,8 @@ export function ArticlesFilters({
                 onClick={clearFilters}
                 disabled={isPending}
               >
-                <X className="h-4 w-4 mr-1" />
-                Clear All
+                <X className="h-4 w-4 me-1" />
+                امسح الكل
               </Button>
             )}
             <Button
@@ -266,11 +266,11 @@ export function ArticlesFilters({
             >
               {isPending ? (
                 <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Applying...
+                  <RefreshCw className="h-4 w-4 me-2 animate-spin" />
+                  يطبّق…
                 </>
               ) : (
-                "Apply Filters"
+                "طبّق الفلاتر"
               )}
             </Button>
           </div>

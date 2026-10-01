@@ -168,7 +168,7 @@ export function ClientPreviewCard({
             onClick={onChangeSlug}
             className="h-6 shrink-0 px-2 text-[11px] text-yellow-600 hover:bg-yellow-500/10 hover:text-yellow-600"
           >
-            <RefreshCw className="me-1 size-3" aria-hidden /> Change
+            <RefreshCw className="me-1 size-3" aria-hidden /> غيّر
           </Button>
         )}
       </div>

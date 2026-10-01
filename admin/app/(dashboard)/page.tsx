@@ -1,145 +1,113 @@
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { getDashboardAlerts } from "./actions/dashboard-actions";
-import { DashboardAlertsBanner } from "./components/dashboard-alerts-banner";
-import { AwaitingActivationCard } from "./components/awaiting-activation-card";
-import { RenewalsDueCard } from "./components/renewals-due-card";
-import { DashboardNav } from "./components/dashboard-nav";
+import { articleStatusCounts, clientStatusCounts, contentPagesSeoAudit, listingPagesSeoAudit, memberCounts, sectorPagesSeoAudit, visitorActionsSummary } from "@/lib/dashboard/cached";
+import { getErrorsToFix } from "./actions/errors-to-fix";
+import { DashboardTabs } from "./components/dashboard-tabs";
 import { PlatformSeoOverall } from "./components/sections/platform-seo-overall";
-import { TodayStrip } from "./components/sections/today-strip";
-import { VisitorActionsBreakdown } from "./components/sections/visitor-actions-breakdown";
+import { GoogleSearchCard } from "./components/sections/google-search-card";
+import { TodayHeader, TodayList } from "./components/sections/today-list";
+import { NumbersCard } from "./components/sections/numbers-card";
+import { SeoSummaryCard } from "./components/sections/seo-summary-card";
 import { ArticlesPipeline } from "./components/sections/articles-pipeline";
 import { ClientsPipeline } from "./components/sections/clients-pipeline";
+import { VisitorActionsBreakdown } from "./components/sections/visitor-actions-breakdown";
 import { MembersPipeline } from "./components/sections/members-pipeline";
 import { SubscribersPipeline } from "./components/sections/subscribers-pipeline";
 import { NewsletterPipeline } from "./components/sections/newsletter-pipeline";
-import { ErrorsToFix } from "./components/sections/errors-to-fix";
 import { ListingPagesSeo } from "./components/sections/listing-pages-seo";
 import { MediaLibrary } from "./components/sections/media-library";
 import { ReferenceData } from "./components/sections/reference-data";
+import { ErrorsToFix } from "./components/sections/errors-to-fix";
 
 /**
- * The dashboard is a TRIAGE screen, and the Today strip is its answer
- * (design approved 2026-07-13).
+ * The dashboard — redesigned 30 Sep 2026 (Khalid approved the mockup
+ * `documents/HTML/admin-dashboard-mockup.html`, in Arabic).
  *
- * Reading order = business order: what needs me now (Today) → what visitors did →
- * our content → the money → the housekeeping (media + reference share one row).
- * Every number the strip ranks comes from the same cached fetch its section uses,
- * so the two can never disagree.
+ * Fourteen stacked English sections (~5,300px open, numbers without labels, the same
+ * number in two or three places) became four blocks: what needs you today, the numbers,
+ * SEO health, and the detail as tabs. Every number, link and fix button of the old page
+ * is kept — measured against it before building (123/123 data points, 91/91 links).
  */
 export default async function DashboardPage() {
-  const alerts = await getDashboardAlerts();
+  // Tab counts — the same cached fetches the panels read, so a tab never disagrees with itself.
+  const [articles, clients, va, members, listing, content, sectors, errors] = await Promise.all([
+    articleStatusCounts(),
+    clientStatusCounts(),
+    visitorActionsSummary(),
+    memberCounts(),
+    listingPagesSeoAudit(),
+    contentPagesSeoAudit(),
+    sectorPagesSeoAudit(),
+    getErrorsToFix(),
+  ]);
+  const c = (v: number) => v.toLocaleString("en-US");
+  const articleTotal = Object.values(articles).reduce((s, v) => s + v, 0);
+  const errorTotal = errors.reduce((s, e) => s + e.items.length, 0);
+
+  const panel = (node: React.ReactNode, h = "h-64") => <Suspense fallback={<Skeleton className={`${h} w-full`} />}>{node}</Suspense>;
 
   return (
-    <div className="mx-auto max-w-[1280px] space-y-7">
-      {/* Sticky jump-bar — the topmost pinned element, sits right under the main header
-          (Khalid 2026-07-25: «اللاصق الأكبر فوق وتحت الهيدر الرئيسي») */}
-      <DashboardNav />
+    <div dir="rtl" className="mx-auto max-w-[1280px] space-y-4">
+      <Suspense fallback={<Skeleton className="h-14 w-full" />}>
+        <TodayHeader />
+      </Suspense>
 
-      {/* 0 · The one platform number — Modonty's overall SEO */}
+      {/* The one platform number — Modonty's overall SEO, on top as before. */}
       <Suspense fallback={<Skeleton className="h-20 w-full rounded-2xl" />}>
         <PlatformSeoOverall />
       </Suspense>
 
-      {/* 1 · The ranked answer to "what needs you today" (includes the page header) */}
-      <section id="sec-today" className="scroll-mt-24">
-        <Suspense
-          fallback={
-            <div className="space-y-4">
-              <Skeleton className="h-14 w-72" />
-              <Skeleton className="h-64 w-full" />
-            </div>
-          }
-        >
-          <TodayStrip />
-        </Suspense>
-      </section>
-
-      {/* Urgent cross-source alerts — renders nothing when all is clear */}
-      <DashboardAlertsBanner alerts={alerts} />
-
-      {/* المال الذي وصل والخدمة لم تبدأ — أعلى بندٍ في الفرز لأنّه الوحيد الذي يخصّ عميلاً
-          دفع ولم يأخذ شيئاً بعد. يختفي تماماً حين لا ينتظر أحد (ACTIVATION-FLOW §1). */}
-      <Suspense fallback={<Skeleton className="h-[74px] w-full rounded-2xl" />}>
-        <AwaitingActivationCard />
+      {/* modonty.com in Google Search — impressions, clicks, CTR, position (Khalid, 1 Oct 2026). */}
+      <Suspense fallback={<Skeleton className="h-44 w-full rounded-xl" />}>
+        <GoogleSearchCard />
       </Suspense>
 
-      {/* الطرفُ الآخر من الدائرة: اشتراكٌ انتهى ولم يُجدَّد — خدمةٌ تُقدَّم بلا مقابل.
-          تحت بطاقة التفعيل لأنّ «دفع ولم يأخذ» أسبقُ من «أخذ ولم يدفع الجديد».
-          وتختفي حين لا يستحقّ أحد. */}
-      <Suspense fallback={<Skeleton className="h-[74px] w-full rounded-2xl" />}>
-        <RenewalsDueCard />
-      </Suspense>
+      <div className="grid items-start gap-4 lg:grid-cols-[1.35fr_1fr]">
+        <Suspense fallback={<Skeleton className="h-[480px] w-full rounded-xl" />}>
+          <TodayList />
+        </Suspense>
+        <div className="space-y-4">
+          <Suspense fallback={<Skeleton className="h-72 w-full rounded-xl" />}>
+            <NumbersCard />
+          </Suspense>
+          <Suspense fallback={<Skeleton className="h-60 w-full rounded-xl" />}>
+            <SeoSummaryCard />
+          </Suspense>
+        </div>
+      </div>
 
-      {/* The seven modonty listing pages — meta + JSON-LD + their link to Settings.
-          Sits right under the platform number because it explains it: these are the
-          pages Google lands on, and nothing measured them before today. */}
-      <section id="sec-listing-seo" className="scroll-mt-24">
-        <Suspense fallback={<Skeleton className="h-24 w-full" />}>
-          <ListingPagesSeo />
-        </Suspense>
-      </section>
-
-      {/* Data problems needing a human — reusable «Errors to fix» aggregator */}
-      <section id="sec-errors-to-fix" className="scroll-mt-24">
-        <Suspense fallback={<Skeleton className="h-24 w-full" />}>
-          <ErrorsToFix />
-        </Suspense>
-      </section>
-
-      {/* 2 · What visitors did to us */}
-      <section id="sec-visitors" className="scroll-mt-24">
-        <Suspense fallback={<Skeleton className="h-64 w-full" />}>
-          <VisitorActionsBreakdown />
-        </Suspense>
-      </section>
-
-      {/* 3 · Where our own content stands */}
-      <section id="sec-articles" className="scroll-mt-24">
-        <Suspense fallback={<Skeleton className="h-32 w-full" />}>
-          <ArticlesPipeline />
-        </Suspense>
-      </section>
-
-      {/* 4 · Where the money stands */}
-      <section id="sec-clients" className="scroll-mt-24">
-        <Suspense fallback={<Skeleton className="h-72 w-full" />}>
-          <ClientsPipeline />
-        </Suspense>
-      </section>
-
-      {/* 5 · The people who registered on Modonty (Google / email + password) */}
-      <section id="sec-members" className="scroll-mt-24">
-        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
-          <MembersPipeline />
-        </Suspense>
-      </section>
-
-      {/* 6 · Subscribers — per-client audience + Modonty's own newsletter (distinct sources) */}
-      <section id="sec-subscribers" className="scroll-mt-24">
-        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
-          <SubscribersPipeline />
-        </Suspense>
-      </section>
-
-      <section id="sec-newsletter" className="scroll-mt-24">
-        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
-          <NewsletterPipeline />
-        </Suspense>
-      </section>
-
-      {/* 7 · Housekeeping — each on its own full-width row (collapsed header = one line) */}
-      <section id="sec-media" className="scroll-mt-24">
-        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
-          <MediaLibrary />
-        </Suspense>
-      </section>
-      <section id="sec-reference" className="scroll-mt-24">
-        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
-          <ReferenceData />
-        </Suspense>
-      </section>
+      <DashboardTabs
+        tabs={[
+          { key: "articles", label: "المقالات", count: c(articleTotal), panel: panel(<ArticlesPipeline />) },
+          { key: "clients", label: "العملاء", count: c(clients.total), panel: panel(<ClientsPipeline />, "h-96") },
+          { key: "visitors", label: "الزوار", count: c(va.bookings.db), panel: panel(<VisitorActionsBreakdown />) },
+          {
+            key: "members",
+            label: "الأعضاء والنشرة",
+            count: c(members.total),
+            panel: (
+              <div className="space-y-6">
+                {panel(<MembersPipeline />, "h-40")}
+                {panel(<SubscribersPipeline />, "h-40")}
+                {panel(<NewsletterPipeline />, "h-40")}
+              </div>
+            ),
+          },
+          { key: "pages", label: "صفحات الموقع", count: c(listing.length + content.length + sectors.length), panel: panel(<ListingPagesSeo />) },
+          {
+            key: "media",
+            label: "الوسائط والتصنيفات",
+            panel: (
+              <div className="space-y-6">
+                {panel(<MediaLibrary />, "h-40")}
+                {panel(<ReferenceData />, "h-40")}
+              </div>
+            ),
+          },
+          { key: "errors", label: "أخطاء البيانات", count: c(errorTotal), panel: panel(<ErrorsToFix />, "h-24") },
+        ]}
+      />
     </div>
   );
 }

@@ -22,20 +22,25 @@ type SortKey = "filename" | "seoScore" | "createdAt";
 
 /** Declared role at upload (MediaType enum) → what the admin reads. */
 const TYPE_LABEL: Record<string, string> = {
-  LOGO: "Logo",
-  OGIMAGE: "OG image",
-  TWITTER_IMAGE: "Twitter image",
-  CLIENT_MINI: "Client mini",
-  POST: "Post",
-  GENERAL: "General",
+  LOGO: "شعار",
+  OGIMAGE: "صورة مشاركة",
+  TWITTER_IMAGE: "صورة تويتر",
+  CLIENT_MINI: "صورة عميل مصغّرة",
+  POST: "منشور",
+  GENERAL: "عامة",
+  HERO: "غلاف",
+  HERO_MOBILE: "غلاف الجوال",
+  GALLERY: "معرض العميل",
+  SECTOR_HERO: "غلاف قطاع",
+  SECTOR_HERO_MOBILE: "غلاف قطاع للجوال",
 };
 
 /** Usage relations → where the image actually appears on the site. */
 const USED_LABEL: Record<string, string> = {
-  featured: "article cover",
-  gallery: "article gallery",
-  logo: "client logo",
-  hero: "client hero",
+  featured: "صورة مقال",
+  gallery: "معرض مقال",
+  logo: "شعار عميل",
+  hero: "غلاف عميل",
 };
 
 
@@ -87,12 +92,12 @@ export function MediaSegmentTable({ rows }: { rows: MediaRow[] }) {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search filename or alt text…"
+            placeholder="ابحث باسم الملف أو النص البديل…"
             className="h-8 ps-8 text-xs"
           />
         </div>
         <p className="shrink-0 text-xs text-muted-foreground">
-          {visible.length === rows.length ? `${rows.length} files` : `${visible.length} of ${rows.length}`}
+          {visible.length === rows.length ? `${rows.length} ملف` : `${visible.length} من ${rows.length}`}
         </p>
       </div>
 
@@ -101,13 +106,13 @@ export function MediaSegmentTable({ rows }: { rows: MediaRow[] }) {
           <TableHeader>
             <TableRow className="hover:bg-transparent">
               <TableHead className="h-9 w-[52px] py-0" />
-              <SortHead label="File" k="filename" />
-              <TableHead className="h-9 py-0 text-xs">Type</TableHead>
-              <TableHead className="h-9 py-0 text-xs">Alt text</TableHead>
-              <TableHead className="h-9 py-0 text-xs">Size</TableHead>
-              <SortHead label="SEO" k="seoScore" end />
-              <TableHead className="h-9 py-0 text-xs">Used as</TableHead>
-              <SortHead label="Added" k="createdAt" />
+              <SortHead label="الملف" k="filename" />
+              <TableHead className="h-9 py-0 text-xs">النوع</TableHead>
+              <TableHead className="h-9 py-0 text-xs">النص البديل</TableHead>
+              <TableHead className="h-9 py-0 text-xs">الحجم</TableHead>
+              <SortHead label="السيو" k="seoScore" end />
+              <TableHead className="h-9 py-0 text-xs">مستخدمة كـ</TableHead>
+              <SortHead label="أُضيف" k="createdAt" />
               <TableHead className="h-9 py-0" />
             </TableRow>
           </TableHeader>
@@ -116,8 +121,8 @@ export function MediaSegmentTable({ rows }: { rows: MediaRow[] }) {
               <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={9} className="py-10 text-center text-xs text-muted-foreground">
                   {rows.length === 0
-                    ? "Nothing is in this segment — that is good news."
-                    : "No file matches that search."}
+                    ? "ما في ملف هنا — خبر زين."
+                    : "ما في ملف يطابق البحث."}
                 </TableCell>
               </TableRow>
             ) : (
@@ -151,7 +156,7 @@ export function MediaSegmentTable({ rows }: { rows: MediaRow[] }) {
                         {r.altText}
                       </span>
                     ) : (
-                      <span className="font-semibold text-red-600 dark:text-red-400">missing</span>
+                      <span className="font-semibold text-red-600 dark:text-red-400">ناقص</span>
                     )}
                   </TableCell>
                   <TableCell className="whitespace-nowrap py-2 tabular-nums" dir="ltr">
@@ -168,7 +173,7 @@ export function MediaSegmentTable({ rows }: { rows: MediaRow[] }) {
                   </TableCell>
                   <TableCell className="whitespace-nowrap py-2">
                     {r.usedAs.length === 0 ? (
-                      <span className="font-semibold text-red-600 dark:text-red-400">unused</span>
+                      <span className="font-semibold text-red-600 dark:text-red-400">غير مستخدمة</span>
                     ) : (
                       <span className="text-muted-foreground">
                         {r.usedAs.map((u) => USED_LABEL[u] ?? u).join(" · ")}
@@ -183,7 +188,7 @@ export function MediaSegmentTable({ rows }: { rows: MediaRow[] }) {
                       href={`/media/${r.id}/edit`}
                       className="font-semibold text-primary hover:underline"
                     >
-                      Edit
+                      تعديل
                     </Link>
                   </TableCell>
                 </TableRow>

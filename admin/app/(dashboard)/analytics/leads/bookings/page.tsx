@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { getBookingsReport } from "../../actions/get-bookings-report";
@@ -10,15 +11,17 @@ import { FAIL_REASON_LABEL } from "@/lib/analytics/book-funnel";
 // else (funnel, sources, reconciliation) is diagnostics — folded away, not deleted.
 
 const SOURCE_LABEL: Record<string, string> = {
-  article_dock: "sticky bar in an article",
-  article_card: "article card",
-  client_page: "client page",
-  client_list: "clients listing",
+  article_dock: "الشريط الثابت في المقال",
+  article_card: "بطاقة المقال",
+  client_page: "صفحة العميل",
+  client_list: "قائمة العملاء",
 };
 
 function fmt(iso: string): string {
   return iso.slice(0, 16).replace("T", " ");
 }
+
+const STATUS_LABEL: Record<string, string> = { new: "جديد", contacted: "تواصلنا", done: "انتهى" };
 
 function StatusBadge({ status }: { status: string }) {
   const cls =
@@ -29,7 +32,7 @@ function StatusBadge({ status }: { status: string }) {
         : status === "done"
           ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
           : "bg-muted text-muted-foreground";
-  return <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${cls}`}>{status}</span>;
+  return <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${cls}`}>{STATUS_LABEL[status] ?? status}</span>;
 }
 
 function Bar({ value, max }: { value: number; max: number }) {
@@ -82,16 +85,17 @@ export default async function BookingsReportPage({
     }`;
 
   return (
-    <div className="mx-auto max-w-[1000px] space-y-5">
+    <div dir="rtl" className="mx-auto max-w-[1000px] space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold leading-tight">Bookings &amp; leads</h1>
+          <h1 className="text-2xl font-semibold leading-tight">الحجوزات والليدز</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Last 90 days · who to contact now and which clients are leaking
+            آخر 90 يوم · مين تتصل فيه الآن، ومين من العملاء يتسرّب منه الحجز
           </p>
         </div>
-        <Link href="/" className="shrink-0 rounded-md border border-input px-3 py-1.5 text-sm hover:bg-muted">
-          ← Back to dashboard
+        <Link href="/" className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-input px-3 py-1.5 text-sm hover:bg-muted">
+          <ArrowRight className="size-4" aria-hidden />
+          لوحة التحكم
         </Link>
       </div>
 
@@ -99,12 +103,12 @@ export default async function BookingsReportPage({
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="border-s-4 border-s-red-500">
           <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">Needs contact</p>
+            <p className="text-xs text-muted-foreground">تحتاج اتصال</p>
             <p className="text-3xl font-bold tabular-nums text-red-600 dark:text-red-400">{nNew}</p>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {isWhatsApp
-                ? "new WhatsApp leads — the chat went to the client to follow up"
-                : "new bookings nobody has called yet"}
+                ? "ليدز واتساب جديدة — المحادثة راحت للعميل يتابعها"
+                : "حجوزات جديدة ما أحد اتصل فيها بعد"}
             </p>
           </CardContent>
         </Card>
@@ -112,15 +116,15 @@ export default async function BookingsReportPage({
         {isWhatsApp ? (
           <Card className="border-s-4 border-s-[#25d366]">
             <CardContent className="pt-4">
-              <p className="text-xs text-muted-foreground">WhatsApp leads (90d)</p>
+              <p className="text-xs text-muted-foreground">ليدز واتساب (90 يوم)</p>
               <p className="text-3xl font-bold tabular-nums text-[#1a7f4b] dark:text-[#3ddc84]">{scoped.length}</p>
-              <p className="text-[11px] text-muted-foreground">anonymous chats handed to clients</p>
+              <p className="text-xs text-muted-foreground">محادثات بلا اسم وصلت للعملاء</p>
             </CardContent>
           </Card>
         ) : (
           <Card className={`border-s-4 ${leaks.length ? "border-s-amber-500" : "border-s-emerald-500"}`}>
             <CardContent className="pt-4">
-              <p className="text-xs text-muted-foreground">Leaking clients</p>
+              <p className="text-xs text-muted-foreground">عملاء يتسرّب منهم الحجز</p>
               <p
                 className={`text-3xl font-bold tabular-nums ${
                   leaks.length ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
@@ -128,7 +132,7 @@ export default async function BookingsReportPage({
               >
                 {leaks.length}
               </p>
-              <p className="text-[11px] text-muted-foreground">book page opened, zero bookings — money walking away</p>
+              <p className="text-xs text-muted-foreground">صفحة الحجز انفتحت وصفر حجوزات — فلوس تمشي</p>
             </CardContent>
           </Card>
         )}
@@ -138,17 +142,17 @@ export default async function BookingsReportPage({
       {!isWhatsApp && leaks.length > 0 && (
         <Card className="border-amber-500/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Leaking clients — fix these first</CardTitle>
+            <CardTitle className="text-base">عملاء يتسرّب منهم الحجز — أصلحهم أولاً</CardTitle>
             <p className="text-xs text-muted-foreground">
-              real visits to their book page, nothing booked — usually a broken or missing contact button
+              زيارات حقيقية لصفحة حجزهم وما انحجز شي — غالباً زر التواصل معطّل أو ناقص
             </p>
           </CardHeader>
           <CardContent>
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-xs text-muted-foreground">
-                  <th className="py-2 pe-3 text-start font-medium">Client</th>
-                  <th className="py-2 pe-3 text-start font-medium">Opened</th>
+                  <th className="py-2 pe-3 text-start font-medium">العميل</th>
+                  <th className="py-2 pe-3 text-start font-medium">فتحوا الصفحة</th>
                   <th className="w-[40%] py-2 text-start font-medium"></th>
                 </tr>
               </thead>
@@ -172,47 +176,52 @@ export default async function BookingsReportPage({
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base">
-            {isWhatsApp ? "WhatsApp leads — which clients got them" : "Leads"}
+            {isWhatsApp ? "ليدز واتساب — أي عميل استلمها" : "الليدز"}
           </CardTitle>
           {isWhatsApp && (
             <p className="text-xs text-muted-foreground">
-              anonymous — the chat is the contact, so there is no name or phone. This is who each client received.
+              بلا اسم — المحادثة هي وسيلة التواصل، فما في اسم ولا جوال. هذا اللي وصل كل عميل.
             </p>
           )}
           <div className="flex flex-wrap gap-1.5 pt-2">
             <Link href={q({ status: undefined })} className={tab(!status)}>
-              All {scoped.length}
+              الكل {scoped.length}
             </Link>
             <Link href={q({ status: "new" })} className={tab(status === "new")}>
-              New {nNew}
+              جديد {nNew}
             </Link>
             <Link href={q({ status: "contacted" })} className={tab(status === "contacted")}>
-              Contacted {nContacted}
+              تواصلنا {nContacted}
             </Link>
             <Link href={q({ status: "done" })} className={tab(status === "done")}>
-              Done {nDone}
+              انتهى {nDone}
             </Link>
+            {channel && !isWhatsApp && (
+              <Link href={q({ channel: undefined })} className={tab(true)}>
+                القناة: {channel === "form" ? "نموذج الحجز" : channel} ✕
+              </Link>
+            )}
             {client && (
               <Link href={q({ client: undefined })} className={tab(true)}>
-                Client: {client} ✕
+                العميل: {client} ✕
               </Link>
             )}
           </div>
         </CardHeader>
         <CardContent>
           {rows.length === 0 ? (
-            <p className="py-10 text-center text-sm text-muted-foreground">No leads match this filter</p>
+            <p className="py-10 text-center text-sm text-muted-foreground">ما في ليدز بهذا الفلتر.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-xs text-muted-foreground">
-                    <th className="py-2 pe-3 text-start font-medium">Lead</th>
-                    <th className="py-2 pe-3 text-start font-medium">Client</th>
-                    <th className="py-2 pe-3 text-start font-medium">Contact</th>
-                    <th className="py-2 pe-3 text-start font-medium">Source</th>
-                    <th className="py-2 pe-3 text-start font-medium">When</th>
-                    <th className="py-2 text-start font-medium">Status</th>
+                    <th className="py-2 pe-3 text-start font-medium">الليد</th>
+                    <th className="py-2 pe-3 text-start font-medium">العميل</th>
+                    <th className="py-2 pe-3 text-start font-medium">التواصل</th>
+                    <th className="py-2 pe-3 text-start font-medium">المصدر</th>
+                    <th className="py-2 pe-3 text-start font-medium">التاريخ</th>
+                    <th className="py-2 text-start font-medium">الحالة</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -221,7 +230,7 @@ export default async function BookingsReportPage({
                       <td className="py-2 pe-3 font-semibold">
                         {r.name ?? (
                           <span className="font-normal text-muted-foreground">
-                            {r.channel === "whatsapp" ? "WhatsApp lead" : "—"}
+                            {r.channel === "whatsapp" ? "ليد واتساب" : "—"}
                           </span>
                         )}
                       </td>
@@ -232,17 +241,16 @@ export default async function BookingsReportPage({
                             {r.phone}
                           </div>
                         ) : r.channel === "whatsapp" ? (
-                          <span className="rounded-full bg-[#25d366]/15 px-2 py-0.5 text-[11px] font-semibold text-[#1a7f4b] dark:text-[#3ddc84]">
-                            via WhatsApp
+                          <span className="rounded-full bg-[#25d366]/15 px-2 py-0.5 text-xs font-semibold text-[#1a7f4b] dark:text-[#3ddc84]">
+                            عبر واتساب
                           </span>
                         ) : (
                           <span className="text-muted-foreground">—</span>
                         )}
-                        {r.email && <div className="text-xs text-muted-foreground">{r.email}</div>}
+                        {r.email && <div dir="ltr" className="text-end text-xs text-muted-foreground">{r.email}</div>}
                       </td>
                       <td className="py-2 pe-3">
-                        <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{r.source}</code>
-                        <div className="text-[11px] text-muted-foreground">{SOURCE_LABEL[r.source] ?? "—"}</div>
+                        <div className="text-xs">{SOURCE_LABEL[r.source] ?? r.source}</div>
                       </td>
                       <td className="whitespace-nowrap py-2 pe-3 text-xs tabular-nums text-muted-foreground">
                         {fmt(r.createdAt)}
@@ -263,36 +271,36 @@ export default async function BookingsReportPage({
       {!isWhatsApp && (
         <details className="group rounded-xl border bg-card">
           <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-semibold">
-            More analysis — funnel, sources &amp; reconciliation
-            <span className="text-xs font-normal text-muted-foreground group-open:hidden">show</span>
-            <span className="hidden text-xs font-normal text-muted-foreground group-open:inline">hide</span>
+            تحليل أكثر — المسار والمصادر والمطابقة
+            <span className="text-xs font-normal text-muted-foreground group-open:hidden">اعرض</span>
+            <span className="hidden text-xs font-normal text-muted-foreground group-open:inline">أخفِ</span>
           </summary>
 
           <div className="space-y-5 border-t p-4">
             {/* Funnel */}
             <div>
-              <p className="text-sm font-semibold">The funnel — where people fall out</p>
-              <p className="mb-3 text-xs text-muted-foreground">opened the page → pressed submit → saved</p>
+              <p className="text-sm font-semibold">المسار — وين يطيح الناس</p>
+              <p className="mb-3 text-xs text-muted-foreground">فتح الصفحة ← ضغط إرسال ← انحفظ</p>
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="rounded-lg border p-3">
                   <p className="text-2xl font-bold tabular-nums">{funnel.opened}</p>
-                  <p className="text-[11px] text-muted-foreground">opened · GA4</p>
+                  <p className="text-xs text-muted-foreground">فتحوا · GA4</p>
                 </div>
                 <div className="rounded-lg border p-3">
                   <p className="text-2xl font-bold tabular-nums">{funnel.attempts}</p>
-                  <p className="text-[11px] text-muted-foreground">pressed submit · GA4</p>
+                  <p className="text-xs text-muted-foreground">ضغطوا إرسال · GA4</p>
                 </div>
                 <div className="rounded-lg border p-3">
                   <p className="text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
                     {funnel.booked}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">saved · our DB</p>
+                  <p className="text-xs text-muted-foreground">انحفظ · قاعدتنا</p>
                 </div>
               </div>
               {funnel.attempts === 0 && funnel.opened > 0 && (
-                <p className="mt-3 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-[11px]">
-                  No <code className="rounded bg-muted px-1">booking_attempt</code> events yet (ships with the pending
-                  modonty push) — until then the middle number stays 0.
+                <p className="mt-3 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs">
+                  ما في أحداث <code className="rounded bg-muted px-1" dir="ltr">booking_attempt</code> بعد — لين توصل،
+                  الرقم الأوسط يبقى 0.
                 </p>
               )}
               {funnel.failed.length > 0 && (
@@ -313,14 +321,13 @@ export default async function BookingsReportPage({
 
             {/* By source */}
             <div>
-              <p className="mb-2 text-sm font-semibold">By source — which surface converts</p>
+              <p className="mb-2 text-sm font-semibold">حسب المصدر — أي مكان يحوّل</p>
               <table className="w-full text-sm">
                 <tbody>
                   {bySource.map((s) => (
                     <tr key={s.source} className="border-b last:border-0">
                       <td className="py-1.5 pe-3">
-                        <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{s.source}</code>
-                        <span className="ms-2 text-[11px] text-muted-foreground">{SOURCE_LABEL[s.source] ?? "—"}</span>
+                        {SOURCE_LABEL[s.source] ?? s.source}
                       </td>
                       <td className="py-1.5 text-end font-bold tabular-nums">{s.count}</td>
                     </tr>
@@ -333,15 +340,15 @@ export default async function BookingsReportPage({
             {unaccountedOpens.length > 0 && (
               <div>
                 <p className="mb-2 text-sm font-semibold">
-                  Book-page views not tied to a live client ·{" "}
-                  {unaccountedOpens.reduce((a, b) => a + b.views, 0)} views
+                  مشاهدات صفحة حجز ما ترتبط بعميل حيّ ·{" "}
+                  {unaccountedOpens.reduce((a, b) => a + b.views, 0)} مشاهدة
                 </p>
                 <table className="w-full text-sm">
                   <tbody>
                     {unaccountedOpens.map((u) => (
                       <tr key={u.path} className="border-b last:border-0">
                         <td className="py-1.5 pe-3">
-                          <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]">{u.path}</code>
+                          <code dir="ltr" className="rounded bg-muted px-1.5 py-0.5 text-xs">{u.path}</code>
                         </td>
                         <td className="py-1.5 text-end font-bold tabular-nums">{u.views}</td>
                       </tr>

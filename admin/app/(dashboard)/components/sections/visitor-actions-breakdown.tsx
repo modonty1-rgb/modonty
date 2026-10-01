@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Activity, Calendar, HelpCircle, Mail, MessageSquare, type LucideIcon } from "lucide-react";
+import { Calendar, HelpCircle, Mail, MessageSquare, type LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { visitorActionsSummary } from "@/lib/dashboard/cached";
-import { IBOX, SummaryChip, type Tier } from "../dashboard-ui";
-import { CollapsibleSection } from "../collapsible-section";
+import { IBOX, type Tier } from "../dashboard-ui";
+import { PanelHead } from "../panel-head";
 
 /**
  * Visitor Actions — what people did to us, last 90 days.
@@ -58,11 +58,11 @@ function InfoCard({
               {n(headline.value)}
             </span>
           </div>
-          <p className="text-[11px] font-semibold leading-tight">{title}</p>
+          <p className="text-xs font-semibold leading-tight">{title}</p>
 
           <div>
             {lines.map((l) => (
-              <div key={l.label} className="flex items-baseline gap-2 text-[11px] leading-5">
+              <div key={l.label} className="flex items-baseline gap-2 text-xs leading-5">
                 <span className={`w-8 shrink-0 text-end font-bold tabular-nums ${tone(l.src)}`}>
                   {n(l.value)}
                 </span>
@@ -73,7 +73,7 @@ function InfoCard({
             ))}
           </div>
 
-          <div className="mt-auto pt-1 text-[11px] font-bold text-primary">full report →</div>
+          <div className="mt-auto pt-1 text-xs font-bold text-primary">التقرير الكامل ←</div>
         </CardContent>
       </Card>
     </Link>
@@ -89,73 +89,55 @@ export async function VisitorActionsBreakdown() {
   const triedAndFailed = Math.max(0, bookings.attempts - bookings.db);
 
   return (
-    <CollapsibleSection
-      iconNode={<Activity className="h-4 w-4 text-muted-foreground" />}
-      title="Visitor actions"
-        subtitle={
+    <>
+      <PanelHead
+        title="تصرفات الزوار"
+        hint={
           <>
-            last 90 days ·{" "}
-            <span className="font-bold text-amber-600 dark:text-amber-400">■ GA4</span> what Google saw
+            آخر 90 يوم ·{" "}
+            <span className="font-bold text-amber-600 dark:text-amber-400">■ GA4</span> ما شافه جوجل
             <span className="text-muted-foreground/40"> · </span>
-            <span className="font-bold text-emerald-600 dark:text-emerald-400">■ Database</span> what we
-            actually have
-          </>
-        }
-        storageKey="dashVisitorOpen"
-        summary={
-          <>
-            <SummaryChip
-              icon={Calendar}
-              value={bookings.db}
-              tier={bookings.attempts === 0 && bookings.pageViews > 0 ? "hot" : "plain"}
-            />
-            <SummaryChip icon={Mail} value={messages.newCount} tier={messages.newCount > 0 ? "hot" : "plain"} />
-            <SummaryChip icon={MessageSquare} value={comments.pending} tier={comments.pending > 0 ? "hot" : "plain"} />
-            <SummaryChip icon={HelpCircle} value={questions.unanswered} tier={questions.unanswered > 0 ? "warm" : "plain"} />
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">■ القاعدة</span> ما عندنا فعلاً
           </>
         }
         right={
-          <Link
-            href="/analytics"
-            className="flex items-baseline gap-2 text-xs text-muted-foreground hover:underline"
-          >
+          <Link href="/analytics" className="flex items-baseline gap-2 text-xs text-muted-foreground hover:underline">
             <span className="text-base font-bold tabular-nums text-amber-600 dark:text-amber-400">
               {visitors.users.toLocaleString("en-US")}
             </span>
-            people
+            شخص
             <span className="text-muted-foreground/40">·</span>
             <span className="font-bold tabular-nums text-amber-600 dark:text-amber-400">
               {visitors.sessions.toLocaleString("en-US")}
             </span>
-            sessions
+            جلسة
             <span className="text-muted-foreground/40">·</span>
             <span className="font-bold tabular-nums text-red-600 dark:text-red-400">
               {Math.round(visitors.actionRate ?? 0)}%
             </span>
-            took action
+            تفاعلوا
             <span className="text-muted-foreground/40">·</span>
-            {/* The GEO signal — first measured 2026-07-14. Amber = GA4, like the rest of the line. */}
             <span className="font-bold tabular-nums text-amber-600 dark:text-amber-400">
               {visitors.aiSessions.toLocaleString("en-US")}
             </span>
-            from AI answers
-            <span className="text-primary">→</span>
+            من إجابات الذكاء
+            <span className="text-primary">←</span>
           </Link>
         }
-      >
+      />
       <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
         <InfoCard
           href="/analytics/leads/bookings"
           tier={bookings.attempts === 0 && bookings.pageViews > 0 ? "hot" : "plain"}
           icon={Calendar}
-          title="Bookings — where people fall out"
-          headline={{ value: bookings.db, label: "booked", src: "db" }}
+          title="الحجز — وين يطيح الناس"
+          headline={{ value: bookings.db, label: "حجز", src: "db" }}
           lines={[
-            { value: bookings.pageViews, label: "opened book page", src: "ga4" },
-            { value: neverClicked, label: "left before submit", src: "ga4" },
-            { value: bookings.attempts, label: "pressed submit", src: "ga4" },
-            { value: triedAndFailed, label: "submit failed", src: "ga4" },
-            { value: bookings.leaks.length, label: "clients leaking", src: "db" },
+            { value: bookings.pageViews, label: "فتحوا صفحة الحجز", src: "ga4" },
+            { value: neverClicked, label: "خرجوا قبل الإرسال", src: "ga4" },
+            { value: bookings.attempts, label: "ضغطوا إرسال", src: "ga4" },
+            { value: triedAndFailed, label: "فشل الإرسال", src: "ga4" },
+            { value: bookings.leaks.length, label: "عملاء يتسرّب منهم الحجز", src: "db" },
           ]}
         />
 
@@ -163,14 +145,14 @@ export async function VisitorActionsBreakdown() {
           href="/analytics/leads?type=MESSAGE"
           tier={messages.newCount > 0 ? "hot" : "plain"}
           icon={Mail}
-          title="Messages unread"
-          headline={{ value: messages.newCount, label: "unread", src: "db" }}
+          title="رسائل بلا رد"
+          headline={{ value: messages.newCount, label: "بلا رد", src: "db" }}
           lines={[
-            { value: messages.ga4, label: "submitted · GA4", src: "ga4" },
-            { value: messages.db, label: "we hold", src: "db" },
-            { value: messages.replied, label: "replied", src: "db" },
-            { value: messages.guest, label: "from guests", src: "db" },
-            { value: messages.member, label: "from members", src: "db" },
+            { value: messages.ga4, label: "أُرسلت · GA4", src: "ga4" },
+            { value: messages.db, label: "عندنا في القاعدة", src: "db" },
+            { value: messages.replied, label: "رُدّ عليها", src: "db" },
+            { value: messages.guest, label: "من ضيوف", src: "db" },
+            { value: messages.member, label: "من أعضاء", src: "db" },
           ]}
         />
 
@@ -178,14 +160,14 @@ export async function VisitorActionsBreakdown() {
           href="/analytics/leads?type=COMMENT"
           tier={comments.pending > 0 ? "hot" : "plain"}
           icon={MessageSquare}
-          title="Comments to approve"
-          headline={{ value: comments.pending, label: "to approve", src: "db" }}
+          title="تعليقات للموافقة"
+          headline={{ value: comments.pending, label: "للموافقة", src: "db" }}
           lines={[
-            { value: comments.ga4, label: "submitted · GA4", src: "ga4" },
-            { value: comments.db, label: "we hold", src: "db" },
-            { value: comments.approved, label: "approved", src: "db" },
-            { value: comments.onArticles, label: "on articles", src: "db" },
-            { value: comments.onClients, label: "on client pages", src: "db" },
+            { value: comments.ga4, label: "أُرسلت · GA4", src: "ga4" },
+            { value: comments.db, label: "عندنا في القاعدة", src: "db" },
+            { value: comments.approved, label: "معتمدة", src: "db" },
+            { value: comments.onArticles, label: "على مقالات", src: "db" },
+            { value: comments.onClients, label: "على صفحات عملاء", src: "db" },
           ]}
         />
 
@@ -193,17 +175,17 @@ export async function VisitorActionsBreakdown() {
           href="/analytics/leads/questions"
           tier={questions.unanswered > 0 ? "warm" : "plain"}
           icon={HelpCircle}
-          title="Question unanswered"
-          headline={{ value: questions.unanswered, label: "unanswered", src: "db" }}
+          title="أسئلة بلا جواب"
+          headline={{ value: questions.unanswered, label: "بلا جواب", src: "db" }}
           lines={[
-            { value: questions.ga4, label: "submitted · GA4", src: "ga4" },
-            { value: questions.total, label: "we hold", src: "db" },
-            { value: questions.fromArticle, label: "on articles", src: "db" },
-            { value: questions.fromClient, label: "on client pages", src: "db" },
-            { value: questions.oldestWaitingDays ?? 0, label: "days oldest waited", src: "db" },
+            { value: questions.ga4, label: "أُرسلت · GA4", src: "ga4" },
+            { value: questions.total, label: "عندنا في القاعدة", src: "db" },
+            { value: questions.fromArticle, label: "على مقالات", src: "db" },
+            { value: questions.fromClient, label: "على صفحات عملاء", src: "db" },
+            { value: questions.oldestWaitingDays ?? 0, label: "أيام أقدم انتظار", src: "db" },
           ]}
         />
       </div>
-    </CollapsibleSection>
+    </>
   );
 }

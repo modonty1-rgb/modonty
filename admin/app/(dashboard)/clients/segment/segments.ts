@@ -81,13 +81,13 @@ interface Segment {
  *   reach + content + data gaps                    → the client edit form
  *   SEO score + description                        → the SEO workspace
  */
-const MONEY_ACTION: SegmentAction = { label: "Statement", path: "account" };
-const SEO_ACTION: SegmentAction = { label: "Fix SEO", path: "seo" };
+const MONEY_ACTION: SegmentAction = { label: "كشف الحساب", path: "account" };
+const SEO_ACTION: SegmentAction = { label: "أصلح السيو", path: "seo" };
 // The contact button and the logo/hero/share images are all set on the client edit
 // workspace, so these gaps send the admin straight there with a label that says what
 // to fix — not the blind «Edit» that started this (Khalid 2026-07-24).
-const CTA_ACTION: SegmentAction = { label: "Fix CTA", path: "edit" };
-const IMAGE_ACTION: SegmentAction = { label: "Add image", path: "edit" };
+const CTA_ACTION: SegmentAction = { label: "أصلح الزر", path: "edit" };
+const IMAGE_ACTION: SegmentAction = { label: "أضف صورة", path: "edit" };
 
 
 /**
@@ -293,99 +293,96 @@ export async function getClientImageGaps(): Promise<Record<ImageGapKey, string[]
 export async function getSegment(key: string): Promise<Segment | null> {
   const segments: Record<SegmentKey, Segment> = {
     overdue: {
-      title: "Unpaid invoices",
-      description: "They have at least one invoice still outstanding.",
+      title: "فواتير غير مدفوعة",
+      description: "عليهم فاتورة واحدة على الأقل لم تُسدَّد.",
       // Resolved from the invoices below — `Client.paymentStatus` is never written
       // OVERDUE by anything, so this page listed nothing while the card counted two.
       where: {},
       action: MONEY_ACTION,
     },
     expired: {
-      title: "Subscription expired",
-      description: "Still live on the site, but the paid period ended — a renewal is overdue.",
+      title: "الاشتراك انتهى",
+      description: "ما زالوا ظاهرين على الموقع، لكن المدة المدفوعة انتهت — التجديد متأخر.",
       // One definition, shared with the /clients overdue chip — see expiredByDateWhere.
       where: {}, // resolved below from the active order
       action: MONEY_ACTION,
     },
     "expiring-soon": {
-      title: "Expiring this week",
-      description: "Call them before it lapses.",
+      title: "تنتهي هذا الأسبوع",
+      description: "اتصل بهم قبل ما ينقطع.",
       where: {}, // resolved below from the active order
       action: MONEY_ACTION,
     },
     "expiring-month": {
-      title: "Expiring this month",
-      description: "Subscription ends this month — renew before it lapses (money).",
+      title: "تنتهي هذا الشهر",
+      description: "الاشتراك ينتهي هذا الشهر — جدّده قبل ما ينقطع.",
       where: {}, // resolved below from the active order
       action: MONEY_ACTION,
     },
     pending: {
-      title: "Waiting to be activated",
-      description: "Signed up, not switched on yet.",
+      title: "بانتظار التفعيل",
+      description: "سجّلوا ولم يُفعَّلوا بعد.",
       where: {}, // resolved below from the active order
       action: MONEY_ACTION,
     },
     form: {
-      title: "Booking form",
-      description: "Books through our form — the lead lands in our database.",
+      title: "نموذج حجز",
+      description: "يحجزون عبر نموذجنا — الليد يوصل قاعدتنا.",
       where: { ctaMode: ClientCtaMode.FORM },
     },
     link: {
-      title: "External link",
-      description:
-        "Their button sends the visitor away (their site, WhatsApp). We see the click, never the lead.",
+      title: "رابط خارجي",
+      description: "زرّهم يودّي الزائر برّا (موقعهم أو واتساب). نشوف النقرة وما نشوف الليد.",
       where: { ctaMode: ClientCtaMode.LINK },
     },
     none: {
-      title: "No button at all",
-      description: "The visitor has no way to reach them.",
+      title: "بلا زر أصلاً",
+      description: "الزائر ما عنده طريق يوصلهم.",
       where: { ctaMode: ClientCtaMode.NONE },
       action: CTA_ACTION,
     },
     unset: {
-      title: "CTA never set",
-      description:
-        "Their record has no ctaMode field — it predates the field, and a schema push does not backfill. On the site they behave as if they had no button.",
+      title: "الزر ما انضبط",
+      description: "سجلّهم ما فيه حقل ctaMode — أقدم من الحقل، ودفع السكيما لا يعبّئ القديم. على الموقع يتصرفون كأنهم بلا زر.",
       // Resolved below via raw MongoDB: no Prisma filter can match an absent field.
       where: {},
       action: CTA_ACTION,
     },
-    active: { title: "Active", description: "Paying and live.", where: {} },
+    active: { title: "نشط", description: "يدفع وظاهر.", where: {} },
     ymyl: {
-      title: "YMYL clients",
-      description: "Medical, legal or financial — their booking form carries a liability disclaimer.",
+      title: "عملاء YMYL",
+      description: "طبي أو قانوني أو مالي — نموذج الحجز عندهم يحمل إخلاء مسؤولية.",
       where: {}, // resolved below: active (from the order) AND isYmyl
     },
     standard: {
-      title: "Standard clients",
-      description: "Everyone who is not YMYL.",
+      title: "عملاء عاديون",
+      description: "كل من ليس YMYL.",
       where: {}, // resolved below: active (from the order) AND not isYmyl
     },
     cancelled: {
-      title: "Cancelled",
-      description: "They left us.",
+      title: "ملغي",
+      description: "تركونا.",
       where: {}, // resolved below — the one status still set by hand on the card
       action: MONEY_ACTION,
     },
     "no-articles": {
-      title: "No articles at all",
-      description: "Not one article exists for them. They are paying for silence.",
+      title: "بلا مقالات",
+      description: "ما في مقال واحد لهم. يدفعون مقابل صمت.",
       where: { articles: { none: {} } },
     },
     "has-published": {
-      title: "Has published articles",
-      description: "At least one of their articles is live on modonty.com.",
+      title: "نشر مقالات",
+      description: "مقال واحد على الأقل منشور على مدونتي.",
       where: { articles: { some: { status: ArticleStatus.PUBLISHED } } },
     },
     "awaiting-approval": {
-      title: "Waiting for the client to approve",
-      description: "We wrote it, they have not signed off. The ball is in their court — chase them.",
+      title: "ينتظر موافقة العميل",
+      description: "كتبناه وما وافقوا. الكرة عندهم — تابعهم.",
       where: { articles: { some: { status: ArticleStatus.AWAITING_APPROVAL } } },
     },
     "content-in-progress": {
-      title: "Content in progress",
-      description:
-        "They have articles, but nothing is live and nothing is waiting on them — the work is still on our side.",
+      title: "المحتوى قيد التنفيذ",
+      description: "عندهم مقالات، لكن ما نُشر شي وما شي ينتظرهم — الشغل عندنا.",
       where: {
         articles: { some: {} },
         NOT: {
@@ -399,57 +396,51 @@ export async function getSegment(key: string): Promise<Segment | null> {
     },
     // Image gaps — resolved to id lists below (see getClientImageGaps).
     "no-logo": {
-      title: "No logo",
-      description:
-        "No logo on their record. It is what their page shows as the brand mark, and what Organization JSON-LD hands Google for the knowledge panel.",
+      title: "بلا شعار",
+      description: "ما في شعار في سجلّهم. هو علامتهم في صفحتهم، واللي يعطيه JSON-LD المنظمة لجوجل للوحة المعرفة.",
       where: {},
       action: IMAGE_ACTION,
     },
     "no-hero": {
-      title: "No hero image",
-      description: "The banner at the top of their client page is empty.",
+      title: "بلا صورة غلاف",
+      description: "البانر أعلى صفحة العميل فاضي.",
       where: {},
       action: IMAGE_ACTION,
     },
     "no-og": {
-      title: "No share image",
-      description:
-        "Their published metadata carries no og:image, so every link to them — WhatsApp, X, LinkedIn — previews blank. Worth 25 points of their SEO score.",
+      title: "بلا صورة مشاركة",
+      description: "الميتا المنشورة ما فيها og:image، فأي رابط لهم — واتساب، X، لينكدإن — يطلع بمعاينة فاضية. تساوي 25 نقطة من سيوهم.",
       where: {},
       action: IMAGE_ACTION,
     },
     "no-image": {
-      title: "No image at all",
-      description:
-        "No logo, no hero, no share image. Their page is text on white and their links preview blank. Start here.",
+      title: "بلا أي صورة",
+      description: "لا شعار ولا غلاف ولا صورة مشاركة. صفحتهم نص على أبيض وروابطهم بلا معاينة. ابدأ هنا.",
       where: {},
       action: IMAGE_ACTION,
     },
     // Record gaps — resolved to id lists below (see getClientDataGaps).
     "no-end-date": {
-      title: "Renewal date missing",
-      description:
-        "Clients whose content is LIVE (at least one published article) but who have no subscription end date — the invoice was never issued or the date was never filled. They can never show in «Expiring this week», so the renewal watch is blind to them. Clients with no published article are excluded: their subscription simply hasn't started.",
+      title: "تاريخ التجديد ناقص",
+      description: "عملاء محتواهم منشور (مقال واحد على الأقل) وما لهم تاريخ نهاية اشتراك — الفاتورة ما صدرت أو التاريخ ما تعبّى. ما يطلعون في «تنتهي هذا الأسبوع»، فمراقبة التجديد عمياء عنهم. من لم يُنشر له مقال مستثنى: اشتراكه ما بدأ.",
       where: {},
       action: MONEY_ACTION, // the end date lives on the account statement, not the profile form
     },
     "no-address": {
-      title: "No address",
-      description:
-        "No city on their record. Their JSON-LD cannot carry a PostalAddress, so Google gets no location for them — and local search is where their customers are.",
+      title: "بلا عنوان",
+      description: "ما في مدينة في سجلّهم. الـJSON-LD ما يقدر يحمل PostalAddress، فجوجل ما يعرف موقعهم — والبحث المحلي هو مكان عملائهم.",
       where: {},
       action: SEO_ACTION,
     },
     "no-social": {
-      title: "No social links",
-      description:
-        "Empty sameAs. Nothing ties their page to their real profiles, so the knowledge graph never connects the two.",
+      title: "بلا روابط سوشال",
+      description: "sameAs فاضي. ما شي يربط صفحتهم بحساباتهم الحقيقية، فمخطط المعرفة ما يوصل بينهم.",
       where: {},
       action: SEO_ACTION,
     },
     "no-description": {
-      title: "No description",
-      description: "No Organization description — their JSON-LD says who they are and nothing about them.",
+      title: "بلا وصف",
+      description: "ما في وصف للمنظمة — الـJSON-LD يقول مين هم وما يقول شي عنهم.",
       where: {},
       action: SEO_ACTION,
     },
@@ -457,25 +448,23 @@ export async function getSegment(key: string): Promise<Segment | null> {
     // the only question is whether it has an SEO problem). where:{} = same all-client scope
     // as the dashboard count; the page filters by the computed score, so list === number.
     "seo-imperfect": {
-      title: "Clients with SEO problems",
-      description:
-        "Any client that isn't a perfect 100 on the shared SEO rubric (meta + JSON-LD). Open each to see which checks are missing — most are the client's own data (logo, description, contact).",
+      title: "عملاء فيهم نقص سيو",
+      description: "أي عميل ما وصل 100 في مقياس السيو المشترك (ميتا + JSON-LD). افتح كل واحد تشوف الفحوص الناقصة — أغلبها بيانات العميل نفسه (شعار، وصف، تواصل).",
       where: {},
       scoreFilter: "imperfect",
       action: SEO_ACTION,
     },
     "seo-perfect": {
-      title: "Clients with perfect SEO",
-      description: "Any client that passes every check on the shared SEO rubric — nothing to fix.",
+      title: "عملاء سيوهم كامل",
+      description: "أي عميل يجتاز كل فحوص مقياس السيو المشترك — ما في شي يحتاج إصلاح.",
       where: {},
       scoreFilter: "perfect",
     },
     // The Today strip's business number: NONE plus the missing-field ones — every
     // client a visitor has no way to reach. Resolved to an id list below.
     unreachable: {
-      title: "Unreachable clients",
-      description:
-        "No working contact button: ctaMode is NONE, or the field is missing entirely. A visitor who wants them has no way in — this is the conversion leak.",
+      title: "عملاء ما يوصلهم الزائر",
+      description: "بلا زر تواصل يعمل: ctaMode هو NONE، أو الحقل غائب تماماً. الزائر اللي يبغاهم ما عنده طريق — هنا يتسرّب التحويل.",
       where: {},
       action: CTA_ACTION,
     },

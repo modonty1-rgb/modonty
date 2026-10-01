@@ -149,13 +149,13 @@ export function MediaPageClient({
       if (!saved.success) throw new Error(saved.error);
       const kb = (n: number) => `${Math.round(n / 1024)} KB`;
       toast({
-        title: "Converted to WebP",
-        description: `${item.filename}: ${kb(before)} → ${kb(fields.fileSize)}. Same file, same links.${saved.seoWarning ? " " + saved.seoWarning : ""}`,
+        title: "تحوّلت إلى WebP",
+        description: `${item.filename}: ${kb(before)} → ${kb(fields.fileSize)}. نفس الملف ونفس الروابط.${saved.seoWarning ? " " + saved.seoWarning : ""}`,
         variant: "success",
       });
       router.refresh();
     } catch (e) {
-      toast({ title: "Conversion failed", description: e instanceof Error ? e.message : "Try again.", variant: "destructive" });
+      toast({ title: "فشل التحويل", description: e instanceof Error ? e.message : "حاول مرة ثانية.", variant: "destructive" });
     } finally {
       setConvertingId(null);
     }
@@ -219,7 +219,7 @@ export function MediaPageClient({
         return;
       }
       if (!canDelete.canDelete) {
-        setDeleteError(canDelete.reason || "Cannot delete this media file.");
+        setDeleteError(canDelete.reason || "ما يمكن حذف هذا الملف.");
         setDeleteTarget({ id });
         setDeleteDialogOpen(true);
         return;
@@ -287,11 +287,11 @@ export function MediaPageClient({
               <ImageIcon className="h-8 w-8 text-muted-foreground/60" />
             </div>
             <div className="text-center space-y-1">
-              <p className="text-sm font-medium">{!searchQuery && emptyState ? emptyState.title : "No media found"}</p>
+              <p className="text-sm font-medium">{!searchQuery && emptyState ? emptyState.title : "ما في وسائط"}</p>
               <p className="text-xs text-muted-foreground max-w-[300px]">
                 {searchQuery
-                  ? "Try a different search term or clear filters"
-                  : emptyState?.hint ?? "Upload your first file to get started"}
+                  ? "جرّب كلمة بحث ثانية أو امسح الفلاتر"
+                  : emptyState?.hint ?? "ارفع أول ملف لتبدأ"}
               </p>
             </div>
             {!searchQuery && emptyState?.action ? (
@@ -300,7 +300,7 @@ export function MediaPageClient({
               <Link href={emptyState?.actionHref ?? uploadHref}>
                 <Button size="sm" className="gap-1.5 mt-2">
                   <Upload className="h-4 w-4" />
-                  {emptyState?.actionLabel ?? "Upload Media"}
+                  {emptyState?.actionLabel ?? "ارفع وسائط"}
                 </Button>
               </Link>
             )}
@@ -360,7 +360,7 @@ export function MediaPageClient({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {deleteError ? "Cannot delete" : "Confirm delete"}
+              {deleteError ? "ما ينحذف" : "تأكيد الحذف"}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {deleteError
@@ -369,14 +369,14 @@ export function MediaPageClient({
                     // Name what is lost — «Are you sure?» alone asks for trust, not a decision.
                     const target = media.find((m) => m.id === deleteTarget?.id);
                     return target
-                      ? `«${target.filename}»${target.client?.name ? ` of ${target.client.name}` : ""} will be removed from the library and its storage. This cannot be undone.`
-                      : "This file will be removed from the library and its storage. This cannot be undone.";
+                      ? `«${target.filename}»${target.client?.name ? ` (${target.client.name})` : ""} بينحذف من المكتبة ومن التخزين. ما يمكن التراجع.`
+                      : "بينحذف الملف من المكتبة ومن التخزين. ما يمكن التراجع.";
                   })()}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>
-              {deleteError ? "Close" : "Cancel"}
+              {deleteError ? "إغلاق" : "إلغاء"}
             </AlertDialogCancel>
             {!deleteError && (
               <AlertDialogAction
@@ -385,7 +385,7 @@ export function MediaPageClient({
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 {isDeleting ? <Loader2 className="h-4 w-4 animate-spin me-2" /> : null}
-                {isDeleting ? "Deleting..." : "Delete"}
+                {isDeleting ? "يحذف…" : "احذف"}
               </AlertDialogAction>
             )}
           </AlertDialogFooter>

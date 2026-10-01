@@ -16,7 +16,7 @@ export function MemberTable({ members }: MemberTableProps) {
       columns={[
         {
           key: "name",
-          header: "Member",
+          header: "العضو",
           render: (m) => (
             <div className="flex items-center gap-3">
               <Avatar className="h-8 w-8">
@@ -34,7 +34,7 @@ export function MemberTable({ members }: MemberTableProps) {
         },
         {
           key: "via",
-          header: "Method",
+          header: "طريقة التسجيل",
           render: (m) => (
             <span
               className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -43,31 +43,33 @@ export function MemberTable({ members }: MemberTableProps) {
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              {m.via === "google" ? "Google" : "Email"}
+              {m.via === "google" ? "جوجل" : "بريد وكلمة مرور"}
             </span>
           ),
         },
         {
           key: "verified",
-          header: "Verified",
+          header: "تأكيد البريد",
           render: (m) => (
             <span className={`text-xs ${m.verified ? "text-emerald-600" : "text-muted-foreground"}`}>
-              {m.verified ? "Verified" : "—"}
+              {m.verified ? "مؤكَّد" : "ما أكّد"}
             </span>
           ),
         },
         {
           key: "createdAt",
-          header: "Joined",
+          header: "تاريخ التسجيل",
           render: (m) => (
             <span className="text-muted-foreground text-sm">
-              {format(new Date(m.createdAt), "MMM d, yyyy")}
+              {format(new Date(m.createdAt), "yyyy-MM-dd")}
             </span>
           ),
         },
       ]}
       searchKey="email"
-      searchPlaceholder="Search by email..."
+      searchPlaceholder="ابحث بالبريد…"
+      emptyText="ما في أعضاء."
+      arabic
     />
   );
 }

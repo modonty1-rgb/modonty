@@ -19,7 +19,7 @@ export function Fact({
 }) {
   return (
     <div className="min-w-0" title={hint}>
-      <dt className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+      <dt className="flex items-center gap-1.5 text-xs text-muted-foreground">
         {dot ? <span className={cn("size-2 shrink-0 rounded-full", dot)} aria-hidden /> : null}
         <span className="truncate">{label}</span>
       </dt>

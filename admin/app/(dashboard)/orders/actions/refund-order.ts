@@ -59,6 +59,7 @@ export async function refundOrderAction(
   revalidatePath("/orders");
   revalidatePath(`/orders/${orderId}`);
   revalidatePath("/clients/sales-report");
+  revalidatePath("/sales-commissions"); // a refunded deal loses its commission, or becomes a clawback
   revalidatePath("/");
   return { ok: true };
 }

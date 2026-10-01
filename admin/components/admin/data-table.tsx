@@ -40,6 +40,12 @@ interface DataTableProps<T> {
   renderExpanded?: (item: T) => React.ReactNode;
   /** Names the «+» for screen readers — e.g. `Quota details of ${name}`. */
   expandLabel?: (item: T) => string;
+  /**
+   * Arabic chrome — pagination, page counter and expand labels, with the arrows flipped for
+   * RTL. Opt-in because 21 pages share this table and not all of them are Arabic yet
+   * (1 Oct 2026: the pages the dashboard opens went Arabic first).
+   */
+  arabic?: boolean;
 }
 
 type SortDirection = "asc" | "desc" | null;
@@ -57,6 +63,7 @@ export function DataTable<T extends { id: string }>({
   className,
   renderExpanded,
   expandLabel,
+  arabic = false,
 }: DataTableProps<T>) {
   const [openId, setOpenId] = useState<string | null>(null);
   const toggleOpen = (id: string) => setOpenId((prev) => (prev === id ? null : id));
@@ -178,7 +185,7 @@ export function DataTable<T extends { id: string }>({
           Row height is fixed here ONCE — never override per table. */}
       {/* الحشو الأفقيّ 10px لا 16px (خالد ١٨ سبتمبر): جدولُ اثني عشر عموداً كان يدفع
           ٣٨٤px حشواً وحدها فيولد تمريرٌ أفقيّ على ١٢٨٠. كلّ عمودٍ يأخذ ما يحتاجه فقط. */}
-      <div className="border rounded-lg bg-card scroll-x-visible [&_th]:!h-10 [&_td]:!py-0 [&_th]:!px-2.5 [&_td]:!px-2.5 [&_th]:text-[11px] [&_th]:font-semibold [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-muted-foreground">
+      <div className="border rounded-lg bg-card scroll-x-visible [&_th]:!h-10 [&_td]:!py-0 [&_th]:!px-2.5 [&_td]:!px-2.5 [&_th]:text-xs [&_th]:font-semibold [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-muted-foreground">
         <Table
           className={cn(
             "whitespace-nowrap text-[13px]",
@@ -189,7 +196,7 @@ export function DataTable<T extends { id: string }>({
         >
           <TableHeader>
             <TableRow>
-              {renderExpanded ? <TableHead className="w-[1%] !px-2" aria-label="Details" /> : null}
+              {renderExpanded ? <TableHead className="w-[1%] !px-2" aria-label={arabic ? "التفاصيل" : "Details"} /> : null}
               {columns.map((column) => (
                 <TableHead
                   key={String(column.key)}
@@ -255,7 +262,7 @@ export function DataTable<T extends { id: string }>({
                     <TableCell className="w-[1%] !px-2">
                       <button
                         type="button"
-                        aria-label={expandLabel?.(item) ?? (isOpen ? "Hide details" : "Show details")}
+                        aria-label={expandLabel?.(item) ?? (arabic ? (isOpen ? "أخفِ التفاصيل" : "اعرض التفاصيل") : isOpen ? "Hide details" : "Show details")}
                         aria-expanded={isOpen}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -296,8 +303,9 @@ export function DataTable<T extends { id: string }>({
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of{" "}
-            {filteredData.length} results
+            {arabic
+              ? `عرض ${startIndex + 1}–${Math.min(endIndex, filteredData.length)} من ${filteredData.length}`
+              : `Showing ${startIndex + 1} to ${Math.min(endIndex, filteredData.length)} of ${filteredData.length} results`}
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -305,19 +313,21 @@ export function DataTable<T extends { id: string }>({
               size="sm"
               onClick={() => { setOpenId(null); setCurrentPage((p) => Math.max(1, p - 1)); }}
               disabled={currentPage === 1}
+              aria-label={arabic ? "الصفحة السابقة" : "Previous page"}
             >
-              <ChevronLeft className="h-4 w-4" />
+              {arabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
             <span className="text-sm text-muted-foreground">
-              Page {currentPage} of {totalPages}
+              {arabic ? `صفحة ${currentPage} من ${totalPages}` : `Page ${currentPage} of ${totalPages}`}
             </span>
             <Button
               variant="outline"
               size="sm"
               onClick={() => { setOpenId(null); setCurrentPage((p) => Math.min(totalPages, p + 1)); }}
               disabled={currentPage === totalPages}
+              aria-label={arabic ? "الصفحة التالية" : "Next page"}
             >
-              <ChevronRight className="h-4 w-4" />
+              {arabic ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </Button>
           </div>
         </div>

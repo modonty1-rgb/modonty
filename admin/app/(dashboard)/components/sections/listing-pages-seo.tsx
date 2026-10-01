@@ -1,7 +1,5 @@
-import { LayoutList } from "lucide-react";
-
-import { getContentPagesSeoAudit, getListingPagesSeoAudit } from "../../actions/listing-pages-seo-audit";
-import { CollapsibleSection } from "../collapsible-section";
+import { contentPagesSeoAudit, listingPagesSeoAudit, sectorPagesSeoAudit } from "@/lib/dashboard/cached";
+import { PanelHead } from "../panel-head";
 import { ListingPagesSeoRows } from "./listing-pages-seo-rows";
 
 /**
@@ -10,68 +8,69 @@ import { ListingPagesSeoRows } from "./listing-pages-seo-rows";
  * in the admin measured them — the dashboard scored categories and tags while the pages
  * themselves went unwatched.
  *
- * Collapsed, the header carries the one number that matters: how many of the seven are
- * below 100. Nothing to do → the count is zero and green, and no row pulses.
+ * The tab heading carries the one number that matters: how many pages are below 100.
+ * Nothing to do → «كلها 100», and no row pulses.
  */
 export async function ListingPagesSeo() {
   // Two families, one section: the seven Settings-backed listing pages, and the six
   // content pages whose SEO lives on their own Modonty row. Same 16 checks for both.
-  const [listing, content] = await Promise.all([
-    getListingPagesSeoAudit(),
-    getContentPagesSeoAudit(),
+  const [listing, content, sectors] = await Promise.all([
+    listingPagesSeoAudit(),
+    contentPagesSeoAudit(),
+    sectorPagesSeoAudit(),
   ]);
-  const pages = [...listing, ...content];
+  const pages = [...listing, ...content, ...sectors];
   const failing = pages.filter((p) => p.score < 100).length;
   const average = pages.length
     ? Math.round(pages.reduce((s, p) => s + p.score, 0) / pages.length)
     : 0;
 
+  // The page count comes from the data — the heading said «١٣ صفحة» as fixed text while 17
+  // rows showed (30 Sep 2026).
   return (
-    <CollapsibleSection
-      iconNode={<LayoutList className="h-4 w-4 text-muted-foreground" />}
-      title="Pages SEO"
-      subtitle="١٣ صفحة — الميتا و JSON-LD وارتباطهما بمصدرهما في القاعدة"
-      storageKey="dashListingSeoOpen"
-      summary={
-        <span
-          className={`text-xs font-bold tabular-nums ${
-            failing > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
-          }`}
-        >
-          {failing > 0 ? `${failing}/${pages.length} تحت ١٠٠` : `${pages.length}/${pages.length} ✓`}
-        </span>
-      }
-      right={
-        <p className="text-xs text-muted-foreground">
-          متوسّط{" "}
-          <span
-            className={`text-base font-bold tabular-nums ${
-              average >= 100
-                ? "text-emerald-600 dark:text-emerald-400"
-                : average >= 60
-                  ? "text-amber-600 dark:text-amber-400"
-                  : "text-red-600 dark:text-red-400"
-            }`}
-          >
-            {average}
-          </span>
-        </p>
-      }
-    >
+    <>
+      <PanelHead
+        title="صفحات الموقع"
+        hint={`${pages.length} صفحة — الميتا و JSON-LD وارتباطهما بمصدرهما في القاعدة · ${failing > 0 ? `${failing} تحت 100` : "كلها 100"}`}
+        right={
+          <p className="text-xs text-muted-foreground">
+            متوسّط{" "}
+            <span
+              className={`text-base font-bold tabular-nums ${
+                average >= 100
+                  ? "text-emerald-600 dark:text-emerald-400"
+                  : average >= 60
+                    ? "text-amber-600 dark:text-amber-400"
+                    : "text-red-600 dark:text-red-400"
+              }`}
+            >
+              {average}
+            </span>
+          </p>
+        }
+      />
       <div className="space-y-4">
         <div className="space-y-1.5">
-          <p className="text-[11.5px] font-semibold text-muted-foreground">
+          <p className="text-xs font-semibold text-muted-foreground">
             صفحات القوائم — سيوها في إعدادات الموقع
           </p>
           <ListingPagesSeoRows pages={listing} kind="listing" />
         </div>
         <div className="space-y-1.5">
-          <p className="text-[11.5px] font-semibold text-muted-foreground">
+          <p className="text-xs font-semibold text-muted-foreground">
             صفحات المحتوى — لكل واحدة صفّها ومحرّرها
           </p>
           <ListingPagesSeoRows pages={content} kind="content" />
         </div>
+        {sectors.length > 0 && (
+          <div className="space-y-1.5">
+            <p className="text-xs font-semibold text-muted-foreground">
+              صفحات القطاعات — السيو في مدونتي › القطاعات (المتوقفة خارج الفهرسة فما تُقاس)
+            </p>
+            <ListingPagesSeoRows pages={sectors} kind="content" />
+          </div>
+        )}
       </div>
-    </CollapsibleSection>
+    </>
   );
 }

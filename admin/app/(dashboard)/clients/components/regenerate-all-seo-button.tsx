@@ -88,7 +88,7 @@ export function RegenerateAllSeoButton({ clients, open, onOpenChange, hideTrigge
         onClick={() => setIsOpen(true)}
       >
         <RefreshCw className="h-3.5 w-3.5" />
-        Regenerate All SEO
+        أعد توليد السيو للكل
       </Button>
     );
   }
@@ -102,13 +102,13 @@ export function RegenerateAllSeoButton({ clients, open, onOpenChange, hideTrigge
         {/* Header */}
         <div className="px-5 py-4 border-b flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-semibold">Regenerate SEO Data</h2>
+            <h2 className="text-sm font-semibold">إعادة توليد بيانات السيو</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
               {isRunning
-                ? `Processing ${current} of ${clients.length}...`
+                ? `يعالج ${current} من ${clients.length}…`
                 : progress.length === 0
-                ? `Will update ${clients.length} clients`
-                : `Done — ${done} succeeded · ${errors} failed`}
+                ? `بيحدّث ${clients.length} عميل`
+                : `انتهى — ${done} نجح · ${errors} فشل`}
             </p>
           </div>
           {!isRunning && progress.length > 0 && (
@@ -116,7 +116,7 @@ export function RegenerateAllSeoButton({ clients, open, onOpenChange, hideTrigge
               onClick={handleClose}
               className="text-muted-foreground hover:text-foreground text-xs"
             >
-              Close
+              إغلاق
             </button>
           )}
         </div>
@@ -141,7 +141,7 @@ export function RegenerateAllSeoButton({ clients, open, onOpenChange, hideTrigge
         <div className="px-5 py-3 max-h-64 overflow-y-auto space-y-1">
           {progress.length === 0 ? (
             <p className="text-xs text-muted-foreground py-2">
-              This will regenerate SEO structured data for all {clients.length} clients. Google reads this data directly.
+              بيعيد توليد بيانات السيو المنظّمة لكل الـ{clients.length} عميل. جوجل يقرأ هذي البيانات مباشرة.
             </p>
           ) : (
             progress.map((p) => (
@@ -184,23 +184,23 @@ export function RegenerateAllSeoButton({ clients, open, onOpenChange, hideTrigge
           {!isRunning && progress.length === 0 && (
             <>
               <Button variant="outline" size="sm" onClick={handleClose}>
-                Cancel
+                إلغاء
               </Button>
               <Button size="sm" onClick={handleStart}>
                 <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                Start
+                ابدأ
               </Button>
             </>
           )}
           {isRunning && (
             <Button size="sm" disabled>
-              <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-              Updating...
+              <Loader2 className="h-3.5 w-3.5 me-1.5 animate-spin" />
+              يحدّث…
             </Button>
           )}
           {!isRunning && progress.length > 0 && (
             <Button size="sm" onClick={handleClose}>
-              Done
+              تمّ
             </Button>
           )}
         </div>

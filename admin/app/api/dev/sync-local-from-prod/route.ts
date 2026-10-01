@@ -43,6 +43,19 @@ const SKIP_COLLECTIONS = new Set<string>([
   "email_events",        // raw Resend webhook log
 ]);
 
+/**
+ * **حساباتُ الفحص المحلّيّة تنجو من النسخ** (خالد ٣٠ سبتمبر ٢٠٢٦ — «عملت سينك فطلع خطأ»).
+ *
+ * جدولُ `staff` يُمسح ويُملأ من الإنتاج، فكلُّ موظّفٍ محلّيٍّ لا نظيرَ له هناك كان يختفي —
+ * ومنه حسابُ الفحص الذي يفتح الأدمنَ نفسَه (`claude-check@modonty.local`). فتسقط الجلسة
+ * المفتوحة عند فحصها الدوريّ (`auth.config.ts`)، ويردّ الحارسُ طلبَ الصفحة بصفحة الدخول،
+ * فيرى المستخدمُ «An unexpected response was received from the server».
+ *
+ * فيُحفظ قبل المسح كلُّ صفٍّ محلّيٍّ لا يطابق الإنتاجَ بمعرّفٍ ولا ببريد، ويُعاد بعد النسخ.
+ * ما يطابقه يأخذ نسخةَ الإنتاج كما هي — الإنتاجُ مصدرُ الحقيقة.
+ */
+const STAFF_COLLECTION = "staff";
+
 interface SseEvent {
   type:
     | "start"
@@ -219,6 +232,20 @@ export async function POST(_req: NextRequest) {
           });
 
           try {
+            // Local-only staff (check accounts) — kept aside before the drop, put back after.
+            let keptStaff: Record<string, unknown>[] = [];
+            if (collName === STAFF_COLLECTION) {
+              const prodStaff = await prodDb
+                .collection(collName)
+                .find({}, { projection: { _id: 1, email: 1 } })
+                .toArray();
+              const prodIds = new Set(prodStaff.map((d) => String(d._id)));
+              const prodEmails = new Set(prodStaff.map((d) => String(d.email ?? "").toLowerCase()).filter(Boolean));
+              keptStaff = (await localDb.collection(collName).find({}).toArray()).filter(
+                (d) => !prodIds.has(String(d._id)) && !prodEmails.has(String(d.email ?? "").toLowerCase()),
+              );
+            }
+
             // 1. Drop local collection
             try {
               await localDb.collection(collName).drop();
@@ -268,6 +295,11 @@ export async function POST(_req: NextRequest) {
               if (batch.length >= BATCH) await flush();
             }
             await flush();
+            if (keptStaff.length > 0) {
+              await localCol.insertMany(keptStaff as never[], { ordered: false });
+              docCount += keptStaff.length;
+              send({ type: "doc_progress", collection: collName, docs: docCount, keptLocal: keptStaff.length });
+            }
 
             // 4. Recreate indexes (skip the auto _id index)
             const indexesToCreate = buildIndexSpecs(prodIndexes);

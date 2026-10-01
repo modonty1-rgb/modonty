@@ -41,17 +41,17 @@ export interface EntityRouteConfig {
 }
 
 const routeLabels: Record<string, string> = {
-  articles: 'Articles',
+  articles: 'المقالات',
   briefs: 'Content Briefs',
-  clients: 'Clients',
+  clients: 'العملاء',
   categories: 'Categories',
   industries: 'Industries',
   tags: 'Tags',
   authors: 'Authors',
-  media: 'Media',
+  media: 'الوسائط',
   users: 'Users',
-  subscribers: 'Subscribers',
-  analytics: 'Analytics',
+  subscribers: 'مشتركو العملاء',
+  analytics: 'التحاليل',
   settings: 'Settings',
   'export-data': 'Export Data',
   'system-errors': 'Error Logs',
@@ -94,6 +94,12 @@ const sectionLabels: Record<string, string> = {
   // thing above them. Left alone it reads «Sales-leads» — the one English word on an
   // otherwise Arabic page, sitting exactly where the eye lands first.
   'sales-leads': 'العملاء المحتملون',
+  'sales-commissions': 'عمولات المناديب',
+  kpi: 'KPI',
+  'contact-messages': 'رسائل التواصل',
+  members: 'الأعضاء',
+  segment: 'القوائم',
+  reference: 'التصنيفات',
 };
 
 /**
@@ -103,7 +109,14 @@ const sectionLabels: Record<string, string> = {
  */
 const scopedLabels: Record<string, Record<string, string>> = {
   'sales-leads': { new: 'عميل جديد', edit: 'تعديل', 'follow-ups': 'المتابعة' },
+  // /clients/[id]/edit — the client pages are Arabic; «edit» elsewhere stays English.
+  clients: { edit: 'تعديل' },
+  // Dashboard drill-downs (/clients|/articles|/media|/reference/segment/[key]) — Arabic like the pages.
+  segment: { 'overdue': 'فواتير غير مدفوعة', 'expired': 'الاشتراك انتهى', 'expiring-soon': 'تنتهي هذا الأسبوع', 'expiring-month': 'تنتهي هذا الشهر', 'pending': 'بانتظار التفعيل', 'form': 'نموذج حجز', 'link': 'رابط خارجي', 'none': 'بلا زر', 'unset': 'الزر ما انضبط', 'active': 'نشط', 'ymyl': 'YMYL', 'standard': 'عادي', 'cancelled': 'ملغي', 'no-articles': 'بلا مقالات', 'has-published': 'نشر مقالات', 'awaiting-approval': 'بانتظار الموافقة', 'content-in-progress': 'المحتوى قيد التنفيذ', 'no-logo': 'بلا شعار', 'no-hero': 'بلا غلاف', 'no-og': 'بلا صورة مشاركة', 'no-image': 'بلا أي صورة', 'no-end-date': 'تاريخ التجديد ناقص', 'no-address': 'بلا عنوان', 'no-social': 'بلا سوشال', 'no-description': 'بلا وصف', 'seo-imperfect': 'فيها نقص سيو', 'seo-perfect': 'سيو كامل', 'unreachable': 'ما يوصلهم الزائر', 'published': 'منشور', 'published-on-client-site': 'على موقع العميل', 'approved': 'معتمد بلا تاريخ', 'scheduled': 'مجدول', 'writing': 'يُكتب', 'draft': 'مسودات', 'needs-revision': 'تحتاج تعديل', 'archived': 'مؤرشف', 'ymyl-uncited': 'YMYL بلا مصادر', 'unused': 'غير مستخدمة', 'no-alt': 'بلا نص بديل', 'failing-seo': 'تفشل في السيو', 'no-dimensions': 'بلا أبعاد', 'categories': 'الفئات', 'tags': 'الوسوم', 'industries': 'الصناعات', 'authors': 'الكتّاب' },
   reports: { modonty: 'مدونتي', jbrseo: 'جبر سيو' },
+  // Scoped: /campaigns/leads is a different page with the same segment name.
+  analytics: { leads: 'أفعال الزوار' },
+  leads: { bookings: 'الحجوزات', questions: 'الأسئلة' },
 };
 
 export function isObjectId(str: string): boolean {
@@ -122,7 +135,9 @@ export function parsePathname(pathname: string): string[] {
 export function getRouteLabel(segment: string, index: number, segments: string[]): string {
   // The section above wins over the global maps: `new` is a generic word whose right
   // translation depends on where it sits, and only its parent knows that.
-  const parent = segments[index - 1];
+  // An id between them (/clients/[id]/edit) is not the section — look one further up.
+  const direct = segments[index - 1];
+  const parent = direct && isObjectId(direct) ? segments[index - 2] : direct;
   if (parent && scopedLabels[parent]?.[segment]) {
     return scopedLabels[parent][segment];
   }
@@ -211,7 +226,8 @@ export function generateBreadcrumbs(
       });
     } else if (segment === 'edit' && i > 1 && isObjectId(segments[i - 1])) {
       items.push({
-        label: 'Edit',
+        // Scoped first: /clients/[id]/edit is Arabic (1 Oct 2026); other entities stay English.
+        label: scopedLabels[segments[i - 2]]?.edit ?? 'Edit',
         href: currentPath,
       });
     } else if (sectionLabels[segment] && i > 2 && segments[i - 2] === 'edit') {

@@ -22,6 +22,8 @@ import { orderMarketLabel } from "./helpers/order-market-label";
 import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { AWAITING_ACTIVATION } from "@/lib/orders/awaiting-activation";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
+import { checkFinanceAdmin } from "@/lib/require-finance-admin";
+import { getSalesCommissions } from "@/lib/commissions/get-sales-commissions";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +65,8 @@ function ownOrderStanding(rows: OrderRow[]): GroupStanding {
   };
 }
 
+/** قيمةُ `?rep=` للطلبات التي لا مندوبَ لها ولا لعميلها. */
+const NO_REP = "none";
 const PROVIDERS: PaymentProvider[] = ["NGENIUS", "TAMARA", "BANK_TRANSFER", "INSTAPAY", "MIGRATED"];
 /**
  * **الأسواقُ الثلاثة — والإجماليّ يُجمَع بالسوق لا بالعملة.**
@@ -85,8 +89,8 @@ const MARKET_HINT: Record<(typeof MARKETS)[number], string> = {
 };
 const TAKE = 50;
 
-export default async function OrdersPage({ searchParams }: { searchParams: Promise<{ status?: string; view?: string; provider?: string; market?: string; q?: string }> }) {
-  const { status, view, provider, market, q } = await searchParams;
+export default async function OrdersPage({ searchParams }: { searchParams: Promise<{ status?: string; view?: string; provider?: string; market?: string; q?: string; rep?: string }> }) {
+  const { status, view, provider, market, q, rep: repParam } = await searchParams;
   const query = (q ?? "").trim();
   // السوق حقلٌ على الطلب نفسه — لا يُستنتج من العملة، فقد تتغيّر العملة ويبقى السوق.
   const activeMarket = MARKETS.find((candidate) => candidate === market);
@@ -106,6 +110,27 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   const expiredOrderIds = isExpiredView ? await expiredOrderIdsPromise : null;
 
   /**
+   * مندوبُ كلّ طلب — مندوبُ الطلب نفسِه، وإلّا مندوبُ عميله: نفسُ قاعدة تقرير المبيعات
+   * (`get-sales-report.ts`). يُحسب هنا لا في الشرط، لأنّ «فارغٌ على الطلب» في مونغو غيابُ حقلٍ
+   * لا `null`، وشرطٌ على الغائب يعطي أصفاراً كاذبة.
+   */
+  const [repOrders, repClients] = await Promise.all([
+    db.checkoutOrder.findMany({ select: { id: true, clientId: true, salesRepId: true }, take: 5000 }),
+    db.client.findMany({ where: { salesRepId: { not: null } }, select: { id: true, salesRepId: true }, take: 5000 }),
+  ]);
+  const clientRep = new Map(repClients.map((c) => [c.id, c.salesRepId!]));
+  const repOfOrder = new Map(repOrders.map((o) => [o.id, o.salesRepId ?? (o.clientId ? clientRep.get(o.clientId) : undefined) ?? null]));
+  const repCounts = new Map<string, number>();
+  for (const r of repOfOrder.values()) repCounts.set(r ?? NO_REP, (repCounts.get(r ?? NO_REP) ?? 0) + 1);
+  const repStaff = await db.staff.findMany({
+    where: { id: { in: [...repCounts.keys()].filter((k) => k !== NO_REP) } },
+    select: { id: true, name: true },
+  });
+  const repName = new Map(repStaff.map((s) => [s.id, s.name ?? "—"]));
+  const activeRep = repParam === NO_REP || repName.has(repParam ?? "") ? repParam : undefined;
+  const repOrderIds = activeRep ? [...repOfOrder].filter(([, r]) => (r ?? NO_REP) === activeRep).map(([id]) => id) : null;
+
+  /**
    * البحثُ يُضاف إلى الفلتر لا يحلّ محلَّه — فيقرأ «المصريّون الذين اسمُهم كذا».
    * وهو على القاعدة لا على الصفوف المجلوبة، فيشمل ما وراء الخمسين المعروضة.
    */
@@ -123,6 +148,8 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   /** شرطُ الفلتر الواحد — يقود الجدولَ والإجماليَّ معاً فلا يقول أحدُهما غيرَ ما يقوله الآخر. */
   const filterWhere = expiredOrderIds
     ? { id: { in: expiredOrderIds } }
+    : repOrderIds
+      ? { id: { in: repOrderIds } }
     : isAwaitingView
       ? AWAITING_ACTIVATION
       : activeProvider
@@ -198,6 +225,22 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
 
   // يعتمد على الطلبات المجلوبة، فلا يدخل `Promise.all` أعلاه.
   const pageClientIds = [...new Set(orders.flatMap((order) => (order.clientId ? [order.clientId] : [])))];
+  // The rep's commission per order — the face beside the order number. Admin only: what the
+  // company pays its staff is not for the sales desk.
+  const commissionByOrder = new Map<string, NonNullable<OrderRow["commission"]>>();
+  if ((await checkFinanceAdmin()).status === "ok") {
+    for (const rep of await getSalesCommissions()) {
+      const paidOnByOrder = new Map<string, Date>();
+      for (const p of rep.payouts) for (const it of p.items) if (it.commissionMinor > 0) paidOnByOrder.set(it.orderId, p.paidOn);
+      for (const d of rep.deals) {
+        const money = (m: number) => formatOrderMoney(m, d.currency);
+        if (d.state === "settled") commissionByOrder.set(d.orderId, { state: "settled", label: `انصرفت عمولة ${rep.name} (${money(d.paidMinor)})${paidOnByOrder.get(d.orderId) ? ` — ${formatOrderDate(paidOnByOrder.get(d.orderId)!)}` : ""}` });
+        else if (d.state === "unpaid") commissionByOrder.set(d.orderId, { state: "unpaid", label: `عمولة ${rep.name} لسه ما انصرفت (${money(d.commissionMinor)})` });
+        else if (d.state === "clawback") commissionByOrder.set(d.orderId, { state: "clawback", label: `انصرفت عمولة ${rep.name} ثم استُردّ الطلب — تُخصم من صرفه القادم (${money(d.clawbackMinor)})` });
+      }
+    }
+  }
+
   const [firstArticleAt, clientCards, clientSubs] = await Promise.all([
     getFirstPublishedDates(pageClientIds),
     // اسمُ العميل من كرته لا من الطلب: المشتري قد يكون موظّفاً والحسابُ باسم المنشأة.
@@ -232,6 +275,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
       subscriptionState: standing.state,
       subscriptionDaysLeft: standing.daysLeft,
       subscriptionEndsLabel: standing.endsAt ? formatOrderDate(standing.endsAt) : null,
+      commission: commissionByOrder.get(order.id) ?? null,
       id: order.id,
       number: order.number,
       needsReview: order.notes?.startsWith("⚠") ?? false,
@@ -271,6 +315,8 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     const group = groupMap.get(key) ?? {
       key,
       clientId: order.clientId,
+      // مندوبُ أحدثِ طلب — الذي باع أو جدّد آخرَ مرّة.
+      repName: repName.get(repOfOrder.get(order.id) ?? "") ?? null,
       name: (order.clientId && clientById.get(order.clientId)?.name) || order.businessName || order.buyerName,
       paid: new Map<string, number>(),
       rows: [],
@@ -289,6 +335,8 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     ? "لا اشتراكات منتهية — كلُّ المفعَّل ساري."
     : activeProvider
       ? "لا اشتراكات عبر هذه البوّابة."
+    : activeRep
+      ? "لا طلبات لهذا المندوب."
     : isAwaitingView
     ? "ما فيه طلبٌ ينتظر التفعيل — كل طلبٍ مدفوع له حساب عميل."
     : activeStatus
@@ -353,6 +401,11 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
             marketCounts={marketCounts}
             marketLabels={MARKET_LABEL}
             activeMarket={activeMarket}
+            reps={[...repName]
+              .map(([id, name]) => ({ id, name, count: repCounts.get(id) ?? 0 }))
+              .sort((a, b) => b.count - a.count)
+              .concat(repCounts.has(NO_REP) ? [{ id: NO_REP, name: "بلا مندوب", count: repCounts.get(NO_REP)! }] : [])}
+            activeRep={activeRep}
           />
           <MonthlyRevenueStrip data={monthly} totals={totals} />
         </div>

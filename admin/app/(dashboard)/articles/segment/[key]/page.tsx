@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { SegmentPageHeader } from "@/components/shared/segment-page-header";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { db } from "@/lib/db";
-import { getArticleSeoScore } from "@/lib/seo/article-seo-score";
+import { ARTICLE_SEO_SELECT, getArticleSeoScore } from "@/lib/seo/article-seo-score";
 import { getArticleSegment } from "../segments";
 import { ArticleSegmentTable, type SegmentArticle } from "./components/article-segment-table";
 
@@ -22,7 +22,9 @@ import { ArticleSegmentTable, type SegmentArticle } from "./components/article-s
 // The admin's own analyzeArticleSEO stays where it belongs: inside the editor, scoring
 // the form as you type. That is a different question and deliberately a different number.
 
-const MAX_ROWS = 300;
+// 1000, not 300 (1 Oct 2026): at 313 articles the cap cut «فيها نقص سيو» to 227 while the
+// dashboard, which scores every article, said 240. The note below still shows if it is ever hit.
+const MAX_ROWS = 1000;
 
 export default async function ArticleSegmentPage({ params }: { params: Promise<{ key: string }> }) {
   const { key } = await params;
@@ -33,19 +35,14 @@ export default async function ArticleSegmentPage({ params }: { params: Promise<{
     where: segment.where,
     select: {
       id: true,
-      title: true,
+      // title · datePublished · dateModified come in ARTICLE_SEO_SELECT below.
       slug: true,
       status: true,
       viewsCount: true,
-      datePublished: true,
-      dateModified: true,
-      // The stored SEO fields the shared scorer reads — nothing more.
-      nextjsMetadata: true,
-      jsonLdStructuredData: true,
-      jsonLdValidationReport: true,
-      featuredImageId: true,
-      authorId: true,
-      clientId: true,
+      // The shared scorer's own select, spread — not retyped. The retyped list here missed
+      // `_count.relatedFrom`, so «links.related» failed for every row: the dashboard said 73
+      // articles at 100 and this page listed 0 (measured 1 Oct 2026).
+      ...ARTICLE_SEO_SELECT,
       client: { select: { name: true } },
       category: { select: { name: true } },
       author: { select: { name: true } },
@@ -77,25 +74,13 @@ export default async function ArticleSegmentPage({ params }: { params: Promise<{
     : scored;
 
   return (
-    <div className="mx-auto max-w-[1200px] space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold leading-tight">{segment.title}</h1>
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{segment.description}</p>
-        </div>
-        <Link
-          href="/"
-          className="shrink-0 rounded-md border border-input px-3 py-1.5 text-sm hover:bg-muted"
-        >
-          ← Back to dashboard
-        </Link>
-      </div>
+    <div dir="rtl" className="mx-auto max-w-[1200px] space-y-6">
+      <SegmentPageHeader title={segment.title} description={segment.description} count={`${articles.length} مقال`} />
 
       {articles.length === MAX_ROWS && (
         <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-700 dark:text-amber-400">
-          Showing the {MAX_ROWS} most recently updated. Scoring SEO means reading each article in
-          full, so the list is capped — a longer one would be slow, and a silently truncated list
-          that looks complete is worse than a slow one.
+          معروض آخر {MAX_ROWS} مقال تحدّث. قياس السيو يقرأ كل مقال كاملاً، فالقائمة محدودة — أطول منها
+          تصير بطيئة، وقائمة مقطوعة بصمت تبدو كاملة أسوأ من قائمة بطيئة. العدد الكامل في لوحة التحكم.
         </p>
       )}
 

@@ -28,9 +28,7 @@ export async function PlatformSeoOverall() {
       <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
         <GoogleIcon className="h-9 w-9 shrink-0" />
         <div className="shrink-0">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            Modonty · overall SEO
-          </p>
+          <p className="text-xs font-bold text-muted-foreground">SEO مدونتي الإجمالي</p>
           <span className={`text-5xl font-extrabold leading-none tabular-nums ${NUM[tier]}`}>
             {pct}%
           </span>
@@ -38,12 +36,12 @@ export async function PlatformSeoOverall() {
         <div
           className="flex h-2.5 min-w-[80px] flex-1 overflow-hidden rounded-full bg-red-500/20"
           role="img"
-          aria-label={`Overall SEO ${pct}%`}
+          aria-label={`SEO مدونتي الإجمالي ${pct}٪`}
         >
           <div className="bg-emerald-500" style={{ width: `${pct}%` }} />
         </div>
         <span className="shrink-0 text-[12px] text-muted-foreground">
-          {nArticles.toLocaleString("en-US")} articles · {nClients.toLocaleString("en-US")} clients
+          {nArticles.toLocaleString("en-US")} مقال · {nClients.toLocaleString("en-US")} عميل
         </span>
       </div>
     </div>

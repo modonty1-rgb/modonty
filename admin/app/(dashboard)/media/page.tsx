@@ -44,12 +44,12 @@ export default async function MediaPage({
   }));
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-6">
+    <div dir="rtl" className="max-w-[1200px] mx-auto space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <div>
-            <h1 className="text-xl font-semibold">Media Library</h1>
-            <p className="text-xs text-muted-foreground mt-0.5">Manage all media files in the system</p>
+            <h1 className="text-xl font-semibold">مكتبة الوسائط</h1>
+            <p className="text-xs text-muted-foreground mt-0.5">كل ملفات الوسائط في النظام</p>
           </div>
           <MediaStats stats={stats} />
         </div>

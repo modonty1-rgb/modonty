@@ -67,14 +67,14 @@ export function MediaToolbar({
           value={searchValue}
           onChange={(e) => onSearchChange(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter") onSearchSubmit(); }}
-          placeholder="Search by filename, alt text, or title..."
+          placeholder="ابحث باسم الملف أو النص البديل أو العنوان…"
           className="ps-9 h-9 text-sm"
         />
         {searchValue && (
           <button
             type="button"
             onClick={onSearchClear}
-            aria-label="Clear search"
+            aria-label="امسح البحث"
             className="absolute end-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
             <X className="h-3.5 w-3.5" />
@@ -91,7 +91,7 @@ export function MediaToolbar({
           size="sm"
           onClick={() => { onViewModeChange("grid"); onGridSizeChange("standard"); }}
           className="h-8 w-8 p-0"
-          title="Standard Grid"
+          title="شبكة عادية"
         >
           <Grid2x2 className="h-4 w-4" />
         </Button>
@@ -100,7 +100,7 @@ export function MediaToolbar({
           size="sm"
           onClick={() => { onViewModeChange("grid"); onGridSizeChange("compact"); }}
           className="h-8 w-8 p-0"
-          title="Compact Grid"
+          title="شبكة مضغوطة"
         >
           <LayoutGrid className="h-4 w-4" />
         </Button>
@@ -109,7 +109,7 @@ export function MediaToolbar({
           size="sm"
           onClick={() => onViewModeChange("list")}
           className="h-8 w-8 p-0"
-          title="List View"
+          title="قائمة"
         >
           <List className="h-4 w-4" />
         </Button>
@@ -122,10 +122,10 @@ export function MediaToolbar({
         size="sm"
         onClick={() => onGroupByClientChange(!groupByClient)}
         className="h-9 gap-1.5"
-        title="Group by client"
+        title="جمّع حسب العميل"
       >
         <FolderTree className="h-4 w-4" />
-        <span className="hidden sm:inline">Group</span>
+        <span className="hidden sm:inline">تجميع</span>
       </Button>
       )}
 
@@ -133,20 +133,20 @@ export function MediaToolbar({
       {mounted ? (
         <Select value={sortBy} onValueChange={onSortChange}>
           <SelectTrigger className="w-[140px] h-9">
-            <SelectValue placeholder="Sort by" />
+            <SelectValue placeholder="الترتيب" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest">Newest First</SelectItem>
-            <SelectItem value="oldest">Oldest First</SelectItem>
-            <SelectItem value="name-asc">Name (A-Z)</SelectItem>
-            <SelectItem value="name-desc">Name (Z-A)</SelectItem>
-            <SelectItem value="size-asc">Size (Smallest)</SelectItem>
-            <SelectItem value="size-desc">Size (Largest)</SelectItem>
+            <SelectItem value="newest">الأحدث أولاً</SelectItem>
+            <SelectItem value="oldest">الأقدم أولاً</SelectItem>
+            <SelectItem value="name-asc">الاسم (أ–ي)</SelectItem>
+            <SelectItem value="name-desc">الاسم (ي–أ)</SelectItem>
+            <SelectItem value="size-asc">الحجم (الأصغر)</SelectItem>
+            <SelectItem value="size-desc">الحجم (الأكبر)</SelectItem>
           </SelectContent>
         </Select>
       ) : (
         <div className="w-[140px] h-9 rounded-md border border-input bg-background flex items-center px-3 text-sm">
-          <span className="text-muted-foreground">Sort by</span>
+          <span className="text-muted-foreground">الترتيب</span>
         </div>
       )}
 
@@ -155,7 +155,7 @@ export function MediaToolbar({
       <Link href={uploadHref}>
         <Button size="sm" className="h-9 gap-1.5">
           <Upload className="h-4 w-4" />
-          Upload
+          ارفع
         </Button>
       </Link>
       )}

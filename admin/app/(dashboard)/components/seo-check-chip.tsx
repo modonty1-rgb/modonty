@@ -12,7 +12,26 @@ import type { SeoCheckTally } from "./seo-health-card";
  * page. Without items it stays a plain count (the shared card is used by sections that
  * don't provide the list yet). Tone follows the bucket: amber = owner lever, red = bug.
  */
-export function SeoCheckChip({ check, tone }: { check: SeoCheckTally; tone: "content" | "system" }) {
+/** The rubric's check names are English (shared scorer); the dashboard shows them in Arabic. */
+const AR: Record<string, string> = {
+  "SEO title": "عنوان SEO",
+  "SEO description": "وصف SEO",
+  "Share image": "صورة المشاركة",
+  "Hero image": "صورة الغلاف",
+  Logo: "الشعار",
+  "Local SEO": "السيو المحلي",
+  Identity: "الهوية",
+  Contact: "التواصل",
+  Presence: "الحضور",
+  "Business IDs": "المعرّفات التجارية",
+  "JSON-LD errors": "أخطاء JSON-LD",
+  "JSON-LD warnings": "تحذيرات JSON-LD",
+  "JSON-LD date": "تاريخ JSON-LD",
+  "OG type + date": "OG نوع + تاريخ",
+};
+
+export function SeoCheckChip({ check: raw, tone }: { check: SeoCheckTally; tone: "content" | "system" }) {
+  const check = { ...raw, label: AR[raw.label] ?? raw.label };
   const amber = tone === "content";
   const chipClass = amber
     ? "border-amber-500/30 bg-amber-500/10"
@@ -29,7 +48,7 @@ export function SeoCheckChip({ check, tone }: { check: SeoCheckTally; tone: "con
   // No drill-down data → plain, non-interactive chip (unchanged behaviour).
   if (!check.items || check.items.length === 0) {
     return (
-      <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] ${chipClass}`}>
+      <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-xs ${chipClass}`}>
         {chipInner}
       </span>
     );
@@ -42,7 +61,7 @@ export function SeoCheckChip({ check, tone }: { check: SeoCheckTally; tone: "con
       <PopoverTrigger asChild>
         <button
           type="button"
-          className={`inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] transition-colors hover:brightness-110 ${chipClass}`}
+          className={`inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-full border px-2 py-0.5 text-xs transition-colors hover:brightness-110 ${chipClass}`}
         >
           {chipInner}
         </button>
@@ -51,10 +70,10 @@ export function SeoCheckChip({ check, tone }: { check: SeoCheckTally; tone: "con
         <div className="border-b px-3 py-2" dir="rtl">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold">{check.label}</span>
-            <span className={`text-[11px] font-extrabold tabular-nums ${numClass}`}>{check.failing}</span>
+            <span className={`text-xs font-extrabold tabular-nums ${numClass}`}>{check.failing}</span>
           </div>
           {check.desc && (
-            <p className="mt-1 text-[11px] leading-snug text-muted-foreground">{check.desc}</p>
+            <p className="mt-1 text-xs leading-snug text-muted-foreground">{check.desc}</p>
           )}
         </div>
         <div className="max-h-64 overflow-y-auto py-1">
@@ -70,7 +89,7 @@ export function SeoCheckChip({ check, tone }: { check: SeoCheckTally; tone: "con
           ))}
         </div>
         {hidden > 0 && (
-          <div className="border-t px-3 py-1.5 text-[11px] text-muted-foreground">+{hidden} أكثر</div>
+          <div className="border-t px-3 py-1.5 text-xs text-muted-foreground">+{hidden} أكثر</div>
         )}
       </PopoverContent>
     </Popover>

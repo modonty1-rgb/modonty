@@ -61,7 +61,7 @@ export function PasswordField({
     <div className="space-y-1">
       <div className="flex items-center justify-between gap-2">
         <Label htmlFor="password" className="text-[11px] font-medium leading-none text-muted-foreground">
-          Password
+          كلمة المرور
         </Label>
         <button
           type="button"

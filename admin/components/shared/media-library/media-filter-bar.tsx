@@ -30,7 +30,7 @@ export function useFilterParam() {
 const ITEM = "text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-sm";
 
 function Count({ n }: { n: number }) {
-  return <span className="ms-1.5 rounded-full bg-foreground/10 px-1.5 text-[10px] font-semibold tabular-nums">{n}</span>;
+  return <span className="ms-1.5 rounded-full bg-foreground/10 px-1.5 text-xs font-semibold tabular-nums">{n}</span>;
 }
 
 /**
@@ -63,10 +63,10 @@ export function MediaKindToggles({
         value={kind}
         onValueChange={(v) => { if (v) update("kind", v); }}
         disabled={isPending}
-        aria-label="Type"
+        aria-label="النوع"
         className="h-auto flex-wrap justify-start"
       >
-        <ToggleGroupItem value="all" className={ITEM}>All<Count n={total} /></ToggleGroupItem>
+        <ToggleGroupItem value="all" className={ITEM}>الكل<Count n={total} /></ToggleGroupItem>
         {kinds.map((k) => (
           <ToggleGroupItem key={k.value} value={k.value} className={ITEM}>
             {k.label}<Count n={byKind[k.value] ?? 0} />
@@ -81,7 +81,7 @@ export function MediaKindToggles({
           aria-pressed={issuesOn}
           onClick={() => update("issues", issuesOn ? null : "1")}
           disabled={isPending}
-          title="Wrong format, ratio or size — the files with the warning triangle"
+          title="صيغة أو نسبة أو حجم غلط — الملفات اللي عليها مثلث التحذير"
           className={
             "inline-flex h-9 items-center gap-1 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60 " +
             (issuesOn
@@ -90,10 +90,10 @@ export function MediaKindToggles({
           }
         >
           <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
-          Issues<Count n={issues} />
+          مشاكل<Count n={issues} />
         </button>
       )}
-      {isPending && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-label="Updating" />}
+      {isPending && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-label="يحدّث" />}
     </div>
   );
 }
@@ -103,13 +103,13 @@ export function MediaUsageSelect({ used, unused }: { used: number; unused: numbe
   const { searchParams, update, isPending } = useFilterParam();
   return (
     <Select value={searchParams.get("used") ?? "all"} onValueChange={(v) => update("used", v)} disabled={isPending}>
-      <SelectTrigger className="h-9 w-[140px] text-xs" aria-label="Usage">
+      <SelectTrigger className="h-9 w-[140px] text-xs" aria-label="الاستخدام">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">All usage</SelectItem>
-        <SelectItem value="used">In use · {used}</SelectItem>
-        <SelectItem value="unused">Unused · {unused}</SelectItem>
+        <SelectItem value="all">كل الاستخدام</SelectItem>
+        <SelectItem value="used">مستخدمة · {used}</SelectItem>
+        <SelectItem value="unused">غير مستخدمة · {unused}</SelectItem>
       </SelectContent>
     </Select>
   );
@@ -165,7 +165,7 @@ export function UrlSearchPicker({
         <button
           type="button"
           onClick={() => pick(null)}
-          aria-label={`Clear ${ariaLabel.toLowerCase()}`}
+          aria-label={`امسح ${ariaLabel}`}
           title={allLabel}
           className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
         >

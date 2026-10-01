@@ -9,6 +9,8 @@ import { loadSiteUrl } from "@/lib/seo/site-url";
 import { formatOrderMoney } from "@/lib/orders/format-order-money";
 import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { ActivateButton } from "./components/activate-button";
+import { LinkRenewalButton } from "./components/link-renewal-button";
+import { findExistingClientForOrder } from "./helpers/find-existing-client-for-order";
 
 /**
  * **صفحةُ عرضٍ وزرّ — لا فورم.**
@@ -54,9 +56,11 @@ export default async function ActivateOrderPage({ params }: { params: Promise<{ 
   if (!order) notFound();
   if (order.status !== "PAID" || order.clientId) redirect("/clients/activate");
 
-  const rep = order.salesRepId
-    ? await db.staff.findUnique({ where: { id: order.salesRepId }, select: { name: true } })
-    : null;
+  const [rep, existingClient] = await Promise.all([
+    order.salesRepId ? db.staff.findUnique({ where: { id: order.salesRepId }, select: { name: true } }) : null,
+    // A renewal of an account that already exists is linked to it, never activated a second time.
+    findExistingClientForOrder(order),
+  ]);
 
   const paidAt = order.paidAt ?? order.createdAt;
   const serviceMonths = order.paidMonths + order.bonusServiceMonths;
@@ -167,7 +171,22 @@ export default async function ActivateOrderPage({ params }: { params: Promise<{ 
         </dl>
       </section>
 
-      <ActivateButton orderId={order.id} />
+      {existingClient ? (
+        <section className="space-y-3 rounded-lg border border-primary/30 bg-primary/5 p-4">
+          <p className="text-sm">
+            <b>تجديدٌ لعميلٍ قائم:</b>{" "}
+            <Link href={`/clients/${existingClient.id}`} className="font-medium text-primary hover:underline">
+              {existingClient.name}
+            </Link>
+          </p>
+          <p className="text-[12px] text-muted-foreground">
+            بريدُ الطلب لحسابٍ موجود، فلا يُفتح حسابٌ ثانٍ. الربطُ يضع الطلب على حسابه، ويجعله الصفقةَ السارية، ويمدّ اشتراكه.
+          </p>
+          <LinkRenewalButton orderId={order.id} clientName={existingClient.name} />
+        </section>
+      ) : (
+        <ActivateButton orderId={order.id} />
+      )}
     </main>
   );
 }

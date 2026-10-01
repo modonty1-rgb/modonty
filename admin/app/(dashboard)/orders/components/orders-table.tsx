@@ -1,7 +1,7 @@
 "use client";
 
 import type { CheckoutOrderStatus } from "@prisma/client";
-import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, Minus, Plus, ReceiptText } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, Frown, Minus, Plus, ReceiptText, Smile } from "lucide-react";
 import { Fragment, useState } from "react";
 import Link from "next/link";
 
@@ -46,6 +46,12 @@ export interface OrderRow {
   subscriptionState: SubscriptionState;
   subscriptionDaysLeft: number | null;
   subscriptionEndsLabel: string | null;
+  /**
+   * The rep's commission on this order (admin only; null = no rep, nothing to pay, or not admin):
+   * `settled` paid out (smiling face) · `unpaid` still owed (frowning) · `clawback` paid, then
+   * refunded — owed back (frowning, red).
+   */
+  commission?: { state: "unpaid" | "settled" | "clawback"; label: string } | null;
 }
 
 const EMPTY = <span className="text-muted-foreground">—</span>;
@@ -142,9 +148,21 @@ const COLUMNS: Column<OrderRow>[] = [
     header: "رقم الطلب",
     className: FIT,
     render: (r) => (
-      <Link href={`/orders/${r.id}`} className="whitespace-nowrap font-medium tabular-nums underline-offset-2 hover:underline">
-        {r.number}
-      </Link>
+      <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+        <Link href={`/orders/${r.id}`} className="font-medium tabular-nums underline-offset-2 hover:underline">
+          {r.number}
+        </Link>
+        {/* Khalid (30 Sep 2026): a sad face while the rep's commission is unpaid, a happy one once it went out. */}
+        {r.commission && (
+          <span title={r.commission.label} className="inline-flex">
+            {r.commission.state === "settled" ? (
+              <Smile className="size-4 text-emerald-600" role="img" aria-label={r.commission.label} />
+            ) : (
+              <Frown className={r.commission.state === "clawback" ? "size-4 text-rose-600" : "size-4 text-amber-600"} role="img" aria-label={r.commission.label} />
+            )}
+          </span>
+        )}
+      </span>
     ),
   },
   { key: "createdAtMs", header: "التاريخ", className: FIT, sortFn: byNumber((r) => r.createdAtMs), render: (r) => <span className="tabular-nums text-muted-foreground">{r.createdAtLabel}</span> },
@@ -196,6 +214,8 @@ export interface ClientGroup {
   key: string;
   clientId: string | null;
   name: string;
+  /** مندوبُ أحدثِ طلبٍ للعميل (أو مندوبُ العميل إن خلا الطلب) — `null` بلا مندوب. */
+  repName: string | null;
   /** المقبوضُ من طلباته المدفوعة بعملاته — `null` حين لا شيء مدفوع. */
   paidLabel: string | null;
   /**
@@ -256,6 +276,7 @@ export function OrdersTable({ groups, emptyText }: { groups: ClientGroup[]; empt
             <TableRow className="bg-muted/70 hover:bg-muted/70">
               <TableHead className="h-10 w-[1%] px-2" aria-label="فتح الطلبات" />
               <TableHead className="h-10 text-right text-[12px] font-bold text-foreground">العميل</TableHead>
+              <TableHead className="h-10 w-[1%] whitespace-nowrap text-right text-[12px] font-bold text-foreground">المندوب</TableHead>
               <TableHead className="h-10 w-[1%] whitespace-nowrap text-right text-[12px] font-bold text-foreground">السوق</TableHead>
               <TableHead className="h-10 w-[1%] whitespace-nowrap text-right text-[12px] font-bold text-foreground">الطلبات</TableHead>
               <TableHead className="h-10 w-[1%] whitespace-nowrap text-right text-[12px] font-bold text-foreground">الباقة الحالية</TableHead>
@@ -321,6 +342,7 @@ export function OrdersTable({ groups, emptyText }: { groups: ClientGroup[]; empt
                         ) : null}
                       </span>
                     </TableCell>
+                    <TableCell className="whitespace-nowrap py-2">{g.repName ?? EMPTY}</TableCell>
                     <TableCell className="whitespace-nowrap py-2 text-muted-foreground">{market ?? "—"}</TableCell>
                     <TableCell className="py-2">
                       <span
@@ -342,7 +364,7 @@ export function OrdersTable({ groups, emptyText }: { groups: ClientGroup[]; empt
 
                   {isOpen ? (
                     <TableRow className="hover:bg-transparent">
-                      <TableCell colSpan={8} className="border-s-2 border-s-primary bg-primary/[0.04] px-4 pb-4 pt-1">
+                      <TableCell colSpan={9} className="border-s-2 border-s-primary bg-primary/[0.04] px-4 pb-4 pt-1">
                         {/* الفرعيُّ لوحةٌ داخل سطر العميل: عنوانٌ يسمّيه، ثمّ جدولٌ أصغرُ خطّاً
                             وأخفُّ رأساً ومُزاحٌ تحت الاسم — فلا يُخلط بجدول العملاء. */}
                         <div className="ms-8">

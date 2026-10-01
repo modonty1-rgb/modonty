@@ -34,6 +34,8 @@ export interface QuestionRow {
 export interface QuestionsReport {
   rows: QuestionRow[];
   kpi: { pending: number; team: number; visitor: number; oldestWaitingDays: number | null; clientsWaiting: number };
+  /** True when a table hit MAX_ROWS — the numbers below are then a floor, not a total. */
+  truncated: boolean;
   byClient: Array<{ name: string; team: number; visitor: number }>;
   byOrigin: Array<{ origin: QuestionOrigin; pending: number }>;
 }
@@ -41,6 +43,13 @@ export interface QuestionsReport {
 const dayGap = (from: Date): number => Math.floor((Date.now() - from.getTime()) / (24 * 60 * 60 * 1000));
 const kindOf = (source: string | null): QuestionKind =>
   source === "user" || source === "chatbot" ? "visitor" : "team";
+
+/**
+ * Per table. Was 500 and the KPIs were computed from the rows read, so every number on the page
+ * stopped at 500 while the dashboard counted 583 (measured 1 Oct 2026). A pending FAQ is a few
+ * short fields, so reading them all is cheap; if this ceiling is ever reached the page says so.
+ */
+const MAX_ROWS = 5000;
 
 export async function getQuestionsReport(): Promise<QuestionsReport> {
   const [articleQs, clientQs] = await Promise.all([
@@ -56,7 +65,7 @@ export async function getQuestionsReport(): Promise<QuestionsReport> {
         article: { select: { title: true, client: { select: { name: true } } } },
       },
       orderBy: { createdAt: "desc" },
-      take: 500,
+      take: MAX_ROWS,
     }),
     db.clientFAQ.findMany({
       where: { status: "PENDING" },
@@ -70,7 +79,7 @@ export async function getQuestionsReport(): Promise<QuestionsReport> {
         client: { select: { name: true } },
       },
       orderBy: { createdAt: "desc" },
-      take: 500,
+      take: MAX_ROWS,
     }),
   ]);
 
@@ -112,6 +121,7 @@ export async function getQuestionsReport(): Promise<QuestionsReport> {
 
   return {
     rows,
+    truncated: articleQs.length === MAX_ROWS || clientQs.length === MAX_ROWS,
     kpi: {
       pending: rows.length,
       team: rows.filter((r) => r.kind === "team").length,

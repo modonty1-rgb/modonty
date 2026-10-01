@@ -13,23 +13,23 @@ interface MediaSegment {
 
 const SEGMENTS: Record<MediaSegmentKey, MediaSegment> = {
   unused: {
-    title: "Unused files",
+    title: "ملفات غير مستخدمة",
     description:
-      "Nothing points at them — not an article's featured image, not its gallery, not a client logo or hero. They cost storage and nothing else.",
+      "ما شي يشير لها — لا صورة مقال رئيسية ولا معرضه ولا شعار عميل ولا غلافه. تكلّف تخزين وبس.",
   },
   "no-alt": {
-    title: "No alt text",
+    title: "بلا نص بديل (alt)",
     description:
-      "Invisible in Google Images and unreadable by a screen reader. It is 50 points of the image's SEO score and the single most valuable field to fill.",
+      "ما تظهر في صور جوجل وما يقرأها قارئ الشاشة. تساوي 50 نقطة من سيو الصورة، وهي أهم حقل تعبّيه.",
   },
   "failing-seo": {
-    title: "Failing SEO",
-    description: "Below 60. Alt text, dimensions, description or filename is letting them down.",
+    title: "تفشل في السيو",
+    description: "تحت 60. النص البديل أو الأبعاد أو الوصف أو اسم الملف ينقصها.",
   },
   "no-dimensions": {
-    title: "No dimensions stored",
+    title: "بلا أبعاد محفوظة",
     description:
-      "No width or height on the record. The browser cannot reserve space for them (layout shift), and they cannot be used as a share image.",
+      "ما في عرض ولا ارتفاع في السجل. المتصفح ما يحجز لها مكان (الصفحة تقفز)، وما تصلح صورة مشاركة.",
   },
 };
 

@@ -1,8 +1,11 @@
 import { Building2, FolderTree, Tag, User, type LucideIcon } from "lucide-react";
 
-import { getReferenceSeoCounts, type ReferenceGroup } from "../../actions/reference-seo-counts";
-import { CARD_GRID, SummaryChip, TierCard } from "../dashboard-ui";
-import { CollapsibleSection } from "../collapsible-section";
+const LABEL: Record<ReferenceGroup["key"], string> = { categories: "الفئات", tags: "الوسوم", industries: "الصناعات", authors: "الكتّاب" };
+
+import type { ReferenceGroup } from "../../actions/reference-seo-counts";
+import { referenceSeoCounts } from "@/lib/dashboard/cached";
+import { CARD_GRID, TierCard } from "../dashboard-ui";
+import { PanelHead } from "../panel-head";
 
 /**
  * Reference data. Four indexed listing
@@ -19,31 +22,27 @@ const ICON: Record<ReferenceGroup["key"], LucideIcon> = {
 };
 
 export async function ReferenceData() {
-  const groups = await getReferenceSeoCounts();
+  const groups = await referenceSeoCounts();
   const totalFailing = groups.reduce((s, g) => s + g.failing, 0);
 
   return (
-    <CollapsibleSection
-      iconNode={<FolderTree className="h-4 w-4 text-muted-foreground" />}
-      title="Categories & tags"
-      subtitle="+ industries & authors — indexed listing pages"
-      storageKey="dashReferenceOpen"
-      summary={groups.map((g) => (
-        <SummaryChip key={g.key} icon={ICON[g.key]} value={g.total} tier={g.failing > 0 ? "warm" : "ok"} />
-      ))}
-      right={
-        <p className="text-xs text-muted-foreground">
-          <span
-            className={`text-base font-bold tabular-nums ${
-              totalFailing > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
-            }`}
-          >
-            {totalFailing}
-          </span>{" "}
-          below 60
-        </p>
-      }
-    >
+    <>
+      <PanelHead
+        title="الفئات والوسوم"
+        hint="+ الصناعات والكتّاب — صفحات قوائم مؤرشفة"
+        right={
+          <p className="text-xs text-muted-foreground">
+            <span
+              className={`text-base font-bold tabular-nums ${
+                totalFailing > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
+              }`}
+            >
+              {totalFailing}
+            </span>{" "}
+            تحت 60
+          </p>
+        }
+      />
       <div className={CARD_GRID}>
         {groups.map((g) => (
           <TierCard
@@ -52,17 +51,17 @@ export async function ReferenceData() {
             tier={g.failing > 0 ? "warm" : "ok"}
             icon={ICON[g.key]}
             value={g.total}
-            label={g.label}
+            label={LABEL[g.key]}
             note={
               g.failing > 0
                 ? g.failing === g.total
-                  ? `all ${g.total} failing — nothing generated`
-                  : `${g.failing} of ${g.total} below 60`
-                : `all ${g.total} healthy ✓`
+                  ? `كلها ${g.total} تفشل — ما تولّد شي`
+                  : `${g.failing} من ${g.total} تحت 60`
+                : `كلها ${g.total} سليمة`
             }
           />
         ))}
       </div>
-    </CollapsibleSection>
+    </>
   );
 }

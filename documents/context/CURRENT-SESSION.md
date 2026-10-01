@@ -1,79 +1,72 @@
 # الجلسة الحاليّة
 
-**٣٠ سبتمبر ٢٠٢٦: أرقام جوجل في الكونسول وتقرير Looker وقسم KPI في الأدمن**
+**٣٠ سبتمبر ٢٠٢٦ (مساءً): عمولات المناديب في الأدمن، وفحص الكونسول على الجوّال، وإصلاح السينك**
 
 ## وقفنا عند
 
-رفعنا صفحة KPI › Content (`94a805b`) وقرأنا أرقامها على الإنتاج. سألنا خالد عن ٨ عملاء بلا كاتب في كرت «Unassigned»، ظهورهم كله ٣ مرات، ولم يجب بعد.
+رجّعنا دايلوج الصرف في صفحة العمولات. الدايلوج يطلع مرّة واحدة لكل ضغطة على «اصرف المحدد»، وفيه تاريخ الصرف وملاحظة. وشلنا خانة الملاحظة من شريط الجدول. جرّبناه حيّاً على dev.
 
-**الخطوة التالية:** ننتظر جوابه عن تعيين كتّاب لهؤلاء العملاء، ثم صفحات KPI القادمة (Graphics وSales) في نفس القسم.
+**كل شغل هذه الجلسة غير مثبّت وغير مرفوع.**
 
-## ما أُنجز ورُفع (الأحدث أولاً)
+**الخطوة التالية:** ننتظر `push>` من خالد. على الإنتاج نحتاج جدولَي العمولات وفهارسهما (`prisma db push`)، ولا ننفّذ ذلك إلا بأمره.
 
-| الكوميت | العمل |
+## ما أُنجز (غير مثبّت)
+
+| العمل | الملفّات |
 |---|---|
-| `94a805b` | الأدمن: قسم KPI فيه صفحة Content. كرت لكل كاتب (EDITOR عبر `Client.editorId`)، مرتّب بالنقرات. فيه: الظهور والنقرات ونسبة النقر والترتيب، والتغيّر عن الفترة السابقة، وكم مقال ظهر، وأقوى مقال، والظهور حسب الدولة، وأعلى دولة لكل عميل. الفلتر ٧ / ٢٨ / ٩٠ يوماً وAll time (١٦ شهراً). للأدمن فقط. |
-| `502a6ef` | الكونسول: بطاقة Google Analytics كانت تسقط بخطأ 400. حذفنا طلب Realtime، لأن جوجل ترفض فيه `customEvent:client_id`. التقارير صارت `allSettled`، والرسالة بالعربي. |
-| `c2f29b1` | الكونسول: زرّ «تأكّد من أرقامك في تقرير جوجل»، ونقلنا شعار جوجل إلى `shared/components/icons/google-icon.tsx`. |
-| `a916915` | الكونسول: لوحة جديدة بأرقام سيرش كونسل للعميل (فلتر فترة، وشريط انتباه ثابت، ورسوم)، ومعها الرابط `/api/google-report`. |
-
-**الملفّات الأساسية:**
-- **الأدمن:**
-  - `admin/app/(dashboard)/kpi/content/`: `page`، `loading`، `components/writer-card`، `helpers/get-content-kpis`، `helpers/country-name`.
-  - `admin/components/admin/sidebar.tsx`: مجموعة «KPI».
-- **المشترك:**
-  - `shared/lib/google/query-modonty-search.ts`: استعلام سيرش كونسل، يستعمله الأدمن والكونسول.
-  - `shared/lib/google/get-google-service-token.ts`.
-- **الكونسول:**
-  - `console/lib/google/`: `sign-` و`verify-google-report-key` (HMAC بـ`ADMIN_CONSOLE_ACCESS_SECRET` وبادئة `google-report:`)، و`get-client-page-paths`، و`get-client-search-rows`، و`get-google-report-url`.
-  - `console/app/api/google-report/route.ts`، ومعه `looker-connector/Code.gs` و`appsscript.json`، وهما نسخة مطابقة لما هو منشور في Google.
-  - `console/lib/analytics/ga4-data-api.ts` و`dashboard/analytics/components/ga4-realtime-card.tsx`.
-
-## تقرير Google (Looker Studio)
-
-- **الموصّل:** مشروع Apps Script اسمه «Modonty — Google Report Connector» في حساب modonty1، والنشر Head Deployment `AKfycbzlCwNQYq_oBTB01dvEZTrgEoChK4JYMGGff8paC3k`.
-- **مصدر البيانات:** «مدونتي — أداء جوجل» `68f34f4b-…`، والمعامل `ds0.key` قابل للتعديل من الرابط.
-- **التقرير:** `bac9ee3d-7004-422f-8ddf-ed158b823fe3`، مشارك Unlisted للمشاهدة فقط.
-- **تقرير صفحة `/analytics` في مدونتي:** «تحاليل مدوّنتي» `e2a0618d`، رابطه القصير `s/nBnyGkiUdGw`. **لا يُمسّ.**
-- **إذا عدّلنا `Code.gs`:** نلصق التعديل في مشروع Apps Script عبر monaco، ثم نحفظ.
+| **عمولات المناديب:** نسبة لكل مندوب (جديد وتجديد)، على المبلغ قبل الضريبة. الاسترداد يُلغي العمولة، وما انصرف منها يُخصم من الصرفية القادمة. تغيير النسبة لا يمسّ الصفقات القديمة. الصرف يكون بتحديد الطلبات ثم الضغط على «اصرف المحدد»، والصفحة للأدمن فقط. | `shared/prisma/schema/schema.prisma` (`SalesCommissionRate` و`SalesCommissionPayout`، ونوع `SalesCommissionPayoutItem`) · `admin/lib/commissions/get-sales-commissions.ts` · `admin/app/(dashboard)/sales-commissions/` (`page`، و`loading`، و`components/unpaid-orders-table`، و`delete-payout-button`، و`actions/record-` و`delete-commission-payout`) |
+| **النسبة من صفحة الموظف (SALES):** بدون رابط لصفحة العمولات. | `admin/app/(dashboard)/users/[id]/` (`page`، و`components/commission-rate-section`، و`rate-dialog`، و`actions/set-commission-rate`) · `admin/lib/audit/log-action.ts` |
+| **ربط التجديد بالعميل القائم** من صفحة التفعيل. | `admin/app/(dashboard)/clients/activate/[orderId]/` (`helpers/find-existing-client-for-order`، و`actions/link-renewal-to-client`، و`components/link-renewal-button`، و`page`) |
+| **صفحة `/orders`:** وجه مبتسم أو زعلان للعمولة جنب رقم الطلب (للأدمن). عمود «المندوب» جنب العميل: مندوب أحدث طلب، وإلّا مندوب العميل. حبوب فلتر للمناديب `?rep=` ومعها «بلا مندوب». | `admin/app/(dashboard)/orders/page.tsx` · `components/orders-table.tsx` · `components/order-status-filter.tsx` |
+| **قائمة المبيعات:** بند «عمولات المناديب» للأدمن. | `admin/components/admin/sales-menu.tsx` · `header.tsx` · `admin/app/(dashboard)/layout.tsx` · `breadcrumb-utils.ts` |
+| **عين كلمة المرور** في صفحة الموظف. | `admin/app/(dashboard)/users/components/user-form.tsx` |
+| **السينك يحتفظ بحسابات الموظفين المحلّيّة:** سبب خطأ «An unexpected response…» أن الحساب انمسح فسقطت الجلسة. | `admin/app/api/dev/sync-local-from-prod/route.ts` |
+| **فحص الكونسول على الجوّال:** بدون أي فيضان، والأزرار الصغيرة كبرت إلى 44، والخطوط الصغيرة صارت 12. | `console/components/ui/{button,input,checkbox,sheet}.tsx` · ملفّات كثيرة في `console/app/(dashboard)/` · `shared/components/ui/switch.tsx` · `shared/components/confirm-delete-button.tsx` · `shared/components/media-upload-zone.tsx` |
+| **سكربتات الفحص:** | `.claude/skills/subscriber-journey-qa/scripts/` (`_mobile-audit.mjs`، و`mobile-run.mjs`، و`console-mobile-run.mjs`) |
 
 ## قرارات خالد السارية
 
-- **KPI الكتّاب:** المقياس هو جوجل فقط.
-- **لا نستبعد أي عميل من KPI:** «مدونتي» تُحسب لكاتبها طارق.
-- **لا Google Sheet:** التقرير واحد لكل العملاء، والمفتاح موقَّع، ولا يوجد إدخال يدوي.
+- **مصدر العمولة:** تُحسب من الطلب، ولا تُخزَّن. المخزَّن فقط الصرفيات، ومعها مبلغ كل طلب يوم الصرف.
+- **التجديد:** نسبته أقل. والعميل الذي استُرد طلبه الأول، يُحسب طلبه المدفوع التالي «جديداً».
+- **دايلوج الصرف:** يبقى، لأنه يطلع مرّة واحدة لكل ضغطة لا لكل سطر.
+- **وجوه العمولة في `/orders`:** أيقونات Smile وFrown من lucide، لا إيموجي.
+- **بيانات التجربة:** لا تُحذف.
 
-## قيود مقيسة
+## حالة dev بعد سينك الليلة
 
-- **تقسيم الصفحات حسب الدولة يُسقط الظهور المحجوب للخصوصية:**
-  - على الموقع كله: ٣٩١٬٠٢٨ ظهوراً بالصفحة، مقابل ٢٠٤٬٤٣٠ بالصفحة والدولة.
-  - الكرت يكتب النسبة المغطّاة.
-- **Realtime في GA4:** لا يدعم الأبعاد من نوع event-scoped.
-- **فتح الكونسول من الأدمن عبر Playwright:** نافذة الزرّ أحياناً تفتح خارج سيطرة Playwright. الحلّ أن نفتح `console.modonty.com/...` مباشرة، لأن جلسة آخر عميل تبقى.
+`modonty_dev` صارت نسخة من الإنتاج.
 
-## الفحوص (هذه الجلسة، مقيسة)
+- **طلبات تجربة العمولات القديمة:** اختفت.
+- **جداول العمولات:** باقية، لأنها غير موجودة في الإنتاج. فيها نسبتان وصرفية ٠٠٠٥١ (١٠٤٫٠٩ ر.س)، وهذه الصرفية تشير لطلب غير موجود، فتضخّم رقم «ما انصرف له».
+- **حساب `claude-check@modonty.local`:** أُعيد بنفس المعرّف `6aa404ee…`.
+- **حسابات مفقودة:** `claude-check-editor@modonty.local` و`q-01@test.local` (الكونسول)، ولم تُعَد.
+- **ملاحظة:** طلبات «[تجربة]» موجودة في الإنتاج نفسه، منها ORD-2026-00054 مدفوع اليوم.
 
-- **tsc:** الأدمن والكونسول ومدونتي كلها exit 0 قبل كل دفع.
-- **عيّنة ١٠ عملاء عشوائيين من ٤٦:** دخلنا من الأدمن عبر «Open Client Console». أرقام الكونسول والرابط `/api/google-report` وتقرير Looker (بمتصفّح غير مسجَّل) تطابقت في العشرة. المفتاح المعدَّل يرجع 401.
-- **Vercel:** الكونسول Ready لـ`c2f29b1` و`502a6ef`. صفحة KPI تعمل على `admin.modonty.com`.
+## معلّق بقرار خالد
+
+- **حذف الصرفية اليتيمة ٠٠٠٥١.**
+- **إعادة حسابَي الفحص** (EDITOR والكونسول)، وتوسيع السينك ليحفظ حساب الكونسول أيضاً.
+- **proxy.ts:** إن انتهت الجلسة ينقل لصفحة الدخول نظيفاً بدل رسالة الخطأ. هذا اقتراح لم يُنفَّذ.
+- **KPI:** الـ٨ عملاء بلا كاتب، وصفحات Graphics وSales لاحقاً.
+- **تذكير:** أرقام واتساب من الإعلانات (CTWA).
 
 ## Git
 
-- الفرع `main`، ومتزامن مع origin (0 0). آخر كوميت `94a805b`.
-- **غير مثبّت:** `documents/tasks/*` (TASK، والأرشيف، و`task-data.json`)، مع هذا الملف.
-- **غير متتبَّع، لا يُثبَّت:** `docs/`، و`documents/HTML/modonty-registration.html`، و`documents/remotion-assets/`، و`modonty/scratch-flow-db.mjs`.
+- الفرع `main`، وآخر كوميت `0070542`، ومتزامن مع origin عند آخر فحص.
+- **غير مثبّت:** ~115 مسار (الجدول أعلاه، مع تعديلات قديمة غير متعلّقة في الأدمن والكونسول).
+- **ملفّات جديدة غير متتبَّعة:** `sales-commissions/` و`lib/commissions/` وأخرى، فلا يوجد `git diff` لها.
 
-## معلّق
+## الفحوص
 
-- **تذكير:** أرقام واتساب من الإعلانات (CTWA)، والسؤال: هل الرقم على التطبيق أم على API؟
-- **لقطات الكونسول للجوال لـRemotion:** أوقفها خالد، ولم تُستأنف.
-- **تنظيف بيانات تجربة على `modonty_dev`:** qa-sub-01..99 والتعليقات والمتابعات، ويحتاج إذن خالد (`cleanup.mjs --apply`).
+- **حيّاً على dev (Playwright، هذه الجلسة):**
+  - العمولات: الصرف والحذف والخصم والوجوه.
+  - فلتر المناديب: ٢٤ + ٦ + ٢٢ = ٥٢ = «الكل».
+  - السينك: ١٢٢/١٢٢ جدولاً، وصفر صفوف مكسورة، وstaff ١٨.
+  - دايلوج الصرف: يفتح ويُلغى.
+- **tsc/build:** UNVERIFIED. يُشغَّلان مع `push>` فقط.
 
 ## ملاحظات تشغيل
 
-- **سيرفرات dev:** مدونتي 3000، والأدمن 3001، والكونسول 3002.
-- **حسابات الفحص:**
-  - أدمن محلّي: `claude-check@modonty.local`.
-  - كونسول dev: `شركة-جبر-سيو`.
-- **الحذف:** بـPowerShell فقط، لأن `rm` مرفوض.
-- **tsc:** لا يُشغَّل إلا مع `push>`، وهذا حاجز hook.
+- **سيرفرات dev:** الأدمن 3001 والكونسول 3002. إعادة توليد Prisma تتطلب إيقافهما أولاً (خطأ EPERM).
+- **الحذف:** بـPowerShell فقط.
+- **Playwright:** لا `browser_resize`.

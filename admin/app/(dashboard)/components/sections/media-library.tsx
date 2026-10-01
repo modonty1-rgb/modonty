@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { AlertTriangle, Database, Image as ImageIcon } from "lucide-react";
 
-import { getMediaCounts } from "../../actions/media-counts";
-import { CARD_GRID, Ghost, SummaryChip, TierCard, ZChip } from "../dashboard-ui";
-import { CollapsibleSection } from "../collapsible-section";
+import { mediaCounts } from "@/lib/dashboard/cached";
+import { CARD_GRID, Ghost, TierCard, ZChip } from "../dashboard-ui";
+import { PanelHead } from "../panel-head";
 
 /**
  * Media. Two questions only:
@@ -12,22 +12,13 @@ import { CollapsibleSection } from "../collapsible-section";
  */
 
 export async function MediaLibrary() {
-  const { total, used, unused, noAlt, failingSeo, noDimensions } = await getMediaCounts();
+  const { total, used, unused, noAlt, failingSeo, noDimensions } = await mediaCounts();
 
   return (
-    <CollapsibleSection
-      iconNode={<ImageIcon className="h-4 w-4 text-muted-foreground" />}
-      title="Media"
-      subtitle="usage & search"
-      storageKey="dashMediaOpen"
-      summary={
-        <>
-          <SummaryChip icon={AlertTriangle} value={failingSeo} tier={failingSeo > 0 ? "warm" : "ok"} />
-          <SummaryChip icon={ImageIcon} value={noAlt} tier={noAlt > 0 ? "warm" : "ok"} />
-          <SummaryChip icon={Database} value={unused} tier="plain" />
-          {noDimensions > 0 && <SummaryChip icon={ImageIcon} value={noDimensions} tier="warm" />}
-        </>
-      }
+    <>
+      <PanelHead
+        title="الوسائط"
+        hint="الاستخدام والبحث"
         right={
           <Link href="/media" className="flex items-baseline gap-2 text-xs text-muted-foreground hover:underline">
             <span
@@ -37,42 +28,42 @@ export async function MediaLibrary() {
             >
               {failingSeo}
             </span>
-            failing SEO
+            تفشل في السيو
             <span className="text-muted-foreground/40">·</span>
-            {used.toLocaleString("en-US")} of {total.toLocaleString("en-US")} in use
-            <span className="text-primary">→</span>
+            {used.toLocaleString("en-US")} من {total.toLocaleString("en-US")} مستخدمة
+            <span className="text-primary">←</span>
           </Link>
         }
-      >
+      />
       <div className={CARD_GRID}>
         <TierCard
           href="/media/segment/failing-seo"
           tier={failingSeo > 0 ? "warm" : "ok"}
           icon={AlertTriangle}
           value={failingSeo}
-          label="Failing SEO"
-          note="below 60 — alt text is the fix, 40 of 100 pts"
+          label="تفشل في السيو"
+          note="تحت 60 — النص البديل هو الحل، 40 من 100 نقطة"
         />
         <TierCard
           href="/media/segment/no-alt"
           tier={noAlt > 0 ? "warm" : "ok"}
           icon={ImageIcon}
           value={noAlt}
-          label="No alt text"
-          note="invisible in Google Images"
+          label="بلا نص بديل (alt)"
+          note="ما تظهر في صور جوجل"
         />
         <TierCard
           href="/media/segment/unused"
           tier="plain"
           icon={Database}
           value={unused}
-          label="Unused"
-          note="housekeeping — storage only, nothing breaks"
+          label="غير مستخدمة"
+          note="تنظيف — تخزين بس، ما يكسر شي"
         />
         {noDimensions === 0 ? (
-          <Ghost title="Healthy">
+          <Ghost title="سليم">
             <ZChip good>
-              <b className="font-bold">0</b> no dimensions ✓
+              <b className="font-bold">0</b> بلا أبعاد — سليم
             </ZChip>
           </Ghost>
         ) : (
@@ -81,11 +72,11 @@ export async function MediaLibrary() {
             tier="warm"
             icon={ImageIcon}
             value={noDimensions}
-            label="No dimensions"
-            note="cannot be a share image — the page jumps while it loads"
+            label="بلا أبعاد"
+            note="ما تصلح صورة مشاركة — الصفحة تقفز وهي تتحمّل"
           />
         )}
       </div>
-    </CollapsibleSection>
+    </>
   );
 }

@@ -93,11 +93,11 @@ export function ListingPagesSeoRows({
                   )}
                 />
                 <span className="text-sm font-semibold">{page.label}</span>
-                <span className="font-mono text-[11px] text-muted-foreground">{page.path}</span>
+                <span className="font-mono text-xs text-muted-foreground">{page.path}</span>
                 {needsFix && (
                   <span
                     className={cn(
-                      "inline-flex animate-pulse items-center rounded-full px-1.5 py-0.5 text-[10.5px] font-bold",
+                      "inline-flex animate-pulse items-center rounded-full px-1.5 py-0.5 text-xs font-bold",
                       page.score < 60
                         ? "bg-red-500/15 text-red-600 dark:text-red-400"
                         : "bg-amber-500/15 text-amber-600 dark:text-amber-400",
@@ -140,7 +140,7 @@ export function ListingPagesSeoRows({
             {isOpen && (
               <ul className="mt-2 space-y-1 ps-6">
                 {page.checks.map((check) => (
-                  <li key={check.key} className="flex items-start gap-2 text-[11.5px]">
+                  <li key={check.key} className="flex items-start gap-2 text-xs">
                     <span
                       className={cn(
                         "mt-1 h-1.5 w-1.5 shrink-0 rounded-full",
@@ -155,7 +155,7 @@ export function ListingPagesSeoRows({
                       <span className="font-medium text-foreground">{check.label}</span>
                       {check.hint && <> — {check.hint}</>}
                     </span>
-                    <span className="ms-auto shrink-0 font-mono text-[10.5px] text-muted-foreground">
+                    <span className="ms-auto shrink-0 font-mono text-xs text-muted-foreground">
                       {check.earned}/{check.max}
                     </span>
                   </li>

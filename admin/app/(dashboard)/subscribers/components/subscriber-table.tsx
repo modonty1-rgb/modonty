@@ -36,35 +36,35 @@ export function SubscriberTable({ subscribers }: SubscriberTableProps) {
       columns={[
         {
           key: "email",
-          header: "Email",
+          header: "البريد",
         },
         {
           key: "name",
-          header: "Name",
+          header: "الاسم",
           render: (subscriber) => subscriber.name || "-",
         },
         {
           key: "client",
-          header: "Client",
+          header: "العميل",
           render: (subscriber) => subscriber.client?.name || "-",
         },
         {
           key: "subscribed",
-          header: "Status",
+          header: "الحالة",
           render: (subscriber) => (
             <Badge variant={subscriber.subscribed ? "default" : "secondary"}>
-              {subscriber.subscribed ? "Subscribed" : "Unsubscribed"}
+              {subscriber.subscribed ? "مشترك" : "ألغى"}
             </Badge>
           ),
         },
         {
           key: "subscribedAt",
-          header: "Subscribed",
-          render: (subscriber) => format(new Date(subscriber.subscribedAt), "MMM d, yyyy"),
+          header: "تاريخ الاشتراك",
+          render: (subscriber) => format(new Date(subscriber.subscribedAt), "yyyy-MM-dd"),
         },
         {
           key: "actions",
-          header: "Actions",
+          header: "إجراء",
           render: (subscriber) => (
             <Button
               variant="outline"
@@ -74,12 +74,15 @@ export function SubscriberTable({ subscribers }: SubscriberTableProps) {
                 handleToggleStatus(subscriber.id, subscriber.subscribed);
               }}
             >
-              {subscriber.subscribed ? "Unsubscribe" : "Subscribe"}
+              {subscriber.subscribed ? "ألغِ الاشتراك" : "أعد الاشتراك"}
             </Button>
           ),
         },
       ]}
       searchKey="email"
+      searchPlaceholder="ابحث بالبريد…"
+      emptyText="ما في مشتركين."
+      arabic
     />
   );
 }

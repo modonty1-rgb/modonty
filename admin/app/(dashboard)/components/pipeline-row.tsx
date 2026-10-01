@@ -59,10 +59,10 @@ export function PipelineRow({
       </span>
       <span className="text-[13px] leading-snug">
         {label}
-        {note && <span className="mt-0.5 block text-[11px] text-muted-foreground">{note}</span>}
+        {note && <span className="mt-0.5 block text-xs text-muted-foreground">{note}</span>}
       </span>
       {action && (
-        <span className="hidden text-[11.5px] font-bold text-primary md:block">{action} →</span>
+        <span className="hidden text-xs font-bold text-primary md:block">{action} ←</span>
       )}
     </Link>
   );
@@ -81,7 +81,7 @@ export function BudgetRow({
   label,
   icon: Icon,
   reviewHref,
-  reviewLabel = "review",
+  reviewLabel = "راجع",
   segments,
 }: {
   total: number;
@@ -117,9 +117,9 @@ export function BudgetRow({
         </div>
         <Link
           href={reviewHref}
-          className="shrink-0 text-[11.5px] font-bold text-primary hover:underline"
+          className="shrink-0 text-xs font-bold text-primary hover:underline"
         >
-          {reviewLabel} →
+          {reviewLabel} ←
         </Link>
       </div>
       {/* Line 2: per-part counts, tight. */}
@@ -130,7 +130,7 @@ export function BudgetRow({
             <span className={`text-[12px] font-extrabold tabular-nums ${NUM[s.tier]}`}>
               {s.value.toLocaleString("en-US")}
             </span>
-            <span className="text-[11px] text-muted-foreground">{s.label}</span>
+            <span className="text-xs text-muted-foreground">{s.label}</span>
           </Link>
         ))}
       </div>

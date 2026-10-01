@@ -15,6 +15,18 @@ import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
  * one line per row, colour carries status, 12px throughout, zebra striping.
  */
 
+const STATUS_LABEL: Record<string, string> = {
+  WRITING: "يُكتب",
+  DRAFT: "مسودة",
+  AWAITING_APPROVAL: "بانتظار الموافقة",
+  APPROVED: "معتمد بلا تاريخ",
+  NEEDS_REVISION: "تحتاج تعديل",
+  SCHEDULED: "مجدول",
+  PUBLISHED: "منشور",
+  PUBLISHED_ON_CLIENT_SITE: "على موقع العميل",
+  ARCHIVED: "مؤرشف",
+};
+
 export interface SegmentArticle {
   id: string;
   title: string;
@@ -98,16 +110,16 @@ export function ArticleSegmentTable({ articles }: { articles: SegmentArticle[] }
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search title, slug, client, category…"
+            placeholder="ابحث بالعنوان أو الرابط أو العميل أو الفئة…"
             className="h-8 ps-8 text-xs"
           />
         </div>
         <p className="shrink-0 text-xs text-muted-foreground">
           {rows.length === articles.length
-            ? `${articles.length} article${articles.length === 1 ? "" : "s"}`
-            : `${rows.length} of ${articles.length}`}
+            ? `${articles.length} مقال`
+            : `${rows.length} من ${articles.length}`}
           <span className="ms-2 text-muted-foreground/60">
-            SEO scored live · 90+ good · 70+ watch · below failing
+            السيو محسوب لحظياً · 90+ جيد · 70+ انتبه · أقل يفشل
           </span>
         </p>
       </div>
@@ -116,15 +128,15 @@ export function ArticleSegmentTable({ articles }: { articles: SegmentArticle[] }
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <SortHead label="Article" k="title" />
-              <TableHead className="h-9 py-0 text-xs">Client</TableHead>
-              <TableHead className="h-9 py-0 text-xs">Category</TableHead>
-              <TableHead className="h-9 py-0 text-xs">Author</TableHead>
-              <TableHead className="h-9 py-0 text-xs">Status</TableHead>
-              <SortHead label={<GoogleIcon className="h-4 w-4" />} k="seoScore" end title="SEO Score" />
-              <SortHead label="Views" k="views" end />
-              <SortHead label="Published" k="publishedAt" />
-              <SortHead label="Updated" k="updatedAt" />
+              <SortHead label="المقال" k="title" />
+              <TableHead className="h-9 py-0 text-xs">العميل</TableHead>
+              <TableHead className="h-9 py-0 text-xs">الفئة</TableHead>
+              <TableHead className="h-9 py-0 text-xs">الكاتب</TableHead>
+              <TableHead className="h-9 py-0 text-xs">الحالة</TableHead>
+              <SortHead label={<GoogleIcon className="h-4 w-4" />} k="seoScore" end title="درجة السيو" />
+              <SortHead label="المشاهدات" k="views" end />
+              <SortHead label="النشر" k="publishedAt" />
+              <SortHead label="آخر تحديث" k="updatedAt" />
               <TableHead className="h-9 py-0" />
             </TableRow>
           </TableHeader>
@@ -133,8 +145,8 @@ export function ArticleSegmentTable({ articles }: { articles: SegmentArticle[] }
               <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={10} className="py-10 text-center text-xs text-muted-foreground">
                   {articles.length === 0
-                    ? "Nothing is in this segment."
-                    : "No article matches that search."}
+                    ? "ما في مقال هنا."
+                    : "ما في مقال يطابق البحث."}
                 </TableCell>
               </TableRow>
             ) : (
@@ -168,7 +180,7 @@ export function ArticleSegmentTable({ articles }: { articles: SegmentArticle[] }
                           blocked ? "font-semibold text-red-600 dark:text-red-400" : "text-muted-foreground"
                         }
                       >
-                        {a.status.toLowerCase().replace(/_/g, " ")}
+                        {STATUS_LABEL[a.status] ?? a.status}
                       </span>
                     </TableCell>
                     <TableCell className="py-2 text-end">
@@ -188,7 +200,7 @@ export function ArticleSegmentTable({ articles }: { articles: SegmentArticle[] }
                         href={`/articles/${a.id}/edit`}
                         className="font-semibold text-primary hover:underline"
                       >
-                        Edit
+                        تعديل
                       </Link>
                     </TableCell>
                   </TableRow>

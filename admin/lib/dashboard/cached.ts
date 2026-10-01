@@ -9,6 +9,9 @@ import { getMemberCounts } from "@/app/(dashboard)/actions/member-counts";
 import { getYmylUncitedCount } from "@/app/(dashboard)/actions/ymyl-uncited-count";
 import { getArticleSeoQuality } from "@/app/(dashboard)/actions/article-seo-quality";
 import { getClientSeoQuality } from "@/app/(dashboard)/actions/client-seo-quality";
+import { getContentPagesSeoAudit, getListingPagesSeoAudit, getSectorPagesSeoAudit } from "@/app/(dashboard)/actions/listing-pages-seo-audit";
+import { getMediaCounts } from "@/app/(dashboard)/actions/media-counts";
+import { getReferenceSeoCounts } from "@/app/(dashboard)/actions/reference-seo-counts";
 
 /**
  * Per-request dedup for the dashboard. The Today strip ranks the same numbers the
@@ -25,3 +28,9 @@ export const memberCounts = cache(getMemberCounts);
 export const ymylUncitedCount = cache(getYmylUncitedCount);
 export const articleSeoQuality = cache(getArticleSeoQuality);
 export const clientSeoQuality = cache(getClientSeoQuality);
+// The SEO-health card and the tabs below read these too (30 Sep 2026 redesign).
+export const listingPagesSeoAudit = cache(getListingPagesSeoAudit);
+export const contentPagesSeoAudit = cache(getContentPagesSeoAudit);
+export const sectorPagesSeoAudit = cache(getSectorPagesSeoAudit);
+export const mediaCounts = cache(getMediaCounts);
+export const referenceSeoCounts = cache(getReferenceSeoCounts);

@@ -47,12 +47,12 @@ const EMPTY_FUNNEL: BookingFunnel = { opened: 0, attempts: 0, booked: 0, failed:
 
 /** Why an attempt died. Keys mirror BookingFailReason in modonty's events registry. */
 export const FAIL_REASON_LABEL: Record<string, string> = {
-  invalid_input: "Form had invalid fields",
-  client_not_found: "Client no longer exists",
-  cta_not_form: "Client is not in booking mode",
-  disclaimer_required: "Did not accept the YMYL disclaimer",
-  rate_limited: "Blocked by rate limit",
-  db_write_failed: "Our database write failed",
+  invalid_input: "حقول النموذج غير صحيحة",
+  client_not_found: "العميل ما عاد موجود",
+  cta_not_form: "العميل مو على وضع الحجز",
+  disclaimer_required: "ما وافق على إخلاء مسؤولية YMYL",
+  rate_limited: "انحظر بحدّ الطلبات",
+  db_write_failed: "فشل الحفظ في قاعدتنا",
 };
 
 export async function getBookingFunnel(opened: number): Promise<BookingFunnel> {

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import {
@@ -72,6 +73,22 @@ export async function getClientSubscriptions(
     });
   }
   return result;
+}
+
+/**
+ * **نسخةٌ واحدة لكلّ طلب صفحة** — نفسُ الجواب، يُحسب مرّةً ويُقرأ من كلّ مكان.
+ *
+ * لوحة التحكّم تسأل السؤالَ نفسه (`NOT_INTERNAL`) من ثلاثة أماكن — عدّاداتُ الحالة وتنبيهاتُ
+ * الانتهاء والتجديداتُ المستحقّة — فكان يُحسب ثلاث مرّات في الطلب الواحد، وكرتُ «يحتاجك اليوم»
+ * ينتظر أبطأها (مقيس ١ أكتوبر ٢٠٢٦: التجديدات ٢٫١ ث والتنبيهات ٣٫٣–٤ ث).
+ *
+ * المفتاحُ نصُّ الشرط، فـ`where` هنا شرطٌ بسيط بلا تواريخ (لا يعود `Date` من `JSON.parse`).
+ * وخارج رسم الصفحة (إجراءات الخادم) لا يحفظ `cache` شيئاً — فيبقى سلوكُها كما هو.
+ */
+const loadShared = cache((whereJson: string) => getClientSubscriptions(JSON.parse(whereJson) as Prisma.ClientWhereInput));
+
+export function getClientSubscriptionsShared(where: Prisma.ClientWhereInput = {}): Promise<Map<string, ClientSubscription>> {
+  return loadShared(JSON.stringify(where));
 }
 
 /** معرّفاتُ العملاء الذين يطابق اشتراكُهم الشرط — للاستعلامات التي كانت تفلتر بحقول الكرت. */

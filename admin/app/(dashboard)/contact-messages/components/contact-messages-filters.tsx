@@ -70,40 +70,40 @@ export function ContactMessagesFilters() {
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <Filter className="h-4 w-4" />
-          Filters
+          الفلاتر
           {hasActiveFilters && (
-            <span className="ml-1 h-2 w-2 rounded-full bg-primary" />
+            <span className="ms-1 h-2 w-2 rounded-full bg-primary" />
           )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[400px] p-4" align="start">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm">Filters</h3>
+            <h3 className="font-semibold text-sm">الفلاتر</h3>
             {hasActiveFilters && (
               <Button variant="ghost" size="sm" onClick={clearFilters} disabled={isPending}>
-                <X className="h-4 w-4 mr-1" />
-                Clear All
+                <X className="h-4 w-4 me-1" />
+                امسح الكل
               </Button>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">الحالة</Label>
             <Select
               value={localFilter.status || "all"}
               onValueChange={(value) => updateFilter("status", value)}
               disabled={isPending}
             >
               <SelectTrigger id="status">
-                <SelectValue placeholder="All statuses" />
+                <SelectValue placeholder="كل الحالات" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Messages</SelectItem>
-                <SelectItem value="new">New</SelectItem>
-                <SelectItem value="read">Read</SelectItem>
-                <SelectItem value="replied">Replied</SelectItem>
-                <SelectItem value="archived">Archived</SelectItem>
+                <SelectItem value="all">كل الرسائل</SelectItem>
+                <SelectItem value="new">جديدة</SelectItem>
+                <SelectItem value="read">مقروءة</SelectItem>
+                <SelectItem value="replied">رُدّ عليها</SelectItem>
+                <SelectItem value="archived">مؤرشفة</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -116,8 +116,8 @@ export function ContactMessagesFilters() {
                 onClick={clearFilters}
                 disabled={isPending}
               >
-                <X className="h-4 w-4 mr-1" />
-                Clear All
+                <X className="h-4 w-4 me-1" />
+                امسح الكل
               </Button>
             )}
             <Button
@@ -127,11 +127,11 @@ export function ContactMessagesFilters() {
             >
               {isPending ? (
                 <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Applying...
+                  <RefreshCw className="h-4 w-4 me-2 animate-spin" />
+                  يطبّق…
                 </>
               ) : (
-                "Apply Filters"
+                "طبّق الفلاتر"
               )}
             </Button>
           </div>

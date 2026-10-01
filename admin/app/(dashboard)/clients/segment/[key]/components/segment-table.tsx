@@ -48,12 +48,23 @@ export interface SegmentClient {
 type SortKey = "name" | "articleCount" | "seoScore" | "subscriptionStartDate" | "subscriptionEndDate";
 
 const CTA_LABEL: Record<string, string> = {
-  FORM: "Booking form",
-  LINK: "External link",
-  NONE: "No button",
+  FORM: "نموذج حجز",
+  LINK: "رابط خارجي",
+  NONE: "بلا زر",
 };
 
 const BAD = new Set(["EXPIRED", "OVERDUE", "CANCELLED"]);
+
+/** The subscription state in the words the rest of the admin uses. */
+const SUB_LABEL: Record<string, string> = {
+  ACTIVE: "نشط",
+  EXPIRED: "منتهي",
+  PENDING: "بانتظار التفعيل",
+  CANCELLED: "ملغي",
+  OVERDUE: "متأخر",
+};
+
+const IMAGE_LABEL: Record<string, string> = { logo: "الشعار", hero: "الغلاف", "share image": "صورة المشاركة" };
 
 function fmt(iso: string | null): string {
   return iso ? iso.slice(0, 10) : "—";
@@ -127,14 +138,14 @@ export function SegmentTable({
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search name, slug, email or phone…"
+            placeholder="ابحث بالاسم أو الرابط أو البريد أو الجوال…"
             className="h-8 ps-8 text-xs"
           />
         </div>
         <p className="shrink-0 text-xs text-muted-foreground">
           {rows.length === clients.length
-            ? `${clients.length} client${clients.length === 1 ? "" : "s"}`
-            : `${rows.length} of ${clients.length}`}
+            ? `${clients.length} عميل`
+            : `${rows.length} من ${clients.length}`}
         </p>
       </div>
 
@@ -142,16 +153,16 @@ export function SegmentTable({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <SortHead label="Client" k="name" />
-              <TableHead className="h-9 py-0 text-xs">Phone</TableHead>
-              <TableHead className="h-9 py-0 text-xs">Email</TableHead>
-              <TableHead className="h-9 py-0 text-xs">Reach</TableHead>
-              <TableHead className="h-9 py-0 text-xs">Missing images</TableHead>
-              <SortHead label="SEO" k="seoScore" end />
-              <SortHead label="Articles" k="articleCount" end />
-              <TableHead className="h-9 py-0 text-xs">Status</TableHead>
-              <SortHead label="Started" k="subscriptionStartDate" />
-              <SortHead label="Ends" k="subscriptionEndDate" />
+              <SortHead label="العميل" k="name" />
+              <TableHead className="h-9 py-0 text-xs">الجوال</TableHead>
+              <TableHead className="h-9 py-0 text-xs">البريد</TableHead>
+              <TableHead className="h-9 py-0 text-xs">زر التواصل</TableHead>
+              <TableHead className="h-9 py-0 text-xs">صور ناقصة</TableHead>
+              <SortHead label="السيو" k="seoScore" end />
+              <SortHead label="المقالات" k="articleCount" end />
+              <TableHead className="h-9 py-0 text-xs">الحالة</TableHead>
+              <SortHead label="البداية" k="subscriptionStartDate" />
+              <SortHead label="النهاية" k="subscriptionEndDate" />
               <TableHead className="h-9 py-0" />
             </TableRow>
           </TableHeader>
@@ -160,8 +171,8 @@ export function SegmentTable({
               <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={11} className="py-10 text-center text-xs text-muted-foreground">
                   {clients.length === 0
-                    ? "Nobody is in this segment — that is good news."
-                    : "No client matches that search."}
+                    ? "ما في أحد هنا — خبر زين."
+                    : "ما في عميل يطابق البحث."}
                 </TableCell>
               </TableRow>
             ) : (
@@ -169,7 +180,7 @@ export function SegmentTable({
                 // "No button" and "never set" are different problems — both are red,
                 // but the label has to say which one you are looking at.
                 const noReach = !c.ctaMode || c.ctaMode === "NONE";
-                const reach = c.ctaMode ? (CTA_LABEL[c.ctaMode] ?? c.ctaMode) : "Never set";
+                const reach = c.ctaMode ? (CTA_LABEL[c.ctaMode] ?? c.ctaMode) : "ما انضبط";
                 const subBad = BAD.has(c.subscriptionStatus);
                 const payBad = c.paymentBad;
                 return (
@@ -181,7 +192,7 @@ export function SegmentTable({
                           {c.name}
                         </span>
                         {c.isYmyl && (
-                          <span className="shrink-0 text-[9px] font-bold text-amber-600 dark:text-amber-400">
+                          <span className="shrink-0 text-xs font-bold text-amber-600 dark:text-amber-400">
                             YMYL
                           </span>
                         )}
@@ -209,7 +220,7 @@ export function SegmentTable({
                         <span className="text-muted-foreground/40">—</span>
                       ) : (
                         <span className="font-semibold text-red-600 dark:text-red-400">
-                          {c.missingImages.join(" · ")}
+                          {c.missingImages.map((m) => IMAGE_LABEL[m] ?? m).join(" · ")}
                         </span>
                       )}
                     </TableCell>
@@ -221,7 +232,7 @@ export function SegmentTable({
                     </TableCell>
                     <TableCell className="whitespace-nowrap py-2">
                       <span className={subBad ? "font-semibold text-red-600 dark:text-red-400" : ""}>
-                        {c.subscriptionStatus.toLowerCase()}
+                        {SUB_LABEL[c.subscriptionStatus] ?? c.subscriptionStatus}
                       </span>
                       <span className="text-muted-foreground/40"> · </span>
                       <span

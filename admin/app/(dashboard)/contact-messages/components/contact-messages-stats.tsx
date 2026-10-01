@@ -21,14 +21,14 @@ export function ContactMessagesStats({ stats }: ContactMessagesStatsProps) {
   
   const statCards = [
     {
-      title: "Total Messages",
+      title: "كل الرسائل",
       value: stats.total,
       icon: MessageSquare,
       href: "/contact-messages",
       className: "text-primary",
     },
     {
-      title: "New",
+      title: "جديدة",
       value: stats.new,
       icon: Inbox,
       href: "/contact-messages?status=new",
@@ -36,21 +36,21 @@ export function ContactMessagesStats({ stats }: ContactMessagesStatsProps) {
       highlight: stats.new > 0,
     },
     {
-      title: "Read",
+      title: "مقروءة",
       value: stats.read,
       icon: Mail,
       href: "/contact-messages?status=read",
       className: "text-secondary-foreground",
     },
     {
-      title: "Replied",
+      title: "رُدّ عليها",
       value: stats.replied,
       icon: CheckCircle,
       href: "/contact-messages?status=replied",
       className: "text-green-500",
     },
     {
-      title: "Archived",
+      title: "مؤرشفة",
       value: stats.archived,
       icon: Archive,
       href: "/contact-messages?status=archived",
@@ -63,7 +63,7 @@ export function ContactMessagesStats({ stats }: ContactMessagesStatsProps) {
       <Card>
         <CollapsibleTrigger className="w-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 cursor-pointer hover:bg-muted/50 transition-colors">
-            <CardTitle>Statistics</CardTitle>
+            <CardTitle>الإحصاءات</CardTitle>
             {isOpen ? (
               <ChevronUp className="h-5 w-5 text-muted-foreground" />
             ) : (
@@ -86,7 +86,7 @@ export function ContactMessagesStats({ stats }: ContactMessagesStatsProps) {
                       <CardContent>
                         <div className="text-2xl font-bold">{stat.value}</div>
                         {stat.highlight && (
-                          <p className="text-xs text-muted-foreground mt-1">Action needed</p>
+                          <p className="text-xs text-muted-foreground mt-1">تحتاج رد</p>
                         )}
                       </CardContent>
                     </Card>

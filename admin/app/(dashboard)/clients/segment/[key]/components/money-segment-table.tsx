@@ -64,6 +64,14 @@ function compareOwed(a: MoneySegmentClient, b: MoneySegmentClient, dir: number):
   return (x.minor - y.minor) * dir;
 }
 
+const SUB_LABEL: Record<string, string> = {
+  ACTIVE: "نشط",
+  EXPIRED: "منتهي",
+  PENDING: "بانتظار التفعيل",
+  CANCELLED: "ملغي",
+  OVERDUE: "متأخر",
+};
+
 function isExpired(iso: string | null): boolean {
   return iso ? new Date(iso).getTime() < Date.now() : false;
 }
@@ -127,12 +135,12 @@ export function MoneySegmentTable({ clients }: { clients: MoneySegmentClient[] }
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search name, email or phone…"
+            placeholder="ابحث بالاسم أو البريد أو الجوال…"
             className="h-9 ps-8 text-sm"
           />
         </div>
         <span className="shrink-0 text-xs text-muted-foreground">
-          {rows.length} {rows.length === 1 ? "client" : "clients"}
+          {rows.length} عميل
         </span>
       </div>
 
@@ -140,11 +148,11 @@ export function MoneySegmentTable({ clients }: { clients: MoneySegmentClient[] }
         <Table>
           <TableHeader>
             <TableRow className="[&>th]:whitespace-nowrap">
-              <SortHead label="Client" k="name" />
-              <SortHead label="Unpaid" k="unpaid" />
-              <SortHead label="Amount owed" k="amount" />
-              <TableHead className="h-9 py-0 text-xs">Status</TableHead>
-              <SortHead label="Ends" k="ends" />
+              <SortHead label="العميل" k="name" />
+              <SortHead label="فواتير غير مدفوعة" k="unpaid" />
+              <SortHead label="المستحق" k="amount" />
+              <TableHead className="h-9 py-0 text-xs">الحالة</TableHead>
+              <SortHead label="النهاية" k="ends" />
               <TableHead className="h-9 py-0" />
             </TableRow>
           </TableHeader>
@@ -152,7 +160,7 @@ export function MoneySegmentTable({ clients }: { clients: MoneySegmentClient[] }
             {rows.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">
-                  Nobody is in this segment — that is good news.
+                  ما في أحد هنا — خبر زين.
                 </TableCell>
               </TableRow>
             ) : (
@@ -164,12 +172,12 @@ export function MoneySegmentTable({ clients }: { clients: MoneySegmentClient[] }
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{c.name}</span>
                         {c.isYmyl && (
-                          <span className="rounded bg-amber-500/15 px-1 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                          <span className="rounded bg-amber-500/15 px-1 text-xs font-semibold text-amber-600 dark:text-amber-400">
                             YMYL
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] text-muted-foreground">{c.phone ?? c.email}</span>
+                      <span className="text-xs text-muted-foreground" dir="ltr">{c.phone ?? c.email}</span>
                     </TableCell>
                     <TableCell className="py-2 tabular-nums">
                       {c.unpaidCount > 0 ? (
@@ -186,7 +194,7 @@ export function MoneySegmentTable({ clients }: { clients: MoneySegmentClient[] }
                       </span>
                     </TableCell>
                     <TableCell className="py-2">
-                      <span className="text-muted-foreground">{c.subscriptionStatus.toLowerCase()}</span>
+                      <span className="text-muted-foreground">{SUB_LABEL[c.subscriptionStatus] ?? c.subscriptionStatus}</span>
                     </TableCell>
                     <TableCell className="whitespace-nowrap py-2 tabular-nums">
                       <span className={expired ? "font-semibold text-red-600 dark:text-red-400" : "text-muted-foreground"}>
@@ -198,7 +206,7 @@ export function MoneySegmentTable({ clients }: { clients: MoneySegmentClient[] }
                         href={`/clients/${c.id}/account`}
                         className="font-semibold text-primary hover:underline"
                       >
-                        Statement
+                        كشف الحساب
                       </Link>
                     </TableCell>
                   </TableRow>

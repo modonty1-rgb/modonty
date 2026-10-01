@@ -82,12 +82,12 @@ export function ReferenceTable({
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search name or slug…"
+            placeholder="ابحث بالاسم أو الرابط…"
             className="h-8 ps-8 text-xs"
           />
         </div>
         <p className="shrink-0 text-xs text-muted-foreground">
-          {visible.length === rows.length ? `${rows.length} pages` : `${visible.length} of ${rows.length}`}
+          {visible.length === rows.length ? `${rows.length} صفحة` : `${visible.length} من ${rows.length}`}
           {failing > 0 && (
             <span className="ms-2 font-semibold text-red-600 dark:text-red-400">
               {failing} below 60
@@ -100,10 +100,10 @@ export function ReferenceTable({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <SortHead label="Name" k="name" />
-              <TableHead className="h-9 py-0 text-xs">Slug</TableHead>
-              <SortHead label="SEO" k="seoScore" end />
-              <TableHead className="h-9 py-0 text-xs">Generated</TableHead>
+              <SortHead label="الاسم" k="name" />
+              <TableHead className="h-9 py-0 text-xs">الرابط</TableHead>
+              <SortHead label="السيو" k="seoScore" end />
+              <TableHead className="h-9 py-0 text-xs">المولَّد</TableHead>
               <TableHead className="h-9 py-0" />
             </TableRow>
           </TableHeader>
@@ -111,7 +111,7 @@ export function ReferenceTable({
             {visible.length === 0 ? (
               <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={5} className="py-10 text-center text-xs text-muted-foreground">
-                  {rows.length === 0 ? "Nothing here yet." : "No page matches that search."}
+                  {rows.length === 0 ? "ما في شي هنا بعد." : "ما في صفحة تطابق البحث."}
                 </TableCell>
               </TableRow>
             ) : (
@@ -152,7 +152,7 @@ export function ReferenceTable({
                         href={editMode === "single" ? editBase : `${editBase}/${r.id}/edit`}
                         className="font-semibold text-primary hover:underline"
                       >
-                        Edit
+                        تعديل
                       </Link>
                     </TableCell>
                   </TableRow>

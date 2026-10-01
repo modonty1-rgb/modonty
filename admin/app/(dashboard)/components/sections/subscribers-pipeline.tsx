@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Mail, MailCheck, MailX, ShieldAlert, UserPlus, Heart, Users } from "lucide-react";
+import { MailCheck, MailX, ShieldAlert, UserPlus, Heart, Users } from "lucide-react";
 
 import { subscriberCounts } from "@/lib/dashboard/cached";
 import { db } from "@/lib/db";
-import { CARD_GRID, SummaryChip, TierCard } from "../dashboard-ui";
-import { CollapsibleSection } from "../collapsible-section";
+import { CARD_GRID, TierCard } from "../dashboard-ui";
+import { PanelHead } from "../panel-head";
 
 /**
  * Newsletter subscribers.
@@ -17,75 +17,61 @@ export async function SubscribersPipeline() {
     await Promise.all([subscriberCounts(), db.articleFavorite.count(), db.clientLike.count()]);
 
   return (
-    <CollapsibleSection
-      iconNode={<Mail className="h-4 w-4 text-muted-foreground" />}
-      title="Client Subscribers"
-      subtitle="مشتركو العملاء (لكل عميل)"
-      storageKey="dashSubscribersOpen"
-      summary={
-        <>
-          <SummaryChip icon={MailCheck} value={active} tier={active > 0 ? "ok" : "plain"} />
-          <SummaryChip icon={UserPlus} value={newLast30} tier="plain" />
-          <SummaryChip icon={ShieldAlert} value={noConsent} tier={noConsent > 0 ? "warm" : "ok"} />
-          <SummaryChip icon={MailX} value={unsubscribed} tier="plain" />
-        </>
-      }
-      right={
-        <Link
-          href="/subscribers"
-          className="flex items-baseline gap-2 text-xs text-muted-foreground hover:underline"
-        >
-          <span className="text-base font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
-            {active.toLocaleString("en-US")}
-          </span>
-          active
-          <span className="text-muted-foreground/40">·</span>
-          {total.toLocaleString("en-US")} total
-          <span className="text-primary">→</span>
-        </Link>
-      }
-    >
+    <>
+      <PanelHead
+        title="مشتركو العملاء"
+        hint="لكل عميل"
+        right={
+          <Link href="/subscribers" className="flex items-baseline gap-2 text-xs text-muted-foreground hover:underline">
+            <span className="text-base font-bold tabular-nums text-emerald-600 dark:text-emerald-400">{active.toLocaleString("en-US")}</span>
+            نشط
+            <span className="text-muted-foreground/40">·</span>
+            {total.toLocaleString("en-US")} إجمالي
+            <span className="text-primary">←</span>
+          </Link>
+        }
+      />
       <div className={CARD_GRID}>
         <TierCard
           href="/subscribers"
           tier={active > 0 ? "ok" : "plain"}
           icon={MailCheck}
           value={active}
-          label="Active"
-          note="opted in, still subscribed"
+          label="نشط"
+          note="اشترك وما ألغى"
         />
         <TierCard
           href="/subscribers"
           tier="plain"
           icon={UserPlus}
           value={newLast30}
-          label="New this month"
-          note="joined in the last 30 days"
+          label="جدد هذا الشهر"
+          note="آخر 30 يوم"
         />
         <TierCard
           href="/subscribers"
           tier={noConsent > 0 ? "warm" : "ok"}
           icon={ShieldAlert}
           value={noConsent}
-          label="No consent recorded"
-          note="GDPR — record consent or remove"
+          label="بلا موافقة مسجّلة"
+          note="GDPR — سجّل الموافقة أو احذف"
         />
         <TierCard
           href="/subscribers"
           tier="plain"
           icon={MailX}
           value={unsubscribed}
-          label="Unsubscribed"
-          note="opted out — kept for records"
+          label="ألغوا"
+          note="محفوظ للسجل"
         />
       </div>
 
       {/* إشارات الاهتمام — أساس الاشتراك القادم (للمراجعة) */}
       <div className="mt-3 rounded-xl border border-dashed p-3" dir="rtl">
         <p className="mb-1 text-[12px] font-bold text-foreground">
-          💡 إشارات الاهتمام — أساس الاشتراك القادم
+          إشارات الاهتمام — أساس الاشتراك القادم
         </p>
-        <p className="mb-3 max-w-[65ch] text-[11px] leading-relaxed text-muted-foreground">
+        <p className="mb-3 max-w-[65ch] text-xs leading-relaxed text-muted-foreground">
           خطة قادمة: نشيل زر «اشترك في النشرة» من المقال والعميل. بدله الاهتمام يُلتقط تلقائياً —
           <span className="font-semibold text-foreground"> حفظ المقال (favorite) = مهتم بالمقال</span>،
           و<span className="font-semibold text-foreground">«تابعني» للعميل = مهتم بالعميل</span>.
@@ -101,8 +87,8 @@ export async function SubscribersPipeline() {
               <span className="text-xl font-bold leading-none tabular-nums">
                 {articleFavorites.toLocaleString("en-US")}
               </span>
-              <p className="pt-1 text-[11px] font-semibold leading-tight">اهتمام المقالات</p>
-              <p className="text-[10px] leading-snug text-muted-foreground">حفظ (favorite) على المقالات</p>
+              <p className="pt-1 text-xs font-semibold leading-tight">اهتمام المقالات</p>
+              <p className="text-xs leading-snug text-muted-foreground">حفظ (favorite) على المقالات</p>
             </div>
           </div>
           <div className="flex items-center gap-2.5 rounded-lg border p-2.5">
@@ -113,12 +99,12 @@ export async function SubscribersPipeline() {
               <span className="text-xl font-bold leading-none tabular-nums">
                 {clientFollows.toLocaleString("en-US")}
               </span>
-              <p className="pt-1 text-[11px] font-semibold leading-tight">اهتمام العملاء</p>
-              <p className="text-[10px] leading-snug text-muted-foreground">متابعة «تابعني» للعملاء</p>
+              <p className="pt-1 text-xs font-semibold leading-tight">اهتمام العملاء</p>
+              <p className="text-xs leading-snug text-muted-foreground">متابعة «تابعني» للعملاء</p>
             </div>
           </div>
         </div>
       </div>
-    </CollapsibleSection>
+    </>
   );
 }

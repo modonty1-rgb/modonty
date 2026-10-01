@@ -2,6 +2,7 @@
 
 import { Fragment, useState, useTransition } from "react";
 import Link from "next/link";
+import { Download, Globe } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -34,18 +35,36 @@ const SOURCE_COLORS: Record<string, string> = {
   INTERNAL: "#9CA3AF",
 };
 const SOURCE_LABELS: Record<string, string> = {
-  ORGANIC: "Organic",
-  DIRECT: "Direct",
-  SOCIAL: "Social",
-  REFERRAL: "Referral",
-  EMAIL: "Email",
-  PAID: "Paid",
-  INTERNAL: "Internal",
+  ORGANIC: "بحث",
+  DIRECT: "مباشر",
+  SOCIAL: "سوشال",
+  REFERRAL: "إحالة",
+  EMAIL: "بريد",
+  PAID: "مدفوع",
+  INTERNAL: "داخلي",
 };
 
-function countryFlag(code: string | null): string {
-  if (!code || code.length !== 2) return "🌐";
-  return code.toUpperCase().replace(/./g, (ch) => String.fromCodePoint(127397 + ch.charCodeAt(0)));
+/** Country name in Arabic from its ISO code — GA4 sends English names. */
+const REGION_AR = typeof Intl !== "undefined" && "DisplayNames" in Intl ? new Intl.DisplayNames(["ar"], { type: "region" }) : null;
+function countryName(stored: string): string {
+  const [code, name] = stored.split("|");
+  if (code && code.length === 2) {
+    try {
+      return REGION_AR?.of(code.toUpperCase()) ?? name ?? code;
+    } catch {
+      return name ?? code;
+    }
+  }
+  return name ?? stored;
+}
+
+/** A code chip, not a flag emoji (project rule: icons, never emoji). */
+function CountryCode({ code }: { code: string | null }) {
+  return (
+    <span dir="ltr" className="me-2 inline-block rounded bg-muted px-1 text-xs font-bold text-muted-foreground">
+      {code && code.length === 2 ? code.toUpperCase() : "—"}
+    </span>
+  );
 }
 
 function SourceMixBar({ mix, width = "w-[110px]" }: { mix: Record<string, number>; width?: string }) {
@@ -73,9 +92,9 @@ function Kpi({ title, value, hint, hero, href }: { title: string; value: number;
       <CardContent className="pt-4">
         <p className="text-xs text-muted-foreground">{title}</p>
         <p className="text-2xl font-bold tabular-nums">{value.toLocaleString("en-US")}</p>
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           {hint}
-          {href && <span className="ms-1 text-primary">→ details</span>}
+          {href && <span className="ms-1 text-primary">التفاصيل ←</span>}
         </p>
       </CardContent>
     </Card>
@@ -147,8 +166,8 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
     <Fragment key={c.country}>
       <tr className="border-b last:border-0">
         <td className="py-2">
-          <span className="me-2 text-base">{countryFlag(c.country.split("|")[0])}</span>
-          <b>{c.country.split("|")[1] ?? c.country}</b>
+          <CountryCode code={c.country.split("|")[0]} />
+          <b>{countryName(c.country)}</b>
         </td>
         <td className="py-2 text-end font-bold tabular-nums">
           {Math.round((c.count / totalGeo) * 100)}% · {c.count}
@@ -183,7 +202,7 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
           }}
           className="h-9 rounded-md border border-input bg-background px-3 text-sm"
         >
-          <option value="">All clients</option>
+          <option value="">كل العملاء</option>
           {clients.map((c) => (
             <option key={c.id} value={c.slug}>
               {c.name}
@@ -198,7 +217,7 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
           }}
           className="h-9 max-w-[320px] rounded-md border border-input bg-background px-3 text-sm"
         >
-          <option value="">All articles</option>
+          <option value="">كل المقالات</option>
           {articleOptions.map((a) => (
             <option key={a.id} value={a.slug}>
               {a.title}
@@ -209,9 +228,10 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
         <button
           type="button"
           onClick={() => exportArticlesCsv(data.articlesTable)}
-          className="h-9 rounded-md border border-input bg-background px-3 text-sm hover:bg-muted"
+          className="inline-flex h-9 items-center gap-1.5 rounded-md border border-input bg-background px-3 text-sm hover:bg-muted"
         >
-          ⬇ Export CSV
+          <Download className="size-4" aria-hidden />
+          تصدير CSV
         </button>
       </div>
 
@@ -229,22 +249,22 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
         <>
           {/* 1 · Activity Overview */}
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-            <Kpi hero title="Total Events" value={data.overview.totalEvents} hint="tracked business events" />
-            <Kpi title="Article Views" value={data.overview.articleViews} hint="published articles" />
-            <Kpi title="Client-Page Visits" value={data.overview.clientViews} hint="partner mini-sites" />
-            <Kpi title="Button Clicks" value={data.overview.ctaClicks} hint="CTA buttons pressed" href="/analytics/cta" />
-            <Kpi title="Engagement" value={data.overview.engagement} hint="likes · saves · shares" href="/analytics/engagement" />
-            <Kpi title="Visitor Actions" value={data.overview.leads} hint="bookings · messages · questions" href="/analytics/leads" />
+            <Kpi hero title="كل الأحداث" value={data.overview.totalEvents} hint="أحداث العمل المتتبَّعة" />
+            <Kpi title="مشاهدات المقالات" value={data.overview.articleViews} hint="المقالات المنشورة" />
+            <Kpi title="زيارات صفحات العملاء" value={data.overview.clientViews} hint="صفحات الشركاء" />
+            <Kpi title="ضغطات الأزرار" value={data.overview.ctaClicks} hint="أزرار التواصل" href="/analytics/cta" />
+            <Kpi title="التفاعل" value={data.overview.engagement} hint="إعجاب · حفظ · مشاركة" href="/analytics/engagement" />
+            <Kpi title="أفعال الزوار" value={data.overview.leads} hint="حجوزات · رسائل · أسئلة" href="/analytics/leads" />
           </div>
 
           {/* 2 · Timeline */}
           <Card>
             <CardHeader>
-              <CardTitle>Events Over Time</CardTitle>
+              <CardTitle>الأحداث عبر الوقت</CardTitle>
             </CardHeader>
             <CardContent>
               {data.timeline.length === 0 ? (
-                <div className="flex h-64 items-center justify-center text-muted-foreground">No data in range</div>
+                <div className="flex h-64 items-center justify-center text-muted-foreground">ما في بيانات في هذي الفترة.</div>
               ) : (
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={data.timeline}>
@@ -253,9 +273,9 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
                     <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} allowDecimals={false} />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="articleViews" name="Article views" stroke="#2563EB" strokeWidth={2.5} dot={false} />
-                    <Line type="monotone" dataKey="clientViews" name="Client-page visits" stroke="#10B981" strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="ctaClicks" name="CTA clicks" stroke="#F59E0B" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="articleViews" name="مشاهدات المقالات" stroke="#2563EB" strokeWidth={2.5} dot={false} />
+                    <Line type="monotone" dataKey="clientViews" name="زيارات صفحات العملاء" stroke="#10B981" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="ctaClicks" name="ضغطات الأزرار" stroke="#F59E0B" strokeWidth={2} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
               )}
@@ -267,16 +287,16 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
             <Card>
               <CardHeader>
                 <CardTitle>
-                  Traffic Sources{" "}
-                  <span className="ms-2 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
-                    clean data since {data.sources.cleanSince}
+                  مصادر الزيارات{" "}
+                  <span className="ms-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
+                    بيانات نظيفة من {data.sources.cleanSince}
                   </span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {totalMix === 0 ? (
                   <p className="py-8 text-center text-sm text-muted-foreground">
-                    No classified visits yet — accumulating since {data.sources.cleanSince}.
+                    ما في زيارات مصنّفة بعد — تتجمّع من {data.sources.cleanSince}.
                   </p>
                 ) : (
                   <>
@@ -288,7 +308,7 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
                             key={source}
                             title={`${SOURCE_LABELS[source] ?? source}: ${n}`}
                             style={{ width: `${(n / totalMix) * 100}%`, background: SOURCE_COLORS[source] ?? "#9CA3AF" }}
-                            className="flex items-center justify-center whitespace-nowrap text-[11px] font-bold text-white"
+                            className="flex items-center justify-center whitespace-nowrap text-xs font-bold text-white"
                           >
                             {(n / totalMix) * 100 >= 12 ? `${SOURCE_LABELS[source] ?? source} ${Math.round((n / totalMix) * 100)}%` : ""}
                           </div>
@@ -307,21 +327,21 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b text-xs text-muted-foreground">
-                          <th className="py-2 text-start font-medium">Top referrer domains</th>
-                          <th className="py-2 text-end font-medium">Visits</th>
+                          <th className="py-2 text-start font-medium">أكثر المواقع المُحيلة</th>
+                          <th className="py-2 text-end font-medium">الزيارات</th>
                         </tr>
                       </thead>
                       <tbody>
                         {data.sources.topDomains.length === 0 ? (
                           <tr>
                             <td colSpan={2} className="py-4 text-center text-muted-foreground">
-                              No referrer domains yet
+                              ما في مواقع مُحيلة بعد
                             </td>
                           </tr>
                         ) : (
                           data.sources.topDomains.map((d) => (
                             <tr key={d.domain} className="border-b last:border-0">
-                              <td className="py-2">{d.domain}</td>
+                              <td className="py-2" dir="ltr">{d.domain}</td>
                               <td className="py-2 text-end font-bold tabular-nums">{d.count}</td>
                             </tr>
                           ))
@@ -335,12 +355,12 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
 
             <Card>
               <CardHeader>
-                <CardTitle>🌍 Geography</CardTitle>
+                <CardTitle className="flex items-center gap-2"><Globe className="size-4" aria-hidden /> الجغرافيا</CardTitle>
               </CardHeader>
               <CardContent>
                 {totalGeo === 0 || data.geo.countries.length === 0 ? (
                   <p className="py-8 text-center text-sm text-muted-foreground">
-                    Geo starts accumulating on production (Vercel edge headers) — empty in local dev.
+                    الجغرافيا تتجمّع على الإنتاج (من هيدرز Vercel) — فاضية في التطوير المحلي.
                   </p>
                 ) : (
                   <>
@@ -350,14 +370,14 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
                     {(restGeo.length > 0 || data.geo.unknown > 0) && (
                       <details className="mt-1">
                         <summary className="cursor-pointer py-1 text-xs text-muted-foreground">
-                          Other countries ({restGeo.length}) · {restGeoCount} users
+                          دول أخرى ({restGeo.length}) · {restGeoCount} مستخدم
                         </summary>
                         <table className="w-full text-sm">
                           <tbody>
                             {restGeo.map(geoRow)}
                             {data.geo.unknown > 0 && (
                               <tr>
-                                <td className="py-2 text-muted-foreground">🌐 Unknown</td>
+                                <td className="py-2 text-muted-foreground">غير معروف</td>
                                 <td className="py-2 text-end tabular-nums text-muted-foreground">{data.geo.unknown}</td>
                               </tr>
                             )}
@@ -374,21 +394,21 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
           {/* 5 · Articles × Sources */}
           <Card>
             <CardHeader>
-              <CardTitle>Articles — where readers come from</CardTitle>
+              <CardTitle>المقالات — من وين يجي القرّاء</CardTitle>
             </CardHeader>
             <CardContent>
               {data.articlesTable.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">No article views in range</p>
+                <p className="py-8 text-center text-sm text-muted-foreground">ما في مشاهدات مقالات في هذي الفترة.</p>
               ) : (
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b text-xs text-muted-foreground">
-                      <th className="py-2 text-start font-medium">Article</th>
-                      <th className="py-2 text-start font-medium">Client</th>
-                      <th className="py-2 text-end font-medium">Views</th>
-                      <th className="py-2 text-start font-medium">Sources mix</th>
-                      <th className="py-2 text-start font-medium">Top country</th>
-                      <th className="py-2 text-end font-medium">CTA</th>
+                      <th className="py-2 text-start font-medium">المقال</th>
+                      <th className="py-2 text-start font-medium">العميل</th>
+                      <th className="py-2 text-end font-medium">المشاهدات</th>
+                      <th className="py-2 text-start font-medium">توزيع المصادر</th>
+                      <th className="py-2 text-start font-medium">أعلى دولة</th>
+                      <th className="py-2 text-end font-medium">الضغطات</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -405,8 +425,8 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
                         <td className="py-2">
                           {a.topCountry ? (
                             <>
-                              <span className="me-1">{countryFlag(a.topCountry.split("|")[0])}</span>
-                              {a.topCountry.split("|")[1] ?? a.topCountry}
+                              <CountryCode code={a.topCountry.split("|")[0]} />
+                              {countryName(a.topCountry)}
                             </>
                           ) : (
                             <span className="text-muted-foreground">—</span>
@@ -432,21 +452,21 @@ export function FullActivityClient({ initialData, clients, articles }: FullActiv
           {/* 6 · Client pages */}
           <Card>
             <CardHeader>
-              <CardTitle>Client Pages — visits &amp; conversion</CardTitle>
+              <CardTitle>صفحات العملاء — الزيارات والتحويل</CardTitle>
             </CardHeader>
             <CardContent>
               {data.clientsTable.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">No client-page visits in range</p>
+                <p className="py-8 text-center text-sm text-muted-foreground">ما في زيارات لصفحات العملاء في هذي الفترة.</p>
               ) : (
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b text-xs text-muted-foreground">
-                      <th className="py-2 text-start font-medium">Client</th>
-                      <th className="py-2 text-end font-medium">Page visits</th>
-                      <th className="py-2 text-end font-medium">CTA clicks</th>
-                      <th className="py-2 text-end font-medium">Bookings</th>
-                      <th className="py-2 text-start font-medium">Top source</th>
-                      <th className="py-2 text-start font-medium">Top city</th>
+                      <th className="py-2 text-start font-medium">العميل</th>
+                      <th className="py-2 text-end font-medium">زيارات الصفحة</th>
+                      <th className="py-2 text-end font-medium">ضغطات الأزرار</th>
+                      <th className="py-2 text-end font-medium">الحجوزات</th>
+                      <th className="py-2 text-start font-medium">أعلى مصدر</th>
+                      <th className="py-2 text-start font-medium">أعلى مدينة</th>
                     </tr>
                   </thead>
                   <tbody>

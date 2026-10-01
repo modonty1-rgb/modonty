@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -9,6 +8,7 @@ import { hasStoredOgImage } from "@modonty/shared/lib/seo/client/meta-score";
 import { getPaymentStates, paymentStateLabel, NO_PAYMENT_STATE } from "@/lib/clients/payment-state";
 import { getSegment } from "../segments";
 import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
+import { SegmentPageHeader } from "@/components/shared/segment-page-header";
 import { SegmentTable, type SegmentClient } from "./components/segment-table";
 import { MoneySegmentTable, type MoneySegmentClient } from "./components/money-segment-table";
 
@@ -102,8 +102,8 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
     });
 
     return (
-      <div className="mx-auto max-w-[1200px] space-y-6">
-        <SegmentHeader title={segment.title} description={segment.description} />
+      <div dir="rtl" className="mx-auto max-w-[1200px] space-y-6">
+        <SegmentPageHeader title={segment.title} description={segment.description} count={`${moneyClients.length} عميل`} />
         <Card>
           <CardContent className="pt-4">
             <MoneySegmentTable clients={moneyClients} />
@@ -114,30 +114,13 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
   }
 
   return (
-    <div className="mx-auto max-w-[1200px] space-y-6">
-      <SegmentHeader title={segment.title} description={segment.description} />
+    <div dir="rtl" className="mx-auto max-w-[1200px] space-y-6">
+      <SegmentPageHeader title={segment.title} description={segment.description} count={`${shown.length} عميل`} />
       <Card>
         <CardContent className="pt-4">
-          <SegmentTable clients={shown} action={segment.action ?? { label: "Open", path: "edit" }} />
+          <SegmentTable clients={shown} action={segment.action ?? { label: "افتح", path: "edit" }} />
         </CardContent>
       </Card>
-    </div>
-  );
-}
-
-function SegmentHeader({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="flex items-start justify-between gap-4">
-      <div>
-        <h1 className="text-2xl font-semibold leading-tight">{title}</h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{description}</p>
-      </div>
-      <Link
-        href="/"
-        className="shrink-0 rounded-md border border-input px-3 py-1.5 text-sm hover:bg-muted"
-      >
-        ← Back to dashboard
-      </Link>
     </div>
   );
 }

@@ -6,10 +6,10 @@ export default async function MembersPage() {
   const members = await getMembers();
 
   return (
-    <div className="max-w-[1200px] mx-auto">
+    <div dir="rtl" className="max-w-[1200px] mx-auto">
       <PageHeader
-        title="Members"
-        description={`${members.length} registered member${members.length !== 1 ? "s" : ""} — visitors who signed up (Google or email)`}
+        title="الأعضاء"
+        description={`${members.length} عضو مسجّل — زوار سجّلوا في مدونتي (جوجل أو البريد)`}
       />
       <MemberTable members={members} />
     </div>

@@ -218,13 +218,13 @@ export function ClientForm({
                 isDirty ? (
                   <>
                     <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-                    <span className="font-medium">Unsaved changes</span>
+                    <span className="font-medium">تعديلات ما انحفظت</span>
                   </>
                 ) : (
-                  <span className="text-muted-foreground">All changes saved</span>
+                  <span className="text-muted-foreground">كل التعديلات محفوظة</span>
                 )
               ) : (
-                <span className="text-muted-foreground">Fill the required fields, then create</span>
+                <span className="text-muted-foreground">عبّ الحقول المطلوبة ثم أنشئ</span>
               )}
 
             </span>
@@ -296,7 +296,7 @@ export function ClientForm({
               )}
               <Button type="submit" size="sm" disabled={loading} className="h-8">
                 {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                {loading ? "Saving…" : isEditMode ? "Save Changes" : "Create Client"}
+                {loading ? "يحفظ…" : isEditMode ? "احفظ التعديلات" : "أنشئ العميل"}
               </Button>
             </div>
           </div>

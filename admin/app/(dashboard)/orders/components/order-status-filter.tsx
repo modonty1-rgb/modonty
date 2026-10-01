@@ -35,6 +35,8 @@ export function OrderStatusFilter({
   marketCounts,
   marketLabels,
   activeMarket,
+  reps,
+  activeRep,
 }: {
   counts: Partial<Record<CheckoutOrderStatus, number>>;
   total: number;
@@ -55,8 +57,11 @@ export function OrderStatusFilter({
   marketCounts: Partial<Record<string, number>>;
   marketLabels: Record<string, string>;
   activeMarket?: string;
+  /** المناديبُ بعدد طلباتهم — مندوبُ الطلب، وإلّا مندوبُ عميله. و`none` = بلا مندوب. */
+  reps: { id: string; name: string; count: number }[];
+  activeRep?: string;
 }) {
-  const nothingActive = !active && !isAwaitingView && !isExpiredView && !activeProvider && !activeMarket;
+  const nothingActive = !active && !isAwaitingView && !isExpiredView && !activeProvider && !activeMarket && !activeRep;
   return (
     // صفٌّ واحدٌ يمرّر أفقيّاً عند الضيق ولا يلتفّ (خالد ١٩ سبتمبر ٢٠٢٦: «كلّها تكون في
     // سطرٍ واحد»). الالتفافُ كان يُنزل «البوّابة» تحت «الاشتراك» على الشاشات الضيّقة، فيتغيّر
@@ -70,6 +75,14 @@ export function OrderStatusFilter({
         {/* منتهٍ = تجديدٌ مستحقّ. أحمرُ كصفوفه في الجدول. */}
         <Pill href="/orders?view=expired" label="منتهٍ" count={expired} isActive={isExpiredView} tone={expired > 0 ? "danger" : undefined} />
       </div>
+      {/* المناديب (خالد ٣٠ سبتمبر ٢٠٢٦: «في توجلز المناديب»). */}
+      {reps.length > 0 && (
+        <div className="flex items-center gap-1 border-s ps-2" role="group" aria-label="المندوب">
+          {reps.map((r) => (
+            <Pill key={r.id} href={`/orders?rep=${r.id}`} label={r.name} count={r.count} isActive={activeRep === r.id} />
+          ))}
+        </div>
+      )}
       <OrderFilterMenu
         sections={[
           {

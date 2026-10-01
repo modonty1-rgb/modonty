@@ -60,9 +60,9 @@ interface ClientEditWorkspaceProps {
  * بوّابة YMYL — كلاهما أوراقٌ رسميّةٌ تُفحص.
  */
 const ZONES = [
-  { id: "z-account", label: "Account & Access" },
-  { id: "z-contact", label: "Classification" },
-  { id: "z-cta", label: "Client Page & Contact" },
+  { id: "z-account", label: "الحساب والدخول" },
+  { id: "z-contact", label: "التصنيف" },
+  { id: "z-cta", label: "صفحة العميل والتواصل" },
 ] as const;
 
 /**

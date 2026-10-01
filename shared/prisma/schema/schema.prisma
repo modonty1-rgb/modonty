@@ -334,6 +334,9 @@ model Staff {
   salesClients  Client[]       @relation("StaffSalesClients")
   salesLeads    SalesLead[]    @relation("StaffSalesLeads")
   editorClients Client[]       @relation("StaffEditorClients")
+  // Sales commissions (Khalid, 30 Sep 2026) — a rep's rate history and what was paid out to him.
+  commissionRates   SalesCommissionRate[]   @relation("StaffCommissionRates")
+  commissionPayouts SalesCommissionPayout[] @relation("StaffCommissionPayouts")
   assignedTasks Task[]         @relation("TaskAssignee")
   createdTasks  Task[]         @relation("TaskCreatedBy")
 
@@ -4242,6 +4245,61 @@ model Country {
 }
 
 // ============================================
+// ═══════════════════════════════════════════════════════════════════════════
+// SALES COMMISSIONS — عمولات المناديب (خالد ٣٠ سبتمبر ٢٠٢٦)
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// لا عمود «عمولة» على الطلب: العمولةُ تُحسب من الطلب نفسه (`CheckoutOrder.salesRepId`
+// · `subtotalMinor` قبل الضريبة · `status`) ومن سجلّ النسب أدناه — فلا نسخةٌ ثانية للمال.
+// قرارات خالد: نسبةٌ لكل مندوب · على المبلغ قبل الضريبة · التجديد بنسبةٍ أقلّ · المستردُّ
+// تسقط عمولته (وتُخصم إن صُرفت) · تغييرُ النسبة لا يمسّ صفقةً قبله · زرّ «صرفت له».
+
+/// نسبة عمولة مندوب — **سجلٌّ لا قيمة واحدة**: كلّ صفٍّ يسري من `effectiveFrom`، وكلّ صفقةٍ
+/// تُحسب بالصفّ الساري يوم دُفعت. فتغييرُ النسبة يضيف صفّاً ولا يعدّل القديم (خالد: «تبقى
+/// على نسبتها»). وأوّلُ صفٍّ لمندوبٍ يسري على صفقاته السابقة كلّها — لم تكن له نسبةٌ قبله.
+model SalesCommissionRate {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  staffId       String   @db.ObjectId
+  staff         Staff    @relation("StaffCommissionRates", fields: [staffId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  /// نقاط أساس: 1000 = ١٠٪ — عددٌ صحيح كي لا يدخل الكسرُ العشريّ في المال.
+  newRateBp     Int
+  /// للتجديد: كلّ طلبٍ بعد أوّل طلبٍ مُحصَّل للعميل.
+  renewalRateBp Int
+  effectiveFrom DateTime
+  createdById   String?  @db.ObjectId
+  createdAt     DateTime @default(now())
+
+  @@index([staffId, effectiveFrom])
+  @@map("sales_commission_rates")
+}
+
+/// طلبٌ واحد غطّته صرفيّة — ولقطةُ عمولته يوم الصرف: تغييرُ النسبة بعدها لا يغيّر ما دُفع.
+/// `commissionMinor` بالسالب = خصمُ عمولةِ طلبٍ صُرفت ثمّ استُردّ (يُطرح من هذه الصرفيّة).
+type SalesCommissionPayoutItem {
+  orderId         String @db.ObjectId
+  orderNumber     String
+  commissionMinor Int
+}
+
+/// صرفيّةٌ لمندوب — تُنشأ من جدول «لسه ما انصرف» بتحديد الطلبات (خالد ٣٠ سبتمبر ٢٠٢٦: «أختار
+/// المندوب… جدول فيه كل الأوردرات اللي لسه ما انصرفت عمولاتها… سيلكت وبعدين صرف»). المبلغ =
+/// مجموع `items`، لكلّ عملةٍ على حدة (ريال وجنيه لا يُحوَّلان). حذفُها يعيد طلباتها للجدول.
+model SalesCommissionPayout {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  staffId     String   @db.ObjectId
+  staff       Staff    @relation("StaffCommissionPayouts", fields: [staffId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  currency    String // SAR | EGP
+  amountMinor Int
+  items       SalesCommissionPayoutItem[]
+  paidOn      DateTime
+  note        String?
+  createdById String?  @db.ObjectId
+  createdAt   DateTime @default(now())
+
+  @@index([staffId, paidOn])
+  @@map("sales_commission_payouts")
+}
+
 // REFERRAL — إحالة عميل لعميل
 // ============================================
 

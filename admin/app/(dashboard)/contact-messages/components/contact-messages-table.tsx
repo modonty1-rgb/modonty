@@ -76,9 +76,9 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
       const result = await sendContactReply(replyTarget.id, body, true);
       if (result.success) {
         toast({
-          title: result.emailFailed ? "Reply saved — email failed" : "Reply sent",
+          title: result.emailFailed ? "انحفظ الرد — والبريد ما انرسل" : "انرسل الرد",
           description: result.emailFailed
-            ? "Saved and marked replied, but the email didn't go out."
+            ? "انحفظ وتعلّم «رُدّ عليها»، لكن البريد ما طلع."
             : `Emailed to ${replyTarget.email} and marked as replied.`,
           variant: result.emailFailed ? "destructive" : "success",
         });
@@ -88,7 +88,7 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
       } else {
         toast({
           title: messages.error.operation_failed,
-          description: result.error || "Couldn't send the reply",
+          description: result.error || "تعذّر إرسال الرد",
           variant: "destructive",
         });
       }
@@ -230,7 +230,7 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
           columns={[
             {
               key: "name",
-              header: "Name",
+              header: "الاسم",
               render: (message) => (
                 <Link
                   href={`/contact-messages/${message.id}`}
@@ -242,11 +242,13 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
             },
             {
               key: "email",
-              header: "Email",
+              header: "البريد",
               render: (message) => (
                 <a
                   href={`mailto:${message.email}`}
-                  className="text-primary hover:underline"
+                  dir="ltr"
+                  title={message.email}
+                  className="block max-w-[190px] truncate text-primary hover:underline"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {message.email}
@@ -255,33 +257,33 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
             },
             {
               key: "subject",
-              header: "Subject",
+              header: "الموضوع",
               render: (message) => (
-                <span className="max-w-xs truncate block" title={message.subject}>
+                <span className="block max-w-[200px] truncate" title={message.subject}>
                   {message.subject}
                 </span>
               ),
             },
             {
               key: "client",
-              header: "Client",
+              header: "العميل",
               render: (message) => message.client?.name || "-",
             },
             {
               key: "status",
-              header: "Status",
+              header: "الحالة",
               render: (message) => <StatusBadge status={message.status as any} />,
             },
             {
               key: "createdAt",
-              header: "Created",
-              render: (message) => format(new Date(message.createdAt), "MMM d, yyyy HH:mm"),
+              header: "التاريخ",
+              render: (message) => format(new Date(message.createdAt), "yyyy-MM-dd HH:mm"),
             },
             {
               key: "actions",
-              header: "Actions",
+              header: "إجراءات",
               render: (message) => (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <Button
                     variant="outline"
                     size="sm"
@@ -293,12 +295,15 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
                     disabled={loading === message.id}
                   >
                     <Reply className="h-4 w-4 me-1.5" />
-                    Reply
+                    ردّ
                   </Button>
                   <Link href={`/contact-messages/${message.id}`}>
                     <Button
                       variant="ghost"
                       size="sm"
+                      className="size-8 p-0"
+                      aria-label="اعرض الرسالة"
+                      title="اعرض الرسالة"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Eye className="h-4 w-4" />
@@ -308,10 +313,13 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
                     <Button
                       variant="ghost"
                       size="sm"
+                      className="size-8 p-0"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleMarkAsRead(message.id);
                       }}
+                      aria-label="علّمها مقروءة"
+                      title="علّمها مقروءة"
                       disabled={loading === message.id}
                     >
                       <Mail className="h-4 w-4" />
@@ -321,10 +329,13 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
                     <Button
                       variant="ghost"
                       size="sm"
+                      className="size-8 p-0"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleMarkAsReplied(message.id);
                       }}
+                      aria-label="علّمها «رُدّ عليها»"
+                      title="علّمها «رُدّ عليها»"
                       disabled={loading === message.id}
                     >
                       <CheckCircle className="h-4 w-4" />
@@ -334,10 +345,13 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
                     <Button
                       variant="ghost"
                       size="sm"
+                      className="size-8 p-0"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleStatusChange(message.id, "archived");
                       }}
+                      aria-label="أرشفها"
+                      title="أرشفها"
                       disabled={loading === message.id}
                     >
                       <Archive className="h-4 w-4" />
@@ -346,10 +360,13 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
                   <Button
                     variant="ghost"
                     size="sm"
+                    className="size-8 p-0"
                     onClick={(e) => {
                       e.stopPropagation();
                       openDeleteDialog(message.id);
                     }}
+                    aria-label="احذفها"
+                    title="احذفها"
                     disabled={loading === message.id}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
@@ -362,21 +379,23 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
             router.push(`/contact-messages/${message.id}`);
           }}
           pageSize={20}
+          emptyText="ما في رسائل."
+          arabic
         />
       </div>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Contact Message</AlertDialogTitle>
+            <AlertDialogTitle>حذف الرسالة</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this contact message? This action cannot be undone.
+              متأكد تبغى تحذف الرسالة؟ ما تقدر ترجعها.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-              Delete
+              احذف
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -393,15 +412,15 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reply to {replyTarget?.name}</DialogTitle>
+            <DialogTitle>ردّ على {replyTarget?.name}</DialogTitle>
             <DialogDescription>
-              Sends an email to {replyTarget?.email} · Re: {replyTarget?.subject}
+              يُرسل بريداً إلى <span dir="ltr">{replyTarget?.email}</span> · بخصوص: {replyTarget?.subject}
             </DialogDescription>
           </DialogHeader>
           <Textarea
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
-            placeholder="Write your reply…"
+            placeholder="اكتب ردّك…"
             rows={6}
             disabled={sending}
             autoFocus
@@ -415,11 +434,11 @@ export function ContactMessagesTable({ messages: contactMessages }: ContactMessa
               }}
               disabled={sending}
             >
-              Cancel
+              إلغاء
             </Button>
             <Button onClick={handleSendReply} disabled={sending || !replyText.trim()}>
               {sending ? <Loader2 className="h-4 w-4 me-2 animate-spin" /> : <Send className="h-4 w-4 me-2" />}
-              Send Reply
+              أرسل الرد
             </Button>
           </DialogFooter>
         </DialogContent>

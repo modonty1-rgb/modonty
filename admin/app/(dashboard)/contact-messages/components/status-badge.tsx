@@ -15,21 +15,21 @@ const statusConfig: Record<
   { label: string; variant: "default" | "secondary" | "destructive" | "outline"; className?: string }
 > = {
   new: {
-    label: "New",
+    label: "جديدة",
     variant: "default",
     className: "bg-blue-500 hover:bg-blue-600 text-white border-blue-600",
   },
   read: {
-    label: "Read",
+    label: "مقروءة",
     variant: "secondary",
   },
   replied: {
-    label: "Replied",
+    label: "رُدّ عليها",
     variant: "default",
     className: "bg-green-500 hover:bg-green-600 text-white border-green-600",
   },
   archived: {
-    label: "Archived",
+    label: "مؤرشفة",
     variant: "outline",
     className: "text-muted-foreground",
   },

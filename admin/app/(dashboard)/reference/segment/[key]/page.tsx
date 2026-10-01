@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { SegmentPageHeader } from "@/components/shared/segment-page-header";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { getReferenceRows } from "../../../actions/reference-seo-counts";
@@ -21,19 +21,8 @@ export default async function ReferenceSegmentPage({ params }: { params: Promise
   const rows = await getReferenceRows(segment.key);
 
   return (
-    <div className="mx-auto max-w-[1000px] space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold leading-tight">{segment.title}</h1>
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{segment.description}</p>
-        </div>
-        <Link
-          href="/"
-          className="shrink-0 rounded-md border border-input px-3 py-1.5 text-sm hover:bg-muted"
-        >
-          ← Back to dashboard
-        </Link>
-      </div>
+    <div dir="rtl" className="mx-auto max-w-[1000px] space-y-6">
+      <SegmentPageHeader title={segment.title} description={segment.description} count={`${rows.length} صفحة`} />
 
       <Card>
         <CardContent className="pt-4">

@@ -63,7 +63,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
     <div className="flex flex-wrap items-center gap-4 p-4 border rounded-lg bg-card">
       <div className="flex items-center gap-2">
         <Calendar className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm font-medium">Date Range</span>
+        <span className="text-sm font-medium">الفترة</span>
       </div>
       
       <div className="flex items-center gap-2">
@@ -72,28 +72,28 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
           size="sm"
           onClick={() => handlePreset("today")}
         >
-          Today
+          اليوم
         </Button>
         <Button
           variant={activePreset === "7d" ? "default" : "outline"}
           size="sm"
           onClick={() => handlePreset("7d")}
         >
-          Last 7 days
+          آخر 7 أيام
         </Button>
         <Button
           variant={activePreset === "30d" ? "default" : "outline"}
           size="sm"
           onClick={() => handlePreset("30d")}
         >
-          Last 30 days
+          آخر 30 يوم
         </Button>
         <Button
           variant={activePreset === "90d" ? "default" : "outline"}
           size="sm"
           onClick={() => handlePreset("90d")}
         >
-          Last 90 days
+          آخر 90 يوم
         </Button>
       </div>
 
@@ -105,7 +105,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
           className="px-3 py-1.5 text-sm border rounded-md bg-background"
           max={endDate ? format(endDate, "yyyy-MM-dd") : undefined}
         />
-        <span className="text-sm text-muted-foreground">to</span>
+        <span className="text-sm text-muted-foreground">إلى</span>
         <input
           type="date"
           value={endDate ? format(endDate, "yyyy-MM-dd") : ""}

@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
  */
 export function MediaPageSkeleton({ pickers = 1 }: { pickers?: number }) {
   return (
-    <div className="max-w-[1200px] mx-auto space-y-5" role="status" aria-busy="true" aria-label="Loading">
+    <div className="max-w-[1200px] mx-auto space-y-5" role="status" aria-busy="true" aria-label="يحمّل">
       <div>
         <Skeleton className="h-7 w-44" />
         <Skeleton className="h-3.5 w-80 mt-1.5" />

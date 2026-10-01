@@ -38,54 +38,6 @@ export const IBOX: Record<Tier, string> = {
   plain: "bg-muted text-muted-foreground",
 };
 
-const CHIP_TEXT: Record<Tier, string> = {
-  hot: "text-red-600 dark:text-red-400",
-  warm: "text-amber-600 dark:text-amber-400",
-  ok: "text-emerald-600 dark:text-emerald-400",
-  plain: "text-muted-foreground",
-};
-
-/**
- * A compact icon+counter (or text-label+counter) chip — the shared unit every collapsed
- * section header uses to show its key numbers at a glance (Khalid 2026-07-23). Pass `icon`
- * for a glyph, or `label` for a short text badge (e.g. "YMYL") when a glyph would blend in.
- * `brand` paints the icon box in WhatsApp green instead of the tier tint.
- */
-export function SummaryChip({
-  icon: Icon,
-  label,
-  value,
-  tier = "plain",
-  brand = false,
-}: {
-  icon?: React.ComponentType<{ className?: string }>;
-  label?: string;
-  value: React.ReactNode;
-  tier?: Tier;
-  brand?: boolean;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1">
-      {label ? (
-        <span
-          className={`rounded px-1 py-0.5 text-[8px] font-extrabold leading-none tracking-tight ${IBOX[tier]}`}
-        >
-          {label}
-        </span>
-      ) : Icon ? (
-        <span
-          className={`flex h-5 w-5 items-center justify-center rounded ${
-            brand ? "bg-[#25d366] text-white" : IBOX[tier]
-          }`}
-        >
-          <Icon className="h-3 w-3" />
-        </span>
-      ) : null}
-      <span className={`text-[11px] font-bold tabular-nums ${CHIP_TEXT[tier]}`}>{value}</span>
-    </span>
-  );
-}
-
 /** 4-up on desktop, 2-up below — every row of the dashboard packs to this grid. */
 export const CARD_GRID = "grid grid-cols-2 gap-2.5 xl:grid-cols-4";
 
@@ -118,8 +70,8 @@ export function TierCard({
               {value.toLocaleString("en-US")}
             </span>
           </div>
-          <p className="pt-2 text-[11px] font-semibold leading-tight">{label}</p>
-          {note && <p className="pt-0.5 text-[10px] leading-snug text-muted-foreground">{note}</p>}
+          <p className="pt-2 text-xs font-semibold leading-tight">{label}</p>
+          {note && <p className="pt-0.5 text-xs leading-snug text-muted-foreground">{note}</p>}
           {children}
         </CardContent>
       </Card>
@@ -134,7 +86,7 @@ export function TierCard({
 export function Ghost({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="flex h-full min-h-[72px] flex-col items-start justify-center gap-1.5 rounded-xl border border-dashed p-3">
-      <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/70">{title}</p>
+      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">{title}</p>
       {children}
     </div>
   );
@@ -143,7 +95,7 @@ export function Ghost({ title, children }: { title: string; children: React.Reac
 export function ZChip({ good, children }: { good?: boolean; children: React.ReactNode }) {
   return (
     <span
-      className={`rounded-full border px-2.5 py-0.5 text-[11px] tabular-nums ${
+      className={`rounded-full border px-2.5 py-0.5 text-xs tabular-nums ${
         good
           ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
           : "bg-card text-muted-foreground"
@@ -164,7 +116,7 @@ export function GroupLabel({
   children: React.ReactNode;
 }) {
   return (
-    <p className="mb-2 mt-4 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+    <p className="mb-2 mt-4 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
       <Icon className="h-3.5 w-3.5" />
       {children}
       {hint && <span className="font-normal normal-case tracking-normal">{hint}</span>}

@@ -20,11 +20,14 @@ export interface SalesRepsSummaryData {
  */
 export function SalesRepsSummary({ reps, unassignedCount, unassigned }: SalesRepsSummaryData) {
   if (reps.length === 0 && unassignedCount === 0) return null;
+  // The base excludes our own accounts (NOT_INTERNAL) — said out loud, or «24 + 22» next to
+  // «من 46» reads as two lost clients (30 Sep 2026 review).
+  const base = reps.reduce((sum, r) => sum + r.count, 0) + unassignedCount;
 
   return (
     <>
-      <GroupLabel icon={Users} hint="— who brought each client, and who has no rep yet">
-        Sales reps
+      <GroupLabel icon={Users} hint={`— مين جاب كل عميل · من ${base.toLocaleString("en-US")} عميل (بلا الحسابات الداخلية)`}>
+        المناديب
       </GroupLabel>
       <div className="mb-3 overflow-hidden rounded-xl border bg-card shadow-sm">
         {reps.map((r) => (
@@ -35,7 +38,7 @@ export function SalesRepsSummary({ reps, unassignedCount, unassigned }: SalesRep
             icon={Users}
             value={r.count}
             label={r.name}
-            note="clients brought"
+            note="عملاء جابهم"
           />
         ))}
 
@@ -50,14 +53,14 @@ export function SalesRepsSummary({ reps, unassignedCount, unassigned }: SalesRep
                 {unassignedCount.toLocaleString("en-US")}
               </span>
               <span className="text-[13px] leading-snug">
-                No sales rep
-                <span className="mt-0.5 block text-[11px] text-muted-foreground">
-                  not assigned to anyone — click to assign
+                بلا مندوب
+                <span className="mt-0.5 block text-xs text-muted-foreground">
+                  ما انعيّن لأحد — اضغط العميل لتعيينه
                 </span>
               </span>
-              <span className="hidden text-[11.5px] font-bold text-primary md:block">
-                <span className="group-open:hidden">show →</span>
-                <span className="hidden group-open:inline">hide ↑</span>
+              <span className="hidden text-xs font-bold text-primary md:block">
+                <span className="group-open:hidden">اعرض ←</span>
+                <span className="hidden group-open:inline">إخفاء ↑</span>
               </span>
             </summary>
             <ul className="divide-y border-t bg-muted/20">
@@ -68,7 +71,7 @@ export function SalesRepsSummary({ reps, unassignedCount, unassigned }: SalesRep
                     className="flex items-center justify-between gap-2 py-2 pe-4 ps-[3.5rem] text-[13px] hover:bg-muted/40"
                   >
                     <span className="truncate">{c.name}</span>
-                    <span className="shrink-0 text-[11.5px] font-bold text-primary">assign →</span>
+                    <span className="shrink-0 text-xs font-bold text-primary">عيّن ←</span>
                   </Link>
                 </li>
               ))}

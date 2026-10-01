@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { ClientCtaMode, ArticleStatus, InvoicePaymentStatus } from "@prisma/client";
-import { clientIdsWhere, getClientSubscriptions, type ClientSubscription } from "@/lib/subscription/get-client-subscriptions";
+import { clientIdsWhere, getClientSubscriptionsShared, type ClientSubscription } from "@/lib/subscription/get-client-subscriptions";
 
 import { getClientIdsMissingCtaMode, getClientImageGaps, getClientDataGaps, NOT_INTERNAL } from "../clients/segment/segments";
 
@@ -107,8 +107,8 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
    * الطلبَ عند تسعةٍ من ٤٣. والآن كلُّها من `getClientSubscriptions` — نفسُ معادلة الكونسول.
    */
   const [all, billable, ymylIds] = await Promise.all([
-    getClientSubscriptions(),
-    getClientSubscriptions(NOT_INTERNAL),
+    getClientSubscriptionsShared(),
+    getClientSubscriptionsShared(NOT_INTERNAL),
     db.client.findMany({ where: { isYmyl: true }, select: { id: true } }).then((r) => new Set(r.map((c) => c.id))),
   ]);
   const countOf = (subs: typeof all, test: (s: ClientSubscription) => boolean) => clientIdsWhere(subs, test).length;

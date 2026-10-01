@@ -10,11 +10,11 @@ export default async function ContactMessagesPage() {
   ]);
 
   const getDescription = () => {
-    return "Manage and respond to contact messages from visitors";
+    return "رسائل الزوار من صفحة التواصل — ردّ عليها وتابعها";
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div dir="rtl" className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <ContactMessagesHeaderWrapper
         messageCount={messages.length}
         description={getDescription()}

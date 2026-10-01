@@ -49,26 +49,26 @@ export function ClientsFilters() {
     <div className="flex flex-wrap items-end gap-3">
       {/* Articles filter */}
       <div className="space-y-1">
-        <Label className="text-xs text-muted-foreground">Articles</Label>
+        <Label className="text-xs text-muted-foreground">المقالات</Label>
         <Select
           value={hasArticles}
           onValueChange={(v) => handleChange("hasArticles", v)}
           disabled={isPending}
         >
           <SelectTrigger className="w-40 h-9 text-sm">
-            <SelectValue placeholder="All" />
+            <SelectValue placeholder="الكل" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="yes">Has articles</SelectItem>
-            <SelectItem value="no">No articles</SelectItem>
+            <SelectItem value="all">الكل</SelectItem>
+            <SelectItem value="yes">عنده مقالات</SelectItem>
+            <SelectItem value="no">بلا مقالات</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {/* Created from */}
       <div className="space-y-1">
-        <Label className="text-xs text-muted-foreground">From Date</Label>
+        <Label className="text-xs text-muted-foreground">من تاريخ</Label>
         <Input
           type="date"
           value={createdFrom}
@@ -80,7 +80,7 @@ export function ClientsFilters() {
 
       {/* Created to */}
       <div className="space-y-1">
-        <Label className="text-xs text-muted-foreground">To Date</Label>
+        <Label className="text-xs text-muted-foreground">إلى تاريخ</Label>
         <Input
           type="date"
           value={createdTo}
@@ -92,7 +92,7 @@ export function ClientsFilters() {
 
       {/* Min article count */}
       <div className="space-y-1">
-        <Label className="text-xs text-muted-foreground">Min Articles</Label>
+        <Label className="text-xs text-muted-foreground">أقل عدد مقالات</Label>
         <Input
           type="number"
           min={0}
@@ -106,7 +106,7 @@ export function ClientsFilters() {
 
       {/* Max article count */}
       <div className="space-y-1">
-        <Label className="text-xs text-muted-foreground">Max Articles</Label>
+        <Label className="text-xs text-muted-foreground">أكثر عدد مقالات</Label>
         <Input
           type="number"
           min={0}

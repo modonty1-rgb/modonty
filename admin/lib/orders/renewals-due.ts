@@ -1,4 +1,4 @@
-import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
+import { getClientSubscriptionsShared } from "@/lib/subscription/get-client-subscriptions";
 import { NOT_INTERNAL } from "@/app/(dashboard)/clients/segment/segments";
 import { RENEWAL_SOON_DAYS } from "./renewal-window";
 
@@ -23,7 +23,7 @@ export interface RenewalsDue {
 }
 
 export async function getRenewalsDue(): Promise<RenewalsDue> {
-  const subs = await getClientSubscriptions(NOT_INTERNAL);
+  const subs = await getClientSubscriptionsShared(NOT_INTERNAL);
 
   let expired = 0;
   let soon = 0;

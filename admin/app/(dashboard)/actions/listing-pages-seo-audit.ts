@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
 import { hreflangCodes } from "@modonty/shared/lib/seo/hreflang-codes";
+import { LIVE_SECTORS } from "@modonty/shared/lib/sectors/live-sectors";
 import type { SeoCheck, JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 
 /**
@@ -124,9 +125,28 @@ const CONTENT_PAGES = [
 export type ContentPageSlug = (typeof CONTENT_PAGES)[number]["slug"];
 
 export async function getContentPagesSeoAudit(): Promise<ListingPageAudit[]> {
+  return auditModontyRows(CONTENT_PAGES);
+}
+
+/**
+ * The sector pages (/modonty/football, /ai …). Their SEO lives on a `Modonty` row too
+ * (`getContentPageRow(slug)` on modonty), so they score exactly like the content pages and the
+ * same «إصلاح» regenerates them (page-config.ts maps every LIVE_SECTORS slug).
+ *
+ * Read from LIVE_SECTORS, not typed here: the six were added 27–28 Sep 2026 and this audit's
+ * hand-written list never heard of them (Khalid, 1 Oct: «ليش ما دخلتها في صفحات الموقع؟»).
+ * A paused sector is left out — it serves «قريباً» with `index: false`, so there is no page
+ * for Google to score.
+ */
+export async function getSectorPagesSeoAudit(): Promise<ListingPageAudit[]> {
+  const live = LIVE_SECTORS.filter((s) => !("paused" in s && s.paused));
+  return auditModontyRows(live.map((s) => ({ slug: s.slug, label: `قطاع ${s.label}`, path: `/modonty/${s.slug}` })));
+}
+
+async function auditModontyRows(pages: ReadonlyArray<{ slug: string; label: string; path: string }>): Promise<ListingPageAudit[]> {
   const [rows, settings] = await Promise.all([
     db.modonty.findMany({
-      where: { slug: { in: CONTENT_PAGES.map((p) => p.slug) } },
+      where: { slug: { in: pages.map((p) => p.slug) } },
       select: {
         slug: true,
         title: true,
@@ -140,7 +160,7 @@ export async function getContentPagesSeoAudit(): Promise<ListingPageAudit[]> {
         jsonLdValidationReport: true,
         jsonLdLastGenerated: true,
       },
-      take: CONTENT_PAGES.length,
+      take: pages.length,
     }),
     db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE, select: { siteUrl: true, defaultAlternateLanguages: true } }),
   ]);
@@ -150,7 +170,7 @@ export async function getContentPagesSeoAudit(): Promise<ListingPageAudit[]> {
   const requiredHreflangs = hreflangCodes(settings?.defaultAlternateLanguages);
   const bySlug = new Map(rows.map((r) => [r.slug, r]));
 
-  return CONTENT_PAGES.map((page) => {
+  return pages.map((page) => {
     const row = bySlug.get(page.slug);
     const { score, checks } = computeReferenceSeoScore({
       name: page.label,
@@ -274,7 +294,8 @@ export async function fixContentPageSeo(
     const result = await generateModontyPageSEO(slug);
     if (!result.success) return { success: false, error: result.error || "فشل التوليد" };
 
-    const audit = await getContentPagesSeoAudit();
+    // Sector slugs share this fix (same Modonty row, same generator) — look in both lists.
+    const audit = [...(await getContentPagesSeoAudit()), ...(await getSectorPagesSeoAudit())];
     return { success: true, score: audit.find((a) => a.key === slug)?.score };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };

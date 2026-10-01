@@ -520,10 +520,14 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
                     required={!isEditMode}
                     autoComplete="new-password"
                   />
+                  {/* Pinned to the input's own box (h-8, the last thing FormInput renders here —
+                      no hint or error is passed), not to a fixed offset from the top: `top-[38px]`
+                      assumed a taller label and left the eye hanging below the field. */}
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute end-3 top-[38px] text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute end-1 bottom-0 flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
                     tabIndex={-1}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

@@ -1,5 +1,7 @@
 "use client";
 
+import type { CheckoutOrderStatus } from "@prisma/client";
+import { orderStatusCopy } from "@/lib/orders/order-status-copy";
 import Link from "next/link";
 import { ArrowLeft, ReceiptText } from "lucide-react";
 
@@ -23,7 +25,7 @@ import { ArrowLeft, ReceiptText } from "lucide-react";
 export type ClientActiveOrder = {
   id: string;
   number: string;
-  status: string;
+  status: CheckoutOrderStatus;
   market?: string | null;
   country?: string | null;
   planName?: string | null;
@@ -74,11 +76,11 @@ export function ClientOrderPanel({ order }: {
       <div className="flex items-center justify-between gap-2">
         <span className="font-mono text-[12px] font-bold tabular-nums">{order.number}</span>
         <span
-          className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+          className={`rounded-full px-2 py-0.5 text-xs font-bold ${
             STATUS_TONE[order.status] ?? "bg-muted text-muted-foreground"
           }`}
         >
-          {order.status}
+          {orderStatusCopy(order.status).label}
         </span>
       </div>
 

@@ -5,8 +5,8 @@ export default function ContactMessagesLoading() {
   return (
     <div className="max-w-[1200px] mx-auto">
       <PageHeader
-        title="Contact Messages"
-        description="Manage and respond to contact messages from visitors"
+        title="رسائل التواصل"
+        description="رسائل الزوار من صفحة التواصل — ردّ عليها وتابعها"
       />
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">

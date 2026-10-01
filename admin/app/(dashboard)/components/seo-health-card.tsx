@@ -79,13 +79,13 @@ export function SeoHealthCard({
         <div
           className="flex h-2 min-w-[60px] flex-1 overflow-hidden rounded-full bg-red-500/25"
           role="img"
-          aria-label={`${pct}% at perfect SEO`}
+          aria-label={`متوسّط السيو ${pct}٪`}
         >
           <div className="bg-emerald-500" style={{ width: `${pct}%` }} />
         </div>
         {caption ?? (
           <span className="shrink-0 text-[12px] text-muted-foreground">
-            {perfect.toLocaleString("en-US")} of {total.toLocaleString("en-US")} at 100%
+            {perfect.toLocaleString("en-US")} من {total.toLocaleString("en-US")} كاملة
           </span>
         )}
       </div>
@@ -93,7 +93,7 @@ export function SeoHealthCard({
       {/* A second metric as its own progress row, right under SEO (Articles: YMYL risk). */}
       {secondary && (
         <div className="mt-2 flex items-center gap-3 border-t pt-2">
-          <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+          <span className="shrink-0 text-xs font-bold uppercase tracking-wide text-muted-foreground">
             {secondary.label}
           </span>
           <span
@@ -119,8 +119,8 @@ export function SeoHealthCard({
         <div className="mt-3 border-t pt-3">
           {contentChecks.length > 0 && (
             <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                Blocking 100%
+              <span className="shrink-0 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                يمنع الـ100٪
               </span>
               <ContentIcon className="h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
               {contentChecks.map((c) => (
@@ -130,7 +130,7 @@ export function SeoHealthCard({
           )}
           {systemChecks.length > 0 && (
             <div className="mt-1.5 flex items-center gap-2 overflow-x-auto pb-1">
-              <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <span className="shrink-0 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 JSON-LD
               </span>
               <Settings className="h-3.5 w-3.5 shrink-0 text-red-600 dark:text-red-400" />

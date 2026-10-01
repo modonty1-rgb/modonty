@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BadgeCheck, Eye, Receipt, ShieldAlert, TrendingUp, UserPlus, Users2, UsersRound, Wallet } from "lucide-react";
+import { BadgeCheck, Eye, HandCoins, Receipt, ShieldAlert, TrendingUp, UserPlus, Users2, UsersRound, Wallet } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,8 @@ interface SalesLink {
   href: string;
   label: string;
   icon: LucideIcon;
+  /** يُرسم للأدمن وحده — والصفحةُ نفسها تفرض الشرط، فإخفاءُ الرابط راحةٌ لا حاجز. */
+  adminOnly?: boolean;
 }
 
 interface SalesGroup {
@@ -63,6 +65,8 @@ const GROUPS: SalesGroup[] = [
       { href: "/pay-preview", label: "الباقات", icon: Eye },
       { href: "/payment-failures", label: "إخفاقات الدفع", icon: ShieldAlert },
       { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp },
+      // تصفية حسابات المناديب (خالد ٣٠ سبتمبر ٢٠٢٦: «تطلع بس للآدمن»).
+      { href: "/sales-commissions", label: "عمولات المناديب", icon: HandCoins, adminOnly: true },
     ],
   },
 ];
@@ -85,7 +89,7 @@ const ITEMS = GROUPS.flatMap((group) => group.items);
  * The trigger lights up whenever one of its pages is open, so the bar still says
  * where you are.
  */
-export function SalesMenu() {
+export function SalesMenu({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
   const active = ITEMS.some((i) => pathname === i.href || pathname.startsWith(i.href + "/"));
   const activeItemHref = ITEMS
@@ -120,7 +124,7 @@ export function SalesMenu() {
             <DropdownMenuLabel className="text-[11px] font-bold text-muted-foreground">
               {group.title}
             </DropdownMenuLabel>
-            {group.items.map(({ href, label, icon: Icon }) => {
+            {group.items.filter((item) => isAdmin || !item.adminOnly).map(({ href, label, icon: Icon }) => {
               const current = activeItemHref === href;
               return (
                 <DropdownMenuItem key={href} asChild>

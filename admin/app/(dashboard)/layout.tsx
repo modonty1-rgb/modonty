@@ -94,6 +94,7 @@ export default async function DashboardLayout({
             dbBadge={<DbBadge />}
             canSyncLocal={(process.env.DATABASE_URL ?? "").includes("modonty_dev")}
             canViewReports={canSeeReports(reportViewer)}
+            isAdmin={reportViewer?.role === "ADMIN"}
             myOpenTasks={myOpenTasks}
             pendingReviews={pendingReviews}
             pendingBriefs={pendingBriefs}

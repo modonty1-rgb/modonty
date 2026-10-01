@@ -48,17 +48,17 @@ import { hasExternalIntroVideo } from "./client-table";
 
 const N = new Intl.NumberFormat("en-US");
 const NO_WRITER = "none";
-const day = (d: Date | string | null | undefined) => (d ? format(new Date(d), "d MMM yyyy") : "—");
+const day = (d: Date | string | null | undefined) => (d ? format(new Date(d), "yyyy-MM-dd") : "—");
 
 /**
  * Subscription state in the «Advanced Table» palette: emerald live · slate not started ·
  * rose ended (a problem to act on) · zinc closed.
  */
 const SUB_TONE: Record<SubscriptionStatus, { label: string; dot: string; badge: string }> = {
-  ACTIVE: { label: "Active", dot: "bg-emerald-500", badge: "bg-emerald-500/15 text-emerald-700 ring-emerald-500/30 dark:text-emerald-300" },
-  PENDING: { label: "Pending", dot: "bg-slate-400", badge: "bg-slate-500/15 text-slate-700 ring-slate-500/30 dark:text-slate-300" },
-  EXPIRED: { label: "Expired", dot: "bg-rose-500", badge: "bg-rose-500/15 text-rose-700 ring-rose-500/30 dark:text-rose-300" },
-  CANCELLED: { label: "Cancelled", dot: "bg-zinc-500", badge: "bg-muted text-muted-foreground ring-border" },
+  ACTIVE: { label: "نشط", dot: "bg-emerald-500", badge: "bg-emerald-500/15 text-emerald-700 ring-emerald-500/30 dark:text-emerald-300" },
+  PENDING: { label: "بانتظار التفعيل", dot: "bg-slate-400", badge: "bg-slate-500/15 text-slate-700 ring-slate-500/30 dark:text-slate-300" },
+  EXPIRED: { label: "منتهي", dot: "bg-rose-500", badge: "bg-rose-500/15 text-rose-700 ring-rose-500/30 dark:text-rose-300" },
+  CANCELLED: { label: "ملغي", dot: "bg-zinc-500", badge: "bg-muted text-muted-foreground ring-border" },
 };
 
 type KpiKey = "overdue" | "renewals" | "incomplete" | "externalVideo";
@@ -117,7 +117,7 @@ export function ClientsBoard({
     let none = 0;
     for (const c of clients) {
       if (!c.editor?.id) { none++; continue; }
-      const w = byId.get(c.editor.id) ?? { id: c.editor.id, name: c.editor.name?.trim() || "Unnamed", count: 0 };
+      const w = byId.get(c.editor.id) ?? { id: c.editor.id, name: c.editor.name?.trim() || "بلا اسم", count: 0 };
       w.count++;
       byId.set(c.editor.id, w);
     }
@@ -188,7 +188,7 @@ export function ClientsBoard({
   const columns: Column<ClientForList>[] = [
     {
       key: "name",
-      header: "Client",
+      header: "العميل",
       sortFn: (a, b) => a.name.localeCompare(b.name, "ar"),
       render: (c) => (
         <div className="flex min-w-0 items-center gap-2.5 whitespace-normal">
@@ -205,35 +205,35 @@ export function ClientsBoard({
               </Link>
               {/* The two things someone must fix, visible without opening the row. */}
               {!c.industryId ? (
-                <span className="shrink-0 rounded-full bg-amber-500/15 px-1.5 text-[10px] font-semibold leading-4 text-amber-700 ring-1 ring-amber-500/30 dark:text-amber-300" title="No industry — complete the profile before the first article">
-                  Incomplete
+                <span className="shrink-0 rounded-full bg-amber-500/15 px-1.5 text-xs font-semibold leading-4 text-amber-700 ring-1 ring-amber-500/30 dark:text-amber-300" title="بلا صناعة — كمّل الملف قبل أول مقال">
+                  ملف ناقص
                 </span>
               ) : null}
               {hasExternalIntroVideo(c) ? (
-                <span className="shrink-0 rounded-full bg-amber-500/15 px-1.5 text-[10px] font-semibold leading-4 text-amber-700 ring-1 ring-amber-500/30 dark:text-amber-300" title="Intro video on a channel the client does not own">
-                  External video
+                <span className="shrink-0 rounded-full bg-amber-500/15 px-1.5 text-xs font-semibold leading-4 text-amber-700 ring-1 ring-amber-500/30 dark:text-amber-300" title="فيديو التعريف على قناة ما يملكها العميل">
+                  فيديو خارجي
                 </span>
               ) : null}
             </span>
-            <span className="block truncate text-xs text-muted-foreground">{c.email}</span>
+            <span dir="ltr" className="block truncate text-end text-xs text-muted-foreground">{c.email}</span>
           </span>
         </div>
       ),
     },
     {
       key: "writer",
-      header: "Writer",
+      header: "الكاتب",
       className: "w-[1%]",
       sortFn: (a, b) => (a.editor?.name ?? "~").localeCompare(b.editor?.name ?? "~"),
-      render: (c) => (c.editor?.name ? <span dir="auto">{c.editor.name}</span> : <span className="text-muted-foreground">No writer</span>),
+      render: (c) => (c.editor?.name ? <span dir="auto">{c.editor.name}</span> : <span className="text-muted-foreground">بلا كاتب</span>),
     },
     {
       key: "status",
-      header: "Status",
+      header: "الحالة",
       className: "w-[1%]",
       sortFn: (a, b) => a.subscriptionStatus.localeCompare(b.subscriptionStatus),
       render: (c) => (
-        <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1", SUB_TONE[c.subscriptionStatus].badge)}>
+        <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold ring-1", SUB_TONE[c.subscriptionStatus].badge)}>
           <span className={cn("size-1.5 rounded-full", SUB_TONE[c.subscriptionStatus].dot)} aria-hidden />
           {SUB_TONE[c.subscriptionStatus].label}
         </span>
@@ -241,7 +241,7 @@ export function ClientsBoard({
     },
     {
       key: "published",
-      header: <span title="Published on modonty.com">Published</span>,
+      header: <span title="منشور على مدونتي">منشور</span>,
       className: "w-[1%] text-center tabular-nums",
       sortFn: (a, b) => a.articleStats.published - b.articleStats.published,
       render: (c) => (
@@ -252,7 +252,7 @@ export function ClientsBoard({
     },
     {
       key: "thisMonth",
-      header: <span title="Published this month ÷ monthly quota">This month</span>,
+      header: <span title="المنشور هذا الشهر ÷ الحصة الشهرية">هذا الشهر</span>,
       className: "w-[1%] text-center tabular-nums",
       sortFn: (a, b) => (computed.get(a.id)?.delivered ?? 0) - (computed.get(b.id)?.delivered ?? 0),
       render: (c) => {
@@ -270,7 +270,7 @@ export function ClientsBoard({
     },
     {
       key: "seo",
-      header: "SEO",
+      header: "السيو",
       className: "w-[1%] text-center",
       sortFn: (a, b) => (computed.get(a.id)?.seo ?? 0) - (computed.get(b.id)?.seo ?? 0),
       render: (c) => <SeoScoreBadge score={computed.get(c.id)?.seo ?? 0} size="sm" />,
@@ -284,43 +284,43 @@ export function ClientsBoard({
       <DetailCard
         columns="lg:grid-cols-[minmax(0,1fr)_1px_auto_1px_auto]"
         groups={[
-          <FactGroup key="articles" title="Articles" spread>
-            <Fact label="Received" value={N.format(c.articleStats.total)} hint="Every article created for this client, any status" />
-            <Fact label="Published" value={N.format(c.articleStats.published)} dot="bg-emerald-500" tone={c.articleStats.published ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground/60"} />
-            <Fact label="Waiting for approval" value={N.format(c.articleStats.awaitingApproval)} dot="bg-sky-500" tone={c.articleStats.awaitingApproval ? "text-sky-600 dark:text-sky-400" : "text-muted-foreground/60"} />
-            <Fact label="Other stages" value={N.format(inWork)} dot="bg-slate-400" hint="Writing, draft, needs changes, scheduled or archived" tone={inWork ? undefined : "text-muted-foreground/60"} />
+          <FactGroup key="articles" title="المقالات" spread>
+            <Fact label="المستلمة" value={N.format(c.articleStats.total)} hint="كل مقال انعمل لهذا العميل، بأي حالة" />
+            <Fact label="منشور" value={N.format(c.articleStats.published)} dot="bg-emerald-500" tone={c.articleStats.published ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground/60"} />
+            <Fact label="بانتظار الموافقة" value={N.format(c.articleStats.awaitingApproval)} dot="bg-sky-500" tone={c.articleStats.awaitingApproval ? "text-sky-600 dark:text-sky-400" : "text-muted-foreground/60"} />
+            <Fact label="مراحل أخرى" value={N.format(inWork)} dot="bg-slate-400" hint="يُكتب، مسودة، يحتاج تعديل، مجدول أو مؤرشف" tone={inWork ? undefined : "text-muted-foreground/60"} />
             <Fact
-              label="This month"
+              label="هذا الشهر"
               value={d && d.promised ? `${N.format(d.delivered)} / ${N.format(d.promised)}` : "—"}
               tone={d && d.promised ? (d.delivered > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400") : undefined}
             />
           </FactGroup>,
-          <FactGroup key="reels" title="Reels">
-            <Fact label="Published" value={N.format(c.reelStats.published)} dot="bg-emerald-500" tone={c.reelStats.published ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground/60"} />
-            <Fact label="Waiting for approval" value={N.format(c.reelStats.pending)} dot="bg-sky-500" tone={c.reelStats.pending ? "text-sky-600 dark:text-sky-400" : "text-muted-foreground/60"} />
+          <FactGroup key="reels" title="الريلز">
+            <Fact label="منشور" value={N.format(c.reelStats.published)} dot="bg-emerald-500" tone={c.reelStats.published ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground/60"} />
+            <Fact label="بانتظار الموافقة" value={N.format(c.reelStats.pending)} dot="bg-sky-500" tone={c.reelStats.pending ? "text-sky-600 dark:text-sky-400" : "text-muted-foreground/60"} />
           </FactGroup>,
-          <FactGroup key="account" title="Account">
-            <Fact label="Ends" value={<span className="text-sm">{day(c.subscriptionEndDate)}</span>} />
-            <Fact label="Joined" value={<span className="text-sm">{day(c.createdAt)}</span>} />
-            <Fact label="Phone" value={<span className="text-sm font-medium" dir="ltr">{c.phone || "—"}</span>} />
+          <FactGroup key="account" title="الحساب">
+            <Fact label="النهاية" value={<span className="text-sm">{day(c.subscriptionEndDate)}</span>} />
+            <Fact label="التسجيل" value={<span className="text-sm">{day(c.createdAt)}</span>} />
+            <Fact label="الجوال" value={<span className="text-sm font-medium" dir="ltr">{c.phone || "—"}</span>} />
           </FactGroup>,
         ]}
         footer={
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <Link href={`/clients/${c.id}`} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-medium hover:bg-muted">
-              <ExternalLink className="size-3.5" /> Open
+              <ExternalLink className="size-3.5" /> افتح
             </Link>
             <Link href={`/clients/${c.id}/edit`} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-medium hover:bg-muted">
-              <Pencil className="size-3.5" /> Edit
+              <Pencil className="size-3.5" /> تعديل
             </Link>
             <Link href={`/articles?clientId=${c.id}`} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-medium hover:bg-muted">
-              <FileText className="size-3.5" /> Articles
+              <FileText className="size-3.5" /> المقالات
             </Link>
             <Link href={`/clients/media?clientId=${c.id}`} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-medium hover:bg-muted">
-              <Images className="size-3.5" /> Media
+              <Images className="size-3.5" /> الوسائط
             </Link>
             <Link href={`/clients/${c.id}/seo-technical`} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-medium hover:bg-muted">
-              <SeoScoreBadge score={d?.seo ?? 0} size="sm" /> SEO
+              <SeoScoreBadge score={d?.seo ?? 0} size="sm" /> السيو
             </Link>
           </div>
         }
@@ -329,26 +329,26 @@ export function ClientsBoard({
   };
 
   return (
-    <div className="space-y-3">
+    <div dir="rtl" className="space-y-3">
       <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h1 className="text-xl font-semibold">Clients</h1>
+        <h1 className="text-xl font-semibold">العملاء</h1>
         <span className="text-sm tabular-nums text-muted-foreground">({N.format(clients.length)})</span>
         <span className="text-xs text-muted-foreground">
-          {stats.delivery.deliveryRate}% delivery · {stats.averageSEO}% SEO
+          تسليم هذا الشهر {stats.delivery.deliveryRate}٪ · متوسّط السيو {stats.averageSEO}٪
         </span>
         <span
           className="inline-flex items-center text-muted-foreground"
           title="ترتيب العملاء في صفحة مدونتي: المميّزون، ثم الأعلى في عدد المقالات المنشورة، ثم الاسم عربيًا."
         >
-          <Info className="size-3.5" aria-label="Order on modonty" />
+          <Info className="size-3.5" aria-label="الترتيب في مدونتي" />
         </span>
       </header>
 
       {/* Two panels: what you choose on the left, what needs acting on on the right. */}
       <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_460px]">
-        <section aria-label="Filters" className="flex flex-col justify-center gap-2 rounded-lg border bg-card px-4 py-2.5">
-          <FilterRow label="Writer">
-            <CountTab label="All" count={N.format(clients.length)} active={!writer} onClick={() => setParam("writer", null)} />
+        <section aria-label="الفلاتر" className="flex flex-col justify-center gap-2 rounded-lg border bg-card px-4 py-2.5">
+          <FilterRow label="الكاتب">
+            <CountTab label="الكل" count={N.format(clients.length)} active={!writer} onClick={() => setParam("writer", null)} />
             {writers.list.map((w) => (
               <CountTab
                 key={w.id}
@@ -359,11 +359,11 @@ export function ClientsBoard({
               />
             ))}
             {writers.none ? (
-              <CountTab label="No writer" count={N.format(writers.none)} active={writer === NO_WRITER} onClick={() => setParam("writer", writer === NO_WRITER ? null : NO_WRITER)} />
+              <CountTab label="بلا كاتب" count={N.format(writers.none)} active={writer === NO_WRITER} onClick={() => setParam("writer", writer === NO_WRITER ? null : NO_WRITER)} />
             ) : null}
           </FilterRow>
-          <FilterRow label="Status">
-            <CountTab label="All" count={N.format(byWriter.length)} active={!status} onClick={() => setParam("status", null)} />
+          <FilterRow label="الحالة">
+            <CountTab label="الكل" count={N.format(byWriter.length)} active={!status} onClick={() => setParam("status", null)} />
             {(Object.keys(SUB_TONE) as SubscriptionStatus[]).map((s) => {
               const n = statusCount(s);
               return (
@@ -384,7 +384,7 @@ export function ClientsBoard({
             })}
           </FilterRow>
         </section>
-        <section aria-label="Needs acting on">
+        <section aria-label="يحتاج تصرّف">
           <div className="grid h-full auto-rows-fr grid-cols-2 gap-2">
             {(Object.keys(KPIS) as KpiKey[]).map((key) => {
               const k = KPIS[key];
@@ -411,36 +411,37 @@ export function ClientsBoard({
         data={visible}
         columns={columns}
         pageSize={20}
-        emptyText="No clients match these filters"
+        emptyText="ما في عملاء بهذي الفلاتر."
+        arabic
         toolbar={
           <>
             <div className="relative min-w-[220px] flex-1">
               <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="Search clients, email, phone…" value={search} onChange={(e) => setSearch(e.target.value)} className="ps-10" />
+              <Input placeholder="ابحث بالعميل أو البريد أو الجوال…" value={search} onChange={(e) => setSearch(e.target.value)} className="ps-10" />
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" aria-label="Client actions">
+                <Button variant="outline" size="icon" aria-label="إجراءات العملاء">
                   <MoreHorizontal className="size-4" aria-hidden />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
-                <DropdownMenuLabel>Client actions</DropdownMenuLabel>
+                <DropdownMenuLabel>إجراءات العملاء</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={() => setFiltersOpen((v) => !v)}>
                   <SlidersHorizontal className="me-2 size-4" aria-hidden />
-                  {filtersOpen ? "Hide filters" : "Filters"}
+                  {filtersOpen ? "أخفِ الفلاتر" : "الفلاتر"}
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setSeoDialogOpen(true)}>
                   <RefreshCw className="me-2 size-4" aria-hidden />
-                  Regenerate all SEO
+                  أعد توليد السيو للكل
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </>
         }
         renderExpanded={details}
-        expandLabel={(c) => `Details of ${c.name.trim()}`}
+        expandLabel={(c) => `تفاصيل ${c.name.trim()}`}
       />
       <RegenerateAllSeoButton clients={clients} open={seoDialogOpen} onOpenChange={setSeoDialogOpen} hideTrigger />
     </div>

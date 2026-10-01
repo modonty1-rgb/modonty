@@ -95,9 +95,9 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" className="h-9 gap-1.5">
             <SlidersHorizontal className="h-3.5 w-3.5" />
-            Filters
+            الفلاتر
             {activeCount > 0 && (
-              <span className="flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+              <span className="flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">
                 {activeCount}
               </span>
             )}
@@ -106,24 +106,24 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
         <PopoverContent align="end" className="w-80 p-4">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-medium">Filters</h4>
+              <h4 className="text-sm font-medium">الفلاتر</h4>
               {activeCount > 0 && (
                 <Button variant="ghost" size="sm" onClick={clearFilters} className="h-7 text-xs text-muted-foreground px-2">
                   <X className="h-3 w-3 me-1" />
-                  Clear all
+                  امسح الكل
                 </Button>
               )}
             </div>
 
             {/* Client */}
             <div className="space-y-1.5">
-              <Label className="text-xs">Client</Label>
+              <Label className="text-xs">العميل</Label>
               <Select value={clientId} onValueChange={handleClientChange}>
                 <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="All Clients" />
+                  <SelectValue placeholder="كل العملاء" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Clients</SelectItem>
+                  <SelectItem value="all">كل العملاء</SelectItem>
                   {clients.map((client) => (
                     <SelectItem key={client.id} value={client.id}>
                       {client.name}
@@ -135,49 +135,49 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
 
             {/* File Type */}
             <div className="space-y-1.5">
-              <Label className="text-xs">File Type</Label>
+              <Label className="text-xs">نوع الملف</Label>
               <Select value={mimeType} onValueChange={handleMimeTypeChange}>
                 <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="All File Types" />
+                  <SelectValue placeholder="كل الأنواع" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All File Types</SelectItem>
-                  <SelectItem value="image">Images</SelectItem>
-                  <SelectItem value="video">Videos</SelectItem>
+                  <SelectItem value="all">كل الأنواع</SelectItem>
+                  <SelectItem value="image">صور</SelectItem>
+                  <SelectItem value="video">فيديو</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Media Type */}
             <div className="space-y-1.5">
-              <Label className="text-xs">Media Type</Label>
+              <Label className="text-xs">دور الملف</Label>
               <Select value={mediaType} onValueChange={handleMediaTypeChange}>
                 <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="All Media Types" />
+                  <SelectValue placeholder="كل الأدوار" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Media Types</SelectItem>
-                  <SelectItem value="GENERAL">General</SelectItem>
-                  <SelectItem value="LOGO">Logo</SelectItem>
-                  <SelectItem value="POST">Post</SelectItem>
-                  <SelectItem value="CLIENT_MINI">Client Mini</SelectItem>
-                  <SelectItem value="OGIMAGE">OG Image</SelectItem>
-                  <SelectItem value="TWITTER_IMAGE">Twitter Image</SelectItem>
+                  <SelectItem value="all">كل الأدوار</SelectItem>
+                  <SelectItem value="GENERAL">عامة</SelectItem>
+                  <SelectItem value="LOGO">شعار</SelectItem>
+                  <SelectItem value="POST">منشور</SelectItem>
+                  <SelectItem value="CLIENT_MINI">صورة عميل مصغّرة</SelectItem>
+                  <SelectItem value="OGIMAGE">صورة مشاركة</SelectItem>
+                  <SelectItem value="TWITTER_IMAGE">صورة تويتر</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Usage */}
             <div className="space-y-1.5">
-              <Label className="text-xs">Usage</Label>
+              <Label className="text-xs">الاستخدام</Label>
               <Select value={used} onValueChange={handleUsedChange}>
                 <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="All" />
+                  <SelectValue placeholder="الكل" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="used">Used</SelectItem>
-                  <SelectItem value="unused">Unused</SelectItem>
+                  <SelectItem value="all">الكل</SelectItem>
+                  <SelectItem value="used">مستخدمة</SelectItem>
+                  <SelectItem value="unused">غير مستخدمة</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -185,7 +185,7 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
             {/* Date Range */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs">From</Label>
+                <Label className="text-xs">من</Label>
                 <Input
                   type="date"
                   value={dateFrom}
@@ -195,7 +195,7 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">To</Label>
+                <Label className="text-xs">إلى</Label>
                 <Input
                   type="date"
                   value={dateTo}

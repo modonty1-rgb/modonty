@@ -24,26 +24,26 @@ interface ReferenceSegment {
 
 const SEGMENTS: Record<ReferenceKey, ReferenceSegment> = {
   categories: {
-    title: "Categories",
-    description: "Every category page Google indexes, with the SEO score of each.",
+    title: "الفئات",
+    description: "كل صفحة فئة يؤرشفها جوجل، ومعها درجة سيوها.",
     editBase: "/categories",
     editMode: "perId",
   },
   tags: {
-    title: "Tags",
-    description: "Every tag page Google indexes, with the SEO score of each.",
+    title: "الوسوم",
+    description: "كل صفحة وسم يؤرشفها جوجل، ومعها درجة سيوها.",
     editBase: "/tags",
     editMode: "perId",
   },
   industries: {
-    title: "Industries",
-    description: "Every industry page Google indexes, with the SEO score of each.",
+    title: "الصناعات",
+    description: "كل صفحة صناعة يؤرشفها جوجل، ومعها درجة سيوها.",
     editBase: "/industries",
     editMode: "perId",
   },
   authors: {
-    title: "Authors",
-    description: "Every author page Google indexes, with the SEO score of each.",
+    title: "الكتّاب",
+    description: "كل صفحة كاتب يؤرشفها جوجل، ومعها درجة سيوها.",
     editBase: "/authors",
     editMode: "single",
   },

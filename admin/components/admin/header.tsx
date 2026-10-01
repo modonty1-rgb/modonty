@@ -29,6 +29,7 @@ export function Header({
   dbBadge,
   canSyncLocal = false,
   canViewReports = false,
+  isAdmin = false,
   myOpenTasks = 0,
   pendingReviews = 0,
   pendingBriefs = 0,
@@ -43,6 +44,8 @@ export function Header({
   pendingBriefs?: number;
   /** Computed on the server from the staff row — the session token does not carry it. */
   canViewReports?: boolean;
+  /** ADMIN role, read on the server — decides admin-only links (the pages enforce it themselves). */
+  isAdmin?: boolean;
 }) {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
@@ -71,7 +74,7 @@ export function Header({
 
           {/* Sales followed Tasks out of the sidebar (Khalid, 2026-09-04) — Faten's
               whole day is these three pages, so they sit beside Tasks not under it. */}
-          <SalesMenu />
+          <SalesMenu isAdmin={isAdmin} />
           <CampaignsMenu pendingBriefs={pendingBriefs} />
 
           {/* الـPlaybook في الشريط نفسه لا داخل قائمة الأفاتار (خالد، ١١ سبتمبر ٢٠٢٦):

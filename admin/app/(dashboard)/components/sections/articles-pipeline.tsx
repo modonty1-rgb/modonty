@@ -4,8 +4,8 @@ import { ArticleStatus } from "@prisma/client";
 
 import { articleSeoQuality, articleStatusCounts, ymylUncitedCount } from "@/lib/dashboard/cached";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
-import { SummaryChip, type Tier } from "../dashboard-ui";
-import { CollapsibleSection } from "../collapsible-section";
+import type { Tier } from "../dashboard-ui";
+import { PanelHead } from "../panel-head";
 import { SeoHealthCard } from "../seo-health-card";
 import { BudgetRow, NUM, RAIL } from "../pipeline-row";
 
@@ -24,15 +24,18 @@ const STAGES: Array<{
   tier: Tier;
   icon: LucideIcon;
 }> = [
-  { status: ArticleStatus.AWAITING_APPROVAL, key: "awaiting-approval", label: "Waiting approval", tier: "warm", icon: FileCheck },
-  { status: ArticleStatus.NEEDS_REVISION, key: "needs-revision", label: "Need revision", tier: "warm", icon: FileX },
+  { status: ArticleStatus.AWAITING_APPROVAL, key: "awaiting-approval", label: "بانتظار الموافقة", tier: "warm", icon: FileCheck },
+  { status: ArticleStatus.NEEDS_REVISION, key: "needs-revision", label: "تحتاج تعديل", tier: "warm", icon: FileX },
   // Client approved, no date yet — the team owes it a date (27 Sep 2026).
-  { status: ArticleStatus.APPROVED, key: "approved", label: "Approved — needs date", tier: "warm", icon: FileCheck },
-  { status: ArticleStatus.DRAFT, key: "draft", label: "Drafts", tier: "plain", icon: FileText },
-  { status: ArticleStatus.WRITING, key: "writing", label: "Being written", tier: "plain", icon: FileText },
-  { status: ArticleStatus.SCHEDULED, key: "scheduled", label: "Scheduled", tier: "plain", icon: FileText },
-  { status: ArticleStatus.PUBLISHED, key: "published", label: "Published", tier: "ok", icon: FileCheck },
-  { status: ArticleStatus.ARCHIVED, key: "archived", label: "Archived", tier: "plain", icon: FileX },
+  { status: ArticleStatus.APPROVED, key: "approved", label: "معتمد بلا تاريخ", tier: "warm", icon: FileCheck },
+  { status: ArticleStatus.DRAFT, key: "draft", label: "مسودة", tier: "plain", icon: FileText },
+  { status: ArticleStatus.WRITING, key: "writing", label: "يُكتب", tier: "plain", icon: FileText },
+  { status: ArticleStatus.SCHEDULED, key: "scheduled", label: "مجدول", tier: "plain", icon: FileText },
+  { status: ArticleStatus.PUBLISHED, key: "published", label: "منشور على مدونتي", tier: "ok", icon: FileCheck },
+  // Live on the client's own site — was missing from the stages, so the pipeline read «289»
+  // while the SEO number counted 313 (30 Sep 2026).
+  { status: ArticleStatus.PUBLISHED_ON_CLIENT_SITE, key: "published-on-client-site", label: "منشور على موقع العميل", tier: "ok", icon: FileCheck },
+  { status: ArticleStatus.ARCHIVED, key: "archived", label: "مؤرشف", tier: "plain", icon: FileX },
 ];
 
 export async function ArticlesPipeline() {
@@ -47,61 +50,44 @@ export async function ArticlesPipeline() {
   // The "from outside" indicators (Khalid 2026-07-23): one glance says healthy or not.
   // Denominator = every scored article, the exact population the two SEO rows split.
   const totalScored = seoQuality.perfect + seoQuality.below;
-  // Health = the AVERAGE article score (Khalid 2026-07-23), not "how many are perfect".
-  const seoHealthPct = seoQuality.avgScore;
   const ymylRiskPct = totalScored > 0 ? Math.round((ymylUncited / totalScored) * 100) : 0;
-  const healthTier: Tier = seoHealthPct >= 80 ? "ok" : seoHealthPct >= 50 ? "warm" : "hot";
   const ymylTier: Tier = ymylRiskPct === 0 ? "ok" : ymylRiskPct >= 30 ? "hot" : "warm";
 
-  const live = STAGES.filter((s) => counts[s.status] > 0);
   const empty = STAGES.filter((s) => counts[s.status] === 0);
 
   return (
-    <CollapsibleSection
-      iconNode={<FileText className="h-4 w-4 text-muted-foreground" />}
-      title="Articles"
-      subtitle="every stage of the pipeline"
-      storageKey="dashArticlesOpen"
-      summary={
-        <>
-          {live.map((s) => (
-            <SummaryChip key={s.status} icon={s.icon} value={counts[s.status].toLocaleString("en-US")} tier={s.tier} />
-          ))}
-          {ymylUncited > 0 && <SummaryChip label="YMYL" value={`${ymylRiskPct}%`} tier={ymylTier} />}
-          {totalScored > 0 && (
-            <SummaryChip icon={GoogleIcon} value={`${seoHealthPct}%`} tier={healthTier} />
-          )}
-        </>
-      }
-      right={
-        <Link
-          href="/articles"
-          className="flex items-baseline gap-2 text-xs text-muted-foreground hover:underline"
-        >
-          <span
-            className={`text-base font-bold tabular-nums ${
-              needDecision > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
-            }`}
-          >
-            {needDecision}
-          </span>
-          need a decision
-          <span className="text-muted-foreground/40">·</span>
-          {total.toLocaleString("en-US")} total
-          <span className="text-primary">→</span>
-        </Link>
-      }
-    >
+    <>
+      <PanelHead
+        title="المقالات"
+        hint="كل مراحل المقال"
+        right={
+          <Link href="/articles" className="flex items-baseline gap-2 text-xs text-muted-foreground hover:underline">
+            <span
+              className={`text-base font-bold tabular-nums ${
+                needDecision > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
+              }`}
+            >
+              {needDecision}
+            </span>
+            تحتاج قرار
+            <span className="text-muted-foreground/40">·</span>
+            {/* /articles lists every stage except the client-site ones, which have their own
+                page — so the link says the number it opens, and the 313 stays on the bar below. */}
+            {(total - counts[ArticleStatus.PUBLISHED_ON_CLIENT_SITE]).toLocaleString("en-US")} في صفحة المقالات
+            <span className="text-primary">←</span>
+          </Link>
+        }
+      />
       <SeoHealthCard
         score={seoQuality.avgScore}
         perfect={seoQuality.perfect}
         below={seoQuality.below}
         checks={seoQuality.checks}
         secondary={{
-          label: "YMYL risk",
+          label: "خطر YMYL",
           pct: ymylRiskPct,
           tier: ymylTier,
-          caption: `${ymylUncited.toLocaleString("en-US")} with no sources`,
+          caption: `${ymylUncited.toLocaleString("en-US")} بلا مصادر`,
         }}
       />
       <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
@@ -110,7 +96,7 @@ export async function ArticlesPipeline() {
         {total > 0 && (
           <BudgetRow
             total={total}
-            label="In production"
+            label="مقال"
             icon={FileText}
             reviewHref="/articles"
             segments={STAGES.map((s) => ({
@@ -129,19 +115,19 @@ export async function ArticlesPipeline() {
             className="relative grid grid-cols-[2.25rem_4.5rem_1fr] items-center gap-3 border-b px-4 py-2.5 transition hover:bg-muted/40 md:grid-cols-[2.25rem_4.5rem_1fr_auto]"
           >
             <span className={`absolute inset-y-0 start-0 w-0.5 ${RAIL.warm}`} />
-            <span className="justify-self-center rounded bg-amber-500/15 px-1.5 py-1 text-[9px] font-extrabold leading-none tracking-tight text-amber-600 dark:text-amber-400">
+            <span className="justify-self-center rounded bg-amber-500/15 px-1.5 py-1 text-xs font-extrabold leading-none tracking-tight text-amber-600 dark:text-amber-400">
               YMYL
             </span>
             <span className={`text-xl font-extrabold leading-none tabular-nums ${NUM.warm}`}>
               {ymylUncited.toLocaleString("en-US")}
             </span>
             <span className="text-[13px] leading-snug">
-              YMYL articles with no sources
-              <span className="mt-0.5 block text-[11px] text-muted-foreground">
-                E-E-A-T risk — add authoritative citations
+              مقالات YMYL بلا مصادر
+              <span className="mt-0.5 block text-xs text-muted-foreground">
+                خطر E-E-A-T — أضف مصادر موثوقة
               </span>
             </span>
-            <span className="hidden text-[11.5px] font-bold text-primary md:block">add sources →</span>
+            <span className="hidden text-xs font-bold text-primary md:block">أضف مصادر ←</span>
           </Link>
         )}
         {/* SEO health of EVERY article (computed score, any status): below 100 = fixable.
@@ -159,12 +145,12 @@ export async function ArticlesPipeline() {
               {seoQuality.below.toLocaleString("en-US")}
             </span>
             <span className="text-[13px] leading-snug">
-              Articles with SEO problems
-              <span className="mt-0.5 block text-[11px] text-muted-foreground">
-                any status — meta or JSON-LD checks missing
+              مقالات فيها نقص سيو
+              <span className="mt-0.5 block text-xs text-muted-foreground">
+                أي حالة — فحوص ميتا أو JSON-LD ناقصة
               </span>
             </span>
-            <span className="hidden text-[11.5px] font-bold text-primary md:block">fix →</span>
+            <span className="hidden text-xs font-bold text-primary md:block">أصلح ←</span>
           </Link>
         )}
         {/* Green row = perfect on the shared rubric; same Google mark, opposite signal. */}
@@ -181,30 +167,30 @@ export async function ArticlesPipeline() {
               {seoQuality.perfect.toLocaleString("en-US")}
             </span>
             <span className="text-[13px] leading-snug">
-              Articles with perfect SEO
-              <span className="mt-0.5 block text-[11px] text-muted-foreground">
-                any status — nothing to fix
+              مقالات سيوها كامل
+              <span className="mt-0.5 block text-xs text-muted-foreground">
+                أي حالة — ما فيها شي يحتاج إصلاح
               </span>
             </span>
-            <span className="hidden text-[11.5px] font-bold text-primary md:block">view →</span>
+            <span className="hidden text-xs font-bold text-primary md:block">اعرض ←</span>
           </Link>
         )}
         {empty.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 border-t bg-muted/20 px-4 py-2.5">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/70">
-              Empty stages
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">
+              مراحل فاضية
             </span>
             {empty.map((s) => (
               <span
                 key={s.status}
-                className="rounded-full border bg-card px-2.5 py-0.5 text-[11px] tabular-nums text-muted-foreground"
+                className="rounded-full border bg-card px-2.5 py-0.5 text-xs tabular-nums text-muted-foreground"
               >
-                <b className="font-bold text-foreground">0</b> {s.label.toLowerCase()}
+                <b className="font-bold text-foreground">0</b> {s.label}
               </span>
             ))}
           </div>
         )}
       </div>
-    </CollapsibleSection>
+    </>
   );
 }
