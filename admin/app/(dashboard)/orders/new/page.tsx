@@ -62,7 +62,7 @@ export default async function NewOrderPage({ searchParams }: { searchParams: Pro
           {lead
             ? "من عميلٍ محتمَل. الهويّة معبّأة منه — والمبلغ تكتبه بما اتُّفق عليه فعلاً."
             : previous
-              ? `تجديدٌ للطلب ${previous.number}. الهويّة والباقة معبّأتان — والمبلغ تكتبه بسعر اليوم.`
+              ? `تجديدٌ للطلب ${previous.number}. الهويّة والباقة معبّأتان، والسعر سعرُ اليوم${previous.clientId ? " — ويُضاف لحساب العميل نفسه عند الحفظ" : ""}.`
               : "نفس الطلب الذي تكتبه صفحة الدفع — بيدك."}
         </p>
       </header>
@@ -79,6 +79,7 @@ export default async function NewOrderPage({ searchParams }: { searchParams: Pro
         <ManualOrderForm
           data={data}
           leadId={lead && !lead.convertedClientId ? lead.id : undefined}
+          renewFromOrderId={previous?.clientId && renewFrom ? renewFrom : undefined}
           prefill={
             previous
               ? {

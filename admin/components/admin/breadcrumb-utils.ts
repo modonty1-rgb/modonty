@@ -95,6 +95,7 @@ const sectionLabels: Record<string, string> = {
   // otherwise Arabic page, sitting exactly where the eye lands first.
   'sales-leads': 'العملاء المحتملون',
   'sales-commissions': 'عمولات المناديب',
+  'commission-statement': 'كشف حساب العمولات',
   kpi: 'KPI',
   'contact-messages': 'رسائل التواصل',
   members: 'الأعضاء',

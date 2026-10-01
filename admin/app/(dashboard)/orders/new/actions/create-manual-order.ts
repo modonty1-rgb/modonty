@@ -11,6 +11,9 @@ import { toE164 } from "@modonty/shared/lib/phone";
 import { db } from "@/lib/db";
 import { requireSalesDesk } from "@/lib/require-sales-desk";
 import { logAction } from "@/lib/audit/log-action";
+import { linkOrderToClient } from "@/lib/orders/link-order-to-client";
+import { findClientByIdentity } from "@/lib/orders/find-client-by-identity";
+import { getSubscriptionTerm } from "@modonty/shared/lib/subscription/subscription-term";
 
 /**
  * طلب اشتراك يُسجَّل من الأدمن — المنفذ الثاني، ونفس الصفّ الذي تكتبه صفحة الدفع.
@@ -87,13 +90,20 @@ const Body = z.object({
    * بفلوسٍ مكتوبةٍ باليد. صار يمرّ من هنا: طلبٌ بمبلغٍ حقيقيّ، ومنه يُولد العميل.
    */
   leadId: z.string().trim().optional(),
+  /**
+   * الطلب الذي يُجدَّد (`/orders/new?renewFrom=`). العميلُ واحدٌ والطلباتُ متعدّدة (خالد ١ أكتوبر
+   * ٢٠٢٦: «مش كل طلب له عميل جديد»): التجديدُ يُضاف لحساب صاحب ذلك الطلب لحظةَ الحفظ.
+   * والحسابُ يُقرأ هنا من الطلب نفسه، لا من المتصفّح — فمعرّفٌ مزوَّر لا يربط صفقةً بغير صاحبها.
+   */
+  renewFromOrderId: z.string().regex(/^[0-9a-f]{24}$/i).optional(),
 });
 
 export type CreateManualOrderInput = z.input<typeof Body>;
 
 export type CreateManualOrderResult =
   | { ok: true; id: string; number: string }
-  | { ok: false; error: string };
+  /** `renewHref` — the buyer is already a client: renew from his current order instead. */
+  | { ok: false; error: string; renewHref?: string };
 
 export async function createManualOrder(input: CreateManualOrderInput): Promise<CreateManualOrderResult> {
   await requireSalesDesk();
@@ -102,10 +112,48 @@ export async function createManualOrder(input: CreateManualOrderInput): Promise<
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? "تحقّق من البيانات" };
   }
-  const body = parsed.data;
+  /**
+   * **التجديدُ لا يغيّر هويّةَ العميل** (خالد ١ أكتوبر ٢٠٢٦: «اللي بتغير المبلغ والتكلفة، لكن
+   * البيانات الأساسية للعميل مستحيل تتغير»). الاسمُ والإيميلُ والجوالُ والنشاطُ والسوقُ تُقرأ
+   * هنا من الطلب المجدَّد نفسِه — والحقولُ مقفلةٌ في الصفحة، وهذا ما يجعل القفلَ حقيقيّاً:
+   * ما يُرسله المتصفّح لهذه الخمسة يُهمَل.
+   */
+  const renewSource = parsed.data.renewFromOrderId
+    ? await db.checkoutOrder.findUnique({
+        where: { id: parsed.data.renewFromOrderId },
+        select: { number: true, clientId: true, buyerName: true, buyerEmail: true, buyerPhone: true, businessName: true, market: true },
+      })
+    : null;
+  if (parsed.data.renewFromOrderId && !renewSource) return { ok: false, error: "الطلب المجدَّد غير موجود" };
+  const body = renewSource
+    ? {
+        ...parsed.data,
+        buyerName: renewSource.buyerName,
+        buyerEmail: renewSource.buyerEmail,
+        buyerPhone: renewSource.buyerPhone,
+        businessName: renewSource.businessName ?? undefined,
+        market: renewSource.market === "EG" || renewSource.market === "SA" ? renewSource.market : parsed.data.market,
+      }
+    : parsed.data;
 
   const { e164, reason } = toE164(body.buyerPhone);
   if (!e164) return { ok: false, error: reason ?? "رقم غير صالح" };
+
+  /**
+   * **بابان لا ثلاثة: عميلٌ جديد أو تجديد.** «اشتراك جديد» بإيميلٍ أو جوالٍ لعميلٍ موجود كان يُحفظ
+   * طلباً ثانياً بلا حساب، ثمّ يرفضه التفعيلُ (الإيميل والجوال فريدان) فيُرقَّع بزرّ «ربط». يُوقف
+   * هنا قبل أيّ كتابة، ويُدَلّ المندوبُ على تجديده — والتجديدُ نفسُه يمرّ (هويّتُه هويّةُ العميل).
+   */
+  if (!renewSource) {
+    const existing = await findClientByIdentity({ email: body.buyerEmail, phone: e164 });
+    if (existing) {
+      return {
+        ok: false,
+        error: `${existing.matchedOn === "email" ? "الإيميل" : "رقم الجوال"} لعميلٍ موجود «${existing.name}» — هذا تجديدٌ لا اشتراكٌ جديد.`,
+        renewHref: existing.activeOrderId ? `/orders/new?renewFrom=${existing.activeOrderId}` : `/clients/${existing.id}`,
+      };
+    }
+  }
 
   const vatRateBp = vatRateBpForMarket(body.market);
   const currency = body.market === "EG" ? "EGP" : "SAR";
@@ -216,6 +264,39 @@ export async function createManualOrder(input: CreateManualOrderInput): Promise<
       salesRepId: body.salesRepId ?? null,
     },
   });
+
+  /**
+   * التجديد على الحساب نفسه — بنفس باب «ربط بالعميل القائم» (`linkOrderToClient`): يكتب العميلَ
+   * على الطلب، ويجعله الصفقةَ السارية، ويعيد حسابَ نهاية الاشتراك. كان يُحفظ بلا عميل فيظهر
+   * في الاشتراكات صفّاً ثانياً «بلا حساب بعد» لنفس العميل حتى يُربط بيدٍ في خطوةٍ ثانية تُنسى.
+   */
+  if (renewSource && body.status === "PAID") {
+    const source = renewSource;
+    if (source.clientId) {
+      /**
+       * **متى تبدأ مدّةُ التجديد** (خالد ١ أكتوبر ٢٠٢٦، الخيار «أ»): من نهاية الاشتراك الحالي إن
+       * كان لم ينتهِ بعد — فلا يضيع على العميل يومٌ دفع ثمنه — ومن يوم الدفع إن كان قد انتهى.
+       * كانت تبدأ مع أوّل مقالٍ يصله بعد التجديد، فمَن جدّد مبكّراً يخسر ما بقي من القديم، ومَن
+       * جدّد بعد الانتهاء يبقى بلا تاريخ نهايةٍ حتى يُكتب له مقال.
+       * تُحسب قبل الربط: الربطُ يجعل هذا الطلبَ هو الساري، فيضيع الطلبُ الذي نقيس نهايته.
+       * وختمُ `serviceStartedAt` هنا يجعل ساعةَ أوّل مقال (`start-service-clock.ts`) لا تلمسه.
+       */
+      const owner = await db.client.findUnique({ where: { id: source.clientId }, select: { activeOrderId: true } });
+      const current = owner?.activeOrderId
+        ? await db.checkoutOrder.findUnique({ where: { id: owner.activeOrderId }, select: { serviceStartedAt: true, paidMonths: true, bonusServiceMonths: true } })
+        : null;
+      const currentEnd = current ? getSubscriptionTerm(current).endsAt : null;
+      const startsAt = currentEnd && currentEnd > paidAt ? currentEnd : paidAt;
+      await db.checkoutOrder.update({ where: { id: order.id }, data: { serviceStartedAt: startsAt } });
+      await linkOrderToClient(order.id, source.clientId);
+      await logAction("order.update", {
+        entity: "Order",
+        entityId: order.id,
+        summary: `تجديد ${source.number} ← ${order.number} أُضيف لحساب العميل نفسه`,
+        metadata: { clientId: source.clientId, renewFrom: body.renewFromOrderId, via: "renewal-auto-link" },
+      });
+    }
+  }
 
   revalidatePath("/orders");
   return { ok: true, id: order.id, number: order.number };

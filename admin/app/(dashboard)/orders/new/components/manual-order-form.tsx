@@ -8,6 +8,7 @@ import { Check, Loader2, Receipt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { formatMonths } from "../../helpers/format-months";
 import { useToast } from "@/hooks/use-toast";
@@ -158,10 +159,13 @@ export type OrderPrefill = {
 export function ManualOrderForm({
   data,
   leadId,
+  renewFromOrderId,
   prefill,
 }: {
   data: OrderFormData;
   leadId?: string;
+  /** The order being renewed — the action adds the new order to that order's client. */
+  renewFromOrderId?: string;
   prefill?: OrderPrefill;
 }) {
   const router = useRouter();
@@ -169,6 +173,10 @@ export function ManualOrderForm({
   const [pending, startTransition] = useTransition();
 
   const [market, setMarket] = useState<MarketKey>(prefill?.market ?? "SA");
+  /** Renewal: the client's identity is fixed — only money and term change (Khalid, 1 Oct 2026). The action ignores these fields too. */
+  const lockIdentity = !!renewFromOrderId;
+  /** Set when the save was refused because the buyer is already a client — the way to renew him. */
+  const [existingClient, setExistingClient] = useState<{ message: string; href: string } | null>(null);
   // باقةُ التجديد إن كانت ما تزال في الكتالوج — وإلّا فأوّل باقةٍ منشورة.
   const [planId, setPlanId] = useState(
     (prefill?.planId && data.plans.some((p) => p.id === prefill.planId) ? prefill.planId : data.plans[0]?.id) ?? "",
@@ -273,12 +281,15 @@ export function ManualOrderForm({
         notes: notes || undefined,
         isInternal,
         leadId,
+        renewFromOrderId,
       });
 
       if (!res.ok) {
+        if (res.renewHref) setExistingClient({ message: res.error, href: res.renewHref });
         toast({ title: "لم يُسجَّل الطلب", description: res.error, variant: "destructive" });
         return;
       }
+      setExistingClient(null);
       toast({ title: "سُجّل الطلب", description: res.number });
       router.push(`/orders/${res.id}`);
     });
@@ -301,6 +312,7 @@ export function ManualOrderForm({
                   key={m.key}
                   type="button"
                   onClick={() => setMarket(m.key)}
+                  disabled={lockIdentity && market !== m.key}
                   aria-pressed={market === m.key}
                   className={cn(
                     "rounded px-2 py-0.5 text-[11px] font-bold transition-colors",
@@ -434,15 +446,20 @@ export function ManualOrderForm({
       </Section>
 
       <Section title="العميل">
+        {lockIdentity && (
+          <p className="mb-3 rounded-md bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+            بيانات العميل ثابتة في التجديد — تتغيّر الباقة والمدّة والمبلغ فقط. تعديلها من صفحة العميل.
+          </p>
+        )}
         <div className="grid grid-cols-2 gap-x-3 gap-y-3 sm:grid-cols-3">
           <Field label="الاسم *" error={err("buyerName")}>
-            <Input className="h-8 text-xs" value={buyerName} onChange={(e) => setBuyerName(e.target.value)} onBlur={() => touch("buyerName")} placeholder="محمد العمري" />
+            <Input className={cn("h-8 text-xs", lockIdentity && "cursor-not-allowed bg-muted/60 text-muted-foreground")} value={buyerName} readOnly={lockIdentity} onChange={(e) => setBuyerName(e.target.value)} onBlur={() => touch("buyerName")} placeholder="محمد العمري" />
           </Field>
           <Field label="الإيميل *" error={err("buyerEmail")}>
-            <Input className="h-8 text-xs" value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} onBlur={() => touch("buyerEmail")} placeholder="you@company.com" />
+            <Input className={cn("h-8 text-xs", lockIdentity && "cursor-not-allowed bg-muted/60 text-muted-foreground")} value={buyerEmail} readOnly={lockIdentity} onChange={(e) => setBuyerEmail(e.target.value)} onBlur={() => touch("buyerEmail")} placeholder="you@company.com" />
           </Field>
           <Field label="الجوال *" error={err("buyerPhone")}>
-            <Input className="h-8 text-xs" value={buyerPhone} onChange={(e) => setBuyerPhone(e.target.value)} onBlur={() => touch("buyerPhone")} placeholder={market === "EG" ? "01012345678" : "0501234567"} />
+            <Input className={cn("h-8 text-xs", lockIdentity && "cursor-not-allowed bg-muted/60 text-muted-foreground")} value={buyerPhone} readOnly={lockIdentity} onChange={(e) => setBuyerPhone(e.target.value)} onBlur={() => touch("buyerPhone")} placeholder={market === "EG" ? "01012345678" : "0501234567"} />
           </Field>
           {/**
             * **اسمُ النشاط لا وصفُه** (مقيسٌ حيّاً ١٩ سبتمبر ٢٠٢٦).
@@ -459,7 +476,7 @@ export function ManualOrderForm({
             * العميل من جدول `Industry`، لأنّ صفحة الدفع لا تسأل الزائر صناعته.
             */}
           <Field label="اسم النشاط">
-            <Input className="h-8 text-xs" value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="حلويات النيل — يُكتب على حساب العميل" />
+            <Input className={cn("h-8 text-xs", lockIdentity && "cursor-not-allowed bg-muted/60 text-muted-foreground")} value={businessName} readOnly={lockIdentity} onChange={(e) => setBusinessName(e.target.value)} placeholder="حلويات النيل — يُكتب على حساب العميل" />
           </Field>
           <Field label="المندوب">
             <Select value={salesRepId} onValueChange={setSalesRepId}>
@@ -519,6 +536,15 @@ export function ManualOrderForm({
           </span>
         </label>
       </Section>
+
+      {existingClient && (
+        <div role="alert" className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-900 dark:text-amber-200">
+          <span>{existingClient.message}</span>
+          <Link href={existingClient.href} className="font-semibold text-primary hover:underline">
+            جدّد له من هنا ←
+          </Link>
+        </div>
+      )}
 
       <div className="flex items-center gap-3">
         <Button size="sm" onClick={submit} disabled={pending} className="h-8 gap-1.5">

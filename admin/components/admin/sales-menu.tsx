@@ -67,6 +67,8 @@ const GROUPS: SalesGroup[] = [
       { href: "/clients/sales-report", label: "تقرير المبيعات", icon: TrendingUp },
       // تصفية حسابات المناديب (خالد ٣٠ سبتمبر ٢٠٢٦: «تطلع بس للآدمن»).
       { href: "/sales-commissions", label: "عمولات المناديب", icon: HandCoins, adminOnly: true },
+      // كشف الحساب (خالد ١ أكتوبر ٢٠٢٦): الأدمن يرى كلّ المناديب، والمندوبُ كشفَه هو وحده.
+      { href: "/commission-statement", label: "كشف حساب العمولات", icon: Wallet },
     ],
   },
 ];

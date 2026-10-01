@@ -28,6 +28,7 @@ import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { buildInvoiceWhatsappLink } from "../helpers/build-invoice-whatsapp-link";
 import { getOrderStatement } from "./helpers/get-order-statement";
 import { getSubscriptionStanding } from "../helpers/get-subscription-standing";
+import { RENEWAL_SOON_DAYS } from "@modonty/shared/lib/subscription/subscription-term";
 import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 import { OrderInternalNote } from "@/components/shared/order-internal-note";
 
@@ -73,6 +74,28 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
    * واشتراكُ العميل = مدّةُ طلبه الساري (`get-client-subscriptions.ts`)، فالحكمُ هنا هو حكمُه.
    */
   const renewal = standing && owner?.activeOrderId === order.id ? standing : null;
+  const showRenew = order.status === "PAID" && !!renewal && (renewal.state === "expired" || renewal.state === "expiring") && isSalesDesk;
+  /**
+   * **لماذا لا يظهر زرّ التجديد — سطرٌ مكانه** (خالد ١ أكتوبر ٢٠٢٦: «الرسائل واضحة قدام المندوب؟»).
+   * كان الزرُّ يغيب بلا كلمة: الطلبُ القديم بعد التجديد يُرى منتهياً بلا زرّ فيبدو معطَّلاً،
+   * والطلبُ غيرُ المربوط لا يقول ما ينقصه. والسببُ هنا هو شرطُ الزرّ نفسُه، بالترتيب.
+   */
+  const activeOrder =
+    order.status === "PAID" && owner?.activeOrderId && owner.activeOrderId !== order.id
+      ? await db.checkoutOrder.findUnique({ where: { id: owner.activeOrderId }, select: { id: true, number: true } })
+      : null;
+  const renewHint: { text: string; href?: string; link?: string } | null =
+    order.status !== "PAID" || !isSalesDesk || showRenew
+      ? null
+      : !order.clientId
+        ? { text: "التجديد بعد ربط الطلب بعميل", href: `/clients/activate/${order.id}`, link: "فعّله" }
+        : owner?.activeOrderId !== order.id
+          ? activeOrder
+            ? { text: `طلب قديم — الاشتراك الحالي ${activeOrder.number}`, href: `/orders/${activeOrder.id}`, link: "افتحه" }
+            : { text: "ليس الاشتراك الساري لهذا العميل" }
+          : !renewal?.endsAt
+            ? { text: "التجديد يُتاح بعد وصول أوّل مقال للعميل" }
+            : { text: `التجديد يفتح يوم ${formatOrderDate(new Date(renewal.endsAt.getTime() - RENEWAL_SOON_DAYS * 86_400_000))}` };
   const serviceMonths = order.paidMonths + order.bonusServiceMonths;
 
   /**
@@ -252,8 +275,21 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           {invoice && whatsapp ? ("href" in whatsapp ? <WhatsappInvoiceButton href={whatsapp.href} orderId={order.id} /> : <Badge variant="destructive" className="text-[11px]">{whatsapp.error}</Badge>) : null}
 
           {/* التجديد: طلبٌ جديد بهويّة هذا الطلب وباقته — يظهر متى انقضت المدّة أو قاربت.
-              كان يعني كتابةَ كلّ شيءٍ من جديد ثمّ الربطَ يدويّاً، فيبقى المنتهي منتهياً. */}
-          {order.status === "PAID" && renewal && (renewal.state === "expired" || renewal.state === "expiring") && isFinanceAdmin ? (
+              كان يعني كتابةَ كلّ شيءٍ من جديد ثمّ الربطَ يدويّاً، فيبقى المنتهي منتهياً.
+              للأدمن والمبيعات (خالد ١ أكتوبر ٢٠٢٦: «المندوب هو اللي بيتابع العميل») — وصفحةُ
+              التجديد نفسُها `requireSalesDesk` من قبل، فالزرُّ يتبع بابَها. */}
+          {renewHint ? (
+            <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-dashed px-2.5 text-xs text-muted-foreground">
+              <RefreshCw className="size-3.5" aria-hidden />
+              {renewHint.text}
+              {renewHint.href && (
+                <Link href={renewHint.href} className="font-semibold text-primary hover:underline">
+                  {renewHint.link}
+                </Link>
+              )}
+            </span>
+          ) : null}
+          {showRenew && renewal ? (
             <Button asChild size="sm" variant={renewal.state === "expired" ? "default" : "outline"} className="h-8 gap-1.5 px-2.5 text-[12px]">
               <Link href={`/orders/new?renewFrom=${order.id}`}>
                 <RefreshCw className="size-4" aria-hidden />

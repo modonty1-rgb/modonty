@@ -9,8 +9,7 @@ import { loadSiteUrl } from "@/lib/seo/site-url";
 import { formatOrderMoney } from "@/lib/orders/format-order-money";
 import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { ActivateButton } from "./components/activate-button";
-import { LinkRenewalButton } from "./components/link-renewal-button";
-import { findExistingClientForOrder } from "./helpers/find-existing-client-for-order";
+import { findClientByIdentity } from "@/lib/orders/find-client-by-identity";
 
 /**
  * **صفحةُ عرضٍ وزرّ — لا فورم.**
@@ -59,7 +58,7 @@ export default async function ActivateOrderPage({ params }: { params: Promise<{ 
   const [rep, existingClient] = await Promise.all([
     order.salesRepId ? db.staff.findUnique({ where: { id: order.salesRepId }, select: { name: true } }) : null,
     // A renewal of an account that already exists is linked to it, never activated a second time.
-    findExistingClientForOrder(order),
+    findClientByIdentity({ email: order.buyerEmail, phone: order.buyerPhone }),
   ]);
 
   const paidAt = order.paidAt ?? order.createdAt;
@@ -171,18 +170,23 @@ export default async function ActivateOrderPage({ params }: { params: Promise<{ 
         </dl>
       </section>
 
+      {/*
+         * **لا حسابَ ثانٍ لعميلٍ موجود، ولا «ربط» بعد اليوم** (خالد ١ أكتوبر ٢٠٢٦). كان هنا زرّ
+         * «ربط بالعميل القائم» — بابٌ ثالث يُرقّع طلباً سُجّل «جديداً» لعميلٍ قديم. الطلبُ الجديد
+         * لعميلٍ موجود يُرفض الآن عند الحفظ (`create-manual-order.ts`)، والتجديدُ ينزل في الحساب
+         * وحده؛ فإن وصل طلبٌ كهذا هنا فهو خطأُ تسجيل، والصفحةُ تقوله بدل أن تفتح حساباً ثانياً.
+       */}
       {existingClient ? (
-        <section className="space-y-3 rounded-lg border border-primary/30 bg-primary/5 p-4">
-          <p className="text-sm">
-            <b>تجديدٌ لعميلٍ قائم:</b>{" "}
+        <section role="alert" className="space-y-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-sm">
+          <p>
+            <b>{existingClient.matchedOn === "email" ? "إيميل" : "جوال"} هذا الطلب لعميلٍ موجود:</b>{" "}
             <Link href={`/clients/${existingClient.id}`} className="font-medium text-primary hover:underline">
               {existingClient.name}
             </Link>
           </p>
-          <p className="text-[12px] text-muted-foreground">
-            بريدُ الطلب لحسابٍ موجود، فلا يُفتح حسابٌ ثانٍ. الربطُ يضع الطلب على حسابه، ويجعله الصفقةَ السارية، ويمدّ اشتراكه.
+          <p className="text-xs text-muted-foreground">
+            لا يُفتح له حسابٌ ثانٍ. طلبُ العميل الموجود يُسجَّل من زرّ «تجديد» على طلبه الحالي — ثم يُحذف هذا الطلب.
           </p>
-          <LinkRenewalButton orderId={order.id} clientName={existingClient.name} />
         </section>
       ) : (
         <ActivateButton orderId={order.id} />

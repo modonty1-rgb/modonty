@@ -22,6 +22,7 @@ import { orderMarketLabel } from "./helpers/order-market-label";
 import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { AWAITING_ACTIVATION } from "@/lib/orders/awaiting-activation";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
+import { auth } from "@/lib/auth";
 import { checkFinanceAdmin } from "@/lib/require-finance-admin";
 import { getSalesCommissions } from "@/lib/commissions/get-sales-commissions";
 
@@ -225,11 +226,18 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
 
   // يعتمد على الطلبات المجلوبة، فلا يدخل `Promise.all` أعلاه.
   const pageClientIds = [...new Set(orders.flatMap((order) => (order.clientId ? [order.clientId] : [])))];
-  // The rep's commission per order — the face beside the order number. Admin only: what the
-  // company pays its staff is not for the sales desk.
+  /**
+   * The rep's commission per order — the face beside the order number.
+   * The admin sees every rep's; a rep sees the face on **his own** orders only (Khalid, 1 Oct 2026:
+   * «المندوب دخل يشوف الطلبات تبعته ويلاقي الوش… عشان يعرف اللي لسه ما تحسبت عمولته») — a
+   * colleague's pay stays his colleague's.
+   */
   const commissionByOrder = new Map<string, NonNullable<OrderRow["commission"]>>();
-  if ((await checkFinanceAdmin()).status === "ok") {
+  const seesAllCommissions = (await checkFinanceAdmin()).status === "ok";
+  const viewerId = ((await auth())?.user as { id?: string } | undefined)?.id;
+  if (seesAllCommissions || viewerId) {
     for (const rep of await getSalesCommissions()) {
+      if (!seesAllCommissions && rep.id !== viewerId) continue;
       const paidOnByOrder = new Map<string, Date>();
       for (const p of rep.payouts) for (const it of p.items) if (it.commissionMinor > 0) paidOnByOrder.set(it.orderId, p.paidOn);
       for (const d of rep.deals) {
@@ -237,6 +245,9 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
         if (d.state === "settled") commissionByOrder.set(d.orderId, { state: "settled", label: `انصرفت عمولة ${rep.name} (${money(d.paidMinor)})${paidOnByOrder.get(d.orderId) ? ` — ${formatOrderDate(paidOnByOrder.get(d.orderId)!)}` : ""}` });
         else if (d.state === "unpaid") commissionByOrder.set(d.orderId, { state: "unpaid", label: `عمولة ${rep.name} لسه ما انصرفت (${money(d.commissionMinor)})` });
         else if (d.state === "clawback") commissionByOrder.set(d.orderId, { state: "clawback", label: `انصرفت عمولة ${rep.name} ثم استُردّ الطلب — تُخصم من صرفه القادم (${money(d.clawbackMinor)})` });
+        // Sad by default (Khalid, 1 Oct 2026: «لو ما اندفعت الديفولت يكون زعلان»): a paid order with
+        // a rep whose rate is not set yet still owes him — its face is sad, not missing.
+        else if (!d.refunded && d.rateBp === null) commissionByOrder.set(d.orderId, { state: "unpaid", label: `عمولة ${rep.name} لسه ما انصرفت — نسبته ما تحدّدت بعد` });
       }
     }
   }
