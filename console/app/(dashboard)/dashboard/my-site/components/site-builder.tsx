@@ -205,7 +205,7 @@ export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
           />
 
           <span className="mx-1.5 h-10 w-px shrink-0 bg-primary/25" aria-hidden />
-          <span className="shrink-0 pe-1 text-[11px] font-bold tracking-wide text-primary">الصفحات</span>
+          <span className="shrink-0 pe-1 text-xs font-bold tracking-wide text-primary">الصفحات</span>
 
           {/* الصفحة تُعرَض لا تُضبَط: القسم يظهر إن كانت بياناته موجودة ويغيب إن غابت.
               وحين يغيب شيء يُرفَع مثلّث تنبيه على الأيقونة — والضغط عليه يشرح ما الناقص
@@ -224,7 +224,7 @@ export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
-            <span className="whitespace-nowrap text-[11px] text-muted-foreground">
+            <span className="whitespace-nowrap text-xs text-muted-foreground">
               {dirty ? "فيه تغييرات ما انحفظت" : "كل شيء محفوظ"}
             </span>
             <button
@@ -383,8 +383,8 @@ function DeviceFrame({
     <div className="flex shrink-0 flex-col gap-2">
       <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
         {title}
-        <code className="rounded bg-muted px-1.5 py-0.5 text-[11px]" dir="ltr">{size.w}×{size.h}</code>
-        {scale < 1 && <span className="text-[11px] opacity-70" dir="ltr">{Math.round(scale * 100)}%</span>}
+        <code className="rounded bg-muted px-1.5 py-0.5 text-xs" dir="ltr">{size.w}×{size.h}</code>
+        {scale < 1 && <span className="text-xs opacity-70" dir="ltr">{Math.round(scale * 100)}%</span>}
       </span>
       {/* حدّ الجهاز على غلاف خارجي، والصندوق القاصّ بمقاس المرسوم تماماً.
           حين كان الحدّ على الصندوق نفسه، ابتلع `border-box` عشرين بكسلاً من المحتوى —
@@ -516,7 +516,7 @@ function ShapeChoices({
             </div>
             <span className={cn("flex items-center gap-2 border-t px-3 py-2 text-xs", selected ? "bg-primary/10 font-bold text-primary" : "text-muted-foreground")}>
               {o.name}
-              <span className="ms-auto rounded-full border px-2 py-0.5 text-[11px]">{selected ? "مختار ✓" : "اختر"}</span>
+              <span className="ms-auto rounded-full border px-2 py-0.5 text-xs">{selected ? "مختار ✓" : "اختر"}</span>
             </span>
           </button>
         );

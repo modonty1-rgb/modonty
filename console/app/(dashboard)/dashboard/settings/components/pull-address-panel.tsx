@@ -34,15 +34,15 @@ function CopyLine({ label, value, mono }: { label: string; value: string; mono?:
 
   return (
     <div className="space-y-1">
-      <span className="block text-[11px] font-medium text-muted-foreground">{label}</span>
+      <span className="block text-xs font-medium text-muted-foreground">{label}</span>
       <div className="flex items-center gap-1.5">
         <code
           dir="ltr"
-          className={`flex-1 overflow-x-auto whitespace-pre rounded bg-muted px-2 py-1.5 text-[11px] ${mono ? "font-mono" : ""}`}
+          className={`flex-1 overflow-x-auto whitespace-pre rounded bg-muted px-2 py-1.5 text-xs ${mono ? "font-mono" : ""}`}
         >
           {value}
         </code>
-        <Button type="button" variant="ghost" size="sm" onClick={copy} aria-label={`نسخ ${label}`}>
+        <Button type="button" variant="ghost" size="sm" onClick={copy} aria-label={`نسخ ${label}`} className="max-md:min-w-11">
           {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
         </Button>
       </div>
@@ -82,7 +82,7 @@ const { articles } = await res.json();`;
       <dl className="grid gap-3 text-xs sm:grid-cols-2">
         <div>
           <dt className="text-muted-foreground">عنوان مقالاتك</dt>
-          <dd className="font-mono text-[11px]" dir="ltr">
+          <dd className="font-mono text-xs" dir="ltr">
             {articlesBaseUrl ?? "—"}
           </dd>
         </div>
@@ -109,13 +109,13 @@ const { articles } = await res.json();`;
         href={`${base}/articles`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 hover:underline dark:text-violet-300"
+        className="inline-flex items-center gap-1.5 max-md:min-h-11 text-xs font-medium text-violet-700 hover:underline dark:text-violet-300"
       >
         افتح العنوان وشوف الردّ
         <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
       </a>
 
-      <ul className="space-y-1 text-[11px] text-muted-foreground">
+      <ul className="space-y-1 text-xs text-muted-foreground">
         <li>· ما فيه مفتاح ولا إعدادات — انسخ العنوان واستخدمه في موقعك مباشرة.</li>
         <li>· خريطة مقالاتك نستضيفها نحن وتتجدّد وحدها — تحطّ سطر <code dir="ltr">Sitemap</code> مرة واحدة وخلاص.</li>
         <li>· الردّ يجي جاهزاً للطباعة: العنوان والوصف والمتن والصورة بأبعادها والبطاقة المهيكلة.</li>

@@ -462,7 +462,7 @@ function FilterPill({
     >
       {label}
       <span
-        className={`inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums ${
+        className={`inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
           active
             ? "bg-background/20 text-primary-foreground"
             : "bg-muted text-muted-foreground"
@@ -742,7 +742,7 @@ function Field({
 }) {
   return (
     <div className="space-y-0.5">
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}>
         {value}
       </p>

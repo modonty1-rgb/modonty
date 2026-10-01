@@ -73,7 +73,7 @@ export function SubscriptionCard({ data }: { data: SubscriptionData }) {
                 style={{ width: `${progress.pct}%` }}
               />
             </div>
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span className="flex items-center gap-1 tabular-nums">
                 <Calendar className="h-3 w-3" />
                 {progress.daysLeft} {s.daysLeft}

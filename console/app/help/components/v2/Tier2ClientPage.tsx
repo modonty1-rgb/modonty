@@ -78,7 +78,7 @@ export function Tier2ClientPage({ onImageClick }: Tier2ClientPageProps) {
             <p className="text-sm text-muted-foreground leading-relaxed flex-1">
               {block.body}
             </p>
-            <div className="flex items-start gap-1.5 text-[11px] text-primary/90 bg-primary/8 rounded-md px-2 py-1.5 mt-1">
+            <div className="flex items-start gap-1.5 text-xs text-primary/90 bg-primary/8 rounded-md px-2 py-1.5 mt-1">
               <Settings2 className="w-3 h-3 mt-0.5 shrink-0" />
               <span>{block.managedFrom}</span>
             </div>

@@ -565,7 +565,7 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
               {DAY_ORDER.map((day) => (
                 <label
                   key={day}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm text-muted-foreground cursor-pointer select-none transition-colors hover:bg-muted/50 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:checked]:text-foreground has-[:checked]:font-medium"
+                  className="flex items-center gap-2 px-3 py-2 max-md:min-h-11 rounded-lg border text-sm text-muted-foreground cursor-pointer select-none transition-colors hover:bg-muted/50 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:checked]:text-foreground has-[:checked]:font-medium"
                 >
                   <input
                     type="checkbox"

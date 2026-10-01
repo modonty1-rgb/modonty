@@ -95,7 +95,7 @@ export function ServicesEditor({
               <span className="min-w-0 flex-1 py-2 text-xs text-foreground">
                 <span className="font-semibold">{s.title}</span>
                 {s.description && (
-                  <span className="mt-0.5 block line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+                  <span className="mt-0.5 block line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                     {s.description}
                   </span>
                 )}

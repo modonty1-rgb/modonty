@@ -37,7 +37,7 @@ export function HelpClient() {
             href={`${process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com"}/story`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 bg-background hover:bg-muted text-foreground text-xs md:text-sm font-medium px-3 py-2 rounded-full border border-border transition-colors"
+            className="inline-flex max-md:min-h-11 max-md:min-w-11 items-center justify-center gap-1.5 bg-background hover:bg-muted text-foreground text-xs md:text-sm font-medium px-3 py-2 rounded-full border border-border transition-colors"
             aria-label="افتح الصفحة العامة للقصة"
             title="افتح القصة كصفحة عامة على modonty.com (للمشاركة)"
           >

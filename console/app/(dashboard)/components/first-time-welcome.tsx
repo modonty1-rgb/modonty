@@ -48,7 +48,7 @@ export function FirstTimeWelcome() {
             <button
               type="button"
               onClick={dismiss}
-              className="absolute top-3 left-3 w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground transition-colors z-10"
+              className="absolute top-3 left-3 w-8 h-8 after:absolute after:-inset-1.5 after:content-[''] rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground transition-colors z-10"
               aria-label="إغلاق"
             >
               <X className="w-4 h-4" />

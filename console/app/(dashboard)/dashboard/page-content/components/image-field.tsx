@@ -107,7 +107,7 @@ export function ImageField({
                 variant="secondary"
                 disabled={uploading}
                 onClick={() => inputRef.current?.click()}
-                className="absolute inset-x-1 bottom-1 h-6 bg-background/90 px-2 text-[11px] backdrop-blur"
+                className="absolute inset-x-1 bottom-1 h-6 bg-background/90 px-2 text-xs backdrop-blur"
               >
                 {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : "استبدال"}
               </Button>
@@ -162,13 +162,13 @@ export function ImageField({
         >
           {uploading ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <ImagePlus className="h-5 w-5" />}
           {/* الدائرة ٨٠ بكسل لا تتّسع لجملة — النصّ يخرج عنها فيُقصّ. */}
-          <span className={`text-[11px] font-medium ${round ? "sr-only" : ""}`}>
+          <span className={`text-xs font-medium ${round ? "sr-only" : ""}`}>
             {uploading ? "جاري الرفع..." : "أضف صورة"}
           </span>
         </button>
       )}
 
-      {hint ? <p className="mt-1 text-[11px] text-muted-foreground">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   );
 }

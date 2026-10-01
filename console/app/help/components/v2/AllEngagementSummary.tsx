@@ -28,7 +28,7 @@ export function AllEngagementSummary() {
             <h4 className="flex items-center gap-2 text-base font-extrabold text-foreground mb-2">
               <span className="text-xl">{group.emoji}</span>
               {group.groupTitle}
-              <span className="text-[11px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+              <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                 {group.events.length}
               </span>
             </h4>

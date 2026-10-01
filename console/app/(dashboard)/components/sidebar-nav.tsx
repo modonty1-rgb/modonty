@@ -39,7 +39,7 @@ export function SidebarNavItem({
     <Link
       href={href}
       className={cn(
-        "flex items-center rounded-md font-normal transition-colors",
+        "flex items-center rounded-md font-normal transition-colors max-md:min-h-11",
         isCompact ? "gap-2 px-2 py-2 text-xs" : "gap-3 px-3 py-2 text-sm",
         "hover:bg-muted",
         isActive
@@ -58,7 +58,7 @@ export function SidebarNavItem({
           {badgeLabel && (
             <span
               className={cn(
-                "relative inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-bold rounded border",
+                "relative inline-flex items-center gap-0.5 px-1.5 py-0.5 text-xs font-bold rounded border",
                 badgeVariant === "danger"
                   ? "bg-destructive/10 text-[hsl(var(--destructive-ink))] border-destructive/30"
                   : badgeVariant === "success"

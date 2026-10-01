@@ -131,7 +131,7 @@ export function PublicPageLink({
       </span>
 
       <span className="min-w-0 flex-1">
-        <span className="block text-[10px] leading-tight text-muted-foreground">
+        <span className="block text-xs leading-tight text-muted-foreground">
           صفحتك على مُدَوَّنَتِي
         </span>
         {/* Stretched link: the anchor covers the whole row without nesting the button. */}
@@ -155,7 +155,7 @@ export function PublicPageLink({
         aria-label={copied ? "تم نسخ الرابط" : "نسخ الرابط"}
         title={copied ? "تم النسخ" : "نسخ الرابط"}
         className={cn(
-          "relative z-10 flex shrink-0 items-center justify-center rounded-md border bg-background",
+          "relative z-10 flex shrink-0 items-center justify-center rounded-md border after:absolute after:-inset-2 after:content-[''] bg-background",
           "text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
           isSidebar ? "h-8 w-8" : "h-8 w-8"
         )}

@@ -93,7 +93,7 @@ export function HelpLanding() {
                   <MousePointerClick className="w-7 h-7" strokeWidth={1.75} />
                 </div>
 
-                <span className="inline-block bg-white/20 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full mb-2">
+                <span className="inline-block bg-white/20 text-white text-xs font-bold px-2.5 py-0.5 rounded-full mb-2">
                   جديد
                 </span>
                 <h2 className="text-xl md:text-2xl font-extrabold mb-2">

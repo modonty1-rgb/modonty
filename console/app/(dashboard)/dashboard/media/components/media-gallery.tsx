@@ -36,7 +36,7 @@ function FilterButton({
     <Button variant={active ? "default" : "outline"} size="sm" onClick={onClick}>
       {label}
       <span
-        className={`ms-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums ${
+        className={`ms-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
           active ? "bg-background/20 text-primary-foreground" : "bg-muted text-muted-foreground"
         }`}
       >
@@ -188,7 +188,7 @@ export function MediaGallery({ media }: MediaGalleryProps) {
                       className="object-cover transition-transform group-hover:scale-105"
                       sizes="(max-width: 768px) 50vw, 25vw"
                     />
-                    <span className="absolute end-1.5 top-1.5 rounded bg-background/90 px-1.5 py-0.5 text-[10px] font-bold text-foreground shadow-sm backdrop-blur">
+                    <span className="absolute end-1.5 top-1.5 rounded bg-background/90 px-1.5 py-0.5 text-xs font-bold text-foreground shadow-sm backdrop-blur">
                       {getFormatLabel(item.mimeType)}
                     </span>
                   </div>
@@ -196,12 +196,12 @@ export function MediaGallery({ media }: MediaGalleryProps) {
                     <p className="truncate text-xs font-medium text-foreground" title={item.filename}>
                       {item.filename}
                     </p>
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {formatDimensions(item.width, item.height)}
                       {item.width && item.height && " · "}
                       {formatBytes(item.fileSize)}
                     </p>
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {item.usageCount === 0
                         ? ar.media.notUsed
                         : `${ar.media.usedInPlaces.replace("{n}", String(item.usageCount))}`}

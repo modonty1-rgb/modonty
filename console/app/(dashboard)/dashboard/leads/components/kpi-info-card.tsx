@@ -73,7 +73,7 @@ export function KpiInfoCard({
             <p className="text-2xl font-bold leading-tight tabular-nums">
               {value}
             </p>
-            <p className="truncate text-[11px] text-muted-foreground">{hint}</p>
+            <p className="truncate text-xs text-muted-foreground">{hint}</p>
           </div>
           <Button
             type="button"
@@ -143,7 +143,7 @@ function KpiInfoSheet({
           {/* Compact formula reminder at the bottom */}
           <FormulaBlock />
 
-          <p className="text-[11px] text-muted-foreground">{l.windowNote}</p>
+          <p className="text-xs text-muted-foreground">{l.windowNote}</p>
         </div>
       </SheetContent>
     </Sheet>

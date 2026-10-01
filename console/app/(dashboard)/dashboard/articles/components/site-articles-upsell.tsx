@@ -47,7 +47,7 @@ export function SiteArticlesUpsell() {
 
         {/* Support, not a checkout: the feature is switched on by the team after a talk
             about the client's site, so a «buy» button would promise a flow we do not have. */}
-        <Link href="/dashboard/support">
+        <Link href="/dashboard/support" className="inline-flex">
           <Button size="lg">
             كلّمنا نفعّلها لك
             <ArrowLeft className="ms-2 h-4 w-4" aria-hidden="true" />

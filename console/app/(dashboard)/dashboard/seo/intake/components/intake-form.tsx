@@ -164,7 +164,7 @@ function Pill({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-4 py-1.5 text-sm transition ${
+      className={`rounded-full border px-4 py-1.5 max-md:min-h-11 text-sm transition ${
         active
           ? "border-primary bg-primary text-primary-foreground"
           : "border-input bg-background hover:bg-muted"
@@ -857,7 +857,7 @@ export function IntakeForm({ initial, intakeUpdatedAt, detected, industryName, c
             return (
               <div key={i} className="space-y-2 rounded-lg bg-muted/30 p-3">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <span className="grid h-5 w-5 place-items-center rounded-full bg-primary/15 text-primary text-[10px] font-bold">
+                  <span className="grid h-5 w-5 place-items-center rounded-full bg-primary/15 text-primary text-xs font-bold">
                     {i + 1}
                   </span>
                   <span>المنافس {i + 1}</span>

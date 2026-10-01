@@ -18,7 +18,7 @@ function ScoreCircle({ label, score }: { label: string; score: number | null }) 
           {score ?? "—"}
         </p>
       </div>
-      <p className="text-[11px] font-medium text-foreground text-center">{label}</p>
+      <p className="text-xs font-medium text-foreground text-center">{label}</p>
     </div>
   );
 }
@@ -60,19 +60,19 @@ function StrategyBlock({
       {(data.cwv.lcpDisplay || data.cwv.clsDisplay || data.cwv.fcpDisplay) && (
         <div className="mt-4 grid grid-cols-3 gap-2 rounded-md border bg-muted/30 p-2 text-center">
           <div>
-            <p className="text-[11px] text-muted-foreground">LCP</p>
+            <p className="text-xs text-muted-foreground">LCP</p>
             <p className="text-sm font-semibold tabular-nums">
               {data.cwv.lcpDisplay ?? "—"}
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-muted-foreground">CLS</p>
+            <p className="text-xs text-muted-foreground">CLS</p>
             <p className="text-sm font-semibold tabular-nums">
               {data.cwv.clsDisplay ?? "—"}
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-muted-foreground">FCP</p>
+            <p className="text-xs text-muted-foreground">FCP</p>
             <p className="text-sm font-semibold tabular-nums">
               {data.cwv.fcpDisplay ?? "—"}
             </p>
@@ -103,10 +103,10 @@ export function PagespeedCard({
         <CardDescription className="flex flex-wrap items-center justify-between gap-2">
           <span>الأرقام مباشرة من Google — مصدر الحقيقة الرسمي</span>
           <span className="flex items-center gap-3">
-            <a href={gMobileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+            <a href={gMobileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline max-md:min-h-11">
               Mobile <ExternalLink className="h-3 w-3" />
             </a>
-            <a href={gDesktopUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+            <a href={gDesktopUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline max-md:min-h-11">
               Desktop <ExternalLink className="h-3 w-3" />
             </a>
           </span>
@@ -116,7 +116,7 @@ export function PagespeedCard({
         <StrategyBlock data={scores.mobile} icon={Smartphone} label="📱 موبايل" />
         <StrategyBlock data={scores.desktop} icon={Monitor} label="💻 كمبيوتر" />
 
-        <p className="text-[11px] text-muted-foreground leading-relaxed">
+        <p className="text-xs text-muted-foreground leading-relaxed">
           ملاحظة: Lighthouse غير حتمي — تشغيلين متتاليين قد يعطون أرقام مختلفة (±5-10 نقاط). لو الفرق أكبر من 10 نقاط، افتح الرابط أعلاه للمقارنة.
         </p>
       </CardContent>

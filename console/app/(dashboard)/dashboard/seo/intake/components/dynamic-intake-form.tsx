@@ -90,7 +90,7 @@ function Pill({ active, onClick, children }: { active: boolean; onClick: () => v
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-4 py-1.5 text-sm transition ${
+      className={`rounded-full border px-4 py-1.5 max-md:min-h-11 text-sm transition ${
         active ? "border-primary bg-primary text-primary-foreground" : "border-input bg-background hover:bg-muted"
       }`}
     >
@@ -192,7 +192,7 @@ export function DynamicIntakeForm({
                   key={m}
                   type="button"
                   onClick={() => setMarketCountry(m)}
-                  className={`rounded-md px-4 py-1.5 text-sm font-medium transition ${
+                  className={`rounded-md px-4 py-1.5 max-md:min-h-11 text-sm font-medium transition ${
                     marketCountry === m ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -318,7 +318,7 @@ function QuestionField({
           <select
             value={asString(value)}
             onChange={(e) => onChange(e.target.value || null)}
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+            className="h-10 max-md:h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
           >
             <option value="">— اختر —</option>
             {options.map((o) => <option key={o.id} value={o.value}>{o.label}</option>)}
@@ -431,7 +431,7 @@ function QuestionField({
           {Array.from({ length: count }, (_, i) => (
             <div key={i} className="space-y-2 rounded-lg bg-muted/30 p-3">
               <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <span className="grid h-5 w-5 place-items-center rounded-full bg-primary/15 text-[10px] font-bold text-primary">{i + 1}</span>
+                <span className="grid h-5 w-5 place-items-center rounded-full bg-primary/15 text-xs font-bold text-primary">{i + 1}</span>
                 <span>{itemLabel} {i + 1}</span>
               </div>
               {fields.map((f) => (

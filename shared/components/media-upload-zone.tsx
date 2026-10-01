@@ -252,14 +252,14 @@ export function MediaUploadZone({
               <Loader2 className="h-5 w-5 shrink-0 animate-spin text-primary" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-foreground">{t.busy}</p>
-                <p className="truncate text-[11px] text-muted-foreground" title={active?.file.name}>
+                <p className="truncate text-xs text-muted-foreground" title={active?.file.name}>
                   {active?.file.name ?? ""}
                 </p>
               </div>
               <span className="shrink-0 text-sm font-bold tabular-nums text-primary">{overall}%</span>
             </div>
             <ProgressBar value={overall} className="mt-3 h-2" label={t.busy} />
-            <p className="mt-2 text-center text-[11px] text-muted-foreground">
+            <p className="mt-2 text-center text-xs text-muted-foreground">
               {t.summary(settled, items.length)} · {t.keepOpen}
             </p>
           </div>
@@ -308,12 +308,12 @@ export function MediaUploadZone({
         <span className="text-sm font-medium text-foreground">
           {busy ? t.busy : dragging ? t.dropNow : t.idle}
         </span>
-        <span className="text-[11px]">{t.hint}</span>
+        <span className="text-xs">{t.hint}</span>
       </button>
 
       {items.length > 0 && (
         <div className="space-y-2 rounded-lg border border-border bg-card p-2">
-          <div className="flex items-center justify-between px-1 text-[11px] text-muted-foreground">
+          <div className="flex items-center justify-between px-1 text-xs text-muted-foreground">
             <span>{t.summary(doneCount, items.length)}</span>
             {busy && <Loader2 className="h-3 w-3 animate-spin" />}
           </div>
@@ -367,7 +367,7 @@ function Row({
       />
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex items-baseline justify-between gap-2">
-          <span className="truncate text-[11px] font-medium text-foreground" title={item.file.name}>
+          <span className="truncate text-xs font-medium text-foreground" title={item.file.name}>
             {item.file.name}
           </span>
           <span className="shrink-0 text-[10px] text-muted-foreground">

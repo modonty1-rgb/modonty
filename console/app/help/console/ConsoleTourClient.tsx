@@ -129,7 +129,7 @@ export function ConsoleTourClient() {
         <div className="max-w-[1100px] mx-auto px-4 md:px-6 py-2.5 flex items-center justify-between gap-3">
           <Link
             href="/help"
-            className="text-xs md:text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
+            className="text-xs md:text-sm text-muted-foreground hover:text-foreground inline-flex max-md:min-h-11 items-center gap-1.5"
           >
             <ArrowRight className="w-3.5 h-3.5" />
             مركز المساعدة
@@ -143,7 +143,7 @@ export function ConsoleTourClient() {
             <button
               type="button"
               onClick={startTour}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs md:text-sm px-4 py-2 rounded-full shadow-md transition-colors"
+              className="inline-flex max-md:min-h-11 items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs md:text-sm px-4 py-2 rounded-full shadow-md transition-colors"
             >
               <PlayCircle className="w-4 h-4" />
               ابدأ الجولة
@@ -155,7 +155,7 @@ export function ConsoleTourClient() {
       <div className="max-w-[1100px] mx-auto px-4 md:px-6 py-10 md:py-12">
         {/* Breadcrumb */}
         <nav className="mb-6 text-sm">
-          <Link href="/help" className="text-muted-foreground hover:text-foreground">
+          <Link href="/help" className="inline-flex max-md:min-h-11 items-center text-muted-foreground hover:text-foreground">
             مركز المساعدة
           </Link>
           <span className="mx-2 text-muted-foreground">›</span>
@@ -244,13 +244,13 @@ export function ConsoleTourClient() {
                         <button
                           type="button"
                           id={`${stop.id}-h${h.n}`}
-                          className={`relative w-7 h-7 rounded-full ${colors.dot} text-xs font-extrabold shadow-md ring-[3px] ring-background flex items-center justify-center hover:scale-110 transition-transform`}
+                          className={`relative w-7 h-7 rounded-full after:absolute after:-inset-2 after:content-[''] ${colors.dot} text-xs font-extrabold shadow-md ring-[3px] ring-background flex items-center justify-center hover:scale-110 transition-transform`}
                           aria-label={h.title}
                         >
                           {globalN}
                         </button>
                         <span
-                          className="pointer-events-none absolute top-full mt-2 right-1/2 translate-x-1/2 whitespace-nowrap rounded-md bg-foreground text-background text-[11px] font-bold px-2.5 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                          className="pointer-events-none absolute top-full mt-2 right-1/2 translate-x-1/2 whitespace-nowrap rounded-md bg-foreground text-background text-xs font-bold px-2.5 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-20"
                           role="tooltip"
                         >
                           {h.title}
@@ -293,7 +293,7 @@ export function ConsoleTourClient() {
           <button
             type="button"
             onClick={startTour}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold text-sm px-5 py-2.5 rounded-full hover:bg-primary/90 transition-colors"
+            className="inline-flex max-md:min-h-11 items-center gap-2 bg-primary text-primary-foreground font-bold text-sm px-5 py-2.5 rounded-full hover:bg-primary/90 transition-colors"
           >
             <PlayCircle className="w-4 h-4" />
             ابدأ من جديد
@@ -301,7 +301,7 @@ export function ConsoleTourClient() {
           <div className="mt-4">
             <Link
               href="/help"
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+              className="inline-flex max-md:min-h-11 items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
             >
               <ArrowRight className="w-3 h-3" />
               رجوع لمركز المساعدة

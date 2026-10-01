@@ -77,7 +77,7 @@ export function PageContentEditor({ initial, views, chrome }: Props) {
           الشاشتان، فلا ينحرفان بعد أوّل تعديل. */}
       <div className="sticky top-0 z-[60] -mx-4 mb-5 border-y border-primary/20 bg-primary/[0.07] px-4 py-2.5 backdrop-blur sm:mx-0 sm:rounded-xl sm:border">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="shrink-0 pe-1 text-[11px] font-bold tracking-wide text-primary">الصفحات</span>
+          <span className="shrink-0 pe-1 text-xs font-bold tracking-wide text-primary">الصفحات</span>
           {SITE_PAGE_TOOLS.map(({ key, label, Icon }) => (
             <SiteToolButton
               key={key}
@@ -186,12 +186,12 @@ function IntroVideoSection({
         // in plain terms — no jargon about hosting or structured data.
         <div className="rounded-lg border border-amber-300 bg-amber-50 p-3">
           <p className="text-xs font-semibold text-amber-900">فيديوك محفوظ عند موقع ثاني</p>
-          <p className="mt-1 text-[11px] leading-relaxed text-amber-800">
+          <p className="mt-1 text-xs leading-relaxed text-amber-800">
             الفيديو اللي في صفحتك الحين مرفوع على قناة مو قناتك، وما تقدر تعدّله ولا تشيله،
             وقوقل يحسبه لصاحب القناة مو لك. ارفعه هنا وبيصير ملكك بالكامل — والقديم يشتغل
             لين ترفع البديل.
           </p>
-          <p dir="ltr" className="mt-2 break-all text-start text-[10px] text-amber-700">
+          <p dir="ltr" className="mt-2 break-all text-start text-xs text-amber-700">
             {legacyUrl}
           </p>
         </div>
@@ -262,7 +262,7 @@ function IntroVideoDetails({
         maxLength={500}
       />
       {missing.length > 0 && (
-        <p className="rounded bg-amber-50 px-2 py-1 text-[11px] leading-tight text-amber-800">
+        <p className="rounded bg-amber-50 px-2 py-1 text-xs leading-tight text-amber-800">
           ناقص: {missing.join(" · ")} — بدونهما الفيديو ما يظهر في نتائج بحث قوقل.
         </p>
       )}
@@ -288,7 +288,7 @@ function SourceTag({ block }: { block: BlockView }) {
     return (
       <span
         title="يضبطها فريق مدونتي — زرّ الطلب وشكله"
-        className="rounded-full border border-sky-500/40 bg-sky-500/10 px-2 py-0.5 text-[11px] font-medium text-sky-700 dark:text-sky-300"
+        className="rounded-full border border-sky-500/40 bg-sky-500/10 px-2 py-0.5 text-xs font-medium text-sky-700 dark:text-sky-300"
       >
         أدمن
       </span>
@@ -296,7 +296,7 @@ function SourceTag({ block }: { block: BlockView }) {
   }
   if (block.owner === "modonty") {
     return (
-      <span className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
+      <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
         نصّ مدونتي
       </span>
     );
@@ -304,7 +304,7 @@ function SourceTag({ block }: { block: BlockView }) {
   // كهرماني لا رمادي (خالد ٣١ أغسطس): معناه «هذي البيانات ما تتعدّل من هنا» — والشريك
   // لازم يلقاها بعينه لا يدوّر عليها. نفس لون النقص في هذي الشاشة، ومعناه واحد: فعلٌ مكانه غير هنا.
   return (
-    <span className="rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:text-amber-300">
+    <span className="rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-300">
       من: {block.where}
     </span>
   );
@@ -318,7 +318,7 @@ function SourceTag({ block }: { block: BlockView }) {
 function HeaderSketch({ chrome }: { chrome: Props["chrome"] }) {
   return (
     <div className="rounded-lg border border-dashed bg-muted/30 p-3">
-      <p className="mb-2 flex flex-wrap items-center gap-2 text-[11px] font-bold text-muted-foreground">
+      <p className="mb-2 flex flex-wrap items-center gap-2 text-xs font-bold text-muted-foreground">
         الشريط العلوي
         <span className="rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 font-medium text-amber-700 dark:text-amber-300">
           من: بيانات نشاطك · الصور والملفات
@@ -326,7 +326,7 @@ function HeaderSketch({ chrome }: { chrome: Props["chrome"] }) {
         <span className="rounded-full border px-2 py-0.5 font-medium">شكله: تصميم الموقع</span>
       </p>
       <div className="flex items-center gap-3 rounded-md border bg-background px-3 py-2.5">
-        <span className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded bg-muted text-[10px] text-muted-foreground">
+        <span className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded bg-muted text-xs text-muted-foreground">
           {chrome.logoUrl ? (
             <OptimizedImage media={asMedia(chrome.logoUrl)} alt="" width={32} height={32} sizes="32px" className="h-8 w-8 object-contain" />
           ) : (
@@ -337,12 +337,12 @@ function HeaderSketch({ chrome }: { chrome: Props["chrome"] }) {
         <span className="mx-1 hidden h-5 w-px bg-border md:block" aria-hidden />
         <span className="hidden flex-wrap items-center gap-1.5 md:flex">
           {SITE_PAGE_TOOLS.map(({ key, label }) => (
-            <span key={key} className="rounded border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground">
+            <span key={key} className="rounded border bg-muted/50 px-2 py-1 text-xs text-muted-foreground">
               {label}
             </span>
           ))}
         </span>
-        <span className="ms-auto shrink-0 rounded border bg-muted/50 px-2 py-1 text-[11px] text-muted-foreground" dir="ltr">
+        <span className="ms-auto shrink-0 rounded border bg-muted/50 px-2 py-1 text-xs text-muted-foreground" dir="ltr">
           {chrome.phone ?? "لا يوجد هاتف"}
         </span>
       </div>
@@ -358,7 +358,7 @@ function HeroSketch({ chrome, block }: { chrome: Props["chrome"]; block: BlockVi
   const { slogan, description, coverUrl } = chrome.hero;
   return (
     <div className="rounded-lg border border-dashed bg-muted/30 p-3">
-      <p className="mb-2 flex flex-wrap items-center gap-2 text-[11px] font-bold text-muted-foreground">
+      <p className="mb-2 flex flex-wrap items-center gap-2 text-xs font-bold text-muted-foreground">
         <span dir="ltr">1</span> · {block.name}
         <SourceTag block={block} />
       </p>
@@ -479,13 +479,13 @@ function PageView({
           >
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               {/* رقمه في الصفحة كاملةً لا في القائمة — الغلاف مرسومٌ فوق وهو الأوّل. */}
-              <span className="text-[11px] font-bold text-muted-foreground" dir="ltr">
+              <span className="text-xs font-bold text-muted-foreground" dir="ltr">
                 {blocks.indexOf(b) + 1}
               </span>
               <h3 className="text-sm font-semibold text-foreground">{b.name}</h3>
               {/* العدد بوحدته: رقمٌ عارٍ بجانب اسم القسم يُخلَط بترقيم الأقسام نفسه. */}
               {b.count !== undefined && (
-                <span className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
+                <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
                   {arCount(b.count, ...(BLOCK_UNIT[b.key] ?? DEFAULT_UNIT))}
                 </span>
               )}
@@ -498,7 +498,7 @@ function PageView({
               {/* نصٌّ كهرماني بلا إطار (خالد ٣١ أغسطس): لونه يربطه بوسم المصدر، وغياب
                   الإطار يفرّقه عنه — هو تنبيه لا وسم. */}
               {b.note && (
-                <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300">
+                <span className="text-xs font-medium text-amber-700 dark:text-amber-300">
                   {b.note}
                 </span>
               )}
@@ -537,7 +537,7 @@ function PageView({
                   />
                 ))}
                 {b.count !== undefined && b.count > b.thumbs.length && (
-                  <span className="grid h-14 w-14 place-items-center rounded-md border bg-muted/30 text-[11px] text-muted-foreground">
+                  <span className="grid h-14 w-14 place-items-center rounded-md border bg-muted/30 text-xs text-muted-foreground">
                     +{b.count - b.thumbs.length}
                   </span>
                 )}
@@ -549,7 +549,7 @@ function PageView({
                   <li key={j} className="rounded-lg border bg-muted/20 px-3 py-2">
                     <p className="text-xs font-semibold text-foreground">{it.title}</p>
                     {it.sub && (
-                      <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+                      <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                         {it.sub}
                       </p>
                     )}
@@ -576,4 +576,4 @@ function PageView({
   );
 }
 
-/** A page heading over the editors whose content lands on that page («يظهر في: الرئيسية»). */
+/** A page heading over the editors whose content lands on that page («يظهر في: الرئيسية»). */

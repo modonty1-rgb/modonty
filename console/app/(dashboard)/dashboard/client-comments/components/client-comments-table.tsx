@@ -143,7 +143,7 @@ export function ClientCommentsTable({ comments }: Props) {
                           {c.author?.name || "زائر"}
                         </span>
                         {c.author?.email && (
-                          <span className="text-[11px] text-muted-foreground">
+                          <span className="text-xs text-muted-foreground">
                             · {c.author.email}
                           </span>
                         )}
@@ -152,7 +152,7 @@ export function ClientCommentsTable({ comments }: Props) {
                         {c.content}
                       </p>
                       <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                        <div className="flex items-center gap-3 text-[11px] text-muted-foreground tabular-nums">
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground tabular-nums">
                           <span className="flex items-center gap-1">
                             <ThumbsUp className="h-3 w-3" />
                             {c._count.likes}
@@ -261,7 +261,7 @@ function FilterPill({
     >
       {label}
       <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums ${
+        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
           active ? "bg-background/20 text-primary-foreground" : "bg-muted text-muted-foreground"
         }`}
       >

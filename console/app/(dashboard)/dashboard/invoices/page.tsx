@@ -94,7 +94,7 @@ export default async function InvoicesPage() {
             <div className="overflow-x-auto">
               <table className="w-full whitespace-nowrap text-[13px]">
                 <thead>
-                  <tr className="border-b bg-muted/40 text-[11px] font-semibold text-muted-foreground [&>th]:px-3 [&>th]:py-2.5 [&>th]:text-start">
+                  <tr className="border-b bg-muted/40 text-xs font-semibold text-muted-foreground [&>th]:px-3 [&>th]:py-2.5 [&>th]:text-start">
                     <th>التاريخ</th>
                     <th>رقم الفاتورة</th>
                     <th>الوصف</th>
@@ -122,15 +122,15 @@ export default async function InvoicesPage() {
                       </td>
                       <td className="text-center">
                         {inv.isRefunded ? (
-                          <span className="rounded-full bg-slate-500/15 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-400">
+                          <span className="rounded-full bg-slate-500/15 px-2 py-0.5 text-xs font-semibold text-slate-600 dark:text-slate-400">
                             مُسترَدة
                           </span>
                         ) : inv.isPaid ? (
-                          <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                          <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                             {INVOICE_STATUS_LABEL.PAID}
                           </span>
                         ) : (
-                          <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                          <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
                             {INVOICE_STATUS_LABEL.DUE}
                           </span>
                         )}

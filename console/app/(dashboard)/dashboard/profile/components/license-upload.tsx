@@ -128,7 +128,7 @@ export function LicenseUpload({ value, onChange }: LicenseUploadProps) {
             <ImageIcon className="h-6 w-6" />
           )}
           <span className="text-sm font-medium">{uploading ? "جاري الرفع..." : "ارفع صورة الترخيص"}</span>
-          <span className="text-[11px]">JPG / PNG / WebP — تُضغط تلقائياً · حتى 20 ميجا</span>
+          <span className="text-xs">JPG / PNG / WebP — تُضغط تلقائياً · حتى 20 ميجا</span>
         </button>
       )}
     </div>

@@ -83,7 +83,7 @@ export function ConfirmDeleteButton({
           aria-label={t.trigger}
           title={t.trigger}
           className={cx(
-            "inline-flex h-7 w-7 items-center justify-center rounded-md bg-background/90 text-red-600 shadow-sm backdrop-blur transition-colors hover:bg-red-500/10 disabled:opacity-50",
+            "inline-flex h-7 w-7 items-center justify-center rounded-md after:absolute after:-inset-2 after:content-[''] bg-background/90 text-red-600 shadow-sm backdrop-blur transition-colors hover:bg-red-500/10 disabled:opacity-50",
             className
           )}
         >
@@ -95,7 +95,7 @@ export function ConfirmDeleteButton({
           onClick={() => setOpen(true)}
           disabled={disabled}
           className={cx(
-            "inline-flex items-center gap-1.5 rounded-md border border-red-200 bg-background px-2.5 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-500/10 disabled:opacity-50",
+            "inline-flex items-center gap-1.5 rounded-md border border-red-200 bg-background px-2.5 py-1.5 max-md:min-h-11 text-xs font-medium text-red-600 transition-colors hover:bg-red-500/10 disabled:opacity-50",
             className
           )}
         >

@@ -28,7 +28,7 @@ export function SidebarIconLink({
       title={label}
       aria-label={label}
       className={cn(
-        "flex h-9 w-9 shrink-0 items-center justify-center rounded-md transition-colors",
+        "flex h-9 w-9 max-md:size-11 shrink-0 items-center justify-center rounded-md transition-colors",
         isActive
           ? "bg-primary/10 text-primary"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"

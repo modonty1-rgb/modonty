@@ -173,7 +173,7 @@ function VideoCoverPicker({ mediaId }: { mediaId: string }) {
   }
 
   return (
-    <label className="flex cursor-pointer items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-2 py-1.5 text-[11px] text-muted-foreground hover:border-primary/40 hover:text-foreground">
+    <label className="flex cursor-pointer items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-2 py-1.5 max-md:min-h-11 text-xs text-muted-foreground hover:border-primary/40 hover:text-foreground">
       <input
         type="file"
         accept="image/*"
@@ -306,7 +306,7 @@ export function ReelCard({ reel, onRemoved }: { reel: ClientReel; onRemoved: () 
             <ImageIcon className="h-8 w-8" />
           </div>
         )}
-        <span className={`absolute start-1.5 top-1.5 rounded px-1.5 py-0.5 text-[10px] font-semibold ring-1 ${state.cls}`}>
+        <span className={`absolute start-1.5 top-1.5 rounded px-1.5 py-0.5 text-xs font-semibold ring-1 ${state.cls}`}>
           {state.label}
         </span>
         {/* A reel that also lives in the gallery is managed from the gallery tick — the
@@ -366,7 +366,7 @@ export function ReelCard({ reel, onRemoved }: { reel: ClientReel; onRemoved: () 
       )}
 
       {!locked && missing.length > 0 && (
-        <p className="rounded bg-amber-50 px-2 py-1 text-[11px] leading-tight text-amber-800">
+        <p className="rounded bg-amber-50 px-2 py-1 text-xs leading-tight text-amber-800">
           ناقص: {missing.join(" · ")} — مُدَوَّنَتِي ما تقدر تعتمده قبل ما تكمله.
         </p>
       )}
@@ -380,7 +380,7 @@ export function ReelCard({ reel, onRemoved }: { reel: ClientReel; onRemoved: () 
       {/* Only once it is out there. Before that the four zeros say nothing except
           "nobody saw it", which the status badge already said better. */}
       {(reel.status === "APPROVED" || reel.status === "PUBLISHED") && (
-        <div className="flex items-center justify-between gap-1 border-t border-border pt-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center justify-between gap-1 border-t border-border pt-1.5 text-xs text-muted-foreground">
           <Metric icon={<Eye className="h-3 w-3" />} value={reel.views} label="مشاهدة" />
           <Metric icon={<Heart className="h-3 w-3" />} value={reel.likes} label="إعجاب" />
           <Metric icon={<MessageCircle className="h-3 w-3" />} value={reel.comments} label="تعليق" />
@@ -389,14 +389,14 @@ export function ReelCard({ reel, onRemoved }: { reel: ClientReel; onRemoved: () 
       )}
 
       {reel.status === "REJECTED" && reel.rejectionReason && (
-        <p className="rounded bg-red-50 px-2 py-1 text-[11px] leading-tight text-red-700">
+        <p className="rounded bg-red-50 px-2 py-1 text-xs leading-tight text-red-700">
           سبب الرفض: {reel.rejectionReason}
         </p>
       )}
       {/* From the gallery: no delete — the row IS the page image. Unticking here only
           takes it out of the reels; the image stays in the gallery untouched. */}
       {reel.inGallery && (
-        <label className="flex cursor-pointer items-start gap-2 rounded-md bg-emerald-500/10 px-2 py-1.5">
+        <label className="flex cursor-pointer items-start gap-2 rounded-md bg-emerald-500/10 px-2 py-1.5 max-md:min-h-11 max-md:items-center">
           <input
             type="checkbox"
             checked
@@ -404,7 +404,7 @@ export function ReelCard({ reel, onRemoved }: { reel: ClientReel; onRemoved: () 
             onChange={unpinFromGallery}
             className="mt-0.5 size-4 shrink-0 accent-emerald-600"
           />
-          <span className="min-w-0 text-[11px] leading-tight">
+          <span className="min-w-0 text-xs leading-tight">
             <span className="font-medium">تظهر في الريلز</span>
             <span className="block text-muted-foreground">
               {pending ? "لحظة…" : "من معرض الصور — شيل العلامة وتبقى في المعرض"}

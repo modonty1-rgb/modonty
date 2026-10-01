@@ -265,7 +265,7 @@ function GalleryCard({
       <div className="group/reel relative">
         <label
           className={cn(
-            "flex cursor-pointer items-start gap-2 rounded-md px-2 py-1.5 transition-colors",
+            "flex cursor-pointer items-start gap-2 rounded-md px-2 py-1.5 transition-colors max-md:min-h-11 max-md:items-center",
             inReels ? "bg-emerald-500/10" : "bg-muted/40"
           )}
         >
@@ -276,7 +276,7 @@ function GalleryCard({
             onChange={(e) => toggleReel(e.target.checked)}
             className="mt-0.5 size-4 shrink-0 accent-emerald-600"
           />
-          <span className="min-w-0 text-[11px] leading-tight">
+          <span className="min-w-0 text-xs leading-tight">
             <span className="font-medium">تظهر في الريلز</span>
             {reelPending ? (
               <span className="ms-1 text-muted-foreground">لحظة…</span>
@@ -293,7 +293,7 @@ function GalleryCard({
 
         <div
           role="tooltip"
-          className="pointer-events-none absolute bottom-full z-30 mb-1.5 w-60 -translate-y-1 rounded-lg bg-slate-900 px-3 py-2 text-[11px] leading-relaxed text-slate-100 opacity-0 shadow-xl transition-all duration-150 group-hover/reel:translate-y-0 group-hover/reel:opacity-100 end-0"
+          className="pointer-events-none absolute bottom-full z-30 mb-1.5 w-60 -translate-y-1 rounded-lg bg-slate-900 px-3 py-2 text-xs leading-relaxed text-slate-100 opacity-0 shadow-xl transition-all duration-150 group-hover/reel:translate-y-0 group-hover/reel:opacity-100 end-0"
         >
           <p className="font-semibold text-white">الريلز شاشة كاملة طولية</p>
           <p className="mt-1 text-slate-300">{reelFit(image.width, image.height)}</p>

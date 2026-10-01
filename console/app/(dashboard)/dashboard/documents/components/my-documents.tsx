@@ -160,7 +160,7 @@ function AddForm({ onDone }: { onDone: () => void }) {
           <img src={url} alt="" className="size-20 rounded-lg border bg-background object-contain" />
           <div className="min-w-0 flex-1">
             <p className="text-[13px] font-medium">الصورة جاهزة</p>
-            <p className="mt-0.5 text-[11.5px] text-muted-foreground">اضغط «أضف» لحفظ الوثيقة.</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">اضغط «أضف» لحفظ الوثيقة.</p>
           </div>
           <Button variant="ghost" size="sm" onClick={() => setUrl("")}>غيّرها</Button>
         </div>
@@ -178,7 +178,7 @@ function AddForm({ onDone }: { onDone: () => void }) {
         >
           {uploading ? <Loader2 className="size-5 animate-spin text-primary" /> : <Upload className="size-5 text-muted-foreground" />}
           <span className="text-[13px] font-medium">{uploading ? "جارٍ الرفع…" : "اسحب الصورة هنا أو اضغط للاختيار"}</span>
-          <span className="text-[11px] text-muted-foreground">صورةٌ حتّى 20 ميجا</span>
+          <span className="text-xs text-muted-foreground">صورةٌ حتّى 20 ميجا</span>
         </button>
       )}
 
@@ -188,7 +188,7 @@ function AddForm({ onDone }: { onDone: () => void }) {
         </Label>
         {/* `dir="ltr"`: حقلُ التاريخ يرسم `mm/dd/yyyy` مقلوباً داخل واجهةٍ عربيّة. */}
         <Input id="d-exp" type="date" dir="ltr" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} className="text-start sm:max-w-56" />
-        <p className="text-[11px] text-muted-foreground">اتركه فارغاً إن كانت الوثيقة بلا انتهاء.</p>
+        <p className="text-xs text-muted-foreground">اتركه فارغاً إن كانت الوثيقة بلا انتهاء.</p>
       </div>
 
       {/* الفعلُ الرئيسيُّ في سطره، بعد أن اكتملت خطواتُه. */}
@@ -224,11 +224,11 @@ function DocCard({ doc, busy, onDelete }: { doc: MyDocument; busy: boolean; onDe
               <Trash2 className="size-3.5" />
             </Button>
           ) : (
-            <span className="shrink-0 text-[10px] text-muted-foreground">أضافها الفريق</span>
+            <span className="shrink-0 text-xs text-muted-foreground">أضافها الفريق</span>
           )}
         </div>
         {expired && (
-          <span className="inline-flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/[0.08] px-1.5 py-0.5 text-[10.5px] font-medium text-red-700 dark:text-red-400">
+          <span className="inline-flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/[0.08] px-1.5 py-0.5 text-xs font-medium text-red-700 dark:text-red-400">
             <AlertTriangle className="size-3" /> منتهية
           </span>
         )}

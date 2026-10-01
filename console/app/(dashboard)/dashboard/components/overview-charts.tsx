@@ -21,7 +21,7 @@ type Day = { date: string; impressions: number; clicks: number; views: number };
 type TopPage = { title: string; impressions: number; clicks: number; views: number };
 
 const grid = "hsl(var(--border))";
-const tick = { fontSize: 11, fill: "hsl(var(--muted-foreground))" };
+const tick = { fontSize: 12, fill: "hsl(var(--muted-foreground))" };
 const primary = "hsl(var(--primary))";
 const emerald = "#059669";
 const violet = "#7c3aed";
@@ -96,7 +96,7 @@ export function OverviewCharts({ daily, topPages }: { daily: Day[]; topPages: To
                     ]}
                   />
                   <Bar dataKey="impressions" fill={primary} radius={[0, 4, 4, 0]} barSize={14}>
-                    <LabelList dataKey="impressions" position="right" style={{ fontSize: 11, fill: "hsl(var(--foreground))" }} formatter={(v: number) => v.toLocaleString()} />
+                    <LabelList dataKey="impressions" position="right" style={{ fontSize: 12, fill: "hsl(var(--foreground))" }} formatter={(v: number) => v.toLocaleString()} />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>

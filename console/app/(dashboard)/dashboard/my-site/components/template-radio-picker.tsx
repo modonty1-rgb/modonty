@@ -37,7 +37,7 @@ export function TemplateRadioPicker<K extends string>({ label, idPrefix, options
           <div key={t.key} className="flex items-center gap-3">
             <div className="flex w-16 shrink-0 flex-col items-center gap-1">
               <RadioGroupItem id={id} value={t.key} aria-label={t.name} className="h-5 w-5" />
-              <Label htmlFor={id} className="cursor-pointer text-center text-[11px] leading-tight text-muted-foreground">
+              <Label htmlFor={id} className="cursor-pointer text-center text-xs leading-tight text-muted-foreground">
                 {t.name}
               </Label>
             </div>

@@ -123,7 +123,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
           <div>
             <Link
               href="/dashboard/articles"
-              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 mb-2"
+              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 mb-2 max-md:min-h-11"
             >
               <ArrowLeft className="h-4 w-4" />
               {a.backToArticles}

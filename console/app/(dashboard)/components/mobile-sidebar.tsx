@@ -97,7 +97,7 @@ export function MobileSidebar({
           {/* The name is the way back to the dashboard on phones — the header's own
               dashboard link is `hidden sm:inline-block`, so without this there is none. */}
           <SheetTitle asChild>
-            <Link href="/dashboard" className="flex items-start gap-2 text-start">
+            <Link href="/dashboard" className="flex min-h-11 items-start gap-2 text-start">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-primary/10 text-primary shadow-sm">
               {clientLogoUrl ? (
                 <OptimizedImage

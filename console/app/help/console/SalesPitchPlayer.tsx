@@ -32,7 +32,7 @@ export function SalesPitchPlayer({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs md:text-sm px-3 py-2 rounded-full shadow-sm transition-colors"
+        className="inline-flex max-md:min-h-11 max-md:min-w-11 items-center justify-center gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs md:text-sm px-3 py-2 rounded-full shadow-sm transition-colors"
         aria-label={label}
       >
         <Volume2 className="w-4 h-4" />

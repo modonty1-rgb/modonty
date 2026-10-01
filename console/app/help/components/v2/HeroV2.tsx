@@ -53,7 +53,7 @@ export function HeroV2() {
 
         <a
           href="#t0"
-          className="inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-sm px-5 py-2.5 rounded-full shadow-xl hover:shadow-2xl hover:scale-[1.03] transition-all"
+          className="inline-flex max-md:min-h-11 items-center gap-2 bg-white text-blue-700 font-bold text-sm px-5 py-2.5 rounded-full shadow-xl hover:shadow-2xl hover:scale-[1.03] transition-all"
         >
           اعرف منصة مودونتي
           <ArrowLeft className="w-4 h-4" />

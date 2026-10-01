@@ -177,7 +177,7 @@ function PasswordField({
           type="button"
           onClick={toggle}
           aria-label={visible ? s.hidePassword : s.showPassword}
-          className="absolute end-2 top-1/2 -translate-y-1/2 grid h-7 w-7 place-items-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="absolute end-2 top-1/2 -translate-y-1/2 grid h-7 w-7 after:absolute after:-inset-2 after:content-[''] place-items-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
           tabIndex={-1}
         >
           {visible ? (

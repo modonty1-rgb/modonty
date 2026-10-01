@@ -77,7 +77,7 @@ export function PageBlocksEditor({ page, data, initialHidden }: PageBlocksEditor
               ) : (
                 <span className="grid h-6 w-6 place-items-center text-muted-foreground" title="ثابت"><Lock className="h-4 w-4" /></span>
               )}
-              <span className="text-center text-[11px] leading-tight text-muted-foreground">{b.name}</span>
+              <span className="text-center text-xs leading-tight text-muted-foreground">{b.name}</span>
             </div>
             <div className={cn("min-w-0 flex-1 overflow-hidden rounded-lg ring-1 ring-border transition-opacity", (!on || empty) && "opacity-40")}>
               {empty ? (

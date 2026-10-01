@@ -38,7 +38,7 @@ export function SiteToolButton({
       aria-haspopup="dialog"
       title={label}
       className={cn(
-        "relative flex min-h-14 w-[84px] shrink-0 flex-col items-center justify-center gap-1 rounded-lg border px-1 py-1.5 text-[11px] font-medium leading-tight transition-colors",
+        "relative flex min-h-14 w-[84px] shrink-0 flex-col items-center justify-center gap-1 rounded-lg border px-1 py-1.5 text-xs font-medium leading-tight transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
         active
           ? "border-primary bg-primary text-primary-foreground"
@@ -55,7 +55,7 @@ export function SiteToolButton({
         <span
           title={`${badge} قسماً مطفأً`}
           className={cn(
-            "absolute -top-1 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold shadow-sm",
+            "absolute -top-1 grid h-4 min-w-4 place-items-center rounded-full px-1 text-xs font-bold shadow-sm",
             "inset-inline-end-[-4px]",
             active ? "bg-primary-foreground text-primary" : "bg-muted-foreground/80 text-background",
           )}

@@ -134,7 +134,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
             <h1 className="text-2xl font-semibold leading-tight text-foreground">
               {a.title}
             </h1>
-            <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-0.5 text-[11px] font-semibold text-violet-700">
+            <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-0.5 text-xs font-semibold text-violet-700">
               {a.pageRolePill}
             </span>
           </div>
@@ -382,7 +382,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
                       <p className="text-sm font-bold tabular-nums text-foreground">
                         {link.clicks}
                       </p>
-                      <p className="text-[11px] text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         {link.uniqueUsers} {a.users}
                       </p>
                     </div>
@@ -645,7 +645,7 @@ function SplitBar({
           style={{ width: `${100 - leftPct}%` }}
         />
       </div>
-      <div className="mt-1 flex justify-between text-[11px] text-muted-foreground">
+      <div className="mt-1 flex justify-between text-xs text-muted-foreground">
         <span>
           {leftLabel}: {leftValue}
         </span>
@@ -673,7 +673,7 @@ function HourHeatmap({
           <div
             key={h.hour}
             title={`${h12}${ampm}: ${h.views} مشاهدة`}
-            className="grid h-9 place-items-center rounded-md text-[10px] font-bold tabular-nums"
+            className="grid h-9 place-items-center rounded-md text-xs font-bold tabular-nums"
             style={{
               backgroundColor: `rgba(59, 130, 246, ${0.1 + intensity * 0.85})`,
               color: intensity > 0.5 ? "white" : "currentColor",
@@ -718,7 +718,7 @@ function Stat({
           <p className="truncate text-xs text-muted-foreground">{label}</p>
           <p className="text-xl font-bold leading-tight tabular-nums">{value}</p>
           {hint && (
-            <p className="truncate text-[11px] text-muted-foreground">{hint}</p>
+            <p className="truncate text-xs text-muted-foreground">{hint}</p>
           )}
         </div>
       </CardContent>

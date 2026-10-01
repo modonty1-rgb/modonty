@@ -161,7 +161,7 @@ export function ClientReviewsTable({ reviews }: Props) {
                           {c.author?.name || "زائر"}
                         </span>
                         {c.author?.email && (
-                          <span className="text-[11px] text-muted-foreground">
+                          <span className="text-xs text-muted-foreground">
                             · {c.author.email}
                           </span>
                         )}
@@ -170,7 +170,7 @@ export function ClientReviewsTable({ reviews }: Props) {
                         {c.comment}
                       </p>
                       <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                        <span className="text-[11px] text-muted-foreground tabular-nums">
+                        <span className="text-xs text-muted-foreground tabular-nums">
                           {fmt(c.createdAt)}
                         </span>
                         <div className="flex flex-wrap gap-1.5">
@@ -266,7 +266,7 @@ function FilterPill({
     >
       {label}
       <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums ${
+        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
           active ? "bg-background/20 text-primary-foreground" : "bg-muted text-muted-foreground"
         }`}
       >

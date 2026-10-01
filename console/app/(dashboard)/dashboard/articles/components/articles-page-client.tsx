@@ -140,7 +140,7 @@ export function ArticlesPageClient({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative z-10 flex shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium transition-colors sm:px-4 ${
+                className={`relative z-10 flex shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-3 py-2 max-md:min-h-11 text-sm font-medium transition-colors sm:px-4 ${
                   isActive
                     ? "border-primary text-foreground"
                     : "border-transparent text-muted-foreground hover:text-foreground"

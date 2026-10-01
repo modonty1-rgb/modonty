@@ -298,7 +298,7 @@ function ReachCard({
       }`}
     >
       {highlight && (
-        <span className="absolute -top-2.5 start-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[11px] font-bold text-primary-foreground shadow rtl:translate-x-1/2">
+        <span className="absolute -top-2.5 start-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-xs font-bold text-primary-foreground shadow rtl:translate-x-1/2">
           الأكثر طلباً
         </span>
       )}
@@ -306,7 +306,7 @@ function ReachCard({
         <div className={`grid h-12 w-12 place-items-center rounded-xl ring-1 ${toneClasses}`}>
           <Icon className="h-6 w-6" />
         </div>
-        <span className="inline-flex w-fit items-center rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
+        <span className="inline-flex w-fit items-center rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
           {tag}
         </span>
         <h3 className="text-lg font-bold text-foreground">{title}</h3>
@@ -414,7 +414,7 @@ function ProofCard({
           href={sourceHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 self-start rounded-md border border-border bg-background/70 px-2 py-1 text-[11px] font-medium text-foreground transition-colors hover:border-foreground/30 hover:bg-background"
+          className="inline-flex items-center gap-1 self-start rounded-md max-md:min-h-11 border border-border bg-background/70 px-2 py-1 text-xs font-medium text-foreground transition-colors hover:border-foreground/30 hover:bg-background"
           title={t.proofVerifyLink}
         >
           {sourceLabel}

@@ -281,7 +281,7 @@ function FilterPill({
     >
       {label}
       <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums ${
+        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
           active
             ? "bg-background/20 text-primary-foreground"
             : "bg-muted text-muted-foreground"
@@ -337,13 +337,13 @@ function QuestionRow({
             >
               {status.label}
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700 ring-1 ring-violet-200">
+            <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">
               <MessageSquare className="h-3 w-3" />
               {sourceLabel(item.source)}
             </span>
             <Link
               href={`/dashboard/articles/${item.article.id}`}
-              className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+              className="inline-flex items-center gap-1 text-xs text-primary hover:underline max-md:min-h-11"
             >
               {q.fromArticle}: {item.article.title}
               <ExternalLink className="h-3 w-3" />
@@ -358,7 +358,7 @@ function QuestionRow({
             {item.submittedByEmail && (
               <a
                 href={`mailto:${item.submittedByEmail}`}
-                className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary hover:underline"
               >
                 <Mail className="h-3 w-3" />
                 {item.submittedByEmail}
@@ -370,7 +370,7 @@ function QuestionRow({
           <button
             type="button"
             onClick={onOpenDetails}
-            className="block text-start text-sm font-semibold text-foreground hover:text-primary hover:underline"
+            className="block text-start text-sm font-semibold text-foreground hover:text-primary hover:underline max-md:min-h-11 max-md:py-2.5"
           >
             {item.question}
           </button>
@@ -378,7 +378,7 @@ function QuestionRow({
           {/* Answer (when published) */}
           {item.answer && (
             <div className="border-s-2 border-emerald-300 bg-emerald-50/30 rounded-e-md py-2 ps-3">
-              <p className="text-[11px] font-semibold uppercase text-emerald-800">
+              <p className="text-xs font-semibold uppercase text-emerald-800">
                 {q.yourReply}
               </p>
               <p className="mt-0.5 text-sm leading-relaxed text-foreground">
@@ -447,7 +447,7 @@ function QuestionRow({
           )}
 
           {/* Footer */}
-          <p className="text-[11px] text-muted-foreground tabular-nums">
+          <p className="text-xs text-muted-foreground tabular-nums">
             {formatDateTime(item.createdAt)}
           </p>
         </div>
@@ -622,7 +622,7 @@ function Field({
 }) {
   return (
     <div className="space-y-0.5">
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p
         className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}
       >

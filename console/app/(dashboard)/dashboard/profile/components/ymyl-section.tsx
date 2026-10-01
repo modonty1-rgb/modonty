@@ -163,9 +163,9 @@ export function YmylSection({
                       aria-invalid={Boolean(error)}
                     />
                     {field.helpText && (
-                      <p className="text-[11px] text-muted-foreground">{field.helpText.ar}</p>
+                      <p className="text-xs text-muted-foreground">{field.helpText.ar}</p>
                     )}
-                    {error && <p className="text-[11px] text-[hsl(var(--destructive-ink))]">{error}</p>}
+                    {error && <p className="text-xs text-[hsl(var(--destructive-ink))]">{error}</p>}
                   </div>
                 );
               }
@@ -200,9 +200,9 @@ export function YmylSection({
                       </SelectContent>
                     </Select>
                     {field.helpText && (
-                      <p className="text-[11px] text-muted-foreground">{field.helpText.ar}</p>
+                      <p className="text-xs text-muted-foreground">{field.helpText.ar}</p>
                     )}
-                    {error && <p className="text-[11px] text-[hsl(var(--destructive-ink))]">{error}</p>}
+                    {error && <p className="text-xs text-[hsl(var(--destructive-ink))]">{error}</p>}
                   </div>
                 );
               }
@@ -230,9 +230,9 @@ export function YmylSection({
                       </SelectContent>
                     </Select>
                     {field.helpText && (
-                      <p className="text-[11px] text-muted-foreground">{field.helpText.ar}</p>
+                      <p className="text-xs text-muted-foreground">{field.helpText.ar}</p>
                     )}
-                    {error && <p className="text-[11px] text-[hsl(var(--destructive-ink))]">{error}</p>}
+                    {error && <p className="text-xs text-[hsl(var(--destructive-ink))]">{error}</p>}
                   </div>
                 );
               }
@@ -249,9 +249,9 @@ export function YmylSection({
                       onChange={(url) => updateField(field.key, url)}
                     />
                     {field.helpText && (
-                      <p className="text-[11px] text-muted-foreground">{field.helpText.ar}</p>
+                      <p className="text-xs text-muted-foreground">{field.helpText.ar}</p>
                     )}
-                    {error && <p className="text-[11px] text-[hsl(var(--destructive-ink))]">{error}</p>}
+                    {error && <p className="text-xs text-[hsl(var(--destructive-ink))]">{error}</p>}
                   </div>
                 );
               }

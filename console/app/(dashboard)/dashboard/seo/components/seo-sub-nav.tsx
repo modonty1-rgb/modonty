@@ -22,7 +22,7 @@ export function SeoSubNav() {
             key={href}
             href={href}
             className={cn(
-              "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+              "px-3 py-1.5 max-md:inline-flex max-md:min-h-11 max-md:items-center rounded-md text-sm font-medium transition-colors",
               isActive
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted hover:opacity-80"

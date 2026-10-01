@@ -41,7 +41,7 @@ export function SidebarSubscription({
       >
         <Crown className="h-4 w-4 text-primary" />
         {progress && (
-          <span className="text-[10px] font-semibold tabular-nums text-muted-foreground">
+          <span className="text-xs font-semibold tabular-nums text-muted-foreground">
             {progress.daysLeft}
           </span>
         )}
@@ -70,7 +70,7 @@ export function SidebarSubscription({
             </span>
           )}
           <span
-            className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium ring-1", status.classes)}
+            className={cn("rounded-full px-2 py-0.5 text-xs font-medium ring-1", status.classes)}
           >
             {status.label}
           </span>
@@ -82,7 +82,7 @@ export function SidebarSubscription({
           <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
             <div className="h-full bg-primary" style={{ width: `${progress.pct}%` }} />
           </div>
-          <div className="flex items-center justify-between gap-2 text-[10px] text-muted-foreground">
+          <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
             <span className="tabular-nums">
               {progress.daysLeft} {s.daysLeft}
             </span>
@@ -97,7 +97,7 @@ export function SidebarSubscription({
       {payment && (
         <span
           className={cn(
-            "inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ring-1",
+            "inline-flex rounded-full px-2 py-0.5 text-xs font-medium ring-1",
             payment.classes
           )}
         >

@@ -188,12 +188,12 @@ export function TelegramCard({
 function StatusBadge({ isConnected }: { isConnected: boolean }) {
   const t = ar.telegram;
   return isConnected ? (
-    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-emerald-200">
+    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
       <CheckCircle2 className="h-3 w-3" />
       {t.statusConnected}
     </span>
   ) : (
-    <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 ring-1 ring-slate-200">
+    <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 ring-1 ring-slate-200">
       {t.statusDisconnected}
     </span>
   );
@@ -226,7 +226,7 @@ function ConnectFlow({
                 href={botLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary underline"
+                className="inline-flex max-md:min-h-11 items-center break-all text-primary underline"
                 dir="ltr"
               >
                 {botLink}
@@ -272,7 +272,7 @@ function ConnectFlow({
               نسخ
             </Button>
           </div>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {t.pairingExpires}{" "}
             <span className="tabular-nums" dir="ltr">
               {formatDate(new Date(pairingCode.expiresAt))}
@@ -301,7 +301,7 @@ function ConnectedSummary({
       <div className="space-y-0.5">
         <p className="text-sm font-medium text-foreground">{t.statusConnected}</p>
         {connectedAt && (
-          <p className="text-[11px] text-muted-foreground tabular-nums">
+          <p className="text-xs text-muted-foreground tabular-nums">
             {t.connectedSince} {formatDate(connectedAt)}
           </p>
         )}
@@ -382,7 +382,7 @@ function EventPreferences({
                   <h4 className="text-sm font-semibold text-foreground">
                     {groupCfg.label}
                   </h4>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {groupCfg.description}
                   </p>
                 </div>
@@ -392,7 +392,7 @@ function EventPreferences({
                     variant="ghost"
                     onClick={() => onGroupBulk(group, true)}
                     disabled={allOn}
-                    className="h-7 px-2 text-[11px]"
+                    className="h-7 px-2 text-xs"
                   >
                     {t.selectAll}
                   </Button>
@@ -401,7 +401,7 @@ function EventPreferences({
                     variant="ghost"
                     onClick={() => onGroupBulk(group, false)}
                     disabled={allOff}
-                    className="h-7 px-2 text-[11px]"
+                    className="h-7 px-2 text-xs"
                   >
                     {t.selectNone}
                   </Button>

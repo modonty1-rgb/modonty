@@ -91,7 +91,7 @@ export function Tier0Platform() {
                   {cap.title}
                 </h3>
                 {cap.highlight && (
-                  <span className="inline-block text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-500/15 px-2 py-0.5 rounded-full">
+                  <span className="inline-block text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-500/15 px-2 py-0.5 rounded-full">
                     {cap.highlight}
                   </span>
                 )}

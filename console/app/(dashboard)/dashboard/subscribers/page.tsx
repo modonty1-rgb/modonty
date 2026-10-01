@@ -129,7 +129,7 @@ function KpiCard({
         <div className="min-w-0 flex-1">
           <p className="text-xs text-muted-foreground">{label}</p>
           <p className="text-2xl font-bold leading-tight tabular-nums">{value}</p>
-          <p className="truncate text-[11px] text-muted-foreground">{hint}</p>
+          <p className="truncate text-xs text-muted-foreground">{hint}</p>
         </div>
       </CardContent>
     </Card>

@@ -125,7 +125,7 @@ async function DayPatternWidget({ clientId }: { clientId: string }) {
   return (
     <div className="overflow-x-auto">
       <div className="inline-block min-w-full">
-        <div className="grid grid-cols-[auto_repeat(24,minmax(14px,1fr))] gap-px text-[10px] text-muted-foreground" dir="ltr">
+        <div className="grid grid-cols-[auto_repeat(24,minmax(14px,1fr))] gap-px text-xs text-muted-foreground" dir="ltr">
           <div></div>
           {Array.from({ length: 24 }, (_, h) => (
             <div key={h} className="text-center">{h % 3 === 0 ? h : ""}</div>

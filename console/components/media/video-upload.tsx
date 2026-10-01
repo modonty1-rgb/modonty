@@ -278,7 +278,7 @@ export function VideoUpload({
           value={phase === "uploading" || phase === "encoding" ? percent : null}
         />
         {phase === "encoding" && (
-          <p className="text-[11px] leading-relaxed text-muted-foreground">
+          <p className="text-xs leading-relaxed text-muted-foreground">
             تقدر تسكّر الصفحة — المقطع يكمّل تجهيزه عند بني، وبيلقاك هنا.
           </p>
         )}
@@ -311,7 +311,7 @@ export function VideoUpload({
       <span className="text-center text-xs">
         {labels.hint} · حتى {megabytes(MAX_BYTES)}
       </span>
-      <span className="flex items-center gap-1 text-[11px]">
+      <span className="flex items-center gap-1 text-xs">
         <Video className="h-3 w-3" />
         الرفع يكمّل حتى لو ضعف الاتصال
       </span>

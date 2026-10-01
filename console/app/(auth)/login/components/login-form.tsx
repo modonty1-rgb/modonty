@@ -151,7 +151,7 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
             tabIndex={-1}
             aria-label={showPassword ? ar.login.hidePassword : ar.login.showPassword}
             aria-pressed={showPassword}
-            className="absolute inset-y-0 end-0 flex items-center pe-3 text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+            className="absolute inset-y-0 end-0 flex min-w-11 items-center justify-center pe-3 text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
           >
             {showPassword ? (
               <EyeOff className="h-4 w-4" aria-hidden />

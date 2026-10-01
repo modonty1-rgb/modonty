@@ -94,7 +94,7 @@ export function ProfileCompletenessButton({
                 <div key={s.title}>
                   <div className="mb-1.5 flex items-center justify-between">
                     <h4 className="text-xs font-bold text-foreground">{s.title}</h4>
-                    <span className="text-[11px] tabular-nums text-muted-foreground">
+                    <span className="text-xs tabular-nums text-muted-foreground">
                       {s.fields.length - sectionMissing}/{s.fields.length}
                     </span>
                   </div>

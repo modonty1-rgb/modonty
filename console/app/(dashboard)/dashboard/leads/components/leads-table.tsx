@@ -315,7 +315,7 @@ export function LeadsTable({ leads }: Props) {
                             {meta.label}
                           </span>
                           {lead.isQualified && (
-                            <span className="ms-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                            <span className="ms-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-xs font-semibold text-primary">
                               <Award className="h-3 w-3" />
                               {l.qualifiedBadge}
                             </span>
@@ -390,7 +390,7 @@ function FilterPill({
     >
       {label}
       <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums ${
+        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
           active
             ? "bg-background/20 text-primary-foreground"
             : "bg-muted text-muted-foreground"
@@ -509,7 +509,7 @@ function LeadDetailSheet({
                 {meta.label}
               </span>
               {lead.isQualified && (
-                <span className="ms-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                <span className="ms-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                   <Award className="h-3 w-3" />
                   {l.qualifiedBadge}
                 </span>
@@ -597,7 +597,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Field({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="space-y-0.5">
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}>
         {value}
       </p>
@@ -634,7 +634,7 @@ function ScoreRow({
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border bg-card p-3">
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-0.5 text-base font-bold tabular-nums text-foreground">{value}</p>
     </div>
   );

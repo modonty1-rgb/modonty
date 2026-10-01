@@ -423,7 +423,7 @@ function FilterPill({
     >
       {label}
       <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums ${
+        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
           active
             ? "bg-background/20 text-primary-foreground"
             : "bg-muted text-muted-foreground"
@@ -494,7 +494,7 @@ function CommentRow({
               {status.label}
             </span>
             {comment.isEdited && (
-              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+              <span className="rounded-full bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
                 {c.editedBadge}
               </span>
             )}
@@ -502,7 +502,7 @@ function CommentRow({
               {comment.author?.name || c.anonymous}
             </span>
             {comment.author?.email && (
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 · {comment.author.email}
               </span>
             )}
@@ -511,7 +511,7 @@ function CommentRow({
           {/* Where it was written — an article or a reel, one merged queue (ق10) */}
           <Link
             href={comment.source.href}
-            className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:underline max-md:min-h-11"
           >
             {comment.kind === "reel" ? "من ريل" : c.fromArticle}: {comment.source.title}
             <ExternalLink className="h-3 w-3" />
@@ -529,7 +529,7 @@ function CommentRow({
           {/* Parent reference */}
           {comment.parent && (
             <div className="rounded-md border-s-2 border-muted bg-muted/30 ps-3 pt-1">
-              <p className="text-[10px] font-semibold uppercase text-muted-foreground">
+              <p className="text-xs font-semibold uppercase text-muted-foreground">
                 {c.replyTo}
               </p>
               <p className="line-clamp-1 text-xs italic text-muted-foreground">
@@ -540,7 +540,7 @@ function CommentRow({
 
           {/* Footer: stats + actions */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <div className="flex items-center gap-3 text-[11px] text-muted-foreground tabular-nums">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground tabular-nums">
               <span className="flex items-center gap-1">
                 <ThumbsUp className="h-3 w-3" />
                 {comment._count.likes}
@@ -839,7 +839,7 @@ function Field({
 }) {
   return (
     <div className="space-y-0.5">
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p
         className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}
       >
@@ -864,7 +864,7 @@ function Mini({
       <p className="mt-1 text-base font-bold tabular-nums text-foreground">
         {value}
       </p>
-      <p className="text-[10px] text-muted-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
     </div>
   );
 }

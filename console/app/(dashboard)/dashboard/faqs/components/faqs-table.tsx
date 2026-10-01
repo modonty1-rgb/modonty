@@ -445,7 +445,7 @@ function FilterPill({
     >
       {label}
       <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums ${
+        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
           active
             ? "bg-background/20 text-primary-foreground"
             : "bg-muted text-muted-foreground"
@@ -525,19 +525,19 @@ function FaqRow({
               {status.label}
             </span>
             {isReaderSubmission && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700 ring-1 ring-violet-200">
+              <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">
                 <MessageSquare className="h-3 w-3" />
                 {src.label}
               </span>
             )}
             {!isReaderSubmission && (
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 {src.label}
               </span>
             )}
             <Link
               href={`/dashboard/articles/${item.article.id}`}
-              className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+              className="inline-flex items-center gap-1 text-xs text-primary hover:underline max-md:min-h-11"
             >
               {f.fromArticle}: {item.article.title}
               <ExternalLink className="h-3 w-3" />
@@ -546,7 +546,7 @@ function FaqRow({
                 الشريك يظنّ أنه نشره فعلاً (مقيس ٣٠ أغسطس: سؤال PUBLISHED على مقال
                 AWAITING_APPROVAL، وصفر أسئلة وصلت الموقع). */}
             {item.status === "PUBLISHED" && item.article.status !== "PUBLISHED" && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-200">
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
                 ما يظهر للزائر — مقاله لسّه ما اننشر
               </span>
             )}
@@ -556,14 +556,14 @@ function FaqRow({
           <button
             type="button"
             onClick={onOpenDetails}
-            className="block text-start text-sm font-semibold text-foreground hover:text-primary hover:underline"
+            className="block text-start text-sm font-semibold text-foreground hover:text-primary hover:underline max-md:min-h-11 max-md:py-2.5"
           >
             {item.question}
           </button>
 
           {/* Submitted by — only for reader submissions */}
           {isReaderSubmission && (item.submittedByName || item.submittedByEmail) && (
-            <div className="flex flex-wrap items-center gap-2 rounded-md border border-violet-200 bg-violet-50/50 px-2.5 py-1.5 text-[11px]">
+            <div className="flex flex-wrap items-center gap-2 rounded-md border border-violet-200 bg-violet-50/50 px-2.5 py-1.5 text-xs">
               <span className="text-violet-900 font-medium">{f.submittedBy}:</span>
               {item.submittedByName && (
                 <span className="text-violet-900">{item.submittedByName}</span>
@@ -623,14 +623,14 @@ function FaqRow({
             </div>
           ) : item.answer ? (
             <div className="ps-3 border-s-2 border-muted">
-              <p className="text-[11px] text-muted-foreground mb-1">{f.answerLabel}:</p>
+              <p className="text-xs text-muted-foreground mb-1">{f.answerLabel}:</p>
               <p className="text-sm text-foreground leading-relaxed">{item.answer}</p>
             </div>
           ) : null}
 
           {/* Footer + actions */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <p className="text-[11px] text-muted-foreground tabular-nums">
+            <p className="text-xs text-muted-foreground tabular-nums">
               {formatDate(item.createdAt)}
             </p>
             {!isEditing && <RowActions
@@ -880,7 +880,7 @@ function Field({
 }) {
   return (
     <div className="space-y-0.5">
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}>
         {value}
       </p>

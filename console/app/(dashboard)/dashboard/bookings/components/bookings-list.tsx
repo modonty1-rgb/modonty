@@ -345,7 +345,7 @@ function ChannelPill({
     >
       {icon}
       {label}
-      <span className={cn("inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums", active ? "bg-background/20" : "bg-muted text-muted-foreground")}>
+      <span className={cn("inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums", active ? "bg-background/20" : "bg-muted text-muted-foreground")}>
         {count}
       </span>
     </Button>
@@ -378,7 +378,7 @@ function FilterPill({
     <Button variant={active ? "default" : "outline"} size="sm" onClick={onClick} className={`gap-2 whitespace-nowrap ${accent}`}>
       {label}
       <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums ${
+        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
           active ? "bg-background/20 text-primary-foreground" : "bg-muted text-muted-foreground"
         }`}
       >
@@ -435,13 +435,13 @@ function BookingRow({
           <div className="flex flex-wrap items-center gap-2">
             <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ${status.classes}`}>{status.label}</span>
             {isWhatsapp && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#25D366]/10 px-2 py-0.5 text-[11px] font-medium text-[#128C7E] ring-1 ring-[#25D366]/30">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#25D366]/10 px-2 py-0.5 text-xs font-medium text-[#128C7E] ring-1 ring-[#25D366]/30">
                 <MessageSquare className="h-3 w-3" />
                 {s.channelWhatsapp}
               </span>
             )}
             {booking.confirmedAt && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-emerald-200">
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
                 <CalendarCheck className="h-3 w-3" />
                 {s.confirmedBadge}
               </span>
@@ -450,11 +450,11 @@ function BookingRow({
               {isWhatsapp ? s.anonymousName : booking.name || "—"}
             </span>
             {isWhatsapp ? (
-              <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                 <MapPin className="h-3 w-3" /> {geoText(booking)}
               </span>
             ) : (
-              booking.phone && <span className="text-[11px] text-muted-foreground tabular-nums" dir="ltr">· {booking.phone}</span>
+              booking.phone && <span className="text-xs text-muted-foreground tabular-nums" dir="ltr">· {booking.phone}</span>
             )}
           </div>
 
@@ -467,7 +467,7 @@ function BookingRow({
           </button>
 
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <span className="text-[11px] text-muted-foreground tabular-nums">{formatDateTime(booking.createdAt)}</span>
+            <span className="text-xs text-muted-foreground tabular-nums">{formatDateTime(booking.createdAt)}</span>
             <div className="flex flex-wrap gap-1.5">
               {isArchived ? (
                 <Button size="sm" variant="outline" onClick={onRestoreNew} disabled={isWorking} className="gap-1.5">
@@ -636,7 +636,7 @@ function BookingDetailSheet({ booking, onClose }: { booking: BookingWithDetails 
                 </Button>
               </div>
             )}
-            {!booking.confirmedAt && <p className="mt-1 text-[11px] text-muted-foreground">{s.noConfirmed}</p>}
+            {!booking.confirmedAt && <p className="mt-1 text-xs text-muted-foreground">{s.noConfirmed}</p>}
           </Section>
 
           {!isWhatsapp && (
@@ -686,7 +686,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Field({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="space-y-0.5">
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`} dir={mono ? "ltr" : undefined}>
         {value}
       </p>

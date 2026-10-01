@@ -83,7 +83,7 @@ export function DashboardHeader({
             size="icon"
             onClick={onMenuClick}
             aria-label={ar.header.openMenu}
-            className="lg:hidden shrink-0 h-10 w-10"
+            className="lg:hidden shrink-0 relative h-10 w-10 max-md:size-10 after:absolute after:-inset-0.5 after:content-['']"
           >
             <Menu className="h-5 w-5" />
           </Button>
@@ -123,16 +123,16 @@ export function DashboardHeader({
         </div>
         <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
           <Link href="/dashboard" title={ar.nav.dashboard} className="hidden sm:inline-block">
-            <Button type="button" variant="ghost" size="icon" className="h-10 w-10">
+            <Button type="button" variant="ghost" size="icon" className="relative h-10 w-10 max-md:size-10 after:absolute after:-inset-0.5 after:content-['']">
               <LayoutDashboard className="h-4 w-4" />
             </Button>
           </Link>
-          <Link href="/dashboard/analytics" title={ar.nav.analytics}>
+          <Link href="/dashboard/analytics" title={ar.nav.analytics} className="relative inline-flex after:absolute after:-inset-0.5 after:content-['']">
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("h-10 w-10", isAnalytics && "bg-primary/10 text-primary")}
+              className={cn("relative h-10 w-10 max-md:size-10 after:absolute after:-inset-0.5 after:content-['']", isAnalytics && "bg-primary/10 text-primary")}
             >
               <BarChart3 className="h-4 w-4" />
             </Button>
@@ -140,18 +140,18 @@ export function DashboardHeader({
           <Link
             href="/dashboard/comments"
             title={ar.nav.comments}
-            className="relative inline-flex"
+            className="relative inline-flex after:absolute after:-inset-0.5 after:content-['']"
           >
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("h-10 w-10", isComments && "bg-primary/10 text-primary")}
+              className={cn("relative h-10 w-10 max-md:size-10 after:absolute after:-inset-0.5 after:content-['']", isComments && "bg-primary/10 text-primary")}
             >
               <MessageSquare className="h-4 w-4" />
             </Button>
             {pendingCommentsCount > 0 && (
-              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-semibold leading-none text-destructive-foreground tabular-nums">
+              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-xs font-semibold leading-none text-destructive-foreground tabular-nums">
                 {pendingCommentsCount > 9 ? "9+" : pendingCommentsCount}
               </span>
             )}
@@ -159,18 +159,18 @@ export function DashboardHeader({
           <Link
             href="/dashboard/questions"
             title={ar.nav.questions}
-            className="relative inline-flex"
+            className="relative inline-flex after:absolute after:-inset-0.5 after:content-['']"
           >
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("h-10 w-10", isQuestions && "bg-primary/10 text-primary")}
+              className={cn("relative h-10 w-10 max-md:size-10 after:absolute after:-inset-0.5 after:content-['']", isQuestions && "bg-primary/10 text-primary")}
             >
               <HelpCircle className="h-4 w-4" />
             </Button>
             {pendingQuestionsCount > 0 && (
-              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-semibold leading-none text-destructive-foreground tabular-nums">
+              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-xs font-semibold leading-none text-destructive-foreground tabular-nums">
                 {pendingQuestionsCount > 9 ? "9+" : pendingQuestionsCount}
               </span>
             )}
@@ -178,24 +178,24 @@ export function DashboardHeader({
           <Link
             href="/dashboard/support"
             title={ar.nav.support}
-            className="relative inline-flex"
+            className="relative inline-flex after:absolute after:-inset-0.5 after:content-['']"
           >
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("h-10 w-10", isSupport && "bg-primary/10 text-primary")}
+              className={cn("relative h-10 w-10 max-md:size-10 after:absolute after:-inset-0.5 after:content-['']", isSupport && "bg-primary/10 text-primary")}
             >
               <Bell className="h-4 w-4" />
             </Button>
             {pendingSupportCount > 0 && (
-              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-semibold leading-none text-destructive-foreground tabular-nums">
+              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-xs font-semibold leading-none text-destructive-foreground tabular-nums">
                 {pendingSupportCount > 9 ? "9+" : pendingSupportCount}
               </span>
             )}
           </Link>
           <Link href="/help" title="دليل الاستخدام" className="hidden sm:inline-block">
-            <Button type="button" variant="ghost" size="icon" className="h-10 w-10">
+            <Button type="button" variant="ghost" size="icon" className="relative h-10 w-10 max-md:size-10 after:absolute after:-inset-0.5 after:content-['']">
               <BookOpen className="h-4 w-4" />
             </Button>
           </Link>
@@ -207,14 +207,14 @@ export function DashboardHeader({
           <Link
             href="/dashboard/settings"
             title={ar.nav.settings}
-            className="inline-flex"
+            className="relative inline-flex after:absolute after:-inset-0.5 after:content-['']"
           >
             <Button
               type="button"
               variant="ghost"
               size="icon"
               className={cn(
-                "h-10 w-10",
+                "relative h-10 w-10 max-md:size-10 after:absolute after:-inset-0.5 after:content-['']",
                 pathname === "/dashboard/settings" && "bg-primary/10 text-primary"
               )}
             >

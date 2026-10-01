@@ -476,7 +476,7 @@ export function SalesPitchOverlay({
             {/* Top header — title + autoplay toggle + mode badge */}
             <div className="border-b border-border bg-muted/30 px-4 md:px-6 py-2.5 pt-14 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 flex-wrap">
-                <p className="text-[11px] text-muted-foreground font-bold">
+                <p className="text-xs text-muted-foreground font-bold">
                   شرح صوتي لمودونتي — {corePositionLabel}
                 </p>
                 {optionalSections.length > 0 && (
@@ -516,14 +516,14 @@ export function SalesPitchOverlay({
               </div>
               <div className="flex items-center gap-3">
                 {mode === "browser-tts" && (
-                  <span className="text-[10px] bg-amber-500/20 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded font-bold">
+                  <span className="text-xs bg-amber-500/20 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded font-bold">
                     وضع تجربة — صوت المتصفح
                   </span>
                 )}
                 <button
                   type="button"
                   onClick={() => setAutoplay((v) => !v)}
-                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-foreground/80 hover:text-foreground transition-colors group"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground/80 hover:text-foreground transition-colors group"
                   aria-pressed={autoplay}
                   aria-label="تشغيل تلقائي للمقاطع التالية"
                   title="عند انتهاء المقطع، ينتقل تلقائياً للتالي"
@@ -546,7 +546,7 @@ export function SalesPitchOverlay({
                     type="button"
                     onClick={() => loadManifest(true)}
                     disabled={isRefreshing}
-                    className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-1 rounded-md border border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-400 hover:bg-amber-500/20 transition-colors disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-md border border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-400 hover:bg-amber-500/20 transition-colors disabled:opacity-50"
                     aria-label="تحديث النصوص من الـ manifest (وضع التطوير فقط)"
                     title="DEV — يعيد تحميل manifest.json بدون قفل النافذة"
                   >
@@ -570,12 +570,12 @@ export function SalesPitchOverlay({
                   <div className="space-y-3">
                     {manifest.categories.map((cat) => (
                       <div key={cat.label}>
-                        <p className="text-[10px] font-extrabold text-foreground/70 mb-1.5 flex items-center gap-1 sticky top-0 bg-muted/95 backdrop-blur py-1 -mx-1 px-1 rounded">
+                        <p className="text-xs font-extrabold text-foreground/70 mb-1.5 flex items-center gap-1 sticky top-0 bg-muted/95 backdrop-blur py-1 -mx-1 px-1 rounded">
                           {cat.emoji && <span>{cat.emoji}</span>}
                           <span>{cat.label}</span>
                         </p>
                         {cat.sectionIds.length === 0 && (
-                          <p className="text-[11px] text-muted-foreground/70 italic px-3 py-2 border border-dashed border-border rounded-lg">
+                          <p className="text-xs text-muted-foreground/70 italic px-3 py-2 border border-dashed border-border rounded-lg">
                             قريباً…
                           </p>
                         )}
@@ -599,7 +599,7 @@ export function SalesPitchOverlay({
                                 }`}
                               >
                                 <span
-                                  className={`text-[10px] font-mono shrink-0 ${
+                                  className={`text-xs font-mono shrink-0 ${
                                     isActive
                                       ? "text-primary-foreground/80"
                                       : "text-muted-foreground"
@@ -639,7 +639,7 @@ export function SalesPitchOverlay({
                           }`}
                         >
                           <span
-                            className={`text-[10px] font-mono shrink-0 ${
+                            className={`text-xs font-mono shrink-0 ${
                               isActive
                                 ? "text-primary-foreground/80"
                                 : "text-muted-foreground"

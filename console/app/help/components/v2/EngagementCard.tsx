@@ -32,7 +32,7 @@ export function EngagementCard({ card, index, onImageClick }: Props) {
         {/* BEFORE — on modonty.com */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-400 px-2 py-0.5 rounded">
+            <span className="text-xs font-bold uppercase tracking-wider bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-400 px-2 py-0.5 rounded">
               في موقعك
             </span>
           </div>
@@ -70,7 +70,7 @@ export function EngagementCard({ card, index, onImageClick }: Props) {
         {/* AFTER — in console */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded">
+            <span className="text-xs font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded">
               يجيك في الكونسول
             </span>
           </div>

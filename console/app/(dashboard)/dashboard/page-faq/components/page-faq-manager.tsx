@@ -229,7 +229,7 @@ function FaqCard({
   return (
     <div className="space-y-2 rounded-lg border bg-muted/20 p-3">
       {isReaderSubmission && faq.submittedByName && (
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           من زائر: <span className="font-medium text-foreground">{faq.submittedByName}</span>
         </p>
       )}

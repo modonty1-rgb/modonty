@@ -248,13 +248,13 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
                   {visibleTags.map((t) => (
                     <span
                       key={t.tag.id}
-                      className="rounded-md bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
+                      className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground"
                     >
                       #{t.tag.name}
                     </span>
                   ))}
                   {remainingTags > 0 && (
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       +{remainingTags}
                     </span>
                   )}

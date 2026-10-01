@@ -29,7 +29,7 @@ function Row({ status, message, recommendation }: { status: string; message: str
       <span className="min-w-0 flex-1 space-y-0.5">
         <span className="block text-xs">{message}</span>
         {recommendation && (
-          <span className="block text-[11px] text-muted-foreground">{recommendation}</span>
+          <span className="block text-xs text-muted-foreground">{recommendation}</span>
         )}
       </span>
     </div>

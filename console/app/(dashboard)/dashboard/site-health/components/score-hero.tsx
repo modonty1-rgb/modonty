@@ -90,7 +90,7 @@ export function ScoreHero({ report }: { report: OverallHealthReport }) {
               <p className="text-lg font-bold tabular-nums">
                 {c.score}/100
               </p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {c.passed}/{c.total} نجح
               </p>
             </div>

@@ -70,7 +70,7 @@ export function TocSidebarV2() {
                   >
                     {tier.title}
                   </div>
-                  <div className="text-[11px] text-muted-foreground truncate">
+                  <div className="text-xs text-muted-foreground truncate">
                     {tier.subtitle}
                   </div>
                 </div>
@@ -81,7 +81,7 @@ export function TocSidebarV2() {
       </nav>
 
       <div className="mt-6 pt-4 border-t border-border">
-        <p className="text-[11px] text-muted-foreground leading-relaxed">
+        <p className="text-xs text-muted-foreground leading-relaxed">
           ⏱ وقت القراءة الكامل: ١٠ دقائق · ١١ لقطة شاشة من موقعك الحقيقي
         </p>
       </div>

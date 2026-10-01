@@ -47,7 +47,7 @@ export default async function ArticleStatsPage({
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <Link href="/dashboard/articles">
+          <Link href="/dashboard/articles" className="inline-flex">
             <Button variant="ghost" size="sm" className="gap-1 h-7 px-2">
               <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
               {ar.articles.backToArticles}
