@@ -28,10 +28,16 @@ export function ArticleFeaturedImage({ image, title, children }: ArticleFeatured
         alt={image.altText || title}
         fill
         className="object-cover"
-        // The LCP image: preload alone. The docs list `loading` and `fetchPriority` under
-        // "when not to use preload", and quality stays at the 75 default — raising it only
-        // inflates an already re-encoded WebP.
-        preload
+        // The LCP image: eager + high priority, not `preload`. Next 16's Image docs: «In most
+        // cases, you should use loading="eager" or fetchPriority="high" instead of preload.»
+        // Measured live 2 Oct 2026 (plan أ١): `preload` emitted a <link> in <head> with NO
+        // fetchpriority, so Chrome fetched the hero at «Low» priority — PageSpeed mobile showed
+        // it starting at 4,084ms, after the whole document (Resource load delay 3,358ms). The
+        // article now prerenders into the static shell, so the <img> itself is early in the
+        // HTML and the preload scanner finds it; it only needed the priority. Quality stays at
+        // the 75 default — raising it only inflates an already re-encoded WebP.
+        loading="eager"
+        fetchPriority="high"
         sizes="hero"
       />
       {/* Tap to open large (plan هـ٣) — a client island over the server image. */}
