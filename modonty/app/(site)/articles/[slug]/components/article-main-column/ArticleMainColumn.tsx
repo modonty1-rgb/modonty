@@ -83,6 +83,7 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
           createdAt={article.createdAt}
           readingTimeMinutes={article.readingTimeMinutes}
           wordCount={article.wordCount}
+          articleId={article.id}
           views={article._count.views}
           questionsCount={article._count.faqs}
           reviewer={

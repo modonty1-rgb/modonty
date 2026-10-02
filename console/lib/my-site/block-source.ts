@@ -25,6 +25,7 @@ export const BLOCK_SOURCE: Record<string, BlockSource> = {
   trust: { where: "محتوى الموقع", href: "/dashboard/page-content", owner: "client" },
   video: { where: "محتوى الموقع", href: "/dashboard/page-content", owner: "client" },
   gallery: { where: "معرض الصور", href: "/dashboard/gallery", owner: "client" },
+  reels: { where: "الريلز", href: "/dashboard/reels", owner: "client" },
   // مقيس في `get-home-data.ts:137`: أسئلة الصفحة أوّلاً ثم أسئلة المقالات — شاشتان لا واحدة.
   faq: { where: "أسئلة صفحتك + أسئلة مقالاتك", href: "/dashboard/page-faq", owner: "client" },
   testimonials: { where: "تقييمات نشاطك", href: "/dashboard/client-reviews", owner: "client" },

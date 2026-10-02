@@ -44,21 +44,34 @@ const isProduction = process.env.VERCEL_ENV
 // TO ENFORCE LATER: watch the console on test.modonty.com across the audio page, an article, a
 // partner page and the homepage; add whatever legitimately appears; only then rename the header
 // to `Content-Security-Policy`.
+// TIGHTENED 2 Oct 2026 (plan ب٧) from what production actually requested — 5 pages (home ·
+// article · client · /audio · /reels) loaded with the policy watching: 116 violations.
+//   - ~110 were the Meta/TikTok/Snap pixels: paused in GTM (plan أ٤), so NOT allowed here.
+//   - 6 were Clarity's own script from scripts.clarity.ms — allowed now. Origins per the vendors'
+//     docs: Microsoft «https://*.clarity.ms https://c.bing.com»; Google (tag-platform CSP guide,
+//     GA4 without Ads) img «*.google-analytics.com», connect «*.google-analytics.com *.google.com».
+//   - 'unsafe-eval' REMOVED: Google's guide needs it only for GTM Custom JavaScript variables,
+//     and the container has none (API, live v23 and workspace 24: `jsm: none`). Next.js does not
+//     eval in production. In report-only mode any eval still runs — it now shows up as a report.
+//   - Dropped origins nothing loads: fonts.googleapis.com / fonts.gstatic.com (next/font serves
+//     fonts from our own origin) and vitals.vercel-insights.com (no Vercel analytics package).
 const CSP_REPORT_ONLY = [
   "default-src 'self'",
   // GTM · GA4 · Clarity are the three that inject their own script tags.
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms",
+  // `'unsafe-eval'` in development only — Next's CSP guide: «In development, 'unsafe-eval' is
+  // required because React uses eval… Neither React nor Next.js use eval in production».
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms`,
   // Tailwind ships classes, but 53 inline `style` attributes remain on the homepage alone.
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com data:",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self' data:",
   // b-cdn.net covers all four Bunny zones (reels · clients · assets · stream covers).
-  "img-src 'self' data: blob: https://*.b-cdn.net https://res.cloudinary.com https://api.dicebear.com https://www.google-analytics.com https://www.googletagmanager.com",
+  "img-src 'self' data: blob: https://*.b-cdn.net https://res.cloudinary.com https://api.dicebear.com https://*.google-analytics.com https://www.googletagmanager.com https://*.clarity.ms https://c.bing.com",
   // The Quran recitations stream from numbered mp3quran servers AND from cdn.islamic.network;
   // Bunny serves reel video. islamic.network was NOT in the code grep — report-only mode caught
   // it on the first load of /audio ("Loading media from cdn.islamic.network violates..."), which
   // is precisely the failure an enforced-on-day-one policy would have shipped as silence.
   "media-src 'self' blob: https://*.mp3quran.net https://cdn.islamic.network https://*.b-cdn.net",
-  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://*.clarity.ms https://vitals.vercel-insights.com",
+  "connect-src 'self' https://*.google-analytics.com https://*.google.com https://www.googletagmanager.com https://*.clarity.ms https://c.bing.com",
   "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
   // Matches X-Frame-Options: DENY above — kept in both because old browsers read only the latter.
   "frame-ancestors 'none'",
@@ -169,6 +182,10 @@ const nextConfig: NextConfig = {
     } : false,
   },
   experimental: {
+    // NOT `inlineCss` — tried 2 Oct 2026 (plan أ١) on a local production build and reverted:
+    // our stylesheet is 237,475 chars (36KB is only its gzip), and Next inlines it twice
+    // (<style> + RSC payload), so an article went 83,281 → 195,181 bytes gzipped and the
+    // <article> moved from char 86,255 to 323,672 — more than the 160–820ms it would save.
     optimizePackageImports: [
       'lucide-react',
       '@radix-ui/react-avatar',

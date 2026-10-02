@@ -24,7 +24,8 @@ export interface ModontyGalleryImage {
 export async function getModontyGallery(clientId: string): Promise<ModontyGalleryImage[]> {
   "use cache";
   cacheTag("clients", "articles");
-  cacheLife("minutes");
+  // hours, not minutes (Vercel cost / plan أ٦, 2 Oct 2026) — clients/articles: console writes go through regenerateClientSeo, admin publish revalidates articles.
+  cacheLife("hours");
 
   const articles = await db.article.findMany({
     where: {

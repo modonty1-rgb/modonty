@@ -33,6 +33,7 @@ export function Header({
   myOpenTasks = 0,
   pendingReviews = 0,
   pendingBriefs = 0,
+  newContactRequests = 0,
 }: {
   dbBadge?: React.ReactNode;
   canSyncLocal?: boolean;
@@ -42,6 +43,8 @@ export function Header({
   pendingReviews?: number;
   /** بريفات حملات بانتظار الموافقة — بادجٌ على قائمة الحملات. */
   pendingBriefs?: number;
+  /** طلبات تواصل قرّاء بحالة «جديد» تخصّني — رقمٌ أحمر على «المبيعات». */
+  newContactRequests?: number;
   /** Computed on the server from the staff row — the session token does not carry it. */
   canViewReports?: boolean;
   /** ADMIN role, read on the server — decides admin-only links (the pages enforce it themselves). */
@@ -74,7 +77,7 @@ export function Header({
 
           {/* Sales followed Tasks out of the sidebar (Khalid, 2026-09-04) — Faten's
               whole day is these three pages, so they sit beside Tasks not under it. */}
-          <SalesMenu isAdmin={isAdmin} />
+          <SalesMenu isAdmin={isAdmin} newContactRequests={newContactRequests} />
           <CampaignsMenu pendingBriefs={pendingBriefs} />
 
           {/* الـPlaybook في الشريط نفسه لا داخل قائمة الأفاتار (خالد، ١١ سبتمبر ٢٠٢٦):

@@ -5,8 +5,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/app/layout/components/theme-provider";
 import { GTMContainer } from "@/app/layout/components/gtm/GTMContainer";
 import { WebVitals } from "@/app/layout/components/gtm/WebVitals";
+import { ClarityPageType } from "@/app/layout/components/analytics/clarity-page-type";
 import { PageViewTracker } from "@/app/layout/components/analytics/PageViewTracker";
-import { ClarityScript } from "@/app/layout/components/analytics/clarity-script";
 import { SITE_URL } from "@/constants";
 import { getSiteLanguage } from "@/lib/settings/get-site-language";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
@@ -110,7 +110,14 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <PageViewTracker />
         </Suspense>
-        <ClarityScript />
+        {/* Clarity `page_type` tag per page (plan ج٦) — reads the pathname, so under Suspense. */}
+        <Suspense fallback={null}>
+          <ClarityPageType />
+        </Suspense>
+        {/* Microsoft Clarity loads from GTM (GTM-MNRR2NS9, the integration connected in Clarity's
+            settings) — not here too. Both ran on 2 Oct 2026: two tag requests for the same project,
+            and the second threw «Cannot read properties of undefined (reading 'v')» on every page.
+            Microsoft: one tag per project. */}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

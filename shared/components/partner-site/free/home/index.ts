@@ -14,6 +14,7 @@ import { ContactCards } from "../contact/contact-cards";
 import { FinalCta } from "../cta/final-cta";
 import { NewsletterForm } from "../newsletter/newsletter-form";
 import { BookingBlock } from "../booking/booking-block";
+import { ReelsGrid } from "../reels/reels-grid";
 import type { HomeData } from "./home-data";
 
 export type { HomeData } from "./home-data";
@@ -27,6 +28,7 @@ export type HomeBlockKey =
   | "stats"
   | "testimonials"
   | "gallery"
+  | "reels"
   | "team"
   | "video"
   | "faq"
@@ -68,6 +70,9 @@ export const HOME_BLOCKS: readonly HomeBlock[] = [
   { key: "stats", name: "أرقامنا", toggleable: true, isEmpty: (d) => d.stats.length === 0, Component: StatsRow },
   { key: "testimonials", name: "آراء العملاء", toggleable: true, isEmpty: (d) => d.testimonials.length === 0, Component: TestimonialsGrid },
   { key: "gallery", name: "المعرض", toggleable: true, isEmpty: (d) => d.gallery.length === 0, Component: GalleryMosaic },
+  // الريلز (خطة المحتوى د١، ٢ أكتوبر ٢٠٢٦): كل ريل يحتاج رابطاً من صفحة ثابتة ليفهرسه جوجل،
+  // وصفحة صاحبه هي بيته. يختفي وحده لمن ليس له ريل منشور.
+  { key: "reels", name: "الريلز", toggleable: true, isEmpty: (d) => d.reels.length === 0, Component: ReelsGrid },
   // الفريق غادر الرئيسية إلى «من نحن» (خالد ٣١ أغسطس): هو تعريفٌ بالناس، وصفحة «من نحن»
   // هي بيت التعريف — ووجوده في الاثنتين تكرارٌ يطوّل الرئيسية بلا معلومة جديدة.
   { key: "faq", name: "الأسئلة الشائعة", toggleable: true, isEmpty: (d) => d.faqs.length === 0, Component: FaqAccordion },

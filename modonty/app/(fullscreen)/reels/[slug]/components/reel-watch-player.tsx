@@ -6,6 +6,8 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { IconVolume2, IconVolumeX } from "@/lib/icons";
 import { ReelVideo } from "../../components/reel-video";
 import { trackReelView } from "../../actions/track-reel-view";
+import { pushGa4Event } from "@/lib/analytics/ga4-browser";
+import { clarityEvent, claritySet } from "@/lib/analytics/clarity";
 import { markReelViewed } from "../../helpers/mark-reel-viewed";
 import type { ReelWatch } from "../data/get-reel-by-slug";
 
@@ -22,7 +24,14 @@ export function ReelWatchPlayer({ reel }: { reel: ReelWatch }) {
   // Same view rule as the feed: two seconds on screen, once per browser session.
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (markReelViewed(reel.id)) void trackReelView(reel.id);
+      if (markReelViewed(reel.id)) {
+        void trackReelView(reel.id).then((ga4) => {
+          if (ga4) {
+            pushGa4Event("reel_view", { ...ga4 });
+            if (ga4.client_slug) claritySet("client", ga4.client_slug); // Clarity tag (plan ج٦)
+          }
+        });
+      }
     }, 2000);
     return () => clearTimeout(timer);
   }, [reel.id]);
@@ -65,7 +74,7 @@ export function ReelWatchPlayer({ reel }: { reel: ReelWatch }) {
       {reel.isVideo && (
         <button
           type="button"
-          onClick={() => setMuted((m) => !m)}
+          onClick={() => { clarityEvent("reel_mute"); setMuted((m) => !m); }}
           aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
           className="absolute end-3 top-3 z-10 grid size-11 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition hover:bg-black/70 motion-safe:active:scale-95 active:bg-black/70"
         >

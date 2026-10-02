@@ -8,6 +8,7 @@ import { messages } from "@/lib/messages";
 
 import type { CommentKind } from "../helpers/comment-queries";
 import { notifyCommentApproved } from "../helpers/notify-comment-approved";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 /**
  * Moderation for both comment tables (ق10, 2026-08-05).
@@ -86,6 +87,11 @@ async function setStatus(
     const isApproved = next === CommentStatus.APPROVED;
     if (wasApproved !== isApproved) {
       await bumpCounter(kind, owned.parentId, isApproved ? 1 : -1);
+      // A reel's comment count is read from modonty's "reels" cache (feed + watch page), and
+      // only this console action moves it — so it has to bust that cache, or modonty shows the
+      // old count until the cache ages out (plan / Vercel cost, 2 Oct 2026: reels moved from
+      // a one-minute cache life to hours). Best-effort: moderation must not fail on it.
+      if (kind === "reel") await revalidateModontyTag("reels").catch(() => {});
     }
     if (isApproved && !wasApproved) await notifyCommentApproved(kind, commentId);
 

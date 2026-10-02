@@ -37,6 +37,8 @@ export function OrderStatusFilter({
   activeMarket,
   reps,
   activeRep,
+  kindCounts,
+  activeKind,
 }: {
   counts: Partial<Record<CheckoutOrderStatus, number>>;
   total: number;
@@ -60,8 +62,11 @@ export function OrderStatusFilter({
   /** المناديبُ بعدد طلباتهم — مندوبُ الطلب، وإلّا مندوبُ عميله. و`none` = بلا مندوب. */
   reps: { id: string; name: string; count: number }[];
   activeRep?: string;
+  /** الطلباتُ المدفوعة: جديد = أوّلُها للعميل، تجديد = ما بعده — قاعدةُ العمولة نفسُها (`classify-order-kinds.ts`). */
+  kindCounts: { new: number; renewal: number };
+  activeKind?: "new" | "renewal";
 }) {
-  const nothingActive = !active && !isAwaitingView && !isExpiredView && !activeProvider && !activeMarket && !activeRep;
+  const nothingActive = !active && !isAwaitingView && !isExpiredView && !activeProvider && !activeMarket && !activeRep && !activeKind;
   return (
     // صفٌّ واحدٌ يمرّر أفقيّاً عند الضيق ولا يلتفّ (خالد ١٩ سبتمبر ٢٠٢٦: «كلّها تكون في
     // سطرٍ واحد»). الالتفافُ كان يُنزل «البوّابة» تحت «الاشتراك» على الشاشات الضيّقة، فيتغيّر
@@ -74,6 +79,11 @@ export function OrderStatusFilter({
         <Pill href="/orders?view=awaiting-activation" label="ينتظر التفعيل" count={awaitingActivation} isActive={isAwaitingView} tone={awaitingActivation > 0 ? "alert" : undefined} />
         {/* منتهٍ = تجديدٌ مستحقّ. أحمرُ كصفوفه في الجدول. */}
         <Pill href="/orders?view=expired" label="منتهٍ" count={expired} isActive={isExpiredView} tone={expired > 0 ? "danger" : undefined} />
+      </div>
+      {/* جديد / تجديد (خالد ١ أكتوبر ٢٠٢٦). */}
+      <div className="flex items-center gap-1 border-s ps-2" role="group" aria-label="النوع">
+        <Pill href="/orders?kind=new" label="جديد" count={kindCounts.new} isActive={activeKind === "new"} />
+        <Pill href="/orders?kind=renewal" label="تجديد" count={kindCounts.renewal} isActive={activeKind === "renewal"} />
       </div>
       {/* المناديب (خالد ٣٠ سبتمبر ٢٠٢٦: «في توجلز المناديب»). */}
       {reps.length > 0 && (

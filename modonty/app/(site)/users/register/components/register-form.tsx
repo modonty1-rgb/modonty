@@ -15,6 +15,7 @@ import { GoogleIcon } from "@modonty/shared/components/icons/google-icon";
 import { registerSchema, type RegisterFormData } from "../helpers/schemas/register-schema";
 import { registerUser } from "../actions/register-actions";
 import { trackSignupClient } from "@/app/(site)/users/register/helpers/track-signup-client";
+import { useGoogleRedirectState } from "../../helpers/use-google-redirect-state";
 import { PASSWORD_HINT } from "@/lib/auth/password-rule";
 import { ALERT_TOPICS } from "@/lib/users/alert-topics";
 
@@ -42,6 +43,8 @@ export function RegisterForm() {
   const alertTopic = ALERT_TOPICS.find((t) => t.id === params.get("alert"));
   const [alertOn, setAlertOn] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Google locks its own button only — the email form stays usable, and back-from-Google unlocks it (ب١).
+  const google = useGoogleRedirectState();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // The account exists and the session is live — say so before leaving the page, or the reader
@@ -62,14 +65,14 @@ export function RegisterForm() {
   }, []);
 
   const handleGoogle = async () => {
-    setIsSubmitting(true);
+    google.start();
     setError(null);
     trackSignupClient("start", "google", "page");
     try {
       await signIn("google", { callbackUrl });
     } catch {
       setError("تعذّر التسجيل بحساب Google. حاول مرة أخرى.");
-      setIsSubmitting(false);
+      google.stop();
     }
   };
 
@@ -137,6 +140,12 @@ export function RegisterForm() {
             </div>
           )}
 
+          {google.stuck && !error && (
+            <div role="alert" className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
+              صفحة Google ما فتحت. تأكّد من الإنترنت واضغط الزر مرة ثانية، أو سجّل بالبريد.
+            </div>
+          )}
+
           {error && (
             <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
               {error}
@@ -149,11 +158,11 @@ export function RegisterForm() {
           <button
             type="button"
             onClick={handleGoogle}
-            disabled={isSubmitting}
+            disabled={google.pending || isSubmitting}
             className="flex h-12 w-full items-center justify-center gap-3 rounded-md border border-[#747775] bg-white text-sm font-medium text-[#1F1F1F] shadow-sm transition-colors hover:bg-[#f8f9fa] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <GoogleIcon />
-            المتابعة بحساب Google
+            {google.pending ? "جاري فتح Google..." : "المتابعة بحساب Google"}
           </button>
 
           <div className="relative">

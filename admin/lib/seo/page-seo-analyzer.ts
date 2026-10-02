@@ -353,16 +353,12 @@ function analyzeContent(html: string): ContentAnalysis {
   const imageCount = Array.from(imageMatches).length;
 
   // Validation checks
-  if (wordCount < 300) {
-    issues.push({
-      code: "CONTENT_TOO_SHORT",
-      category: "content",
-      severity: "warning",
-      message: `Content is too short (${wordCount} words). Recommended: 300+ words`,
-      fix: "Add more content to the page (target: 800+ words for articles)",
-      element: "body",
-    });
-  }
+  //
+  // No word-count rule (plan ب٥, 2 Oct 2026). This file warned below 300 words and told writers
+  // «target: 800+ words for articles» — the exact habit Google lists as a sign of search-engine-
+  // first content: «Are you writing to a particular word count because you've heard or read that
+  // Google has a preferred word count? (No, we don't.)» (Creating helpful content). `wordCount`
+  // is still returned as information; an empty article is still blocked by pre-publish-audit.ts.
 
   if (paragraphCount === 0) {
     issues.push({

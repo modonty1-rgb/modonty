@@ -89,7 +89,8 @@ export interface Ga4FooterStats {
 export async function getGa4FooterStats(): Promise<Ga4FooterStats | null> {
   "use cache";
   cacheTag("ga4-footer");
-  cacheLife("minutes");
+  // hours, not minutes (Vercel cost / plan أ٦, 2 Oct 2026) — external GA4 number, no tag to bust — and it sits in the footer of EVERY page, so «minutes» here capped every page that renders the footer.
+  cacheLife("hours");
 
   try {
     const report = await call("runReport", {

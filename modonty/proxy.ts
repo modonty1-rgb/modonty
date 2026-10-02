@@ -49,6 +49,10 @@ export const config = {
     "/reels/:slug",
     "/users/:id",
     "/page/:pageNumber",
+    // One-segment paths that are NOT a real top-level route or file — old root-level client
+    // links (plan د٥). The lookahead lists every folder under app/ and public/ that answers at
+    // the root, so real pages never invoke the proxy; add a new top-level route here too.
+    "/((?!(?:api|_next|monitoring|about|accounts|analytics|articles|attribution|audio|authors|booking|brand|categories|clients|contact|help|images|industries|legal|lucky-wheel|modo-chat|modo-link|modonty|news|page|pay|quran|reels|search|shop|story|subscribe|tags|team|terms|trending|trust|users)(?:/|$))[^/.]+)",
   ],
 };
 
@@ -138,11 +142,31 @@ async function resolveUserSegment(id: string, request: NextRequest): Promise<Nex
   return gone();
 }
 
+/**
+ * `/<client-slug>` — client pages used to live at the site root, and Google still holds those
+ * URLs (Search Console 404 report, 21 Sep 2026: e.g. `/دكتور-علاء-الدين-بدوي` → 404 while
+ * `/clients/دكتور-علاء-الدين-بدوي` → 200). A live client, or one renamed with a recorded
+ * redirect, gets a 308 to its one canonical home; anything else falls through to Next's own
+ * 404 — a typo at the root is "never existed", not "gone".
+ */
+async function resolveRootSegment(rawSlug: string, request: NextRequest): Promise<NextResponse | undefined> {
+  let slug: string;
+  try {
+    slug = decodeURIComponent(rawSlug);
+  } catch {
+    return;
+  }
+  const target = (await isLiveSlug("clients", slug)) ? slug : await lookupRedirect("clients", slug);
+  if (!target) return;
+  return NextResponse.redirect(new URL(`/clients/${encodeURIComponent(target)}`, request.url), 308);
+}
+
 export async function proxy(request: NextRequest) {
   // No /pay rule here: payment is its own app (PAY-S3, 2026-09-14). See payment/proxy.ts.
   const segments = request.nextUrl.pathname.split("/");
   const section = segments[1];
   const rawSlug = segments[2];
+  if (section && segments.length === 2) return resolveRootSegment(section, request);
   if (!section || !rawSlug) return;
 
   if (section === "page") {

@@ -97,6 +97,7 @@ import { Trophy,
   Star,
   Target,
   PenLine,
+  Gauge,
 } from "lucide-react";
 import { LIVE_SECTORS, type LiveSectorSlug } from "@modonty/shared/lib/sectors/live-sectors";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
@@ -322,7 +323,11 @@ const rawMenuGroups: MenuGroup[] = [
     icon: Target,
     section: "Core work",
     defaultOpen: false,
-    items: [{ icon: PenLine, label: "Content", href: "/kpi/content" }],
+    items: [
+      { icon: PenLine, label: "Content", href: "/kpi/content" },
+      // Plan ج٩ (2 Oct 2026): real-visitor speed, monthly — was a manual check until now.
+      { icon: Gauge, label: "Speed", href: "/kpi/speed" },
+    ],
   },
   {
     title: "Analytics & Channels",

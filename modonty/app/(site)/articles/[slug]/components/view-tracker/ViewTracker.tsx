@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
+import { pushGa4Event } from "@/lib/analytics/ga4-browser";
+import { claritySet } from "@/lib/analytics/clarity";
+
 const BOUNCE_TIME_SEC = 30;
 const BOUNCE_SCROLL_THRESHOLD = 10;
 
@@ -37,6 +40,12 @@ export function ArticleViewTracker({ articleSlug }: ArticleViewTrackerProps) {
       .then((res) => res.json())
       .then((data) => {
         if (data?.analyticsId) analyticsIdRef.current = data.analyticsId;
+        // Only a counted view carries `ga4` — a refresh-in-place returns none, so GA4 and
+        // the DB count the same views.
+        if (data?.ga4) pushGa4Event("article_view", data.ga4);
+        // Clarity tags (plan ج٦): filter recordings by client and by writer — on every visit.
+        claritySet("client", data?.clarity?.client);
+        claritySet("author", data?.clarity?.author);
       })
       .catch(() => {});
   }, [articleSlug]);

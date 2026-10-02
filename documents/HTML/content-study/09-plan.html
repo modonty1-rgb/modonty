@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>خطة العمل — نقاش المحتوى</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .grid3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin:10px 0 }
+  .card { border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; background:#fff }
+  .card b.n { font-size:22px; display:block }
+  .ph { display:inline-block; min-width:26px; text-align:center; border-radius:6px; font-size:12px; font-weight:700; padding:1px 6px }
+  .p1 { background:#dbeafe; color:#1e40af } .p2 { background:#fef3c7; color:#92400e } .p3 { background:#ede9fe; color:#5b21b6 }
+  .ef { font-size:12px; color:#475569; white-space:nowrap }
+  td.ref { font-size:12px; color:#64748b; white-space:nowrap }
+  h2 .cnt { font-size:13px; color:#64748b; font-weight:500 }
+  tr.done > td { background:#dcfce7 !important }
+  .tag.done { background:#16a34a; color:#fff; white-space:nowrap; display:inline-block }
+  tr.checked > td { background:#f1f5f9 !important }
+  tr.half > td { background:#fef9c3 !important }
+  .tag.checked { background:#64748b; color:#fff; white-space:nowrap; display:inline-block }
+  .tag.half { background:#fde68a; color:#78350f; white-space:nowrap; display:inline-block }
+</style>
+</head>
+<body>
+<main>
+  <nav class="top"><a href="index.html">الفهرس</a><a href="01-writers.html">المنطلق ونقاط النقاش</a><a href="02-findings.html">ملاحظات Claude — Search Console والسيو التقني</a><a href="03-ai-search.html">البحث بالذكاء الاصطناعي</a><a href="04-ga4.html">GA4</a><a href="05-appendix.html">ملحق — الأرقام الخام</a><a href="06-clarity.html">Clarity — التجربة والتحويل</a><a href="07-pagespeed.html">PageSpeed — السرعة والجودة</a><a href="08-tools.html">أدوات فحص إضافية</a><a href="09-plan.html" aria-current="page">خطة العمل</a></nav>
+  <h1>خطة العمل</h1>
+  <p class="sub">٢ أكتوبر ٢٠٢٦ · مبنية على الملفات ٠١–٠٨ كاملة · كل بند يرجع لدليله بالمرجع · <span class="tag open">مسودة للنقاش — بلا تنفيذ</span></p>
+
+  <section style="border-color:#bfdbfe">
+    <h2>الخلاصة في ٣ أسطر</h2>
+    <p><b>١ ·</b> الزوّار يجون من جوجل، بس الموقع <b>بطيء على الجوال</b> (٥ ثواني)، و<b>القارئ السعودي يشوفنا وما يضغط</b> (CTR ٠٫٧٥٪ مقابل مصر ٢٫٤٩٪).</p>
+    <p><b>٢ ·</b> اللي يدخل <b>ما يلقى طريق للعميل</b>: الزر في آخر المقال ويوصله ٣٫٩٪ بس، وأكثر شي ينضغط (الصورة وأسماء الباقات) ما يسوي شي.</p>
+    <p><b>٣ ·</b> و<b>القياس نفسه معطوب</b> (٨٢٪ من جلسات GA4 وهمية)، فلازم نصلّحه أوّل عشان نعرف إن الباقي نجح.</p>
+    <div class="grid3">
+      <div class="card"><b class="n">٥٢</b>بند في الخطة، في ٦ أقسام</div>
+      <div class="card"><b class="n"><a href="#order">ابدأ</a></b>ترتيب التنفيذ: ١ → ٥ أوّل</div>
+      <div class="card"><b class="n">٧</b>أسباب جذرية — نصلّح السبب، مو العَرَض</div>
+      <div class="card"><b class="n">٣</b>مراحل · مساران يشتغلون بالتوازي (تقني + محتوى)</div>
+      <div class="card"><b class="n">٢٣</b><a href="#questions">سؤال ينتظر جوابك</a></div>
+    </div>
+  </section>
+
+  <section id="order" style="border-color:#93c5fd;background:#f8fbff">
+    <h2>من وين نبدأ · ترتيب التنفيذ <span class="cnt">كل الـ٥٢ بند مرقّمة</span></h2>
+    <p style="font-size:14px"><b>المعيار بالترتيب:</b> ١) اللي يوقف غيره أوّل · ٢) أثره على تواصل القارئ مع العميل (اللي يخلّي العميل يجدّد) · ٣) الأصغر جهداً. والمساران (تقني + محتوى) يمشون مع بعض.</p>
+    <p style="font-size:15px;background:#dbeafe;border-radius:8px;padding:8px 12px;margin:8px 0"><b>نبدأ بـ ١ → ٥:</b> إعدادان في GA4 (دقائق) · Clarity مرّة وحدة · تشخيص جلسات GA4 الوهمية · حالة التواصل. وبالتوازي فريق المحتوى يبدأ بـ «فرص الأسبوع» (رقم ٢١).</p>
+    <table>
+      <thead><tr><th>الترتيب</th><th>البند</th><th>إيش</th><th>ليش في مكانه</th><th>ينتظر جوابك</th></tr></thead>
+      <tbody>
+        <tr><td colspan="5" style="background:#f8fafc;font-weight:700"><span class="ph p1">م١</span> الموجة ١ · نصلّح القياس وأعطال صغيرة</td></tr>
+        <tr class="done"><td><b>١</b></td><td>ج٢</td><td>الواتساب «تحويل» في GA4 <span class="tag done">منجز · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">يوقف غيره · إعداد بلا كود</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٢</b></td><td>ج٣</td><td>فلتر الدومين في GA4 <span class="tag done">منجز · وضع تجربة</span></td><td style="font-size:13px;color:#475569">يوقف غيره · إعداد بلا كود</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٣</b></td><td>ج٤</td><td>Clarity يتحمّل مرّة وحدة <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">جاهز محلياً · يصحّح أخطاء كل صفحة</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٤</b></td><td>ج١</td><td>تشخيص وإصلاح جلسات GA4 الوهمية (٨٢٪) <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">يوقف غيره: كل رقم GA4 مغلوط</td><td class="ref"><a href="#questions">س٢١</a></td></tr>
+        <tr class="done"><td><b>٥</b></td><td>ج٨</td><td>تحديث حالة التواصل (جديد ← عميل) <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">يوقف قياس «المقال جاب عميل»</td><td class="ref"><a href="#questions">س٢٠</a> · المندوب</td></tr>
+        <tr class="done"><td><b>٦</b></td><td>ب١</td><td>صفحة الدخول تقفل أزرارها <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">عطل حقيقي مشاهَد · صغير</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٧</b></td><td>د١</td><td>روابط حقيقية للريلز + طلب فهرسة <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">١١ من ٢٣ مو مفهرسة · صغير · الريلز أولوية</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٨</b></td><td>ب٢</td><td>«مدونتي | مدونتي» في ٤٧ عنوان <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير · يظهر في جوجل</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٩</b></td><td>ج٥</td><td>أحداث أزرار الريلز في Clarity <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير · يقيس الريلز</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>١٠</b></td><td>ج٦</td><td>وسوم Clarity (العميل · الكاتب · نوع الصفحة) <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير · Clarity لكل عميل</td><td class="ref">—</td></tr>
+        <tr><td><b>١١</b></td><td>و١</td><td>حقل «الكلمة المستهدفة»</td><td style="font-size:13px;color:#475569">يوقف و٢ و٨</td><td class="ref"><a href="#questions">س١٥</a></td></tr>
+        <tr class="checked"><td><b>١٢</b></td><td>ب٤</td><td>تتبّع خطأ «maximum call stack» <span class="tag checked">فُحص · ما تكرّر · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">عطل · سببه ما اتحدّد</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>١٣</b></td><td>ب٣</td><td>بكسل فيسبوك (يبقى أو يتشال) <span class="tag done">منجز · موقوف في GTM · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير بعد القرار</td><td class="ref"><a href="#questions">س٨</a></td></tr>
+        <tr class="done"><td><b>١٤</b></td><td>د٦</td><td>صفحات محجوبة لكنها مفهرسة (٤٥) <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>١٥</b></td><td>د٧</td><td>طلب فهرسة للعملاء والمقالات العالقة <span class="tag done">منجز · ٩ من ١٠ · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير</td><td class="ref">—</td></tr>
+        <tr class="half"><td><b>١٦</b></td><td>د٨</td><td>Bing بـwww · خرائط · أوصاف · alt <span class="tag half">منجز · باقي وصف ٩ صفحات (بيانات إنتاج)</span></td><td style="font-size:13px;color:#475569">صغير</td><td class="ref">—</td></tr>
+        <tr><td><b>١٧</b></td><td>د٩</td><td>تصحيحات بيانات ونصوص صغيرة <span class="tag half">الكود منجز · البيانات تنتظر إذن</span></td><td style="font-size:13px;color:#475569">صغير</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>١٨</b></td><td>ب٥</td><td>محلّل الصفحات يشيل شرط عدد الكلمات <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير · يخالف جوجل</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>١٩</b></td><td>ب٦</td><td>دليل الكتّاب: الرابط العربي صحيح <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير · يخالف جوجل</td><td class="ref">—</td></tr>
+        <tr><td><b>٢٠</b></td><td>د١٠</td><td>حذف hreflang</td><td style="font-size:13px;color:#475569">صغير بعد القرار</td><td class="ref"><a href="#questions">س١١</a></td></tr>
+        <tr><td colspan="5" style="background:#f8fafc;font-weight:700"><span class="ph p1">م١</span> الموجة ١ · مسار المحتوى (بالتوازي، بلا كود)</td></tr>
+        <tr><td><b>٢١</b></td><td>و٣</td><td>«فرص الأسبوع»: ٢١٩ كلمة قريبة من الصفحة الأولى</td><td style="font-size:13px;color:#475569">أثر سريع · بلا كود</td><td class="ref"><a href="#questions">س٢</a></td></tr>
+        <tr><td><b>٢٢</b></td><td>و١٣</td><td>فحص يدوي لنتائج جوجل لأهم ٢٠ كلمة</td><td style="font-size:13px;color:#475569">يفسّر CTR المراكز الأولى</td><td class="ref"><a href="#questions">س٢</a></td></tr>
+        <tr><td><b>٢٣</b></td><td>و٥</td><td>قالب «الجواب أولاً»</td><td style="font-size:13px;color:#475569">بلا كود</td><td class="ref"><a href="#questions">س٢</a></td></tr>
+        <tr><td><b>٢٤</b></td><td>و٦</td><td>تقويم المواسم السعودية</td><td style="font-size:13px;color:#475569">بلا كود · ٥٤٪ من النقرات موسمية</td><td class="ref"><a href="#questions">س٢</a></td></tr>
+        <tr><td><b>٢٥</b></td><td>و٤</td><td>دليل السوق السعودي للكتّاب</td><td style="font-size:13px;color:#475569">يعالج CTR السعودية ٠٫٧٥٪</td><td class="ref"><a href="#questions">س١٧</a></td></tr>
+        <tr><td colspan="5" style="background:#f8fafc;font-weight:700"><span class="ph p2">م٢</span> الموجة ٢ · التحويل والسرعة</td></tr>
+        <tr><td><b>٢٦</b></td><td>هـ١</td><td>زر العميل في أوّل ربع المقال</td><td style="font-size:13px;color:#475569">أكبر رافعة: ٣٫٩٪ يوصلون الزر اليوم</td><td class="ref"><a href="#questions">س٣ · س٤</a></td></tr>
+        <tr><td><b>٢٧</b></td><td>هـ٢</td><td>زر «اطلب» على الباقات والخدمات <span class="tag checked">مؤجَّل · مع بطاقة ARTCTA</span></td><td style="font-size:13px;color:#475569">قرّاء يضغطون أسماء الباقات</td><td class="ref"><a href="#questions">س٤</a></td></tr>
+        <tr class="done"><td><b>٢٨</b></td><td>أ١</td><td>رسم الشاشة الأولى (inlineCss على test أوّل) <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">LCP ٥ ثواني على الجوال</td><td class="ref"><a href="#questions">س٢٢</a></td></tr>
+        <tr class="checked"><td><b>٢٩</b></td><td>أ٥</td><td>الريلز ما تقفز (CLS ٠٫٩٧٥) <span class="tag checked">فُحص · سليم الآن · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير · الريلز أولوية</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٣٠</b></td><td>أ٢</td><td>JavaScript أخفّ (تحليل الحزم أوّل) <span class="tag done">منجز في مسودّة GTM · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">INP ٤١٠ms · كبير</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٣١</b></td><td>هـ٣</td><td>صورة الغلاف تكبر عند الضغط <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">٤٩–٦٢٪ من الضغطات</td><td class="ref"><a href="#questions">س٤</a></td></tr>
+        <tr><td><b>٣٢</b></td><td>هـ٤</td><td>«الخطوة الجاية» بعد أوّل جواب <span class="tag checked">مؤجَّل · قرار خالد ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">٤٠٠ دخول و٣٩٨ خروج</td><td class="ref"><a href="#questions">س٤</a></td></tr>
+        <tr><td><b>٣٣</b></td><td>د٣</td><td>روابط داخلية عند النشر</td><td style="font-size:13px;color:#475569">٤٤ مقال بلا رابط · ١٠٢ يتيم</td><td class="ref">—</td></tr>
+        <tr><td><b>٣٤</b></td><td>د٤</td><td>صيغة العنوان + مختبر العناوين السعودي</td><td style="font-size:13px;color:#475569">٢٢٩ عنوان طويل</td><td class="ref"><a href="#questions">س١٠</a></td></tr>
+        <tr class="done"><td><b>٣٥</b></td><td>أ٦</td><td>تخزين أطول لصفحات العملاء <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">استجابة ١–١٫٧ ث</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٣٦</b></td><td>أ٣</td><td>قوائم أقصر (DOM أصغر) <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">HTML الرئيسية ٦٩٦ ك.ب</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٣٧</b></td><td>أ٤</td><td>مراجعة وسوم GTM <span class="tag done">منجز في مسودّة GTM · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير</td><td class="ref">—</td></tr>
+        <tr><td><b>٣٨</b></td><td>هـ٥</td><td>زر «انسخ» في مقالات العبارات <span class="tag checked">مؤجَّل · قرار خالد ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">ضغط ميت ١٦٫٤٪</td><td class="ref"><a href="#questions">س٤</a></td></tr>
+        <tr class="done"><td><b>٣٩</b></td><td>هـ٦</td><td>إمكانية الوصول (تباين · أزرار · ترجمة الريلز) <span class="tag done">الديسكتوب منجز · الجوّال مسجّل · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٤٠</b></td><td>أ٧</td><td>تفاصيل رسم (أبعاد صور · حركات) <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير</td><td class="ref">—</td></tr>
+        <tr class="done"><td><b>٤١</b></td><td>د٥</td><td>تحويل 301 للروابط القديمة المهمّة <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">متوسط</td><td class="ref">—</td></tr>
+        <tr><td colspan="5" style="background:#f8fafc;font-weight:700"><span class="ph p2">م٢</span> الموجة ٢ · مسار المحتوى</td></tr>
+        <tr><td><b>٤٢</b></td><td>و٢</td><td>قاعدة «قبل ما تكتب» (٥٦ كلمة متنافسة)</td><td style="font-size:13px;color:#475569">تعتمد على و١</td><td class="ref">—</td></tr>
+        <tr><td><b>٤٣</b></td><td>و٧</td><td>قياس مقال العميل بالتواصل</td><td style="font-size:13px;color:#475569">تعتمد على ج١ وج٨</td><td class="ref"><a href="#questions">س١٨</a></td></tr>
+        <tr><td colspan="5" style="background:#f8fafc;font-weight:700"><span class="ph p3">م٣</span> الموجة ٣ · أدوات الكاتب والنمو</td></tr>
+        <tr><td><b>٤٤</b></td><td>و٨</td><td>«مكتب الكاتب» بالإشارات السبع</td><td style="font-size:13px;color:#475569">تعتمد على و١ وج١</td><td class="ref"><a href="#questions">س١٦</a></td></tr>
+        <tr class="done"><td><b>٤٥</b></td><td>ج٩</td><td>لوحة سرعة شهرية (CrUX) <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير</td><td class="ref">—</td></tr>
+        <tr><td><b>٤٦</b></td><td>و٩</td><td>«أنجح مقالات الخليج»</td><td style="font-size:13px;color:#475569">تعتمد على و٧</td><td class="ref"><a href="#questions">س١٩</a></td></tr>
+        <tr><td><b>٤٧</b></td><td>و١٢</td><td>القارئ اللي يرجع</td><td style="font-size:13px;color:#475569">تعتمد على ج١</td><td class="ref">—</td></tr>
+        <tr><td><b>٤٨</b></td><td>و١٠</td><td>مراجعة الجودة من التيم ليدر</td><td style="font-size:13px;color:#475569">مستمر</td><td class="ref">—</td></tr>
+        <tr><td><b>٤٩</b></td><td>و١١</td><td>اختبار الذكاء الاصطناعي الشهري</td><td style="font-size:13px;color:#475569">مستمر · يدوي</td><td class="ref">—</td></tr>
+        <tr><td><b>٥٠</b></td><td>د٢</td><td>الروابط الخارجية (بلا اشتراط على العميل)</td><td style="font-size:13px;color:#475569">مستمر</td><td class="ref"><a href="#questions">س١٣</a></td></tr>
+        <tr class="done"><td><b>٥١</b></td><td>ب٧</td><td>سياسة الأمان تبقى Report-Only ونضيّقها <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td style="font-size:13px;color:#475569">صغير</td><td class="ref"><a href="#questions">س٢٣</a></td></tr>
+        <tr><td><b>٥٢</b></td><td>ج٧</td><td>استبعاد زيارات الفريق</td><td style="font-size:13px;color:#475569">مؤجَّل بقرارك</td><td class="ref"><a href="#questions">س٩</a></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section style="border-color:#fecaca">
+    <h2>المراجعة الثانية (٢ أكتوبر) <span class="tag ok">قراءة فقط — بلا تعديل كود</span></h2>
+    <p style="font-size:14px">رجعت لكل حل وقارنته بثلاثة: <b>الكود الحالي</b> (قراءة) · <b>الوثائق الرسمية</b> (Google · web.dev · Next.js · Microsoft · W3C) · <b>ملفات الدراسة</b> سطر سطر. النتيجة: <b>٦ حلول كانت غلط أو ناقصة</b> وتصحّحت، و<b>٨ أشياء كانت ناقصة</b> وانضافت.</p>
+    <h3 style="font-size:15px;margin:12px 0 6px">٦ تصحيحات</h3>
+    <table>
+      <thead><tr><th>البند</th><th>كان في الخطة</th><th>الحقيقة</th><th>الحل الصحيح الآن</th></tr></thead>
+      <tbody>
+        <tr><td>أ١</td><td>«font-display: swap للخط العربي»</td><td><b>موجود أصلاً</b> (<code>modonty/app/layout.tsx:18 · :26</code>). يعني الحل كان تخمين</td><td>web.dev: تأخير الرسم سببه CSS يحجب + مهام طويلة. فالحل: CSS داخل الصفحة (<code>experimental.inlineCss</code> في Next.js) + تقطيع المهام الطويلة</td></tr>
+        <tr><td>ج١</td><td>«أحداث السيرفر تحمل جلسة الزائر الحقيقية»</td><td><b>منفّذ من ٢٦ يونيو</b> (كوميت <code>d1dc652</code>، <code>visitor-cookie.ts</code>) والجلسات الوهمية باقية ٨٢٪</td><td>شوف الصف ج١ تحت: السبب المرجّح GTM يتحمّل متأخّر، والحل حسب جوجل نرسل أحداث المتصفح من المتصفح</td></tr>
+        <tr><td>ب٧</td><td>«تفعيل سياسة الأمان تدريجياً»</td><td>Next.js: الـnonce يخلي <b>كل الصفحات تنبني مع كل طلب</b> — يوقف ISR والتخزين المؤقت ويرفع تكلفة Vercel</td><td>نخلّيها «Report-Only» ونضيّق القائمة. والبديل الوحيد اللي يحافظ على التخزين (SRI) <b>تجريبي</b></td></tr>
+        <tr><td>د٢</td><td>«مواقع العملاء تربط لصفحاتهم عندنا»</td><td>سياسة السبام في جوجل: «اشتراط رابط ضمن عقد… بدون ما يقدر صاحب الموقع يوسمه» و«مبادلة خدمات مقابل روابط» = <b>سبام</b>. والعميل يدفع لنا</td><td>الرابط من العميل <b>اختياري</b>، ومن حقّه يحط <code>rel="sponsored"</code> أو <code>nofollow</code>. والنموّ من: التواصل الاجتماعي · المجتمع · «الكلام بين الناس» (دليل جوجل)</td></tr>
+        <tr><td>ب٣</td><td>«نسمح لبكسل فيسبوك في CSP»</td><td>وثائق Meta تذكر <code>connect.facebook.net</code> بس. المخالفات عندنا <code>www.facebook.com</code> (form-action · frame-src) ومو موثّقة</td><td>أوّل: <b>هل البكسل مستخدم؟</b> (قرار). لو نعم: نضيف اللي تسجّله تقارير المتصفح فعلاً. لو لا: يتشال من GTM</td></tr>
+        <tr><td>هـ٦</td><td>«أزرار ٤٤px» كأنه شرط</td><td>WCAG 2.2 المستوى AA (2.5.8): الحدّ الأدنى <b>٢٤×٢٤</b>. و٤٤ هو المستوى الأعلى (2.5.5)</td><td>الحدّ الأدنى ٢٤، والمعتمد عندنا ٤٤ (نفس الكونسول)</td></tr>
+      </tbody>
+    </table>
+    <h3 style="font-size:15px;margin:14px 0 6px">٨ أشياء كانت ناقصة وانضافت</h3>
+    <table>
+      <thead><tr><th>من الدراسة</th><th>اللي انضاف</th><th>وين</th></tr></thead>
+      <tbody>
+        <tr><td>غ٦</td><td>القارئ ما يرجع: عائدين ٣٣٦ بس</td><td>و١٢ (جديد)</td></tr>
+        <tr><td>غ٧ · ٢٫٥</td><td>لوحة سرعة من بيانات الزوّار الحقيقيين (CrUX API مجاني ومفتاحه موجود)</td><td>ج٩ (جديد)</td></tr>
+        <tr><td>ملاحظة ٣ · الجاهزية</td><td>فحص يدوي لنتائج جوجل لأهم الكلمات (ليش CTR المراكز ١–٣ = ١٫١٩٪)، لأن السحب الآلي ممنوع</td><td>و١٣ (جديد)</td></tr>
+        <tr><td>ذ-د</td><td>متابعة قناة «AI Assistant» في GA4 شهرياً</td><td>جدول النجاح</td></tr>
+        <tr><td>Bing (٠٨)</td><td>صور بلا alt (٤) · meta robots تحتاج مراجعة (٢)</td><td>د٨</td></tr>
+        <tr><td>Search Console (٠٨)</td><td>«زحف وما فُهرس» لصفحات حقيقية: مقالان (مثل «تسوس الأسنان للأطفال») · ٣ عملاء · ٢ ريلز</td><td>د٧</td></tr>
+        <tr><td>ت٦</td><td>عنوان صفحة الكاتب «مدونتي — الكاتب» ١٥ حرف</td><td>د٩</td></tr>
+        <tr><td>كود (جديد)</td><td>GTM يتحمّل <code>lazyOnload</code> (<code>GTMContainer.tsx</code>)، فـClarity وGA4 يبدون بعد ما تخلص الصفحة: اللي يطلع بسرعة <b>ما ينحسب</b>، وأحداث Clarity لازم تتأكّد إن Clarity جاهز</td><td>ج١ · ج٥ · ج٦</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted)">خارج نطاق مدونتي (سطر واحد): روابط jbrseo لنا في الهيدر والفوتر تروح لـ<code>modonty.com</code> بدون www (تحويل زايد)، وكلها تنحسب نطاق واحد.</p>
+  </section>
+
+  <section>
+    <h2>التحليل · ٧ أسباب وراء كل المشاكل</h2>
+    <p style="font-size:14px">الـ٥٢ بند مو ٥٢ مشكلة مستقلّة. أغلبها أعراض لنفس السبب، فإصلاح السبب يقفل كذا بند مرّة وحدة.</p>
+    <table>
+      <thead><tr><th>#</th><th>السبب الجذري</th><th>الأعراض اللي يسبّبها (مقيسة)</th><th>البنود</th></tr></thead>
+      <tbody>
+        <tr><td>١</td><td><b>الصفحة ثقيلة على المتصفح</b></td><td>LCP جوال ٤٫٩–٥٫٢ ث · العنوان ينتظر ٣٫٨ ث رسم · JavaScript ١٫٥–٢٫٢ ميغا · INP ٤١٠ms · HTML الرئيسية ٦٩٦ ك.ب</td><td>أ١–أ٣ · أ٥–أ٧</td></tr>
+        <tr><td>٢</td><td><b>سكربتات الطرف الثالث بلا ضبط</b></td><td>Clarity يتحمّل مرّتين ويرمي خطأ في كل صفحة · بكسل فيسبوك يصطدم بسياسة الأمان · «الممارسات» ٧٣ في كل الصفحات</td><td>أ٤ · ب٣ · ب٧ · ج٤</td></tr>
+        <tr><td>٣</td><td><b>القياس يخلط الوهمي بالحقيقي</b></td><td>٨٢٪ جلسات GA4 من السيرفر · ٧١٪ «دولة غير صالحة» · الواتساب مو تحويل · ٥٠ من ٥٢ تواصل حالتها «جديد»</td><td>ج١–ج٣ · ج٧–ج٩</td></tr>
+        <tr><td>٤</td><td><b>روابط ما يقدر جوجل يتبعها</b></td><td>١١ من ٢٣ ريل مو مفهرسة (صفر <code>&lt;a href&gt;</code>) · ١٠٢ مقال يتيم · قوّة الروابط تروح للفوتر · ٦٨ رابط خارجي، ٦٤ منها من jbrseo</td><td>د١–د٣ · د٥</td></tr>
+        <tr><td>٥</td><td><b>المحتوى مكتوب للقارئ المصري</b></td><td>CTR السعودية ثلث مصر · وقت القراءة ٥٧ ث مقابل ١٣٨ ث · الكتّاب مصريين والدليل ما فيه شي عن السعودية</td><td>د٤ · و٤ · و٩</td></tr>
+        <tr><td>٦</td><td><b>ما فيه «كلمة مستهدفة» للمقال</b></td><td>الحقل غير موجود في السكيما · ٥٦ كلمة تتنافس عليها مقالاتنا · ما نقدر نقيس «المقال نجح في كلمته؟»</td><td>و١ · و٢</td></tr>
+        <tr><td>٧</td><td><b>طريق العميل في المكان الغلط</b></td><td>الزر آخر المقال (٣٫٩٪ يوصلون) · ٤٠٠ دخول و٣٩٨ خروج · الصورة ٤٩–٦٢٪ من الضغطات ولا ترد · أسماء الباقات بلا روابط</td><td>هـ١–هـ٥</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>ترتيب الشغل · ٣ مراحل</h2>
+    <table>
+      <thead><tr><th>المرحلة</th><th>الهدف</th><th>المسار التقني</th><th>مسار المحتوى (بالتوازي، بلا انتظار كود)</th><th>ليش بهذا الترتيب</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ph p1">م١</span></td><td><b>القياس أوّلاً + الأعطال الصغيرة</b></td><td>ج١–ج٦ · ج٨ · ب١–ب٦ · د١ · د٦–د٩ · و١</td><td>و٣ (أوّل قائمة فرص) · و٥ قالب «الجواب أولاً» · و٦ تقويم المواسم · و٤ مسودة دليل السعودية</td><td>بدون قياس سليم ما نعرف إن م٢ نجحت. وأغلب بنود م١ صغيرة وأثرها فوري</td></tr>
+        <tr><td><span class="ph p2">م٢</span></td><td><b>السرعة والتحويل</b></td><td>أ١–أ٧ · هـ١–هـ٦ · د٣ · د٤ · د٥</td><td>و٢ قاعدة «قبل ما تكتب» · مختبر العناوين (د٤) · و٧ قياس مقال العميل بالتواصل</td><td>أكبر أثر على الزائر الحقيقي. ونقيسها بأدوات م١</td></tr>
+        <tr><td><span class="ph p3">م٣</span></td><td><b>أدوات الكاتب والنمو</b></td><td>و٨ «مكتب الكاتب» · ج٩ لوحة السرعة</td><td>و٩ «أنجح مقالات الخليج» · و١٠ مراجعة الجودة · و١١ اختبار الذكاء الاصطناعي الشهري · و١٢ القارئ اللي يرجع · و١٣ فحص نتائج جوجل يدوياً · د٢ الروابط الخارجية</td><td>تحتاج م١ (حقل الكلمة + GA4 سليم) عشان أرقامها تكون صحيحة</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted)">الجهد تقدير: <b>صغير</b> = ساعات · <b>متوسط</b> = أيام · <b>كبير</b> = أسبوع وأكثر. وحسب طريقة عمل مدونتي: الديسكتوب يتقفل أوّل، وبنود الجوال (هـ١ مثلاً) تتقاس وتتسجّل وتتنفّذ في مرحلة الجوال.</p>
+  </section>
+
+  <section>
+    <h2>أ · السرعة <span class="cnt">٧ بنود · تقني</span></h2>
+    <table>
+      <thead><tr><th>#</th><th>المشكلة</th><th>الرقم</th><th>الحل</th><th>الجهد</th><th>المرحلة</th><th>المرجع</th></tr></thead>
+      <tbody>
+        <tr class="done"><td>أ١</td><td><b>الشاشة الأولى تتأخر في الرسم</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td>LCP جوال ٤٫٩–٥٫٢ ث (الجيد ≤ ٢٫٥) · العنوان يوصل في ٨٦٩ms ويترسم بعد ٣٬٧٦٥ms · CSS يحجب ١٦٠–٦٤٠ms</td><td><b>السبب الأكبر — قياس ٢ أكتوبر:</b> PageSpeed جوال لمقال: «Resource load delay» ‏١٬٩١٠ms من LCP ‏٤٫١ث. المقال كله كان «ثقباً ديناميكياً» (<code>&lt;template id="P:5"&gt;</code>) يتعبّى من السيرفر كل زيارة، وصورته في الحرف ٢٢٦٬٥٩٥ من ٤٩٣ ك.ب. السبب: قراءة حيّة لعدّاد المشاهدات/الإعجابات قبل رسم المقال (<code>get-article-by-slug-minimal.ts</code>) — وNext يقول: قراءة غير مخزّنة خارج Suspense تُخرج كل ما فوقها من الجزء الجاهز. <b>الإصلاح:</b> المقال من الكاش، والأرقام الحيّة في جزر صغيرة (أزرار الإعجاب · التعليقات · المشاهدات) احتياطها الرقم المخزّن. <b>بناء إنتاج محلي:</b> المقال في الجزء الجاهز (الحرف ٨٦٬٢٥٥ بلا ثقب) · preload الصورة في <code>&lt;head&gt;</code> (الحرف ٢٦٦ بدل ٢١٦٬١٢٣) · الأرقام = القاعدة، والمشاهدات تتحدّث حيّاً (٣٩٠٠ ظهرت والمقال مخزّن). ومعه: اعتماد سؤال في الكونسول صار يحدّث المقال في مدونتي (كان يحدّث الكونسول بس). <b>CSS يحجب ١٦٠–٨٢٠ms — جُرّب <code>inlineCss</code> وانشال (٢ أكتوبر):</b> بناء إنتاج محلي، نفس المقال: gzip ‏٨٣٬٢٨١ → <b>١٩٥٬١٨١</b> بايت (+١١٢ ك.ب لكل صفحة)، لأن ملف التصميم ٢٣٧٬٤٧٥ حرفاً (الـ٣٦ ك.ب حجمه مضغوطاً) وNext يحطّه مرّتين، و&lt;article&gt; تأخّر من الحرف ٨٦٬٢٥٥ إلى ٣٢٣٬٦٧٢. الخسارة أكبر من الربح. <b>حجم ملف التصميم — فُحص (٢ أكتوبر):</b> ٢٢٧٬٧٩٩ حرفاً / ٣٦ ك.ب مضغوطاً · المقال يستخدم ~٨٣ ألفاً منه. الباقي موزّع على ١٨ قسماً (القصة ٢١ ألف · مدونتي ١٣ · العملاء ١١…) و٦٧٥ قيمة مخصّصة (٥٥٬٨٥٣ حرفاً). Tailwind 3 يبني ملفاً واحداً للموقع كله ومن الكلاسات المستخدمة فقط (بلا safelist). أقصى ربح لو نصّفناه ~٩٠ms على جوال بطيء، والتأخير الأكبر هو انتظار الطلب نفسه لا حجمه — <b>لا يستاهل إعادة كتابة الآن</b>. (<code>font-display: swap</code> موجود أصلاً)</td><td class="ef">متوسط</td><td><span class="ph p2">م٢</span></td><td class="ref">ت١ · س١ · س٢</td></tr>
+        <tr class="done"><td>أ٢</td><td><b>JavaScript ثقيل</b> <span class="tag done">منجز في مسودّة GTM · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">PageSpeed جوال اليوم (الرئيسية · مقال): TBT ٣٩٠–٤٢٠ms. وقت المعالج الأكبر: فيسبوك (fbevents + config) ~٦٦٠ms و٢٠٢ ك.ب → <b>موقوف في GTM (ب٣)</b> · تيك توك ١٢٨ ك.ب ~٢٠٠ms → قرار خالد المؤجّل · GTM ٣٠٧ ك.ب. أكبر ملفّين «من كودنا» = react-dom (41w9…) وموجّه Next (0aoh…) — أساس لا يُزال. ملف ٢٤ ك.ب غير مستخدم عند التحميل = قائمة Radix في الهيدر — أثر صغير، لا يستحق الآن.</span></td><td>١٫٥–٢٫٢ ميغا · غير مستخدم ٩٥–٣٥٠ ك.ب · مهام طويلة في ١٣ من ١٤ فحص · INP ٤١٠ms</td><td>أوّل: تحليل الحزم (bundle analyzer) يحدّد أي مكوّن ثقيل — <b>ما نخمّن</b>. بعدين: مكوّنات الخادم افتراضياً · <code>next/dynamic</code> لما تحت الطيّ. (<code>optimizePackageImports</code> وGTM <code>lazyOnload</code> موجودين أصلاً)</td><td class="ef">كبير</td><td><span class="ph p2">م٢</span></td><td class="ref">س٣ · ك٨</td></tr>
+        <tr class="done"><td>أ٣</td><td><b>صفحات القوائم ضخمة</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">القياس غيّر الهدف: الوزن ما كان في طول القوائم بل في <code>srcset</code> — ٤٢٨ ك.ب (٣٨٪) من HTML <code>/articles</code> و١٣٧ (٢٠٪) من الرئيسية: الصور الثابتة (١٢٤ · ٤٠ · ٢٠ بكسل) تحمل ١٦ رابطاً لكلّ منها حتى 3840w، لأن Next يسرد كل المقاسات حين <code>sizes</code> بكسل فقط (get-img-props.js). الإصلاح: <code>optimized-image.tsx</code> يُسقط <code>sizes</code> للصورة الثابتة ذات البكسل الواحد («Without sizes … 1x, 2x, suitable for fixed-size images») + صورتا بطاقة الجوّال من fill إلى أبعاد صريحة. محلياً: srcset ١٤٣ ك.ب (١٦٪)، ٢ رابط لكل صورة ثابتة؛ البطاقة ٢٠×٢٠ و١٢٤×٩٣ تملأ حاويتها، والمتصفّح يختار w=48 و256. باقٍ: بيانات React الملحقة ٣١–٤١٪ (بند أ٢).</span></td><td>HTML الرئيسية ٦٩٦ ك.ب · /articles ١٫١ ميغا · «DOM كبير» في ٨ فحوص</td><td>Lighthouse يحذّر فوق ~٨٠٠ عنصر وينبّه فوق ~١٬٤٠٠. الحل الموثّق: نبني العناصر وقت الحاجة (تمرير/ضغطة) · تقسيم صفحات</td><td class="ef">متوسط</td><td><span class="ph p2">م٢</span></td><td class="ref">س٨</td></tr>
+        <tr class="done"><td>أ٤</td><td><b>سكربتات خارجية كثيرة</b> <span class="tag done">منجز في مسودّة GTM · ٢ أكتوبر</span></td><td>GTM + Clarity + فيسبوك · تخزين قصير ٢١٨–٢٢٨ ك.ب في ١١ فحص</td><td><b>قرار خالد (٢ أكتوبر): لا بكسلات على مدونتي</b> — ما فيه حملات، والبكسل يرجع على صفحة الهبوط وقت الحملة. أُوقفت في مسودّة GTM (workspace 24): فيسبوك (9 · 11 · 13) · تيك توك (14) · سناب (18). الإيقاف يكفي بلا حذف: المقاس يثبت إن الموقوف ما يدخل الملف. <b>gtm.js للمسودّة:</b> قبل ٤١٤٬٤٨٨ بايت (tiktok=1 · snap=2) → بعد <b>٤٠٣٬٦٥٨</b> (fbevents=0 · tiktok=0 · snap=0 · clarity=3). والأهمّ: ما عاد يتحمّل سكربت البكسل نفسه — فيسبوك fbevents ‏١١٢٫٧ ك.ب gzip (+ ملف الإعداد) · تيك توك ~١٢٨ ك.ب · سناب ٢٥ ك.ب. الباقي في GTM: GA4 (gtag ‏١٧٩ ك.ب gzip) وClarity — نحتاجهم. ولا متغيّر بلا استخدام؛ ٣ مشغّلات للبكسلات تُركت لإعادة التشغيل وقت الحملة (ما تدخل الملف). GTM نفسه يتحمّل <code>lazyOnload</code> أصلاً، بعد ما تخلص الصفحة.</td><td class="ef">منجز في المسودّة</td><td><span class="ph p2">م٢</span></td><td class="ref">س٦</td></tr>
+        <tr class="checked"><td>أ٥</td><td><b>الريلز تقفز على الكمبيوتر</b> <span class="tag checked">فُحص · سليم الآن · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">PageSpeed اليوم (١٤:١٨) على /reels كمبيوتر: أداء 83 · <b>CLS 0.002</b> (كان 0.975) · LCP 0.6 ث · الوصول 100 · نسبة الصور ودقّتها وأحجام اللمس والترجمة كلّها ناجحة. وكروم خالد: CLS = 0 على الإنتاج والمحلي. «الممارسات» 73 من أخطاء خارجية فقط: «reading 'v'» (ج٤ يحلّه بالنشر) · إطار سناب في CSP · كوكيز طرف ثالث (سناب/فيسبوك/Clarity).</span></td><td>الأداء 49 · CLS 0.975 (الجيد ≤ ٠٫١) · صور بنسبة ودقة غلط</td><td>web.dev: <code>width</code>/<code>height</code> أو <code>aspect-ratio</code> لكل فيديو وصورة، وحجز المساحة لأي شي يتحمّل متأخّر</td><td class="ef">صغير</td><td><span class="ph p2">م٢</span></td><td class="ref">س٥</td></tr>
+        <tr class="done"><td>أ٦</td><td><b>أوّل استجابة من السيرفر بطيئة في صفحات العملاء</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">السبب المقيس على الإنتاج: <code>X-Vercel-Cache: STALE</code> و<code>Age</code> يرجع صفراً خلال دقائق، وأوّل بايت ٢٫١ ث. ثلاث دوالّ في الصفحة (التقييمات · الأسئلة · المعرض) كانت <code>cacheLife("minutes")</code> كحلّ مؤقّت لأن الكونسول «لا يحدّث كاش مدونتي» — وهو يحدّثه الآن: كل كتابة فيها تمرّ بـ<code>regenerateClientSeo</code> → <code>revalidateModontyTag("clients")</code>. صارت <code>"hours"</code>. محلياً: الصفحتان 200 بكل الأقسام. الكاش نفسه يُقاس بعد النشر.</span></td><td>توفير مقدّر ٥٥٠–٧٧٠ms · صفحة العميل ١٬٠٦٠–١٬٧١٠ms</td><td>تخزين مؤقّت أطول لصفحات العملاء (مع كرت VERCEL-CACHE-MINUTES)</td><td class="ef">متوسط</td><td><span class="ph p2">م٢</span></td><td class="ref">س٤</td></tr>
+        <tr class="done"><td>أ٧</td><td><b>تفاصيل رسم صغيرة</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">قياس PageSpeed اليوم (الرئيسية · مقال · عميل، جوال وكمبيوتر): <b>صور بلا أبعاد = 0 · حركات غير مركّبة = 0</b> (انحلّت سابقاً). إعادة التدفّق: مصدرها «[unattributed]» (٧٢ms، سكربتات خارجية) — لا سطر في كودنا. المُصلَح: شعارات العملاء في بطاقة الرئيسية كانت <code>&lt;img&gt;</code> خام ٥٠٠×٥٠٠ تُعرض ٣٤×٣٤ → <code>OptimizedImage sizes="34px"</code> (<code>TrustCard.tsx</code>): ١٦٫٩ ك.ب → ٠٫٦ (w=48) / ١٫٥ (w=96). باقٍ هامشي: صور غلاف أكبر من عرضها بـ١٣–١٩ ك.ب.</span></td><td>صور بلا width/height (٣ فحوص) · حركات غير مركّبة (٣) · إعادة تدفّق إجبارية (٩)</td><td>أبعاد لكل صورة · الحركة بـtransform/opacity · القراءة قبل الكتابة</td><td class="ef">صغير</td><td><span class="ph p2">م٢</span></td><td class="ref">س٩ · س١٠</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>ب · أعطال الكود <span class="cnt">٧ بنود · تقني</span></h2>
+    <table>
+      <thead><tr><th>#</th><th>المشكلة</th><th>الدليل</th><th>الحل</th><th>الجهد</th><th>المرحلة</th><th>المرجع</th></tr></thead>
+      <tbody>
+        <tr class="done"><td>ب١</td><td><b>صفحة الدخول تقفل أزرارها</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">دالّة واحدة <code>users/helpers/use-google-redirect-state.ts</code> للدخول والتسجيل (نفس العطل كان في التسجيل): زر Google يقفل نفسه بس، و<code>pageshow</code> مع <code>persisted</code> يفتحه، وبعد ١٥ ثانية بلا تحويل رسالة. مفحوص: النموذج يبقى شغّال · حدث الرجوع يفتح الزر · الرسالة بعد ١٦ث · Google الحقيقي يوصل accounts.google.com والرجوع يلقى الزر مفتوح.</span></td><td>مشاهَد في تسجيل: بعد ضغط Google الزرّان معطّلين ٧٠+ ثانية، والضغط الغاضب على زر معطّل · <code>login-form.tsx:84 · :127</code></td><td>web.dev (bfcache): <code>pageshow</code> مع <code>event.persisted</code> يرجّع حالة الأزرار · زر Google ما يعطّل نموذج الإيميل · رسالة بعد مهلة</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">ك٦ · LOGIN-BUTTONS-LOCK</td></tr>
+        <tr class="done"><td>ب٢</td><td><b>«مدونتي | مدونتي» في العنوان</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">صفحة المقال تحذف « - {الماركة}» من العنوان المخزّن حين يكون العميل هو الماركة، فيبقى «| مدونتي» من القالب وحده (<code>articles/[slug]/page.tsx</code> · <code>withoutTrailingBrand</code>). بلا لمس للبيانات. مقيس: ٣ مقالات لمدونتي «… | مدونتي» · مقالا جبر سيو بلا تغيير. حذف اسم العميل عموماً = س١٠ ينتظر.</span></td><td>٤٧ مقال · الأدمن يضيف «- اسم العميل» (<code>metadata-generator.ts:227</code>) ومدونتي تضيف «| مدونتي» (<code>layout.tsx:43</code>)</td><td>مصدر واحد يضيف اسم البراند</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">ت٢ · ك١٣</td></tr>
+        <tr class="done"><td>ب٣</td><td><b>بكسل فيسبوك يصطدم بسياسة الأمان</b> <span class="tag done">منجز · موقوف في GTM · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">قرار خالد (٢ أكتوبر): يوقف. الدليل: مدير الإعلانات ٣٥ مجموعة في ٣٠ يوماً (١٬٢٣٠ ر.س) كلّها رسائل/ضغطات/تفاعل — لا هدف «تحويل على الموقع» · Events Manager «Used by» فاضي · جمهور الموقع الوحيد «11/18» أقلّ من ١٠٠٠ و«Not updated» · كلفته ٢٠٢ ك.ب لكل زيارة جديدة. أُوقفت (paused لا حذف) ٣ وسوم في مساحة GTM 24: Meta Pixel · Event-1 (ViewContent) · Register (CompleteRegistration). تيك توك وسناب: مؤجّلة لآخر الخطة (يحتاج دخول خالد).</span></td><td>تحذيرات <code>form-action</code> و<code>frame-src</code> على مقال حيّ</td><td><b>قرار أوّل:</b> البكسل مستخدم؟ لا ← يتشال من GTM. نعم ← نضيف المصادر اللي تسجّلها تقارير المتصفح (وثائق Meta تذكر <code>connect.facebook.net</code> بس)</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">ك١٤ · س٧</td></tr>
+        <tr class="checked"><td>ب٤</td><td><b>خطأ JavaScript متكرّر</b> <span class="tag checked">فُحص · ما تكرّر · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">Clarity: جلستان فقط في ٣٠ يوماً، زائر واحد (القاهرة · كروم جوّال) في دقيقة واحدة ٢٧ سبتمبر ١٤:٠٦، ولم يتكرّر. إعادة مساره (٦ صفحات) على الإنتاج: صفر «call stack». لا سبب في الكود يُصلح. (وظهر بدلاً منه خطأ «reading 'v'» في كل صفحة = Clarity المكرّر، يحلّه ج٤ بعد النشر.)</span></td><td>«maximum call stack size exceeded» · ١٨ مرة · ٠٫١٧٪ من الجلسات</td><td>تتبّع الدالّة اللي تستدعي نفسها. <b>السبب ما اتحدّد بعد</b></td><td class="ef">يحتاج تتبّع</td><td><span class="ph p1">م١</span></td><td class="ref">ك٩</td></tr>
+        <tr class="done"><td>ب٥</td><td><b>محلّل الصفحات يخالف جوجل</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">حُذف تنبيه «300+ … 800+ words» من <code>admin/lib/seo/page-seo-analyzer.ts</code> (جوجل: «Google has a preferred word count? (No, we don't.)»). عدد الكلمات يبقى معلومة، وحماية «مقال فاضي» (٢٠٠ حرف) في pre-publish-audit باقية. مقيس: صفحة ٢١ كلمة → CONTENT_TOO_SHORT=false.</span></td><td>يوصي «300+ … 800+ words» (<code>admin/lib/seo/page-seo-analyzer.ts:356</code>). جوجل: «لا يوجد عدد كلمات سحري»</td><td>نشيل شرط عدد الكلمات</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">إشارة ٦</td></tr>
+        <tr class="done"><td>ب٦</td><td><b>دليل الكتّاب يمنع الرابط العربي</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">دليل الكتّاب صار: «عربي، قصير، وفيه الكلمة اللي يبحث عنها القارئ» + «ولا علامة استفهام (؟)» (جوجل: «Use words in your audience's language in the URL»). الفاحص كان سليماً أصلاً. مقيس: صفحة الدليل في الأدمن تعرض النصّ الجديد ولا أثر للقديم.</span></td><td>«ولا عربي في الرابط» (<code>playbook/…/article-journey/helpers/data.ts:23-24</code>). جوجل يوصي برابط بلغة الجمهور</td><td>نصحّح الدليل، والروابط تبقى عربية</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">ت٧</td></tr>
+        <tr class="done"><td>ب٧</td><td><b>سياسة الأمان تسجّل وما تمنع</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td>CSP «Report-Only» وفيها <code>unsafe-inline</code> و<code>unsafe-eval</code></td><td><b>ضُيّقت من الواقع</b> (<code>modonty/next.config.ts</code>): ٥ صفحات إنتاج تحت المراقبة = ١١٦ مخالفة — ~١١٠ بكسلات (موقوفة في GTM، ما تُسمح) و٦ لسكربت Clarity من <code>scripts.clarity.ms</code> (انسمح، حسب توثيق Microsoft: <code>*.clarity.ms</code> + <code>c.bing.com</code>). GA4 حسب دليل جوجل: img <code>*.google-analytics.com</code> · connect <code>*.google-analytics.com *.google.com</code>. <b>انشال <code>unsafe-eval</code> من الإنتاج:</b> جوجل يحتاجه لمتغيّرات JavaScript المخصّصة في GTM بس، وما عندنا ولا واحد (API: <code>jsm: none</code>)، وNext يقول ما يستخدم eval في الإنتاج — يبقى في التطوير فقط (فحص: production <code>unsafe-eval present: false</code>). وانشالت مصادر ما يحمّل منها شي: خطوط جوجل (الخطوط من موقعنا) وVercel Insights. محلياً ٤ صفحات: صفر مخالفات من مواردنا. يبقى Report-Only — التفعيل بالـnonce يوقف التخزين (Next).</td><td class="ef">منجز محلياً</td><td><span class="ph p3">م٣</span></td><td class="ref">أ-٨</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>ج · Clarity والقياس <span class="cnt">٩ بنود · أوّل شي ينعمل</span></h2>
+    <table>
+      <thead><tr><th>#</th><th>المشكلة</th><th>الدليل</th><th>الحل</th><th>الجهد</th><th>المرحلة</th><th>المرجع</th></tr></thead>
+      <tbody>
+        <tr class="done"><td>ج١</td><td><b>GA4: ٨٢٪ من الجلسات وهمية</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">٢ أكتوبر: قياس ٣٠ يوماً = ٩١٪ وهمي (١٣٬٣١٧ من ١٤٬٦٦٣)، و٩٩٫٧٪ من أحداثها ٨ أحداث تبدأ في المتصفّح ← نُقلت للمتصفّح عبر GTM (<code>ga4-browser.ts</code>). معاينة GTM: الحدث المُرسَل قبل تحميل GTM يدخل نفس جلسة الزائر. واكتُشف أن معلمة <code>client_id</code> تستبدل هويّة الزائر ← صارت <code>client_db_id</code>.</span></td><td>١٩٬٢٦١ من ٢٣٬٥١٩ من أحداث السيرفر (<code>ga4-server.ts:17</code>) · Clarity يأكّد: ٧١٪ «دولة غير صالحة»</td><td>ربط الجلسة <b>منفّذ من ٢٦ يونيو وما كفى</b>. التفسير المرجّح (يُقاس أوّل): GTM يتحمّل <code>lazyOnload</code>، فأوّل الأحداث وزوّار الخروج السريع ما عندهم كوكي GA بعد، والسيرفر يصنع لهم معرّف بديل. وجوجل يقول الموقع والجهاز يُستنتجان من أحداث المتصفح لنفس المعرّف، فبدونها = «بلا دولة». <b>الحل حسب جوجل:</b> أحداث المتصفح (<code>web_vitals</code> ٦٠٪ · <code>article_view</code>) تنرسل من المتصفح عبر gtag/dataLayer (مثال مكتبة web-vitals الرسمي)، والبروتوكول يبقى لأحداث السيرفر بس. الثمن: زوّار الخروج السريع ما ينحسبون في GA4، والسرعة نأخذها من CrUX</td><td class="ef">متوسط</td><td><span class="ph p1">م١</span></td><td class="ref">غ١ · ك١٢</td></tr>
+        <tr class="done"><td>ج٢</td><td><b>ضغطة الواتساب مو «تحويل»</b> <span class="tag done">منجز · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">عُلِّم Key Event من GA4 Admin › Events. الـAPI: <code>booking_whatsapp_click</code> صار ضمن keyEvents. يحتسب من الآن، لا بأثر رجعي.</span></td><td><code>booking_whatsapp_click</code> = ٦٦ ومو معلَّم Key Event</td><td>نعلّمه من إعدادات GA4، بلا كود</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">غ٢</td></tr>
+        <tr class="done"><td>ج٣</td><td><b>بيانات اختبار داخل GA4</b> <span class="tag done">منجز · وضع تجربة</span><br><span style="font-size:12px;color:#334155">فلتر «Exclude dev and preview hosts» (Web hostname · Exclude · <b>Testing</b>): localhost · 95.214.54.4 · يحتوي vercel.app. ما اخترنا «اقبل www فقط» لأن ٨٦ حدثاً حقيقياً (تسجيل بعد دخول جوجل) هوستها accounts.google.com. يتحوّل Active عند النشر بعد التحقّق من بُعد «Test data filter name».</span></td><td>localhost ١٤ جلسة · نسخ Vercel التجريبية ١٦</td><td>فلتر GA4 الرسمي «Web hostname traffic» يستبعد غير www.modonty.com. ما يأثّر بأثر رجعي، والمحذوف ما يرجع</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">غ٨</td></tr>
+        <tr class="done"><td>ج٤</td><td><b>Clarity يتحمّل مرّتين</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td>طلبان، والثاني يرمي خطأ <code>reading 'v'</code> في كل صفحة</td><td><b>جاهز محلياً</b>، ينتظر الرفع</td><td class="ef">منجز محلياً</td><td><span class="ph p1">م١</span></td><td class="ref">إ٥</td></tr>
+        <tr class="done"><td>ج٥</td><td><b>أزرار الريلز ما تنقاس في Clarity</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155"><code>lib/analytics/clarity.ts</code> بطابور Clarity الرسمي (الأوامر قبل التحميل لا تضيع). أحداث: reel_like · reel_save · reel_comments · reel_share · reel_mute · reel_next · reel_prev. مقيس في الطابور محلياً: السبعة كلّها.</span></td><td>أيقونات بلا نص · وفي GA4: مشاهدة ٥٠٨ · مشاركة ٨ · إعجاب ٥</td><td><code>window.clarity("event", …)</code> لكل زر (وثائق Microsoft)، بعد التأكّد إن Clarity تحمّل لأنه يجي متأخّر من GTM</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">ب١ (Clarity)</td></tr>
+        <tr class="done"><td>ج٦</td><td><b>ما نقدر نفلتر Clarity لكل عميل</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">وسم <code>page_type</code> لكل صفحة (home · article · client · reel · reels · listing · account) + <code>client</code> و<code>author</code> في كل زيارة لمقال أو عميل أو ريل — حتى إعادة التحميل. مقيس في الطابور محلياً.</span></td><td>بلا وسوم مخصّصة</td><td><code>window.clarity("set", key, value)</code>: العميل · الكاتب · نوع الصفحة. Microsoft: «بلا حدّ لعدد الوسوم»</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">ب٢ (Clarity)</td></tr>
+        <tr><td>ج٧</td><td><b>زيارات الفريق مخلوطة بالأرقام</b></td><td>زائر واحد له ١٢ من ١٠٠ جلسة رجوع سريع · Microsoft ما يدعم حظر الـIP المتغيّر</td><td>رابط «أنا من الفريق» يمنع Clarity عبر GTM</td><td class="ef">صغير</td><td><span class="ph p1">مؤجَّل</span></td><td class="ref">ب٣ · قرار خالد</td></tr>
+        <tr class="done"><td>ج٨</td><td><b>ما نعرف التواصل صار عميل أو لا</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">صفحة «طلبات التواصل» في الأدمن (<code>/contact-requests</code>) من منيو المبيعات، ورقم أحمر بعدد «الجديد». المندوب يرى طلبات عملائه (<code>Client.salesRepId</code>) والأدمن الكلّ. الحالات نفسها اللي يستخدمها الكونسول. كل تغيير يُكتب في سجلّ التدقيق. مفحوص على dev: ٥٢ · ٥٠ جديد · ٢ تواصلوا، والتغيير يحدّث العدّاد (٥٠←٤٩) ثم رُجّع.</span></td><td>٥٠ من ٥٢ تواصل حالتها «جديد» · «تم التواصل» ٢ بس</td><td>المتابعة تحدّث الحالة (تواصل · صار عميل · ما رد). <b>إجراء عمل</b> أكثر منه كود. وضغطة الواتساب معناها «فتح المحادثة» بس</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">٢٫٣ · ز</td></tr>
+        <tr class="done"><td>ج٩</td><td><b>ما عندنا لوحة سرعة دورية</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td>المعتمد اليوم فحص يدوي · CrUX API مجاني ومفتاح PageSpeed موجود</td><td>صفحة <b>KPI › Speed</b> في الأدمن (<code>/kpi/speed</code>): زوّار كروم الحقيقيين لـ modonty.com، جوال وديسكتوب، رقم لكل شهر من CrUX History API. قياس ٢ أكتوبر: <b>الجوال LCP ‏٤٫٩ ث (ضعيف، الحدّ ٢٫٥)</b> · INP ‏١٦٩ms جيد · CLS ‏٠٫٠٠ جيد · الديسكتوب LCP ‏٤٫١ ث ضعيف. <b>«لكل نوع صفحة» غير متاح من جوجل اليوم:</b> صفحات الرئيسية والمقالات والعملاء والريلز كلها «زوّار غير كافين» (٤٠٤). الصفوف موجودة وتتعبّى وحدها لما يكبر الزوّار. وجوجل تخطّى أشهراً (بيانات الجوال: يونيو–يوليو ثم من ١٢ سبتمبر) فالجدول يعرض الأشهر اللي فيها بيانات فقط.</td><td class="ef">منجز محلياً</td><td><span class="ph p3">م٣</span></td><td class="ref">غ٧ · ٢٫٥</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>د · السيو <span class="cnt">١٠ بنود</span></h2>
+    <table>
+      <thead><tr><th>#</th><th>المشكلة</th><th>الدليل</th><th>الحل</th><th>الجهد</th><th>المرحلة</th><th>المرجع</th></tr></thead>
+      <tbody>
+        <tr class="done"><td>د١</td><td><b>نص الريلز ما ينفهرس</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">السبب المقيس: الرئيسية تربط ٤ ريلز فقط، وصفحة العميل بلا قسم ريلز (وتبويبها كان يعرض مقالاته باسم «ريل» وnoindex). الحل: قسم «ريلز {العميل}» في صفحته (٤ + «كل الريلز») · تبويب الريلز صار يعرضها كلّها index,follow (noindex لمن ليس له ريل) · سهمان «السابقة/التالية» في صفحة الريل. مقيس محلياً: سلسلة الأسهم من أحدث ريل وصلت ٢٣ من ٢٣ · جبر سيو ١٠ روابط · مدونتي ٦ · عبدالرحمن ٤. «طلب الفهرسة» للـ١١ بعد النشر.</span></td><td>٢٣ ريل: ١٢ مفهرس · ٨ جوجل ما يعرفها · ٣ اكتُشفت وما فُهرست · صفحة <code>/reels</code> فيها <b>٠</b> روابط <code>&lt;a href&gt;</code></td><td>روابط حقيقية للريلز (قائمة تحت المشغّل · صفحة العميل · داخل المقال)، بعدين «طلب فهرسة» للـ١١</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">أ-٢</td></tr>
+        <tr><td>د٢</td><td><b>ما فيه مواقع تربط لنا</b></td><td>٦٨ رابط خارجي، ٦٤ منها من jbrseo · Bing: نطاقان فقط</td><td>دليل جوجل: التواصل الاجتماعي · المجتمع · «الكلام بين الناس» · الرابط في المواد المطبوعة. ورابط العميل <b>اختياري</b> ومن حقّه يوسمه <code>sponsored</code>/<code>nofollow</code> — الاشتراط سبام. ممنوع: شراء · تبادل · روابط فوتر موزّعة</td><td class="ef">كبير · مستمر</td><td><span class="ph p3">م٣</span></td><td class="ref">أ-١</td></tr>
+        <tr><td>د٣</td><td><b>الروابط الداخلية ضعيفة</b></td><td>٤٤ مقال بلا أي رابط لمقال ثاني · ١٠٢ مقال ما يربط له أحد · أقوى الروابط تروح للفوتر والسياسات</td><td>عند النشر: رابط من ٢–٣ مقالات قديمة قريبة · الأداة تقترح الروابط</td><td class="ef">متوسط</td><td><span class="ph p2">م٢</span></td><td class="ref">١٨ · ٢٫٢-و</td></tr>
+        <tr><td>د٤</td><td><b>العناوين طويلة ومو للسعودي</b></td><td>٢٢٩ من ٢٣٤ فوق ٦٠ حرف · ١٥٧ فوق ٧٠ · CTR السعودية ٠٫٧٥٪ · ١١٧ كلمة ظهورها كثير ونقراتها شبه صفر</td><td>صيغة أقصر (الكلمة المهمة أوّل) + «مختبر العناوين» للمقالات اللي ظهورها سعودي عالي</td><td class="ef">متوسط</td><td><span class="ph p2">م٢</span></td><td class="ref">ت٢ · ٢ · ٤ · ج</td></tr>
+        <tr class="done"><td>د٥</td><td><b>روابط قديمة ترجع 404</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td>عملاء ١٩ · مقالات ١٥ · تصنيفات ٧</td><td><b>الكود يحلّها أصلاً</b> (<code>modonty/proxy.ts</code>): لكل قسم (مقالات · تصنيفات · وسوم · قطاعات · عملاء · كتّاب · ريلز) — حيّ يمرّ، وتغيّر اسمه بسجلّ تحويل → 308، وانحذف → 410 (جوجل يشيله). قياس الإنتاج: <code>/articles/zz-not-a-real-slug</code> → 410 · <code>/clients/zz-not-real</code> → 410. <b>الفجوة الوحيدة — اتصلّحت:</b> روابط العملاء القديمة على جذر الموقع (الإنتاج: <code>/دكتور-علاء-الدين-بدوي</code> → 404 والعميل حيّ على /clients/… → 200). الحين: مسار بجزء واحد مو صفحة حقيقية → لو اسم عميل حيّ (أو له سجلّ تحويل) → 308 لـ /clients/…، وإلا 404 العادي. تحقّق محلي: عميل عربي → 308 · as-clinics → 308 · /zz-no-such-client → 404 · /about · /trending · /clients · /feed.xml · /robots.txt · / · /modonty · /story · /reels · /search · /industries · /team · /llms.txt · /sitemap.xml → 200 · /whats-new → 308 /news (كما كان). <code>_next</code> القديمة (٢٣) طبيعية بعد كل نشر.</td><td class="ef">منجز محلياً</td><td><span class="ph p2">م٢</span></td><td class="ref">أ-٣</td></tr>
+        <tr class="done"><td>د٦</td><td><b>صفحات محجوبة لكنها مفهرسة</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155"><code>robots.ts</code>: الحجب صار <code>/modo-chat/api/</code> لا الصفحة (عليها noindex والزائر غير المسجّل يرى بوّابة التسجيل فقط) · و<code>Allow: /users/login</code> و<code>/users/register</code> (noindex) — الأطول يغلب عند جوجل، وملفّات الأعضاء تبقى محجوبة. مقيس: robots.txt المحلي.</span></td><td>٤٥ (<code>/modo-chat?</code> ٣٩)</td><td>نسمح بالزحف ونحط noindex</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">أ-٤</td></tr>
+        <tr class="done"><td>د٧</td><td><b>صفحات عملاء بقراءة جوجل قديمة</b> <span class="tag done">منجز · ٩ من ١٠ · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">قياس URL Inspection لـ٤٠ صفحة عميل: ٣٠ مفهرسة · ٦ «noindex» قديمة · ٣ «زحف وما فُهرس» · ١ «اكتُشف». الحيّ كلّها 200 index,follow. «طلب فهرسة» من Search Console: ٩ «Indexing requested» · as-clinics «Quota Exceeded» → بكرة. <b>والجذر:</b> صفحة العميل تنفتح للفهرسة بأوّل مقال، و<code>lastmod</code> في الخريطة كان تاريخ صفّ العميل فقط فلا يتحرّك → صار الأحدث بين الصفّ وآخر مقال (<code>sitemap.ts</code>). مقيس على dev: ٣٨ من ٣٨ مطابقة، و٣ منها تقدّم تاريخها. فلا طلب يدوي بعد اليوم.</span></td><td>٩ اليوم index وجوجل يشوفها noindex · ٣ «قيد التجهيز» بصفر مقالات</td><td>«طلب فهرسة» للـ٩ · الـ٣ تنفتح لحالها لما ينملي ملفهم · ومراجعة الصفحات الحقيقية في «زحف وما فُهرس»: مقالان · ٣ عملاء · ٢ ريلز</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">أ-٥</td></tr>
+        <tr class="half"><td>د٨</td><td><b>Bing وخرائط الموقع</b> <span class="tag half">منجز · باقي وصف ٩ صفحات (بيانات إنتاج)</span></td><td>Bing مسجّل بدون www · خريطتان بدون www في Search Console · وصف قصير في ٩ صفحات</td><td><b>٢ أكتوبر:</b> <b>Bing بـwww — لا يلزم:</b> GetUrlInfo وGetPageStats يرجعان نفس البيانات للتسجيلين (٣٨٤ صفحة كلها www) والخرائط www «Success» (٣٦٩ رابط). <b>الخرائط القديمة — انحذفت:</b> <code>https://modonty.com/sitemap.xml</code> و<code>image-sitemap.xml</code> (مرفوعة ٢١ مايو، وحدة فيها تحذير) — الباقي خريطتان www بصفر أخطاء وصفر تحذيرات. <b>٤ صور بلا alt — سليمة الآن:</b> Bing سمّاها (/about · /terms · عميلان)، والإنتاج اليوم: صفر img بلا alt في الأربع (فحص Bing قديم). <b>meta robots (٢) — مقصود:</b> admin.modonty.com (لوحة الفريق) و/modo-chat (<code>page.tsx:12</code> index:false، ومو في الخريطة). <b>باقي:</b> وصف ١٢٠–١٥٠ حرف لـ٩ صفحات (/page/3 · /authors/modonty · /tags · /contact · /help · /news · /modonty · /reels · /industries) — بيانات إنتاج. <b>قياس الإنتاج ٢ أكتوبر:</b> كلها موجودة لكن قصيرة: /page/3 ٦٦ · /authors/modonty ٧١ · /tags ٧٤ · /contact ٥٧ · /help ٥٨ · /news ٧٦ · /modonty ٨٣ · /reels ٥٧ · /industries ٨٢ حرفاً. <b>مؤجَّل بقرار خالد</b> — نرجع له لاحقاً.</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">أ-٦ · أ-٧</td></tr>
+        <tr><td>د٩</td><td><b>تفاصيل بيانات ونصوص</b> <span class="tag half">الكود منجز · البيانات تنتظر إذن</span><br><span style="font-size:12px;color:#334155"><b>كود (مقيس محلياً):</b> <code>/reels</code> صار lastmod = أحدث ريل (٢٦ سبتمبر = أحدث الـ٢٣) — والصفحات الثابتة الأخرى بلا lastmod بقصد (لا تاريخ حقيقي لها). مولّد الأدمن <code>generate-modonty-page-jsonld.ts</code> لم يعد يكتب <code>mainEntityOfPage</code> على عقدة الصفحة ولا <code>description: ""</code> — بعد Regenerate على dev: /accounts صفر للاثنين. <b>بيانات إنتاج تنتظر إذن خالد:</b> «وجهنك» + مسافتان في تصنيف · «desrve» في بيانات عميل · وصف ريل ٣٢٤ حرف · عنوان كاتب مدونتي «مدونتي — الكاتب» · Regenerate SEO لصفحات مدونتي الثابتة.</span></td><td>«وجهنك» · مسافتين في تصنيف · ٢٥ رابط بلا lastmod · «desrve» · وصف ريل ٣٢٤ حرف · <code>mainEntityOfPage</code> · عنوان صفحة الكاتب ١٥ حرف</td><td>تصحيحات صغيرة</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">ت٦ · أ-٩</td></tr>
+        <tr><td>د١٠</td><td><b>hreflang بلا فايدة</b></td><td>٩ وسوم كلها لنفس الرابط. جوجل: hreflang «إذا عندك نسخ متعدّدة»</td><td>حذفه. ما يضرّ، بس ما يفيد</td><td class="ef">صغير</td><td><span class="ph p1">قرار</span></td><td class="ref">ت٤ · قرار خالد</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>هـ · التحويل — طريق القارئ للعميل <span class="cnt">٦ بنود · من Clarity</span></h2>
+    <table>
+      <thead><tr><th>#</th><th>المشكلة</th><th>الدليل</th><th>الحل</th><th>الجهد</th><th>المرحلة</th><th>المرجع</th></tr></thead>
+      <tbody>
+        <tr><td>هـ١</td><td><b>زر العميل في آخر المقال</b></td><td>جوال: ٤٧٪ يطلعون قبل ١٠٪ من المقال · <b>٣٫٩٪</b> يوصلون ٩٠٪</td><td>NN/g: ٥٧٪ من وقت النظر فوق أوّل شاشة و٧٤٪ في أوّل شاشتين، و«الأزرار الرئيسية فوق». فالواتساب/الحجز في أوّل ربع المقال (+ شريط ثابت في مرحلة الجوال). يُقاس بمسار Clarity قبل وبعد</td><td class="ef">متوسط</td><td><span class="ph p2">م٢</span></td><td class="ref">ك٤</td></tr>
+        <tr><td>هـ٢</td><td><b>القارئ يبي يشتري وما فيه رابط</b> <span class="tag checked">مؤجَّل · مع بطاقة ARTCTA</span></td><td>مقال باقات سوا: ٨+٤+٤+٣+٣ ضغطة على أسماء الباقات وأسعارها</td><td>كل منتج أو خدمة في مقال العميل = زر «اطلب من [العميل]»</td><td class="ef">متوسط</td><td><span class="ph p2">م٢</span></td><td class="ref">ك٢</td></tr>
+        <tr class="done"><td>هـ٣</td><td><b>صورة الغلاف تنضغط وما ترد</b> <span class="tag done">منجز محلياً · ٢ أكتوبر</span></td><td>٤٩٪ من ضغطات الجوال · ٦٢٪ الكمبيوتر (<code>FeaturedImage.tsx</code>)</td><td><b>الضغط يكبّرها:</b> زرّ شفّاف فوق صورة السيرفر (الصورة نفسها ما دخلت جافاسكربت — سرعة الصفحة ما تتأثّر) + علامة مكبّر صغيرة · النافذة وصورتها الكبيرة تنحمّل بأوّل ضغطة بس (<code>CoverZoom.tsx</code> · <code>CoverZoomDialog.tsx</code>) · حدث Clarity <code>cover_zoom</code> يعدّ مين ضغط. <b>تحقّق Playwright:</b> النافذة تفتح والصورة كاملة داخل الشاشة (749×421 في 1280×495، زر الإغلاق ظاهر) · Esc يقفل · الحدث وصل طابور Clarity. أوّل محاولة قصّت الصورة من فوق وتحت (1024×576 أطول من الشاشة) — اتصلّح بعرض محسوب من طول الشاشة. «حمّل / شارك» للمقالات الموسمية: مو الحين.</td><td class="ef">منجز محلياً</td><td><span class="ph p2">م٢</span></td><td class="ref">ك١</td></tr>
+        <tr><td>هـ٤</td><td><b>يدخل صفحة وحدة ويطلع</b> <span class="tag checked">مؤجَّل · قرار خالد ٢ أكتوبر</span></td><td>اليوم الوطني: ٤٠٠ دخول و٣٩٨ خروج</td><td>«الخطوة الجاية» بعد أوّل جواب: مقال قريب أو خدمة العميل</td><td class="ef">متوسط</td><td><span class="ph p2">م٢</span></td><td class="ref">ك٣</td></tr>
+        <tr><td>هـ٥</td><td><b>يضغط على النص عشان ينسخ</b> <span class="tag checked">مؤجَّل · قرار خالد ٢ أكتوبر</span></td><td>ضغط ميت ١٦٫٤٪ من الجلسات · فقرات التهاني ٩ · ٧ · ٦ ضغطات</td><td>زر «انسخ» جنب العبارات في مقالات التهاني. <b>مؤجَّل:</b> الكود ما يقدر يميّز عبارة التهنئة عن باقي النص إلا لو الكاتب علّمها وهو يكتب. والنسخ العادي مفتوح للكل اليوم (زر «نسخ» الموجود ينسخ رابط المقال بس — <code>ShareButtons.tsx:67</code>).</td><td class="ef">صغير</td><td><span class="ph p2">م٢</span></td><td class="ref">ك٥</td></tr>
+        <tr class="done"><td>هـ٦</td><td><b>إمكانية الوصول</b> <span class="tag done">الديسكتوب منجز · الجوّال مسجّل · ٢ أكتوبر</span><br><span style="font-size:12px;color:#334155">PageSpeed اليوم: الكمبيوتر — الرئيسية ١٠٠ · المقال ٩٧ · العميل ١٠٠ · الريلز ١٠٠؛ مخالفتان أُصلحتا: رابطا «اسأل مودو» (aria-label يخفي النصّ الظاهر — WCAG 2.5.3) · تبويب «لا توجد نسخة صوتية» (aria-label على span بلا دور). axe محلياً على الرئيسية والمقال: صفر مخالفات في التباين وحجم اللمس وتطابق الاسم والسمات المحظورة. الجوّال (مسجّل في كرت MOBILE-A11Y-2OCT، لا يُنفّذ الآن): تباين زرّ القائمة السفلي ٢٫١٦ · زرّ ريلز مغطّى ٤٤×١٦. ترجمة الريلز (captions) ناجحة.</span></td><td>تباين ألوان ضعيف · <code>&lt;dl&gt;</code> مرتّبة غلط في صفحة العميل · أزرار الريلز صغيرة وفيديو بلا ترجمة</td><td>تباين WCAG ≥ ٤٫٥:١ للنص · تصحيح القائمة · أزرار ≥ ٢٤px (حدّ WCAG AA) والمعتمد عندنا ٤٤ · ترجمة نصّية للريلز (تفيد السيو)</td><td class="ef">صغير</td><td><span class="ph p2">م٢</span></td><td class="ref">س١١</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>و · المحتوى والكتّاب <span class="cnt">١٣ بند · قلب المشروع</span></h2>
+    <table>
+      <thead><tr><th>#</th><th>المشكلة</th><th>الدليل</th><th>الحل</th><th>الجهد</th><th>المرحلة</th><th>المرجع</th></tr></thead>
+      <tbody>
+        <tr><td>و١</td><td><b>ما فيه «كلمة مستهدفة» للمقال</b></td><td>الحقل غير موجود في السكيما · <code>semanticKeywords</code> فاضي ٢٣١ من ٢٣١ (dev)</td><td>حقل إلزامي + تنبيه «عندنا مقال يظهر عليها»</td><td class="ef">متوسط</td><td><span class="ph p1">م١</span></td><td class="ref">٩ · د</td></tr>
+        <tr><td>و٢</td><td><b>مقالاتنا تنافس بعضها</b></td><td>٥٦ كلمة يظهر عليها مقالين أو أكثر («سيو» ← ٣ مقالات)</td><td>قاعدة «قبل ما تكتب»: نقوّي القديم أو نختار زاوية ثانية (تعتمد على و١)</td><td class="ef">صغير</td><td><span class="ph p2">م٢</span></td><td class="ref">٦ · ٢٫٢-ط</td></tr>
+        <tr><td>و٣</td><td><b>فرص قريبة من الصفحة الأولى</b></td><td>٢١٩ كلمة على ٢٨ مقال · ١٠٤٬٤٥٩ ظهور</td><td>قائمة «فرص الأسبوع»: تحسين الموجود بدل كتابة جديدة. أوّل قائمة جاهزة من البيانات الحالية</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">٥ · ب</td></tr>
+        <tr><td>و٤</td><td><b>الكتّاب مصريين والجمهور سعودي</b></td><td>CTR ٠٫٧٥٪ مقابل ٢٫٤٩٪ · قراءة ٥٧ ث مقابل ١٣٨ ث · جدة قبل الرياض</td><td>«دليل السوق السعودي» داخل دليل الكتّاب الموجود: قاموس الكلمات (يراجعه سعودي) · العملة والجوال والتاريخ · المنصّات الحكومية «كيف أسوّي…» مو الاسم · لهجة البحث من Search Console</td><td class="ef">متوسط</td><td><span class="ph p1">م١</span></td><td class="ref">٢٫٤ · ت٨ · ١٥ · ١٧ · غ٣</td></tr>
+        <tr><td>و٥</td><td><b>الملخّصات الذكية تجاوب بدالنا</b></td><td>CTR المراكز ١–٣ = ١٫١٩٪ · أسئلة الناس ١٣٪ من الظهور · AI Overviews بالعربي من مايو ٢٠٢٥</td><td>قالب «الجواب أولاً» + معلومة ما يقدر الملخّص يعطيها (أسعار محلية · تجربة العميل · أرقام سعودية)</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">٣ · ٧ · ١٣ · ذ-أ · ذ-ج</td></tr>
+        <tr><td>و٦</td><td><b>المواسم تجيب أكبر زيارات</b></td><td>اليوم الوطني لحاله ١٬٩١٠ من ٣٬٥١٨ نقرة (٥٤٪)</td><td>تقويم المواسم السعودية: المقال يتحدّث قبل الموسم بأسابيع، بدل مقال جديد ينافسه</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">١ · و</td></tr>
+        <tr><td>و٧</td><td><b>نقيس الكاتب بالنقرات بس</b></td><td>١٩ من ٢٠ تواصل جا من مقالات العملاء · اليوم الوطني (أعلى دخول) = ٠ تواصل</td><td>مقال العميل ينقاس بالتواصل لكل ١٠٠ نقرة (بعد ج١)</td><td class="ef">صغير</td><td><span class="ph p2">م٢</span></td><td class="ref">ز · ٢٫٣</td></tr>
+        <tr><td>و٨</td><td><b>الكاتب ما يعرف إيش يصلّح</b></td><td>صفحة KPI تعطي ترتيب الكتّاب بس، بلا إشارات لكل مقال</td><td>«مكتب الكاتب»: مقالاته مرتّبة بالأحوج، والإشارات السبع على كل مقال (Search Console + GA4)</td><td class="ef">كبير</td><td><span class="ph p3">م٣</span></td><td class="ref">٢٫١ · ٢٫٢ · أ</td></tr>
+        <tr><td>و٩</td><td><b>ما نعرف أي مقال شدّ الخليج</b></td><td>تواصل الخليج من المقالات ٢ بس (مقاولات الرياض)</td><td>قائمة «أنجح مقالات الخليج» بحدّ أدنى للظهور (الرقم قرار)</td><td class="ef">متوسط</td><td><span class="ph p3">م٣</span></td><td class="ref">٢٫٣</td></tr>
+        <tr><td>و١٠</td><td><b>الأرقام ما تكفي للجودة</b></td><td>جوجل يكافئ «المحتوى للناس أولاً»</td><td>مراجعة التيم ليدر بأسئلة جوجل الأربعة</td><td class="ef">مستمر</td><td><span class="ph p3">م٣</span></td><td class="ref">إشارة ٧</td></tr>
+        <tr><td>و١١</td><td><b>ما نعرف وين إحنا في ChatGPT وGemini</b></td><td>Copilot: ٥٣ استشهاد في ٧ أيام · زيارات الذكاء الاصطناعي ٣٦ في ٩٠ يوم · ChatGPT وGemini بلا أداة رسمية</td><td>اختبار شهري يدوي: ٢٠ سؤال سعودي</td><td class="ef">مستمر</td><td><span class="ph p3">م٣</span></td><td class="ref">ذ-ب · ك١١</td></tr>
+        <tr><td>و١٢</td><td><b>القارئ ما يرجع</b></td><td>العائدين ٣٣٦ (تفاعلهم ٧٢٪) · Clarity: عائدين ١٩٫٨٪</td><td>متابعة العميل · النشرة · «اقرأ أيضاً» أذكى. نقيسه بعد ج١ لأن رقم «الجديد» منفوخ</td><td class="ef">متوسط</td><td><span class="ph p3">م٣</span></td><td class="ref">غ٦</td></tr>
+        <tr><td>و١٣</td><td><b>ما نعرف ليش المراكز الأولى ما تنضغط</b></td><td>CTR المراكز ١–٣ = ١٫١٩٪ · السحب الآلي ممنوع</td><td>شخص يبحث يدوياً بإعدادات السعودية عن أهم ٢٠ كلمة ويسجّل: ملخّص ذكي؟ نتائج مميّزة؟ عنوان المنافس؟</td><td class="ef">صغير</td><td><span class="ph p1">م١</span></td><td class="ref">٣ · ذ٦ · ٢٫٦</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="tariq" style="border-color:#fde68a">
+    <h2>مهام المحتوى — لطارق <span class="cnt">١١ مهمة · شغل كتابة لا كود</span></h2>
+    <p style="font-size:14px;color:#475569;margin:4px 0 10px">كل مهمة هنا يسوّيها فريق المحتوى. الرقم بين القوسين يربطها ببندها في الخطة.</p>
+    <table>
+      <thead><tr><th>#</th><th>المهمة</th><th>إيش يسوّي بالضبط</th><th>البند</th></tr></thead>
+      <tbody>
+        <tr><td>١</td><td><b>عناوين أقصر وبلهجة السوق</b></td><td>٢٢٩ من ٢٣٤ عنوان فوق ٦٠ حرف، و١٥٧ فوق ٧٠. نبدأ بالمقالات اللي ظهورها كثير ونقراتها قليلة</td><td>د٤</td></tr>
+        <tr><td>٢</td><td><b>روابط بين المقالات</b></td><td>٤٤ مقال ما تربط لأي مقال ثاني، و١٠٢ مقال ما يربط لها أحد. عند كل نشر: رابط من ٢–٣ مقالات قديمة قريبة للمقال الجديد</td><td>د٣</td></tr>
+        <tr><td>٣</td><td><b>فرص الأسبوع</b></td><td>مقالات قريبة من الصفحة الأولى في جوجل — نحسّنها بدل ما نكتب جديد</td><td>و٣</td></tr>
+        <tr><td>٤</td><td><b>قبل ما تكتب: لا تنافس مقالنا</b></td><td>لو فيه مقال عندنا على نفس الموضوع: نقوّيه أو نختار زاوية ثانية</td><td>و٢</td></tr>
+        <tr><td>٥</td><td><b>دليل السوق السعودي للكتّاب</b></td><td>قاموس كلمات يراجعه سعودي · العملة · الأمثلة المحلية</td><td>و٤</td></tr>
+        <tr><td>٦</td><td><b>«الجواب أوّلاً»</b></td><td>أوّل فقرة تجاوب السؤال مباشرة، ومعها معلومة ما يعطيها ملخّص جوجل الذكي (سعر محلي · تجربة العميل · رقم)</td><td>و٥</td></tr>
+        <tr><td>٧</td><td><b>تقويم المواسم السعودية</b></td><td>نحدّث المقال الموجود قبل الموسم بأسابيع بدل ما نكتب مقال جديد ينافسه</td><td>و٦</td></tr>
+        <tr><td>٨</td><td><b>مراجعة الجودة</b></td><td>التيم ليدر يراجع المقالات بأسئلة جوجل الأربعة للمحتوى المفيد</td><td>و١٠</td></tr>
+        <tr><td>٩</td><td><b>اختبار الذكاء الاصطناعي الشهري</b></td><td>٢٠ سؤال سعودي في ChatGPT وGemini: هل يذكرونا؟</td><td>و١١</td></tr>
+        <tr><td>١٠</td><td><b>فحص نتائج جوجل يدوياً</b></td><td>أهم ٢٠ كلمة بإعدادات السعودية: إيش يطلع فوقنا (ملخّص ذكي؟ نتائج مميّزة؟)</td><td>و١٣</td></tr>
+        <tr><td>١١</td><td><b>تصحيح نصوص صغيرة</b></td><td>«وجهنك» · مسافة مزدوجة · «desrve» · وصف ريل ٣٢٤ حرف · لقب الكاتب «مدونتي — الكاتب» — على الإنتاج، بإذن خالد</td><td>د٩</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="retest" style="border-color:#bbf7d0">
+    <h2>اختبارات بعد النشر <span class="cnt">كل اختبار محلي يتعاد لايف على الإنتاج</span></h2>
+    <p style="font-size:14px">خالد (٢ أكتوبر): ما ننشر لين تخلص الخطة. بعد البوش نمرّ على هذي القائمة بنداً بنداً في Playwright، ونسجّل الناتج الخام. <b>الترتيب: GTM أوّل، بعده الكود.</b></p>
+    <table>
+      <thead><tr><th>#</th><th>البند</th><th>الاختبار الحيّ</th><th>النتيجة المتوقّعة</th></tr></thead>
+      <tbody>
+        <tr><td>١</td><td>ج١</td><td>نشر نسخة GTM (مساحة 24: وسم «GA4 - Browser events» + ٢٧ متغيّر + وسم جوجل على Initialization)</td><td>Versions يعرض نسخة جديدة Live</td></tr>
+        <tr><td>٢</td><td>ج١</td><td>فتح مقال على www.modonty.com وقراءة طلبات <code>g/collect</code></td><td><code>article_view</code> بنفس <code>cid</code> و<code>sid</code> حق <code>page_view</code>، و<code>ep.client_db_id</code> موجود، و<code>cid</code> ما تغيّر</td></tr>
+        <tr><td>٣</td><td>ج١</td><td>صفحة عميل · ريل · /users/register · دخول بالإيميل · ضغط رابط في /accounts</td><td><code>client_view</code> · <code>reel_view</code> · <code>signup_view</code> · <code>login_start</code> · <code>outbound_click</code> تطلع في <code>g/collect</code></td></tr>
+        <tr><td>٤</td><td>ج١</td><td>تبويب الشبكة: لا طلب إلى <code>/api/track/web-vitals</code></td><td>صفر طلبات، و<code>web_vitals</code> يطلع في <code>g/collect</code></td></tr>
+        <tr><td>٥</td><td>ج١</td><td>بعد ٤٨ ساعة: تقرير القنوات ٣٠ يوماً (سكربت ga4-diag)</td><td>«Unassigned» ينزل من ٩١٪ إلى قرب الصفر · رقم «مشاهدة صفحة» في الفوتر ما يتغيّر</td></tr>
+        <tr><td>٦</td><td>ج١</td><td>تسجيل الضغطة في قاعدة البيانات</td><td><code>POST /api/track/cta-click</code> = 200 وصفّ جديد في CTAClick</td></tr>
+        <tr><td>٧</td><td>ج٤</td><td>مصدر الصفحة على الإنتاج</td><td>سكربت Clarity واحد (من GTM) وبلا خطأ <code>reading 'v'</code> في الكونسول</td></tr>
+        <tr><td>٨</td><td>ج٢</td><td>ضغط واتساب حقيقي، ثم GA4 › Key events</td><td><code>booking_whatsapp_click</code> يُحسب حدثاً رئيسياً</td></tr>
+        <tr><td>٩</td><td>ج٣</td><td>تقرير بُعد «Test data filter name» بعد ٢٤–٣٦ ساعة</td><td>المطابق localhost/vercel/IP فقط · بعدها نحوّل الفلتر Active</td></tr>
+        <tr><td>١٠</td><td>ج٨</td><td>أدمن الإنتاج بحساب الأدمن: منيو المبيعات › طلبات التواصل</td><td>الأرقام تطابق قاعدة الإنتاج (٥٢ · ٥٠ جديد وقت الدراسة) والرقم الأحمر = عدد «جديد»</td></tr>
+        <tr><td>١١</td><td>ج٨</td><td>تغيير حالة طلب ثم إرجاعه، وفتح سجلّ التدقيق</td><td>العدّاد يتحدّث بعد التحميل، وسطر «contactRequest.status» في السجلّ</td></tr>
+        <tr><td>١٢</td><td>ج٨</td><td>حساب مندوب (sales.check) · وحساب EDITOR</td><td>المندوب يرى طلبات عملائه فقط · المحرّر يرى «هذه الصفحة للمبيعات والأدمن»</td></tr>
+        <tr><td>١٣</td><td>ب١</td><td>www.modonty.com/users/login: ضغط Google ثم زر الرجوع في المتصفّح (جوال وكمبيوتر)</td><td>الزر يرجع «تسجيل الدخول بـ Google» مفتوح، ونموذج الإيميل ما يتقفل أبداً</td></tr>
+        <tr><td>١٤</td><td>ب١</td><td>نفس الشي في /users/register</td><td>نفس النتيجة · وClarity بعد أسبوع: لا «ضغط غاضب» على أزرار الدخول</td></tr>
+        <tr><td>١٥</td><td>د١</td><td>curl لصفحة عميل له ريلز + تبويب /reels له + صفحة ريل</td><td>روابط &lt;a href="/reels/…"&gt; في HTML السيرفر · التبويب index,follow · السهمان موجودان</td></tr>
+        <tr><td>١٦</td><td>د١</td><td>Search Console › فحص الرابط › «طلب فهرسة» للـ١١ ريل غير المفهرسة (القائمة في 08-tools.html)</td><td>بعد أسبوع: URL Inspection يعطي «مفهرس» و referringUrls &gt; ٠</td></tr>
+        <tr><td>١٧</td><td>د١</td><td>الكونسول › تصميم موقعي: مفتاح «الريلز»، ثم إطفاؤه</td><td>القسم يختفي من صفحة العميل بعد الحفظ (لم يُفحص محلياً: الكونسول لم يكن شغّالاً)</td></tr>
+        <tr><td>١٨</td><td>ب٢</td><td>&lt;title&gt; لمقال من مدونتي على الإنتاج · وبعد أسبوعين بحث جوجل site:modonty.com «مدونتي | مدونتي»</td><td>اسم الماركة مرّة واحدة · لا نتائج بالتكرار</td></tr>
+        <tr><td>١٩</td><td>ج٥ · ج٦</td><td>Clarity › Filters بعد ٢٤ ساعة من النشر</td><td>أحداث reel_* ظاهرة كـ«Smart events» · وسوم page_type · client · author قابلة للفلترة · والطابور فرغ (window.clarity.q غير معرّف بعد تحميل Clarity)</td></tr>
+        <tr><td>٢٠</td><td>د٦</td><td>Search Console › Pages › «Indexed, though blocked by robots.txt» بعد ٢–٤ أسابيع</td><td>الـ٤٥ تنزل (تنتقل إلى «Excluded by noindex»)</td></tr>
+        <tr><td>٢١</td><td>د٧</td><td>٣ أكتوبر: «طلب فهرسة» لـ /clients/as-clinics · وبعد أسبوع URL Inspection للعشرة</td><td>«مفهرس» أو على الأقل زحف جديد بعد ٢ أكتوبر بلا noindex</td></tr>
+        <tr><td>٢٢</td><td>ب٣</td><td>بعد نشر GTM: مصدر الصفحة على الإنتاج</td><td><code>typeof fbq === "undefined"</code> ولا طلب لـ connect.facebook.net</td></tr>
+        <tr><td>٢٣</td><td>أ٦</td><td>curl مرّتين لصفحة عميل بعد ساعة من النشر</td><td><code>X-Vercel-Cache: HIT</code> و<code>Age</code> بالدقائق الكثيرة لا يرجع صفراً · أوّل بايت &lt; ٥٠٠ms</td></tr>
+        <tr><td>٢٤</td><td>أ٦</td><td>الكونسول: اعتماد تقييم أو تعديل سؤال أو صورة معرض، ثم فتح صفحة العميل</td><td>التغيير ظاهر فوراً (يثبت أن الكونسول يحدّث كاش مدونتي)</td></tr>
+        <tr><td>٢٥</td><td>Vercel</td><td>Vercel › Usage بعد ٧ أيام من النشر: ISR Writes · Function Invocations (مقارنة بالأسبوع قبله)</td><td>نزول واضح في الكتابات — صار لا شيء في مدونتي بـ«minutes» (كان ١١ موضعاً)، والتحديث بالوسم عند التعديل</td></tr>
+        <tr><td>٢٦</td><td>ج٩</td><td>أدمن الإنتاج › KPI › Speed</td><td>الأرقام تطلع (لا رسالة «Couldn't reach») — يعني مفتاح <code>GOOGLE_PAGESPEED_API_KEY</code> موجود في مشروع الأدمن على Vercel · وتطابق PageSpeed Insights › «Discover what your real users are experiencing» لـ modonty.com</td></tr>
+        <tr><td>٢٧</td><td>أ٢ · أ٤</td><td>بعد نشر GTM: الشبكة في الرئيسية ومقال + PageSpeed جوال</td><td>لا طلب لـ connect.facebook.net ولا analytics.tiktok.com ولا sc-static.net · gtm.js الحيّ بلا fbevents/tiktok/snap · TBT أقلّ من ٣٩٠–٤٢٠ms (قياس ٢ أكتوبر)</td></tr>
+        <tr><td>٢٨</td><td>أ١</td><td>مصدر مقال على الإنتاج + PageSpeed جوال لنفس المقال</td><td>&lt;article&gt; خارج أي <code>&lt;template id="P:…"&gt;</code> · preload الصورة في &lt;head&gt; · «Resource load delay» أقلّ بكثير من ١٬٩١٠ms · LCP المختبر أقلّ من ٤٫١ث · وبعد ٢٨ يوماً: KPI › Speed (CrUX) الجوال أقلّ من ٤٫٩ث · وأرقام الإعجاب/المشاهدة تتحدّث</td></tr>
+        <tr><td>٢٩</td><td>د٥</td><td><code>https://www.modonty.com/دكتور-علاء-الدين-بدوي</code> + /about + /trending</td><td>الأول 308 → /clients/دكتور-علاء-الدين-بدوي ثم 200 · الصفحات الحقيقية 200 بلا تحويل · Search Console › 404 ينقص بعد إعادة الزحف</td></tr>
+        <tr><td>٣٠</td><td>هـ٣</td><td>مقال على الإنتاج (جوال وكمبيوتر): اضغط صورة الغلاف</td><td>تفتح كبيرة وكاملة داخل الشاشة · تقفل بـ✕ وEsc · وبعد ٢٤ ساعة: Clarity › Smart events فيه cover_zoom، وضغطات «بلا استجابة» على الغلاف تنزل</td></tr>
+        <tr><td>٣١</td><td>ب٧</td><td>كونسول الإنتاج على ٥ صفحات (الرئيسية · مقال · عميل · /audio · /reels) بعد نشر GTM والكود</td><td>هيدر CSP بلا <code>unsafe-eval</code> · صفر مخالفات Clarity وGA4 · صفر بكسلات (فيسبوك/تيك توك/سناب) — كان ١١٦ مخالفة</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="tools">
+    <h2>الأدوات وإيش كشفت كل وحدة <span class="cnt">١٥ أداة</span></h2>
+    <p style="font-size:14px">كل خلل في الخطة جا من أداة من هذي. العمود الأخير يقول وين الأداة نفسها ما تشوف، عشان ما نبني على رقم أكبر من حدوده.</p>
+    <table>
+      <thead><tr><th>الأداة</th><th>إيش فحصنا فيها</th><th>الخلل اللي كشفته (بالرقم)</th><th>البنود</th><th>حدود الأداة</th></tr></thead>
+      <tbody>
+        <tr><td><b>Search Console API (٩٠ يوم)</b></td><td style="font-size:13px">الكلمات · الصفحات · الدول · الأجهزة</td><td>CTR السعودية ٠٫٧٥٪ مقابل مصر ٢٫٤٩٪ · CTR المراكز ١–٣ = ١٫١٩٪ · ٢١٩ كلمة قريبة من الصفحة الأولى · ١١٧ كلمة ظهور بلا نقرات · ٥٦ كلمة تتنافس عليها مقالاتنا · ٥٤٪ من النقرات من مقال واحد موسمي · Discover تحت حدّ التقرير</td><td class="ref">د٤ · و٢ · و٣ · و٥ · و٦ · و١٣</td><td style="font-size:12px;color:#64748b">يخفي الكلمات النادرة · تأخير ٢–٣ أيام · ما يفصل ملخّصات الذكاء الاصطناعي</td></tr>
+        <tr><td><b>URL Inspection API</b></td><td style="font-size:13px">حالة كل ريل وصفحة عميل عند جوجل</td><td>١١ من ٢٣ ريل مو مفهرسة (٨ جوجل ما يعرفها) · ١٨ صفحة عميل بقراءة noindex قديمة</td><td class="ref">د١ · د٧</td><td style="font-size:12px;color:#64748b">٢٬٠٠٠ فحص يومياً</td></tr>
+        <tr><td><b>Search Console (الواجهة)</b></td><td style="font-size:13px">الفهرسة · الروابط · التحسينات · الأمان</td><td>٤٥ صفحة محجوبة لكنها مفهرسة · ٨٥ رابط 404 · ٦٨ رابط خارجي منها ٦٤ من jbrseo · قوّة الروابط الداخلية للفوتر · خريطتان بدون www</td><td class="ref">د٢ · د٣ · د٥ · د٦ · د٨</td><td style="font-size:12px;color:#64748b">بيانات الفهرسة متأخّرة (آخر تحديث ٢١ سبتمبر)</td></tr>
+        <tr><td><b>GA4 Data API (٩٠ يوم)</b></td><td style="font-size:13px">الجلسات · الأحداث · الدول · المدن</td><td><b>٨٢٪ جلسات وهمية</b> · الواتساب مو «تحويل» · السعودي يقرا ٥٧ ث مقابل ١٣٨ ث للمصري · جدة قبل الرياض · العائدين ٣٣٦ · جلسات اختبار · ٣٦ زيارة من الذكاء الاصطناعي</td><td class="ref">ج١ · ج٢ · ج٣ · و٤ · و١١ · و١٢</td><td style="font-size:12px;color:#64748b">أرقامه مو موثوقة لين ينصلح ج١ · ما يعطي كلمات البحث</td></tr>
+        <tr><td><b>Microsoft Clarity</b></td><td style="font-size:13px">خرائط الضغط والتمرير · التسجيلات · الإعدادات · AI Visibility</td><td>صورة الغلاف ٤٩–٦٢٪ من الضغطات ولا ترد · أسماء الباقات بلا روابط · ٣٫٩٪ يوصلون آخر المقال · ٤٠٠ دخول و٣٩٨ خروج · ضغط ميت ١٦٫٤٪ · <b>صفحة الدخول تقفل نفسها</b> (تسجيل) · خطأ JS متكرّر · Clarity متحمّل مرّتين · INP ٤١٠ms · Copilot استشهد بنا ٥٣ مرة في ٧ أيام</td><td class="ref">هـ١–هـ٥ · ب١ · ب٣ · ب٤ · ج٤ · أ٢ · ج٥ · ج٦</td><td style="font-size:12px;color:#64748b">يتحمّل متأخّر من GTM فما يحسب الخروج السريع · زيارات الفريق مخلوطة · يخفي الأرقام افتراضياً</td></tr>
+        <tr><td><b>PageSpeed Insights (١٤ فحص) + CrUX</b></td><td style="font-size:13px">٧ أنواع صفحات × جوال وكمبيوتر · بيانات الزوّار الحقيقيين</td><td>LCP الجوال ٤٫٩–٥٫٢ ث (الحدّ ٢٫٥) · CSS يحجب الرسم · JS ثقيل ومهام طويلة · DOM كبير · الريلز CLS ٠٫٩٧٥ · استجابة صفحة العميل ١–١٫٧ ث · «الممارسات» ٧٣ · تباين ألوان</td><td class="ref">أ١–أ٧ · هـ٦</td><td style="font-size:12px;color:#64748b">المختبر جهاز واحد وشبكة واحدة · أغلب الصفحات بلا بيانات زوّار خاصة</td></tr>
+        <tr><td><b>Rich Results Test</b></td><td style="font-size:13px">مقال عميل طبي · صفحة عيادة</td><td>كلها صالحة · ناقص priceRange (اختياري) · خطأ إملائي «desrve» · تحذير mainEntityOfPage</td><td class="ref">د٩</td><td style="font-size:12px;color:#64748b">يفحص صفحة وحدة كل مرة</td></tr>
+        <tr><td><b>Google Safe Browsing</b></td><td style="font-size:13px">الموقع كامل</td><td>سليم — ما فيه خلل</td><td class="ref">—</td><td style="font-size:12px;color:#64748b">—</td></tr>
+        <tr><td><b>رؤوس الأمان (قراءة مباشرة من الموقع)</b></td><td style="font-size:13px">HSTS · CSP · غيرها</td><td>سياسة الأمان CSP «Report-Only» وفيها unsafe-inline/unsafe-eval · تعارض مع بكسل فيسبوك</td><td class="ref">ب٣ · ب٧</td><td style="font-size:12px;color:#64748b">—</td></tr>
+        <tr><td><b>Bing Webmaster Tools</b></td><td style="font-size:13px">البحث · AI Performance · الروابط · تقرير SEO</td><td>نطاقان فقط يربطون لنا · مسجّل بدون www · وصف قصير في ٩ صفحات · ٤ صور بلا alt · Copilot استشهد بنا ١٬٤٠٠ مرة في ٣ أشهر</td><td class="ref">د٢ · د٨ · و١١</td><td style="font-size:12px;color:#64748b">مصدر Copilot فقط، مو ChatGPT ولا Gemini</td></tr>
+        <tr><td><b>فحص الموقع الحيّ (سكربت قراءة على ٢٣٤ مقال)</b></td><td style="font-size:13px">العناوين · البيانات المنظّمة · الروابط الداخلية · hreflang</td><td>٢٢٩ عنوان فوق ٦٠ حرف · ٤٧ فيها «مدونتي» مكرّرة · hreflang لنفس الرابط · الكاتب «المنظمة» في الكل · ٤٤ مقال بلا رابط داخلي · ١٠٢ يتيم</td><td class="ref">ب٢ · د٣ · د٤ · د١٠ · س١٢</td><td style="font-size:12px;color:#64748b">—</td></tr>
+        <tr><td><b>قاعدة الإنتاج (قراءة فقط، بموافقتك)</b></td><td style="font-size:13px">سجلّ التواصل BookingRequest</td><td>٥٢ تواصل · ١٩ من ٢٠ من مقالات العملاء · اليوم الوطني ٠ · <b>٥٠ من ٥٢ حالتها «جديد»</b></td><td class="ref">ج٨ · و٧ · و٩</td><td style="font-size:12px;color:#64748b">ضغطة الواتساب = فتح المحادثة بس</td></tr>
+        <tr><td><b>قراءة الكود (بلا تعديل)</b></td><td style="font-size:13px">مدونتي + الأدمن</td><td>محلّل الصفحات يوصي بعدد كلمات · دليل الكتّاب يمنع الرابط العربي · صورة الغلاف بلا رابط · ما فيه حقل كلمة مستهدفة · GTM يتحمّل lazyOnload · font-display موجود أصلاً · إصلاح GA4 منفّذ من ٢٦ يونيو وما كفى</td><td class="ref">ب٥ · ب٦ · هـ٣ · و١ · ج١ · أ١</td><td style="font-size:12px;color:#64748b">—</td></tr>
+        <tr><td><b>الوثائق الرسمية (Google · web.dev · Next.js · Microsoft · W3C · NN/g)</b></td><td style="font-size:13px">مراجعة كل حل</td><td>صحّحت ٦ حلول: font-display · GA4 · سياسة الأمان · الروابط من العملاء (سبام) · بكسل فيسبوك · حجم الأزرار</td><td class="ref">المراجعة الثانية</td><td style="font-size:12px;color:#64748b">—</td></tr>
+        <tr><td><b>طلب الموقع بهوية روبوتات الذكاء الاصطناعي</b></td><td style="font-size:13px">٦ روبوتات (GPTBot · ClaudeBot · …)</td><td>سليم — كلها ترجع 200 بالنص كامل</td><td class="ref">—</td><td style="font-size:12px;color:#64748b">—</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section style="border-color:#bbf7d0">
+    <h2>كيف نعرف إننا نجحنا</h2>
+    <p style="font-size:14px">رقم اليوم من الدراسة. والهدف حدّ جوجل الرسمي حيث يوجد. اللي ما له حدّ رسمي <b>نتابعه شهرياً بلا رقم مختلق</b>.</p>
+    <table>
+      <thead><tr><th>المقياس</th><th>اليوم</th><th>الهدف</th><th>المصدر</th></tr></thead>
+      <tbody>
+        <tr><td>LCP جوال (زوّار حقيقيين)</td><td>٤٫٩–٥٫٢ ث</td><td>≤ ٢٫٥ ث (حدّ جوجل «جيد»)</td><td>CrUX · PageSpeed</td></tr>
+        <tr><td>INP</td><td>٤١٠ms</td><td>≤ ٢٠٠ms (حدّ جوجل)</td><td>Clarity</td></tr>
+        <tr><td>CLS الريلز كمبيوتر</td><td>٠٫٩٧٥</td><td>≤ ٠٫١ (حدّ جوجل)</td><td>PageSpeed</td></tr>
+        <tr><td>جلسات GA4 الوهمية</td><td>٨٢٪</td><td>٠٪</td><td>GA4</td></tr>
+        <tr><td>ريلز مفهرسة</td><td>١٢ من ٢٣</td><td>كلها</td><td>URL Inspection</td></tr>
+        <tr><td>مقالات بلا رابط داخلي · مقالات يتيمة</td><td>٤٤ · ١٠٢</td><td>٠ · ٠</td><td>فحص الموقع الحيّ</td></tr>
+        <tr><td>عناوين فيها «مدونتي» مكرّرة</td><td>٤٧</td><td>٠</td><td>فحص الموقع الحيّ</td></tr>
+        <tr><td>CTR السعودية</td><td>٠٫٧٥٪ (مصر ٢٫٤٩٪)</td><td>نتابعه شهرياً</td><td>Search Console</td></tr>
+        <tr><td>جوال يوصل ٩٠٪ من المقال</td><td>٣٫٩٪</td><td>نتابعه شهرياً</td><td>Clarity</td></tr>
+        <tr><td>تواصل من المقالات</td><td>٢٠ (من ٨ يونيو)</td><td>نتابعه شهرياً لكل مقال</td><td>BookingRequest</td></tr>
+        <tr><td>نطاقات خارجية تربط لنا</td><td>٢ (Bing)</td><td>نتابعه شهرياً</td><td>Bing · Search Console</td></tr>
+        <tr><td>استشهاد Copilot</td><td>٥٣ في ٧ أيام</td><td>نتابعه شهرياً</td><td>Clarity AI Visibility</td></tr>
+        <tr><td>زيارات قناة «AI Assistant»</td><td>٣٣ جلسة في ٩٠ يوم</td><td>نتابعه شهرياً (بعد ج١)</td><td>GA4</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="questions" style="border-color:#fde68a">
+    <h2>أسئلتي لك <span class="cnt">٢٣ سؤال · كل اللي أحتاجه منك هنا</span></h2>
+    <p style="font-size:14px">جمعت هنا <b>كل</b> الأسئلة المفتوحة في الملفات ٠١–٠٩ (خانات «رأي خالد»)، مرتّبة ومعها توصيتي ودليلها. جوابك هنا يغني عن تلك الخانات.</p>
+    <p style="font-size:14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px"><b>أسرع طريقة:</b> لو موافق على توصياتي قل «<b>اعتمد التوصيات</b>»، ويبقى بس اللي يحتاج اسم أو جواب منك: <b>س٢ · س٨ · س١٧ · س١٩ · س٢٠</b> (٥ أسئلة).</p>
+    <table>
+      <thead><tr><th>#</th><th>السؤال</th><th>توصيتي</th><th>يفتح</th><th>جوابك</th></tr></thead>
+      <tbody>
+        <tr><td colspan="5" style="background:#f8fafc;font-weight:700">أ · اعتماد الخطة</td></tr>
+        <tr><td>س١</td><td>نعتمد ترتيب المراحل: م١ القياس والأعطال ← م٢ السرعة والتحويل ← م٣ أدوات الكاتب؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · تعديل</span></td><td><b>نعم.</b> بدون قياس سليم ما نعرف إن م٢ نجحت (GA4 اليوم ٨٢٪ وهمي)</td><td class="ref">كل الخطة</td><td><span class="tag ok">نعم، العدّاد أوّل — خالد ٢ أكتوبر</span></td></tr>
+        <tr><td>س٢</td><td>مين من فريق المحتوى يمسك مسار المحتوى (و٣ فرص الأسبوع · و٤ دليل السعودية · و٥ القالب · و٦ المواسم)؟<br><span style="font-size:12px;color:#64748b">الخيارات: اسم</span></td><td>يحتاج اسم منك — ما أقدر أقرّره</td><td class="ref">مسار المحتوى في م١</td><td class="empty">—</td></tr>
+        <tr><td>س٣</td><td>قاعدة الواجهة تقول الديسكتوب أوّل ثم الجوال. ٦٢٪ من زوّارنا جوال. نستثني التحويل؟<br><span style="font-size:12px;color:#64748b">الخيارات: نلتزم بالقاعدة · نستثني التحويل</span></td><td><b>نلتزم بالقاعدة</b>، بس مكان زر العميل في أوّل ربع المقال (هـ١) ينطبق على الاثنين فيدخل الحين، والشريط الثابت ينتظر مرحلة الجوال</td><td class="ref">هـ١</td><td class="empty">—</td></tr>
+        <tr><td>س٤</td><td>اتجاه التحويل (هـ١–هـ٥): الزر أعلى المقال · تكبير صورة الغلاف · زر «اطلب» على الباقات · «الخطوة الجاية» · زر «انسخ». موافق على الاتجاه؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · بعضها</span></td><td><b>نعم</b>، وكل واحد ينبني على السيرفر المحلي وتشوفه حيّ قبل الاعتماد (بلا ملفات موكب)</td><td class="ref">هـ١–هـ٥</td><td class="empty">—</td></tr>
+        <tr><td colspan="5" style="background:#f8fafc;font-weight:700">ب · حسابات وأدوات</td></tr>
+        <tr><td>س٥</td><td>نفتح حساب Google Ads عشان Keyword Planner (أرقام بحث السعوديين)؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · لا</span></td><td><b>نعم.</b> جوجل يسمّيه «أداة مجانية» بعد إنشاء حملة. هل الحملة لازم تصرف؟ ما ذكروه، فنتأكّد عند الفتح قبل أي دفع</td><td class="ref">و٣ · و٤</td><td class="empty">—</td></tr>
+        <tr><td>س٦</td><td>نقدّم على Google Trends API التجريبي؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · لا</span></td><td><b>نعم.</b> التقديم مجاني، والقبول بيد جوجل</td><td class="ref">و٦</td><td class="empty">—</td></tr>
+        <tr><td>س٧</td><td>مزوّد بيانات مدفوع (Semrush · DataForSEO · SerpApi)؟<br><span style="font-size:12px;color:#64748b">الخيارات: الحين · بعدين · لا</span></td><td><b>بعدين.</b> Search Console يغطّي احتياجنا الحين، وأسعارهم ما اتفحصت</td><td class="ref">و٣ · و٨</td><td class="empty">—</td></tr>
+        <tr><td>س٨</td><td>بكسل فيسبوك: مستخدم في إعلانات Meta؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · لا</span></td><td>يحتاج جوابك. لو <b>لا</b>: يتشال من GTM (سكربت أقل وأخطاء أقل)</td><td class="ref">ب٣ · أ٤</td><td><span class="tag ok">لا — يوقف (خالد ٢ أكتوبر)</span></td></tr>
+        <tr><td>س٩</td><td>استبعاد زيارات الفريق (رابط «أنا من الفريق»): متى نرجع له؟<br><span style="font-size:12px;color:#64748b">الخيارات: م١ · لاحقاً</span></td><td><b>م١</b>، لأنه يصحّح أرقام Clarity اللي نقيس بها نجاح م٢. أجّلته بقرارك</td><td class="ref">ج٧</td><td class="empty">—</td></tr>
+        <tr><td colspan="5" style="background:#f8fafc;font-weight:700">ج · السيو</td></tr>
+        <tr><td>س١٠</td><td>صيغة عنوان المقال اليوم «العنوان - اسم العميل | مدونتي» (٢٢٩ من ٢٣٤ فوق ٦٠ حرف). نشيل اسم العميل من العنوان؟<br><span style="font-size:12px;color:#64748b">الخيارات: نشيله · نخلّيه · لبعض العملاء</span></td><td><b>نشيله من العنوان</b> ويبقى داخل الصفحة. جوجل: «عنوان وصفي ومختصر». بس العميل ممكن يبي اسمه — القرار تجاري</td><td class="ref">د٤ · ب٢</td><td class="empty">—</td></tr>
+        <tr><td>س١١</td><td>نحذف hreflang (٩ وسوم كلها لنفس الرابط)؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · لا</span></td><td><b>نعم.</b> جوجل: hreflang «إذا عندك نسخ متعدّدة» من الصفحة، وما عندنا</td><td class="ref">د١٠</td><td class="empty">—</td></tr>
+        <tr><td>س١٢</td><td>نظهر اسم الكاتب الحقيقي (Person) مع صفحة تعريف بدل «المنظمة» في ٢٣٤ مقال؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · لا</span></td><td><b>نعم بشرط</b>: الكاتب موافق على ظهور اسمه، والمعلومات حقيقية. جوجل يمنع الأسماء والمؤهلات المختلقة</td><td class="ref">ت٣ · ١٦</td><td class="empty">—</td></tr>
+        <tr><td>س١٣</td><td>رابط من مواقع العملاء لنا: نقترحه عليهم؟<br><span style="font-size:12px;color:#64748b">الخيارات: نقترحه اختيارياً · ما نطلبه</span></td><td><b>نقترحه اختيارياً فقط</b>، ومن حقّهم يحطّون <code>sponsored</code>. الاشتراط في العقد سبام عند جوجل</td><td class="ref">د٢</td><td class="empty">—</td></tr>
+        <tr><td>س١٤</td><td>زر مشاركة سناب شات (يوصل لـ٧٣٪ من السعوديين)؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · لا</span></td><td><b>نعم</b>، بشرط ما يضيف سكربت ثقيل — طريقة التركيب تتحقّق من وثائق Snap قبل التنفيذ</td><td class="ref">١٤</td><td class="empty">—</td></tr>
+        <tr><td colspan="5" style="background:#f8fafc;font-weight:700">د · المحتوى والكتّاب</td></tr>
+        <tr><td>س١٥</td><td>حقل «الكلمة المستهدفة» إلزامي على كل مقال؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · اختياري</span></td><td><b>إلزامي.</b> بدونه ما نقيس نجاح المقال ولا ننبّه على مقالين بنفس الكلمة (٥٦ كلمة اليوم)</td><td class="ref">و١ · و٢ · و٨</td><td class="empty">—</td></tr>
+        <tr><td>س١٦</td><td>نعتمد الإشارات السبع للكاتب (٢٫١) كما راجعناها على وثائق جوجل؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · تعديل</span></td><td><b>نعم.</b> وحدّ «قريب من الصفحة الأولى» ٨–٢٠ اختيارنا مو رقم جوجل</td><td class="ref">و٨</td><td class="empty">—</td></tr>
+        <tr><td>س١٧</td><td>مين الشخص السعودي اللي يراجع قاموس الكلمات (مصري ← سعودي)؟<br><span style="font-size:12px;color:#64748b">الخيارات: اسم</span></td><td>يحتاج اسم. ما فيه مصدر رسمي للقاموس، فلازم مراجع سعودي</td><td class="ref">و٤</td><td class="empty">—</td></tr>
+        <tr><td>س١٨</td><td>كاتب مقالات العملاء ينقاس بالتواصل لكل ١٠٠ نقرة، مو بالنقرات بس؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · لا</span></td><td><b>نعم.</b> ١٩ من ٢٠ تواصل جا من مقالات العملاء، واليوم الوطني (أعلى زيارات) جاب ٠</td><td class="ref">و٧</td><td class="empty">—</td></tr>
+        <tr><td>س١٩</td><td>الحدّ الأدنى للظهور قبل ما نحكم على مقال إنه «نجح في الخليج»<br><span style="font-size:12px;color:#64748b">الخيارات: رقم</span></td><td><b>ما أخمّن رقم.</b> أحسب توزيع الظهور الخليجي على مقالاتنا وأعرض عليك الخيارات بالأرقام</td><td class="ref">و٩</td><td class="empty">—</td></tr>
+        <tr><td>س٢٠</td><td>مين يحدّث حالة التواصل (جديد ← تواصل ← صار عميل)؟ اليوم ٥٠ من ٥٢ «جديد»<br><span style="font-size:12px;color:#64748b">الخيارات: المندوب · العميل في الكونسول · الاثنين</span></td><td>يحتاج قرارك. بدونه ما نعرف أي مقال جاب <b>عميل</b> فعلاً</td><td class="ref">ج٨</td><td><span class="tag ok">المندوب في الأدمن</span> <span style="font-size:12px;color:#64748b">٢ أكتوبر</span></td></tr>
+        <tr><td colspan="5" style="background:#f8fafc;font-weight:700">هـ · تقني</td></tr>
+        <tr><td>س٢١</td><td>GA4: نقبل إن زائر الخروج السريع ما ينحسب، مقابل أرقام نظيفة بلا جلسات وهمية؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · لا</span></td><td><b>نعم.</b> جوجل: البروتوكول «لتكملة» القياس مو بديل. والسرعة لكل الزوّار نأخذها من CrUX</td><td class="ref">ج١</td><td><span class="tag ok">نعم — خالد ٢ أكتوبر</span></td></tr>
+        <tr><td>س٢٢</td><td><code>inlineCss</code> ميزة تجريبية في Next.js. نجرّبها على test.modonty أوّل ونقيس؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · لا</span></td><td><b>نعم.</b> Next.js يقول تفيد الزائر الجديد وTailwind، وزوّارنا ٨٠٪ جدد. القياس يقرّر</td><td class="ref">أ١</td><td class="empty">—</td></tr>
+        <tr><td>س٢٣</td><td>سياسة الأمان تبقى «Report-Only» (ما نفعّلها بالـnonce)؟<br><span style="font-size:12px;color:#64748b">الخيارات: نعم · لا</span></td><td><b>نعم.</b> Next.js: الـnonce يوقف ISR والتخزين لكل الصفحات ← أبطأ وأغلى</td><td class="ref">ب٧</td><td class="empty">—</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>اللي ما نسويه — بقرار مدروس</h2>
+    <table>
+      <thead><tr><th>البند</th><th>ليش لا</th><th>المرجع</th></tr></thead>
+      <tbody>
+        <tr><td>سحب نتائج جوجل آلياً (scraping)</td><td>مخالف لشروط جوجل وسياسات السبام، ومدونتي عايشة على جوجل</td><td>٢٫٦</td></tr>
+        <tr><td>تغيير بطاقات الرئيسية بسبب الرجوع السريع</td><td>الفرضية ما ثبتت: ٢٠ من ٢٧ دخول مباشر، و١٢ منها من ٣ زوّار</td><td>ك٧</td></tr>
+        <tr><td>حذف FAQPage</td><td>نتيجته المميّزة للمواقع الحكومية والصحية بس، بس يساعد الملخّصات. نخلّيه</td><td>ت٥</td></tr>
+        <tr><td>حدّ أدنى لعدد الكلمات</td><td>جوجل: «لا يوجد عدد كلمات سحري»</td><td>إشارة ٦</td></tr>
+        <tr><td>تحويل الروابط العربية لإنجليزي</td><td>جوجل يوصي بلغة الجمهور، ومثاله رابط عربي مشفّر</td><td>ت٧</td></tr>
+        <tr><td>«روابط مكرّرة» في جوجل</td><td>الرابط بـ/ يحوّل 308 للأصل، فهي مو نسخ مكرّرة</td><td>١١</td></tr>
+        <tr><td>صفحات العملاء الـ٦ اللي ترجع 410</td><td>عملاء محذوفين، والـ410 صحيح</td><td>أ-٥</td></tr>
+        <tr><td>Discover كأساس</td><td>جوجل: زياراته «أقل قابلية للتوقّع». الشروط التقنية جاهزة، والمحتوى يتبع قالب و٥</td><td>١٢</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section>
+    <h2>مراجع أفضل الممارسات المستخدمة</h2>
+    <p style="font-size:13px;color:var(--muted)">
+      <a href="https://web.dev/articles/optimize-lcp">web.dev — Optimize LCP</a> ·
+      <a href="https://web.dev/articles/optimize-cls">web.dev — Optimize CLS</a> ·
+      <a href="https://web.dev/articles/bfcache">web.dev — bfcache</a> ·
+      <a href="https://developer.chrome.com/docs/lighthouse/performance/dom-size">Lighthouse — DOM size</a> ·
+      <a href="https://nextjs.org/docs/app/api-reference/config/next-config-js/inlineCss">Next.js — inlineCss</a> ·
+      <a href="https://nextjs.org/docs/app/guides/content-security-policy">Next.js — CSP</a> ·
+      <a href="https://nextjs.org/docs/app/guides/third-party-libraries">Next.js — Third-party (GTM)</a> ·
+      <a href="https://developers.google.com/analytics/devguides/collection/protocol/ga4">GA4 Measurement Protocol</a> ·
+      <a href="https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference">MP reference (geo/device)</a> ·
+      <a href="https://github.com/GoogleChrome/web-vitals">web-vitals library</a> ·
+      <a href="https://support.google.com/analytics/answer/10108813">GA4 data filters</a> ·
+      <a href="https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-api">Clarity client API</a> ·
+      <a href="https://learn.microsoft.com/en-us/clarity/setup-and-installation/ip-exclusion">Clarity IP blocking</a> ·
+      <a href="https://developers.google.com/search/docs/essentials/spam-policies">Google spam policies</a> ·
+      <a href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide">SEO Starter Guide</a> ·
+      <a href="https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes">Google — redirects</a> ·
+      <a href="https://developers.google.com/search/docs/crawling-indexing/links-crawlable">Google — crawlable links</a> ·
+      <a href="https://developers.facebook.com/docs/meta-pixel/advanced/">Meta Pixel — CSP</a> ·
+      <a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html">WCAG 2.2 — target size</a> ·
+      <a href="https://www.nngroup.com/articles/scrolling-and-attention/">NN/g — scrolling and attention</a>
+    </p>
+  </section>
+</main>
+</body>
+</html>

@@ -17,7 +17,9 @@ export function AskModo({ className }: AskModoProps) {
   return (
     <Link
       href="/modo-chat"
-      aria-label="اسأل مودو — افتح المحادثة"
+      // No aria-label (plan هـ٦, 2 Oct 2026): it replaced the visible text with a different
+      // sentence, so speech-input users saying what they see («اسأل مودو…») missed the link —
+      // WCAG 2.5.3 Label in Name; PageSpeed flagged it. The visible text is the name now.
       className={cn(
         "group flex items-center gap-3 rounded-lg bg-card p-3 ring-1 ring-border transition-shadow sm:gap-4 sm:px-4 sm:hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         "motion-safe:active:scale-[0.99]",

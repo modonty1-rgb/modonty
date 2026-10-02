@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>المنطلق ونقاط النقاش — نقاش المحتوى</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <nav class="top"><a href="index.html">الفهرس</a><a href="01-writers.html" aria-current="page">المنطلق ونقاط النقاش</a><a href="02-findings.html">ملاحظات Claude — Search Console والسيو التقني</a><a href="03-ai-search.html">البحث بالذكاء الاصطناعي</a><a href="04-ga4.html">GA4</a><a href="05-appendix.html">ملحق — الأرقام الخام</a><a href="06-clarity.html">Clarity — التجربة والتحويل</a><a href="07-pagespeed.html">PageSpeed — السرعة والجودة</a><a href="08-tools.html">أدوات فحص إضافية</a><a href="09-plan.html">خطة العمل</a></nav>
+  <h1>المنطلق ونقاط النقاش</h1>
+
+  <section>
+    <h2 id="s1">١ · المنطلق <span class="tag ok">متّفق عليه</span></h2>
+    <p>مدونتي قائمة على <b>المحتوى</b>. العميل يدفع اشتراكاً لأن مقالاته تظهر في جوجل وتجيب له زوّاراً.</p>
+    <table>
+      <thead><tr><th>العمود</th><th>معناه</th></tr></thead>
+      <tbody>
+        <tr><td>الكلمات المفتاحية</td><td>نختار الكلمة الصحيحة لكل مقال</td></tr>
+        <tr><td>جودة الكتابة</td><td>مقال يستحق أن يُقرأ ويُرتَّب</td></tr>
+        <tr><td>السيو</td><td>كل صفحة مكتملة السيو</td></tr>
+        <tr><td>انتظام النشر</td><td>المقالات تنزل في وقتها كل شهر</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:14px 0 6px">والسلسلة:</p>
+    <div class="chain"><span>محتوى ضعيف</span>←<span>لا نتائج في جوجل</span>←<span>العميل لا يجدّد</span></div>
+  </section>
+
+  <section>
+    <h2 id="s2">٢ · نقاط النقاش <span class="tag open">مفتوح</span></h2>
+
+    <h3 id="s3" style="font-size:15px;margin:6px 0">٢٫١ · الكاتب ما عنده معلومات تحسّن شغله (خالد، ٢ أكتوبر)</h3>
+    <p>العميل يشوف أرقامه في الكونسول. أما الكاتب فما يشوف نقاط ضعف وقوة مقالاته. الهدف: Claude يكون <b>تيم ليدر لفريق الكتّاب</b>، ويرتقي بمدونتي أكثر وأكثر.</p>
+    <table>
+      <thead><tr><th>الموجود اليوم</th><th>الناقص</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>صفحة <b>KPI › Content</b> في الأدمن: لوحة نتائج ترتّب الكتّاب. لكل كاتب نقرات وظهور وCTR وترتيب وأقوى مقال (<code>admin/app/(dashboard)/kpi/content</code>)</td>
+          <td>تقرير <b>لكل مقال</b> يقول للكاتب إيش يصلّح بالضبط</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>المقترح: صفحة لكل كاتب فيها <b>مقالاته هو</b>، مرتّبة بالأحوج للشغل، والمقالات القوية في قسم منفصل عشان يتعلّم منها. وعلى كل مقال إشارات، كل إشارة تقول له إيش يسوي. <b>نتناقش في كل إشارة لحالها.</b></p>
+
+    <div class="review">
+      <b>مراجعة ٢ أكتوبر على وثائق جوجل الرسمية:</b> ٥ إشارات صحيحة وتصحّحت طريقة قياسها، وإشارة ٦ (درجة السيو) احتاجت إصلاح فعلي، وانضافت إشارة ٧.
+      <br>قاعدة عامة من جوجل: نقيس <b>كل كلمة بحث على المقال</b>، مو متوسّط الصفحة كلها. جوجل يقول إن متوسّط الترتيب «مقياس معقّد ممكن يضلّل».
+    </div>
+
+    <div class="point">
+      <h4>إشارة ١ · ظهور كثير ونقرات قليلة <span class="tag ok">صحيحة — جوجل يوصي بها</span></h4>
+      <dl>
+        <dt>معناها</dt><dd>جوجل يعرض المقال، والقارئ يشوفه وما يحسّه يجاوب سؤاله</dd>
+        <dt>نقيسها من</dt><dd>Search Console: كلمات المقال اللي ظهورها عالي والـCTR فيها أقل من مقالات مدونتي <b>في نفس الترتيب</b>. الـCTR يتغيّر حسب الترتيب، فما نقارن مقال ترتيبه ٣ بمقال ترتيبه ٩</dd>
+        <dt>الكاتب يسوي</dt><dd>يعدّل العنوان والوصف عشان يوصفون المقال بدقّة، <b>أو</b> يعدّل المحتوى عشان يطابق الكلمات اللي يظهر عليها. ويبحث في جوجل بنفس الكلمة ويشوف المنافس إيش عنده (عنوان أقوى؟ نتائج مميّزة؟)</dd>
+        <dt>تصحيح</dt><dd>جوجل ممكن يعيد كتابة العنوان، ويستخدم الوصف «أحياناً» بس. فالعنوان لازم يطابق محتوى الصفحة، وإلا جوجل يتجاهله</dd>
+        <dt>المصدر</dt><dd><a href="https://support.google.com/webmasters/answer/17010961">Search Console Help</a> · <a href="https://developers.google.com/search/docs/monitor-debug/bubble-chart-analysis">Bubble chart</a> · <a href="https://developers.google.com/search/docs/appearance/title-link">Title links</a> · <a href="https://developers.google.com/search/docs/appearance/snippet">Snippets</a></dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+
+    <div class="point">
+      <h4>إشارة ٢ · قريب من الصفحة الأولى <span class="tag ok">صحيحة — الرقم ٨–٢٠ اختيارنا</span></h4>
+      <dl>
+        <dt>معناها</dt><dd>كلمة ترتيب المقال فيها برا أوّل النتائج، وعليها ظهور. أي تحسّن في ترتيبها يفرق كثير</dd>
+        <dt>نقيسها من</dt><dd>Search Console: ترتيب <b>كل كلمة</b> على المقال. جوجل ما يحدّد رقم، والحدّ «٨ إلى ٢٠» ممارسة متعارف عليها في السيو، مو رقم من جوجل</dd>
+        <dt>الكاتب يسوي</dt><dd>يحسّن المقال لهذي الكلمة بالذات: يجاوب السؤال أعمق، ويضيف روابط داخلية من مقالات ثانية بنص رابط يوصف المقال</dd>
+        <dt>تصحيح</dt><dd>شلت «أسئلة شائعة» كحلّ ثابت. الإجراء حسب الكلمة، مو قالب واحد لكل المقالات</dd>
+        <dt>المصدر</dt><dd><a href="https://developers.google.com/search/docs/monitor-debug/bubble-chart-analysis">Bubble chart</a> («focus on improving SEO for these queries») · <a href="https://support.google.com/webmasters/answer/7042828">Average position</a> · <a href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide">SEO Starter Guide</a></dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+
+    <div class="point">
+      <h4>إشارة ٣ · صفر ظهور بعد ٣٠ يوم من النشر <span class="tag ok">صحيحة — بترتيب فحص مختلف</span></h4>
+      <dl>
+        <dt>معناها</dt><dd>جوجل ما عرض المقال لأحد</dd>
+        <dt>نقيسها من</dt><dd>تاريخ النشر + Search Console. جوجل يقول الزحف ياخذ «من أيام لأسابيع»، فالـ٣٠ يوم مهلة معقولة</dd>
+        <dt>الترتيب الصحيح</dt><dd><b>أولاً الفهرسة</b> (URL Inspection وتقرير الفهرسة): هذي مشكلة تقنية، والفريق التقني يحلّها مو الكاتب. <b>بعدين</b> لو مفهرس وما ظهر، الكاتب يراجع الكلمة المفتاحية</dd>
+        <dt>المصدر</dt><dd><a href="https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl">Ask Google to recrawl</a></dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+
+    <div class="point">
+      <h4>إشارة ٤ · يظهر على كلمات غير كلمته <span class="tag ok">صحيحة — مع شرط</span></h4>
+      <dl>
+        <dt>معناها</dt><dd>الناس يوصلون للمقال بكلمات غير اللي استهدفها الكاتب</dd>
+        <dt>نقيسها من</dt><dd>Search Console: الكلمات اللي يظهر عليها المقال، مقابل الكلمة المفتاحية المسجّلة عليه</dd>
+        <dt>الكاتب يسوي</dt><dd>لو الكلمة <b>تخدم قارئ المقال</b>: يوسّع المقال ليغطّيها، أو يكتب لها مقال لحالها. لو <b>ما لها علاقة</b>: يتجاهلها</dd>
+        <dt>تصحيح</dt><dd>جوجل يحذّر من محتوى «هدفه الأساسي يجيب زيارات من محركات البحث». ما نلاحق كل كلمة تطلع</dd>
+        <dt>المصدر</dt><dd><a href="https://support.google.com/webmasters/answer/17010961">Search Console Help</a> · <a href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide">SEO Starter Guide</a> · <a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">Helpful content</a></dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+
+    <div class="point">
+      <h4>إشارة ٥ · النقرات تنزل <span class="tag ok">صحيحة — بقياس أدق</span></h4>
+      <dl>
+        <dt>معناها</dt><dd>المقال خسر زيارات</dd>
+        <dt>نقيسها من</dt><dd>Search Console: الفرق بين فترتين. وقبل ما نحكم نستبعد ثلاثة أسباب ما هي ذنب الكاتب: <b>الموسم</b> (نقارن بنفس الفترة السنة الماضية، جوجل يوصي بآخر ١٦ شهر)، و<b>تحديث خوارزمية</b>، و<b>مشكلة تقنية</b></dd>
+        <dt>الكاتب يسوي</dt><dd>يحدّث المقال <b>تحديث حقيقي</b> في المحتوى</dd>
+        <dt>تصحيح</dt><dd>جوجل ينتقد تغيير تاريخ المقال عشان يبان جديد «والمحتوى ما تغيّر تغيّر حقيقي». ممنوع تحديث شكلي</dd>
+        <dt>المصدر</dt><dd><a href="https://developers.google.com/search/docs/monitor-debug/debugging-search-traffic-drops">Debugging traffic drops</a> · <a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">Helpful content</a></dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+
+    <div class="point">
+      <h4>إشارة ٦ · نواقص في الصفحة حسب إرشادات جوجل <span class="tag open">احتاجت إصلاح</span></h4>
+      <dl>
+        <dt>كانت</dt><dd>«درجة سيو ناقصة» وفيها الطول وترتيب العناوين</dd>
+        <dt>الغلط</dt><dd>جوجل ما عنده «درجة سيو». و<b>الطول ما يأثّر على الترتيب</b> («لا يوجد عدد كلمات سحري»). و<b>ترتيب العناوين ما يهمّ جوجل</b></dd>
+        <dt>الصحيح</dt><dd>نفحص بس اللي جوجل يوصي فيه: عنوان مميّز يوصف الصفحة · وصف دقيق خاص بالصفحة · نص بديل يوصف الصورة · روابط داخلية بنص يوصف الصفحة المرتبطة</dd>
+        <dt>ملاحظة</dt><dd><b>فُحص ٢ أكتوبر:</b> مدقّق المقال ما فيه حدّ لعدد الكلمات. أما محلّل الصفحات فيوصي «300+ words… 800+ words for articles» (<code>admin/lib/seo/page-seo-analyzer.ts:356</code>) ويخالف جوجل، فيُصحَّح</dd>
+        <dt>المصدر</dt><dd><a href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide">SEO Starter Guide</a> · <a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">Helpful content</a></dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+
+    <div class="point">
+      <h4>إشارة ٧ (جديدة) · مراجعة الجودة من التيم ليدر <span class="tag open">مقترحة</span></h4>
+      <dl>
+        <dt>معناها</dt><dd>الأرقام ما تكفي. جوجل يكافئ المحتوى «اللي للناس أولاً»، وعنده أسئلة تقييم ذاتي</dd>
+        <dt>الأسئلة</dt><dd>فيه معلومة أصلية أو تحليل؟ · تحفظه أو ترسله لصاحبك؟ · يضيف قيمة أكثر من الصفحات المنافسة؟ · ولا مجرّد تلخيص لكلام غيره؟</dd>
+        <dt>الكاتب يسوي</dt><dd>يستلم ملاحظات المراجعة ويعدّل</dd>
+        <dt>المصدر</dt><dd><a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">Creating helpful, reliable, people-first content</a></dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+
+    <h3 id="s4" style="font-size:15px;margin:22px 0 6px">٢٫٢ · معلومات Search Console اللي توفّر وقت الكتّاب (خالد، ٢ أكتوبر)</h3>
+    <p>خالد: «سيرش كونسول قوي جداً وفيه معلومات قيّمة تفيد الفريق كامل، وبالأخص الكتّاب». كل بند تحت مبني على بيانات يعطيها الـAPI فعلاً، والمصادر تحت الجدول. <span class="tag open">للنقاش بند بند</span></p>
+    <table>
+      <thead><tr><th>متى</th><th>المعلومة للكاتب</th><th>من وين في Search Console</th><th>توفّر عليه</th><th>رأي خالد</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4"><b>قبل الكتابة</b></td><td><b>أ · مواضيع جاهزة:</b> كلمات نظهر عليها وما لها مقال مخصّص</td><td><code>query</code> + <code>page</code></td><td>بحث الكلمات المفتاحية من الصفر</td><td class="empty">—</td></tr>
+        <tr><td><b>ب · أسئلة الناس:</b> كلمات تبدأ بـ«كيف · ما هو · هل · ليش»</td><td>فلتر <code>includingRegex</code> على <code>query</code></td><td>تخمين إيش يبي القارئ</td><td class="empty">—</td></tr>
+        <tr><td><b>ج · جمهور العميل:</b> إيش يبحث عنه جمهور قطاعه</td><td><code>query</code> مفلترة على صفحات العميل</td><td>فهم القطاع من الصفر</td><td class="empty">—</td></tr>
+        <tr><td><b>د · وين القارئ:</b> سعودي أو مصري · جوال أو كمبيوتر</td><td><code>country</code> · <code>device</code></td><td>يكتب باللهجة والمصطلح الصح</td><td class="empty">—</td></tr>
+        <tr><td rowspan="2"><b>أثناء الكتابة</b></td><td><b>هـ · كلمات الناس الفعلية:</b> المرادفات اللي يكتبونها</td><td><code>query</code> على مقالات مشابهة</td><td>يكتب بلغة الباحث مو لغته هو</td><td class="empty">—</td></tr>
+        <tr><td><b>و · روابط داخلية جاهزة:</b> مقالاتنا اللي ترتّب على كلمات قريبة</td><td><code>query</code> + <code>page</code></td><td>البحث اليدوي عن مقالات يربطها</td><td class="empty">—</td></tr>
+        <tr><td rowspan="4"><b>بعد النشر</b></td><td><b>ز · جوجل شاف المقال؟</b> مفهرس، وآخر زحف متى</td><td>URL Inspection: <code>verdict · coverageState · lastCrawlTime</code> — حدّه ٢٠٠٠ فحص يومياً للموقع، ومقالاتنا ٣١٣</td><td>يسأل التقني كل شوي</td><td class="empty">—</td></tr>
+        <tr><td><b>ح · المقال مقابل الإشارات السبع</b> (النقطة ٢٫١)</td><td><code>query</code> + <code>page</code> + <code>date</code></td><td>يعرف بالضبط إيش يصلّح</td><td class="empty">—</td></tr>
+        <tr><td><b>ط · مقالين يتنافسون على نفس الكلمة</b></td><td>نفس <code>query</code> على أكثر من <code>page</code></td><td>مقالات تاكل من بعض</td><td class="empty">—</td></tr>
+        <tr><td><b>ي · إيش يعرضه جوجل بشكل مميّز</b>، وإيش طلع في Discover</td><td><code>searchAppearance</code> · <code>searchType=discover</code></td><td>يعرف أي أسلوب ينجح</td><td class="empty">—</td></tr>
+      </tbody>
+    </table>
+    <div class="review" style="background:#fffbeb;border-color:#fde68a">
+      <b>قيود لازم يعرفها الفريق:</b> البيانات تتأخر ٢–٣ أيام (والأيام الأخيرة «may still change noticeably»). وجوجل يخفي الكلمات النادرة حماية لخصوصية الباحث، فما كل كلمة تطلع. وطلبات <code>page</code> مع <code>query</code> هي «الأغلى» على حدود الاستخدام، فتُجمع مرّة يومياً وتنحفظ، مو كل ما يفتح الكاتب الصفحة.
+    </div>
+    <p style="font-size:13px;color:var(--muted)">المصادر: <a href="https://developers.google.com/webmaster-tools/v1/searchanalytics/query">Search Analytics API</a> · <a href="https://developers.google.com/webmaster-tools/v1/urlInspection.index/UrlInspectionResult">URL Inspection result</a> · <a href="https://developers.google.com/webmaster-tools/limits">API limits</a></p>
+
+    <h3 id="s5" style="font-size:15px;margin:22px 0 6px">٢٫٣ · المقال اللي شدّ جمهور الخليج — حتى لو ظهوره قليل (خالد، ٢ أكتوبر)</h3>
+    <p>خالد: «في مقالات ظهورها أقل ولكن فيها CTR، وعملاء من السعودية تواصلوا معهم… الجمهور المستهدف السعودية أو الخليج». الهدف: الفريق يعرف <b>أي مقال شدّ الجمهور</b> عشان يكرّر النمط. <span class="tag open">للنقاش</span></p>
+    <table>
+      <thead><tr><th>المصدر</th><th>يقول لنا</th><th>الحالة</th></tr></thead>
+      <tbody>
+        <tr><td><b>Search Console</b> — <code>page</code> × <code>country</code></td><td>الظهور والنقرات والـCTR من السعودية · الإمارات · الكويت · قطر · البحرين · عُمان</td><td>متاح (الـAPI)</td></tr>
+        <tr><td><b>سجلّ التواصل</b> — جدول <code>BookingRequest</code></td><td>كل ضغطة واتساب وكل «اترك رقمك»، ومعها <code>articleId</code> و<code>clientId</code> و<code>country</code> و<code>city</code> و<code>status</code></td><td>موجود عندنا (<code>shared/prisma/schema/schema.prisma:1036</code>)</td></tr>
+        <tr><td><b>GA4</b></td><td>مدة القراءة حسب الدولة</td><td>متاح: الـAPI فيه البُعدان <code>country</code> و<code>pagePath</code>، وكودنا يجيبهم كل واحد لحاله (<code>modonty/lib/analytics/ga4.ts:171 · :341</code>)، فالربط بينهم طلب واحد</td></tr>
+      </tbody>
+    </table>
+
+    <div class="point">
+      <h4>المقياسان المقترحان <span class="tag open">للنقاش</span></h4>
+      <dl>
+        <dt>١ · الإقناع</dt><dd>كم واحد من الخليج تواصل مع العميل من كل ١٠٠ نقرة خليجية على المقال. هذا يكشف المقال القوي <b>حتى لو ظهوره قليل</b></dd>
+        <dt>٢ · الجذب</dt><dd>الـCTR الخليجي للمقال، مقارنة بمقالات مدونتي <b>في نفس الترتيب</b> (نفس قاعدة إشارة ١)</dd>
+        <dt>حدّ أدنى</dt><dd>ظهور قليل يعطي نسب كاذبة: نقرتين من خمس ظهورات تطلع ٤٠٪. نحط حدّ أدنى للظهور قبل الحكم، والرقم نختاره سوا</dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+
+    <div class="point">
+      <h4>اللي يستلمه الفريق <span class="tag open">للنقاش</span></h4>
+      <dl>
+        <dt>القائمة</dt><dd>«أنجح مقالات الخليج»: المقال · الكاتب · العميل · ظهور · نقرات · CTR · تواصل · نسبة الإقناع</dd>
+        <dt>الاستفادة</dt><dd>يدرسون العنوان والزاوية والموضوع، ويكرّرون النمط مع عملاء ثانيين</dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+
+    <div class="review" style="background:#fffbeb;border-color:#fde68a">
+      <b>لازم نعرفها:</b> ضغطة الواتساب معناها إن الزائر <b>فتح المحادثة</b>، مو إن المحادثة صارت فعلاً (والسجل يحسبها مرّة واحدة لكل زائر في الجلسة). Search Console يكتب الدولة بثلاث حروف (<code>SAU</code>) وسجلّ التواصل بحرفين (<code>SA</code>)، فنحوّل بينهم. <b>الإنتاج (قراءة فقط، ٢ أكتوبر، بموافقة خالد):</b> ٥٢ تواصل من ٨ يونيو · واتساب ٤٩ · نموذج ١ · بلا قناة ٢ (صفوف قديمة) · مصر ٣٣ · السعودية ١١ · <b>من مقالات ٢٠ على ١٤ مقال، منها ١٩ من مقالات العملاء و١ من مقالات مدونتي</b> · الحالة: «جديد» ٥٠ و«تم التواصل» ٢ فقط. والأرقام نفسها على dev.
+    <table style="margin-top:8px">
+      <thead><tr><th>المقال</th><th>العميل</th><th>تواصل</th><th>نقرات جوجل ٩٠ يوم</th><th>لكل ١٠٠ نقرة</th></tr></thead>
+      <tbody>
+        <tr><td>تصنيع مستحضرات تجميل للغير في مصر</td><td>كيما زون</td><td><b>٧</b> (مصر ٥)</td><td>١٤٩</td><td>٤٫٧</td></tr>
+        <tr><td>أشكال ابتسامة هوليود</td><td>سمايل تاون</td><td>١</td><td>١٤</td><td>٧٫١</td></tr>
+        <tr><td>شركات مقاولات الرياض</td><td>جبر الجنوبية</td><td>١ (السعودية)</td><td>٨</td><td>١٢٫٥</td></tr>
+        <tr><td>شركة مقاولات الرياض لمشاريع النفط والغاز</td><td>جبر الجنوبية</td><td>١ (السعودية)</td><td>١</td><td>—</td></tr>
+        <tr><td>أفضل دورات مجانية بشهادات معتمدة</td><td>مدونتي</td><td>١</td><td>٣٤</td><td>٢٫٩</td></tr>
+        <tr><td>اليوم الوطني السعودي ٩٦</td><td>مدونتي</td><td><b>٠</b></td><td colspan="2">أعلى مقال دخولاً في Clarity (٤٠٠)</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted)">و١٠ مقالات عملاء ثانية بتواصل واحد لكل مقال. «لكل ١٠٠ نقرة» على أقلّ من ١٠ نقرات <b>مؤشّر</b> لا نسبة. تواصل الخليج من المقالات: <b>٢</b> فقط، والاثنين مقالات مقاولات الرياض.</p>
+    </div>
+
+    <h3 id="s6" style="font-size:15px;margin:22px 0 6px">٢٫٤ · أدوات جوجل المجانية + دليل السوق السعودي للكتّاب (خالد، ٢ أكتوبر)</h3>
+    <p>خالد: «الكتّاب عندي كلهم مصريين، وأبغى أعطيهم معلومات يستفيدون منها للسوق السعودي والخليجي، لأنه الجمهور المستهدف». <span class="tag open">للنقاش</span></p>
+    <table>
+      <thead><tr><th>الأداة</th><th>تعطي الكاتب</th><th>ضبطها للسعودية</th><th>تنبيه</th><th>رأي خالد</th></tr></thead>
+      <tbody>
+        <tr><td><b>Google Trends</b></td><td>إيش يبحث عنه السعوديين الحين · مقارنة كلمتين · «الكلمات الصاعدة»</td><td>الموقع: المملكة العربية السعودية · وصفحة «Trending now» بنفس المنطقة</td><td>الأرقام <b>نسبية ٠–١٠٠</b> من عيّنة، مو عدد بحث فعلي</td><td class="empty">—</td></tr>
+        <tr><td><b>Keyword Planner</b></td><td>حجم بحث تقريبي · اقتراحات كلمات</td><td>الموقع: السعودية أو مدينة · اللغة: العربية</td><td>يحتاج حساب Google Ads فيه بيانات دفع · الأرقام <b>مقرّبة</b> · أقل دقّة في المناطق الصغيرة</td><td class="empty">—</td></tr>
+        <tr><td><b>Search Console</b></td><td>كلمات السعوديين <b>الفعلية</b> على مقالاتنا</td><td>فلتر الدولة: السعودية</td><td>موجود عندنا وهو أصدق مصدر (النقطة ٢٫٢)</td><td class="empty">—</td></tr>
+        <tr><td><b>بحث جوجل نفسه</b></td><td>الإكمال التلقائي · «يسأل الناس أيضاً» · البحوث المشابهة</td><td>إعدادات البحث: المنطقة = السعودية</td><td>يدوي</td><td class="empty">—</td></tr>
+        <tr><td><b>Year in Search — السعودية</b></td><td>أكثر المواضيع بحثاً في السنة</td><td>صفحة SA</td><td>سنوي (٢٠٢٥: قبول · قياس · الحرس الوطني · Gemini)</td><td class="empty">—</td></tr>
+        <tr><td><b>Think with Google (MENA)</b></td><td>مواسم الشراء (رمضان والعيد، بالتقويمين الهجري والميلادي) وسلوك المستهلك السعودي</td><td>قسم MENA</td><td>تقارير متفرّقة مو أداة</td><td class="empty">—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="point">
+      <h4>«دليل الكاتب للسوق السعودي» — صفحة في الأدمن <span class="tag open">للنقاش</span></h4>
+      <dl>
+        <dt>١ · قاموس</dt><dd>الكلمة المصرية ← السعودية (مثال: موبايل ← جوال). يُبنى من كلمات السعوديين الفعلية في Search Console، و<b>يراجعه شخص سعودي</b>، لأنه ما فيه مصدر رسمي له</dd>
+        <dt>٢ · أساسيات</dt><dd>العملة بالريال · صيغة الجوال <code>+966</code> · التاريخ الهجري جنب الميلادي · المدن</dd>
+        <dt>٣ · منصّات</dt><dd>المنصّات الحكومية اللي يبحث عنها السعودي (أبشر · نفاذ · قبول · قياس)، ونكتب عنها شرح «كيف أسوّي…»، مو اسم المنصة لحاله (ملاحظة ١٥)</dd>
+        <dt>٤ · مواسم</dt><dd>رمضان · العيدين · اليوم الوطني · يوم التأسيس · موسم الرياض · العودة للمدارس (اقتراح و)</dd>
+        <dt>٥ · أداة</dt><dd>«مدقّق سعودي» داخل محرر المقال: يعلّم على الكلمة المصرية ويقترح بديلها السعودي</dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">المصادر:
+      <a href="https://support.google.com/trends/answer/4365533">Google Trends — how data is adjusted</a> ·
+      <a href="https://support.google.com/google-ads/answer/7337243">Use Keyword Planner</a> ·
+      <a href="https://support.google.com/google-ads/answer/3022575">Keyword Planner forecasts</a> ·
+      <a href="https://trends.withgoogle.com/en-gb/year-in-search/2025/sa/">Year in Search 2025 SA</a> ·
+      <a href="https://www.thinkwithgoogle.com/intl/en-emea/consumer-insights/consumer-trends/google-visa-research-commerce-insights-in-uae-and-saudi/">Think with Google — UAE &amp; Saudi commerce</a>
+    </p>
+
+    <h3 id="s7" style="font-size:15px;margin:22px 0 6px">٢٫٥ · أي أداة لها API نقدر نبني عليه (خالد، ٢ أكتوبر)</h3>
+    <p>خالد: «وأهم حاجة الأدوات هذي تكون فيها API نقدر نستفيد منها». <span class="tag open">للنقاش</span></p>
+    <table>
+      <thead><tr><th>الأداة</th><th>API رسمي؟</th><th>الحالة</th><th>اللي نبنيه للكاتب</th><th>رأي خالد</th></tr></thead>
+      <tbody>
+        <tr><td><b>Search Console</b></td><td>✓</td><td><b>شغّال عندنا</b> (<code>GSC_MODONTY_KEY_BASE64</code>)</td><td>كل اللي في ٢٫١–٢٫٣: كلمات السعوديين · الفرص · الإشارات</td><td class="empty">—</td></tr>
+        <tr><td><b>URL Inspection</b></td><td>✓</td><td>نفس المفتاح · ٢٠٠٠ فحص/يوم للموقع</td><td>«جوجل شاف مقالك؟»</td><td class="empty">—</td></tr>
+        <tr><td><b>Keyword Planner</b><br><small>Google Ads API · <code>KeywordPlanIdeaService.GenerateKeywordIdeas</code></small></td><td>✓</td><td>يحتاج حساب Google Ads ومفتاح مطوّر بمستوى <b>Basic</b> (مستوى Explorer «يقيّد» خدمات تخطيط الكلمات) · ١٥٬٠٠٠ عملية/يوم</td><td>متوسّط البحث الشهري · المنافسة · اقتراحات، مع <code>geo_target_constants</code> = السعودية و<code>language</code> = العربية</td><td class="empty">—</td></tr>
+        <tr><td><b>Google Trends API</b></td><td>✓ <b>alpha</b></td><td>بالتقديم، وجوجل يفتحه «لعدد محدود من المطوّرين»</td><td>اهتمام آخر ٥ سنوات (يومي/أسبوعي/شهري) حسب الدولة والمنطقة. «الكلمات الصاعدة» غير مذكورة في الوثائق</td><td class="empty">—</td></tr>
+        <tr><td><b>CrUX</b> + <b>PageSpeed</b></td><td>✓</td><td>مجاني · CrUX ١٥٠ طلب/دقيقة · مفتاح PageSpeed موجود (<code>GOOGLE_PAGESPEED_API_KEY</code>)</td><td>للفريق التقني: مراقبة السرعة (ت١)</td><td class="empty">—</td></tr>
+        <tr><td><b>Custom Search</b> (نتائج البحث)</td><td>✗</td><td>«غير متاح للعملاء الجدد»، ويتوقف <b>١ يناير ٢٠٢٧</b></td><td>—</td><td>—</td></tr>
+        <tr><td>الإكمال التلقائي · «يسأل الناس أيضاً» · Year in Search · Think with Google</td><td>✗</td><td>ما لها API رسمي</td><td>استخدام يدوي فقط</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <div class="point">
+      <h4>قراران ينتظران خالد <span class="tag open">للنقاش</span></h4>
+      <dl>
+        <dt>١ · Trends</dt><dd>نقدّم على Google Trends API التجريبي؟ التقديم مجاني، والقبول بيد جوجل</dd>
+        <dt>٢ · Ads</dt><dd>نفتح حساب Google Ads ونطلب مستوى Basic؟ هذا اللي يعطي أرقام بحث السعوديين بالضبط. جوجل يصف Keyword Planner بأنه «أداة مجانية» متاحة «لأي أحد عنده حساب Google Ads بعد ما ينشئ حملة». هل لازم الحملة تصرف؟ <b>ما ذكروه</b>، فنتأكد عند فتح الحساب</dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">المصادر:
+      <a href="https://developers.google.com/webmaster-tools/v1/searchanalytics/query">Search Analytics API</a> ·
+      <a href="https://developers.google.com/webmaster-tools/limits">Search Console API limits</a> ·
+      <a href="https://developers.google.com/google-ads/api/docs/keyword-planning/generate-keyword-ideas">Generate keyword ideas</a> ·
+      <a href="https://developers.google.com/google-ads/api/docs/api-policy/access-levels">Ads API access levels</a> ·
+      <a href="https://developers.google.com/search/apis/trends">Google Trends API (alpha)</a> ·
+      <a href="https://developers.google.com/search/blog/2025/07/trends-api">Trends API announcement</a> ·
+      <a href="https://developer.chrome.com/docs/crux/api/">CrUX API</a> ·
+      <a href="https://developers.google.com/custom-search/v1/overview">Custom Search JSON API</a>
+    </p>
+
+    <h3 id="s8" style="font-size:15px;margin:22px 0 6px">٢٫٦ · اللي ما له API — نسحبه (scraping)؟ (خالد، ٢ أكتوبر)</h3>
+    <p><b>رأي Claude: لا لسحب جوجل.</b> <span class="tag open">للنقاش</span></p>
+    <table>
+      <thead><tr><th>المصدر</th><th>النص الرسمي</th></tr></thead>
+      <tbody>
+        <tr><td>شروط خدمة جوجل</td><td>ممنوع «using automated means to access content from any of our services in violation of the machine-readable instructions on our web pages (for example, robots.txt…)»</td></tr>
+        <tr><td><code>google.com/robots.txt</code></td><td><code>User-agent: *</code> ← <code>Disallow: /search</code> (مقيس ٢ أكتوبر)</td></tr>
+        <tr><td>سياسات السبام في جوجل</td><td>«Machine-generated traffic… sending automated queries to Google. This includes scraping results for rank-checking purposes or other types of automated access to Google Search conducted without express permission» — مخالفة لسياسات السبام وشروط الخدمة</td></tr>
+      </tbody>
+    </table>
+    <div class="review" style="background:#fef2f2;border-color:#fecaca">
+      <b>الخطر علينا بالذات:</b> مدونتي عايشة على زيارات جوجل، وسحب نتائج البحث آلياً مذكور صراحةً في سياسات السبام. ما يستاهل نخاطر بمصدر رزقنا عشان قائمة كلمات. وعملياً جوجل يحظر الـIP ويطلع كابتشا، فالسحب ما يثبت.
+    </div>
+    <div class="point">
+      <h4>البدائل النظيفة <span class="tag open">للنقاش</span></h4>
+      <dl>
+        <dt>١ · Search Console</dt><dd>كلمات السعوديين الفعلية على مقالاتنا: أدق من أي سحب، وشغّال عندنا</dd>
+        <dt>٢ · APIs رسمية</dt><dd>Keyword Planner (Google Ads API) و Trends API (alpha): قرارا النقطة ٢٫٥</dd>
+        <dt>٣ · مزوّد بيانات مرخّص</dt><dd>Semrush API · DataForSEO · SerpApi: يبيعون بيانات نتائج البحث، والدفع حسب الاستخدام. <b>الأسعار والشروط ما فحصتها بعد</b>، فلازم نتحقق منها قبل أي قرار</dd>
+        <dt>٤ · يدوي</dt><dd>Year in Search وThink with Google تقارير تطلع مرة في السنة، قراءتها تاخذ دقايق</dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">المصادر:
+      <a href="https://policies.google.com/terms">Google Terms of Service</a> ·
+      <a href="https://developers.google.com/search/docs/essentials/spam-policies">Google spam policies — machine-generated traffic</a> ·
+      <a href="https://www.google.com/robots.txt">google.com/robots.txt</a>
+    </p>
+  </section>
+</main>
+</body>
+</html>

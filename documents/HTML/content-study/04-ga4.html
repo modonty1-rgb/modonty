@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GA4 — نقاش المحتوى</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <nav class="top"><a href="index.html">الفهرس</a><a href="01-writers.html">المنطلق ونقاط النقاش</a><a href="02-findings.html">ملاحظات Claude — Search Console والسيو التقني</a><a href="03-ai-search.html">البحث بالذكاء الاصطناعي</a><a href="04-ga4.html" aria-current="page">GA4</a><a href="05-appendix.html">ملحق — الأرقام الخام</a><a href="06-clarity.html">Clarity — التجربة والتحويل</a><a href="07-pagespeed.html">PageSpeed — السرعة والجودة</a><a href="08-tools.html">أدوات فحص إضافية</a><a href="09-plan.html">خطة العمل</a></nav>
+  <h1>GA4</h1>
+
+  <section>
+    <h2 id="s16">٥ · GA4 — اللي يقوله عن قرّائنا، واللي لازم يتصلّح <span class="tag open">للنقاش</span></h2>
+    <p class="sub" style="margin:0 0 10px">خالد (٢ أكتوبر): «ما أضفت المزايا اللي في GA4». مقيس من GA4 Data API، آخر ٩٠ يوم.</p>
+    <table>
+      <thead><tr><th>#</th><th>الملاحظة</th><th>المقيس</th><th>المعنى / الاقتراح</th><th>رأي خالد</th></tr></thead>
+      <tbody>
+        <tr><td>غ١</td><td><b>القياس معطوب: ٨٢٪ من «الجلسات» وهمية</b></td><td><b>١٩٬٢٦١ من ٢٣٬٥١٩</b> جلسة مصدرها «(not set)» وقناتها «Unassigned»، وتفاعلها ٢٪، و١٨٬٩٧٢ منها بدون دولة. السبب: أحداث تنرسل <b>من السيرفر</b> (Measurement Protocol، <code>modonty/lib/analytics/ga4-server.ts:17</code>): <code>web_vitals</code> ٤٠٬٣٢١ · <code>article_view</code> ٨٬٨٤٤ · <code>client_view</code> ١٬١١٤. الجلسات الحقيقية ≈ <code>session_start</code> = <b>٤٬٠٥٧</b></td><td>جوجل: البروتوكول «لتكملة» القياس من المتصفح «مو بديل له»، ولازم يحمل <code>session_id</code> الجلسة الحقيقية خلال ٢٤ ساعة. الحين كل نسبة في GA4 مغلوطة (التفاعل · جديد/عائد · الدول). <b>للفريق التقني أوّلاً</b></td><td class="empty">—</td></tr>
+        <tr><td>غ٢</td><td><b>أهم حدث تجاري مو «حدث رئيسي»</b></td><td><code>booking_whatsapp_click</code> = <b>٦٦</b> ضغطة واتساب (يعني عملاء محتملين)، ومو معلَّم Key Event. المعلَّم: <code>conversion_complete</code> ٦٦ · <code>signup_complete</code> ٥٨ · <code>follow_client</code> ١١</td><td>نعلّمه Key Event، فيطلع في كل تقارير GA4 كتحويل لكل مقال ومصدر</td><td class="empty">—</td></tr>
+        <tr><td>غ٣</td><td><b>السعودي يقرا أقل من نص وقت المصري</b></td><td>وقت التفاعل لكل مستخدم: السعودية <b>~٥٧ ثانية</b> (٥٢٬٩٨٩ ث ÷ ٩٢٤) · مصر <b>~١٣٨ ثانية</b> (١١٤٬٣٣١ ث ÷ ٨٣١). نسبة التفاعل ٦٧٪ مقابل ٧٢٪</td><td>نفس رسالة CTR (ملاحظة ٢): المحتوى أنسب للقارئ المصري. يدعم «دليل السوق السعودي» (٢٫٤)</td><td class="empty">—</td></tr>
+        <tr><td>غ٤</td><td><b>جدة قبل الرياض</b></td><td>جلسات السعودية حسب المدينة: جدة <b>٥٦٧</b> · الرياض ٣٤٠ · الدمام ١٤٧ · المدينة ٩٤ · مكة ٦١ · أبها ٣٥</td><td>زوايا محلية (أسعار ومواقع وعيادات) تبدأ بجدة والرياض</td><td class="empty">—</td></tr>
+        <tr><td>غ٥</td><td><b>قليل يكمّل المقال</b></td><td>حدث <code>scroll</code> (الوصول ٩٠٪ من الصفحة) = ١٬٦٣٢ مقابل <code>page_view</code> ٩٬٩٦٧ ← تقريباً <b>١٦٪</b> (تقدير، لأن الأحداث ما تنفصل بالمقال بدقة قبل إصلاح غ١)</td><td>«نسبة الإكمال» لكل مقال تنضاف لمكتب الكاتب: تكشف المقال اللي يملّ القارئ</td><td class="empty">—</td></tr>
+        <tr><td>غ٦</td><td><b>القارئ ما يرجع</b></td><td>المستخدمون العائدون <b>٣٣٦</b> (تفاعلهم ٧٢٪)، والرقم الجديد منفوخ بـغ١</td><td>الولاء ضعيف: متابعة العميل · النشرة · «اقرأ أيضاً» الأذكى</td><td class="empty">—</td></tr>
+        <tr><td>غ٧</td><td><b>بيانات سرعة حقيقية عندنا أصلاً</b></td><td>٥٧٬٦٣٨ حدث <code>web_vitals</code> من زوّار حقيقيين</td><td>بعد إصلاح غ١، تصير لوحة سرعة لكل صفحة (ت١) بدون أدوات خارجية</td><td class="empty">—</td></tr>
+        <tr><td>غ٨</td><td><b>بيانات اختبار تختلط بالإنتاج</b></td><td>جلسات من <code>localhost</code> (١٤) ونسخ Vercel التجريبية (١٦)</td><td>فلتر بسيط: GA4 يقيس <code>www.modonty.com</code> بس</td><td class="empty">—</td></tr>
+      </tbody>
+    </table>
+    <div class="point">
+      <h4>اللي يعطيه GA4 للكاتب على كل مقال (بعد إصلاح غ١) <span class="tag open">للنقاش</span></h4>
+      <dl>
+        <dt>لكل مقال</dt><dd>المشاهدات حسب الدولة · وقت القراءة للسعودي مقابل المصري · نسبة الإكمال (scroll) · ضغطات الواتساب للعميل · الضغط على روابط خارجية · المشاركات</dd>
+        <dt>مكانه</dt><dd>«مكتب الكاتب» (اقتراح أ)، جنب إشارات Search Console. Search Console يقول <b>كيف وصل القارئ</b>، وGA4 يقول <b>إيش سوّى بعد ما وصل</b></dd>
+        <dt>ملاحظة</dt><dd>الـAPI ما يعطي كلمات بحث جوجل (جرّبت البعد <code>organicGoogleSearchQuery</code> فرفضه)، فالكلمات تبقى من Search Console</dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">المصادر:
+      <a href="https://developers.google.com/analytics/devguides/collection/protocol/ga4">GA4 Measurement Protocol</a> ·
+      <a href="https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema">GA4 Data API schema</a>
+    </p>
+  </section>
+</main>
+</body>
+</html>

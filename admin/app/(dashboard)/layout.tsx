@@ -6,6 +6,7 @@ import { canSeeReports } from "@/lib/can-see-reports";
 import { db } from "@/lib/db";
 import { TASK_NOT_ARCHIVED } from "@/lib/tasks/not-archived";
 import { countReviewQueue } from "@/lib/tasks/review-queue";
+import { countNewContactRequests } from "@/lib/contact-requests/count-new-contact-requests";
 import { Sidebar } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
 import { DbBadge } from "@/components/admin/db-badge";
@@ -36,7 +37,7 @@ export default async function DashboardLayout({
   // Everything below is independent — read side by side, not one after another. Measured
   // 28 Sep 2026: seven reads in a row held the sidebar ~850 ms behind the root skeleton on
   // every full page load; in parallel the wait is the slowest one (the orders gate, ~340 ms).
-  const [articleStatusCounts, missingSeoFields, ordersOpen, pendingDocs, reportViewer, myOpenTasks, pendingReviews, pendingBriefs] = await Promise.all([
+  const [articleStatusCounts, missingSeoFields, ordersOpen, pendingDocs, reportViewer, myOpenTasks, pendingReviews, pendingBriefs, newContactRequests] = await Promise.all([
     // Article status counts once at layout level → passed to Sidebar as a prop
     // so workflow nav items can show live count badges. Cached 60s via unstable_cache.
     getArticleStatusCounts().catch(() => null),
@@ -53,6 +54,8 @@ export default async function DashboardLayout({
     countReviewQueue(gate.userId),
     // بريفات حملات تنتظر الموافقة — بادجٌ على «بانتظار الموافقة» في قائمة الحملات (خالد ٢٩ سبتمبر ٢٠٢٦).
     db.adCampaign.count({ where: { approval: "PENDING" } }).catch(() => 0),
+    // طلبات تواصل قرّاء بحالة «جديد» لعملاء هذا المندوب (الأدمن: الكلّ) — الرقم الأحمر على «المبيعات» (ج٨).
+    countNewContactRequests(gate.userId).catch(() => 0),
   ]);
 
   // Whether to show the Report link. Read on the SERVER because the permission now lives
@@ -98,6 +101,7 @@ export default async function DashboardLayout({
             myOpenTasks={myOpenTasks}
             pendingReviews={pendingReviews}
             pendingBriefs={pendingBriefs}
+            newContactRequests={newContactRequests}
           />
           <main className="flex-1 overflow-y-auto scrollbar-thin p-4 sm:p-6">{children}</main>
         </div>

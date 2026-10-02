@@ -7,7 +7,6 @@ import { ArticleStatus } from "@prisma/client";
 import { classifyTrafficSource } from "@/lib/analytics/classify-source";
 import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
-import { trackArticleView } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -80,8 +79,12 @@ export async function POST(
       orderBy: { createdAt: "desc" },
       select: { articleId: true },
     });
+    // Clarity session tags (plan ج٦) go back on EVERY visit — a refresh is not a new view, but
+    // it is still a recording that needs its client and writer.
+    const clarity = { client: article.client?.slug, author: article.author?.name ?? undefined };
+
     if (lastView?.articleId === article.id) {
-      return NextResponse.json({ ok: true, analyticsId: null });
+      return NextResponse.json({ ok: true, analyticsId: null, clarity });
     }
 
     const [, analytics] = await Promise.all([
@@ -117,25 +120,26 @@ export async function POST(
       }).catch(() => {});
     }
 
-    void trackArticleView(
-      {
-        article_id: article.id,
-        article_slug: article.slug,
-        article_title: article.title.slice(0, 100),
-        author_id: article.author?.id,
-        author_name: article.author?.name ?? undefined,
-        category_slug: article.category?.slug,
-        category_name: article.category?.name,
-        tag_primary: article.tags[0]?.tag?.name,
-        client_id: article.clientId ?? undefined,
-        client_slug: article.client?.slug,
-        client_name: article.client?.name,
-        client_industry: article.client?.industry?.name,
-      },
-      { userId },
-    );
+    // GA4 article_view is sent by the BROWSER (ViewTracker → pushGa4Event → GTM), not from
+    // here: a server-sent event with no matching browser session became a phantom session
+    // (see lib/analytics/ga4-browser.ts). The params come from here because only the server
+    // has the article's client, author and category.
+    const ga4 = {
+      article_id: article.id,
+      article_slug: article.slug,
+      article_title: article.title,
+      author_id: article.author?.id,
+      author_name: article.author?.name ?? undefined,
+      category_slug: article.category?.slug,
+      category_name: article.category?.name,
+      tag_primary: article.tags[0]?.tag?.name,
+      client_id: article.clientId ?? undefined,
+      client_slug: article.client?.slug,
+      client_name: article.client?.name,
+      client_industry: article.client?.industry?.name,
+    };
 
-    return NextResponse.json({ ok: true, analyticsId: analytics.id });
+    return NextResponse.json({ ok: true, analyticsId: analytics.id, ga4, clarity });
   } catch (err) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }

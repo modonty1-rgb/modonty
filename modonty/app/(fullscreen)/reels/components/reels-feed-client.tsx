@@ -7,6 +7,8 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { IconVolume2, IconVolumeX, IconChevronUp, IconChevronDown } from "@/lib/icons";
 import { loadMoreReels } from "../actions/load-more";
 import { trackReelView } from "../actions/track-reel-view";
+import { pushGa4Event } from "@/lib/analytics/ga4-browser";
+import { clarityEvent, claritySet } from "@/lib/analytics/clarity";
 import { markReelViewed } from "../helpers/mark-reel-viewed";
 import type { ReelFeedItemWithState } from "@/lib/queries/reels-feed-shapes";
 import { ReelActionsRail } from "./reel-actions-rail";
@@ -71,7 +73,14 @@ export function ReelsFeedClient({ initialItems, initialCursor, clientSlug, isLog
     const reel = items[active];
     if (!reel) return;
     const timer = setTimeout(() => {
-      if (markReelViewed(reel.id)) void trackReelView(reel.id);
+      if (markReelViewed(reel.id)) {
+        void trackReelView(reel.id).then((ga4) => {
+          if (ga4) {
+            pushGa4Event("reel_view", { ...ga4 });
+            if (ga4.client_slug) claritySet("client", ga4.client_slug); // Clarity tag (plan ج٦)
+          }
+        });
+      }
     }, 2000);
     return () => clearTimeout(timer);
   }, [active, items]);
@@ -132,21 +141,21 @@ export function ReelsFeedClient({ initialItems, initialCursor, clientSlug, isLog
       <div className="fixed end-4 top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
         <button
           type="button"
-          onClick={() => goTo(active - 1)}
+          onClick={() => { clarityEvent("reel_prev"); goTo(active - 1); }}
           disabled={active === 0}
           aria-label="الطلّة السابقة"
           className="grid size-11 place-items-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
-          <IconChevronUp className="size-5" />
+          <IconChevronUp className="size-5 rotate-90" />
         </button>
         <button
           type="button"
-          onClick={() => goTo(active + 1)}
+          onClick={() => { clarityEvent("reel_next"); goTo(active + 1); }}
           disabled={active >= items.length - 1}
           aria-label="الطلّة التالية"
           className="grid size-11 place-items-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
-          <IconChevronDown className="size-5" />
+          <IconChevronDown className="size-5 -rotate-90" />
         </button>
       </div>
 
@@ -154,7 +163,7 @@ export function ReelsFeedClient({ initialItems, initialCursor, clientSlug, isLog
       {hasVideo && (
         <button
           type="button"
-          onClick={() => setMuted((m) => !m)}
+          onClick={() => { clarityEvent("reel_mute"); setMuted((m) => !m); }}
           aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
           className="pointer-events-auto fixed end-4 top-16 z-30 grid size-11 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition hover:bg-black/70 motion-safe:active:scale-95 active:bg-black/70"
         >

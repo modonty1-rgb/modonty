@@ -36,7 +36,9 @@ async function getFeedChunk(page: number): Promise<{ articles: FeedPost[]; hasMo
  */
 export async function CachedHomePage({ page, userCard }: CachedHomePageProps) {
   "use cache";
-  cacheLife("minutes");
+  // ساعة لا دقيقة (١ أكتوبر ٢٠٢٦ — تكلفة ISR Writes): المقالُ الجديد لا ينتظر الساعة، فحفظُه في
+  // الأدمن يمسح وسمَ `articles` فوراً (`revalidateModontyTag("articles")` في update-article.ts).
+  cacheLife("hours");
   cacheTag("homepage", "articles", "settings");
 
   // `wholeArchive` feeds ONLY the phone's reading-time tiles (counts per bucket). Same cached

@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { unstable_rethrow } from "next/navigation";
 
 import { getArticleDefaultsFromSettings } from "@/app/(site)/articles/[slug]/helpers/get-article-defaults-from-settings";
+import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { getArticlePageData } from "@/app/(site)/articles/[slug]/helpers/get-article-page-data";
 import { generateMetadataFromSEO } from "@/lib/seo";
 import { normalizeOgImages } from "@/app/(site)/articles/[slug]/helpers/normalize-og-images";
@@ -102,15 +103,31 @@ export async function generateStaticParams() {
   }
 }
 
+/**
+ * The stored title ends with « - {client}» (admin metadata-generator.ts), and the root layout's
+ * template appends « | {brand}». When the client IS the brand, Google got «… - مدونتي | مدونتي»
+ * — 47 articles in the 2 Oct 2026 study (plan item ب٢). Dropping the client suffix when it is
+ * the brand leaves exactly one, from the template.
+ */
+function withoutTrailingBrand(title: Metadata["title"], brand: string | undefined): Metadata["title"] {
+  if (typeof title !== "string" || !brand) return title;
+  for (const suffix of [` - ${brand}`, ` | ${brand}`]) {
+    if (title.endsWith(suffix)) return title.slice(0, -suffix.length);
+  }
+  return title;
+}
+
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   try {
     const { slug: rawSlug } = await params;
     const slug = decodeURIComponent(rawSlug);
 
-    const [article, articleDefaults] = await Promise.all([
+    const [article, articleDefaults, { siteName }] = await Promise.all([
       // Same cached read the page body uses — one DB hit serves both.
       getArticleContentBySlug(slug),
       getArticleDefaultsFromSettings(),
+      // The brand the root layout's title template appends (layout.tsx) — same cached read.
+      getPageSeoDefaults(),
     ]);
 
     if (!article) {
@@ -142,6 +159,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
           };
           return {
             ...stored,
+            title: withoutTrailingBrand(stored.title, siteName),
             openGraph: {
               ...(storedOg as object | undefined),
               url: canonicalUrl,

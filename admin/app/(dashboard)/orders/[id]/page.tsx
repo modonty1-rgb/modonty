@@ -28,7 +28,6 @@ import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { buildInvoiceWhatsappLink } from "../helpers/build-invoice-whatsapp-link";
 import { getOrderStatement } from "./helpers/get-order-statement";
 import { getSubscriptionStanding } from "../helpers/get-subscription-standing";
-import { RENEWAL_SOON_DAYS } from "@modonty/shared/lib/subscription/subscription-term";
 import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 import { OrderInternalNote } from "@/components/shared/order-internal-note";
 
@@ -74,7 +73,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
    * واشتراكُ العميل = مدّةُ طلبه الساري (`get-client-subscriptions.ts`)، فالحكمُ هنا هو حكمُه.
    */
   const renewal = standing && owner?.activeOrderId === order.id ? standing : null;
-  const showRenew = order.status === "PAID" && !!renewal && (renewal.state === "expired" || renewal.state === "expiring") && isSalesDesk;
+  // متاحٌ في أيّ وقتٍ من الاشتراك لا في آخر ٣٠ يوماً فقط (خالد ١ أكتوبر ٢٠٢٦: عميلٌ باقٍ له شهرٌ
+  // ونصف وجدّد). المدّةُ الجديدة تبدأ من نهاية الحالية فلا يضيع عليه يوم (`create-manual-order.ts`).
+  // ويبقى شرطُ معرفة النهاية: قبل أوّل مقال لا نهايةَ يُبنى عليها التجديد.
+  const showRenew = order.status === "PAID" && !!renewal?.endsAt && isSalesDesk;
   /**
    * **لماذا لا يظهر زرّ التجديد — سطرٌ مكانه** (خالد ١ أكتوبر ٢٠٢٦: «الرسائل واضحة قدام المندوب؟»).
    * كان الزرُّ يغيب بلا كلمة: الطلبُ القديم بعد التجديد يُرى منتهياً بلا زرّ فيبدو معطَّلاً،
@@ -93,9 +95,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           ? activeOrder
             ? { text: `طلب قديم — الاشتراك الحالي ${activeOrder.number}`, href: `/orders/${activeOrder.id}`, link: "افتحه" }
             : { text: "ليس الاشتراك الساري لهذا العميل" }
-          : !renewal?.endsAt
-            ? { text: "التجديد يُتاح بعد وصول أوّل مقال للعميل" }
-            : { text: `التجديد يفتح يوم ${formatOrderDate(new Date(renewal.endsAt.getTime() - RENEWAL_SOON_DAYS * 86_400_000))}` };
+          : { text: "التجديد يُتاح بعد وصول أوّل مقال للعميل" };
   const serviceMonths = order.paidMonths + order.bonusServiceMonths;
 
   /**

@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { BadgeCheck, Plus } from "lucide-react";
 
 import { checkFinanceAdmin } from "@/lib/require-finance-admin";
 import { formatOrderMoney } from "@/lib/orders/format-order-money";
 import { cn } from "@/lib/utils";
 
 import { DeletePayoutButton } from "./components/delete-payout-button";
-import { UnpaidOrdersTable } from "./components/unpaid-orders-table";
+import { CommissionMonthsTable } from "./components/commission-months-table";
 import { getSalesCommissions } from "@/lib/commissions/get-sales-commissions";
 
 export const metadata = { title: "عمولات المناديب" };
@@ -46,6 +47,21 @@ export default async function SalesCommissionsPage({ searchParams }: { searchPar
   const currency = selected ? (currencies.includes(curParam ?? "") ? curParam! : (selected.totals.find((t) => t.owedMinor !== 0)?.currency ?? currencies[0])) : null;
   const tot = selected && currency ? selected.totals.find((t) => t.currency === currency) ?? null : null;
   const money = (m: number) => formatOrderMoney(m, currency ?? "SAR");
+  // The day each order's commission went out — the latest payout that paid it (a clawback item is negative).
+  const paidOnByOrder = new Map<string, string>();
+  for (const p of selected?.payouts ?? []) for (const it of p.items) if (it.commissionMinor > 0 && !paidOnByOrder.has(it.orderId)) paidOnByOrder.set(it.orderId, day(p.paidOn));
+  // His payouts in this currency by the month they went out — newest month first, as they arrive.
+  const paidMonths: { key: string; label: string; totalMinor: number; payouts: NonNullable<typeof selected>["payouts"] }[] = [];
+  for (const p of selected && currency ? selected.payouts.filter((x) => x.currency === currency) : []) {
+    const key = day(p.paidOn).slice(0, 7);
+    let m = paidMonths.find((x) => x.key === key);
+    if (!m) {
+      m = { key, label: new Date(`${key}-01T00:00:00Z`).toLocaleDateString("ar-EG", { month: "long", year: "numeric", timeZone: "UTC" }), totalMinor: 0, payouts: [] };
+      paidMonths.push(m);
+    }
+    m.payouts.push(p);
+    m.totalMinor += p.amountMinor;
+  }
 
   return (
     <div dir="rtl" className="mx-auto max-w-5xl space-y-5 px-4 pb-8 sm:px-5">
@@ -110,7 +126,7 @@ export default async function SalesCommissionsPage({ searchParams }: { searchPar
         <section aria-label="طلبات لم تُصرف عمولتها" className="space-y-3">
           <div className="flex flex-wrap items-end justify-between gap-2">
             <div>
-              <h2 className="text-sm font-semibold text-muted-foreground">٢ · حدّد الطلبات واصرف — {selected.name}</h2>
+              <h2 className="text-sm font-semibold text-muted-foreground">٢ · عمولاته شهر بشهر — حدّد الباقي واصرف — {selected.name}</h2>
               <p className="text-xs text-muted-foreground">
                 {selected.currentRate
                   ? `النسبة: جديد ${pct(selected.currentRate.newRateBp)} · تجديد ${pct(selected.currentRate.renewalRateBp)} — على المبلغ قبل الضريبة`
@@ -133,60 +149,87 @@ export default async function SalesCommissionsPage({ searchParams }: { searchPar
             )}
           </div>
 
-          <UnpaidOrdersTable
+          <CommissionMonthsTable
             key={`${selected.id}-${currency}-${selected.deals.map((d) => d.orderId + d.state).join()}`}
             staffId={selected.id}
             staffName={selected.name}
             currency={currency}
             format={{ locale: LOCALE[currency] ?? "ar-SA", currency }}
             rows={selected.deals
-              .filter((d) => d.currency === currency && (d.state === "unpaid" || d.state === "clawback"))
+              .filter((d) => d.currency === currency && (d.state !== "none" || d.commissionMinor > 0 || d.refunded))
               .sort((a, b) => a.soldOn.getTime() - b.soldOn.getTime())
-              .map((d) => ({
-                orderId: d.orderId,
-                number: d.number,
-                clientName: d.clientName,
-                soldOn: day(d.soldOn),
-                kind: d.kind,
-                base: money(d.baseMinor),
-                rate: d.rateBp === null ? "بلا نسبة" : pct(d.rateBp),
-                amountMinor: d.state === "clawback" ? -d.clawbackMinor : d.commissionMinor,
-                clawback: d.state === "clawback",
-              }))}
+              .map((d) => {
+                // Same money as the statement's ledger line: settled → the paid-out snapshot;
+                // unpaid → today's figure; refunded → nothing earned. Left = earned − paid.
+                const earnedMinor = d.refunded ? 0 : d.state === "settled" ? d.paidMinor : d.commissionMinor;
+                return {
+                  orderId: d.orderId,
+                  number: d.number,
+                  clientName: d.clientName,
+                  soldOn: day(d.soldOn),
+                  kind: d.kind,
+                  basis: d.refunded ? null : `${money(d.baseMinor)} × ${d.rateBp === null ? "بلا نسبة" : pct(d.rateBp)}`,
+                  earnedMinor,
+                  paidMinor: d.paidMinor,
+                  leftMinor: earnedMinor - d.paidMinor,
+                  paidOn: paidOnByOrder.get(d.orderId) ?? null,
+                  refunded: d.refunded,
+                };
+              })}
           />
 
-          {/* ③ what was paid to him */}
-          <details className="group rounded-xl border bg-card shadow-sm">
-            <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-medium">
-              <span>
-                ما انصرف له — {COUNTRY[currency]} <span className="text-muted-foreground">({money(tot.paidOutMinor)})</span>
+          {/* ③ what was paid to him — month by month (Khalid, 1 Oct 2026: «أعرف كل شهر كم انصرف»).
+              Visible, not folded: «how much went out in September» is the question, so the months
+              are the answer on sight; each opens to its payouts. */}
+          {/* Its own colour (Khalid, 1 Oct 2026: «ما تم صرفه… لون مختلف عشان ما أتلخبط»): money that
+              already left — green, apart from the table above, which is what is still to pay. */}
+          <section className="overflow-hidden rounded-xl border-2 border-emerald-300 bg-emerald-50/40 shadow-sm dark:border-emerald-800 dark:bg-emerald-950/20" aria-label="ما انصرف له">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-200 bg-emerald-100/70 px-4 py-3 dark:border-emerald-900 dark:bg-emerald-900/30">
+              <div>
+                <h3 className="flex items-center gap-2 text-base font-bold text-emerald-800 dark:text-emerald-300">
+                  <BadgeCheck className="size-5" aria-hidden />
+                  ما تم صرفه — {COUNTRY[currency]}
+                </h3>
+                <p className="text-xs text-emerald-800/80 dark:text-emerald-300/80">فلوس حوّلتها له فعلاً، كل تحويل بتاريخه. مجموعها = عمود «انصرف» في الجدول فوق.</p>
+              </div>
+              <span className="text-sm text-emerald-800 dark:text-emerald-300">
+                الإجمالي <b className="text-lg tabular-nums">{money(tot.paidOutMinor)}</b>
               </span>
-              <span className="text-xs text-muted-foreground group-open:hidden">عرض</span>
-            </summary>
-            {selected.payouts.filter((p) => p.currency === currency).length === 0 ? (
-              <p className="border-t px-4 py-3 text-xs text-muted-foreground">لم يُصرف له شيء بهذه العملة بعد.</p>
+            </div>
+            {paidMonths.length === 0 ? (
+              <p className="px-4 py-3 text-xs text-muted-foreground">لم يُصرف له شيء بهذه العملة بعد.</p>
             ) : (
-              <ul className="divide-y border-t">
-                {selected.payouts
-                  .filter((p) => p.currency === currency)
-                  .map((p) => (
-                    <li key={p.id} className="flex items-start justify-between gap-3 px-4 py-2.5 text-sm">
-                      <div className="min-w-0">
-                        <p>
-                          <b className="tabular-nums">{money(p.amountMinor)}</b>
-                          <span className="ms-2 text-muted-foreground">{day(p.paidOn)}</span>
-                          {p.note && <span className="ms-2 text-muted-foreground">· {p.note}</span>}
-                        </p>
-                        <p className="mt-0.5 text-xs text-muted-foreground" dir="ltr">
-                          {p.items.length ? p.items.map((i) => `${i.orderNumber}${i.commissionMinor < 0 ? " (خصم)" : ""}`).join(" · ") : "—"}
-                        </p>
-                      </div>
-                      <DeletePayoutButton payoutId={p.id} label={`${money(p.amountMinor)} (${day(p.paidOn)})`} />
-                    </li>
-                  ))}
-              </ul>
+              paidMonths.map((m) => (
+                <details key={m.key} name="paid-month" className="group border-b border-emerald-200 last:border-0 dark:border-emerald-900">
+                  <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-2.5 text-sm hover:bg-emerald-100/50 dark:hover:bg-emerald-900/20 [&::-webkit-details-marker]:hidden">
+                    <span className="grid size-5 place-items-center rounded border text-muted-foreground transition-transform group-open:rotate-45">
+                      <Plus className="size-3.5" aria-hidden />
+                    </span>
+                    <span className="w-32 font-semibold">{m.label}</span>
+                    <span className="flex-1 text-xs text-muted-foreground">{m.payouts.length.toLocaleString("ar-EG")} دفعة</span>
+                    <b className="tabular-nums">{money(m.totalMinor)}</b>
+                  </summary>
+                  <ul className="mx-4 mb-3 divide-y rounded-lg border bg-background/70 shadow-sm">
+                    {m.payouts.map((p) => (
+                      <li key={p.id} className="flex items-start justify-between gap-3 px-4 py-2.5 text-sm">
+                        <div className="min-w-0">
+                          <p>
+                            <b className="tabular-nums">{money(p.amountMinor)}</b>
+                            <span className="ms-2 text-muted-foreground">{day(p.paidOn)}</span>
+                            {p.note && <span className="ms-2 text-muted-foreground">· {p.note}</span>}
+                          </p>
+                          <p className="mt-0.5 text-xs text-muted-foreground" dir="ltr">
+                            {p.items.length ? p.items.map((i) => `${i.orderNumber}${i.commissionMinor < 0 ? " (خصم)" : ""}`).join(" · ") : "—"}
+                          </p>
+                        </div>
+                        <DeletePayoutButton payoutId={p.id} label={`${money(p.amountMinor)} (${day(p.paidOn)})`} />
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ))
             )}
-          </details>
+          </section>
         </section>
       )}
     </div>

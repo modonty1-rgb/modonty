@@ -1,86 +1,44 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { REELS_BLOCKS } from "@modonty/shared/components/partner-site/free/reels";
+import { PageBlocks } from "../../../components/page-blocks";
 import { getClientPageData } from "../../../helpers/client-page-data";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-export const metadata: Metadata = { robots: { index: false, follow: false } };
-import { OptimizedImage } from "@modonty/shared/components/optimized-image";
-import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { IconPlay } from "@/lib/icons";
+import { getCachedHomeData } from "../../../helpers/get-cached-home-data";
+import { buildPartnerPageMetadata } from "../../../helpers/build-partner-page-metadata";
 
 interface ClientReelsPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default async function ClientReelsPage({ params }: ClientReelsPageProps) {
+/**
+ * «ريلز {الشريك}» — every published reel, each a real link to its watch page (plan item د١,
+ * 2 Oct 2026). It used to list the partner's ARTICLES under a «ريل» badge, was `noindex,
+ * nofollow`, and no page linked to it — while 11 of 23 reels had no inbound link at all.
+ * Indexable and followed now: it is the one page that links every reel of this partner.
+ */
+export async function generateMetadata({ params }: ClientReelsPageProps): Promise<Metadata> {
   const { slug } = await params;
-
-  const data = await getClientPageData(slug);
-
-  if (!data) {
-    notFound();
-  }
-
-  const { client, client: { articles } } = data;
-
-  if (articles.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <IconPlay className="h-4 w-4" />
-            الريلز
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            لا توجد محتويات قصيرة (ريلز) لهذا العميل بعد. عند إضافة مقالات مع صور أو فيديوهات ستظهر هنا كفيديوهات قصيرة يمكن استكشافها.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {articles.map((article) => (
-        <CtaTrackedLink
-          key={article.id}
-          href={`/articles/${article.slug}`}
-          label="View reel article"
-          type="LINK"
-          clientId={client.id}
-          articleId={article.id}
-        >
-          <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer h-full">
-            <div className="relative aspect-[9/16] w-full bg-muted">
-              {article.featuredImage && (
-                <>
-                  <OptimizedImage
-                    media={article.featuredImage}
-                    alt={article.featuredImage.altText || article.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 320px"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                  <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-xs text-white">
-                    <IconPlay className="h-3 w-3" />
-                    <span>ريل</span>
-                  </div>
-                </>
-              )}
-            </div>
-            <CardHeader>
-              <CardTitle className="text-sm line-clamp-2 text-foreground">
-                {article.title}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-        </CtaTrackedLink>
-      ))}
-    </div>
-  );
+  const [data, home] = await Promise.all([getClientPageData(slug), getCachedHomeData(decodeURIComponent(slug))]);
+  if (!data || !home) return { title: "غير موجود" };
+  const count = home.data.reels.length;
+  const meta = await buildPartnerPageMetadata({
+    slug,
+    sub: "reels",
+    title: `ريلز ${data.client.name}`.slice(0, 51),
+    description: `${count} ريل من ${data.client.name} على مدونتي — فيديوهات قصيرة تشوفها في دقيقة.`,
+    heroImage: data.client.heroImageMedia,
+    logo: data.client.logoMedia,
+  });
+  // A partner with no reel has nothing here to index.
+  return count === 0 ? { ...meta, robots: { index: false, follow: true } } : meta;
 }
 
+export default async function ClientReelsPage({ params }: ClientReelsPageProps) {
+  const { slug } = await params;
+  const home = await getCachedHomeData(decodeURIComponent(slug));
+  if (!home) notFound();
+  if (home.data.reels.length === 0) {
+    return <p className="py-10 text-center text-sm text-muted-foreground">ما فيه ريلز منشورة لـ{home.data.name} بعد.</p>;
+  }
+  return <PageBlocks slug={slug} blocks={REELS_BLOCKS} titlePrefix="ريلز" />;
+}

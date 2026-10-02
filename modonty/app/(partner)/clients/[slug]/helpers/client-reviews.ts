@@ -29,9 +29,13 @@ export async function getClientReviews(
 ): Promise<ClientReviewsData> {
   "use cache";
   cacheTag("clients");
-  // Short window so a review approved in console surfaces on modonty within minutes
-  // (the two apps don't share a cache; full fix = cross-app revalidate — see backlog).
-  cacheLife("minutes");
+  // Hours, not minutes (plan أ٦, 2 Oct 2026). «minutes» was the stopgap for a console that
+  // could not bust modonty's cache; it can now — every console write to reviews, the page FAQ
+  // and the gallery goes through regenerateClientSeo(), which calls revalidateModontyTag
+  // ("clients") (console/.../regenerate-client-seo.ts). Left at minutes, this one helper
+  // capped the WHOLE partner page at a one-minute life: measured on prod, `X-Vercel-Cache:
+  // STALE` with `Age` back to 0 within minutes, and a 2.1 s first byte for the unlucky visitor.
+  cacheLife("hours");
   const decodedSlug = decodeURIComponent(rawSlug);
 
   const client = await db.client.findUnique({

@@ -13,6 +13,7 @@ import { trackReelShareEvent } from "../actions/track-reel-share";
 import { ReelCommentsSheetLazy, warmReelCommentsSheet } from "./reel-comments-sheet-lazy";
 import { ReelViewerAvatar } from "./reel-viewer-avatar";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { clarityEvent } from "@/lib/analytics/clarity";
 
 interface ReelActionsRailProps {
   reelId: string;
@@ -62,7 +63,11 @@ export function ReelActionsRail({
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [, startTransition] = useTransition();
 
+  // Clarity events per button (plan ج٥, 2 Oct 2026): the rail is icons only, so Clarity's
+  // heatmaps and smart events could not tell which one a visitor pressed. Fired on the click
+  // itself — signed-out taps included, since that intent is what the funnel needs to see.
   function handleLike() {
+    clarityEvent("reel_like");
     if (!isLoggedIn) {
       setAuthAction("like");
       return;
@@ -80,6 +85,7 @@ export function ReelActionsRail({
   }
 
   function handleSave() {
+    clarityEvent("reel_save");
     if (!isLoggedIn) {
       setAuthAction("save");
       return;
@@ -97,11 +103,13 @@ export function ReelActionsRail({
   }
 
   function openComments() {
+    clarityEvent("reel_comments");
     setCommentsMounted(true);
     setCommentsOpen(true);
   }
 
   async function handleShare() {
+    clarityEvent("reel_share");
     // The reel's own watch page — the indexable URL — never the feed root: a shared link
     // must land the receiver on THIS clip.
     const url = `${window.location.origin}/reels/${encodeURIComponent(slug)}`;

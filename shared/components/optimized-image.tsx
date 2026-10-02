@@ -126,6 +126,19 @@ export function asMedia(url: string, altText?: string | null, blurDataURL?: stri
   return { url, bunnyUrl: null, blurDataURL: blurDataURL ?? null, altText: altText ?? null };
 }
 
+/**
+ * A fixed-size image (width/height, not `fill`) whose `sizes` is one pixel value («40px») gets
+ * NO `sizes` attribute — Next's docs: «Without `sizes`: Next.js generates a limited `srcset`
+ * (e.g. 1x, 2x), suitable for fixed-size images.» With a px-only `sizes`, Next lists EVERY
+ * configured width instead (get-img-props.js getWidths → `allSizes`): a 40px avatar shipped 16
+ * candidates up to 3840w, each repeating the full percent-encoded Bunny URL. Measured on prod
+ * (2 Oct 2026, plan أ٣): `srcset` was 428 KB — 38% — of /articles' HTML. Rule 3 still holds:
+ * callers pass `sizes`; this only drops it where Next itself says it is not needed.
+ */
+function fixedSizeSizes(fill: boolean | undefined, resolved: string): string | undefined {
+  return !fill && /^\s*\d+(\.\d+)?px\s*$/.test(resolved) ? undefined : resolved;
+}
+
 export function OptimizedImage({
   media,
   alt,
@@ -164,7 +177,7 @@ export function OptimizedImage({
       {...(fill ? { fill: true as const } : { width: width!, height: height! })}
       className={className}
       style={style}
-      sizes={SIZE_PRESETS[sizes as SizePreset] ?? sizes}
+      sizes={fixedSizeSizes(fill, SIZE_PRESETS[sizes as SizePreset] ?? sizes)}
       // Rules 1 + 4: each of these is exactly what the caller asked for, nothing derived.
       preload={preload}
       loading={loading}

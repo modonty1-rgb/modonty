@@ -1,10 +1,13 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { cn } from "@/lib/utils";
-import { IconViews, IconHelp } from "@/lib/icons";
+import { IconHelp } from "@/lib/icons";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+
+import { ArticleViewsCount, ViewsCount } from "./ArticleViewsCount";
 
 interface ArticleHeaderProps {
   title: string;
@@ -18,6 +21,9 @@ interface ArticleHeaderProps {
   createdAt: Date;
   readingTimeMinutes: number | null;
   wordCount: number | null;
+  /** Feeds the live view count island. */
+  articleId: string;
+  /** The cached count — shown in the static shell until the live one streams in. */
   views?: number;
   /** True when the «باختصار» box below will summarise the article too. */
   hasKeyPoints?: boolean;
@@ -33,6 +39,7 @@ export function ArticleHeader({
   createdAt,
   readingTimeMinutes,
   wordCount,
+  articleId,
   views,
   questionsCount,
   hasKeyPoints,
@@ -97,14 +104,11 @@ export function ArticleHeader({
           <span>⏱️ {readingTimeMinutes} دقيقة قراءة</span>
         )}
         {wordCount && <span className="max-sm:hidden">📝 {wordCount.toLocaleString(SITE_LOCALE)} كلمة</span>}
-        {/* A zero is worse than nothing: printing «٠ مشاهدة» under the title tells every new
-            reader that nobody has read this. The counter appears once there is one. */}
-        {views !== undefined && views > 0 && (
-          <span className="flex items-center gap-1">
-            <IconViews className="h-3.5 w-3.5 shrink-0" />
-            <span className="tabular-nums">{views.toLocaleString(SITE_LOCALE)}</span>
-          </span>
-        )}
+        {/* Live count in its own island (plan أ١): the cached number ships in the static shell,
+            the live one replaces it. Zero shows nothing — see ViewsCount. */}
+        <Suspense fallback={<ViewsCount views={views ?? 0} />}>
+          <ArticleViewsCount articleId={articleId} cached={views ?? 0} />
+        </Suspense>
         {questionsCount !== undefined && questionsCount > 0 && (
           <a
             href="#article-faq"

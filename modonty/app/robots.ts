@@ -26,18 +26,27 @@ import { SITE_URL } from "@/constants";
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = SITE_URL;
 
-  // `/modo-chat` is listed for the same reason Perplexity blocks `/search*`, Claude `/chat/*` and
-  // Copilot `/chats/*`: a crawler arrives signed-out and can only reach the login gate, and each
-  // visitor's transcript is private. Its endpoints sit under `/modo-chat/api/`, which `/api/` misses
-  // — `GET /modo-chat/api/topics` answered 200 to an anonymous request before this line existed.
-  const SENSITIVE_PATHS = ["/api/", "/admin/", "/users/", "/modo-chat"];
+  // `/modo-chat/api/` — the chat's endpoints, which `/api/` misses (`GET /modo-chat/api/topics`
+  // answered 200 to an anonymous request once). The PAGE `/modo-chat` is no longer blocked
+  // (plan item د٦, 2 Oct 2026): it was, and Google indexed 39 `/modo-chat?…` URLs anyway —
+  // «If the page is blocked by a robots.txt file … the crawler will never see the noindex rule,
+  // and the page can still appear in search results» (Google, block-indexing). A signed-out
+  // crawler reaches only the sign-up gate, and the page carries `noindex, follow`, so letting it
+  // crawl is what finally drops those URLs. Transcripts stay private: they need a session.
+  const SENSITIVE_PATHS = ["/api/", "/admin/", "/users/", "/modo-chat/api/"];
+
+  // Inside the blocked `/users/`, the sign-in and sign-up pages are public and carry `noindex` —
+  // but blocked, Google never saw it and indexed 4 `/users/…?callbackUrl=` URLs (plan د٦).
+  // Google applies «the most specific rule based on the length of the rule path», so these
+  // longer Allow lines open just the two pages; member profiles under `/users/` stay blocked.
+  const ALLOW_PATHS = ["/", "/users/login", "/users/register"];
 
   return {
     rules: [
       // ═══ DEFAULT — All other crawlers ═══
       {
         userAgent: "*",
-        allow: "/",
+        allow: ALLOW_PATHS,
         disallow: SENSITIVE_PATHS,
       },
 
@@ -52,7 +61,7 @@ export default function robots(): MetadataRoute.Robots {
           "Baiduspider",    // Baidu (China — largest search engine)
           "PetalBot",       // Huawei search
         ],
-        allow: "/",
+        allow: ALLOW_PATHS,
         disallow: SENSITIVE_PATHS,
       },
 
@@ -90,7 +99,7 @@ export default function robots(): MetadataRoute.Robots {
           "PhindBot",               // [unofficial] Phind developer AI search
           "Applebot",               // Apple Search + Siri grounding
         ],
-        allow: "/",
+        allow: ALLOW_PATHS,
         // Same private paths as everyone else — see the strategy note above.
         disallow: SENSITIVE_PATHS,
       },
@@ -128,7 +137,7 @@ export default function robots(): MetadataRoute.Robots {
           // ─── Shared dataset feeding most LLMs ───
           "CCBot",                        // Common Crawl
         ],
-        allow: "/",
+        allow: ALLOW_PATHS,
         // Same private paths as everyone else — see the strategy note above.
         disallow: SENSITIVE_PATHS,
       },

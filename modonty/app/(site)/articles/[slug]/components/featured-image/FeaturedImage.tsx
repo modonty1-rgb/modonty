@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 
 import { OptimizedImage, type ImageMedia } from "@modonty/shared/components/optimized-image";
 
+import { CoverZoom } from "./CoverZoom";
+
 interface ArticleFeaturedImageProps {
   /** The media row itself — `bunnyUrl` and `blurDataURL` are required keys on `ImageMedia`,
    *  so a query that forgets either is a compile error here rather than a silent downgrade.
@@ -32,6 +34,8 @@ export function ArticleFeaturedImage({ image, title, children }: ArticleFeatured
         preload
         sizes="hero"
       />
+      {/* Tap to open large (plan هـ٣) — a client island over the server image. */}
+      <CoverZoom media={image} alt={image.altText || title} />
       {children}
     </div>
   );

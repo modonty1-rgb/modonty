@@ -28,22 +28,24 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
         select: { id: true, newRateBp: true, renewalRateBp: true, effectiveFrom: true },
       })
     : [];
+  const target = showCommission
+    ? await db.salesTarget.findFirst({
+        where: { staffId: id, effectiveFrom: { lte: new Date() } },
+        orderBy: [{ effectiveFrom: "desc" }, { createdAt: "desc" }],
+        select: { monthlySarMinor: true },
+      })
+    : null;
 
   return (
     <div className="max-w-[1200px] mx-auto">
+      {/* On a rep's page the sales terms lead — they are why it is opened (Khalid, 1 Oct 2026);
+          the account form follows. Outside the form: the dialogs carry forms of their own. */}
+      {showCommission && <CommissionRateSection staffId={id} staffName={user.name ?? ""} rates={rates} target={target} />}
       <UserForm
         initialData={user}
         userId={id}
         activity={{ total: activity.total, last7: activity.last7, lastActiveAt: activity.lastActiveAt }}
       />
-      {/* Same two-thirds column as the form's cards above it (user-form.tsx: lg:grid-cols-3 · col-span-2). */}
-      {showCommission && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <CommissionRateSection staffId={id} staffName={user.name ?? ""} rates={rates} />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

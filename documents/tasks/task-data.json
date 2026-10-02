@@ -117,6 +117,98 @@
   ],
   "tasks": [
     {
+      "id": "CSP-TIGHTEN",
+      "b": "prod",
+      "app": [
+        "modonty"
+      ],
+      "tab": "done",
+      "sev": "low",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "سياسة الأمان (CSP) ضُيّقت من الواقع — بلا unsafe-eval في الإنتاج (بند ب٧)",
+      "d": "قائمة المصادر المسموحة صارت مبنية على اللي يحمّله الموقع فعلاً: انسمح Clarity، وانشالت مصادر ما يستخدمها أحد، وانشال أخطر استثناء (unsafe-eval). تبقى «تسجيل بلا منع» عشان ما يوقف التخزين.\n\nتقني: modonty/next.config.ts CSP_REPORT_ONLY. قياس إنتاج ٥ صفحات = ١١٦ مخالفة (~١١٠ بكسلات موقوفة · ٦ scripts.clarity.ms). مصادر من توثيق Microsoft (*.clarity.ms · c.bing.com) وGoogle tag-platform CSP (GA4 بلا Ads). unsafe-eval: GTM jsm none (live v23 + ws24) + Next CSP guide → dev فقط؛ production evaluated: unsafe-eval present false. شيلت fonts.googleapis/gstatic وvitals.vercel-insights. محلياً ٤ صفحات صفر مخالفات من مواردنا. retest ٣١."
+    },
+    {
+      "id": "COVER-ZOOM",
+      "b": "prod",
+      "app": [
+        "modonty"
+      ],
+      "tab": "done",
+      "sev": "med",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "صورة غلاف المقال صارت تكبر لما ينضغط عليها (بند هـ٣)",
+      "d": "نص ضغطات القرّاء في صفحة المقال كانت على صورة الغلاف وما يصير شي. الحين تفتح كبيرة وكاملة، وClarity يعدّ مين ضغطها.\n\nتقني: featured-image/CoverZoom.tsx (زرّ شفّاف فوق صورة السيرفر + مكبّر IconSearch + clarityEvent(\"cover_zoom\")) · CoverZoomDialog.tsx (next/dynamic ssr:false، يُحمّل بأوّل ضغطة؛ عرض min(100vw−2rem, 85vh×النسبة, 1024px)). الدليل: Clarity ٤٩٪ جوال · ٦٢٪ كمبيوتر من الضغطات على الغلاف. Playwright: 749×421 داخل 1280×495 وزر الإغلاق ظاهر · Esc يقفل · الحدث في الطابور. retest ٣٠."
+    },
+    {
+      "id": "ROOT-CLIENT-REDIRECT",
+      "b": "prod",
+      "app": [
+        "modonty"
+      ],
+      "tab": "done",
+      "sev": "med",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "روابط العملاء القديمة على جذر الموقع صارت تتحوّل لصفحة العميل (بند د٥)",
+      "d": "صفحات العملاء كانت زمان على جذر الموقع، وجوجل لسا يعرف روابطها فكانت تطلع «غير موجودة». الحين الرابط القديم يودّي لصفحة العميل الصحيحة. باقي الروابط القديمة كان الكود يعالجها أصلاً.\n\nتقني: modonty/proxy.ts — matcher جديد لمسار بجزء واحد بـlookahead يستثني كل مجلّدات الجذر (app + public) · resolveRootSegment: isLiveSlug(clients) أو lookupRedirect(clients) → 308 /clients/<slug>، وإلا 404 Next. قبل (إنتاج): /دكتور-علاء-الدين-بدوي 404 و/clients/… 200. محلياً: عربي 308 · as-clinics 308 · غير موجود 404 · ١٦ صفحة حقيقية 200 · /whats-new 308 كما كان · Playwright: الرابط القديم فتح صفحة العميل. retest ٢٩. تنبيه: أي مسار جذر جديد يُضاف لقائمة الاستثناء في matcher."
+    },
+    {
+      "id": "BING-GSC-SITEMAPS",
+      "b": "prod",
+      "app": [
+        "modonty"
+      ],
+      "tab": "done",
+      "sev": "low",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "Bing وخرائط الموقع (بند د٨) — الخرائط القديمة انحذفت، والباقي سليم أو مقصود",
+      "d": "شلنا خريطتين قديمتين بدون www من Search Console، وبقت الخريطتان الصحيحتان بلا أخطاء. Bing يغطّي صفحات www أصلاً فما يحتاج تسجيل ثاني. الصور الأربع بلا نص بديل صارت سليمة، والصفحتان المخفيتان عن البحث (الأدمن ومودو شات) مخفيتان عن قصد. باقي وصف ٩ صفحات — بيانات إنتاج تنتظر موافقة خالد.\n\nتقني: Bing GetUserSites → https://modonty.com/ (IsVerified) · GetUrlInfo/GetPageStats متطابقة للتسجيلين (٣٨٤ صفحة www) · GetFeeds www Success ٣٦٩. GSC sc-domain:modonty.com sitemaps.delete: https://modonty.com/sitemap.xml + image-sitemap.xml (٢١ مايو) → الباقي www ×٢ errors 0 warnings 0. Bing SEO report: alt (٤) /about · /terms · ٢ عملاء → الإنتاج: صفر img بلا alt. meta robots (٢): admin.modonty.com + /modo-chat (page.tsx:12 index:false، غير موجود في sitemap)."
+    },
+    {
+      "id": "ARTICLE-LCP-SHELL",
+      "b": "prod",
+      "app": [
+        "modonty",
+        "console"
+      ],
+      "tab": "done",
+      "sev": "high",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "صورة المقال كانت تتأخّر ١٫٩ ثانية — المقال صار يطلع جاهز من أول الصفحة (بند أ١)",
+      "d": "عدّاد المشاهدات والإعجابات كان يُقرأ مباشرة من القاعدة قبل رسم المقال، فالمقال كله كان يُبنى من جديد كل زيارة وصورته تنكشف متأخّرة. الحين المقال يطلع من الكاش جاهزاً، والأرقام تجي حيّة في أماكنها الصغيرة. ومعه: اعتماد سؤال في الكونسول صار يحدّث المقال في مدونتي.\n\nتقني: PSI جوال (إنتاج) Resource load delay ١٬٩١٠ms · LCP ٤٫١ث · <article> داخل <template id=P:5> عند الحرف ١٧٧٬٤٧١ والصورة ٢٢٦٬٥٩٥ من ٤٩٣ ك.ب. السبب get-article-by-slug-minimal.ts كان يقرأ العدّادات حيّاً خارج Suspense (next docs 08-caching.md:99-130). الإصلاح: data/get-article-live-counts.ts (React cache، لا يكسر الصفحة) · getArticleBySlugMinimal من الكاش فقط · _count.faqs داخل الكاش · جزر حيّة: ReaderActions · ReaderComments · ArticleViewsCount (احتياطها الرقم المخزّن) · console faq-actions + publish-faq-answer → revalidateModontyTag(\"articles\") (revalidatePath كان يلمس الكونسول بس). بناء إنتاج محلي (next build EXIT 0) + next start :3010: <article> عند ٨٦٬٢٥٥ بلا ثقب · preload الصورة في <head> عند ٢٦٦ و٢٬٣٨٨ · Playwright: الأرقام = القاعدة (٣٬٨٠٩ · ٨ · ٤) والمشاهدات حيّة (٣٩٠٠ ظهرت والمقال مخزّن، ثم أُعيدت ٣٨٠٩). CSS يحجب ١٦٠–٨٢٠ms: جُرّب experimental.inlineCss بقرار خالد على بناء إنتاج محلي وانشال — gzip المقال ٨٣٬٢٨١ → ١٩٥٬١٨١ بايت (ملف التصميم ٢٣٧٬٤٧٥ حرفاً ويُحطّ مرّتين) و<article> تأخّر من ٨٦٬٢٥٥ إلى ٣٢٣٬٦٧٢. حجم CSS فُحص: ٢٢٧٬٧٩٩ حرفاً (٣٦ ك.ب gzip)، المقال يستخدم ~٨٣ ألفاً والباقي موزّع على ١٨ قسماً + ٦٧٥ قيمة مخصّصة (٥٥٬٨٥٣)؛ Tailwind 3 ملف واحد من الكلاسات المستخدمة فقط وبلا safelist — أقصى ربح ~٩٠ms، لا يستاهل إعادة كتابة.ts كتجربة تُحكم لايف بعد البوش (لو ما نفع يُشال السطر). يعمل في بناء الإنتاج فقط — لم يُبنَ بعد. الاختبار الحيّ: retest ٢٨."
+    },
+    {
+      "id": "GTM-PIXELS-OFF",
+      "b": "prod",
+      "app": [
+        "modonty"
+      ],
+      "tab": "done",
+      "sev": "med",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "لا بكسلات إعلانية على مدونتي — فيسبوك وتيك توك وسناب موقوفة في مسودّة GTM (بندا أ٢ وأ٤)",
+      "d": "ما عندنا حملات توديّ لمدونتي، فالبكسلات كانت تحمّل على كل زائر بلا فايدة، وهي أثقل جافاسكربت في الصفحة. وقفناها كلها في مسودّة GTM، وترجع على صفحة الهبوط وقت أي حملة. الموقع الحيّ يتغيّر لما ننشر GTM مع البوش.\n\nتقني: workspace 24، الوسوم 9 · 11 · 13 · 14 · 18 paused (الإيقاف يكفي: المقاس يثبت إن الموقوف ما يدخل gtm.js). gtm.js للمسودّة (env-6) قبل ٤١٤٬٤٨٨ بايت tiktok=1 snap=2 → بعد ٤٠٣٬٦٥٨ fbevents=0 tiktok=0 snap=0 clarity=3. السكربتات اللي ما عادت تتحمّل: fbevents ‏١١٢٬٧٢١ بايت gzip (+config) · تيك توك (loader ٢٬٦٠٨ + main ~١٢٨ ك.ب) · سناب ٢٤٬٩٥٤. ولا متغيّر بلا استخدام؛ ٣ مشغّلات للبكسلات باقية لإعادة التشغيل. الاختبار الحيّ: retest ٢٧."
+    },
+    {
+      "id": "SPEED-KPI-CRUX",
+      "b": "prod",
+      "app": [
+        "admin"
+      ],
+      "tab": "done",
+      "sev": "med",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "لوحة سرعة شهرية للزوّار الحقيقيين — KPI › Speed في الأدمن (بند ج٩)",
+      "d": "صفحة جديدة /kpi/speed: أرقام جوجل لزوّار كروم الحقيقيين على modonty.com، جوال وديسكتوب، رقم لكل شهر. قياس ٢ أكتوبر: الجوال يحمّل المحتوى الرئيسي في ٤٫٩ ثانية (ضعيف، الحدّ ٢٫٥) والديسكتوب ٤٫١ — والتفاعل والثبات جيّدان. أرقام كل صفحة لوحدها ما تطلع اليوم لأن زوّارها أقلّ من حدّ جوجل، والصفوف تتعبّى وحدها لما يكبروا.\n\nتقني: admin/lib/seo/crux-history.ts (CrUX History API، ٤٠ أسبوعاً) · kpi/speed/helpers/get-speed-kpis.ts (unstable_cache يوم، وسم crux-kpi؛ شهر = آخر نافذة فيها بيانات) · page.tsx + loading.tsx · السايدبار KPI › Speed + breadcrumb. تحقّق Playwright محلياً: الأرقام تطابق ناتج الـAPI الخام (٤٨٦٦ms→٤٫٩ث · ٧/٤ ‏٤٤٠٢→٤٫٤ · CLS ٠٫٣٢) وصفر أخطاء كونسول. بعد البوش: يحتاج GOOGLE_PAGESPEED_API_KEY في مشروع الأدمن على Vercel (retest ٢٦)."
+    },
+    {
       "id": "SUBSCRIBER-QA",
       "b": "dev",
       "app": [
@@ -6360,6 +6452,86 @@
       "date": "٣٠ سبتمبر ٢٠٢٦",
       "t": "٦٨ صورة بلا حقل scope — التعبئة بـCLIENT طُبّقت على dev، والإنتاج ينتظر أمر خالد",
       "d": "مقيس ١ أكتوبر على modonty_dev (نسخة الإنتاج ليلة ٣٠ سبتمبر): scope missing: 68 · بفلتر اللوحة نفسه في مونغو 1055 · بـPrisma (not: PLATFORM) 987 — Prisma لا يطابق الحقل الغائب، وصيغة NOT تعطي 987 أيضاً. السكيما: scope MediaScope @default(GENERAL) لكن الصفوف كُتبت بلا الحقل. يؤثّر على اللوحة (media-counts.ts:26) وصفحة مكتبة الوسائط (get-media-stats.ts:71). العلاج: تعبئة scope=GENERAL للـ68 — تعديل بيانات إنتاج يحتاج أمر خالد.<br>١ أكتوبر — تصحيح القيمة: الـ68 كلها لها clientId، والقاعدة في البيانات: كل صورة لعميل = CLIENT (1135) وكل GENERAL بلا عميل (28) — فالصحيح CLIENT لا GENERAL. أُنشئت ٨–١٦ أبريل قبل الحقل. طُبّق على modonty_dev: updated 68 · missing now 0 · المعرّفات محفوظة للتراجع (scratchpad/media-scope-backfill-ids.json). الأثر مقيس: اللوحة 987 ← 1,055 · مستخدمة 791 · غير مستخدمة 264 · بلا alt 125 · بلا أبعاد 3 · صفحة /media «1055 files» — وعدٌّ مستقلّ من مونغو يطابقها كلها. الباقي: نفس السطر على الإنتاج بأمر خالد: updateMany({scope:{$exists:false}},{$set:{scope:\"CLIENT\"}})."
+    },
+    {
+      "id": "VERCEL-CACHE-MINUTES",
+      "b": "prod",
+      "app": [
+        "modonty"
+      ],
+      "tab": "done",
+      "sev": "med",
+      "who": "c",
+      "date": "١ أكتوبر ٢٠٢٦",
+      "t": "مدونتي: ١١ موضعاً تتحدّث كل دقيقة — مراجعتها لتقليل كتابات ISR على Vercel",
+      "d": "متابعة لخطّة تكلفة Vercel (بعد الفوتر والرئيسية اللي صاروا hours ولم يُرفعا). بقي cacheLife(\"minutes\") في: get-reel-by-slug (reels) · client-reviews (clients) · client-gallery (clients) · client-faqs (faqs, clients) · get-reels-feed-page ×٢ (reels, clients) · ga4.ts:92 (ga4-footer) · get-modonty-reels (reels) · get-modonty-gallery (clients, articles) · story-offer (commercial-catalog) · get-clients-search (clients). الخطوة: لكل وسم، يُفحص هل الأدمن/الكونسول يمسحه عند التعديل — إن نعم يتحوّل hours بلا تأخير ظاهر، وإن لا يُضاف المسح أولاً. خالد (١ أكتوبر): بعد ما نخلص الشغل المستعجل. — ٢ أكتوبر (خطة المحتوى أ٦): صفحة العميل كانت محصورة بدقيقة بسبب ٣ دوالّ cacheLife(\"minutes\") (التقييمات · الأسئلة · المعرض) — صارت hours لأن الكونسول يحدّث كاش مدونتي عبر regenerateClientSeo. على الإنتاج قبل الإصلاح: X-Vercel-Cache STALE و Age يرجع ٠ خلال دقائق. لم يُرفع. — ٢ أكتوبر: انتهى محلياً. لكل وسم فُحص مَن يمسحه قبل التحويل: reels (الإعجاب/الحفظ updateTag · اعتماد الأدمن · وأُضيف مسح reels في اعتماد تعليقات الكونسول comment-actions.ts لأن عدد التعليقات في الكاش) · clients (٢٠ موضعاً في الأدمن + regenerateClientSeo في الكونسول) · commercial-catalog (دالّة واحدة تُستدعى ٢٧ مرّة) · ga4-footer (رقم خارجي، وكان يحصر كل صفحة فيها الفوتر بدقيقة). النتيجة: grep cacheLife(\"minutes\") في مدونتي = 0 (كان ١١). باقٍ بقصد: صفحتا الذكاء الاصطناعي وكرة القدم ٥ دقائق (بيانات خارجية حيّة). فحص محلي: ٧ صفحات 200. القياس الحقيقي (ISR writes + X-Vercel-Cache) بعد النشر. لم يُرفع."
+    },
+    {
+      "id": "LOGIN-BUTTONS-LOCK",
+      "b": "prod",
+      "app": [
+        "modonty"
+      ],
+      "tab": "done",
+      "sev": "high",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "مدونتي: صفحة الدخول تقفل زرّيها بعد ضغط Google — الزائر يرجع يلقاها معطّلة",
+      "d": "مشاهَد في تسجيل Clarity (٢٤ سبتمبر · مصر · كمبيوتر · ٤:٣٣ · ٣٤ ضغطة)، حالة الأزرار مقروءة من التسجيل: ٠٠:١٧ و٠١:٢٦ زر Google «جاري تسجيل الدخول...» وزر الإيميل كلاهما disabled، والضغط الغاضب (٠١:٢٤) على زر معطّل · ٠٣:٥٦ زر الإيميل عالق «جاري تسجيل الدخول...» بلا رسالة، والجلسة انتهت على صفحة الدخول. السبب: modonty/app/(site)/users/login/components/login-form.tsx:84 و:127 disabled={loading !== null}، وhandleOAuthSignIn يضبط loading قبل التحويل (:28-31) ولا شيء يعيده عند الرجوع للصفحة (مؤشّر: رجوع المتصفّح/bfcache). الحل: إعادة loading عند pageshow · زر Google لا يعطّل نموذج الإيميل · مهلة ثم رسالة. التفاصيل: documents/HTML/content-study/06-clarity.html ك٦. — أُصلح محلياً ٢ أكتوبر (بند ب١ في الخطة): users/helpers/use-google-redirect-state.ts للدخول والتسجيل معاً (العطل نفسه كان في التسجيل register-form.tsx:65). مفحوص حيّاً في Playwright: نموذج الإيميل يبقى شغّال أثناء Google · pageshow persisted يفتح الزر · رسالة بعد ١٥ث · Google الحقيقي يصل accounts.google.com والرجوع يلقى الزر مفتوح. لم يُرفع."
+    },
+    {
+      "id": "SALES-TARGET-ON-ORDERS",
+      "b": "prod",
+      "app": [
+        "admin"
+      ],
+      "tab": "done",
+      "sev": "med",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "صفحة الاشتراكات: تارجت الشهر فوق الجدول — الأدمن يشوف كل المناديب، والمندوب يشوف نفسه",
+      "d": "خالد (٢ أكتوبر): «أنا كأدمن أشوف البروجرس… وكل مندوب يشوف التارجت اللي هو وصل له». مصدر واحد للحساب: admin/lib/commissions/get-target-progress.ts (استعلام واحد للتارجتات + سعر صرف واحد)، وكشف حساب العمولات صار يقرأ منه بدل نسخته (حُذف الحساب المكرّر من commission-statement/page.tsx). المكوّن: admin/app/(dashboard)/orders/components/target-strip.tsx. مقيس حيّاً على dev: الأدمن يرى «فحص صلاحية SALES ٩٤٪ ٤٬٦٨٢٫٥٤ من ٥٬٠٠٠» و«فاتن حسني ١٪ ١٬٥٥٧٫١٧ من ١٥٠٬٠٠٠»، وكشف الحساب للمندوب نفسه = ٩٤٪ نفس الرقم. والمندوب (sales.check) يرى سطره وحده ولا يرى فاتن ولا سطر «قبضنا». tsc نظيف. لم يُرفع."
+    },
+    {
+      "id": "CONTENT-PLAN-M1-DONE",
+      "b": "prod",
+      "app": [
+        "modonty",
+        "admin"
+      ],
+      "tab": "done",
+      "sev": "high",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "خطة المحتوى · الموجة ١: ١٢ بنداً منجزة محلياً (غير مرفوعة) + بند فُحص بلا إصلاح",
+      "d": "المرجع والأدلّة لكل بند: documents/HTML/content-study/09-plan.html (#order أخضر). ج١ الجلسات الوهمية: قياس ٣٠ يوماً ١٣٬٣١٧ من ١٤٬٦٦٣ Unassigned، و٩٩٫٧٪ من أحداثها ٨ أحداث متصفّح → modonty/lib/analytics/ga4-browser.ts + وسم GTM «GA4 - Browser events» في مساحة 24 (غير منشور)؛ معاينة GTM: الحدث قبل تحميل GTM يدخل نفس cid/sid، وclient_id صار client_db_id. ج٢ واتساب Key Event (API: ضمن keyEvents). ج٣ فلتر Web hostname (Testing). ج٤ Clarity مرّة. ج٨ صفحة admin /contact-requests (٥٢ · ٥٠ جديد · سجلّ التدقيق). ب١ أزرار الدخول والتسجيل (use-google-redirect-state.ts). د١ قسم الريلز في صفحة العميل + تبويب الريلز index + أسهم السابق/التالي (سلسلة ٢٣/٢٣). ب٢ عنوان «مدونتي | مدونتي». ج٥/ج٦ أحداث ووسوم Clarity (lib/analytics/clarity.ts). د٦ robots.txt (modo-chat/api فقط + Allow login/register). د٧ ٩/١٠ طلب فهرسة + lastmod العميل = الأحدث مع آخر مقال (٣٨/٣٨ على dev). ب٤ فُحص: زائر واحد ٢٧ سبتمبر، لم يتكرّر. tsc لم يُشغَّل (ممنوع قبل الدفع). لم يُرفع."
+    },
+    {
+      "id": "CONTENT-PLAN-PUSH-RETEST",
+      "b": "prod",
+      "app": [
+        "modonty",
+        "admin"
+      ],
+      "tab": "next",
+      "sev": "high",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "خطة المحتوى: النشر مرّة واحدة في الآخر — GTM أوّلاً ثم الكود ثم ٢٧ اختباراً لايف",
+      "d": "بقرار خالد (٢ أكتوبر): لا نشر حتى تخلص الخطة. الترتيب إلزامي: نشر نسخة GTM (مساحة 24) قبل الكود وإلا تضيع أحداث المقالات. بعده قسم «اختبارات بعد النشر» (#retest، ٢٧ بنداً) في 09-plan.html بنداً بنداً في Playwright قدّام خالد. وفلتر الدومين في GA4 يتحوّل Active بعد مراجعة بُعد Test data filter name. وطلب فهرسة as-clinics يوم ٣ أكتوبر (حصّة اليوم انتهت). معلّق: حذف ٣ مسارات صارت بلا مستدعٍ (users/register/api/track · users/login/api/track · api/track/web-vitals) — النظام رفض الحذف بلا إذن. — ومع نشر GTM: كل البكسلات موقوفة في المسودّة بقرار خالد ٢ أكتوبر («ما عندنا أي بكسل» — يرجع على صفحة الهبوط وقت الحملة): Meta (9 · 11 · 13) · تيك توك (14) · سناب (18). مقاس gtm.js للمسودّة: ٤١٤٬٤٨٨ → ٤٠٣٬٦٥٨ بايت، وfbevents=0 · tiktok=0 · snap=0. التغييرات في المساحة: ٣٥."
+    },
+    {
+      "id": "MOBILE-A11Y-2OCT",
+      "b": "prod",
+      "app": [
+        "modonty"
+      ],
+      "tab": "next",
+      "sev": "med",
+      "who": "c",
+      "date": "٢ أكتوبر ٢٠٢٦",
+      "t": "مرحلة الجوّال: ملاحظتا سهولة استخدام من PageSpeed (مقيستان، لم تُنفّذا — الديسكتوب أوّلاً)",
+      "d": "PageSpeed جوال ٢ أكتوبر: (١) الرئيسية والمقال: زرّ القائمة في الشريط السفلي (button#radix… مع span absolute bottom-1) تباين النصّ ٢٫١٦–٢٫٦٣ (#74b3b4 / #59a4a5 على #f1f5f8) والمطلوب ٤٫٥ · ونفس الزرّ aria-label «افتح م…» لا يحتوي نصّه الظاهر (WCAG 2.5.3). (٢) /reels: زرّ في شريط أزرار الريل مغطّى جزئياً، أصغر مساحة ٤٤×١٦ (target-size). الديسكتوب: صفر مخالفات بعد إصلاح «اسأل مودو» والتبويب الصوتي (axe محلياً)."
     }
   ],
   "reports": []

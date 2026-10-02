@@ -1,3 +1,5 @@
+import { pushGa4Event } from "./ga4-browser";
+
 export type CTAType = "BUTTON" | "LINK" | "FORM" | "BANNER" | "POPUP";
 
 export interface CtaClickPayload {
@@ -18,14 +20,14 @@ declare global {
 
 export function trackCtaClick(payload: CtaClickPayload): void {
   try {
-    if (typeof window !== "undefined" && Array.isArray(window.dataLayer)) {
-      window.dataLayer.push({
-        event: "cta_click",
+    // GA4 outbound_click goes from the browser (GTM), not from /api/track/cta-click — a
+    // server-sent event became a phantom GA4 session (see ga4-browser.ts). The route keeps the
+    // DB row + the partner's Telegram notice.
+    if (payload.targetUrl) {
+      pushGa4Event("outbound_click", {
         cta_label: payload.label,
-        cta_type: payload.type,
+        cta_type: payload.type.toLowerCase(),
         cta_target_url: payload.targetUrl,
-        ...(payload.articleId && { cta_article_id: payload.articleId }),
-        ...(payload.clientId && { cta_client_id: payload.clientId }),
       });
     }
     fetch("/api/track/cta-click", {

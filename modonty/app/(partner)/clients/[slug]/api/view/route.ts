@@ -5,7 +5,6 @@ import { cookies, headers } from "next/headers";
 import { classifyTrafficSource } from "@/lib/analytics/classify-source";
 import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
-import { trackClientView } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -104,17 +103,16 @@ export async function POST(
       headers: headersList,
     }).catch(() => {});
 
-    void trackClientView(
-      {
-        client_id: client.id,
-        client_slug: client.slug,
-        client_name: client.name,
-        client_industry: client.industry?.name,
-      },
-      userId ? { userId } : undefined,
-    );
+    // GA4 client_view is sent by the BROWSER (ClientViewTracker → pushGa4Event → GTM) — a
+    // server-sent event became a phantom session (see lib/analytics/ga4-browser.ts).
+    const ga4 = {
+      client_id: client.id,
+      client_slug: client.slug,
+      client_name: client.name,
+      client_industry: client.industry?.name,
+    };
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, ga4 });
   } catch (err) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }

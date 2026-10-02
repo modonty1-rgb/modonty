@@ -19,6 +19,8 @@ export interface CurrencyTotal {
   market: string;
   /** يقول العملةَ حين لا يكفي اسمُ البلد — سوقان بالريال نفسِه. */
   hint: string;
+  /** «ر.س» / «ج.م» بجانب الرقم — بلا وحدةٍ كان «١٨٠٬٤٦٨» يُقرأ ريالاً. */
+  unit: string;
   label: string;
 }
 
@@ -30,42 +32,46 @@ export interface CurrencyTotal {
  * هناك (`/clients/sales-report`)، وبنفس شرط المال (`lib/orders/revenue-order.ts`) فالسهمُ لا
  * يوصل إلى رقمٍ آخر — مقيسٌ: «مصر ١٠٩٬١٢٩ · السعودية ٢٬٣٩٤» هنا = `EGP 109,129 · SAR 2,394` هناك.
  *
- * **دخل** ما وصل الخزينة · **استُحقّ** ثمنُ خدمةٍ قُدّمت · **محجوز** مقبوضٌ عن أشهرٍ قادمة —
- * والفارقُ بين الأوّلين كلُّه في الثالث.
+ * **قبضنا بالريال: هذا الشهر · الشهر الماضي · من البداية** — كاشٌ فقط (خالد ١ أكتوبر ٢٠٢٦ اختاره).
+ * كان «دخل · استُحقّ · محجوز» ثم «قبضنا = خدمناه + باقي علينا»، ولم يُفهم أيٌّ منهما: تقسيمُ
+ * المقبوض على أشهر الخدمة سؤالُ محاسب لا سؤالُ هذه الصفحة. والأصفارُ تبقى: الصفرُ جوابٌ لا غياب.
  */
 export function MonthlyRevenueStrip({ data, totals }: { data: MonthlyRevenue; totals: CurrencyTotal[] }) {
   return (
     <section
       // بلا إطار: يجلس بجانب الفلاتر في صفّ العنوان، والإطارُ كان يجعله كرتاً ثانياً يزاحمها.
-      className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground"
+      className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground"
       aria-label="الإيراد الشهريّ بالريال السعوديّ"
     >
       {/* كلُّ سوقٍ بعملته — لا يُجمع ريالٌ على جنيه. */}
+      <span className="font-semibold text-foreground">مبيعات كل سوق:</span>
       {totals.map((t) => (
         <span key={t.code} title={t.hint} className="flex items-baseline gap-1">
           {t.market}
           <b className="text-[13px] tabular-nums text-foreground">{t.label}</b>
+          {t.unit}
         </span>
       ))}
 
       <span className="h-4 w-px bg-border" aria-hidden />
 
-      {/* سعرُ الصرف في التلميح — «بالريال» تكفي السطر، والسعرُ لمن يسأل. */}
+      {/* كاشٌ فقط، بالريال بسعر اليوم (والسعرُ في التلميح). الأشهرُ تنتهي بالشهر الجاري
+          (`get-monthly-revenue.ts`)، فآخرُها هذا الشهر والذي قبله الماضي. */}
       <span
-        className="flex items-baseline gap-1"
-        title={data.fx.ok ? `ما وصل الخزينة — بالريال · ريال = ${data.fx.egp?.toFixed(2) ?? "—"} جنيه` : "ما وصل الخزينة — بالريال"}
+        className="font-semibold text-foreground"
+        title={data.fx.ok ? `كل الأسواق محوّلة للريال · ريال = ${data.fx.egp?.toFixed(2) ?? "—"} جنيه` : "كل الأسواق محوّلة للريال"}
       >
-        دخل <b className="text-[13px] tabular-nums text-foreground">{formatSar(data.totalCashSarMinor)}</b>
+        قبضنا بالريال:
       </span>
-      <span className="flex items-baseline gap-1" title="ثمنُ خدمةٍ قُدّمت — بالريال">
-        استُحقّ <b className="text-[13px] tabular-nums text-primary">{formatSar(data.totalAccruedSarMinor)}</b>
-      </span>
-      {data.deferredSarMinor > 0 ? (
-        <span className="flex items-baseline gap-1" title="مقبوضٌ عن أشهرٍ قادمة — خدمتُها لم تُقدَّم بعد — بالريال">
-          محجوز <b className="text-[13px] tabular-nums text-foreground">{formatSar(data.deferredSarMinor)}</b>
+      {[
+        { label: "هذا الشهر", minor: data.months.at(-1)?.cashSarMinor ?? 0, strong: true },
+        { label: "الشهر الماضي", minor: data.months.at(-2)?.cashSarMinor ?? 0 },
+        { label: "من البداية", minor: data.totalCashSarMinor },
+      ].map((p) => (
+        <span key={p.label} className="flex items-baseline gap-1">
+          {p.label} <b className={`text-[13px] tabular-nums ${p.strong ? "text-primary" : "text-foreground"}`}>{formatSar(p.minor)}</b>
         </span>
-      ) : null}
-      <span className="text-[10px]">بالريال</span>
+      ))}
       {!data.fx.ok ? <span className="text-amber-600 dark:text-amber-400">تعذّر سعرُ الصرف — ريالاتٌ فقط</span> : null}
       {data.unconverted.length > 0 ? (
         <span className="text-amber-600 dark:text-amber-400">بلا سعرِ صرف: {data.unconverted.join(" · ")}</span>

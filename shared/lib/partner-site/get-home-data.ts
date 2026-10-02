@@ -41,7 +41,7 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
   const clientRow = await db.client.findUnique({ where, select: { id: true } });
   if (!clientRow) return null;
   const clientId = clientRow.id;
-  const [client, reviews, gallery, faqs, articleFaqs, articles] = await Promise.all([
+  const [client, reviews, gallery, faqs, articleFaqs, articles, reels] = await Promise.all([
     db.client.findUnique({
       where: { id: clientId },
       select: {
@@ -92,6 +92,14 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
       orderBy: { datePublished: "desc" },
       take: 13, // blog index: 1 featured + 12; home takes its 3 from the front
       select: { title: true, slug: true, datePublished: true, excerpt: true, category: { select: { name: true } }, featuredImage: { select: { url: true, bunnyUrl: true, blurDataURL: true } } },
+    }),
+    // Same definition of a reel as `/reels`: `inReels` + PUBLISHED. A reel with no `reelSlug`
+    // is left out — its watch URL would 404.
+    db.media.findMany({
+      where: { clientId, inReels: true, reelStatus: "PUBLISHED", reelSlug: { not: null } },
+      orderBy: [{ reelPublishedAt: "desc" }, { id: "desc" }],
+      take: 60, // the reels page shows them all; home takes its first ones
+      select: { title: true, reelSlug: true, url: true, bunnyUrl: true, blurDataURL: true, thumbnailUrl: true, bunnyVideoId: true },
     }),
   ]);
   if (!client) return null;
@@ -150,6 +158,13 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
       .filter((f): f is { question: string; answer: string } => Boolean(f.answer))
       .filter((f, i, all) => all.findIndex((x) => x.question.trim() === f.question.trim()) === i),
     blogHref: `/clients/${client.slug}/articles`,
+    reelsHref: `/clients/${client.slug}/reels`,
+    reels: reels.map((r) => ({
+      title: r.title ?? "",
+      href: `/reels/${encodeURIComponent(r.reelSlug ?? "")}`,
+      // A video reel's still is its Bunny thumbnail; an image reel is its own picture.
+      imageUrl: r.bunnyVideoId ? (r.thumbnailUrl ?? mediaSrc(r)) : mediaSrc(r),
+    })),
     posts: articles.map((a) => ({
       title: a.title,
       href: `/articles/${a.slug}`,

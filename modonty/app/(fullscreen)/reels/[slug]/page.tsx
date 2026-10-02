@@ -6,9 +6,10 @@ import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-l
 import { jsonLdHtml } from "@/lib/seo";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { SITE_URL } from "@/constants";
-import { IconVideo } from "@/lib/icons";
+import { IconChevronDown, IconChevronUp, IconVideo } from "@/lib/icons";
 
 import { getReelBySlug } from "./data/get-reel-by-slug";
+import { getReelNeighbors } from "./data/get-reel-neighbors";
 import { generateReelVideoJsonld } from "./helpers/generate-reel-video-jsonld";
 import { ReelWatchPlayer } from "./components/reel-watch-player";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
@@ -72,6 +73,7 @@ export default async function ReelWatchPage({ params }: ReelPageProps) {
   if (!reel) notFound();
 
   const jsonld = generateReelVideoJsonld(reel);
+  const { newer, older } = await getReelNeighbors(reel.id);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950">
@@ -92,6 +94,33 @@ export default async function ReelWatchPage({ params }: ReelPageProps) {
       <div className="h-full p-3">
         <ReelWatchPlayer reel={reel} />
       </div>
+
+      {/* Previous / next reel as real links (plan د١, 2 Oct 2026): the homepage links only the
+          latest four, so older reels had no inbound link and Google never found them. Same
+          place and look as the feed's arrows; an end of the list shows a dimmed placeholder so
+          the pair never shifts. */}
+      <nav aria-label="تنقّل بين الريلز" className="fixed end-4 top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-3 md:flex">
+        {[
+          // The brand arrow points left; turn it to point up / down (modonty-arrow-mark.tsx).
+          { slug: newer, label: "الطلّة السابقة", Icon: IconChevronUp, turn: "rotate-90" },
+          { slug: older, label: "الطلّة التالية", Icon: IconChevronDown, turn: "-rotate-90" },
+        ].map(({ slug: target, label, Icon, turn }) =>
+          target ? (
+            <Link
+              key={label}
+              href={`/reels/${encodeURIComponent(target)}`}
+              aria-label={label}
+              className="grid size-11 place-items-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <Icon className={`size-5 ${turn}`} />
+            </Link>
+          ) : (
+            <span key={label} aria-hidden className="grid size-11 place-items-center rounded-full bg-white/10 text-white opacity-30">
+              <Icon className={`size-5 ${turn}`} />
+            </span>
+          ),
+        )}
+      </nav>
 
       {/* Attribution below the header, above the clip's own gradient — the watch page carries the
           partner link the same way the feed does. */}

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ملاحظات Claude — Search Console والسيو التقني — نقاش المحتوى</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <nav class="top"><a href="index.html">الفهرس</a><a href="01-writers.html">المنطلق ونقاط النقاش</a><a href="02-findings.html" aria-current="page">ملاحظات Claude — Search Console والسيو التقني</a><a href="03-ai-search.html">البحث بالذكاء الاصطناعي</a><a href="04-ga4.html">GA4</a><a href="05-appendix.html">ملحق — الأرقام الخام</a><a href="06-clarity.html">Clarity — التجربة والتحويل</a><a href="07-pagespeed.html">PageSpeed — السرعة والجودة</a><a href="08-tools.html">أدوات فحص إضافية</a><a href="09-plan.html">خطة العمل</a></nav>
+  <h1>ملاحظات Claude — Search Console والسيو التقني</h1>
+
+  <section>
+    <h2 id="s9">٣ · ملاحظات Claude — دراسة Search Console والمقالات <span class="tag open">للنقاش</span></h2>
+    <p class="sub" style="margin:0 0 10px">بيانات جوجل الحقيقية لـmodonty.com: <b>١ يوليو → ٢٨ سبتمبر ٢٠٢٦</b> (٩٠ يوم، أرقام نهائية). المقالات من قاعدة <b>dev</b> (٢٣١ مقال منشور) — وخريطة الموقع الحيّ فيها <b>٢٣٥</b> مقال، يعني القاعدتين شبه متطابقتين.</p>
+
+    <h3 id="s10" style="font-size:15px;margin:10px 0 6px">الأرقام</h3>
+    <table>
+      <thead><tr><th>#</th><th>الملاحظة</th><th>الرقم</th><th>معناها للفريق</th></tr></thead>
+      <tbody>
+        <tr><td>١</td><td><b>تركّز شديد</b>: أعلى ١٠ مقالات تاخذ ٧٥٫٨٪ من النقرات، ومقال «اليوم الوطني ٩٦» لحاله ١٬٩١٠ نقرة من ٣٬٥١٨ (٥٤٪)</td><td>١٦٠ مقال فقط جابت أي نقرة</td><td>الزيارات جاية من مقالات مدونتي العامة والموسمية، مو من مقالات العملاء</td></tr>
+        <tr><td>٢</td><td><b>السعودية تشوفنا وما تضغط</b>: ٦٨٫٩٪ من الظهور من السعودية بـCTR ٠٫٧٥٪. مصر ٦٫١٪ بس من الظهور، بس CTR ٢٫٤٩٪ و١٨٫٩٪ من النقرات</td><td>CTR الخليج = ثلث CTR مصر</td><td>الجمهور المستهدف هو الأضعف تحويلاً: العنوان والزاوية لازم تُبنى للقارئ السعودي</td></tr>
+        <tr><td>٣</td><td><b>CTR منخفض حتى في المراكز الأولى</b>: مراكز ١–٣ = ١٫١٩٪ · ٤–٧ = ٠٫٣٦٪ · ٨–١٠ = ٠٫٤١٪</td><td>على مستوى الكلمة</td><td>مؤشّر: المنافسة في نتائج جوجل (نتائج مميّزة/ملخّصات) أو عناوين ضعيفة. يحتاج فحص عيني للنتائج</td></tr>
+        <tr><td>٤</td><td><b>ظهور كثير ونقرات شبه صفر</b> (إشارة ١): ١١٧ كلمة على ٢٣ مقال، ٧٢٬٠٣٤ ظهور</td><td>مثال: «نظام فارس» مركز ٦٫٦ وCTR ٠٫٠٦٪</td><td>بعضها <b>نيّة تنقّل</b>: الباحث يبي موقع الوزارة نفسه، فما يضغط مهما كان العنوان. جوجل يقول نراجع الكلمات اللي ما تطابق نيّة الباحث</td></tr>
+        <tr><td>٥</td><td><b>قريب من الصفحة الأولى</b> (إشارة ٢): ٢١٩ كلمة على ٢٨ مقال، ترتيب ٨–٢٠ وظهور ٥٠+</td><td>١٠٤٬٤٥٩ ظهور</td><td>أكبر فرصة سريعة: تحسين مقالات موجودة بدل كتابة جديدة</td></tr>
+        <tr><td>٦</td><td><b>مقالات تتنافس على نفس الكلمة</b>: ٥٦ كلمة يظهر عليها مقالين أو أكثر من عندنا</td><td>مثال: «سيو» ← ٣ مقالات · «استعلام عن سجل تجاري» ← مقالين لمدونتي</td><td>قبل كتابة مقال جديد لازم نشوف إذا عندنا مقال يغطّي نفس الكلمة</td></tr>
+        <tr><td>٧</td><td><b>أسئلة الناس</b>: ١٣٪ من الظهور على كلمات تبدأ بـ«متى · كيف · هل · أفضل · أسعار…» (١٬٥٧٢ كلمة)</td><td>مثال: «متى اليوم الوطني السعودي ٩٦» ٢١٬٢٨٧ ظهور</td><td>مواضيع جاهزة: الجواب المباشر في أوّل المقال</td></tr>
+        <tr><td>٨</td><td><b>الجوال</b>: ٧٥٪ من الظهور، وCTR ٠٫٧٢٪ مقابل ١٫١١٪ للكمبيوتر</td><td>٣٦٧٬٦٧٧ ظهور جوال</td><td>العنوان يتقصّ في الجوال: الكلمة المهمة أوّل العنوان</td></tr>
+        <tr><td>٩</td><td><b>ما عندنا «كلمة مستهدفة» مسجّلة</b>: المقال <b>ما فيه حقل للكلمة المستهدفة</b> في السكيما أصلاً (مفحوص)، و<code>semanticKeywords</code> فاضي في ٢٣١ من ٢٣١ على dev (الإنتاج ما قسته)</td><td>٠ من ٢٣١</td><td>ما نقدر نقيس «هل المقال نجح في كلمته؟» (إشارة ٤) بدون هذا الحقل</td></tr>
+        <tr><td>١٠</td><td><b>أساسيات الصفحة سليمة</b>: كل المقالات لها عنوان سيو ووصف، ولا عنوان فوق ٦٠ حرف، ولا عنوان مكرّر</td><td>٠ نواقص</td><td>المشكلة مو في الحقول، في <b>جودة</b> العنوان وزاويته</td></tr>
+        <tr><td>١١</td><td><b>روابط مكرّرة في جوجل</b>: ١٨ مقال جوجل يعرفه بأكثر من رابط (مع <code>/</code> في الآخر وبدونها)</td><td>مؤشّر تقني</td><td><b>صُحّحت ٢ أكتوبر:</b> مقيس — الرابط بـ<code>/</code> يرجع 308 للرابط الأصلي، فجوجل اكتشف تحويلاً لا نسخة مكرّرة. مو مشكلة</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="s11" style="font-size:15px;margin:18px 0 6px">ملاحظات إضافية — كيف ينتشر المقال في السوق الخليجي (بحث في المصادر الرسمية والشركات الكبيرة، ٢ أكتوبر)</h3>
+    <table>
+      <thead><tr><th>#</th><th>الملاحظة</th><th>الدليل</th><th>الاقتراح للفريق</th><th>رأي خالد</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>١٢</td>
+          <td><b>Google Discover هو الطريق الرسمي للانتشار، ونحن برّاه تماماً</b></td>
+          <td>Search Console نوع <code>discover</code> آخر ٩٠ يوم: <b>ولا صف</b>. وجوجل يقول التقرير «يظهر فقط إذا وصل الموقع حدّاً أدنى من الظهور في Discover»، يعني إحنا <b>تحت الحدّ</b> (مو بالضرورة صفر مطلق). والتقنيات جاهزة: <code>googlebot: max-image-preview:large</code> وصورة المقال ١٢٠٠×٦٧٥ (١٦:٩)، مفحوص على مقال حيّ</td>
+          <td>الناقص هو المحتوى، وشروط جوجل: «موضوع في وقته، يحكي قصة، أو فيه رؤية فريدة» · عنوان يعبّر عن جوهر المقال بدون إثارة مضلّلة · صورة حقيقية مو شعار ولا صورة مليانة نص. وجوجل يقول زيارات Discover «أقل قابلية للتوقّع»، فهي إضافة مو أساس</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>١٣</td>
+          <td><b>ملخّصات الذكاء الاصطناعي في جوجل ما تحتاج حيلة خاصة</b></td>
+          <td>جوجل: «لا توجد متطلبات إضافية… ولا تحسينات خاصة». ودراسة Semrush على ١١٬٨٨٢ سؤال و٣٠٤٬٨٠٥ رابط مستشهَد: المحتوى اللي يبدأ بجواب واضح +٣٢٫٨٪ · إشارات الخبرة والثقة +٣٠٫٦٪ · صيغة سؤال وجواب +٢٥٫٥٪ · أقسام بعناوين +٢٢٫٩٪</td>
+          <td>قالب كتابة: <b>الجواب في أوّل فقرة</b>، بعدين التفصيل بعناوين، وأسئلة القارئ الحقيقية من Search Console (بند ٢٫٢-ب). أرقام Semrush ارتباط مو سبب</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>١٤</td>
+          <td><b>سناب شات غائب من أزرار المشاركة</b></td>
+          <td>DataReportal Digital 2026 السعودية: يوتيوب ٧٩٫٢٪ · <b>سناب شات ٧٢٫٩٪</b> · إنستغرام ٥٢٫٤٪ · X ٤٣٫١٪ من السكان. أزرارنا: X · LinkedIn · Facebook · WhatsApp فقط (<code>modonty/components/share/ShareButtons.tsx:31</code>)</td>
+          <td>نضيف زر مشاركة سناب شات الرسمي (Snap Creative Kit Web). سناب يوصل لـ٧٣٪ من السعوديين، ولينكدإن يوصل لـ٣٥٪ وزرّه موجود</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>١٥</td>
+          <td><b>السعودي يبحث عن المنصّات الحكومية بالاسم</b></td>
+          <td>Google Year in Search 2025 السعودية: الأكثر بحثاً «منصة قبول» · «مركز قياس» · «تسجيل الحرس الوطني». وعندنا: «نظام فارس» ١٣٬٨٦٩ ظهور بـCTR ٠٫٠٦٪ (ملاحظة ٤)</td>
+          <td>الاسم وحده نيّته «ودّني للموقع». نكتب حول <b>الأسئلة والمشاكل</b>: «كيف أسجّل في…» · «حلّ مشكلة… لا يعمل» · «الأوراق المطلوبة»، لأن هذي تحتاج شرح</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>١٦</td>
+          <td><b>الكاتب الحقيقي ما يظهر في بيانات المقال</b></td>
+          <td>مقالين حيّين (مقال عام ومقال طبي لعميل): <code>"author": #organization</code>. المقال الطبي فيه <code>reviewedBy</code> و<code>MedicalWebPage</code>، وهذا ممتاز. جوجل يقول عن الكاتب: «أشياء مثل اسم الكاتب حيث يُتوقّع» و«نوصي بشدّة» بـ<code>type</code> و<code>url</code> للكاتب</td>
+          <td>للنقاش: نظهر اسم الكاتب الحقيقي (Person) مع صفحة تعريف له؟ بشرط جوجل: <b>ممنوع</b> أسماء أو صور أو مؤهلات مختلقة</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>١٧</td>
+          <td><b>لهجة الخليج في البحث</b></td>
+          <td>مقالات شركات وكالات (مو مصدر رسمي): «كلمات البحث باللهجة الخليجية تختلف عن الفصحى»</td>
+          <td>ما نعتمد كلامهم. نبني <b>قائمة كلمات اللهجة من بياناتنا</b> في Search Console (كلمات فيها «ليش · وش · ابي · كيف أسوي»)، ونعطيها للكاتب</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>١٨</td>
+          <td><b>الروابط الداخلية من الكاتب نفسه ضعيفة</b></td>
+          <td>مقيس على ٢٣٤ مقال حيّ (داخل نص المقال فقط): <b>٤٤</b> بدون أي رابط لمقال ثاني · ١٣٧ فيها ١–٢ · ٥٣ فيها ٣+. و<b>١٠٢ مقال</b> ما يشير لها ولا رابط من نص أي مقال ثاني. روابط «اقرأ أيضاً» الآلية موجودة في الكل (٦–١٢)</td>
+          <td>عند الكتابة: الأداة تقترح روابط من مقالاتنا اللي ترتّب على كلمات قريبة (بند ٢٫٢-و). وعند نشر مقال جديد: نضيف له رابط من ٢–٣ مقالات قديمة قريبة، عشان ما يبقى بدون روابط له. جوجل يذكر الروابط الداخلية بالاسم في إرشادات ملخّصات الذكاء الاصطناعي وفي دليل البداية</td>
+          <td class="empty">—</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted)">المصادر:
+      <a href="https://developers.google.com/search/docs/appearance/google-discover">Google Discover</a> ·
+      <a href="https://developers.google.com/search/docs/appearance/ai-features">AI features</a> ·
+      <a href="https://www.semrush.com/blog/content-optimization-ai-search-study/">Semrush AI search study</a> ·
+      <a href="https://datareportal.com/reports/digital-2026-saudi-arabia">DataReportal Digital 2026 Saudi Arabia</a> ·
+      <a href="https://developers.snap.com/snap-kit/creative-kit/web">Snap Creative Kit Web</a> ·
+      <a href="https://trends.withgoogle.com/en-gb/year-in-search/2025/sa/">Year in Search 2025 — SA</a> ·
+      <a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">Helpful content (E-E-A-T)</a> ·
+      <a href="https://developers.google.com/search/docs/appearance/structured-data/article">Article structured data</a>
+    </p>
+
+    <h3 id="s12" style="font-size:15px;margin:18px 0 6px">مراجعة السيو التقني — على الموقع الحيّ (٢ أكتوبر)</h3>
+    <p style="font-size:14px">مقيس على <b>www.modonty.com</b> نفسه: ١٣ صفحة من كل نوع، و<b>٢٣٤ مقال</b> (كل مقالات الخريطة)، وبيانات سرعة حقيقية من جوجل (PageSpeed / CrUX). الإنتاج = آخر كود محلي (<code>origin/main...main = 0 0</code>).</p>
+
+    <p style="margin:10px 0 4px"><b>اللي سليم ✓</b></p>
+    <table>
+      <thead><tr><th>البند</th><th>المقيس</th></tr></thead>
+      <tbody>
+        <tr><td>عنوان واحد للموقع</td><td><code>http://</code> و<code>modonty.com</code> بدون www ← 308 إلى <code>https://www.modonty.com</code></td></tr>
+        <tr><td>الصفحات المحذوفة</td><td>صفحة غير موجودة = 404 حقيقي. وأعلى ٤٠ رابط مقال قديم يعرفه جوجل: ٣٨ = <b>410</b> و٢ = 308</td></tr>
+        <tr><td>robots.txt</td><td>يسمح لمحركات البحث وروبوتات الذكاء الاصطناعي، ويمنع <code>/api/ · /admin/ · /users/</code></td></tr>
+        <tr><td>خريطة الموقع</td><td>٣٧٧ رابط، منها ٢٣٥ مقال، و٢٥٦ فيها صور. <code>lastmod</code> للمقال = <code>dateModified</code> نفسه</td></tr>
+        <tr><td>canonical</td><td>يشير لنفسه في ١٣ من ١٣ صفحة. والرابط بـ<code>/</code> في الآخر ← 308 للرابط الأصلي <b>(يصحّح ملاحظة ١١: مو مشكلة)</b></td></tr>
+        <tr><td>الصفحة</td><td>H1 واحد في كل صفحة · صفر صور بدون alt · <code>lang="ar-SA" dir="rtl"</code></td></tr>
+        <tr><td>JSON-LD</td><td>صفر أخطاء قراءة. أنواع غنية: Article · BreadcrumbList · MedicalWebPage مع <code>reviewedBy</code> · Dentist/MedicalClinic · VideoObject للريلز · CollectionPage</td></tr>
+        <tr><td>المشاركة وDiscover</td><td><code>googlebot: max-image-preview:large</code> · صورة ١٢٠٠×٦٧٥ · <code>twitter:card = summary_large_image</code></td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin:14px 0 4px"><b>اللي ناقص ✗</b> — مرتّب بالأهمية</p>
+    <table>
+      <thead><tr><th>#</th><th>المشكلة</th><th>المقيس</th><th>المرجع</th><th>رأي خالد</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>ت١</td>
+          <td><b>السرعة على الجوال بطيئة عند الزوّار الحقيقيين</b></td>
+          <td>بيانات جوجل الحقيقية (CrUX): <b>LCP ٤٫٩–٥٫٢ ثانية</b> = «بطيء». FCP ٣٫١–٣٫٤ ث. السيرفر سريع (TTFB ٠٫٧ ث)، يعني المشكلة في المتصفح: JavaScript ١٫٥–٢٫٢ ميغا، وHTML الرئيسية ٦٩٦ ك.ب و<code>/articles</code> ١٫١ ميغا. نتيجة المختبر ٥٧–٧٠.<br><b>التشخيص (مقال اليوم الوطني، جوال):</b> أكبر عنصر هو <b>عنوان H1 نفسه</b> (نص، مو صورة). وصول الصفحة ٨٦٩ms، ثم <b>تأخير رسم ٣٬٧٦٥ms</b>: CSS يحجب الرسم (توفير ٦٣٠ms) · عمل المتصفح ٢٫٥ ث · JavaScript غير مستخدم ٣٤٥ ك.ب</td>
+          <td>web.dev: الجيد ≤ ٢٫٥ ث، والضعيف &gt; ٤ ث (عند ٧٥٪ من الزيارات). جوجل: تجربة الصفحة «تتماشى مع ما تكافئه أنظمة الترتيب»، وDiscover يوصي بها</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>ت٢</td>
+          <td><b>عناوين المقالات طويلة، والبراند مكرّر في ٤٧ مقال</b></td>
+          <td>الصيغة: «العنوان - اسم العميل | مدونتي». <b>٢٢٩ من ٢٣٤</b> فوق ٦٠ حرف، و١٥٧ فوق ٧٠، وأطولها ١٢٥. و<b>٤٧</b> فيها «- مدونتي | مدونتي». السبب: الأدمن يضيف «- اسم العميل» (<code>admin/lib/seo/metadata-generator.ts:227</code>) ومدونتي تضيف «| مدونتي» (<code>modonty/app/layout.tsx:43</code>)</td>
+          <td>جوجل: «اكتب عنوان وصفي ومختصر»، و«قد يُعيد كتابة» العنوان. اسم العميل يدفع الكلمة المهمة بعيد، والجوال يقصّ. ملاحظة: جوجل ما يحدّد عدد حروف، والقصّ بعرض البكسل؛ «٦٠ حرف» تقدير متعارف عليه</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>ت٣</td>
+          <td><b>اسم الكاتب الحقيقي غائب</b></td>
+          <td>كل الـ٢٣٤ مقال: <code>author = Organization</code></td>
+          <td>جوجل: «نوصي بشدّة» بـ<code>type</code> و<code>url</code> للكاتب. للنقاش مع ملاحظة ١٦</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>ت٤</td>
+          <td><b>hreflang بلا فايدة</b></td>
+          <td>٩ وسوم (ar-SA · ar-EG · ar-AE · … · x-default) في كل صفحة، <b>كلها لنفس الرابط</b></td>
+          <td>جوجل: hreflang «إذا عندك نسخ متعدّدة من الصفحة»، وجوجل «لا يستخدم hreflang ولا lang لاكتشاف اللغة». ما يضرّ، بس ما يفيد</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>ت٥</td>
+          <td><b>FAQPage على ١٧٩ مقال، ونتيجته المميّزة مو لنا</b></td>
+          <td>١٧٩ من ٢٣٤ مقال فيها FAQPage</td>
+          <td>جوجل (من ٢٠٢٣): نتيجة الأسئلة المميّزة «تظهر فقط للمواقع الحكومية والصحية المعروفة». نخلّيه (يساعد الملخّصات)، بس ما ننتظر منه شكل مميّز في جوجل</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>ت٦</td>
+          <td>تفاصيل صغيرة</td>
+          <td>وصف الريل ٣٢٤ حرف · عنوان تصنيف فيه خطأ «وجهنك» ومسافتين («العقارات والاستثمار␣␣العقاري») · ٢٥ رابط في الخريطة بدون <code>lastmod</code> · عنوان صفحة الكاتب «مدونتي — الكاتب» ١٥ حرف</td>
+          <td>—</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>ت٧</td>
+          <td><b>دليل الكتّاب (Playbook) يخالف جوجل في الرابط</b></td>
+          <td>الدليل يقول: «تأكّد أنه إنجليزي… ولا عربي في الرابط» (<code>admin/app/(public)/playbook/content/article-journey/helpers/data.ts:23-24</code>). والواقع: روابطنا عربية مشفّرة، وهذا <b>الصحيح</b></td>
+          <td>جوجل: «Use words in your audience's language in the URL»، ومثاله المُوصى به رابط عربي مشفّر (<code>%D9%86%D8%B9…</code>). الدليل هو اللي يُصحَّح، مو الروابط</td>
+          <td class="empty">—</td>
+        </tr>
+        <tr>
+          <td>ت٨</td>
+          <td><b>الدليل موجود — والاقتراحات تنضاف له</b></td>
+          <td>في الأدمن دليل للكتّاب فيه أقسام: رحلة المقال · البنية · السلطة · البريفات · بعد النشر (<code>admin/app/(public)/playbook/content</code>). <b>ما فيه</b> شي عن السوق السعودي ولا عن Search Console</td>
+          <td>«دليل السوق السعودي» (٢٫٤) والإشارات (٢٫١) تُبنى <b>داخل هذا الدليل</b>، مو صفحة جديدة منفصلة</td>
+          <td class="empty">—</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted)">المصادر:
+      <a href="https://web.dev/articles/lcp">web.dev LCP</a> ·
+      <a href="https://developers.google.com/search/docs/appearance/core-web-vitals">Core Web Vitals</a> ·
+      <a href="https://developers.google.com/search/docs/appearance/title-link">Title links</a> ·
+      <a href="https://developers.google.com/search/docs/appearance/structured-data/article">Article structured data</a> ·
+      <a href="https://developers.google.com/search/docs/specialty/international/localized-versions">hreflang</a> ·
+      <a href="https://developers.google.com/search/docs/appearance/structured-data/faqpage">FAQPage</a> ·
+      <a href="https://developers.google.com/search/docs/crawling-indexing/url-structure">URL structure</a> ·
+      <a href="https://support.google.com/webmasters/answer/9216516">Discover report threshold</a> ·
+      <a href="https://business.google.com/en-all/ad-tools/keyword-planner/">Keyword Planner</a> ·
+      <a href="https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema">GA4 API schema</a>
+    </p>
+
+    <h3 id="s13" style="font-size:15px;margin:16px 0 6px">اقتراحاتي: أدوات ومعلومات نضيفها للفريق</h3>
+    <div class="point">
+      <h4>أ · «مكتب الكاتب»: صفحة لكل كاتب <span class="tag open">للنقاش</span></h4>
+      <dl><dt>فيها</dt><dd>مقالاته هو، مرتّبة بالأحوج للشغل، وعلى كل مقال الإشارات السبع (النقطة ٢٫١)، ومقالاته الناجحة في قسم لحالها</dd><dt>رأي خالد</dt><dd class="empty">—</dd></dl>
+    </div>
+    <div class="point">
+      <h4>ب · «فرص الأسبوع»: قائمة جاهزة كل أسبوع <span class="tag open">للنقاش</span></h4>
+      <dl><dt>فيها</dt><dd>الكلمات القريبة من الصفحة الأولى (اليوم ٢١٩ كلمة على ٢٨ مقال)، مرتّبة بالظهور. الكاتب يبدأ أسبوعه منها بدل ما يدوّر</dd><dt>رأي خالد</dt><dd class="empty">—</dd></dl>
+    </div>
+    <div class="point">
+      <h4>ج · «مختبر العناوين» للجمهور السعودي <span class="tag open">للنقاش</span></h4>
+      <dl><dt>فيه</dt><dd>المقالات اللي ظهورها كثير ونقراتها قليلة من السعودية، والكلمات اللي ظهرت عليها. ونفرز الكلمات اللي <b>نيّتها تنقّل</b> (اسم نظام أو موقع رسمي) عشان ما يضيع وقت الكاتب عليها</dd><dt>ليش</dt><dd>CTR السعودية ٠٫٧٥٪ مقابل مصر ٢٫٤٩٪ (ملاحظة ٢)</dd><dt>رأي خالد</dt><dd class="empty">—</dd></dl>
+    </div>
+    <div class="point">
+      <h4>د · حقل «الكلمة المستهدفة» إلزامي على كل مقال <span class="tag open">للنقاش</span></h4>
+      <dl><dt>ليش</dt><dd>بدونه ما نقدر نقيس نجاح المقال في كلمته (ملاحظة ٩)، ولا ننبّه الكاتب إذا عندنا مقال ثاني على نفس الكلمة (ملاحظة ٦)</dd><dt>وتنبيه</dt><dd>لما يكتب الكلمة: «عندنا مقال يظهر عليها» مع رابطه، فيقرّر يقوّي القديم أو يكتب زاوية مختلفة</dd><dt>رأي خالد</dt><dd class="empty">—</dd></dl>
+    </div>
+    <div class="point">
+      <h4>هـ · «بنك المواضيع» من أسئلة الناس <span class="tag open">للنقاش</span></h4>
+      <dl><dt>فيه</dt><dd>كلمات الأسئلة اللي نظهر عليها (١٣٪ من الظهور)، مفرزة حسب قطاع كل عميل، مع علامة «ما عندنا مقال مخصّص لها»</dd><dt>رأي خالد</dt><dd class="empty">—</dd></dl>
+    </div>
+    <div class="point">
+      <h4>و · تقويم المواسم السعودية <span class="tag open">للنقاش</span></h4>
+      <dl><dt>ليش</dt><dd>مقال «اليوم الوطني» لحاله جاب ٥٤٪ من النقرات. المواسم (رمضان · العيدين · اليوم الوطني · يوم التأسيس · موسم الرياض · العودة للمدارس) تنكتب أو تتحدّث <b>قبلها بأسابيع</b>، والمقال الموسمي يتحدّث كل سنة بدل مقال جديد ينافسه</dd><dt>رأي خالد</dt><dd class="empty">—</dd></dl>
+    </div>
+    <div class="point">
+      <h4>ز · قياس مقالات العملاء بالتواصل مو بالنقرات بس <span class="tag open">للنقاش</span></h4>
+      <dl><dt>ليش</dt><dd><b>ثبتت بالإنتاج (٢ أكتوبر):</b> من ٢٠ تواصل جا من مقالات، <b>١٩ من مقالات العملاء</b> (١٣ مقال) و١ بس من مقالات مدونتي · ومقال اليوم الوطني (أعلى دخول) تواصله <b>٠</b>. يعني مقالات مدونتي العامة تجيب الزيارات، ومقالات العملاء تجيب <b>العميل اللي يتواصل</b> (النقطة ٢٫٣). لو قسنا الكاتب بالنقرات بس، ظلمنا كاتب مقالات العملاء. وتنبيه: ٥٠ من ٥٢ تواصل حالتها «جديد»، فما نعرف كم منها صار عميل</dd><dt>رأي خالد</dt><dd class="empty">—</dd></dl>
+    </div>
+  </section>
+</main>
+</body>
+</html>

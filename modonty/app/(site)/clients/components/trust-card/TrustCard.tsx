@@ -8,6 +8,7 @@ import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { PARTNER_SIGNUP_URL } from "@/constants";
 import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
+import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 const text = messages.clients.trustCard;
 // بتوقيت الرياض صراحةً: السيرفر المحلّيّ (+٣) وفيرسل (UTC) كانا يطبعان يومين مختلفين لنفس الصفّ.
@@ -51,8 +52,10 @@ export async function TrustCard({ variant = "home" }: { variant?: "home" | "dire
                       className="flex min-h-11 items-center gap-2.5 rounded-lg border border-border/60 bg-muted/20 p-2 transition-colors hover:bg-muted/40"
                     >
                       {p.logo ? (
-                        // eslint-disable-next-line @next/next/no-img-element -- a 34px partner logo from the CDN; next/image adds nothing here.
-                        <img src={p.logo} alt="" width={34} height={34} className="size-[34px] shrink-0 rounded-md object-cover" loading="lazy" />
+                        // Through the image optimizer, not a raw <img> (plan أ٧, 2 Oct 2026): PageSpeed
+                        // measured each of these as a 500×500 file drawn at 34×34 — 16–18 KB wasted per
+                        // logo on the homepage. `sizes="34px"` makes the browser fetch the smallest width.
+                        <OptimizedImage media={asMedia(p.logo)} alt="" width={34} height={34} sizes="34px" loading="lazy" className="size-[34px] shrink-0 rounded-md object-cover" />
                       ) : (
                         <span className="grid size-[34px] shrink-0 place-items-center rounded-md bg-primary/15 text-sm font-bold text-link" aria-hidden>
                           {p.name.charAt(0)}

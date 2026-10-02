@@ -70,8 +70,10 @@ export type AuditAction =
   | "order.update"
   | "order.delete" // حذفُ طلبٍ نهائياً مع دفعاته وفاتورته — للأدمن وحده، ويُقيَّد بلقطةٍ لما حُذف
   | "commission.rate" // نسبةُ عمولة مندوبٍ جديدة — تسري من تاريخها، وتحدّد ما يُصرف له
+  | "commission.target" // تارجت مندوبٍ الشهريّ — يسري من شهره، قياسٌ لا يغيّر العمولة
   | "commission.payout" // «صرفت له» — مبلغٌ خرج لمندوبٍ من عمولته
   | "commission.payoutDelete" // حذفُ صرفيّةٍ سُجّلت خطأً — يرفع ما يُستحقّ له
+  | "contactRequest.status" // مندوبٌ غيّر حالة طلب تواصل قارئ (جديد ← تواصلوا ← صار زبون) — ج٨
   | "campaign.decide" // موافقة الأدمن على بريف حملة أو رفضه — مَن وافق على أيّ سقف ومتى
   | "campaign.stop" // إيقاف الأدمن لحملةٍ موافَق عليها — تصير «موقوفة»
   | "campaign.resume" // إعادة تشغيلها
@@ -121,6 +123,7 @@ export type AuditEntity =
   | "Media"
   | "ContactMessage"
   | "SalesLead"
+  | "BookingRequest"
   | "User"
   | "Staff"
   | "Invoice"

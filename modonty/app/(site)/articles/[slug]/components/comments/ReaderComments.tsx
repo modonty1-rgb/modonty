@@ -1,3 +1,4 @@
+import { getArticleLiveCounts } from "@/app/(site)/articles/[slug]/data/get-article-live-counts";
 import { getViewer } from "@/app/(site)/articles/[slug]/helpers/get-viewer";
 import dynamic from "next/dynamic";
 
@@ -31,12 +32,13 @@ export async function ReaderComments({
   articleSlug,
   sectionTitle,
 }: ReaderCommentsProps) {
-  const { userId } = await getViewer();
+  // The live count streams here, not in the article's render (plan أ١) — the prop is the cached one.
+  const [{ userId }, live] = await Promise.all([getViewer(), getArticleLiveCounts(articleId)]);
 
   return (
     <ArticleComments
       comments={comments}
-      commentsCount={commentsCount}
+      commentsCount={live?.comments ?? commentsCount}
       articleId={articleId}
       articleSlug={articleSlug}
       userId={userId}

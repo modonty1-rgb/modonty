@@ -78,6 +78,9 @@ export async function getArticleContentBySlug(slug: string) {
         },
         orderBy: { position: "asc" as const },
       },
+      // Cached with the FAQ list itself (`getArticleFaqs`, same tag), so the header's count and
+      // the section it points to always agree. Was a live read until plan أ١ (2 Oct 2026).
+      _count: { select: { faqs: true } },
       relatedTo: {
         include: {
           related: {

@@ -66,12 +66,15 @@ function MobilePostCardContent({ post, hideClient, hero }: MobilePostCardContent
     >
       {post.clientLogo && (
         <span className="relative size-5 shrink-0 overflow-hidden rounded-full bg-muted" aria-hidden>
+          {/* Fixed 20×20, not `fill`: a fixed-size image gets a 1x/2x srcset instead of all 16
+              widths (plan أ٣ — see optimized-image.tsx fixedSizeSizes). */}
           <OptimizedImage
             media={asMedia(post.clientLogo, post.clientName)}
             alt=""
-            fill
+            width={20}
+            height={20}
             sizes="20px"
-            className="object-cover"
+            className="size-full object-cover"
             loading="lazy"
             decoding="async"
           />
@@ -189,12 +192,14 @@ function MobilePostCardContent({ post, hideClient, hero }: MobilePostCardContent
             close to the three-line title beside it, so the row reads as one block. */}
         <div className="relative aspect-[4/3] w-[124px] shrink-0 overflow-hidden rounded-lg bg-muted">
           {post.image ? (
+            // Fixed 124×93 (the 4:3 box above), not `fill` — 1x/2x srcset, not 16 widths (plan أ٣).
             <OptimizedImage
               media={asMedia(post.image, post.title, post.imageBlur)}
               alt={post.title || "صورة المقال"}
-              fill
+              width={124}
+              height={93}
               sizes="124px"
-              className="object-cover"
+              className="size-full object-cover"
               loading="lazy"
               decoding="async"
             />

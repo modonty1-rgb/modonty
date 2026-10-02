@@ -45,6 +45,14 @@ export interface HomeData {
   posts: { title: string; href: string; imageUrl: string | null; date: string | null; excerpt: string | null; category: string | null }[];
   /** صفحة «مقالاتي» — وجهة زرّ «كل المقالات» حين تتجاوز المقالات الثلاثة المعروضة. */
   blogHref?: string;
+  /**
+   * His published reels, newest first — each a link to its own watch page (`/reels/<slug>`).
+   * Plan item د١ (2 Oct 2026): 11 of 23 reels were never indexed because no page linked to
+   * them; every reel now has a link from its partner's page.
+   */
+  reels: { title: string; href: string; imageUrl: string | null }[];
+  /** The partner's reels page — the home block's «كل الريلز» when it shows fewer than all. */
+  reelsHref?: string;
   contact: {
     address: string | null;
     email: string | null;

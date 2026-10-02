@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أدوات فحص إضافية — نقاش المحتوى</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <nav class="top"><a href="index.html">الفهرس</a><a href="01-writers.html">المنطلق ونقاط النقاش</a><a href="02-findings.html">ملاحظات Claude — Search Console والسيو التقني</a><a href="03-ai-search.html">البحث بالذكاء الاصطناعي</a><a href="04-ga4.html">GA4</a><a href="05-appendix.html">ملحق — الأرقام الخام</a><a href="06-clarity.html">Clarity — التجربة والتحويل</a><a href="07-pagespeed.html">PageSpeed — السرعة والجودة</a><a href="08-tools.html" aria-current="page">أدوات فحص إضافية</a><a href="09-plan.html">خطة العمل</a></nav>
+  <h1>أدوات فحص إضافية</h1>
+
+  <section>
+    <h2>أدوات فحص إضافية — النتائج <span class="tag open">للنقاش · بدون تنفيذ</span></h2>
+    <p class="sub" style="margin:0 0 10px">خالد (٢ أكتوبر): «شوف إيش في أدوات ثانية نفحص فيها مدونتي، استخدمها وسجّل ملاحظاتها كلها». مفحوص في Playwright قدام خالد: Search Console (الواجهة) · Rich Results Test · Safe Browsing · رؤوس الأمان · Bing Webmaster Tools.</p>
+
+    <h3 style="font-size:15px;margin:10px 0 6px">١ · Search Console — الواجهة (اللي ما يعطيه الـAPI)</h3>
+    <table>
+      <thead><tr><th>التقرير</th><th>المقيس</th><th>القراءة</th></tr></thead>
+      <tbody>
+        <tr><td><b>فهرسة الصفحات</b> (آخر تحديث ٢١ سبتمبر)</td><td>مفهرس <b>٥٣٢</b> · غير مفهرس <b>١٬٤٥٠</b>: «زحف وما فُهرس» ١٬١٥١ · noindex ١٤١ · 404 ٨٥ · تحويل ٤٣ · بديلة بـcanonical ١٠ · محجوبة بـrobots ٤ · «اكتُشفت وما فُهرست» ١٢. وتنبيه: «مفهرسة رغم حجبها بـrobots.txt» ٤٥</td><td>الرقم الكبير مو كارثة: من أوّل ٥٠٠ في «زحف وما فُهرس»، <b>٤٨٣ ملفات JavaScript</b> (<code>/_next/static</code>) وهذا طبيعي. التفاصيل تحت</td></tr>
+        <tr><td>«زحف وما فُهرس» — الصفحات الحقيقية</td><td>من أوّل ٥٠٠: عملاء ٣ · مقالات ٢ (مثل «تسوس الأسنان للأطفال») · ريلز ٢ · صفحة قائمة بفلاتر <code>?industry=&amp;category=</code> · <code>feed.xml</code> · <code>admin.modonty.com</code> ١ · <code>test.modonty.com</code> ٢</td><td>قليلة. والريلز والمقالات منها تستاهل تقوية (س-٢ تحت)</td></tr>
+        <tr><td>noindex (١٤١)</td><td><code>test.modonty.com</code> <b>٦٠</b> · صفحات حجز العميل بمعاملات <code>/book?source=…</code> ٥٨ · <b>صفحات عملاء ١٨</b> · بحث/أخبار/جديد ٣</td><td>الاختبار والحجز مقصود ✓. صفحات العملاء الـ١٨: مثال «عيادات دكتور طارق عمر» اليوم على الموقع <code>index, follow</code>، يعني القراءة قديمة، وجوجل لسه ما أعاد الفحص</td></tr>
+        <tr><td>404 (٨٥)</td><td><code>_next</code> قديمة ٢٣ · <b>عملاء ١٩</b> · <b>مقالات ١٥</b> · تصنيفات ٧ · قطاعات ٣ · روابط عملاء قديمة على جذر الموقع مثل <code>/دكتور-علاء-الدين-بدوي</code> و<code>/clients/…/servicesخدماتنا</code></td><td>روابط قديمة جوجل يعرفها. اللي لها روابط أو ظهور تستاهل تحويل 301 لمكانها الجديد</td></tr>
+        <tr><td>«مفهرسة رغم حجبها» (٤٥)</td><td><code>/modo-chat?…</code> <b>٣٩</b> · <code>/users?…</code> ٤ · <code>/api</code> ١</td><td>جوجل: robots.txt «مو وسيلة لإبعاد صفحة عن جوجل». الصحيح: نسمح بالزحف ونحط <code>noindex</code></td></tr>
+        <tr><td>Core Web Vitals</td><td>جوال وكمبيوتر: «ما فيه بيانات استخدام كافية في آخر ٩٠ يوم» (على مستوى الرابط)</td><td>نعتمد على PageSpeed وClarity (الملف ٠٧ · ك٨)</td></tr>
+        <tr><td>التحسينات</td><td>فيديو <b>٥٧٠ صالح · ٠ خطأ</b> · مسار التنقّل ٥٧٠ صالح · بيانات الصور ١٬٨٣٠ صالح · مراجعات ٧ صالح · صفحة الملف ١ صالح مع تحذير «حقل غير معروف mainEntityOfPage»</td><td>سليم ✓ (تحذير واحد صغير)</td></tr>
+        <tr><td><b>الروابط الخارجية</b></td><td>الإجمالي <b>٦٨</b> · منها <b>jbrseo.com ٦٤</b> · x.com ٢ · linkedin ١ · linktr.ee ١. النص الرابط: «مدعوم بـ modonty»</td><td><b>تقريباً ما فيه مواقع خارجية تربط لنا</b> (س-١ تحت)</td></tr>
+        <tr><td>الروابط الداخلية</td><td>١٦٬٢٤٦. الأكثر: الرئيسية ١٬٠٥٨ · من نحن ٥٨٩ · المساعدة ٥٥٣ · سياسة النشر ٥٢٦ · التسجيل ٥٢٥ · الكوكيز ٥٢٤ · الاتفاقية ٥٢٤…</td><td>قوّة الروابط الداخلية تروح لصفحات الفوتر والسياسات، مو للمقالات (يكمّل ملاحظة ١٨)</td></tr>
+        <tr><td>الأمان · العقوبات</td><td>«No issues detected»</td><td>✓</td></tr>
+        <tr><td>خرائط الموقع</td><td>٤ مرفوعة: <code>www</code> (٣٧٥ رابط · ٢١ فيديو) + <code>image-sitemap</code> ٢٣٣ ✓، ونسختان بدون <code>www</code> من ٢٢ مايو</td><td>النسختان بدون www زيادة (الموقع يحوّل لـwww)</td></tr>
+        <tr><td>توصيات Search Console</td><td>«صفحة اليوم الوطني ظهورها زاد ١٠٩٪» · «كلمة <i>شعار اليوم الوطني 96</i> ظهورها نزل ٩٧٪» · ٣٬٩٩١ نقرة</td><td>موسمي: المناسبة خلصت (٢٣ سبتمبر)</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;margin:16px 0 6px">٢ · Rich Results Test (اختبار النتائج المميّزة)</h3>
+    <table>
+      <thead><tr><th>الصفحة</th><th>النتيجة</th><th>ملاحظة</th></tr></thead>
+      <tbody>
+        <tr><td>مقال عميل طبي</td><td><b>١١ عنصر صالح</b>: Article · Breadcrumbs · Image Metadata ×٧ · Organization · «Paywalled Content»</td><td>«Paywalled Content» هو قراءة جوجل لحقل <code>isAccessibleForFree: true</code> (المحتوى مجاني)، ما يضرّ</td></tr>
+        <tr><td>صفحة عميل (عيادة)</td><td><b>٩ عناصر صالحة</b>: Breadcrumbs · Image Metadata ×٦ · Local business · Organization</td><td>تحذير واحد اختياري: ناقص <code>priceRange</code>. وخطأ إملائي في بيانات العميل: «You <b>desrve</b> a better smile»</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;margin:16px 0 6px">٣ · الأمان</h3>
+    <table>
+      <thead><tr><th>الأداة</th><th>النتيجة</th></tr></thead>
+      <tbody>
+        <tr><td>Google Safe Browsing</td><td>«No unsafe content found» (آخر تحديث ١ أكتوبر) ✓</td></tr>
+        <tr><td>رؤوس الأمان (مقروءة مباشرة من الموقع)</td><td>✓ <code>Strict-Transport-Security: max-age=63072000; includeSubDomains; preload</code> · ✓ <code>X-Content-Type-Options: nosniff</code> · ✓ <code>X-Frame-Options: DENY</code> · ✓ <code>Referrer-Policy</code> · ✓ <code>Permissions-Policy</code> · ⚠ <b>CSP «Report-Only»</b>: تسجّل ولا تمنع، وفيها <code>'unsafe-inline' 'unsafe-eval'</code></td></tr>
+        <tr><td>النطاقات الفرعية</td><td>✓ <code>admin</code>: كل شي يحوّل لـ<code>/login</code> وفيها <code>noindex, nofollow</code> · ✓ <code>console</code>: <code>noindex</code> · ✓ <code>test</code>: <code>X-Robots-Tag: noindex, nofollow</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;margin:16px 0 6px">٤ · Bing Webmaster Tools (مصدر Copilot وجزء من ChatGPT)</h3>
+    <table>
+      <thead><tr><th>التقرير</th><th>المقيس</th></tr></thead>
+      <tbody>
+        <tr><td>البحث</td><td>٨٣ نقرة · ١١٬٢٠٠ ظهور (١ يوليو → ٢٨ سبتمبر)</td></tr>
+        <tr><td><b>AI Performance</b> (Copilot وشركاؤه، ٣ أشهر)</td><td><b>١٬٤٠٠ استشهاد</b> · متوسّط الصفحات المستشهَد بها يومياً ٤. أكثر الأسئلة: «اليوم الوطني 96» ٣٢٧ (حصّتنا ٨٫١٪) · «المحتوى الالكتروني» ٨٤ (١٠٫٩٪) · «عزنا بجودنا» ٥٩ (<b>٣٧٫٦٪</b>) · «دخل اضافي» ٣٠ (٢٥٫٤٪) · «شعار اليوم الوطني السعودي 96» ١٨ · «تعديل السلوك» ١٠ (٢٦٫٣٪) · «التحقق من سجل تجاري» ٤</td></tr>
+        <tr><td><b>الروابط الخلفية</b></td><td><b>نطاقان فقط</b>: jbrseo.com (٥) · x.com (٢) · ٧ صفحات</td></tr>
+        <tr><td>تقرير SEO</td><td>١٦ خطأ على ١٥ صفحة: وصف قصير في <b>٩ صفحات</b> (<code>/page/3 · /authors/modonty · /tags · /contact · /help · /news · /modonty · /reels · /industries</code>) · «ما فيه روابط كافية من مواقع قوية» · meta robots تحتاج مراجعة (٢) · صور بدون alt (٤)</td></tr>
+        <tr><td>IndexNow</td><td>✓ ٢٠٩ رابط مُرسَل · ٣ في آخر ٢٣ ساعة</td></tr>
+        <tr><td>خرائط الموقع</td><td>٣ · صفر أخطاء · ٨٣٣ رابط</td></tr>
+        <tr><td>الموقع المسجّل</td><td><code>https://modonty.com/</code> <b>بدون www</b>، والموقع الحقيقي <code>https://www.modonty.com</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;margin:16px 0 6px">المشاكل والحلول</h3>
+    <table>
+      <thead><tr><th>#</th><th>المشكلة</th><th>الدليل</th><th>الحل</th><th>رأي خالد</th></tr></thead>
+      <tbody>
+        <tr><td>أ-١</td><td><b>ما فيه مواقع خارجية تربط لمدونتي</b> — أضعف نقطة في قوّة الموقع</td><td>جوجل: ٦٨ رابط، ٦٤ منها من jbrseo.com · Bing: نطاقان فقط · Bing يوصي صراحةً «روابط من مواقع قوية»</td><td>روابط من <b>مواقع العملاء نفسهم</b> لصفحاتهم ومقالاتهم في مدونتي · ملفات اجتماعية رسمية (X · لينكدإن · سناب) · أدلّة أعمال سعودية · نشر بيانات/دراسات تستحق الاستشهاد · ضيافة كتّاب. (جوجل يمنع شراء الروابط)</td><td class="empty">—</td></tr>
+        <tr><td>أ-٢</td><td><b>الريلز ما تنفهرس</b> — خالد: «الريلز جداً مهمة»</td><td><b>مقيس ٢ أكتوبر</b> (URL Inspection API لكل ريل في الخريطة): ٢٣ ريل ← <b>١٢ مفهرس</b> · <b>٨ «جوجل ما يعرف الرابط أصلاً»</b> · <b>٣ «اكتُشف وما فُهرس»</b>. والسبب المقيس: صفحة <code>/reels</code> فيها <b>صفر روابط <code>&lt;a href&gt;</code></b> لأي ريل (مشغّل فيديو)، ومن ٣٥٤ صفحة في الموقع ما فيه ولا صفحة تربط بأي من الـ١١ غير المفهرسة. جوجل: «يزحف للرابط فقط إذا كان عنصر <code>&lt;a&gt;</code> فيه <code>href</code>»</td><td>روابط <code>&lt;a href&gt;</code> حقيقية للريلز: قائمة روابط في <code>/reels</code> تحت المشغّل · ريلز العميل في صفحته · ريل مرتبط داخل المقال. وبعدها «طلب فهرسة» للـ١١. (ما ثبت إن قلّة النص هي السبب: مفهرس ٤٨٩ حرف وغير مفهرس ٢٣٢، والفرق الثابت هو الروابط)</td><td class="empty">—</td></tr>
+        <tr><td>أ-٣</td><td><b>روابط قديمة تعطي 404</b></td><td>عملاء ١٩ · مقالات ١٥ · تصنيفات ٧ · روابط عملاء قديمة على جذر الموقع</td><td>تحويل 301 للي لها ظهور أو روابط · والباقي يبقى 404/410</td><td class="empty">—</td></tr>
+        <tr><td>أ-٤</td><td><b>صفحات محجوبة لكنها مفهرسة</b></td><td><code>/modo-chat?…</code> ٣٩ · <code>/users?…</code> ٤ · <code>/api</code> ١</td><td>نفتحها للزحف ونحط <code>noindex</code> (أو نتركها لو ما تضرّ)</td><td class="empty">—</td></tr>
+        <tr><td>أ-٥</td><td><b>١٨ صفحة عميل بقراءة noindex قديمة</b></td><td><b>مقيس ٢ أكتوبر لكل الـ١٨</b>: ٩ اليوم <code>index, follow</code> (قراءة جوجل قديمة) · <b>٣ لسه <code>noindex</code> بقصد</b> (nirvana-ibrahim · align-dental-center · toothfairy-dental-clinic: صفحات «قيد التجهيز» بصفر مقالات، والقاعدة في <code>modonty/app/(partner)/clients/[slug]/components/client-page-state.ts:20-23</code>) · <b>٦ ترجع 410</b> (عملاء محذوفين)</td><td>«طلب فهرسة» للـ٩ · ملء ملفات الـ٣ العملاء (نبذة أو خدمات أو مقالات) فتنفتح الفهرسة لحالها · الـ٦ صحيحة كما هي</td><td class="empty">—</td></tr>
+        <tr><td>أ-٦</td><td><b>وصف قصير في صفحات القوائم</b></td><td>Bing: ٩ صفحات (القائمة فوق)</td><td>وصف ١٢٠–١٥٠ حرف لكل صفحة قائمة</td><td class="empty">—</td></tr>
+        <tr><td>أ-٧</td><td><b>Bing مسجّل على النطاق بدون www</b> + خرائط مكرّرة</td><td>Bing: <code>https://modonty.com/</code> · خريطتان بدون www في Search Console وواحدة في Bing</td><td>إضافة <code>www.modonty.com</code> في Bing (أو استيراده من Search Console) · حذف الخرائط بدون www</td><td class="empty">—</td></tr>
+        <tr><td>أ-٨</td><td><b>CSP غير مفعّلة فعلياً</b></td><td>«Report-Only» مع <code>unsafe-inline</code> و<code>unsafe-eval</code></td><td>بعد حلّ تعارض فيسبوك وClarity (ك١٤ · إ٥)، تفعيلها تدريجياً</td><td class="empty">—</td></tr>
+        <tr><td>أ-٩</td><td>تحذيرات بيانات صغيرة</td><td><code>mainEntityOfPage</code> غير معروف في صفحة الملف · <code>priceRange</code> ناقص (اختياري) · خطأ إملائي «desrve» في بيانات عميل</td><td>تصحيحات صغيرة</td><td class="empty">—</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted)">المصادر:
+      <a href="https://search.google.com/search-console?resource_id=sc-domain%3Amodonty.com">Search Console — modonty.com</a> ·
+      <a href="https://search.google.com/test/rich-results">Rich Results Test</a> ·
+      <a href="https://transparencyreport.google.com/safe-browsing/search?url=modonty.com">Safe Browsing</a> ·
+      <a href="https://www.bing.com/webmasters/home?siteUrl=https://modonty.com/">Bing Webmaster Tools</a> ·
+      <a href="https://developers.google.com/search/docs/crawling-indexing/robots/intro">robots.txt intro (Google)</a> ·
+      <a href="https://developers.google.com/search/docs/essentials/spam-policies#link-spam">Link spam policy</a>
+    </p>
+  </section>
+
+
+  <section>
+    <h2>المعلّق اتفحص — بالأرقام <span class="tag ok">مقيس ٢ أكتوبر</span></h2>
+    <p class="sub" style="margin:0 0 10px">خالد: «ممنوع التخمين وممنوع الإفتاءات، افحص وعلى أساسها نقرّر».</p>
+    <h3 style="font-size:15px;margin:10px 0 6px">صفحات العملاء الـ١٨ اللي Search Console يقول عليها noindex</h3>
+    <table>
+      <thead><tr><th>الحالة اليوم على الموقع</th><th>العدد</th><th>الصفحات</th></tr></thead>
+      <tbody>
+        <tr><td><code>200 · index, follow</code> (قراءة جوجل قديمة)</td><td>٩</td><td>عيادات دكتور طارق عمر · مركز دكتور عصام الشيخ · as-clinics · مركز عطاء لطب الأسنان · دكتور علاء الدين بدوي · pain core clinic · mbc-clinic · دكتور عمر الديدي · (+١)</td></tr>
+        <tr><td><code>200 · noindex, follow</code> بقصد — «قيد التجهيز»، صفر مقالات</td><td>٣</td><td>nirvana-ibrahim · align-dental-center · toothfairy-dental-clinic</td></tr>
+        <tr><td><code>410</code> محذوف</td><td>٦</td><td>دكتورة سارة طارق · دكتور أحمد جامع · client-10-تصميم-جرافيكي · عيادة طبية · د احمد زيدان · عيادة دكتور سامح عبد الرحمن · (ومتجر-باقتگ بحرف «گ»)</td></tr>
+      </tbody>
+    </table>
+    <h3 style="font-size:15px;margin:16px 0 6px">كل ريل في الخريطة (٢٣) — حالته في جوجل</h3>
+    <p style="font-size:13px;color:var(--muted)">«روابط» = عدد الصفحات اللي جوجل يعرفها تربط بالريل (<code>referringUrls</code>). صفحة <code>/reels</code> نفسها: <code>&lt;a href&gt;</code> لريلز = <b>٠</b>، ومعرّفات الريلز في بيانات الصفحة ٦ فقط.</p>
+    <table>
+      <thead><tr><th>الريل</th><th>الحالة</th><th>آخر زحف</th><th>روابط</th><th>العنوان</th></tr></thead>
+      <tbody>
+        <tr><td><code>reel-mufrpspe-xr4930</code></td><td>✓ مفهرس</td><td>2026-09-30</td><td>1</td><td>التهاب وتر أكيلس أو ألم خلف الكعب . د عبدالرحمن يو</td></tr>
+        <tr><td><code>reel-mufvg8du-o1frgz</code></td><td>✓ مفهرس</td><td>2026-09-28</td><td>1</td><td>الفيرس المخلويRSV</td></tr>
+        <tr><td><code>reel-muc5adwd-51z75k</code></td><td>✓ مفهرس</td><td>2026-09-29</td><td>1</td><td>دكتور عبدالرحمن يوسف يتحدث عن التهاب اللفافة الأخم</td></tr>
+        <tr><td><code>reel-mubmszbl-migbly</code></td><td>✓ مفهرس</td><td>2026-09-29</td><td>1</td><td>دكتور عبدالرحمن يوسف يتحدث عن خشونة الركبة</td></tr>
+        <tr><td><code>reel-mtzr71wr-w0pzs0</code></td><td>✓ مفهرس</td><td>2026-09-26</td><td>1</td><td>دكتور عبدالرحمن يوسف استشاري جراحة العظام. الفلات </td></tr>
+        <tr><td><code>reel-mtv3ezno-iym3ig</code></td><td>✓ مفهرس</td><td>2026-09-25</td><td>1</td><td>اشترك في موقع مدونتي</td></tr>
+        <tr><td><code>reel-mtv31xlc-6rbdlt</code></td><td>✓ مفهرس</td><td>2026-09-30</td><td>1</td><td>اطلاق مدونتي</td></tr>
+        <tr><td><code>reel-mt1bthex-eqdqum</code></td><td>✓ مفهرس</td><td>2026-09-20</td><td>1</td><td>في عميل سعودي يدوّر… وأنت ما ظهرت له</td></tr>
+        <tr><td><code>reel-mt19ax81-ybjll8</code></td><td>✓ مفهرس</td><td>2026-09-25</td><td>1</td><td>مش ظاهر يبقى مش موجود</td></tr>
+        <tr><td><code>reel-mt0cxv30-lqfi9n</code></td><td>✓ مفهرس</td><td>2026-09-25</td><td>2</td><td>ميزانية تسويق كاملة… وأنت مش ظاهر</td></tr>
+        <tr><td><code>reel-mt06z8q8-bateo2</code></td><td>✓ مفهرس</td><td>2026-09-29</td><td>1</td><td>صوتنا لسه ما وصل صح</td></tr>
+        <tr><td><code>reel-mt03yvjl-lokuu4</code></td><td>✓ مفهرس</td><td>2026-09-29</td><td>1</td><td>مساعد يشتغل معك من جوالك</td></tr>
+        <tr><td><code>reel-mt02vq6x-l3nlhs</code></td><td>✗ جوجل ما يعرفه</td><td>-</td><td>0</td><td>السيو هو الطريق اللي يوصل لمشروعك</td></tr>
+        <tr><td><code>reel-mt02g0b5-3aqo95</code></td><td>✗ اكتُشف وما فُهرس</td><td>-</td><td>0</td><td>الذكاء الأجنبي ما يفهم سوقك</td></tr>
+        <tr><td><code>reel-mt02dxwr-mu78q9</code></td><td>✗ جوجل ما يعرفه</td><td>-</td><td>0</td><td>لحد متى تدفع إعلانات وتوقف يختفون؟</td></tr>
+        <tr><td><code>reel-mt01tdbc-632cpo</code></td><td>✗ جوجل ما يعرفه</td><td>-</td><td>0</td><td>موقعك نزل للصفحة العاشرة… ولا عميل واحد</td></tr>
+        <tr><td><code>reel-mt01sfgu-y0e0rp</code></td><td>✗ اكتُشف وما فُهرس</td><td>-</td><td>0</td><td>مساعدك يقعد معك في المجلس</td></tr>
+        <tr><td><code>reel-mszzuqxc-dd1v4j</code></td><td>✗ اكتُشف وما فُهرس</td><td>-</td><td>0</td><td>ثلاثة أخطاء تخلّي موقعك ما يجيب عملاء</td></tr>
+        <tr><td><code>reel-mszzrm86-l8vmqp</code></td><td>✗ جوجل ما يعرفه</td><td>-</td><td>0</td><td>روبوت أجنبي ما يفهم لهجتك</td></tr>
+        <tr><td><code>reel-mslmkxg9-t3efnw</code></td><td>✗ جوجل ما يعرفه</td><td>-</td><td>0</td><td>طموحنا وصل القمة… وصوتنا لسه ما وصل</td></tr>
+        <tr><td><code>reel-mslmjhde-7hj90s</code></td><td>✗ جوجل ما يعرفه</td><td>-</td><td>0</td><td>باقي قليل… ويتغيّر مفهوم المحتوى</td></tr>
+        <tr><td><code>reel-msw1gsq6-p9oepi</code></td><td>✗ جوجل ما يعرفه</td><td>-</td><td>0</td><td>مركز داوي سمايل ايليت لزراعة الاسنان وتجميل الاسنا</td></tr>
+        <tr><td><code>reel-msw62b7a-od9qzx</code></td><td>✗ جوجل ما يعرفه</td><td>-</td><td>0</td><td>زراعة الأسنان</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted)">المصادر: <a href="https://developers.google.com/webmaster-tools/v1/urlInspection.index/inspect">URL Inspection API</a> · <a href="https://developers.google.com/search/docs/crawling-indexing/links-crawlable">Make your links crawlable (Google)</a></p>
+  </section>
+</main>
+</body>
+</html>

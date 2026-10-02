@@ -30,7 +30,8 @@ export interface StoryOffer {
 export async function getStoryOffer(): Promise<StoryOffer> {
   "use cache";
   cacheTag("commercial-catalog");
-  cacheLife("minutes");
+  // hours, not minutes (Vercel cost / plan أ٦, 2 Oct 2026) — commercial-catalog: every pricing write in admin goes through one helper that revalidates it.
+  cacheLife("hours");
 
   const [annualTerm, activePrices] = await Promise.all([
     db.commercialTermPolicy.findFirst({

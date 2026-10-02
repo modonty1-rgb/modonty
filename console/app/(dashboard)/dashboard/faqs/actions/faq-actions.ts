@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
 import { publishFaqAnswer } from "@/lib/faq/publish-faq-answer";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 type Result = { success: true } | { success: false; error: string };
 type BulkResult =
@@ -47,6 +48,8 @@ export async function rejectFaq(faqId: string): Promise<Result> {
       data: { status: "REJECTED" },
     });
     revalidatePath("/dashboard/faqs");
+    // The FAQ shows on the article in modonty (another app) — its list and count are cached there.
+    await revalidateModontyTag("articles");
     return { success: true };
   } catch {
     return { success: false, error: messages.error.serverError };
@@ -67,6 +70,8 @@ export async function restoreFaqToPendingAction(faqId: string): Promise<Result> 
       data: { status: "PENDING" },
     });
     revalidatePath("/dashboard/faqs");
+    // The FAQ shows on the article in modonty (another app) — its list and count are cached there.
+    await revalidateModontyTag("articles");
     return { success: true };
   } catch {
     return { success: false, error: messages.error.serverError };
@@ -94,6 +99,8 @@ export async function editPublishedFaqAction(
       data: { answer: answer.trim() },
     });
     revalidatePath("/dashboard/faqs");
+    // The FAQ shows on the article in modonty (another app) — its list and count are cached there.
+    await revalidateModontyTag("articles");
     return { success: true };
   } catch {
     return { success: false, error: messages.error.serverError };
@@ -130,6 +137,8 @@ export async function bulkPublishFaqsAction(
       data: { status: "PUBLISHED" },
     });
     revalidatePath("/dashboard/faqs");
+    // The FAQ shows on the article in modonty (another app) — its list and count are cached there.
+    await revalidateModontyTag("articles");
     return { success: true, count: result.count };
   } catch {
     return { success: false, error: messages.error.serverError };
@@ -147,6 +156,8 @@ export async function bulkRejectFaqsAction(ids: string[]): Promise<BulkResult> {
       data: { status: "REJECTED" },
     });
     revalidatePath("/dashboard/faqs");
+    // The FAQ shows on the article in modonty (another app) — its list and count are cached there.
+    await revalidateModontyTag("articles");
     return { success: true, count: result.count };
   } catch {
     return { success: false, error: messages.error.serverError };

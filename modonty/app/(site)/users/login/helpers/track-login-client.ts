@@ -1,18 +1,11 @@
-// Fire-and-forget client helper for the login funnel (login_start on button click).
-// Posts to /users/login/api/track which forwards to GA4 via Measurement Protocol —
-// reliable without depending on any GTM tag configuration.
+// login_start (Google/email button on /users/login) — pushed to GTM from the browser. Until
+// Oct 2026 it went through a server route on Measurement Protocol, and each one became a
+// phantom GA4 session (see lib/analytics/ga4-browser.ts).
+
+import { pushGa4Event } from "@/lib/analytics/ga4-browser";
 
 type LoginMethod = "google" | "email";
 
 export function trackLoginClient(method: LoginMethod): void {
-  try {
-    fetch("/users/login/api/track", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ method }),
-      keepalive: true,
-    }).catch(() => {});
-  } catch {
-    // no-op
-  }
+  pushGa4Event("login_start", { login_method: method });
 }

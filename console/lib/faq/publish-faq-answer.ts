@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { ArticleFAQStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { messages } from "@/lib/messages";
 import { sendEmail } from "@/lib/email/resend-client";
 import { faqReplyEmail } from "@modonty/shared/lib/email/templates/faq-reply";
@@ -83,7 +84,9 @@ export async function publishFaqAnswer(
         .catch((err) => console.error("[publishFaqAnswer] reply email failed:", err));
     }
 
-    revalidatePath(`/articles/${faq.article.slug}`);
+    // The article lives on modonty, a different app: `revalidatePath` here only touched the
+    // console's own cache, so a published answer waited hours to appear (plan أ١, 2 Oct 2026).
+    await revalidateModontyTag("articles");
     revalidatePath("/dashboard/questions");
     revalidatePath("/dashboard/faqs");
     return { success: true };

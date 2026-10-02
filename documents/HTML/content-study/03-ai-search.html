@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>البحث بالذكاء الاصطناعي — نقاش المحتوى</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <nav class="top"><a href="index.html">الفهرس</a><a href="01-writers.html">المنطلق ونقاط النقاش</a><a href="02-findings.html">ملاحظات Claude — Search Console والسيو التقني</a><a href="03-ai-search.html" aria-current="page">البحث بالذكاء الاصطناعي</a><a href="04-ga4.html">GA4</a><a href="05-appendix.html">ملحق — الأرقام الخام</a><a href="06-clarity.html">Clarity — التجربة والتحويل</a><a href="07-pagespeed.html">PageSpeed — السرعة والجودة</a><a href="08-tools.html">أدوات فحص إضافية</a><a href="09-plan.html">خطة العمل</a></nav>
+  <h1>البحث بالذكاء الاصطناعي</h1>
+
+  <section>
+    <h2 id="s14">٤ · مدونتي في البحث بالذكاء الاصطناعي — وين إحنا؟ <span class="tag open">للنقاش</span></h2>
+    <p class="sub" style="margin:0 0 10px">خالد (٢ أكتوبر): «الناس في السعودية والعالم العربي يبحثون عن طريق الذكاء الاصطناعي، إحنا فين منه؟». كل رقم تحت مقيس على الموقع الحيّ أو GA4 أو مصدر رسمي.</p>
+
+    <h3 id="s15" style="font-size:15px;margin:10px 0 6px">الخلاصة: الباب مفتوح، والزيارات منه شبه صفر، وجوجل نفسه صار يجاوب بدالنا</h3>
+    <table>
+      <thead><tr><th>#</th><th>السؤال</th><th>المقيس</th><th>الحكم</th></tr></thead>
+      <tbody>
+        <tr><td>ذ١</td><td><b>هل روبوتات الذكاء الاصطناعي تقدر تقرانا؟</b></td><td><code>robots.txt</code> يسمح لكل روبوتات البحث والتدريب (OAI-SearchBot · ChatGPT-User · GPTBot · PerplexityBot · ClaudeBot · Google-Extended …). وطلب المقال بهوية ٦ روبوتات رجع <b>200</b> بالصفحة كاملة (~٥١٩ ك.ب، فيها H1 ونص المقال) <b>بدون JavaScript</b></td><td>✓ مفتوح وقابل للقراءة</td></tr>
+        <tr><td>ذ٢</td><td><b>هل نبلّغ محركات Bing وغيرها فوراً بالجديد؟</b> (ChatGPT وCopilot يعتمدون على فهرس Bing)</td><td>IndexNow مربوط بالنشر (<code>admin/lib/indexnow.ts</code> · <code>publish-article.ts</code>)، وملف المفتاح على الموقع يرجع <b>200</b> ومطابق</td><td>✓</td></tr>
+        <tr><td>ذ٣</td><td><b>كم زيارة جتنا من أدوات الذكاء الاصطناعي؟</b></td><td>GA4 آخر ٩٠ يوم: chatgpt.com <b>٢٤</b> · perplexity <b>٧</b> · gemini <b>٥</b> = <b>٣٦ جلسة</b> (٠٫١٥٪ من كل الجلسات · ونحو ٠٫٩٪ من الجلسات الحقيقية ~٤٬٠٥٧). وGA4 عنده قناة جاهزة اسمها «AI Assistant»: ٣٣ جلسة بتفاعل ٧٣٪. أكثر الصفحات: اليوم الوطني · مصادر دخل إضافي في السعودية · موسم الرياض · أسعار تقويم الأسنان · باقات STC</td><td>✗ شبه صفر</td></tr>
+        <tr><td>ذ٤</td><td><b>هل ملخّصات جوجل الذكية موجودة عندنا؟</b></td><td>جوجل: AI Overviews «متاحة لكل المستخدمين في منطقة الشرق الأوسط وشمال أفريقيا، وبالعربي عالمياً» (٢٠ مايو ٢٠٢٥)، وتظهر خصوصاً مع أسئلة «كيف · ليش» والمقارنات</td><td>موجودة، وتنافس مقالاتنا على نفس الأسئلة</td></tr>
+        <tr><td>ذ٥</td><td><b>هل نقدر نقيس ظهورنا داخل ملخّصات جوجل؟</b></td><td>جوجل: الظهور في AI Overviews وAI Mode «محسوب ضمن إجمالي البحث» في Search Console (نوع Web)، <b>ما ينفصل</b></td><td>✗ ما يُقاس لحاله</td></tr>
+        <tr><td>ذ٦</td><td><b>هل الملخّصات تاكل النقرات؟</b></td><td>Pew (أمريكا، مارس ٢٠٢٥، ٩٠٠ مستخدم): الضغط على نتيجة <b>٨٪</b> مع ملخّص مقابل <b>١٥٪</b> بدونه، والضغط على رابط داخل الملخّص <b>١٪</b>. Ahrefs (ديسمبر ٢٠٢٥): وجود الملخّص يرتبط بـCTR أقل <b>٥٨٪</b> للنتيجة الأولى</td><td>مؤشّر قوي يفسّر ملاحظة ٣ (CTR المراكز ١–٣ = ١٫١٩٪). الدراستان مو على السوق السعودي</td></tr>
+        <tr><td>ذ٧</td><td><b>هل ChatGPT وPerplexity يستشهدون بنا؟</b></td><td>جزئياً: Clarity «AI Visibility» (فُعّل ٢ أكتوبر) يقيس <b>Copilot وشركاءه</b>: ٥٣ استشهاد في ٧ أيام، وحصّتنا ١٦٫٥٦٪ (التفاصيل في ك١١). ChatGPT وGemini وPerplexity ما لها أداة رسمية</td><td>Copilot مقاس · الباقي اختبار يدوي شهري (اقتراح ذ-ب)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="point">
+      <h4>اقتراحات الذكاء الاصطناعي <span class="tag open">للنقاش</span></h4>
+      <dl>
+        <dt>ذ-أ · قالب «الجواب أولاً»</dt><dd>أوّل فقرة تجاوب السؤال مباشرة، بعدين التفصيل بعناوين بصيغة أسئلة الناس الفعلية من Search Console. دراسة Semrush: الجواب الواضح +٣٢٫٨٪ في الاستشهاد (ملاحظة ١٣)</dd>
+        <dt>ذ-ب · اختبار شهري</dt><dd>٢٠ سؤال سعودي من قطاعات عملائنا، نسألها لـ ChatGPT وGemini وPerplexity وملخّص جوجل، ونسجّل: انذكرنا؟ مين انذكر بدالنا؟ (يدوي، لأنه ما فيه API)</dd>
+        <dt>ذ-ج · قيمة ما يقدر الملخّص يعطيها</dt><dd>جوجل يكافئ «معلومة أصلية… قيمة أكبر من الصفحات الثانية». الملخّص يجاوب «متى اليوم الوطني»، بس ما يعطي: أسعار محلية حقيقية · تجربة طبيب العميل · مقارنات بأرقام سعودية. هذي اللي نكتبها</dd>
+        <dt>ذ-د · نتابع قناة «AI Assistant»</dt><dd>رقم شهري في لوحة الفريق من GA4 (بعد إصلاح القياس في غ١)</dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">المصادر:
+      <a href="https://blog.google/intl/en-mena/product-updates/explore-get-answers/bringing-ai-overviews-to-mena-and-in-arabic-globally/">AI Overviews in MENA &amp; Arabic</a> ·
+      <a href="https://developers.google.com/search/docs/appearance/ai-features">AI features &amp; your website</a> ·
+      <a href="https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/">Pew Research</a> ·
+      <a href="https://ahrefs.com/blog/ai-overviews-reduce-clicks-update/">Ahrefs — AI Overviews reduce clicks</a> ·
+      <a href="https://www.semrush.com/blog/content-optimization-ai-search-study/">Semrush AI search study</a> ·
+      <a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">Helpful content</a>
+    </p>
+  </section>
+</main>
+</body>
+</html>

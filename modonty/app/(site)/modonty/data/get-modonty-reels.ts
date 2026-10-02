@@ -18,7 +18,8 @@ const RAIL_REELS = 3;
 export async function getModontyReels(clientId: string): Promise<ReelItem[]> {
   "use cache";
   cacheTag("reels");
-  cacheLife("minutes");
+  // hours, not minutes (Vercel cost / plan أ٦, 2 Oct 2026) — reels: approvals revalidate the tag.
+  cacheLife("hours");
 
   const reels = await db.media.findMany({
     where: { clientId, inReels: true, reelStatus: "PUBLISHED" },

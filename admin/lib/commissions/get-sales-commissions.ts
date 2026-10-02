@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
+import { classifyOrderKinds, soldOnOf, type OrderKind } from "@/lib/orders/classify-order-kinds";
 
-export type DealKind = "new" | "renewal";
+export type DealKind = OrderKind;
 
 export interface CommissionRateRow {
   id: string;
@@ -65,11 +66,6 @@ export interface RepCommission {
   refundedCount: number;
 }
 
-/** The day a deal counts from: payment, else the manual confirmation, the transfer, the order. */
-function soldOnOf(o: { paidAt: Date | null; confirmedAt: Date | null; transferDate: Date | null; createdAt: Date }): Date {
-  return o.paidAt ?? o.confirmedAt ?? o.transferDate ?? o.createdAt;
-}
-
 /** The rate in force on `day`; a deal older than the first rate takes the first rate. */
 function rateOn(rates: CommissionRateRow[], day: Date): CommissionRateRow | null {
   if (!rates.length) return null;
@@ -112,30 +108,9 @@ export async function getSalesCommissions(): Promise<RepCommission[]> {
   const clients = clientIds.length ? await db.client.findMany({ where: { id: { in: clientIds } }, select: { id: true, name: true } }) : [];
   const clientName = new Map(clients.map((c) => [c.id, c.name.trim()]));
 
-  // Whose client an order is. A renewal is paid BEFORE it is linked to the existing account
-  // («ربط بالعميل القائم», lib/orders/link-order-to-client.ts), so for a while it has no
-  // clientId — matched by the buyer's email to the account his earlier orders are linked to,
-  // or it would count as a «new» deal at the higher rate until someone links it.
-  const clientByEmail = new Map<string, string>();
-  for (const o of orders) if (o.clientId) clientByEmail.set(o.buyerEmail.trim().toLowerCase(), o.clientId);
-  const clientKeyOf = (o: { clientId: string | null; buyerEmail: string }) => {
-    const email = o.buyerEmail.trim().toLowerCase();
-    return o.clientId ?? clientByEmail.get(email) ?? `email:${email}`;
-  };
-
-  // The client's first PAID order is «new»; every later one is a renewal. A refunded order does
-  // not open the account — money that went back is no deal — so a client whose first order was
-  // refunded is «new» again on his next paid one (Khalid, 30 Sep 2026). A refunded order is
-  // itself labelled by the same rule (renewal only if a paid order came before it); its
-  // commission is 0 either way.
-  const firstOrderOf = new Map<string, { id: string; at: Date }>();
-  for (const o of orders) {
-    if (o.status !== "PAID") continue;
-    const key = clientKeyOf(o);
-    const at = soldOnOf(o);
-    const cur = firstOrderOf.get(key);
-    if (!cur || at < cur.at) firstOrderOf.set(key, { id: o.id, at });
-  }
+  // New or renewal — the same rule the orders filter reads (`classify-order-kinds.ts`). A refunded
+  // order's commission is 0 whichever it is.
+  const kindOf = classifyOrderKinds(orders);
 
   // Reps: every SALES staff member, plus anyone named on an order or holding a rate/payout.
   const repIds = new Set<string>(reps.map((r) => r.id));
@@ -156,9 +131,7 @@ export async function getSalesCommissions(): Promise<RepCommission[]> {
       .filter((o) => o.salesRepId === s.id)
       .map((o) => {
         const soldOn = soldOnOf(o);
-        const first = firstOrderOf.get(clientKeyOf(o));
-        const kind: DealKind =
-          o.status === "PAID" ? (first?.id === o.id ? "new" : "renewal") : first && first.at < soldOn ? "renewal" : "new";
+        const kind: DealKind = kindOf.get(o.id) ?? "new";
         const rate = rateOn(myRates, soldOn);
         const rateBp = rate ? (kind === "new" ? rate.newRateBp : rate.renewalRateBp) : null;
         const refunded = o.status === "REFUNDED";

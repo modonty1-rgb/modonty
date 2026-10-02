@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clarity — التجربة والتحويل — نقاش المحتوى</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <nav class="top"><a href="index.html">الفهرس</a><a href="01-writers.html">المنطلق ونقاط النقاش</a><a href="02-findings.html">ملاحظات Claude — Search Console والسيو التقني</a><a href="03-ai-search.html">البحث بالذكاء الاصطناعي</a><a href="04-ga4.html">GA4</a><a href="05-appendix.html">ملحق — الأرقام الخام</a><a href="06-clarity.html" aria-current="page">Clarity — التجربة والتحويل</a><a href="07-pagespeed.html">PageSpeed — السرعة والجودة</a><a href="08-tools.html">أدوات فحص إضافية</a><a href="09-plan.html">خطة العمل</a></nav>
+  <h1>Clarity — التجربة والتحويل</h1>
+
+  <section>
+    <h2>خطة علاج مشاكل Clarity — مرتّبة بالأولوية <span class="tag open">للتنفيذ</span></h2>
+    <p class="sub" style="margin:0 0 10px">خالد (٢ أكتوبر): «كل الملاحظات والمشاكل اللي لقيتها في كلاريتي عشان نعالجها». كل سطر يرجع لملاحظته فوق بدليله.</p>
+    <table>
+      <thead><tr><th>#</th><th>المشكلة</th><th>الرقم</th><th>العلاج</th><th>مين</th><th>المرجع</th><th>رأي خالد</th></tr></thead>
+      <tbody>
+        <tr><td>١</td><td>زر العميل في آخر المقال وما أحد يوصله</td><td>٣٫٩٪ يوصلون ٩٠٪ (جوال)</td><td>الواتساب/الحجز في أوّل ربع المقال + شريط ثابت أسفل الجوال</td><td>تصميم + كود</td><td>ك٤</td><td class="empty">—</td></tr>
+        <tr><td>٢</td><td>القارئ يبي يشتري وما فيه رابط</td><td>٨+٤+٤+٣+٣ ضغطة على أسماء الباقات وأسعارها (سوا)</td><td>كل منتج/خدمة في مقال العميل = زر «اطلب من [العميل]»</td><td>كاتب + كود</td><td>ك٢</td><td class="empty">—</td></tr>
+        <tr><td>٣</td><td>صورة الغلاف أكثر شي ينضغط وما تسوي شي</td><td>٤٩٪ جوال · ٦٢٪ كمبيوتر</td><td>الضغط يكبّرها · وفي الموسمية زر «حمّل/شارك»</td><td>كود</td><td>ك١</td><td class="empty">—</td></tr>
+        <tr><td>٤</td><td>دخول وخروج من نفس المقال</td><td>٤٠٠ / ٣٩٨</td><td>«الخطوة الجاية» بعد أوّل جواب: مقال قريب أو خدمة العميل</td><td>تصميم + كاتب</td><td>ك٣</td><td class="empty">—</td></tr>
+        <tr><td>٥</td><td>ضغط ميت على النص (نسخ)</td><td>١٦٫٤٪ من الجلسات</td><td>زر «انسخ» جنب العبارات في مقالات التهاني والعبارات</td><td>كود</td><td>ك٥</td><td class="empty">—</td></tr>
+        <tr><td>٦</td><td>السرعة والتفاعل</td><td>LCP ٤٫٦ ث · INP ٤١٠ms · CLS ٠٫١٣</td><td>تخفيف JS وCSS اللي يحجب الرسم</td><td>تقني</td><td>ك٨ · ت١</td><td class="empty">—</td></tr>
+        <tr><td>٧</td><td><b>صفحة الدخول تقفل نفسها</b> (مقيس من التسجيل)</td><td>بعد ضغط «Google» الزرّان يبقون معطّلين ٧٠ ثانية وأكثر، والضغط الغاضب كان على زر معطّل · وآخر الجلسة زر الإيميل عالق على «جاري تسجيل الدخول...» بلا رسالة</td><td>الزرّان يرجعون يشتغلون لما الزائر يرجع للصفحة (<code>pageshow</code>) · مهلة للانتظار وبعدها رسالة واضحة · زر Google ما يعطّل نموذج الإيميل</td><td>تقني</td><td>ك٦ · ب٤</td><td class="empty">—</td></tr>
+        <tr><td>٨</td><td>رجوع سريع من الرئيسية — <b>الفرضية ما ثبتت</b></td><td>٢٠ من ٢٧ بلا مصدر (دخول مباشر) · ١٢ منها من ٣ زوّار بس · ٥ فقط من جوجل</td><td>لا تغيير تصميم الآن · حظر IP الفريق أوّلاً ثم إعادة القياس</td><td>بيانات</td><td>ك٧ · ب٤</td><td class="empty">—</td></tr>
+        <tr><td>٩</td><td>خطأ JavaScript متكرّر</td><td>«maximum call stack size exceeded» · ١٨</td><td>إيجاد الدالّة اللي تستدعي نفسها</td><td>تقني</td><td>ك٩</td><td class="empty">—</td></tr>
+        <tr><td>١٠</td><td>Clarity يتحمّل مرّتين</td><td>خطأ <code>reading 'v'</code> في كل صفحة</td><td><b>انحلّ محلياً</b> (إ٥)، يُرفع مع push&gt;</td><td>✓</td><td>إ٥</td><td>—</td></tr>
+        <tr><td>١١</td><td>أزرار الريلز ما تنقاس</td><td>أيقونات بلا نص</td><td><code>clarity("event", "reel_like")</code> وأخواتها</td><td>كود</td><td>ب١</td><td class="empty">—</td></tr>
+        <tr><td>١٢</td><td>ما نقدر نفلتر لكل عميل</td><td>بلا وسوم</td><td><code>clarity("set", "client", …)</code> + الكاتب + نوع الصفحة</td><td>كود</td><td>ب٢</td><td class="empty">—</td></tr>
+        <tr><td>١٣</td><td>زيارات الفريق مخلوطة بالأرقام</td><td>زائر مصر/كمبيوتر بـ٣٤ جلسة</td><td>رابط «أنا من الفريق» يمنع Clarity عبر GTM (الحظر بالـIP ما ينفع: Microsoft ما يدعم العناوين المتغيّرة ولا الجوال)</td><td>بيانات</td><td>ب٣</td><td>مؤجَّل (٢ أكتوبر)</td></tr>
+        <tr><td>١٤</td><td>بكسل فيسبوك يصطدم بسياسة الأمان</td><td>تحذيرات CSP report-only</td><td>السماح له في CSP أو إزالته من GTM</td><td>تقني</td><td>ك١٤</td><td class="empty">—</td></tr>
+        <tr><td>١٥</td><td>«مدونتي» مكرّرة في العنوان</td><td>«… | مدونتي | مدونتي»</td><td>إصلاح الصيغة (<code>admin/lib/seo/metadata-generator.ts:227</code>)</td><td>تقني</td><td>ك١٣ · ت٢</td><td class="empty">—</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section>
+    <h2>Clarity — وين يتعثّر القارئ، ووين يضيع التحويل <span class="tag open">للنقاش</span></h2>
+    <p class="sub" style="margin:0 0 10px">دراسة من الصفر (خالد، ٢ أكتوبر: «لا تعتمد على الملف القديم»). مشروع Clarity <code>modonty</code> (<code>xwq5tz4deb</code>) · آخر ٣٠ يوم حتى ٢ أكتوبر ٢٠٢٦ · مقروء من Clarity نفسه في Playwright.</p>
+
+    <h3 style="font-size:15px;margin:10px 0 6px">الأرقام الأساسية</h3>
+    <table>
+      <thead><tr><th>المقياس</th><th>القيمة</th></tr></thead>
+      <tbody>
+        <tr><td>الجلسات</td><td><b>١٬١٧٧</b> (واستُبعدت ١٨٣ جلسة روبوت)</td></tr>
+        <tr><td>الدول</td><td>السعودية <b>٥٠٫٩٪</b> (٥٩٩) · مصر ٢٨٫٦٪ (٣٣٧) · الجزائر ٢٫٤٪ · اليمن ٢٫٢٪</td></tr>
+        <tr><td>الأجهزة</td><td>جوال <b>٦٢٫١٪</b> (٧٣٠) · كمبيوتر ٣٤٪ · تابلت ٣٫٨٪</td></tr>
+        <tr><td>من وين جوا</td><td>Google ٨١٦ · مباشر ٦٢ · Bing ١١ · فيسبوك ٧ · ChatGPT ٣ · Gemini ٢ · Perplexity ٢ (قناة «AI Platform» = ٩)</td></tr>
+        <tr><td>صفحات للجلسة · التمرير · الوقت</td><td>٢٫١٣ صفحة · تمرير ٤٩٫٣٪ · وقت نشط ١٫٥ دقيقة من ٣٫٦</td></tr>
+        <tr><td>جدد · عائدين</td><td>٨٠٫٢٪ · ١٩٫٨٪ (٢٣٣ جلسة)</td></tr>
+        <tr><td>إشارات التعثّر</td><td>ضغط غاضب ٠٫٥٩٪ (٧) · <b>ضغط ميت ١٦٫٤٪ (١٩٣)</b> · <b>رجوع سريع ١٠٫١٪ (١١٩)</b> · تمرير زايد ٠٪</td></tr>
+        <tr><td>أفعال القارئ (Smart events)</td><td>ضغط رابط خارجي ٥٥ جلسة · إرسال فورم ١٩ · تسجيل دخول ٧ · «تواصل معنا» ٥</td></tr>
+        <tr><td>السرعة (زوّار حقيقيين)</td><td>نتيجة ٦٦/١٠٠ · <b>LCP ٤٫٦ ث (ضعيف)</b> · INP ٤١٠ms (يحتاج تحسين) · CLS ٠٫١٣ (يحتاج تحسين)</td></tr>
+        <tr><td>أخطاء JavaScript</td><td>٠٫١٧٪ من الجلسات · ١٨ خطأ · كلها «maximum call stack size exceeded»</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;margin:16px 0 6px">الملاحظات</h3>
+    <table>
+      <thead><tr><th>#</th><th>الملاحظة</th><th>الدليل من Clarity</th><th>الاقتراح</th><th>رأي خالد</th></tr></thead>
+      <tbody>
+        <tr><td>ك١</td><td><b>صورة الغلاف أكثر شي ينضغط، وما تسوي شي</b></td><td>مقال اليوم الوطني: جوال <b>٨١ ضغطة (٤٩٫٤٪)</b> · كمبيوتر <b>٢٨ (٦٢٫٢٪)</b>. مقال باقات سوا: جوال ١٥ (٢٨٫٩٪). والكود: الصورة بدون رابط ولا تكبير (<code>modonty/app/(site)/articles/[slug]/components/featured-image/FeaturedImage.tsx</code>)</td><td>الضغط يكبّر الصورة. وفي المقالات الموسمية (اليوم الوطني) زر «حمّل الصورة / شاركها»</td><td class="empty">—</td></tr>
+        <tr><td>ك٢</td><td><b>القارئ يبي يشتري، وما نعطيه طريق</b></td><td>مقال «باقات سوا» (عميل: متجر باقتك)، جوال: القرّاء يضغطون على <b>أسماء الباقات وأسعارها</b> («سوا…» · «سوا فليكس…» · الأرقام): ٨ + ٤ + ٤ + ٣ + ٣ ضغطات، وما فيها روابط. (Clarity يخفي الأرقام افتراضياً، فتظهر ▫▫)</td><td>كل باقة أو منتج أو خدمة في مقال عميل = زر «اطلب من [العميل]». هذي أوضح فرصة تحويل في الدراسة</td><td class="empty">—</td></tr>
+        <tr><td>ك٣</td><td><b>القارئ يجي من جوجل، يقرا صفحة وحدة، ويطلع</b></td><td>اليوم الوطني: صفحة دخول لـ<b>٤٠٠</b> جلسة وصفحة خروج لـ<b>٣٩٨</b>. التسجيلات: نمط متكرّر «Google ← مقال ← ٠ ضغطات ← خروج» (سعودي، جوال)</td><td>«الخطوة الجاية» مباشرة بعد أوّل جواب في المقال، مو في آخره: مقال قريب، أو خدمة العميل</td><td class="empty">—</td></tr>
+        <tr><td>ك٤</td><td><b>آخر المقال ما يوصله أحد</b></td><td>مقال اليوم الوطني، جوال: ٤٧٪ يطلعون قبل ١٠٪ من الصفحة · <b>٩٫٦٪ يوصلون النص</b> · <b>٣٫٩٪ يوصلون ٩٠٪</b>. كمبيوتر: ٨٠٪ يطلعون قبل ١٠٪. الرئيسية، جوال: ٣٦٪ يوصلون النص</td><td>أي زر للعميل أو الواتساب في آخر المقال يشوفه أقل من ٤٪. نرفعه لأوّل ربع المقال. (والجواب في أوّل المقال شغّال: القارئ ياخذه ويطلع)</td><td class="empty">—</td></tr>
+        <tr><td>ك٥</td><td><b>ضغط على النص نفسه</b></td><td>اليوم الوطني، جوال: فقرات النص في المراكز ٢–٤ (٩ · ٧ · ٦ ضغطات)، وعبارات التهنئة. ضغط ميت عام: <b>١٦٫٤٪</b> من الجلسات (١٩٣)</td><td>مؤشّر إنهم يبون <b>ينسخون</b> العبارات. زر «انسخ» جنب كل عبارة في مقالات العبارات والتهاني</td><td class="empty">—</td></tr>
+        <tr><td>ك٦</td><td><b>صفحة الدخول تقفل نفسها</b> <span class="tag ok">مشاهَد ٢ أكتوبر</span></td><td>تسجيل ٢٤ سبتمبر (مصر · كمبيوتر · ٤:٣٣ · ٣٤ ضغطة). حالة الأزرار مقروءة من التسجيل نفسه:<br>• <b>٠٠:١٧</b> زر Google «جاري تسجيل الدخول...» <b>معطّل</b> · زر الإيميل <b>معطّل</b><br>• <b>٠١:٢٦</b> نفس الحالة — والضغط الغاضب (٠١:٢٤) كان على زر معطّل<br>• <b>٠٣:٤٢</b> الرئيسية والهيدر يقول «دخول» (ما دخل)<br>• <b>٠٣:٥٦</b> زر الإيميل «جاري تسجيل الدخول...» معطّل، وزر Google معطّل، <b>بلا أي رسالة خطأ</b> · وانتهت الجلسة على صفحة الدخول.<br>السبب في الكود: <code>modonty/app/(site)/users/login/components/login-form.tsx:84</code> و<code>:127</code> — الزرّان <code>disabled={loading !== null}</code>، وزر Google يضبط <code>loading</code> قبل التحويل لجوجل (<code>:28-31</code>) وما فيه شي يرجّعه لو رجع الزائر للصفحة. <b>مؤشّر</b>: إن الرجوع كان بزر «رجوع» المتصفّح (Clarity ما يسجّل صفحة جوجل)</td><td>الزرّان يرجعون يشتغلون عند الرجوع للصفحة (<code>pageshow</code>) · زر Google ما يعطّل نموذج الإيميل · مهلة لـ«جاري تسجيل الدخول» وبعدها رسالة واضحة</td><td class="empty">—</td></tr>
+        <tr><td>ك٧</td><td><b>رجوع سريع من الرئيسية</b> <span class="tag ok">مقيس ٢ أكتوبر</span></td><td>رجوع سريع ١٠٫١٪ (١١٩ جلسة). أوّل ١٠٠ جلسة: الدخول من الرئيسية <b>٢٧</b>، منها <b>٢٠ بلا مصدر</b> (دخول مباشر) و<b>٥ فقط من جوجل</b> · و<b>١٢ من الـ٢٧ من ٣ زوّار</b> (<code>112ju0a</code> ٦ · <code>m1g8km</code> ٣ · <code>15in1zt</code> ٣) · والزائر <code>15in1zt</code> (مصر · كروم كمبيوتر) له <b>١٢ جلسة من الـ١٠٠</b>، جلسات ٢١–٤٥ دقيقة على صفحات العملاء — نمط شخص من الفريق (<b>مؤشّر</b> حتى يُحظر IP). تسجيل شاهدته (١٥ ثانية · ٤ صفحات): رئيسية ← رئيسية ← «مدونتي» ← رئيسية، تنقّل في القائمة لا بطاقة خاطئة</td><td><b>فرضية «البطاقة توعد بغير اللي تفتحه» ما ثبتت.</b> الرقم منفوخ بزيارات مباشرة متكرّرة. حظر IP الفريق (ب) ثم إعادة القياس قبل أي تغيير تصميم</td><td class="empty">—</td></tr>
+        <tr><td>ك٨</td><td><b>Clarity يأكّد السرعة، ويضيف التفاعل والاهتزاز</b></td><td>LCP ٤٫٦ ث ضعيف (يتّفق مع ت١). وجديد: <b>INP ٤١٠ms</b> و<b>CLS ٠٫١٣</b> «يحتاج تحسين»</td><td>للفريق التقني مع ت١</td><td class="empty">—</td></tr>
+        <tr><td>ك٩</td><td><b>خطأ JavaScript متكرّر</b></td><td>«maximum call stack size exceeded» · ١٨ مرة · ٠٫١٧٪ من الجلسات</td><td>للفريق التقني: دالّة تستدعي نفسها بلا نهاية</td><td class="empty">—</td></tr>
+        <tr><td>ك١٠</td><td><b>Clarity مركّب بس ما نستفيد من نصّه</b></td><td>ما فيه ولا مسار تحويل (Funnel) مضبوط. والكود يحمّل السكربت فقط (<code>modonty/app/layout/components/analytics/clarity-script.tsx</code>)، بلا أحداث ولا وسوم مخصّصة</td><td>نرسل أحداث: <code>whatsapp_click</code> · <code>booking_submit</code> · <code>follow_client</code>، ووسوم: العميل · الكاتب · نوع الصفحة (<code>clarity("event")</code> و<code>clarity("set")</code>، مجاني). وبعدها مسار: مقال ← تمرير ٥٠٪ ← زر العميل ← واتساب</td><td class="empty">—</td></tr>
+        <tr><td>ك١١</td><td><b>«AI Visibility» في Clarity: مفعّل، ونطلع في أجوبة Copilot</b></td><td><b>فُعّل ٢ أكتوبر بموافقة خالد</b>. آخر ٧ أيام، المصدر «Microsoft Copilot and partners»: <b>٥٣ استشهاد</b> · حصّتنا من الاستشهادات على نفس الأسئلة <b>١٦٫٥٦٪</b> (٥٣ من ٣٢٠) · زيارات من الذكاء الاصطناعي ٩ (٠٫٨١٪) · استشهادات باسمنا (Branded) <b>٠٪</b>. أكثر الأسئلة: «مقدمة عن اليوم الوطني ٩٦» ٦ · «تعديل السلوك» ٥ (حصّتنا ٢٦٪) · «عزنا بجودنا» ٥ (٣٨٪). أكثر الصفحات: اليوم الوطني ٢٧ · تعديل السلوك ٥ · تقييم الشركات ٤ · تحليل مخزون الحديد ٣ · بعد خلع الضرس ٢ · مسكن للأسنان ٢</td><td>نتابعه شهرياً. وما فيه استشهاد واحد باسم «مدونتي» (Branded ٠٪)، يعني الناس ما تسأل عنّا بالاسم بعد. والمصدر Copilot وشركاؤه، مو ChatGPT ولا Gemini</td><td class="empty">—</td></tr>
+        <tr><td>ك١٢</td><td><b>شاهد ثاني على عطل GA4</b></td><td>تبويب Google Analytics داخل Clarity، آخر ٧ أيام: GA4 يقول <b>٤٬١٥٢</b> جلسة، منها <b>٢٬٩٦٢ (٧١٪) دولتها «Invalid»</b>، و٨٢٫٦٪ «كمبيوتر». بينما Clarity نفسه يقيس ٦٢٪ جوال</td><td>يثبّت غ١: أحداث السيرفر تتسجّل كجلسات كمبيوتر بدون دولة</td><td class="empty">—</td></tr>
+        <tr><td>ك١٣</td><td><b>البراند مكرّر ظاهر في Clarity</b></td><td>عنوان أكثر صفحة زيارة: «اليوم الوطني السعودي ٩٦… | مدونتي | مدونتي»</td><td>يثبّت ت٢</td><td class="empty">—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="point">
+      <h4>مسار التحويل كما يظهر في Clarity <span class="tag open">للنقاش</span></h4>
+      <dl>
+        <dt>١ · الدخول</dt><dd>٨١٦ من ١٬١٧٧ جلسة من جوجل، وأغلبها على مقال واحد</dd>
+        <dt>٢ · القراءة</dt><dd>نص قرّاء المقال على الجوال يطلعون قبل ١٠٪ منه، و٩٫٦٪ يوصلون نصّه</dd>
+        <dt>٣ · الفعل</dt><dd>ضغط رابط خارجي: ٥٥ جلسة (٤٫٧٪) · إرسال فورم: ١٩ (١٫٦٪) · «تواصل معنا»: ٥</dd>
+        <dt>وين الخلل</dt><dd>زر العميل بعيد عن مكان القارئ (ك٤) · أشياء يضغطها ما ترد (ك١ · ك٢ · ك٥) · ما فيه خطوة جاية بعد الجواب (ك٣)</dd>
+        <dt>رأي خالد</dt><dd class="empty">—</dd>
+      </dl>
+    </div>
+
+    <div class="review" style="background:#fffbeb;border-color:#fde68a">
+      <b>حدود الدراسة:</b> التسجيلات اللي قريتها هي قوائم الجلسات (الصفحات والضغطات والمدّة)، وبعدها (٢ أكتوبر) شاهدت تسجيلات ك٦ وك٧ وقريت حالة الأزرار من داخل التسجيل، فصار الحكم فيهما مقيساً. وملخّص Clarity الآلي مكتوب عليه «قد يخطئ»، فما اعتمدت منه إلا اللي ثبّتته الأرقام. وClarity يخفي الأرقام والإدخالات افتراضياً حماية للخصوصية.
+    </div>
+    <p style="font-size:13px;color:var(--muted)">المصادر:
+      <a href="https://clarity.microsoft.com/projects/view/xwq5tz4deb/dashboard?date=Last%2030%20days">لوحة Clarity — modonty</a> ·
+      <a href="https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-api">Clarity client API</a>
+    </p>
+  </section>
+
+  <section>
+    <h2>إعدادات Clarity — المراجعة واللي تعدّل (٢ أكتوبر) <span class="tag ok">تمّ بتفويض خالد</span></h2>
+    <p class="sub" style="margin:0 0 10px">خالد: «راجع كل إعدادات كلاريتي واعمله بيرفكت… عشان يكون العين تبعنا ما بيننا وما بين العميل» · «اللي فيه غلط راجعه عدّله». كل بند تحت مقروء من Clarity نفسه بعد التعديل.</p>
+
+    <h3 style="font-size:15px;margin:10px 0 6px">اللي تعدّل</h3>
+    <table>
+      <thead><tr><th>#</th><th>التعديل</th><th>قبل</th><th>بعد (مقيس)</th></tr></thead>
+      <tbody>
+        <tr><td>إ١</td><td><b>«AI Visibility» فُعّل</b></td><td>غير مفعّل</td><td>٥٣ استشهاد في Copilot خلال ٧ أيام · حصّتنا ١٦٫٥٦٪ (ك١١)</td></tr>
+        <tr><td>إ٢</td><td><b>٨ أحداث ذكية جديدة</b> (Smart events) لأفعال قارئ العميل ومدونتي</td><td>٧ أحداث عامة من Clarity، ولا واحد للواتساب أو الحجز</td><td><b>١٥ حدث</b>: <code>WhatsApp to client</code> («واتساب» · «راسلنا واتساب» · «أو كلّمه واتساب») · <code>Booking with client</code> («احجز الآن» · «احجز الان») · <code>Ask the client</code> («عندك سؤال؟») · <code>Client location map</code> («افتح في خرائط قوقل») · <code>Signup free</code> («سجّل مجاناً») · <code>Become partner</code> («صِر شريكاً») · <code>WhatsApp to Modonty sales</code> («واتساب المبيعات») · <code>Open reels</code> («الطلّات» · «شاهد الطلّات» · «كل الريلز»)</td></tr>
+        <tr><td>إ٣</td><td><b>٦ مسارات تحويل</b> (Funnels)</td><td>صفر</td><td><code>Article to WhatsApp client</code> · <code>Article to booking client</code> · <code>Article to ask client</code> · <code>Client page to WhatsApp</code> · <code>Reels to WhatsApp client</code> · <code>Modonty to become partner</code> — كل واحد خطوتين، ومتأكَّد منها في قائمة المسارات</td></tr>
+        <tr><td>إ٤</td><td><b>كشف نص المقال</b> (Unmask <code>.article-body</code>)</td><td>الأرقام داخل المقال مخفية «▫▫▫▫» (الأسعار مثلاً)</td><td>نص المقال العام يظهر في التسجيلات والخرائط. الوضع العام باقي «Balanced»: الفورمات والجوالات والإيميلات تبقى مخفية. يسري على الجلسات الجديدة فقط (Clarity: «لا يطبَّق بأثر رجعي»)</td></tr>
+        <tr><td>إ٥</td><td><b>إزالة التركيب المكرّر</b> (في الكود، <b>محلياً ولم يُرفع</b>)</td><td>Clarity يتحمّل مرّتين: من الكود (<code>clarity-script.tsx</code>) ومن GTM (<code>GTM-MNRR2NS9</code>). وفي المتصفح: طلبان <code>/tag/xwq5tz4deb</code> و<code>?ref=gtm</code>، والثاني يرمي <code>Uncaught TypeError: Cannot read properties of undefined (reading 'v')</code> في كل صفحة</td><td>حُذف التحميل من الكود (<code>modonty/app/layout.tsx</code> + حذف <code>clarity-script.tsx</code>)، ويبقى GTM لأنه الربط الرسمي في إعدادات Clarity. مايكروسوفت: «tag واحد لكل مشروع». الموقع المحلي يرجع 200. <b>يدخل مع push&gt; القادم</b></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted)">ملاحظة: الأحداث الجديدة تظهر «٠ جلسات» أوّل ما تنعمل، لين Clarity يعالج البيانات.</p>
+
+    <h3 style="font-size:15px;margin:14px 0 6px">اللي سليم ومتروك</h3>
+    <table>
+      <thead><tr><th>الإعداد</th><th>الحالة</th></tr></thead>
+      <tbody>
+        <tr><td>Google Analytics</td><td>مربوط (<code>www.modonty.com</code>) · Active</td></tr>
+        <tr><td>Google Tag Manager</td><td>مربوط (حساب <code>JBRSEO - modonty</code> · حاوية <code>modonty.com</code>)</td></tr>
+        <tr><td>الكوكيز</td><td>On (تربط صفحات الجلسة الواحدة)</td></tr>
+        <tr><td>كشف الروبوتات</td><td>On (استبعد ١٨٣ جلسة في ٣٠ يوم)</td></tr>
+        <tr><td>Copilot</td><td>On</td></tr>
+        <tr><td>تصدير البيانات (API)</td><td>فيه توكن اسمه <code>Modonty_heatmap</code> · الحدّ ١٠ طلبات يومياً للمشروع</td></tr>
+        <tr><td>نوع النشاط</td><td>«B2C Services». ما فيه خيار «إعلام/محتوى» في القائمة، فتُرك</td></tr>
+        <tr><td>الفريق</td><td>٤: modonty1@gmail.com (Admin) + ٣ أعضاء (Mariam Hamdy · Yasmeen Work · ziad tarek)</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;margin:14px 0 6px">باقي — يحتاج شي من برّا Clarity</h3>
+    <table>
+      <thead><tr><th>#</th><th>البند</th><th>ليش ما تعدّل الحين</th><th>رأي خالد</th></tr></thead>
+      <tbody>
+        <tr><td>ب١</td><td><b>أحداث الريلز</b> (إعجاب · مشاركة · حفظ · تعليق) — خالد: «الريلز جداً مهمة»</td><td>أزرار الريلز <b>أيقونات بلا نص</b>، فـClarity ما يقدر يلتقطها من الإعدادات. تحتاج سطر في الكود لكل زر: <code>window.clarity("event", "reel_like")</code> … (مجاني، حسب وثائق Clarity). وفي GA4 موجودة أصلاً: <code>reel_view</code> ٥٠٨ · <code>reel_share</code> ٨ · <code>reel_like</code> ٥ · <code>reel_comment_submit</code> ٣ · <code>reel_favorite</code> ٢ (٩٠ يوم)</td><td class="empty">—</td></tr>
+        <tr><td>ب٢</td><td><b>وسوم مخصّصة</b>: العميل · الكاتب · نوع الصفحة</td><td>تحتاج كود (<code>clarity("set", "client", …)</code>). بعدها نفلتر التسجيلات والخرائط لكل عميل، ويصير Clarity «عين» على كل عميل لحاله</td><td class="empty">—</td></tr>
+        <tr><td>ب٣</td><td><b>حظر IP الفريق</b></td><td>«You aren't blocking any IP addresses». أكثر زائر: مصر، كمبيوتر، <b>٣٤ جلسة</b>، غالباً من الفريق ويخرّب الأرقام. <b>الحظر بالـIP ما ينفع لنا</b> — <a href="https://learn.microsoft.com/en-us/clarity/setup-and-installation/ip-exclusion">Microsoft</a>: «We do not support… dynamic IP addresses» و«Mobile devices generally don't have a stable IP». البديل: رابط <code>?team=1</code> يضع علامة في المتصفّح، وGTM ما يشغّل Clarity معها</td><td>مؤجَّل (٢ أكتوبر)</td></tr>
+        <tr><td>ب٤</td><td><b>مشاهدة تسجيلات</b> ك٦ (الدخول) وك٧ (الرجوع السريع) <span class="tag ok">تمّت ٢ أكتوبر</span></td><td>ك٦: عطل مقيس (الأزرار تقفل) · ك٧: الفرضية ما ثبتت، والرقم منفوخ بزيارات مباشرة متكرّرة</td><td class="empty">—</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;margin:14px 0 6px">ملاحظات إضافية طلعت أثناء المراجعة</h3>
+    <table>
+      <thead><tr><th>#</th><th>الملاحظة</th><th>الدليل</th></tr></thead>
+      <tbody>
+        <tr><td>ك١٤</td><td><b>بكسل فيسبوك (عبر GTM) يصطدم بسياسة الأمان</b></td><td>المتصفح على مقال حيّ: <code>Sending form data to 'https://www.facebook.com/tr/' violates … "form-action 'self'"</code> و<code>Framing 'https://www.facebook.com/' violates … "frame-src"</code>. السياسة الحين «report-only» فما تمنع، بس لو صارت إلزامية يتعطّل البكسل. مؤشّر للفريق التقني</td></tr>
+        <tr><td>ك١٥</td><td><b>ملخّص Copilot الآلي للتسجيلات</b> (مكتوب عليه «قد يخطئ»)</td><td>نجاح: قراءة مقالات السياحة واليوم الوطني والصحة · بحث عن السجل التجاري وباقات STC/سوا. فشل: «مشاكل في صفحة الدخول: ضغط غاضب وميت ومحاولات كلمة مرور» · «روابط داخل المقالات ضُغطت وما حصل شي». الأرقام أكّدت الثاني (ك١ · ك٢ · ك٥)، والأول مؤشّر (ك٦)</td></tr>
+        <tr><td>ك١٦</td><td><b>أزرار موجودة يستخدمها الزوّار</b> (من قائمة Clarity للأزرار المضغوطة)</td><td>«واتساب» على ١٥ صفحة · «بحث متقدم» ١١ · «من نحن» ٨ · «دخول» ٨ · «سجّل مجاناً» ٧ · «راسلنا واتساب» ٦ · «عندك سؤال؟» ٥ · «صِر شريكاً» ٤ · «احجز الآن» ٣ · «اتصل بنا» ٣ · «افتح في خرائط قوقل» ٣</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted)">المصادر:
+      <a href="https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-api">Clarity client API</a> ·
+      <a href="https://learn.microsoft.com/en-us/clarity/third-party-integrations/google-tag-manager">Clarity on Google Tag Manager</a> ·
+      <a href="https://learn.microsoft.com/en-us/clarity/setup-and-installation/troubleshooting-installation">Troubleshooting installation</a>
+    </p>
+  </section>
+</main>
+</body>
+</html>

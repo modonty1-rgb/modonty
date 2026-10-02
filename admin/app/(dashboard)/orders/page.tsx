@@ -1,6 +1,4 @@
 import type { CheckoutOrderStatus, PaymentProvider } from "@prisma/client";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 
 import { db } from "@/lib/db";
 import { OrderStatusFilter } from "./components/order-status-filter";
@@ -21,10 +19,12 @@ import { REVENUE_ORDER } from "@/lib/orders/revenue-order";
 import { orderMarketLabel } from "./helpers/order-market-label";
 import { orderProviderLabel } from "@/lib/orders/order-provider-label";
 import { AWAITING_ACTIVATION } from "@/lib/orders/awaiting-activation";
-import { checkSalesDesk } from "@/lib/require-sales-desk";
 import { auth } from "@/lib/auth";
 import { checkFinanceAdmin } from "@/lib/require-finance-admin";
 import { getSalesCommissions } from "@/lib/commissions/get-sales-commissions";
+import { getTargetProgress } from "@/lib/commissions/get-target-progress";
+import { TargetStrip } from "./components/target-strip";
+import { classifyOrderKinds } from "@/lib/orders/classify-order-kinds";
 
 export const dynamic = "force-dynamic";
 
@@ -90,8 +90,9 @@ const MARKET_HINT: Record<(typeof MARKETS)[number], string> = {
 };
 const TAKE = 50;
 
-export default async function OrdersPage({ searchParams }: { searchParams: Promise<{ status?: string; view?: string; provider?: string; market?: string; q?: string; rep?: string }> }) {
-  const { status, view, provider, market, q, rep: repParam } = await searchParams;
+export default async function OrdersPage({ searchParams }: { searchParams: Promise<{ status?: string; view?: string; provider?: string; market?: string; q?: string; rep?: string; kind?: string }> }) {
+  const { status, view, provider, market, q, rep: repParam, kind } = await searchParams;
+  const activeKind = kind === "new" || kind === "renewal" ? kind : undefined;
   const query = (q ?? "").trim();
   // السوق حقلٌ على الطلب نفسه — لا يُستنتج من العملة، فقد تتغيّر العملة ويبقى السوق.
   const activeMarket = MARKETS.find((candidate) => candidate === market);
@@ -116,7 +117,11 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
    * لا `null`، وشرطٌ على الغائب يعطي أصفاراً كاذبة.
    */
   const [repOrders, repClients] = await Promise.all([
-    db.checkoutOrder.findMany({ select: { id: true, clientId: true, salesRepId: true }, take: 5000 }),
+    // والحقولُ الباقية لتصنيف «جديد / تجديد» — نفسُ قاعدة العمولة (`classify-order-kinds.ts`).
+    db.checkoutOrder.findMany({
+      select: { id: true, clientId: true, salesRepId: true, status: true, buyerEmail: true, paidAt: true, confirmedAt: true, transferDate: true, createdAt: true },
+      take: 5000,
+    }),
     db.client.findMany({ where: { salesRepId: { not: null } }, select: { id: true, salesRepId: true }, take: 5000 }),
   ]);
   const clientRep = new Map(repClients.map((c) => [c.id, c.salesRepId!]));
@@ -130,6 +135,15 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   const repName = new Map(repStaff.map((s) => [s.id, s.name ?? "—"]));
   const activeRep = repParam === NO_REP || repName.has(repParam ?? "") ? repParam : undefined;
   const repOrderIds = activeRep ? [...repOfOrder].filter(([, r]) => (r ?? NO_REP) === activeRep).map(([id]) => id) : null;
+  // جديد / تجديد (خالد ١ أكتوبر ٢٠٢٦: «نفصل مشترك جديد وتجديد الاشتراك»).
+  // **المدفوعُ وحده** يُعدّ ويُفلتر (خالد ١ أكتوبر ٢٠٢٦): الملغى والمنتظرُ للتحويل ليسا اشتراكاً
+  // جديداً ولا تجديداً بعد — كانا يُحسبان «جديد» فيكبر الرقم عن صفقات العمولة.
+  const kindOf = classifyOrderKinds(repOrders);
+  const paidIds = new Set(repOrders.filter((o) => o.status === "PAID").map((o) => o.id));
+  const paidKinds = [...kindOf].filter(([id]) => paidIds.has(id));
+  const kindCounts = { new: 0, renewal: 0 };
+  for (const [, k] of paidKinds) kindCounts[k]++;
+  const kindOrderIds = activeKind ? paidKinds.filter(([, k]) => k === activeKind).map(([id]) => id) : null;
 
   /**
    * البحثُ يُضاف إلى الفلتر لا يحلّ محلَّه — فيقرأ «المصريّون الذين اسمُهم كذا».
@@ -151,6 +165,8 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     ? { id: { in: expiredOrderIds } }
     : repOrderIds
       ? { id: { in: repOrderIds } }
+    : kindOrderIds
+      ? { id: { in: kindOrderIds } }
     : isAwaitingView
       ? AWAITING_ACTIVATION
       : activeProvider
@@ -164,8 +180,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   const where =
     filterWhere && searchWhere ? { AND: [filterWhere, searchWhere] } : (searchWhere ?? filterWhere);
 
-  const [salesDeskGate, orders, total, countRows, awaitingActivation, expiredCount, providerPairs, marketRows, sumRows] = await Promise.all([
-    checkSalesDesk(),
+  const [orders, total, countRows, awaitingActivation, expiredCount, providerPairs, marketRows, sumRows] = await Promise.all([
     db.checkoutOrder.findMany({
       where,
       select: {
@@ -195,7 +210,6 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     // مستردّة). و«حسابٌ لنا» خارجٌ كما يَعِد مربّعُه — نفسُ شرط `get-monthly-revenue.ts`.
     db.checkoutOrder.groupBy({ by: ["market"], where: REVENUE_ORDER, _sum: { totalMinor: true } }),
   ]);
-  const isSalesDesk = salesDeskGate.status === "ok";
   const counts = Object.fromEntries(countRows.map((row) => [row.status, row._count._all])) as Partial<Record<CheckoutOrderStatus, number>>;
   const providerCounts: Partial<Record<PaymentProvider, number>> = {};
   for (const pair of providerPairs) providerCounts[pair.provider] = (providerCounts[pair.provider] ?? 0) + 1;
@@ -216,13 +230,16 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
     code,
     market: MARKET_LABEL[code],
     hint: MARKET_HINT[code],
+    unit: code === "EG" ? "ج.م" : "ر.س",
     label: formatOrderAmount(sumByMarket.get(code) ?? 0),
   }));
   /**
    * الإيرادُ الشهريُّ لا يتبع الفلتر ولا البحث — كالإجماليّين تماماً. سؤالُه «كم دخل
    * في كلّ شهر»، وجوابُه لا يتغيّر باختيار عمودٍ يُعرض.
+   * **وللأدمن وحده** (خالد ١ أكتوبر ٢٠٢٦): دخلُ الشركة كلّها ليس شأنَ المندوب — فلا يُحسب له أصلاً.
    */
-  const monthly = await getMonthlyRevenue();
+  const seesAllCommissions = (await checkFinanceAdmin()).status === "ok";
+  const monthly = seesAllCommissions ? await getMonthlyRevenue() : null;
 
   // يعتمد على الطلبات المجلوبة، فلا يدخل `Promise.all` أعلاه.
   const pageClientIds = [...new Set(orders.flatMap((order) => (order.clientId ? [order.clientId] : [])))];
@@ -233,22 +250,26 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
    * colleague's pay stays his colleague's.
    */
   const commissionByOrder = new Map<string, NonNullable<OrderRow["commission"]>>();
-  const seesAllCommissions = (await checkFinanceAdmin()).status === "ok";
   const viewerId = ((await auth())?.user as { id?: string } | undefined)?.id;
-  if (seesAllCommissions || viewerId) {
-    for (const rep of await getSalesCommissions()) {
-      if (!seesAllCommissions && rep.id !== viewerId) continue;
-      const paidOnByOrder = new Map<string, Date>();
-      for (const p of rep.payouts) for (const it of p.items) if (it.commissionMinor > 0) paidOnByOrder.set(it.orderId, p.paidOn);
-      for (const d of rep.deals) {
-        const money = (m: number) => formatOrderMoney(m, d.currency);
-        if (d.state === "settled") commissionByOrder.set(d.orderId, { state: "settled", label: `انصرفت عمولة ${rep.name} (${money(d.paidMinor)})${paidOnByOrder.get(d.orderId) ? ` — ${formatOrderDate(paidOnByOrder.get(d.orderId)!)}` : ""}` });
-        else if (d.state === "unpaid") commissionByOrder.set(d.orderId, { state: "unpaid", label: `عمولة ${rep.name} لسه ما انصرفت (${money(d.commissionMinor)})` });
-        else if (d.state === "clawback") commissionByOrder.set(d.orderId, { state: "clawback", label: `انصرفت عمولة ${rep.name} ثم استُردّ الطلب — تُخصم من صرفه القادم (${money(d.clawbackMinor)})` });
-        // Sad by default (Khalid, 1 Oct 2026: «لو ما اندفعت الديفولت يكون زعلان»): a paid order with
-        // a rep whose rate is not set yet still owes him — its face is sad, not missing.
-        else if (!d.refunded && d.rateBp === null) commissionByOrder.set(d.orderId, { state: "unpaid", label: `عمولة ${rep.name} لسه ما انصرفت — نسبته ما تحدّدت بعد` });
-      }
+  const visibleReps = seesAllCommissions || viewerId
+    ? (await getSalesCommissions()).filter((rep) => seesAllCommissions || rep.id === viewerId)
+    : [];
+  /**
+   * This month's target, above the table (Khalid, 2 Oct 2026: «كل مندوب يشوف التارجت اللي هو وصل
+   * له… عشان الدنيا تكون واضحة قدام عينه»). The admin sees every active rep; a rep sees only himself.
+   */
+  const targetProgress = await getTargetProgress(seesAllCommissions ? visibleReps.filter((rep) => rep.isActive) : visibleReps);
+  for (const rep of visibleReps) {
+    const paidOnByOrder = new Map<string, Date>();
+    for (const p of rep.payouts) for (const it of p.items) if (it.commissionMinor > 0) paidOnByOrder.set(it.orderId, p.paidOn);
+    for (const d of rep.deals) {
+      const money = (m: number) => formatOrderMoney(m, d.currency);
+      if (d.state === "settled") commissionByOrder.set(d.orderId, { state: "settled", label: `انصرفت عمولة ${rep.name} (${money(d.paidMinor)})${paidOnByOrder.get(d.orderId) ? ` — ${formatOrderDate(paidOnByOrder.get(d.orderId)!)}` : ""}` });
+      else if (d.state === "unpaid") commissionByOrder.set(d.orderId, { state: "unpaid", label: `عمولة ${rep.name} لسه ما انصرفت (${money(d.commissionMinor)})` });
+      else if (d.state === "clawback") commissionByOrder.set(d.orderId, { state: "clawback", label: `انصرفت عمولة ${rep.name} ثم استُردّ الطلب — تُخصم من صرفه القادم (${money(d.clawbackMinor)})` });
+      // Sad by default (Khalid, 1 Oct 2026: «لو ما اندفعت الديفولت يكون زعلان»): a paid order with
+      // a rep whose rate is not set yet still owes him — its face is sad, not missing.
+      else if (!d.refunded && d.rateBp === null) commissionByOrder.set(d.orderId, { state: "unpaid", label: `عمولة ${rep.name} لسه ما انصرفت — نسبته ما تحدّدت بعد` });
     }
   }
 
@@ -373,27 +394,10 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
             {total}
           </span>
         </h1>
-        {/* البحثُ بين العنوان وزرّ «+» (خالد ١٩ سبتمبر ٢٠٢٦) — ويأخذ ما بقي من الصفّ. */}
+        {/* البحثُ يأخذ ما بقي من الصفّ. زرُّ «+» (اشتراك جديد) شِيل من هنا (خالد ١ أكتوبر ٢٠٢٦:
+            «أبغى المندوب يشتغل مركّز ما أبغى يتوه»): بابُ الاشتراك الجديد في قائمة المبيعات وحده،
+            بجانب «تجديد اشتراك» — بابان واضحان في مكانٍ واحد بدل بابٍ ثالث في صفحة الطلبات. */}
         <OrdersSearch />
-        {/**
-          * المنفذ الثاني بجانب صفحة الدفع — ومنه تُعاد إدخال العملاء القائمين.
-          * أيقونة «+» وحدها — والاسمُ في التلميح ولقارئ الشاشة.
-          *
-          * **ولا يُعرض لمن لا يقدر يستعمله** (خالد ٢٠ سبتمبر ٢٠٢٦): كان `<Link>` عارياً
-          * بلا شرط، وصفحةُ `/orders/new` تبدأ بـ`requireFinanceAdmin()` التي **ترمي**.
-          * فالسيلز يرى الزرّ، يضغطه، فتُصفعه صفحةُ خطأ. وهو عكسُ العطل الآخر في نفس
-          * اليوم — هناك زرٌّ اختفى بلا سبب، وهنا زرٌّ يظهر ثمّ يرفض.
-          */}
-        {isSalesDesk ? (
-        <Link
-          href="/orders/new"
-          aria-label="اشتراك جديد"
-          title="اشتراك جديد"
-          className="inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
-        >
-          <Plus className="size-5" strokeWidth={2.5} />
-        </Link>
-        ) : null}
       </div>
 
       {/* الفلاترُ والإجماليّاتُ في صفٍّ واحد (خالد ٢٣ سبتمبر ٢٠٢٦: «جنب التوغلز عشان نستفيد
@@ -417,10 +421,18 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
               .sort((a, b) => b.count - a.count)
               .concat(repCounts.has(NO_REP) ? [{ id: NO_REP, name: "بلا مندوب", count: repCounts.get(NO_REP)! }] : [])}
             activeRep={activeRep}
+            kindCounts={kindCounts}
+            activeKind={activeKind}
           />
-          <MonthlyRevenueStrip data={monthly} totals={totals} />
+          {monthly ? <MonthlyRevenueStrip data={monthly} totals={totals} /> : null}
         </div>
       </header>
+
+      <TargetStrip
+        progress={targetProgress}
+        isAdmin={seesAllCommissions}
+        monthLabel={new Date().toLocaleDateString("ar-EG", { month: "long", timeZone: "UTC" })}
+      />
 
       <OrdersTable groups={groups} emptyText={emptyText} />
     </main>

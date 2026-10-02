@@ -42,9 +42,16 @@ interface GA4Payload {
   }>;
 }
 
+/**
+ * Our partner's database id travels as `client_db_id`, never `client_id`: in the browser a
+ * GA4 event parameter named `client_id` REPLACES the visitor's GA client id (measured in GTM
+ * preview, 2 Oct 2026: `cid=TEST-client`). The browser path (GTM tag) sends `client_db_id`;
+ * the server path renames here so both land in the same GA4 dimension.
+ */
 function sanitizeParams(params: GA4EventParams): GA4EventParams {
   const out: GA4EventParams = {};
-  for (const [k, v] of Object.entries(params)) {
+  for (const [rawKey, v] of Object.entries(params)) {
+    const k = rawKey === "client_id" ? "client_db_id" : rawKey;
     if (v === null || v === undefined) continue;
     if (typeof v === "string" && v.length > 500) {
       out[k] = v.slice(0, 500);

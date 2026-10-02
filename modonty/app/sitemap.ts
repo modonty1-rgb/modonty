@@ -205,9 +205,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           description: true,
           seoDescription: true,
           _count: { select: { articles: { where: { status: ArticleStatus.PUBLISHED } } } },
+          articles: {
+            where: { status: ArticleStatus.PUBLISHED },
+            orderBy: { datePublished: "desc" },
+            take: 1,
+            select: { datePublished: true, dateModified: true },
+          },
         },
       })
-      .then((rows) => rows.filter(notTestSlug).filter(isIndexableClient)),
+      .then((rows) =>
+        rows
+          .filter(notTestSlug)
+          .filter(isIndexableClient)
+          // lastmod = the newer of the partner row and its latest article (plan د٧, 2 Oct 2026).
+          // A partner's page goes from «قيد التجهيز» (noindex) to indexable when its FIRST article
+          // is published — which never touches `client.updatedAt`. The page joined the sitemap
+          // with an old date, so Google had no reason to recrawl it: 6 partner pages were still
+          // read as noindex weeks after they opened. Google uses lastmod «if it's consistently
+          // and verifiably accurate» — this makes it accurate.
+          .map((c) => {
+            const a = c.articles[0];
+            const articleDate = a?.dateModified ?? a?.datePublished ?? null;
+            return { ...c, updatedAt: articleDate && articleDate > c.updatedAt ? articleDate : c.updatedAt };
+          }),
+      ),
     db.author.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.tag.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.industry.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
@@ -325,7 +346,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Section landing pages. Each is linked from the top nav or a homepage rail, so Google meets
     // them while crawling anyway — but a page reachable only by crawl is discovered late and
     // recrawled rarely. Listing them here is how they get treated as first-class destinations.
-    { url: new URL("/reels", baseUrl).href },
+    // The feed's content IS its reels, so its real last change is the newest reel's publish date —
+    // a true lastmod, unlike the code-only pages above (plan د٩, 2 Oct 2026).
+    { url: new URL("/reels", baseUrl).href, lastModified: reels[0]?.reelPublishedAt ?? undefined },
     { url: new URL("/audio", baseUrl).href },
     // The mushaf, split out of `/audio` on 26 Sep 2026 — the most searched subject on the site.
     { url: new URL("/quran", baseUrl).href },

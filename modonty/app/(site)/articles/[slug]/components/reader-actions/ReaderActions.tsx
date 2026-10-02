@@ -1,3 +1,4 @@
+import { getArticleLiveCounts } from "@/app/(site)/articles/[slug]/data/get-article-live-counts";
 import { getMyArticleReactions } from "@/app/(site)/articles/[slug]/data/get-my-article-reactions";
 import { getViewer } from "@/app/(site)/articles/[slug]/helpers/get-viewer";
 import { ArticleTopEngagementBar } from "@/app/(site)/articles/[slug]/components/top-engagement-bar/TopEngagementBarLazy";
@@ -25,8 +26,8 @@ interface ReaderActionsProps {
  * session before rendering anything, and reading it there cost the article its static shell.
  *
  * Now the shell prerenders with the tabs' skeleton in it and this streams in behind a Suspense
- * boundary. The counts come from the shell (they are the same for everyone); only the two
- * booleans are fetched here, and only when someone is signed in.
+ * boundary. The shell's counts are the cached ones; the live counts are read here too, so the
+ * shell can stay static (plan أ١, 2 Oct 2026) — `likes`/`favorites` props are the fallback.
  */
 export async function ReaderActions({
   articleId,
@@ -42,15 +43,15 @@ export async function ReaderActions({
   attached,
   orientation = "row",
 }: ReaderActionsProps) {
-  const { userId } = await getViewer();
+  const [{ userId }, live] = await Promise.all([getViewer(), getArticleLiveCounts(articleId)]);
   const reactions = userId
     ? await getMyArticleReactions(articleId, userId)
     : { userLiked: false, userFavorited: false };
 
   return (
     <ArticleTopEngagementBar
-      likes={likes}
-      favorites={favorites}
+      likes={live?.likes ?? likes}
+      favorites={live?.favorites ?? favorites}
       userLiked={reactions.userLiked}
       userFavorited={reactions.userFavorited}
       articleId={articleId}

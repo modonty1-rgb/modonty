@@ -45,6 +45,7 @@ export interface BlockView {
  */
 const SAMPLE_ON_HOME: Record<string, { cap: number; rest: string }> = {
   gallery: { cap: 5, rest: "«ألبوم أعمالنا»" }, // gallery-mosaic.tsx:7
+  reels: { cap: 4, rest: "«الريلز»" }, // reels-grid.tsx HOME_REELS_LIMIT
   blog: { cap: 3, rest: "«مقالاتي»" }, // latest-posts.tsx:10
   faq: { cap: 6, rest: "«الأسئلة الشائعة»" }, // faq-accordion.tsx:15 (HOME_FAQ_LIMIT)
   testimonials: { cap: 3, rest: "«آراء العملاء»" }, // testimonials-grid.tsx:21
@@ -127,6 +128,13 @@ function linesFor(
         count: d.gallery.length,
         lines: [],
         thumbs: d.gallery.slice(0, cap ?? d.gallery.length).map((g) => g.url),
+      };
+    // مصغّرات كالمعرض: الشريك يشوف ريلزه نفسها. الرئيسية تعرض أربعة (`reels-grid.tsx`).
+    case "reels":
+      return {
+        count: d.reels.length,
+        lines: [],
+        thumbs: d.reels.slice(0, cap ?? d.reels.length).flatMap((r) => (r.imageUrl ? [r.imageUrl] : [])),
       };
     case "team":
       return { count: d.team.length, lines: d.team.map((m) => [m.name, m.role].filter(Boolean).join(" — ")) };

@@ -13,7 +13,8 @@ export async function getClientsSearch(
 ): Promise<ClientResponse[]> {
   "use cache";
   cacheTag("clients");
-  cacheLife("minutes");
+  // hours, not minutes (Vercel cost / plan أ٦, 2 Oct 2026) — clients: admin (20 call sites) and console revalidate it on every client write.
+  cacheLife("hours");
   const literalSearch = safeLiteralSearch(search);
   if (!literalSearch) return [];
   const orderBy = clientOrderBy(sortBy);

@@ -166,10 +166,11 @@ export function ArticleAudioPlayer({ src, slug, tabClassName, durationSeconds }:
       <span
         className={cn(tabClassName, "cursor-not-allowed bg-muted text-muted-foreground/70 hover:translate-y-0")}
         title="لا توجد نسخة صوتية لهذا المقال"
-        aria-label="لا توجد نسخة صوتية لهذا المقال"
-        aria-disabled="true"
       >
-        <IconListenOff className="size-[18px]" />
+        {/* Text for screen readers, not aria-label/aria-disabled: both are prohibited on a span
+            with no role (axe «aria-prohibited-attr», plan هـ٦) and were silently ignored. */}
+        <IconListenOff className="size-[18px]" aria-hidden />
+        <span className="sr-only">لا توجد نسخة صوتية لهذا المقال</span>
       </span>
     );
   }

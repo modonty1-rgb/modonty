@@ -336,6 +336,7 @@ model Staff {
   editorClients Client[]       @relation("StaffEditorClients")
   // Sales commissions (Khalid, 30 Sep 2026) — a rep's rate history and what was paid out to him.
   commissionRates   SalesCommissionRate[]   @relation("StaffCommissionRates")
+  salesTargets      SalesTarget[]           @relation("StaffSalesTargets")
   commissionPayouts SalesCommissionPayout[] @relation("StaffCommissionPayouts")
   assignedTasks Task[]         @relation("TaskAssignee")
   createdTasks  Task[]         @relation("TaskCreatedBy")
@@ -4271,6 +4272,24 @@ model SalesCommissionRate {
 
   @@index([staffId, effectiveFrom])
   @@map("sales_commission_rates")
+}
+
+/// تارجت مندوب الشهريّ — مبلغُ مبيعاتٍ قبل الضريبة في الشهر (خالد ١ أكتوبر ٢٠٢٦: «شهري بالمبلغ»).
+/// **بالريال السعوديّ دائماً** (خالد: «التارجت يكون بالريال»)، ومبيعاتُ الجنيه تُحوَّل إليه بسعر
+/// اليوم وتُعرض للمندوب بسعرها. سجلٌّ كالنسبة: كلّ صفٍّ يسري من `effectiveFrom`، فتغييرُه لا يعيد
+/// كتابة شهرٍ مضى. وهو قياسٌ للمندوب لا شرطٌ للعمولة — لا يغيّر نسبةً ولا مبلغاً.
+model SalesTarget {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  staffId       String   @db.ObjectId
+  staff         Staff    @relation("StaffSalesTargets", fields: [staffId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  /// بالهللة، قبل الضريبة — نفسُ أساس العمولة (`subtotalMinor`).
+  monthlySarMinor Int
+  effectiveFrom DateTime
+  createdById   String?  @db.ObjectId
+  createdAt     DateTime @default(now())
+
+  @@index([staffId, effectiveFrom])
+  @@map("sales_targets")
 }
 
 /// طلبٌ واحد غطّته صرفيّة — ولقطةُ عمولته يوم الصرف: تغييرُ النسبة بعدها لا يغيّر ما دُفع.

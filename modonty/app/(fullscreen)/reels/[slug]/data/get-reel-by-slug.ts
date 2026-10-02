@@ -41,7 +41,8 @@ const OBJECT_ID = /^[0-9a-f]{24}$/i;
 export async function getReelBySlug(slug: string): Promise<ReelWatch | null> {
   "use cache";
   cacheTag("reels");
-  cacheLife("minutes");
+  // hours, not minutes (Vercel cost / plan أ٦, 2 Oct 2026) — reels: likes/saves call updateTag("reels"), approvals and console comment moderation revalidate it; only the view counter lags, by design.
+  cacheLife("hours");
 
   const r = await db.media.findFirst({
     where: {

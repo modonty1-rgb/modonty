@@ -81,6 +81,7 @@ const routeLabels: Record<string, string> = {
 const sectionLabels: Record<string, string> = {
   basic: 'Basic',
   content: 'Content',
+  speed: 'Speed',
   seo: 'SEO',
   media: 'Media',
   tags: 'Tags',
@@ -96,6 +97,8 @@ const sectionLabels: Record<string, string> = {
   'sales-leads': 'العملاء المحتملون',
   'sales-commissions': 'عمولات المناديب',
   'commission-statement': 'كشف حساب العمولات',
+  'contact-requests': 'طلبات التواصل',
+  renewals: 'تجديد اشتراك',
   kpi: 'KPI',
   'contact-messages': 'رسائل التواصل',
   members: 'الأعضاء',

@@ -16,7 +16,8 @@ export interface ReelClientFilterOption {
 export async function getReelClientFilterOptions(): Promise<ReelClientFilterOption[]> {
   "use cache";
   cacheTag("reels", "clients");
-  cacheLife("minutes");
+  // hours, not minutes (Vercel cost / plan أ٦, 2 Oct 2026) — reels: likes/saves updateTag, approvals and console comment moderation revalidate; views lag by design.
+  cacheLife("hours");
 
   const clients = await db.client.findMany({
     where: { media: { some: { inReels: true, reelStatus: "PUBLISHED" } } },
@@ -47,7 +48,8 @@ export async function getReelClientFilterOptions(): Promise<ReelClientFilterOpti
 export async function getReelsFeedPage(cursor?: string | null, clientSlug?: string | null): Promise<ReelFeedPage> {
   "use cache";
   cacheTag("reels");
-  cacheLife("minutes");
+  // hours, not minutes (Vercel cost / plan أ٦, 2 Oct 2026) — reels: likes/saves updateTag, approvals and console comment moderation revalidate; views lag by design.
+  cacheLife("hours");
   // Both kinds of reel now (2026-08-20): a video (bunnyVideoId set, plays) and a still image
   // share one feed. The old `mimeType: "image/"` filter hid every video reel the console
   // uploaded and the admin approved — they sat PUBLISHED and invisible. `client: isNot null`

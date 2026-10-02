@@ -7,7 +7,13 @@ import { FooterStats } from "./footer-stats-types";
 export async function getFooterStats(): Promise<FooterStats> {
   "use cache";
   cacheTag("stats");
-  cacheLife("minutes");
+  /**
+   * ساعة لا دقيقة (خالد ١ أكتوبر ٢٠٢٦ — فاتورة Vercel: «ISR Writes» ١٤٫٠٨$ في نصف دورة).
+   * `minutes` = يُعاد بناؤه كلّ دقيقة (توثيق Next: revalidate 1m)، وكلُّ إعادةِ بناءٍ تُكتب في
+   * مخزن ISR وتُحسب بوحدات ٨ KB (توثيق Vercel). والفوتر في كلّ صفحة، فعدّادٌ يتحرّك كلّ دقيقة
+   * كان يدفع كتابةً كلّ دقيقة. المشاهداتُ تتحدّث الآن كلّ ساعة — رقمُ تعريفٍ بالمنصّة لا لوحةٌ حيّة.
+   */
+  cacheLife("hours");
 
   const now = new Date();
   const publishedFilter = {

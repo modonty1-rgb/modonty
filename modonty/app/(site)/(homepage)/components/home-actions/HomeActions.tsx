@@ -9,7 +9,9 @@ export function HomeActions() {
     <section aria-label="اسأل مودو" className="flex items-center gap-2 rounded-lg bg-card p-2 ring-1 ring-border lg:gap-3 lg:p-3">
       <Link
         href="/modo-chat"
-        aria-label="اسأل مودو — افتح المحادثة"
+        // No aria-label (plan هـ٦, 2 Oct 2026): it replaced the visible text with a different
+        // sentence, so speech-input users saying what they see («اسأل مودو…») missed the link —
+        // WCAG 2.5.3 Label in Name; PageSpeed flagged it. The visible text is the name now.
         className="group flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card lg:gap-3"
       >
         <span className="relative flex size-10 shrink-0 overflow-hidden rounded-full ring-1 ring-primary/15 lg:size-11">

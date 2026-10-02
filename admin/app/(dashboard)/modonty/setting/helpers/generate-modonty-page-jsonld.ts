@@ -177,8 +177,12 @@ export function generateModontyPageJsonLd(config: ModontySiteConfig, page: Modon
     "@id": pageNodeId,
     name,
     url: pageUrl,
-    mainEntityOfPage: pageUrl,
-    description: description ?? "",
+    // No `mainEntityOfPage` (plan د٩, 2 Oct 2026). It sat here pointing the page at its own URL —
+    // «this page is the main entity of itself» — and Google's Profile page report flagged it on
+    // /accounts as an unrecognised field. The page's subject is stated with `mainEntity` /
+    // `about` below; `mainEntityOfPage` belongs on the thing a page is about, not on the page.
+    // And no `""` description: an empty one asserts «describes itself as nothing» (see above).
+    ...(description?.trim() ? { description } : {}),
     publisher: { "@id": orgId },
     isPartOf: { "@id": websiteId },
     inLanguage: inLang,
