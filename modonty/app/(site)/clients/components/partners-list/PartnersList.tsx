@@ -85,10 +85,10 @@ export function PartnersList({ partners, industryCount, industryName, query }: P
       ) : (
         // Below 1240px the compact card: the full one ran ~300px each, so a phone showed
         // two partners per screen (measured 21 Aug). Desktop keeps the full card exactly.
-        rows.map((partner) => (
+        rows.map((partner, i) => (
           <div key={partner.id}>
             <div className="min-[1240px]:hidden">
-              <PartnerCardMobile partner={partner} />
+              <PartnerCardMobile partner={partner} isLcp={i === 0} />
             </div>
             <div className="hidden min-[1240px]:block">
               <PartnerCard partner={partner} />

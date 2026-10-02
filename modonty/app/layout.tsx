@@ -25,7 +25,12 @@ const montserrat = Montserrat({
   weight: ["400", "500", "600", "700"],
   variable: "--font-montserrat",
   display: "swap",
-  preload: true,
+  // NOT preloaded (plan أ١, 3 Oct 2026). It is only the second fallback in the font stack —
+  // Tajawal ships its own latin subset, so no page renders a glyph in Montserrat — yet its
+  // preload was the largest font on every page (36KB, «High» priority), fetched in the same
+  // instant as the LCP image (PageSpeed mobile: 7 fonts, 102KB, all at 1,712ms). Without the
+  // preload the browser downloads it only if a glyph ever needs it.
+  preload: false,
 });
 
 // كانت `export const metadata` ثابتة، فاسم الماركة في قالب العنوان — وهو الذي يُلحَق

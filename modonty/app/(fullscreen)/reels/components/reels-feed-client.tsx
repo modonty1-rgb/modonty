@@ -212,7 +212,8 @@ export function ReelsFeedClient({ initialItems, initialCursor, clientSlug, isLog
                     fill
                     sizes="(max-width: 768px) 100vw, 420px"
                     className="scale-125 object-cover opacity-50 blur-2xl"
-                    {...(i === 0 ? { preload: true } : {})}
+                    // Same URL and sizes as the cover below, so the browser fetches it once.
+                    {...(i === 0 ? { loading: "eager" as const } : {})}
                   />
                   <OptimizedImage
                     media={asMedia(reel.imageUrl, reel.title)}
@@ -220,7 +221,10 @@ export function ReelsFeedClient({ initialItems, initialCursor, clientSlug, isLog
                     fill
                     sizes="(max-width: 768px) 100vw, 420px"
                     className="object-contain"
-                    {...(i === 0 ? { preload: true } : {})}
+                    // The first cover is the LCP. Eager + high, not `preload`: a preload carries no
+                    // priority, and PageSpeed mobile /reels (3 Oct 2026) flagged «fetchpriority=high
+                    // should be applied» — Next 16 Image docs prefer eager/fetchPriority over preload.
+                    {...(i === 0 ? { loading: "eager" as const, fetchPriority: "high" as const } : {})}
                   />
                 </>
               )}

@@ -1,35 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useState } from "react";
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { askClientSchema, type AskClientFormData } from "./ask-client-schema";
-import { submitAskClient } from "./submit-ask-client";
-import { Badge } from "@/components/ui/badge";
 import { trackCtaClick } from "@/lib/analytics/cta-tracking";
+import type { PendingFaq } from "./ask-client-pending-dialog";
 
-interface PendingFaq {
-  id: string;
-  question: string;
-  createdAt: Date;
-}
+// The two dialogs load on the first tap, never with the page (plan أ١, 3 Oct 2026): the form
+// brought Radix Dialog + react-hook-form + zod into every article's first load. Pointing at a
+// trigger warms its chunk so the tap that follows finds it in cache.
+const loadForm = () => import("./ask-client-form-dialog");
+const loadPending = () => import("./ask-client-pending-dialog");
+const AskClientFormDialog = dynamic(() => loadForm().then((m) => ({ default: m.AskClientFormDialog })), { ssr: false });
+const AskClientPendingDialog = dynamic(() => loadPending().then((m) => ({ default: m.AskClientPendingDialog })), { ssr: false });
 
 interface AskClientDialogProps {
   articleId: string;
@@ -60,187 +45,75 @@ export function AskClientDialog({
   triggerLabel,
   triggerOnly = false,
 }: AskClientDialogProps) {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [formMounted, setFormMounted] = useState(false);
   const [pendingOpen, setPendingOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [pendingMounted, setPendingMounted] = useState(false);
 
   const isLoggedIn = Boolean(user?.email);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm<AskClientFormData>({
-    resolver: zodResolver(askClientSchema),
-    defaultValues: {
-      name: user?.name ?? "",
-      email: user?.email ?? "",
-      question: "",
-    },
-  });
-
-  useEffect(() => {
-    if (user) {
-      setValue("name", user.name ?? "");
-      setValue("email", user.email ?? "");
-    }
-  }, [user, setValue]);
-
-  const onSubmit = async (data: AskClientFormData) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    const result = await submitAskClient(data, articleId);
-    setIsSubmitting(false);
-    if (!result.success) {
-      setSubmitError(result.error ?? "فشل إرسال السؤال");
-      return;
-    }
-    reset();
-    setOpen(false);
-    // Server Component re-fetches pendingFaqs from page.tsx Promise.all
-    router.refresh();
+  const openForm = () => {
+    trackCtaClick({
+      type: "FORM",
+      label: clientName ? `تواصل مع ${clientName}` : "اسأل العميل",
+      targetUrl: "#",
+      articleId,
+      clientId,
+    });
+    setFormMounted(true);
+    setOpen(true);
   };
 
   const mainDialog = (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        if (next) {
-          trackCtaClick({
-            type: "FORM",
-            label: clientName ? `تواصل مع ${clientName}` : "اسأل العميل",
-            targetUrl: "#",
-            articleId,
-            clientId,
-          });
-        }
-        setOpen(next);
-      }}
-    >
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn("w-full h-auto py-2 whitespace-normal justify-center bg-amber-500 border-amber-500 text-black font-semibold hover:bg-amber-400 hover:border-amber-400 shadow-sm", triggerClassName)}
-          type="button"
-        >
-          {/* One default for every surface (Khalid, 19 Aug). It used to build
-              «اسأل ⟨الاسم⟩ مباشرةً» here, and only the partner card overrode it — so the same
-              button read differently in Modo's chat than under an article. An invitation with
-              no pronoun also fits a doctor, a company and a shop alike. */}
-          {triggerLabel ?? "عندك سؤال؟"}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md" dir="rtl">
-        <DialogHeader>
-          <DialogTitle>{clientName ? `تواصل مع ${clientName}` : "اسأل العميل"}</DialogTitle>
-          <DialogDescription>
-            {articleTitle ? `اطرح سؤالك حول: ${articleTitle}` : "اطرح سؤالك وسيتم الرد عليه لاحقاً."}
-          </DialogDescription>
-        </DialogHeader>
-        {!isLoggedIn ? (
-          <div className="space-y-4 py-2">
-            <p className="text-sm text-muted-foreground">
-              سجّل مجاناً لطرح سؤالك على الشركة.
-            </p>
-            <Button asChild variant="default" className="w-full">
-              <Link href="/users/register">سجّل مجاناً</Link>
-            </Button>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {submitError && (
-              <p className="text-sm text-destructive bg-destructive/10 p-2 rounded-md">{submitError}</p>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="ask-name">الاسم</Label>
-              <Input
-                id="ask-name"
-                {...register("name")}
-                placeholder="الاسم"
-                className="text-right bg-muted"
-                readOnly
-                disabled
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="ask-email">البريد الإلكتروني</Label>
-              <Input
-                id="ask-email"
-                type="email"
-                {...register("email")}
-                placeholder="example@email.com"
-                className="text-right bg-muted"
-                readOnly
-                disabled
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="ask-question">السؤال</Label>
-              <Textarea
-                id="ask-question"
-                {...register("question")}
-                placeholder="اكتب سؤالك هنا..."
-                rows={4}
-                className="text-right resize-none"
-              />
-              {errors.question && (
-                <p className="text-sm text-destructive">{errors.question.message}</p>
-              )}
-            </div>
-            <DialogFooter className="gap-2 sm:gap-0">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
-                إلغاء
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "جاري الإرسال..." : "إرسال السؤال"}
-              </Button>
-            </DialogFooter>
-          </form>
-        )}
-      </DialogContent>
-    </Dialog>
+    <>
+      <Button
+        variant="outline"
+        className={cn("w-full h-auto py-2 whitespace-normal justify-center bg-amber-500 border-amber-500 text-black font-semibold hover:bg-amber-400 hover:border-amber-400 shadow-sm", triggerClassName)}
+        type="button"
+        aria-haspopup="dialog"
+        onPointerEnter={() => void loadForm()}
+        onFocus={() => void loadForm()}
+        onClick={openForm}
+      >
+        {/* One default for every surface (Khalid, 19 Aug). It used to build
+            «اسأل ⟨الاسم⟩ مباشرةً» here, and only the partner card overrode it — so the same
+            button read differently in Modo's chat than under an article. An invitation with
+            no pronoun also fits a doctor, a company and a shop alike. */}
+        {triggerLabel ?? "عندك سؤال؟"}
+      </Button>
+      {formMounted && (
+        <AskClientFormDialog
+          open={open}
+          onOpenChange={setOpen}
+          articleId={articleId}
+          clientName={clientName}
+          articleTitle={articleTitle}
+          user={user}
+        />
+      )}
+    </>
   );
 
   const content = (
     <>
       {isLoggedIn && (
-        <Dialog open={pendingOpen} onOpenChange={setPendingOpen}>
+        <>
           <Button
             variant="ghost"
             size="sm"
             className="w-full justify-center text-muted-foreground hover:text-foreground"
             type="button"
-            onClick={() => setPendingOpen(true)}
+            aria-haspopup="dialog"
+            onPointerEnter={() => void loadPending()}
+            onClick={() => {
+              setPendingMounted(true);
+              setPendingOpen(true);
+            }}
           >
             أسئلتك المعلقة{pendingFaqs.length > 0 ? ` (${pendingFaqs.length})` : ""}
           </Button>
-          <DialogContent className="sm:max-w-md" dir="rtl">
-            <DialogHeader>
-              <DialogTitle>أسئلتك المعلقة</DialogTitle>
-              <DialogDescription>الأسئلة التي أرسلتها وتنتظر الرد.</DialogDescription>
-            </DialogHeader>
-            {pendingFaqs.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-2">لا توجد أسئلة معلقة</p>
-            ) : (
-              <ul className="space-y-2 max-h-[60vh] overflow-y-auto">
-                {pendingFaqs.map((faq) => (
-                  <li key={faq.id}>
-                    <Card className="p-3">
-                      <p className="text-sm text-foreground">{faq.question}</p>
-                      <Badge className="mt-2 text-xs bg-accent text-accent-foreground">
-                        قيد المراجعة
-                      </Badge>
-                    </Card>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </DialogContent>
-        </Dialog>
+          {pendingMounted && <AskClientPendingDialog open={pendingOpen} onOpenChange={setPendingOpen} pendingFaqs={pendingFaqs} />}
+        </>
       )}
       {mainDialog}
     </>

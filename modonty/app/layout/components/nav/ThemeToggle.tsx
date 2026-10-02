@@ -1,53 +1,38 @@
 "use client";
 
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { IconDesktop, IconMoon, IconSun } from "@/lib/icons";
+import { useState } from "react";
+import dynamic from "next/dynamic";
 
-// shadcn's official "mode toggle" over next-themes (already the app's provider:
-// attribute="class", enableSystem): an icon-only button that opens light · dark ·
-// system. Lives in the header's utility group so signed-out visitors get it too.
-// The sun/moon swap is CSS-only (`dark:` classes), so there is no hydration mismatch
-// and no need to wait for mount.
-export function ThemeToggle({ labels }: { labels: { toggle: string; light: string; dark: string; system: string } }) {
-  const { setTheme } = useTheme();
+import { ThemeToggleButton, type ThemeLabels } from "./ThemeToggleButton";
+
+/**
+ * The theme control, loaded on demand (plan أ١, 3 Oct 2026). The first load ships only the
+ * sun/moon button; the Radix menu (~50KB gzip, measured in the local production build's
+ * first-load chunks: dropdown-menu · focus-scope · remove-scroll) arrives when the reader
+ * points at the button, focuses it, or taps it. A tap opens the menu as soon as it lands; the
+ * placeholder while it loads is the very same button, so nothing moves.
+ */
+const loadMenu = () => import("./ThemeToggleMenu");
+
+const ThemeToggleMenu = dynamic(() => loadMenu().then((m) => ({ default: m.ThemeToggleMenu })), {
+  ssr: false,
+  loading: () => <ThemeToggleButton label="" aria-hidden tabIndex={-1} />,
+});
+
+export function ThemeToggle({ labels }: { labels: ThemeLabels }) {
+  const [open, setOpen] = useState(false);
+
+  // Once tapped, the real menu takes over for good, opened on arrival.
+  if (open) return <ThemeToggleMenu labels={labels} defaultOpen />;
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        {/* Muted like the other navigation controls; the moon is stacked on the sun. */}
-        <Button
-          variant="navigation"
-          size="mobileIcon"
-          aria-label={labels.toggle}
-          className="relative rounded-xl"
-        >
-          <IconSun className="rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" aria-hidden />
-          <IconMoon className="absolute rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" aria-hidden />
-        </Button>
-      </DropdownMenuTrigger>
-      {/* Same surface as the header it drops from (slate-100 light / card dark) — the
-          default popover white read as a glare against the bar (Khalid, 2026-08-16). */}
-      <DropdownMenuContent align="end" className="min-w-36 bg-slate-100 dark:bg-card">
-        <DropdownMenuItem onClick={() => setTheme("light")} className="gap-2">
-          <IconSun className="h-4 w-4" aria-hidden />
-          {labels.light}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")} className="gap-2">
-          <IconMoon className="h-4 w-4" aria-hidden />
-          {labels.dark}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")} className="gap-2">
-          <IconDesktop className="h-4 w-4" aria-hidden />
-          {labels.system}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <ThemeToggleButton
+      label={labels.toggle}
+      // Pointing at it or tabbing to it only fetches the chunk (same module as the dynamic
+      // import above, so the tap that follows finds it in cache); nothing re-renders.
+      onPointerEnter={() => void loadMenu()}
+      onFocus={() => void loadMenu()}
+      onClick={() => setOpen(true)}
+    />
   );
 }

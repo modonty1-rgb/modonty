@@ -25,6 +25,8 @@ const ACTION_LABEL: Record<ClientCtaMode, string> = {
 
 interface PartnerCardMobileProps {
   partner: ClientListItem;
+  /** The first card of a list: its cover is the phone's LCP (PageSpeed /clients, 3 Oct 2026). */
+  isLcp?: boolean;
 }
 
 /**
@@ -39,7 +41,7 @@ interface PartnerCardMobileProps {
  * reader can check. A featured partner opens with the cover he paid for — that is the
  * catch — and keeps the brand-teal action.
  */
-export function PartnerCardMobile({ partner }: PartnerCardMobileProps) {
+export function PartnerCardMobile({ partner, isLcp = false }: PartnerCardMobileProps) {
   const href = `/clients/${encodeURIComponent(partner.slug)}`;
   const action = partner.ctaLabel?.trim() || ACTION_LABEL[partner.ctaMode];
   const services = partner.services.slice(0, 2);
@@ -67,7 +69,11 @@ export function PartnerCardMobile({ partner }: PartnerCardMobileProps) {
             fill
             sizes="(max-width: 1240px) 70vw, 300px"
             className="object-cover"
-            loading="lazy"
+            // The first card's cover is the LCP on a phone. PageSpeed mobile /clients (3 Oct 2026):
+            // it shipped `loading="lazy"` — «Resource load delay 3,020ms», LCP 4.0s. Eager + high
+            // for that one card only; every other card stays lazy.
+            loading={isLcp ? "eager" : "lazy"}
+            fetchPriority={isLcp ? "high" : undefined}
             decoding="async"
           />
         </span>

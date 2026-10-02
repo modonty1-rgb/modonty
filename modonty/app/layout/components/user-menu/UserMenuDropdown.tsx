@@ -19,11 +19,14 @@ type SessionUser = NonNullable<Session["user"]>;
 
 interface UserMenuDropdownProps {
   user: SessionUser;
+  /** Opened on arrival — it is loaded by the tap that should open it (see UserMenu). */
+  defaultOpen?: boolean;
 }
 
-export function UserMenuDropdown({ user }: UserMenuDropdownProps) {
+/** Loaded only through `UserMenu`, on demand — never imported directly (plan أ١, 3 Oct 2026). */
+export function UserMenuDropdown({ user, defaultOpen = false }: UserMenuDropdownProps) {
   return (
-    <DropdownMenu>
+    <DropdownMenu defaultOpen={defaultOpen}>
       <DropdownMenuTrigger asChild>
         <UserAvatarButton user={user} />
       </DropdownMenuTrigger>
