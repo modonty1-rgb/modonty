@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { IntentLink } from "@/components/shared/intent-link/IntentLink";
 import { trackCtaClick } from "@/lib/analytics/cta-tracking";
 import type { CTAType } from "@/lib/analytics/cta-tracking";
 
@@ -29,7 +29,7 @@ export function CtaTrackedLink({
   ...rest
 }: CtaTrackedLinkProps) {
   return (
-    <Link
+    <IntentLink
       href={href}
       className={className}
       target={target}
@@ -41,6 +41,6 @@ export function CtaTrackedLink({
       {...rest}
     >
       {children}
-    </Link>
+    </IntentLink>
   );
 }

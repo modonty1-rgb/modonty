@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ComponentType, type SVGProps } from "react";
-import Link from "next/link";
+import { IntentLink } from "@/components/shared/intent-link/IntentLink";
 import { usePathname } from "next/navigation";
 
 import { ModontyMark } from "@/components/icons/modonty-mark";
@@ -123,7 +123,7 @@ function OrbitLinkItem({ link, index, activeIndex, previousActiveIndex }: OrbitL
           below — it touched the bar's top border and its glow was cut off by the nav's clip.
           Now: active 6px · 56 · 6px; resting 48 (drawn at 44 by the .92 scale) sits at 10,
           so both share one centre line. 56 stays well over the 44px touch minimum. */}
-      <Link href={link.href} aria-current={isActive ? "page" : undefined} aria-label={link.label ?? undefined} className={`flex flex-col rounded-full border text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive ? "size-14" : "size-12"} items-center justify-center ${className}`}>
+      <IntentLink href={link.href} aria-current={isActive ? "page" : undefined} aria-label={link.label ?? undefined} className={`flex flex-col rounded-full border text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive ? "size-14" : "size-12"} items-center justify-center ${className}`}>
         {/* The 48px resting target is intentionally generous for a thumb, but a 20px glyph
             inside it read as accidental padding once the orbit moved to the bottom bar.
             Enlarge the visible mark only; the target and its spacing stay stable. */}
@@ -138,7 +138,7 @@ function OrbitLinkItem({ link, index, activeIndex, previousActiveIndex }: OrbitL
             {link.label}
           </span>
         )}
-      </Link>
+      </IntentLink>
     </div>
   );
 }

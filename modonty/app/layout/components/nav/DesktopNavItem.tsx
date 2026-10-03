@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import Link from "next/link";
+import { IntentLink } from "@/components/shared/intent-link/IntentLink";
 import { cn } from "@/lib/utils";
 
 interface DesktopNavItemProps {
@@ -20,7 +20,7 @@ interface DesktopNavItemProps {
  */
 export function DesktopNavItem({ icon: Icon, label, href, active = false, tone }: DesktopNavItemProps) {
   return (
-    <Link
+    <IntentLink
       href={href}
       // `aria-current="page"` announces "you are here" to a screen reader — the size and colour
       // alone cannot. Same attribute MobileMenu and the orbit bar carry.
@@ -43,6 +43,6 @@ export function DesktopNavItem({ icon: Icon, label, href, active = false, tone }
           {label}
         </span>
       )}
-    </Link>
+    </IntentLink>
   );
 }

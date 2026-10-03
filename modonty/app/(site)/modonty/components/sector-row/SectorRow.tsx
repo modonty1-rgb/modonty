@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { IntentLink } from "@/components/shared/intent-link/IntentLink";
 import { messages } from "@/lib/i18n/messages";
 import { SECTORS } from "../../helpers/sectors";
 
@@ -35,7 +35,7 @@ export function SectorRow() {
             : "col-span-2 h-[72px] max-lg:order-2 lg:col-span-1 lg:h-auto";
           return (
             <li key={slug} className={place}>
-              <Link
+              <IntentLink
                 href={href}
                 className={
                   featured
@@ -57,7 +57,7 @@ export function SectorRow() {
                 <span className={`font-medium leading-tight text-foreground ${featured ? "text-xs lg:text-sm" : "text-xs"}`}>
                   {messages.modonty.sectors[slug]}
                 </span>
-              </Link>
+              </IntentLink>
             </li>
           );
         })}
