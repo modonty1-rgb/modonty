@@ -7,6 +7,12 @@ import { NotificationsBell } from "@/app/layout/components/notifications/Notific
 import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
 
 export function TopNavDesktop() {
+  const navLabels = {
+    mainNav: messages.chrome.mainNav,
+    menuItems: messages.chrome.menuItems,
+    searchArticles: messages.chrome.searchArticles,
+    searchPlaceholder: messages.chrome.searchPlaceholder,
+  };
   return (
     <div className="hidden lg:grid lg:grid-cols-[1fr_4.5fr_1fr] h-14 items-center gap-4 px-4">
       <div className="flex items-center gap-2 flex-1">
@@ -14,8 +20,8 @@ export function TopNavDesktop() {
       </div>
       {/* Active mark reads the pathname → own boundary on dynamic routes (/page/n,
           /tags/x); the fallback is the same links, unmarked, so the shell keeps them. */}
-      <Suspense fallback={<DesktopNavList labels={{ mainNav: messages.chrome.mainNav }} pathname={null} />}>
-        <DesktopNavLinks labels={{ mainNav: messages.chrome.mainNav }} />
+      <Suspense fallback={<DesktopNavList labels={navLabels} pathname={null} />}>
+        <DesktopNavLinks labels={navLabels} />
       </Suspense>
       <div className="flex items-center justify-end gap-3">
         <ThemeToggle labels={messages.chrome.theme} />

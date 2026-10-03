@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { SearchLink } from "@/app/layout/components/nav/SearchLink";
+import { SearchLink, type SearchLinkLabels } from "@/app/layout/components/nav/SearchLink";
 import { DesktopNavItem } from "@/app/layout/components/nav/DesktopNavItem";
-import { mainNavItems } from "@/app/layout/helpers/nav-config";
+import { mainNavItemDefs as mainNavItems, type MainNavLabelKey } from "@/app/layout/helpers/nav-items";
 import { getOrbitSteps } from "@/lib/nav/get-orbit-steps";
 import { getNavSectionPath } from "@/lib/nav/get-nav-section-path";
 
@@ -33,7 +33,7 @@ function activeIndexFor(rawPathname: string | null): number {
  * بسلاسة، ولا تتغيّر أبعادُ الشريط. والقافزُ من طرفٍ إلى طرف (أكثر من خانتين) يختفي ويظهر بدل أن
  * يعبر الشريطَ كلَّه أمام العين.
  */
-export function DesktopNavList({ pathname, labels }: { pathname: string | null; labels: { mainNav: string } }) {
+export function DesktopNavList({ pathname, labels }: { pathname: string | null; labels: { mainNav: string; menuItems: Record<MainNavLabelKey, string> } & SearchLinkLabels }) {
   const activeIndex = activeIndexFor(pathname);
   const [previousActiveIndex, setPreviousActiveIndex] = useState(activeIndex);
   useEffect(() => setPreviousActiveIndex(activeIndex), [activeIndex]);
@@ -45,7 +45,7 @@ export function DesktopNavList({ pathname, labels }: { pathname: string | null; 
 
   return (
     <div className="flex items-center gap-3">
-      <SearchLink />
+      <SearchLink labels={labels} />
       <nav aria-label={labels.mainNav} className="relative h-14 flex-shrink-0" style={{ width: RING_WIDTH }}>
         {mainNavItems.map((item, index) => {
           const active = pathname !== null && index === activeIndex;
@@ -59,7 +59,7 @@ export function DesktopNavList({ pathname, labels }: { pathname: string | null; 
               }`}
               style={{ transform: `translateX(${x}px)`, opacity: wrapping ? 0 : 1 }}
             >
-              <DesktopNavItem icon={item.icon} label={item.label} href={item.href} active={active} tone={item.tone} />
+              <DesktopNavItem icon={item.icon} label={labels.menuItems[item.labelKey]} href={item.href} active={active} tone={item.tone} />
             </div>
           );
         })}
@@ -71,7 +71,7 @@ export function DesktopNavList({ pathname, labels }: { pathname: string | null; 
 // `usePathname` on a route with a dynamic param needs a Suspense boundary under
 // cacheComponents (use-pathname.md, "Good to know") — the caller wraps this and uses
 // <DesktopNavList pathname={null} /> as the fallback.
-export function DesktopNavLinks({ labels }: { labels: { mainNav: string } }) {
+export function DesktopNavLinks({ labels }: { labels: { mainNav: string; menuItems: Record<MainNavLabelKey, string> } & SearchLinkLabels }) {
   const pathname = usePathname();
   return <DesktopNavList pathname={pathname} labels={labels} />;
 }

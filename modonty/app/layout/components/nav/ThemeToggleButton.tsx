@@ -3,7 +3,9 @@
 import { forwardRef, type ComponentPropsWithoutRef } from "react";
 
 import { Button } from "@/components/ui/button";
-import { IconMoon, IconSun } from "@/lib/icons";
+// Direct import, not the `@/lib/icons` barrel: from a client tree the barrel pulled all 69 registry
+// icons into every page (bundle analyzer, 3 Oct 2026). Same brand marks, same names.
+import { ModontyThemeDarkMark as IconMoon, ModontyThemeLightMark as IconSun } from "@/components/icons/modonty-brand-icons";
 
 export type ThemeLabels = { toggle: string; light: string; dark: string; system: string };
 

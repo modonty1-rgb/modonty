@@ -51,7 +51,11 @@ export function TopNav() {
           <LogoNav variant="mark" />
           {/* The desktop's own `compact` search box, uncapped so it fills the column —
               same component, so the two headers can never drift apart. */}
-          <SearchLink variant="compact" className="w-full max-w-none" />
+          <SearchLink
+            variant="compact"
+            className="w-full max-w-none"
+            labels={{ searchArticles: messages.chrome.searchArticles, searchPlaceholder: messages.chrome.searchPlaceholder }}
+          />
           {/* The account sits with the menu, not with the destinations (Khalid, 22 Aug).
               The middle column is where the reader GOES; this column is what they DO with
               their own account — grouping by that split is why the three icons now read as

@@ -97,8 +97,8 @@ export default async function RootLayout({
       className={`${tajawal.variable} ${montserrat.variable}`}
     >
        <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* No preconnect to fonts.googleapis/gstatic: next/font self-hosts Tajawal and Montserrat on
+            our own origin, so those two handshakes were spent on nothing (3 Oct 2026). */}
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.clarity.ms" />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />

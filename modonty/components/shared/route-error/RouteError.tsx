@@ -4,7 +4,11 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { IconError, IconHome, IconRefresh } from "@/lib/icons";
+// Direct import, not the `@/lib/icons` barrel: from a client tree the barrel pulled all 69 registry
+// icons into every page (bundle analyzer, 3 Oct 2026). Same brand marks, same names.
+import { ModontyErrorMark as IconError } from "@/components/icons/modonty-error-mark";
+import { ModontyHomeMark as IconHome } from "@/components/icons/modonty-home-mark";
+import { ModontyRefreshMark as IconRefresh } from "@/components/icons/modonty-refresh-mark";
 
 interface RouteErrorProps {
   error: Error & { digest?: string };

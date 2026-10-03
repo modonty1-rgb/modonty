@@ -231,7 +231,9 @@ export function MobilePostCard({ className, featured, post, hideClient, mobileHe
       // `:active` reaches ancestors, so a tap anywhere on the stretched link presses the
       // card. Scale, not colour — 1% is felt, never seen as a layout move.
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm lg:hidden [content-visibility:auto] [contain-intrinsic-size:auto_175px]",
+        "relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm lg:hidden",
+        // Not on the featured (first, on-screen, LCP) card: web.dev — never content-visibility above the fold.
+        !featured && "[content-visibility:auto] [contain-intrinsic-size:auto_175px]",
         "motion-safe:transition-transform motion-safe:duration-100 motion-safe:active:scale-[0.99]",
         featured && "border-primary/20 shadow-primary/5",
         // Modonty publishes here too, and its card was byte-identical to a partner's —

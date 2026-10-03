@@ -34,7 +34,10 @@ export function ArticlesList({ serverPosts, page, reels }: ArticlesListProps) {
                   was never passed by anyone, so every card rendered identically — measured
                   24 Aug: 2 distinct looks across 8 cards, and nothing told the eye where to
                   start. A feed where everything is emphasised emphasises nothing. */}
-              <PostCard post={post} index={index} featured={page === 1 && index === 0} mobileHero={page === 1 && index === 0} className="animate-in fade-in duration-300" />
+              <PostCard post={post} index={index} featured={page === 1 && index === 0} mobileHero={page === 1 && index === 0}
+                // The first card holds the LCP image: no fade-in from opacity 0 on it (it delayed the
+                // largest paint — PageSpeed, 3 Oct 2026: element render delay 1,510 ms). The rest keep it.
+                className={page === 1 && index === 0 ? undefined : "animate-in fade-in duration-300"} />
               {/* Modo's doorway on the phone, IN the feed after the second card (Khalid, 23 Aug:
                   «pure article» homepage — the fixed bottom bar is gone from `/`, and Modo
                   moved from that bar into the flow). Page 1 only, so the series shows it once;

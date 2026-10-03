@@ -16,7 +16,9 @@ export function DesktopPostCard({ className, index, isLcp, hideClient, featured,
         // content-visibility skips rendering off-screen cards (Vercel rule
         // rendering-content-visibility); `auto 500px` reserves an estimated height
         // so the scrollbar doesn't jump, then remembers the real one.
-        "relative group hidden overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md lg:block [content-visibility:auto] [contain-intrinsic-size:auto_500px]",
+        "relative group hidden overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md lg:block",
+        // Not on the featured (first, on-screen, LCP) card: web.dev — never content-visibility above the fold.
+        !featured && "[content-visibility:auto] [contain-intrinsic-size:auto_500px]",
         // The first card is the eye's entry point, so it is allowed to be louder than the rest:
         // a real ring instead of a hairline, and a lift the others only get on hover. Kept to
         // border and shadow — the anatomy, the widths and the image ratio stay identical, so
