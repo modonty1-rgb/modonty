@@ -64,7 +64,7 @@ export function describeClientEvent(event: ClientEvent): ClientEventMessage {
     case "article_share":
       return { type: "article_share", title: "مشاركة جديدة", body: `قارئ شارك مقال ${quote(event.articleTitle)}.`, relatedId: event.articleId, articleId: event.articleId, group: "activity" };
     case "page_question":
-      return { type: "page_faq_new", title: "سؤال جديد على صفحتك", body: "قارئ سأل على صفحتك في مدونتي — ينتظر ردّك.", relatedId: event.faqId, articleId: null, group: "actionable" };
+      return { type: "page_question", title: "سؤال جديد على صفحتك", body: "قارئ سأل على صفحتك في مدونتي — ينتظر ردّك.", relatedId: event.faqId, articleId: null, group: "actionable" };
     case "review":
       return { type: "review_new", title: "تقييم جديد", body: `قارئ قيّمك ${"★".repeat(Math.max(1, Math.min(5, Math.round(event.rating))))} على مدونتي.`, relatedId: event.reviewId, articleId: null, group: "actionable" };
     case "media_comment":

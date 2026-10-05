@@ -3,6 +3,7 @@ import { ArticleFAQStatus } from "@prisma/client";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { publishFaqAnswer } from "@/lib/faq/publish-faq-answer";
+import { updateClientPageFaqForClient } from "@/app/(dashboard)/dashboard/page-faq/helpers/update-client-page-faq";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { rejectMalformedIds } from "@/lib/mobile-api/params";
@@ -25,7 +26,15 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     where: { id: faqId, article: { clientId: session.clientId }, OR: [{ source: "user" }, { source: "chatbot" }] },
     select: { id: true, status: true },
   });
-  if (!question) return fail("NOT_FOUND", "السؤال غير موجود.");
+  if (!question) {
+    // سؤال على صفحة العميل — نفس قاعدة صفحة «أسئلة صفحتي» على الويب: الردّ ينشره.
+    const page = await db.clientFAQ.findFirst({ where: { id: faqId, clientId: session.clientId, source: "user" }, select: { id: true, status: true } });
+    if (!page) return fail("NOT_FOUND", "السؤال غير موجود.");
+    if (page.status !== ArticleFAQStatus.PENDING) return fail("CONFLICT", "هذا السؤال اتردّ عليه أو انرفض من قبل. حدّث الصفحة.");
+    const saved = await updateClientPageFaqForClient(session.clientId, page.id, { status: ArticleFAQStatus.PUBLISHED, answer: parsed.value.answer });
+    if (!saved.success) return fail("INTERNAL_ERROR", saved.error);
+    return ok({ question: { id: page.id, status: "PUBLISHED" } });
+  }
   // شاشة قديمة مفتوحة كانت تكتب فوق ردّ منشور: الردّ للسؤال المنتظر وحده.
   if (question.status !== ArticleFAQStatus.PENDING) return fail("CONFLICT", "هذا السؤال اتردّ عليه أو انرفض من قبل. حدّث الصفحة.");
   const result = await publishFaqAnswer(question.id, session.clientId, parsed.value.answer);

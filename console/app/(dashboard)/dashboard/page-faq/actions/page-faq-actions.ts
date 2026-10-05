@@ -7,6 +7,7 @@ import { ArticleFAQStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
 import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo";
 import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
+import { updateClientPageFaqForClient } from "../helpers/update-client-page-faq";
 
 type Result = { success: true } | { success: false; error: string };
 
@@ -80,23 +81,7 @@ export async function restoreClientPageFaq(id: string): Promise<Result> {
 async function setStatus(id: string, status: ArticleFAQStatus): Promise<Result> {
   const clientId = await getClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
-  try {
-    const owned = await db.clientFAQ.findFirst({
-      where: { id, clientId },
-      select: { id: true },
-    });
-    if (!owned) return { success: false, error: messages.error.notFound };
-    await db.clientFAQ.update({ where: { id }, data: { status } });
-    try {
-      await regenerateClientSeo(clientId);
-    } catch {
-      /* best-effort */
-    }
-    revalidatePath("/dashboard/page-faq");
-    return { success: true };
-  } catch {
-    return { success: false, error: messages.error.serverError };
-  }
+  return updateClientPageFaqForClient(clientId, id, { status });
 }
 
 export async function deleteClientPageFaq(id: string): Promise<Result> {

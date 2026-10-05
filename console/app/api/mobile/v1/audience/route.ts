@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
   const clientId = session.clientId;
   const now = new Date();
-  const [questionRows, commentRows, reelCommentRows, reviewRows] = await Promise.all([
+  const [questionRows, commentRows, reelCommentRows, reviewRows, pageQuestionRows] = await Promise.all([
     db.articleFAQ.findMany({
       where: { article: { clientId }, status: ArticleFAQStatus.PENDING, OR: [{ source: "chatbot" }, { source: "user" }] },
       orderBy: { createdAt: "desc" },
@@ -55,9 +55,27 @@ export async function GET(request: NextRequest) {
       take: 100,
       select: { id: true, rating: true, comment: true, createdAt: true, reviewer: { select: { name: true, email: true } } },
     }),
+    // أسئلة صفحة العميل — تُفتح وتُردّ بنفس شاشة سؤال المقال (المسارات تتعرّف على النوع).
+    db.clientFAQ.findMany({
+      where: { clientId, status: ArticleFAQStatus.PENDING, source: "user" },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+      select: { id: true, question: true, submittedByName: true, submittedByEmail: true, createdAt: true },
+    }),
   ]);
 
-  const questions = questionRows.map((row) => ({
+  const pageQuestions = pageQuestionRows.map((row) => ({
+    id: row.id,
+    name: row.submittedByName,
+    initial: initialOf(row.submittedByName, row.submittedByEmail),
+    email: row.submittedByEmail,
+    timeLabel: arabicRelativeTime(row.createdAt, now),
+    metaLine: arabicMetaLine([row.submittedByEmail, arabicRelativeTime(row.createdAt, now)]),
+    question: row.question,
+    articleLine: "على صفحتك في مدونتي",
+    createdAt: row.createdAt,
+  }));
+  const articleQuestions = questionRows.map((row) => ({
     id: row.id,
     name: row.submittedByName,
     initial: initialOf(row.submittedByName, row.submittedByEmail),
@@ -66,7 +84,11 @@ export async function GET(request: NextRequest) {
     metaLine: arabicMetaLine([row.submittedByEmail, arabicRelativeTime(row.createdAt, now)]),
     question: row.question,
     articleLine: `على مقال: ${row.article.title}`,
+    createdAt: row.createdAt,
   }));
+  const questions = [...articleQuestions, ...pageQuestions]
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .map(({ createdAt: _createdAt, ...rest }) => rest);
 
   const comments = [
     ...commentRows.map((row) => ({ kind: "article" as const, createdAt: row.createdAt, row, line: `على مقال: ${row.article.title}` })),
@@ -116,7 +138,7 @@ export async function GET(request: NextRequest) {
       questionBadgeLabel: "ينتظر ردك",
       openQuestionPrefix: "افتح سؤال",
       emptyQuestionsTitle: "ما في أسئلة تنتظر ردك",
-      emptyQuestionsDescription: "الأسئلة توصلك هنا لما يسأل قارئ على أحد مقالاتك.",
+      emptyQuestionsDescription: "الأسئلة توصلك هنا لما يسأل قارئ على أحد مقالاتك أو على صفحتك.",
       // قرار التعليق من التطبيق (٥ أكتوبر ٢٠٢٦) — نفس كلمتَي صفحة التعليقات على الويب.
       commentApproveLabel: "اعتماد",
       commentRejectLabel: "رفض",

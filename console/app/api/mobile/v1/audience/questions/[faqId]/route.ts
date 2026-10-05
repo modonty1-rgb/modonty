@@ -22,17 +22,24 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const { faqId } = await params;
   const malformed = rejectMalformedIds([faqId], "السؤال غير موجود.");
   if (malformed) return malformed;
-  const row = await db.articleFAQ.findFirst({
+  const articleRow = await db.articleFAQ.findFirst({
     where: { id: faqId, article: { clientId: session.clientId }, OR: [{ source: "user" }, { source: "chatbot" }] },
     select: { id: true, question: true, answer: true, status: true, submittedByName: true, submittedByEmail: true, createdAt: true, article: { select: { title: true } } },
   });
+  // سؤال على صفحة العميل (ClientFAQ) — نفس الشاشة ونفس الردّ (٥ أكتوبر ٢٠٢٦). المعرّفان
+  // ObjectId من مجموعتين، فالبحث في الثانية حين لا يوجد في الأولى لا يخلط سؤالاً بآخر.
+  const pageRow = articleRow ? null : await db.clientFAQ.findFirst({
+    where: { id: faqId, clientId: session.clientId, source: "user" },
+    select: { id: true, question: true, answer: true, status: true, submittedByName: true, submittedByEmail: true, createdAt: true },
+  });
+  const row = articleRow ?? (pageRow ? { ...pageRow, article: null } : null);
   if (!row) return fail("NOT_FOUND", "السؤال غير موجود.");
   return ok({
     question: {
       id: row.id,
       name: row.submittedByName,
       email: row.submittedByEmail,
-      metaLine: arabicMetaLine([row.submittedByEmail, `من مقال: ${row.article.title}`]),
+      metaLine: arabicMetaLine([row.submittedByEmail, row.article ? `من مقال: ${row.article.title}` : "من صفحتك في مدونتي"]),
       question: row.question,
       answer: row.answer,
       isAnswerable: row.status === ArticleFAQStatus.PENDING,
@@ -54,7 +61,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
        * والتأكيد يسمّي ما لا رجعة فيه، لا يسأل «هل أنت متأكد؟» فحسب.
        */
       confirmTitle: "نرسل ردك؟",
-      confirmBody: "الرد يظهر للزوّار تحت المقال باسمك، وما تقدر تعدّله من التطبيق بعدها.",
+      confirmBody: row.article ? "الرد يظهر للزوّار تحت المقال باسمك، وما تقدر تعدّله من التطبيق بعدها." : "الرد يظهر للزوّار في أسئلة صفحتك، وما تقدر تعدّله من التطبيق بعدها.",
       confirmAction: "أرسل",
       confirmCancel: "رجوع للتعديل",
       sentToastLabel: "انرسل ردك",
