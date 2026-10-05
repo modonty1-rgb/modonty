@@ -1,14 +1,12 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { CommentStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
 
 import type { CommentKind } from "../helpers/comment-queries";
-import { notifyCommentApproved } from "../helpers/notify-comment-approved";
-import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { setCommentStatusForClient } from "../helpers/set-comment-status";
 
 /**
  * Moderation for both comment tables (ق10, 2026-08-05).
@@ -29,42 +27,6 @@ async function getClientId(): Promise<string | null> {
   return (session as { clientId?: string })?.clientId ?? null;
 }
 
-interface OwnedComment {
-  status: CommentStatus;
-  /** Article id or media id — whichever row carries the cached counter. */
-  parentId: string;
-}
-
-async function findOwned(
-  kind: CommentKind,
-  commentId: string,
-  clientId: string
-): Promise<OwnedComment | null> {
-  if (kind === "article") {
-    const row = await db.comment.findFirst({
-      where: { id: commentId, article: { clientId } },
-      select: { status: true, articleId: true },
-    });
-    return row ? { status: row.status, parentId: row.articleId } : null;
-  }
-
-  const row = await db.mediaComment.findFirst({
-    where: { id: commentId, media: { clientId, inReels: true } },
-    select: { status: true, mediaId: true },
-  });
-  return row ? { status: row.status, parentId: row.mediaId } : null;
-}
-
-/** Move the parent's cached counter by `delta`, on whichever table owns the comment. */
-async function bumpCounter(kind: CommentKind, parentId: string, delta: number) {
-  const data = { commentsCount: delta > 0 ? { increment: delta } : { decrement: -delta } };
-  if (kind === "article") {
-    await db.article.update({ where: { id: parentId }, data, select: { id: true } });
-  } else {
-    await db.media.update({ where: { id: parentId }, data, select: { id: true } });
-  }
-}
-
 async function setStatus(
   kind: CommentKind,
   commentId: string,
@@ -72,35 +34,7 @@ async function setStatus(
 ): Promise<Result> {
   const clientId = await getClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
-
-  try {
-    const owned = await findOwned(kind, commentId, clientId);
-    if (!owned) return { success: false, error: messages.error.notFound };
-
-    if (kind === "article") {
-      await db.comment.update({ where: { id: commentId }, data: { status: next } });
-    } else {
-      await db.mediaComment.update({ where: { id: commentId }, data: { status: next } });
-    }
-
-    const wasApproved = owned.status === CommentStatus.APPROVED;
-    const isApproved = next === CommentStatus.APPROVED;
-    if (wasApproved !== isApproved) {
-      await bumpCounter(kind, owned.parentId, isApproved ? 1 : -1);
-      // A reel's comment count is read from modonty's "reels" cache (feed + watch page), and
-      // only this console action moves it — so it has to bust that cache, or modonty shows the
-      // old count until the cache ages out (plan / Vercel cost, 2 Oct 2026: reels moved from
-      // a one-minute cache life to hours). Best-effort: moderation must not fail on it.
-      if (kind === "reel") await revalidateModontyTag("reels").catch(() => {});
-    }
-    if (isApproved && !wasApproved) await notifyCommentApproved(kind, commentId);
-
-    revalidatePath("/dashboard/comments");
-    if (kind === "reel") revalidatePath("/dashboard/reels");
-    return { success: true };
-  } catch {
-    return { success: false, error: messages.error.serverError };
-  }
+  return setCommentStatusForClient(clientId, kind, commentId, next);
 }
 
 export async function approveComment(kind: CommentKind, commentId: string): Promise<Result> {

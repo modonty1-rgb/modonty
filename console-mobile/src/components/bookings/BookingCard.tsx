@@ -20,11 +20,21 @@ function whatsappUrlOf(phone: string): string | null {
  * والواتساب نغميّتان، والبريد شبحية) · ثم من أين جاء ومتى.
  *
  * كل وسيلة رابطٌ يفتح تطبيقه مباشرةً (`tel:` · `wa.me` · `mailto:`) — أقلّ فعل يحتاجه العميل
- * ليردّ، لا شاشة جديدة. إدارة حالة الطلب تبقى في الكونسول.
+ * ليردّ، لا شاشة جديدة. وتحتها خطوة الحالة التالية الواحدة (٥ أكتوبر ٢٠٢٦ · CMOB-FEATURES):
+ * «تواصلت معه» ثم «خلص» — نفس قيم الكونسول.
  */
-export const BookingCard = memo(function BookingCard({ booking }: { booking: BookingRequestItem }) {
+export const BookingCard = memo(function BookingCard({ booking, onAdvance }: { booking: BookingRequestItem; onAdvance?: (booking: BookingRequestItem) => Promise<string | null> }) {
   const { theme } = useAppTheme();
   const [openFailed, setOpenFailed] = useState(false);
+  const [advancing, setAdvancing] = useState(false);
+  const [advanceError, setAdvanceError] = useState<string | null>(null);
+  const advance = useCallback(async () => {
+    if (!onAdvance || advancing) return;
+    setAdvancing(true); setAdvanceError(null);
+    const failure = await onAdvance(booking);
+    setAdvancing(false);
+    if (failure !== null) setAdvanceError(failure);
+  }, [advancing, booking, onAdvance]);
   const whatsappUrl = booking.phone ? whatsappUrlOf(booking.phone) : null;
 
   const open = useCallback((url: string) => {
@@ -51,6 +61,8 @@ export const BookingCard = memo(function BookingCard({ booking }: { booking: Boo
     </View> : null}
     {booking.metaLabel ? <Text numberOfLines={1} style={[styles.secondary, { color: theme.colors.muted }]}>{booking.metaLabel}</Text> : null}
     {openFailed ? <Text accessibilityLiveRegion="polite" style={[styles.secondary, { color: theme.colors.errorText }]}>{bookingContactCopy.openFailed}</Text> : null}
+    {booking.nextStatus && onAdvance ? <PillButton label={booking.nextStatus.label} icon="check" size="medium" disabled={advancing} onPress={() => void advance()} accessibilityLabel={`${booking.nextStatus.label} — ${booking.name}`} style={styles.advance} /> : null}
+    {advanceError ? <Text accessibilityLiveRegion="polite" style={[styles.secondary, { color: theme.colors.errorText }]}>{advanceError}</Text> : null}
   </TonalCard>;
 });
 
@@ -61,4 +73,5 @@ const styles = StyleSheet.create({
   message: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },
   contacts: { flexDirection: 'row-reverse', flexWrap: 'wrap', gap: spacing.xs },
   secondary: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
+  advance: { alignSelf: 'flex-end', marginTop: spacing.xxs },
 });

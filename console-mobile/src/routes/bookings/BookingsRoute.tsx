@@ -7,7 +7,8 @@ import { BookingCard } from '@/src/components/bookings/BookingCard';
 import { EmptyState, ErrorState, ListScreenSkeleton, OfflineState, RefreshNotice } from '@/src/components/ui/MobileUI';
 import { EnterView, TonalCard } from '@/src/components/ui/Nabd';
 import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
-import { bookingFallbackText, getBookings, networkCopy, type BookingRequestItem, type BookingsScreen } from '@/src/services/bookings-api';
+import { bookingFallbackText, getBookings, networkCopy, type BookingRequestItem, type BookingsScreen, advanceBooking } from '@/src/services/bookings-api';
+import { emitLiveRefresh } from '@/src/services/live-refresh';
 import { MobileOfflineError } from '@/src/services/mobile-api';
 import { darkColors, fonts, lightColors, nabd, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
@@ -43,7 +44,19 @@ export function BookingsRoute({ accessToken, onBack }: Props) {
   const listContentStyle = useMemo(() => [styles.list, { paddingBottom: spacing.xxl + insets.bottom }], [insets.bottom, styles.list]);
   const refreshControl = useMemo(() => <RefreshControl refreshing={isRefreshing} onRefresh={refresh} colors={[theme.colors.textInteractive]} progressBackgroundColor={theme.colors.surfaceRaised} tintColor={theme.colors.textInteractive} />, [isRefreshing, refresh, theme.colors.surfaceRaised, theme.colors.textInteractive]);
 
-  const renderBooking = useCallback(({ item }: { item: BookingRequestItem }) => <BookingCard booking={item} />, []);
+  // الخطوة تُحفظ ثم القائمة تُعاد بصمت (الطلب «خلص» ينزل لآخرها)، والرئيسية تُحدَّث عدّادها.
+  const onAdvance = useCallback(async (booking: BookingRequestItem): Promise<string | null> => {
+    if (!booking.nextStatus) return null;
+    try {
+      await advanceBooking(accessToken, booking.id, booking.nextStatus.key);
+    } catch (reason) {
+      return reason instanceof Error && reason.message ? reason.message : bookingFallbackText.loadFailed;
+    }
+    refresh();
+    emitLiveRefresh();
+    return null;
+  }, [accessToken, refresh]);
+  const renderBooking = useCallback(({ item }: { item: BookingRequestItem }) => <BookingCard booking={item} onAdvance={onAdvance} />, [onAdvance]);
 
   /**
    * «نبض» (S15): بلاطتا أرقام — المفتوح على سطح البطاقة، وواتساب تركوازية — ثم سطر واتساب

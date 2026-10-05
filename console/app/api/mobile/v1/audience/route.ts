@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
   const clientId = session.clientId;
   const now = new Date();
-  const [questionRows, commentRows] = await Promise.all([
+  const [questionRows, commentRows, reelCommentRows, reviewRows] = await Promise.all([
     db.articleFAQ.findMany({
       where: { article: { clientId }, status: ArticleFAQStatus.PENDING, OR: [{ source: "chatbot" }, { source: "user" }] },
       orderBy: { createdAt: "desc" },
@@ -39,6 +39,21 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
       take: 100,
       select: { id: true, content: true, createdAt: true, author: { select: { name: true, email: true } }, article: { select: { title: true } } },
+    }),
+    // تعليقات الريلز تنتظر نفس القرار على الويب (`/dashboard/comments` يعرض النوعين) — والجرس
+    // يصل عنها منذ ٥ أكتوبر، فلا بدّ أن تظهر هنا أيضاً وإلا رنّ الجوال على شيء لا يجده العميل.
+    db.mediaComment.findMany({
+      where: { media: { clientId, inReels: true }, status: CommentStatus.PENDING },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+      select: { id: true, content: true, createdAt: true, author: { select: { name: true, email: true } }, media: { select: { title: true } } },
+    }),
+    // تقييمات صفحة العميل المنتظرة — الجرس يصل عنها، والقرار نفسه في `comments/[id]` بنوع `review`.
+    db.clientReview.findMany({
+      where: { clientId, status: CommentStatus.PENDING },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+      select: { id: true, rating: true, comment: true, createdAt: true, reviewer: { select: { name: true, email: true } } },
     }),
   ]);
 
@@ -53,20 +68,38 @@ export async function GET(request: NextRequest) {
     articleLine: `على مقال: ${row.article.title}`,
   }));
 
-  const comments = commentRows.map((row) => ({
+  const comments = [
+    ...commentRows.map((row) => ({ kind: "article" as const, createdAt: row.createdAt, row, line: `على مقال: ${row.article.title}` })),
+    ...reelCommentRows.map((row) => ({ kind: "reel" as const, createdAt: row.createdAt, row, line: `على فيديو: ${row.media.title ?? "طلّة"}` })),
+  ]
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .map(({ kind, row, line }) => ({
+      id: row.id,
+      kind,
+      name: row.author?.name ?? null,
+      initial: initialOf(row.author?.name ?? null, row.author?.email ?? null),
+      email: row.author?.email ?? null,
+      metaLine: arabicMetaLine([row.author?.email ?? null, arabicRelativeTime(row.createdAt, now)]),
+      content: row.content,
+      articleLine: line,
+    }));
+
+  const reviews = reviewRows.map((row) => ({
     id: row.id,
-    name: row.author?.name ?? null,
-    initial: initialOf(row.author?.name ?? null, row.author?.email ?? null),
-    email: row.author?.email ?? null,
-    metaLine: arabicMetaLine([row.author?.email ?? null, arabicRelativeTime(row.createdAt, now)]),
-    content: row.content,
-    articleLine: `على مقال: ${row.article.title}`,
+    kind: "review" as const,
+    name: row.reviewer?.name ?? null,
+    initial: initialOf(row.reviewer?.name ?? null, row.reviewer?.email ?? null),
+    email: row.reviewer?.email ?? null,
+    metaLine: arabicMetaLine([row.reviewer?.email ?? null, arabicRelativeTime(row.createdAt, now)]),
+    content: `${"★".repeat(Math.max(1, Math.min(5, row.rating)))}${"☆".repeat(5 - Math.max(1, Math.min(5, row.rating)))}  ${row.comment}`,
+    articleLine: "تقييم على صفحتك في مدونتي",
   }));
 
-  const waiting = questions.length + comments.length;
+  const waiting = questions.length + comments.length + reviews.length;
   return ok({
     questions,
     comments,
+    reviews,
     review: {
       title: "الجمهور",
       subtitle: waiting === 0 ? "ما في رسائل تنتظر ردك" : arabicCount(waiting, "رسالة تحتاج ردك", "رسالتان تحتاجان ردك", "رسائل تحتاج ردك"),
@@ -74,14 +107,22 @@ export async function GET(request: NextRequest) {
       questionsTabCount: arabicNumber(questions.length),
       commentsTabLabel: "التعليقات",
       commentsTabCount: arabicNumber(comments.length),
+      reviewsTabLabel: "التقييمات",
+      reviewsTabCount: arabicNumber(reviews.length),
+      emptyReviewsTitle: "ما في تقييمات جديدة",
+      emptyReviewsDescription: "التقييمات توصلك هنا لما يقيّمك قارئ على صفحتك في مدونتي.",
       replyLinkLabel: "الرد على السؤال",
       // «نبض»: شارة الحالة على بطاقة السؤال — القائمة لا تحمل إلا PENDING، فالكلمة صادقة على كل صفّ.
       questionBadgeLabel: "ينتظر ردك",
       openQuestionPrefix: "افتح سؤال",
       emptyQuestionsTitle: "ما في أسئلة تنتظر ردك",
       emptyQuestionsDescription: "الأسئلة توصلك هنا لما يسأل قارئ على أحد مقالاتك.",
+      // قرار التعليق من التطبيق (٥ أكتوبر ٢٠٢٦) — نفس كلمتَي صفحة التعليقات على الويب.
+      commentApproveLabel: "اعتماد",
+      commentRejectLabel: "رفض",
+      commentBadgeLabel: "ينتظر قرارك",
       emptyCommentsTitle: "ما في تعليقات جديدة",
-      emptyCommentsDescription: "التعليقات توصلك هنا لما يعلّق قارئ على أحد مقالاتك.",
+      emptyCommentsDescription: "التعليقات توصلك هنا لما يعلّق قارئ على أحد مقالاتك أو فيديوهاتك.",
       retryLabel: "إعادة المحاولة",
       errorTitle: "ما قدرنا نحمّل الجمهور",
       offlineTitle: "ما في اتصال",

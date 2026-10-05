@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { arabicCount, arabicMetaLine, arabicNumber, arabicRelativeTime } from "@/lib/mobile-api/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
+import { NEXT_BOOKING_STATUS } from "@/lib/mobile-api/booking-status";
 
 /**
  * طلبات التواصل (S15) — قناتان في جدول واحد، ولا تُخلطان.
@@ -14,7 +15,11 @@ import { fail, ok } from "@/lib/mobile-api/http";
  * لذلك: عدّاد الرئيسية يحصي طلبات النموذج **المفتوحة** وحدها، وواتساب تُعرض في قسمها بنصّها
  * الذي يشرح لماذا لا يوجد ما يُفعَل بها. والتقسيم مطابق لفلتر القنوات في الكونسول.
  *
- * **الشاشة عرضٌ محض — صفر أفعال** — قرار خالد (٢٩ أغسطس): «هي الصفحة هذه عرض بس مو أكثر».
+ * **تحديث ٥ أكتوبر ٢٠٢٦:** قائمة الإضافات التي اعتمدها خالد (٤ أكتوبر · CMOB-FEATURES) تطلب
+ * «اتصال وواتساب وتغيير الحالة» — فلكل طلب نموذج خطوةٌ واحدة تالية (`nextStatus`) يحفظها
+ * `bookings/[bookingId]`، ونفس قيم حالة الكونسول فلا تعارض بين السطحين.
+ *
+ * القرار السابق (٢٩ أغسطس، نُسخ بالقرار أعلاه): «هي الصفحة هذه عرض بس مو أكثر».
  * فكنتُ بنيتُ مسار `/status` وزرَّي حالة، ثم زرَّي «اتصل» و«واتساب» — وكلّها أفعال.
  * إدارة الحالة مكانها الكونسول حيث يعمل الفريق (وزرّان لنفس الحالة على سطحين يفتحان باب
  * التعارض)، والاتصال يفعله العميل من دفتر هاتفه. الجوّال يوصّل الخبر: من طلب، ورقمه،
@@ -88,6 +93,7 @@ export async function GET(request: NextRequest) {
       message: row.message?.trim() || null,
       statusLabel: statusLabels[row.status] ?? row.status,
       statusTone: statusTones[row.status] ?? "neutral",
+      nextStatus: NEXT_BOOKING_STATUS[row.status] ?? null,
       metaLabel: arabicMetaLine([sourceLabels[row.source] ?? null, row.article?.title ?? null, arabicRelativeTime(row.createdAt)]),
     })),
   });

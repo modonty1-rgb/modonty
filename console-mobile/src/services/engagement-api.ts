@@ -21,7 +21,7 @@ export function arabicDigits(value: number): string {
 
 /** Same digit table for server-written copy («186 يوماً» → «١٨٦ يوماً»). */
 export function arabicDigitsText(value: string | null | undefined): string {
-  return (value ?? "").replace(/d/g, (digit) => ARABIC_DIGITS[Number(digit)]);
+  return (value ?? "").replace(/\d/g, (digit) => ARABIC_DIGITS[Number(digit)]);
 }
 
 export type StatusTone = 'primary' | 'warning' | 'danger' | 'muted';
@@ -39,6 +39,8 @@ export type AudienceQuestionSummary = {
 
 export type AudienceCommentSummary = {
   id: string;
+  /** مقال أو ريل — يحدّد جدول القرار. غائب في الخادم الأقدم ⇐ مقال. */
+  kind?: 'article' | 'reel' | 'review';
   name: string | null;
   initial: string | null;
   email: string | null;
@@ -57,6 +59,14 @@ export type AudienceReview = {
   replyLinkLabel: string;
   /** شارة «ينتظر ردك» — اختيارية كي يبقى الخادم الأقدم يعمل. */
   questionBadgeLabel?: string;
+  /** قرار التعليق — بلا هذين الحقلين (خادم أقدم) تبقى البطاقة بلا أزرار كما كانت. */
+  commentApproveLabel?: string;
+  commentRejectLabel?: string;
+  commentBadgeLabel?: string;
+  reviewsTabLabel?: string;
+  reviewsTabCount?: string;
+  emptyReviewsTitle?: string;
+  emptyReviewsDescription?: string;
   openQuestionPrefix: string;
   emptyQuestionsTitle: string;
   emptyQuestionsDescription: string;
@@ -68,7 +78,7 @@ export type AudienceReview = {
   offlineDescription: string;
 };
 
-export type AudienceInbox = { questions: AudienceQuestionSummary[]; comments: AudienceCommentSummary[]; review: AudienceReview };
+export type AudienceInbox = { questions: AudienceQuestionSummary[]; comments: AudienceCommentSummary[]; /** تقييمات صفحة العميل — غائبة في الخادم الأقدم. */ reviews?: AudienceCommentSummary[]; review: AudienceReview };
 
 export type AudienceQuestionDetail = {
   question: { id: string; name: string | null; email: string | null; metaLine: string | null; question: string; answer: string | null; isAnswerable: boolean; timeLabel: string };
@@ -190,6 +200,10 @@ export type SupportReview = {
 
 export function getAudienceInbox(accessToken: string): Promise<AudienceInbox> {
   return mobileRequest<AudienceInbox>('/audience', accessToken, 'تعذّر تحميل الجمهور.');
+}
+
+export function decideAudienceComment(accessToken: string, commentId: string, kind: 'article' | 'reel' | 'review', decision: 'approve' | 'reject'): Promise<{ comment: { id: string; status: string }; message: string }> {
+  return mobileRequest(`/comments/${commentId}`, accessToken, 'تعذّر حفظ قرارك على التعليق.', { method: 'POST', body: { kind, decision } });
 }
 
 export function getAudienceQuestion(accessToken: string, questionId: string): Promise<AudienceQuestionDetail> {

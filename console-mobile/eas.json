@@ -12,7 +12,8 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_MOBILE_API_BASE_URL": "https://console.modonty.com/api/mobile/v1"
+        "EXPO_PUBLIC_MOBILE_API_BASE_URL": "https://console.modonty.com/api/mobile/v1",
+        "ORG_GRADLE_PROJECT_reactNativeArchitectures": "armeabi-v7a,arm64-v8a"
       }
     },
     "preview": {
@@ -22,7 +23,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_MOBILE_API_BASE_URL": "https://florist-distinct-educator.ngrok-free.dev/api/mobile/v1"
+        "EXPO_PUBLIC_MOBILE_API_BASE_URL": "https://console.modonty.com/api/mobile/v1"
       }
     }
   }

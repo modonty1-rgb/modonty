@@ -11,6 +11,8 @@ export type BookingRequestItem = {
   message: string | null;
   statusLabel: string;
   statusTone: BookingStatusTone;
+  /** الخطوة التالية (جديد ← تواصلت معه ← خلص) — غائبة في الخادم الأقدم فلا زرّ. */
+  nextStatus?: { key: 'contacted' | 'done'; label: string } | null;
   metaLabel: string | null;
 };
 
@@ -45,6 +47,10 @@ export const bookingContactCopy = {
 
 export async function getBookings(accessToken: string): Promise<BookingsScreen> {
   return mobileRequest<BookingsScreen>('/bookings', accessToken, bookingFallbackText.loadFailed);
+}
+
+export function advanceBooking(accessToken: string, bookingId: string, status: 'contacted' | 'done'): Promise<{ booking: { id: string; status: string } }> {
+  return mobileRequest(`/bookings/${bookingId}`, accessToken, 'تعذّر حفظ حالة الطلب.', { method: 'PATCH', body: { status } });
 }
 
 
