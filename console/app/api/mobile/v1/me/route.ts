@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
-import { notificationToggles, readNotificationPreferences } from "./preference-groups";
+import { notificationToggles, readNotificationPreferences } from "@modonty/shared/lib/mobile-push";
 
 /**
  * S13 «حسابي».

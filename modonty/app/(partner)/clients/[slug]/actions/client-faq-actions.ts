@@ -11,7 +11,8 @@ import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 // PENDING). The client answers it from console /dashboard/page-faq, which
 // publishes it into the page FAQ + FAQPage JSON-LD. Mirrors submitAskClient.
 const clientQuestionSchema = z.object({
-  name: z.string().min(2, "الاسم يجب أن يكون على الأقل حرفين").max(100, "الاسم طويل جداً"),
+  // الحقل «(اختياري)» في النموذج: الفراغ مقبول والاسم يُؤخذ من الجلسة أدناه؛ ولو كُتب فحرفان على الأقل.
+  name: z.string().trim().max(100, "الاسم طويل جداً").refine((v) => v.length === 0 || v.length >= 2, "الاسم يجب أن يكون على الأقل حرفين"),
   email: z.string().email("البريد الإلكتروني غير صحيح"),
   question: z.string().min(10, "السؤال يجب أن يكون على الأقل 10 أحرف").max(2000, "السؤال طويل جداً"),
 });
@@ -19,6 +20,7 @@ const clientQuestionSchema = z.object({
 export type ClientQuestionFormData = z.infer<typeof clientQuestionSchema>;
 
 import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 export async function submitClientPageQuestion(
   data: ClientQuestionFormData,
@@ -44,7 +46,7 @@ export async function submitClientPageQuestion(
     return { success: false, error: "الصفحة غير متاحة" };
   }
 
-  const submittedByName = (session.user.name ?? parsed.data.name).trim();
+  const submittedByName = (session.user.name || parsed.data.name).trim();
   const submittedByEmail = (session.user.email ?? parsed.data.email).trim();
   if (!submittedByName || !submittedByEmail) {
     return { success: false, error: "حسابك يفتقد الاسم أو البريد. حدّث الملف الشخصي ثم جرّب مرة أخرى." };
@@ -70,7 +72,7 @@ export async function submitClientPageQuestion(
   });
   const position = (last?.position ?? -1) + 1;
 
-  await db.clientFAQ.create({
+  const faq = await db.clientFAQ.create({
     data: {
       clientId: client.id,
       question: stripHtmlTags(parsed.data.question.trim()),
@@ -85,6 +87,7 @@ export async function submitClientPageQuestion(
 
   revalidatePath(`/clients/${client.slug}`);
 
+  fireClientEvent(client.id, { kind: "page_question", faqId: faq.id });
   notifyTelegram(client.id, "askClientQuestion", {
     title: `سؤال على صفحة ${client.name}`,
     body: `${submittedByName}: ${parsed.data.question.trim()}`,

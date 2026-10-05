@@ -9,6 +9,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { AppShell } from '@/src/components/navigation/AppShell';
 import { ConfirmProvider } from '@/src/components/ui/ConfirmProvider';
 import { BackgroundGlow } from '@/src/components/ui/Nabd';
+import { observeLiveSignals, onLiveRefresh } from '@/src/services/live-refresh';
 import { configureForegroundPresentation, ensureAndroidChannel, observeNotificationTaps, registerForPushNotifications, type PushTapTarget } from '@/src/services/push-registration';
 import { LoginRoute } from '@/src/routes/auth/LoginRoute';
 import { SessionRestoreRoute } from '@/src/routes/auth/SessionRestoreRoute';
@@ -286,6 +287,13 @@ function MobileConsole() {
   }, []);
   const loadDashboard = useCallback(() => fetchDashboard(false), [fetchDashboard]);
   const refreshDashboard = useCallback(() => fetchDashboard(true), [fetchDashboard]);
+  // التحديث الحيّ: تنبيه يصل أو رجوع من الخلفية ← الرئيسية والشارة تتحدّثان بصمت (`live-refresh.ts`).
+  useEffect(() => {
+    if (!isSignedIn) return;
+    const stopSignals = observeLiveSignals();
+    const stopDashboard = onLiveRefresh(loadDashboard);
+    return () => { stopSignals(); stopDashboard(); };
+  }, [isSignedIn, loadDashboard]);
 
   /**
    * الخروج: `auth/logout` ومعه معرّف الجهاز (يعطّل تنبيهاته) ← ثم مسح محلي.
@@ -374,6 +382,7 @@ function useReloadOnFocus(load: () => void, refresh: () => void) {
   const hasLoaded = useRef(false);
   useFocusEffect(useCallback(() => {
     if (hasLoaded.current) refresh(); else { hasLoaded.current = true; load(); }
+    return onLiveRefresh(refresh);
   }, [load, refresh]));
 }
 

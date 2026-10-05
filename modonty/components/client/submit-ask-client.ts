@@ -10,6 +10,7 @@ import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackAskClientSubmit } from "@/lib/analytics/events-registry";
 
 import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
+import { fireClientEvent, notifyClientEvent } from "@modonty/shared/lib/mobile-push";
 
 /** A signed-in reader asks the article's client a question — lands PENDING in their console inbox. */
 export async function submitAskClient(
@@ -67,7 +68,7 @@ export async function submitAskClient(
     return { success: false, error: "الحد الأقصى 5 أسئلة معلقة. انتظر الرد على أسئلتك الحالية." };
   }
 
-  await db.articleFAQ.create({
+  const faq = await db.articleFAQ.create({
     data: {
       articleId,
       question: stripHtmlTags(parsed.data.question.trim()),
@@ -81,6 +82,8 @@ export async function submitAskClient(
   });
 
   revalidatePath(`/articles/${article.slug}`);
+
+  fireClientEvent(article.clientId, { kind: "article_question", articleId: article.id, articleTitle: article.title, faqId: faq.id });
 
   if (article.clientId) {
     notifyTelegram(article.clientId, "askClientQuestion", {

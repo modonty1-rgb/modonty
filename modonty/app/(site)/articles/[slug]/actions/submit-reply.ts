@@ -13,6 +13,7 @@ import {
 import { isPublicArticle } from "@/lib/articles/is-public-article";
 
 import { sanitizeComment, validateCommentContent } from "@/lib/comments/validate-comment";
+import { fireClientEvent, notifyClientEvent } from "@modonty/shared/lib/mobile-push";
 
 export async function submitReply(
   articleId: string,
@@ -93,6 +94,7 @@ export async function submitReply(
         });
         if (!art) return;
         if (art.clientId) {
+          await notifyClientEvent(art.clientId, { kind: "article_comment", articleId, articleTitle: art.title, commentId: reply.id, isReply: true });
           notifyTelegram(art.clientId, "commentReply", {
             title: art.title,
             body: `${reply.author?.name ?? "زائر"}: ${content}`,

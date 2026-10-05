@@ -16,6 +16,7 @@ const schema = z.object({
 const MAX_PENDING_PER_VISITOR = 5;
 
 import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 /**
  * Hands a question Modo could not answer to the partner who can.
@@ -92,7 +93,7 @@ export async function askPartnerFromChat(input: {
   });
 
   try {
-    await db.articleFAQ.create({
+    const faq = await db.articleFAQ.create({
       data: {
         articleId: article.id,
         question: stripHtmlTags(parsed.data.question.trim()),
@@ -106,6 +107,7 @@ export async function askPartnerFromChat(input: {
       },
     });
 
+    fireClientEvent(client.id, { kind: "article_question", articleId: article.id, articleTitle: article.title, faqId: faq.id });
     notifyTelegram(client.id, "askClientQuestion", {
       title: `سؤال من مودو · ${article.title}`,
       body: `${name}: ${parsed.data.question.trim()}`,

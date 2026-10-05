@@ -55,25 +55,25 @@ export function SettingsForm({ initial }: Props) {
             <PrefRow
               icon={FileText}
               label={s.articlePublished}
-              checked={!!prefs.articlePublished}
+              checked={prefs.articlePublished !== false}
               onChange={(v) => setBool("articlePublished", v)}
             />
             <PrefRow
               icon={CheckCircle2}
               label={s.articleApprovedOption}
-              checked={!!prefs.articleApproved}
+              checked={prefs.articleApproved !== false}
               onChange={(v) => setBool("articleApproved", v)}
             />
             <PrefRow
               icon={MessageSquare}
               label={s.commentsNew}
-              checked={!!prefs.commentsNew}
+              checked={prefs.commentsNew !== false}
               onChange={(v) => setBool("commentsNew", v)}
             />
             <PrefRow
               icon={Mail}
               label={s.supportReplies}
-              checked={!!prefs.supportReplies}
+              checked={prefs.supportReplies !== false}
               onChange={(v) => setBool("supportReplies", v)}
             />
           </div>

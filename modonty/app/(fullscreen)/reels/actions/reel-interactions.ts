@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { incrementCounters } from "@/lib/counters/increment-counters";
 import { trackReelLike, trackReelFavorite } from "@/lib/analytics/events-registry";
 import type { MediaReactionKind } from "@prisma/client";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 type ToggleResult =
   | { success: true; active: boolean; count: number }
@@ -73,6 +74,7 @@ async function toggleReaction(mediaId: string, kind: MediaReactionKind): Promise
         },
       });
       if (reel) {
+        fireClientEvent(reel.client?.id, { kind: "media_reaction", mediaId });
         const params = {
           reel_id: mediaId,
           reel_slug: reel.reelSlug ?? mediaId,

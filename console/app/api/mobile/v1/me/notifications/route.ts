@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { readBody } from "@/lib/mobile-api/request";
-import { mergeNotificationPreferences, notificationToggles, readNotificationPreferences } from "../preference-groups";
+import { mergeNotificationPreferences, notificationToggles, readNotificationPreferences } from "@modonty/shared/lib/mobile-push";
 
 /** S13 — saving one notification switch. One switch per call, so a failure names its own row. */
 const input = z.object({ key: z.enum(["actionable", "activity"]), enabled: z.boolean() });

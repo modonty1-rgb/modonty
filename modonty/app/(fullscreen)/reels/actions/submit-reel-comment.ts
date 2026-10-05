@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { trackReelCommentSubmit } from "@/lib/analytics/events-registry";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { sanitizeComment, validateCommentContent } from "@/lib/comments/validate-comment";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 /**
  * A visitor's comment on a reel — same contract as article comments: signed-in only,
@@ -43,6 +44,7 @@ export async function submitReelComment(mediaId: string, content: string) {
       select: { id: true, author: { select: { name: true } } },
     });
 
+    fireClientEvent(reel.clientId, { kind: "media_comment", mediaId: reel.id, commentId: comment.id });
     if (reel.clientId) {
       notifyTelegram(reel.clientId, "commentNew", {
         title: reel.title ?? "ريل",

@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackClientFavorite } from "@/lib/analytics/events-registry";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 /**
  * Toggle favorite for the current user on a client page.
@@ -87,6 +88,7 @@ export async function POST(
       request.headers.get("x-real-ip") ||
       request.headers.get("cf-connecting-ip") ||
       null;
+    fireClientEvent(client.id, { kind: "favorite" });
     notifyTelegram(client.id, "clientFavorite", {
       title: client.name,
       meta: { الزائر: session.user.name ?? session.user.email ?? "زائر" },

@@ -9,6 +9,7 @@ import {
 } from "@/lib/analytics/events-registry";
 
 import type { TelegramEventKey } from "@/lib/telegram/telegram-events";
+import { fireClientEvent, notifyClientEvent } from "@modonty/shared/lib/mobile-push";
 
 type ArticleGA4EventName = "article_like" | "article_dislike" | "article_favorite";
 
@@ -37,6 +38,9 @@ export function fireEngagement(
       });
       if (!art) return;
       if (art.clientId) {
+        // الإعجاب والحفظ يرنّان في تطبيق العميل؛ عدم الإعجاب لا — خبرٌ سلبيّ بلا فعلٍ يملكه.
+        if (ga4EventName === "article_like") await notifyClientEvent(art.clientId, { kind: "article_like", articleId, articleTitle: art.title });
+        else if (ga4EventName === "article_favorite") await notifyClientEvent(art.clientId, { kind: "article_favorite", articleId, articleTitle: art.title });
         notifyTelegram(art.clientId, telegramKey, {
           title: art.title,
           meta: actor.name ? { الزائر: actor.name } : undefined,

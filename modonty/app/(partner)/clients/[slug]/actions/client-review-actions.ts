@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 export interface ClientReviewFormState {
   ok: boolean;
@@ -72,7 +73,7 @@ export async function postClientReviewAction(
 
   // One review per visitor per client (@@unique). Editing an existing review
   // resets it to PENDING for re-moderation.
-  await db.clientReview.upsert({
+  const review = await db.clientReview.upsert({
     where: {
       clientId_reviewerId: { clientId: client.id, reviewerId: session.user.id },
     },
@@ -92,6 +93,9 @@ export async function postClientReviewAction(
 
   // Refresh the client page so the APPROVED aggregate/list updates once moderated.
   revalidatePath(`/clients/${encodeURIComponent(decodedSlug)}`);
+
+  // تقييم جديد أو معدَّل ينتظر موافقة العميل — يرنّ في تطبيقه.
+  fireClientEvent(client.id, { kind: "review", reviewId: review.id, rating });
 
   return {
     ok: true,

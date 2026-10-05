@@ -19,7 +19,7 @@ import { getVisitorContext } from "@/lib/analytics/visitor-cookie";
 import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { sendEmail } from "@/lib/email/resend-client";
 import { bookingNotificationEmail } from "@/lib/email/templates/booking-notification";
-import { notifyClientMobile } from "@/lib/mobile-push";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 export type BookingSource =
@@ -119,12 +119,7 @@ export async function recordWhatsappLead(ctx: {
       select: { id: true },
     });
     // Only a stored, non-duplicate lead alerts the client. No visitor data leaves Modonty.
-    void notifyClientMobile(ctx.clientId, {
-      event: "WHATSAPP_CONTACT",
-      title: "تواصل جديد عبر واتساب",
-      body: "لديك تواصل جديد من أحد مقالاتك.",
-      articleId: ctx.articleId,
-    });
+    fireClientEvent(ctx.clientId, { kind: "whatsapp_contact", articleId: ctx.articleId ?? null });
   } catch {
     // recording must never block the WhatsApp handoff
   }
@@ -265,12 +260,7 @@ export async function submitBookingRequest(
   }
 
   // The alert confirms a stored request, not merely a press on the CTA.
-  void notifyClientMobile(client.id, {
-    event: "BOOKING_CREATED",
-    title: "طلب حجز جديد",
-    body: "لديك طلب حجز جديد من أحد مقالاتك.",
-    articleId: ctx.articleId,
-  });
+  fireClientEvent(client.id, { kind: "booking", bookingId, articleId: ctx.articleId ?? null });
 
   // 6. Internal notification → a staff admin (bell icon). Staff live in their own
   //    table now, so the recipient is a staffId (not a users row).

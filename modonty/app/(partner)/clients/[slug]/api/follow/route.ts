@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackFollowClient } from "@/lib/analytics/events-registry";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 export async function GET(
   request: NextRequest,
@@ -123,6 +124,7 @@ export async function POST(
         request.headers.get("x-real-ip") ||
         request.headers.get("cf-connecting-ip") ||
         null;
+      fireClientEvent(client.id, { kind: "follow" });
       notifyTelegram(client.id, "clientFollow", {
         meta: { الزائر: session.user.name ?? session.user.email ?? "زائر" },
         ipAddress: ip,

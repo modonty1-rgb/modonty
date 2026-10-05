@@ -14,6 +14,7 @@ import type { ValidationResult } from "@/lib/seo/article-validator";
 import { regenerateJsonLd, needsRegeneration } from "@/lib/seo/jsonld-storage";
 import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";
 import { checkYmylPublishGate } from "@/lib/seo/ymyl-helpers";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 export interface GatedTransitionResult {
   success: boolean;
@@ -86,6 +87,7 @@ export async function gatedTransitionAction(
         nextjsMetadataLastGenerated: true,
         featuredImageId: true,
         isClientSiteArticle: true,
+        clientId: true,
         // YMYL reviewer for publish gate
         reviewedById: true,
         client: {
@@ -204,6 +206,9 @@ export async function gatedTransitionAction(
     // وهذا هو وصولُ المقال إلى العميل: منه تبدأ ساعةُ اشتراكه إن كان أوّلَ مقالٍ يصله
     // (خالد ١٩ سبتمبر ٢٠٢٦: «المدّة تبدأ بعد أوّل أرتيكل»). والدالّةُ تُكتب مرّةً واحدة.
     await startServiceClockOnFirstDelivery(articleId);
+
+    // جرس العميل: «مقال جديد ينتظر قرارك» — كان المقال يصل صامتاً ولا يعرف به إلا لو فتح.
+    fireClientEvent(article.clientId, { kind: "article_awaiting_approval", articleId, articleTitle: article.title });
 
     // This one passed the SEO gate and the YMYL check — worth recording who put it through.
     await logAction("article.transition", {

@@ -3,6 +3,18 @@
 import { IntentLink } from "@/components/shared/intent-link/IntentLink";
 import { trackCtaClick } from "@/lib/analytics/cta-tracking";
 import type { CTAType } from "@/lib/analytics/cta-tracking";
+import { recordWhatsappLead } from "@/components/shared/booking-form/booking-actions";
+
+/** نفس قاعدة `isWhatsAppUrl` في مسار المقال — هنا لأنّ المكوّن مشترك ولا يستورد من مسار. */
+function isWhatsAppHref(raw: string): boolean {
+  try {
+    const host = new URL(raw).hostname.replace(/^www\./, "");
+    return host === "wa.me" || host.endsWith("whatsapp.com");
+  } catch {
+    return false;
+  }
+}
+
 
 interface CtaTrackedLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
   href: string;
@@ -36,7 +48,12 @@ export function CtaTrackedLink({
       rel={rel}
       onClick={() => {
         trackCtaClick({ type, label, targetUrl: href, articleId, clientId });
-        onBeforeNavigate?.();
+        if (onBeforeNavigate) onBeforeNavigate();
+        // زرّ واتساب العميل يسجّل تواصلاً (ومنه جرس تطبيق الكونسول) — كان يُحسب نقرةً فقط في
+        // زرّ المقال وواجهة صفحة العميل، فلا يصل العميل خبرٌ (اختبار ٥ أكتوبر ٢٠٢٦).
+        else if (clientId && isWhatsAppHref(href)) {
+          void recordWhatsappLead({ clientId, source: articleId ? "article_dock" : "client_page", articleId: articleId ?? null });
+        }
       }}
       {...rest}
     >

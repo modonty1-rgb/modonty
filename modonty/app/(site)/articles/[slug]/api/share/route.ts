@@ -5,6 +5,7 @@ import { SharePlatform, ArticleStatus } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackArticleShare } from "@/lib/analytics/events-registry";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 const SHARE_RATE_LIMIT = 10;
 const SHARE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
@@ -100,6 +101,7 @@ export async function POST(
         request.headers.get("x-real-ip") ||
         request.headers.get("cf-connecting-ip") ||
         null;
+      fireClientEvent(article.clientId, { kind: "article_share", articleId: article.id, articleTitle: article.title });
       notifyTelegram(article.clientId, "articleShare", {
         title: article.title,
         meta: { المنصة: SHARE_PLATFORM_AR[sharePlatform] },

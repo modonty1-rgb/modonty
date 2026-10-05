@@ -8,6 +8,7 @@ import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackNewsletterSubscribe } from "@/lib/analytics/events-registry";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 const subscribeSchema = z.object({
   email: z.string().email().max(254),
@@ -84,6 +85,7 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-real-ip") ||
       request.headers.get("cf-connecting-ip") ||
       null;
+    fireClientEvent(clientId, { kind: "subscriber" });
     notifyTelegram(clientId, "clientSubscribe", {
       meta: { البريد: email },
       ipAddress: ip,

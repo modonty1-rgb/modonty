@@ -9,6 +9,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { submitToIndexNow } from "@/lib/indexnow";
 import { assertArticlePublishable } from "@/lib/seo/assert-article-publishable";
 import { loadSiteUrl } from "@/lib/seo/site-url";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 /**
  * **نشرُ مقال — بابٌ واحدٌ للزرّ وللكرون.**
@@ -93,6 +94,8 @@ export async function publishArticle(
     },
     actor === "cron" ? SYSTEM_ACTOR : undefined,
   );
+
+  fireClientEvent(article.clientId, { kind: "article_published", articleId, articleTitle: article.title });
 
   // إشعارُ محرّكات البحث — لمقالات مدونتي وحدها: رابطُ مقال العميل على نطاقه هو، ولسنا
   // مالكيه المتحقَّقين، فالإشعارُ يُرفض في أحسن الأحوال.

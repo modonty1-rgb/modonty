@@ -1,6 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MobileOfflineError } from '@/src/services/mobile-api';
+import { onLiveRefresh } from '@/src/services/live-refresh';
 
 /**
  * The four states every screen owes the user, in one place: skeleton · ready · error · offline.
@@ -107,9 +108,10 @@ export function useEngagementResource<T>(accessToken: string, load: (accessToken
    * تُعاد الدالة كل رندر فيُشغَّل الأثر بلا نهاية.
    */
   useFocusEffect(useCallback(() => {
-    if (hasLoaded.current) { run(true); return; }
-    hasLoaded.current = true;
-    run(false);
+    if (hasLoaded.current) run(true);
+    else { hasLoaded.current = true; run(false); }
+    // ما دامت الشاشة مركَّزة تتحدّث بصمت مع كل تنبيه يصل أو رجوع من الخلفية (`live-refresh.ts`).
+    return onLiveRefresh(() => run(true));
   }, [run]));
 
   const replace = useCallback((data: T) => {
