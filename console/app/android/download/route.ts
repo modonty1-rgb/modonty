@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
 /**
- * الرابط الثابت لتحميل تطبيق الأندرويد: `console.modonty.com/android`.
+ * ملف تطبيق الأندرويد نفسه: `console.modonty.com/android/download` — يحوّل إلى الـAPK على Bunny.
+ * الصفحة `/android` (يفتحها الـQR والبانر) تعرض زرّ التحميل الذي يشير إلى هنا.
  *
  * البانر والـQR يشيران إلى هنا لا إلى ملف الـAPK نفسه، فحين نرفع نسخة جديدة يتغيّر
  * `ANDROID_APK_URL` على Vercel وحده — والـQR المطبوع أو المرسَل يبقى صالحاً.

@@ -14,7 +14,8 @@ import { IconClose, IconDownload, IconMobile } from "@modonty/shared/lib/icons";
  * يُغلق ويُحفظ الإغلاق في المتصفّح: من ثبّت التطبيق لا يُلاحَق بالبانر.
  */
 const DISMISS_KEY = "modonty-android-banner-dismissed";
-const DOWNLOAD_PATH = "/android";
+// الجوال داخل كروم أصلاً (الكونسول مفتوح فيه) فيحمّل الملف مباشرة؛ الـQR يفتح صفحة `/android`.
+const DOWNLOAD_PATH = "/android/download";
 
 type Device = "android" | "ios" | "desktop";
 
