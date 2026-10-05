@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
+import { revokeAllMobileSessions } from "@/lib/mobile-api/auth";
 
 type Result =
   | { success: true }
@@ -64,6 +65,8 @@ export async function changePassword(
       where: { id: clientId },
       data: { password: hashed },
     });
+    // كلمة مرور جديدة تُخرج كل جوّال دخل بالقديمة — وإلّا بقي من عرفها داخلاً ٣٠ يوماً.
+    await revokeAllMobileSessions(clientId, "PasswordChanged");
     revalidatePath("/dashboard/settings");
     return { success: true };
   } catch {

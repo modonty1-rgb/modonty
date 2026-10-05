@@ -4,11 +4,12 @@ import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BookingCard } from '@/src/components/bookings/BookingCard';
-import { EmptyState, ErrorState, ListScreenSkeleton, OfflineState } from '@/src/components/ui/MobileUI';
+import { EmptyState, ErrorState, ListScreenSkeleton, OfflineState, RefreshNotice } from '@/src/components/ui/MobileUI';
+import { EnterView, TonalCard } from '@/src/components/ui/Nabd';
 import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 import { bookingFallbackText, getBookings, networkCopy, type BookingRequestItem, type BookingsScreen } from '@/src/services/bookings-api';
 import { MobileOfflineError } from '@/src/services/mobile-api';
-import { darkColors, fonts, lightColors, radii, spacing, typography } from '@/src/theme/tokens';
+import { darkColors, fonts, lightColors, nabd, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
 type Props = { accessToken: string; onBack: () => void };
@@ -44,36 +45,47 @@ export function BookingsRoute({ accessToken, onBack }: Props) {
 
   const renderBooking = useCallback(({ item }: { item: BookingRequestItem }) => <BookingCard booking={item} />, []);
 
+  /**
+   * «نبض» (S15): بلاطتا أرقام — المفتوح على سطح البطاقة، وواتساب تركوازية — ثم سطر واتساب
+   * الذي يشرح لماذا لا قائمة لهم (لا نحفظ أرقامهم). الخادم الأقدم بلا `stats` يرجع لبطاقة واتساب.
+   */
+  const stats = screen?.stats ?? [];
   const listHeader = useMemo(() => screen === null ? null : <View style={styles.header}>
-    <Text style={styles.subtitle}>{screen.subtitle}</Text>
-    {/* قسم واتساب بلا زرّ: العميل لا يملك ما يفعله به، والنصّ يشرح لماذا بدل أن يترك سؤالاً. */}
-    {screen.whatsapp ? <View style={styles.whatsappCard}>
-      <View style={styles.whatsappHead}>
-        <View style={styles.countBadge}><Text maxFontSizeMultiplier={1} style={styles.countBadgeText}>{screen.whatsapp.countLabel}</Text></View>
-        <Text style={styles.whatsappTitle}>{screen.whatsapp.title}</Text>
-      </View>
-      <Text style={styles.whatsappBody}>{screen.whatsapp.description}</Text>
-    </View> : null}
-  </View>, [screen, styles]);
+    {stats.length > 0 ? <EnterView index={0} style={styles.tiles}>
+      {stats.map((stat) => <TonalCard key={stat.key} tone={stat.key === 'whatsapp' ? 'tertiary' : 'surface'} style={styles.tile}>
+        <Text maxFontSizeMultiplier={1} style={[styles.tileNumeral, stat.key === 'whatsapp' ? styles.onTertiary : null]}>{stat.value}</Text>
+        <Text style={[styles.subtitle, stat.key === 'whatsapp' ? styles.onTertiary : null]}>{stat.label}</Text>
+      </TonalCard>)}
+    </EnterView> : <Text style={styles.subtitle}>{screen.subtitle}</Text>}
+    {screen.whatsapp ? <EnterView index={1}>
+      {stats.length > 0
+        ? <Text style={styles.subtitle}>{screen.whatsapp.description}</Text>
+        : <TonalCard tone="tertiary" style={styles.whatsappCard}>
+          <Text style={[styles.whatsappTitle, styles.onTertiary]}>{`${screen.whatsapp.title} · ${screen.whatsapp.countLabel}`}</Text>
+          <Text style={[styles.subtitle, styles.onTertiary]}>{screen.whatsapp.description}</Text>
+        </TonalCard>}
+    </EnterView> : null}
+  </View>, [screen, stats, styles]);
 
-  if (isOffline) return <View style={styles.screen}>
-    <ScreenHeader title={screen?.screenTitle ?? null} backLabel={networkCopy.retryLabel} onBack={onBack} />
+  // زرّ الرجوع اسمه «رجوع» في كل الحالات — كان يُعلَن لقارئ الشاشة «حاول مرة ثانية».
+  if (isOffline && screen === null) return <View style={styles.screen}>
+    <ScreenHeader padded title={null} backLabel={networkCopy.backLabel} onBack={onBack} />
     <ScrollView contentContainerStyle={styles.state}><OfflineState title={networkCopy.offlineTitle} description={networkCopy.offlineDescription} retryLabel={networkCopy.retryLabel} onRetry={load} /></ScrollView>
   </View>;
 
   if (error !== null && screen === null) return <View style={styles.screen}>
-    <ScreenHeader title={null} backLabel={networkCopy.retryLabel} onBack={onBack} />
+    <ScreenHeader padded title={null} backLabel={networkCopy.backLabel} onBack={onBack} />
     <ScrollView contentContainerStyle={styles.state}><ErrorState message={error} retryLabel={networkCopy.retryLabel} onRetry={load} /></ScrollView>
   </View>;
 
   if (screen === null) return <View style={styles.screen}>
-    <ScreenHeader title={null} backLabel={networkCopy.retryLabel} onBack={onBack} />
+    <ScreenHeader padded title={null} backLabel={networkCopy.backLabel} onBack={onBack} />
     <View style={styles.state}><ListScreenSkeleton count={3} withSubtitle /></View>
   </View>;
 
   return <View style={styles.screen}>
-    <ScreenHeader title={screen.screenTitle} backLabel={screen.backLabel} onBack={onBack} />
-    {error !== null ? <Text style={styles.inlineError}>{error}</Text> : null}
+    <ScreenHeader padded title={screen.screenTitle} backLabel={screen.backLabel} onBack={onBack} />
+    {error !== null ? <View style={styles.noticeSlot}><RefreshNotice message={error} offline={isOffline} retryLabel={networkCopy.retryLabel} onRetry={refresh} /></View> : null}
     <FlashList
       data={screen.requests}
       renderItem={renderBooking}
@@ -89,28 +101,24 @@ export function BookingsRoute({ accessToken, onBack }: Props) {
 const shared = {
   screen: { flex: 1 },
   state: { flexGrow: 1, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md },
-  list: { paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md },
-  header: { gap: spacing.md, marginBottom: spacing.md },
+  list: { paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.xxs },
+  header: { gap: spacing.sm, marginBottom: spacing.sm },
   subtitle: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right' as const, writingDirection: 'rtl' as const },
-  whatsappCard: { borderRadius: radii.card, borderWidth: StyleSheet.hairlineWidth, gap: spacing.xs, padding: spacing.md },
-  whatsappHead: { alignItems: 'center' as const, flexDirection: 'row-reverse' as const, gap: spacing.xs },
-  whatsappTitle: { flex: 1, fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right' as const, writingDirection: 'rtl' as const },
-  countBadge: { borderRadius: radii.field, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: spacing.xs, paddingVertical: spacing.xxs },
-  countBadgeText: { fontFamily: fonts.medium, fontSize: typography.tabLabel, lineHeight: typography.lineHeightTabLabel, writingDirection: 'rtl' as const },
-  whatsappBody: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right' as const, writingDirection: 'rtl' as const },
-  inlineError: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, marginBottom: spacing.sm, paddingHorizontal: spacing.screenHorizontal, textAlign: 'right' as const, writingDirection: 'rtl' as const },
+  tiles: { flexDirection: 'row-reverse' as const, gap: spacing.sm },
+  tile: { borderRadius: nabd.tileRadius, flex: 1, gap: spacing.xxs, minHeight: 88, padding: spacing.md },
+  tileNumeral: { fontFamily: fonts.medium, fontSize: typography.tileNumeral, lineHeight: typography.lineHeightTileNumeral, textAlign: 'right' as const, writingDirection: 'rtl' as const },
+  whatsappCard: { gap: spacing.xxs },
+  whatsappTitle: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right' as const, writingDirection: 'rtl' as const },
+  onTertiary: {},
+  noticeSlot: { paddingHorizontal: spacing.screenHorizontal },
 };
 
 function stylesFor(palette: typeof darkColors) {
   return StyleSheet.create({
     ...shared,
     subtitle: { ...shared.subtitle, color: palette.muted },
-    whatsappCard: { ...shared.whatsappCard, backgroundColor: palette.surface, borderColor: palette.border },
-    whatsappTitle: { ...shared.whatsappTitle, color: palette.text },
-    countBadge: { ...shared.countBadge, borderColor: palette.muted },
-    countBadgeText: { ...shared.countBadgeText, color: palette.muted },
-    whatsappBody: { ...shared.whatsappBody, color: palette.muted },
-    inlineError: { ...shared.inlineError, color: palette.errorText },
+    tileNumeral: { ...shared.tileNumeral, color: palette.text },
+    onTertiary: { color: palette.onTertiary },
   });
 }
 

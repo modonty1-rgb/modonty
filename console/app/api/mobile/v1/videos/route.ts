@@ -45,7 +45,7 @@ function durationLabel(seconds: number | null): string | null {
 
 function uploaderLabel(uploader: ReelUploader | null): string | null {
   if (uploader === ReelUploader.CLIENT) return "رفعته أنت";
-  if (uploader === ReelUploader.ADMIN) return "رفعه فريق مودونتي";
+  if (uploader === ReelUploader.ADMIN) return "رفعه فريق مدونتي";
   return null;
 }
 
@@ -59,6 +59,16 @@ export async function GET(request: NextRequest) {
     take: 100,
     select: { id: true, filename: true, mimeType: true, reelStatus: true, reelUploadedBy: true, reelRejectionReason: true, thumbnailUrl: true, durationSec: true, createdAt: true },
   });
+
+  /**
+   * «نبض»: شريط ١٠·٢·١ — منشور · قيد المراجعة · مرفوض. يُعدّ من القاعدة كاملةً لا من الصفوف
+   * المئة المقصوصة، والتسمية نفسها تسمية الحالة على البطاقة فلا يختلف الرقم عن الكلمة.
+   */
+  const statKeys = [ReelStatus.PUBLISHED, ReelStatus.PENDING_APPROVAL, ReelStatus.REJECTED] as const;
+  const statCounts = await Promise.all(statKeys.map((reelStatus) => db.media.count({ where: { clientId: session.clientId, inReels: true, reelStatus } })));
+  const stats = statCounts.some((count) => count > 0)
+    ? statKeys.map((reelStatus, index) => ({ key: reelStatus, value: arabicNumber(statCounts[index]), label: STATUS_LABELS[reelStatus], tone: STATUS_TONES[reelStatus] }))
+    : [];
 
   const videos = rows.map((row) => ({
     id: row.id,
@@ -88,6 +98,7 @@ export async function GET(request: NextRequest) {
   return ok({
     videos,
     review: {
+      stats,
       title: "الطلّات",
       uploadActionLabel: "رفع طلّة",
       latestSectionTitle: "آخر الطلّات",
@@ -107,7 +118,7 @@ export async function GET(request: NextRequest) {
       cameraLabel: "تصوير الآن",
       libraryLabel: "اختيار من الاستديو",
       noteTitle: "الرفع ما ينشر الطلّة مباشرة.",
-      noteBody: "تبدأ حالتها «بانتظار المراجعة» ثم تظهر لفريق مودونتي.",
+      noteBody: "تبدأ حالتها «بانتظار المراجعة» ثم تظهر لفريق مدونتي.",
       backLabel: "العودة للطلّات",
       /**
        * العنوان مكتوب، لا «الكونسول على المتصفح».

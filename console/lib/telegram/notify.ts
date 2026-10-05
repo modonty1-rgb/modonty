@@ -114,7 +114,8 @@ const ADMIN_MIRROR_EVENTS: ReadonlySet<TelegramEventKey> = new Set([
  */
 const PUSH_EVENTS: ReadonlyMap<TelegramEventKey, NotificationGroupKey> = new Map([
   ["supportMessage", "actionable"],
-  ["campaignInterest", "actionable"],
+  // `campaignInterest` خرج من الدفع: العميل نفسه من سجّل الاهتمام، فالدفعة صدى لفعله
+  // (بند التدقيق ٢). تيليجرام ونسخة الأدمن باقيان كما هما.
   ["askClientQuestion", "actionable"],
   ["bookingRequest", "actionable"],
   ["commentNew", "activity"],

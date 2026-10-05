@@ -1,17 +1,21 @@
 import { Image } from 'expo-image';
 import RenderHtml, { defaultSystemFonts, type CustomBlockRenderer } from '@native-html/render';
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
 import { DecisionBar } from '@/src/components/articles/DecisionBar';
+import { useKeyboardInset } from '@/src/components/ui/useKeyboardInset';
+import { StatusBadge } from '@/src/components/ui/Nabd';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { ArticleReviewDetail } from '@/src/services/articles-api';
-import { articleContent, darkColors, fonts, lightColors, media, radii, spacing, typography } from '@/src/theme/tokens';
+import { articleContent, darkColors, fonts, lightColors, media, nabd, radii, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
 type ArticleSurfaceProps = {
   article: ArticleReviewDetail;
   isSubmitting: boolean;
+  /** فشل الاعتماد أو طلب التعديل — يُعرض فوق الزرّين نفسيهما. */
+  errorMessage: string | null;
   changesOpen: boolean;
   feedback: string;
   onApprove: () => void;
@@ -41,7 +45,7 @@ const htmlRenderers = { img: HtmlImage };
  */
 const articleSystemFonts = [...defaultSystemFonts, fonts.regular, fonts.medium, fonts.bold];
 
-export function ArticleSurface({ article, isSubmitting, changesOpen, feedback, onApprove, onOpenChanges, onCancelChanges, onFeedbackChange, onSubmitChanges }: ArticleSurfaceProps) {
+export function ArticleSurface({ article, isSubmitting, errorMessage, changesOpen, feedback, onApprove, onOpenChanges, onCancelChanges, onFeedbackChange, onSubmitChanges }: ArticleSurfaceProps) {
   const { mode } = useAppTheme();
   const styles = mode === 'dark' ? darkStyles : lightStyles;
   const htmlStyles = mode === 'dark' ? darkHtmlStyles : lightHtmlStyles;
@@ -58,6 +62,13 @@ export function ArticleSurface({ article, isSubmitting, changesOpen, feedback, o
    * فتحُ محرّرٍ وعدٌ بأن تُكمل فيه، والوعد يقتضي أن يكون كامله مرئياً.
    */
   useEffect(() => { if (changesOpen) scrollRef.current?.scrollToEnd({ animated: true }); }, [changesOpen]);
+  /**
+   * وفتح اللوحة نفسها يقصّر العرض: الشاشة تحجز ارتفاعها (`useKeyboardInset` — النافذة لا تنكمش
+   * في edge-to-edge)، ثم ينزل التمرير إلى المحرّر كي يبقى الحقل وزرّ الإرسال فوقها.
+   */
+  const keyboardInset = useKeyboardInset();
+  // بعد أن يقصر العرض فعلاً لا قبله: النزول قبل إعادة التخطيط لا يجد ما يمرّره (قِيس: بقي الزرّ تحت اللوحة).
+  const followKeyboard = useCallback(() => { if (changesOpen && keyboardInset > 0) scrollRef.current?.scrollToEnd({ animated: true }); }, [changesOpen, keyboardInset]);
 
   /**
    * `h2` و`h3` نمطان لا نمط واحد.
@@ -67,22 +78,25 @@ export function ArticleSurface({ article, isSubmitting, changesOpen, feedback, o
    * الفرعي أصغر ووزنه أخفّ، فالتدرّج يُقرأ بلا شرح.
    */
   const tagsStyles = useMemo(() => ({ a: htmlStyles.link, blockquote: htmlStyles.quote, h1: htmlStyles.heading, h2: htmlStyles.heading, h3: htmlStyles.subheading, li: htmlStyles.listItem, ol: htmlStyles.list, p: htmlStyles.paragraph, strong: htmlStyles.strong, ul: htmlStyles.list }), [htmlStyles]);
-  return <View style={styles.surface}>
-    <ScrollView ref={scrollRef} contentContainerStyle={scrollStyle} keyboardShouldPersistTaps="handled">
-      {heroUri ? <View style={styles.hero}>
-        <Image accessibilityLabel={article.featuredImage?.altText ?? article.title} contentFit="cover" source={heroUri} style={styles.heroImage} transition={200} />
-        <View style={styles.heroBadge}><Text maxFontSizeMultiplier={1} style={styles.heroBadgeText}>{article.review.article.heroBadgeLabel}</Text></View>
-      </View> : null}
-      {article.review.article.headLabel ? <Text style={styles.head}>{article.review.article.headLabel}</Text> : null}
-      <Text style={styles.title}>{article.title}</Text>
-      {article.content
-        ? <RenderHtml baseStyle={htmlStyles.base} contentWidth={contentWidth} renderers={htmlRenderers} source={{ html: article.content }} systemFonts={articleSystemFonts} tagsStyles={tagsStyles} />
-        : <Text style={styles.empty}>{article.review.article.emptyContentLabel}</Text>}
+  return <View style={[styles.surface, { paddingBottom: keyboardInset }]}>
+    <ScrollView ref={scrollRef} contentContainerStyle={scrollStyle} keyboardShouldPersistTaps="handled" onLayout={followKeyboard}>
+      {heroUri ? <Image accessibilityLabel={article.featuredImage?.altText ?? article.title} contentFit="cover" source={heroUri} style={styles.heroImage} transition={200} /> : null}
+      {/* «نبض»: الشارة تحت الصورة على سطح نعرفه — فوق صورة العميل كان تباينها رهن البانر. */}
+      <View style={styles.headBlock}>
+        <StatusBadge label={article.review.article.heroBadgeLabel} tone={article.status === 'AWAITING_APPROVAL' ? 'warning' : 'positive'} />
+        <Text style={styles.title}>{article.title}</Text>
+        {article.review.article.headLabel ? <Text style={styles.head}>{article.review.article.headLabel}</Text> : null}
+      </View>
+      <View style={styles.contentCard}>
+        {article.content
+          ? <RenderHtml baseStyle={htmlStyles.base} contentWidth={contentWidth - spacing.md * 2} renderers={htmlRenderers} source={{ html: article.content }} systemFonts={articleSystemFonts} tagsStyles={tagsStyles} />
+          : <Text style={styles.empty}>{article.review.article.emptyContentLabel}</Text>}
+      </View>
       {article.review.ymyl ? <View style={styles.ymyl}>
         <Text style={styles.ymylTitle}>{article.review.ymyl.title}</Text>
         <Text style={styles.ymylBody}>{article.review.ymyl.description}</Text>
       </View> : null}
-      {canDecide ? <DecisionBar review={article.review} isSubmitting={isSubmitting} changesOpen={changesOpen} feedback={feedback} onApprove={onApprove} onOpenChanges={onOpenChanges} onCancelChanges={onCancelChanges} onFeedbackChange={onFeedbackChange} onSubmitChanges={onSubmitChanges} /> : null}
+      {canDecide ? <DecisionBar review={article.review} isSubmitting={isSubmitting} errorMessage={errorMessage} changesOpen={changesOpen} feedback={feedback} onApprove={onApprove} onOpenChanges={onOpenChanges} onCancelChanges={onCancelChanges} onFeedbackChange={onFeedbackChange} onSubmitChanges={onSubmitChanges} /> : null}
     </ScrollView>
   </View>;
 }
@@ -90,14 +104,13 @@ export function ArticleSurface({ article, isSubmitting, changesOpen, feedback, o
 const shared = {
   surface: { flex: 1 },
   scroll: { paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md },
-  hero: { position: 'relative' as const },
   heroImage: { aspectRatio: media.cardImageAspectRatio, borderRadius: radii.field, width: '100%' as const },
-  heroBadge: { borderRadius: radii.field, end: spacing.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs, position: 'absolute' as const, top: spacing.sm },
-  heroBadgeText: { fontFamily: fonts.medium, fontSize: typography.tabLabel, lineHeight: typography.lineHeightTabLabel, writingDirection: 'rtl' as const },
-  head: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, marginTop: spacing.md, textAlign: 'right' as const, writingDirection: 'rtl' as const },
-  title: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, marginTop: spacing.xs, textAlign: 'right' as const, writingDirection: 'rtl' as const },
-  empty: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, marginTop: spacing.xl, textAlign: 'right' as const, writingDirection: 'rtl' as const },
-  ymyl: { borderRadius: radii.card, borderWidth: 1, marginTop: spacing.xl, padding: spacing.md },
+  headBlock: { gap: spacing.xs, marginTop: spacing.md },
+  head: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right' as const, writingDirection: 'rtl' as const },
+  title: { fontFamily: fonts.bold, fontSize: spacing.xl, lineHeight: spacing.xxl, textAlign: 'right' as const, writingDirection: 'rtl' as const },
+  contentCard: { borderRadius: nabd.cardRadius, marginTop: spacing.md, paddingBottom: spacing.md, paddingHorizontal: spacing.md },
+  empty: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, marginTop: spacing.md, textAlign: 'right' as const, writingDirection: 'rtl' as const },
+  ymyl: { borderRadius: nabd.cardRadius, marginTop: spacing.md, padding: spacing.md },
   ymylTitle: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right' as const, writingDirection: 'rtl' as const },
   ymylBody: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, marginTop: spacing.xs, textAlign: 'right' as const, writingDirection: 'rtl' as const },
 };
@@ -105,14 +118,13 @@ const shared = {
 function stylesFor(palette: typeof darkColors) {
   return StyleSheet.create({
     ...shared,
-    heroBadge: { ...shared.heroBadge, backgroundColor: palette.warning },
-    heroBadgeText: { ...shared.heroBadgeText, color: palette.onWarning },
     head: { ...shared.head, color: palette.muted },
+    contentCard: { ...shared.contentCard, backgroundColor: palette.surface },
     title: { ...shared.title, color: palette.text },
     empty: { ...shared.empty, color: palette.muted },
-    ymyl: { ...shared.ymyl, backgroundColor: palette.surface, borderColor: palette.warning },
-    ymylTitle: { ...shared.ymylTitle, color: palette.warning },
-    ymylBody: { ...shared.ymylBody, color: palette.text },
+    ymyl: { ...shared.ymyl, backgroundColor: palette.warningContainer },
+    ymylTitle: { ...shared.ymylTitle, color: palette.onWarningContainer },
+    ymylBody: { ...shared.ymylBody, color: palette.onWarningContainer },
   });
 }
 

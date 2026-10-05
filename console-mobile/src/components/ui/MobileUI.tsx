@@ -2,8 +2,8 @@ import { Pressable, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from 'r
 import { AppText as Text } from '@/src/components/ui/AppText';
 import { ReactNode } from 'react';
 import { ModontyIcon, ModontyIconName } from '@/src/components/brand/icons/ModontyIcon';
-import { ModontyWordmark } from '@/src/components/brand/ModontyWordmark';
-import { brand, control, fonts, radii, skeleton, spacing, typography } from '@/src/theme/tokens';
+import { control, fonts, nabd, radii, skeleton, spacing, typography } from '@/src/theme/tokens';
+import { PillButton, StatusBadge } from '@/src/components/ui/Nabd';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
 export function Screen({ title, icon, children }: { title: string; icon: ModontyIconName; children: ReactNode }) {
@@ -16,7 +16,8 @@ export function Screen({ title, icon, children }: { title: string; icon: Modonty
 
 export function Card({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const { theme } = useAppTheme();
-  return <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }, style]}>{children}</View>;
+  // «نبض»: البطاقة نغمية — لونها يفصلها عن الأرضية، بلا حدّ ١px.
+  return <View style={[styles.card, { backgroundColor: theme.colors.surface }, style]}>{children}</View>;
 }
 
 export function SectionTitle({ children, actionLabel, onAction }: { children: string; actionLabel?: string; onAction?: () => void }) {
@@ -24,16 +25,13 @@ export function SectionTitle({ children, actionLabel, onAction }: { children: st
   return <View style={styles.sectionHeader}><Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{children}</Text>{actionLabel && onAction ? <Pressable onPress={onAction} accessibilityRole="button" accessibilityLabel={actionLabel} style={styles.sectionActionTarget}><Text style={[styles.sectionAction, { color: theme.colors.textInteractive }]}>{actionLabel}</Text></Pressable> : null}</View>;
 }
 
+/** حالةٌ نغمية: نصّ + رمز + لون (`StatusBadge`). */
 export function StatusPill({ children, tone = 'primary' }: { children: string; tone?: 'primary' | 'warning' | 'danger' | 'muted' }) {
-  const { theme } = useAppTheme();
-  const color = tone === 'warning' ? theme.colors.warning : tone === 'danger' ? theme.colors.danger : tone === 'muted' ? theme.colors.muted : theme.colors.textInteractive;
-  return <View style={[styles.pill, { borderColor: color }]}><Text style={[styles.pillText, { color }]}>{children}</Text></View>;
+  return <StatusBadge label={children} tone={tone === 'primary' ? 'positive' : tone === 'muted' ? 'neutral' : tone} />;
 }
 
 export function PrimaryAction({ label, icon, onPress, style, tone = 'primary' }: { label: string; icon?: ModontyIconName; onPress: () => void; style?: StyleProp<ViewStyle>; tone?: 'primary' | 'secondary' }) {
-  const { theme } = useAppTheme();
-  const foreground = tone === 'primary' ? theme.colors.textOnPrimary : theme.colors.text;
-  return <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={[styles.primaryAction, { backgroundColor: tone === 'primary' ? theme.colors.primary : theme.colors.surfaceRaised, borderColor: tone === 'primary' ? theme.colors.primary : theme.colors.textInteractive, borderWidth: tone === 'primary' ? 0 : StyleSheet.hairlineWidth }, style]}>{icon ? <ModontyIcon name={icon} size={control.iconSize} primary={foreground} accent={tone === 'primary' ? theme.colors.navy : theme.colors.accent}/> : null}<Text style={[styles.primaryText, { color: foreground }]}>{label}</Text></Pressable>;
+  return <PillButton label={label} icon={icon} onPress={onPress} tone={tone} size="medium" style={style} />;
 }
 
 export function EmptyState({ icon, title, copy, actionLabel, onAction }: { icon: ModontyIconName; title: string; copy: string; actionLabel?: string; onAction?: () => void }) {
@@ -100,7 +98,31 @@ export function OfflineState({ title, description, retryLabel, onRetry }: { titl
   </Card>;
 }
 
+/**
+ * فشلُ **تحديث** فوق بيانات صالحة: سطر صغير فوق المحتوى، والمحتوى يبقى.
+ *
+ * كان فشل السحب أو العودة للتاب يمسح الشاشة كلها ويضع مكانها بطاقة خطأ — فيخسر العميل
+ * ما كان يقرؤه بسبب نفقٍ عابر. والعكس كان أسوأ في شاشات أخرى: يُبتلع الفشل بلا كلمة.
+ * هنا الاثنان معاً: البيانات القديمة ظاهرة، وسطرٌ يقول إنها لم تتحدّث ومعه «إعادة المحاولة».
+ */
+export function RefreshNotice({ message, offline, retryLabel, onRetry }: { message: string; offline: boolean; retryLabel: string; onRetry: () => void }) {
+  const { theme } = useAppTheme();
+  const tone = offline ? theme.colors.onWarningContainer : theme.colors.onDangerContainer;
+  return <View accessibilityLiveRegion="polite" style={[styles.notice, { backgroundColor: offline ? theme.colors.warningContainer : theme.colors.dangerContainer }]}>
+    <ModontyIcon name={offline ? 'info' : 'error'} size={control.iconSize} primary={tone} accent={theme.colors.accent} />
+    <Text style={[styles.noticeText, { color: offline ? theme.colors.onWarningContainer : theme.colors.onDangerContainer }]}>{message}</Text>
+    <Pressable accessibilityRole="button" accessibilityLabel={retryLabel} onPress={onRetry} style={({ pressed }) => [styles.noticeAction, pressed && styles.noticePressed]}>
+      <Text maxFontSizeMultiplier={1.3} style={[styles.noticeActionText, { color: offline ? theme.colors.onWarningContainer : theme.colors.onDangerContainer }]}>{retryLabel}</Text>
+    </Pressable>
+  </View>;
+}
+
 const styles = StyleSheet.create({
+  notice: { alignItems: 'center', borderRadius: nabd.statRadius, flexDirection: 'row-reverse', gap: spacing.xs, marginTop: spacing.sm, paddingHorizontal: spacing.sm },
+  noticeText: { flex: 1, fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, paddingVertical: spacing.xs, textAlign: 'right', writingDirection: 'rtl' },
+  noticeAction: { alignItems: 'center', justifyContent: 'center', minHeight: control.minTouchTarget, minWidth: control.minTouchTarget, paddingHorizontal: spacing.xs },
+  noticeActionText: { fontFamily: fonts.bold, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textDecorationLine: 'underline', writingDirection: 'rtl' },
+  noticePressed: { opacity: 0.72 },
   screen: { paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
   listScreenSkeleton: { gap: spacing.sm },
   skeletonList: { gap: spacing.sm },
@@ -113,15 +135,11 @@ const styles = StyleSheet.create({
   stateAction: { alignSelf: 'stretch', marginTop: spacing.xs },
   screenTitle: { flexDirection: 'row-reverse', alignItems: 'center', gap: spacing.xs, marginTop: spacing.md, marginBottom: spacing.xl },
   pageTitle: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, writingDirection: 'rtl' },
-  card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.md },
+  card: { borderRadius: nabd.cardRadius, padding: spacing.md },
   sectionHeader: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xl, marginBottom: spacing.sm },
   sectionTitle: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, writingDirection: 'rtl' },
   sectionActionTarget: { alignItems: 'center', justifyContent: 'center', minHeight: control.minTouchTarget, minWidth: control.minTouchTarget },
   sectionAction: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, writingDirection: 'rtl' },
-  pill: { alignSelf: 'flex-start', borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.field, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs },
-  pillText: { fontFamily: fonts.medium, fontSize: typography.tabLabel, lineHeight: typography.lineHeightTabLabel, writingDirection: 'rtl' },
-  primaryAction: { minHeight: control.minTouchTarget, borderRadius: radii.button, paddingHorizontal: spacing.md, flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'center', gap: spacing.xs },
-  primaryText: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' },
   empty: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.xxl },
   emptyTitle: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, writingDirection: 'rtl', marginTop: spacing.md, textAlign: 'center' },
   emptyCopy: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'rtl', marginTop: spacing.xs, textAlign: 'center' },

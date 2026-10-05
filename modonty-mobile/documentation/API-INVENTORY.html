@@ -1,0 +1,1760 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>جرد واجهات تطبيق القارئ — مدونتي</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap"><style>body{margin:0;background:#f4f6fb;color:#1b2133;font:15px/1.75 Tajawal,Tahoma,sans-serif}.wrap{max-width:1100px;margin:0 auto;padding:28px 16px 64px}h1,h2,h3{color:#0E065A}h2{border-bottom:1px solid #d8dfec;padding-bottom:6px;margin-top:32px}table{border-collapse:collapse;width:100%;background:#fff;font-size:14px;display:block;overflow-x:auto}th,td{border:1px solid #d8dfec;padding:7px 9px;text-align:right;vertical-align:top}th{background:#eef1f7}code{direction:ltr;unicode-bidi:isolate;background:#eef1f7;padding:1px 5px;border-radius:5px;font-size:12.5px}pre{direction:ltr;background:#0e1230;color:#e9edf5;padding:12px;border-radius:10px;overflow-x:auto}@media(prefers-color-scheme:dark){body{background:#070b14;color:#d7ddea}h1,h2,h3{color:#e9edf5}table{background:#101827}th{background:#151c33}th,td,h2{border-color:#26304a}code{background:#151c33}}</style></head><body><div class="wrap"><h1>API-INVENTORY — جرد موقع مدونتي العام وعقد الـAPI لتطبيق القارئ</h1>
+<ul>
+<li>التاريخ: ٤ أكتوبر ٢٠٢٦ · النطاق: <code>modonty/</code> فقط (+ <code>shared/</code> كمصدر لما تستهلكه مدونتي) · قراءة كود بلا تعديل.</li>
+<li>المسارات في هذا الملف نسبية إلى <code>modonty/</code> إلا ما بدأ بـ<code>shared/</code> أو <code>console/</code>.</li>
+<li>القاعدة الحاكمة (<code>modonty-mobile/AGENTS.md</code>): التطبيق يقرأ من <strong>نفس الدوال</strong> التي تقرأ منها صفحة الويب. كل نقطة مقترحة أدناه تسمّي الدالة التي تغلّفها؛ ما ليس له دالة موجودة يُوسَم «جديد».</li>
+</ul>
+<hr>
+<h2>١ · الملخّص</h2>
+<table>
+<thead>
+<tr>
+<th>البند</th>
+<th>الرقم</th>
+<th>الدليل</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>صفحات <code>page.tsx</code></td>
+<td>٧٨</td>
+<td><code>find app -name page.tsx</code></td>
+</tr>
+<tr>
+<td>Route Handlers <code>route.ts</code></td>
+<td>٤٤ (منها ١١ تحت <code>app/api/</code>)</td>
+<td><code>find app -name route.ts</code></td>
+</tr>
+<tr>
+<td>ملفات <code>&quot;use server&quot;</code> / دوال أكشن مُصدَّرة</td>
+<td>٣٦ / ٥٠</td>
+<td>grep <code>^&quot;use server&quot;</code></td>
+</tr>
+<tr>
+<td>دوال مكيّشة <code>&quot;use cache&quot;</code></td>
+<td>٩٥ موضعاً · <code>cacheLife(&quot;hours&quot;)</code> في ٩٧</td>
+<td>grep في <code>app lib components</code></td>
+</tr>
+<tr>
+<td>قدرات القارئ المكتشفة</td>
+<td><strong>٥٢</strong> صفّاً (جدول §٢)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>نقاط API موجودة يقدر التطبيق يستعملها كما هي (بلا كوكي)</td>
+<td><strong>٥</strong>: <code>GET /articles/api/list</code> · <code>GET /api/articles</code> (الرئيسية) · <code>POST /api/news/subscribe</code> · <code>POST /api/booking</code> · <code>POST /api/lucky-wheel</code></td>
+<td>§٣</td>
+</tr>
+<tr>
+<td>نقاط موجودة لكن تعتمد كوكي الجلسة أو كوكي الزائر (لا تصلح للتطبيق كما هي)</td>
+<td>١٨</td>
+<td>§٣</td>
+</tr>
+<tr>
+<td>سطور العقد المقترح تحت <code>/api/mobile/v1</code></td>
+<td><strong>٦٥</strong> (V1: ٣٧ · V2: ٢٢ · V3: ٦) — كلّها تغلّف دوالاً موجودة إلا ٦ موسومة «جديد» (A3 A4 A14 N3 N4 · read-all)</td>
+<td>§٤ و§٦</td>
+</tr>
+</tbody>
+</table>
+<h3>أهم ٥ مخاطر/قرارات</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>القرار/الخطر</th>
+<th>الحكم</th>
+<th>الدليل</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>١</td>
+<td><strong>كل الكتابات اليوم Server Actions أو Route Handlers تقرأ <code>auth()</code> من كوكي NextAuth</strong> — التطبيق ما عنده كوكي.</td>
+<td>يُبنى طبقة مصادقة بتوكن Bearer على مدونتي (نفس نمط الكونسول بعد إصلاحه: صفّ جلسة في القاعدة + إلغاء) وتُعاد كتابة نقاط الكتابة كـRoute Handlers تغلّف <strong>نفس</strong> الدوال.</td>
+<td><code>lib/auth.ts:18-21</code> (jwt strategy, cookie) · <code>console/lib/mobile-api/auth.ts:38-96</code> · <code>app/(site)/articles/[slug]/actions/like-article.ts:14</code></td>
+</tr>
+<tr>
+<td>٢</td>
+<td><strong>الدوال الحيّة لا تفصل الهويّة عن المنطق</strong>: <code>likeArticle</code> تنادي <code>auth()</code> داخلها، فلا يمكن استدعاؤها من نقطة Bearer بلا تعديل.</td>
+<td>تعديل تركيبي واحد لكل دالّة: استخراج <code>likeArticleAs(userId, …)</code> ويبقى الأكشن الحالي غلافاً له. صفر منطق ثانٍ.</td>
+<td><code>like-article.ts:12-16</code> · <code>favorite-article.ts:12-16</code> · <code>reel-interactions.ts:31-33</code> · <code>submit-comment.ts:17-25</code></td>
+</tr>
+<tr>
+<td>٣</td>
+<td><strong>العدّادات والتحليلات تعتمد كوكي <code>modonty_view_sid</code> + User-Agent</strong> لمنع التكرار؛ التطبيق بلا كوكي → كل فتح مقال = مشاهدة جديدة وينفخ العدّاد.</td>
+<td>رأس <code>X-Device-Id</code> ثابت من التطبيق يُستعمل بديلاً لـ<code>sessionId</code> في نفس منطق «آخر مشاهدة = نفس المقال».</td>
+<td><code>app/(site)/articles/[slug]/api/view/route.ts:40-50, 77-88</code> · <code>app/api/track/pageview/route.ts:45-70</code></td>
+</tr>
+<tr>
+<td>٤</td>
+<td><strong>GA4 المتصفّحي (GTM) غير موجود في التطبيق</strong>: ٨ أحداث تُرسل من المتصفّح فقط (<code>article_view</code> …) بسبب جلسات «Unassigned».</td>
+<td>التطبيق <strong>لا</strong> يرسل عبر Measurement Protocol من الخادم (نفس المشكلة المقيسة). الخيار: Firebase Analytics SDK في التطبيق لأحداث العرض، والخادم يبقى على MP للأحداث الخادميّة كما هو. قرار لخالد (§٧).</td>
+<td><code>lib/analytics/ga4-browser.ts:1-40</code> · <code>view/route.ts:123-141</code></td>
+</tr>
+<tr>
+<td>٥</td>
+<td><strong>OAuth على الجوّال</strong>: الويب يستعمل Google عبر NextAuth بـredirect وكوكي PKCE؛ هذا لا يعمل داخل تطبيق أصلي. وApple إلزامي على iOS لو عرضنا Google.</td>
+<td>التطبيق يحصل على <code>idToken</code> أصلياً (Google Sign-In / Apple) ويرسله لنقطة <code>POST /auth/google</code> تتحقّق منه بـ<code>google-auth-library.verifyIdToken</code> ثم تربطه بنفس <code>User</code>/<code>Account</code> (adapter).</td>
+<td><code>lib/auth.ts:25-32</code> · <code>auth.config.ts:12-19</code> · Expo docs (§٥)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>٢ · جدول القدرات (ما يملكه القارئ على الويب فعلاً)</h2>
+<p>الرموز: <strong>V1</strong> = أساس تطبيق القراءة · <strong>V2</strong> = بعد الإطلاق · <strong>V3/لا</strong> = لاحقاً أو خارج التطبيق. «أثر» = ما يُكتب غير الصفّ نفسه.</p>
+<h3>٢٫١ المحتوى (قراءة)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>القدرة</th>
+<th>مسار الويب</th>
+<th>الدالة (ملف:سطر)</th>
+<th>مصادقة</th>
+<th>أثر جانبي</th>
+<th>كاش</th>
+<th>التطبيق</th>
+<th>السبب</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>الرئيسية: فيد المقالات (ترتيب اختيارات الأدمن ثم الأحدث)</td>
+<td><code>/</code> · <code>/page/[n]</code></td>
+<td><code>getHomeFeedArticlesCached</code> — <code>app/(site)/(homepage)/data/home-feed-shapes.ts:71-84</code> · <code>getMoreArticles</code> — <code>data/get-more-articles.ts:17-40</code></td>
+<td>لا</td>
+<td>لا</td>
+<td><code>&quot;use cache&quot;</code> · tag <code>articles</code> · hours (<code>home-feed-shapes.ts:72-74</code>) · الصفحة كلّها <code>cacheTag(&quot;homepage&quot;,&quot;articles&quot;,&quot;settings&quot;)</code> (<code>CachedHomePage.tsx:38-42</code>)</td>
+<td><strong>V1</strong></td>
+<td>الشاشة الأولى</td>
+</tr>
+<tr>
+<td>2</td>
+<td>الرئيسية: ريلز + صناعات + شركاء جدد</td>
+<td><code>/</code></td>
+<td><code>getReelsFeedPage</code> · <code>getIndustriesWithCounts</code> · <code>getLatestPartners</code> (<code>lib/queries/get-latest-partners.ts:25-28</code>)</td>
+<td>لا</td>
+<td>لا</td>
+<td>hours</td>
+<td>V1 (ريلز/صناعات)</td>
+<td>أقسام الرئيسية</td>
+</tr>
+<tr>
+<td>3</td>
+<td>أرشيف المقالات مع فلاتر (صناعة/تصنيف/وسم/بحث/ترتيب/وقت قراءة)</td>
+<td><code>/articles</code></td>
+<td><code>getArticlesArchive</code> — <code>lib/articles/archive/get-articles-archive.ts:116-119</code> (سقف ٣٠٠ · <code>:40</code>) · <code>getArticlesFilters</code> <code>:49-52</code> · <code>filterByReadingTime</code></td>
+<td>لا</td>
+<td>لا</td>
+<td>tag <code>articles</code> · hours</td>
+<td><strong>V1</strong></td>
+<td>تصفّح</td>
+</tr>
+<tr>
+<td>4</td>
+<td>صفحة المقال (محتوى + كاتب + شريك + أسئلة + ذات صلة + عدّادات حيّة)</td>
+<td><code>/articles/[slug]</code></td>
+<td><code>getArticlePageData</code> — <code>app/(site)/articles/[slug]/helpers/get-article-page-data.ts:63</code> ← <code>getArticleContentBySlug</code> (<code>data/get-article-content-by-slug.ts:14-17</code>) · <code>getArticleFaqs</code> (<code>:19-22</code>) · <code>getRelatedArticlesByArticleId</code> (<code>:108-116</code>) · <code>getArticleLiveCounts</code> (<code>data/get-article-live-counts.ts:26</code>, غير مكيّش عن قصد)</td>
+<td>لا (الهويّة في جزر Suspense: <code>helpers/get-viewer.ts</code>)</td>
+<td>لا</td>
+<td>محتوى: tag <code>articles</code> hours · عدّادات: حيّة</td>
+<td><strong>V1</strong></td>
+<td>نفس المصدر للعنوان/الوصف/الكاتب/التاريخ (قاعدة <a href="http://AGENTS.md">AGENTS.md</a>)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>تعليقات المقال (المعتمدة فقط) + حالة إعجابي</td>
+<td><code>/articles/[slug]</code></td>
+<td><code>getArticleComments</code> — <code>data/get-article-comments.ts:17-24</code> (<code>CommentStatus.APPROVED</code>) · <code>fetchArticleComments</code> (أكشن) · <code>getMyArticleReactions</code> <code>data/get-my-article-reactions.ts:14</code></td>
+<td>اختيارية</td>
+<td>لا</td>
+<td>حيّ</td>
+<td><strong>V1</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>6</td>
+<td>التصنيفات: قائمة + صفحة تصنيف</td>
+<td><code>/categories</code> · <code>/categories/[slug]</code></td>
+<td><code>getCategoriesEnhanced</code> — <code>app/(site)/categories/helpers/get-categories-enhanced.ts:11</code> (<code>unstable_cache</code>) · <code>loadMoreCategories</code> أكشن <code>categories/actions.ts:11</code> · استعلامات الصفحة داخل <code>categories/[slug]/page.tsx:35-124</code> (٥ دوال <code>use cache</code> tag <code>categories</code>/<code>clients</code>/<code>reviews</code>)</td>
+<td>لا</td>
+<td>لا</td>
+<td>hours</td>
+<td><strong>V1</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>7</td>
+<td>الوسوم: قائمة + صفحة وسم</td>
+<td><code>/tags</code> · <code>/tags/[slug]</code></td>
+<td><code>getTagsEnhanced</code> — <code>tags/helpers/get-tags-enhanced.ts:18</code> · <code>loadMoreTags</code> <code>tags/actions.ts:12</code> · <code>tags/[slug]/page.tsx:46-128</code></td>
+<td>لا</td>
+<td>لا</td>
+<td>hours</td>
+<td>V2</td>
+<td>أقلّ أولوية من التصنيفات</td>
+</tr>
+<tr>
+<td>8</td>
+<td>الصناعات: قائمة + صفحة صناعة (فيد + شركاء)</td>
+<td><code>/industries</code> · <code>/industries/[slug]</code></td>
+<td><code>getIndustriesEnhanced</code> — <code>lib/queries/get-industries-enhanced.ts:16</code> · <code>getIndustryFeed</code> <code>industries/data/get-industry-feed.ts</code> · <code>getIndustriesWithCounts</code> · <code>loadMoreIndustries</code> <code>industries/actions.ts:12</code></td>
+<td>لا</td>
+<td>لا</td>
+<td>hours</td>
+<td><strong>V1</strong></td>
+<td>محور التصفّح في مدونتي</td>
+</tr>
+<tr>
+<td>9</td>
+<td>دليل الشركاء (فلترة/ترتيب)</td>
+<td><code>/clients</code></td>
+<td><code>getClientsList</code> — <code>lib/queries/get-clients-list.ts:59-62</code> (٥٠٠ شريك · <code>:118</code>) · <code>filterPartners</code> · <code>parsePartnersQuery</code></td>
+<td>لا</td>
+<td>لا</td>
+<td>tag <code>clients</code> hours</td>
+<td><strong>V1</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>10</td>
+<td>صفحة الشريك (الرئيسية) + صفحاته الداخلية (about/articles/services/photos/faq/reviews/contact/book/followers/likes/mentions/reels)</td>
+<td><code>/clients/[slug]/**</code></td>
+<td><code>getClientPageData</code> — <code>app/(partner)/clients/[slug]/helpers/client-page-data.ts:15-18,100</code> · <code>getPartnerSite</code> <code>helpers/get-partner-site.ts:12-15</code> · <code>getCachedHomeData</code> <code>:7-11</code> · <code>getClientGallery</code> <code>:20-29</code> · <code>getClientPageFaqs</code> <code>client-faqs.ts:59-61</code> · <code>getClientReviews</code> <code>client-reviews.ts:27-41</code> · <code>getClientFollowers</code> <code>client-followers.ts:5-10</code> · <code>getClientStats</code> <code>client-stats.ts:6-9</code> · <code>getClientEngagementBySlug</code></td>
+<td>لا</td>
+<td>لا</td>
+<td>tags <code>clients</code> + <code>client:&lt;slug&gt;</code> (<code>shared/lib/cache/client-cache-tags.ts:13-22</code>) · hours</td>
+<td><strong>V1</strong> (الرئيسية + المقالات + التواصل) · V2 بقيّة التبويبات</td>
+<td>«أساس البيزنس موديل»</td>
+</tr>
+<tr>
+<td>11</td>
+<td>صفحة الكاتب</td>
+<td><code>/authors/[slug]</code></td>
+<td>استعلامات داخل <code>authors/[slug]/page.tsx:94-126</code> (<code>use cache</code> tag <code>authors</code>)</td>
+<td>لا</td>
+<td>لا</td>
+<td>hours</td>
+<td>V2</td>
+<td>—</td>
+</tr>
+<tr>
+<td>12</td>
+<td>الريلز: فيد عام (cursor) + ريل واحد + جيرانه + فلتر شريك</td>
+<td><code>/reels</code> · <code>/reels/[slug]</code></td>
+<td><code>getReelsFeedPage(cursor, clientSlug)</code> — <code>lib/queries/get-reels-feed-page.ts:48-51</code> (حجم ٦ · <code>reels-feed-shapes.ts:2</code> · <code>nextCursor</code> <code>:126</code>) · <code>getReelClientFilterOptions</code> <code>:16-18</code> · <code>getReelBySlug</code> <code>reels/[slug]/data/get-reel-by-slug.ts:41-45</code> · <code>getReelNeighbors</code> <code>:11-13</code> · <code>getUserReelFlags</code> <code>lib/queries/get-user-reel-flags.ts:4</code></td>
+<td>اختيارية للحالة الشخصية</td>
+<td>لا</td>
+<td>tag <code>reels</code> hours؛ الإعجاب يستدعي <code>updateTag(&quot;reels&quot;)</code> (<code>reel-interactions.ts:61</code>)</td>
+<td><strong>V1</strong></td>
+<td>المحتوى الأعلى تفاعلاً</td>
+</tr>
+<tr>
+<td>13</td>
+<td>تعليقات الريل + إعجاب تعليق</td>
+<td><code>/reels</code></td>
+<td><code>getReelComments(mediaId, userId)</code> — <code>reels/data/get-reel-comments.ts:23-27</code> (APPROVED · سقف ٢٠٠)</td>
+<td>اختيارية</td>
+<td>لا</td>
+<td>حيّ</td>
+<td>V2</td>
+<td>—</td>
+</tr>
+<tr>
+<td>14</td>
+<td>الصوت (مقالات لها <code>audioUrl</code>)</td>
+<td><code>/audio</code></td>
+<td><code>getAudioArticles</code> — <code>audio/data/get-audio-articles.ts:39-42</code></td>
+<td>لا</td>
+<td>لا</td>
+<td>hours</td>
+<td>V2</td>
+<td>مشغّل داخل المقال يكفي V1</td>
+</tr>
+<tr>
+<td>15</td>
+<td>الرائج (٧ أيام)</td>
+<td><code>/trending</code></td>
+<td><code>getTrendingArticles(limit, days)</code> — <code>trending/helpers/get-trending-articles.ts:17-30</code> (React <code>cache</code> فقط، بلا <code>use cache</code>)</td>
+<td>لا</td>
+<td>لا</td>
+<td>لا (حيّ)</td>
+<td>V2</td>
+<td>—</td>
+</tr>
+<tr>
+<td>16</td>
+<td>أخبار مدونتي (مقالات الناشر الأساسي)</td>
+<td><code>/news</code></td>
+<td><code>getArticles</code> — <code>lib/queries/get-articles.ts:11</code> ← <code>getArticlesCached</code> <code>article-feed-shapes.ts:115-118</code></td>
+<td>لا</td>
+<td>لا</td>
+<td>hours</td>
+<td>V2</td>
+<td>—</td>
+</tr>
+<tr>
+<td>17</td>
+<td>قطاعات مدونتي (ai/education/entertainment/entrepreneurship/football/health) + APIs بيانات مفتوحة</td>
+<td><code>/modonty/*</code> · <code>GET /modonty/health/api/drugs</code> …</td>
+<td><code>getSectorArticles</code> · <code>getSectorHero</code> + دوال لكل قطاع (<code>modonty/*/data/*</code>)</td>
+<td>لا</td>
+<td>لا</td>
+<td><code>Cache-Control: s-maxage=86400</code> على الـAPIs (<code>modonty/health/api/drugs/route.ts:14</code>)</td>
+<td>V3</td>
+<td>محتوى تحريري خاص؛ <code>/modonty/[sector]</code> يرجّع 404 (<code>modonty/[sector]/page.tsx:9-11</code>)</td>
+</tr>
+<tr>
+<td>18</td>
+<td>صفحات ثابتة (about/contact/legal×4/trust/story/team/help/faq/terms/quran/accounts)</td>
+<td><code>/about</code> …</td>
+<td><code>getContentPageRow</code> — <code>lib/seo/get-content-page-row.ts</code> (tag <code>pages</code>) · <code>getActiveFAQs</code> <code>help/faq/actions/faq-actions.ts:5</code> · <code>getAccountsData</code> <code>accounts/helpers/get-accounts-data.ts:21-23</code></td>
+<td>لا</td>
+<td>لا</td>
+<td>hours</td>
+<td>V2 (عن/خصوصية/شروط فقط)</td>
+<td>متطلّب متجر التطبيقات: رابط خصوصية</td>
+</tr>
+<tr>
+<td>19</td>
+<td>RSS / llms.txt / image-sitemap</td>
+<td><code>/feed.xml</code> …</td>
+<td><code>app/feed.xml/route.ts:25-30</code></td>
+<td>لا</td>
+<td>لا</td>
+<td><code>s-maxage=3600</code> (<code>:87</code>)</td>
+<td>لا</td>
+<td>للمحرّكات</td>
+</tr>
+</tbody>
+</table>
+<h3>٢٫٢ البحث والاكتشاف</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>القدرة</th>
+<th>مسار الويب</th>
+<th>الدالة</th>
+<th>مصادقة</th>
+<th>أثر</th>
+<th>كاش</th>
+<th>التطبيق</th>
+<th>السبب</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20</td>
+<td>بحث مقالات + شركاء (<code>q</code>, <code>type</code>, ترتيب)</td>
+<td><code>/search</code></td>
+<td><code>getArticles({search})</code> — <code>article-feed-shapes.ts:179-181</code> (<code>contains</code> insensitive على title/excerpt/content) · <code>getClientsSearch</code> — <code>search/helpers/get-clients-search.ts:9-17</code> · <code>safeLiteralSearch</code> <code>lib/search/safe-literal-search.ts</code></td>
+<td>لا</td>
+<td>لا</td>
+<td>hours (مفتاح الكاش يتضمّن النصّ)</td>
+<td><strong>V1</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>21</td>
+<td>مودو (مساعد ذكي: سؤال/تاريخ/تقييم/اسأل الشريك)</td>
+<td><code>/modo-chat</code> · <code>POST /modo-chat/api/chat</code></td>
+<td><code>modo-chat/api/chat/route.ts:45</code> · <code>checkRateLimit</code> <code>data/check-rate-limit.ts:41</code> · <code>spendAnonymousQuestion</code> (كوكي موقَّع <code>modo_trial</code> · <code>check-anonymous-quota.ts:7-9</code>) · <code>rateAnswer</code> · <code>askPartnerFromChat</code> <code>data/ask-partner-from-chat.ts:35-39</code></td>
+<td>اختيارية؛ المجهول ٣ أسئلة بكوكي</td>
+<td>يكتب <code>ChatbotMessage</code> · Cohere</td>
+<td>لا</td>
+<td>V3</td>
+<td>تكلفة Cohere + الحصّة المجهولة تعتمد كوكي؛ تحتاج تصميم حصّة بالجهاز</td>
+</tr>
+</tbody>
+</table>
+<h3>٢٫٣ الحساب والمصادقة</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>القدرة</th>
+<th>مسار الويب</th>
+<th>الدالة</th>
+<th>مصادقة</th>
+<th>أثر</th>
+<th>التطبيق</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>22</td>
+<td>تسجيل بالبريد (name/email/password/marketingConsent/alertTopic)</td>
+<td><code>/users/register</code></td>
+<td><code>registerUser</code> — <code>users/register/actions/register-actions.ts:18-64</code> · <code>registerSchema</code> <code>helpers/schemas/register-schema.ts:6-31</code> · bcrypt 10 (<code>:49</code>)</td>
+<td>لا</td>
+<td>بريد ترحيب + بريد تحقّق (Resend · <code>:93-109</code>) · Telegram أدمن · <code>Conversion SIGNUP</code> · GA4 <code>signup_complete</code> (<code>:118</code>)</td>
+<td><strong>V1</strong></td>
+</tr>
+<tr>
+<td>23</td>
+<td>دخول بالبريد/كلمة المرور</td>
+<td><code>/users/login</code></td>
+<td>NextAuth Credentials — <code>auth.config.ts:20-60</code> (<code>db.user.findUnique</code> + bcrypt)</td>
+<td>—</td>
+<td>GA4 <code>login_start</code> من المتصفّح (<code>users/login/api/track/route.ts:14-24</code>)</td>
+<td><strong>V1</strong> (نقطة Bearer جديدة تعيد نفس التحقّق)</td>
+</tr>
+<tr>
+<td>24</td>
+<td>دخول Google</td>
+<td><code>/users/login</code></td>
+<td>NextAuth Google + <code>allowDangerousEmailAccountLinking</code> — <code>auth.config.ts:12-19</code> · <code>PrismaAdapter</code> <code>lib/auth.ts:20</code> · حدث <code>createUser</code> يسجّل التحويل (<code>lib/auth.ts:38-49</code>)</td>
+<td>—</td>
+<td><code>Conversion SIGNUP</code> · GA4 <code>signup_complete{google}</code></td>
+<td><strong>V1</strong> (idToken أصلي → نقطة جديدة)</td>
+</tr>
+<tr>
+<td>25</td>
+<td>نسيت/إعادة كلمة المرور</td>
+<td><code>/users/forgot-password</code> · <code>/users/reset-password</code></td>
+<td><code>forgotPasswordAction</code> — <code>forgot-password-action.ts:13-52</code> (توكن SHA-256 · بريد Resend) · <code>resetPasswordAction</code> — <code>reset-password-action.ts:15-44</code> (bcrypt 12)</td>
+<td>لا</td>
+<td>بريد</td>
+<td><strong>V1</strong> (الرابط في البريد يفتح الويب — يكفي)</td>
+</tr>
+<tr>
+<td>26</td>
+<td>تحقّق البريد</td>
+<td><code>/users/verify-email?token=</code></td>
+<td><code>users/verify-email/page.tsx:11-26</code> (<code>VerificationToken</code>)</td>
+<td>لا</td>
+<td>—</td>
+<td>لا (يبقى ويب)</td>
+</tr>
+<tr>
+<td>27</td>
+<td>الملف الشخصي (إحصاءات/نشاط/مفضّلة/إعجابات/تعليقات/متابَعون/حجوزات/غير معجَب)</td>
+<td><code>/users/profile/**</code></td>
+<td><code>getProfileStats</code> <code>profile/helpers/profile-stats.ts:20-41</code> · <code>getProfileActivity</code> <code>:35</code> · <code>getProfileFavorites</code> <code>:23</code> · <code>getProfileLiked</code> <code>:28</code> · <code>getProfileComments</code> <code>:39</code> · <code>getProfileFollowing</code> <code>:20</code> · <code>getProfileBookings</code> <code>:19</code> · <code>getProfileDisliked</code> <code>:37</code></td>
+<td><strong>نعم</strong> (<code>auth()</code> + redirect)</td>
+<td>لا</td>
+<td><strong>V1</strong> (المفضّلة + المتابَعون + الإعجابات) · V2 البقيّة</td>
+</tr>
+<tr>
+<td>28</td>
+<td>الإعدادات: تعديل الاسم/النبذة/الصورة · إنشاء/تغيير كلمة المرور · تفضيلات التنبيهات (مواضيع + قنوات + جوّال E.164) · الحسابات المرتبطة</td>
+<td><code>/users/profile/settings</code></td>
+<td><code>updateProfile</code> · <code>createPassword</code> · <code>changePassword</code> — <code>settings/actions/settings-actions.ts:17-139</code> · <code>GET/PUT settings/api/[id]/route.ts:29-153</code> · <code>GET …/accounts/route.ts:6</code> · رفع الصورة <code>POST profile/api/avatar/route.ts:58-89</code> (Bunny · ٤ ميجا) · <code>readAlertPreferences</code> <code>lib/users/read-alert-preferences.ts:22</code></td>
+<td>نعم</td>
+<td><code>revalidatePath</code></td>
+<td>V2</td>
+</tr>
+<tr>
+<td>29</td>
+<td>صفحة مستخدم عامّة</td>
+<td><code>/users/[id]</code></td>
+<td><code>users/[id]/page.tsx:104-137</code> (<code>use cache</code> tag <code>users</code>)</td>
+<td>لا</td>
+<td>لا</td>
+<td>V3</td>
+</tr>
+</tbody>
+</table>
+<h3>٢٫٤ التفاعل (كتابة)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>القدرة</th>
+<th>الدالة (ملف:سطر)</th>
+<th>مصادقة</th>
+<th>أثر جانبي</th>
+<th>التطبيق</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>30</td>
+<td>إعجاب/إلغاء إعجاب مقال (يلغي «لا يعجبني»)</td>
+<td><code>likeArticle(articleId, slug)</code> — <code>articles/[slug]/actions/like-article.ts:12-61</code> · <code>incrementCounters</code> <code>lib/counters/increment-counters.ts:18</code> (<code>$inc</code> بلا transaction)</td>
+<td>نعم</td>
+<td><code>revalidatePath</code> · <code>fireEngagement</code> → Telegram <code>articleLike</code> + GA4 <code>article_like</code> (<code>lib/articles/fire-engagement.ts:15-62</code>)</td>
+<td><strong>V1</strong></td>
+</tr>
+<tr>
+<td>31</td>
+<td>لا يعجبني مقال</td>
+<td><code>dislikeArticle</code> — <code>dislike-article.ts:11-66</code> (ما زال <code>db.article.update increment</code> داخل transaction · <code>:35-57</code>)</td>
+<td>نعم</td>
+<td>Telegram + GA4</td>
+<td>V2</td>
+</tr>
+<tr>
+<td>32</td>
+<td>حفظ/مفضّلة مقال</td>
+<td><code>favoriteArticle</code> — <code>lib/articles/favorite-article.ts:12-53</code></td>
+<td>نعم</td>
+<td>Telegram <code>articleFavorite</code> + GA4</td>
+<td><strong>V1</strong></td>
+</tr>
+<tr>
+<td>33</td>
+<td>تعليق + ردّ (يُنشَر PENDING حتى يعتمده الشريك)</td>
+<td><code>submitComment</code> — <code>submit-comment.ts:17-95</code> · <code>submitReply</code> — <code>submit-reply.ts:17-101</code> · <code>validateCommentContent</code>/<code>sanitizeComment</code> <code>lib/comments/validate-comment.ts</code></td>
+<td>نعم</td>
+<td>Telegram <code>commentNew</code>/<code>commentReply</code> · GA4 · <code>revalidatePath</code></td>
+<td><strong>V1</strong> (تعليق) · V2 (ردّ)</td>
+</tr>
+<tr>
+<td>34</td>
+<td>إعجاب تعليق</td>
+<td><code>likeComment(commentId, slug)</code> — <code>like-comment.ts:12-87</code></td>
+<td>نعم</td>
+<td>Telegram <code>commentLike</code> · GA4</td>
+<td>V2</td>
+</tr>
+<tr>
+<td>35</td>
+<td>مشاركة مقال (تتبّع)</td>
+<td><code>POST /articles/[slug]/api/share</code> — <code>api/share/route.ts:24-127</code> (حدّ ١٠/ساعة/جلسة · <code>:54-67</code>)</td>
+<td>اختيارية</td>
+<td><code>Share</code> row · Telegram <code>articleShare</code> · GA4 <code>article_share</code></td>
+<td><strong>V1</strong></td>
+</tr>
+<tr>
+<td>36</td>
+<td>مشاهدة مقال (عدّاد + Analytics + Clarity tags)</td>
+<td><code>POST /articles/[slug]/api/view</code> — <code>view/route.ts:14-142</code> (dedupe بآخر مشاهدة للجلسة <code>:77-88</code>) · <code>PATCH …/api/analytics/[id]</code> (timeOnPage/scroll/LCP · <code>analytics/[id]/route.ts:11-56</code>)</td>
+<td>اختيارية</td>
+<td><code>ArticleView</code> + <code>Analytics</code> + <code>$inc viewsCount</code> · Telegram <code>articleView</code> · يرجّع params GA4 للمتصفّح</td>
+<td><strong>V1</strong></td>
+</tr>
+<tr>
+<td>37</td>
+<td>نقر رابط داخل المقال / نقر CTA</td>
+<td><code>POST /articles/api/track/article-link-click</code> (<code>:11-70</code>) · <code>POST /api/track/cta-click</code> (<code>:42-90</code> · سقف ٢٠ تنبيه/ساعة/شريك <code>:33</code>)</td>
+<td>اختيارية</td>
+<td>صفوف + Telegram</td>
+<td>V2</td>
+</tr>
+<tr>
+<td>38</td>
+<td>متابعة شريك (ClientLike = متابعة) · «تابع مدونتي» = متابعة صفّ Client الأساسي</td>
+<td><code>GET/POST/DELETE /clients/[slug]/api/follow</code> — <code>follow/route.ts:8-193</code> · <code>FollowCtaButton.tsx:19-27,52</code> · <code>getCoreClientSlug</code> <code>lib/settings/get-core-client-slug.ts:11</code></td>
+<td>نعم</td>
+<td>Telegram <code>clientFollow</code> · GA4 <code>follow_client</code></td>
+<td><strong>V1</strong></td>
+</tr>
+<tr>
+<td>39</td>
+<td>مفضّلة شريك</td>
+<td><code>GET/POST/DELETE /clients/[slug]/api/favorite</code> — <code>favorite/route.ts:21-138</code></td>
+<td>نعم</td>
+<td>Telegram + GA4</td>
+<td>V2</td>
+</tr>
+<tr>
+<td>40</td>
+<td>مشاهدة/مشاركة صفحة شريك</td>
+<td><code>POST /clients/[slug]/api/view</code> (<code>:12-100</code>) · <code>POST …/api/share</code> (<code>:35-98</code>)</td>
+<td>اختيارية</td>
+<td><code>ClientView</code>/<code>Share</code> · Telegram</td>
+<td><strong>V1</strong> (view) · V2 (share)</td>
+</tr>
+<tr>
+<td>41</td>
+<td>تقييم شريك (نجوم + نصّ، PENDING)</td>
+<td><code>postClientReviewAction</code> — <code>clients/[slug]/actions/client-review-actions.ts:30-94</code> (upsert)</td>
+<td>نعم</td>
+<td><code>revalidatePath</code></td>
+<td>V2</td>
+</tr>
+<tr>
+<td>42</td>
+<td>سؤال للشريك (من صفحته أو من مقال)</td>
+<td><code>submitClientPageQuestion</code> — <code>client-faq-actions.ts:23-98</code> (سقف ٥ معلّقة <code>:54-63</code>) · <code>submitAskClient</code> — <code>components/client/submit-ask-client.ts:15-109</code></td>
+<td>نعم (+ اسم وبريد في الحساب <code>:50</code>)</td>
+<td>Telegram <code>askClientQuestion</code> · GA4</td>
+<td>V2</td>
+</tr>
+<tr>
+<td>43</td>
+<td>حجز/اترك رقمك (لشريك)</td>
+<td><code>submitBookingRequest</code> — <code>components/shared/booking-form/booking-actions.ts:149-397</code> · <code>POST /api/booking</code> يغلّفه (<code>api/booking/route.ts:24-67</code>) · <code>recordWhatsappLead</code> <code>:75</code></td>
+<td>اختيارية</td>
+<td><code>BookingRequest</code> · Push لجوّال العميل (<code>lib/mobile-push.ts:15</code>) · <code>Notification</code> للأدمن (<code>:280</code>) · بريد · Telegram <code>bookingRequest</code> · GA4 · اشتراك نشرة اختياري (<code>:379-381</code>)</td>
+<td><strong>V1</strong></td>
+</tr>
+<tr>
+<td>44</td>
+<td>ريلز: إعجاب/حفظ · تعليق/ردّ · إعجاب تعليق · مشاهدة · مشاركة</td>
+<td><code>toggleReelLike</code>/<code>toggleReelFavorite</code> — <code>reels/actions/reel-interactions.ts:96-100</code> · <code>submitReelComment</code> <code>:18</code> · <code>submitReelCommentReply</code> <code>:14</code> · <code>toggleReelCommentLike</code> <code>:14</code> · <code>trackReelView</code> <code>track-reel-view.ts:31-47</code> (بلا dedupe) · <code>trackReelShareEvent</code> <code>:17</code></td>
+<td>نعم (إلا view/share)</td>
+<td><code>updateTag(&quot;reels&quot;)</code> · Telegram · GA4</td>
+<td><strong>V1</strong> (like/save/view) · V2 (تعليق/مشاركة)</td>
+</tr>
+<tr>
+<td>45</td>
+<td>ريلزي (ما أعجبني/حفظته)</td>
+<td><code>getMyReels</code> — <code>reels/data/get-my-reels.ts:25</code> · <code>fetchMyReels</code></td>
+<td>نعم</td>
+<td>—</td>
+<td>V2</td>
+</tr>
+<tr>
+<td>46</td>
+<td>اشتراك النشرة العامّة · اشتراك نشرة شريك</td>
+<td><code>POST /api/news/subscribe</code> (<code>:23-90</code> · حدّ IP في الذاكرة) · <code>POST /api/subscribers</code> (<code>:17-92</code> · ٥/ساعة/بريد)</td>
+<td>لا</td>
+<td>بريد ترحيب · Telegram · <code>Conversion NEWSLETTER</code></td>
+<td>V2</td>
+</tr>
+<tr>
+<td>47</td>
+<td>رسالة تواصل (دعم)</td>
+<td><code>submitContactMessage</code> — <code>contact/actions/contact-actions.ts:21-94</code> · <code>POST /contact/api</code> (<code>:10-53</code> · ٣/ساعة/IP)</td>
+<td>اختيارية</td>
+<td><code>ContactMessage</code> · Telegram <code>supportMessage</code> · GA4</td>
+<td>V2</td>
+</tr>
+<tr>
+<td>48</td>
+<td>تقييم سؤال شائع (مفيد/لا)</td>
+<td><code>submitFAQFeedback</code> — <code>help/faq/actions/faq-feedback-actions.ts:7-36</code></td>
+<td>اختيارية</td>
+<td>—</td>
+<td>لا</td>
+</tr>
+<tr>
+<td>49</td>
+<td>تفعيل تنبيه موضوع (قطاعات)</td>
+<td><code>enableTopicAlert</code> — <code>modonty/actions.ts:22-38</code></td>
+<td>نعم</td>
+<td>يكتب <code>notificationPreferences</code></td>
+<td>V3</td>
+</tr>
+<tr>
+<td>50</td>
+<td>عجلة الحظّ (حملة)</td>
+<td><code>POST /api/lucky-wheel</code> (<code>:25-67</code> · حدّ IP في الذاكرة)</td>
+<td>لا</td>
+<td><code>LuckyWheel</code> row</td>
+<td>لا (حملة موسمية)</td>
+</tr>
+</tbody>
+</table>
+<h3>٢٫٥ الإشعارات</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>القدرة</th>
+<th>الدالة</th>
+<th>مصادقة</th>
+<th>التطبيق</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>51</td>
+<td>قائمة إشعاراتي (<code>comment_*</code> · <code>reel_comment_*</code> · <code>faq_reply</code> · ردّ رسالة تواصل) + تفاصيل + عدّاد غير المقروء</td>
+<td><code>users/notifications/page.tsx:78-128</code> · <code>getUnreadNotificationCount</code> <code>app/layout/components/notifications/get-unread-notification-count.ts:16</code> · <code>markNotificationAsRead</code> <code>notifications/actions/notifications-actions.ts:7-15</code></td>
+<td>نعم</td>
+<td><strong>V1</strong> (قائمة + قراءة)</td>
+</tr>
+<tr>
+<td>52</td>
+<td>من يكتب الإشعار؟</td>
+<td><strong>مدونتي لا تكتب أي إشعار للقارئ</strong> (<code>db.notification.create</code> الوحيد للأدمن: <code>booking-actions.ts:280</code>). الكاتب هو الكونسول (اعتماد تعليق/ردّ سؤال) والأدمن.</td>
+<td>—</td>
+<td>Push للقارئ <strong>غير موجود</strong> في أي طبقة اليوم (<code>MobileDevice</code> مرتبط بـ<code>clientId</code> فقط · <code>shared/prisma/schema/schema.prisma:5182-5209</code>) → يحتاج جدولاً جديداً <code>ReaderDevice</code> + نداء من الكونسول/الأدمن عند الكتابة. V2.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>٣ · نقاط API الموجودة اليوم — ما يصلح للتطبيق كما هو</h2>
+<table>
+<thead>
+<tr>
+<th>النقطة</th>
+<th>عامّة؟</th>
+<th>تعتمد كوكي؟</th>
+<th>الحكم للتطبيق</th>
+<th>الدليل</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /articles/api/list?page&amp;sort&amp;time&amp;industry&amp;category&amp;tag&amp;search&amp;modonty=1</code></td>
+<td>نعم</td>
+<td>لا</td>
+<td><strong>قابلة للاستعمال فوراً</strong> (مكتوب فيها «the door the mobile app will use») — لكن صفحات offset على مصفوفة ≤٣٠٠، بلا <code>Cache-Control</code>، وترجع <code>FeedPost</code> كاملاً</td>
+<td><code>articles/api/list/route.ts:11-45</code></td>
+</tr>
+<tr>
+<td><code>GET /api/articles?page&amp;category&amp;client&amp;view</code> (الرئيسية)</td>
+<td>نعم</td>
+<td>لا</td>
+<td>قابلة فوراً («Public endpoint for the coming mobile app») — offset</td>
+<td><code>(homepage)/api/articles/route.ts:3-25</code></td>
+</tr>
+<tr>
+<td><code>POST /api/news/subscribe</code> · <code>POST /api/subscribers</code></td>
+<td>نعم</td>
+<td>لا (IP فقط)</td>
+<td>قابلة؛ لكن <code>getOrCreateSessionId</code> يكتب كوكي لن يراه التطبيق — يعمل بلا ضرر</td>
+<td><code>api/news/subscribe/route.ts:84-88</code></td>
+</tr>
+<tr>
+<td><code>POST /api/booking</code></td>
+<td>نعم</td>
+<td>لا</td>
+<td>قابلة فوراً؛ تمرّر لنفس الأكشن</td>
+<td><code>api/booking/route.ts:46-57</code></td>
+</tr>
+<tr>
+<td><code>POST /api/lucky-wheel</code></td>
+<td>نعم</td>
+<td>لا</td>
+<td>قابلة؛ حملة</td>
+<td><code>api/lucky-wheel/route.ts:25</code></td>
+</tr>
+<tr>
+<td><code>POST /articles/[slug]/api/view</code> · <code>/share</code> · <code>PATCH /api/analytics/[id]</code> · <code>/clients/[slug]/api/view</code> · <code>/share</code> · <code>/api/track/pageview</code> · <code>/api/track/cta-click</code> · <code>article-link-click</code></td>
+<td>نعم</td>
+<td><strong>نعم</strong> — <code>modonty_view_sid</code> للتكرار/الحدّ، و<code>auth()</code> اختياري</td>
+<td>لا تُستعمل مباشرة: بلا الكوكي يسقط dedupe والحدّ. تُعاد كتابتها خلف <code>/api/mobile/v1</code> بمفتاح <code>X-Device-Id</code></td>
+<td><code>view/route.ts:40-50,77</code> · <code>share/route.ts:54-67</code></td>
+</tr>
+<tr>
+<td><code>GET/POST/DELETE /clients/[slug]/api/follow</code> · <code>/favorite</code></td>
+<td>—</td>
+<td><strong>نعم</strong> <code>auth()</code></td>
+<td>لا تُستعمل مباشرة (كوكي NextAuth فقط)</td>
+<td><code>follow/route.ts:13-17</code></td>
+</tr>
+<tr>
+<td><code>GET/PUT /users/profile/settings/api/[id]</code> · <code>/accounts</code> · <code>POST /users/profile/api/avatar</code></td>
+<td>—</td>
+<td>نعم</td>
+<td>نفس الشيء</td>
+<td><code>settings/api/[id]/route.ts:34</code></td>
+</tr>
+<tr>
+<td><code>POST /modo-chat/api/*</code> · <code>GET conversation/history/memory</code></td>
+<td>—</td>
+<td>جزئياً (<code>modo_trial</code> + <code>auth()</code>)</td>
+<td>V3</td>
+<td><code>check-anonymous-quota.ts:9</code></td>
+</tr>
+<tr>
+<td><code>GET /modonty/*/api/*</code> (أدوية/مرافق/مدارس/أنشطة)</td>
+<td>نعم</td>
+<td>لا</td>
+<td>قابلة؛ V3</td>
+<td><code>Cache-Control</code> موجود</td>
+</tr>
+<tr>
+<td><code>POST /api/revalidate*</code></td>
+<td>داخلية (سرّ)</td>
+<td>—</td>
+<td><strong>لا</strong></td>
+<td><code>api/revalidate/tag/route.ts:31-45</code></td>
+</tr>
+<tr>
+<td><code>GET/POST /api/auth/[...nextauth]</code></td>
+<td>—</td>
+<td>كوكي</td>
+<td>لا تُستعمل من التطبيق (redirect + PKCE cookies)</td>
+<td><code>lib/auth.ts:25-32</code></td>
+</tr>
+<tr>
+<td><code>/users/login/api/track</code> · <code>/users/register/api/track</code></td>
+<td>نعم</td>
+<td><code>auth()</code> اختياري</td>
+<td>يُستبدل بأحداث التطبيق</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>الصيغ الحالية غير موحّدة</strong>: <code>{success,data,error}</code> (<code>lib/types.ts:6</code>) · <code>{ok}</code> · <code>{items,hasMore}</code> · <code>Response.json({error})</code>. الكونسول يستعمل <code>{data}</code> / <code>{error:{code,message}}</code> (<code>console/lib/mobile-api/http.ts:22-31</code>). <strong>الحكم:</strong> تطبيق القارئ يأخذ غلاف الكونسول نفسه.</p>
+<hr>
+<h2>٤ · عقد الـAPI المقترح — <code>modonty/app/api/mobile/v1/**</code></h2>
+<h3>٤٫٠ القواعد العامّة للعقد</h3>
+<table>
+<thead>
+<tr>
+<th>البند</th>
+<th>القرار</th>
+<th>المرجع</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>الغلاف</td>
+<td>نجاح <code>{ data }</code> · فشل <code>{ error: { code, message, details? } }</code> · الرموز: <code>UNAUTHORIZED 401</code> <code>FORBIDDEN 403</code> <code>NOT_FOUND 404</code> <code>VALIDATION_ERROR 422</code> <code>CONFLICT 409</code> <code>RATE_LIMITED 429</code> <code>INTERNAL_ERROR 500</code> — نسخة <code>modonty/lib/mobile-api/http.ts</code> مطابقة لـ<code>console/lib/mobile-api/http.ts:3-31</code></td>
+<td>إعادة استعمال</td>
+</tr>
+<tr>
+<td>قراءة الجسم</td>
+<td><code>readBody(request, zodSchema)</code> — نسخة <code>console/lib/mobile-api/request.ts:5-8</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>المعرّفات</td>
+<td>ObjectId يُفحص قبل القاعدة (<code>console/lib/mobile-api/params.ts:6,19</code>)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>المصادقة</td>
+<td><code>Authorization: Bearer &lt;token&gt;</code> · التوكن <code>next-auth/jwt encode</code> بـsalt خاص <code>modonty-reader-mobile-v1</code> ويحمل <code>sid</code> لصفّ <code>ReaderSession</code> (§٥)</td>
+<td><code>console/lib/mobile-api/auth.ts:17,38-67</code></td>
+</tr>
+<tr>
+<td>هويّة الجهاز</td>
+<td>رأس <code>X-Device-Id</code> (UUID يولّده التطبيق مرّة ويخزّنه) · إلزامي على نقاط التتبّع؛ يحلّ مكان <code>modonty_view_sid</code></td>
+<td><code>view/route.ts:40-50</code></td>
+</tr>
+<tr>
+<td>الترقيم</td>
+<td><strong>cursor</strong> لكل قائمة جديدة (<code>?cursor=&lt;id&gt;&amp;limit=</code>) ← يُرجَع <code>{ items, nextCursor }</code>؛ الدوال الحالية offset (<code>getArticles</code> <code>skip/take</code> <code>article-feed-shapes.ts:194-195</code>) تبقى كما هي خلف نقاط «الرئيسية» و«الأرشيف» لأن ترتيبها تحريري ومسقوف (٣٠٠) — تُرجَع <code>{ items, page, hasMore }</code></td>
+<td><code>get-reels-feed-page.ts:91-92,126</code> نموذج cursor موجود</td>
+</tr>
+<tr>
+<td>الكاش للقراءة العامّة</td>
+<td>النقطة تنادي دالّة <code>&quot;use cache&quot;</code> الموجودة (نفس الوسم ونفس <code>cacheLife</code>) <strong>و</strong>تضيف <code>Cache-Control: public, s-maxage=300, stale-while-revalidate=3600</code> على النقاط العامّة فقط؛ أي نقطة تقرأ Bearer أو <code>X-Device-Id</code> → <code>Cache-Control: private, no-store</code></td>
+<td><code>modonty/health/api/drugs/route.ts:14</code> نمط موجود</td>
+</tr>
+<tr>
+<td>الحقول</td>
+<td><strong>نفس</strong> أنواع الويب: <code>FeedPost</code> (<code>lib/types.ts:70-112</code>) للقوائم · <code>ArticleResponse</code> (<code>:20-59</code>) للمقال · <code>ClientListItem</code> (<code>get-clients-list.ts:8-30</code>) للشركاء · <code>ReelFeedItem</code> (<code>reels-feed-shapes.ts:4</code>) للريلز. لا DTO ثانٍ.</td>
+<td><a href="http://AGENTS.md">AGENTS.md</a></td>
+</tr>
+<tr>
+<td>الرسائل</td>
+<td>عربية، بصيغة الويب الحالية حيث وُجدت (مثال <code>&quot;يجب تسجيل الدخول لطرح سؤال&quot;</code> <code>client-faq-actions.ts:29</code>)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>الحدّ</td>
+<td>مثل الكونسول: حدّ دخول في القاعدة ٥/١٥ دقيقة (<code>console/lib/mobile-api/login-throttle.ts:10-11</code>) لا في الذاكرة (<code>api/news/subscribe/is-subscribe-rate-limited.ts</code> في الذاكرة — لا يصلح على Vercel)</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3>٤٫١ المحتوى (قراءة) — عامّة</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Method · Path</th>
+<th>Request (Zod)</th>
+<th>Response <code>data</code></th>
+<th>ترقيم</th>
+<th>كاش</th>
+<th>يغلّف</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1</td>
+<td><code>GET /home</code></td>
+<td>—</td>
+<td><code>{ articles: FeedPost[], reels: ReelFeedItem[], industries: {…}[], partners: LatestPartner[] }</code></td>
+<td>—</td>
+<td>tags <code>homepage/articles/reels/settings</code> hours + CDN 300s</td>
+<td><code>getHomeFeedArticlesCached</code> · <code>getReelsFeedPage()</code> · <code>getIndustriesWithCounts</code> · <code>getLatestPartners</code> — نفس <code>CachedHomePage.tsx:5-11</code></td>
+</tr>
+<tr>
+<td>C2</td>
+<td><code>GET /articles?page&amp;category&amp;client&amp;view</code></td>
+<td><code>page:int≥1</code>, <code>view∈latest/popular/audio</code></td>
+<td><code>MoreArticlesResult {articles: FeedPost[], hasMore}</code></td>
+<td>offset</td>
+<td>hours + CDN</td>
+<td><code>getMoreArticles</code> (<code>get-more-articles.ts:17</code>) — <strong>موجودة</strong> كـ<code>/api/articles</code>؛ تُعاد تحت <code>/mobile/v1</code> بالغلاف الموحّد</td>
+</tr>
+<tr>
+<td>C3</td>
+<td><code>GET /articles/archive?page&amp;sort&amp;time&amp;industry&amp;category&amp;tag&amp;search&amp;modonty</code></td>
+<td>كما في <code>articles/api/list/route.ts:16-33</code></td>
+<td><code>{ items: ArchiveArticle[], hasMore, filters? }</code></td>
+<td>offset (≤٣٠٠)</td>
+<td>hours + CDN</td>
+<td><code>getArticlesArchive</code> + <code>filterByReadingTime</code> (+ <code>getArticlesFilters</code> عند <code>?withFilters=1</code>)</td>
+</tr>
+<tr>
+<td>C4</td>
+<td><code>GET /articles/:slug</code></td>
+<td>slug ≤٢٠٠</td>
+<td><code>{ article: ArticleResponse+content(sanitized), faqs, related, readMore, cta }</code> — <strong>نفس</strong> ما ترجعه <code>getArticlePageData</code></td>
+<td>—</td>
+<td>tag <code>articles</code> hours + CDN</td>
+<td><code>getArticlePageData(slug)</code> (<code>get-article-page-data.ts:63-172</code>)</td>
+</tr>
+<tr>
+<td>C5</td>
+<td><code>GET /articles/:slug/counts</code></td>
+<td>—</td>
+<td><code>ArticleLiveCounts {likes,favorites,comments,views}</code> + (مع Bearer) <code>{ liked, disliked, favorited }</code></td>
+<td>—</td>
+<td><code>no-store</code></td>
+<td><code>getArticleLiveCounts</code> (<code>:26</code>) · <code>getMyArticleReactions</code> (<code>:14</code>)</td>
+</tr>
+<tr>
+<td>C6</td>
+<td><code>GET /articles/:id/comments</code></td>
+<td>id ObjectId</td>
+<td><code>{ comments: Comment[] (APPROVED, شجرة) , likedByMe[] }</code></td>
+<td>— (الويب بلا سقف · <code>get-article-comments.ts:24</code>) → نضيف <code>take:200</code> كالريلز</td>
+<td><code>no-store</code></td>
+<td><code>getArticleComments</code> + <code>flattenCommentsWithContext</code></td>
+</tr>
+<tr>
+<td>C7</td>
+<td><code>GET /categories?search&amp;sort&amp;page</code></td>
+<td>—</td>
+<td><code>CategoryResponse[]</code></td>
+<td>offset</td>
+<td>hours + CDN</td>
+<td><code>getCategoriesEnhanced</code> (<code>get-categories-enhanced.ts:11</code>)</td>
+</tr>
+<tr>
+<td>C8</td>
+<td><code>GET /categories/:slug?page</code></td>
+<td>—</td>
+<td><code>{ category, articles: FeedPost[], partners, hasMore }</code></td>
+<td>offset</td>
+<td>hours + CDN</td>
+<td>الدوال الـ<code>use cache</code> داخل <code>categories/[slug]/page.tsx:35-124</code> <strong>تُستخرج</strong> إلى <code>categories/[slug]/data/*.ts</code> (نقل بلا تغيير)</td>
+</tr>
+<tr>
+<td>C9</td>
+<td><code>GET /tags</code> · <code>GET /tags/:slug</code></td>
+<td>—</td>
+<td>مثل C7/C8</td>
+<td>offset</td>
+<td>hours</td>
+<td><code>getTagsEnhanced</code> · <code>tags/[slug]/page.tsx:46-128</code> (استخراج مماثل) — V2</td>
+</tr>
+<tr>
+<td>C10</td>
+<td><code>GET /industries</code> · <code>GET /industries/:slug?page</code></td>
+<td>—</td>
+<td><code>IndustryListItem[]</code> · <code>{ industry, feed: FeedPost[], partners }</code></td>
+<td>offset</td>
+<td>hours</td>
+<td><code>getIndustriesEnhanced</code> · <code>getIndustryFeed</code> · <code>getClientsList</code></td>
+</tr>
+<tr>
+<td>C11</td>
+<td><code>GET /partners?q&amp;industry&amp;city&amp;sort</code></td>
+<td>كما <code>parsePartnersQuery</code></td>
+<td><code>ClientListItem[]</code> (مفلترة)</td>
+<td>offset</td>
+<td>tag <code>clients</code> hours + CDN</td>
+<td><code>getClientsList</code> + <code>filterPartners</code> (<code>clients/helpers/*</code>)</td>
+</tr>
+<tr>
+<td>C12</td>
+<td><code>GET /partners/:slug</code></td>
+<td>—</td>
+<td><code>{ page: ClientPageData, site: PartnerSite, home: CachedHomeData, gallery[], faqs[], stats }</code></td>
+<td>—</td>
+<td>tags <code>clients</code>,<code>client:&lt;slug&gt;</code> + CDN</td>
+<td><code>getClientPageData</code> · <code>getPartnerSite</code> · <code>getCachedHomeData</code> · <code>getClientGallery</code> · <code>getClientPageFaqs</code> · <code>getClientStats</code></td>
+</tr>
+<tr>
+<td>C13</td>
+<td><code>GET /partners/:slug/articles?page</code> · <code>/reviews?page</code> · <code>/followers</code></td>
+<td>—</td>
+<td><code>FeedPost[]</code> · <code>ClientReview[] (APPROVED)</code> · followers</td>
+<td>offset</td>
+<td>hours</td>
+<td><code>getClientPageData</code> (مقالات) · <code>getClientReviews</code> · <code>getClientFollowers</code> — V2</td>
+</tr>
+<tr>
+<td>C14</td>
+<td><code>GET /reels?cursor&amp;client</code></td>
+<td><code>cursor: ObjectId?</code> · <code>client: slug?</code></td>
+<td><code>{ items: ReelFeedItemWithState[], nextCursor }</code> (الحالة الشخصية مع Bearer)</td>
+<td><strong>cursor</strong> (٦)</td>
+<td>tag <code>reels</code> hours؛ مع Bearer <code>no-store</code></td>
+<td><code>getReelsFeedPage(cursor, clientSlug)</code> + <code>getUserReelFlags</code> — نفس <code>load-more.ts:14-17</code></td>
+</tr>
+<tr>
+<td>C15</td>
+<td><code>GET /reels/filters</code></td>
+<td>—</td>
+<td><code>ReelClientFilterOption[]</code></td>
+<td>—</td>
+<td>hours + CDN</td>
+<td><code>getReelClientFilterOptions</code></td>
+</tr>
+<tr>
+<td>C16</td>
+<td><code>GET /reels/:slug</code></td>
+<td>—</td>
+<td><code>{ reel: ReelWatch, neighbors: {newer, older} }</code></td>
+<td>—</td>
+<td>hours + CDN</td>
+<td><code>getReelBySlug</code> · <code>getReelNeighbors</code></td>
+</tr>
+<tr>
+<td>C17</td>
+<td><code>GET /reels/:id/comments</code></td>
+<td>—</td>
+<td><code>ReelComment[]</code> (مع <code>likedByMe</code>)</td>
+<td>≤٢٠٠</td>
+<td><code>no-store</code></td>
+<td><code>getReelComments(mediaId, userId)</code> — V2</td>
+</tr>
+<tr>
+<td>C18</td>
+<td><code>GET /authors/:slug?page</code></td>
+<td>—</td>
+<td><code>{ author, articles, hasMore }</code></td>
+<td>offset</td>
+<td>hours</td>
+<td>استخراج دوال <code>authors/[slug]/page.tsx:94-126</code> — V2</td>
+</tr>
+<tr>
+<td>C19</td>
+<td><code>GET /audio</code> · <code>GET /trending?period</code> · <code>GET /news?page</code></td>
+<td>—</td>
+<td><code>AudioArticle[]</code> · <code>ArticleResponse[]</code> · <code>FeedPost[]</code></td>
+<td>—</td>
+<td>hours / حيّ</td>
+<td><code>getAudioArticles</code> · <code>getTrendingArticles</code> · <code>getArticles</code> — V2</td>
+</tr>
+<tr>
+<td>C20</td>
+<td><code>GET /pages/:key</code> (<code>about</code>,<code>privacy-policy</code>,<code>user-agreement</code>,<code>terms</code>)</td>
+<td>key enum</td>
+<td><code>{ title, html, updatedAt }</code></td>
+<td>—</td>
+<td>tag <code>pages</code> hours + CDN</td>
+<td><code>getContentPageRow</code> — V2</td>
+</tr>
+</tbody>
+</table>
+<h3>٤٫٢ الاكتشاف والبحث — عامّة</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Method · Path</th>
+<th>Request</th>
+<th>Response</th>
+<th>ترقيم</th>
+<th>كاش</th>
+<th>يغلّف</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>`GET /search?q&amp;type=articles</td>
+<td>partners</td>
+<td>all&amp;page&amp;sort`</td>
+<td><code>q: string.trim().min(2).max(100)</code> · <code>safeLiteralSearch</code></td>
+<td><code>{ articles: {items: ArticleResponse[], total}, partners: ClientResponse[] }</code></td>
+<td>offset</td>
+</tr>
+<tr>
+<td>S2</td>
+<td><code>GET /search/suggest?q</code></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td><strong>جديد — لا يُبنى</strong>: لا يوجد مصدر على الويب؛ V3 لو طُلب</td>
+</tr>
+</tbody>
+</table>
+<h3>٤٫٣ المصادقة والحساب</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Method · Path</th>
+<th>Auth</th>
+<th>Request (Zod)</th>
+<th>Response</th>
+<th>أخطاء</th>
+<th>أثر</th>
+<th>يغلّف</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td><code>POST /auth/register</code></td>
+<td>عامّة</td>
+<td><code>registerSchema</code> نفسه (<code>register-schema.ts:6-31</code>) + <code>deviceId</code></td>
+<td><code>{ accessToken, refreshToken, expiresIn, user:{id,name,email,image,hasPassword} }</code></td>
+<td><code>VALIDATION_ERROR</code> · <code>CONFLICT &quot;البريد الإلكتروني مستخدم بالفعل&quot;</code> (<code>register-actions.ts:45</code>)</td>
+<td>نفس <code>registerUser</code>: بريدان · Telegram · Conversion · GA4</td>
+<td><code>registerUser(data)</code> ثم <code>startReaderSession</code></td>
+</tr>
+<tr>
+<td>A2</td>
+<td><code>POST /auth/login</code></td>
+<td>عامّة</td>
+<td><code>{ email: email.max(320), password: min(1).max(256) }</code></td>
+<td>كما A1</td>
+<td><code>RATE_LIMITED</code> (٥/١٥ دقيقة بالقاعدة · <code>Retry-After</code>) · <code>UNAUTHORIZED &quot;البريد الإلكتروني أو كلمة المرور غير صحيحة.&quot;</code></td>
+<td>يسجّل <code>login_start</code>؟ لا — الويب لا يسجّل <code>login_complete</code> (<code>login/api/track/route.ts:12</code>)</td>
+<td><strong>نفس</strong> تحقّق <code>auth.config.ts:32-47</code> يُستخرج إلى <code>lib/auth/verify-credentials.ts</code> ويُستعمل من الاثنين</td>
+</tr>
+<tr>
+<td>A3</td>
+<td><code>POST /auth/google</code></td>
+<td>عامّة</td>
+<td><code>{ idToken: string, deviceId }</code></td>
+<td>كما A1</td>
+<td><code>UNAUTHORIZED &quot;تعذّر التحقّق من حساب جوجل.&quot;</code></td>
+<td>إن أنشأ مستخدماً جديداً: نفس <code>events.createUser</code> (<code>lib/auth.ts:38-49</code>: Conversion + GA4 <code>signup_complete{google}</code>)</td>
+<td><strong>جديد</strong>: <code>google-auth-library.verifyIdToken({idToken, audience:[webClientId, iosClientId, androidClientId]})</code> → <code>email_verified</code> → <code>db.account.findUnique({provider:'google', providerAccountId: sub})</code> وإلا ربط بالبريد (نفس سياسة <code>allowDangerousEmailAccountLinking</code> <code>auth.config.ts:15-18</code>)</td>
+</tr>
+<tr>
+<td>A4</td>
+<td><code>POST /auth/apple</code></td>
+<td>عامّة</td>
+<td><code>{ identityToken, nonce, fullName? }</code></td>
+<td>كما A1</td>
+<td>—</td>
+<td>—</td>
+<td><strong>جديد</strong> (إلزامي iOS — §٥). التحقّق بـJWKS أبل (<code>jose</code>) · <code>Account.provider='apple'</code></td>
+</tr>
+<tr>
+<td>A5</td>
+<td><code>POST /auth/refresh</code></td>
+<td>Bearer (refresh)</td>
+<td>—</td>
+<td><code>{ accessToken, refreshToken, expiresIn }</code></td>
+<td><code>UNAUTHORIZED &quot;انتهت الجلسة. سجّل الدخول مرة أخرى.&quot;</code></td>
+<td>يدوّر <code>refreshToken</code> ويحدّث <code>ReaderSession.expiresAt</code></td>
+<td>نمط <code>refreshMobileSession</code> (<code>console/lib/mobile-api/auth.ts:70-73</code>)</td>
+</tr>
+<tr>
+<td>A6</td>
+<td><code>POST /auth/logout</code></td>
+<td>Bearer</td>
+<td><code>{ deviceId? }</code></td>
+<td><code>{ signedOut: true }</code></td>
+<td>—</td>
+<td>يلغي صفّ الجلسة <strong>ويعطّل <code>ReaderDevice</code></strong> للجهاز (علاج الخلل ٣ في تدقيق الكونسول)</td>
+<td>نمط <code>endMobileSession</code> (<code>:79-87</code>)</td>
+</tr>
+<tr>
+<td>A7</td>
+<td><code>POST /auth/forgot-password</code></td>
+<td>عامّة</td>
+<td><code>{ email }</code></td>
+<td><code>{ sent: true }</code> دائماً</td>
+<td>—</td>
+<td>بريد Resend</td>
+<td><code>forgotPasswordAction</code> (يقبل FormData اليوم <code>:13</code> → غلاف يبني FormData أو يُستخرج جسمه)</td>
+</tr>
+<tr>
+<td>A8</td>
+<td><code>GET /me</code></td>
+<td>Bearer</td>
+<td>—</td>
+<td><code>{ user:{id,name,email,image,bio,createdAt,hasPassword,phone?}, stats: ProfileStats, unreadNotifications }</code></td>
+<td>—</td>
+<td>—</td>
+<td><code>db.user.findUnique</code> select كما <code>auth.config.ts:100-111</code> · <code>getProfileStats</code> · <code>getUnreadNotificationCount</code></td>
+</tr>
+<tr>
+<td>A9</td>
+<td><code>PATCH /me</code></td>
+<td>Bearer</td>
+<td><code>profileSchema</code> (<code>settings-schemas.ts</code>)</td>
+<td><code>{ user }</code></td>
+<td><code>VALIDATION_ERROR</code></td>
+<td><code>revalidatePath(&quot;/users/profile&quot;)</code> كما <code>settings-actions.ts:40-41</code></td>
+<td><code>updateProfile(userId, data)</code> بعد استخراج الهويّة</td>
+</tr>
+<tr>
+<td>A10</td>
+<td><code>POST /me/avatar</code></td>
+<td>Bearer · multipart</td>
+<td>≤٤ ميجا · jpg/png/webp</td>
+<td><code>{ url }</code></td>
+<td>كما <code>avatar/route.ts:69-83</code></td>
+<td>Bunny</td>
+<td>نفس جسم <code>avatar/route.ts:58-89</code> بعد استبدال <code>auth()</code> — V2</td>
+</tr>
+<tr>
+<td>A11</td>
+<td><code>POST /me/password</code></td>
+<td>Bearer</td>
+<td><code>passwordSchema</code></td>
+<td><code>{ ok }</code></td>
+<td><code>&quot;كلمة المرور الحالية غير صحيحة&quot;</code> (<code>:135</code>)</td>
+<td><strong>يلغي كل جلسات القارئ عدا الحالية</strong> (نمط <code>revokeAllMobileSessions</code> <code>console/lib/mobile-api/auth.ts:90-96</code>)</td>
+<td><code>changePassword</code>/<code>createPassword</code> — V2</td>
+</tr>
+<tr>
+<td>A12</td>
+<td><code>GET/PUT /me/alerts</code></td>
+<td>Bearer</td>
+<td><code>{ topics, channels, phone(E.164) }</code></td>
+<td><code>AlertPreferences</code></td>
+<td>—</td>
+<td>—</td>
+<td><code>readAlertPreferences</code> + أكشن التنبيهات في <code>settings-actions.ts</code> — V2</td>
+</tr>
+<tr>
+<td>A13</td>
+<td><code>GET /me/favorites?page</code> · <code>/me/following?page</code> · <code>/me/liked?page</code> · <code>/me/comments?page</code> · <code>/me/bookings?page</code> · <code>/me/reels</code></td>
+<td>Bearer</td>
+<td><code>page, limit≤50</code></td>
+<td>نفس مخرجات <code>profile-*.ts</code></td>
+<td>—</td>
+<td>—</td>
+<td><code>getProfileFavorites</code> · <code>getProfileFollowing</code> · <code>getProfileLiked</code> · <code>getProfileComments</code> · <code>getProfileBookings</code> · <code>getMyReels</code></td>
+</tr>
+<tr>
+<td>A14</td>
+<td><code>DELETE /me</code></td>
+<td>Bearer</td>
+<td><code>{ password? }</code></td>
+<td><code>{ deleted: true }</code></td>
+<td>—</td>
+<td>—</td>
+<td><strong>جديد — لا يوجد على الويب</strong> · متطلّب متجري (Apple 5.1.1(v)) · قرار لخالد</td>
+</tr>
+</tbody>
+</table>
+<h3>٤٫٤ التفاعل (كتابة) — Bearer إلا ما ذُكر</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Method · Path</th>
+<th>Request</th>
+<th>Response</th>
+<th>أثر (نفس الويب)</th>
+<th>يغلّف (بعد استخراج <code>…As(userId)</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E1</td>
+<td><code>POST /articles/:id/like</code> (toggle)</td>
+<td><code>{ slug }</code></td>
+<td><code>{ liked: boolean, likesCount, dislikesCount }</code></td>
+<td><code>incrementCounters</code> · <code>revalidatePath</code> · Telegram+GA4 عبر <code>fireEngagement</code></td>
+<td><code>likeArticle</code> (<code>like-article.ts:12</code>)</td>
+</tr>
+<tr>
+<td>E2</td>
+<td><code>POST /articles/:id/dislike</code> (toggle)</td>
+<td><code>{ slug }</code></td>
+<td><code>{ disliked, likesCount, dislikesCount }</code></td>
+<td>كما الويب</td>
+<td><code>dislikeArticle</code> — V2</td>
+</tr>
+<tr>
+<td>E3</td>
+<td><code>POST /articles/:id/favorite</code> (toggle)</td>
+<td><code>{ slug }</code></td>
+<td><code>{ favorited, favoritesCount }</code></td>
+<td>كما الويب</td>
+<td><code>favoriteArticle</code> (<code>favorite-article.ts:12</code>)</td>
+</tr>
+<tr>
+<td>E4</td>
+<td><code>POST /articles/:id/comments</code></td>
+<td><code>{ slug, content: validateCommentContent }</code></td>
+<td><code>{ comment (status PENDING) }</code> + رسالة «تعليقك بانتظار موافقة الشريك»</td>
+<td>Telegram <code>commentNew</code> · GA4</td>
+<td><code>submitComment</code></td>
+</tr>
+<tr>
+<td>E5</td>
+<td><code>POST /comments/:id/replies</code> · <code>POST /comments/:id/like</code></td>
+<td><code>{ slug, content }</code></td>
+<td>—</td>
+<td>—</td>
+<td><code>submitReply</code> · <code>likeComment</code> — V2</td>
+</tr>
+<tr>
+<td>E6</td>
+<td><code>POST /articles/:slug/view</code></td>
+<td><strong>عامّة</strong> + <code>X-Device-Id</code> إلزامي · Bearer اختياري · <code>{ referrer?, url? }</code></td>
+<td><code>{ counted: boolean, analyticsId, ga4: {...}, clarity }</code> (نفس <code>view/route.ts:127-142</code>)</td>
+<td><code>ArticleView</code> · <code>Analytics</code> · <code>$inc</code> · Telegram <code>articleView</code></td>
+<td>جسم <code>view/route.ts:14-142</code> مع <code>sessionId = deviceId</code> بدل الكوكي</td>
+</tr>
+<tr>
+<td>E7</td>
+<td><code>PATCH /analytics/:id</code></td>
+<td>عامّة + <code>X-Device-Id</code></td>
+<td><code>analyticsUpdateSchema</code> (<code>analytics/[id]/route.ts:11-17</code>)</td>
+<td><code>{ ok }</code></td>
+<td>يحدّث <code>Analytics</code></td>
+</tr>
+<tr>
+<td>E8</td>
+<td><code>POST /articles/:slug/share</code></td>
+<td>عامّة + <code>X-Device-Id</code> · <code>{ platform: SharePlatform }</code></td>
+<td><code>{ ok }</code></td>
+<td>حدّ ١٠/ساعة/جهاز · <code>Share</code> · Telegram · GA4</td>
+<td>جسم <code>share/route.ts:24-127</code></td>
+</tr>
+<tr>
+<td>E9</td>
+<td><code>POST /partners/:slug/follow</code> · <code>DELETE …</code> · <code>GET …</code></td>
+<td>—</td>
+<td><code>{ following, followersCount }</code></td>
+<td>Telegram <code>clientFollow</code> · GA4 <code>follow_client</code></td>
+<td>جسم <code>follow/route.ts:64-193</code> (يُستخرج <code>followClientAs(userId, slug)</code>) · «تابع مدونتي» = نفس النقطة بـslug الأساسي من <code>GET /home.coreClientSlug</code></td>
+</tr>
+<tr>
+<td>E10</td>
+<td><code>POST/DELETE /partners/:slug/favorite</code></td>
+<td>—</td>
+<td><code>{ favorited, count }</code></td>
+<td>—</td>
+<td><code>favorite/route.ts</code> — V2</td>
+</tr>
+<tr>
+<td>E11</td>
+<td><code>POST /partners/:slug/view</code> · <code>/share</code></td>
+<td>عامّة + <code>X-Device-Id</code></td>
+<td><code>{ ok }</code></td>
+<td><code>ClientView</code> · Telegram</td>
+<td>أجسام `clients/[slug]/api/view</td>
+</tr>
+<tr>
+<td>E12</td>
+<td><code>POST /partners/:slug/reviews</code></td>
+<td><code>ReviewSchema</code> (<code>client-review-actions.ts:17</code>)</td>
+<td><code>{ status: &quot;PENDING&quot; }</code></td>
+<td><code>revalidatePath</code></td>
+<td><code>postClientReviewAction</code> — V2</td>
+</tr>
+<tr>
+<td>E13</td>
+<td><code>POST /partners/:slug/questions</code> · <code>POST /articles/:id/questions</code></td>
+<td><code>clientQuestionSchema</code> / <code>askClientSchema</code></td>
+<td><code>{ ok }</code></td>
+<td>سقف ٥ معلّقة · Telegram · GA4</td>
+<td><code>submitClientPageQuestion</code> · <code>submitAskClient</code> — V2</td>
+</tr>
+<tr>
+<td>E14</td>
+<td><code>POST /partners/:id/booking</code></td>
+<td><strong>عامّة</strong> (Bearer اختياري) · <code>bookingSchema</code> + <code>{ source, disclaimerAccepted, newsletterOptIn? }</code></td>
+<td><code>{ success }</code> أو <code>VALIDATION_ERROR</code> بنصّ الرفض كما الويب</td>
+<td>Push لجوّال الشريك · Notification للأدمن · بريد · Telegram · GA4 · Conversion</td>
+<td><code>submitBookingRequest(data, ctx)</code> — <strong>موجودة</strong> خلف <code>/api/booking</code>؛ تُعاد بالغلاف</td>
+</tr>
+<tr>
+<td>E15</td>
+<td><code>POST /partners/:id/whatsapp-lead</code></td>
+<td>عامّة</td>
+<td><code>{ name?, phone? }</code></td>
+<td>—</td>
+<td><code>recordWhatsappLead</code> (<code>booking-actions.ts:75</code>)</td>
+</tr>
+<tr>
+<td>E16</td>
+<td><code>POST /reels/:id/like</code> · <code>/favorite</code> (toggle)</td>
+<td>—</td>
+<td><code>ToggleResult {likesCount, favoritesCount, active}</code></td>
+<td><code>updateTag(&quot;reels&quot;)</code> · GA4</td>
+<td><code>toggleReelLike</code>/<code>toggleReelFavorite</code> (<code>reel-interactions.ts:96-100</code>)</td>
+</tr>
+<tr>
+<td>E17</td>
+<td><code>POST /reels/:id/view</code></td>
+<td>عامّة + <code>X-Device-Id</code></td>
+<td><code>ReelViewGa4Params</code></td>
+<td><code>$inc viewsCount</code> (الويب بلا dedupe — نضيف dedupe بالجهاز كالمقال)</td>
+<td><code>trackReelView</code> (<code>track-reel-view.ts:31</code>)</td>
+</tr>
+<tr>
+<td>E18</td>
+<td><code>POST /reels/:id/comments</code> · <code>/comments/:id/replies</code> · <code>/comments/:id/like</code> · <code>POST /reels/:id/share</code></td>
+<td>—</td>
+<td>—</td>
+<td>Telegram · GA4</td>
+<td><code>submitReelComment</code> · <code>submitReelCommentReply</code> · <code>toggleReelCommentLike</code> · <code>trackReelShareEvent</code> — V2</td>
+</tr>
+<tr>
+<td>E19</td>
+<td><code>POST /newsletter</code> · <code>POST /partners/:id/subscribe</code></td>
+<td>عامّة</td>
+<td><code>{ email }</code></td>
+<td><code>{ message }</code></td>
+<td>بريد · Telegram · Conversion</td>
+</tr>
+<tr>
+<td>E20</td>
+<td><code>POST /contact</code></td>
+<td>Bearer اختياري</td>
+<td>كما <code>contact/api/route.ts:12-25</code></td>
+<td>—</td>
+<td>Telegram <code>supportMessage</code> · GA4</td>
+</tr>
+</tbody>
+</table>
+<h3>٤٫٥ الإشعارات والدفع</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Method · Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+<th>يغلّف</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N1</td>
+<td>`GET /me/notifications?cursor&amp;tab=unread</td>
+<td>read`</td>
+<td>Bearer</td>
+<td>—</td>
+<td>`{ items: {id,type,title,body,readAt,createdAt,clientId,relatedId, target: {kind:'article'</td>
+</tr>
+<tr>
+<td>N2</td>
+<td><code>POST /me/notifications/:id/read</code> · <code>POST /me/notifications/read-all</code></td>
+<td>Bearer</td>
+<td>—</td>
+<td><code>{ ok, unreadCount }</code></td>
+<td><code>markNotificationAsRead</code> (<code>notifications-actions.ts:7-15</code>) · read-all <strong>جديد</strong> (updateMany)</td>
+</tr>
+<tr>
+<td>N3</td>
+<td><code>POST /devices/register</code> · <code>DELETE /devices/:id</code></td>
+<td>Bearer</td>
+<td>`{ expoPushToken: /^(Expo</td>
+<td>Exponent)PushToken[/, platform, deviceName?, appVersion?, deviceId }`</td>
+<td><code>{ device }</code></td>
+</tr>
+<tr>
+<td>N4</td>
+<td>إرسال الدفع للقارئ</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td><strong>جديد</strong> <code>shared/lib/push/notify-reader.ts</code>: يُنادى من <strong>نفس</strong> الأماكن التي تكتب <code>Notification</code> للقارئ (الكونسول عند اعتماد تعليق/ردّ سؤال، الأدمن عند ردّ رسالة تواصل). الحمولة: <code>{ to, title, body, channelId:&quot;default&quot;, data:{ type:&lt;lowercase&gt;, notificationId, articleSlug?/reelSlug? } }</code> — <strong>مفتاح واحد <code>type</code></strong> (لا <code>event</code> و<code>type</code> معاً — علاج خلل data.event/data.type) · <code>DeviceNotRegistered</code> يعطّل الصفّ (<code>lib/mobile-push.ts:50-58</code> نمط موجود) · <strong>لا صدى</strong>: لا دفع لمن تسبّب بالحدث</td>
+</tr>
+</tbody>
+</table>
+<h3>٤٫٦ التحليلات</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Method · Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>يغلّف / الحكم</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td><code>POST /track/pageview</code></td>
+<td>عامّة + <code>X-Device-Id</code></td>
+<td><code>{ path }</code></td>
+<td>جسم <code>api/track/pageview/route.ts:24-76</code> بـ<code>sessionId=deviceId</code>؛ يحذف فحص <code>BOT_UA</code> لأن UA التطبيق ثابت (يُستبدل بفحص رأس <code>X-App-Version</code>)</td>
+</tr>
+<tr>
+<td>T2</td>
+<td><code>POST /track/cta-click</code> · <code>/track/link-click</code></td>
+<td>عامّة + <code>X-Device-Id</code></td>
+<td><code>ctaClickSchema</code> (<code>cta-click/route.ts:17-26</code>)</td>
+<td>نفس الأجسام — V2</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>أحداث GA4 التي يرسلها المتصفّح اليوم (<code>article_view</code>, <code>client_view</code>, <code>reel_view</code>, <code>outbound_click</code>, <code>signup_view</code>, <code>signup_start</code>, <code>login_start</code>, <code>web_vitals</code> — <code>ga4-browser.ts:27-36</code>)</td>
+<td>—</td>
+<td>—</td>
+<td><strong>لا تُرسل من خادم مدونتي</strong> (قياس ١ أكتوبر: ٩١٪ جلسات Unassigned · <code>ga4-browser.ts:4-8</code>). تُرسل من التطبيق بـFirebase Analytics SDK (stream منفصل في نفس خاصية GA4) بنفس الأسماء والمعاملات التي ترجعها E6/E11/E17 (<code>ga4</code> object). الأحداث الخادميّة (<code>signup_complete</code>, likes, <code>booking_submit</code> …) تبقى على <code>events-registry.ts</code> كما هي. قرار لخالد §٧</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>Clarity</td>
+<td>—</td>
+<td>—</td>
+<td>لا يوجد SDK أصلي رسمي لـClarity على RN — <strong>لا</strong> (مؤشّر)</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>Web Vitals</td>
+<td>—</td>
+<td>—</td>
+<td>لا ينطبق على التطبيق</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>٥ · المصادقة — التصميم الموصى به لتطبيق القارئ</h2>
+<h3>٥٫١ ما يعمل على الويب اليوم</h3>
+<table>
+<thead>
+<tr>
+<th>البند</th>
+<th>الواقع</th>
+<th>الدليل</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>المكتبة</td>
+<td><code>next-auth@5.0.0-beta.25</code> · <code>@auth/prisma-adapter@2.7</code> · <code>session.strategy=&quot;jwt&quot;</code> في كوكي</td>
+<td><code>package.json:50,24</code> · <code>lib/auth.ts:20-21</code></td>
+</tr>
+<tr>
+<td>المزوّدون</td>
+<td>Credentials (bcrypt) + Google (<code>allowDangerousEmailAccountLinking</code>)</td>
+<td><code>auth.config.ts:11-61</code></td>
+</tr>
+<tr>
+<td>كوكي PKCE/state مضبوطة لسفاري ومتصفّحات داخل التطبيقات</td>
+<td><code>lib/auth.ts:23-32</code></td>
+<td></td>
+</tr>
+<tr>
+<td>القارئ منفصل تماماً عن الموظّفين (<code>User</code> ≠ <code>Staff</code>) ولا <code>role</code> في الجلسة</td>
+<td><code>auth.config.ts:141-148</code> · <code>schema.prisma:203-277</code></td>
+<td></td>
+</tr>
+<tr>
+<td>جدول <code>Account</code> يحمل <code>provider/providerAccountId</code> — يكفي لربط Google/Apple بالتطبيق</td>
+<td><code>schema.prisma:423-449</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>٥٫٢ القرار</h3>
+<table>
+<thead>
+<tr>
+<th>الطبقة</th>
+<th>القرار</th>
+<th>لماذا</th>
+<th>المصدر</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>توكن الوصول</td>
+<td><code>next-auth/jwt encode/decode</code> (A256CBC-HS512 · HKDF من <code>AUTH_SECRET</code> · salt <code>modonty-reader-mobile-v1</code>) · عمر <strong>١٥ دقيقة</strong></td>
+<td>نفس الأداة التي يملكها المشروع والكونسول؛ decode يتحقّق من exp وkid</td>
+<td>Auth.js: «encode … A256CBC-HS512 … derives a 64-byte key using HKDF-SHA256 … decode … validates expiration» (<code>/websites/deepwiki_nextauthjs_next-auth</code> · 2.4 JWT and tokens) · <code>console/lib/mobile-api/auth.ts:40,53</code></td>
+</tr>
+<tr>
+<td>توكن التجديد</td>
+<td>سلسلة عشوائية ٣٢ بايت تُخزَّن <strong>هاشاً</strong> في <code>ReaderSession</code> · عمر ٣٠ يوماً · تدوير عند كل تجديد (القديم يُلغى؛ إعادة استعماله = إلغاء الجلسة كلّها)</td>
+<td>يعالج خلل الكونسول رقم ٤ (توكن ٣٠ يوماً لا يُلغى) ويقصّر نافذة السرقة إلى ١٥ دقيقة</td>
+<td><code>console-mobile/documentation/html/AUDIT-2026-10-02.html</code> البند ٤</td>
+</tr>
+<tr>
+<td>الإلغاء من الخادم</td>
+<td>جدول جديد <code>ReaderSession { userId, refreshHash @unique, deviceId, expiresAt, revokedAt, revokedReason, lastSeenAt, userAgent }</code> · كل نقطة Bearer تفحص صفّ الجلسة حيّاً (نفس <code>mobileSessionFromRequest</code>) · تغيير كلمة المرور يلغي الكلّ عدا الحالية</td>
+<td>نسخة مُجرَّبة من الكونسول</td>
+<td><code>console/lib/mobile-api/auth.ts:61-67,90-96</code> · <code>schema.prisma:5210-5224</code></td>
+</tr>
+<tr>
+<td>حدّ المحاولات</td>
+<td>في القاعدة: ٥ فشل/١٥ دقيقة لمفتاح `(email</td>
+<td>ip)<code>→ 429 +</code>Retry-After<code>· يُعاد استعمال جدول</code>MobileLoginAttempt` نفسه (المفتاح يميّز)</td>
+<td>الذاكرة لا تعمل على Vercel (نسخ متعدّدة)</td>
+</tr>
+<tr>
+<td>Google على الجوّال</td>
+<td>التطبيق: <code>@react-native-google-signin/google-signin</code> أو <code>react-native-nitro-google-signin</code> (Expo يذكرهما؛ development build لازم؛ Android Credential Manager) → <code>idToken</code> · الخادم: <code>google-auth-library</code> <code>OAuth2Client.verifyIdToken({ idToken, audience: [...] })</code> ثم <code>payload.email_verified</code> و<code>sub</code></td>
+<td>Auth.js لا يملك تدفّق idToken للتطبيقات الأصلية؛ تدفّق redirect/PKCE يعتمد كوكي (<code>lib/auth.ts:23-32</code>)</td>
+<td>Expo: «You can integrate Google authentication … <code>react-native-nitro-google-signin</code> … <code>@react-native-google-signin/google-signin</code> … require custom native code … development build» (<code>/websites/expo_dev</code> guides/google-authentication) · google-auth-library: <code>verifyIdToken(options: {idToken, audience?, maxExpiry?}) → LoginTicket.getPayload()</code> (<code>/googleapis/google-auth-library-nodejs</code>)</td>
+</tr>
+<tr>
+<td>Apple</td>
+<td><strong>إلزامي على iOS</strong> لو عرضنا Google: <code>expo-apple-authentication.signInAsync({ requestedScopes, nonce, state })</code> → <code>identityToken</code> يُتحقّق بـJWKS أبل · الاسم يصل <strong>أوّل مرّة فقط</strong> فيُخزَّن فوراً</td>
+<td>متطلّب App Store</td>
+<td>Expo: «Any app that includes third-party authentication options <strong>must</strong> provide Apple authentication … App Store Review guidelines» · «requested scopes will only be provided … the first time» (<code>/websites/expo_dev</code> sdk/apple-authentication)</td>
+</tr>
+<tr>
+<td>التخزين على الجهاز</td>
+<td><code>expo-secure-store</code> للتوكنين · <strong>لا</strong> <code>AsyncStorage</code> · القيم صغيرة (iOS رفض تاريخياً &gt;٢٠٤٨ بايت — توكن Auth.js المشفّر مع claims قليلة يبقى تحتها؛ يُقاس)</td>
+<td>—</td>
+<td>Expo: «secure things like access tokens locally using expo-secure-store (this is different from AsyncStorage, which is not secure)» · «some iOS releases refused values above roughly 2048 bytes» (<code>/websites/expo_dev</code> sdk/securestore)</td>
+</tr>
+<tr>
+<td>الربط بحساب الويب</td>
+<td>نفس <code>User</code> ونفس <code>Account</code>؛ لا جدول مستخدمين ثانٍ. Google بنفس البريد لحساب كلمة مرور يُربط (نفس سياسة الويب)</td>
+<td>هويّة واحدة = نفس الإعجابات والمتابعات على الويب والتطبيق</td>
+<td><code>auth.config.ts:15-18</code></td>
+</tr>
+</tbody>
+</table>
+<h3>٥٫٣ ما لا يُنقل من الكونسول (أخطاء مثبتة)</h3>
+<table>
+<thead>
+<tr>
+<th>الخلل في الكونسول</th>
+<th>الدليل</th>
+<th>ما نفعله هنا</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>توكن واحد ٣٠ يوماً بلا تجديد منفصل</td>
+<td><code>console/lib/mobile-api/auth.ts:18</code></td>
+<td>توكنان (١٥ دقيقة / ٣٠ يوماً مع تدوير)</td>
+</tr>
+<tr>
+<td><code>logout</code> ما زال بلا إلغاء رغم وجود <code>endMobileSession</code></td>
+<td><code>console/app/api/mobile/v1/auth/logout/route.ts:3-4</code></td>
+<td>A6 يلغي الجلسة والجهاز</td>
+</tr>
+<tr>
+<td><code>refresh</code> يستورد <code>issueMobileToken</code> غير المُصدَّر (لن يُترجم)</td>
+<td><code>console/app/api/mobile/v1/auth/refresh/route.ts:2</code> مقابل <code>auth.ts:38</code> (بلا <code>export</code>)</td>
+<td><strong>خارج النطاق</strong> — يُذكر سطراً لخالد</td>
+</tr>
+<tr>
+<td><code>data.event</code> و<code>data.type</code> معاً في الدفع</td>
+<td><code>console/lib/mobile-api/push.ts:36-41</code></td>
+<td>مفتاح واحد <code>type</code></td>
+</tr>
+<tr>
+<td>دفع «صدى» لفاعل الحدث</td>
+<td>التدقيق البند ٢</td>
+<td>N4: لا دفع لـ<code>actorUserId === recipient</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>٦ · الأولويات</h2>
+<table>
+<thead>
+<tr>
+<th>المرحلة</th>
+<th>النقاط</th>
+<th>يعتمد على</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>V1 — تطبيق قراءة يُشحن</strong> (٣٧ سطراً)</td>
+<td>C1 C2 C3 C4 C5 C6 C7 C8 C10 C11 C12 C14 C15 C16 · S1 · A1 A2 A3 A4 A5 A6 A7 A8 A13(favorites/following) · E1 E3 E4 E6 E8 E9 E11(view) E14 E16 E17 · N1 N2 · T1</td>
+<td>١) <code>modonty/lib/mobile-api/{http,request,params,auth,login-throttle}.ts</code> ٢) <code>ReaderSession</code> + <code>ReaderDevice</code> في السكيما ٣) استخراج <code>…As(userId)</code> من ٦ أكشنات (like/favorite/comment/follow/reelLike/reelFavorite) ٤) استخراج استعلامات <code>categories/[slug]/page.tsx</code> إلى <code>data/</code> ٥) <code>google-auth-library</code> في <code>modonty/package.json</code></td>
+</tr>
+<tr>
+<td><strong>V2</strong> (٢٢)</td>
+<td>C9 C13 C17 C18 C19 C20 · A9 A10 A11 A12 A13(بقيّة) · E2 E5 E10 E12 E13 E15 E18 E19 E20 · N3 N4 · T2</td>
+<td>قرار الدفع (§٧ س٣) · الكونسول/الأدمن يناديان <code>notify-reader</code></td>
+</tr>
+<tr>
+<td><strong>V3</strong> (٦)</td>
+<td>مودو (<code>/chat</code> بحصّة جهاز) · قطاعات مدونتي · <code>/users/:id</code> · <code>enableTopicAlert</code> · A14 حذف الحساب · S2</td>
+<td>تصميم حصّة Cohere بالجهاز بدل الكوكي (<code>check-anonymous-quota.ts:22-29</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>٧ · قرارات تحتاج خالد (نعم/لا)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>السؤال</th>
+<th>توصيتي</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>١</td>
+<td><s>هل نعرض دخول Google في التطبيق (وبالتالي <strong>نُلزَم</strong> بـApple على iOS)؟ أم V1 بالبريد فقط؟</s></td>
+<td><strong>محسوم — خالد ٤ أكتوبر ٢٠٢٦:</strong> V1 (أندرويد) = البريد وكلمة المرور فقط (<code>auth.config.ts:20</code>). Google (A3) وApple (A4) على الجوّال يُقرَّران معاً عند الوصول لنسخة App Store.</td>
+</tr>
+<tr>
+<td>٢</td>
+<td>هل تُقبل <strong>كتابة نقاط كتابة جديدة</strong> (Route Handlers) تغلّف الأكشنات بعد استخراج <code>…As(userId)</code> — أي تعديل تركيبي في ٦ ملفّات أكشن على الويب؟</td>
+<td><strong>نعم</strong>؛ البديل (تكرار المنطق في النقطة) مرفوض بقاعدة «مصدر واحد». التعديل لا يغيّر سلوك الويب (الأكشن يبقى غلافاً).</td>
+</tr>
+<tr>
+<td>٣</td>
+<td><s>الدفع للقارئ: هل يُبنى <code>ReaderDevice</code> + <code>notify-reader</code> في V2؟</s></td>
+<td><strong>محسوم — خالد ٤ أكتوبر ٢٠٢٦: V2، بعد اكتمال V1 كاملة.</strong> السبب: ما يكتب الإشعار للقارئ اليوم هو الكونسول/الأدمن (<code>users/notifications/page.tsx:87-88</code>)، فالدفع يحتاج تعديلاً هناك؛ V1 يكتفي بجرس داخل التطبيق (N1/N2).</td>
+</tr>
+<tr>
+<td>٤</td>
+<td>GA4 في التطبيق: Firebase Analytics SDK (stream تطبيق في نفس الخاصية) لأحداث العرض؟ أم لا تحليلات عرض في V1؟</td>
+<td><strong>Firebase SDK</strong>، لأن إرسال <code>article_view</code> من الخادم أثبت جلسات Unassigned (<code>ga4-browser.ts:4-8</code>). يحتاج مشروع Firebase وربطه بخاصية GA4 — خارج الكود.</td>
+</tr>
+<tr>
+<td>٥</td>
+<td>هل نقبل في V1 ترقيم <strong>offset</strong> للأرشيف والرئيسية (كما الويب، سقف ٣٠٠ · ترتيب تحريري) وcursor للريلز والتعليقات والإشعارات فقط؟</td>
+<td><strong>نعم</strong>؛ تحويل الأرشيف إلى cursor يغيّر ترتيب <code>HOMEPAGE_ARTICLE_ORDER</code> ويكسر تطابق الصفحة الأولى بين الويب والتطبيق (<code>get-more-articles.ts:36-37</code>).</td>
+</tr>
+<tr>
+<td>٦</td>
+<td>حذف الحساب من التطبيق (A14 — غير موجود على الويب؛ متطلّب Apple عند السماح بإنشاء حساب): يُبنى في V1 أم يكفي رابط ويب؟</td>
+<td><strong>رابط ويب لا يكفي</strong> لمتجر أبل لو وُجد إنشاء حساب داخل التطبيق؛ أقترح A14 في V2 قبل نشر iOS، وV1 أندرويد أوّلاً (جهاز الاختبار أندرويد — <code>ENGINEERING-RULES.md §٧</code>).</td>
+</tr>
+<tr>
+<td>٧</td>
+<td>خلل الكونسول: <code>refresh/route.ts:2</code> يستورد دالّة غير مُصدَّرة — أُصلحه؟ (خارج نطاق هذه المهمّة)</td>
+<td>سؤال فقط؛ لا أعمل فيه بلا أمر.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>٨ · ما لم يُتحقَّق منه («مؤشّر»)</h2>
+<table>
+<thead>
+<tr>
+<th>البند</th>
+<th>لماذا غير مقيس</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>حجم توكن Auth.js المشفّر (هل يبقى &lt; ٢٠٤٨ بايت لـSecureStore iOS)</td>
+<td>يحتاج تشغيل <code>encode</code> فعلياً؛ لم يُشغَّل كود</td>
+</tr>
+<tr>
+<td>نسبة تسجيلات Google مقابل البريد على الويب</td>
+<td>يحتاج قراءة <code>Account.provider</code> من القاعدة — لم تُفتح القاعدة</td>
+</tr>
+<tr>
+<td>هل <code>getArticlePageData</code> ترجع <code>content</code> مُنقّى (<code>sanitize-html.ts</code>) بصيغة تصلح لمحرّك عرض RN (HTML → native)؟</td>
+<td>قُرئت التواقيع لا جسم الدالة بالكامل (<code>get-article-page-data.ts:63-172</code>)</td>
+</tr>
+<tr>
+<td>سلوك <code>&quot;use cache&quot;</code> عند استدعاء الدالة من Route Handler مع رأس <code>Authorization</code> (هل يُلوّث مفتاح الكاش؟)</td>
+<td>يحتاج اختباراً على <code>next@16.3.4</code> مع <code>cacheComponents: true</code> (<code>next.config.ts:123</code>) — قاعدة التصميم أعلاه تفصل العامّ عن الشخصي احتياطاً</td>
+</tr>
+<tr>
+<td>وجود <code>GOOGLE_CLIENT_ID</code> لمنصّتي iOS/Android</td>
+<td>لم تُفتح ملفّات البيئة (الهوك يمنع)؛ الموجود اسماً فقط: <code>GOOGLE_CLIENT_ID</code>/<code>GOOGLE_CLIENT_SECRET</code> للويب (<code>auth.config.ts:13-14</code>)</td>
+</tr>
+<tr>
+<td>رقم «٩٥ <code>use cache</code>» يشمل تعليقات تحوي النصّ؟</td>
+<td>grep نصّي؛ قد يزيد ١–٣ عن الفعلي</td>
+</tr>
+<tr>
+<td>Clarity على RN</td>
+<td>لا SDK رسمي معروف لي؛ لم أتحقّق من مصدر رسمي</td>
+</tr>
+<tr>
+<td>إن كان الأدمن/الكونسول يكتبان <code>Notification.type</code> بقيم غير التي يقرأها <code>notifications/page.tsx:97-119</code></td>
+<td>خارج النطاق (<code>admin/</code> · <code>console/</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><strong>سطر واحد خارج النطاق:</strong> في الكونسول <code>app/api/mobile/v1/auth/refresh/route.ts:2</code> يستورد <code>issueMobileToken</code> وهو غير مُصدَّر في <code>console/lib/mobile-api/auth.ts:38</code>، و<code>auth/logout/route.ts</code> ما زال بلا إلغاء رغم وجود <code>endMobileSession</code> — يُفحص بـ<code>tsc</code> عند أوّل فرصة.</p>
+</div></body></html>

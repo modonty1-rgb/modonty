@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { db } from "@/lib/db";
-import { arabicCount, arabicMetaLine, arabicRelativeTime } from "@/lib/mobile-api/arabic-format";
+import { arabicCount, arabicMetaLine, arabicNumber, arabicRelativeTime } from "@/lib/mobile-api/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 
@@ -58,7 +58,17 @@ export async function GET(request: NextRequest) {
     return openDelta !== 0 ? openDelta : b.createdAt.getTime() - a.createdAt.getTime();
   });
 
+  /**
+   * «نبض»: بلاطتا أرقام فوق القائمة — المفتوح (نفس `waiting` الذي يعدّه العدّاد) وواتساب. كلاهما
+   * عدٌّ من القاعدة، والبلاطة لا تُرسل إلا حين يكون لرقمها معنى (طلبات موجودة · ضغطات واتساب).
+   */
+  const stats = [
+    requests.length > 0 ? { key: "open", value: arabicNumber(waiting), label: waiting === 1 ? "طلب مفتوح" : waiting === 2 ? "طلبان مفتوحان" : "طلبات مفتوحة", tone: waiting > 0 ? "warning" : "neutral" } : null,
+    whatsappCount > 0 ? { key: "whatsapp", value: arabicNumber(whatsappCount), label: `تواصل واتساب · ${arabicCount(whatsappCount, "زائر", "زائران", "زوّار")}`, tone: "positive" } : null,
+  ].filter((stat): stat is NonNullable<typeof stat> => stat !== null);
+
   return ok({
+    stats,
     screenTitle: "طلبات التواصل",
     backLabel: "رجوع",
     subtitle: waiting === 0 ? "ما في طلب مفتوح — خلّصت كل طلبات التواصل." : arabicCount(waiting, "طلب مفتوح ينتظرك", "طلبان مفتوحان ينتظرانك", "طلبات مفتوحة تنتظرك"),

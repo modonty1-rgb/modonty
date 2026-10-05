@@ -1,11 +1,12 @@
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
 import { ModontyIcon } from '@/src/components/brand/icons/ModontyIcon';
-import { ErrorState, OfflineState, SkeletonCards, StatusPill } from '@/src/components/ui/MobileUI';
+import { ErrorState, OfflineState, SkeletonCards } from '@/src/components/ui/MobileUI';
+import { EnterView, IconShape, SectionHeading, TonalCard } from '@/src/components/ui/Nabd';
 import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 import { getVideoCollection } from '@/src/services/engagement-api';
 import { CONNECTION_COPY, useEngagementResource } from '@/src/services/use-engagement-resource';
-import { control, fonts, radii, spacing, typography } from '@/src/theme/tokens';
+import { control, fonts, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
 /**
@@ -40,51 +41,55 @@ export function VideoUploadRoute({ accessToken, onDone }: Props) {
     <View style={styles.state}><ErrorState message={resource.message ?? CONNECTION_COPY.errorTitle} retryLabel={CONNECTION_COPY.retryLabel} onRetry={reload} /></View>
   </View>;
 
+  /**
+   * «نبض» (S10): العنوان الكبير · سطرا الشرح · بطاقتا المصدر (تصوير · استديو) · تنبيه الإغلاق
+   * بحاوية التحذير · ثم ملاحظة «الرفع ما ينشر مباشرة». اليوم `available: false` فالبطاقتان
+   * **معطّلتان مرئياً** (شفافية ٤٥٪ ولا تُضغطان) بجانب السبب — لا زرّاً يعد بما لا يقع.
+   * زرّ «العودة للطلّات» في آخر الشاشة سقط: الرجوع الدائري في أعلاها يؤدّيه، وكانا فعلين لشيء واحد.
+   */
+  const source = (icon: 'video' | 'gallery', label: string) => <TonalCard
+    key={icon}
+    onPress={upload.available ? onDone : undefined}
+    accessibilityLabel={label}
+    style={[styles.source, upload.available ? null : styles.disabled]}
+  >
+    <IconShape icon={icon} />
+    <Text style={[styles.sourceLabel, { color: theme.colors.text }]}>{label}</Text>
+  </TonalCard>;
+
   return <ScrollView contentContainerStyle={styles.screen} showsVerticalScrollIndicator={false}>
     <ScreenHeader title={upload.screenTitle} backLabel={upload.backLabel} onBack={onDone} />
-
-    <View style={[styles.hero, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-      <Text style={[styles.heroTitle, { color: theme.colors.text }]}>{upload.title}</Text>
-      <Text style={[styles.heroCopy, { color: theme.colors.muted }]}>{upload.description}</Text>
-      <StatusPill tone="warning">{upload.statusBadgeLabel}</StatusPill>
-    </View>
-
-    {upload.available ? <>
-      <Pressable accessibilityRole="button" accessibilityLabel={upload.cameraLabel} onPress={onDone} style={[styles.primaryAction, { backgroundColor: theme.colors.primary }]}>
-        <Text style={[styles.primaryLabel, { color: theme.colors.textOnPrimary }]}>{upload.cameraLabel}</Text>
-      </Pressable>
-      <Pressable accessibilityRole="button" accessibilityLabel={upload.libraryLabel} onPress={onDone} style={[styles.secondaryAction, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.secondaryLabel, { color: theme.colors.text }]}>{upload.libraryLabel}</Text>
-      </Pressable>
-    </> : <View style={[styles.note, { backgroundColor: theme.colors.surface, borderColor: theme.colors.warning }]}>
-      <Text style={[styles.noteBody, { color: theme.colors.text }]}>{upload.unavailableLabel}</Text>
-    </View>}
-
-    <View style={[styles.note, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-      <Text style={[styles.noteTitle, { color: theme.colors.text }]}>{upload.noteTitle}</Text>
-      <Text style={[styles.noteBody, { color: theme.colors.muted }]}>{upload.noteBody}</Text>
-    </View>
-
-    <Pressable accessibilityRole="button" accessibilityLabel={upload.backLabel} onPress={onDone} style={[styles.secondaryAction, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-      <Text style={[styles.secondaryLabel, { color: theme.colors.text }]}>{upload.backLabel}</Text>
-    </Pressable>
+    <EnterView index={0} style={styles.intro}>
+      <SectionHeading>{upload.title}</SectionHeading>
+      <Text style={[styles.secondary, { color: theme.colors.muted }]}>{upload.description}</Text>
+    </EnterView>
+    <EnterView index={1} style={styles.sources}>
+      <View accessibilityState={{ disabled: !upload.available }} style={styles.sources}>
+        {source('video', upload.cameraLabel)}
+        {source('gallery', upload.libraryLabel)}
+      </View>
+    </EnterView>
+    {upload.available ? null : <EnterView index={2}>
+      <TonalCard tone="warning" style={styles.notice}>
+        <ModontyIcon name="upload" size={control.iconSizeSmall} primary={theme.colors.onWarningContainer} accent={theme.colors.accent} />
+        <Text style={[styles.noticeText, { color: theme.colors.onWarningContainer }]}>{upload.unavailableLabel}</Text>
+      </TonalCard>
+    </EnterView>}
+    <EnterView index={3}>
+      <Text style={[styles.secondary, { color: theme.colors.muted }]}>{`${upload.noteTitle} ${upload.noteBody}`}</Text>
+    </EnterView>
   </ScrollView>;
 }
 
 const styles = StyleSheet.create({
   state: { flex: 1, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md },
-  screen: { paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
-  heading: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: StyleSheet.hairlineWidth, marginTop: spacing.md, paddingBottom: spacing.md },
-  pageTitle: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, textAlign: 'right', writingDirection: 'rtl' },
-  backButton: { width: control.minTouchTarget, height: control.minTouchTarget, alignItems: 'center', justifyContent: 'center' },
-  hero: { alignItems: 'center', borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.lg, marginTop: spacing.lg, gap: spacing.xs },
-  heroTitle: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, textAlign: 'center', writingDirection: 'rtl' },
-  heroCopy: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'center', writingDirection: 'rtl', marginBottom: spacing.xs },
-  primaryAction: { minHeight: control.buttonHeight, borderRadius: radii.button, alignItems: 'center', justifyContent: 'center', marginTop: spacing.lg },
-  primaryLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' },
-  secondaryAction: { minHeight: control.buttonHeight, borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.button, alignItems: 'center', justifyContent: 'center', marginTop: spacing.sm },
-  secondaryLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' },
-  note: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.md, marginTop: spacing.lg, alignItems: 'flex-end' },
-  noteTitle: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },
-  noteBody: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xxs },
+  screen: { gap: spacing.sm, paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
+  intro: { gap: spacing.xxs },
+  sources: { gap: spacing.sm },
+  source: { alignItems: 'center', flexDirection: 'row-reverse', gap: spacing.sm, minHeight: 72 },
+  disabled: { opacity: 0.45 },
+  sourceLabel: { flex: 1, fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right', writingDirection: 'rtl' },
+  notice: { alignItems: 'flex-start', flexDirection: 'row-reverse', gap: spacing.sm },
+  noticeText: { flex: 1, fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right', writingDirection: 'rtl' },
+  secondary: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
 });

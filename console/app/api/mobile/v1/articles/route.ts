@@ -34,8 +34,29 @@ export async function GET(request: NextRequest) {
     scope === "decision"
       ? await db.article.count({ where: { clientId: session.clientId, ...statusFilter } })
       : 0;
+  /**
+   * «نبض» (اعتمده خالد ٤ أكتوبر): شريط أرقام فوق القائمة — **أرقام حقيقية وتسمياتها من هنا**،
+   * فلا تكتب الشاشة عدداً ولا كلمة. يُعدّ من القاعدة حيث يمكن (لا من القائمة المقصوصة عند ١٠٠).
+   */
+  const publishedCount = scope === "published" ? await db.article.count({ where: { clientId: session.clientId, ...statusFilter } }) : 0;
+  const lastPublished = scope === "published"
+    ? articles.reduce<Date | null>((latest, article) => article.datePublished && (!latest || article.datePublished > latest) ? article.datePublished : latest, null)
+    : null;
+  const pendingTeamQuestions = articles.reduce((sum, article) => sum + article.faqs.filter((faq) => faq.status === ArticleFAQStatus.PENDING).length, 0);
+  const citationTotal = articles.some((article) => article.client.isYmyl) ? articles.reduce((sum, article) => sum + (article.client.isYmyl ? article.citations.length : 0), 0) : null;
+  const stats = scope === "decision"
+    ? decisionCount === 0 ? [] : [
+      { key: "pending", value: arabicNumber(decisionCount), label: "بانتظار قرارك", tone: "warning" as const },
+      { key: "questions", value: arabicNumber(pendingTeamQuestions), label: "أسئلة الفريق", tone: "neutral" as const },
+      ...(citationTotal === null ? [] : [{ key: "citations", value: arabicNumber(citationTotal), label: citationTotal === 1 ? "استشهاد" : citationTotal === 2 ? "استشهادان" : "استشهادات", tone: "neutral" as const }]),
+    ]
+    : publishedCount === 0 ? [] : [
+      { key: "published", value: arabicNumber(publishedCount), label: publishedCount === 1 ? "مقال منشور" : publishedCount === 2 ? "مقالان منشوران" : publishedCount <= 10 ? "مقالات منشورة" : "مقالاً منشوراً", tone: "neutral" as const },
+      ...(lastPublished === null ? [] : [{ key: "lastPublished", value: arabicLongDate(lastPublished), label: "آخر نشر", tone: "neutral" as const }]),
+    ];
   const review = scope === "decision"
     ? {
+      stats,
       title: "مقالات بانتظار قرارك",
       subtitle: "راجِع المقال كاملاً، ثم اعتمده أو اطلب تعديله.",
       /**
@@ -64,6 +85,7 @@ export async function GET(request: NextRequest) {
        * على مدونتي لا على موقعه (مقيس: كيما زون `canPublishToOwnSite: false`). فالنصّ يقول
        * الآن ما هو صحيح للحالتين، والبطاقة نفسها تُظهر النطاق الفعلي لكل مقال.
        */
+      stats,
       title: "المقالات المنشورة",
       subtitle: "مقالاتك المنشورة — اضغط أيّها لتقرأه كما يراه الزائر.",
       emptyTitle: "ما نُشر لك مقال بعد",

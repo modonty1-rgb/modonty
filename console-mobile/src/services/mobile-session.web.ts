@@ -37,3 +37,50 @@ export async function clearMobileAccessToken(): Promise<void> {
     console.warn('[mobile-session.web] تعذّر حذف التوكن من التخزين المحلي', reason);
   }
 }
+
+const pushDeviceIdKey = 'modonty.console.mobile.push-device-id';
+
+/** الويب لا يسجّل تنبيهات دفع أصلاً — الدوالّ موجودة لتطابق واجهة النسخة الأصلية. */
+export async function readPushDeviceId(): Promise<string | null> {
+  try {
+    return globalThis.localStorage?.getItem(pushDeviceIdKey) ?? null;
+  } catch (reason) {
+    console.warn('[mobile-session.web] تعذّرت قراءة معرّف الجهاز', reason);
+    return null;
+  }
+}
+
+export async function savePushDeviceId(deviceId: string): Promise<void> {
+  try {
+    globalThis.localStorage?.setItem(pushDeviceIdKey, deviceId);
+  } catch (reason) {
+    console.warn('[mobile-session.web] تعذّر حفظ معرّف الجهاز', reason);
+  }
+}
+
+export async function clearPushDeviceId(): Promise<void> {
+  try {
+    globalThis.localStorage?.removeItem(pushDeviceIdKey);
+  } catch (reason) {
+    console.warn('[mobile-session.web] تعذّر حذف معرّف الجهاز', reason);
+  }
+}
+
+const themeModeKey = 'modonty.console.mobile.theme-mode';
+
+export async function readThemeMode(): Promise<string | null> {
+  try {
+    return globalThis.localStorage?.getItem(themeModeKey) ?? null;
+  } catch (reason) {
+    console.warn('[mobile-session.web] تعذّرت قراءة المظهر', reason);
+    return null;
+  }
+}
+
+export async function saveThemeMode(mode: string): Promise<void> {
+  try {
+    globalThis.localStorage?.setItem(themeModeKey, mode);
+  } catch (reason) {
+    console.warn('[mobile-session.web] تعذّر حفظ المظهر', reason);
+  }
+}

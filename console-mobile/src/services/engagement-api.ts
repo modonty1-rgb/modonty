@@ -1,4 +1,4 @@
-import { mobileRequest } from '@/src/services/mobile-api';
+import { mobileRequest, type MobileStat } from '@/src/services/mobile-api';
 
 /**
  * S08–S14 — audience, videos, notifications, account and support.
@@ -17,6 +17,11 @@ const ARABIC_DIGITS = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩
  */
 export function arabicDigits(value: number): string {
   return String(Math.max(0, Math.trunc(value))).replace(/\d/g, (digit) => ARABIC_DIGITS[Number(digit)]);
+}
+
+/** Same digit table for server-written copy («186 يوماً» → «١٨٦ يوماً»). */
+export function arabicDigitsText(value: string | null | undefined): string {
+  return (value ?? "").replace(/d/g, (digit) => ARABIC_DIGITS[Number(digit)]);
 }
 
 export type StatusTone = 'primary' | 'warning' | 'danger' | 'muted';
@@ -50,6 +55,8 @@ export type AudienceReview = {
   commentsTabLabel: string;
   commentsTabCount: string;
   replyLinkLabel: string;
+  /** شارة «ينتظر ردك» — اختيارية كي يبقى الخادم الأقدم يعمل. */
+  questionBadgeLabel?: string;
   openQuestionPrefix: string;
   emptyQuestionsTitle: string;
   emptyQuestionsDescription: string;
@@ -114,7 +121,7 @@ export type VideoUploadCopy = {
 
 export type VideoCollection = {
   videos: VideoSummary[];
-  review: { title: string; uploadActionLabel: string; latestSectionTitle: string; uploadHintLabel: string; retryLabel: string; emptyTitle: string; emptyDescription: string; errorTitle: string; offlineTitle: string; offlineDescription: string };
+  review: { stats?: MobileStat[]; title: string; uploadActionLabel: string; latestSectionTitle: string; uploadHintLabel: string; retryLabel: string; emptyTitle: string; emptyDescription: string; errorTitle: string; offlineTitle: string; offlineDescription: string };
   upload: VideoUploadCopy;
 };
 

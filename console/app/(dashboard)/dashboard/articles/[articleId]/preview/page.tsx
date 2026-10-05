@@ -23,5 +23,5 @@ export default async function ArticlePreviewPage({
     redirect("/dashboard/articles");
   }
 
-  return <ArticlePreviewClient article={article} clientId={clientId} />;
+  return <ArticlePreviewClient article={article} />;
 }

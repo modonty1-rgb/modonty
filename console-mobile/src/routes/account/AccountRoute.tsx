@@ -1,13 +1,15 @@
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
+import { Image } from 'expo-image';
+import { ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { useConfirm } from '@/src/components/ui/ConfirmProvider';
 import { AppText as Text } from '@/src/components/ui/AppText';
 import { ModontyIcon } from '@/src/components/brand/icons/ModontyIcon';
-import { ErrorState, OfflineState, SkeletonCards, StatusPill } from '@/src/components/ui/MobileUI';
+import { ErrorState, OfflineState, SkeletonCards } from '@/src/components/ui/MobileUI';
+import { Cookie, EnterView, GroupRow, haptic, ListGroup, PillButton, SectionHeading, StatusBadge, TonalCard } from '@/src/components/ui/Nabd';
 import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 import { getAccountOverview, saveNotificationToggle, type NotificationToggle } from '@/src/services/engagement-api';
 import { CONNECTION_COPY, useEngagementResource } from '@/src/services/use-engagement-resource';
-import { control, fonts, radii, spacing, typography } from '@/src/theme/tokens';
+import { control, fonts, nabd, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
 /**
@@ -21,9 +23,9 @@ import { useAppTheme } from '@/src/theme/ThemeProvider';
  * destructive action is never one tap.
  */
 
-type Props = { accessToken: string; onBack: () => void; onSupport: () => void; onLogout: () => void };
+type Props = { accessToken: string; onBack: () => void; onSupport: () => void; onLogout: () => void; /** شعار العميل من ملفّه — يجلس داخل «الكعكة» في بطاقة الهويّة. */ logoUrl?: string | null };
 
-export function AccountRoute({ accessToken, onBack, onSupport, onLogout }: Props) {
+export function AccountRoute({ accessToken, onBack, onSupport, onLogout, logoUrl = null }: Props) {
   const confirm = useConfirm();
   const { theme } = useAppTheme();
   const { resource, reload, replace } = useEngagementResource(accessToken, getAccountOverview);
@@ -63,62 +65,85 @@ export function AccountRoute({ accessToken, onBack, onSupport, onLogout }: Props
   </View>;
 
   const { account, review } = overview;
+  /**
+   * «نبض» (S13): بطاقة هويّة نغمية `secondary` بزاوية ٢٨ — «كعكة» كحلية بشعار العميل · الاسم ·
+   * البريد · شارة الباقة — ثم مجموعتان مقطّعتان (التنبيهات · المساعدة) ثم الخروج كبسولة خطر.
+   */
   return <ScrollView contentContainerStyle={styles.screen} showsVerticalScrollIndicator={false}>
     <ScreenHeader title={review.title} backLabel={review.backLabel} onBack={onBack} />
 
-    <View style={[styles.card, styles.profile, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-      <Text style={[styles.name, { color: theme.colors.text }]}>{account.name}</Text>
-      <Text style={[styles.email, { color: theme.colors.muted }]}>{account.email}</Text>
-      <StatusPill>{account.planLabel}</StatusPill>
-    </View>
+    <EnterView index={0}>
+      <TonalCard tone="secondary" style={styles.identity}>
+        <Cookie size={IDENTITY_COOKIE} color={theme.colors.navy}>
+          {logoUrl
+            ? <Image source={{ uri: logoUrl }} accessibilityLabel={account.name} cachePolicy="memory-disk" contentFit="contain" style={styles.logo} />
+            : <ModontyIcon name="profile" size={control.iconSize} primary={theme.colors.onHero} accent={theme.colors.accent} />}
+        </Cookie>
+        <Text style={[styles.name, { color: theme.colors.onSecondary }]}>{account.name}</Text>
+        <Text style={[styles.email, { color: theme.colors.onSecondary }]}>{account.email}</Text>
+        <StatusBadge label={account.planLabel} tone="positive" style={styles.planBadge} />
+      </TonalCard>
+    </EnterView>
 
-    <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{review.notificationsSectionTitle}</Text>
-    {account.notifications.map((item) => <View key={item.key} style={[styles.card, styles.toggleRow, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-      <Switch
-        accessibilityLabel={item.label}
-        disabled={savingKey !== null}
-        onValueChange={(next) => toggle(item.key, next)}
-        trackColor={{ false: theme.colors.border, true: theme.colors.brandFill }}
-        value={item.enabled}
-      />
-      <View style={styles.toggleCopy}>
-        <Text style={[styles.toggleLabel, { color: theme.colors.text }]}>{item.label}</Text>
-        <Text style={[styles.toggleDetail, { color: theme.colors.muted }]}>{savingKey === item.key ? review.savingLabel : item.description}</Text>
-      </View>
-    </View>)}
-    {saveError ? <Text style={[styles.error, { color: theme.colors.errorText }]}>{saveError}</Text> : null}
+    <EnterView index={1} style={styles.section}>
+      <SectionHeading>{review.notificationsSectionTitle}</SectionHeading>
+      <ListGroup>
+        {account.notifications.map((item) => <GroupRow key={item.key}>
+          <View style={styles.row}>
+            <View style={styles.rowCopy}>
+              <Text style={[styles.rowLabel, { color: theme.colors.text }]}>{item.label}</Text>
+              <Text style={[styles.secondary, { color: theme.colors.muted }]}>{savingKey === item.key ? review.savingLabel : item.description}</Text>
+            </View>
+            <Switch
+              accessibilityLabel={item.label}
+              disabled={savingKey !== null}
+              onValueChange={(next) => { haptic('selection'); toggle(item.key, next); }}
+              thumbColor={item.enabled ? theme.colors.onBrandFill : theme.colors.inputBorder}
+              trackColor={{ false: theme.colors.surfaceHigh, true: theme.colors.brandFill }}
+              value={item.enabled}
+            />
+          </View>
+        </GroupRow>)}
+      </ListGroup>
+      {saveError ? <Text accessibilityLiveRegion="assertive" style={[styles.secondary, { color: theme.colors.errorText }]}>{saveError}</Text> : null}
+    </EnterView>
 
-    <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{review.helpSectionTitle}</Text>
-    <Pressable accessibilityRole="button" accessibilityLabel={review.supportTitle} onPress={onSupport} style={({ pressed }) => [styles.card, styles.supportRow, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }, pressed && styles.pressed]}>
-      <View style={styles.supportCopy}>
-        <Text style={[styles.toggleLabel, { color: theme.colors.text }]}>{review.supportTitle}</Text>
-        <Text style={[styles.toggleDetail, { color: theme.colors.muted }]}>{review.supportDescription}</Text>
-      </View>
-      <ModontyIcon name="arrow-left" size={control.iconSize} primary={theme.colors.muted} accent={theme.colors.accent} />
-    </Pressable>
+    <EnterView index={2} style={styles.section}>
+      <SectionHeading>{review.helpSectionTitle}</SectionHeading>
+      <GroupRow onPress={onSupport} accessibilityLabel={review.supportTitle}>
+        <View style={styles.row}>
+          <ModontyIcon name="support" size={control.iconSize} primary={theme.colors.text} accent={theme.colors.accent} />
+          <View style={styles.rowCopy}>
+            <Text style={[styles.rowLabel, { color: theme.colors.text }]}>{review.supportTitle}</Text>
+            <Text style={[styles.secondary, { color: theme.colors.muted }]}>{review.supportDescription}</Text>
+          </View>
+          <ModontyIcon name="arrow-left" size={control.iconSizeSmall} primary={theme.colors.muted} accent={theme.colors.accent} />
+        </View>
+      </GroupRow>
+    </EnterView>
 
-    <Pressable accessibilityRole="button" accessibilityLabel={review.logoutLabel} onPress={confirmLogout} style={({ pressed }) => [styles.card, styles.logout, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }, pressed && styles.pressed]}>
-      <Text style={[styles.logoutLabel, { color: theme.colors.danger }]}>{review.logoutLabel}</Text>
-    </Pressable>
+    <EnterView index={3} style={styles.section}>
+      <PillButton label={review.logoutLabel} icon="logout" tone="danger" onPress={confirmLogout} />
+    </EnterView>
   </ScrollView>;
 }
 
+/** «الكعكة» في بطاقة الهويّة ٧٢ (‎.cookie 72 في الموكب) والشعار داخلها ٤٤. */
+const IDENTITY_COOKIE = 72;
+const LOGO_SIZE = 44;
+
 const styles = StyleSheet.create({
   state: { flex: 1, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md },
-  screen: { paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
-  pressed: { opacity: 0.72 },
-  card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.md, marginBottom: spacing.sm },
-  profile: { alignItems: 'center', gap: spacing.xxs, marginTop: spacing.lg, paddingVertical: spacing.lg },
-  name: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, writingDirection: 'rtl' },
-  email: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'ltr', marginBottom: spacing.xs },
-  sectionTitle: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xl, marginBottom: spacing.sm },
-  toggleRow: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm, minHeight: control.minTouchTarget },
-  toggleCopy: { flex: 1, alignItems: 'flex-end' },
-  toggleLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },
-  toggleDetail: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xxs },
-  supportRow: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm, minHeight: control.minTouchTarget },
-  supportCopy: { flex: 1, alignItems: 'flex-end' },
-  error: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xxs },
-  logout: { alignItems: 'center', justifyContent: 'center', minHeight: control.buttonHeight, marginTop: spacing.xl },
-  logoutLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' },
+  screen: { gap: spacing.sm, paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
+  identity: { alignItems: 'center', borderRadius: nabd.bigCardRadius, gap: spacing.xs, padding: spacing.lg },
+  logo: { backgroundColor: '#FFFFFF', borderRadius: LOGO_SIZE, height: LOGO_SIZE, width: LOGO_SIZE },
+  name: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, textAlign: 'center', writingDirection: 'rtl' },
+  // البريد لاتيني: يُعلن اتّجاهه كي لا تقلبه الفقرة العربية.
+  email: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'center', writingDirection: 'ltr' },
+  planBadge: { alignSelf: 'center' },
+  section: { gap: spacing.xs, marginTop: spacing.xxs },
+  row: { alignItems: 'center', flexDirection: 'row-reverse', gap: spacing.sm, minHeight: control.minTouchTarget },
+  rowCopy: { flex: 1, minWidth: 0 },
+  rowLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },
+  secondary: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
 });

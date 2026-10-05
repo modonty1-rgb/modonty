@@ -19,6 +19,7 @@ import {
 } from "@/lib/subscription";
 import { DashboardLayoutClient } from "./components/dashboard-layout-client";
 import { ImpersonationBanner } from "./components/impersonation-banner";
+import { AndroidAppBanner } from "./components/android-app-banner";
 import { AccountNotice } from "./dashboard/components/account-notice";
 import {
   getPendingArticlesCount,
@@ -146,11 +147,15 @@ export default async function DashboardLayout({
       {impersonated && <ImpersonationBanner clientName={clientName} />}
       <DashboardLayoutClient
       accountNotice={
-        <AccountNotice
-          endDate={sub.endsAt}
-          unpaidCount={outstanding.count}
-          unpaidTotal={formatCurrencyTotals(outstanding.totals, " و")}
-        />
+        <div className="flex flex-col gap-3 empty:hidden">
+          {/* يظهر فقط حين يُضبط رابط الـAPK على الخادم — إزالة المتغيّر تُخفيه بلا رفع كود. */}
+          {process.env.ANDROID_APK_URL && <AndroidAppBanner />}
+          <AccountNotice
+            endDate={sub.endsAt}
+            unpaidCount={outstanding.count}
+            unpaidTotal={formatCurrencyTotals(outstanding.totals, " و")}
+          />
+        </div>
       }
       clientName={clientName}
       clientLogoUrl={clientLogoUrl}

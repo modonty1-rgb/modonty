@@ -71,7 +71,7 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
   const runApprove = async () => {
     setLoading(true);
     try {
-      const result = await approveArticle(article.id, article.client.id);
+      const result = await approveArticle(article.id);
       if (result.success) {
         setConfirmApprove(false);
         toast.success(ar.articles.approveSuccess ?? "تمت الموافقة — المحرر سيقوم بالنشر قريباً");
@@ -91,7 +91,7 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
   const handleRequestChanges = async (feedback: string) => {
     setLoading(true);
     try {
-      const result = await requestChanges(article.id, article.client.id, feedback);
+      const result = await requestChanges(article.id, feedback);
       if (result.success) {
         setShowFeedback(false);
         toast.success(ar.articles.requestSuccess ?? "تم إرسال طلب التعديلات للمحرر");

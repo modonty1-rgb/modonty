@@ -2,6 +2,8 @@ import type { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
+import { rejectMalformedIds } from "@/lib/mobile-api/params";
+import { clientInboxWhere, countClientUnread } from "@/lib/mobile-api/client-inbox";
 
 /**
  * وسم تنبيه واحد كمقروء.
@@ -18,21 +20,16 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const session = await mobileSessionFromRequest(request);
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
   const { notificationId } = await params;
+  const malformed = rejectMalformedIds([notificationId], "ما لقينا هذا التنبيه.");
+  if (malformed) return malformed;
 
   /**
-   * حرّاس الملكية **نسخةٌ حرفية من `GET`** في المجلّد الأعلى — ولا يجوز أن يفترقا.
+   * حرّاس الملكية من `clientInboxWhere` — نفس دالّة `GET` في المجلّد الأعلى، فلا يفترقان.
    * وذراعا `isSet` ليستا زينة: على مونجو الحقل الغائب لا يساوي `null`، والنسخة أحادية
    * الذراع رجعت **صفراً من ٣** على `modonty_dev` (مقيسة، ومكتوبة في `GET` نفسه).
    */
   const existing = await db.notification.findFirst({
-    where: {
-      id: notificationId,
-      clientId: session.clientId,
-      AND: [
-        { OR: [{ userId: null }, { userId: { isSet: false } }] },
-        { OR: [{ staffId: null }, { staffId: { isSet: false } }] },
-      ],
-    },
+    where: { id: notificationId, ...clientInboxWhere(session.clientId) },
     select: { id: true, readAt: true },
   });
   if (existing === null) return fail("NOT_FOUND", "ما لقينا هذا التنبيه.");
@@ -42,16 +39,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     await db.notification.update({ where: { id: existing.id }, data: { readAt: new Date() } });
   }
 
-  const unreadCount = await db.notification.count({
-    where: {
-      clientId: session.clientId,
-      readAt: null,
-      AND: [
-        { OR: [{ userId: null }, { userId: { isSet: false } }] },
-        { OR: [{ staffId: null }, { staffId: { isSet: false } }] },
-      ],
-    },
-  });
+  const unreadCount = await countClientUnread(session.clientId);
 
   return ok({ notificationId: existing.id, unreadCount });
 }

@@ -1,13 +1,16 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useConfirm } from '@/src/components/ui/ConfirmProvider';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useKeyboardInset } from '@/src/components/ui/useKeyboardInset';
 import { AppText as Text } from '@/src/components/ui/AppText';
-import { ModontyIcon } from '@/src/components/brand/icons/ModontyIcon';
+import { rtlLine } from '@/src/components/ui/bidi';
+import { DockSurface, EnterView, PillButton, TextAreaField, TonalCard } from '@/src/components/ui/Nabd';
 import { ErrorState, OfflineState, SkeletonCards } from '@/src/components/ui/MobileUI';
 import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 import { arabicDigits, getAudienceQuestion, sendAudienceReply } from '@/src/services/engagement-api';
 import { CONNECTION_COPY, useEngagementResource } from '@/src/services/use-engagement-resource';
-import { control, fonts, radii, skeleton, spacing, typography } from '@/src/theme/tokens';
+import { MobileOfflineError } from '@/src/services/mobile-api';
+import { fonts, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
 /**
@@ -23,10 +26,14 @@ export function AudienceReplyRoute({ accessToken, questionId, onBack, onSent }: 
   const { theme } = useAppTheme();
   const confirm = useConfirm();
   const load = useCallback((token: string) => getAudienceQuestion(token, questionId), [questionId]);
-  const { resource, reload } = useEngagementResource(accessToken, load);
+  const { resource, reload, refresh } = useEngagementResource(accessToken, load);
   const [answer, setAnswer] = useState('');
   const [isSending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+  const keyboardInset = useKeyboardInset();
+  const scrollRef = useRef<ScrollView>(null);
+  // الحقل وزرّ الإرسال آخر المحتوى: لمّا تنفتح اللوحة ويقصر العرض فعلاً (onLayout)، ينزل التمرير إليهما.
+  const followKeyboard = useCallback(() => { if (keyboardInset > 0) scrollRef.current?.scrollToEnd({ animated: true }); }, [keyboardInset]);
 
   const detail = resource.data;
   const trimmed = answer.trim();
@@ -49,9 +56,13 @@ export function AudienceReplyRoute({ accessToken, questionId, onBack, onSent }: 
     setSendError(null);
     sendAudienceReply(accessToken, questionId, trimmed)
       .then(onSent)
-      .catch((reason: unknown) => setSendError(reason instanceof Error ? reason.message : CONNECTION_COPY.errorTitle))
+      .catch((reason: unknown) => {
+        setSendError(reason instanceof Error && reason.message ? reason.message : CONNECTION_COPY.errorTitle);
+        // الخادم يرد ٤٠٩ لسؤالٍ حُسم من مكان آخر — نعيد قراءته بصمت فتظهر حالته الحقيقية.
+        if (!(reason instanceof MobileOfflineError)) refresh();
+      })
       .finally(() => setSending(false));
-  }, [accessToken, canSend, confirm, detail, onSent, questionId, trimmed]);
+  }, [accessToken, canSend, confirm, detail, onSent, questionId, refresh, trimmed]);
 
   /**
    * رأس التطبيق الموحَّد — كان مبنيّاً هنا بيده، بالرجوع **يساراً** وعنوان `?? ''` غير مرئي
@@ -64,74 +75,48 @@ export function AudienceReplyRoute({ accessToken, questionId, onBack, onSent }: 
   if (resource.status === 'error' || detail === null) return <View style={styles.fill}>{header}<View style={styles.state}><ErrorState message={resource.message ?? CONNECTION_COPY.errorTitle} retryLabel={CONNECTION_COPY.retryLabel} onRetry={reload} /></View></View>;
 
   const { question, review } = detail;
-  return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.fill}>
-    <ScrollView contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+  /**
+   * «نبض» (S08-reply): سطح نغمي `surfaceRaised` يحمل السؤال وصاحبه معاً — كانا بطاقتين بحدّ —
+   * ثم حقل الرد، ثم زرّ الإرسال على لوح الفعل (‎.dock-glass) آخر المحتوى.
+   */
+  const askedBy = [question.name, question.metaLine].filter((part): part is string => Boolean(part)).join(' · ');
+  return <View style={[styles.fill, { paddingBottom: keyboardInset }]}>
+    <ScrollView ref={scrollRef} onLayout={followKeyboard} contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
       {header}
-      <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        {question.name ? <Text style={[styles.name, { color: theme.colors.text }]}>{question.name}</Text> : null}
-        {question.metaLine ? <Text style={[styles.meta, { color: theme.colors.muted }]}>{question.metaLine}</Text> : null}
-      </View>
-      <View style={[styles.card, styles.questionCard, { backgroundColor: theme.colors.surfaceRaised, borderColor: theme.colors.border }]}>
-        <Text style={[styles.cardLabel, { color: theme.colors.textInteractive }]}>{review.questionCardLabel}</Text>
-        <Text style={[styles.question, { color: theme.colors.text }]}>{question.question}</Text>
-      </View>
+      <EnterView index={0}>
+        <TonalCard tone="raised" style={styles.questionCard}>
+          <Text style={[styles.secondary, { color: theme.colors.muted }]}>{review.questionCardLabel}</Text>
+          <Text style={[styles.question, { color: theme.colors.text }]}>{question.question}</Text>
+          {askedBy ? <Text numberOfLines={2} style={[styles.secondary, { color: theme.colors.muted }]}>{rtlLine(askedBy)}</Text> : null}
+        </TonalCard>
+      </EnterView>
 
-      {question.isAnswerable ? <>
-        <Text style={[styles.fieldLabel, { color: theme.colors.text }]}>{review.answerLabel}</Text>
-        <View style={[styles.inputShell, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-          <TextInput
-            accessibilityLabel={review.answerLabel}
-            editable={!isSending}
-            maxLength={review.answerMaxLength}
-            multiline
-            onChangeText={setAnswer}
-            placeholder={review.answerPlaceholder}
-            placeholderTextColor={theme.colors.inputPlaceholder}
-            style={[styles.input, { backgroundColor: theme.colors.inputSurface, borderColor: theme.colors.inputBorder, color: theme.colors.text }]}
-            textAlign="right"
-            textAlignVertical="top"
-            value={answer}
-          />
-          <Text style={[styles.counter, { color: theme.colors.muted }]}>{arabicDigits(answer.length)} / {review.counterMaxLabel}</Text>
-        </View>
-        {sendError ? <Text style={[styles.error, { color: theme.colors.errorText }]}>{sendError}</Text> : null}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={review.submitLabel}
-          accessibilityState={{ disabled: !canSend, busy: isSending }}
-          disabled={!canSend}
-          onPress={send}
-          style={({ pressed }) => [styles.submit, { backgroundColor: theme.colors.brandFill }, canSend ? null : styles.submitDisabled, pressed && canSend ? styles.pressed : null]}
-        >
-          {/* `onBrandFill` لا `navy`: قِيس navy على brandFill = **2.39:1** في الفاتح (يلزم 4.5). والتوكن موجود لهذا الغرض: 7.37:1 فاتحاً و9.91:1 داكناً. */}
-          <Text style={[styles.submitLabel, { color: theme.colors.onBrandFill }]}>{isSending ? review.submittingLabel : review.submitLabel}</Text>
-        </Pressable>
-      </> : <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.cardLabel, { color: theme.colors.textInteractive }]}>{review.answeredLabel}</Text>
-        {question.answer ? <Text style={[styles.question, { color: theme.colors.text }]}>{question.answer}</Text> : null}
-      </View>}
+      {question.isAnswerable ? <EnterView index={1} style={styles.form}>
+        <TextAreaField label={review.answerLabel} value={answer} onChangeText={setAnswer} placeholder={review.answerPlaceholder} maxLength={review.answerMaxLength} editable={!isSending} minHeight={MIN_ANSWER_HEIGHT} counter={`${arabicDigits(answer.length)} / ${review.counterMaxLabel}`} />
+        {sendError ? <Text accessibilityLiveRegion="assertive" style={[styles.secondary, { color: theme.colors.errorText }]}>{sendError}</Text> : null}
+        <DockSurface>
+          <PillButton label={isSending ? review.submittingLabel : review.submitLabel} disabled={!canSend} glow={false} onPress={() => void send()} accessibilityState={{ disabled: !canSend, busy: isSending }} />
+        </DockSurface>
+      </EnterView> : <TonalCard tone="positive" style={styles.answered}>
+        <Text style={[styles.label, { color: theme.colors.onPositiveContainer }]}>{review.answeredLabel}</Text>
+        {question.answer ? <Text style={[styles.body, { color: theme.colors.onPositiveContainer }]}>{question.answer}</Text> : null}
+      </TonalCard>}
     </ScrollView>
-  </KeyboardAvoidingView>;
+  </View>;
 }
+
+/** ‎.inp.area في الموكب: ١٣٢ لا ١١٢ — مساحة تقول «اكتب ردّاً» لا «اكتب كلمة». */
+const MIN_ANSWER_HEIGHT = 132;
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   state: { flex: 1, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md },
-  screen: { paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
-  card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.md, marginTop: spacing.md, alignItems: 'flex-end' },
-  questionCard: { marginTop: spacing.sm },
-  name: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, textAlign: 'right', writingDirection: 'rtl' },
-  meta: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xxs },
-  cardLabel: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right', writingDirection: 'rtl' },
-  question: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.sm },
-  fieldLabel: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xl },
-  inputShell: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.md, marginTop: spacing.xs },
-  // WCAG 1.4.11: حدّ عنصر التحكّم 3:1. كان الحقل بلا حدّ ولا خلفية فلا يُقرأ حقلاً أصلاً.
-  input: { borderColor: 'transparent', borderRadius: radii.field, borderWidth: control.inputBorderWidth, fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, minHeight: control.buttonHeight * 2, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, writingDirection: 'rtl' },
-  counter: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'left', writingDirection: 'ltr', marginTop: spacing.xs },
-  error: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xs },
-  submit: { minHeight: control.buttonHeight, borderRadius: radii.button, alignItems: 'center', justifyContent: 'center', marginTop: spacing.md },
-  submitDisabled: { opacity: 0.5 },
-  pressed: { opacity: 0.72 },
-  submitLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' },
+  screen: { gap: spacing.sm, paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
+  questionCard: { gap: spacing.xs },
+  form: { gap: spacing.sm, marginTop: spacing.xxs },
+  answered: { gap: spacing.xs },
+  secondary: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
+  question: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, textAlign: 'right', writingDirection: 'rtl' },
+  label: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right', writingDirection: 'rtl' },
+  body: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },
 });

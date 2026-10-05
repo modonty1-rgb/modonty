@@ -1,42 +1,51 @@
 import { memo, useCallback } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
+import { rtlLine } from '@/src/components/ui/bidi';
+import type { ModontyIconName } from '@/src/components/brand/icons/ModontyIcon';
+import { GroupRow, IconShape } from '@/src/components/ui/Nabd';
 import type { NotificationSummary } from '@/src/services/engagement-api';
-import { control, fonts, radii, spacing, typography } from '@/src/theme/tokens';
+import { fonts, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
+const iconByTarget: Record<NonNullable<NotificationSummary['target']>, ModontyIconName> = { article: 'articles', audience: 'question', videos: 'reels' };
+
+type Props = { item: NotificationSummary; openPrefix: string; position: 'only' | 'first' | 'middle' | 'last'; onOpen: (item: NotificationSummary) => void };
+
 /**
- * One notification on S12.
+ * تنبيه واحد في S12 — «نبض»: صفّ في مجموعة مقطّعة، ورمز نوعه في دائرة.
  *
- * Unread is carried twice — an accent border AND the word «جديد» — so the distinction
- * survives a colour-blind reader and a dimmed screen in daylight.
- *
- * A row whose `target` is null is not pressable: the app has no screen for that type yet,
- * and a tap that goes nowhere is worse than none.
+ * غير المقروء محمولٌ **ثلاث مرّات**: دائرة بأزرق البطل · نقطة بجانب العنوان · وكلمة «جديد» بلون
+ * الرابط — فيبقى الفرق لمن لا يميّز الألوان وتحت شمس النهار. والصفّ الذي `target` له null لا
+ * يُضغط: لا شاشة لنوعه بعد، وضغطة لا تقود لشيء أسوأ من لا ضغطة.
  */
-
-type Props = { item: NotificationSummary; openPrefix: string; onOpen: (item: NotificationSummary) => void };
-
-export const NotificationCard = memo(function NotificationCard({ item, openPrefix, onOpen }: Props) {
+export const NotificationCard = memo(function NotificationCard({ item, openPrefix, position, onOpen }: Props) {
   const { theme } = useAppTheme();
   const open = useCallback(() => onOpen(item), [item, onOpen]);
-  const body = <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: item.isUnread ? theme.colors.textInteractive : theme.colors.border }]}>
-    <Text style={[styles.title, { color: theme.colors.text }]}>{item.title}</Text>
-    {item.body ? <Text numberOfLines={2} style={[styles.body, { color: theme.colors.muted }]}>{item.body}</Text> : null}
-    <View style={styles.footer}>
-      <Text style={[styles.state, { color: item.isUnread ? theme.colors.textInteractive : theme.colors.muted }]}>{item.stateLabel}</Text>
-      <Text style={[styles.time, { color: theme.colors.muted }]}>{item.timeLabel}</Text>
+  return <GroupRow position={position} onPress={item.target === null ? undefined : open} accessibilityLabel={`${openPrefix} ${item.title} ${item.stateLabel}`}>
+    <View style={styles.row}>
+      <IconShape icon={item.target ? iconByTarget[item.target] : 'notifications'} tone={item.isUnread ? 'hero' : 'secondary'} />
+      <View style={styles.copy}>
+        <View style={styles.head}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>{rtlLine(item.title)}</Text>
+          {item.isUnread ? <View accessibilityElementsHidden importantForAccessibility="no" style={[styles.dot, { backgroundColor: theme.colors.brandFill }]} /> : null}
+        </View>
+        {item.body ? <Text numberOfLines={2} style={[styles.secondary, { color: theme.colors.text }]}>{rtlLine(item.body)}</Text> : null}
+        <Text style={[styles.secondary, { color: theme.colors.muted }]}>
+          <Text style={item.isUnread ? [styles.state, { color: theme.colors.textInteractive }] : null}>{item.stateLabel}</Text>
+          {` · ${item.timeLabel}`}
+        </Text>
+      </View>
     </View>
-  </View>;
-  return item.target === null ? body
-    : <Pressable accessibilityRole="button" accessibilityLabel={`${openPrefix} ${item.title}`} onPress={open}>{body}</Pressable>;
+  </GroupRow>;
 });
 
 const styles = StyleSheet.create({
-  card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.md, marginBottom: spacing.sm, minHeight: control.minTouchTarget, alignItems: 'flex-end' },
-  title: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, textAlign: 'right', writingDirection: 'rtl' },
-  body: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xxs },
-  footer: { alignSelf: 'stretch', flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xs },
-  state: { fontFamily: fonts.medium, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, writingDirection: 'rtl' },
-  time: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, writingDirection: 'rtl' },
+  row: { alignItems: 'flex-start', flexDirection: 'row-reverse', gap: spacing.sm },
+  copy: { flex: 1, gap: spacing.xxs, minWidth: 0 },
+  head: { alignItems: 'center', flexDirection: 'row-reverse', gap: spacing.xs, justifyContent: 'space-between' },
+  title: { flex: 1, fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },
+  dot: { borderRadius: 4, height: 8, width: 8 },
+  secondary: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
+  state: { fontFamily: fonts.medium },
 });

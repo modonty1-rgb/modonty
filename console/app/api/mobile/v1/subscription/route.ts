@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { isCollectedOrder } from "@modonty/shared/lib/payments/collected";
 import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { arabicCurrency, arabicLongDateLatin } from "@/lib/mobile-api/arabic-format";
+import { arabicCurrency, arabicLongDate, arabicLongDateLatin, arabicNumber } from "@/lib/mobile-api/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
@@ -76,10 +76,28 @@ export async function GET(request: NextRequest) {
     durationDays === null ? null : { label: "مدة الاشتراك", value: `${durationDays} يوماً` },
   ].filter((row): row is { label: string; value: string } => row !== null);
 
+  /**
+   * «نبض» (S04): بطل الاشتراك — حلقة الأيّام الباقية من مدّة الطلب الساري، بنفس معادلة حلقة
+   * الرئيسية (`daysRemaining ÷ durationDays`) فلا يختلف الرقمان. الأرقام هنا هندية كالموكب
+   * المعتمد وكحلقة الرئيسية؛ صفوف التفاصيل تحتها باقية على قاعدة S04 اللاتينية أعلاه.
+   */
+  const elapsedPercent = daysRemaining !== null && durationDays ? Math.min(Math.max(Math.round(((durationDays - daysRemaining) / durationDays) * 100), 0), 100) : null;
+  const hero = {
+    label: "حالة الاشتراك",
+    planTitle: activeOrder?.planName ? `باقة ${activeOrder.planName}` : null,
+    daysRemaining,
+    durationDays,
+    daysValue: daysRemaining === null ? null : arabicNumber(daysRemaining),
+    daysUnit: "يوماً",
+    rangeLabel: sub.startedAt && sub.endsAt ? `من ${arabicLongDate(sub.startedAt)} إلى ${arabicLongDate(sub.endsAt)}` : null,
+    elapsedLabel: elapsedPercent === null ? null : `مضى ${arabicNumber(elapsedPercent)}٪ من المدّة`,
+  };
+
   return ok({
     ...screen,
     empty: null,
     subscription: {
+      hero,
       status: sub.status,
       statusLabel: statusLabels[sub.status] ?? sub.status,
       statusTone: positiveStatuses.has(sub.status) ? "positive" : dangerStatuses.has(sub.status) ? "danger" : "warning",

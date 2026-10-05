@@ -83,6 +83,8 @@ export type SubscriptionScreen = {
     statusLabel: string;
     statusTone: SubscriptionStatusTone;
     daysRemainingLabel: string | null;
+    /** بطل «نبض» — اختياري كي يبقى الخادم الأقدم يعمل (يرجع لسطر الأيّام وحده). */
+    hero?: { label: string; planTitle: string | null; daysRemaining: number | null; durationDays: number | null; daysValue: string | null; daysUnit: string; rangeLabel: string | null; elapsedLabel: string | null };
     planPayment: { title: string; rows: SubscriptionDetailRow[] } | null;
     usage: { title: string; remainingLabel: string; valueLabel: string; remainingPercent: number; note: string } | null;
     period: { title: string; rows: SubscriptionDetailRow[] } | null;
@@ -101,7 +103,8 @@ async function publicRequest<T>(path: string, fallbackMessage: string): Promise<
   try {
     response = await fetch(`${configuredBaseUrl}${path}`);
   } catch (reason) {
-    throw new MobileOfflineError(reason instanceof Error ? reason.message : fallbackMessage);
+    console.warn('[account-api] network failure', path, reason instanceof Error ? reason.message : reason);
+    throw new MobileOfflineError();
   }
   let payload: { data?: T; error?: { message?: string } };
   try {

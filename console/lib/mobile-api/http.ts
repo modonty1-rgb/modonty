@@ -6,6 +6,7 @@ export type MobileApiErrorCode =
   | "NOT_FOUND"
   | "VALIDATION_ERROR"
   | "CONFLICT"
+  | "RATE_LIMITED"
   | "INTERNAL_ERROR";
 
 const STATUS_BY_CODE: Record<MobileApiErrorCode, number> = {
@@ -14,6 +15,7 @@ const STATUS_BY_CODE: Record<MobileApiErrorCode, number> = {
   NOT_FOUND: 404,
   VALIDATION_ERROR: 422,
   CONFLICT: 409,
+  RATE_LIMITED: 429,
   INTERNAL_ERROR: 500,
 };
 

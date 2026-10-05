@@ -23,10 +23,9 @@ import { ar } from "@/lib/ar";
 
 interface ArticlePreviewClientProps {
   article: ArticleWithAllData;
-  clientId: string;
 }
 
-export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClientProps) {
+export function ArticlePreviewClient({ article }: ArticlePreviewClientProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -50,7 +49,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
   const runApprove = async () => {
     setLoading(true);
     try {
-      const result = await approveArticle(article.id, clientId);
+      const result = await approveArticle(article.id);
       if (result.success) {
         toast.success(a.approveSuccess ?? "تمت الموافقة — المحرر سيقوم بالنشر قريباً");
         router.push("/dashboard/articles");
@@ -70,7 +69,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
   const handleRequestChanges = async (feedback: string) => {
     setLoading(true);
     try {
-      const result = await requestChanges(article.id, clientId, feedback);
+      const result = await requestChanges(article.id, feedback);
       if (result.success) {
         setShowFeedback(false);
         toast.success(a.requestSuccess ?? "تم إرسال طلب التعديلات للمحرر");

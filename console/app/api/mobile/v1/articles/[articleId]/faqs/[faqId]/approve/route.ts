@@ -3,11 +3,14 @@ import { db } from "@/lib/db";
 import { publishFaqAnswer } from "@/lib/faq/publish-faq-answer";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
+import { rejectMalformedIds } from "@/lib/mobile-api/params";
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ articleId: string; faqId: string }> }) {
   const session = await mobileSessionFromRequest(request);
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
   const { articleId, faqId } = await params;
+  const malformed = rejectMalformedIds([articleId, faqId], "سؤال فريق المحتوى غير موجود.");
+  if (malformed) return malformed;
   const faq = await db.articleFAQ.findFirst({
     where: { id: faqId, articleId, article: { clientId: session.clientId }, OR: [{ source: "manual" }, { source: null }, { source: { isSet: false } }] },
     select: { id: true, answer: true },

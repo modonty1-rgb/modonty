@@ -1,12 +1,81 @@
 export type ThemeMode = 'dark' | 'light';
 
+/**
+ * لوحة «نبض» — الاتجاه «د» المعتمد (خالد، ٤ أكتوبر ٢٠٢٦؛ المصدر `console-ui-nabd.html` ‎.dD).
+ *
+ * بطلٌ أزرق واحد لكل شاشة · أسطح كحلية/لافندرية بلا حدود · حاويات لونية للحالة · شريط تابات
+ * وقائمة على سطح شبه معتم (٩٢–٩٥٪) فلا تمويه ولا نصّ فوق زجاج. كل زوج نصّ/سطح مقيس ≥ ٤٫٥:١
+ * (أدنى قيمة: الرابط على s2 الفاتح 5.97 · الأبيض على البطل 7.02 · onWarnC على warnC 9.13).
+ */
+function nabdDark() {
+  return {
+    hero: '#3030FF',
+    onHero: '#FFFFFF',
+    /** شكل «الكعكة» خلف رقم البطل — أفتح درجة من البطل نفسه (الأبيض عليه 5.55:1). */
+    heroNumeral: '#4C4CFF',
+    secondary: '#2A3290',
+    onSecondary: '#E2E3FF',
+    tertiary: '#00393A',
+    onTertiary: '#8AF3F2',
+    warningContainer: '#3F2B06',
+    onWarningContainer: '#FFCF85',
+    positiveContainer: '#00393A',
+    onPositiveContainer: '#8AF3F2',
+    dangerContainer: '#43161A',
+    onDangerContainer: '#FFB4B4',
+    tabBar: 'rgba(18,26,60,0.92)',
+    menuSurface: 'rgba(27,36,82,0.94)',
+    edgeHighlight: 'rgba(255,255,255,0.14)',
+    glowBlue: '#3030FF',
+    glowBlueOpacity: 0.42,
+    glowTeal: '#00D8D8',
+    glowTealOpacity: 0.2,
+    liftShadow: '0 10px 28px rgba(0,0,0,0.32)',
+    heroShadow: '0 14px 34px rgba(48,48,255,0.38)',
+    scrim: 'rgba(3,5,14,0.35)',
+    onHeroMuted: 'rgba(255,255,255,0.88)',
+  };
+}
+
+function nabdLight() {
+  return {
+    hero: '#3030FF',
+    onHero: '#FFFFFF',
+    heroNumeral: '#5555FF',
+    secondary: '#DCDDFF',
+    onSecondary: '#16168F',
+    tertiary: '#C6F2F1',
+    onTertiary: '#00403F',
+    warningContainer: '#FFE2BC',
+    onWarningContainer: '#5C2E00',
+    positiveContainer: '#C6F2F1',
+    onPositiveContainer: '#00403F',
+    dangerContainer: '#FFDAD6',
+    onDangerContainer: '#7A1410',
+    tabBar: 'rgba(255,255,255,0.92)',
+    menuSurface: 'rgba(255,255,255,0.95)',
+    edgeHighlight: 'rgba(255,255,255,0.95)',
+    glowBlue: '#3030FF',
+    glowBlueOpacity: 0.15,
+    glowTeal: '#00D8D8',
+    glowTealOpacity: 0.22,
+    liftShadow: '0 10px 28px rgba(14,6,90,0.14)',
+    heroShadow: '0 14px 34px rgba(48,48,255,0.28)',
+    scrim: 'rgba(3,5,14,0.35)',
+    onHeroMuted: 'rgba(255,255,255,0.88)',
+  };
+}
+
 export const darkColors = {
-  page: '#070B14',
-  surface: '#101827',
-  surfaceRaised: '#152036',
-  border: '#293853',
+  // «نبض» (٤ أكتوبر): الأسطح كحلية متدرّجة s1 → s2 → s3 بلا حدود — تباين النصوص مقيس أسفل الكتلة.
+  page: '#070B16',
+  surface: '#121A3C',
+  surfaceRaised: '#1B2452',
+  surfaceHigh: '#283166',
+  border: '#283166',
   text: '#FFFFFF',
-  muted: '#A9B6CC',
+  // 9.19:1 على s1 · 8.02:1 على s2 · 6.62:1 على s3.
+  muted: '#B6BEDC',
   primary: '#3030FF',
   accent: '#00D8D8',
   navy: '#0E065A',
@@ -26,7 +95,7 @@ export const darkColors = {
    * WCAG 1.4.11 «Non-text Contrast» يطلب **3:1** لحدّ أي عنصر تحكّم.
    * الحلّ طبقتان: بئر أغمق من البطاقة + حدّ يعبر 3:1.
    */
-  inputSurface: '#070B14',
+  inputSurface: '#0B1024',
   inputBorder: '#606B7F',
   /**
    * درجة «قيد التقدّم» في مسار الإحالة.
@@ -56,6 +125,7 @@ export const darkColors = {
    * والأبيض على البنّي الداكن (5.09:1). التعبئة ما تغيّرت — الماركة كما هي.
    */
   onWarning: '#0E065A',
+  ...nabdDark(),
 };
 
 /**
@@ -74,20 +144,22 @@ export const darkColors = {
  * إلى **6.1–7.4** فصار الوضعان متكافئين في الراحة لا في العبور فقط. الصبغة نفسها لم تتغيّر.
  */
 export const lightColors = {
-  page: '#E4EAF4',
-  surface: '#F4F7FC',
-  surfaceRaised: '#FFFFFF',
-  border: '#C6D3E8',
-  text: '#101827',
-  // 6.10:1 على البطاقة (كان 4.54) — نظيره الداكن 7.94، فالفجوة أُغلقت.
-  muted: '#54637A',
+  // «نبض»: أرضية مصبوغة لافندر → بطاقة بيضاء → سطح ثانٍ لافندري.
+  page: '#EEF0FB',
+  surface: '#FFFFFF',
+  surfaceRaised: '#E4E6FA',
+  surfaceHigh: '#D6D9F5',
+  border: '#D6D9F5',
+  text: '#0E1230',
+  // 7.66:1 على البطاقة البيضاء · 6.20:1 على s2 · 5.51:1 على s3.
+  muted: '#4A5272',
   primary: '#3030FF',
   accent: '#00D8D8',
   navy: '#0E065A',
   // 6.66:1 نصّاً على البطاقة، و6.66:1 للأبيض فوقه تعبئةً (شارة «بانتظار قرارك»).
   warning: '#96450A',
   danger: '#B4241A',
-  textStrong: '#101827',
+  textStrong: '#0E1230',
   textOnPrimary: '#FFFFFF',
   textInteractive: '#0B605E',
   inputPlaceholder: '#54637A',
@@ -102,6 +174,7 @@ export const lightColors = {
   onBrandFill: '#FFFFFF',
   // الأبيض على `warning` الفاتح = 6.66:1، بدل الكحلي الراسب 3.46:1.
   onWarning: '#FFFFFF',
+  ...nabdLight(),
 };
 
 export const themes = {
@@ -116,6 +189,8 @@ export const fonts = {
   regular: 'Tajawal_400Regular',
   medium: 'Tajawal_500Medium',
   bold: 'Tajawal_700Bold',
+  /** رقم البطل وحده (الكعكة) — وزن ٨٠٠ لرقم واحد في الشاشة، كما في الموكب. */
+  extraBold: 'Tajawal_800ExtraBold',
 };
 
 export const spacing = {
@@ -137,11 +212,78 @@ export const radii = {
   card: 20,
 } as const;
 
+/**
+ * هندسة «نبض» — أرقام الموكب المعتمد كما هي (‎.dD)، لا من سلّم ٤–٣٢ لأنها هندسة الشكل لا مسافات
+ * المحتوى: زاوية البطل ٣٢ · مجموعة القائمة ٢٤ خارجياً و٨ داخلياً بفجوة ٣ · الشريط العائم ١٤ من
+ * الحواف بارتفاع ٦٤ ومؤشّر ٥٢×٣٠ · القائمة المنسدلة ٢٨ وبنودها ١٤ · هامش المحتوى تحت الشريط ١٠٠.
+ */
+export const nabd = {
+  heroRadius: 32,
+  cardRadius: 24,
+  tileRadius: 24,
+  statRadius: 18,
+  groupRadius: 24,
+  groupInnerRadius: 8,
+  groupGap: 4,
+  pill: 999,
+  heroPadding: 20,
+  cookieSize: 88,
+  loginCookieSize: 120,
+  ringSize: 56,
+  heroRingSize: 84,
+  ringStroke: 6,
+  heroRingStroke: 8,
+  shapeSize: 40,
+  rowShapeSize: 36,
+  backButtonSize: 44,
+  tabBarInset: 16,
+  tabBarHeight: 64,
+  tabBarPadding: 4,
+  tabIndicatorWidth: 52,
+  tabIndicatorHeight: 30,
+  tabLabelGap: 4,
+  tabBadgeSize: 18,
+  /** الشارة فوق طرف الأيقونة الأيسر: نصف عرض المؤشّر (٢٦) من منتصف التاب. */
+  tabBadgeOffset: 26,
+  badgePaddingX: 12,
+  statPaddingY: 12,
+  rowPaddingY: 12,
+  bigCardRadius: 28,
+  /** المحتوى تحت الشريط العائم: ١٦ + ٦٤ + ٢٠ تنفّس — يُضاف إليه `insets.bottom`. */
+  tabBarClearance: 100,
+  menuRadius: 28,
+  menuItemRadius: 14,
+  menuWidth: 232,
+  heroGlowSize: 220,
+} as const;
+
+/** الحركة — جدول الموكب: ضغط ٠٫٩٧ نابضيّ · دخول ٣٦٠ بتتابع ٤٠ (٥ عناصر) · عدّ ٥٠٠ · حلقة ٦٠٠ · قائمة ٢٠٠/١٥٠. */
+export const motion = {
+  pressScale: 0.97,
+  pressDamping: 18,
+  pressStiffness: 260,
+  enterDuration: 360,
+  enterStep: 40,
+  enterMaxSteps: 4,
+  enterOffset: 10,
+  countUpDuration: 500,
+  ringDuration: 600,
+  menuOpen: 200,
+  menuClose: 150,
+  menuOffset: 8,
+  tabDamping: 20,
+  tabStiffness: 260,
+} as const;
+
 export const control = {
   minTouchTarget: 48,
   buttonHeight: 56,
   inputHeight: 48,
   iconSize: 24,
+  /** سلّم الأيقونات: ١٢ شارة · ١٦ داخل سطر · ٢٠ سهم صفّ/زرّ · ٢٤ قياسي — لا رقم خارجه. */
+  iconSizeBadge: 12,
+  iconSizeInline: 16,
+  iconSizeSmall: 20,
   headerIconSize: 24,
   headerHeight: 56,
   footerHeight: 64,
@@ -227,9 +369,25 @@ export const typography = {
   lineHeightSection: 24,
   lineHeightSecondary: 18,
   lineHeightTabLabel: 16,
+  // «نبض»: العنوان الكبير ٢٨/٣٦ وعنوان البطل ٢٠/٢٨ والأرقام — رقم ٨٠٠ واحد فقط في الشاشة (رقم البطل).
+  largeTitle: 28,
+  lineHeightLargeTitle: 36,
+  heroTitle: 20,
+  lineHeightHeroTitle: 28,
+  cookieNumeral: 48,
+  lineHeightCookieNumeral: 56,
+  ringNumeral: 15,
+  heroRingNumeral: 24,
+  lineHeightRingNumeral: 18,
+  tileNumeral: 30,
+  lineHeightTileNumeral: 34,
+  mediumTitle: 24,
+  lineHeightMediumTitle: 32,
+  statNumeral: 24,
+  lineHeightStatNumeral: 30,
 } as const;
 
-/** UI typography is designed against the approved Android reference at this multiplier. */
+/** Text grows with the phone setting up to 1.3× (accessibility); compact chrome (tabs, badges, ring numerals) stays at 1 on its own. */
 export const fontScale = {
-  uiMaxMultiplier: 1,
+  uiMaxMultiplier: 1.3,
 } as const;

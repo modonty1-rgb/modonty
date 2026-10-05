@@ -1,16 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
-import { useFonts, Tajawal_400Regular, Tajawal_500Medium, Tajawal_700Bold } from '@expo-google-fonts/tajawal';
-import { DarkTheme, DefaultTheme, NavigationContainer, useFocusEffect, useNavigation, useNavigationContainerRef } from '@react-navigation/native';
+import { useFonts, Tajawal_400Regular, Tajawal_500Medium, Tajawal_700Bold, Tajawal_800ExtraBold } from '@expo-google-fonts/tajawal';
+import { DarkTheme, DefaultTheme, NavigationContainer, StackActions, useFocusEffect, useNavigation, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { Linking, StyleSheet, View } from 'react-native';
+import { BackHandler, Linking, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppShell } from '@/src/components/navigation/AppShell';
 import { ConfirmProvider } from '@/src/components/ui/ConfirmProvider';
-import { configureForegroundPresentation, ensureAndroidChannel, observeNotificationTaps, registerForPushNotifications } from '@/src/services/push-registration';
-import { ScreenRef } from '@/src/components/ui/ScreenRef';
+import { BackgroundGlow } from '@/src/components/ui/Nabd';
+import { configureForegroundPresentation, ensureAndroidChannel, observeNotificationTaps, registerForPushNotifications, type PushTapTarget } from '@/src/services/push-registration';
 import { LoginRoute } from '@/src/routes/auth/LoginRoute';
+import { SessionRestoreRoute } from '@/src/routes/auth/SessionRestoreRoute';
 import { AccountRoute } from '@/src/routes/account/AccountRoute';
 import { ArticleReviewApiRoute } from '@/src/routes/articles/ArticleReviewApiRoute';
 import { ArticlesApiRoute } from '@/src/routes/articles/ArticlesApiRoute';
@@ -26,9 +27,10 @@ import { SubscriptionRoute } from '@/src/routes/subscription/SubscriptionRoute';
 import { VideoUploadRoute } from '@/src/routes/videos/VideoUploadRoute';
 import { VideosRoute } from '@/src/routes/videos/VideosRoute';
 import { AppThemeProvider, useAppTheme } from '@/src/theme/ThemeProvider';
-import { articleFallbackText, ArticleListCollection, getDecisionArticles, getPublishedArticles } from '@/src/services/articles-api';
-import { getCurrentClient, getDashboard, loginWithEmail, logoutMobileSession, MobileClientProfile, MobileDashboard, MobileOfflineError, MobileSessionExpiredError, MobileShellCopy, refreshMobileAccessToken } from '@/src/services/mobile-api';
-import { clearMobileAccessToken, readMobileAccessToken, saveMobileAccessToken } from '@/src/services/mobile-session';
+import { getDecisionArticles, getPublishedArticles } from '@/src/services/articles-api';
+import { connectionErrorText, getCurrentClient, getDashboard, loginWithEmail, logoutMobileSession, MobileClientProfile, MobileDashboard, MobileOfflineError, MobileSessionExpiredError, MobileShellCopy, onMobileSessionRejected, refreshMobileAccessToken } from '@/src/services/mobile-api';
+import { clearMobileAccessToken, clearPushDeviceId, readMobileAccessToken, readPushDeviceId, saveMobileAccessToken } from '@/src/services/mobile-session';
+import { clearResourceCache, useEngagementResource, type RefreshFailure } from '@/src/services/use-engagement-resource';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -44,11 +46,11 @@ export default function App() {
  * what S03 · S04 · S06 · S07 · S08-reply · S10 · S13 · S14 show. The stack header stays off;
  * this wrapper only pays back the safe area the shell would otherwise have supplied.
  */
-function PushedScreen({ code, children }: { code: string; children: ReactNode }) {
+function PushedScreen({ children }: { children: ReactNode }) {
   const { theme } = useAppTheme();
   const insets = useSafeAreaInsets();
   return <View style={[styles.pushed, { backgroundColor: theme.colors.page, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-    <ScreenRef code={code} />
+    <BackgroundGlow />
     {children}
   </View>;
 }
@@ -59,9 +61,13 @@ function PushedScreen({ code, children }: { code: string; children: ReactNode })
  * S05 «مقالات بانتظار قرارك» is reached from the home card, yet the approved image shows the
  * header AND the tab bar with «المقالات» lit — so it is a pushed screen with chrome, not a tab.
  * Tapping a tab from here returns to the tab host rather than stacking a second copy of it.
+ *
+ * **`popTo` لا `navigate`:** في React Navigation 7 صار `navigate` إلى شاشة موجودة في المكدّس
+ * **يدفع نسخة جديدة** (خيار `pop` افتراضه `false`) — قِيس على جوّال خالد: تاب «الرئيسية» من هنا
+ * دفع غلاف تابات ثانياً، فصار زرّ الرجوع من الرئيسية يعيد فتح «مقالات بانتظار قرارك» القديمة.
+ * `popTo('tabs')` يُسقط ما فوق غلاف التابات ويرجع إليه نفسه (التوثيق: stack-actions#popto).
  */
-function ChromeScreen({ code, client, shellCopy, activeTab, unreadCount, onSelectTab, children }: {
-  code: string;
+function ChromeScreen({ client, shellCopy, activeTab, unreadCount, onSelectTab, children }: {
   client: MobileClientProfile | null;
   shellCopy: MobileShellCopy;
   activeTab: BottomTabRoute;
@@ -75,44 +81,47 @@ function ChromeScreen({ code, client, shellCopy, activeTab, unreadCount, onSelec
     copy={shellCopy}
     activeRoute={activeTab}
     unreadCount={unreadCount}
-    onSelectTab={(nextTab) => { onSelectTab(nextTab); navigation.navigate('tabs'); }}
+    onSelectTab={(nextTab) => { onSelectTab(nextTab); navigation.popTo('tabs'); }}
     onOpenPushed={(route: PushedRoute) => navigation.navigate(route)}
   >
-    <ScreenRef code={code} />
     {children}
   </AppShell>;
 }
 
-/** رموز الشاشات كما في تقرير التست — مرجع تطوير فقط، لا يظهر في الإنتاج. */
-const tabScreenCodes: Record<BottomTabRoute, string> = { home: 'S02', articles: 'S11', videos: 'S09', audience: 'S08', notifications: 'S12' };
 
 function MobileConsole() {
   const [client, setClient] = useState<MobileClientProfile | null>(null);
   const [dashboard, setDashboard] = useState<MobileDashboard | null>(null);
-  const [dashboardError, setDashboardError] = useState<string | null>(null);
-  const [dashboardOffline, setDashboardOffline] = useState(false);
+  /** فشل **تحديث** الرئيسية وهي حاضرة — سطرٌ فوقها لا شاشة بدلها. */
+  const [dashboardRefreshFailure, setDashboardRefreshFailure] = useState<RefreshFailure | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [tab, setTab] = useState<BottomTabRoute>('home');
   const [isDashboardRefreshing, setDashboardRefreshing] = useState(false);
   const [isSessionRestoring, setSessionRestoring] = useState(true);
   const [sessionRestoreError, setSessionRestoreError] = useState<string | null>(null);
-  const [fontsLoaded] = useFonts({ Tajawal_400Regular, Tajawal_500Medium, Tajawal_700Bold });
+  /** جلسة محفوظة تعذّر التحقق منها بلا ٤٠١ (انقطاع · عطل خادم) — تبقى، ولا تُعرض شاشة الدخول. */
+  const [restoreFailure, setRestoreFailure] = useState<{ offline: boolean; message: string } | null>(null);
+  const [isRestoreRetrying, setRestoreRetrying] = useState(false);
+  const [fontsLoaded] = useFonts({ Tajawal_400Regular, Tajawal_500Medium, Tajawal_700Bold, Tajawal_800ExtraBold });
+  const accessTokenRef = useRef<string | null>(null);
+  accessTokenRef.current = accessToken;
 
   /**
-   * تسجيل الجهاز للتنبيهات — **مرّة واحدة لكل جلسة**.
+   * تسجيل الجهاز للتنبيهات — **مرّة واحدة لكل دخول**، لا لكل توكن.
    *
    * الخادم يملك `devices/register` وموديل `MobileDevice` منذ البداية، والتطبيق لم ينادِهما
    * ولا مرّة: صندوقٌ ينتظر عنواناً لا يصله. فالعميل لا يعرف بالمقال المنتظر قراره إلّا لو
    * فتح التطبيق بنفسه — وهذا يقلب التطبيق من «ينبّهك» إلى «تفقّده كل يوم».
    *
    * وموضعه بعد الجلسة لا قبلها: الرمز يُربط بعميل، ولا عميل قبل الدخول. والفشل لا يُعرض
-   * للعميل — تسجيلُ جهازٍ شأنٌ تشغيليّ، وإخفاقُه لا يمنعه من استعمال التطبيق.
+   * للعميل — تسجيلُ جهازٍ شأنٌ تشغيليّ، وإخفاقُه لا يمنعه من استعمال التطبيق. والتوكن يتجدّد
+   * أثناء الجلسة، فالعلَم يُصفَّر عند الخروج وحده كي لا يُعاد التسجيل مع كل تجديد.
    */
-  const pushRegisteredFor = useRef<string | null>(null);
+  const isPushRegistered = useRef(false);
   useEffect(() => {
-    if (accessToken === null || pushRegisteredFor.current === accessToken) return;
-    pushRegisteredFor.current = accessToken;
+    if (accessToken === null || isPushRegistered.current) return;
+    isPushRegistered.current = true;
     configureForegroundPresentation();
     void ensureAndroidChannel();
     void registerForPushNotifications(accessToken).then((outcome) => {
@@ -121,117 +130,191 @@ function MobileConsole() {
   }, [accessToken]);
 
   /**
-   * الضغط على التنبيه يفتح تبويبه.
+   * الضغط على التنبيه يفتح وجهته: **المقال نفسه** لو عُرف معرّفه، وإلا تبويبه.
    *
    * التبويب وحده لا يكفي: لو كان العميل داخل شاشة مكدَّسة (مراجعة مقال · الردّ على سؤال)
-   * فتغييرُ التبويب يقع **تحتها** ولا يراه. فنعود إلى `tabs` أوّلاً بالمرجع الرسمي، و`isReady()`
-   * قبله لأنّ الفتح البارد قد يصل قبل أن تُركّب الشجرة.
+   * فتغييرُ التبويب يقع **تحتها** ولا يراه. فنعود إلى `tabs` أوّلاً بالمرجع الرسمي. والفتح
+   * البارد قد يصل قبل أن تجهز الشجرة، فيُحفظ الهدف ويُنفَّذ في `onReady`.
    */
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
+  const pendingTapTarget = useRef<PushTapTarget | null>(null);
+  const openTapTarget = useCallback((target: PushTapTarget) => {
+    if (!navigationRef.isReady()) { pendingTapTarget.current = target; return; }
+    if (target.articleId) { navigationRef.navigate('article-review', { articleId: target.articleId }); return; }
+    if (target.tab === 'bookings') { navigationRef.navigate('bookings'); return; }
+    setTab(target.tab);
+    // `popTo` يُسقط الشاشات المكدَّسة فوق التابات؛ `navigate` كان يدفع غلافاً ثانياً فوقها.
+    navigationRef.dispatch(StackActions.popTo('tabs'));
+  }, [navigationRef]);
+  const flushPendingTapTarget = useCallback(() => {
+    const target = pendingTapTarget.current;
+    pendingTapTarget.current = null;
+    if (target) openTapTarget(target);
+  }, [openTapTarget]);
+  const isSignedIn = accessToken !== null;
   useEffect(() => {
-    if (accessToken === null) return;
-    return observeNotificationTaps((target) => {
-      setTab(target);
-      if (navigationRef.isReady()) navigationRef.navigate('tabs');
-    });
-  }, [accessToken, navigationRef]);
+    if (!isSignedIn) return;
+    return observeNotificationTaps(openTapTarget);
+  }, [isSignedIn, openTapTarget]);
+  // هدفٌ وصل قبل جاهزية الشجرة ثم فاته `onReady` (يُطلق مرّة واحدة) — يُنفَّذ أوّل ما تكتمل الجلسة والرئيسية.
+  useEffect(() => {
+    if (!isSignedIn || dashboard === null || pendingTapTarget.current === null) return;
+    const timer = setTimeout(() => { if (navigationRef.isReady()) flushPendingTapTarget(); }, 0);
+    return () => clearTimeout(timer);
+  });
 
   const { theme, mode } = useAppTheme();
+
+  /** كل ما يخصّ الجلسة يُمسح معاً — ومعه ذاكرة الشاشات كي لا يرى حسابٌ بيانات حسابٍ قبله. */
+  const resetSessionState = useCallback((loginMessage: string | null) => {
+    clearResourceCache();
+    isPushRegistered.current = false;
+    pendingTapTarget.current = null;
+    setClient(null); setDashboard(null); setUnreadCount(0); setDashboardRefreshFailure(null);
+    setTab('home');
+    setAccessToken(null);
+    setRestoreFailure(null);
+    setSessionRestoreError(loginMessage);
+  }, []);
+
+  const clearStoredSession = useCallback(async () => {
+    await clearMobileAccessToken().catch((reason: unknown) => console.warn('[session] clear token failed', reason));
+    await clearPushDeviceId().catch((reason: unknown) => console.warn('[session] clear device id failed', reason));
+  }, []);
 
   /**
    * Restore only what the first screen draws.
    *
    * ENGINEERING-RULES §4.1: a screen loads what it renders and nothing else. Audience, videos,
-   * notifications and subscription each fetch on open, so they are deliberately absent here —
-   * this used to preload five collections before the home screen had drawn once.
+   * notifications and subscription each fetch on open, so they are deliberately absent here.
+   *
+   * **٤٠١ وحده يُخرج العميل.** الانقطاع أو عطل الخادم يُبقي الجلسة ويعرض «ما في اتصال» مع
+   * إعادة المحاولة — كان أيّ فشل يرميه إلى شاشة الدخول بـ«Network request failed».
    */
+  const restoreSession = useCallback(async () => {
+    try {
+      const storedToken = await readMobileAccessToken();
+      if (!storedToken) { setRestoreFailure(null); return; }
+      const refreshedToken = await refreshMobileAccessToken(storedToken);
+      await saveMobileAccessToken(refreshedToken);
+      const [profile, summary] = await Promise.all([getCurrentClient(refreshedToken), getDashboard(refreshedToken)]);
+      setClient(profile);
+      setDashboard(summary);
+      setUnreadCount(summary.unreadNotifications);
+      setRestoreFailure(null);
+      setTab('home');
+      setAccessToken(refreshedToken);
+    } catch (reason) {
+      if (reason instanceof MobileSessionExpiredError) {
+        await clearStoredSession();
+        setRestoreFailure(null);
+        setSessionRestoreError(reason.message);
+        return;
+      }
+      setRestoreFailure({
+        offline: reason instanceof MobileOfflineError,
+        message: reason instanceof Error && reason.message ? reason.message : connectionErrorText.verifySessionFailed,
+      });
+    }
+  }, [clearStoredSession]);
+
   useEffect(() => {
     if (!fontsLoaded) return;
-    let mounted = true;
-    void (async () => {
-      try {
-        const storedToken = await readMobileAccessToken();
-        if (!storedToken) return;
-        const refreshedToken = await refreshMobileAccessToken(storedToken);
-        const [profile, summary] = await Promise.all([getCurrentClient(refreshedToken), getDashboard(refreshedToken)]);
-        if (!mounted) return;
-        setClient(profile);
-        setDashboard(summary);
-        setUnreadCount(summary.unreadNotifications);
-        setAccessToken(refreshedToken);
-        await saveMobileAccessToken(refreshedToken);
-      } catch (reason) {
-        const message = reason instanceof Error ? reason.message : null;
-        if (reason instanceof MobileSessionExpiredError) {
-          try {
-            await clearMobileAccessToken();
-          } catch (clearReason) {
-            if (mounted) setSessionRestoreError(clearReason instanceof Error ? clearReason.message : message);
-            return;
-          }
-        }
-        if (mounted) setSessionRestoreError(message);
-      } finally {
-        if (mounted) setSessionRestoring(false);
-      }
-    })();
-    return () => { mounted = false; };
-  }, [fontsLoaded]);
+    void restoreSession().finally(() => setSessionRestoring(false));
+  }, [fontsLoaded, restoreSession]);
 
-  useEffect(() => { if (fontsLoaded && !isSessionRestoring) SplashScreen.hideAsync(); }, [fontsLoaded, isSessionRestoring]);
+  const retryRestore = useCallback(() => {
+    setRestoreRetrying(true);
+    void restoreSession().finally(() => setRestoreRetrying(false));
+  }, [restoreSession]);
 
-  const handleLogin = async (email: string, password: string) => {
-    const session = await loginWithEmail(email, password);
+  const { isReady: isThemeReady } = useAppTheme();
+  useEffect(() => { if (fontsLoaded && !isSessionRestoring && isThemeReady) SplashScreen.hideAsync(); }, [fontsLoaded, isSessionRestoring, isThemeReady]);
+
+  /**
+   * توكنٌ رُفض **أثناء** الجلسة: نجرّب التجديد مرّة. ٤٠١ على التجديد نفسه وحده يُخرج العميل؛
+   * الانقطاع لا يفعل شيئاً (الشاشة تعرض حالتها)، والنجاح يستبدل التوكن فتُعيد الشاشات الجلب.
+   */
+  const isHandlingRejection = useRef(false);
+  useEffect(() => onMobileSessionRejected((rejectedToken) => {
+    if (isHandlingRejection.current || rejectedToken !== accessTokenRef.current) return;
+    isHandlingRejection.current = true;
+    void refreshMobileAccessToken(rejectedToken)
+      .then(async (freshToken) => {
+        await saveMobileAccessToken(freshToken);
+        if (accessTokenRef.current === rejectedToken) setAccessToken(freshToken);
+      })
+      .catch(async (reason: unknown) => {
+        if (!(reason instanceof MobileSessionExpiredError) || accessTokenRef.current !== rejectedToken) return;
+        await clearStoredSession();
+        resetSessionState(reason.message);
+      })
+      .finally(() => { isHandlingRejection.current = false; });
+  }), [clearStoredSession, resetSessionState]);
+
+  const handleLogin = async (identifier: string, password: string) => {
+    const session = await loginWithEmail(identifier, password);
     const [profile, summary] = await Promise.all([getCurrentClient(session.accessToken), getDashboard(session.accessToken)]);
     await saveMobileAccessToken(session.accessToken);
+    clearResourceCache();
     setClient(profile);
     setDashboard(summary);
     setUnreadCount(summary.unreadNotifications);
+    setDashboardRefreshFailure(null);
+    setSessionRestoreError(null);
+    setTab('home');
     setAccessToken(session.accessToken);
   };
 
-  const loadDashboard = useCallback(() => {
-    if (!accessToken) return;
-    setDashboardError(null);
-    setDashboardOffline(false);
-    void getDashboard(accessToken).then((next) => { setDashboard(next); setUnreadCount(next.unreadNotifications); }).catch((reason: unknown) => {
-      setDashboardOffline(reason instanceof MobileOfflineError);
-      setDashboardError(reason instanceof Error ? reason.message : articleFallbackText.loadArticlesFailed);
-    });
-  }, [accessToken]);
-
-  /** السحب يُبقي الرئيسية تحت الإصبع؛ `loadDashboard` وحدها هي التي تُظهر الهيكل. */
-  const refreshDashboard = useCallback(() => {
-    if (!accessToken) return;
-    setDashboardRefreshing(true);
-    void getDashboard(accessToken)
-      .then((next) => { setDashboard(next); setUnreadCount(next.unreadNotifications); setDashboardError(null); setDashboardOffline(false); })
+  /**
+   * السحب والعودة للتاب يقرآن الرئيسية **بصمت**: البيانات الحاضرة لا تُمسح أبداً.
+   * كان أيّ فشل يمسح الرئيسية كلها ويضع مكانها «Network request failed» بالإنجليزي.
+   */
+  const fetchDashboard = useCallback((showSpinner: boolean) => {
+    const token = accessTokenRef.current;
+    if (!token) return;
+    if (showSpinner) setDashboardRefreshing(true);
+    void getDashboard(token)
+      .then((next) => { setDashboard(next); setUnreadCount(next.unreadNotifications); setDashboardRefreshFailure(null); })
       .catch((reason: unknown) => {
-        setDashboardOffline(reason instanceof MobileOfflineError);
-        setDashboardError(reason instanceof Error ? reason.message : articleFallbackText.loadArticlesFailed);
+        setDashboardRefreshFailure({
+          offline: reason instanceof MobileOfflineError,
+          message: reason instanceof Error && reason.message ? reason.message : connectionErrorText.loadHomeFailed,
+        });
       })
-      .finally(() => setDashboardRefreshing(false));
-  }, [accessToken]);
+      .finally(() => { if (showSpinner) setDashboardRefreshing(false); });
+  }, []);
+  const loadDashboard = useCallback(() => fetchDashboard(false), [fetchDashboard]);
+  const refreshDashboard = useCallback(() => fetchDashboard(true), [fetchDashboard]);
 
+  /**
+   * الخروج: `auth/logout` ومعه معرّف الجهاز (يعطّل تنبيهاته) ← ثم مسح محلي.
+   *
+   * الجهاز كان يبقى مسجَّلاً بعد الخروج فتصل تنبيهات العميل إلى جوال خرج منه. والنداء
+   * بمهلة قصيرة، وفشله (بلا شبكة مثلاً) لا يمنع الخروج: المسح المحلي يقع دائماً.
+   */
+  const isLoggingOut = useRef(false);
   const handleLogout = useCallback(() => {
-    const finish = () => {
-      setClient(null); setDashboard(null); setUnreadCount(0);
-      setAccessToken(null); setSessionRestoreError(null);
-    };
-    const clearLocal = () => {
-      void clearMobileAccessToken().then(finish).catch((reason) => {
-        setSessionRestoreError(reason instanceof Error ? reason.message : null);
-        finish();
-      });
-    };
-    if (!accessToken) { clearLocal(); return; }
-    void logoutMobileSession(accessToken).catch((reason) => {
-      setSessionRestoreError(reason instanceof Error ? reason.message : null);
-    }).finally(clearLocal);
-  }, [accessToken]);
+    if (isLoggingOut.current) return;
+    isLoggingOut.current = true;
+    const token = accessTokenRef.current;
+    void (async () => {
+      const deviceId = await readPushDeviceId().catch(() => null);
+      if (token) {
+        await logoutMobileSession(token, deviceId)
+          .then((result) => { if (deviceId && result.deviceUnregistered !== true) console.warn('[logout] device not unregistered', deviceId); })
+          .catch((reason: unknown) => console.warn('[logout] server logout failed', reason instanceof Error ? reason.message : reason));
+      }
+      await clearStoredSession();
+      resetSessionState(null);
+      isLoggingOut.current = false;
+    })();
+  }, [clearStoredSession, resetSessionState]);
 
-  if (!fontsLoaded || isSessionRestoring) return null;
-  if (!accessToken) return <><StatusBar style="light" /><View style={styles.pushed}><ScreenRef code="S01" /><LoginRoute onLogin={handleLogin} restoreError={sessionRestoreError} /></View></>;
+  if (!fontsLoaded || isSessionRestoring || !isThemeReady) return null;
+  if (!accessToken && restoreFailure) return <><StatusBar style={mode === 'dark' ? 'light' : 'dark'} /><View style={styles.pushed}><SessionRestoreRoute failure={restoreFailure} isRetrying={isRestoreRetrying} onRetry={retryRestore} /></View></>;
+  // شريط الحالة يتبع الوضع هنا أيضاً — كان «light» ثابتاً فتختفي ساعته على أرضية الوضع الفاتح.
+  if (!accessToken) return <><StatusBar style={mode === 'dark' ? 'light' : 'dark'} /><View style={styles.pushed}><LoginRoute onLogin={handleLogin} restoreError={sessionRestoreError} /></View></>;
 
   const navTheme = mode === 'dark'
     ? { ...DarkTheme, colors: { ...DarkTheme.colors, background: theme.colors.page, card: theme.colors.surface, text: theme.colors.text, border: theme.colors.border, primary: theme.colors.accent } }
@@ -239,37 +322,37 @@ function MobileConsole() {
 
   return <>
     <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
-    <NavigationContainer ref={navigationRef} theme={navTheme}>
+    <NavigationContainer ref={navigationRef} theme={navTheme} onReady={flushPendingTapTarget}>
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_left', contentStyle: { backgroundColor: theme.colors.page } }}>
         <Stack.Screen name="tabs">
-          {() => dashboard === null ? null : <TabsShell tab={tab} onSelectTab={setTab} client={client} dashboard={dashboard} dashboardError={dashboardError} dashboardOffline={dashboardOffline} accessToken={accessToken} unreadCount={unreadCount} onUnreadCountChange={setUnreadCount} onReloadDashboard={loadDashboard} onRefreshDashboard={refreshDashboard} isDashboardRefreshing={isDashboardRefreshing} />}
+          {() => dashboard === null ? null : <TabsShell tab={tab} onSelectTab={setTab} client={client} dashboard={dashboard} dashboardRefreshFailure={dashboardRefreshFailure} accessToken={accessToken} unreadCount={unreadCount} onUnreadCountChange={setUnreadCount} onReloadDashboard={loadDashboard} onRefreshDashboard={refreshDashboard} isDashboardRefreshing={isDashboardRefreshing} />}
         </Stack.Screen>
         <Stack.Screen name="article-decisions">
-          {() => dashboard === null ? <PushedScreen code="S05"><DecisionArticlesScreen accessToken={accessToken} /></PushedScreen> : <ChromeScreen code="S05" client={client} shellCopy={dashboard.shell} activeTab="articles" unreadCount={unreadCount} onSelectTab={setTab}><DecisionArticlesScreen accessToken={accessToken} /></ChromeScreen>}
+          {() => dashboard === null ? <PushedScreen><DecisionArticlesScreen accessToken={accessToken} /></PushedScreen> : <ChromeScreen client={client} shellCopy={dashboard.shell} activeTab="articles" unreadCount={unreadCount} onSelectTab={setTab}><DecisionArticlesScreen accessToken={accessToken} /></ChromeScreen>}
         </Stack.Screen>
         <Stack.Screen name="article-review">
-          {({ route, navigation }) => <PushedScreen code="S07"><ArticleReviewApiRoute accessToken={accessToken} articleId={route.params.articleId} onDone={() => { loadDashboard(); navigation.goBack(); }} /></PushedScreen>}
+          {({ route, navigation }) => <PushedScreen><ArticleReviewApiRoute accessToken={accessToken} articleId={route.params.articleId} onDone={() => { loadDashboard(); navigation.goBack(); }} /></PushedScreen>}
         </Stack.Screen>
         <Stack.Screen name="video-upload">
-          {({ navigation }) => <PushedScreen code="S10"><VideoUploadRoute accessToken={accessToken} onDone={() => navigation.goBack()} /></PushedScreen>}
+          {({ navigation }) => <PushedScreen><VideoUploadRoute accessToken={accessToken} onDone={() => navigation.goBack()} /></PushedScreen>}
         </Stack.Screen>
         <Stack.Screen name="audience-reply">
-          {({ route, navigation }) => <PushedScreen code="S08-reply"><AudienceReplyRoute accessToken={accessToken} questionId={route.params.questionId} onBack={() => navigation.goBack()} onSent={() => { loadDashboard(); navigation.goBack(); }} /></PushedScreen>}
+          {({ route, navigation }) => <PushedScreen><AudienceReplyRoute accessToken={accessToken} questionId={route.params.questionId} onBack={() => navigation.goBack()} onSent={() => { loadDashboard(); navigation.goBack(); }} /></PushedScreen>}
         </Stack.Screen>
         <Stack.Screen name="subscription">
-          {({ navigation }) => <PushedScreen code="S04"><SubscriptionRoute accessToken={accessToken} onBack={() => navigation.goBack()} onSupport={() => navigation.navigate('support')} /></PushedScreen>}
+          {({ navigation }) => <PushedScreen><SubscriptionRoute accessToken={accessToken} onBack={() => navigation.goBack()} onSupport={() => navigation.navigate('support')} /></PushedScreen>}
         </Stack.Screen>
         <Stack.Screen name="referral">
-          {({ navigation }) => <PushedScreen code="S03"><ReferralRoute accessToken={accessToken} onBack={() => navigation.goBack()} /></PushedScreen>}
+          {({ navigation }) => <PushedScreen><ReferralRoute accessToken={accessToken} onBack={() => navigation.goBack()} /></PushedScreen>}
         </Stack.Screen>
         <Stack.Screen name="account">
-          {({ navigation }) => <PushedScreen code="S13"><AccountRoute accessToken={accessToken} onBack={() => navigation.goBack()} onSupport={() => navigation.navigate('support')} onLogout={handleLogout} /></PushedScreen>}
+          {({ navigation }) => <PushedScreen><AccountRoute accessToken={accessToken} onBack={() => navigation.goBack()} onSupport={() => navigation.navigate('support')} onLogout={handleLogout} logoUrl={client?.logoUrl ?? null} /></PushedScreen>}
         </Stack.Screen>
         <Stack.Screen name="bookings">
-          {({ navigation }) => <PushedScreen code="S15"><BookingsRoute accessToken={accessToken} onBack={() => navigation.goBack()} /></PushedScreen>}
+          {({ navigation }) => <PushedScreen><BookingsRoute accessToken={accessToken} onBack={() => navigation.goBack()} /></PushedScreen>}
         </Stack.Screen>
         <Stack.Screen name="support">
-          {({ navigation }) => <PushedScreen code="S14"><SupportRoute accessToken={accessToken} onDone={() => navigation.goBack()} /></PushedScreen>}
+          {({ navigation }) => <PushedScreen><SupportRoute accessToken={accessToken} onDone={() => navigation.goBack()} /></PushedScreen>}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
@@ -294,62 +377,39 @@ function useReloadOnFocus(load: () => void, refresh: () => void) {
   }, [load, refresh]));
 }
 
-/** S05 lives on the stack, not on a tab — the tab bar shows the PUBLISHED list (S11). */
+/**
+ * S05 lives on the stack, not on a tab — the tab bar shows the PUBLISHED list (S11).
+ *
+ * القائمتان تمرّان بنفس آلة الحالات التي تخدم بقية الشاشات (`useEngagementResource`): جلبٌ
+ * أوّل بهيكل · تحديثٌ صامت عند العودة للشاشة (بعد الاعتماد يرجع العميل فيرى الطابور محدَّثاً)
+ * · وفشل التحديث يُبقي القائمة ويضع فوقها سطراً — لا يهدمها.
+ */
 function DecisionArticlesScreen({ accessToken }: { accessToken: string }) {
   const navigation = useNavigation<Nav>();
-  const [collection, setCollection] = useState<ArticleListCollection | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [offline, setOffline] = useState(false);
-  const [isRefreshing, setRefreshing] = useState(false);
-  const fetchDecisions = useCallback((isPullToRefresh: boolean) => {
-    setError(null); setOffline(false);
-    // السحب يُبقي القائمة تحت الإصبع؛ التحميل الأول وحده يستبدلها بالهيكل.
-    if (isPullToRefresh) setRefreshing(true); else setCollection(null);
-    void getDecisionArticles(accessToken).then(setCollection).catch((reason: unknown) => {
-      setOffline(reason instanceof MobileOfflineError);
-      setError(reason instanceof Error ? reason.message : articleFallbackText.loadArticlesFailed);
-    }).finally(() => setRefreshing(false));
-  }, [accessToken]);
-  const load = useCallback(() => fetchDecisions(false), [fetchDecisions]);
-  const refresh = useCallback(() => fetchDecisions(true), [fetchDecisions]);
-  useReloadOnFocus(load, refresh);
-  return <ArticlesApiRoute collection={collection} error={error} offline={offline} siteOpenError={null} onRetry={load} onRefresh={refresh} isRefreshing={isRefreshing} onOpenSite={() => undefined} onReview={(articleId) => navigation.navigate('article-review', { articleId })} />;
+  const { resource, reload, refresh, isRefreshing, refreshFailure } = useEngagementResource(accessToken, getDecisionArticles);
+  return <ArticlesApiRoute collection={resource.data} error={resource.status === 'error' ? resource.message : null} offline={resource.status === 'offline'} refreshFailure={refreshFailure} siteOpenError={null} onRetry={reload} onRefresh={refresh} isRefreshing={isRefreshing} onOpenSite={() => undefined} onReview={(articleId) => navigation.navigate('article-review', { articleId })} />;
 }
 
 /** S11 — the «المقالات» tab. */
 function PublishedArticlesScreen({ accessToken }: { accessToken: string }) {
   const navigation = useNavigation<Nav>();
-  const [collection, setCollection] = useState<ArticleListCollection | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [offline, setOffline] = useState(false);
+  const { resource, reload, refresh, isRefreshing, refreshFailure } = useEngagementResource(accessToken, getPublishedArticles);
+  const collection = resource.data;
   const [siteOpenError, setSiteOpenError] = useState<string | null>(null);
-  const [isRefreshing, setRefreshing] = useState(false);
-  const fetchPublished = useCallback((isPullToRefresh: boolean) => {
-    setError(null); setOffline(false);
-    if (isPullToRefresh) setRefreshing(true); else setCollection(null);
-    void getPublishedArticles(accessToken).then(setCollection).catch((reason: unknown) => {
-      setOffline(reason instanceof MobileOfflineError);
-      setError(reason instanceof Error ? reason.message : articleFallbackText.loadArticlesFailed);
-    }).finally(() => setRefreshing(false));
-  }, [accessToken]);
-  const load = useCallback(() => fetchPublished(false), [fetchPublished]);
-  const refresh = useCallback(() => fetchPublished(true), [fetchPublished]);
-  useReloadOnFocus(load, refresh);
   const openSite = useCallback((url: string) => {
     setSiteOpenError(null);
     void Linking.openURL(url).catch(() => setSiteOpenError(collection?.review.openSiteError ?? null));
   }, [collection?.review.openSiteError]);
-  return <ArticlesApiRoute collection={collection} error={error} offline={offline} siteOpenError={siteOpenError} onRetry={load} onRefresh={refresh} isRefreshing={isRefreshing} onOpenSite={openSite} onReview={(articleId) => navigation.navigate('article-review', { articleId })} />;
+  return <ArticlesApiRoute collection={collection} error={resource.status === 'error' ? resource.message : null} offline={resource.status === 'offline'} refreshFailure={refreshFailure} siteOpenError={siteOpenError} onRetry={reload} onRefresh={refresh} isRefreshing={isRefreshing} onOpenSite={openSite} onReview={(articleId) => navigation.navigate('article-review', { articleId })} />;
 }
 
-function TabsShell({ tab, onSelectTab, client, dashboard, dashboardError, dashboardOffline, accessToken, unreadCount, onUnreadCountChange, onReloadDashboard, onRefreshDashboard, isDashboardRefreshing }: {
+function TabsShell({ tab, onSelectTab, client, dashboard, dashboardRefreshFailure, accessToken, unreadCount, onUnreadCountChange, onReloadDashboard, onRefreshDashboard, isDashboardRefreshing }: {
   tab: BottomTabRoute;
   onSelectTab: (tab: BottomTabRoute) => void;
   client: MobileClientProfile | null;
   /** غير قابل للـnull هنا: الغلاف يستهلك نصوصه، والتوكن والرئيسية يُضبطان في نفس الخطوة. */
   dashboard: MobileDashboard;
-  dashboardError: string | null;
-  dashboardOffline: boolean;
+  dashboardRefreshFailure: RefreshFailure | null;
   accessToken: string;
   unreadCount: number;
   onUnreadCountChange: (unreadCount: number) => void;
@@ -358,15 +418,30 @@ function TabsShell({ tab, onSelectTab, client, dashboard, dashboardError, dashbo
   isDashboardRefreshing: boolean;
 }) {
   const navigation = useNavigation<Nav>();
-  useReloadOnFocus(onReloadDashboard, onRefreshDashboard);
+  useReloadOnFocus(onReloadDashboard, onReloadDashboard);
 
-  const screen = tab === 'home' ? <HomeRoute clientName={client?.name} dashboard={dashboard} error={dashboardError} offline={dashboardOffline} onRetry={onReloadDashboard} onRefresh={onRefreshDashboard} isRefreshing={isDashboardRefreshing} onOpenDecisionArticles={() => navigation.navigate('article-decisions')} onOpenVideos={() => onSelectTab('videos')} onOpenAudience={() => onSelectTab('audience')} onOpenBookings={() => navigation.navigate('bookings')} onOpenSubscription={() => navigation.navigate('subscription')} onOpenReferral={() => navigation.navigate('referral')} />
+  /**
+   * زرّ الرجوع في أيّ تاب غير الرئيسية **يعود إلى الرئيسية** ولا يغلق التطبيق — نمط أندرويد
+   * المعتمد لشريط التنقّل السفلي. من الرئيسية يبقى سلوك النظام (الخروج). والدرج `Modal`
+   * يلتقط الرجوع بنفسه قبل هذا.
+   */
+  useFocusEffect(useCallback(() => {
+    if (tab === 'home') return undefined;
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => { onSelectTab('home'); return true; });
+    return () => subscription.remove();
+  }, [onSelectTab, tab]));
+
+  const openArticleFromNotification = useCallback((articleId: string | null) => {
+    if (articleId) navigation.navigate('article-review', { articleId });
+    else navigation.navigate('article-decisions');
+  }, [navigation]);
+
+  const screen = tab === 'home' ? <HomeRoute clientName={client?.name} dashboard={dashboard} refreshFailure={dashboardRefreshFailure} onRetry={onRefreshDashboard} onRefresh={onRefreshDashboard} isRefreshing={isDashboardRefreshing} onOpenDecisionArticles={() => navigation.navigate('article-decisions')} onOpenVideos={() => onSelectTab('videos')} onOpenAudience={() => onSelectTab('audience')} onOpenBookings={() => navigation.navigate('bookings')} onOpenSubscription={() => navigation.navigate('subscription')} onOpenReferral={() => navigation.navigate('referral')} />
     : tab === 'articles' ? <PublishedArticlesScreen accessToken={accessToken} />
     : tab === 'videos' ? <VideosRoute accessToken={accessToken} onUpload={() => navigation.navigate('video-upload')} />
     : tab === 'audience' ? <AudienceApiRoute accessToken={accessToken} onOpenQuestion={(questionId) => navigation.navigate('audience-reply', { questionId })} />
-    : <NotificationsRoute accessToken={accessToken} onOpenArticle={() => navigation.navigate('article-decisions')} onOpenAudience={() => onSelectTab('audience')} onOpenVideos={() => onSelectTab('videos')} onUnreadCountChange={onUnreadCountChange} />;
+    : <NotificationsRoute accessToken={accessToken} onOpenArticle={openArticleFromNotification} onOpenAudience={() => onSelectTab('audience')} onOpenVideos={() => onSelectTab('videos')} onUnreadCountChange={onUnreadCountChange} />;
   return <AppShell client={client} copy={dashboard.shell} activeRoute={tab} unreadCount={unreadCount} onSelectTab={onSelectTab} onOpenPushed={(route: PushedRoute) => navigation.navigate(route)}>
-    <ScreenRef code={tabScreenCodes[tab]} />
     {screen}
   </AppShell>;
 }

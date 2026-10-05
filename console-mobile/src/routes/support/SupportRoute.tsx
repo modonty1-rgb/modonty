@@ -1,11 +1,14 @@
-import { useCallback, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useKeyboardInset } from '@/src/components/ui/useKeyboardInset';
 import { AppText as Text } from '@/src/components/ui/AppText';
+import { ModontyIcon } from '@/src/components/brand/icons/ModontyIcon';
 import { ErrorState, OfflineState, SkeletonCards } from '@/src/components/ui/MobileUI';
+import { DockSurface, EnterView, PillButton, TextAreaField, TonalCard } from '@/src/components/ui/Nabd';
 import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 import { arabicDigits, getSupportReview, sendSupportMessage } from '@/src/services/engagement-api';
 import { CONNECTION_COPY, useEngagementResource } from '@/src/services/use-engagement-resource';
-import { control, fonts, radii, spacing, typography } from '@/src/theme/tokens';
+import { control, fonts, nabd, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
 /**
@@ -24,6 +27,9 @@ export function SupportRoute({ accessToken, onDone }: Props) {
   const [isSending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [isSent, setSent] = useState(false);
+  const keyboardInset = useKeyboardInset();
+  const scrollRef = useRef<ScrollView>(null);
+  const followKeyboard = useCallback(() => { if (keyboardInset > 0) scrollRef.current?.scrollToEnd({ animated: true }); }, [keyboardInset]);
 
   const review = resource.data?.review;
   const trimmed = message.trim();
@@ -52,70 +58,56 @@ export function SupportRoute({ accessToken, onDone }: Props) {
     <View style={styles.state}><ErrorState message={resource.message ?? CONNECTION_COPY.errorTitle} retryLabel={CONNECTION_COPY.retryLabel} onRetry={reload} /></View>
   </View>;
 
-  return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.fill}>
-    <ScrollView contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+  /**
+   * «نبض» (S14): بطل نغمي تركوازي بزاوية ٢٨ (رمز الدعم · «كيف نساعدك؟» ٢٢/٣٠) · حقل الرسالة
+   * ١٨٠ وتحته ما يحدث بعد الإرسال والعدّاد · ثم زرّ الإرسال على لوح الفعل.
+   */
+  return <View style={[styles.fill, { paddingBottom: keyboardInset }]}>
+    <ScrollView ref={scrollRef} onLayout={followKeyboard} contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
       <ScreenHeader title={review.title} backLabel={review.backLabel} onBack={onDone} />
 
-      <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.cardTitle, { color: theme.colors.text }]}>{review.heroTitle}</Text>
-        <Text style={[styles.cardBody, { color: theme.colors.muted }]}>{review.heroDescription}</Text>
-      </View>
+      <EnterView index={0}>
+        <TonalCard tone="tertiary" style={styles.hero}>
+          <View style={styles.heroIcon}><ModontyIcon name="support" size={control.iconSize} primary={theme.colors.onTertiary} accent={theme.colors.accent} /></View>
+          <Text style={[styles.heroTitle, { color: theme.colors.onTertiary }]}>{review.heroTitle}</Text>
+          <Text style={[styles.secondary, { color: theme.colors.onTertiary }]}>{review.heroDescription}</Text>
+        </TonalCard>
+      </EnterView>
 
-      {isSent ? <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.textInteractive }]}>
-        <Text style={[styles.cardTitle, { color: theme.colors.text }]}>{review.sentTitle}</Text>
-        <Text style={[styles.cardBody, { color: theme.colors.muted }]}>{review.sentDescription}</Text>
-      </View> : <>
-        <Text style={[styles.fieldLabel, { color: theme.colors.text }]}>{review.messageLabel}</Text>
-        <View style={[styles.inputShell, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-          <TextInput
-            accessibilityLabel={review.messageLabel}
-            editable={!isSending}
-            maxLength={review.messageMaxLength}
-            multiline
-            onChangeText={setMessage}
-            placeholder={review.messagePlaceholder}
-            placeholderTextColor={theme.colors.inputPlaceholder}
-            style={[styles.input, { backgroundColor: theme.colors.inputSurface, borderColor: theme.colors.inputBorder, color: theme.colors.text }]}
-            textAlign="right"
-            textAlignVertical="top"
-            value={message}
-          />
-          <Text style={[styles.counter, { color: theme.colors.muted }]}>{arabicDigits(message.length)} / {review.counterMaxLabel}</Text>
-        </View>
-        {sendError ? <Text style={[styles.error, { color: theme.colors.errorText }]}>{sendError}</Text> : null}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={review.submitLabel}
-          accessibilityState={{ disabled: !canSend, busy: isSending }}
-          disabled={!canSend}
-          onPress={send}
-          style={({ pressed }) => [styles.submit, { backgroundColor: theme.colors.primary }, canSend ? null : styles.submitDisabled, pressed && canSend ? styles.pressed : null]}
-        >
-          <Text style={[styles.submitLabel, { color: theme.colors.textOnPrimary }]}>{isSending ? review.submittingLabel : review.submitLabel}</Text>
-        </Pressable>
-        <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-          <Text style={[styles.cardBody, { color: theme.colors.muted }]}>{review.noteLabel}</Text>
-        </View>
-      </>}
+      {isSent ? <EnterView index={1}>
+        <TonalCard tone="positive" style={styles.sent}>
+          <View style={styles.sentHead}>
+            <ModontyIcon name="check" size={control.iconSizeSmall} primary={theme.colors.onPositiveContainer} accent={theme.colors.accent} />
+            <Text style={[styles.sentTitle, { color: theme.colors.onPositiveContainer }]}>{review.sentTitle}</Text>
+          </View>
+          <Text style={[styles.body, { color: theme.colors.onPositiveContainer }]}>{review.sentDescription}</Text>
+        </TonalCard>
+      </EnterView> : <EnterView index={1} style={styles.form}>
+        <TextAreaField label={review.messageLabel} value={message} onChangeText={setMessage} placeholder={review.messagePlaceholder} maxLength={review.messageMaxLength} editable={!isSending} minHeight={MESSAGE_HEIGHT} helper={review.noteLabel} counter={`${arabicDigits(message.length)} / ${review.counterMaxLabel}`} />
+        {sendError ? <Text accessibilityLiveRegion="assertive" style={[styles.secondary, { color: theme.colors.errorText }]}>{sendError}</Text> : null}
+        <DockSurface>
+          <PillButton label={isSending ? review.submittingLabel : review.submitLabel} disabled={!canSend} glow={false} onPress={send} accessibilityState={{ disabled: !canSend, busy: isSending }} />
+        </DockSurface>
+      </EnterView>}
     </ScrollView>
-  </KeyboardAvoidingView>;
+  </View>;
 }
+
+/** ‎.inp.area في S14: ١٨٠ — رسالة الدعم أطول من ردّ على قارئ. */
+const MESSAGE_HEIGHT = 180;
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   state: { flex: 1, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md },
-  screen: { paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
-  card: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.md, marginTop: spacing.lg, alignItems: 'flex-end' },
-  cardTitle: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, textAlign: 'right', writingDirection: 'rtl' },
-  cardBody: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xxs },
-  fieldLabel: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xl },
-  inputShell: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radii.card, padding: spacing.md, marginTop: spacing.xs },
-  // WCAG 1.4.11: حدّ عنصر التحكّم 3:1. كان الحقل بلا حدّ ولا خلفية فلا يُقرأ حقلاً أصلاً.
-  input: { borderColor: 'transparent', borderRadius: radii.field, borderWidth: control.inputBorderWidth, fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, minHeight: control.buttonHeight * 2, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, writingDirection: 'rtl' },
-  counter: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'left', writingDirection: 'ltr', marginTop: spacing.xs },
-  error: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl', marginTop: spacing.xs },
-  submit: { minHeight: control.buttonHeight, borderRadius: radii.button, alignItems: 'center', justifyContent: 'center', marginTop: spacing.md },
-  submitDisabled: { opacity: 0.5 },
-  pressed: { opacity: 0.72 },
-  submitLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' },
+  screen: { gap: spacing.sm, paddingHorizontal: spacing.screenHorizontal, paddingBottom: spacing.screenBottom },
+  // العمود لا يرث اتّجاه العربية (التطبيق بلا forceRTL)، فالرمز يُثبَّت في بداية السطر يميناً.
+  heroIcon: { alignSelf: 'flex-end' },
+  hero: { borderRadius: nabd.bigCardRadius, gap: spacing.xs, padding: spacing.lg },
+  heroTitle: { fontFamily: fonts.bold, fontSize: typography.heroTitle, lineHeight: typography.lineHeightHeroTitle, textAlign: 'right', writingDirection: 'rtl' },
+  form: { gap: spacing.sm, marginTop: spacing.xxs },
+  sent: { gap: spacing.xs },
+  sentHead: { alignItems: 'center', flexDirection: 'row-reverse', gap: spacing.xs },
+  sentTitle: { flex: 1, fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, textAlign: 'right', writingDirection: 'rtl' },
+  body: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },
+  secondary: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
 });

@@ -33,9 +33,11 @@ function reviewCopy() {
     messagePlaceholder: "اكتب رسالتك هنا",
     submitLabel: "إرسال للدعم",
     submittingLabel: "يُرسل…",
-    noteLabel: "سنرسل تأكيدًا عند استلام رسالتك.",
+    // كان «سنرسل تأكيدًا عند استلام رسالتك» — ولا رسالة تأكيد تُرسل. القناة الحقيقية: الأدمن يردّ
+    // من `/contact-messages` ويصل الردّ بريداً (`sendContactReply`)، ولا خيط ردود داخل التطبيق.
+    noteLabel: "يوصل فريقنا رسالتك ويرد عليك على بريدك.",
     sentTitle: "وصلت رسالتك",
-    sentDescription: "فريق مودونتي بيرد عليك على بريدك.",
+    sentDescription: "فريق مدونتي بيرد عليك على بريدك.",
     messageMaxLength: MESSAGE_MAX_LENGTH,
     counterMaxLabel: arabicNumber(MESSAGE_MAX_LENGTH),
     emptyMessageError: "اكتب رسالتك أولاً.",
@@ -58,7 +60,7 @@ export async function POST(request: NextRequest) {
   const parsed = await readBody(request, input);
   if ("response" in parsed) return parsed.response;
   const client = await db.client.findUnique({ where: { id: session.clientId }, select: { name: true, email: true } });
-  if (!client?.email) return fail("CONFLICT", "حسابك بلا بريد مسجّل، فما نقدر نرد عليك. راجع فريق مودونتي.");
+  if (!client?.email) return fail("CONFLICT", "حسابك بلا بريد مسجّل، فما نقدر نرد عليك. راجع فريق مدونتي.");
   const created = await db.contactMessage.create({
     data: {
       name: client.name,

@@ -1,6 +1,7 @@
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import { registerPushDevice } from '@/src/services/mobile-api';
+import { savePushDeviceId } from '@/src/services/mobile-session';
 
 /**
  * الوحدتان تُحمَّلان **عند الطلب داخل `try`**، لا في رأس الملفّ.
@@ -74,12 +75,14 @@ export async function registerForPushNotifications(accessToken: string): Promise
 
     const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
 
-    await registerPushDevice(accessToken, {
+    const registered = await registerPushDevice(accessToken, {
       expoPushToken: token,
       platform: Platform.OS === 'ios' ? 'ios' : 'android',
       deviceName: Device.deviceName ?? undefined,
       appVersion: Constants.expoConfig?.version ?? undefined,
     });
+    // يُحفظ ليُلغى به التسجيل عند الخروج (`DELETE /devices/{id}`).
+    await savePushDeviceId(registered.device.id);
 
     return { status: 'registered', token };
   } catch (reason) {
@@ -91,48 +94,75 @@ export async function registerForPushNotifications(accessToken: string): Promise
 /**
  * أين يفتح التنبيه حين يُضغط.
  *
- * الخادم يضع في كل دفعة `data.type`، ونقطة التنبيهات تشتقّ منه هدفاً بثلاث قيم فقط
- * (`console/app/api/mobile/v1/notifications/route.ts:20`). فنكرّر الاشتقاق **بنفس البادئات**
- * لا بترجمة جديدة: أيّ اختلاف بين الاثنين يعني تنبيهاً يفتح تبويباً غير الذي يَعِد به.
+ * المُرسِل كان يكتب النوع في `data.event` والتطبيق يقرأ `data.type` فقط — فلا تنبيه يفتح
+ * شيئاً. نقرأ الاثنين (`type ?? event`) فيعمل التطبيق مع الخادم القديم والجديد معاً.
+ * ونقطة التنبيهات تشتقّ الهدف **بنفس البادئات** (`console/app/api/mobile/v1/notifications/route.ts`):
+ * أيّ اختلاف بين الاثنين يعني تنبيهاً يفتح تبويباً غير الذي يَعِد به.
  *
- * وبلا هذا المراقب تكون الضغطة بلا أثر — يفتح التطبيق على آخر شاشة كان عليها، فيقرأ العميل
- * «سؤال من قارئ» ويجد نفسه في الرئيسية يبحث عنه بيده.
+ * وتنبيه المقال يفتح **المقال نفسه** لا قائمة المقالات: `data.articleId`، أو `relatedId`
+ * لأنه معرّف المقال في كل تنبيه نوعه `article*`.
  */
-export type PushTapTarget = 'articles' | 'audience' | 'videos' | 'notifications';
+export type PushTapTab = 'articles' | 'audience' | 'videos' | 'notifications' | 'bookings';
+export type PushTapTarget = { tab: PushTapTab; articleId: string | null };
 
-export function tapTargetOf(type: unknown): PushTapTarget | null {
-  if (typeof type !== 'string') return null;
+export function tapTabOf(rawType: unknown): PushTapTab | null {
+  if (typeof rawType !== 'string') return null;
+  // الأنواع تصل بصيغتين (`article_approved` · `askClientQuestion`) — المقارنة بلا حالة أحرف.
+  const type = rawType.toLowerCase();
   if (type.startsWith('article')) return 'articles';
+  if (type.startsWith('booking')) return 'bookings';
   if (type.startsWith('faq') || type.startsWith('comment') || type.startsWith('contact') || type.includes('question')) return 'audience';
   if (type.startsWith('reel') || type.startsWith('video') || type.startsWith('media')) return 'videos';
   // ما لا هدف له يفتح صندوق التنبيهات: هناك يجده مكتوباً، بدل أن تذهب ضغطته سدى.
   return 'notifications';
 }
 
+const nonEmptyString = (value: unknown): string | null => typeof value === 'string' && value.length > 0 ? value : null;
+
+export function tapTargetOf(data: unknown): PushTapTarget | null {
+  const payload = (data ?? {}) as Record<string, unknown>;
+  const type = nonEmptyString(payload.type) ?? nonEmptyString(payload.event);
+  const tab = tapTabOf(type);
+  if (tab === null) return null;
+  const articleId = tab === 'articles' ? nonEmptyString(payload.articleId) ?? nonEmptyString(payload.relatedId) : null;
+  return { tab, articleId };
+}
+
 /**
- * يربط الضغطة بالتبويب، ويشمل **الفتح البارد**.
+ * يربط الضغطة بوجهتها، ويشمل **الفتح البارد**.
  *
  * `getLastNotificationResponse()` بنصّ التوثيق للحالة التي كان فيها التطبيق مغلقاً تماماً —
  * بدونها يعمل المراقب فقط والتطبيق حيّ، وهي أقلّ الحالتين وقوعاً في تنبيه حقيقي.
  *
  * يعيد دالّة فكّ الاشتراك، أو `undefined` إن لم تكن الوحدات مبنيّة.
  */
+const handledTapIds = new Set<string>();
+
 export function observeNotificationTaps(onTarget: (target: PushTapTarget) => void): (() => void) | undefined {
   const native = loadNativeModules();
   if (native === null) return undefined;
   const Notifications = native.notifications;
 
-  const dispatch = (data: unknown): void => {
-    const target = tapTargetOf((data as { type?: unknown } | null)?.type);
+  // الضغطة الواحدة تُفتح مرّة: «آخر ضغطة» تبقى محفوظة بعد الخروج والدخول، فبلا هذا تعيد فتح نفس المقال.
+  const dispatch = (response: { notification: { request: { identifier: string; content: { data: unknown } } } }): void => {
+    const identifier = response.notification.request.identifier;
+    if (handledTapIds.has(identifier)) return;
+    handledTapIds.add(identifier);
+    const target = tapTargetOf(response.notification.request.content.data);
+    console.log("[push] tap target:", JSON.stringify(target));
     if (target !== null) onTarget(target);
   };
 
   const cold = Notifications.getLastNotificationResponse();
-  if (cold) dispatch(cold.notification.request.content.data);
+  console.log("[push] cold response (sync):", cold ? cold.notification.request.identifier : null);
+  if (cold) dispatch(cold);
+  // الفتح البارد على أندرويد قد لا يكون جاهزاً لحظة القراءة المتزامنة — القراءة غير المتزامنة تكمّلها.
+  void Notifications.getLastNotificationResponseAsync().then((late: typeof cold) => {
+    console.log("[push] cold response (async):", late ? late.notification.request.identifier : null);
+    if (late) dispatch(late);
+  }).catch(() => undefined);
 
-  const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-    dispatch(response.notification.request.content.data);
-  });
+  const subscription = Notifications.addNotificationResponseReceivedListener(dispatch);
   return () => subscription.remove();
 }
 

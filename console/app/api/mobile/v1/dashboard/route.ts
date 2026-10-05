@@ -1,8 +1,10 @@
 import type { NextRequest } from "next/server";
 import { ArticleStatus, ArticleFAQStatus, CommentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
+import { arabicNumber } from "@/lib/mobile-api/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
+import { countClientUnread } from "@/lib/mobile-api/client-inbox";
 import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
 
 const subscriptionStatusLabels: Record<string, string> = { ACTIVE: "نشط", PENDING: "بانتظار التفعيل", EXPIRED: "منتهي", SUSPENDED: "معلّق", CANCELLED: "ملغي" };
@@ -47,23 +49,17 @@ export async function GET(request: NextRequest) {
      * كانت تبدأ صفراً ولا تظهر إلا بعد أن يفتح العميل تاب التنبيهات — أي أنّ الشارة كانت
      * تفشل في الحالة الوحيدة التي وُجدت لها: تنبيه المستخدم بما لم يره بعد.
      *
-     * الشرط مطابق لـ`notifications/route.ts` حرفياً: على مونجو الحقل الغائب لا يساوي `null`،
-     * فكلّ مستقبِل يحتاج ذراعين وإلّا رجع صفر (مقيس على `modonty_dev`: صفر من ٣).
+     * الشرط من `client-inbox.ts` — نفس الدالّة التي تعدّ بها القائمة ووسم المقروء.
      */
-    db.notification.count({
-      where: {
-        clientId,
-        readAt: null,
-        AND: [
-          { OR: [{ userId: null }, { userId: { isSet: false } }] },
-          { OR: [{ staffId: null }, { staffId: { isSet: false } }] },
-        ],
-      },
-    }),
+    countClientUnread(clientId),
   ]);
 
   const daysRemaining = sub.daysLeft === null ? null : Math.max(sub.daysLeft, 0);
+  /** مدّة الطلب الساري بالأيّام — حلقة «نبض» على الرئيسية تُرسم من الباقي على الكامل، لا من رقم مخترَع. */
+  const durationDays = sub.startedAt && sub.endsAt ? Math.max(Math.round((sub.endsAt.getTime() - sub.startedAt.getTime()) / 86_400_000), 0) : null;
   const subscription = {
+    daysRemaining,
+    durationDays,
     status: sub.status,
     statusLabel: subscriptionStatusLabels[sub.status] ?? sub.status,
     statusTone: positiveStatuses.has(sub.status) ? "positive" : dangerStatuses.has(sub.status) ? "danger" : "warning",
@@ -77,12 +73,17 @@ export async function GET(request: NextRequest) {
    * صفوف لتجد اثنين فيهما عمل، بدل أن ترى العمل وحده. والشاشة تعرض بالفعل
    * «ما فيه مهام تنتظر منك شيئاً الآن» حين تفرغ القائمة — وهي الحالة الصحيحة لا صفوف الأصفار.
    */
+  /**
+   * `actionLabel` = زرّ بطل «نبض» حين يكون البند **أوّل** المهام: فعلٌ يقول ما سيحدث، بصيغة عدده.
+   */
   const actionItems = ([
-    { key: "approval", value: pendingApproval, label: "مقالات بانتظار قرارك" },
-    { key: "questions", value: pendingQuestions, label: "أجب عن أسئلة القراء" },
-    { key: "comments", value: pendingComments, label: "راجع التعليقات" },
-    { key: "videos", value: pendingVideos, label: "راجع الطلّات" },
-    { key: "bookings", value: pendingBookings, label: "طلبات تواصل تنتظرك" },
+    { key: "approval", value: pendingApproval, label: "مقالات بانتظار قرارك", actionLabel: pendingApproval === 1 ? "مراجعة المقال" : pendingApproval === 2 ? "مراجعة المقالين" : "مراجعة المقالات" },
+    { key: "questions", value: pendingQuestions, label: "أجب عن أسئلة القراء", actionLabel: pendingQuestions === 1 ? "الرد على السؤال" : "الرد على الأسئلة" },
+    { key: "comments", value: pendingComments, label: "راجع التعليقات", actionLabel: pendingComments === 1 ? "مراجعة التعليق" : "مراجعة التعليقات" },
+    // «راجع الطلّات» خرجت (٤ أكتوبر): `PENDING_APPROVAL` تنتظر موافقة فريق مدونتي لا العميل
+    // (الويب نفسه يسمّيها كذلك، `gallery-manager.tsx`). فبندٌ هنا مهمّة ليست له ولا ينزل عدّها
+    // بأيّ فعل منه. العدد باقٍ في `summary.pendingVideos` للعلم.
+    { key: "bookings", value: pendingBookings, label: "طلبات تواصل تنتظرك", actionLabel: "فتح طلبات التواصل" },
   ] as const).filter((item) => item.value > 0);
 
   return ok({
@@ -110,8 +111,10 @@ export async function GET(request: NextRequest) {
       subscriptionLabel: "تفاصيل الاشتراك",
       // Guarded: `subscription` is null when the client row is missing, and a bare
       // optional chain used to render «undefined يوماً متبقياً».
-      daysRemainingText: daysRemaining === null ? null : `${daysRemaining} يوماً متبقياً`,
+      daysRemainingText: daysRemaining === null ? null : `${arabicNumber(daysRemaining)} يوماً متبقياً`,
       actionItemsTitle: "مهام تحتاج إجراء",
+      // فوق أوّل مهمّة في بطل «نبض».
+      firstActionLabel: "أوّلها",
       noActionItemsLabel: "ما فيه مهام تنتظر منك شيئاً الآن.",
     },
     /**
@@ -123,10 +126,14 @@ export async function GET(request: NextRequest) {
      */
     shell: {
       menuLabel: "القائمة",
-      brandLabel: "شعار مودونتي",
+      brandLabel: "شعار مدونتي",
       accountLabel: "حسابي",
       closeMenuLabel: "إغلاق القائمة",
       darkModeLabel: "المظهر الداكن",
+      // «نبض»: صفّ المظهر في قائمة الحساب = «المظهر» + مبدّل «فاتح | داكن» (الموكب ‎.mseg).
+      themeLabel: "المظهر",
+      lightShortLabel: "فاتح",
+      darkShortLabel: "داكن",
       lightModeLabel: "المظهر الفاتح",
       supportLabel: "المساعدة والدعم",
     },

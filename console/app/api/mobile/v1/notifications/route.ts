@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { arabicNumber, arabicRelativeTime } from "@/lib/mobile-api/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
+import { clientInboxWhere, countClientUnread } from "@/lib/mobile-api/client-inbox";
 
 /**
  * S12 «التنبيهات» — the client's own inbox, read from `Notification` (`notifications`).
@@ -30,13 +31,7 @@ export async function GET(request: NextRequest) {
   const now = new Date();
   // مشتركٌ بين القائمة والعدّاد: نسخُ الشرط في موضعين يجعل عدّاداً يقيس مجموعةً غير
   // التي تُعرض بعد أوّل تعديل على أحدهما.
-  const scopeWhere = {
-    clientId: session.clientId,
-    AND: [
-      { OR: [{ userId: null }, { userId: { isSet: false } }] },
-      { OR: [{ staffId: null }, { staffId: { isSet: false } }] },
-    ],
-  };
+  const scopeWhere = clientInboxWhere(session.clientId);
   const rows = await db.notification.findMany({
     // `userId: null` alone matches nothing: in MongoDB a row created without the field has no
     // such KEY, and an absent key equals neither `null` nor any value. Each recipient field
@@ -49,9 +44,7 @@ export async function GET(request: NextRequest) {
   // يُعدّ في القاعدة لا من `rows`: تلك آخر مئة إشعار، فصاحب 140 غير مقروء كان يرى «100»
   // — والشارة التي لا تتجاوز مئةً أبداً تُقرأ كسقفٍ للاهتمام لا كعدد.
   // `readAt` غائبٌ في الصفوف القديمة لا `null`، فالطرفان لازمان — كما في شرط النطاق أعلاه.
-  const unreadCount = await db.notification.count({
-    where: { ...scopeWhere, OR: [{ readAt: null }, { readAt: { isSet: false } }] },
-  });
+  const unreadCount = await countClientUnread(session.clientId);
 
   const notifications = rows.map((row) => ({
     id: row.id,

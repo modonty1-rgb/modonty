@@ -47,3 +47,33 @@ backups/
 # أدوات الوكلاء محلية؛ لا تدخل أرشيف EAS ولا تعتمد عليها حزمة الموبايل.
 .agents/
 .claude/
+
+# هذا الملفّ (جذر المستودع) هو الوحيد الذي يقرؤه eas-cli؛ console-mobile/.easignore لا يُقرأ.
+# بدون هذه الأسطر رُفع ~٢٫٢ جيجا (backup وحده ٢ جيجا) فتوقّف البناء عند الضغط.
+# تطبيق الجوّال لا يستورد شيئاً من حزم الويب (لا @modonty/* ولا ../shared)،
+# وتثبيت pnpm لـ console-mobile لا يحتاج مجلّداتها.
+/backup/
+/documents/
+/scratch/
+/payment/
+/admin/
+/modonty/
+/console/
+/shared/
+/dataLayer/
+/creative/
+/docs/
+/public/
+/modonty-mobile/
+/.pnpm-store/
+/*.jpeg
+/*.jpg
+/*.svg
+console-mobile/documentation/
+console-mobile/.playwright-mcp/
+console-mobile/skills-lock.json
+**/*.bak
+
+# نسخة git المستنسخة داخل الأرشيف = ~١٢٠ ميجا من الـ١٢٣؛ البناء لا يقرأ تاريخ git
+# (runtimeVersion = appVersion، لا fingerprint). eas-cli يدعم استثناءها صراحةً (vcs/clients/git.js).
+.git

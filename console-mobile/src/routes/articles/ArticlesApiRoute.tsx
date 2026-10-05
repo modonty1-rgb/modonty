@@ -2,13 +2,14 @@ import { FlashList } from '@shopify/flash-list';
 import { useCallback, useMemo } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArticleCard } from '@/src/components/articles/ArticleCard';
 import { PublishedArticleCard } from '@/src/components/articles/PublishedArticleCard';
 import { DecisionCountBar } from '@/src/components/articles/DecisionCountBar';
-import { EmptyState, ErrorState, ListScreenSkeleton, OfflineState } from '@/src/components/ui/MobileUI';
+import { EmptyState, ErrorState, ListScreenSkeleton, OfflineState, RefreshNotice } from '@/src/components/ui/MobileUI';
+import { EnterView, groupPositionOf, LargeTitle, StatStrip, TonalCard, useTabBarClearance } from '@/src/components/ui/Nabd';
 import { articleFallbackText, type ArticleListCollection, type ArticleListItem } from '@/src/services/articles-api';
-import { control, darkColors, fonts, lightColors, spacing, typography } from '@/src/theme/tokens';
+import type { RefreshFailure } from '@/src/services/use-engagement-resource';
+import { darkColors, fonts, lightColors, nabd, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
 type ArticlesApiRouteProps = {
@@ -27,16 +28,19 @@ type ArticlesApiRouteProps = {
    */
   onRefresh: () => void;
   isRefreshing: boolean;
+  /** تحديثٌ فشل والقائمة حاضرة — سطرٌ فوقها، والقائمة باقية. */
+  refreshFailure?: RefreshFailure | null;
 };
 
 const keyOf = (article: ArticleListItem) => article.id;
 
-export function ArticlesApiRoute({ collection, error, siteOpenError, onRetry, onReview, onOpenSite, onRefresh, isRefreshing, offline = false }: ArticlesApiRouteProps) {
+export function ArticlesApiRoute({ collection, error, siteOpenError, onRetry, onReview, onOpenSite, onRefresh, isRefreshing, offline = false, refreshFailure = null }: ArticlesApiRouteProps) {
   const { mode, theme } = useAppTheme();
   const styles = mode === 'dark' ? darkStyles : lightStyles;
-  const insets = useSafeAreaInsets();
-  /** The list reserves the tab bar plus the gesture bar, so the last card is never buried. */
-  const listContentStyle = useMemo(() => [styles.list, { paddingBottom: control.footerHeight + insets.bottom + spacing.xxl }], [insets.bottom, styles.list]);
+  /** الشريط العائم يغطّي آخر القائمة — المحتوى يحجز ١٠٠ + شريط الإيماءة (هامش «نبض»). */
+  const clearance = useTabBarClearance();
+  const listContentStyle = useMemo(() => [styles.list, { paddingBottom: clearance }], [clearance, styles.list]);
+  const articleCount = collection?.articles.length ?? 0;
   const review = collection?.review;
   const openLabelPrefix = review?.openLabelPrefix ?? '';
   const siteOpenLabel = review?.openSiteLabel;
@@ -49,9 +53,10 @@ export function ArticlesApiRoute({ collection, error, siteOpenError, onRetry, on
    * صورة كاملة وعنوان بلا قصّ ونبذة، والضغطة تفتح المتصفّح لا شاشةً داخلية. الفرق ليس
    * تجميلياً: كل فتحة من هنا زيارة حقيقية لموقع العميل.
    */
-  const renderItem = useCallback(({ item }: { item: ArticleListItem }) => {
+  const renderItem = useCallback(({ item, index }: { item: ArticleListItem; index: number }) => {
     const isDecision = item.status === 'AWAITING_APPROVAL';
     if (!isDecision) return <PublishedArticleCard
+      position={groupPositionOf(index, articleCount)}
       article={item}
       accessibilityLabel={siteOpenAccessibilityPrefix ? `${siteOpenAccessibilityPrefix} ${item.title}` : item.title}
       openLabel={siteOpenLabel ?? ''}
@@ -67,7 +72,7 @@ export function ArticlesApiRoute({ collection, error, siteOpenError, onRetry, on
       siteOpenLabel={siteOpenLabel}
       siteOpenAccessibilityLabel={siteOpenAccessibilityPrefix ? `${siteOpenAccessibilityPrefix} ${item.title}` : undefined}
     />;
-  }, [onOpenSite, onReview, openLabelPrefix, reviewActionLabel, siteOpenAccessibilityPrefix, siteOpenLabel]);
+  }, [articleCount, onOpenSite, onReview, openLabelPrefix, reviewActionLabel, siteOpenAccessibilityPrefix, siteOpenLabel]);
 
   /** دوّارة السحب تأخذ ألوان الماركة: الافتراضي رماديّ النظام ويكاد يختفي على صفحة داكنة. */
   const refreshControl = useMemo(() => <RefreshControl
@@ -79,15 +84,35 @@ export function ArticlesApiRoute({ collection, error, siteOpenError, onRetry, on
   />, [isRefreshing, onRefresh, theme.colors.textInteractive, theme.colors.surfaceRaised]);
 
   /** العنصر كان يُبنى داخل الـJSX فيُعاد إنشاؤه مع كل رسم، فيهتزّ رأس القائمة بلا سبب. */
+  /**
+   * «نبض»: عنوان كبير ثم الأرقام — شريط ثلاث خلايا للقرارات (بانتظارك · أسئلة الفريق ·
+   * استشهادات) وبلاطتان للمنشورة (العدد · آخر نشر). الأرقام والتسميات من `review.stats`؛
+   * والخادم الأقدم بلا `stats` يرجع لشريط العدّ القديم.
+   */
+  const stats = collection?.review.stats ?? [];
+  const isPublished = collection !== null && collection.review.openSiteLabel !== undefined;
   const listHeader = useMemo(() => collection === null ? null : <View style={styles.header}>
-    <Text style={styles.title}>{collection.review.title}</Text>
-    {collection.review.subtitle ? <Text style={styles.subtitle}>{collection.review.subtitle}</Text> : null}
-    {collection.review.countLabel ? <View style={styles.countBar}><DecisionCountBar label={collection.review.countLabel} /></View> : null}
+    <EnterView index={0}><LargeTitle title={collection.review.title} subtitle={collection.review.subtitle} /></EnterView>
+    {stats.length > 0
+      ? <EnterView index={1}>{isPublished
+        ? <View style={styles.tiles}>{stats.map((stat) => <TonalCard key={stat.key} style={styles.tile}>
+          {stat.key === 'lastPublished' ? <>
+            <Text style={styles.subtitle}>{stat.label}</Text>
+            <Text style={styles.tileLabel}>{stat.value}</Text>
+          </> : <>
+            <Text maxFontSizeMultiplier={1} style={styles.tileNumeral}>{stat.value}</Text>
+            <Text style={styles.subtitle}>{stat.label}</Text>
+          </>}
+        </TonalCard>)}</View>
+        : <StatStrip stats={stats} />}</EnterView>
+      : collection.review.countLabel ? <View style={styles.countBar}><DecisionCountBar label={collection.review.countLabel} /></View> : null}
     {siteOpenError ? <Text style={styles.siteOpenError}>{siteOpenError}</Text> : null}
-  </View>, [collection, siteOpenError, styles]);
+    {refreshFailure ? <RefreshNotice message={refreshFailure.message} offline={refreshFailure.offline} retryLabel={collection.review.retryLabel} onRetry={onRefresh} /> : null}
+  </View>, [collection, isPublished, onRefresh, refreshFailure, siteOpenError, stats, styles]);
 
-  if (offline) return <ScrollView contentContainerStyle={styles.state}><OfflineState title={review?.offlineTitle ?? articleFallbackText.offlineTitle} description={review?.offlineDescription ?? articleFallbackText.offlineDescription} retryLabel={review?.retryLabel ?? articleFallbackText.retryLabel} onRetry={onRetry} /></ScrollView>;
-  if (error) return <ScrollView contentContainerStyle={styles.state}><ErrorState message={error} retryLabel={review?.retryLabel ?? articleFallbackText.retryLabel} onRetry={onRetry} /></ScrollView>;
+  // القائمة الحاضرة لا تُهدم بفشل تحديث — الحالتان أدناه للجلب الأوّل وحده.
+  if (offline && collection === null) return <ScrollView contentContainerStyle={styles.state}><OfflineState title={review?.offlineTitle ?? articleFallbackText.offlineTitle} description={review?.offlineDescription ?? articleFallbackText.offlineDescription} retryLabel={review?.retryLabel ?? articleFallbackText.retryLabel} onRetry={onRetry} /></ScrollView>;
+  if (error && collection === null) return <ScrollView contentContainerStyle={styles.state}><ErrorState message={error} retryLabel={review?.retryLabel ?? articleFallbackText.retryLabel} onRetry={onRetry} /></ScrollView>;
   if (collection === null) return <View style={styles.state}><ListScreenSkeleton count={3} withSubtitle /></View>;
   /**
    * الحالة الفارغة **داخل** القائمة لا بديلاً عنها — ثلاثة أعطال في فرع واحد:
@@ -111,14 +136,17 @@ export function ArticlesApiRoute({ collection, error, siteOpenError, onRetry, on
 }
 
 const shared = {
-  state: { flexGrow: 1, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md, paddingBottom: control.footerHeight + spacing.xxl },
-  list: { paddingBottom: control.footerHeight + spacing.xxl, paddingHorizontal: spacing.screenHorizontal },
-  header: { marginBottom: spacing.md, marginTop: spacing.md },
-  title: { fontFamily: fonts.medium, fontSize: typography.pageTitle, lineHeight: typography.lineHeightPageTitle, textAlign: 'right' as const, writingDirection: 'rtl' as const },
-  subtitle: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, marginTop: spacing.xs, textAlign: 'right' as const, writingDirection: 'rtl' as const },
-  countBar: { marginTop: spacing.md },
+  state: { flexGrow: 1, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md, paddingBottom: nabd.tabBarClearance },
+  list: { paddingHorizontal: spacing.screenHorizontal },
+  header: { gap: spacing.sm, marginBottom: spacing.sm, marginTop: spacing.xxs },
+  subtitle: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right' as const, writingDirection: 'rtl' as const },
+  countBar: { marginTop: spacing.xxs },
+  tiles: { flexDirection: 'row-reverse' as const, gap: spacing.sm },
+  tile: { borderRadius: nabd.tileRadius, flex: 1, gap: spacing.xxs, minHeight: nabd.ringSize + spacing.md, padding: spacing.sm },
+  tileNumeral: { fontFamily: fonts.medium, fontSize: typography.tileNumeral, lineHeight: typography.lineHeightTileNumeral, textAlign: 'right' as const, writingDirection: 'rtl' as const },
+  tileLabel: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right' as const, writingDirection: 'rtl' as const },
   siteOpenError: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, marginTop: spacing.sm, textAlign: 'right' as const, writingDirection: 'rtl' as const },
 };
 
-const darkStyles = StyleSheet.create({ ...shared, title: { ...shared.title, color: darkColors.text }, subtitle: { ...shared.subtitle, color: darkColors.muted }, siteOpenError: { ...shared.siteOpenError, color: darkColors.errorText } });
-const lightStyles = StyleSheet.create({ ...shared, title: { ...shared.title, color: lightColors.text }, subtitle: { ...shared.subtitle, color: lightColors.muted }, siteOpenError: { ...shared.siteOpenError, color: lightColors.errorText } });
+const darkStyles = StyleSheet.create({ ...shared, tileNumeral: { ...shared.tileNumeral, color: darkColors.text }, tileLabel: { ...shared.tileLabel, color: darkColors.text }, subtitle: { ...shared.subtitle, color: darkColors.muted }, siteOpenError: { ...shared.siteOpenError, color: darkColors.errorText } });
+const lightStyles = StyleSheet.create({ ...shared, tileNumeral: { ...shared.tileNumeral, color: lightColors.text }, tileLabel: { ...shared.tileLabel, color: lightColors.text }, subtitle: { ...shared.subtitle, color: lightColors.muted }, siteOpenError: { ...shared.siteOpenError, color: lightColors.errorText } });

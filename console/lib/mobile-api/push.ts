@@ -32,7 +32,13 @@ export async function sendPushToClient(input: PushInput) {
   const devices = await db.mobileDevice.findMany({ where: { clientId: input.clientId, enabled: true }, select: { id: true, expoPushToken: true } });
   if (!devices.length) return { attempted: 0, accepted: 0 };
 
-  const payload = devices.map((device) => ({ to: device.expoPushToken, sound: "default", title: input.title, body: input.body, data: { event: input.event, ...input.data } }));
+  /**
+   * التطبيق يقرأ `data.type` لا `data.event` (`console-mobile/src/services/push-registration.ts`
+   * `tapTargetOf`) ويطابق بادئات صغيرة (`article` · `faq` · …). فـ`type` هو نفس الحدث بحروف
+   * صغيرة، و`event` يبقى كما هو لأيّ قارئ قديم. ومعرّف الهدف (`articleId` …) يأتي من `data`.
+   * و`channelId: "default"` هي قناة التطبيق العربية — بدونها ينزل التنبيه في قناة أندرويد الصامتة.
+   */
+  const payload = devices.map((device) => ({ to: device.expoPushToken, sound: "default", channelId: "default", title: input.title, body: input.body, data: { ...input.data, event: input.event, type: input.event.toLowerCase() } }));
   let response: Response | null = null;
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
     try {

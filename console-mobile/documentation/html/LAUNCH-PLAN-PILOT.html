@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>خطة الإطلاق التجريبي — تطبيق الكونسول</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap">
+<style>
+:root{--bg:#f4f6fb;--paper:#fff;--ink:#0E065A;--tx:#1b2133;--mu:#55607a;--line:#d8dfec;--acc:#3030FF;--ok:#0B605E;--okbg:#d9f4f3;--warn:#6e3500;--warnbg:#ffecd2;--bad:#8a1c14;--badbg:#ffe1dd}
+@media (prefers-color-scheme:dark){:root{--bg:#070b14;--paper:#101827;--ink:#e9edf5;--tx:#d7ddea;--mu:#a3aec6;--line:#26304a;--acc:#8c8cff;--ok:#00d8d8;--okbg:#0d2c33;--warn:#ffcf85;--warnbg:#3a2a10;--bad:#ff9a9a;--badbg:#3a1517;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 'Tajawal',Tahoma,sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:32px 16px 64px}
+h1{color:var(--ink);font-size:30px;margin:0 0 4px}
+h2{color:var(--ink);font-size:21px;margin:36px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.meta{color:var(--mu);font-size:14px}
+.lead{background:var(--paper);border:1px solid var(--line);border-inline-start:5px solid var(--acc);border-radius:12px;padding:14px 18px;margin-top:16px}
+ol.phases{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:p}
+ol.phases li{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start;counter-increment:p}
+ol.phases li::before{content:counter(p);width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-weight:700}
+ol.phases b{color:var(--ink)}
+.gate{display:block;margin-top:4px;font-size:14px;color:var(--mu)}
+.gate::before{content:"البوّابة: ";font-weight:700;color:var(--ok)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:15px}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--bg);color:var(--ink)}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;border-radius:999px;padding:0 10px;font-size:13px;font-weight:500;white-space:nowrap}
+.p-run{background:var(--warnbg);color:var(--warn)} .p-todo{background:var(--bg);color:var(--mu);border:1px solid var(--line)} .p-done{background:var(--okbg);color:var(--ok)}
+.who-k{font-weight:700;color:var(--acc)}
+ul.check{list-style:none;padding:0;display:grid;gap:8px}
+ul.check li{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+ul.check li::before{content:"☐ ";color:var(--acc);font-weight:700}
+.note{font-size:14px;color:var(--mu)}
+a{color:var(--acc)}
+code{direction:ltr;unicode-bidi:isolate;font-size:13px;background:var(--bg);padding:1px 6px;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>خطة الإطلاق التجريبي — تطبيق الكونسول</h1>
+<div class="meta">٤ أكتوبر ٢٠٢٦ · خالد · ملف محلي: <code>console-mobile/documentation/html/LAUNCH-PLAN-PILOT.html</code></div>
+
+<p class="lead">نوزّع تطبيق الكونسول (أندرويد) مباشرةً على عملائنا الحاليين (~٤٠) كاختبار حقيقي صامت، بلا متجر، قبل التوسّع إلى ٥٠٠ و١٠٠٠ عميل. نسخة الآيفون تُعلَن «قيد التطوير»، ومدونتي للقرّاء تنزل عامّة في المتجر لاحقاً.</p>
+
+<h2>المراحل</h2>
+<p>ست مراحل بالترتيب؛ لا تبدأ مرحلة قبل أن تعبر سابقتها بوّابتها.</p>
+<ol class="phases">
+  <li><div><b>إقفال التطبيق محلياً</b> — إصلاح لوحة المفاتيح وزر الرجوع، وتطبيق تصميم «نبض».<span class="gate">كل الشاشات مجرَّبة على جوال خالد، وفحص TypeScript صفر أخطاء.</span></div></li>
+  <li><div><b>رفع الكونسول للإنتاج</b> — بعد معرض Techne (ينتهي ٥ أكتوبر): واجهة الجوال الجديدة، وجدولا الجلسات ومحاولات الدخول.<span class="gate">الدخول والخروج والتنبيه يعملون على السيرفر الحقيقي بطلبات مباشرة.</span></div></li>
+  <li><div><b>النسخة التجريبية الكاملة (APK)</b> — تُبنى على Expo وتقرأ عنوان الإنتاج، بلا حاجة للكمبيوتر.<span class="gate">فتح التطبيق المغلق تماماً من تنبيه يفتح المقال الصحيح، على جوال خالد.</span></div></li>
+  <li><div><b>فريق داخلي</b> — خالد وفريق المبيعات يستعملونه أسبوعاً على حسابات تجريبية.<span class="gate">صفر عطل يمنع العمل، وكل ملاحظة مسجّلة.</span></div></li>
+  <li><div><b>الدفعة الأولى: ١٠ عملاء</b> — الأقرب والأنشط، برابط تنزيل ثابت وخطوات تثبيت مصوّرة بالعربي.<span class="gate">٧ من ١٠ سجّلوا دخولاً ووصلهم تنبيه واحد على الأقل.</span></div></li>
+  <li><div><b>بقية العملاء (~٤٠)</b> — نفس الرابط، والتحديثات تصلهم تلقائياً بلا إعادة تثبيت.<span class="gate">لما بعده (المتجر والتوسّع): أسبوعان بلا عطل حرج، ورقم D-U-N-S جاهز.</span></div></li>
+</ol>
+
+<h2>المهام</h2>
+<p>٤ مهام من ١٢ تحتاج خالد، والباقي Claude.</p>
+<div class="tw"><table>
+<thead><tr><th>المرحلة</th><th>المهمة</th><th>المسؤول</th><th>الحالة</th></tr></thead>
+<tbody>
+<tr><td>١</td><td>إصلاح لوحة المفاتيح وزر الرجوع</td><td>Claude</td><td><span class="pill p-run">جارية</span></td></tr>
+<tr><td>١</td><td>تطبيق تصميم «نبض» على كل الشاشات</td><td>Claude</td><td><span class="pill p-run">جارية</span></td></tr>
+<tr><td>٢</td><td>مراجعة التغييرات والموافقة على الرفع (بعد ٥ أكتوبر)</td><td class="who-k">خالد</td><td><span class="pill p-todo">لم تبدأ</span></td></tr>
+<tr><td>٢</td><td>رفع الكونسول وفحصه على الإنتاج</td><td>Claude</td><td><span class="pill p-todo">لم تبدأ</span></td></tr>
+<tr><td>٣</td><td>بناء النسخة التجريبية الكاملة على Expo</td><td>Claude</td><td><span class="pill p-todo">لم تبدأ</span></td></tr>
+<tr><td>٣</td><td>تجربة التنبيه والتطبيق مغلق تماماً</td><td>Claude</td><td><span class="pill p-todo">لم تبدأ</span></td></tr>
+<tr><td>٣</td><td>رابط تنزيل ثابت + خطوات تثبيت مصوّرة بالعربي</td><td>Claude</td><td><span class="pill p-todo">لم تبدأ</span></td></tr>
+<tr><td>٣</td><td>مراقبة صامتة: أعطال التطبيق + عدد الدخول اليومي</td><td>Claude</td><td><span class="pill p-todo">لم تبدأ</span></td></tr>
+<tr><td>٤</td><td>أسبوع استعمال داخلي من الفريق</td><td class="who-k">خالد</td><td><span class="pill p-todo">لم تبدأ</span></td></tr>
+<tr><td>٥</td><td>اختيار أوّل ١٠ عملاء وإرسال الرابط لهم</td><td class="who-k">خالد</td><td><span class="pill p-todo">لم تبدأ</span></td></tr>
+<tr><td>٥</td><td>تقرير أسبوعي: من دخل، وماذا تعطّل</td><td>Claude</td><td><span class="pill p-todo">لم تبدأ</span></td></tr>
+<tr><td>٦</td><td>إرسال الرابط لبقية العملاء</td><td class="who-k">خالد</td><td><span class="pill p-todo">لم تبدأ</span></td></tr>
+</tbody></table></div>
+
+<h2>المطلوب من خالد</h2>
+<p>أربعة أشياء لا يقدر عليها غيرك؛ الأول يبدأ الآن لأنه الأطول.</p>
+<ul class="check">
+<li><b>طلب رقم D-U-N-S</b> مجاناً من Dun &amp; Bradstreet — حتى ٣٠ يوماً. لازم لحساب Google Play باسم الشركة، ولتوثيق المطوّر الذي تفرضه جوجل عالمياً في ٢٠٢٧.</li>
+<li><b>الموافقة على الرفع للإنتاج</b> بعد ٥ أكتوبر (لا رفع أيام المعرض).</li>
+<li><b>اختيار أوّل ١٠ عملاء</b> — الأنشط والأقرب، وكلهم بجوالات أندرويد.</li>
+<li><b>رسالة للعملاء</b> بصوت مدونتي: «تطبيقكم صار على الجوال — نسخة أندرويد الآن، والآيفون قريباً».</li>
+</ul>
+
+<h2>ما نراقبه بصمت</h2>
+<div class="tw"><table>
+<thead><tr><th>المقياس</th><th>من أين</th><th>الهدف في الدفعة الأولى</th></tr></thead>
+<tbody>
+<tr><td>عملاء ثبّتوا وسجّلوا دخولاً</td><td>جدول الجلسات على السيرفر</td><td>٧ من ١٠</td></tr>
+<tr><td>أجهزة مسجّلة للتنبيهات</td><td>جدول أجهزة الجوال</td><td>كل من دخل</td></tr>
+<tr><td>تنبيهات وصلت وفُتحت</td><td>إيصالات Expo + تعليم «مقروء»</td><td>تنبيه واحد على الأقل لكل عميل</td></tr>
+<tr><td>قرارات من الجوال (اعتماد مقال · رد على سؤال)</td><td>سجلّ الخادم</td><td>أوّل قرار خلال أسبوع</td></tr>
+<tr><td>أعطال وأخطاء</td><td>سجلّ الخادم (5xx) + أعطال التطبيق</td><td>صفر عطل يمنع العمل</td></tr>
+</tbody></table></div>
+
+<h2>المخاطر وخطة التراجع</h2>
+<div class="tw"><table>
+<thead><tr><th>الخطر</th><th>ماذا نفعل</th></tr></thead>
+<tbody>
+<tr><td>العميل يخاف من تحذير «مصدر غير معروف»</td><td>خطوات تثبيت مصوّرة بالعربي، ومكالمة قصيرة من المندوب لأوّل ١٠.</td></tr>
+<tr><td>عميل عنده آيفون</td><td>نقول له بوضوح: نسخة الآيفون قيد التطوير، والكونسول على المتصفح يكفيه الآن.</td></tr>
+<tr><td>عطل بعد الإرسال</td><td>الإصلاح يصلهم عبر التحديث التلقائي (<code>expo-updates</code>) بلا إعادة تثبيت؛ العطل في مكتبة على مستوى الجوال وحده يحتاج ملفاً جديداً.</td></tr>
+<tr><td>تنبيهات مزعجة أو خاطئة</td><td>العميل يطفئها من «حسابي»، والإرسال من مصدر واحد يحترم تفضيلاته.</td></tr>
+<tr><td>تشديد جوجل على التطبيقات خارج المتجر (٢٠٢٧)</td><td>نبدأ توثيق المطوّر مبكراً مع رقم D-U-N-S.</td></tr>
+</tbody></table></div>
+
+<h2>قرارات مفتوحة</h2>
+<ul class="check">
+<li>هل يُسمح بقبول أسئلة مقال طلب العميل تعديله؟ (اليوم مسموح)</li>
+<li>هل ينزل التنبيه لافتةً فوق الشاشة أم في القائمة فقط؟ (اليوم في القائمة)</li>
+<li>متى نبدأ نسخة الآيفون، وعبر TestFlight أم المتجر مباشرة؟</li>
+</ul>
+
+<h2>مصادر</h2>
+<ul>
+<li><a href="https://support.google.com/googleplay/android-developer/answer/13628312?hl=en">Play Console — المعلومات المطلوبة لحساب مطوّر</a></li>
+<li><a href="https://support.google.com/googleplay/android-developer/answer/14151465?hl=en">Play Console — شرط الاختبار للحسابات الشخصية الجديدة</a></li>
+<li><a href="https://developer.android.com/developer-verification">Android developer verification</a></li>
+</ul>
+<p class="note">ملفات ذات صلة: <code>UI-NABD.html</code> (التصميم المعتمد) · <code>UI-DIRECTIONS.html</code> (المقارنة) · لوحة المهام <code>documents/tasks/TASK.html</code> بطاقة CMOB-PILOT.</p>
+</div>
+</body>
+</html>

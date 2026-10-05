@@ -6,5 +6,5 @@ export default ({ config }: ConfigContext) => ({
     ...config.extra,
     mobileApiBaseUrl: process.env.EXPO_PUBLIC_MOBILE_API_BASE_URL,
   },
-  plugins: [...(config.plugins ?? []), 'react-native-bottom-tabs'],
+  plugins: [...(config.plugins ?? []), ['expo-notifications', { color: '#0E065A', defaultChannel: 'default' }]],
 });

@@ -75,6 +75,8 @@ export async function GET(request: NextRequest) {
       commentsTabLabel: "التعليقات",
       commentsTabCount: arabicNumber(comments.length),
       replyLinkLabel: "الرد على السؤال",
+      // «نبض»: شارة الحالة على بطاقة السؤال — القائمة لا تحمل إلا PENDING، فالكلمة صادقة على كل صفّ.
+      questionBadgeLabel: "ينتظر ردك",
       openQuestionPrefix: "افتح سؤال",
       emptyQuestionsTitle: "ما في أسئلة تنتظر ردك",
       emptyQuestionsDescription: "الأسئلة توصلك هنا لما يسأل قارئ على أحد مقالاتك.",

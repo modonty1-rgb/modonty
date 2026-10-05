@@ -5153,6 +5153,38 @@ model MobileDevice {
   @@map("mobile_devices")
 }
 
+/// One row per mobile sign-in (console app). The access token carries this row's id
+/// (`sid`); every authenticated mobile request checks the row is live, so signing out
+/// ends THIS phone only, and a password change ends them all. No relation on purpose:
+/// it keeps the Client model untouched.
+model MobileSession {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  clientId      String    @db.ObjectId
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  /// "SignedOut" | "PasswordChanged"
+  revokedReason String?
+  createdAt     DateTime  @default(now())
+
+  @@index([clientId])
+  @@map("mobile_sessions")
+}
+
+/// One row per FAILED mobile login, keyed by identifier + IP. Five inside fifteen
+/// minutes → 429. A successful login deletes the key's rows.
+model MobileLoginAttempt {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  /// lower-cased identifier + "|" + client IP
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+  @@index([createdAt])
+  @@map("mobile_login_attempts")
+}
+
 enum ReelStatus {
   DRAFT
   PENDING_APPROVAL // client upload awaiting admin approval

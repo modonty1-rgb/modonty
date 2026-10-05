@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { arabicMetaLine, arabicNumber, arabicRelativeTime } from "@/lib/mobile-api/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
+import { rejectMalformedIds } from "@/lib/mobile-api/params";
 
 /**
  * S08-reply «الرد على سؤال» — the one question the client opened.
@@ -19,6 +20,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const session = await mobileSessionFromRequest(request);
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
   const { faqId } = await params;
+  const malformed = rejectMalformedIds([faqId], "السؤال غير موجود.");
+  if (malformed) return malformed;
   const row = await db.articleFAQ.findFirst({
     where: { id: faqId, article: { clientId: session.clientId }, OR: [{ source: "user" }, { source: "chatbot" }] },
     select: { id: true, question: true, answer: true, status: true, submittedByName: true, submittedByEmail: true, createdAt: true, article: { select: { title: true } } },

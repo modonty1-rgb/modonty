@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       notificationsSectionTitle: "التنبيهات",
       helpSectionTitle: "المساعدة",
       supportTitle: "المساعدة والدعم",
-      supportDescription: "تواصل مع فريق مودونتي من داخل التطبيق",
+      supportDescription: "تواصل مع فريق مدونتي من داخل التطبيق",
       logoutLabel: "تسجيل الخروج",
       logoutConfirmTitle: "تسجيل الخروج؟",
       logoutConfirmDescription: "بتخرج من حسابك على هذا الجوال، وبتحتاج تسجّل الدخول مرة ثانية.",

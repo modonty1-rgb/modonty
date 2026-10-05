@@ -3,6 +3,7 @@ import { ArticleFAQStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
+import { rejectMalformedIds } from "@/lib/mobile-api/params";
 import { CLIENT_READABLE_STATUSES } from "@/lib/articles/client-visible-statuses";
 import { arabicCount, arabicMetaLine, arabicNumber } from "@/lib/mobile-api/arabic-format";
 
@@ -12,6 +13,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const session = await mobileSessionFromRequest(request);
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
   const { articleId } = await params;
+  const malformed = rejectMalformedIds([articleId], "المقال غير موجود.");
+  if (malformed) return malformed;
   const article = await db.article.findFirst({
     // نفس قائمة السماح التي تحكم الكونسول — الجوّال يقرأ من القاعدة نفسها بنفس
     // الجلسة، فبابٌ يُغلق هناك ويُترك هنا ليس مُغلقاً. `clientId` يمنع مقال عميلٍ
@@ -103,6 +106,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         rejectConfirmationDescription: "السؤال بيختفي من المقال المنشور وما بيشوفه القارئ.",
         cancelLabel: "إلغاء",
         approvedLabel: "مقبول",
+        // «نبض»: شارة السؤال الذي لم يُقرَّر بعد — الحالة نصّ + رمز + لون، لا غيابُ شارة.
+        pendingLabel: "بانتظارك",
         rejectedLabel: "مرفوض",
       } : null,
       citations: citations.length > 0 ? {

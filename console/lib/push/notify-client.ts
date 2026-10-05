@@ -27,6 +27,8 @@ export type NotifyClientInput = {
   title: string;
   body: string;
   relatedId?: string | null;
+  /** المقال الذي يفتحه التنبيه حين يُضغط. يُشتقّ من `relatedId` لأنواع `article*` إن لم يُمرَّر. */
+  articleId?: string | null;
   /**
    * أي مفتاح تفضيل يحكم هذا التنبيه.
    *
@@ -92,7 +94,12 @@ async function deliver(input: NotifyClientInput, notificationId: string | null):
      */
     channelId: "default",
     // يفتح التطبيق على الشاشة الصحيحة ويوسم التنبيه مقروءاً بمعرّفه.
-    data: { notificationId, type: input.type, relatedId: input.relatedId ?? null },
+    data: {
+      notificationId,
+      type: input.type,
+      relatedId: input.relatedId ?? null,
+      articleId: input.articleId ?? (input.type.startsWith("article") ? input.relatedId ?? null : null),
+    },
   }));
 
   try {

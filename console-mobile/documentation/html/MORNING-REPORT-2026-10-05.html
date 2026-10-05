@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تقرير الصباح · ٥ أكتوبر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--page:#EEF0FB;--surface:#FFFFFF;--s2:#E4E6FA;--text:#0E1230;--muted:#4A5272;--hero:#3030FF;--onHero:#FFFFFF;--ok:#0B605E;--okC:#C6F2F1;--warn:#96450A;--warnC:#FFE2BC;--bad:#B4241A;--badC:#FFDAD6;--line:#D6D9F5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#070B16;--surface:#121A3C;--s2:#1B2452;--text:#FFFFFF;--muted:#B6BEDC;--ok:#8AF3F2;--okC:#00393A;--warn:#FFCF85;--warnC:#3F2B06;--bad:#FFB4B4;--badC:#43161A;--line:#283166}}
+:root[data-theme="dark"]{--page:#070B16;--surface:#121A3C;--s2:#1B2452;--text:#FFFFFF;--muted:#B6BEDC;--ok:#8AF3F2;--okC:#00393A;--warn:#FFCF85;--warnC:#3F2B06;--bad:#FFB4B4;--badC:#43161A;--line:#283166}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text);font-family:Tajawal,system-ui,sans-serif;font-size:15px;line-height:1.6}
+main{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:24px;margin:8px 0 4px}h2{font-size:18px;margin:28px 0 8px}h3{font-size:16px;margin:16px 0 6px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+.hero{background:var(--hero);color:var(--onHero);border-radius:24px;padding:20px}
+.hero ol{margin:0;padding-inline-start:20px}.hero li{margin:4px 0}
+.card{background:var(--surface);border-radius:20px;padding:16px;margin:12px 0;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+th,td{padding:8px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:var(--s2);border-radius:6px;padding:1px 4px;direction:ltr;unicode-bidi:isolate}
+.tag{display:inline-block;border-radius:999px;padding:0 10px;font-size:12px;font-weight:500;white-space:nowrap}
+.ok{background:var(--okC);color:var(--ok)}.warn{background:var(--warnC);color:var(--warn)}.bad{background:var(--badC);color:var(--bad)}
+.note{color:var(--muted);font-size:13px}
+.num{font-weight:700;direction:ltr;unicode-bidi:isolate}
+</style>
+</head>
+<body><main>
+<h1>تقرير الصباح · الكونسول «نبض» + تطبيق القارئ</h1>
+<p class="sub">٥ أكتوبر ٢٠٢٦ · آخر يوم في Techne — لا رفع اليوم · كل أرقام الأداء من <b>نسخة تطوير — مؤشّر</b></p>
+
+<section class="hero">
+<ol>
+<li><b>«نبض» مبني على كل الشاشات</b> و<code>tsc = 0</code>؛ تدقيق الصباح صحّح ٧ أنواع مخالفات (٣٩ موضعاً في ١٦ ملفاً) وتأكّدنا منها على الجهاز.</li>
+<li><b>الكونسول جاهز من ناحية الكود، لكن مهمّة الإطلاق ما خلصت</b>: باقي رفعه للإنتاج بعد Techne، وبناء preview، وتجربة التنبيه والتطبيق مقفول.</li>
+<li><b>ينتظر قرارك</b>: نظام الأرقام (عربي/لاتيني) في شاشة الاشتراك · هل يكبر النصّ مع حجم خط الجوال (جوالك على ١٫٥×) · ٣ قرارات في تطبيق القارئ.</li>
+</ol>
+</section>
+
+<h2>١ · «نبض» — الشاشات</h2>
+<div class="card"><table>
+<tr><th>الشاشة</th><th>صورة الليلة</th><th>فحص الصباح (أبعاد)</th><th>الحالة</th></tr>
+<tr><td>الدخول · استعادة الجلسة</td><td><code>n-login-dark</code> · <code>n-session-restore-dark</code></td><td>الحقول ١٤ ← ١٦ حشوة جانبية</td><td><span class="tag ok">منجز</span></td></tr>
+<tr><td>الرئيسية</td><td><code>n-home-dark/light</code></td><td>٨ عناصر قابلة للمس · ٠ تحت ٤٨dp</td><td><span class="tag ok">منجز</span></td></tr>
+<tr><td>قائمة الصورة</td><td><code>n-menu-dark/light</code></td><td>٣ بنود × ٢١٦×٥٦dp</td><td><span class="tag ok">منجز</span></td></tr>
+<tr><td>القرارات · مركز المراجعة · المقال · الأسئلة · الاستشهادات</td><td><code>n-decisions</code> <code>n-hub</code> <code>n-article</code> <code>n-faqs</code> <code>n-citations</code></td><td>من الكود (بيانات dev فاضية: ٠ مهام)</td><td><span class="tag ok">منجز</span></td></tr>
+<tr><td>المنشور</td><td><code>n-published-dark</code></td><td>عيب قصّ «اقرأه كما يراه الزائر» ← <b>انصلح</b></td><td><span class="tag ok">منجز</span></td></tr>
+<tr><td>الجمهور (أسئلة + تعليقات) · الرد</td><td><code>n-audience</code> <code>n-reply-dark/light</code></td><td>تبويبات ١٦٦/١٥٤×٤٨dp</td><td><span class="tag ok">منجز</span></td></tr>
+<tr><td>الطلّات · الرفع</td><td><code>n-videos</code> <code>n-upload</code></td><td>بلاطات ١٠٤×٧٢dp · ٠ تحت ٤٨</td><td><span class="tag ok">منجز</span></td></tr>
+<tr><td>التنبيهات</td><td><code>n-notifications</code></td><td>الحالة الفاضية سليمة</td><td><span class="tag ok">منجز</span></td></tr>
+<tr><td>حسابي · الدعم</td><td><code>n-account</code> <code>n-support</code></td><td>زر الرجوع ٤٨ · الخروج ٥٦dp</td><td><span class="tag ok">منجز</span></td></tr>
+<tr><td>الحجوزات · الاشتراك · الإحالة</td><td><code>n-bookings</code> <code>n-subscription</code> <code>n-referral</code></td><td>الاشتراك: أرقام عربية ولاتينية مخلوطة ← قرار</td><td><span class="tag warn">قرار</span></td></tr>
+</table>
+<p class="note">طريقة القياس: <code>uiautomator dump</code> ← تحويل px إلى dp. جوالك كان شغّال (تيك توك/واتساب)، فالمرور على الشاشات صار على المحاكي (أندرويد ١٥ · ٢٫٠× · ٣٦٠×٨٠٠dp) والأداء على جوالك (A21s · أندرويد ١٢ · ١٫٧٥×). كل لمسة مسبوقة بفحص أنّ التطبيق في الواجهة (<code>scratchpad/qa/t.sh</code>).</p>
+</div>
+
+<h3>نتائج التدقيق وما انصلح</h3>
+<div class="card"><table>
+<tr><th>#</th><th>المخالفة</th><th>قبل</th><th>بعد</th><th>الموضع</th></tr>
+<tr><td>١</td><td>مقاس خط شاذّ</td><td>٢٢/٣٠ · ١٤ (label+1) ×٢ · ٢٤/٣٢ من رموز المسافات</td><td>٢٠/٢٨ <code>heroTitle</code> · ١٣ <code>label</code> · رمز جديد <code>typography.mediumTitle</code> ٢٤/٣٢</td><td><code>SupportRoute.tsx:106</code> · <code>Nabd.tsx:480,498</code> · <code>ReferralRoute.tsx:229</code></td></tr>
+<tr><td>٢</td><td>مسافات برّا سلّم ٤–٣٢</td><td>١٠ ×٥ · ١٤ ×٥ · ٦ ×٣ · ٢ ×٢</td><td>١٢ · ١٦ · ٨/٤ · ٤</td><td>١١ ملفاً (Login · Referral · Bookings · Support · AudienceReply · بطاقتا الجمهور · Notification · VideoUpload · Nabd · AppShell)</td></tr>
+<tr><td>٣</td><td>رموز «نبض» برّا السلّم</td><td><code>groupGap 3</code> · <code>tabBarPadding 6</code> · <code>tabLabelGap 2</code> · ثلاث حشوات ١٠</td><td>٤ · ٤ · ٤ · ١٢</td><td><code>tokens.ts:227-250</code></td></tr>
+<tr><td>٤</td><td>الشريط السفلي ما يحاذي حافة الشاشة</td><td>١٤dp مقابل ١٦ للمحتوى</td><td>١٦dp (والتابة ٦٤×٥٦dp)</td><td><code>tokens.ts:239</code> · مقاس على الجوال: أعلى التابة ١٣٩١←١٣٨٣px</td></tr>
+<tr><td>٥</td><td>مقاسات أيقونات مبعثرة</td><td>أرقام مكتوبة ٢٠ ×٩ · ٢٨ ×٢ · ١٦ · ١٢</td><td>سلّم من رموز: ١٢ / ١٦ / ٢٠ / ٢٤، وشلنا ٢٨</td><td><code>tokens.ts</code> <code>control.iconSize*</code> · ٨ ملفات</td></tr>
+<tr><td>٦</td><td>نصّ مقصوص</td><td>«اقرأه كما يراه» — «الزائر» راحت لسطر ثانٍ ما يبان (صندوق ١٠١dp)</td><td>سطر واحد كامل (تأكّدنا بعد إعادة تحميل نظيفة)</td><td><code>PublishedArticleCard.tsx:44</code></td></tr>
+<tr><td>٧</td><td>حشوة المحدِّد في القائمة</td><td>٢</td><td>٤</td><td><code>AppShell.tsx:127</code></td></tr>
+</table></div>
+
+<h3>ما يحتاج تعديل</h3>
+<div class="card"><table>
+<tr><th>البند</th><th>الدليل</th><th>الحكم</th></tr>
+<tr><td>التباين — ٢٨ زوجاً في الوضعين</td><td>أقلّ نصّ: <span class="num">4.74:1</span> (statusProgress داكن) · حدّ الحقل <span class="num">3.51 / 3.95:1</span></td><td><span class="tag ok">كلّها ناجحة</span> — تركواز <code>accent</code> على الأبيض <span class="num">1.78:1</span> لكنه زخرفة أيقونة فقط (فحصنا: ما يُستعمل لنصّ ولا لعنصر تحكّم)</td></tr>
+<tr><td>أهداف اللمس</td><td>٠ عنصر تحت ٤٨dp في ٩ شاشات على المحاكي</td><td><span class="tag ok">سليم</span></td></tr>
+<tr><td>حدود التابات على جوالك تبان ٣٢dp</td><td>أداة الوصول على أندرويد ١٢ تقصّ الحدود عند ١٤٤٨px؛ ضغطنا على y=1472 فانفتحت المقالات</td><td><span class="tag ok">ليس عيباً</span></td></tr>
+</table></div>
+
+<h3>ينتظر قرارك</h3>
+<div class="card"><table>
+<tr><th>البند</th><th>الدليل</th><th>ليش ما صلّحناه</th></tr>
+<tr><td>شاشة الاشتراك فيها نوعين أرقام</td><td>«١٨٦» و«٨ أبريل ٢٠٢٦» جنب «24 من 24» و«8 أبريل 2026» — <code>console/app/api/mobile/v1/subscription/route.ts:74-76,109</code></td><td>اللاتيني مقصود حسب ورقة S04 (<code>arabic-format.ts:72-78</code>: «لو ثبّت خالد نظاماً واحداً احذف هذه»)</td></tr>
+<tr><td>النصّ ما يكبر مع حجم خط الجوال</td><td>خط جوالك على <span class="num">1.5×</span> والتطبيق ثابت على 1.0 (<code>tokens.ts</code> <code>fontScale.uiMaxMultiplier</code>)</td><td>قاعدتنا في <code>UIUX-RULES.md §4</code> تقول «النصّ المقروء يكبر مع النظام». السماح بالتكبير يعني نفحص كل الشاشات عند ١٫٣ و١٫٥</td></tr>
+<tr><td>الشعار في الوضع الفاتح</td><td>صندوق كحلي ١٤٠×٤٩dp بينه وبين العنوان ٨dp بس (الداكن ١١٦dp)</td><td>مؤشّر من لقطة واحدة — يحتاج نظرتك</td></tr>
+</table></div>
+
+<h2>٢ · الأداء — <span class="tag warn">نسخة تطوير — مؤشّر</span></h2>
+<div class="card"><table>
+<tr><th>المقياس</th><th>القياس</th><th>الهدف</th><th>الحكم</th></tr>
+<tr><td>التشغيل من الصفر (<code>am start -W</code> ×٣)</td><td>TotalTime: <span class="num">— / 9123 / 7713 ms</span> (القراءة الأولى WaitTime <span class="num">4399</span>) — يفتح DevLauncher ثم يجيب JS من Metro عبر الواي فاي</td><td>&lt; ٢ث في نسخة release</td><td><span class="tag warn">ما يمثّل release</span> — نقيسه على بناء preview</td></tr>
+<tr><td>التقطيع — جولة ١ (١٠ شاشات + تمرير)</td><td><span class="num">2204</span> إطار · مقطّع <span class="num">13.20%</span> · p50/90/95/99 = <span class="num">21/32/34/93 ms</span></td><td>&lt; ٥٪</td><td><span class="tag bad">أعلى</span></td></tr>
+<tr><td>التقطيع — جولة ٢ (الكاش دافئ)</td><td><span class="num">2310</span> إطار · مقطّع <span class="num">7.14%</span> · p50/90/95/99 = <span class="num">21/26/32/101 ms</span></td><td>&lt; ٥٪</td><td><span class="tag warn">قريب</span> — نسخة التطوير تبطّئ JS «بشكل كبير» (توثيق RN)</td></tr>
+<tr><td>الذاكرة (TOTAL PSS)</td><td><span class="num">310.2 → 379.0 → 389.0 MB</span> (قبل ← بعد ١٠ شاشات ← بعد ٢٠)</td><td>ثابتة</td><td><span class="tag ok">تستقرّ</span> — الجولة الثانية زادت ٢٫٦٪ بس، يعني ما فيه تسريب ظاهر</td></tr>
+<tr><td>زمن الـAPI (آخر ٧٩ طلب، <code>next dev</code>)</td><td>الوسيط <span class="num">641 ms</span> · p90 <span class="num">1019</span> · الأقصى <span class="num">1563</span></td><td>الوسيط &lt; ٥٠٠</td><td><span class="tag bad">أعلى</span> — خادم تطوير + Atlas بعيد</td></tr>
+</table>
+<p class="note">لكل نقطة: dashboard ٢١ طلب، الوسيط ٧٠٨ والأقصى ١١٥٢ · articles ١١ طلب، ٨٢٣ / ١٣٩٧ · auth/refresh ٨ طلبات، ٨٠٠ / ١١٩٨ · me ١٠ طلبات، ٦٠٣ / ٨٩٣ · audience ٩ طلبات، ٤٩٨ / ١٥٦٣ · notifications ٩ طلبات، ٢٦١ / ٢٩٨ · videos ٥ طلبات، ٢٦٨ / ٦٧٤. المصدر: <code>scratchpad/nabd/console-dev.log</code>. السجلّ بلا توقيت، فأخذنا آخر ٨٠ طلب (فيها طلبات المحاكي أيضاً).</p>
+</div>
+<div class="card"><table>
+<tr><th>مراجعة الكود</th><th>النتيجة</th></tr>
+<tr><td>القوائم الطويلة</td><td>٩ FlashList، وكلها فيها <code>keyExtractor</code> و<code>renderItem</code> ثابتة · ١٠ بطاقات ملفوفة بـ<code>memo</code> <span class="tag ok">سليم</span></td></tr>
+<tr><td>الصور</td><td>كلها <code>expo-image</code> (٨ ملفات) مع <code>cachePolicy="memory-disk"</code> <span class="tag ok">سليم</span></td></tr>
+<tr><td>الحركة</td><td>٦ على المحرّك الأصلي · ٢ على JS بالضرورة: عدّاد الرقم وحلقة SVG، لأن المحرّك الأصلي يحرّك <code>transform/opacity</code> بس (توثيق RN · animations › Caveats)، وكلها تشتغل مرّة وحدة <span class="tag ok">مقبول</span></td></tr>
+<tr><td>إصلاحات JS للأداء</td><td>ما لقينا مشكلة آمنة نصلّحها — التقطيع يجي غالباً من وضع التطوير. الحكم النهائي على بناء preview</td></tr>
+</table></div>
+<div class="card"><table>
+<tr><th>حزمة</th><th>الاستيراد في <code>src/</code></th><th>للبناء الجاي</th></tr>
+<tr><td><code>react-native-bottom-tabs</code></td><td>٠ — بس إضافة في <code>app.config.ts:9</code></td><td>تنشال هي وإضافتها</td></tr>
+<tr><td><code>@bottom-tabs/react-navigation</code></td><td>٠</td><td>تنشال</td></tr>
+<tr><td><code>@react-navigation/bottom-tabs</code></td><td>٠</td><td>تنشال</td></tr>
+<tr><td><code>@react-navigation/elements</code></td><td>٠ (تابعة لـnative-stack)</td><td>تنشال من package.json بعد ما نتأكّد من شجرة الحزم</td></tr>
+<tr><td><code>@expo/vector-icons</code></td><td>٠</td><td>تنشال</td></tr>
+<tr><td><code>expo-haptics</code></td><td>١ ملف — مستعملة</td><td>تبقى</td></tr>
+</table><p class="note">ما شلنا شي الحين: الحزم الأصلية تحتاج بناء تطوير جديد.</p></div>
+
+<h2>٣ · مدونتي — تطبيق القارئ</h2>
+<div class="card"><table>
+<tr><th>البند</th><th>الرقم / الحالة</th><th>الدليل</th></tr>
+<tr><td>جرد الموقع</td><td>٧٨ صفحة · ٥٢ قدرة للقارئ · ٦٥ نقطة API مقترحة (V1: ٣٧ · V2: ٢٢ · V3: ٦)</td><td><code>modonty-mobile/documentation/API-INVENTORY.md §1</code></td></tr>
+<tr><td>البناء تحت <code>modonty/app/api/mobile/v1</code></td><td>الكرت يقول ٣٤ مساراً / ٣٧ دالّة · العدّ اليوم: <b>٣٨</b> ملف <code>route.ts</code> و<b>٤١</b> دالّة HTTP مصدَّرة</td><td>الفرق ٤ ما فحصناه — يحتاج مقارنة مع قائمة الكرت</td></tr>
+<tr><td>اختبار العقد</td><td><b>RESULT: 174 passed, 0 failed (of 174)</b></td><td><code>scratchpad/reader-api/run3.log:253</code> (الملف موجود)</td></tr>
+<tr><td>قرارات اتّخذناها</td><td>V1 بالبريد وكلمة المرور بس · تنبيهات القارئ في V2 · واجهة تطبيق القارئ بـReact Native Paper</td><td>كرت <code>RAPI-V1</code></td></tr>
+<tr><td>معلّق</td><td><code>tsc</code> لمدونتي ينتظر أمرك · ٣ قرارات: جدول يمنع تكرار مشاهدة الريل · الحجز من التطبيق بدون حساب · حدّ أعلى لتعليقات المقال · بيانات <code>[QA TEST]</code> للحذف</td><td><code>task-data.json</code> › <code>RAPI-V1</code></td></tr>
+</table></div>
+
+<h2>٤ · الباقي قبل الإطلاق التجريبي</h2>
+<div class="card"><table>
+<tr><th>#</th><th>المهمّة</th><th>على مين</th><th>الحالة</th></tr>
+<tr><td>١</td><td>رفع الكونسول للإنتاج (واجهة الجوال + جدولا MobileSession / MobileLoginAttempt)</td><td>بعد أمرك</td><td><span class="tag warn">بعد Techne — مو اليوم</span></td></tr>
+<tr><td>٢</td><td>بناء EAS preview على عنوان الإنتاج + تجربة التنبيه والتطبيق مقفول تماماً (يفتح المقال الصح)</td><td>Claude</td><td><span class="tag warn">لم تبدأ</span></td></tr>
+<tr><td>٣</td><td>نقيس التشغيل من الصفر والتقطيع من جديد على preview (هذا التقرير مؤشّر بس)</td><td>Claude</td><td><span class="tag warn">مع البند ٢</span></td></tr>
+<tr><td>٤</td><td>شيل الحزم الخمس اللي ما تُستعمل في نفس البناء</td><td>Claude</td><td><span class="tag warn">مع البند ٢</span></td></tr>
+<tr><td>٥</td><td>رابط تنزيل ثابت + خطوات تثبيت مصوّرة · مراقبة بهدوء · تحديثات expo-updates</td><td>Claude</td><td><span class="tag warn">بعد ٢</span></td></tr>
+<tr><td>٦</td><td>رقم D-U-N-S — أرسلنا الطلب ٤ أكتوبر عبر D&amp;B SAME وننتظر ردّهم على khalid@modonty.com</td><td>خالد</td><td><span class="tag warn">بانتظار الرد</span></td></tr>
+</table><p class="note">المصدر: <code>LAUNCH-PLAN-PILOT.html</code> · كرت <code>CMOB-PILOT</code> في <code>documents/tasks/task-data.json</code>.</p></div>
+
+<p class="note">ما دفعنا ولا رفعنا ولا لمسنا الإنتاج. <code>tsc</code> للكونسول = ٠ بعد التعديلات. ما فيه حزم أصلية جديدة. التطبيق على جوالك مسجّل دخول وواقف على الرئيسية.</p>
+</main></body></html>

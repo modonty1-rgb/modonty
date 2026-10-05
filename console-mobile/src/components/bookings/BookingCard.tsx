@@ -1,66 +1,64 @@
-import { memo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { memo, useCallback, useState } from 'react';
+import { Linking, StyleSheet, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
-import type { BookingRequestItem } from '@/src/services/bookings-api';
-import { darkColors, fonts, lightColors, radii, spacing, typography } from '@/src/theme/tokens';
+import { ltrLine } from '@/src/components/ui/bidi';
+import { PillButton, StatusBadge, TonalCard, type BadgeTone } from '@/src/components/ui/Nabd';
+import { bookingContactCopy, type BookingRequestItem, type BookingStatusTone } from '@/src/services/bookings-api';
+import { fonts, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
-const badgeStyle = { pending: 'pendingBadge', done: 'doneBadge', neutral: 'neutralBadge' } as const;
-const badgeTextStyle = { pending: 'pendingBadgeText', done: 'doneBadgeText', neutral: 'neutralBadgeText' } as const;
+const badgeTone: Record<BookingStatusTone, BadgeTone> = { pending: 'warning', done: 'positive', neutral: 'neutral' };
 
-/**
- * بطاقة طلب تواصل — **عرضٌ محض، صفر أفعال** (قرار خالد ٢٩ أغسطس).
- *
- * تحمل ما يحتاجه العميل ليعرف: من طلب · رقمه · ماذا قال · من أين جاء · متى · وأين وصل
- * الطلب في الكونسول. لا زرّ فيها إطلاقاً: إدارة الحالة في الكونسول، والاتصال من دفتر
- * هاتفه. ولذلك هي `View` لا `Pressable` — لا تُعلن نفسها زرّاً لقارئ الشاشة ولا تعد بضغطة.
- *
- * والرقم قابل للتحديد والنسخ (`selectable`) — فبلا زرّ اتصال، النسخ هو طريقه إليه.
- */
-export const BookingCard = memo(function BookingCard({ booking }: { booking: BookingRequestItem }) {
-  const { mode } = useAppTheme();
-  const styles = mode === 'dark' ? darkStyles : lightStyles;
-
-  return <View style={styles.card}>
-    <View style={styles.head}>
-      <View style={styles[badgeStyle[booking.statusTone]]}><Text maxFontSizeMultiplier={1} style={styles[badgeTextStyle[booking.statusTone]]}>{booking.statusLabel}</Text></View>
-      <Text numberOfLines={1} style={styles.name}>{booking.name}</Text>
-    </View>
-    {booking.phone ? <Text selectable style={styles.phone}>{booking.phone}</Text> : null}
-    {booking.message ? <Text style={styles.message}>{booking.message}</Text> : null}
-    <Text numberOfLines={1} style={styles.meta}>{booking.metaLabel}</Text>
-  </View>;
-});
-
-const shared = {
-  card: { borderRadius: radii.card, borderWidth: StyleSheet.hairlineWidth, gap: spacing.xs, marginBottom: spacing.sm, padding: spacing.md },
-  head: { alignItems: 'flex-end' as const, gap: spacing.xs },
-  name: { fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, textAlign: 'right' as const, width: '100%' as const, writingDirection: 'rtl' as const },
-  badge: { borderRadius: radii.field, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: spacing.xs, paddingVertical: spacing.xxs },
-  badgeText: { fontFamily: fonts.medium, fontSize: typography.tabLabel, lineHeight: typography.lineHeightTabLabel, writingDirection: 'rtl' as const },
-  // الرقم يُقرأ يساراً كأي رقم هاتف، ولو كانت الشاشة عربية.
-  phone: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right' as const, writingDirection: 'ltr' as const },
-  message: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right' as const, writingDirection: 'rtl' as const },
-  meta: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right' as const, writingDirection: 'rtl' as const },
-};
-
-function stylesFor(palette: typeof darkColors) {
-  return StyleSheet.create({
-    ...shared,
-    card: { ...shared.card, backgroundColor: palette.surfaceRaised, borderColor: palette.border },
-    name: { ...shared.name, color: palette.text },
-    pendingBadge: { ...shared.badge, borderColor: palette.warning },
-    pendingBadgeText: { ...shared.badgeText, color: palette.warning },
-    doneBadge: { ...shared.badge, borderColor: palette.textInteractive },
-    doneBadgeText: { ...shared.badgeText, color: palette.textInteractive },
-    neutralBadge: { ...shared.badge, borderColor: palette.muted },
-    neutralBadgeText: { ...shared.badgeText, color: palette.muted },
-    // الرقم نصّ لا رابط — لكنه يبقى أبرز سطر في البطاقة لأنه ما يبحث عنه العميل.
-    phone: { ...shared.phone, color: palette.text },
-    message: { ...shared.message, color: palette.text },
-    meta: { ...shared.meta, color: palette.muted },
-  });
+/** واتساب يريد الرقم أرقاماً فقط بصيغته الدولية: `wa.me/9665…` — بلا «+» ولا «00» ولا مسافات. */
+function whatsappUrlOf(phone: string): string | null {
+  const digits = phone.replace(/\D/g, '').replace(/^00/, '');
+  return digits.length >= 8 ? `https://wa.me/${digits}` : null;
 }
 
-const darkStyles = stylesFor(darkColors);
-const lightStyles = stylesFor(lightColors);
+/**
+ * بطاقة طلب تواصل — «نبض»: الاسم وشارة الحالة · ما قاله · ثم وسائل الوصول كبسولات (الجوال
+ * والواتساب نغميّتان، والبريد شبحية) · ثم من أين جاء ومتى.
+ *
+ * كل وسيلة رابطٌ يفتح تطبيقه مباشرةً (`tel:` · `wa.me` · `mailto:`) — أقلّ فعل يحتاجه العميل
+ * ليردّ، لا شاشة جديدة. إدارة حالة الطلب تبقى في الكونسول.
+ */
+export const BookingCard = memo(function BookingCard({ booking }: { booking: BookingRequestItem }) {
+  const { theme } = useAppTheme();
+  const [openFailed, setOpenFailed] = useState(false);
+  const whatsappUrl = booking.phone ? whatsappUrlOf(booking.phone) : null;
+
+  const open = useCallback((url: string) => {
+    setOpenFailed(false);
+    Linking.openURL(url).catch((reason: unknown) => {
+      console.warn('[BookingCard] openURL failed', url, reason);
+      setOpenFailed(true);
+    });
+  }, []);
+  const call = useCallback(() => { if (booking.phone) open(`tel:${booking.phone.replace(/[^\d+]/g, '')}`); }, [booking.phone, open]);
+  const email = useCallback(() => { if (booking.email) open(`mailto:${booking.email}`); }, [booking.email, open]);
+  const whatsapp = useCallback(() => { if (whatsappUrl) open(whatsappUrl); }, [open, whatsappUrl]);
+
+  return <TonalCard style={styles.card}>
+    <View style={styles.head}>
+      <Text numberOfLines={1} style={[styles.name, { color: theme.colors.text }]}>{booking.name}</Text>
+      <StatusBadge label={booking.statusLabel} tone={badgeTone[booking.statusTone]} />
+    </View>
+    {booking.message ? <Text style={[styles.message, { color: theme.colors.text }]}>{booking.message}</Text> : null}
+    {booking.phone || booking.email ? <View style={styles.contacts}>
+      {booking.phone ? <PillButton label={ltrLine(booking.phone)} icon="phone" tone="secondary" size="medium" onPress={call} accessibilityLabel={`${bookingContactCopy.callPrefix} ${booking.phone}`} /> : null}
+      {whatsappUrl && booking.phone ? <PillButton label={bookingContactCopy.whatsappLabel} icon="whatsapp" tone="secondary" size="medium" onPress={whatsapp} accessibilityLabel={`${bookingContactCopy.whatsappPrefix} ${booking.phone}`} /> : null}
+      {booking.email ? <PillButton label={ltrLine(booking.email)} icon="email" tone="ghost" size="medium" onPress={email} accessibilityLabel={`${bookingContactCopy.emailPrefix} ${booking.email}`} /> : null}
+    </View> : null}
+    {booking.metaLabel ? <Text numberOfLines={1} style={[styles.secondary, { color: theme.colors.muted }]}>{booking.metaLabel}</Text> : null}
+    {openFailed ? <Text accessibilityLiveRegion="polite" style={[styles.secondary, { color: theme.colors.errorText }]}>{bookingContactCopy.openFailed}</Text> : null}
+  </TonalCard>;
+});
+
+const styles = StyleSheet.create({
+  card: { gap: spacing.xs, marginBottom: spacing.sm },
+  head: { alignItems: 'center', flexDirection: 'row-reverse', gap: spacing.xs, justifyContent: 'space-between' },
+  name: { flex: 1, fontFamily: fonts.medium, fontSize: typography.sectionTitle, lineHeight: typography.lineHeightSection, textAlign: 'right', writingDirection: 'rtl' },
+  message: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },
+  contacts: { flexDirection: 'row-reverse', flexWrap: 'wrap', gap: spacing.xs },
+  secondary: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
+});

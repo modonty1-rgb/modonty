@@ -1,9 +1,11 @@
 import type { NextRequest } from "next/server";
+import { ArticleFAQStatus } from "@prisma/client";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { publishFaqAnswer } from "@/lib/faq/publish-faq-answer";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
+import { rejectMalformedIds } from "@/lib/mobile-api/params";
 import { readBody } from "@/lib/mobile-api/request";
 
 /** Mirrors the character counter the reply screen shows — the client must not be able to
@@ -17,11 +19,15 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const parsed = await readBody(request, input);
   if ("response" in parsed) return parsed.response;
   const { faqId } = await params;
+  const malformed = rejectMalformedIds([faqId], "السؤال غير موجود.");
+  if (malformed) return malformed;
   const question = await db.articleFAQ.findFirst({
     where: { id: faqId, article: { clientId: session.clientId }, OR: [{ source: "user" }, { source: "chatbot" }] },
-    select: { id: true },
+    select: { id: true, status: true },
   });
   if (!question) return fail("NOT_FOUND", "السؤال غير موجود.");
+  // شاشة قديمة مفتوحة كانت تكتب فوق ردّ منشور: الردّ للسؤال المنتظر وحده.
+  if (question.status !== ArticleFAQStatus.PENDING) return fail("CONFLICT", "هذا السؤال اتردّ عليه أو انرفض من قبل. حدّث الصفحة.");
   const result = await publishFaqAnswer(question.id, session.clientId, parsed.value.answer);
   if (!result.success) return fail("INTERNAL_ERROR", result.error);
   return ok({ question: { id: question.id, status: "PUBLISHED" } });

@@ -9,14 +9,14 @@ export function GET() {
   return ok({
     title: "أهلًا بك",
     subtitle: "تابع نموك من مكان واحد.",
-    emailLabel: "البريد الإلكتروني",
-    emailPlaceholder: "name@company.com",
+    emailLabel: "البريد الإلكتروني أو اسم الحساب",
+    emailPlaceholder: "name@company.com أو اسم حسابك",
     passwordLabel: "كلمة المرور",
     showPasswordLabel: "إظهار كلمة المرور",
     hidePasswordLabel: "إخفاء كلمة المرور",
     submitLabel: "دخول إلى حسابي",
     submittingLabel: "جارٍ الدخول…",
-    missingFieldsMessage: "اكتب البريد وكلمة المرور.",
+    missingFieldsMessage: "اكتب بريدك أو اسم حسابك، وكلمة المرور.",
     forgotPasswordLabel: "نسيت كلمة المرور؟",
     // No password-reset route exists in the console yet, so the link says the
     // truth instead of opening an invented screen.

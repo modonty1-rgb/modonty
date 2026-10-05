@@ -8,10 +8,73 @@ const baseUrl = configuredBaseUrl;
 
 type ApiEnvelope<T> = { data?: T; error?: { message?: string } };
 
-export class MobileSessionExpiredError extends Error {}
+/**
+ * كلمات الفشل الشبكي — **الاستثناء الوحيد من «صفر نصّ في الكود»**: هي ما يُقال حين لم يصل
+ * الخادم أصلاً، فلا يمكن أن تأتي منه. وكانت رسالة المنصّة تُمرَّر كما هي، فرأى العميل
+ * «Network request failed» بالإنجليزي في الدخول والرئيسية ولوحة المراجعة.
+ */
+export const connectionErrorText = {
+  offline: 'ما في اتصال بالإنترنت. تأكد من الشبكة وجرّب مرة ثانية.',
+  timeout: 'الخادم تأخّر في الرد. جرّب مرة ثانية.',
+  sessionExpired: 'انتهت الجلسة. سجّل الدخول مرة أخرى.',
+  loginFailed: 'تعذّر تسجيل الدخول. حاول مرة أخرى.',
+  verifySessionFailed: 'ما قدرنا نتحقق من الجلسة. جرّب مرة ثانية.',
+  loadAccountFailed: 'تعذّر تحميل بيانات الحساب.',
+  loadHomeFailed: 'تعذّر تحميل الرئيسية.',
+} as const;
 
-/** Network reached no server: distinguishes «بلا شبكة» from a server error. */
-export class MobileOfflineError extends Error {}
+export class MobileSessionExpiredError extends Error {
+  constructor(message: string = connectionErrorText.sessionExpired) { super(message); }
+}
+
+/** Network reached no server: distinguishes «بلا شبكة» from a server error. Its message is always Arabic. */
+export class MobileOfflineError extends Error {
+  constructor(message: string = connectionErrorText.offline) { super(message); }
+}
+
+/**
+ * من يُبلَّغ حين يرفض الخادم توكناً **أثناء** الجلسة.
+ *
+ * كان `MobileSessionExpiredError` يُلتقط في موضع واحد (استرجاع الجلسة عند الفتح)، فتوكنٌ
+ * انتهى والتطبيق مفتوح يعطي كل شاشة «انتهت الجلسة» مع «إعادة المحاولة» لا تُصلح شيئاً.
+ * الجذر يسجّل هنا دالّة تحاول التجديد مرّة، ولا تُخرج العميل إلا لو رُفض التجديد نفسه.
+ */
+let sessionRejectedListener: ((rejectedToken: string) => void) | null = null;
+export function onMobileSessionRejected(listener: (rejectedToken: string) => void): () => void {
+  sessionRejectedListener = listener;
+  return () => { if (sessionRejectedListener === listener) sessionRejectedListener = null; };
+}
+
+const DEFAULT_TIMEOUT_MS = 20_000;
+
+type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+
+/**
+ * النداء الخام الوحيد في التطبيق: الانقطاع والمهلة يصيران `MobileOfflineError` بنصّ عربي.
+ * المهلة لازمة لأنّ `fetch` بلا مهلة قد يعلّق الشاشة على «جاري…» بلا نهاية مع شبكة ضعيفة.
+ */
+async function send(path: string, options: { method?: HttpMethod; body?: unknown; accessToken?: string; timeoutMs?: number } = {}): Promise<Response> {
+  const headers: Record<string, string> = {};
+  if (options.accessToken) headers.Authorization = `Bearer ${options.accessToken}`;
+  if (options.body !== undefined) headers['Content-Type'] = 'application/json';
+  const controller = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
+  try {
+    return await fetch(`${baseUrl}${path}`, {
+      method: options.method ?? 'GET',
+      headers,
+      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      signal: controller.signal,
+    });
+  } catch (reason) {
+    // السبب الأصلي (إنجليزي) للسجلّ فقط — العميل يرى الجملة العربية.
+    console.warn('[mobile-api] network failure', path, reason instanceof Error ? reason.message : reason);
+    throw new MobileOfflineError(timedOut ? connectionErrorText.timeout : connectionErrorText.offline);
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 async function envelopeOf<T>(response: Response, fallbackMessage: string): Promise<T> {
   let payload: ApiEnvelope<T>;
@@ -20,26 +83,18 @@ async function envelopeOf<T>(response: Response, fallbackMessage: string): Promi
   } catch {
     throw new Error(fallbackMessage);
   }
-  if (!response.ok) throw new Error(payload.error?.message ?? fallbackMessage);
-  if (payload.data === undefined) throw new Error(payload.error?.message ?? fallbackMessage);
+  if (!response.ok) throw new Error(payload.error?.message || fallbackMessage);
+  if (payload.data === undefined) throw new Error(payload.error?.message || fallbackMessage);
   return payload.data;
 }
 
 /** Single request path for every domain module: offline is typed, 401 expires the session, `ok` is read before `json`. */
-export async function mobileRequest<T>(path: string, accessToken: string, fallbackMessage: string, init?: { method?: 'GET' | 'POST' | 'PATCH'; body?: unknown }): Promise<T> {
-  let response: Response;
-  try {
-    response = await fetch(`${baseUrl}${path}`, {
-      method: init?.method ?? 'GET',
-      headers: init?.body === undefined
-        ? { Authorization: `Bearer ${accessToken}` }
-        : { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-      body: init?.body === undefined ? undefined : JSON.stringify(init.body),
-    });
-  } catch (reason) {
-    throw new MobileOfflineError(reason instanceof Error ? reason.message : fallbackMessage);
+export async function mobileRequest<T>(path: string, accessToken: string, fallbackMessage: string, init?: { method?: HttpMethod; body?: unknown; timeoutMs?: number; reportSessionRejection?: boolean }): Promise<T> {
+  const response = await send(path, { method: init?.method, body: init?.body, accessToken, timeoutMs: init?.timeoutMs });
+  if (response.status === 401) {
+    if (init?.reportSessionRejection !== false) sessionRejectedListener?.(accessToken);
+    throw new MobileSessionExpiredError();
   }
-  if (response.status === 401) throw new MobileSessionExpiredError('انتهت الجلسة. سجّل الدخول مرة أخرى.');
   return envelopeOf<T>(response, fallbackMessage);
 }
 
@@ -55,18 +110,34 @@ export type MobileClientProfile = MobileSession['client'] & {
   logoAlt: string | null;
 };
 
-export type MobileShellCopy = { menuLabel: string; brandLabel: string; accountLabel: string; closeMenuLabel: string; darkModeLabel: string; lightModeLabel: string; supportLabel: string };
+export type MobileShellCopy = { menuLabel: string; brandLabel: string; accountLabel: string; closeMenuLabel: string; darkModeLabel: string; lightModeLabel: string; supportLabel: string; /** «نبض» — اختيارية كي يبقى الخادم الأقدم يعمل. */ themeLabel?: string; lightShortLabel?: string; darkShortLabel?: string };
 
 export type MobileDashboard = {
   summary: { pendingApproval: number; pendingQuestions: number; pendingComments: number; pendingVideos: number };
   /** يُبذَر منه عدّاد شارة التنبيهات قبل أن يفتح العميل التاب. */
   unreadNotifications: number;
-  actionItems: { key: 'approval' | 'questions' | 'comments' | 'videos' | 'bookings'; value: number; label: string }[];
-  subscription: MobileSubscription | null;
+  /** `actionLabel` = زرّ البطل حين يكون البند أوّل المهام (قد يغيب في خادم أقدم). */
+  actionItems: { key: 'approval' | 'questions' | 'comments' | 'videos' | 'bookings'; value: number; label: string; actionLabel?: string }[];
+  subscription: MobileDashboardSubscription | null;
   referral: MobileReferral;
   shell: MobileShellCopy;
-  review: { title: string; greetingPrefix: string; greetingFallback: string; subtitle: string; subscriptionLabel: string; daysRemainingText: string | null; actionItemsTitle: string; noActionItemsLabel: string };
+  review: { title: string; greetingPrefix: string; greetingFallback: string; subtitle: string; subscriptionLabel: string; daysRemainingText: string | null; actionItemsTitle: string; noActionItemsLabel: string; firstActionLabel?: string };
 };
+
+/**
+ * ما يرسله `/dashboard` فعلاً لبطاقة الاشتراك — الحالة والأيّام والمدّة لا أكثر (ENGINEERING §4.1).
+ * كان النوع `MobileSubscription` كاملاً (تواريخ · سعر · استخدام) وهي حقول لا يرسلها هذا العقد.
+ */
+export type MobileDashboardSubscription = {
+  status: string;
+  statusLabel: string;
+  statusTone?: 'positive' | 'warning' | 'danger';
+  daysRemaining?: number | null;
+  durationDays?: number | null;
+};
+
+/** رقم في شريط «نبض» — القيمة مصاغة بالعربية من الخادم، والتسمية معها. */
+export type MobileStat = { key: string; value: string; label: string; tone: 'warning' | 'positive' | 'danger' | 'neutral' | 'primary' | 'muted' };
 
 export type MobileReferral = { screenTitle: string; backLabel: string; hook: string; title: string; description: string; phoneLabel: string; consentLabel: string; consentDescription: string; submitLabel: string; unavailableLabel: string; stepsTitle: string; steps: string[]; lastReferralTitle: string; lastReferralEmpty: string };
 
@@ -86,254 +157,65 @@ export type MobileSubscription = {
   review: { screenTitle: string; backLabel: string; planPaymentTitle: string; tierLabel: string; paymentLabel: string; usageTitle: string; remainingArticlesLabel: string; noArticlesPublishedLabel: string; periodTitle: string; startDateLabel: string; endDateLabel: string; durationLabel: string; priceLabel: string };
 };
 
-export type MobileArticle = {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  status: string;
-  statusLabel: string;
-  wordCount: number | null;
-  wordCountLabel: string | null;
-  datePublished: string | null;
-  publishedDateLabel: string | null;
-  metadataLabel: string | null;
-  siteUrl: string | null;
-  featuredImage: { url: string; bunnyUrl: string | null; altText: string | null } | null;
-  category: { name: string } | null;
-  contentFaqCount: number;
-  citationCount: number | null;
-  updatedAt: string;
-};
-
-export type MobileArticleCollection = {
-  articles: MobileArticle[];
-  review: { title: string; emptyTitle: string; emptyDescription: string; retryLabel: string; openLabelPrefix: string; reviewActionLabel?: string; questionCountLabel?: string; citationCountLabel?: string; openSiteLabel?: string; openSiteAccessibilityPrefix?: string; openSiteError?: string };
-};
-
-export type MobileArticleDetail = MobileArticle & {
-  content: string | null;
-  wordCount: number | null;
-  category: { name: string } | null;
-  featuredImage: { url: string; bunnyUrl: string | null; altText: string | null } | null;
-  faqs: { id: string; question: string; answer: string | null; status: string; source: 'manual' | null; position: number }[];
-  citations: string[];
-  isYmyl: boolean;
-  review: {
-    title: string;
-    article: { title: string; description: string };
-    faqs: { title: string; description: string; approveLabel: string; approvingLabel: string; rejectLabel: string; rejectingLabel: string; rejectConfirmationTitle: string; rejectConfirmationDescription: string; cancelLabel: string } | null;
-    citations: { title: string; description: string } | null;
-    changes: { title: string; description: string; inputLabel: string; submitLabel: string; submittingLabel: string; cancelLabel: string };
-    approve: { label: string; loadingLabel: string; confirmationTitle: string; cancelLabel: string };
-    backLabel: string;
-  };
-};
-
-export type MobileVideo = {
-  id: string;
-  filename: string;
-  reelStatus: string | null;
-  durationSec: number | null;
-  thumbnailUrl: string | null;
-  createdAt: string;
-};
-
-export type MobileNotification = {
-  id: string;
-  type: string;
-  title: string;
-  body: string | null;
-  relatedId: string | null;
-  readAt: string | null;
-  createdAt: string;
-};
-
-export type MobileAudience = {
-  questions: { id: string; question: string; answer: string | null; status: string; source: 'user' | 'chatbot'; submittedByName: string | null; submittedByEmail: string | null; createdAt: string; article: { id: string; title: string; slug: string } }[];
-  comments: { id: string; content: string; status: string; createdAt: string; author: { name: string | null; email: string | null } | null; article: { id: string; title: string } }[];
-  summary: { pendingQuestions: number; pendingComments: number };
-  review: {
-    title: string;
-    sourceUserLabel: string;
-    sourceChatbotLabel: string;
-    pendingLabel: string;
-    publishedLabel: string;
-    rejectedLabel: string;
-    articleLabel: string;
-    nameLabel: string;
-    emailLabel: string;
-    answerLabel: string;
-    publishLabel: string;
-    publishingLabel: string;
-    rejectLabel: string;
-    rejectingLabel: string;
-    retryLabel: string;
-    emptyTitle: string;
-    emptyDescription: string;
-    rejectConfirmationTitle: string;
-    rejectConfirmationDescription: string;
-    cancelLabel: string;
-  };
-};
-
-/** تسجيل رمز الدفع عند الخادم — الجانب المفقود: النقطة موجودة منذ البداية ولا ينادِها أحد. */
+/** تسجيل رمز الدفع عند الخادم — يرجع معرّف الجهاز ليُحفظ ويُلغى به التسجيل عند الخروج. */
 export function registerPushDevice(accessToken: string, device: { expoPushToken: string; platform: 'android' | 'ios'; deviceName?: string; appVersion?: string }): Promise<{ device: { id: string; platform: string; enabled: boolean } }> {
   return mobileRequest<{ device: { id: string; platform: string; enabled: boolean } }>('/devices/register', accessToken, 'تعذّر تسجيل الجهاز للتنبيهات.', { method: 'POST', body: device });
 }
 
-export async function loginWithEmail(email: string, password: string): Promise<MobileSession> {
-  const response = await fetch(`${baseUrl}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email.trim(), password }),
-  });
+/**
+ * الدخول — **رسالة الخادم تُعرض كما هي** لأي رفض ٤xx (٤٠١ · ٤٢٢ · ٤٢٩).
+ *
+ * كانت تُرمى ويحلّ محلّها «تعذّر تسجيل الدخول. حاول مرة أخرى.» حتى لكلمة مرور خاطئة،
+ * فيعيد العميل المحاولة بنفس الكلمة بدل أن يعرف أنها خطأ. الحقل يقبل البريد أو اسم الحساب،
+ * ويُرسل في `email` لأنّ هذا اسم الحقل في عقد الخادم.
+ */
+export async function loginWithEmail(identifier: string, password: string): Promise<MobileSession> {
+  const trimmed = identifier.trim();
+  // العقد الحالي يقرأ `identifier`؛ و`email` يُرفق فقط حين يكون بريداً، فيبقى الخادم الأقدم يعمل.
+  const body = trimmed.includes('@') ? { identifier: trimmed, email: trimmed, password } : { identifier: trimmed, password };
+  const response = await send('/auth/login', { method: 'POST', body });
+  let payload: ApiEnvelope<MobileSession> | null = null;
+  try {
+    payload = await response.json() as ApiEnvelope<MobileSession>;
+  } catch {
+    payload = null;
+  }
   if (!response.ok) {
-    throw new Error('تعذّر تسجيل الدخول. حاول مرة أخرى.');
+    const serverMessage = payload?.error?.message;
+    throw new Error(response.status >= 400 && response.status < 500 && serverMessage ? serverMessage : connectionErrorText.loginFailed);
   }
-  const payload = await response.json() as ApiEnvelope<MobileSession>;
-  if (!payload.data?.accessToken) {
-    throw new Error('تعذّر تسجيل الدخول. حاول مرة أخرى.');
-  }
+  if (!payload?.data?.accessToken) throw new Error(connectionErrorText.loginFailed);
   return payload.data;
 }
 
+/** التجديد: ٤٠١ وحده يُنهي الجلسة؛ الانقطاع يرمي `MobileOfflineError` ويبقى التوكن محفوظاً. */
 export async function refreshMobileAccessToken(accessToken: string): Promise<string> {
-  const response = await fetch(`${baseUrl}/auth/refresh`, { method: 'POST', headers: { Authorization: `Bearer ${accessToken}` } });
-  if (response.status === 401) throw new MobileSessionExpiredError('انتهت الجلسة. سجّل الدخول مرة أخرى.');
-  if (!response.ok) throw new Error('تعذّر التحقق من الجلسة.');
-  const payload = await response.json() as ApiEnvelope<{ accessToken?: string }>;
-  if (!payload.data?.accessToken) throw new MobileSessionExpiredError('انتهت الجلسة. سجّل الدخول مرة أخرى.');
-  return payload.data.accessToken;
+  const response = await send('/auth/refresh', { method: 'POST', accessToken });
+  if (response.status === 401) throw new MobileSessionExpiredError();
+  const data = await envelopeOf<{ accessToken?: string }>(response, connectionErrorText.verifySessionFailed);
+  if (!data.accessToken) throw new Error(connectionErrorText.verifySessionFailed);
+  return data.accessToken;
 }
 
-export async function logoutMobileSession(accessToken: string): Promise<void> {
-  const response = await fetch(`${baseUrl}/auth/logout`, { method: 'POST', headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) {
-    const payload = await response.json() as ApiEnvelope<never>;
-    throw new Error(payload.error?.message);
-  }
-  const payload = await response.json() as ApiEnvelope<{ signedOut?: boolean }>;
-  if (payload.data?.signedOut !== true) throw new Error();
+/**
+ * الخروج يُنهي الجلسة عند الخادم **ويعطّل تنبيهات هذا الجهاز** بـ`deviceId` في الجسم —
+ * فلا تصل تنبيهات العميل إلى جوال خرج منه. (`DELETE /devices/:id` بعد الخروج يرجع ٤٠١،
+ * فالجسم هو الطريق الوحيد المضمون.)
+ */
+export async function logoutMobileSession(accessToken: string, deviceId: string | null): Promise<{ signedOut?: boolean; deviceUnregistered?: boolean }> {
+  return mobileRequest<{ signedOut?: boolean; deviceUnregistered?: boolean }>('/auth/logout', accessToken, 'تعذّر تسجيل الخروج.', { method: 'POST', body: deviceId ? { deviceId } : {}, timeoutMs: 5_000, reportSessionRejection: false });
 }
 
 export async function getCurrentClient(accessToken: string): Promise<MobileClientProfile> {
-  const response = await fetch(`${baseUrl}/me`, { headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) {
-    throw new Error('تعذّر تحميل بيانات الحساب.');
-  }
-  const payload = await response.json() as ApiEnvelope<{ client?: {
+  const data = await mobileRequest<{ client?: {
     id: string; name: string; slug: string; email: string; subscriptionStatus: string; subscriptionTier: string;
     logoMedia?: { url: string; bunnyUrl?: string | null; altText?: string | null } | null;
-  } }>;
-  const client = payload.data?.client;
-  if (!client) throw new Error('تعذّر تحميل بيانات الحساب.');
+  } }>('/me', accessToken, connectionErrorText.loadAccountFailed);
+  const client = data.client;
+  if (!client) throw new Error(connectionErrorText.loadAccountFailed);
   return { ...client, logoUrl: client.logoMedia?.bunnyUrl ?? client.logoMedia?.url ?? null, logoAlt: client.logoMedia?.altText ?? null };
 }
 
-export async function getDashboard(accessToken: string): Promise<MobileDashboard> {
-  const response = await fetch(`${baseUrl}/dashboard`, { headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) {
-    throw new Error('تعذّر تحميل الرئيسية.');
-  }
-  const payload = await response.json() as ApiEnvelope<MobileDashboard>;
-  if (!payload.data) throw new Error('تعذّر تحميل الرئيسية.');
-  return payload.data;
-}
-
-export async function getArticles(accessToken: string, scope: 'published' | 'decision'): Promise<MobileArticleCollection> {
-  const response = await fetch(`${baseUrl}/articles?scope=${scope}`, { headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) throw new Error('تعذّر تحميل المقالات.');
-  const payload = await response.json() as ApiEnvelope<MobileArticleCollection>;
-  if (!payload.data?.articles || !payload.data.review) throw new Error('تعذّر تحميل المقالات.');
-  return payload.data;
-}
-
-export async function getArticle(accessToken: string, articleId: string): Promise<MobileArticleDetail> {
-  const response = await fetch(`${baseUrl}/articles/${articleId}`, { headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) throw new Error('تعذّر تحميل المقال.');
-  const payload = await response.json() as ApiEnvelope<{ article?: MobileArticleDetail }>;
-  if (!payload.data?.article) throw new Error('تعذّر تحميل المقال.');
-  return payload.data.article;
-}
-
-export async function approveArticle(accessToken: string, articleId: string): Promise<void> {
-  const response = await fetch(`${baseUrl}/articles/${articleId}/approve`, { method: 'POST', headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) throw new Error('تعذّر اعتماد المقال.');
-  const payload = await response.json() as ApiEnvelope<{ status?: string }>;
-  if (payload.data?.status !== 'SCHEDULED') throw new Error('تعذّر اعتماد المقال.');
-}
-
-export async function requestArticleChanges(accessToken: string, articleId: string, feedback: string): Promise<void> {
-  const response = await fetch(`${baseUrl}/articles/${articleId}/request-changes`, { method: 'POST', headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ feedback }) });
-  if (!response.ok) {
-    const payload = await response.json() as ApiEnvelope<never>;
-    throw new Error(payload.error?.message);
-  }
-  const payload = await response.json() as ApiEnvelope<{ status?: string }>;
-  if (payload.data?.status !== 'NEEDS_REVISION') throw new Error();
-}
-
-export async function approveContentFaq(accessToken: string, articleId: string, faqId: string): Promise<void> {
-  const response = await fetch(`${baseUrl}/articles/${articleId}/faqs/${faqId}/approve`, { method: 'POST', headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) {
-    const payload = await response.json() as ApiEnvelope<never>;
-    throw new Error(payload.error?.message);
-  }
-  const payload = await response.json() as ApiEnvelope<{ faq?: { id: string; status: string } }>;
-  if (payload.data?.faq?.id !== faqId || payload.data.faq.status !== 'PUBLISHED') throw new Error();
-}
-
-export async function rejectContentFaq(accessToken: string, articleId: string, faqId: string): Promise<void> {
-  const response = await fetch(`${baseUrl}/articles/${articleId}/faqs/${faqId}/reject`, { method: 'POST', headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) {
-    const payload = await response.json() as ApiEnvelope<never>;
-    throw new Error(payload.error?.message);
-  }
-  const payload = await response.json() as ApiEnvelope<{ faq?: { id: string; status: string } }>;
-  if (payload.data?.faq?.id !== faqId || payload.data.faq.status !== 'REJECTED') throw new Error();
-}
-
-export async function getVideos(accessToken: string): Promise<MobileVideo[]> {
-  const response = await fetch(`${baseUrl}/videos`, { headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) throw new Error('تعذّر تحميل الطلّات.');
-  const payload = await response.json() as ApiEnvelope<{ videos?: MobileVideo[] }>;
-  if (!payload.data?.videos) throw new Error('تعذّر تحميل الطلّات.');
-  return payload.data.videos;
-}
-
-export async function getNotifications(accessToken: string): Promise<{ notifications: MobileNotification[]; unreadCount: number }> {
-  const response = await fetch(`${baseUrl}/notifications`, { headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) throw new Error('تعذّر تحميل التنبيهات.');
-  const payload = await response.json() as ApiEnvelope<{ notifications?: MobileNotification[]; unreadCount?: number }>;
-  if (!payload.data?.notifications || typeof payload.data.unreadCount !== 'number') throw new Error('تعذّر تحميل التنبيهات.');
-  return { notifications: payload.data.notifications, unreadCount: payload.data.unreadCount };
-}
-
-export async function getAudience(accessToken: string): Promise<MobileAudience> {
-  const response = await fetch(`${baseUrl}/audience`, { headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) throw new Error('تعذّر تحميل الجمهور.');
-  const payload = await response.json() as ApiEnvelope<MobileAudience>;
-  if (!payload.data) throw new Error('تعذّر تحميل الجمهور.');
-  return payload.data;
-}
-
-export async function replyToAudienceQuestion(accessToken: string, questionId: string, answer: string): Promise<void> {
-  const response = await fetch(`${baseUrl}/questions/${questionId}/reply`, { method: 'POST', headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ answer }) });
-  if (!response.ok) {
-    const payload = await response.json() as ApiEnvelope<never>;
-    throw new Error(payload.error?.message);
-  }
-  const payload = await response.json() as ApiEnvelope<{ question?: { id: string; status: string } }>;
-  if (payload.data?.question?.id !== questionId || payload.data.question.status !== 'PUBLISHED') throw new Error();
-}
-
-export async function rejectAudienceQuestion(accessToken: string, questionId: string): Promise<void> {
-  const response = await fetch(`${baseUrl}/questions/${questionId}/reject`, { method: 'POST', headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) {
-    const payload = await response.json() as ApiEnvelope<never>;
-    throw new Error(payload.error?.message);
-  }
-  const payload = await response.json() as ApiEnvelope<{ question?: { id: string; status: string } }>;
-  if (payload.data?.question?.id !== questionId || payload.data.question.status !== 'REJECTED') throw new Error();
+export function getDashboard(accessToken: string): Promise<MobileDashboard> {
+  return mobileRequest<MobileDashboard>('/dashboard', accessToken, connectionErrorText.loadHomeFailed);
 }

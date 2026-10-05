@@ -1,4 +1,4 @@
-import { mobileRequest } from '@/src/services/mobile-api';
+import { mobileRequest, type MobileStat } from '@/src/services/mobile-api';
 
 /**
  * Article-domain service module. Every screen label comes from the server — the types
@@ -56,6 +56,8 @@ export type ArticleListItem = {
 };
 
 export type ArticleListReview = {
+  /** شريط الأرقام فوق القائمة (يغيب في خادم أقدم، أو حين لا رقم). */
+  stats?: MobileStat[];
   title: string;
   emptyTitle: string;
   emptyDescription: string;
@@ -97,6 +99,8 @@ export type ArticleQuestionsReview = {
   cancelLabel: string;
   approvedLabel: string;
   rejectedLabel: string;
+  /** «بانتظارك» — اختيارية كي يبقى الخادم الأقدم يعمل. */
+  pendingLabel?: string;
 };
 
 /** Citations arrive as plain URLs — the schema stores `Article.citations String[]` and nothing more. */

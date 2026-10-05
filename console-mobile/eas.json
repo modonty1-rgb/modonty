@@ -6,7 +6,24 @@
       "channel": "development"
     },
     "production": {
-      "channel": "production"
+      "channel": "production",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_MOBILE_API_BASE_URL": "https://console.modonty.com/api/mobile/v1"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_MOBILE_API_BASE_URL": "https://florist-distinct-educator.ngrok-free.dev/api/mobile/v1"
+      }
     }
   }
 }
