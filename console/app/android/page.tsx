@@ -68,11 +68,28 @@ export default async function AndroidDownloadPage() {
           </a>
 
           <ol className="list-decimal space-y-2 rounded-xl border bg-card p-4 ps-8 text-sm leading-relaxed text-foreground">
+            <li>تأكّد أن في جوّالك مساحة فارغة أكثر من ١ جيجا — الجوّال الممتلئ يعلّق التثبيت.</li>
             <li>اضغط «حمّل التطبيق» وانتظر حتى يكتمل التحميل (دقيقة أو دقيقتين).</li>
-            <li>افتح الملف من إشعار التحميل أو من «التنزيلات».</li>
-            <li>إن طلب الجوّال إذناً، اسمح بالتثبيت من هذا المصدر ثم اضغط «تثبيت».</li>
+            <li>افتح الملف من إشعار التحميل أو من «التنزيلات»، ثم اضغط «تثبيت» (Install).</li>
+            <li>إن طلب الجوّال إذناً، اسمح بالتثبيت من هذا المصدر.</li>
             <li>افتح «بوابة مدونتي» وادخل بنفس بريدك وكلمة مرورك في الكونسول.</li>
           </ol>
+
+          {/* مقيس على جوال خالد ٥ أكتوبر ٢٠٢٦: نافذة Play Protect تظهر بعد «Install» بثوانٍ،
+              وشاشة «Installing…» تبقى ظاهرة حتى بعد اكتمال التثبيت — فيظنّ العميل أنه علّق. */}
+          <div className="space-y-2 rounded-xl border border-amber-500/30 bg-amber-500/[0.08] p-4 text-sm leading-relaxed">
+            <p className="font-semibold">لو ظهرت لك رسالة Google Play Protect</p>
+            <p className="text-muted-foreground">
+              رسالة «App scan recommended» طبيعية لأي تطبيق من خارج المتجر. اضغط «Scan app» وانتظر
+              دقيقة أو دقيقتين حتى يكتمل الفحص والتثبيت.
+            </p>
+            <p className="font-semibold">لو بقيت شاشة «Installing…» أكثر من دقيقتين</p>
+            <p className="text-muted-foreground">
+              ارجع للشاشة الرئيسية وابحث عن «بوابة مدونتي» بين تطبيقاتك — غالباً اكتمل التثبيت والشاشة لم تتحدّث.
+            </p>
+          </div>
+
+          <p className="text-center text-xs text-muted-foreground">الإصدار ١٫٠٫٠ · آخر تحديث ٥ أكتوبر ٢٠٢٦</p>
         </>
       )}
     </main>
