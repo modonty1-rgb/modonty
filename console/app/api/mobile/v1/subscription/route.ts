@@ -6,6 +6,8 @@ import { arabicCurrency, arabicLongDate, arabicLongDateLatin, arabicNumber } fro
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
+import { resolveAccountNotice } from "@/lib/subscription/resolve-account-notice";
+import { formatCurrencyTotals, getOutstandingInvoices } from "@/lib/payments";
 import { formatTermLabel } from "@modonty/shared/lib/commercial/term-label";
 
 const statusLabels: Record<string, string> = { ACTIVE: "نشط", PENDING: "بانتظار التفعيل", EXPIRED: "منتهي", SUSPENDED: "معلّق", CANCELLED: "ملغي" };
@@ -93,10 +95,15 @@ export async function GET(request: NextRequest) {
     elapsedLabel: elapsedPercent === null ? null : `مضى ${arabicNumber(elapsedPercent)}٪ من المدّة`,
   };
 
+  // نفس إشعار الحساب الذي يعلو كل صفحات الكونسول على الويب (انتهى · فاتورة · ينتهي قريباً).
+  const outstanding = await getOutstandingInvoices(session.clientId);
+  const notice = resolveAccountNotice({ endDate: sub.endsAt, unpaidCount: outstanding.count, unpaidTotal: formatCurrencyTotals(outstanding.totals, " و") });
+
   return ok({
     ...screen,
     empty: null,
     subscription: {
+      notice: notice === null ? null : { tone: notice.tone === "attention" ? "warning" : "primary", title: notice.title, body: notice.body },
       hero,
       status: sub.status,
       statusLabel: statusLabels[sub.status] ?? sub.status,

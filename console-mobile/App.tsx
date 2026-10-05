@@ -445,7 +445,7 @@ function TabsShell({ tab, onSelectTab, client, dashboard, dashboardRefreshFailur
     else navigation.navigate('article-decisions');
   }, [navigation]);
 
-  const screen = tab === 'home' ? <HomeRoute clientName={client?.name} dashboard={dashboard} refreshFailure={dashboardRefreshFailure} onRetry={onRefreshDashboard} onRefresh={onRefreshDashboard} isRefreshing={isDashboardRefreshing} onOpenDecisionArticles={() => navigation.navigate('article-decisions')} onOpenVideos={() => onSelectTab('videos')} onOpenAudience={() => onSelectTab('audience')} onOpenBookings={() => navigation.navigate('bookings')} onOpenSubscription={() => navigation.navigate('subscription')} onOpenReferral={() => navigation.navigate('referral')} />
+  const screen = tab === 'home' ? <HomeRoute clientName={client?.name} accessToken={accessToken} dashboard={dashboard} refreshFailure={dashboardRefreshFailure} onRetry={onRefreshDashboard} onRefresh={onRefreshDashboard} isRefreshing={isDashboardRefreshing} onOpenDecisionArticles={() => navigation.navigate('article-decisions')} onOpenVideos={() => onSelectTab('videos')} onOpenAudience={() => onSelectTab('audience')} onOpenBookings={() => navigation.navigate('bookings')} onOpenSubscription={() => navigation.navigate('subscription')} onOpenReferral={() => navigation.navigate('referral')} />
     : tab === 'articles' ? <PublishedArticlesScreen accessToken={accessToken} />
     : tab === 'videos' ? <VideosRoute accessToken={accessToken} onUpload={() => navigation.navigate('video-upload')} />
     : tab === 'audience' ? <AudienceApiRoute accessToken={accessToken} onOpenQuestion={(questionId) => navigation.navigate('audience-reply', { questionId })} />

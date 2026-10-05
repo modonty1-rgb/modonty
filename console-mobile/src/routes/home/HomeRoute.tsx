@@ -6,11 +6,14 @@ import { badgeToneOf, Cookie, CountUpText, EnterView, GroupRow, HeroCard, IconSh
 import { networkCopy } from '@/src/services/account-api';
 import { arabicDigits } from '@/src/services/engagement-api';
 import { MobileDashboard } from '@/src/services/mobile-api';
+import { PerformanceCard } from '@/src/components/home/PerformanceCard';
 import { control, fonts, nabd, radii, skeleton, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
 type HomeRouteProps = {
   clientName?: string;
+  /** لبطاقة «زوّارك» التي تُجلب وحدها بعد الرئيسية. */
+  accessToken?: string | null;
   dashboard: MobileDashboard | null;
   /** Wired from App.tsx; optional so the shell keeps compiling until it is. */
   error?: string | null;
@@ -46,7 +49,7 @@ const noop = () => undefined;
  * الذي ينتظرني» قبل أي شيء آخر، وكانت الشاشة تبدأ ببطاقة الإحالة التسويقية. والأرقام كلها من
  * `/dashboard`: لا رقم في الشاشة لا يحمله العقد (الحلقة = الأيّام الباقية ÷ مدّة الطلب الساري).
  */
-export function HomeRoute({ clientName, dashboard, error = null, offline = false, onRetry, refreshFailure = null, onOpenDecisionArticles, onOpenVideos, onOpenAudience, onOpenBookings, onRefresh, isRefreshing, onOpenSubscription, onOpenReferral }: HomeRouteProps) {
+export function HomeRoute({ clientName, accessToken, dashboard, error = null, offline = false, onRetry, refreshFailure = null, onOpenDecisionArticles, onOpenVideos, onOpenAudience, onOpenBookings, onRefresh, isRefreshing, onOpenSubscription, onOpenReferral }: HomeRouteProps) {
   const { theme } = useAppTheme();
   const clearance = useTabBarClearance();
 
@@ -143,6 +146,8 @@ export function HomeRoute({ clientName, dashboard, error = null, offline = false
         </GroupRow>)}
       </ListGroup>
     </EnterView> : null}
+
+    {accessToken ? <EnterView index={4}><PerformanceCard accessToken={accessToken} /></EnterView> : null}
   </ScrollView>;
 }
 

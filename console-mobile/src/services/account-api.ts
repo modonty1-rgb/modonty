@@ -84,6 +84,8 @@ export type SubscriptionScreen = {
     statusTone: SubscriptionStatusTone;
     daysRemainingLabel: string | null;
     /** بطل «نبض» — اختياري كي يبقى الخادم الأقدم يعمل (يرجع لسطر الأيّام وحده). */
+    /** إشعار الحساب (انتهى · فاتورة بانتظار الدفع · ينتهي قريباً) — نفس شريط الويب. غائب في الخادم الأقدم. */
+    notice?: { tone: 'warning' | 'primary'; title: string; body: string } | null;
     hero?: { label: string; planTitle: string | null; daysRemaining: number | null; durationDays: number | null; daysValue: string | null; daysUnit: string; rangeLabel: string | null; elapsedLabel: string | null };
     planPayment: { title: string; rows: SubscriptionDetailRow[] } | null;
     usage: { title: string; remainingLabel: string; valueLabel: string; remainingPercent: number; note: string } | null;

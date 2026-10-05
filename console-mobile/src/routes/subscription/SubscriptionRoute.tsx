@@ -63,6 +63,10 @@ export function SubscriptionRoute({ accessToken, onBack, onSupport }: Subscripti
           : subscription === null
             ? null
             : <View style={styles.stack}>
+              {subscription.notice ? <TonalCard tone={subscription.notice.tone === 'warning' ? 'warning' : undefined} accessibilityLabel={`${subscription.notice.title}. ${subscription.notice.body}`}>
+                <Text style={[styles.noticeTitle, { color: theme.colors.text }]}>{subscription.notice.title}</Text>
+                <Text style={[styles.noticeBody, { color: theme.colors.muted }]}>{subscription.notice.body}</Text>
+              </TonalCard> : null}
               <EnterView index={0}>
                 <HeroCard>
                   <View style={styles.heroHead}>
@@ -144,6 +148,8 @@ const styles = StyleSheet.create({
   ringNumeral: { fontFamily: fonts.extraBold, fontSize: typography.heroRingNumeral, lineHeight: typography.heroRingNumeral + spacing.xxs, textAlign: 'center' },
   ringUnit: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary - spacing.xxs, textAlign: 'center' },
   label: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right', writingDirection: 'rtl' },
+  noticeTitle: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right', writingDirection: 'rtl' },
+  noticeBody: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
   secondary: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
   body: { fontFamily: fonts.regular, fontSize: typography.body, lineHeight: typography.lineHeightBody, writingDirection: 'rtl' },
   usage: { gap: spacing.xs },

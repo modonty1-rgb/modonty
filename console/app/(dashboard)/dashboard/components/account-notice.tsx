@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CalendarClock, Receipt, AlertCircle } from "lucide-react";
+import { resolveAccountNotice } from "@/lib/subscription/resolve-account-notice";
 
 /**
  * The one thing the client needs to know about their account, said once and calmly.
@@ -24,19 +25,6 @@ interface AccountNoticeProps {
   unpaidTotal: string | null;
 }
 
-/** Whole days from today to `d` — negative once the date has passed. */
-function daysUntil(d: Date): number {
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-  const target = new Date(d);
-  target.setHours(0, 0, 0, 0);
-  return Math.round((target.getTime() - startOfToday.getTime()) / 86_400_000);
-}
-
-function arDate(d: Date): string {
-  return new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "long", year: "numeric" }).format(d);
-}
-
 const TONES = {
   calm: "border-primary/25 bg-primary/[0.06] text-foreground",
   attention: "border-amber-500/30 bg-amber-500/[0.07] text-foreground",
@@ -47,49 +35,17 @@ const ICON_TONES = {
   attention: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
 } as const;
 
+const ICONS = { expired: AlertCircle, unpaid: Receipt, ending: CalendarClock } as const;
+const LINKS = {
+  expired: { href: "/dashboard/invoices", cta: "تفاصيل الاشتراك" },
+  unpaid: { href: "/dashboard/invoices", cta: "عرض الفواتير" },
+  ending: { href: "/dashboard/invoices", cta: "تفاصيل الاشتراك" },
+} as const;
+
 export function AccountNotice({ endDate, unpaidCount, unpaidTotal }: AccountNoticeProps) {
-  const left = endDate ? daysUntil(endDate) : null;
-
-  // Ordered by consequence: a lapsed subscription first, then money, then the reminder.
-  // Only one shows — stacking notices is how a dashboard starts nagging.
-  let notice: {
-    tone: keyof typeof TONES;
-    icon: typeof CalendarClock;
-    title: string;
-    body: string;
-    href: string;
-    cta: string;
-  } | null = null;
-
-  if (endDate && left !== null && left < 0) {
-    notice = {
-      tone: "attention",
-      icon: AlertCircle,
-      title: "انتهت مدة اشتراكك",
-      body: `كانت المدة سارية حتى ${arDate(endDate)}. تجديدها يبقي صفحتك ومقالاتك تعمل كالمعتاد.`,
-      href: "/dashboard/invoices",
-      cta: "تفاصيل الاشتراك",
-    };
-  } else if (unpaidCount > 0) {
-    const amount = unpaidTotal ? ` بقيمة ${unpaidTotal}` : "";
-    notice = {
-      tone: "attention",
-      icon: Receipt,
-      title: unpaidCount === 1 ? "لديك فاتورة بانتظار الدفع" : `لديك ${unpaidCount} فواتير بانتظار الدفع`,
-      body: `${unpaidCount === 1 ? "الفاتورة" : "الفواتير"}${amount} متاحة للاطّلاع. لو دفعتها مؤخراً فتجاهل هذه الرسالة — قد لا يكون الدفع قد سُجّل بعد.`,
-      href: "/dashboard/invoices",
-      cta: "عرض الفواتير",
-    };
-  } else if (endDate && left !== null && left <= 7) {
-    notice = {
-      tone: "calm",
-      icon: CalendarClock,
-      title: left === 0 ? "اشتراكك ينتهي اليوم" : `اشتراكك ينتهي خلال ${left === 1 ? "يوم" : `${left} أيام`}`,
-      body: `المدة الحالية تنتهي في ${arDate(endDate)}. يسعدنا استمرارك معنا.`,
-      href: "/dashboard/invoices",
-      cta: "تفاصيل الاشتراك",
-    };
-  }
+  // القاعدة في `lib/subscription/resolve-account-notice.ts` — نفسها التي يعرضها تطبيق الجوال.
+  const resolved = resolveAccountNotice({ endDate, unpaidCount, unpaidTotal });
+  const notice = resolved ? { ...resolved, icon: ICONS[resolved.kind], ...LINKS[resolved.kind] } : null;
 
   if (!notice) return null;
 
