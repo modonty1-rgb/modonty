@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
  * البانر والـQR يشيران إلى هنا لا إلى ملف الـAPK نفسه، فحين نرفع نسخة جديدة يتغيّر
  * `ANDROID_APK_URL` على Vercel وحده — والـQR المطبوع أو المرسَل يبقى صالحاً.
  * عامّ بلا دخول: العميل يصوّر الـQR بجواله وهو غير مسجّل فيه.
+ * ضُبط على Vercel (مشروع modonty-console · Production) ٥ أكتوبر ٢٠٢٦: نسخة «بوابة مدونتي» ٦٣ م.ب على Bunny.
  */
 export const dynamic = "force-dynamic";
 
