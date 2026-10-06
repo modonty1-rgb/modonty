@@ -7,7 +7,7 @@ import { ModontyIcon } from '@/src/components/brand/icons/ModontyIcon';
 import { ErrorState, OfflineState, SkeletonCards } from '@/src/components/ui/MobileUI';
 import { Cookie, EnterView, GroupRow, haptic, ListGroup, PillButton, SectionHeading, StatusBadge, TonalCard } from '@/src/components/ui/Nabd';
 import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
-import { getAccountOverview, saveNotificationToggle, type NotificationToggle } from '@/src/services/engagement-api';
+import { getAccountOverview, saveNotificationToggle } from '@/src/services/engagement-api';
 import { CONNECTION_COPY, useEngagementResource } from '@/src/services/use-engagement-resource';
 import { control, fonts, nabd, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
@@ -16,7 +16,9 @@ import { getAppVersionLine } from '@/src/services/app-version';
 /**
  * S13 «حسابي».
  *
- * The two switches write to `Client.notificationPreferences` immediately. A switch that only
+ * One switch per event (6 Oct 2026 — «يحدد يس أو نو» on every event we track), grouped under
+ * the server's section headings; an older server sends only the two group switches, and those
+ * render instead. Every switch writes to `Client.notificationPreferences` immediately. A switch that only
  * moves on screen is a lie the client discovers weeks later, when the notification they
  * turned off arrives anyway — so a failed save puts the switch back and says so.
  *
@@ -30,16 +32,16 @@ export function AccountRoute({ accessToken, onBack, onSupport, onLogout, logoUrl
   const confirm = useConfirm();
   const { theme } = useAppTheme();
   const { resource, reload, replace } = useEngagementResource(accessToken, getAccountOverview);
-  const [savingKey, setSavingKey] = useState<NotificationToggle['key'] | null>(null);
+  const [savingKey, setSavingKey] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const overview = resource.data;
 
-  const toggle = useCallback((key: NotificationToggle['key'], enabled: boolean) => {
+  const toggle = useCallback((key: string, enabled: boolean) => {
     if (overview === null || savingKey !== null) return;
     setSavingKey(key);
     setSaveError(null);
     saveNotificationToggle(accessToken, key, enabled)
-      .then((result) => replace({ ...overview, account: { ...overview.account, notifications: result.notifications } }))
+      .then((result) => replace({ ...overview, account: { ...overview.account, notifications: result.notifications, notificationEvents: result.notificationEvents ?? overview.account.notificationEvents } }))
       .catch((reason: unknown) => setSaveError(reason instanceof Error ? reason.message : overview.review.saveErrorTitle))
       .finally(() => setSavingKey(null));
   }, [accessToken, overview, replace, savingKey]);
@@ -88,24 +90,50 @@ export function AccountRoute({ accessToken, onBack, onSupport, onLogout, logoUrl
 
     <EnterView index={1} style={styles.section}>
       <SectionHeading>{review.notificationsSectionTitle}</SectionHeading>
-      <ListGroup>
-        {account.notifications.map((item) => <GroupRow key={item.key}>
-          <View style={styles.row}>
-            <View style={styles.rowCopy}>
-              <Text style={[styles.rowLabel, { color: theme.colors.text }]}>{item.label}</Text>
-              <Text style={[styles.secondary, { color: theme.colors.muted }]}>{savingKey === item.key ? review.savingLabel : item.description}</Text>
+      {account.notificationEvents && account.notificationGroups
+        ? account.notificationGroups.map((section) => {
+          const rows = account.notificationEvents?.filter((item) => item.section === section.key) ?? [];
+          if (rows.length === 0) return null;
+          return <View key={section.key} style={styles.eventSection}>
+            <Text style={[styles.sectionLabel, { color: theme.colors.muted }]}>{section.label}</Text>
+            <ListGroup>
+              {rows.map((item) => <GroupRow key={item.key}>
+                <View style={styles.row}>
+                  <View style={styles.rowCopy}>
+                    <Text style={[styles.rowLabel, { color: theme.colors.text }]}>{item.label}</Text>
+                    {savingKey === item.key ? <Text style={[styles.secondary, { color: theme.colors.muted }]}>{review.savingLabel}</Text> : null}
+                  </View>
+                  <Switch
+                    accessibilityLabel={item.label}
+                    disabled={savingKey !== null}
+                    onValueChange={(next) => { haptic('selection'); toggle(item.key, next); }}
+                    thumbColor={item.enabled ? theme.colors.onBrandFill : theme.colors.inputBorder}
+                    trackColor={{ false: theme.colors.surfaceHigh, true: theme.colors.brandFill }}
+                    value={item.enabled}
+                  />
+                </View>
+              </GroupRow>)}
+            </ListGroup>
+          </View>;
+        })
+        : <ListGroup>
+          {account.notifications.map((item) => <GroupRow key={item.key}>
+            <View style={styles.row}>
+              <View style={styles.rowCopy}>
+                <Text style={[styles.rowLabel, { color: theme.colors.text }]}>{item.label}</Text>
+                <Text style={[styles.secondary, { color: theme.colors.muted }]}>{savingKey === item.key ? review.savingLabel : item.description}</Text>
+              </View>
+              <Switch
+                accessibilityLabel={item.label}
+                disabled={savingKey !== null}
+                onValueChange={(next) => { haptic('selection'); toggle(item.key, next); }}
+                thumbColor={item.enabled ? theme.colors.onBrandFill : theme.colors.inputBorder}
+                trackColor={{ false: theme.colors.surfaceHigh, true: theme.colors.brandFill }}
+                value={item.enabled}
+              />
             </View>
-            <Switch
-              accessibilityLabel={item.label}
-              disabled={savingKey !== null}
-              onValueChange={(next) => { haptic('selection'); toggle(item.key, next); }}
-              thumbColor={item.enabled ? theme.colors.onBrandFill : theme.colors.inputBorder}
-              trackColor={{ false: theme.colors.surfaceHigh, true: theme.colors.brandFill }}
-              value={item.enabled}
-            />
-          </View>
-        </GroupRow>)}
-      </ListGroup>
+          </GroupRow>)}
+        </ListGroup>}
       {saveError ? <Text accessibilityLiveRegion="assertive" style={[styles.secondary, { color: theme.colors.errorText }]}>{saveError}</Text> : null}
     </EnterView>
 
@@ -145,6 +173,8 @@ const styles = StyleSheet.create({
   email: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'center', writingDirection: 'ltr' },
   planBadge: { alignSelf: 'center' },
   section: { gap: spacing.xs, marginTop: spacing.xxs },
+  eventSection: { gap: spacing.xxs, marginTop: spacing.xxs },
+  sectionLabel: { fontFamily: fonts.medium, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, paddingHorizontal: spacing.xs, textAlign: 'right', writingDirection: 'rtl' },
   row: { alignItems: 'center', flexDirection: 'row-reverse', gap: spacing.sm, minHeight: control.minTouchTarget },
   rowCopy: { flex: 1, minWidth: 0 },
   rowLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },

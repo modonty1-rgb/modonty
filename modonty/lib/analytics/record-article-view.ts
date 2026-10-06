@@ -6,6 +6,7 @@ import { ArticleStatus } from "@prisma/client";
 import { classifyTrafficSource } from "@/lib/analytics/classify-source";
 import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 export interface ArticleViewInput {
   /** Decoded slug. */
@@ -114,6 +115,8 @@ export async function recordArticleView(input: ArticleViewInput): Promise<Articl
       ipAddress,
       headers: headersList,
     }).catch(() => {});
+    // رنين لكل قراءة حقيقية (خالد ٦ أكتوبر ٢٠٢٦) — التحديث في مكانه خرج أعلاه، فلا يتكرّر.
+    fireClientEvent(article.clientId, { kind: "article_view", articleId: article.id, articleTitle: article.title });
   }
 
   // GA4 article_view is sent by the CLIENT (browser: ViewTracker → GTM; app: its own SDK), not

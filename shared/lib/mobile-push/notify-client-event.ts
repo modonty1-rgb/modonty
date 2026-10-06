@@ -1,7 +1,8 @@
 import { after } from "next/server";
 import { db } from "../db";
 import { describeClientEvent, type ClientEvent } from "./client-events";
-import { isGroupOn, readNotificationPreferences } from "./preference-groups";
+import { readNotificationPreferences } from "./preference-groups";
+import { isEventOn } from "./event-preferences";
 
 /**
  * الجسر الواحد: حدث في مدونتي أو الأدمن ← صفّ في صندوق العميل + دفعة إلى جواله.
@@ -32,14 +33,18 @@ export async function notifyClientEvent(clientId: string, event: ClientEvent): P
   const message = describeClientEvent(event);
   let notificationId: string | null = null;
   try {
-    const row = await db.notification.create({
-      data: { clientId, type: message.type, title: message.title, body: message.body, relatedId: message.relatedId, readAt: null },
-      select: { id: true },
-    });
-    notificationId = row.id;
+    if (!message.pushOnly) {
+      const row = await db.notification.create({
+        data: { clientId, type: message.type, title: message.title, body: message.body, relatedId: message.relatedId, readAt: null },
+        select: { id: true },
+      });
+      notificationId = row.id;
+    }
 
     const client = await db.client.findUnique({ where: { id: clientId }, select: { notificationPreferences: true } });
-    if (!isGroupOn(readNotificationPreferences(client?.notificationPreferences ?? null), message.group)) {
+    // مفتاح الحدث نفسه (٦ أكتوبر ٢٠٢٦) — والصفّ كُتب أعلاه، فالمُطفأ يبقى في صندوق التطبيق بلا رنين.
+    // والقراءات والزيارات (`pushOnly`) لا صفّ لها، فالمُطفأ منها لا يُكلّف إلا هذه القراءة.
+    if (!isEventOn(readNotificationPreferences(client?.notificationPreferences ?? null), event.kind, message.group)) {
       return { notificationId, pushed: 0, skipped: "muted" };
     }
 

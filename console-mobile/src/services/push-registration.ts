@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { APP_RELEASE } from '@/src/services/app-release';
 import { Platform } from 'react-native';
 import { registerPushDevice } from '@/src/services/mobile-api';
 import { savePushDeviceId } from '@/src/services/mobile-session';
@@ -79,7 +80,7 @@ export async function registerForPushNotifications(accessToken: string): Promise
       expoPushToken: token,
       platform: Platform.OS === 'ios' ? 'ios' : 'android',
       deviceName: Device.deviceName ?? undefined,
-      appVersion: Constants.expoConfig?.version ?? undefined,
+      appVersion: APP_RELEASE,
     });
     // يُحفظ ليُلغى به التسجيل عند الخروج (`DELETE /devices/{id}`).
     await savePushDeviceId(registered.device.id);

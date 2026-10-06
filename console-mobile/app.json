@@ -48,11 +48,12 @@
         "projectId": "6cc8b8ea-cc0c-46e9-bb4f-56810fed5616"
       }
     },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "updates": {
-      "url": "https://u.expo.dev/6cc8b8ea-cc0c-46e9-bb4f-56810fed5616"
+      "url": "https://u.expo.dev/6cc8b8ea-cc0c-46e9-bb4f-56810fed5616",
+      "requestHeaders": {
+        "expo-channel-name": "production"
+      }
     }
   }
 }

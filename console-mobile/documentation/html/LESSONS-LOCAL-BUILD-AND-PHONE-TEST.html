@@ -63,12 +63,19 @@ adb shell pm install -r /data/local/tmp/cr.apk      # ~9 ثوانٍ بعد إط�
 <tr><td>١٢</td><td>نسخ ملف للجوال فشل: <code>cannot stat '/c/Users/...'</code></td><td><code>MSYS_NO_PATHCONV=1</code> يمنع تحويل المسار، وadb.exe يحتاج <code>C:/...</code></td><td>مسارات ويندوز مع adb دائماً</td><td>—</td></tr>
 <tr><td>١٣</td><td>«١٫٠٫٠» و«١٬٤٨١» تُقرأ خطأً</td><td>في خط Tajawal: الصفر العربي نقطة، وفاصل الآلاف «٬» يشبه الصفر</td><td>الإصدار بأرقام لاتينية · التجميع من خمس خانات بمسافة رفيعة · إخفاء العدّاد عند الصفر</td><td>أي رقم جديد في التطبيق: جرّبه بالصفر وبأربع خانات</td></tr>
 <tr><td>١٤</td><td>فلتر <code>startsWith: "[QA TEST]"</code> طابق ٤١ مهمّة حقيقية</td><td>الأقواس تُفهم مجموعة حروف في regex على مونغو</td><td>الحذف بالمعرّفات بعد فحص في JS</td><td>لا حذف بـ startsWith لنصّ فيه رموز</td></tr>
+<tr><td>١٥</td><td><code>eas update</code> رفض: «runtime version policies are not supported»</td><td>مجلّد <code>android/</code> موجود ⇐ Expo يعامله «bare»</td><td><code>"runtimeVersion": "1.0.0"</code> نصّاً — نفس <code>expo_runtime_version</code> في strings.xml</td><td>غيّر الرقم فقط مع بناء جديد</td></tr>
+<tr><td>١٦</td><td>«signatures do not match» والتوقيعان متطابقان</td><td><code>adb push</code> بلا <code>MSYS_NO_PATHCONV=1</code> نسخ لمسار خطأ، فثُبّت <code>cr.apk</code> قديم من الظهر</td><td>اسم ملف جديد + <code>sha256sum</code> على الجوال قبل التثبيت</td><td>قارن البصمة قبل الحكم على التوقيع</td></tr>
 </table></div>
+
+<h2>التحديث بلا بناء (يعمل من ٦ أكتوبر ٢٠٢٦)</h2>
+<pre>EXPO_PUBLIC_MOBILE_API_BASE_URL=https://console.modonty.com/api/mobile/v1 EXPO_NO_METRO_WORKSPACE_ROOT=1 \
+  npx eas-cli update --channel production --platform android --message "..." --non-interactive
+npx eas-cli update:insights &lt;group-id&gt;     # أوّل تجربة: uniqueUsers 1 · installs 1 · failedInstalls 0</pre>
+<p>بدون المتغيّر يُبنى التحديث على <code>.env.local</code> (127.0.0.1) فينقطع التطبيق عند العملاء. بناء جديد فقط لمكتبة أصلية أو تغيير <code>app.json</code>.</p>
 
 <h2>المفتوح بعد هذا الملف</h2>
 <div class="tw"><table>
 <tr><th>البند</th><th>الحالة</th></tr>
-<tr><td>إعادة <code>verifier_verify_adb_installs</code> على جوال خالد</td><td class="bad">ينتظر رجوع الجوال</td></tr>
 <tr><td>ملاحظة ٧ — الحل المقترح في #49254 (إزالة كتلة notification قبل Firebase)</td><td class="bad">مؤجّل للإصدار القادم بقرار خالد</td></tr>
 <tr><td>إعدادات <code>android/</code> (cmake · cleartext) مولَّدة وغير محفوظة في git</td><td>تُنقل إلى config plugin قبل أن يمسحها prebuild --clean</td></tr>
 </table></div>

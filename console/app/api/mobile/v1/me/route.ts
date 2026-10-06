@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
-import { notificationToggles, readNotificationPreferences } from "@modonty/shared/lib/mobile-push";
+import { CLIENT_EVENT_SECTIONS, eventToggles, notificationToggles, readNotificationPreferences } from "@modonty/shared/lib/mobile-push";
 
 /**
  * S13 «حسابي».
@@ -39,6 +39,9 @@ export async function GET(request: NextRequest) {
       // كان يطبع رمز الـenum نفسه («باقة PRO») في تطبيق الجوّال. الاسم الآن من الطلب.
       planLabel: `${activeOrder ? "باقة " + activeOrder.planName : "بلا باقة"} ${STATUS_LABELS[sub.status]}`,
       notifications: notificationToggles(preferences),
+      // مفتاح لكل حدث (٦ أكتوبر ٢٠٢٦) — والتطبيق الأقدم يبقى على المجموعتين أعلاه.
+      notificationEvents: eventToggles(preferences),
+      notificationGroups: CLIENT_EVENT_SECTIONS.map((section) => ({ key: section.key, label: section.label })),
     },
     review: {
       title: "حسابي",

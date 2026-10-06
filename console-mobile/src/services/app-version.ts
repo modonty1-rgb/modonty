@@ -1,6 +1,6 @@
-import Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
 import { arabicDigitsText } from '@/src/services/engagement-api';
+import { APP_RELEASE } from '@/src/services/app-release';
 
 const MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
 
@@ -13,8 +13,7 @@ const MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'ماي�
 export function getAppVersionLine(): string {
   // رقم الإصدار بأرقام لاتينية (1.0.0) كما يُكتب في كل متجر: «١٫٠٫٠» قُرئ صفّ نقاط لأن الصفر العربي نقطة
   // (جوال خالد ٦ أكتوبر ٢٠٢٦). وهو الرقم نفسه الذي يُقرأ لفريق الدعم.
-  const version = Constants.expoConfig?.version ?? '';
-  const parts = [`الإصدار ${version}`];
+  const parts = [`الإصدار ${APP_RELEASE}`];
   const created = Updates.isEmbeddedLaunch ? null : Updates.createdAt;
   if (created) parts.push(`تحديث ${arabicDigitsText(String(created.getDate()))} ${MONTHS[created.getMonth()]}`);
   if (Updates.updateId) parts.push(Updates.updateId.slice(0, 8));

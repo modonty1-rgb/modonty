@@ -45,10 +45,14 @@ export async function updateNotificationPreferences(
   const clean = sanitizePrefs(prefs);
 
   try {
+    // مفاتيح الأحداث (`events`) يضبطها العميل من الجوال — الحفظ هنا يكتب المفاتيح الأربعة ويحملها كما هي.
+    const current = await db.client.findUnique({ where: { id: clientId }, select: { notificationPreferences: true } });
+    const stored = current?.notificationPreferences;
+    const events = stored !== null && typeof stored === "object" && !Array.isArray(stored) ? (stored as Record<string, unknown>).events : undefined;
     await db.client.update({
       where: { id: clientId },
       data: {
-        notificationPreferences: clean as Prisma.InputJsonValue,
+        notificationPreferences: (events === undefined ? clean : { ...clean, events }) as Prisma.InputJsonValue,
       },
     });
     revalidatePath("/dashboard");

@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { classifyTrafficSource } from "@/lib/analytics/classify-source";
 import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 export type ClientViewResult =
   | { found: false }
@@ -90,6 +91,7 @@ export async function recordClientView(input: {
     ipAddress,
     headers: headersList,
   }).catch(() => {});
+  fireClientEvent(client.id, { kind: "page_view" });
 
   // GA4 client_view is sent by the CLIENT (browser: ClientViewTracker → GTM; app: its own SDK) —
   // a server-sent event became a phantom session (see lib/analytics/ga4-browser.ts).

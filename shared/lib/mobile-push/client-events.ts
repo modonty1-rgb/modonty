@@ -28,7 +28,10 @@ export type ClientEvent =
   | { kind: "page_share" }
   | { kind: "subscriber" }
   | { kind: "booking"; bookingId: string; articleId: string | null }
-  | { kind: "whatsapp_contact"; articleId: string | null };
+  | { kind: "whatsapp_contact"; articleId: string | null }
+  | { kind: "article_view"; articleId: string; articleTitle: string }
+  | { kind: "page_view" }
+  | { kind: "reel_view"; mediaId: string };
 
 export type ClientEventMessage = {
   /** يُكتب في `Notification.type` ويُرسل في `data.type`. */
@@ -39,6 +42,11 @@ export type ClientEventMessage = {
   relatedId: string | null;
   articleId: string | null;
   group: NotificationGroupKey;
+  /**
+   * رنين بلا صفّ في الصندوق — للقراءات والزيارات والمشاهدات (خالد ٦ أكتوبر ٢٠٢٦): تأتي لكل
+   * دخول، فلو كُتبت صفوفاً لدفنت الأسئلة والطلبات تحتها.
+   */
+  pushOnly?: true;
 };
 
 /** عنوان المقال داخل نصّ قصير: علامتا تنصيص ولا يتجاوز سطراً في التنبيه. */
@@ -83,5 +91,11 @@ export function describeClientEvent(event: ClientEvent): ClientEventMessage {
       return { type: "booking_created", title: "طلب تواصل جديد", body: "لديك طلب تواصل جديد من مدونتي — تواصل معه بسرعة.", relatedId: event.bookingId, articleId: event.articleId, group: "actionable" };
     case "whatsapp_contact":
       return { type: "booking_whatsapp", title: "تواصل جديد عبر واتساب", body: "قارئ فتح واتساب للتواصل معك من مدونتي.", relatedId: event.articleId, articleId: event.articleId, group: "actionable" };
+    case "article_view":
+      return { type: "article_view", title: "قارئ يقرأ مقالك الآن", body: `${quote(event.articleTitle)} على مدونتي.`, relatedId: event.articleId, articleId: event.articleId, group: "activity", pushOnly: true };
+    case "page_view":
+      return { type: "page_view", title: "زائر على صفحتك الآن", body: "قارئ فتح صفحتك على مدونتي.", relatedId: null, articleId: null, group: "activity", pushOnly: true };
+    case "reel_view":
+      return { type: "reel_view", title: "مشاهدة جديدة لفيديو", body: "قارئ يشاهد أحد مقاطعك على مدونتي.", relatedId: event.mediaId, articleId: null, group: "activity", pushOnly: true };
   }
 }

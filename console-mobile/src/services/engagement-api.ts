@@ -169,8 +169,19 @@ export type NotificationCollection = {
 
 export type NotificationToggle = { key: 'actionable' | 'activity'; label: string; description: string; enabled: boolean };
 
+/** مفتاح لكل حدث (٦ أكتوبر ٢٠٢٦) — `section` يضعه تحت عنوانه، والقائمة والعناوين من الخادم كي يضيف حدثاً بلا بناء. */
+export type NotificationEventToggle = { key: string; section: string; label: string; enabled: boolean };
+
 export type AccountOverview = {
-  account: { name: string; email: string; planLabel: string; notifications: NotificationToggle[] };
+  account: {
+    name: string;
+    email: string;
+    planLabel: string;
+    notifications: NotificationToggle[];
+    /** غائبان في الخادم الأقدم ⇐ تبقى المجموعتان. */
+    notificationEvents?: NotificationEventToggle[];
+    notificationGroups?: { key: string; label: string }[];
+  };
   review: {
     title: string;
     backLabel: string;
@@ -251,7 +262,7 @@ export function getAccountOverview(accessToken: string): Promise<AccountOverview
   return mobileRequest<AccountOverview>('/me', accessToken, 'تعذّر تحميل الحساب.');
 }
 
-export function saveNotificationToggle(accessToken: string, key: NotificationToggle['key'], enabled: boolean): Promise<{ notifications: NotificationToggle[] }> {
+export function saveNotificationToggle(accessToken: string, key: string, enabled: boolean): Promise<{ notifications: NotificationToggle[]; notificationEvents?: NotificationEventToggle[] }> {
   return mobileRequest('/me/notifications', accessToken, 'تعذّر حفظ الإعداد.', { method: 'PATCH', body: { key, enabled } });
 }
 

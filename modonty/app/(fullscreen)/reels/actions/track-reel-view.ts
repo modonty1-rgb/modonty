@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { incrementCounters } from "@/lib/counters/increment-counters";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 export interface ReelViewGa4Params {
   reel_id: string;
@@ -45,6 +46,7 @@ export async function trackReelView(mediaId: string): Promise<ReelViewGa4Params 
 
     // Atomic `$inc` outside a transaction — see incrementCounters (write conflicts under load).
     await incrementCounters("media", reel.id, { viewsCount: 1 });
+    fireClientEvent(reel.client?.id, { kind: "reel_view", mediaId: reel.id });
 
     // The counter is modonty's own; the event is what GA4 reports on. Both fire on the same
     // 2-second hold, so «مشاهدة» means one thing in both places. The caller pushes it from the

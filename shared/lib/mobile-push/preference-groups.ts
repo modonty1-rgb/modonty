@@ -28,7 +28,11 @@ export const NOTIFICATION_GROUPS: NotificationGroup[] = [
   { key: "activity", label: "نشاط المتابعين", description: "تعليقات، متابعات ومؤشرات", preferenceKeys: ["commentsNew", "articlePublished"] },
 ];
 
-export type NotificationPreferences = Partial<Record<NotificationPreferenceKey, boolean>>;
+/**
+ * `events`: مفتاح لكل حدث (٦ أكتوبر ٢٠٢٦) — `{ "follow": false }`. الغائب يتبع مفتاح مجموعته
+ * أعلاه، فالعملاء الذين ضبطوا المجموعتين قبل اليوم يبقى اختيارهم كما هو.
+ */
+export type NotificationPreferences = Partial<Record<NotificationPreferenceKey, boolean>> & { events?: Record<string, boolean> };
 
 /** The one rule for every surface: only an explicit `false` turns a key off. */
 export function isPreferenceOn(preferences: NotificationPreferences, key: NotificationPreferenceKey): boolean {
@@ -50,6 +54,13 @@ export function readNotificationPreferences(stored: Prisma.JsonValue | null): No
     for (const key of group.preferenceKeys) {
       if (typeof raw[key] === "boolean") out[key] = raw[key];
     }
+  }
+  if (raw.events !== null && typeof raw.events === "object" && !Array.isArray(raw.events)) {
+    const events: Record<string, boolean> = {};
+    for (const [kind, value] of Object.entries(raw.events as Record<string, unknown>)) {
+      if (typeof value === "boolean") events[kind] = value;
+    }
+    out.events = events;
   }
   return out;
 }
