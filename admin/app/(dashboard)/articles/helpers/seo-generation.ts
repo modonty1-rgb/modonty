@@ -7,21 +7,12 @@ import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { truncateAtWordBoundary } from "@modonty/shared/lib/seo/truncate-at-word-boundary";
 
 /**
- * Generate SEO title with optional client name
+ * The SEO title the form fills in when the field is empty: the article title, cut at a word
+ * boundary to 60. No client name — it used to end with " | {client}", which took ~15 of
+ * Google's characters on every title (Tarek's task, 6 Oct 2026).
  */
-export function generateSEOTitle(title: string, clientName?: string): string {
+export function generateSEOTitle(title: string): string {
   if (!title) return "";
-  if (clientName) {
-    const full = `${title} | ${clientName}`;
-    if (full.length <= 60) return full;
-    const suffix = ` | ${clientName}`;
-    const maxTitleLen = 60 - suffix.length;
-    if (maxTitleLen > 10) {
-      // No ellipsis here: the client name already follows, so the title just stops.
-      const clean = truncateAtWordBoundary(title, maxTitleLen, "");
-      return `${clean.trim()} | ${clientName}`;
-    }
-  }
   return truncateAtWordBoundary(title, 60, "").trim();
 }
 

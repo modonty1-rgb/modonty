@@ -6823,6 +6823,34 @@
       "sev": "critical",
       "t": "🟨 تمارا: اختبار الساندبوكس كامل على قائمتهم — بقي إرسال UAT لهم ومفاتيح الإنتاج",
       "d": "<b>٥ أكتوبر ٢٠٢٦ — إيميل تمارا (٢٧ سبتمبر، khalid@jbrseo.com) = مفاتيح ساندبوكس فقط.</b> الإنتاج يُرسَل بعد اعتمادهم الاختبار.<br>✓ المفاتيح في <code>payment/.env.local</code> · payment-types = 200.<br>✓ ويبهوك مسجَّل في الساندبوكس (<code>POST /webhooks</code>) id <code>f648989a-4efd-4721-b83c-a5b0d3c66b37</code> بالأحداث السبعة — يشير مؤقتاً إلى ngrok، ويُحدَّث إلى <code>https://pay.modonty.com/api/webhooks/tamara</code> بعد النشر.<br><b>قائمة تمارا (online-go-live-testing-checklist) — مقيسة حيّاً على modonty_dev:</b><pre>نجاح        ORD-61/62  تمارا fully_captured 2394  ⇒ PAID\nاسترداد    من الأدمن    تمارا fully_refunded 2394 ⇒ REFUNDED (settledAt محفوظ)\nرفض        ORD-63 (536422337) تمارا declined ⇒ FAILED + صفحة «الدفع لم يكتمل»\nإلغاء العميل ORD-64      تمارا expired فوراً ⇒ FAILED + رجوع للدفع\nالأحداث    approved · authorised · captured · refunded · declined · expired — كلها processed</pre><b>بُني اليوم:</b> <code>refundOrder</code> (simplified-refund) · <code>/api/internal/tamara-refund</code> بسرّ <code>PAYMENT_INTERNAL_SECRET</code> · زرّ الاسترداد في الأدمن يردّ عبر تمارا أوّلاً ولا يكتب شيئاً إن رفضت · ويدجت تمارا الرسمي على صفحة التقسيط · إصلاح باگ: إشعار رابط الطلب يحمل <code>order_status</code> لا <code>event_type</code> فكان كل حدثٍ لاحق يُسقَط مكرَّراً.<br>الإلغاء عبر API غير مطلوب: قائمتهم «not applicable if Auto-capture is enabled» ونحن نقبض فور التفويض.<br><b>الباقي:</b> ١ نشر (payment + admin) · ٢ <code>PAYMENT_INTERNAL_SECRET</code> على Vercel للمشروعين + <code>PAY_INTERNAL_URL</code> للأدمن · ٣ مفاتيح تمارا الساندبوكس على Preview لرابط UAT · ٤ تحديث رابط الويبهوك · ٥ إيميل UAT لتمارا (رابط staging + أرقام الطلبات) · ٦ الويدجت على صفحة الباقات (مكوّن shared) — اختياري في قائمتهم «wherever applicable»."
+    },
+    {
+      "id": "SEO-PAGE-1",
+      "b": "projects",
+      "app": [
+        "admin"
+      ],
+      "tab": "next",
+      "sev": "medium",
+      "who": "c",
+      "date": "٦ أكتوبر ٢٠٢٦",
+      "t": "صفحة صيانة السيو في الأدمن — شكل جديد يعطي القرار في نظرة (اعتمده خالد على تصميم مهارة kpi-dashboard-design)",
+      "d": "<p><b>ليش:</b> الصفحة الحالية (<code>/seo</code>) إنجليزي وإيموجي وفقرات شرح، والوقت المكتوب «3-5 دقائق» والحقيقي ٢٦ دقيقة على ٣١٩ مقالاً (مقيس ٦ أكتوبر على modonty_dev: <code>439 of 439 entities · 26m 9s</code>). ولا تعرف وش راح يتغيّر قبل الضغط، ولا تقرير بعده، ولا سجلّ، ولو قُفل التبويب يتوقّف. قاعدة خالد: «الأدمن أداة قرار» — بلا إيموجي وبلا حشو.</p><p><b>الشكل المعتمد (العمود الثالث «بعد المهارة»):</b> <code>admin/app/(dashboard)/seo/documentation/seo-page-before-after.html</code></p><ol><li><b>يحتاج قرارك</b> أوّلاً — كل تنبيه رقم كبير + زرّ (عناوين تحتاج إعادة توليد · فشل آخر تشغيل · أي فحص غير سليم).</li><li><b>العناوين:</b> أطول من ٦٠ حرفاً · مكرّرة · فاضية — كل رقم مع مقارنة بآخر تشغيل، وكل رقم يفتح قائمته، وطريقة الحساب مكتوبة.</li><li><b>صحّة الموقع:</b> الفحوص السليمة سطر أخضر واحد بدل ٤ بطاقات؛ «مقالات منشورة» يُشال (رقم لا يقود لقرار).</li><li><b>معاينة قبل التشغيل:</b> قائمة قبل/بعد للعناوين، قراءة فقط.</li><li><b>التشغيل:</b> وقت متوقّع من عدد المقالات الفعلي · تنبيه عند قفل الصفحة · «كمّل من وين وقف».</li><li><b>سجلّ آخر تشغيل:</b> متى · مين · كم انصلح · كم فشل (في AuditLog بنفس مفتاح <code>seo.cascade</code>).</li></ol><p><b>مبنيّ قبله (نفس اليوم):</b> مهمّة طارق «اسم العميل في عنوان السيو» — الصيانة تنظّف الحقل ثم تولّد (<code>admin/lib/seo/strip-client-name-from-seo-title.ts</code>). هذه البطاقة واجهة فقط فوق ذلك.</p>"
+    },
+    {
+      "id": "CONV-CONSOLE-1",
+      "b": "projects",
+      "app": [
+        "console",
+        "console-mobile",
+        "shared"
+      ],
+      "tab": "next",
+      "sev": "medium",
+      "who": "c",
+      "date": "٧ أكتوبر ٢٠٢٦",
+      "t": "الكونسول وتطبيق الجوال: «أي مقال جاب لك تواصل» للعميل — نفس أرقام صفحة الفريق",
+      "d": "<p><b>ليش:</b> مهمّة طارق (تتبّع CTA العملاء) انبنت للفريق في الأدمن: <code>/articles/conversions</code> — صفّ لكل عميل بإجماليّات التواصل، «+» مقالاته التي جابت إجراء، والضغط على المقال يفتح ما حصل فيه. العميل نفسه ما يشوفها: الكونسول يجمّع النقرات بنوع الزرّ فقط (<code>console/app/(dashboard)/dashboard/analytics/helpers/cta-clicks-queries.ts:20</code> <code>by: [\"type\",\"label\"]</code>).</p><p><b>المطلوب:</b> نفس الجدول لعميل واحد في الكونسول (الويب) وفي تطبيق الجوال، من الدالة المشتركة <code>shared/lib/analytics/get-article-actions.ts</code> بـ<code>clientId</code> — فرقم العميل = رقم الفريق. الجوال يوصله بتحديث بلا بناء (زِد <code>APP_RELEASE</code>).</p><p><b>قواعد العدّ (مكتوبة في الدالة):</b> طلب تواصل = نموذج أُرسل · واتساب = الأكبر من النقرات (مرّة لكل زائر في اليوم) وطلبات القناة · اتصال/موقع = نقرات زرّ المقال بلا روابط مدونتي · التحويل = إجراءات لكل ١٠٠ قراءة، يظهر من ٢٠ قراءة.</p>"
     }
   ],
   "reports": []

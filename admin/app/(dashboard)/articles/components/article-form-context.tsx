@@ -659,14 +659,12 @@ export function ArticleFormProvider({
   // Auto-fill SEO title from title (if empty)
   useEffect(() => {
     if (formData.title && !formData.seoTitle) {
-      const selectedClient = clients.find((c) => c.id === formData.clientId);
-      const clientName = selectedClient?.name;
-      const seoTitle = generateSEOTitle(formData.title, clientName);
+      const seoTitle = generateSEOTitle(formData.title);
       if (seoTitle) {
         setFormData((prev) => ({ ...prev, seoTitle }));
       }
     }
-  }, [formData.title, formData.seoTitle, formData.clientId, clients]);
+  }, [formData.title, formData.seoTitle]);
 
   // Auto-fill SEO description from excerpt (if empty)
   useEffect(() => {

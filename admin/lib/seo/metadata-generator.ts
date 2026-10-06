@@ -165,8 +165,8 @@ export async function generateNextjsMetadata(
 ): Promise<Metadata> {
   const siteUrl = options?.siteUrl || (await loadSiteUrl());
 
-  // The partner the article was written for. It brands the TITLE (seoTitle already ends
-  // with " | {client}") — it is not the name of the site the page is served from.
+  // The partner the article was written for — the site name of a client-site article and an
+  // image-alt fallback. It no longer brands the title (see `title` below).
   const clientName = article.client.name || SITE_NAME_FALLBACK;
 
   // og:site_name is "the name which should be displayed for the overall site" (ogp.me).
@@ -179,7 +179,7 @@ export async function generateNextjsMetadata(
     : article.ogSiteName?.trim() || options?.siteName?.trim() || SITE_NAME_FALLBACK;
 
   // Effective values
-  const effectiveTitle = article.seoTitle || article.title || "";
+  const effectiveTitle = (article.seoTitle || article.title || "").trim();
   // `undefined`, never `""`. An article with neither a meta description nor an excerpt used to
   // ship `<meta name="description" content="">` plus empty `og:` and `twitter:` descriptions.
   // An empty tag is not a missing tag: the missing one lets Google compose a snippet from the
@@ -219,12 +219,6 @@ export async function generateNextjsMetadata(
       );
     }
   }
-  // Avoid double-branding: seoTitle already ends with " | {client}" (generateSEOTitle),
-  // so only append the site name when the title isn't already branded with it.
-  const alreadyBranded = [` | ${clientName}`, ` - ${clientName}`].some((suffix) =>
-    effectiveTitle.endsWith(suffix)
-  );
-  const fullTitle = alreadyBranded ? effectiveTitle : `${effectiveTitle} - ${clientName}`;
 
   // Featured image. Last link was `${siteUrl}/og-image.jpg` — a file that does not exist
   // (measured HTTP 404 on 2026-08-07), so an article with no image whose client had neither
@@ -342,7 +336,11 @@ export async function generateNextjsMetadata(
 
   // Build final metadata object
   const metadata: Metadata = {
-    title: fullTitle,
+    // The SEO title field, exactly. The client's name used to be appended here (" - {client}"),
+    // and modonty's layout then adds " | مدونتي" — so Google got «title - client | مدونتي» and
+    // cut the article's own words to fit (Tarek's task, 6 Oct 2026). The brand stays; the client
+    // name is gone from every title, on every save and on the maintenance regeneration.
+    title: effectiveTitle,
     ...(effectiveDescription && { description: effectiveDescription }),
     alternates: {
       canonical: effectiveCanonical,

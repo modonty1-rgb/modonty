@@ -22,10 +22,9 @@ export function useArticleFormAutoFill() {
   // Auto-fill SEO title from title (if empty)
   useEffect(() => {
     if (formData.title && !formData.seoTitle) {
-      const clientName = selectedClient?.name;
-      updateField('seoTitle', generateSEOTitle(formData.title, clientName));
+      updateField('seoTitle', generateSEOTitle(formData.title));
     }
-  }, [formData.title, formData.seoTitle, selectedClient, updateField]);
+  }, [formData.title, formData.seoTitle, updateField]);
 
   // Auto-fill SEO description from excerpt (if empty)
   useEffect(() => {

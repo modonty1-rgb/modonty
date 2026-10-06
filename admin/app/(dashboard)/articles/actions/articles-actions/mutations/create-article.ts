@@ -165,7 +165,7 @@ export async function createArticle(data: ArticleFormData) {
     const contentDepth = determineContentDepth(wordCount);
 
     const seoTitle =
-      data.seoTitle || generateSEOTitle(data.title, client?.name);
+      data.seoTitle || generateSEOTitle(data.title);
     const seoDescription =
       data.seoDescription || generateSEODescription(data.excerpt || "");
 

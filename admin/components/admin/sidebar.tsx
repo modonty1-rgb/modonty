@@ -205,6 +205,9 @@ const rawMenuGroups: MenuGroup[] = [
       // Every client's quota, delivered and remaining, and activation day — so the content
       // team knows who is owed what without opening each order (Khalid, 2026-09-24).
       { icon: BookUser, label: "Client Quotas", href: "/articles/clients-guide" },
+      // Which article — and which kind of article — brings the client a lead (Tarek's task,
+      // Khalid 6 Oct 2026: «تساعد فريق المحتوى يعرف نوعية الارتكل اللي بتجيب شغل»).
+      { icon: Target, label: "Article Conversions", href: "/articles/conversions" },
       // Names (Khalid, 27 Sep 2026): «Clients Articles» and «Client Articles» sat one letter
       // apart for two unrelated pages — quotas per client, and articles for the client's site.
       // Its own entry, not a filter on «All Articles»: these are published on the

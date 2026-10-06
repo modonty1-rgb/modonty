@@ -5,6 +5,13 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
 import { randomInt } from "crypto";
+import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
+import { recordRedirect } from "@/lib/redirect/record-redirect";
+import { loadSiteUrl } from "@/lib/seo/site-url";
+import { generateAndSaveNextjsMetadata } from "@/lib/seo/metadata-storage";
+import { generateAndSaveJsonLd } from "@/lib/seo/jsonld-storage";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { generateCanonicalUrl } from "../../helpers/seo-helpers";
 
 const OTP_EXPIRY_MINUTES = 10;
 const OTP_RATE_LIMIT = 3;
@@ -97,7 +104,7 @@ export async function verifyAndChangeArticleSlug(
 
   const oldArticle = await db.article.findUnique({
     where: { id: articleId },
-    select: { slug: true },
+    select: { slug: true, isClientSiteArticle: true, client: { select: { articlesBaseUrl: true } } },
   });
   if (!oldArticle) return { success: false, error: "Article not found" };
 
@@ -108,13 +115,27 @@ export async function verifyAndChangeArticleSlug(
     data: { used: true },
   });
 
+  // The canonical is baked from the slug — same derivation as update-article.ts, so the
+  // stored row, its metadata and its JSON-LD all name the new address, not the old one.
+  const clientBaseUrl = (oldArticle.client?.articlesBaseUrl ?? "").replace(/\/+$/, "");
+  const bakeOnClientSite = oldArticle.isClientSiteArticle && clientBaseUrl !== "";
+  const baseUrl = bakeOnClientSite ? clientBaseUrl : await loadSiteUrl();
+  const canonicalUrl = bakeOnClientSite ? absoluteUrl(`/${newSlug}`, baseUrl) : generateCanonicalUrl(newSlug, baseUrl);
+
   await db.article.update({
     where: { id: articleId },
-    data: { slug: newSlug },
+    data: { slug: newSlug, canonicalUrl },
   });
+
+  // The old URL is in Google's index — a 308 to the new one keeps it, instead of a 410.
+  // Clients, categories, tags and industries already recorded theirs; articles did not.
+  await recordRedirect(db, "articles", oldSlug, newSlug);
+  await generateAndSaveJsonLd(articleId);
+  await generateAndSaveNextjsMetadata(articleId);
 
   revalidatePath(`/articles/${oldSlug}`);
   revalidatePath(`/articles/${newSlug}`);
+  await revalidateModontyTag("articles").catch(() => {});
 
   await sendTelegramMessage(
     `✅ <b>Article Slug Changed</b>\n\nOld: <code>${oldSlug}</code>\nNew: <code>${newSlug}</code>`

@@ -113,7 +113,12 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     // Slug unique across ALL articles when it changes — same rule and reason as create-article.ts
     // (the public URL has no client in it). The schema's normalised slug, not the raw input, and
     // applied here because a create-only fix would leave every EDIT able to reintroduce it.
-    const slug = parsed.data.slug;
+    // An existing article keeps the slug it is stored under. The form locks it, and the one
+    // way to change it is the Telegram OTP (article-slug-otp.ts), which saves it directly and
+    // records the 308. Taking `parsed.data.slug` here re-ran `slugify` on every save and quietly
+    // moved any article whose stored slug held a «؟» — no OTP, no redirect, the old URL 410s
+    // (measured on dev 6 Oct 2026: sent «…موقعك؟», stored «…موقعك», 0 redirects).
+    const slug = existingArticle.slug;
 
     if (slug && slug !== existingArticle.slug) {
       const existingSlug = await db.article.findFirst({
@@ -195,7 +200,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     const contentDepth = determineContentDepth(wordCount);
 
     const seoTitle =
-      data.seoTitle || generateSEOTitle(data.title, client?.name);
+      data.seoTitle || generateSEOTitle(data.title);
     const seoDescription =
       data.seoDescription || generateSEODescription(data.excerpt || "");
 

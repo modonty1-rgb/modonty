@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صفحة الصيانة — قبل وبعد</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#141a2b;--mu:#667085;--line:#e3e6ee;--pri:#3030FF;--ok:#0f8a5f;--okbg:#e6f6ef;--warn:#b45309;--warnbg:#fdf3e2;--bad:#c0262d;--badbg:#fdecec}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 'Tajawal',Tahoma,sans-serif;padding:16px}
+.note{max-width:1900px;margin:0 auto 12px;background:#fff8d6;border:1px solid #eedc8a;border-radius:10px;padding:8px 12px;font-size:13px}
+.cols{max-width:1900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+@media(max-width:1300px){.cols{grid-template-columns:1fr}}
+.col>h2{margin:0 0 8px;font-size:15px;display:flex;gap:8px;align-items:center}
+.tag{font-size:11px;padding:2px 8px;border-radius:99px}
+.t-before{background:var(--badbg);color:var(--bad)} .t-after{background:var(--okbg);color:var(--ok)}
+.frame{background:#eceef3;border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.ltr{direction:ltr;text-align:left}
+.small{font-size:11px;color:var(--mu)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.kpi .l{font-size:11px;color:var(--mu)} .kpi .v{font-size:18px;font-weight:700}
+.ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+.btn{display:inline-block;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;border:1px solid var(--line);background:#fff}
+.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.bar{height:6px;background:#e7e9f0;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri)}
+table{width:100%;border-collapse:collapse;font-size:12px} td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top} th{color:var(--mu);font-weight:500}
+del{color:var(--bad)} ins{color:var(--ok);text-decoration:none}
+.status{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border-radius:12px;background:var(--warnbg);border:1px solid #f3d9a8}
+.status b{font-size:16px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{font-size:11px;padding:3px 8px;border-radius:99px;background:#eef0ff;color:var(--pri)}
+.chip.d{background:var(--okbg);color:var(--ok)}
+.issues{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.issue{border:1px solid var(--line);border-radius:10px;padding:8px}
+.issue .v{font-size:18px;font-weight:700}
+.t-skill{background:#eef0ff;color:var(--pri)}
+.alert{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff}
+.alert .n{font-size:22px;font-weight:700;min-width:44px;text-align:center}
+.alert.r{border-color:#f2c3c5;background:var(--badbg)} .alert.a{border-color:#f3d9a8;background:var(--warnbg)}
+.trend{font-size:11px;font-weight:700} .up{color:var(--bad)} .down{color:var(--ok)}
+.how{font-size:11px;color:var(--mu);border-top:1px dashed var(--line);margin-top:6px;padding-top:6px}
+.okline{display:flex;gap:8px;align-items:center;padding:8px 12px;border-radius:12px;background:var(--okbg);color:var(--ok);font-size:13px}
+.sec{font-size:11px;color:var(--mu);font-weight:700;letter-spacing:.3px;margin:4px 2px -4px}
+</style>
+</head>
+<body>
+<div class="note"><b>أرقام توضيحية</b> — الشكل هو المقصود، لا الأرقام. «قبل» منقول من الصفحة الحالية على localhost:3001/seo بنصوصها.</div>
+
+<div class="cols">
+
+<!-- ================= قبل ================= -->
+<section class="col">
+  <h2><span class="tag t-before">قبل</span> الصفحة الحالية</h2>
+  <div class="frame">
+    <div class="ltr">
+      <div style="font-size:18px;font-weight:700">SEO</div>
+      <div class="small">Platform-wide SEO health and regeneration. Per-article work lives in Articles.</div>
+    </div>
+    <div class="grid4 ltr">
+      <div class="card kpi"><div class="l">PUBLISHED ARTICLES</div><div class="v">319</div><div class="small">indexable content</div></div>
+      <div class="card kpi"><div class="l">JSON-LD ✓</div><div class="v ok">100%</div><div class="small">319/319 cached · all hosts fresh</div></div>
+      <div class="card kpi"><div class="l">CANONICAL URLS ✓</div><div class="v ok">Clean</div><div class="small">all 7 tables correct</div></div>
+      <div class="card kpi"><div class="l">SITEMAPS (GSC) ✓</div><div class="v ok">Fresh</div><div class="small">submitted within 24h</div></div>
+    </div>
+    <div class="card row ltr"><span class="ok small">✓ Standard fixes — all clean · 18.2s</span><span class="btn">Report</span></div>
+    <div class="card ltr">
+      <div style="font-weight:700">🔄 Full Rebuild (Cascade) <span class="small">~3-5 min · touches all entities</span></div>
+      <div class="small">Regenerates JSON-LD + Next.js metadata for every article, client, category, tag, industry, and listing.</div>
+      <div class="small">Use when: you changed a global Setting (site URL, brand name, hreflang config) and want every page to pick it up.</div>
+      <div class="small" style="margin:6px 0">☑ Categories ☑ Tags ☑ Industries ☑ Clients ☑ Articles ☑ Listings</div>
+      <div class="row"><span class="small">41% · 179 of 432 entities</span><span class="small">9m 4s · ~12m 48s</span></div>
+      <div class="bar"><i style="width:41%"></i></div>
+      <div class="grid4" style="grid-template-columns:repeat(3,1fr);margin-top:8px">
+        <div class="card small">CATEGORIES 15/15</div><div class="card small">TAGS 23/23</div><div class="card small">INDUSTRIES 8/8</div>
+        <div class="card small">CLIENTS 48/48</div><div class="card small">ARTICLES 85/319</div><div class="card small">LISTINGS 0/19 waiting</div>
+      </div>
+      <div style="margin-top:8px"><span class="btn">Running…</span> <span class="btn">Cancel</span></div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700">🔍 فحص السيو الحيّ</div>
+      <div class="small">يفتح صفحات الموقع ويعدّ المخالفات. صفرٌ في كل سطر = لم ينكسر شيء. قراءة فقط.</div>
+      <div style="margin-top:6px"><span class="btn p">افحص الإنتاج</span> <span class="btn">افحص المحلي</span></div>
+    </div>
+    <div class="card row ltr small"><span><b class="bad">12</b> articles below a perfect 100 of 319 — open each to see what is missing</span><b style="color:var(--pri)">Open list →</b></div>
+    <div class="small" style="padding:0 4px">المشاكل: إنجليزي · إيموجي · فقرات شرح · الوقت «3-5 دقائق» والحقيقي ~٢٢ · لا تعرف وش راح يتغيّر قبل الضغط · لا تقرير بعده · لا سجلّ · لو قفلت الصفحة يتوقّف ويبدأ من الصفر.</div>
+  </div>
+</section>
+
+<!-- ================= بعد ================= -->
+<section class="col">
+  <h2><span class="tag t-after">بعد</span> المقترح — قرار في نظرة</h2>
+  <div class="frame">
+    <div class="row">
+      <div><div style="font-size:18px;font-weight:700">صيانة السيو</div><div class="small">آخر تشغيل: اليوم ١٠:٤٧م · خالد · ٢٣١ عنوان انصلح · ٢ فشل</div></div>
+      <span class="btn">السجلّ</span>
+    </div>
+
+    <!-- القرار أولاً -->
+    <div class="status">
+      <div><b>يحتاج إجراء: ٢٣١ عنوان فيه اسم العميل</b><div class="small">الإصلاح يشيل الاسم ويعيد توليد الميتا · لا يغيّر تاريخ التعديل</div></div>
+      <span class="btn p">معاينة ثم تشغيل</span>
+    </div>
+
+    <!-- الصحّة: سطر واحد لكل شيء -->
+    <div class="grid4">
+      <div class="card kpi"><div class="l">مقالات منشورة</div><div class="v">٣١٩</div></div>
+      <div class="card kpi"><div class="l">البيانات المنظّمة</div><div class="v ok">سليمة</div></div>
+      <div class="card kpi"><div class="l">الروابط الأساسية</div><div class="v ok">سليمة</div></div>
+      <div class="card kpi"><div class="l">خريطة الموقع</div><div class="v ok">قبل ٣ س</div></div>
+    </div>
+
+    <!-- فاحص العناوين -->
+    <div class="card">
+      <div class="row"><b>العناوين</b><span class="small">اضغط أي رقم يفتح القائمة</span></div>
+      <div class="issues" style="margin-top:8px">
+        <div class="issue"><div class="v warn">٤٠</div><div class="small">أطول مما يعرضه جوجل</div></div>
+        <div class="issue"><div class="v warn">٣</div><div class="small">مكرّرة بين مقالين</div></div>
+        <div class="issue"><div class="v ok">٠</div><div class="small">فاضية</div></div>
+      </div>
+    </div>
+
+    <!-- المعاينة -->
+    <div class="card">
+      <div class="row"><b>معاينة — ما الذي سيتغيّر</b><span class="small">قراءة فقط، لا يُعدَّل شيء</span></div>
+      <table style="margin-top:6px">
+        <tr><th>المقال</th><th>العنوان في جوجل</th></tr>
+        <tr><td>علاج اللثة قبل الزراعة</td><td><del>… - Dentonic dental clinics</del><br><ins>أهمية علاج اللثة قبل زراعة الأسنان وخطوات العلاج</ins></td></tr>
+        <tr><td>كيف يساعد السيو</td><td><del>… | شركة جبر سيو</del><br><ins>كيف يساعد سيو في زيادة المبيعات؟</ins></td></tr>
+        <tr><td colspan="2" class="small">+ ٢٢٩ عنواناً آخر · <a href="#">القائمة كاملة</a></td></tr>
+      </table>
+    </div>
+
+    <!-- التشغيل -->
+    <div class="card">
+      <div class="row"><b>إعادة توليد الميتا</b><span class="small">~٢٢ دقيقة لـ٣١٩ مقال · لا تقفل الصفحة</span></div>
+      <div class="chips" style="margin:8px 0"><span class="chip d">التصنيفات</span><span class="chip d">الوسوم</span><span class="chip d">القطاعات</span><span class="chip d">العملاء</span><span class="chip">المقالات ٨٥/٣١٩</span><span class="chip">صفحات القوائم</span></div>
+      <div class="bar"><i style="width:41%"></i></div>
+      <div class="row" style="margin-top:8px"><span class="small">باقي ~١٣ دقيقة</span><span><span class="btn">إيقاف</span> <span class="btn">كمّل من ٨٦</span></span></div>
+    </div>
+
+    <!-- التقرير بعد التشغيل -->
+    <div class="card">
+      <div class="row"><b>تقرير آخر تشغيل</b><span class="small">اليوم ١٠:٤٧م</span></div>
+      <div class="issues" style="margin-top:8px">
+        <div class="issue"><div class="v ok">٢٢٩</div><div class="small">ميتا أُعيد توليدها</div></div>
+        <div class="issue"><div class="v ok">٦</div><div class="small">حقل نُظّف من الاسم</div></div>
+        <div class="issue"><div class="v bad">٢</div><div class="small">فشل — <a href="#">افتحهما</a></div></div>
+      </div>
+    </div>
+
+    <!-- الفحص الحيّ -->
+    <div class="card row"><span><b>فحص الموقع الحيّ</b> <span class="small">آخر نتيجة: ٠ مخالفات في ١٤ صفحة</span></span><span><span class="btn">الإنتاج</span> <span class="btn">المحلي</span></span></div>
+  </div>
+</section>
+
+<!-- ================= بعد المهارة ================= -->
+<section class="col">
+  <h2><span class="tag t-skill">بعد المهارة</span> kpi-dashboard-design — تنبيهات أولاً، والسليم سطر واحد</h2>
+  <div class="frame">
+    <div class="row">
+      <div><div style="font-size:18px;font-weight:700">صيانة السيو</div><div class="small">آخر تشغيل: اليوم ١٠:٤٧م · خالد · المدة ٢٢ د</div></div>
+      <span class="btn">السجلّ</span>
+    </div>
+
+    <div class="sec">يحتاج قرارك (٢)</div>
+    <div class="alert a">
+      <div class="n warn">٢٣١</div>
+      <div><b>عنوان فيه اسم العميل</b><div class="small">الهدف ٠ · الإصلاح لا يغيّر تاريخ التعديل</div></div>
+      <span class="btn p">معاينة ← تشغيل</span>
+    </div>
+    <div class="alert r">
+      <div class="n bad">٢</div>
+      <div><b>فشلت في آخر تشغيل</b><div class="small">جديد منذ أمس</div></div>
+      <span class="btn">افتحهما</span>
+    </div>
+
+    <div class="sec">العناوين — الأرقام تفتح القائمة</div>
+    <div class="card">
+      <div class="issues">
+        <div class="issue"><div class="row"><div class="v warn">٤٠</div><span class="trend down">▼ ١٢</span></div><div class="small">أطول من ٦٠ حرفاً</div></div>
+        <div class="issue"><div class="row"><div class="v warn">٣</div><span class="trend up">▲ ١</span></div><div class="small">مكرّرة</div></div>
+        <div class="issue"><div class="row"><div class="v ok">٠</div><span class="small">=</span></div><div class="small">فاضية</div></div>
+      </div>
+      <div class="how">طريقة الحساب: عنوان جوجل = حقل SEO Title + « | مدونتي». الطول يُعدّ على الناتج كاملاً. المقارنة مع آخر تشغيل.</div>
+    </div>
+
+    <div class="sec">صحّة الموقع</div>
+    <div class="okline">✓ ٤ فحوص سليمة — البيانات المنظّمة · الروابط الأساسية · خريطة الموقع (قبل ٣ س) · فحص الإنتاج (٠ / ١٤ صفحة)</div>
+
+    <div class="sec">التشغيل</div>
+    <div class="card">
+      <div class="row"><b>إعادة توليد الميتا</b><span class="small">٣١٩ مقال · ~٢٢ د · لا تقفل الصفحة</span></div>
+      <div class="bar" style="margin:8px 0"><i style="width:41%"></i></div>
+      <div class="row"><span class="small">المقالات ٨٥/٣١٩ · باقي ~١٣ د</span><span><span class="btn">إيقاف</span> <span class="btn">كمّل من ٨٦</span></span></div>
+    </div>
+    <div class="small" style="padding:0 4px">ما تغيّر عن «المقترح»: شلنا «مقالات منشورة ٣١٩» (رقم لا يقود لقرار) · الأربعة السليمة صارت سطراً واحداً · كل رقم معه مقارنة بآخر تشغيل · طريقة الحساب مكتوبة · التقرير اندمج في التنبيهات.</div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
