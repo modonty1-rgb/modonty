@@ -10,7 +10,7 @@ import { AppShell } from '@/src/components/navigation/AppShell';
 import { ConfirmProvider } from '@/src/components/ui/ConfirmProvider';
 import { BackgroundGlow } from '@/src/components/ui/Nabd';
 import { observeLiveSignals, onLiveRefresh } from '@/src/services/live-refresh';
-import { configureForegroundPresentation, ensureAndroidChannel, observeNotificationTaps, registerForPushNotifications, type PushTapTarget } from '@/src/services/push-registration';
+import { captureNotificationTaps, configureForegroundPresentation, consumeNotificationTaps, ensureAndroidChannel, registerForPushNotifications, type PushTapTarget } from '@/src/services/push-registration';
 import { LoginRoute } from '@/src/routes/auth/LoginRoute';
 import { SessionRestoreRoute } from '@/src/routes/auth/SessionRestoreRoute';
 import { AccountRoute } from '@/src/routes/account/AccountRoute';
@@ -34,6 +34,8 @@ import { clearMobileAccessToken, clearPushDeviceId, readMobileAccessToken, readP
 import { clearResourceCache, useEngagementResource, type RefreshFailure } from '@/src/services/use-engagement-resource';
 
 SplashScreen.preventAutoHideAsync();
+// قبل أيّ رسم أو جلسة: ضغطة الفتح البارد تُلتقط هنا وتنتظر الشاشات (السبب في `push-registration.ts`).
+captureNotificationTaps();
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -134,35 +136,28 @@ function MobileConsole() {
    * الضغط على التنبيه يفتح وجهته: **المقال نفسه** لو عُرف معرّفه، وإلا تبويبه.
    *
    * التبويب وحده لا يكفي: لو كان العميل داخل شاشة مكدَّسة (مراجعة مقال · الردّ على سؤال)
-   * فتغييرُ التبويب يقع **تحتها** ولا يراه. فنعود إلى `tabs` أوّلاً بالمرجع الرسمي. والفتح
-   * البارد قد يصل قبل أن تجهز الشجرة، فيُحفظ الهدف ويُنفَّذ في `onReady`.
+   * فتغييرُ التبويب يقع **تحتها** ولا يراه. فنعود إلى `tabs` أوّلاً بالمرجع الرسمي.
+   *
+   * والتنفيذ **حالةٌ تنتظر شروطها** لا نداءٌ فوري: الهدف يُحفظ في `tapTarget` ولا يُنفَّذ إلا
+   * والجلسة والرئيسية والملاحة جاهزة معاً (`isNavigationReady` من `onReady`). كان مرجعاً يُفرَّغ
+   * في `onReady` الذي يُطلق مرّة واحدة — وكل ما يصل بعدها أو قبل اكتمال الجلسة كان يُترك
+   * لأثرٍ بلا تبعيات. و`setTab('home')` في استرجاع الجلسة يقع قبل تركيب الملاحة، فلا يطغى
+   * على الوجهة بعد تنفيذها.
    */
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
-  const pendingTapTarget = useRef<PushTapTarget | null>(null);
-  const openTapTarget = useCallback((target: PushTapTarget) => {
-    if (!navigationRef.isReady()) { pendingTapTarget.current = target; return; }
-    if (target.articleId) { navigationRef.navigate('article-review', { articleId: target.articleId }); return; }
-    if (target.tab === 'bookings') { navigationRef.navigate('bookings'); return; }
-    setTab(target.tab);
+  const [isNavigationReady, setNavigationReady] = useState(false);
+  const [tapTarget, setTapTarget] = useState<PushTapTarget | null>(null);
+  const isSignedIn = accessToken !== null;
+  useEffect(() => consumeNotificationTaps(setTapTarget), []);
+  useEffect(() => {
+    if (tapTarget === null || !isSignedIn || dashboard === null || !isNavigationReady || !navigationRef.isReady()) return;
+    setTapTarget(null);
+    if (tapTarget.articleId) { navigationRef.navigate('article-review', { articleId: tapTarget.articleId }); return; }
+    if (tapTarget.tab === 'bookings') { navigationRef.navigate('bookings'); return; }
+    setTab(tapTarget.tab);
     // `popTo` يُسقط الشاشات المكدَّسة فوق التابات؛ `navigate` كان يدفع غلافاً ثانياً فوقها.
     navigationRef.dispatch(StackActions.popTo('tabs'));
-  }, [navigationRef]);
-  const flushPendingTapTarget = useCallback(() => {
-    const target = pendingTapTarget.current;
-    pendingTapTarget.current = null;
-    if (target) openTapTarget(target);
-  }, [openTapTarget]);
-  const isSignedIn = accessToken !== null;
-  useEffect(() => {
-    if (!isSignedIn) return;
-    return observeNotificationTaps(openTapTarget);
-  }, [isSignedIn, openTapTarget]);
-  // هدفٌ وصل قبل جاهزية الشجرة ثم فاته `onReady` (يُطلق مرّة واحدة) — يُنفَّذ أوّل ما تكتمل الجلسة والرئيسية.
-  useEffect(() => {
-    if (!isSignedIn || dashboard === null || pendingTapTarget.current === null) return;
-    const timer = setTimeout(() => { if (navigationRef.isReady()) flushPendingTapTarget(); }, 0);
-    return () => clearTimeout(timer);
-  });
+  }, [dashboard, isNavigationReady, isSignedIn, navigationRef, tapTarget]);
 
   const { theme, mode } = useAppTheme();
 
@@ -170,7 +165,9 @@ function MobileConsole() {
   const resetSessionState = useCallback((loginMessage: string | null) => {
     clearResourceCache();
     isPushRegistered.current = false;
-    pendingTapTarget.current = null;
+    // الملاحة تُزال مع الجلسة؛ `onReady` يُطلق من جديد حين تُركَّب بعد الدخول التالي.
+    setNavigationReady(false);
+    setTapTarget(null);
     setClient(null); setDashboard(null); setUnreadCount(0); setDashboardRefreshFailure(null);
     setTab('home');
     setAccessToken(null);
@@ -330,7 +327,7 @@ function MobileConsole() {
 
   return <>
     <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
-    <NavigationContainer ref={navigationRef} theme={navTheme} onReady={flushPendingTapTarget}>
+    <NavigationContainer ref={navigationRef} theme={navTheme} onReady={() => setNavigationReady(true)}>
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_left', contentStyle: { backgroundColor: theme.colors.page } }}>
         <Stack.Screen name="tabs">
           {() => dashboard === null ? null : <TabsShell tab={tab} onSelectTab={setTab} client={client} dashboard={dashboard} dashboardRefreshFailure={dashboardRefreshFailure} accessToken={accessToken} unreadCount={unreadCount} onUnreadCountChange={setUnreadCount} onReloadDashboard={loadDashboard} onRefreshDashboard={refreshDashboard} isDashboardRefreshing={isDashboardRefreshing} />}
@@ -445,11 +442,11 @@ function TabsShell({ tab, onSelectTab, client, dashboard, dashboardRefreshFailur
     else navigation.navigate('article-decisions');
   }, [navigation]);
 
-  const screen = tab === 'home' ? <HomeRoute clientName={client?.name} accessToken={accessToken} dashboard={dashboard} refreshFailure={dashboardRefreshFailure} onRetry={onRefreshDashboard} onRefresh={onRefreshDashboard} isRefreshing={isDashboardRefreshing} onOpenDecisionArticles={() => navigation.navigate('article-decisions')} onOpenVideos={() => onSelectTab('videos')} onOpenAudience={() => onSelectTab('audience')} onOpenBookings={() => navigation.navigate('bookings')} onOpenSubscription={() => navigation.navigate('subscription')} onOpenReferral={() => navigation.navigate('referral')} />
+  const screen = tab === 'home' ? <HomeRoute clientName={client?.name} unreadCount={unreadCount} onOpenNotifications={() => onSelectTab('notifications')} accessToken={accessToken} dashboard={dashboard} refreshFailure={dashboardRefreshFailure} onRetry={onRefreshDashboard} onRefresh={onRefreshDashboard} isRefreshing={isDashboardRefreshing} onOpenDecisionArticles={() => navigation.navigate('article-decisions')} onOpenVideos={() => onSelectTab('videos')} onOpenAudience={() => onSelectTab('audience')} onOpenBookings={() => navigation.navigate('bookings')} onOpenSubscription={() => navigation.navigate('subscription')} onOpenReferral={() => navigation.navigate('referral')} />
     : tab === 'articles' ? <PublishedArticlesScreen accessToken={accessToken} />
     : tab === 'videos' ? <VideosRoute accessToken={accessToken} onUpload={() => navigation.navigate('video-upload')} />
     : tab === 'audience' ? <AudienceApiRoute accessToken={accessToken} onOpenQuestion={(questionId) => navigation.navigate('audience-reply', { questionId })} />
-    : <NotificationsRoute accessToken={accessToken} onOpenArticle={openArticleFromNotification} onOpenAudience={() => onSelectTab('audience')} onOpenVideos={() => onSelectTab('videos')} onUnreadCountChange={onUnreadCountChange} />;
+    : <NotificationsRoute accessToken={accessToken} onOpenArticle={openArticleFromNotification} onOpenAudience={() => onSelectTab('audience')} onOpenVideos={() => onSelectTab('videos')} onOpenBookings={() => navigation.navigate('bookings')} onUnreadCountChange={onUnreadCountChange} />;
   return <AppShell client={client} copy={dashboard.shell} activeRoute={tab} unreadCount={unreadCount} onSelectTab={onSelectTab} onOpenPushed={(route: PushedRoute) => navigation.navigate(route)}>
     {screen}
   </AppShell>;

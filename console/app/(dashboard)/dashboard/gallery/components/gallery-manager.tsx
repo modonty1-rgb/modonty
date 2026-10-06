@@ -45,7 +45,7 @@ function reelFit(width: number | null, height: number | null): string {
   const ratio = width / height;
   const pretty = `${width}×${height}`;
   if (Math.abs(ratio - REELS_RATIO) < 0.06) {
-    return `مقاس صورتك ${pretty} — طولية ومناسبة تماماً للريلز ✅`;
+    return `مقاس صورتك ${pretty} — طولية ومناسبة تماماً للريلز`;
   }
   // Square first: 1254×1254 is neither landscape nor portrait, and calling it "portrait"
   // (the first version did) is a plain lie to a client reading his own image.

@@ -1,10 +1,8 @@
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { getArticles } from "@/lib/queries/get-articles";
-import { getClientsSearch } from "@/app/(site)/search/helpers/get-clients-search";
+import { getSearchResults, type SearchScope, type ArticleSortOption } from "./helpers/get-search-results";
 import type { ClientSortOption } from "./helpers/client-sort";
-import type { ArticleResponse, ClientResponse, FeedPost } from "@/lib/types";
 import { generateMetadataFromSEO } from "@/lib/seo";
 import { messages } from "@/lib/i18n/messages";
 
@@ -22,13 +20,11 @@ interface SearchPageProps {
   searchParams: Promise<{ q?: string; page?: string; type?: string; sort_articles?: string; sort_clients?: string }>;
 }
 
-type SearchScope = "all" | "articles" | "clients";
 
 function normalizeScope(type: unknown): SearchScope {
   return type === "clients" ? "clients" : type === "articles" ? "articles" : "all";
 }
 
-type ArticleSortOption = "newest" | "oldest" | "title";
 
 function normalizeArticleSort(s: unknown): ArticleSortOption {
   return s === "oldest" || s === "title" ? s : "newest";
@@ -87,60 +83,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const sortArticles = normalizeArticleSort(params.sort_articles);
   const sortClients = normalizeClientSort(params.sort_clients);
   const page = Math.max(1, parseInt(String(params.page), 10) || 1);
-  const limit = 20;
-
-  let articles: ArticleResponse[] = [];
-  let pagination: { totalPages: number; total: number } | null = null;
-  let clients: ClientResponse[] = [];
-
-  if (q) {
-    if (scope === "all" || scope === "articles") {
-      const result = await getArticles({ search: q, limit, page, sortBy: sortArticles });
-      articles = result.articles;
-      pagination = result.pagination;
-    }
-    if (scope === "all" || scope === "clients") {
-      clients = await getClientsSearch(q, 10, sortClients);
-    }
-  }
-
-  const totalPages = pagination?.totalPages ?? 0;
-  const total = pagination?.total ?? 0;
-
-  const posts: FeedPost[] = articles.map((article: ArticleResponse) => ({
-    id: article.id,
-    title: article.title,
-    excerpt: article.excerpt ?? undefined,
-    image: article.image,
-    imageBlur: article.featuredImage?.blurDataURL ?? undefined,
-    slug: article.slug,
-    publishedAt: new Date(article.publishedAt),
-    clientName: article.client.name,
-    clientSlug: article.client.slug,
-    clientId: article.client.id,
-    clientLogo: article.client.logo,
-    readingTimeMinutes: article.readingTimeMinutes,
-    author: {
-      id: article.author.id,
-      // اسم الكاتب من صفّه. كان الاحتياط يكتب اسم الماركة مكان كاتبٍ بلا اسم — فيظهر
-      // للقارئ أن الماركة كتبت المقال، وهو ادّعاءٌ عن المؤلِّف لا احتياط عرض.
-      name: article.author.name || "",
-      title: "",
-      company: article.client.name,
-      avatar: article.author.image || "",
-    },
-    likes: article.interactions.likes,
-    dislikes: article.interactions.dislikes,
-    comments: article.interactions.comments,
-    favorites: article.interactions.favorites,
-    views: article.interactions.views,
-    status: "published" as const,
-  }));
+  // Same results the reader mobile API serves (helpers/get-search-results.ts).
+  const { posts, clients, total, totalPages } = await getSearchResults({ q, scope, sortArticles, sortClients, page });
 
   const resultsCountText =
     scope === "clients"
       ? formatClientResultsCount(clients.length)
-      : formatResultsCount(total > 0 ? total : articles.length);
+      : formatResultsCount(total > 0 ? total : posts.length);
 
   return (
     <>

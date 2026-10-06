@@ -379,6 +379,16 @@ export async function createTask(raw: unknown): Promise<Result> {
   }
 }
 
+/**
+ * مهمّةٌ أسندها زميلٌ لا يُقفلها منفّذُها (خالد ٣ أكتوبر ٢٠٢٦): آخرُ خطوةٍ عنده «بانتظار الاعتماد»،
+ * و«منجَزة» تأتي من `approveTask` بيد مَن أسندها. كان المنفّذ يسحبها إلى «Done» أو يختارها، فتُتجاوز
+ * صفحةُ الاعتماد كلُّها دون أن يراها أحد.
+ */
+function skipsReview(task: { status: string; createdById: string | null; assigneeId: string | null }, to: string): boolean {
+  return to === "DONE" && task.status !== "DONE" && !!task.createdById && task.createdById !== task.assigneeId;
+}
+const SKIP_REVIEW_ERROR = "هذه المهمّة من زميل — سلّمها «بانتظار الاعتماد» وهو يعتمدها";
+
 export async function updateTask(raw: unknown): Promise<Result> {
   const session = await auth();
   const userId = sessionUserId(session);
@@ -396,7 +406,34 @@ export async function updateTask(raw: unknown): Promise<Result> {
       select: { id: true, status: true, completedAt: true, assigneeId: true, createdById: true },
     });
     if (!existing) return { success: false, error: "Task not found" };
+
+    // مَن أسند المهمّةَ لزميلٍ يعدّل نصَّها وأولويّتها من «Assign Task» (خالد ٣ أكتوبر ٢٠٢٦:
+    // أسند ١٢ مهمّةً لطارق ولم يقدر يصحّح صياغتها). الحالةُ والمنفّذُ لا يُمسّان — العمودُ قرارُ المنفّذ،
+    // والمراجعةُ لها بابُها. والمنفّذُ يصله جرس «عدّل X مهمّتك» كي لا يعمل على نصٍّ تغيّر تحته.
+    if (existing.createdById === userId && existing.assigneeId && existing.assigneeId !== userId) {
+      await db.task.update({
+        where: { id: existing.id },
+        data: {
+          title: data.title,
+          description: orNull(data.description),
+          priority: data.priority,
+          // لا `dueDate`: الموعدُ وعدُ المنفّذ، فلا يكتبه المُسنِد فوقه.
+        },
+      });
+      await notifyDecision({
+        to: existing.assigneeId,
+        actorId: userId,
+        taskId: existing.id,
+        type: "task_edited",
+        title: (from) => `عدّل ${from} مهمّتك`,
+        body: data.title,
+      });
+      revalidateBoard(existing.assigneeId);
+      return { success: true };
+    }
+
     if (existing.assigneeId !== userId) return { success: false, error: "Task not found" };
+    if (skipsReview(existing, data.status)) return { success: false, error: SKIP_REVIEW_ERROR };
 
     await db.task.update({
       where: { id: existing.id },
@@ -454,6 +491,7 @@ export async function moveTask(raw: unknown): Promise<Result> {
     });
     if (!task) return { success: false, error: "Task not found" };
     if (task.assigneeId !== userId) return { success: false, error: "Task not found" };
+    if (skipsReview(task, status)) return { success: false, error: SKIP_REVIEW_ERROR };
 
     // Siblings EXCLUDING the moving card: if it is already in this column, its
     // own row would otherwise shift every index by one and land the card next

@@ -2,6 +2,7 @@ import { getArticleLiveCounts } from "@/app/(site)/articles/[slug]/data/get-arti
 import { getMyArticleReactions } from "@/app/(site)/articles/[slug]/data/get-my-article-reactions";
 import { getViewer } from "@/app/(site)/articles/[slug]/helpers/get-viewer";
 import { ArticleTopEngagementBar } from "@/app/(site)/articles/[slug]/components/top-engagement-bar/TopEngagementBarLazy";
+import { EngagementBarOnDemand } from "@/app/(site)/articles/[slug]/components/top-engagement-bar/EngagementBarOnDemand";
 
 interface ReaderActionsProps {
   articleId: string;
@@ -48,8 +49,11 @@ export async function ReaderActions({
     ? await getMyArticleReactions(articleId, userId)
     : { userLiked: false, userFavorited: false };
 
+  // On a phone's outline bar the four buttons are drawn plain and the real bar loads on the first
+  // touch (EngagementBarOnDemand, 3 Oct 2026); elsewhere it loads with the page as before.
+  const Bar = size === "compact" && show === "engagement" ? EngagementBarOnDemand : ArticleTopEngagementBar;
   return (
-    <ArticleTopEngagementBar
+    <Bar
       likes={live?.likes ?? likes}
       favorites={live?.favorites ?? favorites}
       userLiked={reactions.userLiked}

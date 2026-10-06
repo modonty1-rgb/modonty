@@ -46,7 +46,7 @@ export interface BlockView {
 const SAMPLE_ON_HOME: Record<string, { cap: number; rest: string }> = {
   gallery: { cap: 5, rest: "«ألبوم أعمالنا»" }, // gallery-mosaic.tsx:7
   reels: { cap: 4, rest: "«الريلز»" }, // reels-grid.tsx HOME_REELS_LIMIT
-  blog: { cap: 3, rest: "«مقالاتي»" }, // latest-posts.tsx:10
+  blog: { cap: 3, rest: "«مقالاتنا»" }, // latest-posts.tsx:10
   faq: { cap: 6, rest: "«الأسئلة الشائعة»" }, // faq-accordion.tsx:15 (HOME_FAQ_LIMIT)
   testimonials: { cap: 3, rest: "«آراء العملاء»" }, // testimonials-grid.tsx:21
   services: { cap: 6, rest: "«خدماتنا»" }, // services-grid.tsx:11
@@ -160,12 +160,12 @@ function linesFor(
      * الأخير» يجيء من مصدره نفسه، فلا تنحرف نسختان.
      */
     case "cta":
-      return { lines: finalCtaLines(d.name) };
+      return { lines: finalCtaLines(d.name, d.booking) };
     case "newsletter":
-      return { lines: [`خلّك على تواصل مع ${d.name}`, "بريدك الإلكتروني", "زرّ: اشترك"] };
+      return { lines: ["ابقَ على تواصل معنا", "بريدك الإلكتروني", "زرّ: اشترك"] };
     case "lead-form":
       return {
-        lines: ["اترك رقمك — ونعاود الاتصال بك في نفس اليوم", "اسمك · رقم جوّالك · إيش تحتاج", "زرّ: اطلب اتصالاً"],
+        lines: ["اترك رقمك — ونعاود الاتصال بك بأقرب وقت", "اسمك · رقم جوّالك · ماذا تحتاج", "زرّ: اطلب اتصالاً"],
       };
     default:
       return { lines: [] };

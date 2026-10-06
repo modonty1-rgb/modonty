@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { isTaskLate } from "@/lib/tasks/is-task-late";
 
 import type { TaskStatusKey } from "@/lib/tasks/task-config";
 
@@ -79,8 +80,8 @@ export async function getTasksByRange(from?: Date, to?: Date): Promise<StaffDay[
   });
 
   const groups = new Map<string, StaffDay>();
-  const isLate = (t: { dueDate: Date | null; status: string }) =>
-    !!t.dueDate && t.status !== "DONE" && new Date(t.dueDate).setHours(23, 59, 59, 999) < Date.now();
+  // القاعدةُ الواحدة: ما في المراجعة ليس متأخّراً — المنفّذُ سلّم.
+  const isLate = (t: { dueDate: Date | null; status: string }) => isTaskLate(t);
 
   for (const row of rows) {
     // Unassigned work is its own lane, not hidden: a task nobody owns is

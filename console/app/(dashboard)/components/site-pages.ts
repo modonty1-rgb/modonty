@@ -31,7 +31,7 @@ export const SITE_PAGES: readonly SitePageDef[] = [
   { key: "services", label: "خدماتنا", icon: Briefcase },
   { key: "photos", label: "ألبوم أعمالنا", icon: Images },
   { key: "reviews", label: "آراء العملاء", icon: Star },
-  { key: "articles", label: "المدونة", icon: Newspaper },
+  { key: "articles", label: "مقالاتنا", icon: Newspaper },
   { key: "faq", label: "الأسئلة الشائعة", icon: HelpCircle },
   { key: "contact", label: "تواصل معنا", icon: Phone },
   { key: "book", label: "الحجز", icon: CalendarCheck },

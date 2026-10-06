@@ -224,6 +224,8 @@ const clientFormObject = z
     ctaPresetId: z.string().optional().nullable().or(z.literal("")),
     ctaLabel: z.string().max(40, "Button label must be 40 characters or less").optional().nullable().or(z.literal("")),
     ctaUrl: z.string().max(500, "Link must be less than 500 characters").optional().nullable().or(z.literal("")),
+    // «يظهر في» (خالد ٣ أكتوبر ٢٠٢٦) — صفحات مدونتي التي يظهر فيها العميل، اختيارُ الأدمن الصريح.
+    listedOn: z.array(z.enum(["BOOKING", "SHOP"])).optional().default([]),
 
     // Subscription Management
     // (سقط `subscriptionTierConfigId` — ١٩ سبتمبر ٢٠٢٦: الباقةُ من الطلب الساري.)
@@ -264,6 +266,15 @@ const clientFormObject = z
  * تعيد `void` (TS2322).
  */
 const refineShared = (data: z.infer<typeof clientFormObject>, ctx: z.RefinementCtx): void => {
+    // صفحةُ الحجز تفتح نموذجَ الحجز — فلا يظهر فيها عميلٌ بلا نموذج.
+    if (data.listedOn?.includes("BOOKING") && data.ctaMode !== ClientCtaMode.FORM) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["listedOn"],
+        message: "صفحة الحجز تحتاج زرّ حجز (Booking form)",
+      });
+    }
+
     // LINK mode needs a destination; FORM/NONE don't.
     if (data.ctaMode === ClientCtaMode.LINK) {
       const url = (data.ctaUrl ?? "").trim();

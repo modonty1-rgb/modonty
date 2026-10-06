@@ -72,6 +72,11 @@ type ArticleClient = {
   // and the base every one of their canonical URLs is built from.
   canPublishToOwnSite?: boolean;
   articlesBaseUrl?: string | null;
+  /** موقعُ العميل — زرُّ المقال لا يقبل رابطاً من غيره. */
+  url?: string | null;
+  /** زرُّ العميل — يظهر تحت «زر المقال» ليعرف الكاتب ما يطلع لو تركه فاضياً (فلو زرّ المقال، ٣ أكتوبر ٢٠٢٦). */
+  ctaMode?: "NONE" | "FORM" | "LINK" | null;
+  ctaLabel?: string | null;
   logoMediaId?: string | null;
   logoMedia?: {
     url: string;

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تسجيل مدونتي الرسمي</title>
+<meta name="description" content="الجهات والأوراق والرسوم لتسجيل مدونتي وشعارها وشخصية مودو — من الصفحات الرسمية فقط">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --ink:#15211d; --muted:#5b6a64; --line:#dde3df;
+  --accent:#0f6b4f; --accent-soft:#e3f1ea;
+  --warn:#8a5a00; --warn-soft:#fbf1dc;
+  --gap:#8f2a2a; --gap-soft:#f8e6e4;
+  --money:#0f3d6b; --money-soft:#e4edf7;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#101614; --surface:#18201d; --ink:#e6ece9; --muted:#9aaaa3; --line:#2a3531;
+    --accent:#5cc99f; --accent-soft:#16312a;
+    --warn:#e8b75a; --warn-soft:#322713;
+    --gap:#ef8f86; --gap-soft:#3a1d1b;
+    --money:#8fbdf0; --money-soft:#16263a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#101614; --surface:#18201d; --ink:#e6ece9; --muted:#9aaaa3; --line:#2a3531;
+  --accent:#5cc99f; --accent-soft:#16312a;
+  --warn:#e8b75a; --warn-soft:#322713;
+  --gap:#ef8f86; --gap-soft:#3a1d1b;
+  --money:#8fbdf0; --money-soft:#16263a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,"Segoe UI",Tahoma,sans-serif;font-size:16px;line-height:1.75}
+.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:32px 64px;display:grid;gap:28px}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.35}
+h1{font-size:clamp(1.7rem,4vw,2.3rem);font-weight:800}
+h2{font-size:1.35rem;font-weight:800}
+h3{font-size:1.05rem;font-weight:700}
+p{margin:0}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.85em;direction:ltr;unicode-bidi:isolate}
+header{display:grid;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.meta{color:var(--muted);font-size:.95rem}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.9rem;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.chip.ok{background:var(--accent-soft);color:var(--accent)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.gap{background:var(--gap-soft);color:var(--gap)}
+.chip.money{background:var(--money-soft);color:var(--money)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.95rem}
+th,td{text-align:right;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:700;color:var(--muted);font-size:.85rem;letter-spacing:.02em;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.amt{font-weight:800;white-space:nowrap;color:var(--money)}
+tfoot td{font-weight:800;background:var(--money-soft);color:var(--money)}
+.note{font-size:.9rem;color:var(--muted)}
+section.body{display:grid;gap:14px}
+.entity{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:14px}
+.entity-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px}
+.entity-head .who{color:var(--muted);font-size:.9rem}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.fact{border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.fact b{display:block;font-size:.78rem;color:var(--muted);font-weight:500;letter-spacing:.02em}
+.fact span{font-weight:800}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+ul,ol{margin:0;padding-inline-start:1.2em;display:grid;gap:4px}
+.lbl{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.03em;margin-bottom:4px}
+.gapbox{background:var(--gap-soft);color:var(--ink);border-radius:8px;padding:10px 14px;font-size:.93rem}
+.gapbox strong{color:var(--gap)}
+.warnbox{background:var(--warn-soft);border-radius:8px;padding:10px 14px;font-size:.93rem}
+.warnbox strong{color:var(--warn)}
+.src{font-size:.85rem;color:var(--muted)}
+.src a{word-break:break-all}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.sub{border:1px dashed var(--line);border-radius:10px;padding:14px;display:grid;gap:10px}
+footer{border-top:1px solid var(--line);padding-top:16px;display:grid;gap:8px}
+footer ol{font-size:.88rem}
+</style>
+</head>
+<body>
+
+<div class="wrap" dir="rtl" lang="ar">
+
+<header>
+  <h1>تسجيل مدونتي الرسمي</h1>
+  <p class="meta">المؤسسة · الشعار · شخصية «مودو» — كل رقم هنا منقول من صفحة الجهة الرسمية، وتاريخ الجمع ٢٨ سبتمبر ٢٠٢٦.</p>
+  <div class="legend">
+    <span><span class="chip ok">رسمي</span> منقول نصاً من صفحة الجهة</span>
+    <span><span class="chip warn">مشروط</span> يلزم فقط في حالة محددة</span>
+    <span><span class="chip gap">غير مذكور رسمياً</span> الصفحة الرسمية سكتت عنه — يُسأل عنه</span>
+  </div>
+</header>
+
+<section class="body">
+  <h2>التكلفة الرسمية — السنة الأولى</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>البند</th><th>الجهة</th><th>الحالة</th><th>المبلغ (ريال)</th></tr></thead>
+      <tbody>
+        <tr><td>تعديل السجل القائم: إضافة النشاط الإعلامي</td><td>وزارة التجارة</td><td><span class="chip ok">إلزامي</span></td><td class="amt num">100</td></tr>
+        <tr><td>ترخيص نشاط مجلة إلكترونية (أو صحافة إلكترونية)</td><td>هيئة تنظيم الإعلام</td><td><span class="chip ok">مجاني</span></td><td class="amt num">0</td></tr>
+        <tr><td>التسجيل في ضريبة القيمة المضافة</td><td>الزكاة والضريبة والجمارك</td><td><span class="chip ok">مجاني</span></td><td class="amt num">0</td></tr>
+        <tr><td>توثيق التجارة الإلكترونية</td><td>المركز السعودي للأعمال</td><td><span class="chip ok">مجاني</span></td><td class="amt num">0</td></tr>
+        <tr><td>علامة تجارية — الشعار</td><td>الملكية الفكرية</td><td><span class="chip ok">طلب واحد</span></td><td class="amt num">6,500</td></tr>
+        <tr><td>علامة تجارية — شخصية مودو</td><td>الملكية الفكرية</td><td><span class="chip ok">طلب واحد</span></td><td class="amt num">6,500</td></tr>
+        <tr><td>حق مؤلف (مصنف فني) — الشعار</td><td>الملكية الفكرية</td><td><span class="chip ok">مؤسسة</span></td><td class="amt num">300</td></tr>
+        <tr><td>حق مؤلف (مصنف فني) — مودو</td><td>الملكية الفكرية</td><td><span class="chip ok">مؤسسة</span></td><td class="amt num">300</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3">المجموع الرسمي للبنود أعلاه</td><td class="num">13,700</td></tr></tfoot>
+    </table>
+  </div>
+  <div class="cols">
+    <div class="warnbox"><strong>يُضاف لو انطبق:</strong> ترخيص إنتاج المحتوى الإعلامي المرئي والمسموع <b class="num">2,000</b> ريال لثلاث سنوات — إن كانت مدونتي تنتج فيديو أو صوتاً أو رسوماً متحركة.</div>
+    <div class="gapbox"><strong>قبل الدفع اسأل الهيئة:</strong> صفحة العلامة التجارية الرسمية تذكر <b class="num">6,500</b> للطلب دون أن تقول «لكل فئة». النظام يسمح بفئة أو أكثر في الطلب، لكن هل يتضاعف المبلغ؟ الصفحة لا تجيب. هاتف الهيئة <span class="mono">920021421</span>.</div>
+  </div>
+  <p class="note">السجل التجاري موجود عندكم، فلا رسوم قيد جديد. التأكيد السنوي للسجل يستمر كما هو: <b class="num">500</b> ريال لمؤسسة فردية، أو <b class="num">1,200</b> لشركة ذات مسؤولية محدودة. العلامة تحمي عشر سنوات، وتجديدها <b class="num">5,500 + 1,000</b> نشر. حق المؤلف لا تجديد له في الصفحة الرسمية.</p>
+</section>
+
+<section class="body">
+  <h2>الجهات بالتفصيل — بالترتيب</h2>
+  <p class="note">الخطوة الأولى تعديل سجلكم القائم: ترخيص هيئة الإعلام يشترط «سجل تجاري يتضمن النشاط الإعلامي»، وأنشطة التطوير والبرمجة الموجودة لا تكفي له.</p>
+
+  <!-- 1 -->
+  <article class="entity" id="cr">
+    <div class="entity-head">
+      <h3>١ · تعديل السجل التجاري القائم — إضافة النشاط الإعلامي</h3>
+      <span class="who">وزارة التجارة عبر منصة المركز السعودي للأعمال</span>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>رسوم التعديل</b><span class="num">100 ريال</span></div>
+      <div class="fact"><b>المدة</b><span>فوري</span></div>
+      <div class="fact"><b>الدفع</b><span>بطاقات ائتمان · سداد</span></div>
+    </div>
+    <div class="cols">
+      <div><p class="lbl">الشروط الرسمية</p>
+        <ul><li>السجل التجاري نشط.</li><li>المدير عمره ١٨ سنة فأكثر، وليس موظفاً حكومياً.</li><li>«وجود ترخيص ساري المفعول في حال إضافة نشاط يتطلب ترخيصاً قبل الإصدار».</li></ul></div>
+      <div><p class="lbl">ما يُعدَّل في الخدمة نفسها</p>
+        <ul><li>الأنشطة التجارية — هنا يُضاف النشاط الإعلامي.</li><li>التراخيص، والعنوان، والاسم التجاري، ورأس المال، وبيانات الاتصال، والمديرون.</li></ul></div>
+    </div>
+    <div class="gapbox"><strong>غير مذكور رسمياً:</strong> هل النشاط الإعلامي من الأنشطة التي تشترط ترخيصاً <em>قبل</em> إضافتها للسجل. اسأل الوزارة <span class="mono">1900</span> قبل التعديل.</div>
+    <div class="gapbox"><strong>الخدمة أعلاه لمؤسسة فردية.</strong> لو سجلكم لشركة فالخدمة مختلفة ورسومها لم تُراجَع هنا.</div>
+    <div><p class="lbl">التزامات السجل القائمة (من أسئلة الوزارة عن المخالفات)</p>
+      <ul>
+        <li>تأكيد سنوي لبيانات السجل — بعد سنة من القيد، ومهلة ٩٠ يوماً قبل التعليق، ويُشطب إن لم يُؤكَّد خلال سنة من التعليق.</li>
+        <li>تقديم بيانات الحساب البنكي للوزارة خلال المدة النظامية، وتحديثها عند أي تغيير.</li>
+        <li>عرض البيانات الأساسية بالرمز الإلكتروني الموحد الصادر من المركز السعودي للأعمال.</li>
+        <li>عرض الاسم التجاري في الوثائق والمراسلات والمطبوعات.</li>
+        <li>الغرامة عند المخالفة: حتى <b class="num">50,000</b> ريال، وتتضاعف عند التكرار.</li>
+      </ul></div>
+    <p class="src">المصدر: <a href="https://mc.gov.sa/ar/eservices/Pages/ServiceDetails.aspx?sID=70" target="_blank" rel="noopener">تعديل بيانات السجل التجاري لمؤسسة فردية</a> · <a href="https://mc.gov.sa/ar/eservices/Pages/ServiceDetails.aspx?sID=2" target="_blank" rel="noopener">التأكيد السنوي لشركة</a> · <a href="https://mc.gov.sa/ar/eservices/Pages/ServiceDetails.aspx?sID=15" target="_blank" rel="noopener">التأكيد السنوي لمؤسسة فردية</a> · <a href="https://mc.gov.sa/ar/mediacenter/News/Pages/22-05-25-02.aspx" target="_blank" rel="noopener">اشتراطات التأكيد السنوي</a> · <a href="https://mc.gov.sa/ar/DO/qcr.pdf" target="_blank" rel="noopener">أسئلة المخالفات والعقوبات</a> · هاتف الوزارة <span class="mono">1900</span></p>
+  </article>
+
+  <!-- 2 -->
+  <article class="entity" id="chamber">
+    <div class="entity-head">
+      <h3>٢ · الغرفة التجارية</h3>
+      <span class="who">نظام الغرف التجارية الجديد</span>
+    </div>
+    <p>نص الوزارة: «إعفاء المشتركين الجدد (الشركات والمؤسسات) من رسوم الاشتراك في الغرفة لمدة ٣ سنوات» من تاريخ القيد. سجلكم قائم، فالإعفاء يسري فقط إن كان تاريخ قيده خلال آخر ٣ سنوات.</p>
+    <div class="gapbox"><strong>غير مذكور رسمياً:</strong> مبلغ الاشتراك بعد انتهاء الإعفاء لا يظهر في صفحة النظام.</div>
+    <p class="src">المصدر: <a href="https://mc.gov.sa/ar/Pages/CCS.aspx" target="_blank" rel="noopener">نظام الغرف التجارية الجديد — وزارة التجارة</a></p>
+  </article>
+
+  <!-- 3 -->
+  <article class="entity" id="media">
+    <div class="entity-head">
+      <h3>٣ · ترخيص النشر الإلكتروني</h3>
+      <span class="who">الهيئة العامة لتنظيم الإعلام — منصة «إعلام»</span>
+    </div>
+    <div class="split">
+      <div class="sub">
+        <div class="entity-head"><h3>مجلة إلكترونية</h3><span class="chip ok">مجاني</span></div>
+        <p>النص الرسمي: «موقع إلكتروني له عنوان ثابت، يقدم خدمات النشر الصحفي على الشبكة متخصصة تصدر بشكل دوري».</p>
+        <p class="note"><span class="num">30</span> يوم عمل · صلاحية سنة</p>
+      </div>
+      <div class="sub">
+        <div class="entity-head"><h3>صحافة إلكترونية</h3><span class="chip ok">مجاني</span></div>
+        <p>النص الرسمي: «موقع إلكتروني له عنوان ثابت، يقدم خدمات النشر الصحفي على الشبكة» — يصدر الأخبار والتقارير.</p>
+        <p class="note"><span class="num">30</span> يوم عمل · صلاحية سنة · يُضاف شرط مؤهل رئيس التحرير</p>
+      </div>
+    </div>
+    <div class="cols">
+      <div><p class="lbl">الشروط الرسمية (للاثنين)</p>
+        <ul><li>سجل تجاري يتضمن النشاط الإعلامي.</li><li>عنوان وطني.</li><li>هوية سارية.</li><li>المتقدم مالك المؤسسة أو مدير الشركة.</li><li>مؤهل جامعي أو ما يعادله.</li></ul></div>
+      <div><p class="lbl">المستندات الرسمية</p>
+        <ul><li>إثبات ممارسة النشاط (الموقع شغّال).</li><li>إثبات ملكية النطاق <span class="mono">modonty.com</span>.</li></ul>
+        <p class="lbl" style="margin-top:10px">الخطوات</p>
+        <ol><li>الدخول إلى <span class="mono">e.gmedia.gov.sa</span>.</li><li>التراخيص الإعلامية.</li><li>اختيار الخدمة.</li><li>استكمال البيانات.</li></ol></div>
+    </div>
+    <div class="warnbox"><strong>مشروط — إنتاج المحتوى المرئي والمسموع:</strong> <b class="num">2,000</b> ريال · <span class="num">30</span> يوم عمل · صلاحية ٣ سنوات. يشمل حسب النص «البرامج… المحتوى الإعلامي المرئي والمسموع… الرسوم المتحركة… المونتاج… الجرافيكس». الشروط نفسها: سجل فيه النشاط الإعلامي، وعنوان وطني، وهوية سارية.</div>
+    <div class="gapbox"><strong>غير مذكور رسمياً:</strong> أيّ الترخيصين يناسب مدونتي بالضبط — الهيئة هي التي تصنّف النشاط عند الطلب.</div>
+    <p class="src">المصدر: <a href="https://gmedia.gov.sa/ar/services/electronic-magazine-activity-license" target="_blank" rel="noopener">ترخيص نشاط مجلة إلكترونية</a> · <a href="https://gmedia.gov.sa/ar/services/licensing-of-electronic-journalism-activities" target="_blank" rel="noopener">ترخيص نشاط الصحافة الإلكترونية</a> · <a href="https://gmedia.gov.sa/ar/services/license-for-producing-visual-and-audio-media-content" target="_blank" rel="noopener">ترخيص إنتاج المحتوى المرئي والمسموع</a></p>
+  </article>
+
+  <!-- 4 -->
+  <article class="entity" id="vat">
+    <div class="entity-head">
+      <h3>٤ · ضريبة القيمة المضافة</h3>
+      <span class="who">هيئة الزكاة والضريبة والجمارك</span>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>الرسوم</b><span>مجانية</span></div>
+      <div class="fact"><b>المدة</b><span>5 دقائق</span></div>
+      <div class="fact"><b>المستندات</b><span>لا يوجد</span></div>
+      <div class="fact"><b>الشرط</b><span>بلوغ حد التسجيل</span></div>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>الإيرادات السنوية</th><th>الحكم</th></tr></thead>
+        <tbody>
+          <tr><td class="num">أكثر من 375,000 ريال</td><td>تسجيل إلزامي خلال ٣٠ يوماً من بلوغ الحد</td></tr>
+          <tr><td class="num">من 187,500 إلى 375,000 ريال</td><td>تسجيل اختياري</td></tr>
+          <tr><td class="num">أقل من 187,500 ريال</td><td>غير ملزم</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">المصدر: <a href="https://my.gov.sa/ar/services/20453" target="_blank" rel="noopener">التسجيل في ضريبة القيمة المضافة للمنشآت — المنصة الوطنية</a> (الرسوم والمدة والمستندات) · <a href="https://x.com/Zatca_care/status/1541900062065922048" target="_blank" rel="noopener">حساب الهيئة الرسمي «اسأل الزكاة والضريبة»</a> (الحدود) · هاتف <span class="mono">00966112048998</span></p>
+  </article>
+
+  <!-- 5 -->
+  <article class="entity" id="ecom">
+    <div class="entity-head">
+      <h3>٥ · توثيق التجارة الإلكترونية</h3>
+      <span class="chip warn">مشروط: لو الدفع يتم من الموقع</span>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>الرسوم</b><span>مجاني</span></div>
+      <div class="fact"><b>المدة</b><span>5 – 7 أيام عمل</span></div>
+      <div class="fact"><b>المستفيد</b><span>أفراد / منشآت</span></div>
+    </div>
+    <div class="cols">
+      <div><p class="lbl">الشروط الرسمية</p>
+        <ul><li>سجل تجاري أو وثيقة عمل حر سارية.</li><li>حساب بنكي تجاري مربوط بالسجل.</li></ul></div>
+      <div><p class="lbl">الخطوات (دليل المركز)</p>
+        <ol><li>الدخول إلى منصة الأعمال.</li><li>ممارسة الأعمال ← المركز السعودي للأعمال ← «توثيق إلكتروني».</li><li>«طلب توثيق جديد» واختيار نوع الوثيقة.</li><li>الموافقة على الاشتراطات.</li><li>تعبئة البيانات وقنوات التواصل ثم «تقديم الطلب».</li></ol></div>
+    </div>
+    <p class="src">المصدر: <a href="https://scbc.gov.sa/ar/eservices/details/4d6e9d30-e989-4940-08ce-08dbf015747a" target="_blank" rel="noopener">توثيق التجارة الإلكترونية — المركز السعودي للأعمال</a> · <a href="https://mc.gov.sa/ar/mediacenter/News/Pages/29-03-23-02.aspx" target="_blank" rel="noopener">بيان وزارة التجارة</a> · <a href="https://business.sa/media/files/05d23469-91b4-47e2-b5d0-e3e9cdf940a3.pdf" target="_blank" rel="noopener">دليل المستخدم</a></p>
+  </article>
+
+  <!-- 6 -->
+  <article class="entity" id="sdaia">
+    <div class="entity-head">
+      <h3>٦ · سجل جهات التحكم في البيانات الشخصية</h3>
+      <span class="chip warn">مشروط</span>
+    </div>
+    <p>يلزم التسجيل إذا كانت الجهة تعالج <strong>بيانات حساسة</strong>، أو كان <strong>نشاطها الرئيسي</strong> قائماً على معالجة البيانات الشخصية.</p>
+    <div class="cols">
+      <div><p class="lbl">الشروط الرسمية</p>
+        <ul><li>سجل تجاري غير مشطوب.</li><li>تفويض ممثل الجهة عبر المركز السعودي للأعمال.</li></ul></div>
+      <div><p class="lbl">الخطوات</p>
+        <ol><li>تعيين الممثل في المركز السعودي للأعمال.</li><li>الدخول إلى <span class="mono">dgp.sdaia.gov.sa</span> ← الجهات الخاصة بالنفاذ الوطني.</li><li>الملف التعريفي للجهة والممثل.</li><li>تقييم إلزامية تعيين مسؤول حماية البيانات.</li><li>استلام شهادة السجل الوطني.</li></ol></div>
+    </div>
+    <div class="gapbox"><strong>غير مذكور رسمياً:</strong> لا رسوم مذكورة في صفحة التسجيل.</div>
+    <p class="src">المصدر: <a href="https://dgp.sdaia.gov.sa/wps/portal/pdp/Registration/private" target="_blank" rel="noopener">تسجيل الجهات الخاصة — منصة حوكمة البيانات الوطنية</a> · <a href="https://www.spa.gov.sa/N2217412" target="_blank" rel="noopener">دعوة سدايا — واس</a></p>
+  </article>
+
+  <!-- 7 -->
+  <article class="entity" id="logo">
+    <div class="entity-head">
+      <h3>٧ · الشعار — علامة تجارية + حق مؤلف</h3>
+      <span class="who">الهيئة السعودية للملكية الفكرية — <span class="mono">eservices.saip.gov.sa</span></span>
+    </div>
+    <p>النظام الخليجي للعلامات (المادة ٢) يعدّ من العلامات «الرسوم أو الصور أو النقوش»، فالشعار والشخصية كلاهما يُسجَّل علامةً. والعلامة «مدة الحماية المترتبة على تسجيلها عشر سنوات» (المادة ٢٠).</p>
+    <div class="split">
+      <div class="sub">
+        <div class="entity-head"><h3>العلامة التجارية</h3><span class="chip money num">6,500</span></div>
+        <div class="tbl"><table style="min-width:0">
+          <tbody>
+            <tr><td>دراسة الطلب</td><td class="amt num">1,000</td></tr>
+            <tr><td>النشر</td><td class="amt num">500</td></tr>
+            <tr><td>التسجيل وإصدار الشهادة</td><td class="amt num">5,000</td></tr>
+          </tbody></table></div>
+        <p class="note">دراسة ٩٠ يوم عمل · نشر ٦٠ يوماً للاعتراض · الفاتورة النهائية خلال ٣٠ يوماً</p>
+      </div>
+      <div class="sub">
+        <div class="entity-head"><h3>حق المؤلف — مصنف فني</h3><span class="chip money num">150 / 300</span></div>
+        <div class="tbl"><table style="min-width:0">
+          <thead><tr><th></th><th>أفراد</th><th>مؤسسات</th></tr></thead>
+          <tbody>
+            <tr><td>الفحص</td><td class="num">50</td><td class="num">100</td></tr>
+            <tr><td>التسجيل</td><td class="num">100</td><td class="num">200</td></tr>
+          </tbody></table></div>
+        <p class="note">٧ أيام عمل · يوثّق أن الرسم ملككم (المصنفات ثنائية الأبعاد)</p>
+      </div>
+    </div>
+    <div><p class="lbl">مستندات العلامة (من المنصة الوطنية) — ما يخص الشعار</p>
+      <ul>
+        <li>صورة العلامة التجارية.</li>
+        <li><strong>إن كان الشعار يحتوي اسم نطاق (<span class="mono">.com</span>):</strong> شهادة إثبات تطابق مالك النطاق.</li>
+        <li>إن كان فيه عبارة أجنبية: ترجمة مع بيان النطق من مكتب ترجمة معتمد.</li>
+        <li>إن كانت الكلمة العربية غير مفهومة للعامة: إرفاق معناها — «مدونتي» كلمة عربية.</li>
+      </ul></div>
+    <div><p class="lbl">الخطوات</p>
+      <ol><li>النفاذ الوطني أو البريد ← طلب علامة جديدة (كمالك، أو مالك مؤسسة، أو شركة).</li><li>تعبئة البيانات وسداد فاتورة الدراسة.</li><li>القرار: قبول، أو قبول بشرط التعديل (مهلة ٩٠ يوماً)، أو رفض قابل للتعديل (١٠ أيام).</li><li>سداد النشر ← نشر ٦٠ يوماً.</li><li>بلا اعتراض: الفاتورة النهائية خلال ٣٠ يوماً ثم طباعة الشهادة.</li></ol></div>
+    <div class="gapbox"><strong>غير مذكور رسمياً:</strong> هل يُحسب مبلغ ٦,٥٠٠ لكل فئة خدمات أم للطلب كله. المادة ٩ من النظام تسمح «بفئة واحدة أو أكثر». اسأل <span class="mono">920021421</span> أو <span class="mono">saip@saip.gov.sa</span> قبل التقديم.</div>
+    <p class="src">المصدر: <a href="https://www.saip.gov.sa/ar/services/trademarks/trademark-registration" target="_blank" rel="noopener">تسجيل علامة تجارية — الهيئة</a> · <a href="https://my.gov.sa/ar/services/245210" target="_blank" rel="noopener">تسجيل علامة تجارية — المنصة الوطنية</a> · <a href="https://www.saip.gov.sa/ar/services/trademarks/trademark-renewal" target="_blank" rel="noopener">تجديد علامة</a> · <a href="https://www.saip.gov.sa/ar/services/%D8%AD%D9%82-%D8%A7%D9%84%D9%85%D8%A4%D9%84%D9%81/copyr10" target="_blank" rel="noopener">تسجيل مصنف فني</a> · <a href="https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/b2d0decd-a691-45b9-9af0-a9a700f1e86f/1" target="_blank" rel="noopener">نظام العلامات التجارية الخليجي</a></p>
+  </article>
+
+  <!-- 8 -->
+  <article class="entity" id="modo">
+    <div class="entity-head">
+      <h3>٨ · شخصية «مودو» — علامة تجارية + حق مؤلف</h3>
+      <span class="who">الجهة والرسوم والخطوات نفسها في البند ٧</span>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>علامة تجارية</b><span class="num">6,500 ريال</span></div>
+      <div class="fact"><b>مصنف فني (مؤسسة)</b><span class="num">300 ريال</span></div>
+      <div class="fact"><b>مصنف فني (فرد)</b><span class="num">150 ريال</span></div>
+    </div>
+    <div class="cols">
+      <div><p class="lbl">لماذا الاثنان</p>
+        <ul><li><strong>العلامة:</strong> تمنع غيركم من استعمال «مودو» في تمييز خدمات مشابهة — عشر سنوات قابلة للتجديد.</li><li><strong>حق المؤلف:</strong> شهادة رسمية بأن رسم الشخصية ملككم — تُستخدم دليلاً عند أي نزاع.</li></ul></div>
+      <div><p class="lbl">مستند يخص الشخصيات (من المنصة الوطنية)</p>
+        <ul><li>«موافقة صاحب الاسم/الصورة/اللقب/الشعار الظاهر في صورة العلامة» — لو رسمها مصمم خارجي، جهّزوا ما يثبت أن الحقوق انتقلت لكم.</li></ul></div>
+    </div>
+  </article>
+</section>
+
+<section class="body">
+  <h2>أسئلة لا تجيب عنها الصفحات الرسمية</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>السؤال</th><th>الجهة</th><th>التواصل</th></tr></thead>
+      <tbody>
+        <tr><td>رسوم العلامة: لكل فئة أم للطلب؟</td><td>الملكية الفكرية</td><td class="mono">920021421</td></tr>
+        <tr><td>مجلة إلكترونية أم صحافة إلكترونية لمدونتي؟</td><td>هيئة تنظيم الإعلام</td><td class="mono">e.gmedia.gov.sa</td></tr>
+        <tr><td>هل النشاط الإعلامي يحتاج ترخيصاً قبل إضافته للسجل؟</td><td>وزارة التجارة</td><td class="mono">1900</td></tr>
+        <tr><td>رسوم الغرفة لسجلّكم القائم</td><td>وزارة التجارة</td><td class="mono">1900</td></tr>
+        <tr><td>هل مدونتي ملزمة بسجل سدايا؟</td><td>سدايا</td><td class="mono">dgp.sdaia.gov.sa</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <p class="note">لم يُدرج هنا أي رقم من مواقع مكاتب الخدمات أو المدونات — حتى لو تكرر فيها. الأرقام تتغير؛ راجع صفحة الجهة يوم الدفع.</p>
+</footer>
+
+</div>
+</body>
+</html>

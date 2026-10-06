@@ -2,8 +2,7 @@ import { ReactNode, Suspense } from "react";
 import dynamicImport from "next/dynamic";
 import { notFound } from "next/navigation";
 import { hexToHslTriplet, readableInkHsl } from "@modonty/shared/lib/partner-site";
-import { getHeaderTemplate } from "@modonty/shared/components/partner-site/free/header";
-import { getFooterTemplate } from "@modonty/shared/components/partner-site/free/footer";
+import { resolvePartnerTheme, getThemeFooter, getThemeHeader, themeTokensCss } from "@modonty/shared/components/partner-site/theme";
 import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
 import { IconCalendarCheck, IconPhone, IconWebsite } from "@/lib/icons";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
@@ -59,7 +58,8 @@ async function PartnerChrome({ params, slot }: PartnerChromeProps) {
   const { header, footer } = buildChromeData(site, await getCopyrightYear());
 
   if (slot === "footer") {
-    const Footer = getFooterTemplate(site.site?.footerTemplate).Component;
+    // The partner's theme (THEMES.md) — free unless he has another and is entitled to it.
+    const Footer = getThemeFooter(resolvePartnerTheme(site.site?.themeKey), site.site?.footerTemplate).Component;
     // The partner page's two doors in the shared mobile bar (MOBCHROME): primary = his
     // admin-chosen CTA (the same ctaMode/ctaLabel/ctaUrl every other surface reads),
     // secondary = «تواصل» to his contact block. Full path (not bare #hash) so the bar
@@ -81,12 +81,15 @@ async function PartnerChrome({ params, slot }: PartnerChromeProps) {
         <Footer data={footer} />
         {/* Clears the fixed bar below lg — the PAIR rule from MobileCtaBar's contract. */}
         <div aria-hidden className="h-20 lg:hidden" />
-        <MobileCtaBar ariaLabel="احجز أو تواصل" primary={primary} secondary={secondary} />
+        {/* Bottom, not under the header: there it hid behind the partner's own header (4 Oct 2026). */}
+        <MobileCtaBar ariaLabel="احجز أو تواصل" primary={primary} secondary={secondary} placement="bottom" />
       </div>
     );
   }
 
-  const Header = getHeaderTemplate(site.site?.headerTemplate).Component;
+  // The partner's theme: header shapes and the look's CSS variables come from it (THEMES.md).
+  const theme = resolvePartnerTheme(site.site?.themeKey);
+  const Header = getThemeHeader(theme, site.site?.headerTemplate).Component;
   // كان يستنتج التوثيق من امتلاء السجلّ أو الاسم النظاميّ أو صورة التوثيق — وكلّها
   // بياناتٌ يدخلها العميل، فوجودها لا يعني أنّ أحداً فحصها. والقوائم كانت تستنتجه من
   // الباقة، فظهر العميل موثَّقاً هنا وغيرَ موثَّق هناك. المصدر الآن خانة الأدمن وحدها.
@@ -123,6 +126,8 @@ async function PartnerChrome({ params, slot }: PartnerChromeProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdHtml(generateBreadcrumbStructuredData(breadcrumbTrail)) }}
       />
+      {/* The theme's look — radii and section rhythm — on the same wrappers the colour targets. */}
+      <style>{`#main-content,[data-partner-theme]{${themeTokensCss(theme.tokens)}}`}</style>
       {primaryHsl && (
         <style>{
           `#main-content,[data-partner-theme]{--primary:${primaryHsl};--ring:${primaryHsl};--primary-ink:${inkLight ?? primaryHsl}}` +

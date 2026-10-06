@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { ModontyTrustMark } from "@modonty/shared/components/icons/modonty-trust-mark";
@@ -87,6 +88,15 @@ export function PageContentEditor({ initial, views, chrome }: Props) {
               onClick={() => setPage(key)}
             />
           ))}
+          {/* The way back to the result: this screen writes, «تصميم الموقع» shows — and nothing here
+              led there (4 Oct 2026). Opens the builder on the same page. */}
+          <Link
+            href={`/dashboard/my-site?p=${page}`}
+            className="ms-auto inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg border border-primary/30 bg-background px-3 text-xs font-bold text-primary transition-colors hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            شوف النتيجة
+            <ChevronLeft className="h-3.5 w-3.5" aria-hidden />
+          </Link>
           {/* ما عاد فيه زرّ حفظٍ عامّ (خالد ٣١ أغسطس): كل قسم يحفظ نفسه من حواره، فزرٌّ
               اسمه «حفظ محتوى الصفحة» ما عاد يحفظ شيئاً — ووجوده يوهم أن الشغل غير محفوظ. */}
         </div>

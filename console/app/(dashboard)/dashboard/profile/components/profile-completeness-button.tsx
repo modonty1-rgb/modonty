@@ -81,7 +81,7 @@ export function ProfileCompletenessButton({
             <DialogDescription>
               {missing > 0
                 ? `باقي ${missing} ${missing === 1 ? "حقل" : "حقول"} لإكمال ملفك — موضّحة بالأسفل.`
-                : "ملفك مكتمل بالكامل 🎉"}
+                : "ملفك مكتمل بالكامل"}
             </DialogDescription>
           </DialogHeader>
 
@@ -93,7 +93,7 @@ export function ProfileCompletenessButton({
               return (
                 <div key={s.title}>
                   <div className="mb-1.5 flex items-center justify-between">
-                    <h4 className="text-xs font-bold text-foreground">{s.title}</h4>
+                    <h3 className="text-xs font-bold text-foreground">{s.title}</h3>
                     <span className="text-xs tabular-nums text-muted-foreground">
                       {s.fields.length - sectionMissing}/{s.fields.length}
                     </span>

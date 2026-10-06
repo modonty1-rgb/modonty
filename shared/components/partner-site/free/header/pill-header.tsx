@@ -1,5 +1,6 @@
 "use client";
 
+import { SiteLink } from "../../parts/site-link";
 import { Phone } from "lucide-react";
 
 import { cn } from "../../../../lib/utils/index";
@@ -21,23 +22,23 @@ export function PillHeader({ data }: { data: HeaderData }) {
         {/* اسم النشاط لا ينكمش على الديسكتوب: كان الوحيد الذي يحمل `min-w-0` في الشريط،
             فانضغط إلى ١٣٠px وهو يحتاج ١٥٣ فبُتِر (مقيس ١٢٨٠ · ٣١ أغسطس). شريط الروابط
             يملك ٥٧٨px ففيه فائضٌ يكفي، والاسم أهمّ من مسافة بين الروابط. */}
-        <a href={data.homeHref} className="min-w-0 xl:shrink-0 max-md:flex max-md:min-h-11 max-md:items-center">
+        <SiteLink href={data.homeHref} className="min-w-0 xl:shrink-0 max-md:flex max-md:min-h-11 max-md:items-center">
           {/* «الكبسولة» تنفق عرضها على شريط الروابط وزرّي الهاتف والقائمة، فلا يبقى للعلامة
               إلا ١٥٥px — والسطر التعريفي يحتاج ١٩٢ فيُبتَر «السياحة العلاجية · الإسكندري…»
               على ٣٩٠ **وعلى ١٢٨٠ معاً** (مقيس ٣١ أغسطس). سطرٌ نصفه لا يفيد، فيُحذف من هذا
               القالب وحده — وبقيّة القوالب تعرضه لأن عندها متّسعاً. */}
           <BrandLogo name={data.name} logoUrl={data.logoUrl} />
-        </a>
+        </SiteLink>
         {/* الشارة تختفي تحت `md`: الشريط ينفق عرضه على زرّي الهاتف والقائمة، والمقيس على
             ٣٩٠ أن اسم النشاط لم يبق له إلا ٩٢px من ١٥٣ فبُتِر. الاسم يسبق الشارة —
             والشارة باقية على الديسكتوب وفي بقيّة القوالب. */}
-        <VerifiedBadge className="max-md:hidden" />
+        {data.verified ? <VerifiedBadge className="max-md:hidden" /> : null}
         {/* شريط الروابط من ١٢٨٠ فقط: بين ٧٦٨ و١٢٧٩ كان يزاحم اسم النشاط فيُبتَر (١٥٣←١١٥
             مقيس على ٩٥٠)، أو يدفع أزرار الطرف خارج الشاشة حين مُنع الاسم من الانكماش.
             دون ذلك يتولّى زرّ القائمة — ونفس الروابط داخله. */}
         <nav className="hidden items-center rounded-full border p-1 xl:flex" aria-label="الصفحات">
           {data.links.map((l) => (
-            <a
+            <SiteLink
               key={l.href}
               href={l.href}
               aria-current={l.href === current ? "page" : undefined}
@@ -47,12 +48,12 @@ export function PillHeader({ data }: { data: HeaderData }) {
               )}
             >
               {l.label}
-            </a>
+            </SiteLink>
           ))}
         </nav>
         <div className="flex items-center gap-2">
           {data.phone && (
-            <a
+            <SiteLink
               href={`tel:${data.phone}`}
               aria-label="اتصال"
               // ٤٤×٤٤ على الجوّال: المقيس كان ٤٠×٤٠ — دون حدّ Apple HIG، ومخالف لجاره
@@ -62,7 +63,7 @@ export function PillHeader({ data }: { data: HeaderData }) {
               className="grid h-10 w-10 place-items-center rounded-full border text-[hsl(var(--primary-ink,var(--primary)))] max-md:h-11 max-md:w-11"
             >
               <Phone className="h-4 w-4" />
-            </a>
+            </SiteLink>
           )}
           <WhatsAppButton href={data.whatsappHref} variant="round" className="hidden xl:grid" />
           <MobileMenu data={data} hideAt="xl:hidden" />

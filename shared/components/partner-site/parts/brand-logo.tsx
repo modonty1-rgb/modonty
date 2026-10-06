@@ -30,7 +30,7 @@ export function BrandLogo({ name, tagline, logoUrl, size = "small", light = fals
       <span className="min-w-0 leading-tight">
         <span className={cn("block truncate text-base font-bold", light && "text-white")}>{name}</span>
         {tagline && (
-          <span className={cn("block truncate text-xs", light ? "text-white/75" : "text-muted-foreground", taglineClassName)}>{tagline}</span>
+          <span className={cn("block truncate text-sm md:text-xs", light ? "text-white/75" : "text-muted-foreground", taglineClassName)}>{tagline}</span>
         )}
       </span>
     </span>

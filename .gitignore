@@ -119,3 +119,4 @@ payment/_*.mjs
 skills-lock.json
 **/skills-lock.json
 payment/.claude/
+.env*

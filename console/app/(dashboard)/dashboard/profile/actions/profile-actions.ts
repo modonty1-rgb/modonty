@@ -76,6 +76,15 @@ type ProfileUpdate = {
 };
 
 export async function updateProfile(clientId: string, data: ProfileUpdate) {
+  // The partner comes from the SESSION, never from the caller (security fix, 4 Oct 2026). This
+  // action trusted the `clientId` it was handed — and partner ids are public in modonty's HTML —
+  // so anyone could rewrite any partner's name, phone, address and links. The argument stays for
+  // the existing caller, but it must be the signed-in partner's own id.
+  const session = await auth();
+  const sessionClientId = (session as { clientId?: string })?.clientId;
+  if (!sessionClientId || sessionClientId !== clientId) {
+    return { success: false, error: messages.error.unauthorized };
+  }
   try {
     const client = await db.client.findUnique({
       where: { id: clientId },
@@ -225,7 +234,8 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
     // the save so the public client page stays in sync — but a regen failure must
     // NEVER fail the save (which already succeeded).
     try {
-      await regenerateClientSeo(clientId);
+      // Profile edits change what the directory and home cards show (name, logo, slogan).
+      await regenerateClientSeo(clientId, { listing: true });
     } catch {
       // swallow — save already succeeded; SEO regen is best-effort
     }

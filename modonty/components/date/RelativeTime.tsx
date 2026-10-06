@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
-const rtf = new Intl.RelativeTimeFormat("ar", { numeric: "always" });
+// SITE_LOCALE لا "ar": «ar» يكتب «قبل 3 أيام» بأرقامٍ لاتينيّة بجانب «١٢» المشاهدات (تدقيق الجوال ٣ أكتوبر ٢٠٢٦).
+const rtf = new Intl.RelativeTimeFormat(SITE_LOCALE, { numeric: "always" });
 
 function formatRelative(date: Date, now: Date): string {
   const diff = date.getTime() - now.getTime();

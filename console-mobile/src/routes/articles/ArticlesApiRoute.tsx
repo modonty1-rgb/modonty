@@ -59,7 +59,6 @@ export function ArticlesApiRoute({ collection, error, siteOpenError, onRetry, on
       position={groupPositionOf(index, articleCount)}
       article={item}
       accessibilityLabel={siteOpenAccessibilityPrefix ? `${siteOpenAccessibilityPrefix} ${item.title}` : item.title}
-      openLabel={siteOpenLabel ?? ''}
       onOpen={onOpenSite}
     />;
     return <ArticleCard

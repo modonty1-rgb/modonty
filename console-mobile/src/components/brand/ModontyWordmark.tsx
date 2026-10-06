@@ -1,28 +1,20 @@
 import { Image } from 'expo-image';
-import { StyleSheet, View } from 'react-native';
-import { radii, spacing } from '@/src/theme/tokens';
+import { SvgXml } from 'react-native-svg';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
+import { MODONTY_WORDMARK_LIGHT_SVG } from './modonty-wordmark-light-svg';
 
 type ModontyWordmarkProps = { width?: number; height?: number };
 
 /**
- * الشعار الرسمي كما هو — على اللون الذي رُسم له.
+ * الشعار الرسمي بنسختيه — كلٌّ على الأرضية التي رُسم لها.
  *
- * الأصل `modonty-wordmark-on-navy.png` حروفه **بيضاء على خلفية شفّافة**، أي أنّه مخبوز
- * لأرضية كحلية. في الوضع الداكن يجلس على الصفحة مباشرةً فيقرأ. وفي الفاتح كان يجلس على
- * رأسٍ شبه أبيض، فتختفي «odonty» كلياً — الشعار مكسور نصفه على نصف مستخدمينا.
- *
- * الحلّ **ليس** إعادة تلوين الماركة (لا نملك أصلاً فاتحاً، وتلوين شعار بالكود تزوير علامة)،
- * بل إعطاؤه لوحه الكحلي في الفاتح — «لوحة الشعار» القياسية في كل دليل ماركة. صندوق الـ«m»
- * الكحلي داخل الأصل يذوب في اللوح فيبدو لقباً واحداً، والماركة لم تُمسّ بكسلاً.
+ * الداكن: `modonty-wordmark-on-navy.png` حروفه بيضاء على خلفية شفّافة، فيجلس على الصفحة مباشرةً.
+ * الفاتح: النسخة الرسمية للأرضيات الفاتحة (`admin/public/brand-assets/logo-light.svg` — حروف
+ * زرقاء وصندوق «m» كحلي). كان الفاتح يعرض نسخة الداكن على لوحٍ كحلي، فيظهر مستطيلاً داكناً
+ * نشازاً أعلى شاشة فاتحة (جوال خالد ٥ أكتوبر ٢٠٢٦) — والنسخة الصحيحة كانت موجودة في الأدمن.
  */
 export function ModontyWordmark({ width = 140, height = 48 }: ModontyWordmarkProps) {
-  const { theme, mode } = useAppTheme();
-  const mark = <Image source={require('../../../assets/brand/modonty-wordmark-on-navy.png')} style={{ width, height }} contentFit="contain" />;
-  if (mode === 'dark') return mark;
-  return <View style={[styles.plate, { backgroundColor: theme.colors.navy }]}>{mark}</View>;
+  const { mode } = useAppTheme();
+  if (mode === 'dark') return <Image source={require('../../../assets/brand/modonty-wordmark-on-navy.png')} style={{ width, height }} contentFit="contain" />;
+  return <SvgXml xml={MODONTY_WORDMARK_LIGHT_SVG} width={width} height={height} />;
 }
-
-const styles = StyleSheet.create({
-  plate: { alignItems: 'center', borderRadius: radii.field, justifyContent: 'center', paddingHorizontal: spacing.xs, paddingVertical: spacing.xxs },
-});

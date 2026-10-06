@@ -83,7 +83,7 @@ export function SupportRoute({ accessToken, onDone }: Props) {
           <Text style={[styles.body, { color: theme.colors.onPositiveContainer }]}>{review.sentDescription}</Text>
         </TonalCard>
       </EnterView> : <EnterView index={1} style={styles.form}>
-        <TextAreaField label={review.messageLabel} value={message} onChangeText={setMessage} placeholder={review.messagePlaceholder} maxLength={review.messageMaxLength} editable={!isSending} minHeight={MESSAGE_HEIGHT} helper={review.noteLabel} counter={`${arabicDigits(message.length)} / ${review.counterMaxLabel}`} />
+        <TextAreaField label={review.messageLabel} value={message} onChangeText={setMessage} placeholder={review.messagePlaceholder} maxLength={review.messageMaxLength} editable={!isSending} minHeight={MESSAGE_HEIGHT} helper={review.noteLabel} counter={message.length > 0 ? `${arabicDigits(message.length)} / ${review.counterMaxLabel}` : null} />
         {sendError ? <Text accessibilityLiveRegion="assertive" style={[styles.secondary, { color: theme.colors.errorText }]}>{sendError}</Text> : null}
         <DockSurface>
           <PillButton label={isSending ? review.submittingLabel : review.submitLabel} disabled={!canSend} glow={false} onPress={send} accessibilityState={{ disabled: !canSend, busy: isSending }} />

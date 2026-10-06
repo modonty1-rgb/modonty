@@ -6,11 +6,13 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
 import { requireFinanceAdmin } from "@/lib/require-finance-admin";
+import { refundTamaraOrder } from "@/lib/payments/refund-tamara-order";
 
 /**
- * تسجيلُ استردادٍ حصل — لا تنفيذُه.
+ * تسجيلُ استردادٍ حصل — وتنفيذُه لطلبات تمارا وحدها.
  *
- * المالُ يُردّ في البنك أو لدى المزوّد بيدِ إنسان؛ وهذا الفعلُ يكتب أنّه حصل. وكانت
+ * المالُ يُردّ في البنك أو لدى المزوّد بيدِ إنسان؛ وهذا الفعلُ يكتب أنّه حصل. الاستثناء تمارا:
+ * شرطُها أن يمرّ كل استردادٍ عبر واجهتها، فيُطلب الردّ منها أوّلاً (`refundTamaraOrder`). وكانت
  * `REFUNDED` قيمةً في الـenum **بلا كودٍ يكتبها** (مقيسٌ ١٨ سبتمبر ٢٠٢٦: صفر كاتب)،
  * فالمالُ يخرج من الحساب ويبقى في تقرير المبيعات إيراداً إلى الأبد.
  *
@@ -43,7 +45,20 @@ export async function refundOrderAction(
   // شرطٌ على القيمة المخزَّنة لا المعروضة: الصفحةُ قد تكون مفتوحةً منذ دقائق.
   if (order.status !== "PAID") return { ok: false, error: `لا يُسترد إلّا المدفوع — هذا الطلب «${order.status}»` };
 
-  const stamp = `↩ مُسترَد ${new Date().toISOString().slice(0, 10)} — ${reason}`;
+  // طلب تمارا يُردّ عبر واجهتهم أوّلاً (قائمة إطلاق تمارا: الاسترداد عبر تمارا وحدها).
+  // إن رفضت تمارا لا يُكتب شيء — وإلّا خرج المال من التقرير وبقي عند العميل دَيناً.
+  const viaTamara = await db.paymentTransaction.findFirst({
+    where: { orderId, provider: "TAMARA", providerOrderRef: { not: null } },
+    select: { id: true },
+  });
+  let tamaraRefundId: string | null = null;
+  if (viaTamara) {
+    const result = await refundTamaraOrder(orderId, reason);
+    if (!result.ok) return { ok: false, error: result.error };
+    tamaraRefundId = result.refundId;
+  }
+
+  const stamp = `↩ مُسترَد ${new Date().toISOString().slice(0, 10)} — ${reason}${tamaraRefundId ? ` · تمارا ${tamaraRefundId}` : ""}`;
   await db.checkoutOrder.update({
     where: { id: orderId },
     data: { status: "REFUNDED", notes: order.notes ? `${order.notes}\n${stamp}` : stamp },
@@ -53,7 +68,7 @@ export async function refundOrderAction(
     entity: "Order",
     entityId: orderId,
     summary: `استرداد ${order.number} — ${(order.totalMinor / 100).toLocaleString("en")} ${order.currency} — ${reason}`,
-    metadata: { totalMinor: order.totalMinor, currency: order.currency, reason },
+    metadata: { totalMinor: order.totalMinor, currency: order.currency, reason, tamaraRefundId },
   });
 
   revalidatePath("/orders");

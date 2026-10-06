@@ -25,11 +25,13 @@ export function ReadingProgressBar() {
   }, []);
 
   return (
+    // أعلى الشاشة فوق الهيدر (خالد ٣ أكتوبر ٢٠٢٦: «فوق الناف بار الرئيسي… عشان ما يعمل تشويش بصري») — خطٌّ
+    // على حافّة الشاشة لا يتحرّك مع الأشرطة تحته ولا يعلق بينها. القديم:
     // `top-[var(--sticky-chrome)]`, not `top-14`: on the phone the tabs band hangs under the
     // header and `top-14` drew this line across the tabs' welded top edge (measured 23 Aug:
     // bar y=56, band y=56–135). The token is 135px on phones (this page's tab is active) and
     // 56px from `lg` up, so the desktop line does not move.
-    <div className="fixed top-[var(--sticky-chrome)] left-0 right-0 h-1 bg-background z-40">
+    <div data-reading-progress className="fixed top-0 left-0 right-0 z-50 h-1 bg-transparent">
       <div
         className="h-full bg-accent transition-all duration-150"
         style={{ width: mounted ? `${progress}%` : "0%" }}

@@ -1,6 +1,7 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
+import { clientSlugTag } from "@modonty/shared/lib/cache/client-cache-tags";
 
 /**
  * Everything the partner site's chrome (header nav · footer) and hero need, in ONE cached
@@ -10,7 +11,7 @@ import { db } from "@/lib/db";
  */
 export async function getPartnerSite(decodedSlug: string) {
   "use cache";
-  cacheTag("clients");
+  cacheTag("clients", clientSlugTag(decodedSlug));
   cacheLife("hours");
   return db.client.findUnique({
     where: { slug: decodedSlug, subscriptionStatus: SubscriptionStatus.ACTIVE },
@@ -46,7 +47,7 @@ export async function getPartnerSite(decodedSlug: string) {
 
 
       // The partner's look, chosen in the console «إعدادات الموقع» (ClientSite): keys into the shared registries.
-      site: { select: { headerTemplate: true, footerTemplate: true, primaryColor: true, hiddenSections: true } },
+      site: { select: { headerTemplate: true, footerTemplate: true, primaryColor: true, hiddenSections: true, themeKey: true } },
       services: true,
       achievements: true,
       credentials: true,

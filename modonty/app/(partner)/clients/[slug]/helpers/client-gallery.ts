@@ -1,5 +1,6 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
+import { clientSlugTag } from "@modonty/shared/lib/cache/client-cache-tags";
 
 export interface ClientGalleryImage {
   id: string;
@@ -18,7 +19,7 @@ export interface ClientGalleryImage {
  */
 export async function getClientGallery(clientSlug: string): Promise<ClientGalleryImage[]> {
   "use cache";
-  cacheTag("clients");
+  cacheTag("clients", clientSlugTag(clientSlug));
   // Hours, not minutes (plan أ٦, 2 Oct 2026). «minutes» was the stopgap for a console that
   // could not bust modonty's cache; it can now — every console write to reviews, the page FAQ
   // and the gallery goes through regenerateClientSeo(), which calls revalidateModontyTag

@@ -12,5 +12,7 @@ export const metadata = { title: "Tasks" };
  * Assign Task each carry their own title.
  */
 export default function TasksLayout({ children }: { children: ReactNode }) {
-  return <div className="flex h-full min-h-0 flex-col gap-3 p-4 sm:p-6">{children}</div>;
+  // بلا حشوة: `<main>` في تخطيط الأدمن يحشو ٢٤ بكسل أصلاً، والثانيةُ هنا كانت ٤٨ بكسل فارغة فوق
+  // كلّ صفحة مهامّ (مقيس ٣ أكتوبر ٢٠٢٦ على شاشة خالد ١٢٨٠×٤٩٥: العنوانُ عند ١٠٥ والشريطُ ينتهي عند ٥٧).
+  return <div className="flex h-full min-h-0 flex-col gap-3">{children}</div>;
 }

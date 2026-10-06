@@ -16,17 +16,18 @@ import {
 } from "recharts";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 type Day = { date: string; impressions: number; clicks: number; views: number };
 type TopPage = { title: string; impressions: number; clicks: number; views: number };
 
 const grid = "hsl(var(--border))";
-const tick = { fontSize: 12, fill: "hsl(var(--muted-foreground))" };
+const tick = { fontSize: 14, fill: "hsl(var(--muted-foreground))" };
 const primary = "hsl(var(--primary))";
 const emerald = "#059669";
 const violet = "#7c3aed";
-const tooltipStyle = { backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "var(--radius)", fontSize: 12 };
-const dayLabel = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("ar-SA", { month: "short", day: "numeric", timeZone: "UTC" });
+const tooltipStyle = { backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "var(--radius)", fontSize: 14 };
+const dayLabel = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString(SITE_LOCALE_GREGORIAN, { month: "short", day: "numeric", timeZone: "UTC" });
 const short = (s: string, n = 26) => (s.length > n ? `${s.slice(0, n).trimEnd()}…` : s);
 const NAMES: Record<string, string> = { impressions: "ظهور في جوجل", clicks: "زيارات من جوجل", views: "مشاهدات على مدونتي" };
 
@@ -62,7 +63,7 @@ export function OverviewCharts({ daily, topPages }: { daily: Day[]; topPages: To
                 <YAxis yAxisId="impr" tick={tick} width={44} />
                 <YAxis yAxisId="people" orientation="right" tick={tick} width={36} allowDecimals={false} />
                 <Tooltip contentStyle={tooltipStyle} formatter={(v: number | string, n: string) => [Number(v).toLocaleString(), NAMES[n] ?? n]} />
-                <Legend formatter={(v: string) => NAMES[v] ?? v} wrapperStyle={{ fontSize: 12 }} />
+                <Legend formatter={(v: string) => NAMES[v] ?? v} wrapperStyle={{ fontSize: 14 }} />
                 <Area yAxisId="impr" type="monotone" dataKey="impressions" stroke={primary} strokeWidth={2} fill="url(#ovImpr)" />
                 <Line yAxisId="people" type="linear" dataKey="clicks" stroke={emerald} strokeWidth={2} dot={false} />
                 <Line yAxisId="people" type="linear" dataKey="views" stroke={violet} strokeWidth={2} dot={false} />
@@ -96,7 +97,7 @@ export function OverviewCharts({ daily, topPages }: { daily: Day[]; topPages: To
                     ]}
                   />
                   <Bar dataKey="impressions" fill={primary} radius={[0, 4, 4, 0]} barSize={14}>
-                    <LabelList dataKey="impressions" position="right" style={{ fontSize: 12, fill: "hsl(var(--foreground))" }} formatter={(v: number) => v.toLocaleString()} />
+                    <LabelList dataKey="impressions" position="right" style={{ fontSize: 14, fill: "hsl(var(--foreground))" }} formatter={(v: number) => v.toLocaleString()} />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>

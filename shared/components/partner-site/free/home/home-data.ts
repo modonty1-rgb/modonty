@@ -34,17 +34,19 @@ export interface HomeData {
     description: string | null;
     legalName: string | null;
   };
-  services: { title: string; description: string | null }[];
+  services: { title: string; description: string | null; icon?: string | null }[];
   stats: { value: string; label: string }[];
   testimonials: { rating: number; comment: string; author: string }[];
   /** Latest images first; width/height drive the justified rows (repo gallery standard). */
   gallery: { url: string; alt: string; width: number | null; height: number | null }[];
   team: { name: string; role: string | null; photoUrl: string | null }[];
-  video: { url: string; posterUrl: string | null; title: string | null } | null;
+  video: { url: string; posterUrl: string | null; title: string | null; width?: number | null; height?: number | null } | null;
   faqs: { question: string; answer: string }[];
   posts: { title: string; href: string; imageUrl: string | null; date: string | null; excerpt: string | null; category: string | null }[];
-  /** صفحة «مقالاتي» — وجهة زرّ «كل المقالات» حين تتجاوز المقالات الثلاثة المعروضة. */
+  /** صفحة «مقالاتنا» — وجهة زرّ «كل المقالات» حين تتجاوز المقالات الثلاثة المعروضة. */
   blogHref?: string;
+  /** The partner's booking page (`/clients/<slug>/book`) — where the FORM button leads. */
+  bookHref?: string;
   /**
    * His published reels, newest first — each a link to its own watch page (`/reels/<slug>`).
    * Plan item د١ (2 Oct 2026): 11 of 23 reels were never indexed because no page linked to
@@ -53,6 +55,11 @@ export interface HomeData {
   reels: { title: string; href: string; imageUrl: string | null }[];
   /** The partner's reels page — the home block's «كل الريلز» when it shows fewer than all. */
   reelsHref?: string;
+  /** The other full pages, for the home sections' «عرض الكل» (4 Oct 2026). */
+  servicesHref?: string;
+  reviewsHref?: string;
+  photosHref?: string;
+  faqHref?: string;
   contact: {
     address: string | null;
     email: string | null;

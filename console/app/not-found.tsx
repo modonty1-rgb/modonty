@@ -55,28 +55,28 @@ export default function NotFound() {
           <div className="flex flex-wrap gap-2 justify-center text-sm">
             <Link
               href="/dashboard/profile"
-              className="text-primary hover:underline"
+              className="inline-flex items-center text-primary hover:underline max-md:min-h-11"
             >
               معلومات النشاط
             </Link>
             <span className="text-muted-foreground">·</span>
             <Link
               href="/dashboard/seo/intake"
-              className="text-primary hover:underline"
+              className="inline-flex items-center text-primary hover:underline max-md:min-h-11"
             >
               معلومات نشاطك
             </Link>
             <span className="text-muted-foreground">·</span>
             <Link
               href="/dashboard/articles"
-              className="text-primary hover:underline"
+              className="inline-flex items-center text-primary hover:underline max-md:min-h-11"
             >
               المقالات
             </Link>
             <span className="text-muted-foreground">·</span>
             <Link
               href="/dashboard/media"
-              className="text-primary hover:underline"
+              className="inline-flex items-center text-primary hover:underline max-md:min-h-11"
             >
               الوسائط
             </Link>

@@ -52,19 +52,23 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
         redirect: false,
       });
 
-      if (result?.error) {
-        const errorMsg = messages.error.invalidCredentials;
-        setError(errorMsg);
-        toast.error(errorMsg);
-      } else if (result?.ok) {
+      if (result?.ok && !result.error) {
+        /**
+         * الزرّ يبقى «جارٍ الدخول» حتى تنتقل الصفحة فعلاً — لا `finally`.
+         * قِيس على الإنتاج ٥ أكتوبر ٢٠٢٦: الدخول يرجع بسرعة ثم يأخذ فتح اللوحة ثوانيَ،
+         * فكان الزرّ يرجع فعّالاً بينها، فيظنّ العميل أن ضغطته لم تُحسب ويضغط ثانيةً.
+         */
         router.push("/dashboard");
         router.refresh();
+        return;
       }
+      const errorMsg = messages.error.invalidCredentials;
+      setError(errorMsg);
+      toast.error(errorMsg);
     } catch {
       setError(ar.login.somethingWrong);
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const errorProps = error

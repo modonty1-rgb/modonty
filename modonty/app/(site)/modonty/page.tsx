@@ -187,7 +187,7 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
               services={profile.services}
             />
           </div>
-          <ModontyMobileLanding hero={mobileHero} />
+          <ModontyMobileLanding hero={mobileHero} clientSlug={profile.slug} />
         </div>
       }
       right={

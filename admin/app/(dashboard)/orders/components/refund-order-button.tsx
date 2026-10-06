@@ -24,7 +24,7 @@ import { refundOrderAction } from "../actions/refund-order";
  * T-08 بسببٍ من حرفين: الفعلُ رفض، والطلبُ بقي `PAID`، والحوار انغلق بلا كلمة — فيقرأ
  * الموظّف الصمتَ نجاحاً ويظنّ المالَ خارجاً من الإيراد وهو فيه.
  */
-export function RefundOrderButton({ orderId, amountLabel, buyerName }: { orderId: string; amountLabel: string; buyerName: string }) {
+export function RefundOrderButton({ orderId, amountLabel, buyerName, viaTamara = false }: { orderId: string; amountLabel: string; buyerName: string; viaTamara?: boolean }) {
   const [state, action, pending] = useActionState(refundOrderAction, null);
   const [open, setOpen] = useState(false);
 
@@ -46,7 +46,9 @@ export function RefundOrderButton({ orderId, amountLabel, buyerName }: { orderId
           <AlertDialogHeader>
             <AlertDialogTitle>تسجيل استرداد {amountLabel} لـ«{buyerName}»؟</AlertDialogTitle>
             <AlertDialogDescription>
-              يخرج الطلب من الإيراد فوراً ويصير «مسترد». المالُ يُردّ في البنك بيدك — هذا تسجيلٌ لما حصل.
+              {viaTamara
+                ? "دُفع بتمارا: التأكيد يردّ المبلغ كاملاً للعميل عبر تمارا الآن، ثم يخرج الطلب من الإيراد ويصير «مسترد». "
+                : "يخرج الطلب من الإيراد فوراً ويصير «مسترد». المالُ يُردّ في البنك بيدك — هذا تسجيلٌ لما حصل. "}
               ولا يُفكّ حساب العميل: إيقافُ الخدمة قرارٌ آخر من كرته.
             </AlertDialogDescription>
           </AlertDialogHeader>

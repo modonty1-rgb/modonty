@@ -28,8 +28,10 @@ export async function PlatformBar({ isVerified, clientSlug }: PlatformBarProps) 
       <div className="bg-[#0b0d1f] text-sm text-[#c9ccdf] md:text-xs">
         {/* الارتفاع: كان 44 على الجوّال — وهو الحدّ الأدنى لهدف اللمس لا المريح
             (Apple HIG · Layout: 44×44pt أدنى · Material: 48dp). صار 56 ليتنفّس الصفّ
-            ويصله الإصبع بلا تصويب. الديسكتوب يبقى 36. */}
-        <div className="mx-auto flex h-9 max-w-[1216px] items-center gap-4 px-4 max-md:h-14">
+            ويصله الإصبع بلا تصويب. الديسكتوب يبقى 36.
+            المسافات على الجوّال ضاقت (٤ أكتوبر): مقيس على ٣٦٠ — الشعار ١١٦ + الشارة ١٤ +
+            الأزرار ١٨٢ + فراغات ٤٨ + حشو ٣٢ = ٣٩٢، فخرج الشريط ٣٢px عن الشاشة. */}
+        <div className="mx-auto flex h-9 max-w-[1216px] items-center gap-4 px-4 max-md:h-14 max-md:gap-2">
           {/* الشعار الرسمي لا اسمٌ مكتوب بيد (خالد ٣٠ أغسطس). و`LogoNav` هو المكوّن الذي
               يقرأه من الإعدادات ويضبط مقاسه — فالشريط يستهلكه بدل أن يعيد بناءه، وأي تبديل
               للشعار من الأدمن يصل هنا بلا لمس هذا الملفّ. */}
@@ -52,7 +54,7 @@ export async function PlatformBar({ isVerified, clientSlug }: PlatformBarProps) 
               </Link>
             </>
           ) : null}
-          <span className="ms-auto flex items-center gap-2 md:gap-3">
+          <span className="ms-auto flex items-center gap-1 md:gap-3">
             {/* Same size as the two phone icons / desktop buttons, so nothing shifts when it lands. */}
             <Suspense fallback={<span className="inline-block h-7 w-[150px] max-md:h-9 max-md:w-[78px]" aria-hidden />}>
               <PlatformBarActionsIsland clientSlug={clientSlug} />

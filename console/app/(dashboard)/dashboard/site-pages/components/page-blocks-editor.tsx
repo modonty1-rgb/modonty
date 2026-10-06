@@ -4,33 +4,14 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Lock } from "lucide-react";
 import { Switch } from "@modonty/shared/components/ui/switch";
-import { HOME_BLOCKS, type HomeBlockKey, type HomeData } from "@modonty/shared/components/partner-site/free/home";
-import { ABOUT_BLOCKS } from "@modonty/shared/components/partner-site/free/about";
-import { SERVICES_BLOCKS } from "@modonty/shared/components/partner-site/free/services";
-import { GALLERY_BLOCKS } from "@modonty/shared/components/partner-site/free/gallery";
-import { FAQ_BLOCKS } from "@modonty/shared/components/partner-site/free/faq";
-import { CONTACT_BLOCKS } from "@modonty/shared/components/partner-site/free/contact";
-import { BLOG_BLOCKS } from "@modonty/shared/components/partner-site/free/blog";
-import { BOOKING_BLOCKS } from "@modonty/shared/components/partner-site/free/booking";
-import { REVIEWS_BLOCKS } from "@modonty/shared/components/partner-site/free/testimonials";
+import type { HomeBlockKey, HomeData } from "@modonty/shared/components/partner-site/free/home";
 
 import { cn } from "@/lib/utils";
 import { saveHiddenBlocks } from "@/lib/my-site/save-hidden-blocks";
+import { PAGE_BLOCKS } from "@/lib/my-site/page-blocks";
 
 import type { BlocksPage } from "../helpers/blocks-pages";
 
-/** Registries live here (client side): a server page cannot pass components/functions as props. */
-const PAGE_BLOCKS: Record<BlocksPage, readonly (typeof HOME_BLOCKS)[number][]> = {
-  home: HOME_BLOCKS,
-  about: ABOUT_BLOCKS,
-  services: SERVICES_BLOCKS,
-  photos: GALLERY_BLOCKS,
-  faq: FAQ_BLOCKS,
-  contact: CONTACT_BLOCKS,
-  articles: BLOG_BLOCKS,
-  book: BOOKING_BLOCKS,
-  reviews: REVIEWS_BLOCKS,
-};
 
 interface PageBlocksEditorProps {
   page: BlocksPage;
@@ -50,10 +31,12 @@ export function PageBlocksEditor({ page, data, initialHidden }: PageBlocksEditor
   const [pending, startTransition] = useTransition();
 
   // A switch is the save: one round-trip per flip, and the site updates within seconds.
+  // Keys are per page («home:testimonials») so a switch here never touches another page.
+  const nsKey = (key: string) => `${page}:${key}`;
   function toggle(key: HomeBlockKey, on: boolean) {
     const next = new Set(hidden);
-    if (on) next.delete(key);
-    else next.add(key);
+    if (on) next.delete(nsKey(key));
+    else next.add(nsKey(key));
     setHidden(next);
     startTransition(async () => {
       const res = await saveHiddenBlocks(Array.from(next));
@@ -68,7 +51,7 @@ export function PageBlocksEditor({ page, data, initialHidden }: PageBlocksEditor
     <div className={cn("space-y-4", pending && "opacity-90")}>
       {blocks.map((b) => {
         const empty = b.isEmpty(data);
-        const on = !hidden.has(b.key);
+        const on = !hidden.has(nsKey(b.key));
         return (
           <div key={b.key} className="flex items-start gap-3">
             <div className="flex w-16 shrink-0 flex-col items-center gap-1 pt-4">

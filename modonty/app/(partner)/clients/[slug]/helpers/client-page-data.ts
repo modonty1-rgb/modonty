@@ -3,6 +3,7 @@ import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { getClientStats, getRelatedClients } from "./client-stats";
+import { clientSlugTag } from "@modonty/shared/lib/cache/client-cache-tags";
 
 /**
  * Heavy, same-for-everyone client content — partner record + published articles +
@@ -12,7 +13,7 @@ import { getClientStats, getRelatedClients } from "./client-stats";
  */
 async function getClientContentBySlug(decodedSlug: string) {
   "use cache";
-  cacheTag("clients");
+  cacheTag("clients", clientSlugTag(decodedSlug));
   cacheTag("articles");
   cacheLife("hours");
 

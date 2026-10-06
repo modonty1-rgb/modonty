@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { SERVICES_BLOCKS } from "@modonty/shared/components/partner-site/free/services";
 import { PageBlocks } from "../../components/page-blocks";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { IconBriefcase } from "@/lib/icons";
 import { getPartnerSite } from "../../helpers/get-partner-site";
 import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
-import { PageFrame } from "../../components/page-frame";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -31,5 +29,5 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 /** Rendered from the shared block registry — same components the partner previewed in the console. */
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
-  return <PageBlocks slug={slug} blocks={SERVICES_BLOCKS} titlePrefix="خدمات" />;
+  return <PageBlocks slug={slug} page="services" />;
 }

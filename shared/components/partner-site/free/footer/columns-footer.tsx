@@ -1,3 +1,4 @@
+import { SiteLink } from "../../parts/site-link";
 import type { CSSProperties } from "react";
 
 import { BrandLogo } from "../../parts/brand-logo";
@@ -15,7 +16,7 @@ import type { FooterData } from "./footer-data";
  */
 export function ColumnsFooter({ data, preview = false }: { data: FooterData; preview?: boolean }) {
   const columns = [
-    data.services.length > 0 ? <LinkColumn key="services" title="خدماتنا" links={data.services} /> : null,
+    data.services.length > 0 ? <LinkColumn key="services" title="خدماتنا" links={data.services} limit={6} /> : null,
     <LinkColumn key="pages" title="الصفحات" links={data.pages} />,
     <ContactColumn key="contact" data={data} inert={preview} />,
   ].filter(Boolean);
@@ -32,14 +33,18 @@ export function ColumnsFooter({ data, preview = false }: { data: FooterData; pre
             property: one column below 768, the exact same track list at and above it — so the
             desktop footer is byte-for-byte what it was. */}
         <div
-          className="grid grid-cols-1 gap-8 md:[grid-template-columns:var(--partner-footer-cols)]"
+          className="grid grid-cols-2 gap-8 md:[grid-template-columns:var(--partner-footer-cols)] max-md:[&>*:first-child]:col-span-2 max-md:[&>*:last-child]:col-span-2"
           style={{ "--partner-footer-cols": `1.6fr ${columns.map(() => "1fr").join(" ")}` } as CSSProperties}
         >
           <div className="space-y-4">
-            <a href={data.homeHref} className="inline-block">
+            {/* `inline-block` grew to the full name: a long one («Dawi Smile elite - مركز زراعة…»)
+                measured 421px on a 360 screen and scrolled every page sideways (4 Oct 2026).
+                A capped flex box lets the name truncate as it does in the header. */}
+            <SiteLink href={data.homeHref} className="flex w-fit max-w-full">
               <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size="standard" />
-            </a>
-            {data.description && <p className="line-clamp-3 max-w-xs text-sm leading-6 text-muted-foreground">{data.description}</p>}
+            </SiteLink>
+            {/* No description here: the same text already ran in the hero/«تعرّف علينا» above — three
+                times on one page (review, 4 Oct 2026). The brand block keeps the name and tagline. */}
             <SocialLinks urls={data.socialLinks} inert={preview} />
           </div>
           {columns}

@@ -2,7 +2,7 @@ import type { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { db } from "./lib/db";
-import bcrypt from "bcryptjs";
+import { verifyCredentials } from "./lib/auth/verify-credentials";
 
 export const authConfig = {
   pages: {
@@ -29,29 +29,8 @@ export const authConfig = {
         }
 
         try {
-          const user = await db.user.findUnique({
-            where: { email: credentials.email as string },
-          });
-
-          if (!user || !user.password) {
-            return null;
-          }
-
-          const isPasswordValid = await bcrypt.compare(
-            credentials.password as string,
-            user.password
-          );
-
-          if (!isPasswordValid) {
-            return null;
-          }
-
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image || user.avatar,
-          };
+          // Same check the reader mobile API uses — one source (lib/auth/verify-credentials.ts).
+          return await verifyCredentials(credentials.email as string, credentials.password as string);
         } catch (error) {
           console.error("Auth error:", error);
           return null;

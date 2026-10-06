@@ -5,6 +5,7 @@ import { Tajawal, Montserrat } from "next/font/google";
 import "./globals.css";
 import { payPublicUrl } from "@/lib/pay-public-url";
 import { ThemeProvider } from "./theme-provider";
+import { GtmContainer } from "./components/gtm-container/GtmContainer";
 
 /**
  * تخطيط جذر حزمة الدفع.
@@ -97,6 +98,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       className={`${tajawal.variable} ${montserrat.variable}`}
     >
       <body className="bg-background font-sans">
+        <GtmContainer />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
           {/*

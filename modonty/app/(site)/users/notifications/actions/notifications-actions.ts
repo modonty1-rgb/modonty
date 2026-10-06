@@ -2,15 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { markNotificationReadAs } from "@/lib/notifications/mark-notification-read-as";
 
+/** Web door: identity from the session cookie; the update lives in `markNotificationReadAs` (shared with the mobile API). */
 export async function markNotificationAsRead(notificationId: string) {
   const session = await auth();
   if (!session?.user?.id) return;
 
-  await db.notification.updateMany({
-    where: { id: notificationId, userId: session.user.id },
-    data: { readAt: new Date() },
-  });
+  await markNotificationReadAs(session.user.id, notificationId);
   revalidatePath("/");
 }

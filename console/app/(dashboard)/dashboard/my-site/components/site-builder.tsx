@@ -34,7 +34,9 @@ type ToolKey = "look" | BlocksPage;
  */
 const LOOK_TOOL = {
   key: "look" as const,
-  label: "شكل الموقع",
+  // Not «شكل الموقع»: beside the screen's own name «تصميم الموقع» the two read as one thing —
+  // the review counted four names for this screen (4 Oct 2026). The label says what it holds.
+  label: "اللون والشريط والذيل",
   Icon: Palette,
   hint: "اللون والشريط العلوي والذيل — يظهرون في كل صفحات موقعك.",
 };
@@ -43,7 +45,9 @@ function toolTitle(key: ToolKey): string {
   return key === "look" ? LOOK_TOOL.label : `صفحة ${PAGE_LABELS[key]}`;
 }
 function toolHint(key: ToolKey): string {
-  return key === "look" ? LOOK_TOOL.hint : "أقسام الصفحة بالترتيب الذي يراه الزائر. أطفئ اللي ما تبغاه.";
+  // «أطفئ اللي ما تبغاه» promised switches this screen does not have — by design the partner fills
+  // data and the section appears (MissingList below). The hint now says that (4 Oct 2026).
+  return key === "look" ? LOOK_TOOL.hint : "أقسام الصفحة بالترتيب الذي يراه الزائر. يظهر القسم حين تكتمل بياناته.";
 }
 
 /**
@@ -60,6 +64,8 @@ interface SiteBuilderProps {
   initial: MySiteData;
   /** لكل صفحة: أقسامها التي لن تظهر لأن بياناتها ناقصة — محسوبة على الخادم. */
   missing: Record<BlocksPage, MissingBlock[]>;
+  /** The page to open on — set by «شوف النتيجة» in «محتوى الموقع». */
+  initialPage?: BlocksPage;
 }
 
 /**
@@ -69,12 +75,12 @@ interface SiteBuilderProps {
  * The panel FLOATS over the stage instead of pushing it: pushing shrank the 1280 frame to
  * ≈26% of its width exactly while a choice was being made — measured on a 1440 window.
  */
-export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
+export function SiteBuilder({ initial, missing, initialPage = "home" }: SiteBuilderProps) {
   const [open, setOpen] = useState<ToolKey | null>(null);
   const [headerTemplate, setHeaderTemplate] = useState<HeaderTemplateKey>(initial.headerTemplate);
   const [footerTemplate, setFooterTemplate] = useState<FooterTemplateKey>(initial.footerTemplate);
   const [primaryColor, setPrimaryColor] = useState<string | null>(initial.primaryColor);
-  const [page, setPage] = useState<BlocksPage>("home");
+  const [page, setPage] = useState<BlocksPage>(initialPage);
   const [pending, startTransition] = useTransition();
 
 
@@ -94,6 +100,8 @@ export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
   const stage = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.7);
+  // On a phone the desktop frame at 30% helped nobody (review, 4 Oct 2026): narrow → phone frame only, full width.
+  const [narrow, setNarrow] = useState(false);
 
   // The sheet must start where the bar ends. A fixed 96px guessed it wrong (measured: the
   // bar's bottom is 167 when the page is at the top, and it moves as the page scrolls),
@@ -114,7 +122,11 @@ export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
       // desktop (measured: 844 vs 603) — a picture that contradicts what the partner knows
       // about his own devices, and a preview that argues with reality is not a preview.
       const chrome = 24 + 24; // الفجوة بين الإطارين + حدّ الجهاز
-      setScale(Math.min(1, Math.max(0.3, (node.clientWidth - chrome) / (DESKTOP.w + PHONE.w))));
+      const isNarrow = node.clientWidth < 700;
+      setNarrow(isNarrow);
+      setScale(isNarrow
+        ? Math.min(1, (node.clientWidth - 24) / PHONE.w)
+        : Math.min(1, Math.max(0.3, (node.clientWidth - chrome) / (DESKTOP.w + PHONE.w))));
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -152,6 +164,37 @@ export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
     footerTemplate !== saved.footerTemplate ||
     primaryColor !== saved.primaryColor;
 
+  /**
+   * Unsaved choices used to vanish without a word: pick a colour, tap «شريط الثقة» in the missing
+   * list, come back — «كل شيء محفوظ» and the old colour (tried, 4 Oct 2026). While something is
+   * unsaved, leaving asks first: a tab close or reload through `beforeunload`, and any in-app link
+   * through one capturing click listener (the App Router has no navigation-blocking API).
+   */
+  useEffect(() => {
+    if (!dirty) return;
+    const QUESTION = "فيه تغييرات ما انحفظت — تطلع بدون حفظ؟";
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as HTMLElement | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!a || a.target === "_blank") return;
+      const url = new URL(a.href, location.href);
+      if (url.origin !== location.origin || url.pathname === location.pathname) return;
+      if (!window.confirm(QUESTION)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    document.addEventListener("click", onClick, true);
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      document.removeEventListener("click", onClick, true);
+    };
+  }, [dirty]);
+
   function save() {
     startTransition(async () => {
       // بلا `subdomain`: هذه الشاشة لا تملكه، فلا تكتبه.
@@ -161,7 +204,11 @@ export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
         return;
       }
       setSaved({ headerTemplate, footerTemplate, primaryColor });
-      toast.success("انحفظ — التغيير ظاهر على موقعك");
+      // Only claim «ظاهر» when modonty confirmed the refresh.
+      // A partner whose subscription is not active has no public page (modonty serves ACTIVE only),
+      // so «ظاهر على موقعك» was untrue for him (4 Oct 2026).
+      if (!initial.published) toast.warning("انحفظ — لكن موقعك غير منشور الآن لأن الاشتراك غير فعّال");
+      else toast.success(res.live ? "انحفظ — التغيير ظاهر على موقعك" : "انحفظ — يظهر على موقعك خلال دقائق");
     });
   }
 
@@ -194,7 +241,8 @@ export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
         {/* صفّان لا واحد: الأدوات تلتفّ في عمودها، وزرّ الحفظ عمودٌ ثابت بجانبها.
             حين كان الجميع في `flex-wrap` واحد نزل الزرّ وحده إلى سطر تحت. */}
         <div className="flex items-start gap-3">
-          <div className="flex flex-1 flex-wrap items-center gap-1.5">
+          {/* Phones: one scrolling row — wrapped, the eleven tools stacked into a column that filled the screen. */}
+          <div className="flex flex-1 flex-wrap items-center gap-1.5 max-sm:flex-nowrap max-sm:overflow-x-auto">
           {/* `text-primary/70` قِيس ٢٫٨٤:١ على أرضية الشريط — تحت حدّ WCAG 1.4.3 (٤٫٥:١
               لنصّ ١١px). اللون كاملاً بلا شفافية. */}
           <SiteToolButton
@@ -240,8 +288,8 @@ export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
       </div>
 
       {/* ── المسرح: الجهازان جنب بعض، وكلاهما يعرض نفس الصفحة ──── */}
-      <div ref={stage} className="flex items-start justify-end gap-6">
-        <DeviceFrame title="كمبيوتر" size={DESKTOP} src={src} scale={scale} />
+      <div ref={stage} className={cn("flex items-start gap-6", narrow ? "justify-center" : "justify-end")}>
+        {!narrow && <DeviceFrame title="كمبيوتر" size={DESKTOP} src={src} scale={scale} />}
         <DeviceFrame title="جوّال" size={PHONE} src={src} scale={scale} phone />
       </div>
 
@@ -284,13 +332,16 @@ export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
             <div className="min-h-0 flex-1 overflow-y-auto p-5">
               {open === "look" && (
                 <div className="flex flex-col gap-8">
+                  {/* The shape thumbnails keep the SAVED colour: tied to the picked one, every colour
+                      click reloaded all nine of them (≈12 queries each; 4 Oct 2026). The two big
+                      frames show the colour being tried. */}
                   <Group title="الشريط العلوي" hint="خمسة أشكال — كلها بشعارك وصفحاتك ولونك.">
                     <ShapeChoices
                       options={HEADER_TEMPLATES.map((t) => ({ key: t.key, name: t.name }))}
                       value={headerTemplate}
                       onPick={(k) => setHeaderTemplate(k as HeaderTemplateKey)}
-                      previewSrc={(k) => preview({ h: k, bare: true, only: "header" })}
-                      cropSource={300}
+                      previewSrc={(k) => preview({ h: k, c: saved.primaryColor ?? "default", bare: true, only: "header" })}
+                      cropSource={140}
                     />
                   </Group>
 
@@ -299,7 +350,7 @@ export function SiteBuilder({ initial, missing }: SiteBuilderProps) {
                       options={FOOTER_TEMPLATES.map((t) => ({ key: t.key, name: t.name }))}
                       value={footerTemplate}
                       onPick={(k) => setFooterTemplate(k as FooterTemplateKey)}
-                      previewSrc={(k) => preview({ f: k, bare: true, only: "footer" })}
+                      previewSrc={(k) => preview({ f: k, c: saved.primaryColor ?? "default", bare: true, only: "footer" })}
                       cropSource={420}
                     />
                   </Group>
@@ -358,7 +409,7 @@ function MissingList({ rows, page }: { rows: MissingBlock[]; page: string }) {
 function Group({ title, hint, children }: { title: string; hint: string; children: React.ReactNode }) {
   return (
     <section>
-      <h3 className="text-sm font-bold text-foreground">{title}</h3>
+      <h2 className="text-sm font-bold text-foreground">{title}</h2>
       <p className="mb-3 mt-0.5 text-xs text-muted-foreground">{hint}</p>
       {children}
     </section>
@@ -447,6 +498,12 @@ function ColorChoices({ value, onPick }: { value: string | null; onPick: (c: str
           </button>
         );
       })}
+      {/* The circles were names only to a screen reader (4 Oct 2026); the picked one is now spelled out. */}
+      {value && (
+        <span className="ms-2 text-xs font-medium text-foreground" aria-hidden>
+          {PARTNER_SITE_PALETTE.find((c) => c.hex === value)?.label}
+        </span>
+      )}
     </div>
   );
 }
@@ -516,7 +573,7 @@ function ShapeChoices({
             </div>
             <span className={cn("flex items-center gap-2 border-t px-3 py-2 text-xs", selected ? "bg-primary/10 font-bold text-primary" : "text-muted-foreground")}>
               {o.name}
-              <span className="ms-auto rounded-full border px-2 py-0.5 text-xs">{selected ? "مختار ✓" : "اختر"}</span>
+              <span className="ms-auto rounded-full border px-2 py-0.5 text-xs">{selected ? "مختار" : "اختر"}</span>
             </span>
           </button>
         );

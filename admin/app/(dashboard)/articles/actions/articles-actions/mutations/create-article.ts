@@ -23,6 +23,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
+import { checkArticleCtaUrl } from "../../../helpers/check-article-cta-url";
 
 export async function createArticle(data: ArticleFormData) {
   try {
@@ -111,6 +112,18 @@ export async function createArticle(data: ArticleFormData) {
         articlesBaseUrl: true,
       },
     });
+
+    // زرُّ المقال (ARTCTA): أيُّ رابطٍ صحيح — منتجُ العميل قد يكون في أمازون أو نون أو موقعه.
+    let ctaUrl: string | null | undefined = undefined;
+    if (data.ctaUrl !== undefined) {
+      const raw = data.ctaUrl?.trim() || "";
+      if (!raw) ctaUrl = null;
+      else {
+        const check = checkArticleCtaUrl(raw);
+        if (!check.ok) return { success: false, error: check.error };
+        ctaUrl = check.url;
+      }
+    }
 
     // An article destined for the client's own website can only exist for a client we
     // can actually build URLs for. The «Client-Site Articles» section only lists eligible
@@ -219,6 +232,9 @@ export async function createArticle(data: ArticleFormData) {
         mainEntityOfPage: canonicalUrl || null,
         seoTitle: seoTitle || null,
         seoDescription: seoDescription || null,
+        targetKeyword: data.targetKeyword?.trim() || null,
+        ctaUrl: ctaUrl ?? null,
+        ctaLabel: data.ctaLabel?.trim() || null,
         ogArticleAuthor: data.ogArticleAuthor || null,
         ogArticlePublishedTime: datePublished,
         // Not `new Date()`. An article being created has not been MODIFIED — it has been

@@ -41,8 +41,11 @@ import { PartnerStrip } from "./components/partner-strip/PartnerStrip";
 import { Gallery } from "./components/gallery/GalleryLazy";
 import { ReadMore } from "./components/read-more/ReadMore";
 import { ArticleCtaBar } from "./components/article-cta-bar/ArticleCtaBar";
+import { resolveArticleCta } from "./helpers/resolve-article-cta";
+import { ClientSheetButton } from "./components/client-sheet/ClientSheetButton";
 import { ReaderActions } from "./components/reader-actions/ReaderActions";
 import { ReadingTools } from "./components/reading-tools/ReadingToolsLazy";
+import { DesktopOnly } from "@/components/shared/desktop-only/DesktopOnly";
 import { ArticleAudioPlayer } from "./components/audio-player/ArticleAudioPlayerLazy";
 import { MobileSection } from "./components/mobile-section/MobileSection";
 import { EngagementFab } from "./components/engagement-fab/EngagementFab";
@@ -307,7 +310,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
         <ReadingProgressBar />
 
+        {/* على الجوال مخفيٌّ بالـCSS لا محذوف (خالد ٣ أكتوبر ٢٠٢٦): سطرٌ كامل بعنوانٍ مقصوص فوق العنوان نفسه،
+            ولا يفيد قارئ الجوال. يبقى في HTML ومعه BreadcrumbList في JSON-LD — جوجل يقرؤه كما هو. */}
         <Breadcrumb
+          className="max-lg:hidden"
           items={[
             { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
             { label: "الشركاء", href: "/clients" },
@@ -331,19 +337,23 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
             {/* Centred over the rail column, not parked on its edge (Khalid, 19 Aug): the four
                 tabs and the card below them read as one stack when they share a centre line. */}
             <div className="pointer-events-auto ms-auto flex w-[300px] justify-center gap-2">
-              <Suspense fallback={<div className="h-10 w-full" aria-hidden />}>
-                <ReaderActions
-                  articleId={article.id}
-                  articleSlug={article.slug}
-                  clientId={article.clientId}
-                  likes={article._count.likes}
-                  favorites={article._count.favorites}
-                  audioUrl={article.audioUrl}
-                  audioDurationSeconds={article.audioDurationSeconds}
-                  labels={copy.actions}
-                  attached
-                />
-              </Suspense>
+              {/* الشاشة العريضة فقط: الطبقةُ `hidden lg:block` كانت تُخفي الأزرار عن الجوال وتُنزّل كودَها له
+                  (٣ أكتوبر ٢٠٢٦ — خالد: «ما تشتغل إلا لما يضغط عليها»). */}
+              <DesktopOnly>
+                <Suspense fallback={<div className="h-10 w-full" aria-hidden />}>
+                  <ReaderActions
+                    articleId={article.id}
+                    articleSlug={article.slug}
+                    clientId={article.clientId}
+                    likes={article._count.likes}
+                    favorites={article._count.favorites}
+                    audioUrl={article.audioUrl}
+                    audioDurationSeconds={article.audioDurationSeconds}
+                    labels={copy.actions}
+                    attached
+                  />
+                </Suspense>
+              </DesktopOnly>
             </div>
           </div>
         </div>
@@ -366,15 +376,15 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 {/* Below xl the margin is too narrow to stand in (36px at 1200), so the tools
                     stay here; from xl up they move out to the gutter layer below. */}
                 <div className="xl:hidden">
-                  <ReadingTools labels={copy.tools} />
+                  <DesktopOnly>
+                    <ReadingTools labels={copy.tools} />
+                  </DesktopOnly>
                 </div>
                 {article.client && (
                   <PartnerStrip
                     client={article.client}
                     cta={{
-                      mode: article.client.ctaMode,
-                      label: article.client.ctaLabel,
-                      url: article.client.ctaUrl,
+                      ...resolveArticleCta(article),
                       articleId: article.id,
                       source: "article_card",
                     }}
@@ -412,11 +422,37 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
             clientName={article.client.name}
             clientSlug={article.client.slug}
             clientPhone={article.client.phone ?? null}
-            cta={{
-              mode: article.client.ctaMode,
-              label: article.client.ctaLabel,
-              url: article.client.ctaUrl,
-            }}
+            cta={resolveArticleCta(article)}
+            articleId={article.id}
+            clientId={article.clientId}
+            // شعارُ العميل بين الزرّين يفتح نافذته (خالد ٣ أكتوبر ٢٠٢٦) — بدل الكرت الذي كان قبل أوّل سطر.
+            clientSlot={
+              <ClientSheetButton
+                reviewedLabel={copy.partner.reviewed}
+                client={{
+                  name: article.client.name,
+                  slug: article.client.slug,
+                  isVerified: article.client.isVerified,
+                  credential:
+                    article.client.description?.trim() ||
+                    article.client.businessBrief?.trim() ||
+                    article.client.slogan?.trim() ||
+                    null,
+                  city: article.client.addressCity,
+                  logoMedia: article.client.logoMedia,
+                }}
+                details={
+                  <Suspense fallback={<div className="h-9" aria-hidden />}>
+                    <ReaderPartnerDetails
+                      client={article.client}
+                      articleId={article.id}
+                      articleTitle={article.title}
+                      clientId={article.clientId}
+                    />
+                  </Suspense>
+                }
+              />
+            }
           />
         )}
       </>

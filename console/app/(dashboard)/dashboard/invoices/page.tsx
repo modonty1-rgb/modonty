@@ -7,12 +7,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrencyTotals } from "@/lib/payments";
 import { formatOrderMoney } from "@/lib/subscription/active-order";
 import { getClientInvoices } from "./helpers/invoice-queries";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 export const dynamic = "force-dynamic";
 
 function arDate(d: Date | null) {
   if (!d) return "—";
-  return new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "long", year: "numeric" }).format(d);
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, { day: "numeric", month: "long", year: "numeric" }).format(d);
 }
 
 export default async function InvoicesPage() {

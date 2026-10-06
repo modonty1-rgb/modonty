@@ -1,11 +1,13 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
+import { clientSlugTag } from "@modonty/shared/lib/cache/client-cache-tags";
 
 export async function getClientFollowers(rawSlug: string, limit = 6) {
   "use cache";
   cacheTag("clients");
   cacheLife("hours");
   const decodedSlug = decodeURIComponent(rawSlug);
+  cacheTag(clientSlugTag(decodedSlug)); // this partner only — see shared/lib/cache/client-cache-tags.ts
 
   const client = await db.client.findUnique({
     where: { slug: decodedSlug },

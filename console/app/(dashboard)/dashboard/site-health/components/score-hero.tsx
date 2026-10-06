@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ShieldCheck } from "lucide-react";
 import type { OverallHealthReport } from "@/lib/health/types";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 const GRADE_COLORS: Record<OverallHealthReport["grade"], string> = {
   "A+": "text-emerald-600 bg-emerald-50 ring-emerald-200",
@@ -21,7 +22,7 @@ const GRADE_LABEL: Record<OverallHealthReport["grade"], string> = {
 };
 
 function formatTime(iso: string): string {
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     timeZone: "Asia/Riyadh",
     day: "2-digit",
     month: "short",

@@ -2,7 +2,7 @@ import { cacheTag, cacheLife } from "next/cache";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
-import type { ClientCtaMode } from "@prisma/client";
+import type { ClientCtaMode, ClientListing } from "@prisma/client";
 
 /** One row of the partners list — only what the card and the rail show. */
 export interface ClientListItem {
@@ -40,6 +40,8 @@ export interface ClientListItem {
   ctaMode: ClientCtaMode;
   ctaLabel: string | null;
   ctaUrl: string | null;
+  /** «يظهر في» — the listing pages the admin put this partner on (/booking · /shop). */
+  listedOn: ClientListing[];
   createdAt: Date;
 }
 
@@ -82,6 +84,7 @@ export async function getClientsList(): Promise<ClientListItem[]> {
       ctaMode: true,
       ctaLabel: true,
       ctaUrl: true,
+      listedOn: true,
       createdAt: true,
       logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
@@ -144,6 +147,7 @@ export async function getClientsList(): Promise<ClientListItem[]> {
     ctaMode: client.ctaMode,
     ctaLabel: client.ctaLabel,
     ctaUrl: client.ctaUrl,
+    listedOn: client.listedOn ?? [],
     createdAt: client.createdAt,
   }));
 }

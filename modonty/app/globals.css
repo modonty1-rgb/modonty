@@ -36,6 +36,11 @@
     /* Brand blue used AS TEXT (links, active labels). Same as --primary in light mode
        (7:1 on white); dark mode needs its own lighter value — see .dark. */
     --link: var(--brand-blue);
+    /* Partner-site text ink when the partner kept «لون مدونتي». Undefined, it fell back to
+       --primary and read 3.2–3.8:1 in dark mode (eyebrows, stats, «اقرأ القصّة», measured
+       4 Oct 2026). Following --link it takes the dark step too. A partner colour overrides it
+       on #main-content (clients/[slug]/layout.tsx). */
+    --primary-ink: var(--link);
     /* Brand teal used AS TEXT: --accent (42%) is a fill and reads 2.6:1 on white; text
        gets its own darker step — 23% = 5.5:1 on white, 5.0:1 on the header. */
     --link-accent: 180 100% 23%;
@@ -172,6 +177,9 @@
        its own step, like Primer's accent-fg vs accent-emphasis: 72% = 5.1:1 on the
        background, 4.6:1 on cards. */
     --link: 240 100% 72%;
+    /* Partner-site ink one step lighter than --link: on the muted bands (lighter than the page)
+       72% read 3.9:1 — under 4.5 (measured 4 Oct 2026). 80% clears both grounds. */
+    --primary-ink: 240 100% 80%;
     /* Teal as text: the bright accent already clears contrast on the dark ground. */
     --link-accent: 180 100% 50%;
     
@@ -308,7 +316,7 @@
      and the 3.5rem above stands. */
   @media (max-width: 1023.98px) {
     html:has([data-mobile-cta-bar]) {
-      --sticky-chrome: 7.5625rem; /* 121px = header 56 + bar 65 */
+      --sticky-chrome: 7.0625rem; /* 113px = header 56 + bar 57 (أزرار ٤٤ — ٣ أكتوبر ٢٠٢٦) */
     }
   }
 
@@ -541,6 +549,28 @@
 
    The attribute sits on <html> and is written before first paint by the inline script in the
    article page, so a reader who picked «كبير» never sees one frame of the default size. */
+/* عناوينُ المقال على الجوال تتدرّج مع العرض (خالد ٣ أكتوبر ٢٠٢٦ — «لازم الفونتات تكون دايناميك في الموبايل»).
+   كانت ثابتة (h2 ٢٤px · h3 ٢٠px) من ٣٦٠ إلى ٤٣٠. الآن خطٌّ مستقيم: h2 ٢٠→٢٤ · h3 ١٨→٢٠ بين ٣٦٠ و٤٣٠.
+   الحدّان بـem لا px: «حجم النص» الذي يختاره القارئ (صغير/كبير) يبقى يكبّر العناوين معه.
+   ونصُّ المقال لا يُلمس — ١٦px أرضيةُ القراءة على الجوال، وما تحتها يُقرأ بصعوبة. */
+@media (max-width: 767px) {
+  .article-body :where(h2) {
+    font-size: clamp(1.25em, calc(5.71vw - 0.57px), 1.5em);
+  }
+  .article-body :where(h3) {
+    font-size: clamp(1.125em, calc(2.86vw + 7.71px), 1.25em);
+  }
+}
+
+/* نصُّ المقال على الجوال ١٨px لا ١٦ (خالد ٣ أكتوبر ٢٠٢٦، بعد مقارنة: WebMD ١٨ · Healthline ٢٢). اختيارُ القارئ
+   «صغير/كبير» تحته يغلبه (محدّدٌ أعلى). الكمبيوتر على prose-lg كما هو. */
+@media (max-width: 767px) {
+  .article-body.prose-base {
+    font-size: 1.125rem;
+    line-height: 1.85;
+  }
+}
+
 html[data-article-text="small"] .article-body {
   font-size: 1rem;
   line-height: 1.85;
@@ -583,7 +613,7 @@ footer[role="contentinfo"] {
    render it — pages without a contextual action should not acquire a blank band. */
 @media (max-width: 1023px) {
   [data-site-shell] main:has([data-mobile-cta-bar]) {
-    padding-top: 4.25rem;
+    padding-top: 3.75rem; /* الشريط 57 + 3 */
   }
 }
 
@@ -710,3 +740,6 @@ footer[role="contentinfo"] {
     display: none;
   }
 }
+
+/* شريطُ الأزرار ثابتٌ تحت الهيدر طوال القراءة (خالد ٣ أكتوبر ٢٠٢٦، بعد تجربة إخفائه بـCSS): فيه شعارُ العميل
+   وزرُّ التحويل — «العميل محتاج يظهر»، والقرارُ يُتّخذ غالباً في منتصف المقال لا آخره. */

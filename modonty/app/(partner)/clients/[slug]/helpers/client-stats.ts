@@ -1,10 +1,11 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
+import { clientIdTag } from "@modonty/shared/lib/cache/client-cache-tags";
 
 export async function getClientStats(clientId: string) {
   "use cache";
-  cacheTag("clients");
+  cacheTag("clients", clientIdTag(clientId));
   cacheLife("hours");
 
   try {

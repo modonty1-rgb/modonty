@@ -16,6 +16,7 @@ import { TrafficChart } from "./components/traffic-chart";
 import { PeriodFilter } from "./components/period-filter";
 import { AttentionStrip } from "./components/attention-strip";
 import { DashboardOverview, DashboardOverviewSkeleton } from "./components/dashboard-overview";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -131,7 +132,7 @@ export default async function DashboardPage({
                         {activity.description}
                       </p>
                       <p className="mt-0.5 text-xs text-muted-foreground tabular-nums">
-                        {new Intl.DateTimeFormat("en-GB", {
+                        {new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
                           year: "numeric",
                           month: "short",
                           day: "numeric",

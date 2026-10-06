@@ -10,6 +10,8 @@ import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { MarkAsReadOnOpen } from "./components/mark-as-read-on-open";
 import { BellRevalidateTrigger } from "./components/bell-revalidate-trigger";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { getReaderNotifications } from "@/lib/notifications/get-reader-notifications";
+import { notificationTargetKind } from "@/lib/notifications/notification-target-kind";
 
 export const metadata: Metadata = {
   title: "الإشعارات",
@@ -75,11 +77,8 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
   const { id: selectedId, tab: tabParam } = resolved;
   const tab = tabParam === TAB_NEW || tabParam === TAB_READ ? tabParam : TAB_ALL;
 
-  const notifications = await db.notification.findMany({
-    where: { userId },
-    orderBy: [{ readAt: "asc" }, { createdAt: "desc" }],
-    take: 50,
-  });
+  // Same list the mobile API pages through (lib/notifications/get-reader-notifications.ts).
+  const notifications = await getReaderNotifications(userId, { limit: 50 });
 
   let selectedNotification = null;
   let contactMessage = null;
@@ -94,19 +93,21 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
       where: { id: selectedId, userId },
     });
     if (selectedNotification?.relatedId) {
-      if (selectedNotification.type.startsWith("comment_")) {
+      // One routing rule for the inbox and the mobile API (lib/notifications/notification-target-kind.ts).
+      const targetKind = notificationTargetKind(selectedNotification.type);
+      if (targetKind === "article_comment") {
         const c = await db.comment.findUnique({
           where: { id: selectedNotification.relatedId },
           select: { id: true, content: true, article: { select: { title: true, slug: true } } },
         });
         if (c) commentNotice = { content: c.content, href: `/articles/${c.article.slug}#comment-${c.id}`, where: c.article.title };
-      } else if (selectedNotification.type.startsWith("reel_comment_")) {
+      } else if (targetKind === "reel_comment") {
         const c = await db.mediaComment.findUnique({
           where: { id: selectedNotification.relatedId },
           select: { content: true, media: { select: { title: true, reelSlug: true } } },
         });
         if (c?.media.reelSlug) commentNotice = { content: c.content, href: `/reels/${c.media.reelSlug}`, where: c.media.title ?? "الريل" };
-      } else if (selectedNotification.type === "faq_reply") {
+      } else if (targetKind === "faq_reply") {
         faqReply = await db.articleFAQ.findFirst({
           where: { id: selectedNotification.relatedId },
           select: {

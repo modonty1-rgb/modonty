@@ -39,7 +39,9 @@ export const BLOCK_SOURCE: Record<string, BlockSource> = {
   // الشعار والوصف والمدينة من «بيانات نشاطك»، وصورة الغلاف والشعار من «الصور والملفات».
   hero: { where: "بيانات نشاطك · الصور والملفات", href: "/dashboard/profile", owner: "client" },
   booking: { where: "الأدمن", href: "", owner: "admin" },
-  cta: { where: "نصّ مدونتي", href: "", owner: "modonty" },
+  // «النداء الأخير» يظهر بزرّ الحجز أو برقم واتساب — والرقم بيد الشريك (٤ أكتوبر ٢٠٢٦).
+  cta: { where: "بيانات نشاطك · رقم الجوال", href: "/dashboard/profile", owner: "client" },
   newsletter: { where: "نصّ مدونتي", href: "", owner: "modonty" },
-  "lead-form": { where: "نصّ مدونتي", href: "", owner: "modonty" },
+  // يظهر حين يكون زرّ الطلب «نموذج» — قرار الأدمن لا الشريك.
+  "lead-form": { where: "الأدمن", href: "", owner: "admin" },
 };

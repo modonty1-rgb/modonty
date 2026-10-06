@@ -1,0 +1,161 @@
+{
+  "device": "iPhone 14 · 390 CSS px wide · DPR 3",
+  "captured": "2026-09-30 (dev)",
+  "note": "بيانات dev — بعض الشاشات فيها حسابات تجربة موسومة [تجربة]",
+  "shots": [
+    {
+      "screen": "الرئيسية — زائر",
+      "url": "/",
+      "screenFile": "01-home.png",
+      "screenSize": "1170x1992",
+      "fullFile": "01-home-full.png",
+      "fullSize": "1170x10722"
+    },
+    {
+      "screen": "القائمة الجانبية",
+      "url": "/",
+      "screenFile": "02-side-menu.png",
+      "screenSize": "1170x1992"
+    },
+    {
+      "screen": "المقالة — أعلى",
+      "url": "/articles/التجارة-الإلكترونية-في-السعودية-كيف-يختار-العميل",
+      "screenFile": "03-article-top.png",
+      "screenSize": "1170x1992",
+      "fullFile": "03-article-top-full.png",
+      "fullSize": "1170x44643"
+    },
+    {
+      "screen": "المقالة — شريط التفاعل",
+      "url": "/articles/التجارة-الإلكترونية-في-السعودية-كيف-يختار-العميل",
+      "screenFile": "04-article-actions-bar.png",
+      "screenSize": "1170x1992",
+      "fullFile": "04-article-actions-bar-full.png",
+      "fullSize": "1170x44643"
+    },
+    {
+      "screen": "أعجبني وأنا زائر → نافذة الدخول",
+      "url": "/articles/التجارة-الإلكترونية-في-السعودية-كيف-يختار-العميل",
+      "screenFile": "05-login-prompt-dialog.png",
+      "screenSize": "1170x1992"
+    },
+    {
+      "screen": "تسجيل الدخول",
+      "url": "/users/login",
+      "screenFile": "06-login.png",
+      "screenSize": "1170x1992",
+      "fullFile": "06-login-full.png",
+      "fullSize": "1170x4854"
+    },
+    {
+      "screen": "كلمة مرور غلط",
+      "url": "/users/login",
+      "screenFile": "07-login-wrong-password.png",
+      "screenSize": "1170x1992",
+      "fullFile": "07-login-wrong-password-full.png",
+      "fullSize": "1170x5034"
+    },
+    {
+      "screen": "إنشاء حساب",
+      "url": "/users/register",
+      "screenFile": "08-register.png",
+      "screenSize": "1170x1992",
+      "fullFile": "08-register-full.png",
+      "fullSize": "1170x5400"
+    },
+    {
+      "screen": "الريلز",
+      "url": "/reels",
+      "screenFile": "09-reels.png",
+      "screenSize": "1170x1992",
+      "fullFile": "09-reels-full.png",
+      "fullSize": "1170x1992"
+    },
+    {
+      "screen": "قائمة الشركاء",
+      "url": "/clients",
+      "screenFile": "10-partners-list.png",
+      "screenSize": "1170x1992",
+      "fullFile": "10-partners-list-full.png",
+      "fullSize": "1170x13419"
+    },
+    {
+      "screen": "صفحة الشريك — زائر",
+      "url": "/clients/شركة-جبر-سيو",
+      "screenFile": "11-partner-page-guest.png",
+      "screenSize": "1170x1992",
+      "fullFile": "11-partner-page-guest-full.png",
+      "fullSize": "1170x15918"
+    },
+    {
+      "screen": "صفحة تقييمات الشريك",
+      "url": "/clients/شركة-جبر-سيو/reviews",
+      "screenFile": "12-partner-reviews.png",
+      "screenSize": "1170x1992",
+      "fullFile": "12-partner-reviews-full.png",
+      "fullSize": "1170x5160"
+    },
+    {
+      "screen": "مدونتي — صفحة الشركاء",
+      "url": "/modonty",
+      "screenFile": "13-modonty-partners-landing.png",
+      "screenSize": "1170x1992",
+      "fullFile": "13-modonty-partners-landing-full.png",
+      "fullSize": "1170x11163"
+    },
+    {
+      "screen": "عجلة الحظ",
+      "url": "/lucky-wheel",
+      "screenFile": "14-lucky-wheel.png",
+      "screenSize": "1170x1992",
+      "fullFile": "14-lucky-wheel-full.png",
+      "fullSize": "1170x4662"
+    },
+    {
+      "screen": "المقالة — مسجّل",
+      "url": "/articles/التجارة-الإلكترونية-في-السعودية-كيف-يختار-العميل",
+      "screenFile": "16-article-signed-in.png",
+      "screenSize": "1170x1992",
+      "fullFile": "16-article-signed-in-full.png",
+      "fullSize": "1170x44739"
+    },
+    {
+      "screen": "حوار التعليق",
+      "url": "/articles/التجارة-الإلكترونية-في-السعودية-كيف-يختار-العميل",
+      "screenFile": "17-comment-dialog.png",
+      "screenSize": "1170x1992"
+    },
+    {
+      "screen": "صفحة الشريك — مسجّل",
+      "url": "/clients/شركة-جبر-سيو",
+      "screenFile": "18-partner-page-signed-in.png",
+      "screenSize": "1170x1992",
+      "fullFile": "18-partner-page-signed-in-full.png",
+      "fullSize": "1170x15918"
+    },
+    {
+      "screen": "البروفايل",
+      "url": "/users/profile",
+      "screenFile": "19-profile.png",
+      "screenSize": "1170x1992",
+      "fullFile": "19-profile-full.png",
+      "fullSize": "1170x4878"
+    },
+    {
+      "screen": "الإعدادات",
+      "url": "/users/profile/settings",
+      "screenFile": "20-settings.png",
+      "screenSize": "1170x1992",
+      "fullFile": "20-settings-full.png",
+      "fullSize": "1170x12054"
+    },
+    {
+      "screen": "الإشعارات",
+      "url": "/users/notifications",
+      "screenFile": "21-notifications.png",
+      "screenSize": "1170x1992",
+      "fullFile": "21-notifications-full.png",
+      "fullSize": "1170x4830"
+    }
+  ]
+}

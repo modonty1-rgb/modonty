@@ -14,6 +14,8 @@ import {
 import { saveIntakeAction } from "../actions/save-intake";
 import type { ClientIntake } from "../lib/intake-types";
 import { INTAKE_SCHEMA_VERSION } from "../lib/intake-types";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+import { IconAlertTriangle, IconCheck, IconCheckCircle, IconLightbulb } from "@modonty/shared/lib/icons";
 
 interface IntakeFormProps {
   initial: ClientIntake | null;
@@ -105,12 +107,12 @@ const FUNNEL_OPTIONS = [
 ];
 
 const CTA_OPTIONS = [
-  { value: "call", label: "📞 اتصال / واتساب" },
-  { value: "form", label: "📝 نموذج تواصل" },
-  { value: "appointment", label: "📅 حجز موعد / استشارة" },
-  { value: "newsletter", label: "📧 اشتراك في النشرة" },
-  { value: "product", label: "🛒 صفحة منتج محدد" },
-  { value: "education", label: "📚 فقط تثقيف (بدون CTA)" },
+  { value: "call", label: "اتصال / واتساب" },
+  { value: "form", label: "نموذج تواصل" },
+  { value: "appointment", label: "حجز موعد / استشارة" },
+  { value: "newsletter", label: "اشتراك في النشرة" },
+  { value: "product", label: "صفحة منتج محدد" },
+  { value: "education", label: "تثقيف فقط (بلا زرّ إجراء)" },
 ];
 
 // Citation sources grouped by country — toggled by client. International sources
@@ -205,7 +207,7 @@ function SectionHeader({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-muted-foreground">{step}/{totalSections}</span>
-          <h3 className="text-base font-bold">{title}</h3>
+          <h2 className="text-base font-bold">{title}</h2>
           {complete && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
         </div>
         <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
@@ -541,12 +543,12 @@ export function IntakeForm({ initial, intakeUpdatedAt, detected, industryName, c
         <CardContent className="p-6 space-y-3">
           {autoDetectedGbp ? (
             <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
-              🤖 وجدنا الرابط تلقائياً من موقعك — تقدر تعدّله لو غير صحيح.
+              <IconCheckCircle className="me-1 inline h-4 w-4 align-[-3px]" aria-hidden />وجدنا الرابط تلقائياً في موقعك — يمكنك تعديله إن لم يكن صحيحاً.
             </div>
           ) : (
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
-              💡 ما لقينا الرابط من موقعك. لو عندك بطاقة على Google Maps، أضف الرابط هنا.
-              تقدر تجدّه بالبحث في Google عن اسم نشاطك ثم نسخ رابط البطاقة.
+              <IconLightbulb className="me-1 inline h-4 w-4 align-[-3px]" aria-hidden />لم نجد الرابط في موقعك. إن كانت لديك بطاقة على Google Maps فأضف رابطها هنا،
+              وتجده بالبحث في Google عن اسم نشاطك ثم نسخ رابط البطاقة.
             </div>
           )}
           <div className="space-y-2">
@@ -555,7 +557,7 @@ export function IntakeForm({ initial, intakeUpdatedAt, detected, industryName, c
               {data.technical?.googleBusinessProfileUrl &&
                 detected?.gbpUrl === data.technical.googleBusinessProfileUrl && (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    ✓ اكتُشف تلقائياً
+                    <IconCheck className="me-1 inline h-3.5 w-3.5 align-[-2px]" aria-hidden />اكتُشف تلقائياً
                   </span>
                 )}
             </div>
@@ -624,7 +626,7 @@ export function IntakeForm({ initial, intakeUpdatedAt, detected, industryName, c
               placeholder="مثال: 15 سنة خبرة، شهادة ISO 22716، عملنا مع 200+ علامة..."
             />
             <p className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900">
-              ⚠️ ضع فقط الشهادات والجوائز الموثّقة — ستظهر للقرّاء وفي JSON-LD المرئي لـ Google.
+              <IconAlertTriangle className="me-1 inline h-4 w-4 align-[-3px]" aria-hidden />ضع فقط الشهادات والجوائز الموثّقة — ستظهر للقرّاء وفي JSON-LD المرئي لـ Google.
             </p>
           </div>
           <div className="space-y-2">
@@ -775,7 +777,7 @@ export function IntakeForm({ initial, intakeUpdatedAt, detected, industryName, c
               placeholder="مثال: عملاء راضون 95% / 200+ علامة عملت معنا..."
             />
             <p className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900">
-              ⚠️ ضع فقط الأرقام والشهادات القابلة للإثبات — ستُنشر للقرّاء.
+              <IconAlertTriangle className="me-1 inline h-4 w-4 align-[-3px]" aria-hidden />ضع فقط الأرقام والشهادات القابلة للإثبات — ستُنشر للقرّاء.
             </p>
           </div>
           <div className="space-y-2">
@@ -920,7 +922,7 @@ export function IntakeForm({ initial, intakeUpdatedAt, detected, industryName, c
         />
         <CardContent className="p-6 space-y-4">
           <p className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900">
-            ⚠️ تأكّد من صحة المؤهل والترخيص قبل الإدخال — ستظهر هذه المعلومات للقرّاء وفي JSON-LD المرئي لـ Google. أي ادعاء غير موثّق قد يعرّضك لمسؤولية قانونية.
+            <IconAlertTriangle className="me-1 inline h-4 w-4 align-[-3px]" aria-hidden />تأكّد من صحة المؤهل والترخيص قبل الإدخال — ستظهر هذه المعلومات للقرّاء وفي JSON-LD المرئي لـ Google. أي ادعاء غير موثّق قد يعرّضك لمسؤولية قانونية.
           </p>
           <div className="space-y-1.5">
             <Label className="text-sm">الاسم الكامل</Label>
@@ -970,7 +972,7 @@ export function IntakeForm({ initial, intakeUpdatedAt, detected, industryName, c
               <>
                 <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                 <span className="text-emerald-700 font-medium">
-                  حُفظ · {new Intl.DateTimeFormat("ar-SA", { timeStyle: "short" }).format(savedAt)}
+                  حُفظ · {new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, { timeStyle: "short" }).format(savedAt)}
                 </span>
               </>
             ) : (

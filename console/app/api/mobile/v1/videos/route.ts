@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     where: { clientId: session.clientId, inReels: true },
     orderBy: { createdAt: "desc" },
     take: 100,
-    select: { id: true, filename: true, mimeType: true, reelStatus: true, reelUploadedBy: true, reelRejectionReason: true, thumbnailUrl: true, durationSec: true, createdAt: true },
+    select: { id: true, filename: true, mimeType: true, url: true, bunnyUrl: true, bunnyVideoId: true, playbackUrl: true, mp4Url: true, reelStatus: true, reelUploadedBy: true, reelRejectionReason: true, thumbnailUrl: true, durationSec: true, createdAt: true },
   });
 
   /**
@@ -70,30 +70,45 @@ export async function GET(request: NextRequest) {
     ? statKeys.map((reelStatus, index) => ({ key: reelStatus, value: arabicNumber(statCounts[index]), label: STATUS_LABELS[reelStatus], tone: STATUS_TONES[reelStatus] }))
     : [];
 
-  const videos = rows.map((row) => ({
-    id: row.id,
-    filename: row.filename,
-    statusLabel: row.reelStatus === null ? null : STATUS_LABELS[row.reelStatus],
-    statusTone: row.reelStatus === null ? null : STATUS_TONES[row.reelStatus],
+  const videos = rows.map((row) => {
     /**
-     * سطر بيانات **واحد** يحمل النوع واليوم والمدّة والرافع.
-     *
-     * كان اليوم سطراً والباقي سطراً، فصارت البطاقة أربعة أسطر بينما ثلاثة تكفي — والفائض
-     * ترك **فراغاً ميّتاً تحت المصغّرة** لأنّ عمود النصّ أطول من الصورة. وكلّها بيانات وصفية
-     * من رتبة واحدة، فلا سبب لتفريقها إلّا أنّها جاءت من حقول.
-     *
-     * والنوع هنا **كلمة، لا رمز تشغيل فوق المصغّرة**: الرمز يُقرأ وعداً بالتشغيل والتطبيق
-     * لا يشغّل شيئاً (الاعتماد عند الفريق لا عند العميل، فلا مشغّل)، فتذهب الضغطة سدى ثم
-     * يتّصل يسأل «ليش ما يشتغل؟». إشارةٌ تعد بما لا يقع أسوأ من غياب الإشارة (خالد، ٢٩ أغسطس).
-     *
-     * والكلمة تؤدّي غرض الرمز كاملاً: القائمة تحمل صوراً وفيديوهات معاً (مقيس: صفّ `03.png`
-     * بـ`image/jpeg` تحت `inReels: true`) وكانت تُعرض متطابقة. و`durationSec` ليس بديلاً —
-     * فيديوهات حقيقية على القاعدة مدّتها `null`. المصدر الصادق هو نوع الملفّ.
+     * رابط التشغيل بنفس ترتيب مدونتي (`modonty/app/(fullscreen)/reels/helpers/use-reel-video.ts`):
+     * HLS من Bunny Stream أوّلاً ثم MP4 الاحتياطي. والفيديو المرفوع بلا Stream (`video/*` على
+     * التخزين) يُشغَّل من ملفّه. الصورة لا رابط تشغيل لها — تُعرض صورتها ملء الشاشة.
+     * كان الردّ بلا أيّ رابط فلا يقدر التطبيق أن يشغّل شيئاً (خالد ٥ أكتوبر: «الفيديو لا يُشغَّل»).
      */
-    metaLine: arabicMetaLine([typeLabel(row.mimeType), arabicDayLabel(row.createdAt, now), durationLabel(row.durationSec), uploaderLabel(row.reelUploadedBy)]),
-    rejectionReason: row.reelRejectionReason,
-    thumbnailUrl: row.thumbnailUrl,
-  }));
+    const isVideo = row.bunnyVideoId !== null || row.mimeType.startsWith("video/");
+    const fileUrl = row.bunnyUrl ?? row.url;
+    const videoUrl = isVideo ? row.playbackUrl ?? row.mp4Url ?? (row.mimeType.startsWith("video/") ? fileUrl : null) : null;
+    return {
+      id: row.id,
+      filename: row.filename,
+      statusLabel: row.reelStatus === null ? null : STATUS_LABELS[row.reelStatus],
+      statusTone: row.reelStatus === null ? null : STATUS_TONES[row.reelStatus],
+      /**
+       * سطر بيانات **واحد** يحمل النوع واليوم والمدّة والرافع.
+       *
+       * كان اليوم سطراً والباقي سطراً، فصارت البطاقة أربعة أسطر بينما ثلاثة تكفي — والفائض
+       * ترك **فراغاً ميّتاً تحت المصغّرة** لأنّ عمود النصّ أطول من الصورة. وكلّها بيانات وصفية
+       * من رتبة واحدة، فلا سبب لتفريقها إلّا أنّها جاءت من حقول.
+       *
+       * والنوع **كلمة** تُقال للقارئ الصوتي، والرمز فوق المصغّرة صار صادقاً منذ ٥ أكتوبر ٢٠٢٦:
+       * الردّ يحمل `videoUrl` والتطبيق يشغّله ملء الشاشة. قبلها كان الرمز وعداً بلا مشغّل
+       * (خالد، ٢٩ أغسطس: «إشارةٌ تعد بما لا يقع أسوأ من غياب الإشارة»).
+       *
+       * والكلمة تؤدّي غرض الرمز كاملاً: القائمة تحمل صوراً وفيديوهات معاً (مقيس: صفّ `03.png`
+       * بـ`image/jpeg` تحت `inReels: true`) وكانت تُعرض متطابقة. و`durationSec` ليس بديلاً —
+       * فيديوهات حقيقية على القاعدة مدّتها `null`. المصدر الصادق هو نوع الملفّ.
+       */
+      metaLine: arabicMetaLine([typeLabel(row.mimeType), arabicDayLabel(row.createdAt, now), durationLabel(row.durationSec), uploaderLabel(row.reelUploadedBy)]),
+      rejectionReason: row.reelRejectionReason,
+      // الصورة مصغّرتها هي نفسها — كانت `thumbnailUrl` فارغة لها فتظهر خانة بلا صورة في الشبكة.
+      thumbnailUrl: row.thumbnailUrl ?? (isVideo ? null : fileUrl),
+      isVideo,
+      videoUrl,
+      imageUrl: isVideo ? null : fileUrl,
+    };
+  });
 
   return ok({
     videos,
@@ -109,6 +124,14 @@ export async function GET(request: NextRequest) {
       errorTitle: "ما قدرنا نحمّل الطلّات",
       offlineTitle: "ما في اتصال",
       offlineDescription: "تأكد من الإنترنت وجرّب مرة ثانية.",
+      // مشغّل ملء الشاشة — كل كلمة من هنا، والتطبيق لا يكتب عربياً.
+      openPrefix: "شغّل الطلّة",
+      playerBackLabel: "رجوع للطلّات",
+      playLabel: "تشغيل",
+      pauseLabel: "إيقاف مؤقت",
+      rejectionTitle: "سبب الرفض",
+      videoNotReadyLabel: "الفيديو لسه يتجهّز — جرّب بعد دقائق.",
+      playbackErrorLabel: "ما قدرنا نشغّل الفيديو. تأكد من الإنترنت وجرّب مرة ثانية.",
     },
     upload: {
       available: false,
@@ -127,6 +150,13 @@ export async function GET(request: NextRequest) {
        * هو الفرق بين إرشادٍ يُنهي المهمّة وإرشادٍ يؤجّلها. أمر خالد (٢٩ أغسطس).
        */
       unavailableLabel: "الرفع من الجوال لسه ما فُتح. ارفع طلّتك من الكونسول على المتصفح: console.modonty.com",
+      /**
+       * نفس الجملة مقسومة: نصّ + رابط يُضغط. خالد ٥ أكتوبر: «console.modonty.com» داخل النصّ
+       * لا يُضغط، فيحفظه العميل ويكتبه بيده. `unavailableLabel` باقٍ كما هو للنسخ الأقدم من التطبيق.
+       */
+      unavailableText: "الرفع من الجوال لسه ما فُتح. ارفع طلّتك من الكونسول على المتصفح:",
+      consoleLinkLabel: "console.modonty.com",
+      consoleUrl: "https://console.modonty.com",
       screenTitle: "رفع طلّة",
     },
   });

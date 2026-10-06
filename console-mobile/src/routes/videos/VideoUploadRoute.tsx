@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { AppText as Text } from '@/src/components/ui/AppText';
 import { ModontyIcon } from '@/src/components/brand/icons/ModontyIcon';
 import { ErrorState, OfflineState, SkeletonCards } from '@/src/components/ui/MobileUI';
@@ -70,9 +70,17 @@ export function VideoUploadRoute({ accessToken, onDone }: Props) {
       </View>
     </EnterView>
     {upload.available ? null : <EnterView index={2}>
+      {/* رمز «معلومة» لا «رفع»: سهم الرفع هنا كان يُقرأ زرّاً لا يعمل (خالد ٥ أكتوبر ٢٠٢٦)، والعنوان رابط يُضغط. */}
       <TonalCard tone="warning" style={styles.notice}>
-        <ModontyIcon name="upload" size={control.iconSizeSmall} primary={theme.colors.onWarningContainer} accent={theme.colors.accent} />
-        <Text style={[styles.noticeText, { color: theme.colors.onWarningContainer }]}>{upload.unavailableLabel}</Text>
+        <ModontyIcon name="info" size={control.iconSizeSmall} primary={theme.colors.onWarningContainer} accent={theme.colors.accent} />
+        <Text style={[styles.noticeText, { color: theme.colors.onWarningContainer }]}>
+          {upload.unavailableText && upload.consoleLinkLabel && upload.consoleUrl
+            ? <>
+              {`${upload.unavailableText} `}
+              <Text accessibilityRole="link" onPress={() => { if (upload.consoleUrl) void Linking.openURL(upload.consoleUrl).catch(() => undefined); }} style={styles.link}>{upload.consoleLinkLabel}</Text>
+            </>
+            : upload.unavailableLabel}
+        </Text>
       </TonalCard>
     </EnterView>}
     <EnterView index={3}>
@@ -90,6 +98,7 @@ const styles = StyleSheet.create({
   disabled: { opacity: 0.45 },
   sourceLabel: { flex: 1, fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right', writingDirection: 'rtl' },
   notice: { alignItems: 'flex-start', flexDirection: 'row-reverse', gap: spacing.sm },
+  link: { fontFamily: fonts.bold, textDecorationLine: 'underline' },
   noticeText: { flex: 1, fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right', writingDirection: 'rtl' },
   secondary: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
 });

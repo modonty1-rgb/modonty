@@ -14,6 +14,7 @@ const pages = [
   { href: "/playbook/content/article-journey", title: "رحلة المقال", line: "ثلاث مراحل، وحدود حقول يرفضها النظام عند تجاوزها." },
   { href: "/playbook/content/authority", title: "السلطة والنسبة", line: "باسم مَن يُنشر المقال، وكيف تُبنى ثقة الاسم." },
   { href: "/playbook/content/reels", title: "الريلز", line: "تأتي من الشريك، ونضبط بياناتها وسيوها قبل النشر." },
+  { href: "/playbook/content/article-button", title: "زرّ المقال", line: "الزرّ اللي يطلع للقارئ: من العميل، وإلا من المقال، ووين يودّي." },
   { href: "/playbook/content/after-publish", title: "بعد النشر", line: "صحّة المقال، ومَن يملك أي حقل: أنت أم النظام." },
 ] as const;
 

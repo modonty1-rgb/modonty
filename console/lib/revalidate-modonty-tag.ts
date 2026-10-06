@@ -1,7 +1,8 @@
 // Cross-app cache buster: tells the PUBLIC modonty.com deployment to revalidate a
 // cache tag (the console's own revalidatePath only touches the console runtime, so
 // regenerated client JSON-LD/meta would otherwise stay stale on the public client
-// page). Mirrors admin/lib/revalidate-modonty-tag.ts. Best-effort: never throws.
+// page). Mirrors admin/lib/revalidate-modonty-tag.ts. Best-effort: never throws; resolves true
+// when modonty confirmed the bust, so a caller can tell the partner the truth.
 /**
  * Where to send the bust — NOT simply NEXT_PUBLIC_SITE_URL.
  *
@@ -34,27 +35,39 @@ export async function revalidateModontyTag(
     | "industries"
     | "faqs"
     | "reels"
-): Promise<void> {
+    // One partner's own tags — shared/lib/cache/client-cache-tags.ts (4 Oct 2026).
+    | `client:${string}`
+    | `client-id:${string}`,
+  /**
+   * `immediate`: expire now instead of «max» (stale once, then fresh). The builder says «ظاهر على
+   * موقعك» the moment it saves, and with «max» the partner's first visit still showed the old look
+   * (4 Oct 2026). Same option admin/lib/revalidate-modonty-tag.ts has.
+   */
+  options?: { immediate?: boolean },
+): Promise<boolean> {
   try {
     const secret = process.env.REVALIDATE_SECRET;
     if (!secret) {
       if (process.env.NODE_ENV === "development") {
         console.warn("[revalidateModontyTag] No REVALIDATE_SECRET — skipping modonty cache invalidation");
       }
-      return;
+      return false;
     }
 
     const url = modontyBaseUrl();
     const res = await fetch(`${url}/api/revalidate/tag`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tag, secret }),
+      body: JSON.stringify({ tag, secret, ...(options?.immediate && { immediate: true }) }),
     });
 
     if (!res.ok) {
       console.error(`[revalidateModontyTag] Failed to revalidate tag "${tag}" on ${url} — status ${res.status}`);
+      return false;
     }
+    return true;
   } catch (error) {
     console.error(`[revalidateModontyTag] Network error revalidating tag "${tag}" — modonty may be down:`, error instanceof Error ? error.message : error);
+    return false;
   }
 }

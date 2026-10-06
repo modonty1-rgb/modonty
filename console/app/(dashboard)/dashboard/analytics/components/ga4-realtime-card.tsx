@@ -93,7 +93,7 @@ async function GA4Stats({ clientId }: { clientId: string }) {
 
       {data.topEvents && data.topEvents.length > 0 && (
         <div className="mt-4 rounded-lg border bg-card p-4">
-          <h4 className="mb-3 text-sm font-semibold text-foreground">أهم الأحداث (7 أيام)</h4>
+          <h3 className="mb-3 text-sm font-semibold text-foreground">أهم الأحداث (7 أيام)</h3>
           <div className="space-y-2">
             {data.topEvents.slice(0, 5).map((evt) => {
               const max = data.topEvents?.[0]?.count || 1;

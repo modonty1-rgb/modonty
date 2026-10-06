@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { BOOKING_BLOCKS } from "@modonty/shared/components/partner-site/free/booking";
 import { PageBlocks } from "../../components/page-blocks";
 
 interface PageProps {
@@ -14,5 +13,6 @@ export const metadata: Metadata = {
 /** «الحجز» — the admin's request form (or link) from the shared registry; the whole page is empty when no button is set. */
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
-  return <PageBlocks slug={slug} blocks={BOOKING_BLOCKS} />;
+  // h1 كبقيّة الصفحات الداخلية (٤ أكتوبر ٢٠٢٦): كانت الصفحة الوحيدة بلا عنوان رئيسي — قسمُ الحجز h2.
+  return <PageBlocks slug={slug} page="book" />;
 }

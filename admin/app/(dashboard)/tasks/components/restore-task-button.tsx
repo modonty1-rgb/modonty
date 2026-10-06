@@ -40,15 +40,15 @@ export function RestoreTaskButton({
           const result = await restoreTask(id);
           toast(
             result.success
-              ? { title: "Restored", description: `${title} is back in ${column}.` }
-              : { title: "Restore failed", description: result.error, variant: "destructive" },
+              ? { title: "رجعت", description: `«${title}» رجعت إلى «${column}».` }
+              : { title: "ما رجعت", description: result.error, variant: "destructive" },
           );
           router.refresh();
         })
       }
     >
       <Undo2 className="size-3.5" aria-hidden />
-      {isPending ? "Restoring…" : "Restore"}
+      {isPending ? "جارٍ الاسترداد…" : "استرداد"}
     </Button>
   );
 }

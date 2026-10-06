@@ -12,6 +12,9 @@ import { useAppTheme } from '@/src/theme/ThemeProvider';
 
 type HomeRouteProps = {
   clientName?: string;
+  /** العدّ الحيّ نفسه الذي تحمله شارة تاب التنبيهات — كي لا يختلف الرقمان. */
+  unreadCount?: number;
+  onOpenNotifications?: () => void;
   /** لبطاقة «زوّارك» التي تُجلب وحدها بعد الرئيسية. */
   accessToken?: string | null;
   dashboard: MobileDashboard | null;
@@ -49,7 +52,7 @@ const noop = () => undefined;
  * الذي ينتظرني» قبل أي شيء آخر، وكانت الشاشة تبدأ ببطاقة الإحالة التسويقية. والأرقام كلها من
  * `/dashboard`: لا رقم في الشاشة لا يحمله العقد (الحلقة = الأيّام الباقية ÷ مدّة الطلب الساري).
  */
-export function HomeRoute({ clientName, accessToken, dashboard, error = null, offline = false, onRetry, refreshFailure = null, onOpenDecisionArticles, onOpenVideos, onOpenAudience, onOpenBookings, onRefresh, isRefreshing, onOpenSubscription, onOpenReferral }: HomeRouteProps) {
+export function HomeRoute({ clientName, unreadCount = 0, onOpenNotifications, accessToken, dashboard, error = null, offline = false, onRetry, refreshFailure = null, onOpenDecisionArticles, onOpenVideos, onOpenAudience, onOpenBookings, onRefresh, isRefreshing, onOpenSubscription, onOpenReferral }: HomeRouteProps) {
   const { theme } = useAppTheme();
   const clearance = useTabBarClearance();
 
@@ -88,6 +91,18 @@ export function HomeRoute({ clientName, accessToken, dashboard, error = null, of
     <EnterView index={0}>
       <LargeTitle title={dashboard.review.title} subtitle={`${dashboard.review.greetingPrefix} ${clientName ?? dashboard.review.greetingFallback}`} />
     </EnterView>
+
+    {/*
+      * سطر التنبيهات الجديدة: الضغط على إشعار والتطبيق مقفول يفتح الرئيسية لا وجهته (خلل Expo
+      * #49254، ملاحظة ٧) — فالتنبيه يجب أن يكون أوّل ما يراه العميل هنا، بضغطة تفتح التنبيهات.
+      */}
+    {unreadCount > 0 && dashboard.review.unreadBannerTemplate && onOpenNotifications ? <EnterView index={1}>
+      <TonalCard tone="warning" onPress={onOpenNotifications} accessibilityLabel={dashboard.review.unreadBannerTemplate.replace('{count}', arabicDigits(unreadCount))} style={styles.unreadBanner}>
+        <ModontyIcon name="notifications" size={control.iconSize} primary={theme.colors.onWarningContainer} accent={theme.colors.accent} />
+        <Text maxFontSizeMultiplier={1.2} style={[styles.unreadText, { color: theme.colors.onWarningContainer }]}>{dashboard.review.unreadBannerTemplate.replace('{count}', arabicDigits(unreadCount))}</Text>
+        <ModontyIcon name="arrow-left" size={control.iconSizeSmall} primary={theme.colors.onWarningContainer} accent={theme.colors.accent} />
+      </TonalCard>
+    </EnterView> : null}
 
     <EnterView index={1}>
       <HeroCard>
@@ -154,6 +169,8 @@ export function HomeRoute({ clientName, accessToken, dashboard, error = null, of
 const styles = StyleSheet.create({
   content: { gap: spacing.sm, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.xxs },
   state: { flex: 1, gap: spacing.sm, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.md },
+  unreadBanner: { alignItems: 'center', flexDirection: 'row-reverse', gap: spacing.sm },
+  unreadText: { flex: 1, fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right', writingDirection: 'rtl' },
   heroHead: { alignItems: 'center', flexDirection: 'row-reverse', justifyContent: 'space-between' },
   heroLabel: { fontFamily: fonts.medium, fontSize: typography.label, lineHeight: typography.lineHeightLabel, textAlign: 'right', writingDirection: 'rtl' },
   heroRow: { alignItems: 'center', flexDirection: 'row-reverse', gap: spacing.md },

@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { BLOG_BLOCKS } from "@modonty/shared/components/partner-site/free/blog";
 import { PageBlocks } from "../../components/page-blocks";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { getClientPageData } from "../../helpers/client-page-data";
 import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
-import { PageFrame } from "../../components/page-frame";
 import { messages } from "@/lib/i18n/messages";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
@@ -37,5 +35,5 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 /** Rendered from the shared block registry — same components the partner previewed in the console. */
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
-  return <PageBlocks slug={slug} blocks={BLOG_BLOCKS} titlePrefix="مقالات" />;
+  return <PageBlocks slug={slug} page="articles" />;
 }

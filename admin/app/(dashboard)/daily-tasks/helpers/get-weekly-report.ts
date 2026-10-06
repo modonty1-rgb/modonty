@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { isTaskLate } from "@/lib/tasks/is-task-late";
 
 /**
  * **تقريرُ الأسبوع لكلّ شخص** (خالد ٢٣ سبتمبر ٢٠٢٦: «تتقسم لتقرير أسبوعي — تقرير بمعنى الكلمة»).
@@ -13,6 +14,20 @@ import { db } from "@/lib/db";
  *
  * الأسبوعُ من الأحد إلى السبت — أسبوعُ العمل في السعوديّة ومصر يبدأ الأحد.
  */
+/** مهمّةٌ وراء أرقام الشخص — تُفتح تحت سطره في الجدول (خالد ٣ أكتوبر ٢٠٢٦). */
+export interface WeekTask {
+  id: string;
+  title: string;
+  description: string | null;
+  status: "TODO" | "IN_PROGRESS" | "REVIEW" | "DONE";
+  priority: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+  dueDate: Date | null;
+  late: boolean;
+  /** أُنجزت داخل الأسبوع — وفي موعدها أم لا (null = بلا موعد أو لم تُنجز). */
+  completedOnTime: boolean | null;
+  completed: boolean;
+}
+
 export interface PersonWeek {
   staffId: string | null;
   name: string;
@@ -23,6 +38,8 @@ export interface PersonWeek {
   onTime: number;
   lateNow: number;
   completedLastWeek: number;
+  /** المهامُّ التي صنعت أرقامَ الأسبوع (بلا ما أُنجز الأسبوعَ الماضي — ذاك للمقارنة فقط). */
+  tasks: WeekTask[];
 }
 
 /** بدايةُ أسبوعٍ (الأحد، منتصف الليل المحلّيّ) يحوي `day`. */
@@ -54,13 +71,17 @@ export async function getWeeklyReport(weekStart: Date, now: Date = new Date()): 
           OR: [
             { createdAt: { gte: weekStart, lt: weekEnd } },
             { completedAt: { gte: prevStart, lt: weekEnd } },
-            // المتأخّرُ الآن: مفتوحٌ وموعدُه قبل اليوم.
-            { status: { not: "DONE" }, dueDate: { lt: now } },
+            // المتأخّرُ الآن: عند منفّذه (لم تبدأ/قيد التنفيذ) وموعدُه قبل اليوم — المراجعةُ ليست تأخيراً.
+            { status: { in: ["TODO", "IN_PROGRESS"] }, dueDate: { lt: now } },
           ],
         },
       ],
     },
     select: {
+      id: true,
+      title: true,
+      description: true,
+      priority: true,
       status: true,
       dueDate: true,
       createdAt: true,
@@ -77,9 +98,9 @@ export async function getWeeklyReport(weekStart: Date, now: Date = new Date()): 
     if (!p) {
       p = {
         staffId: a?.id ?? null,
-        name: a?.name?.trim() || (a ? "No name" : "Unassigned"),
+        name: a?.name?.trim() || (a ? "بلا اسم" : "بلا منفّذ"),
         image: a?.image ?? null,
-        assigned: 0, completed: 0, completedWithDue: 0, onTime: 0, lateNow: 0, completedLastWeek: 0,
+        assigned: 0, completed: 0, completedWithDue: 0, onTime: 0, lateNow: 0, completedLastWeek: 0, tasks: [],
       };
       people.set(key, p);
     }
@@ -88,16 +109,27 @@ export async function getWeeklyReport(weekStart: Date, now: Date = new Date()): 
 
   for (const t of rows) {
     const p = bucket(t.assignee);
-    if (t.createdAt >= weekStart && t.createdAt < weekEnd) p.assigned += 1;
-    if (t.completedAt && t.completedAt >= weekStart && t.completedAt < weekEnd) {
+    const assignedNow = t.createdAt >= weekStart && t.createdAt < weekEnd;
+    const completedNow = !!t.completedAt && t.completedAt >= weekStart && t.completedAt < weekEnd;
+    const late = isTaskLate(t, now.getTime());
+    let onTime: boolean | null = null;
+    if (assignedNow) p.assigned += 1;
+    if (completedNow) {
       p.completed += 1;
       if (t.dueDate) {
         p.completedWithDue += 1;
-        if (t.completedAt.getTime() <= endOfDay(t.dueDate)) p.onTime += 1;
+        onTime = t.completedAt!.getTime() <= endOfDay(t.dueDate);
+        if (onTime) p.onTime += 1;
       }
     }
     if (t.completedAt && t.completedAt >= prevStart && t.completedAt < weekStart) p.completedLastWeek += 1;
-    if (t.status !== "DONE" && t.dueDate && endOfDay(t.dueDate) < now.getTime()) p.lateNow += 1;
+    if (late) p.lateNow += 1;
+    if (assignedNow || completedNow || late) {
+      p.tasks.push({
+        id: t.id, title: t.title, description: t.description, status: t.status, priority: t.priority,
+        dueDate: t.dueDate, late, completedOnTime: onTime, completed: completedNow,
+      });
+    }
   }
 
   // المتأخّرُ أوّلاً ثمّ الأكثرُ عملاً — مَن يحتاج نظرةً اليوم أوّلُ مَن يُرى. وبلا مُسنَدٍ في الآخر.

@@ -121,4 +121,5 @@ export const clientServerSchema = z.object({
   ctaPresetId: z.string().optional().nullable(),
   ctaLabel: z.string().max(40).optional().nullable(),
   ctaUrl: z.string().max(500).optional().nullable(),
+  listedOn: z.array(z.enum(["BOOKING", "SHOP"])).optional().nullable(),
 }).passthrough(); // Allow extra fields from form that aren't listed here

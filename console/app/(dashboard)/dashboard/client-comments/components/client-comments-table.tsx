@@ -24,6 +24,7 @@ import {
   deleteClientComment,
   restoreClientComment,
 } from "../actions/client-comment-actions";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 interface Props {
   comments: ClientCommentWithDetails[];
@@ -32,7 +33,7 @@ interface Props {
 type FilterKey = "all" | CommentStatus;
 
 function fmt(d: Date | string): string {
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     year: "numeric",
     month: "short",
     day: "numeric",

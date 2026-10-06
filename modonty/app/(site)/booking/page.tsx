@@ -39,12 +39,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /**
  * The booking door: the same partner card as `/clients` (Khalid, 2026-08-16 — «خلي الكرت
- * تبع العميل يكون reusable»), filtered to partners whose CTA is a booking form. Reads the
+ * تبع العميل يكون reusable»), filtered to partners the admin listed here («يظهر في: الحجز», only with a booking form). Reads the
  * exact same cached list `/clients` reads — one query, one card, two doors — so a partner
  * never shows richer or thinner information depending on which page a visitor arrived from.
  */
-export default async function BookingPage() {
-  const partners = (await getClientsList()).filter((partner) => partner.ctaMode === "FORM");
+// «يظهر في» (خالد ٣ أكتوبر ٢٠٢٦): الأدمن يضع العميل في هذه الصفحة صراحةً — لا يُستنتج من نوع زرّه
+// (كان أيُّ رابطٍ «متجراً»، فظهر زرُّ واتساب في التسوّق). و`?industry=` يقصرها على مجالٍ واحد:
+// زرُّ صفحة المجال يفتح شركاءَ ذلك المجال، لا كلَّ الشركاء.
+export default async function BookingPage({ searchParams }: { searchParams: Promise<{ industry?: string }> }) {
+  const { industry } = await searchParams;
+  const partners = (await getClientsList()).filter(
+    (partner) => partner.listedOn.includes("BOOKING") && (!industry || partner.industry?.slug === industry),
+  );
 
   return (
     <>

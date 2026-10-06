@@ -1,18 +1,16 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { canSeeReports } from "@/lib/can-see-reports";
-import { TASK_PRIORITY_META, TASK_STATUS_META, type TaskStatusKey } from "@/lib/tasks/task-config";
-import { cn } from "@/lib/utils";
+import { type TaskStatusKey } from "@/lib/tasks/task-config";
+import { isTaskLate } from "@/lib/tasks/is-task-late";
 
 import { AssignTaskButton } from "./components/assign-task-button";
+import { SentTasksTable, type SentTaskRow } from "./components/sent-tasks-table";
 
 export const metadata = { title: "Assign Task" };
 
-const dateFmt = new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "long" });
-const N = new Intl.NumberFormat("ar-EG");
 
 /**
  * **Assign Task — إسنادُ المهامّ ومتابعتُها** (خالد ٢٣ سبتمبر ٢٠٢٦).
@@ -46,7 +44,7 @@ export default async function AssignTaskPage() {
         NOT: [{ status: "DONE" }],
         OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
       },
-      select: { assigneeId: true, dueDate: true },
+      select: { assigneeId: true, dueDate: true, status: true },
       take: 5000,
     }),
     db.task.findMany({
@@ -57,8 +55,8 @@ export default async function AssignTaskPage() {
         OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }],
       },
       select: {
-        id: true, title: true, status: true, priority: true, dueDate: true, createdAt: true, completedAt: true,
-        assignee: { select: { name: true, email: true, image: true } },
+        id: true, title: true, description: true, status: true, priority: true, dueDate: true, createdAt: true, completedAt: true,
+        assignee: { select: { id: true, name: true, email: true, image: true } },
       },
       orderBy: { createdAt: "desc" },
       take: 200,
@@ -71,21 +69,26 @@ export default async function AssignTaskPage() {
     if (!t.assigneeId) continue;
     const l = load.get(t.assigneeId) ?? { open: 0, late: 0 };
     l.open += 1;
-    if (t.dueDate && new Date(t.dueDate).setHours(23, 59, 59, 999) < now) l.late += 1;
+    if (isTaskLate(t, now)) l.late += 1;
     load.set(t.assigneeId, l);
   }
   // لا يُسند المرءُ لنفسه من هنا — لوحتُه لذلك.
   const assignees = staff
     .filter((a) => a.id !== userId)
     .map((a) => ({ ...a, open: load.get(a.id)?.open ?? 0, late: load.get(a.id)?.late ?? 0 }));
-  const isLate = (t: { dueDate: Date | null; status: string }) =>
-    !!t.dueDate && t.status !== "DONE" && new Date(t.dueDate).setHours(23, 59, 59, 999) < now;
-  const counts = {
-    open: sent.filter((t) => t.status === "TODO" || t.status === "IN_PROGRESS").length,
-    late: sent.filter(isLate).length,
-    review: sent.filter((t) => t.status === "REVIEW").length,
-    done: sent.filter((t) => t.status === "DONE").length,
-  };
+  const rows: SentTaskRow[] = sent.map((t) => ({
+    id: t.id,
+    title: t.title,
+    description: t.description,
+    status: t.status as TaskStatusKey,
+    priority: t.priority,
+    dueDate: t.dueDate,
+    createdAt: t.createdAt,
+    completedAt: t.completedAt,
+    late: isTaskLate(t, now),
+    assignee: t.assignee ? { id: t.assignee.id, name: t.assignee.name, image: t.assignee.image } : null,
+    assigneeName: t.assignee?.name?.trim() || t.assignee?.email || "—",
+  }));
 
   return (
     <div className="space-y-3" dir="rtl">
@@ -97,69 +100,13 @@ export default async function AssignTaskPage() {
         <AssignTaskButton assignees={assignees} />
       </header>
 
-      {/* الخلاصةُ قبل القائمة — المتأخّرُ مصبوغ، و«بانتظار اعتمادك» تفتح صفحةَ القرار. */}
-      <div className="flex flex-wrap items-center gap-2 text-[12px]">
-        <span className="rounded-full border bg-card px-2.5 py-1">مفتوحة <b className="tabular-nums">{N.format(counts.open)}</b></span>
-        <span className={cn("rounded-full border px-2.5 py-1", counts.late ? "border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-400" : "bg-card")}>
-          متأخّرة <b className="tabular-nums">{N.format(counts.late)}</b>
-        </span>
-        <Link
-          href="/tasks/reviews"
-          className={cn("rounded-full border px-2.5 py-1 hover:bg-muted", counts.review ? "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-400" : "bg-card")}
-        >
-          بانتظار اعتمادك <b className="tabular-nums">{N.format(counts.review)}</b> ←
-        </Link>
-        <span className="rounded-full border bg-card px-2.5 py-1">منجَزة <b className="tabular-nums">{N.format(counts.done)}</b></span>
-      </div>
-
-      {sent.length === 0 ? (
+      {rows.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-10 text-center">
           <p className="text-sm font-medium">لم تُسند مهمّةً لأحدٍ بعد</p>
-          <p className="text-[13px] text-muted-foreground">اضغط «إسناد مهمّة»، واختر الزميل والموعد — تظهر هنا وتتابعها حتى تُنجَز.</p>
+          <p className="text-[13px] text-muted-foreground">اضغط «إسناد مهمّة»، واختر الزميل — تظهر هنا وتتابعها حتى تُنجَز.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <table className="w-full text-[13px]">
-            <thead>
-              <tr className="border-b bg-muted/60 text-[12px] font-bold">
-                <th className="px-3 py-2 text-right">المهمّة</th>
-                <th className="px-3 py-2 text-right">إلى</th>
-                <th className="px-3 py-2 text-right">الحالة</th>
-                <th className="px-3 py-2 text-right">الأولويّة</th>
-                <th className="px-3 py-2 text-right">الموعد</th>
-                <th className="px-3 py-2 text-right">أُسندت</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sent.map((t) => {
-                const late = isLate(t);
-                const who = t.assignee?.name?.trim() || t.assignee?.email || "—";
-                const status = TASK_STATUS_META[t.status as TaskStatusKey];
-                return (
-                  <tr key={t.id} className={cn("border-b last:border-0", late && "bg-red-500/5")}>
-                    <td className="max-w-[360px] px-3 py-2 font-medium">
-                      <span className="line-clamp-2">{t.title}</span>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2">{who}</td>
-                    <td className="px-3 py-2">
-                      <span className={cn("rounded px-1.5 py-0.5 text-[11px] font-semibold", status.tone)}>{status.labelAr}</span>
-                    </td>
-                    <td className="px-3 py-2">
-                      <span className={cn("rounded px-1.5 py-0.5 text-[11px] font-semibold", TASK_PRIORITY_META[t.priority].tone)}>
-                        {TASK_PRIORITY_META[t.priority].labelAr}
-                      </span>
-                    </td>
-                    <td className={cn("whitespace-nowrap px-3 py-2 tabular-nums", late ? "font-bold text-red-600 dark:text-red-400" : "text-muted-foreground")}>
-                      {t.dueDate ? dateFmt.format(t.dueDate) : "—"}
-                      {late ? " · متأخّرة" : ""}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2 tabular-nums text-muted-foreground">{dateFmt.format(t.createdAt)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <SentTasksTable rows={rows} />
       )}
     </div>
   );

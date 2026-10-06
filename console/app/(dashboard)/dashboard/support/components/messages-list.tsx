@@ -42,6 +42,7 @@ import {
   bulkDeleteMessages,
   sendReply,
 } from "../actions/support-actions";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 interface Props {
   messages: ContactMessageWithDetails[];
@@ -51,7 +52,7 @@ type FilterKey = "all" | ContactStatus;
 
 function formatDateTime(d: Date | string | null | undefined): string {
   if (!d) return "—";
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -641,9 +642,9 @@ function EmptyState({
         <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary/10">
           <Inbox className="h-8 w-8 text-primary" />
         </div>
-        <h3 className="mt-4 text-base font-semibold text-foreground">
+        <h2 className="mt-4 text-base font-semibold text-foreground">
           {s.noMessagesFound}
-        </h3>
+        </h2>
       </div>
     );
   }

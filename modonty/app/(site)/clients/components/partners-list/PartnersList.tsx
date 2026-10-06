@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PartnerCard } from "@/components/shared/partner-card/PartnerCard";
 import { PartnerCardMobile } from "@/components/shared/partner-card/PartnerCardMobile";
 import { buildPartnersHref } from "@/app/(site)/clients/helpers/build-partners-href";
+import { PARTNERS_PAGE_SIZE } from "@/app/(site)/clients/helpers/partners-page-size";
 import { buttonVariants } from "@/components/ui/button";
 import { messages, formatCount, fill } from "@/lib/i18n/messages";
 import type { ClientListItem } from "@/lib/queries/get-clients-list";
@@ -11,7 +12,7 @@ const text = messages.clients.partnersList;
 const counts = messages.clients.counts;
 
 /** Cards per chunk. Small enough that «التالية» is a real page, not a formality. */
-const PAGE_SIZE = 12;
+const PAGE_SIZE = PARTNERS_PAGE_SIZE;
 
 interface PartnersListProps {
   /** Already filtered and sorted — this component only chunks and draws. */

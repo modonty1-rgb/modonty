@@ -113,6 +113,12 @@ export type VideoSummary = {
   metaLine: string | null;
   rejectionReason: string | null;
   thumbnailUrl: string | null;
+  /** غائبة في الخادم الأقدم ⇐ الطلّة تُعرض ولا تُشغَّل. */
+  isVideo?: boolean;
+  /** رابط التشغيل (HLS أو MP4) — `null` لصورة أو فيديو لم يُجهَّز بعد. */
+  videoUrl?: string | null;
+  /** الصورة نفسها للطلّة المصوّرة — تُعرض ملء الشاشة بدل المشغّل. */
+  imageUrl?: string | null;
 };
 
 export type VideoUploadCopy = {
@@ -126,12 +132,20 @@ export type VideoUploadCopy = {
   noteBody: string;
   backLabel: string;
   unavailableLabel: string;
+  /** الجملة بلا العنوان + رابط يُضغط — غائبة في الخادم الأقدم ⇐ `unavailableLabel` كما هو. */
+  unavailableText?: string;
+  consoleLinkLabel?: string;
+  consoleUrl?: string;
   screenTitle: string;
 };
 
 export type VideoCollection = {
   videos: VideoSummary[];
-  review: { stats?: MobileStat[]; title: string; uploadActionLabel: string; latestSectionTitle: string; uploadHintLabel: string; retryLabel: string; emptyTitle: string; emptyDescription: string; errorTitle: string; offlineTitle: string; offlineDescription: string };
+  review: {
+    stats?: MobileStat[]; title: string; uploadActionLabel: string; latestSectionTitle: string; uploadHintLabel: string; retryLabel: string; emptyTitle: string; emptyDescription: string; errorTitle: string; offlineTitle: string; offlineDescription: string;
+    /** نصوص المشغّل — اختيارية كي يبقى الخادم الأقدم يعمل. */
+    openPrefix?: string; playerBackLabel?: string; playLabel?: string; pauseLabel?: string; rejectionTitle?: string; videoNotReadyLabel?: string; playbackErrorLabel?: string;
+  };
   upload: VideoUploadCopy;
 };
 
@@ -140,7 +154,8 @@ export type NotificationSummary = {
   title: string;
   body: string | null;
   relatedId: string | null;
-  target: 'article' | 'audience' | 'videos' | null;
+  /** `null` = تنبيه نشاط بلا شاشة (متابعة · مشاركة صفحة) — يُضغط ليُقرأ كاملاً ويُوسم مقروءاً. */
+  target: 'article' | 'bookings' | 'audience' | 'videos' | null;
   isUnread: boolean;
   stateLabel: string;
   timeLabel: string;
@@ -149,7 +164,7 @@ export type NotificationSummary = {
 export type NotificationCollection = {
   notifications: NotificationSummary[];
   unreadCount: number;
-  review: { title: string; unreadBadgeLabel: string | null; priorityNote: string; openPrefix: string; retryLabel: string; emptyTitle: string; emptyDescription: string; errorTitle: string; offlineTitle: string; offlineDescription: string };
+  review: { title: string; unreadBadgeLabel: string | null; priorityNote: string; openPrefix: string; /** غائب في الخادم الأقدم ⇐ لا زرّ. */ markAllReadLabel?: string; /** غائبان في الخادم الأقدم ⇐ يبقى النصّ حتى إعادة الجلب. */ readStateLabel?: string; unreadBadgeTemplate?: string; retryLabel: string; emptyTitle: string; emptyDescription: string; errorTitle: string; offlineTitle: string; offlineDescription: string };
 };
 
 export type NotificationToggle = { key: 'actionable' | 'activity'; label: string; description: string; enabled: boolean };
@@ -225,6 +240,11 @@ export function getNotificationCollection(accessToken: string): Promise<Notifica
 /** يُوسَم التنبيه مقروءاً عند فتحه، ويرجع العدّ الجديد فلا يحتاج التطبيق نداءً ثانياً ليصحّح شارته. */
 export function markNotificationRead(accessToken: string, notificationId: string): Promise<{ notificationId: string; unreadCount: number }> {
   return mobileRequest<{ notificationId: string; unreadCount: number }>(`/notifications/${notificationId}/read`, accessToken, 'تعذّر تحديث حالة التنبيه.', { method: 'POST' });
+}
+
+/** «تعليم الكل كمقروء» — يرجع العدّ بعد الوسم (صفر إلا لو وصل تنبيه في نفس اللحظة). */
+export function markAllNotificationsRead(accessToken: string): Promise<{ markedCount: number; unreadCount: number }> {
+  return mobileRequest<{ markedCount: number; unreadCount: number }>('/notifications/read-all', accessToken, 'تعذّر تحديث حالة التنبيهات.', { method: 'POST' });
 }
 
 export function getAccountOverview(accessToken: string): Promise<AccountOverview> {

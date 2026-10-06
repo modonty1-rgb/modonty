@@ -1,7 +1,7 @@
 import type { HomeBlock } from "../home";
 import { ContactCards } from "./contact-cards";
 import { MapBlock } from "./map-block";
-import { LeadForm } from "./lead-form";
+import { LeadForm } from "./lead-form-block";
 import { FinalCta } from "../cta/final-cta";
 
 /**
@@ -16,5 +16,5 @@ export const CONTACT_BLOCKS: readonly HomeBlock[] = [
   // لعميلٍ وضعه ليس `FORM` (`booking-actions.ts:188`). استمارةٌ تُعرض ثم يُرفض كل ما
   // يُرسَل فيها أسوأ من غيابها.
   { key: "lead-form", name: "نموذج «اترك رقمك»", toggleable: true, isEmpty: (d) => d.booking.mode !== "FORM", Component: LeadForm },
-  { key: "cta", name: "النداء الأخير", toggleable: false, isEmpty: () => false, Component: FinalCta },
+  { key: "cta", name: "النداء الأخير", toggleable: false, isEmpty: (d) => !d.whatsappHref && d.booking.mode !== "FORM" && !(d.booking.mode === "LINK" && d.booking.url), Component: FinalCta },
 ] as const;

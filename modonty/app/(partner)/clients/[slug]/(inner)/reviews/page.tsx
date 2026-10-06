@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { REVIEWS_BLOCKS } from "@modonty/shared/components/partner-site/free/testimonials";
 import { PageBlocks } from "../../components/page-blocks";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../../helpers/client-page-data";
@@ -39,7 +38,7 @@ export default async function Page({ params }: ClientReviewsPageProps) {
   // the form existed unmounted (subscriber QA finding #9, 29 Sep 2026).
   return (
     <>
-      <PageBlocks slug={slug} blocks={REVIEWS_BLOCKS} titlePrefix="تقييمات" />
+      <PageBlocks slug={slug} page="reviews" />
       <section className="mx-auto max-w-[1216px] px-4 pb-12" aria-label="اكتب تقييمك">
         <div className="rounded-xl border bg-card p-5">
           <h2 className="text-lg font-bold">جرّبت خدماتهم؟</h2>

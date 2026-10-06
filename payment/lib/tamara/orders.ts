@@ -49,17 +49,37 @@ export async function authoriseOrder(orderId: string): Promise<TamaraAuthoriseRe
 }
 
 /**
- * There is deliberately no `cancelOrder` or `refundOrder` here.
- *
- * Both exist in Tamara's API (`POST /orders/{id}/cancel` while authorised, and
- * `POST /payments/simplified-refund/{id}` once captured), and both are already available
- * as buttons in the Tamara Partners Portal. Refunds are issued from there.
- *
- * Wrapping them in code nothing calls would leave two functions that look like a working
- * refund path and are not — the same trap as a webhook handler with no registered URL.
- * If refunds ever need to start from our own admin, the endpoints above are the whole
- * job; until then the portal is the honest answer.
+ * No `cancelOrder`: `POST /orders/{id}/cancel` only works while an order is `authorised`,
+ * and the webhook captures in the same request that authorises — so no order of ours ever
+ * rests in that state. Tamara's go-live checklist marks the cancellation flow "not
+ * applicable if Auto-capture is enabled", which is what immediate capture amounts to.
  */
+
+export interface TamaraRefundResponse {
+  refund_id: string;
+  order_id: string;
+  status: string;
+  refunded_amount: TamaraMoney;
+}
+
+/**
+ * Gives the money back — for captured orders only.
+ *
+ * Tamara's checklist requires a refund started anywhere on our side to reach them as an API
+ * call ("All Tamara orders refunds are handled over Tamara ONLY"), so the admin's refund
+ * button calls this through `/api/internal/tamara-refund` instead of only writing a status.
+ * `comment` is required by the endpoint (docs: reference/simplifiedrefund).
+ */
+export async function refundOrder(
+  orderId: string,
+  total: TamaraMoney,
+  comment: string,
+): Promise<TamaraRefundResponse> {
+  return tamaraRequest<TamaraRefundResponse>(
+    `/payments/simplified-refund/${encodeURIComponent(orderId)}`,
+    { method: "POST", body: { total_amount: total, comment } },
+  );
+}
 
 export interface TamaraCaptureResponse {
   capture_id: string;

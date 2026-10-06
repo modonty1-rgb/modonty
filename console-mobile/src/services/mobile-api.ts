@@ -121,7 +121,7 @@ export type MobileDashboard = {
   subscription: MobileDashboardSubscription | null;
   referral: MobileReferral;
   shell: MobileShellCopy;
-  review: { title: string; greetingPrefix: string; greetingFallback: string; subtitle: string; subscriptionLabel: string; daysRemainingText: string | null; actionItemsTitle: string; noActionItemsLabel: string; firstActionLabel?: string };
+  review: { title: string; greetingPrefix: string; greetingFallback: string; subtitle: string; subscriptionLabel: string; daysRemainingText: string | null; actionItemsTitle: string; noActionItemsLabel: string; firstActionLabel?: string; /** غائب في الخادم الأقدم ⇐ لا سطر. */ unreadBannerTemplate?: string };
 };
 
 /**

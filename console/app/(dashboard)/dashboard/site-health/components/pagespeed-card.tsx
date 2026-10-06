@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Gauge, ExternalLink, Smartphone, Monitor } from "lucide-react";
 import type { PagespeedScores, PagespeedStrategyScores } from "@/lib/health/pagespeed";
+import { IconAlertTriangle } from "@modonty/shared/lib/icons";
 
 function colorFor(score: number | null): string {
   if (score == null) return "bg-muted text-muted-foreground ring-border";
@@ -40,7 +41,7 @@ function StrategyBlock({
           <p className="text-sm font-semibold text-foreground">{label}</p>
         </div>
         <p className="text-xs text-muted-foreground">
-          ⚠️ غير متاح: {data.error ?? "Google لم يُرجع نتائج"}
+          <IconAlertTriangle className="me-1 inline h-4 w-4 align-[-3px]" aria-hidden />غير متاح: {data.error ?? "Google لم يُرجع نتائج"}
         </p>
       </div>
     );
@@ -113,8 +114,8 @@ export function PagespeedCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <StrategyBlock data={scores.mobile} icon={Smartphone} label="📱 موبايل" />
-        <StrategyBlock data={scores.desktop} icon={Monitor} label="💻 كمبيوتر" />
+        <StrategyBlock data={scores.mobile} icon={Smartphone} label="الجوّال" />
+        <StrategyBlock data={scores.desktop} icon={Monitor} label="الكمبيوتر" />
 
         <p className="text-xs text-muted-foreground leading-relaxed">
           ملاحظة: Lighthouse غير حتمي — تشغيلين متتاليين قد يعطون أرقام مختلفة (±5-10 نقاط). لو الفرق أكبر من 10 نقاط، افتح الرابط أعلاه للمقارنة.

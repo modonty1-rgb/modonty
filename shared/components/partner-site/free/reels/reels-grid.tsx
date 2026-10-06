@@ -1,6 +1,8 @@
+import { SiteLink } from "../../parts/site-link";
 import { OptimizedImage, asMedia } from "../../../optimized-image";
 import { ModontyPlayMark } from "../../../icons/modonty-play-mark";
 import { Section } from "../home/parts/section";
+import { ViewAllLink } from "../home/parts/view-all-link";
 import type { HomeData } from "../home/home-data";
 
 /** Home shows one row on desktop; the reels page shows them all. */
@@ -18,19 +20,21 @@ export const HOME_REELS_LIMIT = 4;
 export function ReelsGrid({ data, all = false }: { data: HomeData; preview?: boolean; all?: boolean }) {
   const reels = all ? data.reels : data.reels.slice(0, HOME_REELS_LIMIT);
   return (
-    <Section id="reels" eyebrow="فيديوهات قصيرة" heading={`ريلز ${data.name}`} tone="plain">
+    <Section id="reels" eyebrow="فيديوهات قصيرة" heading="أحدث الريلز" tone="plain">
       <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-        {reels.map((r) => (
+        {reels.map((r, i) => (
           <li key={r.href}>
-            <a href={r.href} className="group block">
-              <span className="relative block aspect-[9/16] overflow-hidden rounded-lg bg-muted">
+            {/* An untitled reel was a link with no name at all — the image is decorative and the
+                <h3> empty (4 Oct 2026). The label falls back to the partner and the position. */}
+            <SiteLink href={r.href} aria-label={r.title?.trim() ? undefined : `ريل ${i + 1} من ${data.name}`} className="group block">
+              <span className="relative block aspect-[9/16] overflow-hidden rounded-[var(--ps-radius-card,0.5rem)] bg-muted">
                 {r.imageUrl && (
                   <OptimizedImage
                     media={asMedia(r.imageUrl, r.title)}
                     alt=""
                     fill
                     sizes="(min-width: 768px) 260px, 45vw"
-                    className="object-cover transition-transform group-hover:scale-[1.02]"
+                    className="object-cover motion-safe:transition-transform motion-safe:group-hover:scale-[1.02]"
                   />
                 )}
                 <span className="absolute inset-0 grid place-items-center">
@@ -39,19 +43,13 @@ export function ReelsGrid({ data, all = false }: { data: HomeData; preview?: boo
                   </span>
                 </span>
               </span>
-              <h3 className="mt-2 line-clamp-2 text-sm font-bold leading-6 text-foreground">{r.title}</h3>
-            </a>
+              {r.title?.trim() && <h3 className="mt-2 line-clamp-2 text-sm font-bold leading-6 text-foreground">{r.title}</h3>}
+            </SiteLink>
           </li>
         ))}
       </ul>
-      {!all && data.reels.length > HOME_REELS_LIMIT && (
-        <a
-          href={data.reelsHref ?? "#"}
-          className="mt-8 inline-flex min-h-11 items-center rounded-full border px-5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-        >
-          كل الريلز
-        </a>
-      )}
+      {/* No page to go to → no button. `?? "#"` printed a link that went nowhere. */}
+      {!all && <ViewAllLink href={data.reelsHref} label="كل الريلز" shown={reels.length} total={data.reels.length} />}
     </Section>
   );
 }

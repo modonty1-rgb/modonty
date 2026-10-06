@@ -16,6 +16,7 @@ import { getClientSubscription } from "@/lib/subscription/get-client-subscriptio
 import { getOutstandingInvoices, resolveClientPayment } from "@/lib/payments";
 import type { NotificationPreferences } from "./actions/settings-actions";
 import type { TelegramEventPreferences } from "@/lib/telegram/events";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -92,7 +93,7 @@ export default async function SettingsPage() {
             suspended={client.apiKeySuspended}
             lastFetchedAt={
               client.apiKeyLastUsedAt
-                ? new Intl.DateTimeFormat("ar-SA", {
+                ? new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
                     dateStyle: "medium",
                     timeStyle: "short",
                   }).format(client.apiKeyLastUsedAt)

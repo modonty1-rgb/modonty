@@ -12,7 +12,12 @@
 
 const LOCALE = "ar-SA";
 
-const numberFormat = new Intl.NumberFormat(LOCALE);
+/**
+ * التجميع من خمس خانات فقط، وبمسافة رفيعة لا «٬»: في خطّ Tajawal على الجوال فاصل الآلاف
+ * العربي نقطةٌ تشبه الصفر «٠»، فقُرئ «١٬٤٨١» عشرةَ آلاف (جوال خالد ٥ أكتوبر ٢٠٢٦).
+ */
+const numberFormat = new Intl.NumberFormat(LOCALE, { useGrouping: "min2" });
+const THIN_SPACE = " ";
 const longDateFormat = new Intl.DateTimeFormat(LOCALE, { day: "numeric", month: "long", year: "numeric", calendar: "gregory" });
 const relativeFormat = new Intl.RelativeTimeFormat(LOCALE, { numeric: "auto" });
 
@@ -22,7 +27,7 @@ const DAY_MS = 24 * HOUR_MS;
 
 /** «٨٧٧» — Arabic-Indic digits, matching every count in the approved screens. */
 export function arabicNumber(value: number): string {
-  return numberFormat.format(value);
+  return numberFormat.format(value).replace(/٬/g, THIN_SPACE);
 }
 
 /** «١١ يونيو ٢٠٢٦» */

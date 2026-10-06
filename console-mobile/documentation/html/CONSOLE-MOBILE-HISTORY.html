@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سجل تطبيق الكونسول</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#f3f5fb;--paper:#fff;--ink:#0E065A;--tx:#1b2133;--mu:#55607a;--line:#d8dfec;--acc:#3030FF;
+--ok:#0B605E;--okbg:#dcf4f2;--warn:#7a3b00;--warnbg:#ffedd6;--bad:#8f1d1d;--badbg:#fde4e4;--wait:#3a2f8f;--waitbg:#e8e6ff}
+@media (prefers-color-scheme:dark){:root{--bg:#070b14;--paper:#101827;--ink:#e9edf5;--tx:#d7ddea;--mu:#a3aec6;--line:#26304a;--acc:#8c8cff;
+--ok:#3fe0d0;--okbg:#0d2c33;--warn:#ffcf85;--warnbg:#3a2a10;--bad:#ff9d9d;--badbg:#3a1414;--wait:#c3bcff;--waitbg:#211d45;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 'Tajawal',Tahoma,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:28px 16px 64px}
+h1{color:var(--ink);font-size:28px;margin:0 0 2px}
+h2{color:var(--ink);font-size:20px;margin:36px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.meta{color:var(--mu);font-size:14px}
+.nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}
+.nav a{font-size:14px;padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--ink);text-decoration:none}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:20px}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi b{display:block;font-size:26px;color:var(--ink);font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:var(--mu)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--bg);color:var(--ink);font-weight:700;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+code,.ltr{direction:ltr;unicode-bidi:isolate;font-family:Consolas,monospace;font-size:13px}
+.pill{display:inline-block;border-radius:999px;padding:0 10px;font-size:13px;font-weight:500;white-space:nowrap}
+.ok{background:var(--okbg);color:var(--ok)} .warn{background:var(--warnbg);color:var(--warn)}
+.bad{background:var(--badbg);color:var(--bad)} .wait{background:var(--waitbg);color:var(--wait)}
+.date{white-space:nowrap;font-weight:700;color:var(--ink)}
+.note{font-size:14px;color:var(--mu);margin:8px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>سجل تطبيق الكونسول (console-mobile)</h1>
+<div class="meta">آخر تحديث: ٥ أكتوبر ٢٠٢٦ · المصادر: git · لوحة المهام <span class="ltr">task-data.json</span> · نتائج الفحص الخام المذكورة في كل صف</div>
+<div class="nav">
+<a href="#now">واقف علينا</a><a href="#broken">متعطّل</a><a href="#todo">الباقي</a><a href="#done">المنجز</a><a href="#timeline">التاريخ</a><a href="#junk">ملفات زايدة</a>
+</div>
+
+<div class="kpis">
+<div class="kpi"><b>٤</b><span>واقف علينا الآن</span></div>
+<div class="kpi"><b>٧</b><span>متعطّل أو ناقص معروف</span></div>
+<div class="kpi"><b>١٠</b><span>مهام باقية بالترتيب</span></div>
+<div class="kpi"><b>٢١</b><span>بند زايد مرشّح للحذف</span></div>
+</div>
+
+<h2 id="now">واقف علينا الآن</h2>
+<div class="tw"><table>
+<thead><tr><th>البند</th><th>على مين</th><th>الحالة والدليل</th></tr></thead>
+<tbody>
+<tr><td>دفع الكونسول للإنتاج</td><td><span class="pill wait">خالد: «ادفع»</span></td><td>بعد ٧ مساءً (نهاية Techne). الفرع <code>deploy/console-mobile</code> كوميت واحد <code>31ce15b</code> فوق الإنتاج، المقارنة <code>0 1</code>، ١٠٨ ملفات، بناء الكونسول <code>EXIT=0</code>. الدفع يعيد نشر مدونتي والأدمن أيضاً (تغيّر <code>shared/</code> السكيما والقفل) بلا تغيير في كودهما.</td></tr>
+<tr><td>ضبط رابط التطبيق على Vercel</td><td><span class="pill wait">نحن بعد الدفع</span></td><td>المتغيّر <code>ANDROID_APK_URL</code> في مشروع console. بدونه البانر مخفي. الملف على Bunny: <code>modonty-asset.b-cdn.net/apps/android/modonty-console-2026-10-05.apk</code> → <code>200</code> · ١١٢٬٤٠٩٬٢٤٢ بايت.</td></tr>
+<tr><td>فهارس الجدولين الجديدين</td><td><span class="pill wait">قرار خالد</span></td><td><code>prisma db push</code> على الإنتاج لفهارس <code>mobile_sessions</code> و<code>mobile_login_attempts</code>. الجداول نفسها تُنشأ تلقائياً عند أول كتابة.</td></tr>
+<tr><td>رقم D-U-N-S لحساب Google Play شركة</td><td><span class="pill wait">رد D&amp;B</span></td><td>أُرسل ٤ أكتوبر ٨:٥٥م عبر dnbsame.com. العادي حتى ٣٠ يوم عمل. بعده: «الاختبار الداخلي» في Play (حتى ١٠٠ مختبِر بالإيميل) بدل ملف APK.</td></tr>
+</tbody></table></div>
+
+<h2 id="broken">متعطّل أو ناقص معروف</h2>
+<div class="tw"><table>
+<thead><tr><th>المشكلة</th><th>الأثر على العميل</th><th>الحالة والدليل</th></tr></thead>
+<tbody>
+<tr><td>التنبيه والتطبيق مقفول تماماً يفتح الرئيسية بدل المقال</td><td>يضغط التنبيه فيصل للرئيسية ويدوّر بنفسه</td><td><span class="pill bad">غير مُصلح</span> <code>getLastNotificationResponse</code> رجّع null في نسخة preview. أضفنا إضافة <code>expo-notifications</code> لنسخة production — <b>ما جرّبناها بعد</b>. التطبيق مفتوح أو في الخلفية: يفتح المقال صح (مجرَّب على جوال خالد ٤ أكتوبر).</td></tr>
+<tr><td>تنبيه «مقال ينتظر قرارك» غير موجود</td><td>العميل لا يعرف أن عنده مقال يحتاج قراره إلا لو فتح التطبيق</td><td><span class="pill bad">ناقص</span> الإرسال الحقيقي الوحيد اليوم: طلب تواصل جديد من مدونتي — <code>modonty/components/shared/booking-form/booking-actions.ts:122</code> و<code>:268</code>. <code>notifyClient</code> في <code>console/lib/push/notify-client.ts:54</code> لا يستدعيها أحد. بطاقة CMOB-PUSH.</td></tr>
+<tr><td><b>مطلب خالد:</b> كل حدث في مدونتي يُسمَع في تطبيق الكونسول — سؤال · إعجاب · تعليق · متابعة · طلب تواصل · اشتراك · تقييم… (ومن الأدمن: مقال ينتظر القرار)</td><td>اليوم الأحداث تُحفظ في القاعدة وتظهر لو فتح العميل الشاشة، لكن لا جرس ولا تحديث فوري — إلا طلب التواصل يرنّ</td><td><span class="pill ok">مبني ومجرَّب محلياً ٥ أكتوبر · غير مدفوع</span> جسر واحد <code>shared/lib/mobile-push</code> موصول بـ١٥ حدثاً من مدونتي وحدثين من الأدمن؛ اختبار حيّ على modonty_dev: ١٢ صفاً وصلت صندوق العميل (إعجاب · حفظ · تعليق · متابعة + ٨ مباشرة). كوميت <code>11f2332</code> في نسخة الرفع. كان: <code>modonty/components/client/submit-ask-client.ts</code> يحفظ السؤال <code>PENDING</code> بلا إرسال؛ الإرسال الوحيد في مدونتي <code>booking-actions.ts:122</code> و<code>:268</code>. ونفس الشي لمقال طارق: <code>admin/.../workflow/actions/transition-article.ts</code> بلا <code>push/notify/fcm</code>.</td></tr>
+<tr><td>التطبيق لا يتحدّث تلقائياً وهو مفتوح</td><td>لو وصل مقال أو سؤال والعميل على نفس الشاشة، ما يظهر إلا لو سحب الشاشة لتحت أو تنقّل وعاد</td><td><span class="pill ok">مبني · غير مدفوع</span> <code>console-mobile/src/services/live-refresh.ts</code>: وصول تنبيه أو رجوع من الخلفية يحدّث الرئيسية والشاشة المفتوحة. يُنشر للتطبيق المثبَّت بتحديث OTA بلا ملف جديد. كان: التحديث فقط عند دخول الشاشة <code>use-engagement-resource.ts:109</code> و<code>App.tsx:375</code> + السحب للتحديث (<code>RefreshControl</code> في ٦ ملفات). <code>AppState</code> = ٠ نتيجة: الرجوع من الخلفية لا يحدّث، ووصول تنبيه لا يحدّث.</td></tr>
+<tr><td>الدخول باسم الحساب غير موجود على الإنتاج</td><td>قبل الدفع: الدخول بالبريد فقط</td><td><span class="pill warn">يُحل بالدفع</span> <code>console.modonty.com/api/mobile/v1/auth/screen</code> يرجّع <code>"emailLabel":"البريد الإلكتروني"</code> (القديم). و<code>/android</code> على الإنتاج → <code>404</code>.</td></tr>
+<tr><td>حجم ملف التطبيق ١١٢ ميجا <span class="pill ok">مُصلح: ٦٣ م.ب</span></td><td>تحميل ثقيل على باقة الجوال</td><td><span class="pill warn">مؤشّر</span> غالباً لأن الملف يحمل كل معالجات أندرويد معاً. الحل المحتمل: بناء arm64 فقط — ما تحقّقت بعد.</td></tr>
+<tr><td>اسم التطبيق «Modonty Console» بالإنجليزي <span class="pill ok">مُصلح: «بوابة مدونتي»</span></td><td>العميل يدوّر على «مدونتي» ما يلقاه</td><td><span class="pill wait">قرار خالد</span> <code>app.json</code> → <code>"name": "Modonty Console"</code>. تغييره يحتاج بناء جديد.</td></tr>
+</tbody></table></div>
+<p class="note">الأداء (من نسخة التطوير، مؤشّر لا قياس نهائي): تقطيع ٧٪ والهدف أقل من ٥٪ · وسيط الواجهة ٦٤١ms على خادم التطوير · الذاكرة مستقرة. يُعاد القياس على نسخة production.</p>
+
+<h2 id="todo">الباقي بالترتيب</h2>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>المهمة</th><th>متى</th></tr></thead>
+<tbody>
+<tr><td>١</td><td>الدفع ثم ٧ فحوص سريعة: نص شاشة الدخول · دخول 200 بالبريد واسم الحساب · معرّف مكسور 404 · الخروج يلغي الجلسة 401 · ٦ محاولات خاطئة 429 · <code>/android</code> 302 · اعتماد مقال من الويب ينجح</td><td>بعد ٧ مساءً</td></tr>
+<tr><td>٢</td><td>ضبط <code>ANDROID_APK_URL</code> على Vercel والتأكد أن البانر ظهر وزر التحميل يعمل من جوال حقيقي</td><td>بعد الدفع مباشرة</td></tr>
+<tr><td>٣</td><td>تثبيت نسخة production على جوال خالد من الـQR · دخول · تجربة التنبيه والتطبيق مقفول</td><td>بعد الدفع</td></tr>
+<tr><td>٤</td><td>إبلاغ العملاء الأربعين أن التطبيق في الكونسول (البانر يظهر لهم تلقائياً)</td><td>بعد نجاح ٣</td></tr>
+<tr><td>٥</td><td>CMOB-PUSH: تنبيه «مقال ينتظر قرارك» من الأدمن + أسئلة القرّاء والتعليقات + سجل الإرسال ومفتاح إيقاف في الأدمن</td><td>التالي بعد الإطلاق</td></tr>
+<tr><td>٦</td><td>إصلاح فتح المقال من التنبيه والتطبيق مقفول (لو فشل في ٣)</td><td>مع ٥</td></tr>
+<tr><td>٧</td><td>مراقبة صامتة: أعطال التطبيق · سجل الخادم · عدد الدخول اليومي</td><td>أول أسبوع</td></tr>
+<tr><td>٨</td><td>CMOB-FEATURES: الرد على التعليقات · اتصال/واتساب وتغيير حالة طلب التواصل · تقييمات العملاء · زوار الشهر · التجديد والفاتورة</td><td>بعد ٥</td></tr>
+<tr><td>٩</td><td>تنظيف الملفات الزايدة (القسم الأخير) وحذف نسخة الرفع المؤقتة</td><td>بعد الدفع</td></tr>
+<tr><td>١٠</td><td>النقل لـ Google Play (اختبار داخلي) · نسخة الآيفون</td><td>بعد D-U-N-S</td></tr>
+</tbody></table></div>
+<p class="note">قرارات صغيرة مفتوحة لخالد: الأرقام اللاتينية في صفوف الاشتراك (التواريخ و«٢٤ من ٢٤») · سؤال FAQ بحالة «يحتاج تعديل» · شكل التنبيه (بانر منبثق أو لا).</p>
+
+<h2 id="done">المنجز</h2>
+<div class="tw"><table>
+<thead><tr><th>البند</th><th>الدليل</th></tr></thead>
+<tbody>
+<tr><td>أدوات أندرويد خفيفة على جهاز التطوير (JDK 17 · SDK 36 · محاكي واحد ٧٢٠×١٦٠٠) بلا Android Studio</td><td>بطاقة CMOB-TOOLS · بناء تطوير EAS في ١٢ دقيقة</td></tr>
+<tr><td>رفع EAS نزل من ~٢٫٢ جيجا إلى ٠٫٩ ميجا</td><td>٣٠ سطراً في <code>.easignore</code> الجذر</td></tr>
+<tr><td>نسخة React واحدة في التطبيق</td><td><code>console-mobile/metro.config.js</code></td></tr>
+<tr><td>إصلاح ١٦ عطلاً (خادم + تطبيق)</td><td>بطاقة CMOB-BUGS · tsc console = 0</td></tr>
+<tr><td>جلسات جوال قابلة للإلغاء (خروج وتغيير كلمة المرور) + حدّ ٥ محاولات/١٥ دقيقة</td><td>جدولا <code>MobileSession</code> و<code>MobileLoginAttempt</code></td></tr>
+<tr><td>الدخول بالبريد بأي حالة أحرف أو باسم الحساب</td><td><code>console/lib/find-client-by-identifier.ts</code></td></tr>
+<tr><td>تصميم «نبض» على كل الشاشات + مراجعة ٣٩ مخالفة + تباين ٢٨ زوجاً + لا هدف لمس تحت ٤٨dp</td><td>بطاقة CMOB-DESIGN · <code>UI-NABD.html</code></td></tr>
+<tr><td>قائمة منسدلة من الصورة بدل البرجر · حذف أرقام الشاشات الحمراء</td><td>على المحاكي وجوال خالد</td></tr>
+<tr><td>تنبيه حقيقي يصل لجوال خالد ويفتح المقال (التطبيق مفتوح أو في الخلفية)</td><td>٤ أكتوبر ليلاً · قناة default</td></tr>
+<tr><td>نسخة production جاهزة وسليمة</td><td>EAS <code>0136d2a7…</code> · الملف <code>zip ok</code> · ١٣٩١ ملفاً</td></tr>
+<tr><td>بانر التحميل في الكونسول: زر للجوال · QR للكمبيوتر · تنويه «الآيفون قيد التطوير» · رابط ثابت <code>/android</code></td><td>جوال ٣٩٠: <code>button:true qr:false</code> · كمبيوتر ١٢٨٠: <code>qr:true button:false</code> · <code>/android</code> محلياً → 302 إلى Bunny</td></tr>
+<tr><td><b>اختبار حيّ كامل ٥ أكتوبر</b> — من الأدمن ومدونتي إلى جوال خالد (شركة جبر سيو · modonty_dev): إعجاب · حفظ · تعليق · سؤال مقال · مشاركة مقال · متابعة · مشاركة صفحة · مفضّلة · اشتراك · تقييم · سؤال صفحة · إعجاب ريل · تعليق ريل · «مقال ينتظر قرارك» · «نُشر مقالك» = ١٥ حدثاً وصلت الجوال، والضغط يفتح المقال، والرئيسية تتحدّث وحدها</td><td><code>dumpsys notification</code> لتطبيقنا وحده · صفوف <code>notifications</code> · إصلاح: دفعة متتالية والتطبيق مفتوح كانت تُسقط ٥ من ١٣ (مهلة ٣ ثوانٍ في expo-notifications SDK ≤57) ← <code>live-refresh.ts</code> ينتظر هدوء الدفعة · بعده ٥/٥ · بيانات [QA TEST] حُذفت</td></tr>
+<tr><td>ملاحظات من الاختبار (غير مُصلحة)</td><td>واتساب على الكمبيوتر لا يُسجَّل تواصلاً (<code>ArticleCtaBar.tsx:71</code> بلا <code>recordWhatsappLead</code>) فلا يرنّ · حقل «الاسم (اختياري)» في سؤال الصفحة يرفض الفراغ (<code>client-faq-actions.ts:14</code> min 2) · الحجز غير مفعّل لجبر سيو فلم يُجرَّب من الواجهة · سؤال مودو نفس الدالة ولم يُقَد من الواجهة</td></tr>
+<tr><td><b>الإضافات من الويب (٥ أكتوبر بعد الظهر)</b>: اعتماد/رفض التعليقات (مقال وريل) · تاب «التقييمات» · خطوة حالة طلب التواصل · بطاقة «زوّارك آخر ٢٨ يوماً» · إشعار الحساب في الاشتراك · الرد على أسئلة صفحة العميل</td><td>مقيس على جوال خالد وواجهة الجوال: APPROVED/REJECTED/contacted/PUBLISHED · أرقام الزوّار مطابقة للويب (٥٬٩١٨ · ٣٧ · ٢٥) · كوميتات 9d1ff40 · 1c92d9e · 7e47a5d</td></tr>
+<tr><td>APK جديد «بوابة مدونتي» — ٦٣ م.ب بدل ١١٢ (armeabi-v7a + arm64-v8a)</td><td>EAS <code>6597b3bc</code> · <code>application-label:'بوابة مدونتي'</code> · Bunny <code>modonty-console-2026-10-05-v2.apk</code> → 200 · ٦٢٬٩٦٣٬٣٤٠ بايت</td></tr>
+<tr><td>طلب D-U-N-S أُرسل</td><td><code>DUNS-COMPANY-DATA.html</code></td></tr>
+<tr><td>واجهات تطبيق القارئ V1 (مدونتي) — مشروع منفصل</td><td>بطاقة RAPI-V1 · اختبار العقد ١٧٤/١٧٤ · غير مدفوع</td></tr>
+</tbody></table></div>
+
+<h2 id="timeline">التاريخ</h2>
+<div class="tw"><table>
+<thead><tr><th>التاريخ</th><th>ما حدث</th></tr></thead>
+<tbody>
+<tr><td class="date">٢٧–٢٨ أغسطس</td><td>إنشاء مشروع Expo مستقل للكونسول · هوية أندرويد <code>com.modonty.console</code> · أول بناء تطوير على EAS (كوميت <code>01f37a3</code>).</td></tr>
+<tr><td class="date">٢٩ أغسطس</td><td>تشغيل على جهاز حقيقي SM-A217F · ١٤ شاشة (S00–S14): ١٠ ناجحة و٨ موقوفة على قرارات · الإحالة من الجوال للأدمن تعمل (<code>c1d9178</code>).</td></tr>
+<tr><td class="date">٣١ أغسطس</td><td>تسجيل الجوال لتنبيهات Firebase · تقرير الدمج مع main · console-mobile 1.2.0 (<code>a1067c5</code>). آخر كوميت للتطبيق على main.</td></tr>
+<tr><td class="date">٢ أكتوبر</td><td>تدقيق شامل للتطبيق (<code>AUDIT-2026-10-02.html</code>).</td></tr>
+<tr><td class="date">٤ أكتوبر</td><td>تجهيز أدوات أندرويد والمحاكي · إصلاح الأعطال الـ١٦ · الجلسات وحدّ المحاولات · اختيار تصميم «نبض» وتطبيقه · الجرد مقابل الويب (٥ إضافات ناقصة) · قرار الإطلاق الصامت على ~٤٠ عميل بملف APK · تجربة على جوال خالد: التنبيهات تصل · إرسال طلب D-U-N-S · بناء واجهات تطبيق القارئ.</td></tr>
+<tr><td class="date">٥ أكتوبر</td><td>مراجعة التصميم (٣٩ مخالفة) · نسخة preview وتحديث OTA لفتح التنبيه (ما نجح والتطبيق مقفول) · بناء production · تجهيز نسخة رفع نظيفة · بانر التحميل في الكونسول · رفع الملف على Bunny · مسح التطبيق من جوال خالد للتجربة من الـQR.</td></tr>
+</tbody></table></div>
+
+<h2 id="junk">ملفات زايدة — جرد للحذف (ما انحذف شي)</h2>
+<p class="note"><b>٥ أكتوبر: نُفّذ التنظيف</b> — حُذفت بنود «حذف» داخل console-mobile وملفات APK، ونُقلت وثائق أغسطس إلى <code>documentation/archive/2026-08</code>. باقٍ: بقايا الجوال الثلاثة (الحذف عبر adb مرفوض) · نسخة الرفع حتى الدفع · بنود «قرار خالد». حذف الكود والصور يدخل كوميتاً لاحقاً لا كوميت الرفع.</p>
+<p class="note">كل صف مفحوص: «غير مستورد» = بحث <code>grep</code> في <code>src</code> و<code>App.tsx</code> رجّع صفر. القرار لخالد.</p>
+<div class="tw"><table>
+<thead><tr><th>المسار</th><th>الحجم</th><th>ليش زايد</th><th>التوصية</th></tr></thead>
+<tbody>
+<tr><td colspan="4"><b>داخل console-mobile — كود وصور</b></td></tr>
+<tr><td><code>src/components/audience/AudienceTabs.tsx</code></td><td>١٫٨ ك.ب</td><td>غير مستورد</td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td><code>src/components/brand/ModontyBrandMark.tsx</code></td><td>١٫٢ ك.ب</td><td>غير مستورد</td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td><code>assets/images/react-logo*.png</code> (٣) و<code>partial-react-logo.png</code></td><td rowspan="2">٥٧٢ ك.ب معاً</td><td>بقايا قالب Expo، لا مرجع لها</td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td><code>assets/images/icon.png</code> · <code>splash-icon.png</code> · <code>android-icon-*.png</code> (٣)</td><td>بقايا القالب؛ الأيقونة والشاشة الأولى من <code>assets/brand/modonty-mark.png</code></td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td><code>dist/</code></td><td>١٢ م.ب</td><td>ناتج تصدير ويب قديم (خارج git)</td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td><code>.playwright-mcp/</code> (٤ لقطات تنبيه)</td><td>٧٠٤ ك.ب</td><td>لقطات تجارب (خارج git)</td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td colspan="4"><b>داخل console-mobile — وثائق قديمة</b></td></tr>
+<tr><td><code>documentation/evidence/</code> (٥٥ لقطة)</td><td>٧٫٥ م.ب</td><td>لقطات أغسطس قبل «نبض» — الشكل تغيّر (خارج git)</td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td><code>documentation/md/</code> (١٢ ملفاً)</td><td>٢٣٢ ك.ب</td><td>آخر تعديل ٣١ أغسطس؛ هذا الملف يحل محلها، وثلاثة منها نسخ md من ملفات html</td><td><span class="pill warn">أرشفة</span></td></tr>
+<tr><td><code>documentation/assets/</code> (٤ معاينات)</td><td>٢٦٤ ك.ب</td><td>معاينات شاشة الدخول ٢٧ أغسطس</td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td><code>scripts/sync-documentation.mjs</code></td><td>صغير</td><td>يحوّل md إلى html؛ بلا فائدة لو انشالت md</td><td><span class="pill warn">مع md</span></td></tr>
+<tr><td><code>html/</code>: BRD · UI-RULES · mobile-console-proposal · JARD-MOBILE-APP · KIMAZONE-END-TO-END-TEST-FLOW · ARTICLE-CLIENT-CTA-INVENTORY</td><td>~١١٠ ك.ب</td><td>وثائق أغسطس قبل التصميم والقرارات الجديدة</td><td><span class="pill warn">أرشفة</span></td></tr>
+<tr><td><code>html/UI-DIRECTIONS.html</code> · <code>MORNING-REPORT-2026-10-05.html</code></td><td>١٤١ ك.ب</td><td>خيارات التصميم قبل اختيار «نبض» · تقرير يوم واحد</td><td><span class="pill warn">أرشفة</span></td></tr>
+<tr><td><code>.agents/skills/</code> (١٣٢ ملفاً) + <code>skills-lock.json</code></td><td>١٫١ م.ب</td><td>مهارات وكلاء Expo داخل المستودع (مرفوعة في git)</td><td><span class="pill wait">قرار خالد</span></td></tr>
+<tr><td colspan="4"><b>خارج المشروع — مؤقّت من شغلنا</b></td></tr>
+<tr><td><code>MODONTY-console-deploy/</code> (نسخة الرفع)</td><td>٢٫٦ ج.ب</td><td>تلزم حتى الدفع فقط</td><td><span class="pill warn">حذف بعد الدفع</span></td></tr>
+<tr><td>ملفات APK في مجلد الجلسة المؤقت (٥ ملفات)</td><td>١٫٥ ج.ب</td><td>نسخ تجربة؛ الإنتاج صار على Bunny</td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td>جوال خالد: <code>/sdcard/u.xml</code> · <code>/sdcard/n.xml</code> · <code>/data/local/tmp/cp.apk</code></td><td>—</td><td>بقايا فحص adb — موجودة (<code>EXISTS</code> ×٣)</td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td>عمليات شغّالة: ngrok · Metro 8081 · خادما ملفات 8090 و8790</td><td>—</td><td>تلزم للتجربة المحلية فقط</td><td><span class="pill warn">إيقاف بعد التجربة</span></td></tr>
+<tr><td>ملف <code>preview</code> في <code>eas.json</code> برابط ngrok</td><td>—</td><td>رابط تجربة سيُحفظ في المستودع مع الدفع</td><td><span class="pill warn">تنظيف لاحقاً</span></td></tr>
+<tr><td>بيانات <code>[QA TEST]</code> لتطبيق القارئ على modonty_dev (<code>SEED-IDS.json</code>)</td><td>—</td><td>بيانات اختبار</td><td><span class="pill bad">حذف</span></td></tr>
+<tr><td>نسختا عمل قديمتان <code>MODONTY.worktrees/*</code> (معلَّمتان prunable)</td><td>—</td><td>من جلسات سابقة، لا علاقة لها بالكونسول موبايل</td><td><span class="pill wait">قرار خالد</span></td></tr>
+</tbody></table></div>
+</div>
+</body>
+</html>

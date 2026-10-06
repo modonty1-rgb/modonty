@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
     namePlaceholder: "مثال: مؤسسة نور الشام للتجميل",
     phoneLabel: "رقم جوال العميل",
     // لوحة الأرقام على أندرويد فيها `+` ولا قوس فيها — فالمثال يطلب ما يمكن كتابته.
-    phonePlaceholder: "+20 100 123 4567",
+    phonePlaceholder: "+966 50 123 4567",
     phoneFormatLabel: "ابدأ بعلامة + ثم مفتاح الدولة ثم الرقم.",
     noteLabel: "ملاحظة عن العميل (اختياري)",
     notePlaceholder: "مثال: يفضّل التواصل مساءً",
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
   if (candidateName.length === 0) return fail("VALIDATION_ERROR", "اكتب اسم العميل أو نشاطه.");
 
   const phoneE164 = typeof body.phone === "string" ? parsePhone(body.phone) : null;
-  if (!phoneE164) return fail("VALIDATION_ERROR", "ابدأ الرقم بعلامة + ثم مفتاح الدولة، مثل +20 100 123 4567.");
+  if (!phoneE164) return fail("VALIDATION_ERROR", "ابدأ الرقم بعلامة + ثم مفتاح الدولة، مثل +966 50 123 4567.");
   if (body.consent !== true) return fail("VALIDATION_ERROR", "أكّد أن صاحب الرقم موافق على التواصل.");
 
   const candidateNote = typeof body.candidateNote === "string" ? body.candidateNote.trim() || null : null;

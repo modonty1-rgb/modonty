@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
-import { notifyTelegram } from "@/lib/telegram/notify-telegram";
-import { trackFollowClient } from "@/lib/analytics/events-registry";
-import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
+import { getClientFollowState } from "@/lib/clients/get-client-follow-state";
+import { followClientAs } from "@/lib/clients/follow-client-as";
+import { unfollowClientAs } from "@/lib/clients/unfollow-client-as";
+
+// Web door: identity from the session cookie; the follow logic lives in lib/clients/*
+// (shared with the mobile API). Responses are unchanged.
 
 export async function GET(
   request: NextRequest,
@@ -21,37 +23,21 @@ export async function GET(
 
     const { slug } = await params;
     const decodedSlug = decodeURIComponent(slug);
-    
-    const client = await db.client.findUnique({
-      where: { slug: decodedSlug },
-      select: { id: true }
-    });
 
-    if (!client) {
+    const result = await getClientFollowState(session.user.id, decodedSlug);
+
+    if (!result.found) {
       return NextResponse.json(
         { success: false, error: "Client not found" } as ApiResponse<never>,
         { status: 404 }
       );
     }
 
-    const followRecord = await db.clientLike.findUnique({
-      where: {
-        clientId_userId: {
-          clientId: client.id,
-          userId: session.user.id
-        }
-      }
-    });
-
-    const followersCount = await db.clientLike.count({
-      where: { clientId: client.id }
-    });
-
     return NextResponse.json({
       success: true,
       data: {
-        isFollowing: !!followRecord,
-        followersCount
+        isFollowing: result.isFollowing,
+        followersCount: result.followersCount
       }
     } as ApiResponse<{ isFollowing: boolean; followersCount: number }>);
   } catch (error) {
@@ -77,68 +63,17 @@ export async function POST(
 
     const { slug } = await params;
     const decodedSlug = decodeURIComponent(slug);
-    
-    const client = await db.client.findUnique({
-      where: { slug: decodedSlug },
-      select: { id: true, slug: true, name: true, industry: { select: { name: true } } }
-    });
 
-    if (!client) {
+    const result = await followClientAs(
+      { id: session.user.id, name: session.user.name ?? null, email: session.user.email ?? null },
+      decodedSlug,
+      request.headers,
+    );
+
+    if (!result.found) {
       return NextResponse.json(
         { success: false, error: "Client not found" } as ApiResponse<never>,
         { status: 404 }
-      );
-    }
-
-    const existing = await db.clientLike.findUnique({
-      where: {
-        clientId_userId: {
-          clientId: client.id,
-          userId: session.user.id,
-        },
-      },
-      select: { id: true },
-    });
-
-    await db.clientLike.upsert({
-      where: {
-        clientId_userId: {
-          clientId: client.id,
-          userId: session.user.id
-        }
-      },
-      create: {
-        clientId: client.id,
-        userId: session.user.id
-      },
-      update: {}
-    });
-
-    const followersCount = await db.clientLike.count({
-      where: { clientId: client.id }
-    });
-
-    if (!existing) {
-      const ip =
-        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-        request.headers.get("x-real-ip") ||
-        request.headers.get("cf-connecting-ip") ||
-        null;
-      fireClientEvent(client.id, { kind: "follow" });
-      notifyTelegram(client.id, "clientFollow", {
-        meta: { الزائر: session.user.name ?? session.user.email ?? "زائر" },
-        ipAddress: ip,
-        headers: request.headers,
-      }).catch(() => {});
-
-      void trackFollowClient(
-        {
-          client_id: client.id,
-          client_slug: client.slug,
-          client_name: client.name,
-          client_industry: client.industry?.name,
-        },
-        { userId: session.user.id },
       );
     }
 
@@ -146,7 +81,7 @@ export async function POST(
       success: true,
       data: {
         isFollowing: true,
-        followersCount
+        followersCount: result.followersCount
       }
     } as ApiResponse<{ isFollowing: boolean; followersCount: number }>);
   } catch (error) {
@@ -172,35 +107,21 @@ export async function DELETE(
 
     const { slug } = await params;
     const decodedSlug = decodeURIComponent(slug);
-    
-    const client = await db.client.findUnique({
-      where: { slug: decodedSlug },
-      select: { id: true }
-    });
 
-    if (!client) {
+    const result = await unfollowClientAs(session.user.id, decodedSlug);
+
+    if (!result.found) {
       return NextResponse.json(
         { success: false, error: "Client not found" } as ApiResponse<never>,
         { status: 404 }
       );
     }
 
-    await db.clientLike.deleteMany({
-      where: {
-        clientId: client.id,
-        userId: session.user.id
-      }
-    });
-
-    const followersCount = await db.clientLike.count({
-      where: { clientId: client.id }
-    });
-
     return NextResponse.json({
       success: true,
       data: {
         isFollowing: false,
-        followersCount
+        followersCount: result.followersCount
       }
     } as ApiResponse<{ isFollowing: boolean; followersCount: number }>);
   } catch (error) {

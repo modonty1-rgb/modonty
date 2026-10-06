@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconCheckCircle, IconEmail, IconMessage, IconUser, IconAdd, IconRemove } from "@/lib/icons";
+import { IconCheckCircle, IconEmail, IconMessage, IconUser, IconAdd, IconRemove, IconInfo } from "@/lib/icons";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,7 +39,7 @@ export function BookingForm({
   source,
   clientName,
   user,
-  submitLabel = "اطلب اتصال",
+  submitLabel = "اطلب اتصالاً",
   defaultCountry,
 }: BookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -130,7 +130,7 @@ export function BookingForm({
           }}
         />
         {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
-        <p className="text-xs text-muted-foreground">رقمك للحجز فقط — بلا رسائل تسويقية.</p>
+        <p className="text-sm text-muted-foreground md:text-xs">رقمك للحجز فقط — بلا رسائل تسويقية.</p>
       </div>
 
       {/* Submit */}
@@ -145,7 +145,7 @@ export function BookingForm({
           firstTouch();
           setShowDetails((v) => !v);
         }}
-        className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-primary/40 bg-primary/[0.03] py-2.5 text-sm font-semibold text-[hsl(var(--primary-ink,var(--primary)))]"
+        className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-primary/40 bg-primary/[0.03] py-2.5 text-sm font-semibold text-[hsl(var(--primary-ink,var(--primary)))]"
       >
         {showDetails ? <IconRemove className="h-4 w-4" /> : <IconAdd className="h-4 w-4" />}
         {showDetails ? "إخفاء التفاصيل" : "أضف تفاصيل (اختياري)"}
@@ -183,8 +183,10 @@ export function BookingForm({
       )}
 
       {/* sign-in wrap consent — conspicuous, non-blocking; the click = agreement */}
-      <p className="flex items-start gap-1.5 text-xs leading-relaxed text-muted-foreground">
-        <span aria-hidden>ℹ️</span>
+      {/* 14px on phones (was 12, under the partner-page floor) and the brand info mark, not an emoji.
+          The two links sit inside a sentence — WCAG 2.5.8 exempts inline links from target size. */}
+      <p className="flex items-start gap-1.5 text-sm leading-relaxed text-muted-foreground md:text-xs">
+        <IconInfo className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
         <span>
           بمتابعتك، أنت توافق على{" "}
           <Link href="/terms" className="font-semibold text-[hsl(var(--primary-ink,var(--primary)))] underline">الشروط</Link> و

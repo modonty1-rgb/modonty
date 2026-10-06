@@ -63,6 +63,11 @@ export interface ArticleFormData {
   license?: string;
   
   // SEO Meta Tags
+  /** الكلمة المستهدفة (بند و١) — اختيارية. */
+  targetKeyword?: string;
+  /** زرُّ المقال (ARTCTA): رابطُ المنتج في موقع العميل ونصُّ الزرّ — اختياريّان. */
+  ctaUrl?: string;
+  ctaLabel?: string;
   seoTitle?: string;
   seoDescription?: string;
   metaRobots?: string;
@@ -267,6 +272,8 @@ export interface ClientFormData {
   ctaPresetId?: string | null;
   ctaLabel?: string | null;
   ctaUrl?: string | null;
+  /** «يظهر في» — modonty's listing pages for this client (ClientListing). */
+  listedOn?: ("BOOKING" | "SHOP")[];
 }
 
 export interface AuthorFormData {

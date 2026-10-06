@@ -17,7 +17,9 @@ export function ReportTable({ rows }: { rows: ReportRow[] }) {
   const groups = new Map<string, ReportRow[]>();
   for (const row of rows) groups.set(row.person, [...(groups.get(row.person) ?? []), row]);
   const groupEntries = [...groups.entries()];
-  const [openPeople, setOpenPeople] = useState<string[]>(() => groupEntries.map(([person]) => person));
+  // مطويّةٌ في البداية: الجدولُ الأسبوعيّ فوقها يقول مَن يحتاج نظرة، فتُفتح مهامُّه هو (٣ أكتوبر ٢٠٢٦).
+  // كانت كلُّها مفتوحة فطالت الصفحةُ بكلّ مهمّةٍ لكلّ شخص.
+  const [openPeople, setOpenPeople] = useState<string[]>([]);
   const allOpen = openPeople.length === groupEntries.length;
 
   return <div className="space-y-2">
@@ -37,7 +39,7 @@ export function ReportTable({ rows }: { rows: ReportRow[] }) {
         <span className="min-w-0 flex-1 truncate text-sm font-semibold">{person}</span>
         {first.role && <span className="text-[11px] text-muted-foreground">{first.role}</span>}
         <span className="hidden items-center gap-1.5 md:flex">
-          {statusCounts.map(({ status, count }) => <span key={status} className={cn("rounded px-1.5 py-0.5 text-[10px] font-medium", TASK_STATUS_META[status].tone)}>{TASK_STATUS_META[status].label} {count}</span>)}
+          {statusCounts.map(({ status, count }) => <span key={status} className={cn("rounded px-1.5 py-0.5 text-[10px] font-medium", TASK_STATUS_META[status].tone)}>{TASK_STATUS_META[status].labelAr} {count}</span>)}
         </span>
         {late > 0 && <span className="rounded bg-red-500/15 px-1.5 py-0.5 text-[11px] font-medium text-red-600 dark:text-red-400">{late} متأخر</span>}
         <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">{tasks.length}</span>
@@ -45,8 +47,8 @@ export function ReportTable({ rows }: { rows: ReportRow[] }) {
       </summary>
       <div className="border-t bg-muted/20 p-2 sm:p-3"><div className="overflow-hidden rounded-md border bg-background"><table className="w-full text-sm"><tbody>{tasks.map((task) => <tr key={task.id} className="border-b last:border-0">
         <td className="px-3 py-2 font-medium"><details className="group/task"><summary className="flex cursor-pointer list-none items-center gap-1.5"><ChevronDown className="size-3.5 text-muted-foreground transition-transform group-open/task:rotate-180" />{task.title}</summary><div className="mt-2 grid gap-2 border-s ps-3 text-xs font-normal text-muted-foreground sm:grid-cols-2"><p className="sm:col-span-2 text-foreground">{task.description || "لا يوجد وصف للمهمة."}</p><span>أُنشئت: {dueFmt.format(task.createdAt)}</span>{task.assignedBy && <span>أسندها: {task.assignedBy.name || task.assignedBy.email || "عضو بالفريق"}</span>}</div></details></td>
-        <td className="hidden px-2 py-2 sm:table-cell"><span className={cn("rounded px-1.5 py-0.5 text-[10px] font-semibold", TASK_PRIORITY_META[task.priority].tone)}>{TASK_PRIORITY_META[task.priority].label}</span></td>
-        <td className="hidden px-2 py-2 sm:table-cell"><span className={cn("rounded px-1.5 py-0.5 text-[10px] font-semibold", TASK_STATUS_META[task.status].tone)}>{TASK_STATUS_META[task.status].label}</span></td>
+        <td className="hidden px-2 py-2 sm:table-cell"><span className={cn("rounded px-1.5 py-0.5 text-[10px] font-semibold", TASK_PRIORITY_META[task.priority].tone)}>{TASK_PRIORITY_META[task.priority].labelAr}</span></td>
+        <td className="hidden px-2 py-2 sm:table-cell"><span className={cn("rounded px-1.5 py-0.5 text-[10px] font-semibold", TASK_STATUS_META[task.status].tone)}>{TASK_STATUS_META[task.status].labelAr}</span></td>
         <td className={cn("whitespace-nowrap px-3 py-2 text-end text-[11px]", task.late ? "font-medium text-red-600 dark:text-red-400" : "text-muted-foreground")}>{task.dueDate ? <span className="inline-flex items-center gap-1"><CalendarClock className="size-3" />{dueFmt.format(task.dueDate)}</span> : "—"}</td>
       </tr>)}</tbody></table></div></div>
     </details>;

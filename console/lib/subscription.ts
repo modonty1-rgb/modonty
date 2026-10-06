@@ -1,5 +1,6 @@
 import { ar } from "@/lib/ar";
 import type { ClientPaymentKey } from "@/lib/payments/resolve-client-payment";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 /**
  * Subscription state, derived once and read by both the settings card and the sidebar
@@ -82,7 +83,7 @@ export function subscriptionProgress(
 
 export function formatSubscriptionDate(d: Date | null | undefined): string {
   if (!d) return "—";
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     year: "numeric",
     month: "short",
     day: "numeric",

@@ -5,7 +5,8 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { messages } from "@/lib/messages";
-import { deleteBunnyUrl, isBunnyUrl } from "@modonty/shared/lib/bunny";
+import { deleteBunnyUrl } from "@modonty/shared/lib/bunny";
+import { isOwnBunnyUrl } from "@/lib/bunny/is-own-bunny-url";
 import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo";
 import { notifyReelPending } from "../../reels/actions/notify-reel-pending";
 
@@ -78,7 +79,9 @@ export async function addGalleryImage(input: AddGalleryInput): Promise<AddResult
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const url = (input.url ?? "").trim();
-  if (!url.startsWith("http")) return { success: false, error: messages.error.serverError };
+  // Only a file this partner uploaded (/api/upload-bunny → clients/<id>/…). Any url used to pass,
+  // and the delete below would then erase another partner's file (security fix, 4 Oct 2026).
+  if (!isOwnBunnyUrl(url, clientId)) return { success: false, error: messages.error.unauthorized };
 
   try {
     const media = await db.media.create({
@@ -191,7 +194,8 @@ export async function deleteGalleryImage(mediaId: string): Promise<MutResult> {
 
     // Nothing depends on it — a real delete. Bunny-hosted files go immediately; legacy
     // Cloudinary files stay for the orphans maintenance (production-only) as before.
-    if (isBunnyUrl("reels", owned.url)) {
+    // Only ever delete from this partner's own folder — never a file another partner owns.
+    if (isOwnBunnyUrl(owned.url, clientId)) {
       await deleteBunnyUrl("reels", owned.url).catch(() => {});
     }
     await db.media.delete({ where: { id: mediaId } });

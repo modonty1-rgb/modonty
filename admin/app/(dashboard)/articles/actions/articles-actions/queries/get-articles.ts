@@ -138,6 +138,7 @@ export async function getArticles(filters?: ArticleFilters) {
           contentDepth: true,
           seoTitle: true,
           seoDescription: true,
+          targetKeyword: true,
           canonicalUrl: true,
           author: { select: { id: true, name: true } }, // name shown in category/tag views
           featuredImage: { select: { id: true, altText: true } }, // no url/width/height
@@ -190,6 +191,7 @@ export async function getArticles(filters?: ArticleFilters) {
         contentDepth: article.contentDepth,
         seoTitle: article.seoTitle,
         seoDescription: article.seoDescription,
+        targetKeyword: article.targetKeyword,
         canonicalUrl: article.canonicalUrl,
         // The shared SEO scorer reads these — the fetch above selects them, and this
         // hand-written re-map is where they used to get dropped on the floor.
@@ -223,6 +225,7 @@ export async function getArticles(filters?: ArticleFilters) {
       contentDepth: article.contentDepth,
       seoTitle: article.seoTitle,
       seoDescription: article.seoDescription,
+      targetKeyword: article.targetKeyword,
       canonicalUrl: article.canonicalUrl,
       nextjsMetadata: article.nextjsMetadata,
       jsonLdStructuredData: article.jsonLdStructuredData,

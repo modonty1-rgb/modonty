@@ -14,6 +14,7 @@ import { TemplateRadioPicker } from "./template-radio-picker";
 import { SiteAddressSettings } from "./site-address-settings";
 import { HEADER_TEMPLATES, type HeaderData, type HeaderTemplateKey } from "@modonty/shared/components/partner-site/free/header";
 import { FOOTER_TEMPLATES, type FooterData, type FooterTemplateKey } from "@modonty/shared/components/partner-site/free/footer";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 interface MySiteEditorProps {
   initial: MySiteData;
@@ -93,14 +94,14 @@ export function MySiteEditor({ initial }: MySiteEditorProps) {
     pages: links,
     socialLinks: chrome.socialLinks,
     registrationNumber: chrome.registrationNumber,
-    year: new Intl.DateTimeFormat("ar-SA", { year: "numeric" }).format(new Date()),
+    year: new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, { year: "numeric" }).format(new Date()),
     primaryColor,
   };
 
   function handleSave() {
     startTransition(async () => {
       const res = await saveMySite({ headerTemplate, footerTemplate, primaryColor, subdomain });
-      if (res.success) toast.success("تم — التغيير ظاهر على موقعك");
+      if (res.success) toast.success(res.live ? "تم — التغيير ظاهر على موقعك" : "تم — يظهر على موقعك خلال دقائق");
       else toast.error(res.error);
     });
   }

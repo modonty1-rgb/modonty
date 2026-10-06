@@ -7,8 +7,10 @@ import { addDays, getWeeklyReport, weekStartOf } from "./helpers/get-weekly-repo
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { canSeeReports } from "@/lib/can-see-reports";
+import { isTaskLate } from "@/lib/tasks/is-task-late";
 import { redirect } from "next/navigation";
 
+const N = new Intl.NumberFormat("ar-EG");
 const dayFmt = new Intl.DateTimeFormat("ar-EG", {
   weekday: "long",
   day: "numeric",
@@ -24,9 +26,6 @@ function parseDay(raw: string | undefined): Date {
   return Number.isNaN(d.getTime()) ? new Date() : d;
 }
 
-function isLate(due: Date | null, status: string) {
-  return !!due && status !== "DONE" && new Date(due).setHours(23, 59, 59, 999) < Date.now();
-}
 
 /**
  * One day of the team's work.
@@ -76,7 +75,7 @@ export default async function ReportPage({
       : view === "range" && rangeStart && rangeEnd
         ? getTasksByRange(rangeStart, rangeEnd)
         : isWeek
-          ? getTasksByRange(weekStart, weekEnd)
+          ? Promise.resolve([] as Awaited<ReturnType<typeof getTasksByDay>>)
           : getTasksByDay(day),
     isWeek ? getWeeklyReport(weekStart) : Promise.resolve([]),
   ]);
@@ -114,20 +113,23 @@ export default async function ReportPage({
       dueDate: t.dueDate,
       createdAt: t.createdAt,
       assignedBy: t.assignedBy,
-      late: isLate(t.dueDate, t.status),
+      late: isTaskLate(t),
     })),
   );
 
   return (
-    <div className="flex min-h-0 flex-col gap-3 p-4 sm:p-6">
+    // بلا حشوة ثانية: `<main>` يحشو ٢٤ بكسل أصلاً، والمكرّرةُ كانت ٤٨ بكسل فارغة فوق العنوان (٣ أكتوبر ٢٠٢٦).
+    <div className="flex min-h-0 flex-col gap-3">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
           <h1 className="text-lg font-bold sm:text-xl">تقرير الفريق</h1>
           <p className="mt-0.5 text-[13px] text-muted-foreground">
             {isWeek ? weekLabel : view === "all" ? "كل المهام" : view === "range" && from && to ? `${dayFmt.format(rangeStart!)} — ${dayFmt.format(parseDay(to))}` : dayFmt.format(day)} ·{" "}
-            {selected
-              ? `${rows.length} من ${totalAll} مهمة`
-              : `${totalAll} مهمة`}
+            {isWeek
+              ? `${N.format(weekPeople.reduce((n, p) => n + p.assigned, 0))} مهمة أُسندت`
+              : selected
+                ? `${N.format(rows.length)} من ${N.format(totalAll)} مهمة`
+                : `${N.format(totalAll)} مهمة`}
           </p>
         </div>
         {/* الإسنادُ خرج إلى «Assign Task» — التقريرُ يُقرأ ولا يُكتب فيه. */}
@@ -143,7 +145,9 @@ export default async function ReportPage({
         />
       ) : null}
 
-      {totalAll === 0 ? (
+      {/* في الأسبوع: الجدولُ فوقه هو التفاصيل — كلُّ شخصٍ يُفتح لمهامّه (خالد ٣ أكتوبر ٢٠٢٦)، فلا قسمَ
+          ثانٍ يعيد نفس الأسماء. اليومُ والكلُّ والفترةُ تبقى بالقائمة المجمّعة. */}
+      {isWeek ? null : totalAll === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-10 text-center">
           <p className="text-sm font-medium">لا توجد مهام كُتبت في هذه الفترة</p>
           <p className="text-[13px] text-muted-foreground">

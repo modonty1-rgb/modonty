@@ -22,4 +22,9 @@ export interface HeaderData {
   links: HeaderNavLink[];
   /** Palette hex or null → modonty's primary. */
   primaryColor: string | null;
+  /**
+   * The admin's «شريك موثَّق» flag. The header badge drew for EVERY partner, verified or not,
+   * while the platform bar above it read this flag — two answers on one screen (4 Oct 2026).
+   */
+  verified?: boolean;
 }

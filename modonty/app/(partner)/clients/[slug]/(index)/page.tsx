@@ -15,7 +15,6 @@ import {
 import { cacheTag, cacheLife } from "next/cache";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { messages } from "@/lib/i18n/messages";
-import { HOME_BLOCKS } from "@modonty/shared/components/partner-site/free/home";
 import { HOME_FAQ_LIMIT } from "@modonty/shared/components/partner-site/free/faq/faq-accordion";
 import { PageBlocks } from "../components/page-blocks";
 import { getClientPageData } from "../helpers/client-page-data";
@@ -27,6 +26,7 @@ import { ClientViewTracker } from "../components/client-view-tracker";
 import { PartnerHomeSkeleton } from "../components/home/partner-home-skeleton";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 import { SITE_URL } from "@/constants";
+import { clientSlugTag } from "@modonty/shared/lib/cache/client-cache-tags";
 
 interface ClientPageProps {
   params: Promise<{ slug: string }>;
@@ -55,7 +55,7 @@ export async function generateStaticParams() {
 // in the prerendered shell <head> instead of being streamed into <body>.
 async function getClientForMetadata(decodedSlug: string) {
   "use cache";
-  cacheTag("clients");
+  cacheTag("clients", clientSlugTag(decodedSlug));
   cacheLife("hours");
   return db.client.findUnique({
     where: { slug: decodedSlug, subscriptionStatus: SubscriptionStatus.ACTIVE },
@@ -243,7 +243,7 @@ async function ClientPageMeta({ params }: ClientPageProps) {
             <ClientNotReadyPanel clientId={client.id} clientName={client.name} clientSlug={client.slug} ctaMode={client.ctaMode} ctaUrl={client.ctaUrl} ctaLabel={client.ctaLabel} />
           </div>
         ) : (
-          <PageBlocks slug={slug} blocks={HOME_BLOCKS} />
+          <PageBlocks slug={slug} page="home" />
         )}
       </>
     );

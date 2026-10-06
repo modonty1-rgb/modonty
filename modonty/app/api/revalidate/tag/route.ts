@@ -18,7 +18,10 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}));
     const { tag, secret, immediate } = body;
 
-    if (!tag || !ALLOWED_TAGS.includes(tag)) {
+    // One partner's own tags (shared/lib/cache/client-cache-tags.ts) — «client:<slug>» and
+    // «client-id:<id>» — so a partner's save refreshes his pages, not every partner's (4 Oct 2026).
+    const isPartnerTag = typeof tag === "string" && /^client(-id)?:[^\s]{1,200}$/.test(tag);
+    if (!tag || (!ALLOWED_TAGS.includes(tag) && !isPartnerTag)) {
       return NextResponse.json(
         { success: false, error: `Tag must be one of: ${ALLOWED_TAGS.join(", ")}` },
         { status: 400 }

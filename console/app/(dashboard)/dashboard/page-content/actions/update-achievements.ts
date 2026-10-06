@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { deleteBunnyUrl } from "@modonty/shared/lib/bunny";
+import { isOwnBunnyUrl } from "@/lib/bunny/is-own-bunny-url";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -32,15 +33,6 @@ export async function updateAchievements(achievements: AchievementInput[]): Prom
   const clientId = (session as { clientId?: string })?.clientId ?? null;
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
-  const rows = (achievements ?? [])
-    .map((a) => ({
-      value: (a.value ?? "").trim(),
-      label: (a.label ?? "").trim().slice(0, LABEL_MAX),
-      image: clean(a.image),
-      description: clean(a.description)?.slice(0, DESC_MAX) ?? null,
-    }))
-    .filter((a) => a.value.length > 0 && a.label.length > 0);
-
   // تُقرأ قبل الكتابة: بعدها ما عاد لها أثر يُعرف منه المحذوف.
   const existing = await db.client.findUnique({
     where: { id: clientId },
@@ -50,6 +42,20 @@ export async function updateAchievements(achievements: AchievementInput[]): Prom
     .map((a) => a.image)
     .filter((u): u is string => Boolean(u));
 
+  // صورة الإنجاز: ملف رفعه الشريك نفسه، أو صورة كانت محفوظة له أصلاً — لا رابط غريب يُحذف لاحقاً
+  // من بني (إصلاح أمني ٤ أكتوبر ٢٠٢٦: كان أي رابط يُقبل ثم يُمسح عند الحفظ التالي).
+  const allowedImage = (url: string | null) =>
+    url && (isOwnBunnyUrl(url, clientId) || oldImages.includes(url)) ? url : null;
+
+  const rows = (achievements ?? [])
+    .map((a) => ({
+      value: (a.value ?? "").trim(),
+      label: (a.label ?? "").trim().slice(0, LABEL_MAX),
+      image: allowedImage(clean(a.image)),
+      description: clean(a.description)?.slice(0, DESC_MAX) ?? null,
+    }))
+    .filter((a) => a.value.length > 0 && a.label.length > 0);
+
   try {
     await db.client.update({
       where: { id: clientId },
@@ -58,7 +64,8 @@ export async function updateAchievements(achievements: AchievementInput[]): Prom
 
     const kept = new Set(rows.map((a) => a.image).filter(Boolean));
     for (const url of oldImages) {
-      if (!kept.has(url)) {
+      // من مجلّد الشريك نفسه فقط — لا يُمسح ملف شريك آخر أبداً.
+      if (!kept.has(url) && isOwnBunnyUrl(url, clientId)) {
         try {
           await deleteBunnyUrl("reels", url);
         } catch {

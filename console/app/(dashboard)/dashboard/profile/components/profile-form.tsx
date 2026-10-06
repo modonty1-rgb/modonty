@@ -17,6 +17,7 @@ import {
   normalizeOrganizationType,
 } from "@modonty/shared/lib/constants/client-classification";
 import { Building2, MapPin, Scale, Clock, CheckCircle2, AlertCircle, Loader2, ShieldCheck, Lock, ChevronDown } from "lucide-react";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 const DAY_ORDER = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] as const;
 // Default working days for a new client (Sun–Thu) — Sat & Fri off.
@@ -118,7 +119,7 @@ function SectionHeader({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-muted-foreground">{step}/3</span>
-          <h3 className="text-base font-bold">{title}</h3>
+          <h2 className="text-base font-bold">{title}</h2>
           {complete && <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-label="مكتمل" />}
         </div>
         <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
@@ -458,7 +459,7 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
               value={form.contactType}
               onChange={(e) => update("contactType", e.target.value)}
               disabled={loading}
-              className="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+              className="flex h-10 max-md:h-11 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
             >
               <option value="">—</option>
               <option value="customer service">خدمة العملاء</option>
@@ -488,13 +489,13 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
               value={form.priceRange}
               onChange={(e) => update("priceRange", e.target.value)}
               disabled={loading}
-              className="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+              className="flex h-10 max-md:h-11 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
             >
               <option value="">—</option>
-              <option value="$">💰 اقتصاديّ — في المتناول</option>
-              <option value="$$">💰💰 متوسّط</option>
-              <option value="$$$">💰💰💰 مرتفع</option>
-              <option value="$$$$">💰💰💰💰 فاخر</option>
+              <option value="$">اقتصاديّ — في المتناول</option>
+              <option value="$$">متوسّط</option>
+              <option value="$$$">مرتفع</option>
+              <option value="$$$$">فاخر</option>
             </select>
             <p className="text-xs text-muted-foreground">يظهر لجوجل مؤشّراً على مستوى أسعارك.</p>
           </div>
@@ -596,7 +597,7 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
               <>
                 <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                 <span className="text-emerald-700 font-medium">
-                  حُفظ · {new Intl.DateTimeFormat("ar-SA", { timeStyle: "short" }).format(savedAt)}
+                  حُفظ · {new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, { timeStyle: "short" }).format(savedAt)}
                 </span>
               </>
             ) : (

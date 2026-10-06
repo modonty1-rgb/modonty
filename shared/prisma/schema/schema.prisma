@@ -156,6 +156,14 @@ enum ClientCtaMode {
   LINK
 }
 
+/// Which of modonty's listing pages the admin puts this client on (Khalid, 3 Oct 2026).
+/// An explicit choice, never derived from the button: a «branding only» client is on none,
+/// and a new page is added here case by case. BOOKING → /booking · SHOP → /shop.
+enum ClientListing {
+  BOOKING
+  SHOP
+}
+
 enum SharePlatform {
   FACEBOOK
   TWITTER
@@ -865,6 +873,9 @@ model Client {
   // ctaLabel, the IDENTITY lives here. Deliberately not a relation — deleting a button must
   // never touch a client, whose resolved mode/label/url keep working untouched.
   ctaPresetId String? @db.ObjectId
+  // «يظهر في» — the listing pages this client appears on (ClientListing). Empty = none.
+  // BOOKING is only valid with ctaMode FORM (the booking form is what those pages open).
+  listedOn ClientListing[]
 
   // Content-responsibility acknowledgement (acceptance proof; editable text lives on Settings)
   disclaimerAcceptedAt       DateTime?
@@ -993,6 +1004,33 @@ model Client {
 /// KEY into a code registry (shared/components/partner-site/free/…): the component is
 /// code, this row is the choice. One row per client, named columns (Khalid 2026-08-18:
 /// «صفّ واحد متّفقين») — no key/value rows, no catalog. Absent row = all defaults.
+/// The theme catalog — what partners can pick, and at what price (4 Oct 2026, THEMES.md §5).
+/// `key` matches a theme folder in code (shared/components/partner-site/<key>/theme.ts): the
+/// CODE is the theme, this row is the business (name on the card, tier, price, on/off).
+/// A row whose key has no code, or code with no row, is ignored by the picker.
+model PartnerThemeCatalog {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  key          String    @unique
+  name         String
+  description  String?
+  previewImage String?
+  tier         ThemeTier @default(FREE)
+  /// Premium only. Same currency as the subscription billing — one source for money.
+  price        Float?
+  version      String    @default("1.0.0")
+  isActive     Boolean   @default(true)
+  sortOrder    Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("partner_theme_catalog")
+}
+
+enum ThemeTier {
+  FREE
+  PREMIUM
+}
+
 model ClientSite {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   clientId String @unique @db.ObjectId
@@ -1001,7 +1039,11 @@ model ClientSite {
   headerTemplate String   @default("classic") // HEADER_TEMPLATES key
   footerTemplate String   @default("columns") // FOOTER_TEMPLATES key
   primaryColor   String? // palette hex; null = modonty's colour
-  hiddenSections String[] // block keys the partner switched OFF (any page); a new block is visible by default
+  hiddenSections String[] // «page:block» keys the partner switched OFF; a new block is visible by default
+  /// The partner's theme — a `PartnerTheme.key` (shared/components/partner-site/THEMES.md).
+  /// Null = the free theme. A key that no longer exists, or a premium one without entitlement,
+  /// also renders the free theme (resolvePartnerTheme), so a site never breaks.
+  themeKey       String?
   /// `<label>.modonty.com`, validated by shared validateSubdomain.
   ///
   /// NOT `@unique`, on purpose. `@unique` builds a PLAIN unique index, and MongoDB indexes a
@@ -2089,6 +2131,14 @@ model Article {
   // Meta tags
   seoTitle       String?
   seoDescription String? // 155-160 chars optimal
+  /// الكلمة المستهدفة — الجملة اللي الكاتب بنى عليها المقال بعد بحثه (خالد، ٣ أكتوبر ٢٠٢٦ · بند و١). اختيارية
+  /// حتى لا تعطّل النشر، وتظهر في قائمة المقالات للمتابعة. أساس قياس «نجح المقال في كلمته؟» ومنع تكرار الموضوع.
+  targetKeyword  String?
+  /// زرُّ المقال — رابطُ المنتج/الخدمة في موقع العميل ونصُّ الزرّ (خالد ٣ أكتوبر ٢٠٢٦ · بطاقة ARTCTA).
+  /// اختياريّان يعبّيهما الكاتب في محرّر المقال؛ الفارغُ يرجع لزرّ العميل العامّ (`Client.cta*`).
+  /// أيُّ رابطٍ صحيح (موقع العميل · أمازون · نون · واتساب…) — يُفحص أنّه رابطٌ حقيقيّ عند الحفظ.
+  ctaUrl         String?
+  ctaLabel       String?
 
   // Open Graph (Complete)
   ogArticleAuthor        String?
@@ -5183,6 +5233,33 @@ model MobileLoginAttempt {
   @@index([key, createdAt])
   @@index([createdAt])
   @@map("mobile_login_attempts")
+}
+
+/// One row per reader sign-in from the modonty mobile app. The 15-minute access token
+/// carries this row's id (`sid`) and every Bearer request checks the row is live, so
+/// signing out ends THIS phone only. The 30-day refresh token is `<id>.<secret>`; only
+/// its SHA-256 is stored and it rotates on every refresh — presenting the previous one
+/// again (a copied token) revokes the whole session. Not MobileSession: that row is
+/// keyed to a Client and has no refresh token. No relation on purpose: User stays untouched.
+/// Failed logins reuse MobileLoginAttempt with a "reader:" key prefix.
+model ReaderSession {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  userId          String    @db.ObjectId
+  refreshHash     String
+  prevRefreshHash String?
+  /// X-Device-Id the app sent at sign-in
+  deviceId        String?
+  userAgent       String?
+  expiresAt       DateTime
+  lastSeenAt      DateTime  @default(now())
+  revokedAt       DateTime?
+  /// "SignedOut" | "RefreshReuse"
+  revokedReason   String?
+  createdAt       DateTime  @default(now())
+
+  @@index([userId])
+  @@map("reader_sessions")
 }
 
 enum ReelStatus {

@@ -104,13 +104,14 @@ export function ArticleTableOfContents({
             invalid markup and every tap on it would toggle the outline instead.
             No tint of its own: a light translucent layer stacked on another light translucent
             layer is where legibility collapses, so the card carries the material alone. */}
-        <div className="flex items-center justify-between gap-2 px-3 py-1.5">
+        <div className="flex items-center justify-between gap-2 px-3 py-1">
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             /* Feedback on the press, not on the release — and `active:` fires on pointer-down.
                `min-h-11` is the fingertip floor; the label alone was 20px tall. */
-            className="-mx-1 flex min-h-11 min-w-0 items-center gap-1.5 rounded-lg px-1 transition-transform active:scale-[0.97] motion-reduce:active:scale-100"
+            // ٣٦ مع الأزرار بجانبه (تدقيق الجوال ٣ أكتوبر ٢٠٢٦): الشريطُ المثبَّت كان ٥٧px فوق النصّ وقت القراءة.
+            className="-mx-1 flex min-h-9 min-w-0 items-center gap-1.5 rounded-lg px-1 transition-transform active:scale-[0.97] motion-reduce:active:scale-100"
             aria-expanded={open}
           >
             {/* Small text wants tracking slightly OPEN, not tight — tight tracking is for display

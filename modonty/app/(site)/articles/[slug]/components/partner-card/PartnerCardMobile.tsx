@@ -48,16 +48,18 @@ export function PartnerCardMobile({ client, articleId, credential, details, labe
   const sub = [credential?.trim(), client.addressCity?.trim()].filter(Boolean).join(" · ");
 
   return (
-    <div className="mb-4 mt-3 overflow-hidden rounded-xl border border-primary/20 bg-primary/5 lg:hidden">
+    // أخفّ (تدقيق الجوال، ٣ أكتوبر ٢٠٢٦): كان ١٤٩px قبل أوّل سطر — حشوٌ ١٢ وشعارٌ ٤٨ وأزرارٌ ٤٤.
+    // لا شيء يُطوى هنا (قرار ٢١ أغسطس باقٍ) — المقاساتُ فقط نزلت: شعار ٣٢ · حشو ٨ · أزرار ٣٦.
+    <div className="mb-3 mt-2 overflow-hidden rounded-xl border border-primary/20 bg-primary/5 lg:hidden">
       <CtaTrackedLink
         href={`/clients/${client.slug}`}
         label={client.name}
         type="LINK"
         articleId={articleId}
         clientId={client.id}
-        className="flex items-center gap-3 p-3"
+        className="flex items-center gap-2.5 px-3 py-2"
       >
-        <PartnerAvatar media={logoMedia} name={client.name} size="standard" />
+        <PartnerAvatar media={logoMedia} name={client.name} size="small" />
         <span className="min-w-0 flex-1">
           {/* The claim first, small: it is what the reader is checking before they read, and it
               frames the name underneath instead of repeating beside it. */}
@@ -79,7 +81,7 @@ export function PartnerCardMobile({ client, articleId, credential, details, labe
 
       {/* White, as it read inside the old sheet: the tinted row is identity, this strip is
           controls — one face each. */}
-      {details && <div className="border-t border-primary/20 bg-card p-3">{details}</div>}
+      {details && <div className="border-t border-primary/20 bg-card px-3 py-2">{details}</div>}
     </div>
   );
 }

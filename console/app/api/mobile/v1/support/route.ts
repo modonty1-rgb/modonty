@@ -28,7 +28,7 @@ function reviewCopy() {
     title: "المساعدة والدعم",
     backLabel: "رجوع",
     heroTitle: "كيف نساعدك؟",
-    heroDescription: "أرسل رسالتك من التطبيق بدل البحث عن قناة",
+    heroDescription: "اكتب سؤالك أو مشكلتك هنا، وفريق مدونتي يتابعها معك.",
     messageLabel: "رسالتك",
     messagePlaceholder: "اكتب رسالتك هنا",
     submitLabel: "إرسال للدعم",

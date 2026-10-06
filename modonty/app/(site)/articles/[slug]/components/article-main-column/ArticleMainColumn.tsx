@@ -14,18 +14,20 @@ import { AskModoCard } from "../ask-modo-card/AskModoCard";
 import { ReaderPartnerCard } from "../partner-card/ReaderPartnerCard";
 import { Gallery } from "../gallery/GalleryLazy";
 import { ReadMore } from "../read-more/ReadMore";
+import { NextRead } from "../read-more/NextRead";
 import { ReaderActions } from "../reader-actions/ReaderActions";
 import { ReadingTools } from "../reading-tools/ReadingToolsLazy";
+import { DesktopOnly } from "@/components/shared/desktop-only/DesktopOnly";
 import { ArticleAudioPlayer } from "../audio-player/ArticleAudioPlayerLazy";
 import { MobileSection } from "../mobile-section/MobileSection";
 import { EngagementFab } from "../engagement-fab/EngagementFab";
-import { PartnerCardMobile } from "../partner-card/PartnerCardMobile";
-import { ReaderPartnerDetails } from "../partner-card/ReaderPartnerDetails";
 import { ReaderComments } from "../comments/ReaderComments";
 import { ReaderFaq } from "../faq/ReaderFaq";
 import { ArticleBodyLinkTrackerLazy } from "../body-link-tracker/BodyLinkTrackerLazy";
 
 import type { getArticlePageData } from "../../helpers/get-article-page-data";
+import { resolveArticleCta } from "../../helpers/resolve-article-cta";
+import { KeyPoints } from "../key-points/KeyPoints";
 
 type ArticlePageData = Awaited<ReturnType<typeof getArticlePageData>>;
 
@@ -105,51 +107,14 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
           }
         />
 
-        {/* MOBILE: client identity (engagement lives in the sticky top bar; conversion in the bottom bar) */}
-        {article.client && (
-          <PartnerCardMobile
-            client={article.client}
-            articleId={article.id}
-            labels={copy.partner}
-            // Same field, same order as the header's desktop byline — one merged block
-            // on a phone instead of that line plus this card saying it twice.
-            credential={
-              article.client.description?.trim() ||
-              article.client.businessBrief?.trim() ||
-              article.client.slogan?.trim() ||
-              null
-            }
-            // Only what the row does not already say: their channels, their number,
-            // their site, and asking them about this article. The full card repeated the
-            // logo, name, ✓, city and brief that are two lines above it — and its cover
-            // image was 200px of artwork for a panel the reader opened to find a link.
-            details={
-              <Suspense fallback={<div className="h-11" aria-hidden />}>
-                <ReaderPartnerDetails
-                  client={article.client}
-                  articleId={article.id}
-                  articleTitle={article.title}
-                  clientId={article.clientId}
-                />
-              </Suspense>
-            }
-          />
-        )}
+        {/* كرتُ العميل على الجوال صار نافذةً من شعاره في شريط الأزرار (خالد ٣ أكتوبر ٢٠٢٦) — كان ١٣٣px بين
+            العنوان وأوّل سطر، وسطرُ «راجعه واعتمده» تحت العنوان يحمل الاسمَ هنا. */}
 
         {/* The summary sits ABOVE the image, not below it. It is the first thing on the
             page that answers anything, so it should not wait behind 412 pixels of
             artwork — the visitor gets the gist in the first screen and reads on by
             choice. Three sentences, one per opening section. */}
-        {keyPoints.length > 0 && (
-          <div className="mb-5 rounded-xl border border-primary/25 bg-primary/5 p-4">
-            <p className="mb-2 text-sm font-bold text-primary">⚡ {copy.summary}</p>
-            <ul className="space-y-1.5 ps-5 text-sm leading-relaxed text-foreground/85 [&>li]:list-disc">
-              {keyPoints.map((point, i) => (
-                <li key={i}>{point}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {keyPoints.length > 0 && <KeyPoints title={copy.summary} points={keyPoints} />}
 
         {/* The image carried a second newsletter ask on mobile — a dark scrim over the
             bottom third with «جديد … في بريدك 🔔 · اشترك الآن ←». Gone with the strip
@@ -170,7 +135,7 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
             Sticky is the whole point — the tools used to sit still while the page moved,
             so from the middle of an 18,917px article the only way to reach the text size
             was to scroll all the way back to the top. */}
-        <div className="sticky top-[var(--sticky-chrome)] z-30 mt-4 lg:hidden">
+        <div data-article-toc-bar className="sticky top-[var(--sticky-chrome)] z-30 mt-4 lg:hidden">
           <ArticleTableOfContents
             headings={outline.headings}
             collapsible
@@ -179,7 +144,7 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
             // together and the bar goes back to being an outline with one offer on it.
             actions={
               <span className="flex shrink-0 items-center gap-1">
-                <Suspense fallback={<div className="h-11 w-[188px]" aria-hidden />}>
+                <Suspense fallback={<div className="h-9 w-[156px]" aria-hidden />}>
                   <ReaderActions
                     articleId={article.id}
                     articleSlug={article.slug}
@@ -193,13 +158,17 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
                     size="compact"
                   />
                 </Suspense>
-                <ArticleAudioPlayer
-                  src={article.audioUrl}
-                  slug={article.slug}
-                  durationSeconds={article.audioDurationSeconds}
-                  // Sized to the tools beside it, not to the old 48px tab row.
-                  tabClassName="relative flex size-11 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold leading-none shadow-sm transition-transform active:scale-[0.94] motion-reduce:active:scale-100"
-                />
+                {/* بلا تسجيل = بلا زرّ (تدقيق الجوال ٣ أكتوبر ٢٠٢٦): أيقونةُ «لا توجد نسخة صوتية» المشطوبة كانت
+                    تأخذ ٤٤px من شريطٍ ضيّق لتقول للقارئ إنّ شيئاً غير موجود. */}
+                {article.audioUrl ? (
+                  <ArticleAudioPlayer
+                    src={article.audioUrl}
+                    slug={article.slug}
+                    durationSeconds={article.audioDurationSeconds}
+                    // Sized to the tools beside it.
+                    tabClassName="relative flex size-9 shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg bg-muted text-xs font-semibold leading-none transition-transform active:scale-[0.94] motion-reduce:active:scale-100"
+                  />
+                ) : null}
               </span>
             }
           />
@@ -227,7 +196,10 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
           </div>
           <div className="absolute -start-14 top-0 hidden h-full xl:block" aria-hidden={false}>
             <div className="sticky top-[150px]">
-              <ReadingTools bare labels={copy.tools} />
+              {/* يُركَّب على الشاشة العريضة فقط — مخفيٌّ على الجوال ولكنّه كان يُنزَّل له (٣ أكتوبر ٢٠٢٦). */}
+              <DesktopOnly minWidth={1280}>
+                <ReadingTools bare labels={copy.tools} />
+              </DesktopOnly>
             </div>
           </div>
 
@@ -249,6 +221,9 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
         />
         </div>
         <ArticleBodyLinkTrackerLazy articleId={article.id} />
+
+        {/* «اقرأ بعدها» تحت آخر سطر مباشرة (خالد ٣ أكتوبر ٢٠٢٦ · هـ٤) — القائمةُ الكاملة باقية تحت. */}
+        <NextRead item={readMoreTop[0]} articleId={article.id} clientId={article.clientId ?? undefined} />
 
         {article.citations?.length ? (
           <div className="mb-8 [&_section]:my-0">
@@ -282,7 +257,7 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
                 articleId={article.id}
                 articleTitle={article.title}
                 clientId={article.clientId}
-                cta={{ mode: article.client.ctaMode, label: article.client.ctaLabel, url: article.client.ctaUrl }}
+                cta={resolveArticleCta(article)}
               />
             </Suspense>
           </div>
@@ -321,12 +296,15 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
           </MobileSection>
         )}
 
-        {/* «معرض صور المقال» — one copy, every screen, in the reading flow. */}
-        <div className="mb-8">
-          <MobileSection title={copy.sections.gallery} count={galleryImages.length} defaultOpen>
-            <Gallery images={galleryImages} fallbackText={article.client?.description} clientName={article.client?.name} />
-          </MobileSection>
-        </div>
+        {/* «معرض صور المقال» — يظهر فقط حين فيه صور (تدقيق الجوال ٣ أكتوبر ٢٠٢٦). بلا صور كان القسمُ مفتوحاً
+            على «عن العميل» — عنوانٌ يَعِد بصور ويعرض نبذةً قالها الكرتُ في أعلى المقال. */}
+        {galleryImages.length > 0 && (
+          <div className="mb-8">
+            <MobileSection title={copy.sections.gallery} count={galleryImages.length} defaultOpen>
+              <Gallery images={galleryImages} clientName={article.client?.name} />
+            </MobileSection>
+          </div>
+        )}
 
         <Suspense fallback={<div className="h-11 rounded-xl bg-muted/40" aria-hidden />}>
           <ReaderFaq articleId={article.id} faqsCount={article._count.faqs} faqs={articleFaqsForJsonLd} />
@@ -345,9 +323,14 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
         </div>
 
         {/* CONSOLIDATED: one "اقرأ أيضاً" grid (replaces the 4 repetitive related sections) */}
-        <MobileSection title={copy.sections.readMore} count={readMoreTop.length}>
-          <ReadMore articleId={article.id} clientId={article.clientId ?? undefined} items={readMoreTop} />
+        {readMoreTop.length > 1 && (
+          <>
+        {/* بلا الأوّل — صار «اقرأ بعدها» تحت المقال، فلا يُعرض مرّتين. */}
+        <MobileSection title={copy.sections.readMore} count={readMoreTop.length - 1}>
+          <ReadMore articleId={article.id} clientId={article.clientId ?? undefined} items={readMoreTop.slice(1)} />
         </MobileSection>
+          </>
+        )}
 
         {/* The «عن الكاتب» card used to stand on its own above this footer, and repeated
             what the footer already says — who reviewed it, and when. Khalid, 19 Aug: the

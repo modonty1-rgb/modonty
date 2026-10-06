@@ -203,7 +203,7 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "Primary CTA",
     description: "Primary action on the article, client page, and listing — FORM (booking) or LINK (external)",
     icon: "MousePointerClick",
-    fields: ["ctaMode", "ctaPresetId", "ctaLabel", "ctaUrl"],
+    fields: ["ctaMode", "ctaPresetId", "ctaLabel", "ctaUrl", "listedOn"],
     required: [],
     priority: "secondary",
     availableInCreate: false,

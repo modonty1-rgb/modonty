@@ -4,7 +4,7 @@ import { VerifiedBadge } from "@modonty/shared/components/verified-badge/Verifie
 
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { cn } from "@/lib/utils";
-import { IconHelp } from "@/lib/icons";
+import { IconArticle, IconClock, IconHelp } from "@/lib/icons";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 import { ArticleViewsCount, ViewsCount } from "./ArticleViewsCount";
@@ -48,7 +48,9 @@ export function ArticleHeader({
     <header className="mb-6 md:mb-8">
       {/* The loudest thing on a reading page has to be what the visitor came to read. At
           30px/600 the title was quieter than the partner's 57px call-to-action beside it. */}
-      <h1 className="mb-4 break-words text-3xl font-bold leading-tight tracking-tight md:text-[2.5rem]">
+      {/* على الجوال يتدرّج مع العرض (خالد ٣ أكتوبر ٢٠٢٦: «الفونتات لازم تكون دايناميك»): ٢٤px عند ٣٦٠ ← ٣٠px عند ٤٣٠،
+          خطٌّ مستقيم بينهما. كان ٣٠ ثابتاً فيأخذ العنوانُ ٤ أسطر من أوّل شاشة على ٣٦٠ و٣٩٠. */}
+      <h1 className="mb-4 break-words text-[clamp(1.5rem,calc(8.57vw_-_6.86px),1.875rem)] font-bold leading-tight tracking-tight md:text-[2.5rem]">
         {title}
       </h1>
 
@@ -71,13 +73,15 @@ export function ArticleHeader({
           background and the same border as the «باختصار» box ninety pixels below it, so the
           reader met two identical blocks before reaching a single sentence. The summary is the
           one that earns a box; the byline is a fact you scan in passing. */}
-      {/* Desktop only (Khalid, 21 Aug). On a phone the partner card sits directly beneath this
+      {/* Every screen since 3 Oct 2026: the phone's partner card moved into a sheet behind the logo
+          in the action bar, so this line is the one place the name sits above the article.
+          (Was desktop only — Khalid, 21 Aug: on a phone the partner card sat directly beneath this
           line and says the same name behind the same ✓, so the reader met one partner twice in a
           row — and a claim repeated back to back stops reading as trust and starts reading as an
           ad. The card carries the review claim there; this line is the desktop byline, where no
           card follows it. */}
       {reviewer && (
-        <div className="mb-5 hidden flex-wrap items-center gap-x-2 gap-y-1 border-s-2 border-primary/40 ps-3 text-sm lg:flex">
+        <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 border-s-2 border-primary/40 ps-3 text-[13px] lg:mb-5 lg:text-sm">
           <VerifiedBadge className="h-4 w-4" label="مراجَع ومعتمَد" />
           <span className="text-muted-foreground">راجعه واعتمده</span>
           <Link
@@ -87,7 +91,7 @@ export function ArticleHeader({
             {reviewer.name}
           </Link>
           {reviewer.credential && (
-            <span className="text-muted-foreground line-clamp-1">— {reviewer.credential}</span>
+            <span className="text-muted-foreground line-clamp-1 max-lg:hidden">— {reviewer.credential}</span>
           )}
         </div>
       )}
@@ -101,9 +105,18 @@ export function ArticleHeader({
           dateTime={datePublished?.toISOString() ?? createdAt.toISOString()}
         />
         {readingTimeMinutes && (
-          <span>⏱️ {readingTimeMinutes} دقيقة قراءة</span>
+          // أيقونةُ الموقع لا إيموجي (٣ أكتوبر ٢٠٢٦): ⏱️ كانت ترسم بلون نظام التشغيل بجانب أيقوناتنا.
+          <span className="inline-flex items-center gap-1">
+            <IconClock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {readingTimeMinutes.toLocaleString(SITE_LOCALE)} دقيقة قراءة
+          </span>
         )}
-        {wordCount && <span className="max-sm:hidden">📝 {wordCount.toLocaleString(SITE_LOCALE)} كلمة</span>}
+        {wordCount && (
+          <span className="inline-flex items-center gap-1 max-sm:hidden">
+            <IconArticle className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {wordCount.toLocaleString(SITE_LOCALE)} كلمة
+          </span>
+        )}
         {/* Live count in its own island (plan أ١): the cached number ships in the static shell,
             the live one replaces it. Zero shows nothing — see ViewsCount. */}
         <Suspense fallback={<ViewsCount views={views ?? 0} />}>

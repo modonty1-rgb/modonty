@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { REELS_BLOCKS } from "@modonty/shared/components/partner-site/free/reels";
 import { PageBlocks } from "../../../components/page-blocks";
 import { getClientPageData } from "../../../helpers/client-page-data";
 import { getCachedHomeData } from "../../../helpers/get-cached-home-data";
@@ -40,5 +39,5 @@ export default async function ClientReelsPage({ params }: ClientReelsPageProps) 
   if (home.data.reels.length === 0) {
     return <p className="py-10 text-center text-sm text-muted-foreground">ما فيه ريلز منشورة لـ{home.data.name} بعد.</p>;
   }
-  return <PageBlocks slug={slug} blocks={REELS_BLOCKS} titlePrefix="ريلز" />;
+  return <PageBlocks slug={slug} page="reels" />;
 }

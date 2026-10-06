@@ -11,6 +11,7 @@ import { getAccountOverview, saveNotificationToggle, type NotificationToggle } f
 import { CONNECTION_COPY, useEngagementResource } from '@/src/services/use-engagement-resource';
 import { control, fonts, nabd, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
+import { getAppVersionLine } from '@/src/services/app-version';
 
 /**
  * S13 «حسابي».
@@ -125,6 +126,8 @@ export function AccountRoute({ accessToken, onBack, onSupport, onLogout, logoUrl
     <EnterView index={3} style={styles.section}>
       <PillButton label={review.logoutLabel} icon="logout" tone="danger" onPress={confirmLogout} />
     </EnterView>
+
+    <Text selectable style={[styles.version, { color: theme.colors.muted }]}>{getAppVersionLine()}</Text>
   </ScrollView>;
 }
 
@@ -145,5 +148,6 @@ const styles = StyleSheet.create({
   row: { alignItems: 'center', flexDirection: 'row-reverse', gap: spacing.sm, minHeight: control.minTouchTarget },
   rowCopy: { flex: 1, minWidth: 0 },
   rowLabel: { fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },
+  version: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, marginTop: spacing.xs, textAlign: 'center', writingDirection: 'rtl' },
   secondary: { fontFamily: fonts.regular, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, textAlign: 'right', writingDirection: 'rtl' },
 });

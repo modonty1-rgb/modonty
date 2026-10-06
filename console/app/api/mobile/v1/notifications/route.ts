@@ -17,10 +17,19 @@ import { clientInboxWhere, countClientUnread } from "@/lib/mobile-api/client-inb
  * addressed to one of their readers.
  */
 
-/** Which screen the tap opens. Derived here so the app maps no Arabic or DB strings. */
-function targetOf(type: string): "article" | "audience" | "videos" | null {
+/**
+ * Which screen the tap opens. Derived here so the app maps no Arabic or DB strings.
+ *
+ * نفس بادئات `tapTabOf` في `console-mobile/src/services/push-registration.ts` حرفاً بحرف —
+ * التنبيه في الدرج وصفّه في الصندوق يفتحان نفس الشاشة. كان `booking*` و`review*` يقعان هنا
+ * في `null` فلا يُضغط صفّهما ولا يُوسم مقروءاً (خالد ٥ أكتوبر: «٢ جديد» لا تنطفئ).
+ * و`null` الباقي (متابعة · مشاركة صفحة …) صار يُضغط في التطبيق ليُقرأ ويُوسم.
+ */
+function targetOf(rawType: string): "article" | "bookings" | "audience" | "videos" | null {
+  const type = rawType.toLowerCase();
   if (type.startsWith("article")) return "article";
-  if (type.startsWith("faq") || type.startsWith("comment") || type.startsWith("contact") || type.includes("question")) return "audience";
+  if (type.startsWith("booking")) return "bookings";
+  if (type.startsWith("faq") || type.startsWith("comment") || type.startsWith("contact") || type.startsWith("review") || type.includes("question")) return "audience";
   if (type.startsWith("reel") || type.startsWith("video") || type.startsWith("media")) return "videos";
   return null;
 }
@@ -65,6 +74,11 @@ export async function GET(request: NextRequest) {
       unreadBadgeLabel: unreadCount === 0 ? null : `${arabicNumber(unreadCount)} جديد`,
       priorityNote: "الأولوية للأشياء التي تحتاج إجراءً منك",
       openPrefix: "افتح",
+      // يظهر في التطبيق فقط حين يوجد غير مقروء — زرٌّ بلا عمل لا يُعرض.
+      markAllReadLabel: "تعليم الكل كمقروء",
+      // التحديث الفوري في التطبيق بعد الضغط يكتب هذين بلا انتظار إعادة الجلب (جوال خالد ٦ أكتوبر ٢٠٢٦).
+      readStateLabel: "تمت رؤيته",
+      unreadBadgeTemplate: "{count} جديد",
       retryLabel: "إعادة المحاولة",
       emptyTitle: "ما في تنبيهات جديدة",
       emptyDescription: "نعلمك هنا بأي شيء يحتاج قرارك أو متابعتك.",

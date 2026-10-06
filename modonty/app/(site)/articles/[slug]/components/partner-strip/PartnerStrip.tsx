@@ -6,6 +6,11 @@ import { BookingCtaLink } from "@/components/cta/booking-cta-link";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { WhatsAppAction } from "@/components/shared/whatsapp-action/WhatsAppAction";
 import { IconExternal } from "@/lib/icons";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
+import { messages } from "@/lib/i18n/messages";
+
+import { isWhatsAppUrl } from "../../helpers/resolve-article-cta";
 import type { BookingSource } from "@/components/shared/booking-form/booking-actions";
 
 interface PartnerStripProps {
@@ -103,20 +108,57 @@ export function PartnerStrip({ client, cta }: PartnerStripProps) {
           />
         </div>
       )}
+      {/* زرُّ الرابط (منتجُ المقال أو موقعُ العميل) ومعه واتساب — نفسُ الصفّ الذي على الجوال (خالد ٣ أكتوبر
+          ٢٠٢٦: «في الموبايل زر الواتساب ظاهر، في الديسكتوب مو ظاهر»). كان واتساب يظهر مع «احجز» فقط. */}
       {cta?.mode === "LINK" && cta.url && (
-        <CtaTrackedLink
-          href={cta.url}
-          label={cta.label?.trim() || "تسوّق الآن"}
-          type="LINK"
-          articleId={cta.articleId ?? undefined}
-          clientId={client.id}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2.5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-[13px] font-semibold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
-        >
-          <IconExternal className="h-4 w-4" />
-          {cta.label?.trim() || "تسوّق الآن"}
-        </CtaTrackedLink>
+        <div className="mt-2.5 flex items-stretch gap-2">
+          <CtaTrackedLink
+            href={cta.url}
+            label={cta.label?.trim() || "تسوّق الآن"}
+            type="LINK"
+            articleId={cta.articleId ?? undefined}
+            clientId={client.id}
+            target="_blank"
+            rel="noopener"
+            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-[13px] font-semibold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
+          >
+            {isWhatsAppUrl(cta.url) ? <WhatsAppIcon className="h-4 w-4 shrink-0" /> : <IconExternal className="h-4 w-4 shrink-0" />}
+            {cta.label?.trim() || "تسوّق الآن"}
+          </CtaTrackedLink>
+          {/* فلو زرّ المقال (٣ أكتوبر ٢٠٢٦): الزرّ نفسه واتساب ← لا واتساب ثانٍ بجانبه. */}
+          {!isWhatsAppUrl(cta.url) && (
+            <WhatsAppAction
+              phone={client.phone}
+              clientId={client.id}
+              clientName={client.name}
+              source={cta.source}
+              articleId={cta.articleId}
+              variant="split"
+              label="واتساب"
+            />
+          )}
+        </div>
+      )}
+      {/* الأدمن ما اختار زرّاً ← صفحةُ العميل في مدونتي باسمه، ومعها واتساب (فلو زرّ المقال). */}
+      {cta?.mode === "NONE" && (
+        <div className="mt-2.5 flex items-stretch gap-2">
+          <Link
+            href={`/clients/${client.slug}`}
+            className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md border border-link bg-transparent px-3 py-2 text-[13px] font-semibold text-link transition-colors hover:bg-primary/10"
+          >
+            <ModontyPartnerMark className="h-4 w-4 shrink-0" aria-hidden />
+            <span className="truncate">{messages.article.cta.clientPage} {client.name}</span>
+          </Link>
+          <WhatsAppAction
+            phone={client.phone}
+            clientId={client.id}
+            clientName={client.name}
+            source={cta.source}
+            articleId={cta.articleId}
+            variant="split"
+            label="واتساب"
+          />
+        </div>
       )}
     </div>
   );

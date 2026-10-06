@@ -1,96 +1,118 @@
 ---
 name: modonty-uiux
 description: |
-  THE foundational UI/UX standard for the Modonty monorepo
-  (modonty.com / console.modonty.com / admin.modonty.com). Act as a
-  senior UI/UX designer (10+ yrs). Use this skill ANY time work touches an
-  interface: building or editing a page/component, adding a section/card/
-  button/form/dialog, reviewing a screen, "improve the UI", "design a page",
-  fixing layout, empty states, or visual hierarchy. Triggers also on Arabic:
-  "صمّم" · "اعمل UI" · "حسّن الواجهة" · "راجع التصميم" · "اعمل صفحة" ·
-  "mockup" · "UX". Enforces design-before-build to avoid rework, the two-track
-  model (admin dashboard ≠ visitor marketing), and the mandatory pre-build
-  ritual (brief → hierarchy → HTML mockup → code). This is the baseline that
-  governs every visual decision; senior judgment, never random building.
+  THE UI/UX standard for the Modonty monorepo (modonty.com · console · admin). Act as a senior
+  UI/UX designer. Use it ANY time work touches an interface: building or editing a page or
+  component, reviewing a screen, "improve the UI", spacing/layout/hierarchy fixes, empty states —
+  and ALWAYS for the partner business profile (`/clients/[slug]`), which is core to the business
+  model and must be 100% perfect on desktop and mobile. Arabic triggers: «صمّم» · «حسّن الواجهة» ·
+  «راجع التصميم» · «اعمل صفحة» · «صفحة الشريك» · «البيزنس بروفايل» · «بيرفكت» · «UX». Gives the
+  two-track model, the measurable audit protocol (viewports, numbers, a ready measuring script)
+  and the partner-profile checklist. Judgement backed by measurement, never by impression.
 ---
 
 # Modonty UI/UX — Senior Standard
 
-> **Source of truth.** Mirrors `memory/feedback_uiux_standards.md`. If they ever
-> diverge, the memory file wins (it's loaded every session). Built from official
-> Claude (frontend aesthetics cookbook), Vercel design/React skills, Bencium UX,
-> AccessLint (WCAG), and dashboard-UX research (UXPin / SapientPro / UX Collective).
+**Values** (colours, weights, radii, shadows, spacing, grid, icon sizes) live in
+`documents/design/DESIGN-SYSTEM.md` — the single source of truth. This file is the **process
+and the bar**. Read the design system before the first line of UI code.
 
-## 0. The non-negotiable mindset
-- **Tokens, weights, radii, shadows, spacing, grid → `documents/design/DESIGN-SYSTEM.md`.**
-  That file is the single source of truth for every visual VALUE; this file governs
-  the process and judgment. Read it before the first line of any UI code. It replaced
-  two older docs on 2026-08-14 — the previous `DESIGN_SYSTEM.md` documented LinkedIn's
-  brand blue `#0a66c2` while our code runs `#3030FF`, so anything quoting it is wrong.
-- You are a **senior UI/UX engineer, 10+ years**. Decide and design — never build randomly.
-- **Design before build.** A page that "works" but isn't *designed* is a failure here — it causes rework, which Khalid explicitly wants eliminated.
-- Honesty over polish: if a layout has no focal point, say so and fix it before coding.
-- **Every visible Arabic string on a modonty public page goes through `messages/ar.json` + `lib/i18n/messages.ts`, never hardcoded inline in a component.** Read via `messages.<namespace>.<key>` inside SERVER components only — a Client Component importing it leaks the whole namespace into the browser bundle. Namespaces are extracted page-by-page as each page is built (established 2026-08-16). Applies to labels, hints, empty states, button text — not to code identifiers, DB field names, or admin/console UI (English-labeled per `feedback_admin_language`).
+## 0. Mindset — five rules
+1. **Decide, then build.** A page that works but has no focal point, rhythm or hierarchy is a fail.
+2. **Measure, don't eyeball.** Every claim about spacing, size or overflow carries a number from
+   the live page (§5). Unmeasured = «مؤشّر», never «خلص».
+3. **Real data, full data.** Judge a partner page on a fully-filled partner — a sparse one hides
+   half the sections (most partners show 6–9 sections; team · stats · reviews · video · trust
+   were absent on all 8 partners measured, 4 Oct 2026).
+4. **Both screens, every time:** 1280 (desktop reference) and 390 (phone), plus 360 for overflow.
+5. **No HTML mockups unless Khalid asks** («show mockup» / «اعمل موكب»). Design is shown as a
+   short text spec, or built directly and shown live (Khalid, 16 Aug 2026).
 
-## 1. 🔑 Two tracks — never mix them
-The biggest mistake is applying visitor-marketing aesthetics to an admin dashboard (or vice-versa).
-
-| | **Track A — admin / console** | **Track B — modonty public (visitor)** |
+## 1. Two tracks — pick from the surface, never mix
+| | **Track A — admin / console** | **Track B — modonty public (visitor, partner sites)** |
 |---|---|---|
-| Goal | Clarity · fast scanning · low cognitive load | Visual distinctiveness · delight |
-| Typography | Restrained, functional (Tajawal/Montserrat, size+weight for hierarchy) | Distinctive *within stack* (still Tajawal/Montserrat — distinctiveness via weight/size/color/space, NOT new fonts) |
-| Color | Limited, purposeful palette + whitespace | Dominant color + sharp accents; layered backgrounds |
-| Motion | Minimal, only for feedback | One orchestrated page-load (staggered `animation-delay`) |
-| Pattern | Dashboard UX (this file §2) | Anti-AI-slop aesthetics (this file §3) |
+| Goal | Clarity · fast scanning · low load | Trust · distinctiveness · conversion |
+| Type | Restrained; size + weight hierarchy | Same fonts (Tajawal), distinctiveness from weight/size/colour/space |
+| Colour | Limited, meaning-bound (red = danger, amber = warning) | Partner colour as the accent on modonty's neutral system |
+| Motion | Feedback only | Subtle, `motion-safe:` only — never required to understand the page |
+| Copy | Partner-facing, plain | **Formal Arabic (فصحى)** on partner sites (Khalid, 4 Oct 2026) |
 
-Pick the track from the surface, not the task. The Accounts page, every admin/console screen → **Track A**. Marketing/landing/article surfaces on modonty.com → **Track B**.
+## 2. Track A — dashboard checklist
+1. One dominant element at the top — the number/status the page exists for.
+2. Hierarchy by size + weight; no grid of equal cards with no focus.
+3. Progressive disclosure: summary first, details in a Sheet/dialog.
+4. Occasional actions = a button that opens a Sheet, not a permanent form.
+5. Designed empty states — never dev-speak («قيد البناء»).
+6. shadcn/ui first · RTL logical properties (`ps/pe/ms/me/start/end`) · aria-label on icon buttons.
+7. Tell the user the truth about saving: when it is live, say so; when it isn't, say why.
 
-## 2. Track A — Admin/Dashboard checklist (most of our work)
-1. **One dominant element** at the top — the single number/status/alert the page exists to answer (balance, KPI, account state). Establish a focal point.
-2. **Visual hierarchy** via size + weight: big/bold titles & primary metrics, small for labels/secondary. **No grid of equal-weight cards with no focus.**
-3. **Progressive disclosure:** lead with a high-level summary; details via drill-down / Sheet / dialog. Don't dump everything expanded.
-4. **Occasional actions = buttons that open a Sheet/dialog**, not a permanent form eating prime real estate.
-5. **Smart alerts:** danger (overdue/error) = red banner that *screams* · warning (expiring soon) = amber. Bind color to meaning.
-6. **F/Z-pattern:** most important content top-start (RTL: top-right).
-7. **Restrained palette + generous whitespace** to cut visual noise. No evenly-distributed colors.
-8. **Bar charts** for comparisons (read 3–4× faster than pie).
-9. **Designed empty states** — part of the real experience. **Never** ship "قيد البناء" / dev-speak in the UI; write a real empty state ("لا توجد فواتير بعد — أصدر أول فاتورة").
-10. **shadcn/ui first** + consistency with neighboring screens · **accessibility** (aria-label on icon-only buttons · sufficient contrast · semantic HTML) · **RTL** (`ps/pe/ms/me/start/end`, never `pl/pr/left/right`).
-11. **Admin language = English UI labels, Arabic only for data content** (see `feedback_admin_language`) — EXCEPT where a feature is already established in Arabic (e.g. the Accounts billing surface); match the surrounding code.
+## 3. Track B — partner business profile: the 100% bar
+The partner page is part of what partners pay for. Every page of it (home · about · services ·
+photos · reviews · articles · faq · contact · book) must pass ALL of this at 1280 and 390:
 
-## 3. Track B — Visitor distinctiveness (modonty public)
-- Kill "AI slop": purple gradients on white · predictable layouts · evenly-spread colors · cookie-cutter components.
-- Dominant color + sharp accents > timid palette. Backgrounds with depth (layered gradients / geometric patterns) > flat fills.
-- High-impact motion: one well-orchestrated page-load with staggered reveals > scattered micro-interactions.
-- **Stack constraints still apply:** fonts stay Tajawal/Montserrat; respect bundle-size sensitivity on modonty (`project_bundle_size_policy_per_app`) — distinctiveness comes from weight/size/color/space/layout, not heavy deps or new font files.
+**Layout & rhythm**
+- Container `max-w-[1128px]` with 24px side padding; section rhythm 48px phone / 64px desktop,
+  from `Section` only — a section never invents its own padding.
+- Zero horizontal scroll at 360 · 390 · 430 · 768 · 1280 (`scrollWidth − innerWidth ≤ 0`).
+- Columns follow the content count (1 · 2 · 3) — never a 3-column grid holding one card.
+- Two muted bands never touch (Section handles it via `data-tone`).
+- A grid's odd last item never sits alone on a phone row.
 
-## 4. 🛠️ Mandatory pre-build ritual (anti-rework)
-Run these **before** writing component code:
-1. **20-word brief:** who is the user + the one question this page answers.
-2. **Information hierarchy:** name the dominant element; name what's secondary/tertiary.
-3. **Standalone HTML mockup FIRST** (project precedent: `documents/HTML/intake-mockup-v1.html`). RTL, opens in a browser, no main code touched. → Khalid reviews visually → **only then** write real code, once.
-4. **UX review pass:** friction points · unclear affordances · missing feedback states · interactions that defy expectation → for each: describe the problem, why it matters, the specific fix, prioritized by impact.
+**Type**
+- One `h1` per page and it names the partner. Headings in order (h1 → h2 → h3).
+- Body ≥ 16px; nothing interactive or informative < 14px on a phone (12px only for fine meta).
+- Line length ≤ ~65ch for paragraphs (`max-w-prose`/`max-w-2xl`). Arabic body leading 1.7–1.9.
+- No orphan word on its own line in a heading on 360–430 (balance or rewrite).
 
-Skip the mockup only for trivial changes (text/color/spacing, single-line tweaks). Anything with structure (new page, new section with 2+ elements, form, dialog) → mockup first.
+**Touch & focus**
+- Every interactive target ≥ 44×44 on phone (design system: 48 wrapper). Measure, don't assume.
+- Visible focus ring on every link/button; nothing reachable only by hover.
 
-## 5. Verify, then ship
-- Live-test in the browser (Playwright) at the right viewport; screenshots saved under `.playwright-mcp/`.
-- Check both desktop + mobile (RTL intact, no overflow, no horizontal scrollbar).
-- **Don't review from memory — invoke the installed Vercel skills.** They were mirrored into
-  `.claude/skills/` on 2026-08-14 from `vercel-labs/agent-skills` (302 files, official):
-  | Skill | Use it for |
-  |---|---|
-  | `web-design-guidelines` | a11y · semantics · forms · touch targets · perf (rules in its `rules.md`) |
-  | `react-best-practices` | 70 rules, 8 priority tiers — waterfalls, bundle, barrels, caching |
-  | `composition-patterns` | 8 rules — boolean-prop sprawl → compound components |
-  | `react-native-skills` | 38 rules — for the planned React Native build of modonty |
-  | `react-view-transitions` | page/route transitions without a third-party animation lib |
+**Images & media**
+- Logos never cropped (`object-contain`); covers at their own ratio; no grey bars.
+- Each image file ≤ ~2× its rendered width (`sizes` correct); hero/LCP image eager + high priority.
+- Video box takes the file's ratio (portrait capped in width).
+- Every image has alt text or is explicitly decorative.
 
-## 6. Sources (adopted)
-- Claude Cookbook — *Prompting for frontend aesthetics* (Anthropic official)
-- `vercel-labs/agent-skills` — installed locally (see §5), not merely cited
-- Bencium UX · AccessLint (WCAG 2.1/2.2)
-- Dashboard UX research: UXPin · SapientPro · UX Collective (B2B dashboards)
+**Honesty & behaviour**
+- No dead control: a button without a destination is not drawn; preview links are inert.
+- Promises match reality (no «نفس اليوم», no «في دقيقة»); badges only when true.
+- Empty data → the section disappears; never an empty heading or placeholder box.
+- Copy: formal Arabic, correct number agreement, «» quotes, Arabic-Indic digits consistent.
+- `prefers-reduced-motion` respected (`motion-safe:`).
 
-## Related memory
-`feedback_uiux_standards` · `feedback_admin_ui_business_focus` · `feedback_admin_language` · `project_bundle_size_policy_per_app` · `feedback_playwright_screenshots_location` · `feedback_human_writing_tone` (Arabic UI copy).
+**Console parity**
+- The console preview renders the same shared components with the same rules (colour, titles,
+  hidden sections, «قيد التجهيز»). A difference between preview and site is a bug.
+
+## 4. Before building (structure changes only)
+1. 20-word brief: who the visitor is + the one question the page answers.
+2. Name the dominant element, then secondary/tertiary.
+3. Short text spec to Khalid (no HTML mockup unless asked), then build.
+Trivial changes (text, colour, a spacing value) skip this.
+
+## 5. The audit protocol — how a review is done
+1. **Servers:** modonty (3000) + console (3002) only. One browser tab; close what a run leaves.
+2. **Data:** a fully-filled test partner on `modonty_dev`, name starting «تجريبي —» so nobody
+   mistakes it for a client (`fake-test-data-must-be-labelled`).
+3. **Measure:** `scripts/audit-page.js` (this folder). `require` does not work inside
+   `browser_run_code`, so: first call sets `page.context().__audit = { urls: [...], widths: [1280, 390, 360] }`
+   (globalThis does not survive between calls),
+   second call passes the script by `filename`. It reuses an open localhost tab and returns only
+   findings: overflow, small text, small targets, h1 count, heading skips, missing alt, oversized
+   images, orphan heading words, empty sections, page height — as numbers.
+4. **Look:** a full-page screenshot per page per width, read at full size — spacing and balance
+   are judged by eye only AFTER the numbers pass.
+5. **Report:** one table — page · width · finding · measured value · file:line · fix. Severity:
+   broken > dishonest > inconsistent > polish.
+6. **Fix, re-measure, re-screenshot.** «Done» only with the after-numbers.
+Never: a long single run with dialogs (beforeunload/confirm hang the harness), a new tab per
+test, starting admin or extra servers.
+
+## 6. Sources
+- WCAG 2.2: 1.4.3 contrast 4.5:1 (3:1 large) · 1.4.11 non-text 3:1 · 2.5.8 target ≥ 24px (AA),
+  2.5.5 ≥ 44px (AAA, our bar) · 2.4.7 focus visible · 1.3.1 heading structure.
+- Apple HIG (44pt targets) · Material 3 (48dp targets).
+- Google Search Central — structured data must match visible content (FAQ JSON-LD).
+- `documents/design/DESIGN-SYSTEM.md` (values) · `.claude/skills/partner-site-templates` (template
+  model) · `web-design-guidelines` · `react-best-practices` (installed Vercel skills).

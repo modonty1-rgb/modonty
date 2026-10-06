@@ -32,7 +32,7 @@ export function ReviewDecision({ id, title, assignee }: { id: string; title: str
   const approve = () =>
     start(async () => {
       const r = await approveTask(id);
-      toast(r.success ? { title: "اعتُمدت", description: `«${title}» صارت Done عند ${assignee}.` } : { title: "تعذّر الاعتماد", description: r.error, variant: "destructive" });
+      toast(r.success ? { title: "اعتُمدت", description: `«${title}» صارت «منجَزة» عند ${assignee}.` } : { title: "تعذّر الاعتماد", description: r.error, variant: "destructive" });
       router.refresh();
     });
 
@@ -45,17 +45,17 @@ export function ReviewDecision({ id, title, assignee }: { id: string; title: str
       }
       setOpen(false);
       setNote("");
-      toast({ title: "رجعت بملاحظتك", description: `«${title}» عادت إلى In Progress عند ${assignee}.` });
+      toast({ title: "رجعت بملاحظتك", description: `«${title}» رجعت «قيد التنفيذ» عند ${assignee}.` });
       router.refresh();
     });
 
   return (
     <div className="flex shrink-0 gap-2">
-      <Button size="sm" className="h-8 gap-1.5 text-xs" disabled={pending} onClick={approve}>
+      <Button size="sm" className="h-7 gap-1.5 text-xs" disabled={pending} onClick={approve}>
         <CheckCircle2 className="size-3.5" aria-hidden />
         اعتماد
       </Button>
-      <Button size="sm" variant="outline" className="h-8 gap-1.5 text-xs" disabled={pending} onClick={() => setOpen(true)}>
+      <Button size="sm" variant="outline" className="h-7 gap-1.5 text-xs" disabled={pending} onClick={() => setOpen(true)}>
         <Undo2 className="size-3.5" aria-hidden />
         رجّعها بملاحظة
       </Button>

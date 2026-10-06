@@ -111,7 +111,8 @@ export function tapTabOf(rawType: unknown): PushTapTab | null {
   const type = rawType.toLowerCase();
   if (type.startsWith('article')) return 'articles';
   if (type.startsWith('booking')) return 'bookings';
-  if (type.startsWith('faq') || type.startsWith('comment') || type.startsWith('contact') || type.includes('question')) return 'audience';
+  // `review*` (تقييم صفحتك) يُراجَع في تبويب التقييمات داخل الجمهور — نفس سطر الخادم.
+  if (type.startsWith('faq') || type.startsWith('comment') || type.startsWith('contact') || type.startsWith('review') || type.includes('question')) return 'audience';
   if (type.startsWith('reel') || type.startsWith('video') || type.startsWith('media')) return 'videos';
   // ما لا هدف له يفتح صندوق التنبيهات: هناك يجده مكتوباً، بدل أن تذهب ضغطته سدى.
   return 'notifications';
@@ -122,48 +123,93 @@ const nonEmptyString = (value: unknown): string | null => typeof value === 'stri
 export function tapTargetOf(data: unknown): PushTapTarget | null {
   const payload = (data ?? {}) as Record<string, unknown>;
   const type = nonEmptyString(payload.type) ?? nonEmptyString(payload.event);
-  const tab = tapTabOf(type);
-  if (tab === null) return null;
+  // تنبيهٌ وصل بلا نوع يُقرأ (بيانات ناقصة في مسار الفتح البارد مثلاً) يفتح الصندوق لا «الرئيسية».
+  const tab = tapTabOf(type) ?? 'notifications';
   const articleId = tab === 'articles' ? nonEmptyString(payload.articleId) ?? nonEmptyString(payload.relatedId) : null;
   return { tab, articleId };
 }
 
 /**
- * يربط الضغطة بوجهتها، ويشمل **الفتح البارد**.
+ * الضغطة تُلتقط **عند تحميل الحزمة** وتُحفظ هنا حتى تجهز الشاشات — لا بعد الدخول.
  *
- * `getLastNotificationResponse()` بنصّ التوثيق للحالة التي كان فيها التطبيق مغلقاً تماماً —
- * بدونها يعمل المراقب فقط والتطبيق حيّ، وهي أقلّ الحالتين وقوعاً في تنبيه حقيقي.
+ * مقيس على الإنتاج (٥ أكتوبر ٢٠٢٦، جوال خالد): «مشاركة لصفحتك» والتطبيق مقفول تماماً فتح
+ * «الرئيسية» لا التنبيهات. النسخة السابقة كانت تسجّل المستمع وتقرأ «آخر ضغطة» **مرّة واحدة**
+ * داخل `useEffect` ينتظر `isSignedIn` — أي بعد تجديد التوكن وجلب الحساب والرئيسية من الشبكة
+ * (ثانية إلى ثلاث). وعلى أندرويد تصل ضغطة الفتح البارد عبر `NotificationForwarderActivity` ←
+ * `NotificationsService` **بشكل غير متزامن** مع إقلاع التطبيق، وحدث `onDidReceiveNotificationResponse`
+ * يُرسَل من الأصلي **ولا يُحفظ لمستمع يأتي بعده**؛ والتوثيق صريح أنّ أندرويد والتطبيق مقتول
+ * لا يطلق `NotificationResponseReceivedListener` أصلاً، وأنّ المستمع يُسجَّل «at module top-level»
+ * ومعه `getLastNotificationResponse` عند الإقلاع. فكان الاعتماد كلّه على قراءةٍ واحدة في لحظة
+ * واحدة، وما فاتها لا يُعاد: المعرّف يدخل `handledTapIds` ولا يُقرأ ثانية، ولا قراءة بعد جاهزية
+ * الملاحة. (لم يُلتقط سجلّ من الجوال يحسم أيّ الطرفين فات — فالإصلاح يغلق الطرفين معاً.)
  *
- * يعيد دالّة فكّ الاشتراك، أو `undefined` إن لم تكن الوحدات مبنيّة.
+ * الآن: مستمع دائم من أوّل سطر يُحمَّل · قراءة «آخر ضغطة» عند الالتقاط وعند كل اشتراك وبعد
+ * مهلة قصيرة · والهدف يبقى **معلَّقاً هنا** حتى يشترك التطبيق (بعد الجلسة والرئيسية والملاحة)،
+ * لا يُرمى لأنّ الشجرة لم تجهز. وبعد تسليمه تُمسح «آخر ضغطة» من الأصلي كي لا تعيد فتح نفس
+ * الوجهة بعد خروج ودخول.
  */
-const handledTapIds = new Set<string>();
+type TapResponse = { actionIdentifier?: string; notification: { date?: number; request: { identifier?: string | null; content: { data?: unknown } } } };
 
-export function observeNotificationTaps(onTarget: (target: PushTapTarget) => void): (() => void) | undefined {
+const handledTapKeys = new Set<string>();
+let pendingTapTarget: PushTapTarget | null = null;
+let tapConsumer: ((target: PushTapTarget) => void) | null = null;
+let isCapturing = false;
+
+// المعرّف قد يغيب في مسار «الإضافات» (`google.message_id`) — فالتاريخ مع البيانات يميّز الضغطة.
+function tapKeyOf(response: TapResponse): string {
+  const { identifier } = response.notification.request;
+  return identifier ? identifier : `${response.notification.date ?? 0}:${JSON.stringify(response.notification.request.content.data ?? null)}`;
+}
+
+function acceptTap(response: TapResponse | null, source: string): void {
+  if (response === null) return;
+  const key = tapKeyOf(response);
+  if (handledTapKeys.has(key)) return;
+  handledTapKeys.add(key);
+  const target = tapTargetOf(response.notification.request.content.data);
+  console.log('[push] tap', source, JSON.stringify(target));
+  if (target === null) return;
+  if (tapConsumer) tapConsumer(target); else pendingTapTarget = target;
+  // سُلِّم أو حُفظ هنا — الأصلي لا يحتاج أن يتذكّره بعد الآن.
+  try { loadNativeModules()?.notifications.clearLastNotificationResponse(); } catch { /* نسخة أصلية أقدم بلا الدالّة */ }
+}
+
+function readLastTap(source: string): void {
+  try {
+    acceptTap(loadNativeModules()?.notifications.getLastNotificationResponse() ?? null, source);
+  } catch (reason) {
+    console.warn('[push] last response read failed', reason);
+  }
+}
+
+/** يُنادى **مرّة عند تحميل `App.tsx`** — قبل أيّ رسم أو جلسة. التكرار لا يضيف مستمعاً ثانياً. */
+export function captureNotificationTaps(): void {
+  if (isCapturing) return;
   const native = loadNativeModules();
-  if (native === null) return undefined;
-  const Notifications = native.notifications;
+  if (native === null) return;
+  isCapturing = true;
+  // دائم لا يُفكّ: ضغطةٌ أثناء استرجاع الجلسة أو على شاشة الدخول تُحفظ ولا تضيع.
+  native.notifications.addNotificationResponseReceivedListener((response) => acceptTap(response, 'listener'));
+  readLastTap('module');
+}
 
-  // الضغطة الواحدة تُفتح مرّة: «آخر ضغطة» تبقى محفوظة بعد الخروج والدخول، فبلا هذا تعيد فتح نفس المقال.
-  const dispatch = (response: { notification: { request: { identifier: string; content: { data: unknown } } } }): void => {
-    const identifier = response.notification.request.identifier;
-    if (handledTapIds.has(identifier)) return;
-    handledTapIds.add(identifier);
-    const target = tapTargetOf(response.notification.request.content.data);
-    console.log("[push] tap target:", JSON.stringify(target));
-    if (target !== null) onTarget(target);
+/**
+ * التطبيق يشترك **حين يقدر أن ينفّذ** (جلسة + رئيسية + ملاحة جاهزة). يستلم المعلَّق فوراً،
+ * ثم كل ضغطة لاحقة. ويعيد دالّة إلغاء الاشتراك.
+ */
+export function consumeNotificationTaps(onTarget: (target: PushTapTarget) => void): () => void {
+  captureNotificationTaps();
+  tapConsumer = onTarget;
+  readLastTap('subscribe');
+  const pending = pendingTapTarget;
+  pendingTapTarget = null;
+  if (pending !== null) onTarget(pending);
+  // شبكة أمان للسباق نفسه: لو وصلت ضغطة البارد من الخدمة الأصلية بعد هذه اللحظة بقليل.
+  const late = setTimeout(() => readLastTap('late'), 1500);
+  return () => {
+    clearTimeout(late);
+    if (tapConsumer === onTarget) tapConsumer = null;
   };
-
-  const cold = Notifications.getLastNotificationResponse();
-  console.log("[push] cold response (sync):", cold ? cold.notification.request.identifier : null);
-  if (cold) dispatch(cold);
-  // الفتح البارد على أندرويد قد لا يكون جاهزاً لحظة القراءة المتزامنة — القراءة غير المتزامنة تكمّلها.
-  void Notifications.getLastNotificationResponseAsync().then((late: typeof cold) => {
-    console.log("[push] cold response (async):", late ? late.notification.request.identifier : null);
-    if (late) dispatch(late);
-  }).catch(() => undefined);
-
-  const subscription = Notifications.addNotificationResponseReceivedListener(dispatch);
-  return () => subscription.remove();
 }
 
 /**

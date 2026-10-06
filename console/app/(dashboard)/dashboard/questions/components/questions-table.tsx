@@ -36,6 +36,7 @@ import {
   rejectQuestion,
   restoreQuestion,
 } from "../actions/question-actions";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 interface Props {
   questions: VisitorQuestionWithDetails[];
@@ -45,7 +46,7 @@ type FilterKey = "all" | ArticleFAQStatus;
 
 function formatDateTime(d: Date | string | null | undefined): string {
   if (!d) return "—";
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -472,9 +473,9 @@ function EmptyState({
         <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary/10">
           <HelpCircle className="h-8 w-8 text-primary" />
         </div>
-        <h3 className="mt-4 text-base font-semibold text-foreground">
+        <h2 className="mt-4 text-base font-semibold text-foreground">
           {q.noQuestions}
-        </h3>
+        </h2>
         <p className="mt-1 max-w-md mx-auto text-sm text-muted-foreground">
           {q.noQuestionsHint}
         </p>

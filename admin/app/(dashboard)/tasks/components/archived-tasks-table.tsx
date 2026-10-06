@@ -14,26 +14,17 @@ const dateFmt = new Intl.DateTimeFormat("ar-EG", {
 
 /** The active board excludes archived cards; this table is their recovery path. */
 export function ArchivedTasksTable({ tasks }: { tasks: ArchivedTask[] }) {
+  // لا شيء مؤرشف = لا قسم: كان صندوقاً منقّطاً يقول «لا توجد» تحت كلّ لوحة (خالد ٣ أكتوبر ٢٠٢٦).
+  if (tasks.length === 0) return null;
   return (
-    <section aria-labelledby="archived-tasks-heading" className="mb-8 mt-5 border-t pt-5">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <div>
-          <h2 id="archived-tasks-heading" className="text-base font-bold">
-            المهام المؤرشفة
-          </h2>
-          <p className="mt-0.5 text-[13px] text-muted-foreground">
-            {tasks.length === 0 ? "لا توجد مهام مؤرشفة حالياً." : `${tasks.length} مهمة يمكن استردادها إلى اللوحة.`}
-          </p>
-        </div>
-        <ArchiveRestore className="size-5 text-muted-foreground" aria-hidden />
-      </div>
-
-      {tasks.length === 0 ? (
-        <div className="rounded-lg border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
-          أي مهمة تؤرشفها ستظهر هنا ويمكنك استردادها في أي وقت.
-        </div>
-      ) : (
-        <div className="overflow-x-auto rounded-lg border bg-card">
+    // مطويٌّ حتى يُطلب — مكانُ استرداد، لا جزءٌ من يومك.
+    <details className="group/arch mb-6 rounded-lg border bg-card">
+      <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-sm font-semibold">
+        <ArchiveRestore className="size-4 text-muted-foreground" aria-hidden />
+        المؤرشفة <span className="font-normal text-muted-foreground">({tasks.length}) — اضغط للاسترداد</span>
+      </summary>
+      <div className="border-t">
+        <div className="overflow-x-auto">
           <table className="w-full min-w-[620px] text-sm">
             <thead className="border-b bg-muted/40 text-xs text-muted-foreground">
               <tr>
@@ -65,26 +56,26 @@ export function ArchivedTasksTable({ tasks }: { tasks: ArchivedTask[] }) {
                   </td>
                   <td className="px-3 py-2.5">
                     <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-semibold", TASK_PRIORITY_META[task.priority].tone)}>
-                      {TASK_PRIORITY_META[task.priority].label}
+                      {TASK_PRIORITY_META[task.priority].labelAr}
                     </span>
                   </td>
                   <td className="px-3 py-2.5">
                     <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-semibold", TASK_STATUS_META[task.status].tone)}>
-                      {TASK_STATUS_META[task.status].label}
+                      {TASK_STATUS_META[task.status].labelAr}
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-3 py-2.5 text-xs text-muted-foreground">
                     {dateFmt.format(task.archivedAt)}
                   </td>
                   <td className="px-3 py-2.5 text-end">
-                    <RestoreTaskButton id={task.id} title={task.title} column={TASK_STATUS_META[task.status].label} />
+                    <RestoreTaskButton id={task.id} title={task.title} column={TASK_STATUS_META[task.status].labelAr} />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      )}
-    </section>
+      </div>
+    </details>
   );
 }

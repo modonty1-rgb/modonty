@@ -6,7 +6,8 @@ interface PageFrameProps {
   /** Partner name — the trail's first crumb links back to his home page. */
   siteName: string;
   base: string;
-  eyebrow: string;
+  /** Optional — page-blocks no longer passes «موقع الشريك»: platform wording, not the visitor's (4 Oct 2026). */
+  eyebrow?: string;
   title: string;
   intro?: string;
   children: ReactNode;
@@ -36,11 +37,14 @@ export function PageFrame({ siteName, base, eyebrow, title, intro, children }: P
           {/* حبر الشريك لا لونه الخام: `text-[hsl(var(--primary-ink,var(--primary)))]` هنا كان ٢٫٧٣:١ على السمة الداكنة
             (مقيس ٣١ أغسطس) — نفس علّة روابط الموقع، وهذا العنصر خارج `[data-partner-theme]`
             فما وصله المتغيّر إلا بعد تسميته صراحةً. */}
-          <p className="flex items-center gap-2 text-sm font-medium text-[hsl(var(--primary-ink,var(--primary)))]">
-            <span className="h-0.5 w-6 rounded-full bg-accent" aria-hidden />
-            {eyebrow}
-          </p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">{title}</h1>
+          {eyebrow ? (
+            <p className="flex items-center gap-2 text-sm font-medium text-[hsl(var(--primary-ink,var(--primary)))]">
+              <span className="h-0.5 w-6 rounded-full bg-accent" aria-hidden />
+              {eyebrow}
+            </p>
+          ) : null}
+          {/* بلا tracking-tight: نظام التصميم يُبقي تباعد الحروف العربية عادياً. */}
+          <h1 className={`${eyebrow ? "mt-2 " : ""}text-3xl font-bold text-foreground`}>{title}</h1>
           {intro ? <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground">{intro}</p> : null}
         </div>
       </div>

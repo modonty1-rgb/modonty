@@ -17,6 +17,7 @@ import { getArticleStats, getArticleComments, getArticleQuestions } from "./help
 import { getArticleForApproval } from "../helpers/article-queries";
 import { CommentsTable } from "../../comments/components/comments-table";
 import { QuestionsTable } from "../../questions/components/questions-table";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -60,8 +61,8 @@ export default async function ArticleStatsPage({
         <p className="text-sm text-muted-foreground mt-1">
           {article.category?.name ?? "—"} ·{" "}
           {article.datePublished
-            ? new Date(article.datePublished).toLocaleDateString("ar-SA")
-            : new Date(article.createdAt).toLocaleDateString("ar-SA")}
+            ? new Date(article.datePublished).toLocaleDateString(SITE_LOCALE_GREGORIAN)
+            : new Date(article.createdAt).toLocaleDateString(SITE_LOCALE_GREGORIAN)}
         </p>
       </div>
 

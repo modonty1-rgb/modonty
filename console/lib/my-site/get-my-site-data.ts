@@ -1,4 +1,4 @@
-import { ArticleStatus, CommentStatus } from "@prisma/client";
+import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { DEFAULT_HEADER_TEMPLATE, type HeaderTemplateKey } from "@modonty/shared/components/partner-site/free/header";
 import { DEFAULT_FOOTER_TEMPLATE, type FooterTemplateKey } from "@modonty/shared/components/partner-site/free/footer";
@@ -15,12 +15,22 @@ export interface MySiteChrome {
   description: string | null;
   socialLinks: string[];
   registrationNumber: string | null;
+  /** The admin's «شريك موثَّق» flag — the header badge shows only with it. */
+  verified: boolean;
   address: string | null;
   services: string[];
 }
 
 export interface MySiteData {
   slug: string;
+  /**
+   * Is the site public? modonty serves a partner page only for an ACTIVE subscription
+   * (`get-partner-site.ts` → `subscriptionStatus: ACTIVE`); otherwise the visitor gets a 404 while
+   * the builder said «ظاهر على موقعك» (4 Oct 2026).
+   */
+  published: boolean;
+  /** The partner's theme key (THEMES.md); null = free. Resolve with `resolvePartnerTheme`. */
+  themeKey: string | null;
   chrome: MySiteChrome;
   /** Nav link labels exactly as modonty builds them (a page appears only when it has content). */
   pages: string[];
@@ -34,40 +44,45 @@ export interface MySiteData {
 
 /** Everything «إعدادات الموقع» shows, in one round of parallel queries. */
 export async function getMySiteData(clientId: string): Promise<MySiteData | null> {
-  const [client, approvedReviews, galleryImages, publishedArticles] = await Promise.all([
+  const [client, approvedReviews, galleryImages, publishedArticles, publishedFaqs] = await Promise.all([
     db.client.findUnique({
       where: { id: clientId },
       select: {
-        slug: true, name: true, email: true, phone: true, description: true, sameAs: true,
+        slug: true, name: true, email: true, phone: true, description: true, sameAs: true, isVerified: true, subscriptionStatus: true,
         commercialRegistrationNumber: true, addressStreet: true, addressCity: true,
         industry: { select: { name: true } },
         logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
         services: { select: { title: true } },
-        site: { select: { headerTemplate: true, footerTemplate: true, primaryColor: true, subdomain: true, updatedAt: true } },
+        site: { select: { headerTemplate: true, footerTemplate: true, primaryColor: true, subdomain: true, updatedAt: true, themeKey: true } },
       },
     }),
     db.clientReview.count({ where: { clientId, status: CommentStatus.APPROVED } }),
     db.media.count({ where: { clientId, inGallery: true, type: "GALLERY" } }),
     db.article.count({ where: { clientId, status: ArticleStatus.PUBLISHED } }),
+    db.clientFAQ.count({ where: { clientId, status: "PUBLISHED" } }),
   ]);
   if (!client) return null;
 
   const servicesCount = client.services.length;
-  // Same order + "has content" rule as modonty `partner-nav-items.ts`; the business speaks
-  // for itself in first person plural (Khalid 2026-08-17).
+  // Same order, labels and "has content" rule as modonty's `buildSiteLinks`
+  // (modonty/app/(partner)/clients/[slug]/helpers/build-chrome-data.ts). This copy had drifted:
+  // no «الأسئلة الشائعة» and «المدونة» where the site says «مقالاتنا» (4 Oct 2026).
   const pages = [
     "الرئيسية",
     servicesCount > 0 ? "خدماتنا" : null,
     galleryImages > 0 ? "ألبوم أعمالنا" : null,
     approvedReviews > 0 ? "آراء العملاء" : null,
     "من نحن",
-    publishedArticles > 0 ? "المدونة" : null,
+    publishedArticles > 0 ? "مقالاتنا" : null,
+    publishedFaqs > 0 ? "الأسئلة الشائعة" : null,
     "تواصل معنا",
   ].filter((p): p is string => Boolean(p));
 
   const site = client.site;
   return {
     slug: client.slug,
+    published: client.subscriptionStatus === SubscriptionStatus.ACTIVE,
+    themeKey: client.site?.themeKey ?? null,
     pages,
     chrome: {
       name: client.name,
@@ -80,6 +95,7 @@ export async function getMySiteData(clientId: string): Promise<MySiteData | null
       registrationNumber: client.commercialRegistrationNumber,
       address: [client.addressStreet, client.addressCity].filter(Boolean).join("، ") || null,
       services: client.services.map((s) => s.title).filter(Boolean),
+      verified: Boolean(client.isVerified),
     },
     headerTemplate: (site?.headerTemplate as HeaderTemplateKey | undefined) ?? DEFAULT_HEADER_TEMPLATE,
     footerTemplate: (site?.footerTemplate as FooterTemplateKey | undefined) ?? DEFAULT_FOOTER_TEMPLATE,

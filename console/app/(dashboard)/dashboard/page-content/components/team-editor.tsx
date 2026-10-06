@@ -52,7 +52,7 @@ export function TeamEditor({
       }
       onChange(next);
       setDraft(null);
-      toast.success(done);
+      toast.success(`${done} — يظهر على موقعك`);
     });
   }
 

@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تقرير تطبيق الكونسول</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f7fb; --surface:#ffffff; --text:#101827; --muted:#5b6475; --border:#e3e6ee;
+  --brand:#0E065A; --accent:#3030FF;
+  --crit:#c62828; --crit-bg:#fdecec; --med:#b35c00; --med-bg:#fff3e2; --low:#3f4a5e; --low-bg:#eef1f6;
+  --info:#00807f; --info-bg:#e3f7f7; --code-bg:#f1f3f8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#070B14; --surface:#101827; --text:#e8ecf4; --muted:#9aa4b8; --border:#293853;
+    --brand:#c9c6ff; --accent:#8f8fff;
+    --crit:#ff8a80; --crit-bg:#3a1517; --med:#ffb74d; --med-bg:#3a2a10; --low:#c3cbe0; --low-bg:#1a2438;
+    --info:#00D8D8; --info-bg:#0d2c33; --code-bg:#17213a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#070B14; --surface:#101827; --text:#e8ecf4; --muted:#9aa4b8; --border:#293853;
+  --brand:#c9c6ff; --accent:#8f8fff;
+  --crit:#ff8a80; --crit-bg:#3a1517; --med:#ffb74d; --med-bg:#3a2a10; --low:#c3cbe0; --low-bg:#1a2438;
+  --info:#00D8D8; --info-bg:#0d2c33; --code-bg:#17213a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans-serif;font-size:16px;line-height:1.75}
+.wrap{max-width:980px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:28px;margin:0 0 4px;color:var(--brand)}
+h2{font-size:21px;margin:40px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.sub{color:var(--muted);margin:0 0 24px}
+.verdict{background:var(--surface);border:1px solid var(--border);border-inline-start:5px solid var(--crit);border-radius:12px;padding:16px 18px;font-size:17px}
+.verdict b{color:var(--crit)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 0}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+.stat .n{font-size:28px;font-weight:700;line-height:1.2}
+.stat .l{color:var(--muted);font-size:14px}
+.stat.crit .n{color:var(--crit)} .stat.med .n{color:var(--med)} .stat.low .n{color:var(--low)} .stat.info .n{color:var(--info)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin:0 0 12px}
+.card h3{margin:0 0 8px;font-size:18px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.num{font-weight:700;color:var(--muted);min-width:1.6em}
+.tag{font-size:13px;font-weight:500;border-radius:999px;padding:1px 10px;white-space:nowrap}
+.tag.crit{background:var(--crit-bg);color:var(--crit)} .tag.med{background:var(--med-bg);color:var(--med)}
+.tag.low{background:var(--low-bg);color:var(--low)} .tag.info{background:var(--info-bg);color:var(--info)}
+.plain{margin:0 0 10px}
+.plain p{margin:0 0 4px}
+.plain .k{font-weight:700}
+details{border-top:1px dashed var(--border);padding-top:8px}
+summary{cursor:pointer;color:var(--accent);font-weight:500;font-size:15px}
+details ul{margin:8px 0 0;padding-inline-start:20px}
+details li{margin:0 0 6px;font-size:15px}
+code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--code-bg);padding:1px 6px;border-radius:6px;direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;font-size:15px}
+th,td{text-align:right;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--code-bg);font-weight:700}
+tr:last-child td{border-bottom:0}
+.tablewrap{overflow-x:auto}
+.note{color:var(--muted);font-size:14px}
+.scope{background:var(--info-bg);border-radius:12px;padding:12px 16px;font-size:15px}
+.theme-btn{float:left;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 12px;font-family:inherit;cursor:pointer}
+@media (max-width:640px){ .stats{grid-template-columns:repeat(2,minmax(0,1fr))} h1{font-size:23px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<button class="theme-btn" id="themeBtn" type="button">المظهر</button>
+<h1>تقرير تطبيق الكونسول على الجوال</h1>
+<p class="sub">٢ أكتوبر ٢٠٢٦ · النطاق: <code>console-mobile/</code> وواجهته على الخادم <code>console/app/api/mobile/v1</code> (٢٧ نقطة) · قراءة كود فقط، بلا أي تعديل</p>
+
+<div class="verdict"><b>الحكم:</b> الشاشات جاهزة ومرتّبة، لكن التطبيق لا يؤدّي وظيفته الأساسية — <b>لا ينبّه العميل</b> بالمقال الذي ينتظر قراره ولا بسؤال القارئ. والجلسة لا يمكن إلغاؤها من الخادم. آخر تعديل على التطبيق ٣١ أغسطس، والخادم تغيّر كثيراً بعده.</div>
+
+<div class="stats">
+  <div class="stat crit"><div class="n">٤</div><div class="l">حرجة</div></div>
+  <div class="stat med"><div class="n">٦</div><div class="l">متوسطة</div></div>
+  <div class="stat low"><div class="n">٧</div><div class="l">تنظيف وديون</div></div>
+  <div class="stat info"><div class="n">١</div><div class="l">خارج الجوال (الأخطر)</div></div>
+</div>
+
+<h2>خارج تطبيق الجوال — الأخطر</h2>
+<div class="card">
+  <h3><span class="num">٠</span>زرّ اعتماد المقال في كونسول الويب لا يتحقّق من هوية المستخدم <span class="tag crit">حرجة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> دالة الاعتماد تأخذ رقم العميل من المتصفّح نفسه ولا تسأل «من أنت؟».</p>
+    <p><span class="k">الأثر:</span> من يعرف رقم مقال ورقم عميل يقدر يعتمد مقالاً ليس له.</p>
+    <p><span class="k">الحلّ المقترح:</span> تأخذ الدالة رقم العميل من الجلسة لا من المتصفّح.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li><code>console/app/(dashboard)/dashboard/articles/actions/article-actions.ts:14</code> — <code>approveArticle(articleId, clientId)</code> بلا فحص جلسة، وكذلك <code>requestChanges</code> سطر ٥٦.</li>
+    <li>تُنادى من مكوّن متصفّح: <code>article-card.tsx:74</code> و<code>article-preview-client.tsx:53</code> بتمرير <code>article.client.id</code>.</li>
+  </ul></details>
+</div>
+
+<h2>حرجة</h2>
+
+<div class="card">
+  <h3><span class="num">١</span>التنبيه المهم لا يُرسَل أصلاً <span class="tag crit">حرجة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> لمّا يصل للعميل مقال ينتظر قراره، أو يسأله قارئ، أو يعلّق أحد — لا يصله أي تنبيه على جواله.</p>
+    <p><span class="k">الأثر:</span> العميل لازم يفتح التطبيق بنفسه كل يوم ليعرف، وهذا عكس سبب وجود التطبيق.</p>
+    <p><span class="k">الحلّ المقترح:</span> ربط هذه الأحداث بدالة التنبيه الجاهزة التي لا يناديها أحد.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li>نقل المقال إلى <code>AWAITING_APPROVAL</code> في الأدمن لا يكتب <code>Notification</code> ولا يرسل دفعاً: <code>admin/app/(dashboard)/articles/workflow/actions/transition-article.ts</code> و<code>gated-transition.ts</code> — صفر ذكر لـ notification/push.</li>
+    <li>أسئلة القرّاء والتعليقات تحدث في مدونتي، و<code>modonty/lib/telegram/notify-telegram.ts:102</code> يرسل لتيليجرام فقط.</li>
+    <li>قائمة أحداث الدفع <code>PUSH_EVENTS</code> في <code>console/lib/telegram/notify.ts:115</code> — لا يناديها إلا <code>register-interest.ts:105</code> (الاهتمام بالحملات).</li>
+    <li><code>notifyClient</code> (صفّ في الصندوق + دفع) في <code>console/lib/push/notify-client.ts:52</code> — صفر مناداة في المستودع.</li>
+  </ul></details>
+</div>
+
+<div class="card">
+  <h3><span class="num">٢</span>ما يصل للجوال تأكيدٌ لما فعله العميل نفسه <span class="tag crit">حرجة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> يعتمد العميل مقالاً فيصله تنبيه «تمت الموافقة على المقال» — عن فعله هو.</p>
+    <p><span class="k">الأثر:</span> تنبيهات بلا فائدة، لا تحترم مفاتيح «حسابي»، وتنزل في قناة أندرويد صامتة.</p>
+    <p><span class="k">الحلّ المقترح:</span> حذف تنبيهات الصدى، وتوحيد الإرسال على الدالة التي تحترم التفضيلات.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li><code>console/app/api/mobile/v1/articles/[articleId]/approve/route.ts:17</code> و<code>request-changes/route.ts:23</code> ← <code>sendPushToClient</code> لنفس <code>session.clientId</code>.</li>
+    <li>نفس الصدى من الويب: <code>article-actions.ts:43</code> و<code>:84</code>.</li>
+    <li><code>register-interest.ts:105</code>: العميل يسجّل اهتماماً فيصله دفع مصنّف <code>actionable</code>.</li>
+    <li><code>console/lib/mobile-api/push.ts:35</code> بلا <code>channelId</code> ولا فحص <code>notificationPreferences</code> — والتعليق في <code>notify-client.ts:84-92</code> يوثّق أن غياب <code>channelId</code> يضعها في قناة <code>fcm_fallback</code> بلا صوت.</li>
+  </ul></details>
+</div>
+
+<div class="card">
+  <h3><span class="num">٣</span>تسجيل الخروج لا يوقف التنبيهات <span class="tag crit">حرجة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> زرّ الخروج يمسح الدخول من الجوال فقط، ولا يخبر الخادم أن هذا الجهاز خرج.</p>
+    <p><span class="k">الأثر:</span> الجوال يبقى يستقبل تنبيهات الحساب بعد الخروج — مشكلة خصوصية لو انتقل الجوال لشخص آخر.</p>
+    <p><span class="k">الحلّ المقترح:</span> الخروج ينادي نقطة إلغاء الجهاز الموجودة أصلاً.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li><code>console-mobile/App.tsx:216-231</code> — <code>handleLogout</code> ينادي <code>auth/logout</code> ثم يمسح التوكن فقط.</li>
+    <li>النقطة جاهزة ولا يناديها التطبيق: <code>console/app/api/mobile/v1/devices/[deviceId]/route.ts</code> (DELETE). والتطبيق لا يحفظ <code>device.id</code> بعد التسجيل.</li>
+  </ul></details>
+</div>
+
+<div class="card">
+  <h3><span class="num">٤</span>الجلسة لا تُلغى من الخادم <span class="tag crit">حرجة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> مفتاح الدخول صالح ٣٠ يوماً ويتجدّد مع كل فتح، ولا شيء في الخادم يقدر يلغيه.</p>
+    <p><span class="k">الأثر:</span> لو تغيّرت كلمة المرور أو سُرق الجوال، يبقى الدخول القديم يعمل بلا نهاية. ولا حدّ لمحاولات تخمين كلمة المرور.</p>
+    <p><span class="k">الحلّ المقترح:</span> ربط الجلسة بسجلّ في القاعدة يُلغى عند الخروج أو تغيير كلمة المرور، وحدّ لمحاولات الدخول.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li><code>console/lib/mobile-api/auth.ts:12</code> — <code>TOKEN_TTL_SECONDS = 30 يوماً</code>، والتحقق فكّ تشفير فقط بلا قراءة من القاعدة.</li>
+    <li><code>auth/logout/route.ts:3</code>: «Tokens are stateless in v1».</li>
+    <li><code>auth/refresh/route.ts</code> يصدر توكناً جديداً من القديم بلا فحص القاعدة.</li>
+    <li><code>auth/login/route.ts</code> بلا أي حدّ للمحاولات.</li>
+  </ul></details>
+</div>
+
+<h2>متوسطة</h2>
+
+<div class="card">
+  <h3><span class="num">٥</span>دخول الجوال لم يأخذ إصلاح الآيفون <span class="tag med">متوسطة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> الويب صار يقبل البريد بأحرف كبيرة أو صغيرة ويقبل معرّف العميل؛ الجوال ما زال يطلب البريد حرفاً بحرف.</p>
+    <p><span class="k">الأثر:</span> عميل يدخل من الويب ويُرفض من التطبيق بنفس البيانات — خصوصاً العملاء الخمسة المخزّن بريدهم بحرف كبير.</p>
+    <p><span class="k">الحلّ المقترح:</span> الجوال يستعمل نفس دالة البحث عن العميل التي يستعملها الويب.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li>الويب: <code>console/auth.config.ts:30</code> <code>findClientByIdentifier</code> (كوميت <code>9b85657</code>، ١٦ سبتمبر).</li>
+    <li>الجوال: <code>console/app/api/mobile/v1/auth/login/route.ts:8</code> (<code>z.string().email()</code>) و<code>:14</code> (<code>findFirst({ where: { email } })</code>).</li>
+  </ul></details>
+</div>
+
+<div class="card">
+  <h3><span class="num">٦</span>الرئيسية تطلب مهام لا يقدر العميل ينفّذها <span class="tag med">متوسطة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> قائمة «مهام تحتاج إجراء» فيها بنود لا يوجد لها زرّ في التطبيق، أو ليست مهمّة العميل أصلاً.</p>
+    <p><span class="k">الأثر:</span> الأرقام لا تنزل أبداً من الجوال، فيتعلّم العميل تجاهل القائمة كلّها.</p>
+    <p><span class="k">الحلّ المقترح:</span> إمّا نضيف الأفعال الناقصة، أو نحذف البند من القائمة.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li>«راجع الطلّات» تعدّ <code>reelStatus: "PENDING_APPROVAL"</code> — <code>dashboard/route.ts:29</code> — وهي «بانتظار موافقة مدونتي» حسب الويب نفسه (<code>gallery-manager.tsx:66</code>).</li>
+    <li>«راجع التعليقات»: لا فعل على التعليق — <code>console-mobile/src/components/audience/AudienceCommentCard.tsx:12</code>، ولا نقطة خادم للتعليقات.</li>
+    <li>«طلبات تواصل تنتظرك»: قراءة فقط — <code>console-mobile/src/services/bookings-api.ts:33</code>؛ لا تغيير حالة، ولا اتصال بالضغط على الرقم.</li>
+    <li>رفض سؤال القارئ: النقطة موجودة <code>console/app/api/mobile/v1/questions/[faqId]/reject/route.ts</code>، والتطبيق لا يعرض زرّها.</li>
+  </ul></details>
+</div>
+
+<div class="card">
+  <h3><span class="num">٧</span>عدد التنبيهات غير المقروءة برقمين مختلفين <span class="tag med">متوسطة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> الرئيسية تعدّ بطريقة، وشاشة التنبيهات تعدّ بطريقة ثانية.</p>
+    <p><span class="k">الأثر:</span> الشارة على التاب قد تقول رقماً والقائمة رقماً آخر.</p>
+    <p><span class="k">الحلّ المقترح:</span> شرط عدّ واحد مشترك بين النقاط الثلاث.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li><code>dashboard/route.ts:56</code> و<code>notifications/[notificationId]/read/route.ts:48</code> — <code>readAt: null</code> فقط.</li>
+    <li><code>notifications/route.ts:53</code> — <code>OR: [{ readAt: null }, { readAt: { isSet: false } }]</code>.</li>
+    <li>نفس فخّ مونغو الموثّق: الحقل الغائب لا يطابق <code>null</code>.</li>
+  </ul></details>
+</div>
+
+<div class="card">
+  <h3><span class="num">٨</span>الضغط على التنبيه لا يفتح المكان الصحيح <span class="tag med">متوسطة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> المرسل يكتب نوع التنبيه في خانة، والتطبيق يقرأه من خانة أخرى.</p>
+    <p><span class="k">الأثر:</span> الضغط على تنبيه الحجز أو واتساب لا يفعل شيئاً، وتنبيه المقال يفتح القائمة لا المقال.</p>
+    <p><span class="k">الحلّ المقترح:</span> شكل بيانات واحد لكل التنبيهات، وفتح المقال برقمه.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li>التطبيق يقرأ <code>data.type</code>: <code>console-mobile/src/services/push-registration.ts:519</code>.</li>
+    <li>المرسلون يكتبون <code>data.event</code>: <code>console/lib/mobile-api/push.ts:35</code> و<code>modonty/lib/mobile-push.ts:39</code>.</li>
+    <li><code>"askClientQuestion".includes("question")</code> = خطأ (حرف Q كبير) فيذهب للصندوق لا للجمهور.</li>
+    <li>تنبيه المقال يفتح <code>article-decisions</code> ويُهمل <code>relatedId</code>: <code>App.tsx:367</code> و<code>NotificationsRoute.tsx:294</code>.</li>
+  </ul></details>
+</div>
+
+<div class="card">
+  <h3><span class="num">٩</span>انقطاع الشبكة وانتهاء الجلسة بلا معالجة صحيحة <span class="tag med">متوسطة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> فتح التطبيق بلا إنترنت يعيد العميل لشاشة الدخول برسالة إنجليزية؛ وانتهاء الجلسة أثناء الاستعمال لا يعيده للدخول.</p>
+    <p><span class="k">الأثر:</span> يظنّ العميل أنه خرج من حسابه، أو يعلق على شاشة خطأ و«إعادة المحاولة» لا تفيد.</p>
+    <p><span class="k">الحلّ المقترح:</span> كل الطلبات تمرّ بالمسار الموحّد، وانتهاء الجلسة في أي شاشة يعيد للدخول.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li><code>App.tsx:155-156</code> يستعمل <code>refreshMobileAccessToken</code> و<code>getCurrentClient</code> و<code>getDashboard</code> — <code>fetch</code> خام في <code>mobile-api.ts:201-242</code> لا يحوّل الانقطاع إلى <code>MobileOfflineError</code>.</li>
+    <li><code>MobileSessionExpiredError</code> لا يُلتقط إلا في <code>App.tsx:165</code> (الإقلاع).</li>
+  </ul></details>
+</div>
+
+<div class="card">
+  <h3><span class="num">١٠</span>قرارات الجوال لا تحدّث الكاش <span class="tag med">متوسطة</span></h3>
+  <div class="plain">
+    <p><span class="k">ما المشكلة:</span> الاعتماد أو الرفض من الجوال يغيّر القاعدة ولا يحدّث الصفحات المخزّنة.</p>
+    <p><span class="k">الأثر:</span> السؤال المرفوض يبقى ظاهراً في المقال على مدونتي، مع أن رسالة التأكيد تقول «بيختفي من المقال المنشور».</p>
+    <p><span class="k">الحلّ المقترح:</span> نفس التحديث الذي يعمله الويب بعد كل قرار.</p>
+  </div>
+  <details><summary>الدليل التقني</summary><ul>
+    <li>الويب: <code>article-actions.ts:47-48</code> <code>revalidatePath</code>.</li>
+    <li>الجوال بلا أي تحديث: <code>approve/route.ts</code> · <code>articles/[articleId]/faqs/[faqId]/reject/route.ts:16</code> · <code>questions/[faqId]/reject/route.ts:16</code>.</li>
+    <li>الرفض لا يفحص الحالة الحالية، فيرفض سؤالاً منشوراً أيضاً.</li>
+  </ul></details>
+</div>
+
+<h2>تنظيف وديون</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>#</th><th>المشكلة بلغة بسيطة</th><th>الدليل</th></tr></thead>
+<tbody>
+<tr><td>١١</td><td>ثلاث نسخ مختلفة لإرسال التنبيه للجوال، كل واحدة بسلوك مختلف — تخالف قاعدة المصدر الواحد</td><td><code>console/lib/mobile-api/push.ts</code> · <code>console/lib/push/notify-client.ts</code> · <code>modonty/lib/mobile-push.ts</code></td></tr>
+<tr><td>١٢</td><td>١١ دالة ميتة، منها دالة اعتماد تنتظر ردّاً قديماً — لو رجع أحد يستعملها سيرى العميل «فشل الاعتماد» والاعتماد تمّ</td><td><code>console-mobile/src/services/mobile-api.ts:244-339</code> · السطر ٢٦٤ ينتظر <code>SCHEDULED</code> والخادم يردّ <code>APPROVED</code> منذ ٢٧ سبتمبر</td></tr>
+<tr><td>١٣</td><td>إضافة الإحالة بلا تحقّق Zod ولا حدّ لطول الاسم والملاحظة</td><td><code>console/app/api/mobile/v1/referral/route.ts:143-164</code></td></tr>
+<tr><td>١٤</td><td>«المقالات المتبقية» تُحسب بتاريخ كتابة المقال لا نشره، والويب يكرّر نفس المنطق بنسخة ثانية</td><td><code>subscription/route.ts:28</code> · <code>console/app/(dashboard)/dashboard/articles/helpers/article-queries.ts:500</code></td></tr>
+<tr><td>١٥</td><td>ست حزم مثبّتة بلا استعمال، منها حزمة تابات تدخل البناء الأصلي ولا يستعملها سطر</td><td><code>console-mobile/app.config.ts:9</code> (<code>react-native-bottom-tabs</code>) · <code>@react-navigation/bottom-tabs</code> · <code>@bottom-tabs/react-navigation</code> · <code>@react-navigation/elements</code> · <code>expo-haptics</code> · <code>@expo/vector-icons</code></td></tr>
+<tr><td>١٦</td><td>كل تبديل بين التابات يمسح الشاشة ويعيد تحميلها من الصفر</td><td><code>console-mobile/App.tsx:363-367</code></td></tr>
+<tr><td>١٧</td><td>وثائق التطبيق متوقّفة عند ٢٩ أغسطس — مثلاً تقول الإحالة محجوبة وهي مبنية الآن</td><td><code>console-mobile/documentation/md/IMPLEMENTATION-STATUS.md</code></td></tr>
+</tbody></table></div>
+
+<h2>ما لم يُتحقَّق منه</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>البند</th><th>الحالة</th></tr></thead>
+<tbody>
+<tr><td>فحص الأنواع <code>tsc</code></td><td>لم يُشغَّل — الحارس يمنعه بلا طلب صريح</td></tr>
+<tr><td>تجربة على جهاز</td><td>لم تُجرَ — كل ما في التقرير من قراءة الكود بملف:سطر</td></tr>
+<tr><td>عنوان الخادم في بناء الإنتاج</td><td><b>مؤشّر:</b> <code>eas.json</code> بلا متغيّر العنوان، والتطبيق يتوقّف عند الإقلاع بدونه (<code>mobile-api.ts:4</code>). قد يكون مضبوطاً في لوحة EAS ولم تُفحص</td></tr>
+<tr><td>آيفون</td><td>لا <code>bundleIdentifier</code> في <code>app.json</code> — التطبيق عملياً أندرويد فقط</td></tr>
+</tbody></table></div>
+
+<h2>الخطة المقترحة — بانتظار اعتماد خالد</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>الترتيب</th><th>الدفعة</th><th>البنود</th></tr></thead>
+<tbody>
+<tr><td>١</td><td>ثغرة الويب</td><td>٠</td></tr>
+<tr><td>٢</td><td>التنبيهات تصل فعلاً، ومن مصدر واحد</td><td>١ · ٢ · ٨ · ١١</td></tr>
+<tr><td>٣</td><td>الجلسة والخروج والدخول</td><td>٣ · ٤ · ٥ · ٩</td></tr>
+<tr><td>٤</td><td>الرئيسية لا تطلب ما لا يُفعل، والأرقام صادقة</td><td>٦ · ٧ · ١٠ · ١٤</td></tr>
+<tr><td>٥</td><td>تنظيف</td><td>١٢ · ١٣ · ١٥ · ١٦ · ١٧</td></tr>
+</tbody></table></div>
+<p class="note">لا تنفيذ قبل اعتماد هذه الخطة.</p>
+</div>
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('themeBtn');
+  try{var s=localStorage.getItem('audit-theme'); if(s) root.setAttribute('data-theme',s);}catch(e){}
+  btn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    var next=cur==='dark'?'light':'dark'; root.setAttribute('data-theme',next);
+    try{localStorage.setItem('audit-theme',next);}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>

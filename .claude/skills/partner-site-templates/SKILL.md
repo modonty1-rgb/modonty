@@ -19,6 +19,18 @@ description: |
 
 ---
 
+## ٠. المنفَّذ فعلاً (٤ أكتوبر ٢٠٢٦) — ابدأ من هنا
+
+البنية مبنيّة، والدليل التشغيلي **`shared/components/partner-site/THEMES.md`** هو المرجع لكل عمل
+على الثيمات. حين يختلف عنه ما في §٢ أدناه (اقتراح ١٧ أغسطس) فالـTHEMES.md يحكم.
+
+- طبقة الثيمات: `shared/components/partner-site/theme/` — `PartnerTheme` · `getTheme()` (الاحتياطي `free`) · `themeTokensCss()`.
+- الثيم الأول «الأساسي»: `shared/components/partner-site/free/theme.ts` (الصفحات العشر · ٥ هيدرات · ٤ فوترات · الشكل · الإعدادات).
+- القرّاء: مدونتي `clients/[slug]/layout.tsx` + `components/page-blocks.tsx`، والكونسول `lib/my-site/page-blocks.ts` + `(preview)/site-preview/page.tsx` — سجلّ واحد.
+- الشكل متغيّرات CSS (`--ps-radius-card` · `--ps-radius-control` · `--ps-section-y[-md]`) تقرؤها المكوّنات بقيمة احتياطية.
+- **لم يُنفَّذ:** الكتالوج والأسعار و`ClientSite.themeKey` (تعديل سكيما — بموافقة خالد، التصميم في THEMES.md §٥)، ونموذج إعدادات الكونسول المولَّد من `theme.settings`.
+- إضافة ثيم: THEMES.md §٣. فحصه: مهارة `modonty-uiux` §٥.
+
 ## ١. النموذج المشترك عند الكبار (من التوثيق الرسمي)
 
 الأربعة كلهم يفصلون **ثلاث طبقات** — وهذا هو الأساس اللي نبني عليه:

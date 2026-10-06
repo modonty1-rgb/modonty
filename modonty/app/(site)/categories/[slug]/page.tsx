@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { notFound } from "next/navigation";
 import { cacheTag, cacheLife } from "next/cache";
-import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
 import { IconCategory } from "@/lib/icons";
 import { db } from "@/lib/db";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
-import { getClientsGA4Stats } from "@/lib/analytics/ga4";
+import { getCategoryPageData } from "@/lib/categories/get-category-page-data";
 import { generateMetadataFromSEO, localizedStoredBreadcrumbJsonLd } from "@/lib/seo";
 import { messages } from "@/lib/i18n/messages";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -27,95 +26,6 @@ export async function generateStaticParams() {
   } catch {
     return [{ slug: "__no_categories__" }];
   }
-}
-
-// The count reads the clock (scheduled articles), and Next 16 forbids the current time in an
-// uncached prerender scope — so it lives in its own cached function, like getCategoryForMetadata.
-async function countCategoryArticles(slug: string) {
-  "use cache";
-  cacheTag("categories");
-  cacheLife("hours");
-  return db.article.count({
-    where: {
-      status: ArticleStatus.PUBLISHED,
-      OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
-      category: { slug },
-    },
-  });
-}
-
-/**
- * The three reads the page body needs — cached, for the same reason the article page was
- * fixed on 1 Sep 2026.
- *
- * They used to sit in a `Promise.all` at the root of `CategoryDetailPage`: uncached database
- * calls awaited before a single byte could render, outside any `<Suspense>`. The docs shipped
- * with this version are explicit (`node_modules/next/dist/docs/01-app/02-guides/building.md:111`):
- * data accessed outside a boundary «prevents the route from being prerendered, blocking the
- * page load». That is exactly the shape that took the article page down — a healthy cached
- * page held hostage by one live query, and killed outright when that query stumbled.
- *
- * All three are safely cacheable: a category, the partners publishing in it, and their review
- * averages change on publish or on a new review — both of which already fire `revalidateTag`.
- */
-async function getCategoryBySlug(slug: string) {
-  "use cache";
-  cacheTag("categories");
-  cacheLife("hours");
-  return db.category.findUnique({
-    where: { slug },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      description: true,
-      socialImage: true,
-      socialImageAlt: true,
-      jsonLdStructuredData: true,
-    },
-  });
-}
-
-async function getCategoryClients(slug: string, coreClientId: string | null) {
-  "use cache";
-  cacheTag("categories");
-  cacheTag("clients");
-  cacheLife("hours");
-  return db.client.findMany({
-    where: {
-      subscriptionStatus: SubscriptionStatus.ACTIVE,
-      ...(coreClientId ? { id: { not: coreClientId } } : {}),
-      articles: {
-        some: { status: ArticleStatus.PUBLISHED, category: { slug } },
-      },
-    },
-    orderBy: { name: "asc" },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
-      heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
-      phone: true,
-      addressCity: true,
-      slogan: true,
-      _count: { select: { articles: true } },
-    },
-  });
-}
-
-/** Review averages for the listed partners. Keyed by the id list so a different page of
- *  partners gets its own entry rather than reusing another category's averages. */
-async function getClientsRatings(clientIds: string[]) {
-  "use cache";
-  cacheTag("reviews");
-  cacheLife("hours");
-  if (clientIds.length === 0) return [];
-  return db.clientReview.groupBy({
-    by: ["clientId"],
-    where: { clientId: { in: clientIds }, status: CommentStatus.APPROVED },
-    _avg: { rating: true },
-  });
 }
 
 async function getCategoryForMetadata(slug: string) {
@@ -178,23 +88,12 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
   const coreClientId = await getCoreClientId();
 
   try {
-    const [category, clients, articleCount] = await Promise.all([
-      getCategoryBySlug(slug),
-      getCategoryClients(slug, coreClientId),
-      // How many articles this category actually holds — the read-link stays hidden at zero.
-      countCategoryArticles(slug),
-    ]);
+    // Same reads the reader mobile API serves (lib/categories/get-category-page-data.ts).
+    const data = await getCategoryPageData(slug, coreClientId);
 
-    if (!category) notFound();
+    if (!data) notFound();
 
-    const clientIds = clients.map((c) => c.id);
-
-    const [ga4Stats, ratingsRaw] = await Promise.all([
-      getClientsGA4Stats(),
-      getClientsRatings(clientIds),
-    ]);
-
-    const ratingMap = new Map(ratingsRaw.map((r) => [r.clientId, r._avg.rating ?? 0]));
+    const { category, clients, articleCount, ga4Stats, ratingMap } = data;
 
     return (
       <>

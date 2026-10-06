@@ -66,7 +66,7 @@ export function FirstTimeWelcome() {
               >
                 <Sparkles className="w-7 h-7" />
               </motion.div>
-              <h2 className="text-2xl font-extrabold mb-1.5">أهلاً بك في بوابتك ✨</h2>
+              <h2 className="text-2xl font-extrabold mb-1.5">أهلاً بك في بوابتك</h2>
               <p className="text-sm opacity-95 leading-relaxed">
                 هذي أول زيارة لك. حضّرنا لك دليل بسيط يشرح كل صفحة بكلام واضح — وقتك ٥ دقايق بس.
               </p>

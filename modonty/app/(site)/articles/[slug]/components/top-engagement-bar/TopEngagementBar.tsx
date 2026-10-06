@@ -180,7 +180,9 @@ export function ArticleTopEngagementBar({
       // 44 — the same face as the listen tab it sits beside (Khalid, 21 Aug): two sizes in one
       // row read as two kinds of control. It is also the fingertip floor, so no invisible hit
       // area is needed any more. The outline title truncates to make room; the controls do not.
-      ? "size-11 rounded-lg text-xs"
+      // ٣٦ وبلا ألوان (خالد ٣ أكتوبر ٢٠٢٦ — تدقيق الجوال): في شريط الفهرس المثبَّت كانت ٤ مربّعات ٤٤px
+      // بأربعة ألوان صارخة تأكل العنوان («جدو…») وتصيح فوق النصّ وقت القراءة. اللونُ يبقى للأيقونة فقط.
+      ? "size-9 rounded-lg text-xs !shadow-none"
       : "size-12 rounded-xl text-xs lg:size-10",
     size === "compact" ? "" : attached
       // Hanging from the navbar (Khalid, 19 Aug): the radius is flipped — square where it meets
@@ -207,11 +209,11 @@ export function ArticleTopEngagementBar({
     >
       {showEngagement && (
         <>
-          <button type="button" onClick={handleLike} disabled={busy === "like"} className={cn(item, "bg-action-like text-action-like-foreground")} aria-pressed={liked} aria-label={labels.like}>
+          <button type="button" data-engagement="like" onClick={handleLike} disabled={busy === "like"} className={cn(item, size === "compact" ? "bg-muted text-foreground" : "bg-action-like text-action-like-foreground")} aria-pressed={liked} aria-label={labels.like}>
             <IconLike className={cn(glyph, liked && "fill-current")} />
             {likeN > 0 && <span className={badge}>{likeN.toLocaleString(SITE_LOCALE)}</span>}
           </button>
-          <button type="button" onClick={handleSave} disabled={busy === "save"} className={cn(item, "bg-action-save text-action-save-foreground")} aria-pressed={saved} aria-label={labels.save}>
+          <button type="button" data-engagement="save" onClick={handleSave} disabled={busy === "save"} className={cn(item, size === "compact" ? "bg-muted text-foreground" : "bg-action-save text-action-save-foreground")} aria-pressed={saved} aria-label={labels.save}>
             <IconSaved className={cn(glyph, saved && "fill-current")} />
             {favN > 0 && <span className={badge}>{favN.toLocaleString(SITE_LOCALE)}</span>}
           </button>
@@ -221,12 +223,12 @@ export function ArticleTopEngagementBar({
             userId={userId}
             clientId={clientId ?? undefined}
             trigger={
-              <button type="button" className={cn(item, "bg-action-comment text-action-comment-foreground")} aria-label={labels.comment}>
+              <button type="button" data-engagement="comment" className={cn(item, size === "compact" ? "bg-muted text-foreground" : "bg-action-comment text-action-comment-foreground")} aria-label={labels.comment}>
                 <IconComment className={glyph} />
               </button>
             }
           />
-          <button type="button" onClick={handleShare} className={cn(item, "bg-action-share text-action-share-foreground")} aria-label={labels.share}>
+          <button type="button" data-engagement="share" onClick={handleShare} className={cn(item, size === "compact" ? "bg-muted text-foreground" : "bg-action-share text-action-share-foreground")} aria-label={labels.share}>
             {shared ? <IconCheck className={glyph} /> : <IconShare className={glyph} />}
           </button>
         </>

@@ -12,7 +12,7 @@ import { FaqAccordion } from "../faq/faq-accordion";
 import { LatestPosts } from "../blog/latest-posts";
 import { ContactCards } from "../contact/contact-cards";
 import { FinalCta } from "../cta/final-cta";
-import { NewsletterForm } from "../newsletter/newsletter-form";
+import { NewsletterForm } from "../newsletter/newsletter-block";
 import { BookingBlock } from "../booking/booking-block";
 import { ReelsGrid } from "../reels/reels-grid";
 import type { HomeData } from "./home-data";
@@ -66,7 +66,7 @@ export const HOME_BLOCKS: readonly HomeBlock[] = [
   // وهو أضعف موضع: اللي وصله إمّا اقتنع أو طلع.
   { key: "video", name: "فيديو تعريفي", toggleable: true, isEmpty: (d) => !d.video, Component: IntroVideo },
   { key: "services", name: "خدماتنا", toggleable: true, isEmpty: (d) => d.services.length === 0, Component: ServicesGrid },
-  { key: "booking", name: "احجز", toggleable: true, isEmpty: (d) => d.booking.mode === "NONE", Component: BookingBlock },
+  { key: "booking", name: "احجز", toggleable: true, isEmpty: (d) => d.booking.mode === "NONE" || (d.booking.mode === "LINK" && !d.booking.url), Component: BookingBlock },
   { key: "stats", name: "أرقامنا", toggleable: true, isEmpty: (d) => d.stats.length === 0, Component: StatsRow },
   { key: "testimonials", name: "آراء العملاء", toggleable: true, isEmpty: (d) => d.testimonials.length === 0, Component: TestimonialsGrid },
   { key: "gallery", name: "المعرض", toggleable: true, isEmpty: (d) => d.gallery.length === 0, Component: GalleryMosaic },
@@ -76,8 +76,10 @@ export const HOME_BLOCKS: readonly HomeBlock[] = [
   // الفريق غادر الرئيسية إلى «من نحن» (خالد ٣١ أغسطس): هو تعريفٌ بالناس، وصفحة «من نحن»
   // هي بيت التعريف — ووجوده في الاثنتين تكرارٌ يطوّل الرئيسية بلا معلومة جديدة.
   { key: "faq", name: "الأسئلة الشائعة", toggleable: true, isEmpty: (d) => d.faqs.length === 0, Component: FaqAccordion },
-  { key: "blog", name: "المدونة", toggleable: true, isEmpty: (d) => d.posts.length === 0, Component: LatestPosts },
+  { key: "blog", name: "مقالاتنا", toggleable: true, isEmpty: (d) => d.posts.length === 0, Component: LatestPosts },
   { key: "contact", name: "تواصل", toggleable: true, isEmpty: (d) => !d.contact.address && !d.contact.email && !d.phone, Component: ContactCards },
-  { key: "cta", name: "النداء الأخير", toggleable: false, isEmpty: () => false, Component: FinalCta },
-  { key: "newsletter", name: "النشرة البريدية", toggleable: true, isEmpty: () => false, Component: NewsletterForm },
+  // النشرة قبل النداء الأخير لا بعده (٤ أكتوبر ٢٠٢٦): الدعوة هي آخر ما يقرؤه الزائر، ونشرةٌ
+  // بعدها تسرق الخاتمة. وتختفي لمن لا مقالات له: «جديدنا ومقالاتنا على بريدك» وعدٌ بلا شيء.
+  { key: "newsletter", name: "النشرة البريدية", toggleable: true, isEmpty: (d) => d.posts.length === 0, Component: NewsletterForm },
+  { key: "cta", name: "النداء الأخير", toggleable: false, isEmpty: (d) => !d.whatsappHref && d.booking.mode !== "FORM" && !(d.booking.mode === "LINK" && d.booking.url), Component: FinalCta },
 ] as const;

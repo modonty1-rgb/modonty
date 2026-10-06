@@ -30,7 +30,8 @@ const ASKED_FOR = {
   comment: { Icon: IconComment, line: "عشان نعرف مين صاحب التعليق" },
   // The only one of the four that is not a reaction to something on screen — it is the
   // page's main ask on `/modonty`, where the reader has nothing to like or save yet.
-  follow: { Icon: IconBell, line: "عشان يوصلك جديدنا أول بأول" },
+  // كان «عشان يوصلك جديدنا أول بأول» — وما فيه شيء يرسل الجديد للمتابع بعد (المرحلة ٢، خالد ٣ أكتوبر ٢٠٢٦).
+  follow: { Icon: IconBell, line: "عشان نحفظ متابعتك لمدونتي" },
 } as const;
 
 /**

@@ -41,6 +41,9 @@ import {
   bulkPublishFaqsAction,
   bulkRejectFaqsAction,
 } from "../actions/faq-actions";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+
+const FAQ_PAGE = 20;
 
 interface Props {
   faqs: ClientFAQWithArticle[];
@@ -50,7 +53,7 @@ type FilterKey = "all" | "PENDING" | "PUBLISHED" | "REJECTED";
 
 function formatDate(d: Date | string | null | undefined): string {
   if (!d) return "—";
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -59,7 +62,7 @@ function formatDate(d: Date | string | null | undefined): string {
 
 function formatDateTime(d: Date | string | null | undefined): string {
   if (!d) return "—";
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -106,6 +109,9 @@ export function FaqsTable({ faqs }: Props) {
   const [actionId, setActionId] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<ClientFAQWithArticle | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  // Rendered in pages of FAQ_PAGE: a partner with 300 questions made this screen ~100,000px
+  // tall on a phone (4 Oct 2026 audit). Search, filters and select-all still cover the whole list.
+  const [limit, setLimit] = useState(FAQ_PAGE);
   const [isPending, startTransition] = useTransition();
 
   const filtered = useMemo(() => {
@@ -277,7 +283,7 @@ export function FaqsTable({ faqs }: Props) {
               <SearchIcon className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => { setQuery(e.target.value); setLimit(FAQ_PAGE); }}
                 placeholder={f.searchPlaceholder}
                 className="ps-9"
               />
@@ -285,27 +291,27 @@ export function FaqsTable({ faqs }: Props) {
             <div className="flex flex-wrap items-center gap-2">
               <FilterPill
                 active={filter === "all"}
-                onClick={() => setFilter("all")}
+                onClick={() => { setFilter("all"); setLimit(FAQ_PAGE); }}
                 label={f.all}
                 count={counts.all}
               />
               <FilterPill
                 active={filter === "PENDING"}
-                onClick={() => setFilter("PENDING")}
+                onClick={() => { setFilter("PENDING"); setLimit(FAQ_PAGE); }}
                 label={f.pending}
                 count={counts.PENDING}
                 tone="amber"
               />
               <FilterPill
                 active={filter === "PUBLISHED"}
-                onClick={() => setFilter("PUBLISHED")}
+                onClick={() => { setFilter("PUBLISHED"); setLimit(FAQ_PAGE); }}
                 label={f.published}
                 count={counts.PUBLISHED}
                 tone="emerald"
               />
               <FilterPill
                 active={filter === "REJECTED"}
-                onClick={() => setFilter("REJECTED")}
+                onClick={() => { setFilter("REJECTED"); setLimit(FAQ_PAGE); }}
                 label={f.rejected}
                 count={counts.REJECTED}
                 tone="slate"
@@ -376,7 +382,7 @@ export function FaqsTable({ faqs }: Props) {
             />
           ) : (
             <div className="space-y-3">
-              {filtered.map((item) => (
+              {filtered.slice(0, limit).map((item) => (
                 <FaqRow
                   key={item.id}
                   item={item}
@@ -399,6 +405,11 @@ export function FaqsTable({ faqs }: Props) {
                   }
                 />
               ))}
+              {filtered.length > limit && (
+                <Button type="button" variant="outline" className="w-full max-md:h-11" onClick={() => setLimit((n) => n + FAQ_PAGE)}>
+                  عرض المزيد ({filtered.length - limit} متبقّية)
+                </Button>
+              )}
             </div>
           )}
         </CardContent>
@@ -746,7 +757,7 @@ function EmptyState({
         <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary/10">
           <HelpCircle className="h-8 w-8 text-primary" />
         </div>
-        <h3 className="mt-4 text-base font-semibold text-foreground">{f.noFaqs}</h3>
+        <h2 className="mt-4 text-base font-semibold text-foreground">{f.noFaqs}</h2>
         <p className="mt-1 max-w-sm mx-auto text-sm text-muted-foreground">
           {f.noFaqsHint}
         </p>

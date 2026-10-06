@@ -20,7 +20,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { AlertTriangle, Plus } from "lucide-react";
+import { AlarmClock, CalendarClock, Info, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -31,8 +31,11 @@ import type { BoardTask } from "../helpers/queries";
 import { TASK_STATUSES, TASK_STATUS_META, type TaskStatusKey } from "@/lib/tasks/task-config";
 import { TaskCard } from "./task-card";
 import { TaskDialog } from "@/components/tasks/task-dialog";
+import { isTaskLate } from "@/lib/tasks/is-task-late";
 
 type Board = Record<TaskStatusKey, BoardTask[]>;
+
+const N = new Intl.NumberFormat("ar-EG");
 
 function Column({
   status,
@@ -52,26 +55,26 @@ function Column({
   return (
     <section
       ref={setNodeRef}
-      aria-label={meta.label}
+      aria-label={meta.labelAr}
       className={cn(
         "flex min-h-0 w-72 shrink-0 flex-col rounded-xl border bg-muted/30 transition-colors sm:w-full",
         isOver && "border-primary/60 bg-primary/5",
       )}
       data-column={status}
     >
-      <header className="flex items-center gap-2 border-b px-3 py-2">
+      <header className="flex items-center gap-2 border-b px-3 py-1.5">
         <span className={cn("size-2 rounded-full", meta.dot)} aria-hidden />
-        <h2 className="text-[13px] font-bold">{meta.label}</h2>
+        <h2 className="text-[13px] font-bold">{meta.labelAr}</h2>
         <span className="ms-auto rounded-full bg-muted px-2 py-0.5 text-[11px] font-bold tabular-nums text-muted-foreground">
           {tasks.length}
         </span>
       </header>
-      <div className="flex min-h-24 flex-1 flex-col gap-2 overflow-y-auto p-2">{children}</div>
+      <div className="flex min-h-24 flex-1 flex-col gap-1.5 overflow-y-auto p-1.5 scrollbar-thin">{children}</div>
     </section>
   );
 }
 
-export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
+export function TaskBoard({ initialBoard, total, done }: { initialBoard: Board; total: number; done: number }) {
   const router = useRouter();
   const { toast } = useToast();
   const [, startTransition] = useTransition();
@@ -85,6 +88,15 @@ export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [editing, setEditing] = useState<BoardTask | null>(null);
   const [creatingIn, setCreatingIn] = useState<TaskStatusKey | null>(null);
+  // «المهمّ اليوم» (خالد ٣ أكتوبر ٢٠٢٦): المتأخّرُ وما ينتظر موعدَك — تركيزٌ يُخفت الباقي ولا يُخفيه.
+  const [focus, setFocus] = useState<"late" | "noDue" | null>(null);
+  const all = TASK_STATUSES.flatMap((s) => board[s]);
+  const FOCUS = {
+    late: (t: BoardTask) => isTaskLate(t),
+    noDue: (t: BoardTask) => !t.dueDate && !!t.assignedBy && t.status !== "DONE",
+  } as const;
+  const lateCount = all.filter(FOCUS.late).length;
+  const noDueCount = all.filter(FOCUS.noDue).length;
 
   const sensors = useSensors(
     // 6px of slop before a drag starts: without it every click on a card is
@@ -127,7 +139,7 @@ export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
     startTransition(async () => {
       const result = await moveTask({ id: task.id, status: to, toIndex });
       if (!result.success) {
-        toast({ title: "Move failed", description: result.error, variant: "destructive" });
+        toast({ title: "ما انتقلت", description: result.error, variant: "destructive" });
       }
       // Refresh either way: on success to pick up the real positions, on failure
       // to snap the card back to where the database actually has it.
@@ -168,10 +180,10 @@ export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
       toast(
         result.success
           ? {
-              title: "Archived",
-              description: `${task.title} is off the board — find it under Archive and restore it any time.`,
+              title: "أُرشفت",
+              description: `«${task.title}» خرجت من اللوحة — تلقاها في المؤرشفة تحت، وترجّعها متى شئت.`,
             }
-          : { title: "Archive failed", description: result.error, variant: "destructive" },
+          : { title: "ما تأرشفت", description: result.error, variant: "destructive" },
       );
       router.refresh();
     });
@@ -179,47 +191,50 @@ export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
 
   return (
     <>
-      {/* ONE place to add a task, not a button per column — Khalid, 2026-09-02:
-          "one place to add a task, then it moves". New cards land in To Do and
-          you drag them from there.
-
-          Pulled up onto the header's row, which is free now that the tab strip
-          and the duplicate counters are gone. A single small button does not
-          earn a strip of page height, and that height is what the columns
-          needed — they were 257px tall and scrolling over an empty page. */}
-      <div className="-mt-12 mb-2 flex items-center justify-end">
-        <Button size="sm" className="h-8 gap-1.5 text-xs" onClick={() => setCreatingIn("TODO")}>
-          <Plus className="size-3.5" aria-hidden />
-          New Task
-        </Button>
-      </div>
-
-      {/**
-       * **قاعدةُ العمل، على لوحة كلّ موظّفٍ لا على تقرير المدير** (خالد ٢٠ سبتمبر ٢٠٢٦:
-       * «بعض الموظّفين يهملون موضوع التاسكات… أبغاها قدّامهم في البورد تبعهم»).
-       *
-       * ── ودائمةٌ لا مشروطة ──
-       * وُضعت أوّلاً بشرط «اللوحة فارغة»، وهذا يخطئ هدفَها: المهمِلُ قد تكون لوحتُه
-       * فيها بطاقةٌ من الأسبوع الماضي، فلا يراها أبداً. والقاعدةُ سياسةٌ تُعرف لا
-       * تنبيهٌ يُطفأ، فمكانُها فوق الأعمدة دائماً.
-       *
-       * ── وفي `/tasks` وحدها ──
-       * `/daily-tasks` تقريرُ المدير، وهو يعرف القاعدة. المخاطَبُ بها مَن يُقاس يومُه.
-       *
-       * ── ونصُّها مرّ بثلاث صياغات في يومٍ واحد ──
-       * «غير محسوب يومه» قرأها خالد تهديداً، ثمّ «يُرجى الاهتمام بمهامك» قرأها رجاءً
-       * لا يُلزم أحداً. والمطلوبُ بينهما: التزامٌ معلومٌ وعاقبةٌ معلومة، بلا إهانة.
-       * فالجملةُ تقول الواجبَ أوّلاً ثمّ ما يترتّب على تركه — وهذا وحده ما يجعلها
-       * تُقرأ وتُنفَّذ.
-       *
-       * واللونُ يتبع المضمون: عاد كهرمانيّاً لأنّ فيه عاقبة. الأزرقُ كان صحيحاً
-       * للتذكير، وخطأً للالتزام.
-       */}
-      <div className="mb-2 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2.5">
-        <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
-        <p className="text-[13px] font-medium text-amber-900 dark:text-amber-200">
+      {/* سطرٌ واحد فوق اللوحة (خالد ٣ أكتوبر ٢٠٢٦: «مساحات كثيرة مهدرة»): العنوانُ وعددُه، ثم المهمُّ
+          اليوم، ثم القاعدةُ خافتة، وزرُّ الإضافة في الطرف — كانت أربعةَ صفوف تأكل ٢١٦ بكسل من ٤٩٥ قبل
+          أوّل مهمّة. والإضافةُ مكانٌ واحد (خالد ٢ سبتمبر): تنزل في «لم تبدأ» وتُسحب من هناك. */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <h1 className="text-lg font-bold">مهامّي</h1>
+        <span className="text-[13px] text-muted-foreground">
+          {total === 0 ? "لا مهامّ بعد — ابدأ بواحدة" : `${N.format(total)} مهمّة · ${N.format(done)} منجَزة`}
+        </span>
+        {lateCount > 0 ? (
+          <button
+            type="button"
+            aria-pressed={focus === "late"}
+            onClick={() => setFocus(focus === "late" ? null : "late")}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full border border-red-500/40 bg-red-500/10 px-2.5 py-0.5 text-xs font-semibold text-red-700 transition-colors hover:bg-red-500/20 dark:text-red-300",
+              focus === "late" && "ring-2 ring-red-500",
+            )}
+          >
+            <AlarmClock className="size-3.5" aria-hidden />
+            {N.format(lateCount)} متأخّرة
+          </button>
+        ) : null}
+        {noDueCount > 0 ? (
+          <button
+            type="button"
+            aria-pressed={focus === "noDue"}
+            onClick={() => setFocus(focus === "noDue" ? null : "noDue")}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-xs font-semibold text-amber-700 transition-colors hover:bg-amber-500/20 dark:text-amber-300",
+              focus === "noDue" && "ring-2 ring-amber-500",
+            )}
+          >
+            <CalendarClock className="size-3.5" aria-hidden />
+            {N.format(noDueCount)} تنتظر موعدك
+          </button>
+        ) : null}
+        <p className="ms-auto flex items-center gap-1.5 text-[12px] text-muted-foreground">
+          <Info className="size-3.5 shrink-0" aria-hidden />
           متابعة مهامك اليومية واجب وظيفي، وعدم الالتزام يُعرّضك لإجراء إداري.
         </p>
+        <Button size="sm" className="h-8 gap-1.5 text-xs" onClick={() => setCreatingIn("TODO")}>
+          <Plus className="size-3.5" aria-hidden />
+          مهمّة جديدة
+        </Button>
       </div>
 
       <DndContext
@@ -240,7 +255,9 @@ export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
             resolves against a parent chain that has no definite height here.
             `min-h` off the viewport gives the cards the space that was already
             on screen; the columns still scroll when a list outgrows it. */}
-        <div className="flex min-h-[calc(100dvh-10.5rem)] gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-x-visible lg:grid-cols-4">
+        {/* طولُ الشاشة بالضبط: الصفحةُ لا تتمرّر، وكلُّ عمودٍ يتمرّر وحده — فتُرى الأعمدةُ الأربعة
+            كاملةً مهما طال واحدٌ منها. ٩٫٥rem = الشريطُ العلويّ + حشوةُ main + سطرُ العنوان. */}
+        <div className="flex h-[calc(100dvh-9.5rem)] min-h-80 gap-3 overflow-x-auto sm:grid sm:grid-cols-2 sm:overflow-x-visible lg:grid-cols-4">
           {TASK_STATUSES.map((status) => (
             <Column key={status} status={status} tasks={board[status]}>
               <SortableContext
@@ -252,15 +269,14 @@ export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
                     key={task.id}
                     task={task}
                     onEdit={setEditing}
-                    onMove={(t, to) => commitMove(t, to, 0)}
-                    onArchive={handleArchive}
+                    dimmed={focus !== null && !FOCUS[focus](task)}
                   />
                 ))}
               </SortableContext>
 
               {board[status].length === 0 && (
                 <p className="px-1 py-6 text-center text-[12px] text-muted-foreground/70">
-                  Nothing here
+                  لا شيء هنا
                 </p>
               )}
             </Column>
@@ -275,8 +291,6 @@ export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
               task={activeTask}
               dragging
               onEdit={() => {}}
-              onMove={() => {}}
-              onArchive={() => {}}
             />
           )}
         </DragOverlay>
@@ -285,6 +299,7 @@ export function TaskBoard({ initialBoard }: { initialBoard: Board }) {
       <TaskDialog
         task={editing}
         createIn={creatingIn}
+        onArchive={handleArchive}
         onClose={() => {
           setEditing(null);
           setCreatingIn(null);

@@ -25,6 +25,7 @@ import {
 import { ArticlesPageLayout } from "../components/page-layout/ArticlesPageLayout";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { messages } from "@/lib/i18n/messages";
+import { getCoreClientSlug } from "@/lib/settings/get-core-client-slug";
 
 const SORTS: ArchiveSort[] = ["newest", "mostRead", "mostEngaged"];
 const TIMES: ReadingTimeBucket[] = ["short", "medium", "long"];
@@ -184,7 +185,7 @@ export async function generateMetadata({ searchParams }: ArticlesPageProps): Pro
 export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
   const state = readState(await searchParams);
 
-  const [subjectMatches, filters, wholeArchive] = await Promise.all([
+  const [subjectMatches, filters, wholeArchive, coreSlug] = await Promise.all([
     getArticlesArchive({
       coreOnly: state.modonty,
       industrySlug: state.industry,
@@ -198,6 +199,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     // 23 Aug: search and time now compose), where a whole-archive «١٦» over three matching
     // results would be a number about a different list than the one on screen.
     getArticlesArchive({ search: state.search, sort: state.sort }),
+    getCoreClientSlug(),
   ]);
 
   /**
@@ -247,6 +249,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
         readingTimeCounts={readingTimeCounts}
         current={state}
         scopeLabel={scopeLabel}
+        followSlug={coreSlug}
       />
     </>
   );

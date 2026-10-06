@@ -1,0 +1,475 @@
+{
+  "device": "iPhone 14 · 390 CSS px · DPR 3",
+  "captured": "2026-09-30 (dev)",
+  "pages": 78,
+  "shots": [
+    {
+      "screen": "الرئيسية",
+      "url": "/",
+      "screenFile": "01-home.png",
+      "fullFile": "01-home-full.png"
+    },
+    {
+      "screen": "الرئيسية صفحة 2",
+      "url": "/page/2",
+      "screenFile": "02-page-2.png",
+      "fullFile": "02-page-2-full.png"
+    },
+    {
+      "screen": "من نحن",
+      "url": "/about",
+      "screenFile": "03-about.png",
+      "fullFile": "03-about-full.png"
+    },
+    {
+      "screen": "الحسابات",
+      "url": "/accounts",
+      "screenFile": "04-accounts.png",
+      "fullFile": "04-accounts-full.png"
+    },
+    {
+      "screen": "الإحصاءات",
+      "url": "/analytics",
+      "screenFile": "05-analytics.png",
+      "fullFile": "05-analytics-full.png"
+    },
+    {
+      "screen": "المقالات",
+      "url": "/articles",
+      "screenFile": "06-articles.png",
+      "fullFile": "06-articles-full.png"
+    },
+    {
+      "screen": "مقالة",
+      "url": "/articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة",
+      "screenFile": "07-articles.png",
+      "fullFile": "07-articles-full.png"
+    },
+    {
+      "screen": "الصوتيات",
+      "url": "/audio",
+      "screenFile": "08-audio.png",
+      "fullFile": "08-audio-full.png"
+    },
+    {
+      "screen": "كاتب",
+      "url": "/authors/modonty",
+      "screenFile": "09-authors-modonty.png",
+      "fullFile": "09-authors-modonty-full.png"
+    },
+    {
+      "screen": "الحجز",
+      "url": "/booking",
+      "screenFile": "10-booking.png",
+      "fullFile": "10-booking-full.png"
+    },
+    {
+      "screen": "التصنيفات",
+      "url": "/categories",
+      "screenFile": "11-categories.png",
+      "fullFile": "11-categories-full.png"
+    },
+    {
+      "screen": "تصنيف",
+      "url": "/categories/health-wellness",
+      "screenFile": "12-categories-health-wellness.png",
+      "fullFile": "12-categories-health-wellness-full.png"
+    },
+    {
+      "screen": "الشركاء",
+      "url": "/clients",
+      "screenFile": "13-clients.png",
+      "fullFile": "13-clients-full.png"
+    },
+    {
+      "screen": "شريك",
+      "url": "/clients/شركة-جبر-سيو",
+      "screenFile": "14-clients.png",
+      "fullFile": "14-clients-full.png"
+    },
+    {
+      "screen": "شريك — about",
+      "url": "/clients/شركة-جبر-سيو/about",
+      "screenFile": "15-clients-about.png",
+      "fullFile": "15-clients-about-full.png"
+    },
+    {
+      "screen": "شريك — articles",
+      "url": "/clients/شركة-جبر-سيو/articles",
+      "screenFile": "16-clients-articles.png",
+      "fullFile": "16-clients-articles-full.png"
+    },
+    {
+      "screen": "شريك — book",
+      "url": "/clients/شركة-جبر-سيو/book",
+      "screenFile": "17-clients-book.png",
+      "fullFile": "17-clients-book-full.png"
+    },
+    {
+      "screen": "شريك — contact",
+      "url": "/clients/شركة-جبر-سيو/contact",
+      "screenFile": "18-clients-contact.png",
+      "fullFile": "18-clients-contact-full.png"
+    },
+    {
+      "screen": "شريك — faq",
+      "url": "/clients/شركة-جبر-سيو/faq",
+      "screenFile": "19-clients-faq.png",
+      "fullFile": "19-clients-faq-full.png"
+    },
+    {
+      "screen": "شريك — followers",
+      "url": "/clients/شركة-جبر-سيو/followers",
+      "screenFile": "20-clients-followers.png",
+      "fullFile": "20-clients-followers-full.png"
+    },
+    {
+      "screen": "شريك — likes",
+      "url": "/clients/شركة-جبر-سيو/likes",
+      "screenFile": "21-clients-likes.png",
+      "fullFile": "21-clients-likes-full.png"
+    },
+    {
+      "screen": "شريك — mentions",
+      "url": "/clients/شركة-جبر-سيو/mentions",
+      "screenFile": "22-clients-mentions.png",
+      "fullFile": "22-clients-mentions-full.png"
+    },
+    {
+      "screen": "شريك — photos",
+      "url": "/clients/شركة-جبر-سيو/photos",
+      "screenFile": "23-clients-photos.png",
+      "fullFile": "23-clients-photos-full.png"
+    },
+    {
+      "screen": "شريك — reels",
+      "url": "/clients/شركة-جبر-سيو/reels",
+      "screenFile": "24-clients-reels.png",
+      "fullFile": "24-clients-reels-full.png"
+    },
+    {
+      "screen": "شريك — reviews",
+      "url": "/clients/شركة-جبر-سيو/reviews",
+      "screenFile": "25-clients-reviews.png",
+      "fullFile": "25-clients-reviews-full.png"
+    },
+    {
+      "screen": "شريك — services",
+      "url": "/clients/شركة-جبر-سيو/services",
+      "screenFile": "26-clients-services.png",
+      "fullFile": "26-clients-services-full.png"
+    },
+    {
+      "screen": "تواصل",
+      "url": "/contact",
+      "screenFile": "27-contact.png",
+      "fullFile": "27-contact-full.png"
+    },
+    {
+      "screen": "المساعدة",
+      "url": "/help",
+      "screenFile": "28-help.png",
+      "fullFile": "28-help-full.png"
+    },
+    {
+      "screen": "الأسئلة الشائعة",
+      "url": "/help/faq",
+      "screenFile": "29-help-faq.png",
+      "fullFile": "29-help-faq-full.png"
+    },
+    {
+      "screen": "ملاحظاتك",
+      "url": "/help/feedback",
+      "screenFile": "30-help-feedback.png",
+      "fullFile": "30-help-feedback-full.png"
+    },
+    {
+      "screen": "الصناعات",
+      "url": "/industries",
+      "screenFile": "31-industries.png",
+      "fullFile": "31-industries-full.png"
+    },
+    {
+      "screen": "صناعة",
+      "url": "/industries/real-estate",
+      "screenFile": "32-industries-real-estate.png",
+      "fullFile": "32-industries-real-estate-full.png"
+    },
+    {
+      "screen": "القانونية",
+      "url": "/legal",
+      "screenFile": "33-legal.png",
+      "fullFile": "33-legal-full.png"
+    },
+    {
+      "screen": "الكوكيز",
+      "url": "/legal/cookie-policy",
+      "screenFile": "34-legal-cookie-policy.png",
+      "fullFile": "34-legal-cookie-policy-full.png"
+    },
+    {
+      "screen": "حقوق النشر",
+      "url": "/legal/copyright-policy",
+      "screenFile": "35-legal-copyright-policy.png",
+      "fullFile": "35-legal-copyright-policy-full.png"
+    },
+    {
+      "screen": "الخصوصية",
+      "url": "/legal/privacy-policy",
+      "screenFile": "36-legal-privacy-policy.png",
+      "fullFile": "36-legal-privacy-policy-full.png"
+    },
+    {
+      "screen": "اتفاقية الاستخدام",
+      "url": "/legal/user-agreement",
+      "screenFile": "37-legal-user-agreement.png",
+      "fullFile": "37-legal-user-agreement-full.png"
+    },
+    {
+      "screen": "عجلة الحظ",
+      "url": "/lucky-wheel",
+      "screenFile": "38-lucky-wheel.png",
+      "fullFile": "38-lucky-wheel-full.png"
+    },
+    {
+      "screen": "مودو شات",
+      "url": "/modo-chat",
+      "screenFile": "39-modo-chat.png",
+      "fullFile": "39-modo-chat-full.png"
+    },
+    {
+      "screen": "مودو لينك",
+      "url": "/modo-link",
+      "screenFile": "40-modo-link.png",
+      "fullFile": "40-modo-link-full.png"
+    },
+    {
+      "screen": "مدونتي",
+      "url": "/modonty",
+      "screenFile": "41-modonty.png",
+      "fullFile": "41-modonty-full.png"
+    },
+    {
+      "screen": "مدونتي — الذكاء",
+      "url": "/modonty/ai",
+      "screenFile": "42-modonty-ai.png",
+      "fullFile": "42-modonty-ai-full.png"
+    },
+    {
+      "screen": "مدونتي — التعليم",
+      "url": "/modonty/education",
+      "screenFile": "43-modonty-education.png",
+      "fullFile": "43-modonty-education-full.png"
+    },
+    {
+      "screen": "مدونتي — الترفيه",
+      "url": "/modonty/entertainment",
+      "screenFile": "44-modonty-entertainment.png",
+      "fullFile": "44-modonty-entertainment-full.png"
+    },
+    {
+      "screen": "مدونتي — ريادة",
+      "url": "/modonty/entrepreneurship",
+      "screenFile": "45-modonty-entrepreneurship.png",
+      "fullFile": "45-modonty-entrepreneurship-full.png"
+    },
+    {
+      "screen": "مدونتي — الكورة",
+      "url": "/modonty/football",
+      "screenFile": "46-modonty-football.png",
+      "fullFile": "46-modonty-football-full.png"
+    },
+    {
+      "screen": "مدونتي — الصحة",
+      "url": "/modonty/health",
+      "screenFile": "47-modonty-health.png",
+      "fullFile": "47-modonty-health-full.png"
+    },
+    {
+      "screen": "صفحة 404",
+      "url": "/modonty/unknown-sector",
+      "screenFile": "48-modonty-unknown-sector.png",
+      "fullFile": "48-modonty-unknown-sector-full.png"
+    },
+    {
+      "screen": "الأخبار",
+      "url": "/news",
+      "screenFile": "49-news.png",
+      "fullFile": "49-news-full.png"
+    },
+    {
+      "screen": "اشتراك الأخبار",
+      "url": "/news/subscribe",
+      "screenFile": "50-news-subscribe.png",
+      "fullFile": "50-news-subscribe-full.png"
+    },
+    {
+      "screen": "القرآن",
+      "url": "/quran",
+      "screenFile": "51-quran.png",
+      "fullFile": "51-quran-full.png"
+    },
+    {
+      "screen": "الريلز",
+      "url": "/reels",
+      "screenFile": "52-reels.png",
+      "fullFile": "52-reels-full.png"
+    },
+    {
+      "screen": "ريل",
+      "url": "/reels/reel-mt02dxwr-mu78q9",
+      "screenFile": "53-reels-reel-mt02dxwr-mu78q9.png",
+      "fullFile": "53-reels-reel-mt02dxwr-mu78q9-full.png"
+    },
+    {
+      "screen": "البحث",
+      "url": "/search",
+      "screenFile": "54-search.png",
+      "fullFile": "54-search-full.png"
+    },
+    {
+      "screen": "المتجر",
+      "url": "/shop",
+      "screenFile": "55-shop.png",
+      "fullFile": "55-shop-full.png"
+    },
+    {
+      "screen": "قصتنا",
+      "url": "/story",
+      "screenFile": "56-story.png",
+      "fullFile": "56-story-full.png"
+    },
+    {
+      "screen": "الاشتراك",
+      "url": "/subscribe",
+      "screenFile": "57-subscribe.png",
+      "fullFile": "57-subscribe-full.png"
+    },
+    {
+      "screen": "الوسوم",
+      "url": "/tags",
+      "screenFile": "58-tags.png",
+      "fullFile": "58-tags-full.png"
+    },
+    {
+      "screen": "وسم",
+      "url": "/tags/analytics",
+      "screenFile": "59-tags-analytics.png",
+      "fullFile": "59-tags-analytics-full.png"
+    },
+    {
+      "screen": "الفريق",
+      "url": "/team",
+      "screenFile": "60-team.png",
+      "fullFile": "60-team-full.png"
+    },
+    {
+      "screen": "الشروط",
+      "url": "/terms",
+      "screenFile": "61-terms.png",
+      "fullFile": "61-terms-full.png"
+    },
+    {
+      "screen": "الرائج",
+      "url": "/trending",
+      "screenFile": "62-trending.png",
+      "fullFile": "62-trending-full.png"
+    },
+    {
+      "screen": "الثقة",
+      "url": "/trust",
+      "screenFile": "63-trust.png",
+      "fullFile": "63-trust-full.png"
+    },
+    {
+      "screen": "صفحة مشترك عامة",
+      "url": "/users/6abbe600ddd8cb2635a0b7d5",
+      "screenFile": "64-users-6abbe600ddd8cb2635a0b7d5.png",
+      "fullFile": "64-users-6abbe600ddd8cb2635a0b7d5-full.png"
+    },
+    {
+      "screen": "الدخول",
+      "url": "/users/login",
+      "screenFile": "65-users-login.png",
+      "fullFile": "65-users-login-full.png"
+    },
+    {
+      "screen": "التسجيل",
+      "url": "/users/register",
+      "screenFile": "66-users-register.png",
+      "fullFile": "66-users-register-full.png"
+    },
+    {
+      "screen": "نسيت كلمة المرور",
+      "url": "/users/forgot-password",
+      "screenFile": "67-users-forgot-password.png",
+      "fullFile": "67-users-forgot-password-full.png"
+    },
+    {
+      "screen": "إعادة التعيين (بلا رمز)",
+      "url": "/users/reset-password",
+      "screenFile": "68-users-reset-password.png",
+      "fullFile": "68-users-reset-password-full.png"
+    },
+    {
+      "screen": "تأكيد البريد (بلا رمز)",
+      "url": "/users/verify-email",
+      "screenFile": "69-users-verify-email.png",
+      "fullFile": "69-users-verify-email-full.png"
+    },
+    {
+      "screen": "البروفايل",
+      "url": "/users/profile",
+      "screenFile": "71-users-profile.png",
+      "fullFile": "71-users-profile-full.png"
+    },
+    {
+      "screen": "حجوزاتي",
+      "url": "/users/profile/bookings",
+      "screenFile": "72-users-profile-bookings.png",
+      "fullFile": "72-users-profile-bookings-full.png"
+    },
+    {
+      "screen": "تعليقاتي",
+      "url": "/users/profile/comments",
+      "screenFile": "73-users-profile-comments.png",
+      "fullFile": "73-users-profile-comments-full.png"
+    },
+    {
+      "screen": "لم يعجبني",
+      "url": "/users/profile/disliked",
+      "screenFile": "74-users-profile-disliked.png",
+      "fullFile": "74-users-profile-disliked-full.png"
+    },
+    {
+      "screen": "المحفوظات",
+      "url": "/users/profile/favorites",
+      "screenFile": "75-users-profile-favorites.png",
+      "fullFile": "75-users-profile-favorites-full.png"
+    },
+    {
+      "screen": "المتابَعون",
+      "url": "/users/profile/following",
+      "screenFile": "76-users-profile-following.png",
+      "fullFile": "76-users-profile-following-full.png"
+    },
+    {
+      "screen": "الإعجابات",
+      "url": "/users/profile/liked",
+      "screenFile": "77-users-profile-liked.png",
+      "fullFile": "77-users-profile-liked-full.png"
+    },
+    {
+      "screen": "الإعدادات",
+      "url": "/users/profile/settings",
+      "screenFile": "78-users-profile-settings.png",
+      "fullFile": "78-users-profile-settings-full.png"
+    },
+    {
+      "screen": "الإشعارات",
+      "url": "/users/notifications",
+      "screenFile": "79-users-notifications.png",
+      "fullFile": "79-users-notifications-full.png"
+    }
+  ]
+}

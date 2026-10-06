@@ -10,6 +10,8 @@ import { getCachedMarketCatalog, getCachedPaySectionContent } from "../../../dat
 import { CheckoutHeader } from "../components/checkout-header/CheckoutHeader";
 import { OrderSummary } from "../components/order-summary/OrderSummary";
 import { TamaraForm } from "./components/tamara-form/TamaraForm";
+import { TamaraWidget } from "./components/tamara-widget/TamaraWidget";
+import { tamaraIsLive } from "@/lib/tamara/client";
 
 /**
  * صفحة التقسيط (PAY-D6) — منقولة من جبر سيو `checkout/tamara/page.tsx`.
@@ -85,9 +87,13 @@ export default async function TamaraCheckoutPage({
             vatNote={content.vatNote}
           />
 
-          {/* التقسيم نفسه لا يُكتب هنا عمداً: تمارا تقرّر عدد الدفعات وأي رسمٍ من المبلغ
-              ومن حساب المشتري نفسه، وصفحتها تذكر الجدول الحقيقي قبل أي تأكيد. وطبعُ مثالٍ
-              هنا يضع رقماً لا نستطيع الوقوف خلفه بجانب رقمٍ نستطيع. */}
+          {/* التقسيم لا نكتبه نحن: تمارا تقرّر عدد الدفعات وأي رسم. ويدجتها الرسمي يعرضه
+              بحسابها هي — وهو شرطٌ في قائمة إطلاقهم. */}
+          <TamaraWidget
+            amount={snapshot.totalMinor / 100}
+            publicKey={process.env.NEXT_PUBLIC_TAMARA_PUBLIC_KEY ?? ""}
+            cdnUrl={tamaraIsLive() ? "https://cdn.tamara.co/widget-v2/tamara-widget.js" : "https://cdn-sandbox.tamara.co/widget-v2/tamara-widget.js"}
+          />
           <TamaraForm
             planSlug={plan.slug}
             planName={plan.name}

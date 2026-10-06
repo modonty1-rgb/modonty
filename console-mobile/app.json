@@ -4,7 +4,7 @@
     "slug": "modonty-console",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/brand/modonty-mark.png",
+    "icon": "./assets/brand/app-icon.png",
     "scheme": "modontyconsole",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
@@ -15,7 +15,7 @@
       "package": "com.modonty.console",
       "adaptiveIcon": {
         "backgroundColor": "#0E065A",
-        "foregroundImage": "./assets/brand/modonty-mark.png"
+        "foregroundImage": "./assets/brand/app-icon-foreground.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,

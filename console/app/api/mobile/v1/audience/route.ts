@@ -17,6 +17,11 @@ import { fail, ok } from "@/lib/mobile-api/http";
  */
 
 /** First letter for the avatar circle. Falls back to the email when a name is absent. */
+/** عدّاد التبويب يختفي عند الصفر: «الأسئلة ٠» قُرئت «الأسئلة .» على الجوال (الصفر العربي نقطة). */
+function tabCount(count: number): string {
+  return count === 0 ? "" : arabicNumber(count);
+}
+
 function initialOf(name: string | null, email: string | null): string | null {
   const source = (name ?? email ?? "").trim();
   return source.length === 0 ? null : source.slice(0, 1).toUpperCase();
@@ -126,11 +131,11 @@ export async function GET(request: NextRequest) {
       title: "الجمهور",
       subtitle: waiting === 0 ? "ما في رسائل تنتظر ردك" : arabicCount(waiting, "رسالة تحتاج ردك", "رسالتان تحتاجان ردك", "رسائل تحتاج ردك"),
       questionsTabLabel: "الأسئلة",
-      questionsTabCount: arabicNumber(questions.length),
+      questionsTabCount: tabCount(questions.length),
       commentsTabLabel: "التعليقات",
-      commentsTabCount: arabicNumber(comments.length),
+      commentsTabCount: tabCount(comments.length),
       reviewsTabLabel: "التقييمات",
-      reviewsTabCount: arabicNumber(reviews.length),
+      reviewsTabCount: tabCount(reviews.length),
       emptyReviewsTitle: "ما في تقييمات جديدة",
       emptyReviewsDescription: "التقييمات توصلك هنا لما يقيّمك قارئ على صفحتك في مدونتي.",
       replyLinkLabel: "الرد على السؤال",

@@ -11,6 +11,7 @@ import {
   MinusCircle,
 } from "lucide-react";
 import type { CategoryReport, CheckStatus } from "@/lib/health/types";
+import { IconLightbulb } from "@modonty/shared/lib/icons";
 
 const CATEGORY_META: Record<
   CategoryReport["category"],
@@ -49,7 +50,7 @@ export function CategorySection({ report }: { report: CategoryReport }) {
             <Icon className="h-4 w-4 text-primary" />
             {meta.label}
           </span>
-          <span className="text-sm font-bold tabular-nums text-muted-foreground">
+          <span className="whitespace-nowrap text-sm font-bold tabular-nums text-muted-foreground">
             {report.passed}/{report.total} ·{" "}
             <span
               className={
@@ -82,7 +83,7 @@ export function CategorySection({ report }: { report: CategoryReport }) {
                   </p>
                   {c.recommendation && (
                     <p className="mt-1 text-xs text-muted-foreground">
-                      💡 {c.recommendation}
+                      <IconLightbulb className="me-1 inline h-4 w-4 align-[-3px]" aria-hidden />{c.recommendation}
                     </p>
                   )}
                 </div>

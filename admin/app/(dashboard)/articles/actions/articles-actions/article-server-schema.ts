@@ -12,6 +12,11 @@ export const articleServerSchema = z.object({
   excerpt: z.string().max(500).optional().nullable(),
   seoTitle: z.string().max(60, "عنوان SEO طويل جداً — الحد الأقصى 60 حرف").optional().nullable(),
   seoDescription: z.string().max(300).optional().nullable(),
+  // Optional by Khalid's call (3 Oct 2026, plan و١): a missing keyword must never block a save.
+  targetKeyword: z.string().trim().max(120, "الكلمة المستهدفة طويلة — الحد ١٢٠ حرف").optional().nullable(),
+  // زرُّ المقال (ARTCTA) — النطاقُ يُفحص في الحفظ مقابل موقع العميل، لا هنا.
+  ctaUrl: z.string().trim().max(500, "رابط المنتج طويل جداً").optional().nullable(),
+  ctaLabel: z.string().trim().max(30, "نص الزر طويل — الحد ٣٠ حرف").optional().nullable(),
   canonicalUrl: z.string().max(500).optional().nullable(),
   ogArticleAuthor: z.string().max(200).optional().nullable(),
 

@@ -30,6 +30,6 @@ export const SERVICES_BLOCKS: readonly HomeBlock[] = [
   { key: "stats", name: "أرقامنا", toggleable: true, isEmpty: (d) => d.stats.length === 0, Component: StatsRow },
   { key: "testimonials", name: "آراء العملاء", toggleable: true, isEmpty: (d) => d.testimonials.length === 0, Component: TestimonialsGrid },
   { key: "faq", name: "الأسئلة الشائعة", toggleable: true, isEmpty: (d) => d.faqs.length === 0, Component: FaqAccordion },
-  { key: "booking", name: "احجز", toggleable: true, isEmpty: (d) => d.booking.mode === "NONE", Component: BookingBlock },
-  { key: "cta", name: "النداء الأخير", toggleable: false, isEmpty: () => false, Component: FinalCta },
+  { key: "booking", name: "احجز", toggleable: true, isEmpty: (d) => d.booking.mode === "NONE" || (d.booking.mode === "LINK" && !d.booking.url), Component: BookingBlock },
+  { key: "cta", name: "النداء الأخير", toggleable: false, isEmpty: (d) => !d.whatsappHref && d.booking.mode !== "FORM" && !(d.booking.mode === "LINK" && d.booking.url), Component: FinalCta },
 ] as const;

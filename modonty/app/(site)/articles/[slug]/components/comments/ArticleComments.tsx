@@ -310,7 +310,8 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                 /* An empty state has to carry its own action. This one used to say "كن أول من
                    يعلق" and offer no way to do it — the only entry was an icon in the strip
                    far above. */
-                <div className="flex flex-col items-center gap-3 py-8 text-center">
+                // على الجوال سطرٌ واحد: الجملةُ والزرّ جنب بعض (٣ أكتوبر ٢٠٢٦) — كانت ٢١٨px تقول «لا شيء هنا».
+                <div className="flex items-center justify-between gap-3 py-2 lg:flex-col lg:justify-center lg:py-8 lg:text-center">
                   <p className="text-sm text-muted-foreground">ما فيه تعليقات لحد الآن. تكون أول واحد؟</p>
                   <CommentFormDialog
                     articleId={articleId}

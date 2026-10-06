@@ -1,0 +1,432 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ملف عمل مودو لينك</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap">
+<style>
+:root{
+  --navy:#0E065A; --blue:#3030FF; --teal:#00D8D8;
+  --bg:#F3F2EF; --card:#FFFFFF; --ink:#0E065A; --muted:#55586B; --line:#DDDDE3;
+  --soft:#EEF0FF; --tealsoft:#DDF7F7;
+  --ok:#0F7A55; --okbg:#E3F5EC; --warn:#9A5800; --warnbg:#FFF1DC; --bad:#B42318; --badbg:#FDE7E5;
+  --hero1:#0E065A; --hero2:#23209A;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#131318; --card:#1D1D25; --ink:#F2F2F8; --muted:#A5A9BA; --line:#2E2E3A;
+    --soft:#22224A; --tealsoft:#113737; --blue:#7272FF;
+    --ok:#4FD39A; --okbg:#143428; --warn:#F2B866; --warnbg:#3A2A12; --bad:#FF8A80; --badbg:#3D1A18;
+    --hero1:#0B0740; --hero2:#1A1870;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131318; --card:#1D1D25; --ink:#F2F2F8; --muted:#A5A9BA; --line:#2E2E3A;
+  --soft:#22224A; --tealsoft:#113737; --blue:#7272FF;
+  --ok:#4FD39A; --okbg:#143428; --warn:#F2B866; --warnbg:#3A2A12; --bad:#FF8A80; --badbg:#3D1A18;
+  --hero1:#0B0740; --hero2:#1A1870;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,"Segoe UI",Tahoma,sans-serif;font-size:16px;line-height:1.75;direction:rtl}
+a{color:var(--blue);text-underline-offset:3px}
+.wrap{width:min(1080px,100%);margin-inline:auto;padding-inline:16px}
+h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
+p{margin:0}
+.num{font-variant-numeric:tabular-nums}
+
+/* hero */
+.hero{background:linear-gradient(135deg,var(--hero1),var(--hero2));color:#fff;padding-block:40px 34px}
+.hero .eyebrow{color:var(--teal);font-weight:800;font-size:13px;letter-spacing:.02em}
+.hero h1{font-size:clamp(30px,6vw,48px);font-weight:900;margin-top:8px}
+.hero .lead{margin-top:10px;font-size:clamp(15px,2.4vw,18px);color:#DADCFF;max-width:720px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.pill{border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:3px 12px;font-size:13px;color:#fff}
+
+/* nav */
+nav.toc{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.toc .wrap{display:flex;gap:16px;overflow-x:auto;white-space:nowrap;padding-block:10px;scrollbar-width:none}
+nav.toc a{color:var(--ink);text-decoration:none;font-weight:700;font-size:14px}
+nav.toc a:hover{color:var(--blue)}
+
+main{padding-block:28px 64px}
+section{margin-block:0 44px;scroll-margin-top:56px;display:flex;flex-direction:column;gap:14px}
+h2{font-size:clamp(22px,3.6vw,28px);font-weight:900;display:flex;align-items:center;gap:10px}
+h2::before{content:"";width:10px;height:10px;flex:none;background:var(--teal);transform:rotate(45deg);border-radius:2px}
+h3{font-size:17px;font-weight:800}
+.sub{color:var(--muted);font-size:14px}
+
+/* blocks */
+.three{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.three li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+.three li b{color:var(--blue)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--teal);margin-top:9px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stat .v{font-size:26px;font-weight:900;color:var(--blue)}
+.stat .t{font-size:13px;color:var(--muted);margin-top:2px}
+@media (max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.card p,.card li{font-size:15px}
+.card ul{margin:0;padding-inline-start:18px}
+.card.good{border-top:4px solid var(--ok)}
+.card.bad{border-top:4px solid var(--bad)}
+.callout{background:var(--tealsoft);border-radius:14px;padding:14px 16px;font-size:15px}
+.callout.warn{background:var(--warnbg)}
+
+/* tables */
+.tbl{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:620px}
+th{background:var(--soft);text-align:start;padding:10px 12px;font-weight:800;font-size:13.5px;white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+td.c,th.c{text-align:center}
+.pl{display:inline-block;font-size:12px;font-weight:800;border-radius:999px;padding:1px 9px;white-space:nowrap}
+.pl.ok{color:var(--ok);background:var(--okbg)}
+.pl.warn{color:var(--warn);background:var(--warnbg)}
+.pl.bad{color:var(--bad);background:var(--badbg)}
+.pl.us{color:var(--blue);background:var(--soft)}
+.yes{color:var(--ok);font-weight:800}
+.no{color:var(--bad);font-weight:800}
+
+/* phases */
+.phase{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:8px}
+.phase .when{font-size:13px;font-weight:800;color:var(--blue)}
+.phase ul{margin:0;padding-inline-start:18px}
+
+/* decisions */
+ol.decide{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:d}
+ol.decide li{counter-increment:d;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:12px}
+ol.decide li::before{content:counter(d);width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:900}
+:root[data-theme="dark"] ol.decide li::before{background:var(--blue)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) ol.decide li::before{background:var(--blue)}}
+ol.decide b{display:block}
+ol.decide span{font-size:14.5px;color:var(--muted)}
+
+.sources{font-size:14px;display:grid;gap:4px}
+footer{border-top:1px solid var(--line);padding-block:18px 40px;color:var(--muted);font-size:13px}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">مدونتي · ملف عمل · سرّي</div>
+    <h1>مودو لينك</h1>
+    <p class="lead">خدمة الرابط الواحد من مدونتي، مفتوحة للجميع: دراسة كاملة لـ«لينك تري» ومنافسيه، وخطّة الخدمة من انطلاقتها في معرض تكني الإسكندرية إلى الحملات الإعلانية والبيع.</p>
+    <div class="pills"><span class="pill">٢٦ سبتمبر ٢٠٢٦</span><span class="pill">الإصدار ٢ — مبني على دراسة كودكس الأولى</span><span class="pill">نقطة الانطلاق: المعرض ٣–٥ أكتوبر</span><span class="pill">مرحلة الدراسة — لا كود</span></div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="أقسام الملف"><div class="wrap">
+  <a href="#summary">الخلاصة</a><a href="#model">النموذج المفتوح</a><a href="#numbers">بالأرقام</a><a href="#pricing">الأسعار</a><a href="#features">المزايا</a><a href="#swot">القوة والضعف</a><a href="#rivals">المنافسون</a><a href="#market">السوق السعودي</a><a href="#ours">ما عندنا</a><a href="#offer">عرضنا</a><a href="#price-us">تسعيرنا</a><a href="#launch">الانطلاقة</a><a href="#ads">الحملات</a><a href="#tech">التنفيذ</a><a href="#risks">المخاطر</a><a href="#decide">قراراتك</a><a href="#sources">المصادر</a>
+</div></nav>
+
+<main class="wrap">
+
+  <section id="summary">
+    <h2>الخلاصة</h2>
+    <ul class="three">
+      <li><span class="dot"></span><p><b>الفرصة حقيقية:</b> «لينك تري» عنده أكثر من ٧٠ مليون مستخدم، لكن موقعه بلا عربي، و<b>البيع فيه غير متاح في السعودية ولا مصر</b>، ولا يذكر واتساب في جدول مزاياه ولا مرّة.</p></li>
+      <li><span class="dot"></span><p><b>عرضنا:</b> خدمة <b>مفتوحة للجميع</b> مثل «لينك تري» — أي شخص يسجّل ويبني صفحته العربية بنفسه، تبدأ بزرّ واتساب برسالة جاهزة. مجانية للبداية، وأرخص في المدفوع، وبدفع محلي.</p></li>
+      <li><span class="dot"></span><p><b>أكبر تحدٍّ في النموذج المفتوح:</b> صفحات يكتبها الناس على اسم مدونتي تحتاج حماية من الاحتيال والمحتوى المسيء، وتحتاج فصلاً عن محتوى مدونتي في جوجل حتى لا تضرّ ترتيبه.</p></li>
+    </ul>
+    <div class="callout"><b>الملف الآن للدراسة فقط — لا كود ولا تعديل.</b> القرارات في قسم «قراراتك» آخر الملف، وأوّلها قبول النموذج المفتوح بإيجابياته وسلبياته.</div>
+  </section>
+
+  <section id="model">
+    <h2>النموذج: مفتوحة للجميع</h2>
+    <p class="sub">مثل «لينك تري»: أي شخص يسجّل ويبني صفحته، لا عملاء مدونتي وحدهم. مقالات مدونتي تظهر فقط لمن عنده مقالات.</p>
+    <div class="grid2">
+      <div class="card good">
+        <h3>الإيجابيات</h3>
+        <ul>
+          <li><b>حجم أكبر:</b> السوق كل صاحب حساب في السوشال، لا ٤٣ عميلاً.</li>
+          <li><b>مدخل مجاني لمدونتي:</b> صاحب الصفحة اليوم عميل محتوى بكرة.</li>
+          <li><b>إعلان ذاتي:</b> كل صفحة مجانية تحمل اسمنا وتُشارك في حسابات أصحابها.</li>
+          <li><b>يناسب المعرض والحملات:</b> الرسالة بسيطة — «سجّل وخذ صفحتك الحين».</li>
+          <li><b>بيانات سوق:</b> نعرف أي الأنشطة تسجّل وأيها تدفع.</li>
+        </ul>
+      </div>
+      <div class="card bad">
+        <h3>السلبيات</h3>
+        <ul>
+          <li><b>المحتوى المسيء والاحتيال:</b> روابط تصيّد وصفحات مخالفة على اسم مدونتي.</li>
+          <li><b>أثرها على جوجل:</b> آلاف الصفحات القصيرة على نطاق مدونتي قد تُضعف تقييم الموقع كلّه.</li>
+          <li><b>بناء أكبر:</b> تسجيل ذاتي ومحرّر من أول يوم، وجدول جديد في قاعدة البيانات.</li>
+          <li><b>دعم أكثر:</b> مستخدمون ليسوا عملاء، أسئلتهم كثيرة ودخلهم صفر في المجاني.</li>
+          <li><b>مسؤولية نظامية:</b> بيانات يجمعها الناس من زوّارهم تحت نظام حماية البيانات.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>السلبية</th><th>العلاج المقترح</th></tr></thead>
+      <tbody>
+        <tr><td>الاحتيال والمحتوى المسيء</td><td>زرّ «بلّغ عن الصفحة» في كل صفحة · فحص الروابط قبل النشر · أسماء محجوزة (مدونتي، البنوك، الجهات الحكومية) · إيقاف فوري بقرار المشرف</td></tr>
+        <tr><td>أثرها على جوجل</td><td>الصفحات <b>خارج فهرسة جوجل افتراضياً</b>، والروابط الخارجة فيها موسومة بأنها من إنشاء المستخدم (وسم ugc حسب إرشادات جوجل) · أو نطاق مستقلّ للخدمة</td></tr>
+        <tr><td>حجم البناء</td><td>المعرض: تسجيل بحساب مدونتي الموجود + محرّر بسيط فقط · الباقي بعده</td></tr>
+        <tr><td>الدعم</td><td>أسئلة شائعة داخل المحرّر · دعم بشري للمدفوع فقط</td></tr>
+        <tr><td>حماية البيانات</td><td>لا نموذج جمع بيانات في المجاني · موافقة صريحة وحذف عند الطلب في المدفوع</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="numbers">
+    <h2>«لينك تري» بالأرقام</h2>
+    <div class="stats">
+      <div class="stat"><div class="v num">+٧٠ مليون</div><div class="t">مستخدم — من صفحة أسعارهم</div></div>
+      <div class="stat"><div class="v num">٤٫٨</div><div class="t">تقييم تطبيق آيفون من ٦١ ألف تقييم</div></div>
+      <div class="stat"><div class="v num">٤٫٠</div><div class="t">تقييم «ترست بايلوت» من ٧٬١٤٦ تقييماً</div></div>
+      <div class="stat"><div class="v num">٩٪</div><div class="t">من تقييمات «ترست بايلوت» نجمة واحدة (٧٨٪ خمس نجوم)</div></div>
+    </div>
+    <p class="sub">لغات الموقع: الإنجليزية والبرتغالية فقط. التطبيق نفسه يدعم ١٤ لغة منها العربية.</p>
+  </section>
+
+  <section id="pricing">
+    <h2>الخطط والأسعار الرسمية</h2>
+    <p class="sub">من صفحة أسعار «لينك تري» كما ظهرت لنا اليوم، بالدولار. بالريال على سعر الصرف الثابت ٣٫٧٥.</p>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th class="c">مجاني</th><th class="c">المبتدئ</th><th class="c">الاحترافي</th><th class="c">المميّز</th></tr></thead>
+      <tbody>
+        <tr><td><b>سنوي (شهرياً)</b></td><td class="c num">٠</td><td class="c num">٦$ ≈ ٢٢٫٥ ر.س</td><td class="c num">١٢$ ≈ ٤٥ ر.س</td><td class="c num">٣٠$ ≈ ١١٢٫٥ ر.س</td></tr>
+        <tr><td><b>شهري</b></td><td class="c num">٠</td><td class="c num">٨$ ≈ ٣٠ ر.س</td><td class="c num">١٥$ ≈ ٥٦ ر.س</td><td class="c num">٣٥$ ≈ ١٣١ ر.س</td></tr>
+        <tr><td><b>تجربة مجانية</b></td><td class="c">—</td><td class="c">٧ أيام</td><td class="c">٧ أيام</td><td class="c">—</td></tr>
+        <tr><td><b>عمولة بيع المنتجات والدورات</b></td><td class="c num">١٢٪</td><td class="c num">٩٪</td><td class="c num">٩٪</td><td class="c num">٠٪</td></tr>
+        <tr><td><b>إزالة شعار «لينك تري»</b></td><td class="c no">لا</td><td class="c no">لا</td><td class="c yes">نعم</td><td class="c yes">نعم</td></tr>
+        <tr><td><b>مدّة سجلّ التحليلات</b></td><td class="c num">٢٨ يوماً</td><td class="c num">٩٠ يوماً</td><td class="c num">٣٦٥ يوماً</td><td class="c">كلّ الوقت</td></tr>
+        <tr><td><b>روابط مميّزة</b></td><td class="c num">١</td><td class="c">غير محدود</td><td class="c">غير محدود</td><td class="c">غير محدود</td></tr>
+        <tr><td><b>ردود انستغرام الآلية شهرياً</b></td><td class="c num">١٬٠٠٠</td><td class="c num">١٬٥٠٠</td><td class="c num">٢٬٥٠٠</td><td class="c">غير محدود</td></tr>
+        <tr><td><b>سرعة ردّ الدعم</b></td><td class="c num">٤٨ ساعة</td><td class="c num">٢٤ ساعة</td><td class="c num">١٢ ساعة</td><td class="c num">٤ ساعات</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout warn"><b>البيع ليس للجميع:</b> صفحة مساعدتهم تحصر البيع المباشر في ٣٦ دولة. من العالم العربي <b>الإمارات وحدها</b>؛ السعودية ومصر خارج القائمة.</div>
+  </section>
+
+  <section id="features">
+    <h2>كلّ مزايا «لينك تري»</h2>
+    <p class="sub">مجمّعة من جدول المزايا الرسمي. العمود الأخير: هل نحتاجها في مودو لينك، ومتى.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>المجموعة</th><th>المزايا</th><th>عندنا</th></tr></thead>
+      <tbody>
+        <tr><td><b>الروابط والأزرار</b></td><td>روابط غير محدودة · رابط مميّز ومتحرّك · مجموعات بشكل شبكة أو شريط · جدولة ظهور الرابط واختفائه · قفل بكلمة سرّ أو بالعمر · تحويل مباشر لموقع مع تسجيل النقرات · نصوص فاصلة · أسئلة شائعة · كوبون خصم ينسخ بضغطة · خرائط جوجل · حجز مواعيد · نموذج تواصل · جمع الإيميل والجوال · أرشفة الروابط</td><td><span class="pl us">١</span> الأساسي · <span class="pl warn">٢</span> الجدولة والنموذج</td></tr>
+        <tr><td><b>المحتوى المضمَّن</b></td><td>فيديو يوتيوب وتيك توك وانستغرام وفيميو · آخر فيديو يوتيوب تلقائياً · آخر تغريدة · شبكة انستغرام قابلة للضغط · بودكاست وموسيقى · ملفّ تيك توك · سناب شات</td><td><span class="pl us">١</span> مقالات العميل في مدونتي · <span class="pl warn">٢</span> الفيديو</td></tr>
+        <tr><td><b>الربح</b></td><td>منتجات رقمية · دورات · متجر وعمولات · روابط برعاية · أمازون · متاجر شوبيفاي</td><td><span class="pl warn">٣</span> بعد الطلب، وبدفع محلي</td></tr>
+        <tr><td><b>التخصيص</b></td><td>قوالب مجانية ومتقدّمة · خطوط وأزرار · خلفية صورة أو فيديو · صورة غلاف · شعار · شارة توثيق · تخصيص رمز المسح بألوانك وشعارك · اقتراحات تصميم بالذكاء الاصطناعي · إزالة شعارهم</td><td><span class="pl us">١</span> شعار وغلاف وتوثيق · <span class="pl warn">٢</span> القوالب</td></tr>
+        <tr><td><b>التحليلات</b></td><td>زيارات ونقرات · أداء كل رابط · المصدر (انستغرام، تيك توك…) · المدينة والدولة · الجهاز · تصدير ملف · تحليلات بالذكاء الاصطناعي · بيانات الجمهور المجموع</td><td><span class="pl us">١</span> زيارات ونقرات ومصدر · <span class="pl warn">٢</span> الباقي</td></tr>
+        <tr><td><b>أدوات التسويق</b></td><td>وسوم تتبّع الحملات (UTM) · بكسل ميتا (واجهة التحويلات) · تحليلات جوجل · إعدادات الظهور في جوجل · ربط الإيميل (ميل تشيمب، جوجل شيتس) · مختصر روابط · ردود انستغرام الآلية · إظهار أو إخفاء رابط حسب دولة الزائر</td><td><span class="pl us">١</span> وسوم التتبّع · <span class="pl warn">٢</span> البكسل</td></tr>
+        <tr><td><b>الإدارة</b></td><td>أكثر من مشرف · تحقّق بخطوتين · تطبيق جوّال · دعم بالمحادثة</td><td><span class="pl warn">٢</span> من لوحة العميل الحالية</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="swot">
+    <h2>نقاط القوة والضعف</h2>
+    <div class="grid2">
+      <div class="card good">
+        <h3>قوّتهم — لا ننافسها وجهاً لوجه</h3>
+        <ul>
+          <li><b>الاسم:</b> +٧٠ مليون مستخدم؛ الزائر يعرف الصفحة من شكلها.</li>
+          <li><b>سهولة البداية:</b> أكثر إشادة متكرّرة في «ترست بايلوت».</li>
+          <li><b>منظومة ضخمة:</b> عشرات التكاملات (موسيقى، شوبيفاي، كاليندلي…).</li>
+          <li><b>التطبيق:</b> ٤٫٨ من ٦١ ألف تقييم، ويدعم العربية.</li>
+        </ul>
+      </div>
+      <div class="card bad">
+        <h3>ضعفهم — هنا ندخل</h3>
+        <ul>
+          <li><b>لا عربي في الموقع:</b> لغات الموقع الإنجليزية والبرتغالية فقط.</li>
+          <li><b>البيع ممنوع علينا:</b> السعودية ومصر خارج قائمة الـ٣٦ دولة.</li>
+          <li><b>العمولة:</b> ٩–١٢٪ على المبيعات في كل الخطط ما عدا الأغلى.</li>
+          <li><b>الشعار:</b> إزالته تبدأ من ١٢$ شهرياً.</li>
+          <li><b>واتساب:</b> لا يُذكر ولا مرّة في جدول مزاياهم، وهو أوّل قناة تواصل في السعودية.</li>
+          <li><b>الدعم والحساب:</b> أكثر شكاوى «ترست بايلوت»: خصم مبالغ، ودعم آلي لا يحلّ، وحلقة تسجيل دخول، وحسابات مدفوعة تختفي.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="rivals">
+    <h2>المنافسون</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>المنصّة</th><th>الأسعار (شهرياً)</th><th>عمولة البيع</th><th>تميّزها</th><th>المصدر</th></tr></thead>
+      <tbody>
+        <tr><td><b>لينك تري</b></td><td class="num">٠ · ٦–٨$ · ١٢–١٥$ · ٣٠–٣٥$</td><td class="num">١٢٪ ← ٠٪</td><td>الأشهر، أوسع تكاملات</td><td><span class="pl ok">رسمي</span></td></tr>
+        <tr><td><b>بيكنز</b></td><td class="num">٠ · ١٠$ (٨٫٣٣ سنوي) · ٣٠$ (٢٥ سنوي) · ٩٠٠$ سنوياً</td><td class="num">٩٪ ← ٠٪</td><td>ذكاء اصطناعي كثيف، بيع بالتقسيط، ملفّ إعلامي</td><td><span class="pl ok">رسمي</span></td></tr>
+        <tr><td><b>ستان ستور</b></td><td class="num">لا مجاني · ٢٩$ · ٩٩$ (تجربة ١٤ يوماً)</td><td class="num">٠٪</td><td>متجر صنّاع المحتوى: دورات، حجوزات، اشتراكات</td><td><span class="pl ok">مركز مساعدتهم</span></td></tr>
+        <tr><td><b>تاب لينك</b></td><td>أسعار متضاربة في المصادر</td><td>—</td><td>أزرار مراسلة ودفع</td><td><span class="pl warn">لم يُتحقّق</span></td></tr>
+      </tbody>
+    </table></div>
+    <p class="sub">كلّها تحصّل بعملات أجنبية عبر «سترايب» أو «باي بال»؛ لا أحد منهم يذكر مدى أو تمارا.</p>
+  </section>
+
+  <section id="market">
+    <h2>السوق السعودي</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>المؤشّر</th><th>الرقم</th><th>ماذا يعني لنا</th></tr></thead>
+      <tbody>
+        <tr><td>واتساب</td><td class="num">٩٤٫٤٪ رجال · ٩٠٫٤٪ نساء</td><td>زرّ واتساب برسالة جاهزة هو الزرّ الأول، لا رابطاً ضمن الروابط</td></tr>
+        <tr><td>سناب شات</td><td class="num">٨٨٫٢٪ نساء · ٨٠٫٢٪ رجال</td><td>القناة الأولى للحملات، وقالب «رابط سناب»</td></tr>
+        <tr><td>تيك توك</td><td class="num">٧٧٫٦٪ نساء · ٧٦٫٥٪ رجال</td><td>القناة الثانية؛ صنّاع المحتوى جمهور أساسي</td></tr>
+        <tr><td>الدفع</td><td>تمارا و«إن جينيس» مربوطتان في تطبيق الدفع عندنا</td><td>بيع محلي بالريال — لا أحد من المنافسين يقدّمه</td></tr>
+        <tr><td>حماية البيانات</td><td>الموافقة أساس جمع البيانات · سحبها يوجب الإتلاف</td><td>أي نموذج يجمع جوالاً أو إيميلاً يحتاج موافقة صريحة وحذفاً عند الطلب</td></tr>
+      </tbody>
+    </table></div>
+    <p class="sub">نسب المنصّات من تقرير إنترنت السعودية ٢٠٢٥ لهيئة الاتصالات (عبر صحيفة «الرجل»). حماية البيانات من نظام حماية البيانات الشخصية ولائحته (سدايا).</p>
+  </section>
+
+  <section id="ours">
+    <h2>ما عندنا الآن (مقيس)</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>بيانات العملاء جاهزة — ٤٣ عميلاً</h3>
+        <div class="tbl" style="border:0"><table style="min-width:0">
+          <tbody>
+            <tr><td>رقم جوّال (زرّ واتساب)</td><td class="num"><b>٤٣ من ٤٣</b></td></tr>
+            <tr><td>شعار</td><td class="num">٣٧</td></tr>
+            <tr><td>حسابات تواصل (٥٠ رابطاً)</td><td class="num">٢٢</td></tr>
+            <tr><td>ملفّ جوجل للنشاط</td><td class="num">٢٢</td></tr>
+            <tr><td>موقع إلكتروني</td><td class="num">١٤</td></tr>
+          </tbody>
+        </table></div>
+        <p class="sub">قاعدة التطوير. الروابط: فيسبوك ٢٠ · انستغرام ١٣ · تيك توك ٨ · يوتيوب ٢ · لينكد إن ٢ · وواحد منها رابط «لينك تري» نفسه.</p>
+      </div>
+      <div class="card">
+        <h3>مبنيّ في الكود</h3>
+        <ul>
+          <li><b>صفحة «حسابات مدونتي»</b> — نسخة مدونتي نفسها من الفكرة: شعار، أزرار، حسابات، مشاركة، وتتبّع النقرات. هي النموذج الذي نبني عليه.</li>
+          <li><b>صفحات الشركاء</b> بزرّ واتساب.</li>
+          <li><b>تطبيق الدفع</b> بتمارا و«إن جينيس».</li>
+          <li><b>مكتبة رمز المسح</b> في الأدمن (تُستخدم للفواتير)، وليست في مدونتي بعد.</li>
+          <li><b>مربّع «مودو لينك»</b> في صفحة مدونتي وصفحة «قريباً» على رابطه.</li>
+          <li><b>عجلة الحظ</b> للمعرض، شغّالة.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="offer">
+    <h2>عرضنا: مودو لينك</h2>
+    <div class="callout"><b>«صفحة عملك الأولى — بالعربي، تبدأ بواتساب، وعلى علامتك.»</b> لا نبيع «لينك تري عربي»؛ نبيع صفحة تجيب لصاحب العمل محادثة أو طلباً، وتثبت له أثرها.</div>
+    <div class="tbl"><table>
+      <thead><tr><th>نتفوّق في</th><th>كيف</th><th>مقابل «لينك تري»</th></tr></thead>
+      <tbody>
+        <tr><td><b>العربي</b></td><td>واجهة ومحرّر من اليمين لليسار، ونصوص بلهجة الناس</td><td>موقعهم بلا عربي</td></tr>
+        <tr><td><b>واتساب أولاً</b></td><td>زرّ رئيسي برسالة جاهزة يكتبها العميل</td><td>غير مذكور في مزاياهم</td></tr>
+        <tr><td><b>الدفع المحلي</b></td><td>تمارا و«إن جينيس» بالريال (المرحلة الثالثة)</td><td>البيع غير متاح في السعودية</td></tr>
+        <tr><td><b>بلا عمولة</b></td><td>٠٪ على المبيعات في كل الخطط</td><td>١٢٪ و٩٪ في الخطط الأقل</td></tr>
+        <tr><td><b>محتوى يرفعك في جوجل</b></td><td>لمن عنده مقالات في مدونتي: تظهر في صفحته (اختياري، لا شرط)</td><td>صفحة روابط فقط</td></tr>
+        <tr><td><b>دعم بشري</b></td><td>واتساب مبيعات مدونتي</td><td>أكثر شكاواهم الدعم الآلي</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="price-us">
+    <h2>التسعير المقترح</h2>
+    <p class="sub">اقتراح للنقاش، لا قرار. المبدأ: المجاني يكفي فعلاً، والمدفوع أرخص من «لينك تري» ويُدفع بالريال.</p>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th class="c">مجاني</th><th class="c">احترافي</th><th class="c">أعمال</th></tr></thead>
+      <tbody>
+        <tr><td><b>السعر</b></td><td class="c num">٠</td><td class="c num">١٩ ر.س شهرياً · ١٩٠ سنوياً</td><td class="c num">٤٩ ر.س شهرياً · ٤٩٠ سنوياً</td></tr>
+        <tr><td><b>يقابله عند «لينك تري»</b></td><td class="c">مجاني</td><td class="c num">الاحترافي ٤٥–٥٦ ر.س</td><td class="c num">المميّز ١١٢–١٣١ ر.س</td></tr>
+        <tr><td>روابط غير محدودة · واتساب برسالة · رمز مسح</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+        <tr><td>شعار «مودو لينك» الصغير أسفل الصفحة</td><td class="c">ظاهر</td><td class="c yes">يُخفى</td><td class="c yes">يُخفى</td></tr>
+        <tr><td>التحليلات</td><td class="c num">٢٨ يوماً</td><td class="c num">سنة، لكل رابط</td><td class="c">كل الوقت + تصدير</td></tr>
+        <tr><td>قوالب · جدولة · نموذج بيانات بموافقة</td><td class="c no">—</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+        <tr><td>دومين خاص · أكثر من مشرف · بكسل ميتا · بيع بالريال</td><td class="c no">—</td><td class="c no">—</td><td class="c yes">✓</td></tr>
+        <tr><td><b>شركاء مدونتي الحاليون</b></td><td colspan="3" class="c">«احترافي» مشمول في باقتهم — سبب إضافي للاشتراك في مدونتي</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="launch">
+    <h2>الانطلاقة: المعرض — ٦ أيام</h2>
+    <p class="sub">المعرض نقطة البداية للخدمة لا حدودها؛ ما بعده في «الحملات» و«التنفيذ التقني» (المرحلتان ٢ و٣).</p>
+    <div class="callout warn"><b>مسوّدة، لا تُنفَّذ قبل قراراتك.</b> كُتبت أولاً لعملاء مدونتي؛ النموذج المفتوح يضيف لها تسجيلاً ذاتياً ومحرّراً بسيطاً وجدولاً جديداً في قاعدة البيانات، فالأيام الستّة تصير ضيّقة — القرار ٢.</div>
+    <div class="phase"><span class="when">السبت ٢٧ سبتمبر</span><h3>القرارات + صفحة العميل</h3><ul><li>تثبيت شكل الرابط (القرار ١).</li><li>صفحة لكل عميل من بياناته: شعار، غلاف، اسم، توثيق، واتساب برسالة، حساباته، موقعه، ملفّ جوجل، آخر مقالاته في مدونتي.</li></ul></div>
+    <div class="phase"><span class="when">الأحد ٢٨</span><h3>رمز المسح والتتبّع</h3><ul><li>رمز مسح لكل صفحة، بوسم الحملة «تكني ٢٠٢٦».</li><li>تسجيل الزيارة وكل نقرة بحدث النقر الموجود أصلاً.</li></ul></div>
+    <div class="phase"><span class="when">الإثنين ٢٩</span><h3>صفحة الخدمة</h3><ul><li><code>/modo-link</code> تتحوّل من «قريباً» إلى صفحة تعريف: ماذا تقدّم، أمثلة حيّة من عملائنا، وزرّ «ابدأ صفحتك» يفتح واتساب المبيعات.</li></ul></div>
+    <div class="phase"><span class="when">الثلاثاء ٣٠</span><h3>الجودة</h3><ul><li>فحص على الجوّال والديسكتوب، والسرعة.</li><li>تدقيق روابط العملاء الـ٥٠ (فيها رابط «لينك تري» ورابط «جوجل درايف»).</li></ul></div>
+    <div class="phase"><span class="when">الأربعاء ١ أكتوبر</span><h3>الرفع للإنتاج</h3><ul><li>رفع، ثم تجربة حقيقية بمسح الرمز من جوّال.</li></ul></div>
+    <div class="phase"><span class="when">الخميس ٢ أكتوبر</span><h3>مواد الجناح</h3><ul><li>بطاقات ورمز مسح مطبوع للجناح: «صفحتك جاهزة خلال ٢٤ ساعة — مجاناً».</li></ul></div>
+    <div class="phase"><span class="when">٣–٥ أكتوبر · المعرض</span><h3>التشغيل</h3><ul><li>عرض حيّ لصفحات عملائنا على الجوّال.</li><li>كل زائر مهتمّ يُسجَّل عبر واتساب المبيعات، ونبني صفحته من الأدمن خلال ٢٤ ساعة.</li><li>الهدف المقترح: <b>٣٠ تسجيلاً</b> (رقم دراسة كودكس الأولى).</li></ul></div>
+  </section>
+
+  <section id="ads">
+    <h2>الحملات الإعلانية بعد المعرض</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>البند</th><th>المقترح</th></tr></thead>
+      <tbody>
+        <tr><td><b>القنوات</b></td><td>سناب شات أولاً، ثم تيك توك، ثم انستغرام — على ترتيب الاستخدام في تقرير هيئة الاتصالات</td></tr>
+        <tr><td><b>الجمهور</b></td><td>أصحاب المتاجر الصغيرة · المطاعم والمقاهي · العيادات والصالونات · المستقلّون · صنّاع المحتوى · المتحدّثون وأصحاب الفعاليات</td></tr>
+        <tr><td><b>الرسائل</b></td><td>«رابط واحد لكل حساباتك — بالعربي ومجاني» · «زبونك يوصلك واتساب بضغطة» · «بع بالريال بلا عمولة»</td></tr>
+        <tr><td><b>مسار الزائر</b></td><td>إعلان ← صفحة الخدمة ← تسجيل ← صفحته جاهزة ← يشاركها في حساباته ← كل صفحة إعلان مجاني لنا (الشعار الصغير أسفلها)</td></tr>
+        <tr><td><b>المؤشّرات</b></td><td>تكلفة التسجيل · نسبة من فعّل صفحته · نسبة من عدّلها ثانية خلال ١٤ يوماً · نسبة الترقية للمدفوع</td></tr>
+        <tr><td><b>الميزانية</b></td><td>قرارك (القرار ٥)</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="tech">
+    <h2>التنفيذ التقني</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>المرحلة</th><th>ما يُبنى</th><th>قاعدة البيانات</th></tr></thead>
+      <tbody>
+        <tr><td><b>١ · المعرض</b></td><td>صفحة عرض لكل عميل على نفس قالب «حسابات مدونتي» · رمز مسح · وسوم حملة · تتبّع النقرات · صفحة الخدمة</td><td><span class="pl ok">بلا تعديل</span> قراءة من جدول العملاء الحالي</td></tr>
+        <tr><td><b>٢ · ٣٠ يوماً</b></td><td>محرّر في لوحة العميل: ترتيب وإضافة وإخفاء روابط · قوالب · جدولة · نموذج بيانات بموافقة · تحليلات لكل رابط</td><td><span class="pl warn">جدول جديد</span> للروابط والإعدادات، يحتاج مراجعة قبل الإنشاء</td></tr>
+        <tr><td><b>٣ · ٦٠–٩٠ يوماً</b></td><td>دومين خاص · بيع بالريال عبر تطبيق الدفع · قوالب قطاعات · تسجيل ذاتي بلا تدخّل منّا</td><td><span class="pl warn">جداول</span> للطلبات والاشتراكات، من مصدر المال الواحد</td></tr>
+      </tbody>
+    </table></div>
+    <p class="sub">رمز المسح يحتاج إضافة مكتبته لمدونتي (موجودة في الأدمن) — القرار ٤.</p>
+  </section>
+
+  <section id="risks">
+    <h2>المخاطر</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>الخطر</th><th>العلاج</th></tr></thead>
+      <tbody>
+        <tr><td>التشتّت قبل المعرض بأسبوع</td><td>المرحلة الأولى فقط، وكل ما عداها يُؤجَّل بقرار مكتوب</td></tr>
+        <tr><td>بيانات عملاء ناقصة أو روابط مكسورة</td><td>تدقيق الروابط الـ٥٠ يوم الثلاثاء؛ ما ينقصه شعار (٦ عملاء) يظهر بحرفه الأول</td></tr>
+        <tr><td>السوق مزدحم بالمجاني</td><td>لا ننافس بعدد المزايا؛ ننافس بالعربي وواتساب والدفع المحلي والمحتوى</td></tr>
+        <tr><td>جمع بيانات الزوار</td><td>لا نموذج قبل المرحلة الثانية، ومعه موافقة صريحة وحذف عند الطلب</td></tr>
+        <tr><td>صفحة ضعيفة تضرّ الاسم</td><td>لا تُنشر صفحة عميل بلا شعار ورابطين على الأقل</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="decide">
+    <h2>قراراتك</h2>
+    <ol class="decide">
+      <li><div><b>النموذج المفتوح</b><span>نعتمده بعلاجاته (خارج فهرسة جوجل، بلاغ، فحص روابط) · أو نبدأ بعملاء مدونتي ثم نفتحه.</span></div></li>
+      <li><div><b>ما يدخل المعرض</b><span>تسجيل ذاتي ومحرّر بسيط (يحتاج جدولاً جديداً) · أو عرض صفحات جاهزة فقط، والتسجيل بعد المعرض.</span></div></li>
+      <li><div><b>شكل الرابط</b><span><code>modonty.com/l/اسم-العميل</code> (أسرع للمعرض) · أو <code>اسم.modonty.com</code> (أجمل، يحتاج إعداد نطاقات) · أو <code>modonty.com/@اسم</code>.</span></div></li>
+      <li><div><b>المجاني</b><span>بشعار «مودو لينك» الصغير أسفل الصفحة (يسوّق لنا) · أو بدونه.</span></div></li>
+      <li><div><b>التسعير</b><span>١٩ و٤٩ ريالاً كما اقترحت · أو أرقام أخرى · و«احترافي» مشمول لشركاء مدونتي؟</span></div></li>
+      <li><div><b>رمز المسح</b><span>إضافة مكتبته لمدونتي (نفس المستخدمة في الأدمن).</span></div></li>
+      <li><div><b>ميزانية الحملات</b><span>المبلغ الشهري، ونبدأ بسناب أولاً.</span></div></li>
+      <li><div><b>صفحات العملاء الحاليين</b><span>ننشئ صفحة تلقائياً لكل الـ٤٣ عميلاً من بياناتهم كعرض أوّل · أو لمن يطلب فقط.</span></div></li>
+      <li><div><b>النطاق</b><span>الصفحات على نطاق مدونتي · أو نطاق مستقلّ للخدمة يحمي ترتيب مدونتي في جوجل.</span></div></li>
+    </ol>
+  </section>
+
+  <section id="sources">
+    <h2>المصادر</h2>
+    <div class="sources">
+      <a href="https://linktr.ee/s/pricing/">صفحة أسعار «لينك تري» وجدول مزاياها</a>
+      <a href="https://help.linktr.ee/en/articles/11126119-who-can-use-linktree-s-earn-features">مساعدة «لينك تري»: من يستطيع البيع (قائمة الدول)</a>
+      <a href="https://www.trustpilot.com/review/linktr.ee">تقييمات «لينك تري» على «ترست بايلوت»</a>
+      <a href="https://apps.apple.com/us/app/linktree-link-in-bio-creator/id1593515263">تطبيق «لينك تري» على متجر آبل</a>
+      <a href="https://home.beacons.ai/plans">أسعار «بيكنز» الرسمية</a>
+      <a href="https://help.stan.store/article/31-creator-vs-creator-pro">مركز مساعدة «ستان ستور»: الخطّتان</a>
+      <a href="https://www.cst.gov.sa/en/media-center/news/N2026071901">هيئة الاتصالات: تقرير إنترنت السعودية ٢٠٢٥</a>
+      <a href="https://www.arrajol.com/content/407416/">صحيفة «الرجل»: نسب استخدام المنصّات من التقرير</a>
+      <a href="https://laws.boe.gov.sa/boelaws/laws/lawdetails/b7cfae89-828e-4994-b167-adaa00e37188/1">نظام حماية البيانات الشخصية</a>
+      <a href="https://sdaia.gov.sa/ar/Research/Documents/ExecutiveRegulations.pdf">اللائحة التنفيذية للنظام (سدايا)</a>
+      <a href="https://developers.google.com/search/docs/crawling-indexing/qualify-outbound-links">جوجل: وسم الروابط الخارجة (ugc لمحتوى المستخدمين)</a>
+    </div>
+    <p class="sub">أرقام «مقيس» عن عملائنا من قاعدة التطوير في ٢٦ سبتمبر ٢٠٢٦. الإنتاج قد يختلف.</p>
+    <p class="sub">الأسماء اللاتينية: Linktree · Beacons · Stan Store · Taplink · Trustpilot · WhatsApp · Snapchat · TikTok · Tamara · N-Genius · UTM · QR.</p>
+  </section>
+
+</main>
+<footer><div class="wrap">مودو لينك · ملف عمل · مدونتي · الإصدار ٢ (٢٦ سبتمبر ٢٠٢٦) — يبني على دراسة كودكس الأولى، وكل رقم فيه له مصدر أعلاه.</div></footer>

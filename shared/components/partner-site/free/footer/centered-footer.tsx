@@ -1,3 +1,4 @@
+import { SiteLink } from "../../parts/site-link";
 import { BrandLogo } from "../../parts/brand-logo";
 import { WhatsAppButton } from "../../parts/whatsapp-button";
 import { SocialLinks } from "../../social-links";
@@ -11,21 +12,21 @@ export function CenteredFooter({ data, preview = false }: { data: FooterData; pr
     <footer className="bg-muted/30">
       <FooterWrap>
         <div className="flex flex-col items-center gap-6 text-center">
-          <a href={data.homeHref}>
+          <SiteLink href={data.homeHref}>
             <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size="standard" />
-          </a>
+          </SiteLink>
           <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
             {data.pages.map((p) => (
               <li key={p.href}>
                 {/* الارتفاع كان ٤٤ سليماً والعرض ٣٨–٤٣ للتسميات القصيرة («خدماتنا» ٤١ ·
                     «أعمالنا» ٣٨). الهدف مربّع لا خطّ: `min-w-11` يكمل البُعد الثاني. */}
-                <a href={p.href} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:min-w-11 max-md:items-center max-md:justify-center">{p.label}</a>
+                <SiteLink href={p.href} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:min-w-11 max-md:items-center max-md:justify-center">{p.label}</SiteLink>
               </li>
             ))}
           </ul>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
-            {data.phone && <a href={`tel:${data.phone}`} dir="ltr" className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.phone}</a>}
-            {data.email && <a href={`mailto:${data.email}`} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.email}</a>}
+            {data.phone && <SiteLink href={`tel:${data.phone}`} dir="ltr" className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.phone}</SiteLink>}
+            {data.email && <SiteLink href={`mailto:${data.email}`} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.email}</SiteLink>}
             <WhatsAppButton href={data.whatsappHref} variant="text" />
           </div>
           <SocialLinks urls={data.socialLinks} inert={preview} />

@@ -16,6 +16,7 @@ export interface Article {
   lastReviewed?: Date | null;
   seoTitle: string | null;
   seoDescription: string | null;
+  targetKeyword?: string | null;
   mainEntityOfPage?: string | null;
   canonicalUrl?: string | null;
   metaRobots?: string | null;

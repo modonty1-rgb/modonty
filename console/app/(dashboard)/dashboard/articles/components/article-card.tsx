@@ -14,6 +14,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FeedbackForm } from "./feedback-form";
 import { ApproveConfirmDialog } from "./approve-confirm-dialog";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+import { IconCalendar, IconClock } from "@modonty/shared/lib/icons";
 
 interface ArticleCardProps {
   article: ArticleWithAllData;
@@ -23,7 +25,7 @@ interface ArticleCardProps {
 const READING_WORDS_PER_MINUTE = 200;
 
 function formatDate(d: Date) {
-  return new Intl.DateTimeFormat("ar-SA", {
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -184,8 +186,8 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
               <div className="rounded-lg border-2 border-violet-200 bg-violet-50 p-4">
                 {scheduledDate ? (
                   <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-2xl">
-                      📅
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-violet-700">
+                      <IconCalendar className="h-6 w-6" aria-hidden />
                     </div>
                     <div>
                       <div className="text-xs font-medium uppercase tracking-wide text-violet-700">
@@ -198,8 +200,8 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
                   </div>
                 ) : (
                   <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-2xl">
-                      ⏳
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-violet-700">
+                      <IconClock className="h-6 w-6" aria-hidden />
                     </div>
                     <div>
                       <div className="text-base font-bold text-violet-900">

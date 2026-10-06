@@ -18,7 +18,7 @@ import type { MobileHero } from "../../data/get-modonty-mobile-hero";
  * (Khalid, same day: «النافبار والبوتوم بار حاجات ثابتة ما نقدر نلعب فيها»), so the design's
  * own header and in-page search were left out.
  */
-export function ModontyMobileLanding({ hero }: { hero: MobileHero | null }) {
+export function ModontyMobileLanding({ hero, clientSlug }: { hero: MobileHero | null; clientSlug: string }) {
   const t = messages.modonty.landing;
   const values = [
     { icon: IconCompass, label: t.discover },
@@ -89,7 +89,7 @@ export function ModontyMobileLanding({ hero }: { hero: MobileHero | null }) {
         <MobileCtaBar
           placement="inline"
           ariaLabel={messages.modonty.ctaBarLabel}
-          primarySlot={<FollowCtaButton />}
+          primarySlot={<FollowCtaButton clientSlug={clientSlug} />}
           secondary={{ href: PARTNER_SIGNUP_URL, label: "صِر شريكاً", icon: IconHandshake, external: true }}
         />
       </div>

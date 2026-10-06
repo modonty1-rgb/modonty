@@ -14,6 +14,7 @@ import {
 import { saveIntakeAction } from "../actions/save-intake";
 import type { ClientIntake } from "../lib/intake-types";
 import type { IntakeFormDef, IntakeQuestionDef, IntakeOptionDef } from "../lib/intake-queries";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 // lucide icon name (stored on section.icon) → component
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -218,7 +219,7 @@ export function DynamicIntakeForm({
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-muted-foreground">{sIdx + 1}/{sections.length}</span>
-                  <h3 className="text-base font-bold">{section.title}</h3>
+                  <h2 className="text-base font-bold">{section.title}</h2>
                   {complete && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
                 </div>
                 {section.description && <p className="mt-0.5 text-xs text-muted-foreground">{section.description}</p>}
@@ -249,7 +250,7 @@ export function DynamicIntakeForm({
             {pending ? (
               <><Loader2 className="h-4 w-4 animate-spin text-primary" /><span className="text-muted-foreground">جارٍ الحفظ...</span></>
             ) : savedAt ? (
-              <><CheckCircle2 className="h-4 w-4 text-emerald-600" /><span className="font-medium text-emerald-700">حُفظ{mounted ? ` · ${new Intl.DateTimeFormat("ar-SA", { timeStyle: "short" }).format(savedAt)}` : ""}</span></>
+              <><CheckCircle2 className="h-4 w-4 text-emerald-600" /><span className="font-medium text-emerald-700">حُفظ{mounted ? ` · ${new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, { timeStyle: "short" }).format(savedAt)}` : ""}</span></>
             ) : (
               <span className="text-muted-foreground">جاهز للحفظ</span>
             )}

@@ -68,6 +68,7 @@ export function mapInitialDataToFormData(
     ctaPresetId: "",
     ctaLabel: "",
     ctaUrl: "",
+    listedOn: [],
     // Google Business Profile + Local SEO
     gbpProfileUrl: "",
     gbpPlaceId: "",
@@ -175,6 +176,7 @@ export function mapInitialDataToFormData(
     ctaPresetId: (initialData as { ctaPresetId?: string | null }).ctaPresetId ?? "",
     ctaLabel: (initialData as { ctaLabel?: string | null }).ctaLabel ?? "",
     ctaUrl: (initialData as { ctaUrl?: string | null }).ctaUrl ?? "",
+    listedOn: (initialData as { listedOn?: ("BOOKING" | "SHOP")[] | null }).listedOn ?? [],
 
     // Subscription Management
     // (سقط `subscriptionTierConfigId` — ١٩ سبتمبر ٢٠٢٦: الباقةُ من الطلب الساري.)

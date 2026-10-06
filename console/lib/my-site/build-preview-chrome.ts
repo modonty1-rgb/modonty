@@ -23,9 +23,11 @@ export function buildPreviewChrome(
     phone: chrome.phone,
     email: chrome.email,
     primaryColor,
+    // Inert, and only with a number — the live site shows no WhatsApp button without one.
+    whatsappHref: chrome.phone ? "#whatsapp" : null,
   };
   return {
-    header: { ...common, links },
+    header: { ...common, links, verified: chrome.verified },
     footer: {
       ...common,
       description: chrome.description,

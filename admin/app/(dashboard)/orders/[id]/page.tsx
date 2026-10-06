@@ -303,7 +303,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
           {/* الاسترداد: تسجيلُ ما حصل في البنك — يُخرج الطلب من الإيراد ولا يفكّ التفعيل. */}
           {order.status === "PAID" && isFinanceAdmin ? (
-            <RefundOrderButton orderId={order.id} amountLabel={formatOrderMoney(order.totalMinor, order.currency)} buyerName={order.buyerName} />
+            <RefundOrderButton orderId={order.id} amountLabel={formatOrderMoney(order.totalMinor, order.currency)} buyerName={order.buyerName} viaTamara={transactions.some((t) => t.provider === "TAMARA" && t.providerOrderRef)} />
           ) : null}
 
           {/* التعديلُ بابٌ دائم لا خطوةٌ تمضي، فيتنحّى لآخر الصفّ.

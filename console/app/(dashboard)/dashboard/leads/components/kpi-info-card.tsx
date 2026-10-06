@@ -19,6 +19,7 @@ import {
   Target,
 } from "lucide-react";
 import { ar } from "@/lib/ar";
+import { IconLightbulb } from "@modonty/shared/lib/icons";
 
 export type KpiInfoKey = "high" | "medium" | "low" | "qualified" | "avg";
 export type KpiIconKey = "flame" | "trending-up" | "snowflake" | "award" | "target";
@@ -129,7 +130,7 @@ function KpiInfoSheet({
           {content.note && (
             <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
               <p className="text-sm leading-relaxed text-foreground">
-                💡 {content.note}
+                <IconLightbulb className="me-1 inline h-4 w-4 align-[-3px]" aria-hidden />{content.note}
               </p>
             </div>
           )}

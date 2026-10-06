@@ -395,7 +395,7 @@ export function StatStrip({ stats }: { stats: MobileStat[] }) {
       const palette = tone === 'neutral' ? { background: theme.colors.surfaceRaised, foreground: theme.colors.text, label: theme.colors.muted } : { ...filled, label: filled.foreground };
       return <View key={stat.key} accessible accessibilityLabel={`${stat.value} ${stat.label}`} style={[styles.stat, { backgroundColor: palette.background }]}>
         <Text maxFontSizeMultiplier={1} style={[styles.statValue, { color: palette.foreground }]}>{stat.value}</Text>
-        <Text maxFontSizeMultiplier={1.2} numberOfLines={1} style={[styles.secondary, { color: palette.label }]}>{stat.label}</Text>
+        <Text maxFontSizeMultiplier={1.2} numberOfLines={2} style={[styles.secondary, { color: palette.label }]}>{stat.label}</Text>
       </View>;
     })}
   </View>;

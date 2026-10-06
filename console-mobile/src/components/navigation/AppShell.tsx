@@ -76,6 +76,11 @@ export function AppShell({ client, copy, activeRoute, unreadCount, onSelectTab, 
     </View>
 
     <View style={styles.content}>{children}</View>
+    {/*
+      * غطاء بلون الصفحة خلف أزرار الجوال: التطبيق يُرسم حتى حافّة الشاشة (edge-to-edge)، فكانت
+      * القوائم تمرّ تحت أزرار أندرويد وتُقرأ من خلالها (جوال خالد ٦ أكتوبر ٢٠٢٦).
+      */}
+    {insets.bottom > 0 ? <View pointerEvents="none" style={[styles.navScrim, { height: insets.bottom, backgroundColor: theme.colors.page }]} /> : null}
     <BottomNavigation activeRoute={activeRoute} unreadCount={unreadCount} bottomInset={insets.bottom} onSelect={onSelectTab} />
 
     {/* `statusBarTranslucent` يجعل إحداثيات النافذة هي إحداثيات الشاشة، فتقع القائمة تحت الصورة تماماً. */}
@@ -120,13 +125,16 @@ const styles = StyleSheet.create({
   avatar: { width: control.minTouchTarget, height: control.minTouchTarget, borderRadius: nabd.pill, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   avatarImage: { width: control.clientAvatarVisualSize, height: control.clientAvatarVisualSize, borderRadius: control.clientAvatarVisualSize, resizeMode: 'contain' },
   content: { flex: 1, minHeight: 0 },
+  navScrim: { bottom: 0, left: 0, position: 'absolute', right: 0 },
   // تحت الصورة على نفس حافّتها (الهيدر `row-reverse`، فالصورة في الطرف الأيسر).
   dropdown: { position: 'absolute', left: spacing.screenHorizontal, width: nabd.menuWidth, borderRadius: nabd.menuRadius, padding: spacing.xs },
   menuItem: { minHeight: control.buttonHeight, flexDirection: 'row-reverse', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.sm, borderRadius: nabd.menuItemRadius },
   // `row-reverse`: «فاتح» أوّلاً من اليمين كما يُقرأ.
   themeSegment: { borderRadius: nabd.pill, flexDirection: 'row-reverse', padding: spacing.xxs },
   themeItem: { gap: spacing.xs },
-  themeOption: { borderRadius: nabd.pill, paddingHorizontal: spacing.xs, paddingVertical: spacing.xxs },
+  // نصف الارتفاع بالضبط لا `nabd.pill` (٩٩٩): على أندرويد خرجت الكبسولة المختارة «فاتح» مربّعة
+  // بينما «داكن» دائرية (جوال خالد ٥ أكتوبر ٢٠٢٦) — نصف قطرٍ أكبر من العنصر لا يُرسم دائماً.
+  themeOption: { borderRadius: (typography.lineHeightSecondary + spacing.xxs * 2) / 2, overflow: 'hidden', paddingHorizontal: spacing.xs, paddingVertical: spacing.xxs },
   themeOptionText: { fontFamily: fonts.medium, fontSize: typography.secondary, lineHeight: typography.lineHeightSecondary, writingDirection: 'rtl' },
   menuText: { flex: 1, fontFamily: fonts.medium, fontSize: typography.body, lineHeight: typography.lineHeightBody, textAlign: 'right', writingDirection: 'rtl' },
 });

@@ -11,5 +11,5 @@ import { FinalCta } from "../cta/final-cta";
  */
 export const GALLERY_BLOCKS: readonly HomeBlock[] = [
   { key: "gallery", name: "كل الصور", toggleable: false, isEmpty: (d) => d.gallery.length === 0, Component: GalleryJustified },
-  { key: "cta", name: "النداء الأخير", toggleable: false, isEmpty: () => false, Component: FinalCta },
+  { key: "cta", name: "النداء الأخير", toggleable: false, isEmpty: (d) => !d.whatsappHref && d.booking.mode !== "FORM" && !(d.booking.mode === "LINK" && d.booking.url), Component: FinalCta },
 ] as const;

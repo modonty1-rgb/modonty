@@ -9,6 +9,12 @@ const ALLOWED_STATUSES = new Set(Object.values(ArticleStatus));
 const ARTICLE_SCOPE = ["published", "decision"] as const;
 type ArticleScope = typeof ARTICLE_SCOPE[number];
 
+/** النطاق المعروض للعميل — بلا `www.` ولا مسار. */
+function hostOf(url: string | null): string | null {
+  if (url === null) return null;
+  try { return new URL(url).host.replace(/^www\./, ""); } catch { return null; }
+}
+
 export async function GET(request: NextRequest) {
   const session = await mobileSessionFromRequest(request);
   if (!session) return fail("UNAUTHORIZED", "سجّل الدخول للمتابعة.");
@@ -25,7 +31,13 @@ export async function GET(request: NextRequest) {
   const articles = await db.article.findMany({
     where: { clientId: session.clientId, ...statusFilter },
     select: { id: true, title: true, slug: true, excerpt: true, status: true, wordCount: true, scheduledAt: true, datePublished: true, updatedAt: true, createdAt: true, isClientSiteArticle: true, canonicalUrl: true, citations: true, client: { select: { articlesBaseUrl: true, isYmyl: true } }, featuredImage: { select: { url: true, bunnyUrl: true, altText: true } }, category: { select: { name: true } }, faqs: { where: { OR: [{ source: "manual" }, { source: null }, { source: { isSet: false } }] }, select: { id: true, status: true } } },
-    orderBy: { updatedAt: "desc" }, take: 100,
+    /**
+     * المنشورة بتاريخ النشر لا بآخر تعديل — خالد ٥ أكتوبر ٢٠٢٦ على جواله: القائمة نزلت
+     * «١٠ ← ١٣ ← ١٦ ← ٢٠ ← ١٥ سبتمبر ← مايو» لأنّ `updatedAt` يتحرّك مع كل تصحيح سيو.
+     * و`nulls: "last"` غير متاح لمونجو في Prisma؛ لكنّ ترتيب BSON يضع الفارغ والغائب أصغر
+     * من أيّ تاريخ، فالتنازلي يرميهما آخر القائمة وحده. والطابور يبقى على `updatedAt`.
+     */
+    orderBy: scope === "published" ? [{ datePublished: "desc" }, { updatedAt: "desc" }] : { updatedAt: "desc" }, take: 100,
   });
   const statusLabels: Record<string, string> = { AWAITING_APPROVAL: "بانتظار قرارك", PUBLISHED: "منشور", PUBLISHED_ON_CLIENT_SITE: "منشور على موقعك" };
   // يُعدّ في القاعدة لا من `articles`: تلك قُصَّت عند 100، فالعميل الذي ينتظره 120 مقالاً
@@ -54,6 +66,10 @@ export async function GET(request: NextRequest) {
       { key: "published", value: arabicNumber(publishedCount), label: publishedCount === 1 ? "مقال منشور" : publishedCount === 2 ? "مقالان منشوران" : publishedCount <= 10 ? "مقالات منشورة" : "مقالاً منشوراً", tone: "neutral" as const },
       ...(lastPublished === null ? [] : [{ key: "lastPublished", value: arabicLongDate(lastPublished), label: "آخر نشر", tone: "neutral" as const }]),
     ];
+  const publishedHosts = new Set(scope === "published" ? articles.flatMap((article) => {
+    const host = hostOf(article.canonicalUrl);
+    return host === null ? [] : [host];
+  }) : []);
   const review = scope === "decision"
     ? {
       stats,
@@ -87,7 +103,11 @@ export async function GET(request: NextRequest) {
        */
       stats,
       title: "المقالات المنشورة",
-      subtitle: "مقالاتك المنشورة — اضغط أيّها لتقرأه كما يراه الزائر.",
+      /**
+       * أين تذهب الضغطة يُقال **مرّة هنا** لا على كل بطاقة: «اقرأه كما يراه الزائر + modonty.com»
+       * كانت تتكرّر تحت كل مقال فصارت ضجيجاً (خالد ٥ أكتوبر). النطاق يُذكر لو كان واحداً للكل.
+       */
+      subtitle: publishedHosts.size === 1 ? `اضغط أيّ مقال يفتح لك على ${[...publishedHosts][0]} كما يراه الزائر.` : "اضغط أيّ مقال يفتح لك كما يراه الزائر.",
       emptyTitle: "ما نُشر لك مقال بعد",
       emptyDescription: "أول مقال تعتمده يظهر هنا بعد نشره.",
       errorTitle: "ما قدرنا نجيب المقالات",
@@ -117,7 +137,7 @@ export async function GET(request: NextRequest) {
      */
     const siteUrl = scope === "published" && isPublishedArticle ? article.canonicalUrl : null;
     // النطاق الذي يُفتح فعلاً — يُعرض على البطاقة فيعرف العميل أين يذهب قبل أن يضغط.
-    const siteHost = siteUrl === null ? null : (() => { try { return new URL(siteUrl).host.replace(/^www./, ""); } catch { return null; } })();
+    const siteHost = hostOf(siteUrl);
     const pendingFaqCount = faqs.filter((faq) => faq.status === ArticleFAQStatus.PENDING).length;
     const citationCount = client.isYmyl ? citations.length : null;
     const cardDateLabel = scope === "decision" ? arabicLongDate(article.updatedAt) : publishedDateLabel;

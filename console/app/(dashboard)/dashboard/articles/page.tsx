@@ -12,6 +12,7 @@ import {
   getMonthlyPublishedCount,
 } from "./helpers/article-queries";
 import { ArticlesPageClient } from "./components/articles-page-client";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -65,7 +66,7 @@ export default async function ArticlesPage({
   // Formatted here, never in the browser: the reset day is derived from «now», and a
   // client component would compute it against the visitor's clock and mismatch on hydration.
   const now = new Date();
-  const quotaResetDate = new Intl.DateTimeFormat("ar-SA", {
+  const quotaResetDate = new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     year: "numeric",
     month: "long",
     day: "numeric",

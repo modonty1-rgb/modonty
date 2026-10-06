@@ -24,7 +24,9 @@ export function buildMissingData(data: HomeData): Record<BlocksPage, MissingBloc
   const out = {} as Record<BlocksPage, MissingBlock[]>;
   for (const page of BLOCKS_PAGES) {
     out[page] = PAGE_BLOCKS[page]
-      .filter((b) => b.key !== "booking" && b.isEmpty(data))
+      // Only what the partner can fill himself. A block the admin or modonty switches on stayed
+      // a warning forever, and its empty link just reloaded the page (4 Oct 2026).
+      .filter((b) => b.isEmpty(data) && (BLOCK_SOURCE[b.key]?.owner ?? "client") === "client")
       .map((b) => ({
         key: b.key,
         name: b.name,

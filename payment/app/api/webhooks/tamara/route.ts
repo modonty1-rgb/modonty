@@ -28,11 +28,20 @@ import { verifyTamaraToken } from "@/lib/tamara/webhook-token";
  * بخطأ يجعل تمارا تعيد ما أنجزناه.
  */
 
+/**
+ * شكلان للجسم بحسب مصدر الإشعار، ولا يحمل أيٌّ منهما الحقلين معاً:
+ * - رابط `merchant_url.notification` المرسَل مع كل طلب ⇒ `order_status` (مقيس ٥ أكتوبر ٢٠٢٦
+ *   في الساندبوكس: `{"order_id","order_reference_id","order_status":"approved","data":[]}`).
+ * - الويبهوك المسجَّل عبر `POST /webhooks` ⇒ `event_type` (`order_approved` · `order_refunded` …).
+ * قراءة `event_type` وحده كانت تكتب `unknown` لكل إشعارات النوع الأول، فيصير مفتاح عدم التكرار
+ * واحداً للطلب كلّه ويُسقَط أي إشعارٍ لاحق (استرداد · إلغاء) على أنه مكرَّر.
+ */
 type TamaraWebhookBody = {
   order_id?: string;
   order_reference_id?: string;
   order_number?: string;
   event_type?: string;
+  order_status?: string;
   data?: unknown;
 };
 
@@ -72,7 +81,7 @@ export async function POST(req: Request) {
   }
 
   const providerOrderId = body.order_id;
-  const eventType = body.event_type ?? "unknown";
+  const eventType = body.event_type ?? (body.order_status ? `order_${body.order_status}` : "unknown");
   if (!providerOrderId) return new NextResponse("bad-request", { status: 400 });
 
   const eventId = `${providerOrderId}::${eventType}`;
@@ -166,7 +175,8 @@ export async function POST(req: Request) {
         ...(txn
           ? [db.paymentTransaction.update({
               where: { id: txn.id },
-              data: { status: finalStatus, rawStatus: finalStatus, settledAt: paidAt },
+              // إشعار الاسترداد/الإلغاء لا يمحو تاريخ القبض — يُكتب `settledAt` عند الدفع فقط.
+              data: { status: finalStatus, rawStatus: finalStatus, ...(paidAt ? { settledAt: paidAt } : {}) },
             })]
           : []),
       ]);

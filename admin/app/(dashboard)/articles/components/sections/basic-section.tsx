@@ -1,6 +1,7 @@
 'use client';
 
 import { useArticleForm } from '../article-form-context';
+import { checkArticleCtaUrl, hostOf } from '../../helpers/check-article-cta-url';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { FormNativeSelect } from '@/components/admin/form-field';
@@ -16,7 +17,7 @@ import { CharacterCounter } from '@/components/shared/character-counter';
 import { TagMultiSelect } from '../tag-multi-select';
 import { ClientLogoPreview } from '../client-logo-preview';
 import { AlertCircle, AlertTriangle, Link2, RefreshCw } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { ClientLogoModal } from '@/app/(dashboard)/clients/components/client-logo-modal';
 import { cn, slugify } from '@/lib/utils';
 import { mediaSrc } from "@modonty/shared/lib/media-src";
@@ -30,6 +31,10 @@ export function BasicSection() {
   const isSlugLocked = mode === 'edit' && !slugUnlocked;
 
   const selectedClient = clients.find((c) => c.id === formData.clientId);
+  const clientHost = hostOf(selectedClient?.url) ?? hostOf(selectedClient?.articlesBaseUrl);
+  const ctaCheck = (formData.ctaUrl || '').trim()
+    ? checkArticleCtaUrl(formData.ctaUrl!)
+    : null;
   const hasPublisherLogo = !!mediaSrc(selectedClient?.logoMedia);
 
   // For a client-site article the picker is narrowed to clients who can actually
@@ -49,10 +54,12 @@ export function BasicSection() {
     : "modonty.com/articles";
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_272px] gap-5 items-start">
+    // ثلاثة أعمدة من xl (خالد ٣ أكتوبر ٢٠٢٦): المقالُ في الوسط، وقرارُ العميل (العميل + زرّ المقال) يميناً،
+    // والتصنيفُ والوسوم يساراً — كان عموداً جانبيّاً واحداً يتراكب فيه كلُّ شيء. تحت xl يرجع عمودين.
+    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_272px] xl:grid-cols-[272px_minmax(0,1fr)_272px] gap-5 items-start">
 
       {/* ── MAIN: Title / Slug / SEO — كرت واحد ── */}
-      <Card>
+      <Card className="lg:col-start-1 lg:row-start-1 lg:row-span-2 xl:col-start-2 xl:row-span-1">
         <CardContent className="pt-5 space-y-4">
 
           {/* Title */}
@@ -69,7 +76,7 @@ export function BasicSection() {
               name="title"
               value={formData.title}
               onChange={(e) => updateField('title', e.target.value)}
-              className={cn('text-base font-medium h-11', errors.title?.[0] && 'border-destructive')}
+              className={cn('text-base font-medium h-9', errors.title?.[0] && 'border-destructive')}
               placeholder="العنوان الذي يراه القارئ — H1"
             />
             {errors.title?.[0] && (
@@ -86,7 +93,7 @@ export function BasicSection() {
             </div>
 
             {isSlugLocked ? (
-              <div className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm items-center gap-2">
+              <div className="flex h-8 w-full rounded-md border border-input bg-muted px-2.5 py-1 text-sm items-center gap-2">
                 <span className="truncate font-mono text-xs text-muted-foreground flex-1" dir="ltr">
                   {formData.slug || '—'}
                 </span>
@@ -166,6 +173,24 @@ export function BasicSection() {
             </span>
           </div>
 
+          {/* Target keyword (plan و١, Khalid 3 Oct 2026): the phrase the writer researched and built
+              the article on. Optional so it never blocks a save; the articles list flags the ones
+              without it, so it is followed up as a team rule rather than enforced by the form. */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="targetKeyword">الكلمة المستهدفة</Label>
+              <CharacterCounter current={(formData.targetKeyword || '').length} max={120} />
+            </div>
+            <Input
+              id="targetKeyword"
+              value={formData.targetKeyword || ''}
+              onChange={(e) => updateField('targetKeyword', e.target.value)}
+              placeholder="الجملة اللي يبحث عنها الزبون في جوجل — مثال: هل زراعة الأسنان مؤلمة"
+              maxLength={120}
+            />
+            <p className="text-xs text-muted-foreground">من بحثك قبل الكتابة. ابنِ عليها عنوان جوجل والوصف تحت.</p>
+          </div>
+
           {/* SEO Title */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
@@ -218,7 +243,8 @@ export function BasicSection() {
         </CardContent>
       </Card>
 
-      {/* ── SIDE: Client / Category / Tags — كرت واحد ── */}
+      {/* ── SIDE A (يمين): العميل · زرُّ المقال ── */}
+      <div className="space-y-5 lg:col-start-2 lg:row-start-1 xl:col-start-3">
       <Card>
         <CardContent className="pt-4 space-y-4">
 
@@ -279,6 +305,61 @@ export function BasicSection() {
             )}
           </div>
 
+        </CardContent>
+      </Card>
+
+      {/* ── SIDE 2: زرُّ المقال — صندوقٌ وحده ── */}
+      <Card>
+        <CardContent className="pt-4">
+              {/* زرُّ المقال (خالد ٣ أكتوبر ٢٠٢٦ · ARTCTA): مقالٌ عن منتجٍ يودّي القارئَ على المنتج نفسه في موقع
+                  العميل، لا على صفحته العامّة يدوّر فيها. في العمود الجانبي تحت العميل مباشرة (خالد ٣ أكتوبر):
+                  الرابطُ مربوطٌ بموقعه، فيتغيّر تلميحُ النطاق أمامك حين تغيّر العميل. اختياريّ — الفارغُ يرجع لزرّ العميل. والتنبيهُ هنا فوريّ،
+                  والخادمُ يرفض الرابطَ الغريب عند الحفظ بنفس القاعدة. */}
+              <div className="space-y-1.5" data-article-cta>
+                <Label htmlFor="ctaUrl">زر المقال <span className="font-normal text-muted-foreground">— رابط المنتج</span></Label>
+                <div className="grid gap-2">
+                  {/* نصٌّ متعدّد الأسطر لا سطرٌ واحد (خالد ٣ أكتوبر ٢٠٢٦): روابطُ أمازون ونون طويلة، فيُرى كاملاً
+                      ويطول مع الرابط. السطرُ الجديد يُحذف عند الكتابة واللصق — الرابطُ سطرٌ واحد في الحقيقة. */}
+                  <Textarea
+                    id="ctaUrl"
+                    dir="ltr"
+                    rows={1}
+                    value={formData.ctaUrl || ''}
+                    onChange={(e) => updateField('ctaUrl', e.target.value.replace(/\s*\n\s*/g, ''))}
+                    onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+                    placeholder={clientHost ? `https://${clientHost}/products/...` : 'https://...'}
+                    maxLength={500}
+                    style={{ fieldSizing: 'content' } as CSSProperties}
+                    className={cn('min-h-0 resize-none break-all text-xs leading-snug', ctaCheck && !ctaCheck.ok && 'border-destructive')}
+                  />
+                  <Input
+                    id="ctaLabel"
+                    aria-label="نص الزر"
+                    value={formData.ctaLabel || ''}
+                    onChange={(e) => updateField('ctaLabel', e.target.value)}
+                    placeholder="اطلب المنتج"
+                    maxLength={30}
+                  />
+                </div>
+                {/* سطرُ الخطأ فقط — التلميحُ الدائم كان حشواً (خالد ٣ أكتوبر ٢٠٢٦). */}
+                {ctaCheck && !ctaCheck.ok ? (
+                  <p className="text-xs text-destructive">{ctaCheck.error}</p>
+                ) : !formData.ctaUrl?.trim() && selectedClient ? (
+                  // ليس تلميحاً ثابتاً: يقول الزرَّ الفعليّ الذي يرثه المقال من عميله (فلو زرّ المقال، ٣ أكتوبر ٢٠٢٦).
+                  <p className="text-xs text-muted-foreground">
+                    فاضي ← يطلع زرّ العميل: <b className="text-foreground">«{inheritedClientButton(selectedClient)}»</b>
+                  </p>
+                ) : null}
+              </div>
+        </CardContent>
+      </Card>
+
+      </div>
+
+      {/* ── SIDE B (يسار): Category / Tags ── */}
+      <div className="space-y-5 lg:col-start-2 lg:row-start-2 xl:col-start-1 xl:row-start-1">
+      <Card>
+        <CardContent className="pt-4 space-y-4">
           {/* Category */}
           <FormNativeSelect
             label="Category"
@@ -355,7 +436,15 @@ export function BasicSection() {
 
         </CardContent>
       </Card>
+      </div>
 
     </div>
   );
+}
+
+/** نصُّ زرّ العميل كما يطلع في مدونتي — نفسُ قاعدة ArticleCtaBar (حجز · رابط · ما اختار ← «صفحة [اسمه]»). */
+function inheritedClientButton(client: { name: string; ctaMode?: "NONE" | "FORM" | "LINK" | null; ctaLabel?: string | null }): string {
+  if (client.ctaMode === "FORM") return client.ctaLabel?.trim() || "احجز الآن";
+  if (client.ctaMode === "LINK") return client.ctaLabel?.trim() || "زور الموقع";
+  return `صفحة ${client.name}`;
 }

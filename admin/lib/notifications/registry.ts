@@ -78,6 +78,13 @@ const REGISTRY: Record<string, NotificationMeta> = {
     label: "رجعت بملاحظة",
     href: () => "/tasks",
   },
+  /** مَن أسندها عدّل نصَّها أو موعدَها أو أولويّتها (خالد ٣ أكتوبر ٢٠٢٦). */
+  task_edited: {
+    icon: KanbanSquare,
+    toneClasses: "bg-amber-100 text-amber-700 ring-amber-200",
+    label: "تعدّلت مهمّتك",
+    href: () => "/tasks",
+  },
   faq_reply: {
     icon: HelpCircle,
     toneClasses: "bg-emerald-100 text-emerald-700 ring-emerald-200",

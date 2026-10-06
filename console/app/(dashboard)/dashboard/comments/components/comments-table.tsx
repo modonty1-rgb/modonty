@@ -42,6 +42,7 @@ import {
   bulkRejectComments,
   type BulkRef,
 } from "../actions/comment-actions";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 interface Props {
   comments: CommentWithDetails[];
@@ -53,7 +54,7 @@ type SourceKey = "all" | CommentKind;
 
 function formatDateTime(d: Date | string | null | undefined): string {
   if (!d) return "—";
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -668,9 +669,9 @@ function EmptyState({
         <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary/10">
           <MessageSquare className="h-8 w-8 text-primary" />
         </div>
-        <h3 className="mt-4 text-base font-semibold text-foreground">
+        <h2 className="mt-4 text-base font-semibold text-foreground">
           {c.noCommentsFound}
-        </h3>
+        </h2>
         <p className="mt-1 max-w-sm mx-auto text-sm text-muted-foreground">
           {c.noCommentsHint}
         </p>

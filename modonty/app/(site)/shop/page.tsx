@@ -38,12 +38,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /**
  * The shopping door: same partner card as `/clients` and `/booking` (Khalid, 2026-08-16
- * — «خلي الكرت تبع العميل يكون reusable»), filtered to partners whose CTA sends visitors
- * to an external store. Reads the same cached list the other two doors read — one query,
+ * — «خلي الكرت تبع العميل يكون reusable»), filtered to partners the admin listed here
+ * («يظهر في: التسوّق»). Reads the same cached list the other two doors read — one query,
  * one card, three doors.
  */
-export default async function ShopPage() {
-  const partners = (await getClientsList()).filter((partner) => partner.ctaMode === "LINK");
+// «يظهر في» (خالد ٣ أكتوبر ٢٠٢٦): الأدمن يضع العميل في هذه الصفحة صراحةً — لا يُستنتج من نوع زرّه
+// (كان أيُّ رابطٍ «متجراً»، فظهر زرُّ واتساب في التسوّق). و`?industry=` يقصرها على مجالٍ واحد:
+// زرُّ صفحة المجال يفتح شركاءَ ذلك المجال، لا كلَّ الشركاء.
+export default async function ShopPage({ searchParams }: { searchParams: Promise<{ industry?: string }> }) {
+  const { industry } = await searchParams;
+  const partners = (await getClientsList()).filter(
+    (partner) => partner.listedOn.includes("SHOP") && (!industry || partner.industry?.slug === industry),
+  );
 
   return (
     <>

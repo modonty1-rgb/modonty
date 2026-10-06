@@ -1,0 +1,372 @@
+{
+  "device": "iPhone 14 · 390 CSS px · DPR 3",
+  "captured": "2026-09-30 (dev · شركة جبر سيو)",
+  "pages": 46,
+  "shots": [
+    {
+      "screen": "تسجيل الدخول",
+      "url": "/login",
+      "screenFile": "01-login.png",
+      "fullFile": "01-login-full.png",
+      "status": 200,
+      "finalUrl": "/"
+    },
+    {
+      "screen": "تم تسجيل الخروج",
+      "url": "/signed-out",
+      "screenFile": "02-signed-out.png",
+      "fullFile": "02-signed-out-full.png",
+      "status": 200,
+      "finalUrl": "/signed-out"
+    },
+    {
+      "screen": "الترحيب — أول زيارة",
+      "url": "/dashboard",
+      "screenFile": "03-welcome.png"
+    },
+    {
+      "screen": "الرئيسية",
+      "url": "/dashboard",
+      "screenFile": "04-dashboard.png",
+      "fullFile": "04-dashboard-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard"
+    },
+    {
+      "screen": "الإحصائيات",
+      "url": "/dashboard/analytics",
+      "screenFile": "05-analytics.png",
+      "fullFile": "05-analytics-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/analytics"
+    },
+    {
+      "screen": "المقالات",
+      "url": "/dashboard/articles",
+      "screenFile": "06-articles.png",
+      "fullFile": "06-articles-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/articles"
+    },
+    {
+      "screen": "مقال",
+      "url": "/dashboard/articles/6ab0d84fd5eaaff47fd48088",
+      "screenFile": "07-article.png",
+      "fullFile": "07-article-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/articles/6ab0d84fd5eaaff47fd48088"
+    },
+    {
+      "screen": "معاينة المقال",
+      "url": "/dashboard/articles/6ab0d84fd5eaaff47fd48088/preview",
+      "screenFile": "08-article-preview.png",
+      "fullFile": "08-article-preview-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/articles/6ab0d84fd5eaaff47fd48088/preview"
+    },
+    {
+      "screen": "أسئلة مقالاتك",
+      "url": "/dashboard/questions",
+      "screenFile": "09-questions.png",
+      "fullFile": "09-questions-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/questions"
+    },
+    {
+      "screen": "التعليقات",
+      "url": "/dashboard/comments",
+      "screenFile": "10-comments.png",
+      "fullFile": "10-comments-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/comments"
+    },
+    {
+      "screen": "تعليقات صفحتك",
+      "url": "/dashboard/client-comments",
+      "screenFile": "11-client-comments.png",
+      "fullFile": "11-client-comments-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/client-comments"
+    },
+    {
+      "screen": "تقييمات نشاطك",
+      "url": "/dashboard/client-reviews",
+      "screenFile": "12-client-reviews.png",
+      "fullFile": "12-client-reviews-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/client-reviews"
+    },
+    {
+      "screen": "الأسئلة الشائعة",
+      "url": "/dashboard/faqs",
+      "screenFile": "13-faqs.png",
+      "fullFile": "13-faqs-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/faqs"
+    },
+    {
+      "screen": "أسئلة صفحتك",
+      "url": "/dashboard/page-faq",
+      "screenFile": "14-page-faq.png",
+      "fullFile": "14-page-faq-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/page-faq"
+    },
+    {
+      "screen": "محتوى الموقع",
+      "url": "/dashboard/page-content",
+      "screenFile": "15-page-content.png",
+      "fullFile": "15-page-content-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/page-content"
+    },
+    {
+      "screen": "تصميم الموقع",
+      "url": "/dashboard/my-site",
+      "screenFile": "16-my-site.png",
+      "fullFile": "16-my-site-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/my-site"
+    },
+    {
+      "screen": "صفحة الموقع · home",
+      "url": "/dashboard/site-pages/home",
+      "screenFile": "17-site-page-home.png",
+      "fullFile": "17-site-page-home-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/site-pages/home"
+    },
+    {
+      "screen": "صفحة الموقع · about",
+      "url": "/dashboard/site-pages/about",
+      "screenFile": "18-site-page-about.png",
+      "fullFile": "18-site-page-about-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/site-pages/about"
+    },
+    {
+      "screen": "صفحة الموقع · services",
+      "url": "/dashboard/site-pages/services",
+      "screenFile": "19-site-page-services.png",
+      "fullFile": "19-site-page-services-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/site-pages/services"
+    },
+    {
+      "screen": "صفحة الموقع · photos",
+      "url": "/dashboard/site-pages/photos",
+      "screenFile": "20-site-page-photos.png",
+      "fullFile": "20-site-page-photos-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/site-pages/photos"
+    },
+    {
+      "screen": "صفحة الموقع · reviews",
+      "url": "/dashboard/site-pages/reviews",
+      "screenFile": "21-site-page-reviews.png",
+      "fullFile": "21-site-page-reviews-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/site-pages/reviews"
+    },
+    {
+      "screen": "صفحة الموقع · articles",
+      "url": "/dashboard/site-pages/articles",
+      "screenFile": "22-site-page-articles.png",
+      "fullFile": "22-site-page-articles-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/site-pages/articles"
+    },
+    {
+      "screen": "صفحة الموقع · faq",
+      "url": "/dashboard/site-pages/faq",
+      "screenFile": "23-site-page-faq.png",
+      "fullFile": "23-site-page-faq-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/site-pages/faq"
+    },
+    {
+      "screen": "صفحة الموقع · contact",
+      "url": "/dashboard/site-pages/contact",
+      "screenFile": "24-site-page-contact.png",
+      "fullFile": "24-site-page-contact-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/site-pages/contact"
+    },
+    {
+      "screen": "صفحة الموقع · book",
+      "url": "/dashboard/site-pages/book",
+      "screenFile": "25-site-page-book.png",
+      "fullFile": "25-site-page-book-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/site-pages/book"
+    },
+    {
+      "screen": "الوسائط",
+      "url": "/dashboard/media",
+      "screenFile": "26-media.png",
+      "fullFile": "26-media-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/media"
+    },
+    {
+      "screen": "المعرض",
+      "url": "/dashboard/gallery",
+      "screenFile": "27-gallery.png",
+      "fullFile": "27-gallery-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/gallery"
+    },
+    {
+      "screen": "الريلز",
+      "url": "/dashboard/reels",
+      "screenFile": "28-reels.png",
+      "fullFile": "28-reels-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/reels"
+    },
+    {
+      "screen": "الفيديو",
+      "url": "/dashboard/videos",
+      "screenFile": "29-videos.png",
+      "fullFile": "29-videos-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/videos"
+    },
+    {
+      "screen": "الحجوزات",
+      "url": "/dashboard/bookings",
+      "screenFile": "30-bookings.png",
+      "fullFile": "30-bookings-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/bookings"
+    },
+    {
+      "screen": "العملاء المحتملون",
+      "url": "/dashboard/leads",
+      "screenFile": "31-leads.png",
+      "fullFile": "31-leads-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/leads"
+    },
+    {
+      "screen": "المشتركون",
+      "url": "/dashboard/subscribers",
+      "screenFile": "32-subscribers.png",
+      "fullFile": "32-subscribers-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/subscribers"
+    },
+    {
+      "screen": "الحملات",
+      "url": "/dashboard/campaigns",
+      "screenFile": "33-campaigns.png",
+      "fullFile": "33-campaigns-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/campaigns"
+    },
+    {
+      "screen": "الكلمات المفتاحية",
+      "url": "/dashboard/seo/keywords",
+      "screenFile": "34-seo-keywords.png",
+      "fullFile": "34-seo-keywords-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/seo/keywords"
+    },
+    {
+      "screen": "المنافسون",
+      "url": "/dashboard/seo/competitors",
+      "screenFile": "35-seo-competitors.png",
+      "fullFile": "35-seo-competitors-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/seo/competitors"
+    },
+    {
+      "screen": "أسئلة البداية",
+      "url": "/dashboard/seo/intake",
+      "screenFile": "36-seo-intake.png",
+      "fullFile": "36-seo-intake-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/seo/intake"
+    },
+    {
+      "screen": "صحة الموقع",
+      "url": "/dashboard/site-health",
+      "screenFile": "37-site-health.png",
+      "fullFile": "37-site-health-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/site-health"
+    },
+    {
+      "screen": "الفواتير",
+      "url": "/dashboard/invoices",
+      "screenFile": "38-invoices.png",
+      "fullFile": "38-invoices-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/invoices"
+    },
+    {
+      "screen": "المستندات",
+      "url": "/dashboard/documents",
+      "screenFile": "39-documents.png",
+      "fullFile": "39-documents-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/documents"
+    },
+    {
+      "screen": "الدعم",
+      "url": "/dashboard/support",
+      "screenFile": "40-support.png",
+      "fullFile": "40-support-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/support"
+    },
+    {
+      "screen": "الملف الشخصي",
+      "url": "/dashboard/profile",
+      "screenFile": "41-profile.png",
+      "fullFile": "41-profile-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/profile"
+    },
+    {
+      "screen": "الإعدادات",
+      "url": "/dashboard/settings",
+      "screenFile": "42-settings.png",
+      "fullFile": "42-settings-full.png",
+      "status": 200,
+      "finalUrl": "/dashboard/settings"
+    },
+    {
+      "screen": "المساعدة",
+      "url": "/help",
+      "screenFile": "43-help.png",
+      "fullFile": "43-help-full.png",
+      "status": 200,
+      "finalUrl": "/help"
+    },
+    {
+      "screen": "دليل الكونسول",
+      "url": "/help/console",
+      "screenFile": "44-help-console.png",
+      "fullFile": "44-help-console-full.png",
+      "status": 200,
+      "finalUrl": "/help/console"
+    },
+    {
+      "screen": "أسئلة عامة",
+      "url": "/help/general",
+      "screenFile": "45-help-general.png",
+      "fullFile": "45-help-general-full.png",
+      "status": 200,
+      "finalUrl": "/help/general"
+    },
+    {
+      "screen": "معاينة الموقع",
+      "url": "/site-preview",
+      "screenFile": "46-site-preview.png",
+      "fullFile": "46-site-preview-full.png",
+      "status": 200,
+      "finalUrl": "/site-preview"
+    }
+  ]
+}

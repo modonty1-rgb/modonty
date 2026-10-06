@@ -1,7 +1,7 @@
 import { OptimizedImage, asMedia } from "../../../optimized-image";
 import { PartnerAvatar } from "../../../partner-avatar/PartnerAvatar";
-import { WhatsAppButton } from "../../parts/whatsapp-button";
 import type { HomeData } from "../home/home-data";
+import { HeroActions } from "./parts/hero-actions";
 
 /**
  * «الغلاف» — the cover at its own ratio (never cropped), then ONE composed band under it:
@@ -9,8 +9,9 @@ import type { HomeData } from "../home/home-data";
  * one meta line, one supporting sentence, two actions. Without a cover the same band stands
  * on a quiet tinted ground so the page still opens with a focal point.
  */
-export function CoverHero({ data }: { data: HomeData; preview?: boolean }) {
+export function CoverHero({ data, preview = false }: { data: HomeData; preview?: boolean }) {
   const { hero } = data;
+  // Buttons: HeroActions — one rule shared by every theme's hero.
   const promise = hero.slogan || data.name;
   const meta = [hero.industry, hero.city, hero.foundingYear ? `منذ ${hero.foundingYear}` : null].filter(Boolean).join(" · ");
   const hasCover = Boolean(hero.coverUrl);
@@ -23,7 +24,9 @@ export function CoverHero({ data }: { data: HomeData; preview?: boolean }) {
           className="relative w-full overflow-hidden bg-muted"
           style={{ aspectRatio: hero.coverWidth && hero.coverHeight ? `${hero.coverWidth} / ${hero.coverHeight}` : "3 / 1" }}
         >
-          <OptimizedImage media={asMedia(hero.coverUrl!, data.name)} alt="" fill sizes="100vw" className="object-contain" fetchPriority="high" loading="eager" />
+          {/* Known size → the box IS the image's ratio, so `contain` shows it whole with no bars. Unknown
+              size (older uploads) → a 3:1 guess, where `contain` left grey bands on both sides. */}
+          <OptimizedImage media={asMedia(hero.coverUrl!, data.name)} alt="" fill sizes="100vw" className={hero.coverWidth && hero.coverHeight ? "object-contain" : "object-cover"} fetchPriority="high" loading="eager" />
         </div>
       )}
       <div className={hasCover ? "mx-auto max-w-[1128px] px-6" : "mx-auto max-w-[1128px] px-6 pt-16"}>
@@ -45,21 +48,31 @@ export function CoverHero({ data }: { data: HomeData; preview?: boolean }) {
               size="big"
               className={hasCover ? "relative z-10 -mt-6 md:-mt-20" : undefined}
             />
+            {/* The h1 was the slogan, so the page's one heading never named the partner — for a
+                screen reader or a search engine the page had no «who» (4 Oct 2026). The name is
+                now the h1 on the small line; the slogan stays the large line as a paragraph. */}
             <div className="min-w-0 pb-1">
-              {meta && <p className="text-sm text-muted-foreground">{meta}</p>}
-              <h1 className="mt-1 text-3xl font-bold leading-tight text-foreground md:text-4xl">{promise}</h1>
+              {hero.slogan ? (
+                <>
+                  <div className="text-sm">
+                    <h1 className="inline font-bold text-foreground">{data.name}</h1>
+                    {meta && <span className="text-muted-foreground"> · {meta}</span>}
+                  </div>
+                  <p className="mt-1 text-3xl font-bold leading-tight text-foreground md:text-4xl">{promise}</p>
+                </>
+              ) : (
+                <>
+                  {meta && <p className="text-sm text-muted-foreground">{meta}</p>}
+                  <h1 className="mt-1 text-3xl font-bold leading-tight text-foreground md:text-4xl">{data.name}</h1>
+                </>
+              )}
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-3 pb-1">
-            <WhatsAppButton href={data.whatsappHref} />
-            {data.phone && (
-              <a href={`tel:${data.phone}`} className="inline-flex h-10 items-center rounded-full border px-5 text-sm font-medium text-foreground max-md:h-11">
-                اتصل بنا
-              </a>
-            )}
-          </div>
+          <HeroActions data={data} preview={preview} />
         </div>
-        {hero.description && (
+        {/* Not the about text again (4 Oct 2026): the same description printed here, in «تعرّف علينا»
+            right below, and in the footer — three times on one page. Only a DIFFERENT intro shows. */}
+        {hero.description && hero.description.trim() !== (data.about.description ?? "").trim() && (
           <p className="mt-6 max-w-2xl pb-12 text-base leading-8 text-muted-foreground line-clamp-2">{hero.description}</p>
         )}
         {!hero.description && <div className="pb-12" />}

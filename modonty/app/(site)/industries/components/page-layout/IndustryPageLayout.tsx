@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
 import { ModontyShoppingMark } from "@/components/icons/modonty-shopping-mark";
 import { ModontyBookingMark } from "@/components/icons/modonty-booking-mark";
+import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
+import { PARTNER_SIGNUP_URL } from "@/constants";
 import { ArticlesFeed } from "@/app/(site)/industries/components/articles-feed/ArticlesFeed";
 import type { IndustryListItem } from "@/lib/types";
 import type { ClientListItem } from "@/lib/queries/get-clients-list";
@@ -53,6 +55,24 @@ export function IndustryPageLayout({
   page,
   buildPageHref,
 }: IndustryPageLayoutProps) {
+  // «يظهر في» (خالد ٣ أكتوبر ٢٠٢٦): الزرّان يفتحان شركاءَ هذا المجال الذين وضعهم الأدمن في صفحة
+  // الحجز أو التسوّق — لا كلَّ الشركاء من كلّ المجالات. زرٌّ بلا شركاءَ وراءه لا يُعرض، وإن لم يبقَ
+  // شيء صار الشريطُ دعوةَ «صِر شريكاً» في هذا المجال.
+  const scope = currentSlug ? `?industry=${encodeURIComponent(currentSlug)}` : "";
+  const bookingDoor = partners.some((p) => p.listedOn.includes("BOOKING"))
+    ? { href: `/booking${scope}`, label: "احجز الآن", icon: ModontyBookingMark }
+    : null;
+  const shopDoor = partners.some((p) => p.listedOn.includes("SHOP"))
+    ? { href: `/shop${scope}`, label: "تسوّق الآن", icon: ModontyShoppingMark }
+    : null;
+  const [firstDoor, secondDoor] = [bookingDoor, shopDoor].filter((d) => d !== null);
+  const joinDoor = {
+    href: PARTNER_SIGNUP_URL,
+    label: industryName ? `صِر شريكاً في ${industryName}` : "صِر شريكاً",
+    icon: ModontyPartnerMark,
+    external: true,
+  };
+
   return (
     <>
     <ThreeColumnLayout
@@ -115,11 +135,7 @@ export function IndustryPageLayout({
     />
     {/* Same shared bottom bar (Khalid, 21 Aug: the industries pages need it too) — the
         field visitor's end goal is reaching a provider: book, or shop. */}
-    <MobileCtaBar
-      ariaLabel="احجز أو تسوّق"
-      primary={{ href: "/booking", label: "احجز الآن", icon: ModontyBookingMark }}
-      secondary={{ href: "/shop", label: "تسوّق الآن", icon: ModontyShoppingMark }}
-    />
+    <MobileCtaBar ariaLabel="احجز أو تسوّق" primary={firstDoor ?? joinDoor} secondary={secondDoor} />
     </>
   );
 }

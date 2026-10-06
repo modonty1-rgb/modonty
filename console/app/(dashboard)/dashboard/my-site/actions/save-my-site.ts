@@ -6,10 +6,10 @@ import { Prisma } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { messages } from "@/lib/messages";
-import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { revalidatePartner } from "@/lib/revalidate-partner";
 import { mySiteInputSchema, type MySiteInput } from "../helpers/my-site-schema";
 
-type Result = { success: true } | { success: false; error: string };
+type Result = { success: true; live: boolean } | { success: false; error: string };
 
 /**
  * Save the partner's look: header · footer · colour · subdomain — one upsert on his
@@ -42,11 +42,11 @@ export async function saveMySite(input: MySiteInput): Promise<Result> {
     return { success: false, error: messages.error.serverError };
   }
 
-  try {
-    await revalidateModontyTag("clients");
-  } catch {
-    /* best-effort */
-  }
+  // Immediate, and reported: the builder said «ظاهر على موقعك» while modonty could still serve
+  // the old page once, and a failed bust was swallowed (4 Oct 2026).
+  // This partner's pages only (4 Oct 2026) — the look never appears in the shared listings.
+  const owner = await db.client.findUnique({ where: { id: clientId }, select: { slug: true } });
+  const live = owner ? await revalidatePartner({ id: clientId, slug: owner.slug }) : false;
   revalidatePath("/dashboard/my-site");
-  return { success: true };
+  return { success: true, live };
 }

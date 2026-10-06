@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { GALLERY_BLOCKS } from "@modonty/shared/components/partner-site/free/gallery";
 import { PageBlocks } from "../../components/page-blocks";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../../helpers/client-page-data";
@@ -28,5 +27,5 @@ export async function generateMetadata({ params }: ClientPhotosPageProps): Promi
 /** Rendered from the shared block registry — same components the partner previewed in the console. */
 export default async function Page({ params }: ClientPhotosPageProps) {
   const { slug } = await params;
-  return <PageBlocks slug={slug} blocks={GALLERY_BLOCKS} titlePrefix="صور" />;
+  return <PageBlocks slug={slug} page="photos" />;
 }

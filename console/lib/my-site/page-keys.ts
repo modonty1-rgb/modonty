@@ -18,7 +18,7 @@ export const PAGE_LABELS: Record<BlocksPage, string> = {
   photos: "ألبوم أعمالنا",
   faq: "الأسئلة الشائعة",
   contact: "تواصل معنا",
-  articles: "مقالاتي",
+  articles: "مقالاتنا",
   book: "احجز",
   reviews: "آراء العملاء",
 };

@@ -61,7 +61,7 @@ export function AchievementsEditor({
       }
       onChange(next);
       setDraft(null);
-      toast.success(done);
+      toast.success(`${done} — يظهر على موقعك`);
     });
   }
 

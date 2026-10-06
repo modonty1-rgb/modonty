@@ -225,12 +225,16 @@ export default async function AccountsPage() {
                 const handle = getAccountHandle(s.href);
                 return (
                   <li key={s.key}>
-                    {/* `rel="me"` يربط الحسابَ بالموقع لمن يتحقّق من الهويّة. */}
+                    {/* `rel="me"` يربط الحسابَ بالموقع لمن يتحقّق من الهويّة.
+                        بلا `noreferrer` (٣ أكتوبر ٢٠٢٦، قبل معرض Techne): لينكدإن يعرض صفحة الشركة لزائر
+                        غير مسجّل فقط لو عرف أنه جاي من موقع — بلا مُحيل أظهر «الانضمام إلى LinkedIn»
+                        (مقيس في Playwright: نفس الرابط بمُحيل modonty.com فتح «Modonty | LinkedIn»).
+                        `noopener` يكفي للأمان: الصفحة الجديدة ما تقدر توصل لنافذتنا. */}
                     <AccountLink
                       id={s.key}
                       href={s.href}
                       external
-                      rel="me noopener noreferrer"
+                      rel="me noopener"
                       className="group flex min-h-[clamp(3.5rem,3rem+2.5vw,4rem)] items-center gap-[clamp(0.625rem,0.45rem+0.9vw,0.75rem)] rounded-2xl border bg-card p-[clamp(0.5rem,0.4rem+0.5vw,0.625rem)] pe-[clamp(0.75rem,0.5rem+1.2vw,1rem)] shadow-sm transition hover:border-foreground/20 hover:shadow-md motion-safe:active:scale-[0.99]"
                     >
                       <span className={`grid size-[clamp(2.375rem,2rem+1.9vw,2.75rem)] shrink-0 place-items-center rounded-xl ${CHANNEL_TILE[s.key] ?? "bg-muted text-foreground"}`}>

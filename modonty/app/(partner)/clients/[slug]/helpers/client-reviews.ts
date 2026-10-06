@@ -1,6 +1,7 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { CommentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
+import { clientSlugTag } from "@modonty/shared/lib/cache/client-cache-tags";
 
 // NOTE: getClientReviewsBySlug below reads ARTICLE comments (Comment via
 // article.clientId) — the legacy "reviews" that show article discussion as if it
@@ -37,6 +38,7 @@ export async function getClientReviews(
   // STALE` with `Age` back to 0 within minutes, and a 2.1 s first byte for the unlucky visitor.
   cacheLife("hours");
   const decodedSlug = decodeURIComponent(rawSlug);
+  cacheTag(clientSlugTag(decodedSlug)); // this partner only — see shared/lib/cache/client-cache-tags.ts
 
   const client = await db.client.findUnique({
     where: { slug: decodedSlug },

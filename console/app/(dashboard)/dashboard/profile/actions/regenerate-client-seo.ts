@@ -5,7 +5,7 @@ import type { Prisma } from "@prisma/client";
 
 import { generateClientSeoBundle } from "@modonty/shared/lib/seo/generate-client-seo-bundle";
 import { db } from "@/lib/db";
-import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { revalidatePartner } from "@/lib/revalidate-partner";
 
 /**
  * Regenerate the client's cached SEO (Next.js metadata + JSON-LD @graph) and persist
@@ -15,7 +15,9 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
  * NEVER throws — a regen failure must never break the profile save.
  */
 export async function regenerateClientSeo(
-  clientId: string
+  clientId: string,
+  /** `listing`: the save changed what the partner directory shows (name, logo…) — refresh that too. */
+  options?: { listing?: boolean },
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
     const bundle = await generateClientSeoBundle(db, clientId);
@@ -50,7 +52,9 @@ export async function regenerateClientSeo(
     // Best-effort and deliberately outside the return value — the regeneration itself
     // succeeded, and a cache endpoint that is down must not report it as a failure.
     try {
-      await revalidateModontyTag("clients");
+      // This partner's pages only, immediately (4 Oct 2026). Was «clients» with «max»: every
+      // partner's cache dropped on any save, and the first visitor still got the old page.
+      await revalidatePartner({ id: clientId, slug: client.slug }, { listing: options?.listing });
     } catch {
       // swallow — never let a cache bust undo a successful regeneration
     }

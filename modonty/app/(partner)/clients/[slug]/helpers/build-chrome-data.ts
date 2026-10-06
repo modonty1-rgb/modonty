@@ -12,9 +12,10 @@ export function buildSiteLinks(site: PartnerSite): { href: string; label: string
   if (site._count.media > 0) items.push({ href: `${base}/photos`, label: "ألبوم أعمالنا" });
   if (site._count.reviews > 0) items.push({ href: `${base}/reviews`, label: "آراء العملاء" });
   items.push({ href: `${base}/about`, label: "من نحن" });
-  // «مقالاتي» لا «المدونة» (خالد ٣٠ أغسطس): «المدونة» اسم صنف، والصفّ كلّه يتكلّم
-  // بضمير صاحب النشاط — خدماتنا · أعمالنا · من نحن.
-  if (site._count.articles > 0) items.push({ href: `${base}/articles`, label: "مقالاتي" });
+  // «مقالاتنا» لا «المدونة» (خالد ٣٠ أغسطس): «المدونة» اسم صنف، والصفّ كلّه يتكلّم
+  // بضمير صاحب النشاط — خدماتنا · أعمالنا · من نحن. كانت «مقالاتي» مفرداً وسط الجمع؛
+  // خالد وحّدها ٤ أكتوبر ٢٠٢٦.
+  if (site._count.articles > 0) items.push({ href: `${base}/articles`, label: "مقالاتنا" });
   if (site._count.clientFaqs > 0) items.push({ href: `${base}/faq`, label: "الأسئلة الشائعة" });
   items.push({ href: `${base}/contact`, label: "تواصل معنا" });
   return items;
@@ -37,16 +38,18 @@ export function buildChromeData(site: PartnerSite, year: string): { header: Head
     primaryColor,
   };
   return {
-    header: { ...common, links },
+    header: { ...common, links, verified: Boolean(site.isVerified) },
     footer: {
       ...common,
       description: site.description,
       address: [site.addressStreet, site.addressCity].filter(Boolean).join("، ") || null,
-      services: site.services.filter((s) => s.title?.trim()).map((s) => ({ href: `${base}/services`, label: s.title })),
+      services: site.services.filter((s) => s.title?.trim()).map((s, i) => ({ href: `${base}/services#service-${i}`, label: s.title })),
       pages: links,
       socialLinks: site.sameAs,
       registrationNumber: site.commercialRegistrationNumber,
-      privacyHref: "/legal/privacy-policy",
+      // No `privacyHref`: partners have no policy of their own yet, and passing modonty's path here
+      // made the footer call it «سياسة الخصوصية» as if it were the partner's. The legal bar falls
+      // back to the same page and names it «سياسة خصوصية مدونتي».
       year,
     },
   };

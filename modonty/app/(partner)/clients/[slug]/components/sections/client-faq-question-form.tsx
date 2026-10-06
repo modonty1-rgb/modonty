@@ -54,7 +54,7 @@ export function ClientFaqQuestionForm({ slug }: ClientFaqQuestionFormProps) {
 
   if (done) {
     return (
-      <div className="mt-4 flex items-center gap-2 rounded-md border border-success/30 bg-success/10 px-4 py-3 text-[12.5px] font-bold text-success">
+      <div role="status" className="flex items-center gap-2 rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm font-bold text-success">
         <IconSuccess className="h-4 w-4 shrink-0" aria-hidden />
         تم إرسال سؤالك — سنجيبك قريبًا.
       </div>
@@ -64,43 +64,47 @@ export function ClientFaqQuestionForm({ slug }: ClientFaqQuestionFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-4 flex flex-col gap-2.5 border-t pt-4"
+      className="flex flex-col gap-3"
     >
-      <p className="text-[12.5px] font-extrabold text-foreground">
-        اطرح سؤالاً
-      </p>
-
-      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+      {/* Restyled to the partner-site sections (4 Oct 2026): it was the old card's 12.5px text
+          and 36px fields, under the new 14px / 44px sections. Labels for screen readers. */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <label className="sr-only" htmlFor="faq-ask-name">الاسم (اختياري)</label>
         <Input
+          id="faq-ask-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="الاسم (اختياري)"
-          className="h-9 text-[13px]"
+          className="h-11 rounded-full px-5 text-sm"
           disabled={isPending}
         />
+        <label className="sr-only" htmlFor="faq-ask-email">البريد الإلكتروني</label>
         <Input
+          id="faq-ask-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="البريد الإلكتروني"
-          className="h-9 text-[13px]"
+          className="h-11 rounded-full px-5 text-sm"
           disabled={isPending}
           required
         />
       </div>
 
+      <label className="sr-only" htmlFor="faq-ask-question">سؤالك</label>
       <Textarea
+        id="faq-ask-question"
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         placeholder="اكتب سؤالك هنا..."
         rows={3}
-        className="resize-none text-[13px]"
+        className="resize-none rounded-lg px-5 py-3 text-sm"
         disabled={isPending}
         required
       />
 
       {error && (
-        <div className="rounded-md bg-destructive/10 px-3 py-2 text-[12px] text-destructive">
+        <div role="alert" className="rounded-lg bg-destructive/10 px-4 py-2 text-sm text-destructive">
           <p>{error}</p>
           {needsLogin && (
             <Button asChild size="sm" className="mt-2">
@@ -113,7 +117,7 @@ export function ClientFaqQuestionForm({ slug }: ClientFaqQuestionFormProps) {
       <Button
         type="submit"
         disabled={isPending}
-        className="inline-flex items-center gap-2 self-start"
+        className="inline-flex h-11 items-center gap-2 self-start rounded-full px-6 font-bold"
       >
         {isPending ? (
           <IconLoading className="h-4 w-4 animate-spin" aria-hidden />

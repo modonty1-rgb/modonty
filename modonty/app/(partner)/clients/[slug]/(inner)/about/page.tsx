@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import { ABOUT_BLOCKS } from "@modonty/shared/components/partner-site/free/about";
 import { PageBlocks } from "../../components/page-blocks";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../../helpers/client-page-data";
 import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
-import { PageFrame } from "../../components/page-frame";
 import { ClientAboutSection } from "../../components/sections/client-about-section";
 import { ClientTeamSection } from "../../components/sections/client-team-section";
 
@@ -31,5 +29,5 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 /** Rendered from the shared block registry — same components the partner previewed in the console. */
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
-  return <PageBlocks slug={slug} blocks={ABOUT_BLOCKS} />;
+  return <PageBlocks slug={slug} page="about" />;
 }

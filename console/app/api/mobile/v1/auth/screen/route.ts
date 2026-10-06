@@ -10,7 +10,9 @@ export function GET() {
     title: "أهلًا بك",
     subtitle: "تابع نموك من مكان واحد.",
     emailLabel: "البريد الإلكتروني أو اسم الحساب",
-    emailPlaceholder: "name@company.com أو اسم حسابك",
+    // لاتيني فقط: الحقل اتّجاهه LTR، والنصّ المختلط كان يُقصّ من بدايته العربية على الجوال
+    // («سم حسابك» — جوال خالد ٥ أكتوبر ٢٠٢٦). «اسم الحساب» مذكور في العنوان فوقه.
+    emailPlaceholder: "name@company.com",
     passwordLabel: "كلمة المرور",
     showPasswordLabel: "إظهار كلمة المرور",
     hidePasswordLabel: "إخفاء كلمة المرور",

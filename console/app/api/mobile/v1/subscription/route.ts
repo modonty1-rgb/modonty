@@ -51,7 +51,8 @@ export async function GET(request: NextRequest) {
   const paidTotal =
     // الطلبُ المستردُّ لا يُعرض مبلغُه «مدفوعاً» — قاعدةُ `shared/lib/payments/collected.ts`.
     activeOrder && isCollectedOrder(activeOrder) && knownCurrency(activeOrder.currency)
-      ? arabicCurrency(activeOrder.totalMinor / 100, activeOrder.currency)
+      // صفرٌ يُكتب «مجاناً»: «٠ ر.س» قُرئ نقطةً على الجوال (الصفر العربي نقطة — ٥ أكتوبر ٢٠٢٦).
+      ? activeOrder.totalMinor === 0 ? "مجاناً" : arabicCurrency(activeOrder.totalMinor / 100, activeOrder.currency)
       : null;
   // «٦ أشهر + شهر هدية» — صياغةُ الفاتورة وكرت الإعدادات نفسُها (٢٣ سبتمبر ٢٠٢٦ · خالد: مصدرٌ واحد).
   const termLabel = activeOrder

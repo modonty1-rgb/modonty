@@ -70,6 +70,9 @@ export function transformArticleToFormData(
     contentDepth: article.contentDepth || undefined,
 
     // SEO Meta Tags
+    targetKeyword: article.targetKeyword || undefined,
+    ctaUrl: article.ctaUrl || undefined,
+    ctaLabel: article.ctaLabel || undefined,
     seoTitle: article.seoTitle || undefined,
     seoDescription: article.seoDescription || undefined,
     // Without this the form opened on the store default `index, follow`, and the first

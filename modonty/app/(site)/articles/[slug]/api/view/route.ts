@@ -1,16 +1,13 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { incrementCounters } from "@/lib/counters/increment-counters";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
-import { ArticleStatus } from "@prisma/client";
-import { classifyTrafficSource } from "@/lib/analytics/classify-source";
-import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
-import { notifyTelegram } from "@/lib/telegram/notify-telegram";
+import { recordArticleView } from "@/lib/analytics/record-article-view";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
 
+// Web door: the dedupe key is the `modonty_view_sid` cookie. The counting rule itself lives in
+// lib/analytics/record-article-view.ts, shared with the mobile API (which keys on X-Device-Id).
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ slug: string }> }
@@ -19,36 +16,6 @@ export async function POST(
     const { slug } = await params;
     const decodedSlug = decodeURIComponent(slug);
 
-    const article = await db.article.findFirst({
-      where: { slug: decodedSlug, status: ArticleStatus.PUBLISHED },
-      select: {
-        id: true,
-        clientId: true,
-        title: true,
-        slug: true,
-        client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
-        author: { select: { id: true, name: true } },
-        category: { select: { slug: true, name: true } },
-        tags: { select: { tag: { select: { name: true } } }, take: 1 },
-      },
-    });
-
-    if (!article) {
-      return NextResponse.json({ ok: false }, { status: 404 });
-    }
-
-    const cookieStore = await cookies();
-    let sessionId = cookieStore.get(VIEW_SESSION_COOKIE)?.value;
-    if (!sessionId) {
-      sessionId = `view-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
-      cookieStore.set(VIEW_SESSION_COOKIE, sessionId, {
-        maxAge: SESSION_MAX_AGE,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-      });
-    }
-
     // The truth comes from the browser: document.referrer (external source) +
     // location.href (UTM params). The request's own Referer header is always
     // our page URL — relying on it misclassified every view as ORGANIC (pre-2026-07-07).
@@ -56,90 +23,36 @@ export async function POST(
       referrer?: string | null;
       url?: string | null;
     } | null;
-    const referrer = body?.referrer?.trim() || null;
-    const pageUrl = body?.url?.trim() || null;
 
-    const headersList = await headers();
-    const host = headersList.get("host") || null;
-    const userAgent = headersList.get("user-agent") || null;
-    const forwarded = headersList.get("x-forwarded-for");
-    const ipAddress = forwarded ? forwarded.split(",")[0].trim() : headersList.get("x-real-ip") || headersList.get("cf-connecting-ip") || null;
-
-    const { source, referrerDomain, searchEngine } = classifyTrafficSource(referrer, pageUrl, host);
-    const { country, region, city } = getGeoFromHeaders(headersList);
-
-    const session = await auth();
-    const userId = session?.user?.id ?? undefined;
-
-    // Honest views: count every genuine entry; suppress only a refresh-in-place —
-    // i.e. the session's most recent view is the SAME article (consecutive
-    // duplicate). Returning here after visiting another article counts again.
-    const lastView = await db.articleView.findFirst({
-      where: { sessionId },
-      orderBy: { createdAt: "desc" },
-      select: { articleId: true },
+    const result = await recordArticleView({
+      slug: decodedSlug,
+      referrer: body?.referrer?.trim() || null,
+      pageUrl: body?.url?.trim() || null,
+      headers: await headers(),
+      resolveSessionId: async () => {
+        const cookieStore = await cookies();
+        let sessionId = cookieStore.get(VIEW_SESSION_COOKIE)?.value;
+        if (!sessionId) {
+          sessionId = `view-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+          cookieStore.set(VIEW_SESSION_COOKIE, sessionId, {
+            maxAge: SESSION_MAX_AGE,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+          });
+        }
+        return sessionId;
+      },
+      resolveUserId: async () => (await auth())?.user?.id ?? undefined,
     });
-    // Clarity session tags (plan ج٦) go back on EVERY visit — a refresh is not a new view, but
-    // it is still a recording that needs its client and writer.
-    const clarity = { client: article.client?.slug, author: article.author?.name ?? undefined };
 
-    if (lastView?.articleId === article.id) {
-      return NextResponse.json({ ok: true, analyticsId: null, clarity });
+    if (!result.found) {
+      return NextResponse.json({ ok: false }, { status: 404 });
     }
-
-    const [, analytics] = await Promise.all([
-      db.articleView.create({
-        data: { articleId: article.id, userId, sessionId, referrer, userAgent, ipAddress },
-      }),
-      db.analytics.create({
-        data: {
-          articleId: article.id,
-          clientId: article.clientId ?? undefined,
-          sessionId,
-          userId,
-          source,
-          referrerDomain,
-          searchEngine,
-          userAgent,
-          ipAddress,
-          country,
-          region,
-          city,
-        },
-      }),
-      // Atomic `$inc` outside a transaction — 50 readers opening one article at once made the
-      // transactional update abort 49 times on write conflicts (29 Sep 2026). See incrementCounters.
-      incrementCounters("articles", article.id, { viewsCount: 1 }),
-    ]);
-
-    if (article.clientId) {
-      notifyTelegram(article.clientId, "articleView", {
-        title: article.title,
-        ipAddress,
-        headers: headersList,
-      }).catch(() => {});
+    if (result.analyticsId === null) {
+      return NextResponse.json({ ok: true, analyticsId: null, clarity: result.clarity });
     }
-
-    // GA4 article_view is sent by the BROWSER (ViewTracker → pushGa4Event → GTM), not from
-    // here: a server-sent event with no matching browser session became a phantom session
-    // (see lib/analytics/ga4-browser.ts). The params come from here because only the server
-    // has the article's client, author and category.
-    const ga4 = {
-      article_id: article.id,
-      article_slug: article.slug,
-      article_title: article.title,
-      author_id: article.author?.id,
-      author_name: article.author?.name ?? undefined,
-      category_slug: article.category?.slug,
-      category_name: article.category?.name,
-      tag_primary: article.tags[0]?.tag?.name,
-      client_id: article.clientId ?? undefined,
-      client_slug: article.client?.slug,
-      client_name: article.client?.name,
-      client_industry: article.client?.industry?.name,
-    };
-
-    return NextResponse.json({ ok: true, analyticsId: analytics.id, ga4, clarity });
+    return NextResponse.json({ ok: true, analyticsId: result.analyticsId, ga4: result.ga4, clarity: result.clarity });
   } catch (err) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }

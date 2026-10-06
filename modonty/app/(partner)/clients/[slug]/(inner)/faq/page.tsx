@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import { FAQ_BLOCKS } from "@modonty/shared/components/partner-site/free/faq";
+import { Section } from "@modonty/shared/components/partner-site/free/home/parts/section";
 import { PageBlocks } from "../../components/page-blocks";
-import { notFound } from "next/navigation";
 import { jsonLdHtml } from "@/lib/seo";
 import { getPartnerSite } from "../../helpers/get-partner-site";
-import { getClientPageFaqs } from "../../helpers/client-faqs";
+import { getCachedHomeData } from "../../helpers/get-cached-home-data";
 import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
-import { PageFrame } from "../../components/page-frame";
-import { ClientFaqSection } from "../../components/sections/client-faq-section";
+import { ClientFaqQuestionForm } from "../../components/sections/client-faq-question-form";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -27,10 +25,46 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 }
 
-/** «الأسئلة» — the partner's published FAQ + the ask-a-question form (FAQPage JSON-LD ships too). */
-
-/** Rendered from the shared block registry — same components the partner previewed in the console. */
+/**
+ * «الأسئلة» — the partner's questions from the shared registry, then the ask-a-question form,
+ * with an FAQPage JSON-LD for exactly the questions on the page.
+ *
+ * The template rebuild dropped both (4 Oct 2026): visitors could no longer ask, and the page that
+ * the home page's own comment calls «the complete set is declared on /faq» declared nothing.
+ * The JSON-LD reads the same list the accordion renders (`home.data.faqs`), so Google is never
+ * promised a question that is not visible.
+ */
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
-  return <PageBlocks slug={slug} blocks={FAQ_BLOCKS} titlePrefix="الأسئلة الشائعة لدى" />;
+  const home = await getCachedHomeData(decodeURIComponent(slug));
+  const faqs = home?.data.faqs ?? [];
+  return (
+    <>
+      {faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: jsonLdHtml({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.question, acceptedAnswer: { "@type": "Answer", text: f.answer } })),
+            }),
+          }}
+        />
+      )}
+      <PageBlocks
+        slug={slug}
+        page="faq"
+        after={{
+          faq: (
+            <Section id="ask" eyebrow="لم تجد سؤالك؟" heading="اطرح سؤالك">
+              <div className="mx-auto max-w-3xl">
+                <ClientFaqQuestionForm slug={decodeURIComponent(slug)} />
+              </div>
+            </Section>
+          ),
+        }}
+      />
+    </>
+  );
 }

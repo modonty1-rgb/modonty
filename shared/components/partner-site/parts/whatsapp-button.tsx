@@ -17,7 +17,7 @@ export const WHATSAPP_GREEN = "#25D366";
 export const WHATSAPP_SURFACE = "#0E7C6B";
 
 export interface WhatsAppButtonProps {
-  /** wa.me link. When absent (console preview) the button renders inert. */
+  /** wa.me link. Absent → nothing renders. `#…` (console preview) → an inert pill. */
   href?: string | null;
   variant?: "solid" | "outline-light" | "round" | "text";
   className?: string;
@@ -52,7 +52,11 @@ export function WhatsAppButton({ href, variant = "solid", className }: WhatsAppB
   const style =
     variant === "solid" || variant === "round" ? { backgroundColor: WHATSAPP_SURFACE } : undefined;
 
-  if (!href) {
+  // No number → no button (4 Oct 2026). It used to render this same pill as a <span> — a button
+  // that looks tappable and does nothing — on every live partner site without a phone, in up to
+  // 14 places. The console preview passes `#whatsapp` instead, and keeps the inert pill.
+  if (!href) return null;
+  if (href.startsWith("#")) {
     return (
       <span className={classes} style={style} aria-label={variant === "round" ? label : undefined}>
         {inner}

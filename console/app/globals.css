@@ -291,3 +291,26 @@
   from { transform: scaleY(0.4); }
   to   { transform: scaleY(2.2); }
 }
+
+/* Phone legibility (4 Oct 2026 mobile audit: 12px text on almost every console page).
+   `text-xs` is used ~490 times for helper lines, table meta and badges — on a phone held at arm's
+   length 12px Arabic is below the 14px floor the modonty-uiux audit holds. Below `md` the class
+   reads 14px; from `md` (desktop density) it stays 12px. One rule instead of 490 edits. */
+@media (max-width: 767.98px) {
+  .text-xs {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
+
+/* Native checkboxes default to 13px — too small to see on a phone. Unsized ones (seo intake)
+   get 18px and the brand colour; explicit `size-4`/`h-4` utilities still win. The touch target
+   is the wrapping <label> (≥ 44px on phones), as WCAG 2.5.8 counts it. */
+@layer base {
+  input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    accent-color: hsl(var(--primary));
+  }
+}

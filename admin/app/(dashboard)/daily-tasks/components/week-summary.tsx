@@ -1,8 +1,57 @@
-import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+"use client";
 
+import { Fragment, useState } from "react";
+import Link from "next/link";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+
+import { TASK_PRIORITY_META, TASK_STATUS_META } from "@/lib/tasks/task-config";
 import { cn } from "@/lib/utils";
-import type { PersonWeek } from "../helpers/get-weekly-report";
+import type { PersonWeek, WeekTask } from "../helpers/get-weekly-report";
+
+const dueFmt = new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "long" });
+
+/** المتأخّرُ أوّلاً، ثم ما عند المنفّذ، ثم ما ينتظر الاعتماد، والمنجَزُ آخراً. */
+const rank = (t: WeekTask) => (t.late ? 0 : t.status === "TODO" || t.status === "IN_PROGRESS" ? 1 : t.status === "REVIEW" ? 2 : 3);
+
+/**
+ * مهامُّ الشخص تحت سطره — بدل قسمٍ ثانٍ تحت الجدول يعيد نفس الأسماء (خالد ٣ أكتوبر ٢٠٢٦).
+ * كلُّ مهمّةٍ سطر: الحالة · العنوان (يُفتح لتفاصيله) · الأولويّة إن ارتفعت · الموعد.
+ */
+function PersonWeekTasks({ tasks }: { tasks: WeekTask[] }) {
+  if (tasks.length === 0) return <p className="px-3 py-3 text-[12px] text-muted-foreground">لا مهامّ هذا الأسبوع.</p>;
+  const sorted = [...tasks].sort((a, b) => rank(a) - rank(b));
+  return (
+    <ul className="divide-y rounded-md border bg-background">
+      {sorted.map((t) => (
+        <li key={t.id} className={cn("grid grid-cols-[7rem_minmax(0,1fr)_auto] items-start gap-2 px-3 py-1.5", t.late && "bg-red-500/5")}>
+          <span className={cn("mt-0.5 w-fit whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] font-semibold", TASK_STATUS_META[t.status].tone)}>
+            {TASK_STATUS_META[t.status].labelAr}
+          </span>
+          <details className="group min-w-0">
+            <summary className="flex cursor-pointer list-none items-center gap-2 text-[13px]">
+              <span className="truncate font-medium group-open:whitespace-normal">{t.title}</span>
+              {t.priority === "HIGH" || t.priority === "URGENT" ? (
+                <span className={cn("shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold", TASK_PRIORITY_META[t.priority].tone)}>
+                  {TASK_PRIORITY_META[t.priority].labelAr}
+                </span>
+              ) : null}
+            </summary>
+            <p className="mt-1 whitespace-pre-line border-s-2 ps-2 text-[12px] text-muted-foreground">{t.description || "بلا تفاصيل."}</p>
+          </details>
+          <span
+            className={cn(
+              "whitespace-nowrap text-[11px] tabular-nums",
+              t.late ? "font-bold text-red-600 dark:text-red-400" : t.completedOnTime === false ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground",
+            )}
+          >
+            {t.dueDate ? dueFmt.format(t.dueDate) : "بلا موعد"}
+            {t.late ? " · متأخّرة" : t.completedOnTime === false ? " · أُنجزت بعد موعدها" : t.completedOnTime ? " · في موعدها" : ""}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 const N = new Intl.NumberFormat("ar-EG");
 
@@ -33,6 +82,8 @@ export function WeekSummary({
   prevHref: string;
   nextHref: string | null;
 }) {
+  // سطرٌ مفتوحٌ واحد — كالجداول الأخرى، كي لا تُقرأ مهامُّ شخصٍ تحت اسم غيره.
+  const [openKey, setOpenKey] = useState<string | null>(null);
   const total = people.reduce(
     (a, p) => ({
       assigned: a.assigned + p.assigned,
@@ -92,7 +143,7 @@ export function WeekSummary({
         <table className="w-full text-[13px]">
           <thead>
             <tr className="border-b bg-muted/60 text-[12px] font-bold">
-              <th className="px-3 py-2 text-right">الشخص</th>
+              <th className="px-3 py-2 text-right">الشخص <span className="font-normal text-muted-foreground">— اضغط لمهامّه</span></th>
               <th className="px-3 py-2 text-right">أُسند له</th>
               <th className="px-3 py-2 text-right">أنجز</th>
               <th className="px-3 py-2 text-right">في موعده</th>
@@ -108,33 +159,49 @@ export function WeekSummary({
                 </td>
               </tr>
             ) : (
-              people.map((p) => (
-                <tr key={p.staffId ?? "unassigned"} className={cn("border-b last:border-0", p.lateNow > 0 && "bg-red-500/5")}>
-                  <td className="px-3 py-2">
-                    <span className="flex items-center gap-2 font-semibold">
-                      {p.image ? (
-                        <img src={p.image} alt="" className="size-6 rounded-full object-cover" />
-                      ) : (
-                        <span className="grid size-6 place-items-center rounded-full bg-muted text-[10px] font-bold">
-                          {p.name.charAt(0)}
+              people.map((p) => {
+                const key = p.staffId ?? "unassigned";
+                const open = openKey === key;
+                return (
+                  <Fragment key={key}>
+                    <tr
+                      className={cn("cursor-pointer border-b last:border-0 hover:bg-muted/40", p.lateNow > 0 && "bg-red-500/5", open && "bg-muted/50")}
+                      onClick={() => setOpenKey(open ? null : key)}
+                      aria-expanded={open}
+                    >
+                      <td className="px-3 py-2">
+                        <span className="flex items-center gap-2 font-semibold">
+                          <ChevronDown className={cn("size-4 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")} aria-hidden />
+                          {p.image ? (
+                            <img src={p.image} alt="" className="size-6 rounded-full object-cover" />
+                          ) : (
+                            <span className="grid size-6 place-items-center rounded-full bg-muted text-[10px] font-bold">{p.name.charAt(0)}</span>
+                          )}
+                          <bdi>{p.name}</bdi>
                         </span>
-                      )}
-                      {p.name}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 tabular-nums">{N.format(p.assigned)}</td>
-                  <td className="px-3 py-2 font-bold tabular-nums">{N.format(p.completed)}</td>
-                  <td className="px-3 py-2 tabular-nums">
-                    {p.completedWithDue ? `${N.format(p.onTime)} من ${N.format(p.completedWithDue)}` : "—"}
-                  </td>
-                  <td className={cn("px-3 py-2 font-bold tabular-nums", p.lateNow ? "text-red-600 dark:text-red-400" : "text-muted-foreground")}>
-                    {N.format(p.lateNow)}
-                  </td>
-                  <td className="px-3 py-2 text-[12px]">
-                    <Delta now={p.completed} before={p.completedLastWeek} />
-                  </td>
-                </tr>
-              ))
+                      </td>
+                      <td className="px-3 py-2 tabular-nums">{N.format(p.assigned)}</td>
+                      <td className="px-3 py-2 font-bold tabular-nums">{N.format(p.completed)}</td>
+                      <td className="px-3 py-2 tabular-nums">
+                        {p.completedWithDue ? `${N.format(p.onTime)} من ${N.format(p.completedWithDue)}` : "—"}
+                      </td>
+                      <td className={cn("px-3 py-2 font-bold tabular-nums", p.lateNow ? "text-red-600 dark:text-red-400" : "text-muted-foreground")}>
+                        {N.format(p.lateNow)}
+                      </td>
+                      <td className="px-3 py-2 text-[12px]">
+                        <Delta now={p.completed} before={p.completedLastWeek} />
+                      </td>
+                    </tr>
+                    {open ? (
+                      <tr className="border-b bg-muted/20">
+                        <td colSpan={6} className="px-3 py-2">
+                          <PersonWeekTasks tasks={p.tasks} />
+                        </td>
+                      </tr>
+                    ) : null}
+                  </Fragment>
+                );
+              })
             )}
           </tbody>
         </table>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { ArticleStatus } from "@prisma/client";
-import { CalendarCheck, ExternalLink, FileWarning, Gauge, ImageOff, Loader2, PenLine, Search, Workflow } from "lucide-react";
+import { CalendarCheck, Crosshair, ExternalLink, FileWarning, Gauge, ImageOff, Loader2, PenLine, Search, Workflow } from "lucide-react";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { Input } from "@/components/ui/input";
@@ -31,7 +31,7 @@ const day = (d: Date | string | null | undefined) => (d ? format(new Date(d), "d
  * work» cards: in the «Advanced Table» palette amber means «still to do», and the status colours
  * stay free for the statuses. Arabic labels, as on Client Quotas.
  */
-type KpiKey = "publishedThisMonth" | "lowSeo" | "noImage" | "noDescription";
+type KpiKey = "publishedThisMonth" | "lowSeo" | "noImage" | "noDescription" | "noKeyword";
 const KPIS: Record<KpiKey, KpiMeta & { icon: React.ComponentType<{ className?: string }>; test: (a: Article, seo: number) => boolean }> = {
   publishedThisMonth: {
     label: "منشور هذا الشهر",
@@ -65,6 +65,15 @@ const KPIS: Record<KpiKey, KpiMeta & { icon: React.ComponentType<{ className?: s
     ring: "ring-amber-500",
     icon: FileWarning,
     test: (a) => !a.seoDescription?.trim(),
+  },
+  // Plan و١ (Khalid, 3 Oct 2026): the field is optional, so this filter is how the team lead
+  // sees which articles — and whose — were written without a researched target phrase.
+  noKeyword: {
+    label: "بدون كلمة مستهدفة",
+    tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+    ring: "ring-amber-500",
+    icon: Crosshair,
+    test: (a) => !a.targetKeyword?.trim(),
   },
 };
 
@@ -243,6 +252,7 @@ export function ArticlesBoard({
         <FactGroup key="quality" title="الجودة" spread>
           <Fact label="درجة السيو" value={<SeoScoreBadge score={seo.get(a.id) ?? 0} size="sm" />} />
           <Fact label="المشاهدات" value={N.format(a.views)} tone={a.views > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground/60"} />
+          <Fact label="الكلمة المستهدفة" value={a.targetKeyword?.trim() ? <span className="font-medium">{a.targetKeyword}</span> : <Check ok={false} missing="ناقصة" />} />
           <Fact label="عنوان السيو" value={<Check ok={!!a.seoTitle?.trim()} missing="ناقص" />} />
           <Fact label="وصف السيو" value={<Check ok={!!a.seoDescription?.trim()} missing="ناقص" />} />
           <Fact label="الصورة الرئيسية" value={<Check ok={!!a.featuredImage} missing="ناقصة" />} />

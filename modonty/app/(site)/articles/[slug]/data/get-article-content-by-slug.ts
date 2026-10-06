@@ -81,7 +81,12 @@ export async function getArticleContentBySlug(slug: string) {
       // Cached with the FAQ list itself (`getArticleFaqs`, same tag), so the header's count and
       // the section it points to always agree. Was a live read until plan أ١ (2 Oct 2026).
       _count: { select: { faqs: true } },
-      relatedTo: {
+      // `relatedFrom` لا `relatedTo` (٣ أكتوبر ٢٠٢٦): `relatedFrom` = صفوفٌ هذا المقالُ طرفُها الأوّل، و`related`
+      // فيها هو ما اختاره الكاتب. `relatedTo` كان يرجع المقالاتِ التي تربط *إليه*، و`related` فيها هو المقالُ
+      // نفسه — فيُحذف كمكرّر، ولم يظهر اختيارُ الكاتب في «اقرأ أيضاً» قطّ (مقال ١٠٧: ٥ مختارة، ٠ ظاهرة).
+      relatedFrom: {
+        // المنشورُ فقط — مقالٌ مختار لم يُنشر بعد كان سيصير رابطاً إلى ٤٠٤.
+        where: { related: { status: ArticleStatus.PUBLISHED } },
         include: {
           related: {
             select: {

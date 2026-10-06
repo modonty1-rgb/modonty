@@ -170,7 +170,7 @@ export async function getArticlePageData(slug: string) {
       });
     }
   };
-  collectReadMore(article.relatedTo?.map((r) => r.related), article.client?.name);
+  collectReadMore(article.relatedFrom?.map((r) => r.related), article.client?.name);
   collectReadMore(moreFromClient, article.client?.name);
   collectReadMore(moreFromAuthor);
   collectReadMore(relatedArticles);

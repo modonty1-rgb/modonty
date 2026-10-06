@@ -1,3 +1,4 @@
+import { SiteLink } from "../../../parts/site-link";
 import { cn } from "../../../../../lib/utils/index";
 import type { FooterData } from "../footer-data";
 
@@ -11,8 +12,11 @@ export function LegalBar({ data, centered = false }: { data: FooterData; centere
         {data.registrationNumber ? ` · سجل تجاري ${data.registrationNumber}` : ""}
       </span>
       <span className="flex items-center gap-6">
-        <a href={data.privacyHref ?? "/legal/privacy-policy"} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">سياسة الخصوصية</a>
-        <a href="https://www.modonty.com" className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">موقع مبني على مدونتي</a>
+        {/* A partner without his own policy links modonty's — which is the one that applies, since
+            modonty stores what his forms collect. The label now says whose it is: «سياسة الخصوصية»
+            under the partner's name opened modonty's page without warning (4 Oct 2026). */}
+        <SiteLink href={data.privacyHref ?? "/legal/privacy-policy"} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.privacyHref ? "سياسة الخصوصية" : "سياسة خصوصية مدونتي"}</SiteLink>
+        <SiteLink href="https://www.modonty.com" className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">موقع مبني على مدونتي</SiteLink>
       </span>
     </div>
   );

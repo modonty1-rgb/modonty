@@ -96,6 +96,7 @@ export function mapFormDataToClientData(data: ClientFormData) {
     ctaPresetId: data.ctaPresetId || null,
     ctaLabel: data.ctaLabel || null,
     ctaUrl: data.ctaUrl || null,
+    listedOn: data.listedOn ?? [],
 
     // (Twitter card/site/title/description are NOT Client columns — they live in
     // nextjsMetadata, generated from Settings + the client's hero image. No mapping.)

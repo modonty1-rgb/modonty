@@ -31,6 +31,9 @@ interface EngagementFabProps {
  */
 export function EngagementFab({ children, label, closeLabel }: EngagementFabProps) {
   const [open, setOpen] = useState(false);
+  // أدواتُ القراءة تُركَّب عند أوّل فتح فقط (خالد ٣ أكتوبر ٢٠٢٦: «ما تشتغل إلا لما يضغط») — كانت تُركَّب
+  // مخفيّةً مع الصفحة فيُنزَّل كودُها (ReadingTools ٢٩١ سطراً) لكلّ قارئ ولو لم يلمس الزرّ.
+  const [mounted, setMounted] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
   // Close on Escape and on a tap anywhere else — the two exits people try without being told.
@@ -56,7 +59,7 @@ export function EngagementFab({ children, label, closeLabel }: EngagementFabProp
          starts and is gone once it ends, instead of floating over the whole page.
          `end-3` is the LEFT corner in Arabic, the side the bottom bar's primary button is not on;
          the offset clears that bar (65px) plus the phone's own safe area. */
-      className="pointer-events-auto sticky z-40 ms-auto flex w-14 flex-col items-center gap-2 lg:hidden"
+      className="pointer-events-auto sticky z-40 ms-auto flex w-11 flex-col items-center gap-2 lg:hidden"
       // A bottom offset, not a `100dvh -` top one: dvh inside calc resolved to the device height
       // rather than the viewport in testing, and parked the button 58px below the fold.
       style={{ bottom: "calc(65px + env(safe-area-inset-bottom) + 0.75rem)" }}
@@ -75,16 +78,20 @@ export function EngagementFab({ children, label, closeLabel }: EngagementFabProp
         // `visibility` and not just opacity: an invisible row must not be reachable by keyboard.
         style={{ visibility: open ? "visible" : "hidden" }}
       >
-        {children}
+        {mounted ? children : null}
       </div>
 
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          setMounted(true);
+          setOpen((v) => !v);
+        }}
         aria-expanded={open}
         aria-label={open ? closeLabel : label}
         className={cn(
-          "grid size-14 place-items-center rounded-full shadow-lg ring-1 ring-black/5 transition-transform active:scale-95 motion-reduce:active:scale-100",
+          // ٤٤ لا ٥٦ (تدقيق الجوال ٣ أكتوبر ٢٠٢٦): الدائرةُ كانت تغطّي آخر كلمات السطر وقت القراءة.
+          "grid size-11 place-items-center rounded-full shadow-md ring-1 ring-black/5 transition-transform active:scale-95 motion-reduce:active:scale-100",
           // The A mark, not a generic ⋯ : since the four action tabs moved to the outline bar
           // this button opens ONE thing — how the text reads. «Aa» is what Safari Reader, Medium
           // and Kindle all put on that control, so it needs no label.
@@ -93,7 +100,7 @@ export function EngagementFab({ children, label, closeLabel }: EngagementFabProp
             : "bg-primary text-primary-foreground"
         )}
       >
-        {open ? <IconClose className="size-6" /> : <IconTextNormal className="size-6" />}
+        {open ? <IconClose className="size-5" /> : <IconTextNormal className="size-5" />}
       </button>
     </div>
   );

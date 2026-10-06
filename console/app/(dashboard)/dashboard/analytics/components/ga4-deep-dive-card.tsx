@@ -7,6 +7,7 @@ import {
   getDayPattern,
   getConversionFunnel,
 } from "@/lib/analytics/ga4-data-api";
+import { IconAlertTriangle } from "@modonty/shared/lib/icons";
 
 const DAY_NAMES_AR = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
@@ -219,7 +220,7 @@ function EmptyState({ message }: { message: string }) {
 function ErrorState() {
   return (
     <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-      ⚠️ تعذّر جلب البيانات من GA4 حالياً.
+      <IconAlertTriangle className="me-1 inline h-4 w-4 align-[-3px]" aria-hidden />تعذّر جلب البيانات من GA4 حالياً.
     </p>
   );
 }

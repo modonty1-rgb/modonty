@@ -21,4 +21,11 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   return context.resolveRequest(context, moduleName, platform);
 };
 
+// بناء الإصدار المحلي على ويندوز: إضافة react-native تمرّر ملف الدخول نسبياً (`index.js`) وإكسبو
+// يحلّه من جذر المستودع، فيُشغَّل بـ EXPO_NO_METRO_WORKSPACE_ROOT=1 (توثيق Expo CLI). عندها لا يضيف
+// إكسبو جذر المستودع للمراقبة، فلا تُرى حزم pnpm المشتركة — فيُضاف هنا. لا أثر له في التطوير ولا في EAS.
+if (process.env.EXPO_NO_METRO_WORKSPACE_ROOT) {
+  config.watchFolders = [...new Set([...(config.watchFolders ?? []), path.resolve(__dirname, '..')])];
+}
+
 module.exports = config;

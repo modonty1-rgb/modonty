@@ -154,6 +154,8 @@ export function ReferralRoute({ accessToken, onBack }: ReferralRouteProps) {
             </View>)}
           </TonalCard>
         </EnterView>
+        {/* الشرح ينتهي بالفعل نفسه — كان العميل يقرأ الخطوات ثم يبحث عن التبويب بنفسه (٥ أكتوبر ٢٠٢٦). */}
+        <EnterView index={2}><PillButton label={screen.sections.add} icon="offers" onPress={() => setActiveSection('add')} /></EnterView>
       </> : <>
         {/* الضغط على فراغ البطاقة يُغلق اللوحة — `accessible={false}` كي لا يبتلع الغلاف تسميات الحقول. */}
         <TouchableWithoutFeedback accessible={false} onPress={Keyboard.dismiss}>
@@ -182,9 +184,15 @@ export function ReferralRoute({ accessToken, onBack }: ReferralRouteProps) {
           <ModontyIcon name={submissionMessage.isError ? 'error' : 'check'} size={control.iconSize} primary={submissionMessage.isError ? theme.colors.errorText : theme.colors.textInteractive} accent={theme.colors.accent} />
           <Text maxFontSizeMultiplier={1.2} style={[styles.submissionMessage, { color: submissionMessage.isError ? theme.colors.errorText : theme.colors.textInteractive }]}>{submissionMessage.text}</Text>
         </View> : null}
-        <PillButton disabled={isSubmitting || !hasConsent || candidateName.trim().length === 0 || phone.trim().length === 0} label={isSubmitting ? screen.submittingLabel : screen.submitLabel} onPress={submit} />
       </>}
     </ScrollView>
+    {/*
+      * زرّ الإرسال مثبّت تحت النموذج لا في آخر التمرير: على جوال خالد (٥ أكتوبر ٢٠٢٦) كان نصفه
+      * مقصوصاً عند حافّة الشاشة فوق أزرار الجوال، ولا يظهر كاملاً إلا بعد سحب لا يعرفه العميل.
+      */}
+    {activeSection === 'add' ? <View style={[styles.dock, { backgroundColor: theme.colors.page }]}>
+      <PillButton disabled={isSubmitting || !hasConsent || candidateName.trim().length === 0 || phone.trim().length === 0} label={isSubmitting ? screen.submittingLabel : screen.submitLabel} onPress={submit} />
+    </View> : null}
   </View>;
 }
 
@@ -216,6 +224,7 @@ const styles = StyleSheet.create({
   fill: { flex: 1 },
   pressed: { opacity: 0.72 },
   screen: { gap: spacing.sm, paddingBottom: spacing.screenBottom, paddingHorizontal: spacing.screenHorizontal },
+  dock: { paddingBottom: spacing.sm, paddingHorizontal: spacing.screenHorizontal, paddingTop: spacing.xs },
   stickyHeader: { gap: spacing.sm, paddingHorizontal: spacing.screenHorizontal },
   referralsContent: { paddingBottom: spacing.screenBottom, paddingHorizontal: spacing.screenHorizontal },
   listHeading: { marginBottom: spacing.xs, marginTop: spacing.md },

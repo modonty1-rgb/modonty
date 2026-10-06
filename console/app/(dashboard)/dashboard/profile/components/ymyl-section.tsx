@@ -107,7 +107,7 @@ export function YmylSection({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold">بيانات التوثيق المهني</h3>
+              <h2 className="text-base font-bold">بيانات التوثيق المهني</h2>
               {isComplete && <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-label="مكتمل" />}
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">

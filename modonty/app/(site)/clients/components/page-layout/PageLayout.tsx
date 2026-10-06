@@ -9,7 +9,6 @@ import { PartnersFilterBar } from "@/app/(site)/clients/components/partners-filt
 import { TrustStripMobile } from "@/app/(site)/clients/components/trust-card/TrustStripMobile";
 import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
 import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
-import { ModontyIndustriesMark } from "@/components/icons/modonty-industries-mark";
 import { ModontyFeaturedMark } from "@/components/icons/modonty-featured-mark";
 import { cn } from "@/lib/utils";
 import { formatClientsCount } from "@/lib/format-counts";
@@ -119,10 +118,11 @@ export function PageLayout({ partners, industries, query, userCard }: PageLayout
         card already books at a NAMED partner, while the bar could only offer a generic
         booking page. The bar now carries what the cards cannot: joining as a partner,
         and browsing by field. Filtering premium lives with the filters above. */}
+    {/* «المجالات» انشال (خالد ٣ أكتوبر ٢٠٢٦): موجود في القائمة اللي تحت، وشبكة المجالات تحت الشريط
+        مباشرة — ثلاث مرّات في شاشة واحدة. يبقى طلب الصفحة الواحد بعرض الشريط. */}
     <MobileCtaBar
-      ariaLabel="صِر شريكاً أو تصفّح المجالات"
+      ariaLabel="صِر شريكاً"
       primary={{ href: PARTNER_SIGNUP_URL, label: "صِر شريكاً", icon: ModontyPartnerMark, external: true }}
-      secondary={{ href: "/industries", label: "المجالات", icon: ModontyIndustriesMark }}
     />
     </>
   );

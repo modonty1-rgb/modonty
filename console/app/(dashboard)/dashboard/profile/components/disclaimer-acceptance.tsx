@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { acceptDisclaimer } from "../actions/profile-actions";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 interface DisclaimerAcceptanceProps {
   text: string;
@@ -26,7 +27,7 @@ interface DisclaimerAcceptanceProps {
   acceptedAt: Date | null;
 }
 
-const dateFmt = new Intl.DateTimeFormat("ar-SA", { dateStyle: "medium" });
+const dateFmt = new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, { dateStyle: "medium" });
 
 export function DisclaimerAcceptance({
   text,

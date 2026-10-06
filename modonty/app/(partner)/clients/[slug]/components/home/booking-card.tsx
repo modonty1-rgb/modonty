@@ -26,18 +26,20 @@ export async function BookingCard({ clientId, clientName, phone, ctaMode, ctaLab
     const [session, h] = await Promise.all([auth(), headers()]);
     const user = session?.user ? { name: session.user.name ?? null, email: session.user.email ?? null } : null;
     return (
-      <div id="request" className="scroll-mt-32 rounded-lg bg-card ring-1 ring-border p-6 shadow-2xl">
-        <div className="flex items-baseline justify-between">
-          <p className="text-lg font-bold text-foreground">اطلب اتصالاً</p>
-          <span className="text-xs text-green-600 dark:text-green-400">● يردّ في نفس اليوم</span>
-        </div>
-        <div className="mt-4">
+      // One card, no title row: «اطلب اتصالاً» + «يردّ بأقرب وقت» repeated the section heading and
+      // eyebrow right above, under a button that said «احجز موعدك» (review, 4 Oct 2026). Ring, not
+      // shadow-2xl — the design system keeps shadows out of the page flow.
+      <div id="request" className="scroll-mt-32 rounded-lg bg-card p-6 ring-1 ring-border">
+        <div>
           <BookingForm
             clientId={clientId}
             clientName={clientName}
             source="client_page"
             user={user}
             defaultCountry={h.get("x-vercel-ip-country")}
+            // The admin's button text, like the hero and the closing CTA — the form said
+            // «اطلب اتصال» under a section whose every other button said something else.
+            submitLabel={ctaLabel?.trim() || "أرسل طلبك"}
           />
         </div>
         {phone ? (
@@ -63,7 +65,7 @@ export async function BookingCard({ clientId, clientName, phone, ctaMode, ctaLab
             type="BANNER"
             className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-white hover:brightness-110"
           >
-            {ctaLabel ?? "احجز الآن"}
+            {ctaLabel?.trim() || "تواصل معنا"}
             <IconExternal className="h-4 w-4" aria-hidden />
           </CtaTrackedLink>
         ) : null}

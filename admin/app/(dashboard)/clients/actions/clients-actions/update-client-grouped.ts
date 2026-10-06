@@ -744,7 +744,7 @@ export async function updateCtaFields(
   try {
     const client = await db.client.findUnique({
       where: { id: clientId },
-      select: { ctaMode: true, ctaPresetId: true, ctaLabel: true, ctaUrl: true },
+      select: { ctaMode: true, ctaPresetId: true, ctaLabel: true, ctaUrl: true, listedOn: true },
     });
 
     if (!client) {
@@ -762,6 +762,8 @@ export async function updateCtaFields(
       ctaLabel: mode === "NONE" ? null : (data.ctaLabel || null),
       // Only LINK carries a destination
       ctaUrl: mode === "LINK" ? (data.ctaUrl || null) : null,
+      // «يظهر في» — صفحةُ الحجز فقط مع زرّ الحجز: العميلُ بلا نموذجٍ لا يُعرض حيث القارئُ يتوقّع الحجز.
+      listedOn: (data.listedOn ?? []).filter((p) => p !== "BOOKING" || mode === "FORM"),
     };
 
     const updateData = buildGroupUpdateData("cta", client as Record<string, unknown>, newData);

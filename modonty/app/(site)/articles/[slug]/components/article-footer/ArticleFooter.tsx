@@ -13,6 +13,8 @@ import { RoundSnapchat } from "@/components/icons/snapchat";
 import { IconChevronLeft } from "@/lib/icons";
 import type { SocialLink } from "@/lib/settings/get-platform-social-links";
 import type { ComponentType, SVGProps } from "react";
+
+const CONTENT_DEPTH_AR: Record<string, string> = { short: "قصير", medium: "متوسّط", long: "مفصّل" };
 import { PARTNER_SIGNUP_URL } from "@/constants";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
@@ -167,7 +169,8 @@ export function ArticleFooter({
               <RelativeTime date={lastReviewed} />
             </Row>
           )}
-          {contentDepth && <Row label="عمق المحتوى">{contentDepth}</Row>}
+          {/* القيمةُ المخزّنة إنجليزيّة (short/medium/long) — كانت تُطبع كما هي للقارئ (تدقيق الجوال ٣ أكتوبر ٢٠٢٦). */}
+          {contentDepth && <Row label="عمق المحتوى">{CONTENT_DEPTH_AR[contentDepth.toLowerCase()] ?? contentDepth}</Row>}
           {license && (
             <Row label="الرخصة">
               {license.startsWith("http") ? (

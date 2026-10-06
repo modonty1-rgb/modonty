@@ -37,7 +37,7 @@ export function TrafficChart({ data }: TrafficChartProps) {
   if (chartData.length === 0) return null;
 
   const gridStroke = "hsl(var(--border))";
-  const tickStyle = { fontSize: 12, fill: "hsl(var(--muted-foreground))" };
+  const tickStyle = { fontSize: 14, fill: "hsl(var(--muted-foreground))" };
   const barFill = "hsl(var(--primary))";
 
   return (

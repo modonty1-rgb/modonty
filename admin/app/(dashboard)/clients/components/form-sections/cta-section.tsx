@@ -12,7 +12,8 @@
  * The two behaviours live in code and cannot be added from a screen:
  *   FORM → internal booking sheet («احجز الآن») — the lead lands in OUR database
  *   LINK → tracked external destination (store / wa.me / tel:) — we see the click only
- *   NONE → no button anywhere (default; no dead buttons)
+ *   NONE → no booking/link; his articles show «صفحة [اسمه]» → his profile on modonty
+ *           (article-button flow, Khalid 3 Oct 2026 · playbook /playbook/content/article-button)
  *
  * YMYL clients usually want a booking FORM — when the admin flips YMYL on we SUGGEST
  * the first FORM button (only if nothing is set yet). A suggestion, not a lock.
@@ -23,6 +24,7 @@ import { UseFormReturn } from "react-hook-form";
 import { MousePointerClick, Ban, ExternalLink } from "lucide-react";
 
 import { FormSelect, FormInput } from "@/components/admin/form-field";
+import { Checkbox } from "@/components/ui/checkbox";
 import { SelectItem } from "@/components/ui/select";
 
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
@@ -56,6 +58,17 @@ export function CtaSection({ form, ctaPresets }: CtaSectionProps) {
   const ctaPresetId = watch("ctaPresetId") ?? "";
   const ctaLabel = watch("ctaLabel") ?? "";
   const isYmyl = watch("isYmyl") ?? false;
+  const clientName = watch("name")?.trim() || "العميل";
+  const listedOn = (watch("listedOn") ?? []) as ("BOOKING" | "SHOP")[];
+  const toggleListing = (page: "BOOKING" | "SHOP", on: boolean) => {
+    const next = on ? [...new Set([...listedOn, page])] : listedOn.filter((p) => p !== page);
+    setValue("listedOn", next as ClientFormSchemaType["listedOn"], { shouldDirty: true, shouldValidate: true });
+  };
+  // صفحةُ الحجز تفتح النموذج — زرٌّ غيرُ الحجز يُخرج العميلَ منها، لا يتركه معلّقاً بلا نموذج.
+  useEffect(() => {
+    if (ctaMode !== "FORM" && listedOn.includes("BOOKING")) toggleListing("BOOKING", false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ctaMode]);
 
   // The chosen button is STORED, not guessed from the text — so rewording it for this
   // client never makes the picker forget which button they are on.
@@ -139,7 +152,7 @@ export function CtaSection({ form, ctaPresets }: CtaSectionProps) {
           onValueChange={applyPreset}
           hint={isYmyl ? "Suggested for YMYL clients: a booking form" : undefined}
         >
-          <SelectItem value={NONE}>None — no button shown</SelectItem>
+          <SelectItem value={NONE}>بلا زر — مقالاته تعرض «صفحة {clientName}»</SelectItem>
           {ctaPresets.map((p) => (
             <SelectItem key={p.id} value={p.id}>
               {p.labelAr} — {p.mode === "FORM" ? "booking form" : "external link"}
@@ -203,9 +216,34 @@ export function CtaSection({ form, ctaPresets }: CtaSectionProps) {
 
       {ctaMode === "NONE" && (
         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-          <Ban className="h-3.5 w-3.5" /> No action button will appear for this client.
+          <Ban className="h-3.5 w-3.5 shrink-0" /> مقالاته تعرض زرّ <strong className="text-foreground">«صفحة {clientName}»</strong> يودّي بروفايله في مدونتي.
         </p>
       )}
+
+      {/* «يظهر في» (خالد ٣ أكتوبر ٢٠٢٦): اختيارُ الأدمن الصريح لصفحات مدونتي — لا يُستنتج من الزرّ.
+          عميلُ البراندنج لا يختار شيئاً. صفحةٌ جديدة تُضاف هنا حالةً بحالة. */}
+      <fieldset className="space-y-1.5 border-t pt-3" data-listed-on>
+        <legend className="text-sm font-medium">يظهر في</legend>
+        <label className="flex items-center gap-2 text-sm">
+          <Checkbox
+            checked={listedOn.includes("BOOKING")}
+            disabled={ctaMode !== "FORM"}
+            onCheckedChange={(v) => toggleListing("BOOKING", v === true)}
+            aria-label="صفحة الحجز"
+          />
+          صفحة الحجز <span className="text-xs text-muted-foreground">/booking</span>
+          {ctaMode !== "FORM" && <span className="text-xs text-muted-foreground">— تحتاج زرّ حجز</span>}
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <Checkbox
+            checked={listedOn.includes("SHOP")}
+            onCheckedChange={(v) => toggleListing("SHOP", v === true)}
+            aria-label="صفحة التسوّق"
+          />
+          صفحة التسوّق <span className="text-xs text-muted-foreground">/shop</span>
+        </label>
+        {errors.listedOn?.message && <p className="text-xs text-destructive">{errors.listedOn.message}</p>}
+      </fieldset>
     </div>
   );
 }

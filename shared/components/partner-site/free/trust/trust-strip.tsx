@@ -17,17 +17,22 @@ export function TrustStrip({ data }: { data: HomeData; preview?: boolean }) {
    */
   const items = trust.credentials;
   return (
-    <section id="trust" className="border-y bg-muted/30">
-      <div className="mx-auto flex max-w-[1128px] flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 py-4 text-sm text-muted-foreground">
+    // A section with no heading and a row of spans: a screen reader heard loose words with no
+    // «what is this» (4 Oct 2026). Hidden heading + a real list; the look is unchanged.
+    <section id="trust" aria-labelledby="trust-heading" className="border-y bg-muted/30">
+      <h2 id="trust-heading" className="sr-only">اعتمادات {data.name}</h2>
+      <ul className="mx-auto flex max-w-[1128px] flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 py-4 text-sm text-muted-foreground max-md:flex-col max-md:items-start">
         {items.map((c) => (
-          <span key={c.name} className="flex items-center gap-2">
+          // Phones: one credential per line, start-aligned — centred and wrapped, «اعتماد CBAHI» split
+          // across three ragged lines (review, 4 Oct 2026).
+          <li key={c.name} className="flex items-center gap-2 max-md:items-start">
             <Award className="h-4 w-4 text-[hsl(var(--primary-ink,var(--primary)))]" aria-hidden />
-            <span className="text-foreground">{c.name}</span>
+            <span className="whitespace-nowrap text-foreground">{c.name}</span>
             {c.authority && <span>· {c.authority}</span>}
             {c.year && <span>· {c.year}</span>}
-          </span>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }

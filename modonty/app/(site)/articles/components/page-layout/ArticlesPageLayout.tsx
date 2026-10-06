@@ -5,8 +5,8 @@ import { EntitySearchForm } from "@/components/listing/EntitySearchForm";
 import { AiDisclaimer } from "@/components/shared/ai-disclaimer/AiDisclaimer";
 import { AboutCard } from "@/components/shared/about-card/AboutCard";
 import { MobileCtaBar } from "@/components/shared/mobile-cta-bar/MobileCtaBar";
+import { FollowCtaButton } from "@/components/shared/mobile-cta-bar/FollowCtaButton";
 import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
-import { IconVolume2 } from "@/lib/icons";
 
 import { ArticlesHeader } from "../articles-header/ArticlesHeader";
 import { AskModo } from "@/components/shared/ask-modo/AskModo";
@@ -31,6 +31,8 @@ interface ArticlesPageLayoutProps {
   readingTimeCounts: Record<ReadingTimeBucket, number>;
   current: ArchiveState;
   scopeLabel: string | null;
+  /** Modonty's own client slug — «تابع مدونتي» follows it. */
+  followSlug: string | null;
 }
 
 /**
@@ -53,6 +55,7 @@ export async function ArticlesPageLayout({
   readingTimeCounts,
   current,
   scopeLabel,
+  followSlug,
 }: ArticlesPageLayoutProps) {
   const { siteName } = await getPageSeoDefaults();
 
@@ -130,13 +133,13 @@ export async function ArticlesPageLayout({
         </StickyRail>
       }
     />
-    {/* This page's own two asks (Khalid's contextual-bar rule): a reader who did not find
-        his article here has two other ways to take the same content — watch it, or hear
-        it. Booking belongs on a partner's page, not on an archive. */}
+    {/* «تابع مدونتي» replaced «استمع» (Khalid, 3 Oct 2026): listening is already in the bottom
+        menu, so the bar spent a slot repeating it. Following turns a browsing reader into one
+        who comes back; watching stays as the second way to take the same content. */}
     <MobileCtaBar
-      ariaLabel="شاهد أو استمع"
-      primary={{ href: "/reels", label: "شاهد الطلّات", icon: ModontyReelsMark }}
-      secondary={{ href: "/audio", label: "استمع", icon: IconVolume2 }}
+      ariaLabel="تابع أو شاهد"
+      primarySlot={<FollowCtaButton clientSlug={followSlug} />}
+      secondary={{ href: "/reels", label: "شاهد الطلّات", icon: ModontyReelsMark }}
     />
     </>
   );

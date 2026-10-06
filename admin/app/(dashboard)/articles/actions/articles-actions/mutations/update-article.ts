@@ -24,6 +24,7 @@ import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
 import { isValidTransition } from "../../../helpers/article-status-machine";
+import { checkArticleCtaUrl } from "../../../helpers/check-article-cta-url";
 
 export async function updateArticle(articleId: string, data: ArticleFormData) {
   try {
@@ -141,6 +142,18 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         intake: true,
       },
     });
+
+    // زرُّ المقال (ARTCTA): أيُّ رابطٍ صحيح — منتجُ العميل قد يكون في أمازون أو نون أو موقعه.
+    let ctaUrl: string | null | undefined = undefined;
+    if (data.ctaUrl !== undefined) {
+      const raw = data.ctaUrl?.trim() || "";
+      if (!raw) ctaUrl = null;
+      else {
+        const check = checkArticleCtaUrl(raw);
+        if (!check.ok) return { success: false, error: check.error };
+        ctaUrl = check.url;
+      }
+    }
 
     // No SEO gate here. The form can't change status (see meta-section) — data.status === PUBLISHED
     // means an already-live article is being edited, not a first publish (that goes through the
@@ -284,6 +297,12 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         mainEntityOfPage: canonicalUrl || null,
         seoTitle: seoTitle || null,
         seoDescription: seoDescription || null,
+        // Only when the caller sent it: other callers of this action (status moves, pipeline)
+        // do not carry the field, and writing null for them would wipe the writer's keyword.
+        ...(data.targetKeyword !== undefined && { targetKeyword: data.targetKeyword?.trim() || null }),
+        // مثل الكلمة المستهدفة: مَن لا يرسل الحقلَ لا يمحوه.
+        ...(ctaUrl !== undefined && { ctaUrl }),
+        ...(data.ctaLabel !== undefined && { ctaLabel: data.ctaLabel?.trim() || null }),
         ogArticleAuthor: data.ogArticleAuthor || null,
         ogArticlePublishedTime: existingArticle.ogArticlePublishedTime,
         ogArticleModifiedTime: new Date(),
@@ -347,9 +366,12 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       }
 
       await tx.relatedArticle.deleteMany({ where: { articleId: article.id } });
-      if (data.relatedArticles && data.relatedArticles.length > 0) {
+      // لا يُربط المقالُ بنفسه — المنتقي يخفيه، والحفظُ هو الحَكَم: في البرودكشن ١٠ روابط من مقالٍ لنفسه
+      // (٢٢ يوليو → ١٤ سبتمبر ٢٠٢٦). أيُّ حفظٍ لمقالٍ منها يُسقط الربطَ الخاطئ من الآن.
+      const relatedToSave = (data.relatedArticles ?? []).filter((r) => r.relatedId !== article.id);
+      if (relatedToSave.length > 0) {
         await tx.relatedArticle.createMany({
-          data: data.relatedArticles.map((related) => ({
+          data: relatedToSave.map((related) => ({
             articleId: article.id,
             relatedId: related.relatedId,
             relationshipType: related.relationshipType || "related",

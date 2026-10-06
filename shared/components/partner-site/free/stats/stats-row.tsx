@@ -10,20 +10,25 @@ export function StatsRow({ data }: { data: HomeData; preview?: boolean }) {
    */
   const items = data.stats;
   return (
-    <section id="stats" className="border-y">
+    <section id="stats" aria-labelledby="stats-heading" className="border-y">
+      <h2 id="stats-heading" className="sr-only">أرقامنا</h2>
       {/* نفس سُلَّم `Section`: ٤٨ على الجوّال · ٦٤ من `md` — القسم لا يبني إيقاعه وحده. */}
       <dl className="mx-auto grid max-w-[1128px] grid-cols-2 gap-y-8 px-6 py-12 sm:flex sm:flex-wrap sm:divide-x sm:divide-x-reverse sm:divide-border md:py-16">
         {/* المفتاح هو الموضع لا التسمية: العميل يكتب تسمياته بيده، وثلاثة أرقام عند
             «د. علاء الدين بدوي» تحمل «ناجحه» نفسها — فتكرّر المفتاح ورياكت حذّر أن عنصراً
             قد يُكرَّر أو يُحذف. والقائمة ثابتة الترتيب ولا تُفرز، فالموضع مفتاح صالح. */}
         {items.map((s, i) => (
-          <div key={i} className="px-4 text-center sm:flex-1 sm:px-6">
+          // dt comes first in the markup — a definition list reads term then value, and the old
+          // order made a screen reader say «٢٠٠٠» before it said what. `flex-col-reverse` keeps the
+          // big number on top. An odd last cell on the two-column phone grid spans both columns
+          // instead of sitting alone on the right (4 Oct 2026).
+          <div key={i} className="flex flex-col-reverse px-4 text-center sm:flex-1 sm:px-6 [&:last-child:nth-child(odd)]:col-span-2">
             {/* الحقل اسمه «رقم» لكنّ العميل يكتب فيه جملة: «أكثر من ٤٠٠٠ حالة لإستئصال
                 المرارة» قِيست خارجةً عن خليّتها (١٦٣px) على آيفون ٣٩٠، لأن كلمة واحدة بحجم
                 ٣٦px أعرض من الخليّة. يصغر الخطّ على الجوّال والكلمة تُكسَر عند الحاجة —
                 فالرقم القصير يبقى كما هو والجملة الطويلة تنزل بدل أن تُقصّ. */}
-            <dd className="text-3xl font-bold tabular-nums text-[hsl(var(--primary-ink,var(--primary)))] [overflow-wrap:anywhere] sm:text-4xl">{s.value}</dd>
             <dt className="mt-1 text-sm text-muted-foreground">{s.label}</dt>
+            <dd className="text-3xl font-bold tabular-nums text-[hsl(var(--primary-ink,var(--primary)))] [overflow-wrap:anywhere] sm:text-4xl">{s.value}</dd>
           </div>
         ))}
       </dl>

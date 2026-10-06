@@ -34,6 +34,7 @@ import {
   updateTelegramEventPreferencesAction,
   sendTelegramTestMessageAction,
 } from "../actions/telegram-actions";
+import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 interface Props {
   isConnected: boolean;
@@ -44,7 +45,7 @@ interface Props {
 
 function formatDate(d: Date | null): string {
   if (!d) return "—";
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -379,9 +380,9 @@ function EventPreferences({
             <section key={group} className="rounded-lg border bg-card p-4 space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h4 className="text-sm font-semibold text-foreground">
+                  <h3 className="text-sm font-semibold text-foreground">
                     {groupCfg.label}
-                  </h4>
+                  </h3>
                   <p className="text-xs text-muted-foreground">
                     {groupCfg.description}
                   </p>
