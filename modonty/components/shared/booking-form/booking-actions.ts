@@ -16,6 +16,7 @@ import {
   type BookingFailReason,
 } from "@/lib/analytics/events-registry";
 import { getVisitorContext } from "@/lib/analytics/visitor-cookie";
+import { resolveArticleFromRecentView } from "@/lib/analytics/resolve-article-from-recent-view";
 import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { sendEmail } from "@/lib/email/resend-client";
 import { bookingNotificationEmail } from "@/lib/email/templates/booking-notification";
@@ -72,11 +73,14 @@ export async function trackBookingBlocked(
  * don't inflate the count; a genuine return visit (new session) counts as a fresh lead.
  * Anonymous by design — the phone/name live in the WhatsApp chat, not with us.
  */
-export async function recordWhatsappLead(ctx: {
+export async function recordWhatsappLead(input: {
   clientId: string;
   source: BookingSource;
   articleId?: string | null;
 }): Promise<void> {
+  // From the client page there is no article on the click — credit the one this visitor read
+  // (resolve-article-from-recent-view.ts). An article on the click always wins.
+  const ctx = { ...input, articleId: input.articleId ?? (await resolveArticleFromRecentView(input.clientId)) };
   // GA4 counts every click (analytics); the DB lead stays deduped (one source of truth).
   void trackBookingWhatsappClick({
     client_id: ctx.clientId,
@@ -143,8 +147,10 @@ export async function trackBookingFormStartAction(ctx: {
 
 export async function submitBookingRequest(
   data: BookingFormData,
-  ctx: BookingContext
+  input: BookingContext
 ): Promise<{ success: boolean; error?: string }> {
+  // Same attribution as recordWhatsappLead: no article on the form → the one this visitor read.
+  const ctx: BookingContext = { ...input, articleId: input.articleId ?? (await resolveArticleFromRecentView(input.clientId)) };
   // 0. Funnel: the visitor pressed the button. Recorded BEFORE any check, so a
   //    booking that dies in validation still shows up as intent. The gap between
   //    booking_attempt and booking_submit is where we lose people.

@@ -40,6 +40,7 @@ export function WhatsAppBookingCta({
 
   return (
     <a
+      data-cta-tracked=""
       href={href}
       target="_blank"
       rel="noopener noreferrer"

@@ -46,6 +46,8 @@ export function CtaTrackedLink({
       className={className}
       target={target}
       rel={rel}
+      // Tracked here — the client page's catch-all (partner-contact-tracker.tsx) skips it.
+      data-cta-tracked=""
       onClick={() => {
         trackCtaClick({ type, label, targetUrl: href, articleId, clientId });
         if (onBeforeNavigate) onBeforeNavigate();

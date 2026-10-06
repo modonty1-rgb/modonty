@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { CTAType } from "@prisma/client";
 import { notifyTelegram } from "@/lib/telegram/notify-telegram";
+import { resolveArticleFromRecentView } from "@/lib/analytics/resolve-article-from-recent-view";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -76,12 +77,16 @@ export async function POST(request: Request) {
     const session = await auth();
     const userId = session?.user?.id ?? undefined;
 
+    // A click on the client's own page (call · WhatsApp · site) is credited to the article this
+    // visitor read — same cookie, same rule as the leads (resolve-article-from-recent-view.ts).
+    const creditedArticleId = articleId ?? (clientId ? (await resolveArticleFromRecentView(clientId, sessionId)) ?? undefined : undefined);
+
     await db.cTAClick.create({
       data: {
         type,
         label: label ?? null,
         targetUrl: targetUrl ?? null,
-        articleId,
+        articleId: creditedArticleId,
         clientId,
         userId,
         sessionId,

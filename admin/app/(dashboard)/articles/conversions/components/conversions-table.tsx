@@ -50,7 +50,7 @@ const columns: Column<ClientActionsRow>[] = [
         href={`/clients/${r.clientId}`}
         onClick={(e) => e.stopPropagation()}
         title={r.clientName}
-        className="block max-w-[190px] truncate hover:text-primary hover:underline"
+        className="block max-w-[160px] truncate hover:text-primary hover:underline"
       >
         {r.clientName}
       </Link>
@@ -83,6 +83,14 @@ const columns: Column<ClientActionsRow>[] = [
     sortable: true,
     className: "w-[1%] text-center tabular-nums",
     render: (r) => (r.total ? <span className="font-bold">{N.format(r.total)}</span> : dim),
+  },
+  {
+    key: "direct",
+    header: <span title="Contacts from the client page or listings with no article read in the last 7 days — not counted in Total">Page</span>,
+    sortable: true,
+    sortFn: (a, b) => a.direct.total - b.direct.total,
+    className: "w-[1%] text-center tabular-nums",
+    render: (r) => (r.direct.total ? <span className="font-semibold text-muted-foreground">{N.format(r.direct.total)}</span> : dim),
   },
   { key: "views", header: "Reads", sortable: true, className: "w-[1%] text-center tabular-nums", render: (r) => (r.views ? N.format(r.views) : dim) },
   {
@@ -132,12 +140,38 @@ function ArticleBreakdown({ r }: { r: ArticleActionsRow }) {
   );
 }
 
-/** A client's «+»: its articles that brought an action, most first — each opens its breakdown. */
-function ClientArticles({ articles }: { articles: ArticleActionsRow[] }) {
-  const [open, setOpen] = useState<string | null>(null);
-  if (articles.length === 0) return <p className="ms-8 text-xs text-muted-foreground">No article brought an action in this period.</p>;
+/** The contacts with no article behind them — one line above the client's articles. */
+function DirectLine({ direct }: { direct: ClientActionsRow["direct"] }) {
+  if (!direct.total) return null;
   return (
-    <div className="rounded-md border bg-background/70 shadow-sm" onClick={(e) => e.stopPropagation()}>
+    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-1 pb-2 text-xs text-muted-foreground">
+      <span className="font-medium text-foreground">From the client page (no article read):</span>
+      {ACTIONS.map((a) =>
+        direct[a.key] > 0 ? (
+          <span key={a.key} className={cn("inline-flex items-center gap-1 font-semibold", a.text)}>
+            <span className={cn("size-1.5 rounded-full", a.bar)} aria-hidden />
+            {a.label} {N.format(direct[a.key])}
+          </span>
+        ) : null,
+      )}
+    </p>
+  );
+}
+
+/** A client's «+»: its articles that brought an action, most first — each opens its breakdown. */
+function ClientArticles({ articles, direct }: { articles: ArticleActionsRow[]; direct: ClientActionsRow["direct"] }) {
+  const [open, setOpen] = useState<string | null>(null);
+  if (articles.length === 0)
+    return (
+      <div>
+        <DirectLine direct={direct} />
+        <p className="ms-1 text-xs text-muted-foreground">No article brought an action in this period.</p>
+      </div>
+    );
+  return (
+    <div onClick={(e) => e.stopPropagation()}>
+    <DirectLine direct={direct} />
+    <div className="rounded-md border bg-background/70 shadow-sm">
       <ul className="divide-y">
         {articles.map((r) => {
           const isOpen = open === r.articleId;
@@ -173,6 +207,7 @@ function ClientArticles({ articles }: { articles: ArticleActionsRow[] }) {
         })}
       </ul>
     </div>
+    </div>
   );
 }
 
@@ -207,7 +242,7 @@ export function ConversionsTable({
   for (const list of articlesOf.values()) list.sort((a, b) => b.total - a.total || b.views - a.views);
 
   // Clients with an action or a read in the period; a client with neither has nothing to decide on.
-  const visible = byClient.filter((c) => c.total > 0 || c.views > 0);
+  const visible = byClient.filter((c) => c.total > 0 || c.direct.total > 0 || c.views > 0);
 
   return (
     <div className="space-y-3">
@@ -241,11 +276,11 @@ export function ConversionsTable({
         pageSize={25}
         emptyText="No client had an action or a read in this period"
         rowClassName={(r) => (r.total === 0 ? "text-muted-foreground" : undefined)}
-        renderExpanded={(r) => <ClientArticles articles={articlesOf.get(r.clientId) ?? []} />}
+        renderExpanded={(r) => <ClientArticles articles={articlesOf.get(r.clientId) ?? []} direct={r.direct} />}
         expandLabel={(r) => `Articles of ${r.clientName.trim()}`}
       />
       <p className="text-[11px] text-muted-foreground">
-        Form = contact form submitted, not opened · WhatsApp = once per visitor a day · Call and site = clicks on the article button (modonty links excluded) · Conversion = actions per 100 reads in the same period, shown from {MIN_VIEWS_FOR_RATE} reads.
+        Form = contact form submitted, not opened · WhatsApp = once per visitor a day · Call and site = clicks on the article button (modonty links excluded) · Page = contacts with no article read in the last 7 days, not in Total · Conversion = actions per 100 reads in the same period, shown from {MIN_VIEWS_FOR_RATE} reads.
       </p>
     </div>
   );

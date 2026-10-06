@@ -11,6 +11,7 @@ import { buildChromeData } from "./helpers/build-chrome-data";
 import { getCopyrightYear } from "./helpers/get-copyright-year";
 import { PlatformBar } from "./components/chrome/platform-bar";
 import { StickyChrome } from "./components/chrome/sticky-chrome";
+import { PartnerContactTracker } from "./components/partner-contact-tracker";
 
 // Dynamic import for GTM tracker (SSR enabled; component guards browser APIs)
 const GTMClientTracker = dynamicImport(
@@ -138,6 +139,8 @@ async function PartnerChrome({ params, slot }: PartnerChromeProps) {
         clientContext={{ client_id: site.id, client_slug: site.slug, client_name: site.name }}
         pageTitle={site.seoTitle || site.name}
       />
+      {/* Every call/WhatsApp tap on his page — the template buttons included — becomes a lead. */}
+      <PartnerContactTracker clientId={site.id} />
       {/* One sticky block: slides up by the bar's height on scroll-down, so the partner header stays. */}
       <StickyChrome>
         <PlatformBar isVerified={isVerified} clientSlug={site.slug} />

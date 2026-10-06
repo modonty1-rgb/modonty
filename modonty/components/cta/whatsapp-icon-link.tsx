@@ -38,6 +38,7 @@ export function WhatsAppLeadLink({
 }: WhatsAppLeadLinkProps) {
   return (
     <a
+      data-cta-tracked=""
       href={getWhatsAppLink(phone, message)}
       target="_blank"
       rel="noopener noreferrer"
