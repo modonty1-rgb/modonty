@@ -11,7 +11,13 @@ import { NextResponse } from "next/server";
  */
 export const dynamic = "force-dynamic";
 
-export function GET(request: Request) {
-  const apkUrl = process.env.ANDROID_APK_URL;
-  return NextResponse.redirect(apkUrl || new URL("/", request.url), 302);
+/**
+ * رابط آخر نسخة مكتوب هنا لا في `ANDROID_APK_URL`: تغيير متغيّر Vercel يحتاج صلاحية إنتاج،
+ * والرابط في الكود يُرفع مع النسخة ويبقى أثره في git (٦ أكتوبر ٢٠٢٦ — نسخة موقّعة محلياً بختم
+ * مدونتي في ~/.modonty-keys · ٦١ م.ب · arm64-v8a + armeabi-v7a).
+ */
+const LATEST_APK_URL = "https://modonty-asset.b-cdn.net/apps/android/modonty-console-2026-10-06.apk";
+
+export function GET() {
+  return NextResponse.redirect(LATEST_APK_URL, 302);
 }

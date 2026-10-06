@@ -64,7 +64,7 @@ export default async function AndroidDownloadPage() {
             <span className="flex h-6 w-6 items-center justify-center rounded bg-white">
               <IconDownload className="h-5 w-5" />
             </span>
-            حمّل التطبيق (حوالي ٦٣ ميجا)
+            حمّل التطبيق (حوالي ٦١ ميجا)
           </a>
 
           <ol className="list-decimal space-y-2 rounded-xl border bg-card p-4 ps-8 text-sm leading-relaxed text-foreground">
@@ -89,7 +89,7 @@ export default async function AndroidDownloadPage() {
             </p>
           </div>
 
-          <p className="text-center text-xs text-muted-foreground">الإصدار ١٫٠٫٠ · آخر تحديث ٥ أكتوبر ٢٠٢٦</p>
+          <p className="text-center text-xs text-muted-foreground">الإصدار 1.0.0 · آخر تحديث ٦ أكتوبر ٢٠٢٦</p>
         </>
       )}
     </main>
