@@ -13,5 +13,11 @@
       "schedule": "*/15 * * * *"
     }
   ],
-  "ignoreCommand": "[ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] && git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- ./ ../shared ../pnpm-lock.yaml ../package.json"
+  "ignoreCommand": "[ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] && git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- ./ ../shared ../pnpm-lock.yaml ../package.json",
+  "git": {
+    "deploymentEnabled": {
+      "cloud/**": false,
+      "claude/**": false
+    }
+  }
 }
