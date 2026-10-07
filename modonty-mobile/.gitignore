@@ -11,3 +11,4 @@ web-build/
 .env*.local
 android/
 ios/
+!.env.example
