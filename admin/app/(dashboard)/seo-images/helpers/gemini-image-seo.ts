@@ -1,6 +1,6 @@
 import "server-only";
 
-import { resolveAdminPrompt } from "./resolve-admin-prompt";
+import { resolveAdminPrompt } from "@/lib/ai/resolve-admin-prompt";
 
 // Gemini → alt text + description for one gallery image, written PURELY from the owning
 // client's data — the image itself is NOT analysed (the doctor uploads case photos; pixel

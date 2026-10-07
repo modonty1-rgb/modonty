@@ -2,7 +2,7 @@ import { InvoicePaymentStatus } from "@prisma/client";
 import { baseTemplate, divider, paragraph } from "@modonty/shared/lib/email";
 import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 import type { EmailContent } from "@modonty/shared/lib/email";
-import { invoiceHero, invoiceParties, invoiceLine, invoiceQr, invoiceContact } from "./invoice-parts";
+import { invoiceHero, invoiceParties, invoiceLine, invoiceQr, invoiceContact } from "./invoice-email-parts";
 
 /**
  * The legal registry is no longer a parameter here: the shared `baseTemplate` reads

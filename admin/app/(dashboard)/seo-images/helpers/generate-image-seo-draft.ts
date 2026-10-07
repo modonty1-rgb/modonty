@@ -1,6 +1,6 @@
 import "server-only";
 
-import { resolveAdminPrompt } from "./resolve-admin-prompt";
+import { resolveAdminPrompt } from "@/lib/ai/resolve-admin-prompt";
 import type { ImageSeoAiContext } from "./gemini-image-seo";
 
 /**

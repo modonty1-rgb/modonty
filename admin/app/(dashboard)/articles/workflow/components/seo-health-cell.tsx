@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import type { ValidationResult } from "@/lib/seo/article-validator";
+import type { ValidationResult } from "../../helpers/article-validator";
 
 interface Props {
   articleId: string;

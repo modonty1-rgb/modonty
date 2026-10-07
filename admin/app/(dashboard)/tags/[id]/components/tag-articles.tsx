@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { ArticleRowActions } from "@/components/shared/articles/article-row-actions";
+import { ArticleRowActions } from "../../components/article-row-actions";
 
 interface Article {
   id: string;

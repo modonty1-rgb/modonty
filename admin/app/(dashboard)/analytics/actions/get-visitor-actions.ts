@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { runReport } from "@/lib/analytics/ga4-data-api";
+import { runReport } from "../helpers/ga4-data-api";
 import { getBookPageOpens, getBookingFunnel, getWhatsappClicks } from "../helpers/book-funnel";
 
 /**

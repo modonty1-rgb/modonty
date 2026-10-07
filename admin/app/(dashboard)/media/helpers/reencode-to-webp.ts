@@ -1,4 +1,4 @@
-import { compressToWebP } from "@/lib/compress-image";
+import { compressToWebP } from "./compress-image";
 import { uploadImageToBunny } from "@/lib/media/upload-image-to-bunny";
 
 /** What re-encoding needs to know about the stored file. */

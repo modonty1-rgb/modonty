@@ -19,13 +19,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-import { createTask, updateTask } from "@/lib/tasks/task-actions";
-import type { BoardTask } from "@/lib/tasks/task-types";
+import { createTask, updateTask } from "../actions/task-actions";
+import type { BoardTask } from "../helpers/task-types";
 import { TASK_PRIORITIES, TASK_PRIORITY_META, TASK_STATUSES, TASK_STATUS_META, type TaskStatusKey } from "@/lib/tasks/task-config";
 
 import { isTaskLate } from "@/lib/tasks/is-task-late";
 
-import { DueDatePicker, toDateInput } from "@/components/tasks/due-date-picker";
+import { DueDatePicker, toDateInput } from "./due-date-picker";
 
 const UNASSIGNED = "__none__";
 const N = new Intl.NumberFormat("ar-EG");

@@ -1,10 +1,10 @@
 import { getOrphanStats } from "@/lib/database/orphan-cleaner";
 import { getIndexHealth } from "@/lib/database/index-health";
-import { getSlugIntegrity } from "@/lib/database/slug-integrity";
-import { getBrokenReferences } from "@/lib/database/broken-references";
+import { getSlugIntegrity } from "./actions/slug-integrity";
+import { getBrokenReferences } from "./actions/broken-references";
 import { getSessionCleanerStats } from "@/lib/database/session-cleaner";
 import { getStaleVersionsStats } from "@/lib/database/stale-versions";
-import { getDuplicateSlugs } from "@/lib/database/duplicate-slugs";
+import { getDuplicateSlugs } from "./actions/duplicate-slugs";
 import { getLegalFormSanitizerStats } from "@/lib/database/legalform-sanitizer";
 import { getCanonicalSanitizerStats } from "@/lib/database/canonical-sanitizer";
 import { getSiteUrlDriftStatus } from "@/lib/seo/site-url";

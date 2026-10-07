@@ -1,7 +1,7 @@
 import { InvoicePaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { invoiceEmail, type InvoiceEmailParams } from "@/lib/email/templates/invoice";
-import { renderInvoiceQrPng } from "@/lib/invoices/render-invoice-qr";
+import { invoiceEmail, type InvoiceEmailParams } from "./invoice-email";
+import { renderInvoiceQrPng } from "./render-invoice-qr";
 import { buildZatcaQrTlvBase64 } from "@modonty/shared/lib/payments/zatca-qr-tlv";
 import { getSubscriptionTerm } from "@modonty/shared/lib/subscription/subscription-term";
 import type { EmailContent } from "@modonty/shared/lib/email";

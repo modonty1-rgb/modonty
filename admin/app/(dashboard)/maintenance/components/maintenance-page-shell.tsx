@@ -1,13 +1,13 @@
-import { HealthSummary } from "@/components/shared/database/health-summary";
-import { DbToolsSection } from "@/app/(dashboard)/database/components/db-tools-section";
+import { HealthSummary } from "./health-summary";
+import { DbToolsSection } from "./db-tools-section";
 import { AutoMaintenancePanel } from "@/app/(dashboard)/database/components/auto-maintenance-panel";
 import type { OrphanStats } from "@/lib/database/orphan-cleaner";
 import type { TTLIndexStatus } from "@/lib/database/index-health";
-import type { SlugIssue } from "@/lib/database/slug-integrity";
-import type { BrokenRefsResult } from "@/lib/database/broken-references";
+import type { SlugIssue } from "../actions/slug-integrity";
+import type { BrokenRefsResult } from "../actions/broken-references";
 import type { SessionCleanerStats } from "@/lib/database/session-cleaner";
 import type { StaleVersionsStats } from "@/lib/database/stale-versions";
-import type { DuplicateSlugStats } from "@/lib/database/duplicate-slugs";
+import type { DuplicateSlugStats } from "../actions/duplicate-slugs";
 import type { LegalFormSanitizerStats } from "@/lib/database/legalform-sanitizer";
 import type { CanonicalSanitizerStats } from "@/lib/database/canonical-sanitizer";
 import type { SiteUrlDriftStatus } from "@/lib/seo/site-url";

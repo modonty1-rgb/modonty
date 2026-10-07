@@ -15,11 +15,11 @@ import {
   listMyNotificationsAction,
   markNotificationReadAction,
   markAllNotificationsReadAction,
-} from "@/lib/notifications/actions";
-import { getNotificationMeta, type NotificationLike } from "@/lib/notifications/registry";
-import { playChime, primeChime } from "@/lib/notifications/chime";
+} from "@/app/(dashboard)/actions/notifications-actions";
+import { getNotificationMeta, type NotificationLike } from "@/app/(dashboard)/helpers/notifications-registry";
+import { playChime, primeChime } from "@/app/(dashboard)/helpers/notification-chime";
 import { RealtimeEvent, staffChannel } from "@/lib/realtime/channels";
-import { useRealtime } from "@/lib/realtime/use-realtime";
+import { useRealtime } from "@/app/(dashboard)/helpers/use-realtime";
 
 /**
  * **شبكةُ أمانٍ لا وسيلةَ تحديث.**

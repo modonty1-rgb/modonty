@@ -1,4 +1,4 @@
-import type { TaskStatusKey } from "./task-config";
+import type { TaskStatusKey } from "@/lib/tasks/task-config";
 
 /**
  * One card as every task screen consumes it.

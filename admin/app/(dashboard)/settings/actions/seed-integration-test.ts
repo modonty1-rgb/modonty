@@ -32,7 +32,7 @@ import { createClient } from "@/app/(dashboard)/clients/actions/clients-actions/
 import { deleteClient } from "@/lib/clients/delete-client";
 import { createArticle } from "@/app/(dashboard)/articles/actions/articles-actions/mutations/create-article";
 import { updateArticle } from "@/app/(dashboard)/articles/actions/articles-actions/mutations/update-article";
-import { deleteArticle } from "@/lib/articles/delete-article";
+import { deleteArticle } from "./delete-article";
 import { getModontyAuthor } from "@/lib/authors/get-modonty-author";
 import { createFAQ, updateFAQ, deleteFAQ } from "@/lib/modonty/faq-actions";
 import { db } from "@/lib/db";

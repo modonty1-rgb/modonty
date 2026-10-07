@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-import type { EssentialSeoField } from "@/lib/seo/essential-seo-fields";
+import type { EssentialSeoField } from "@/app/(dashboard)/helpers/essential-seo-fields";
 
 interface EssentialSeoDialogProps {
   missing: EssentialSeoField[];

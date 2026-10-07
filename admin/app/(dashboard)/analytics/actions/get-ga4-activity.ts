@@ -2,7 +2,7 @@
 
 import { format } from "date-fns";
 
-import { runReport, type DimensionFilter, type RunReportResponse } from "@/lib/analytics/ga4-data-api";
+import { runReport, type DimensionFilter, type RunReportResponse } from "../helpers/ga4-data-api";
 
 /**
  * GA4-backed full activity — «Google always the SOT» (Khalid, 2026-07-07).

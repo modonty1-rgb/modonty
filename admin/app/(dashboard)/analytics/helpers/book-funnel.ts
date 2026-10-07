@@ -1,4 +1,4 @@
-import { runReport } from "@/lib/analytics/ga4-data-api";
+import { runReport } from "./ga4-data-api";
 
 /**
  * Opens of the booking page, straight from GA4 — the single source both the

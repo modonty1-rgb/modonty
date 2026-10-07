@@ -3,7 +3,7 @@ import "server-only";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
 import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
-import type { HeadChecker } from "@/lib/seo/head-check";
+import type { HeadChecker } from "./head-check";
 import type { HealthIssue, HealthTarget } from "@/lib/health/article-health-types";
 
 /**

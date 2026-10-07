@@ -12,7 +12,7 @@ import { CharacterCounter } from "@/components/shared/character-counter";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { useToast } from "@/hooks/use-toast";
 import { saveImageSeo } from "@/app/(dashboard)/media/actions/save-image-seo";
-import { generateImageSeoAi } from "@/lib/media/generate-image-seo-ai";
+import { generateImageSeoAi } from "../actions/generate-image-seo-ai";
 import { altToFileBase } from "@modonty/shared/lib/seo/media/alt-to-filename";
 import type { MediaCheckStatus } from "@modonty/shared/lib/seo/media/seo-score";
 import type { SeoImageRow } from "../helpers/load-groups";

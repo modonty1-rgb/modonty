@@ -9,8 +9,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { db } from "@/lib/db";
-import { getCachedTopPages } from "./helpers/cached";
-import { parseUrl } from "./helpers/coverage";
+import { getCachedTopPages } from "./helpers/gsc-cached";
+import { parseUrl } from "./helpers/gsc-coverage";
 import { getCachedInspectionsByUrls, type InspectionRecord } from "@/lib/gsc/inspection-cache";
 import { fetchAndParseSitemap } from "@/lib/search-console/parse-sitemap";
 

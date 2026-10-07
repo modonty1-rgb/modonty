@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, ChevronDown, Loader2, XCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import type { RebuildPlan } from "@/lib/orders-migration/plan-rebuild";
+import type { RebuildPlan } from "../helpers/plan-rebuild";
 
 type RunResult = {
   clean: boolean;

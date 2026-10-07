@@ -2,8 +2,8 @@
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { generateImageSeoField, type ImageSeoField } from "@/lib/ai/gemini-image-seo";
-import { toPlainText } from "@/lib/seo-images/to-plain-text";
+import { generateImageSeoField, type ImageSeoField } from "../helpers/gemini-image-seo";
+import { toPlainText } from "../helpers/to-plain-text";
 
 // AI draft for ONE gallery image, written from the owning client's DATA (NOT from analysing
 // the image — the doctor uploads case photos; the field/city/services are what matter). It

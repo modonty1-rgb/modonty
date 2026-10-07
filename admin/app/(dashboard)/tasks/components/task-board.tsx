@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-import { archiveTask, moveTask } from "@/lib/tasks/task-actions";
+import { archiveTask, moveTask } from "../actions/task-actions";
 import type { BoardTask } from "../helpers/queries";
 import { TASK_STATUSES, TASK_STATUS_META, type TaskStatusKey } from "@/lib/tasks/task-config";
 import { TaskCard } from "./task-card";

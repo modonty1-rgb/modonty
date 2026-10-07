@@ -3,7 +3,7 @@ import type {
   ValidationCheck,
   ValidationResult,
   ValidationStatus,
-} from "@/lib/seo/article-validator";
+} from "./article-validator";
 import type { ValidationReport } from "@/lib/seo/jsonld-validator";
 import type { Prisma } from "@prisma/client";
 

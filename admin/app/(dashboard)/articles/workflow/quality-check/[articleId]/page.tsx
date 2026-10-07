@@ -11,7 +11,7 @@ import { validateArticleFromDb } from "../../../helpers/article-validator-db";
 import { needsRegeneration, regenerateJsonLd } from "@/lib/seo/jsonld-storage";
 import { isYmylClientComplete, listYmylMissingFields } from "@/lib/seo/ymyl-helpers";
 import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";
-import type { ValidationCheck } from "@/lib/seo/article-validator";
+import type { ValidationCheck } from "../../../helpers/article-validator";
 import { SendToClientButton } from "./components/send-to-client-button";
 import { ReRunButton } from "./components/re-run-button";
 

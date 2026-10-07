@@ -1,5 +1,5 @@
-import type { GscAnalyticsRequest, GscAnalyticsResponse, GscRow } from "./types";
-import { getGscClient, GSC_PROPERTY } from "./client";
+import type { GscAnalyticsRequest, GscAnalyticsResponse, GscRow } from "@/lib/gsc/types";
+import { getGscClient, GSC_PROPERTY } from "@/lib/gsc/client";
 
 async function queryAnalytics(req: GscAnalyticsRequest): Promise<GscAnalyticsResponse> {
   const gsc = getGscClient();

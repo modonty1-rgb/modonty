@@ -13,8 +13,8 @@ import { db } from "@/lib/db";
 import { RealtimeEvent, staffChannel } from "@/lib/realtime/channels";
 import { publish } from "@/lib/realtime/publish";
 
-import { TASK_NOT_ARCHIVED } from "./not-archived";
-import { createTaskSchema, moveTaskSchema, updateTaskSchema } from "./task-schema";
+import { TASK_NOT_ARCHIVED } from "@/lib/tasks/not-archived";
+import { createTaskSchema, moveTaskSchema, updateTaskSchema } from "../helpers/task-schema";
 
 // Every action follows the same order: session → Zod → try/catch → revalidate.
 // Errors are RETURNED, never thrown: a thrown error inside a server action lands

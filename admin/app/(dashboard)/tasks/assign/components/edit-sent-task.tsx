@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Pencil } from "lucide-react";
 
 import { TaskDialog } from "../../components/task-dialog";
-import type { BoardTask } from "@/lib/tasks/task-types";
+import type { BoardTask } from "../../helpers/task-types";
 
 /**
  * عنوانُ المهمّة المُسنَدة زرٌّ يفتح تعديلَها (خالد ٣ أكتوبر ٢٠٢٦: أسند ١٢ مهمّةً لطارق ولم يجد

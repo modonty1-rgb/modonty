@@ -7,7 +7,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArticleTable } from "@/components/shared/articles/article-table";
+import { ArticleTable } from "../../components/article-table";
 import type { Article as ArticleViewType } from "@/lib/articles/article-view-types";
 
 type Article = ArticleViewType & { views: number };

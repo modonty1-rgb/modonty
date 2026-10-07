@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Trophy, BrainCircuit, Rocket, GraduationCap, MapPinned, HeartPulse, Archive, BookUser, CalendarClock, BadgeCheck, BarChart3, BookOpen, Bot, Briefcase, Bug, Building2, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, ClipboardList, Cloud, ArrowRightLeft, Cookie, Copyright, CreditCard, Database, Download, Factory, FileClock, FileEdit, FilePlus, FileText, FileX, Flame, Folder, GalleryThumbnails, Globe, Handshake, HelpCircle, Images, Info, LayoutGrid, Library, LineChart, Link2, ListChecks, Mail, MailOpen, MailPlus, Megaphone, MessageSquare, MessageSquarePlus, Newspaper, PanelTop, PauseCircle, RotateCcw, Scale, ScrollText, Search, Settings, Settings2, ShieldCheck, Stethoscope, Tag, UserCheck, UserPen, Users, Users2, Wrench, AtSign, Star, Target, PenLine, Gauge } from "lucide-react";
 import { LIVE_SECTORS, type LiveSectorSlug } from "@modonty/shared/lib/sectors/live-sectors";
-import { GoogleSearchConsoleIcon } from "@/components/admin/icons/google-search-console-icon";
+import { GoogleSearchConsoleIcon } from "./google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
 import type { ArticleStatusCounts } from "@/app/(dashboard)/actions/article-status-counts";

@@ -6,7 +6,7 @@ import { Loader2, Wand2 } from "lucide-react";
 
 import { useToast } from "@/hooks/use-toast";
 
-import { autoFixSchemaAction } from "@/lib/search-console/pipeline-actions";
+import { autoFixSchemaAction } from "../actions/pipeline-actions";
 
 interface Props {
   articleId: string;

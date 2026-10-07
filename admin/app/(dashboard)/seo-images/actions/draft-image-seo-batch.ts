@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { generateImageSeoDraft } from "@/lib/ai/generate-image-seo-draft";
-import { toPlainText } from "@/lib/seo-images/to-plain-text";
+import { generateImageSeoDraft } from "../helpers/generate-image-seo-draft";
+import { toPlainText } from "../helpers/to-plain-text";
 
 /**
  * STAGE ONE of the image-SEO repair: let the model write the missing `altText` and

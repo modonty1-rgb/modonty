@@ -13,7 +13,7 @@ import { DbBadge } from "@/app/(dashboard)/components/db-badge";
 import { SidebarProvider } from "@/components/contexts/sidebar-context";
 import { NotAuthorized } from "./components/not-authorized";
 import { getArticleStatusCounts } from "./actions/article-status-counts";
-import { getMissingEssentialSeoFields } from "@/lib/seo/essential-seo-fields";
+import { getMissingEssentialSeoFields } from "@/app/(dashboard)/helpers/essential-seo-fields";
 import { EssentialSeoDialog } from "@/app/(dashboard)/components/essential-seo-dialog";
 
 export const dynamic = 'force-dynamic';

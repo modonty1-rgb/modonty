@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import type { NotificationLike } from "./registry";
+import type { NotificationLike } from "@/app/(dashboard)/helpers/notifications-registry";
 
 const DEFAULT_LIMIT = 20;
 

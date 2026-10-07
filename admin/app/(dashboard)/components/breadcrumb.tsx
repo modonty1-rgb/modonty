@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, ChevronRight } from 'lucide-react';
 import { useMemo, useEffect, useState, useRef } from 'react';
-import { generateBreadcrumbs, parsePathname, isObjectId } from './breadcrumb-utils';
-import { useEntityName } from './use-entity-name';
+import { generateBreadcrumbs, parsePathname, isObjectId } from '@/app/(dashboard)/helpers/breadcrumb-utils';
+import { useEntityName } from '@/app/(dashboard)/helpers/use-entity-name';
 
 export function Breadcrumb() {
   const pathname = usePathname();

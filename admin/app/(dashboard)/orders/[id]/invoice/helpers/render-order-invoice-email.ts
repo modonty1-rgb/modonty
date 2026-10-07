@@ -1,6 +1,6 @@
 import { InvoicePaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { buildInvoiceEmail, INVOICE_QR_CID } from "@/lib/invoices/build-invoice-email";
+import { buildInvoiceEmail, INVOICE_QR_CID } from "../../../helpers/build-invoice-email";
 import { planInvoiceFromOrder } from "../../../helpers/plan-invoice-from-order";
 
 /**

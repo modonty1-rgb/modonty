@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { approveTask, returnTask } from "@/lib/tasks/task-actions";
+import { approveTask, returnTask } from "../../actions/task-actions";
 
 /**
  * The only client island on the reviews page — two decisions, nothing else.

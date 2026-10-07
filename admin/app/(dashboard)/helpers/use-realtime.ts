@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import PusherClient from "pusher-js";
 
-import type { RealtimeEventName } from "./channels";
+import type { RealtimeEventName } from "@/lib/realtime/channels";
 
 /**
  * **الاستماعُ اللحظيّ — هوكٌ واحدٌ لكلّ الميزات.**

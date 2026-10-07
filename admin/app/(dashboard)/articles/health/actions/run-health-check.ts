@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { loadSiteUrl } from "@/lib/seo/site-url";
-import { createHeadChecker } from "@/lib/seo/head-check";
+import { createHeadChecker } from "../../helpers/head-check";
 import {
   ARTICLE_HEALTH_SELECT,
   checkArticleHealth,

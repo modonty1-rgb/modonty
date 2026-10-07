@@ -16,10 +16,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import type { OrphanStats } from "@/lib/database/orphan-cleaner";
 import type { TTLIndexStatus } from "@/lib/database/index-health";
-import type { SlugIssue } from "@/lib/database/slug-integrity";
-import type { BrokenRefsResult } from "@/lib/database/broken-references";
+import type { SlugIssue } from "../actions/slug-integrity";
+import type { BrokenRefsResult } from "../actions/broken-references";
 import type { SessionCleanerStats } from "@/lib/database/session-cleaner";
-import type { DuplicateSlugStats } from "@/lib/database/duplicate-slugs";
+import type { DuplicateSlugStats } from "../actions/duplicate-slugs";
 import type { LegalFormSanitizerStats } from "@/lib/database/legalform-sanitizer";
 import type { CanonicalSanitizerStats } from "@/lib/database/canonical-sanitizer";
 import { cleanExpiredOtps } from "@/lib/database/orphan-cleaner";

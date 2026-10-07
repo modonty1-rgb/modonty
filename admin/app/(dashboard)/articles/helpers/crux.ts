@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { CWVRating } from "./pagespeed";
+import type { CWVRating } from "@/lib/seo/pagespeed";
 
 const CRUX_BASE = "https://chromeuxreport.googleapis.com/v1/records:queryRecord";
 

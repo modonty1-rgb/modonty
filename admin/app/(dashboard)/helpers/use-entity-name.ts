@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { getEntityName } from './breadcrumb-actions';
+import { getEntityName } from '@/app/(dashboard)/actions/breadcrumb-actions';
 
 interface EntityCache {
   [key: string]: string;

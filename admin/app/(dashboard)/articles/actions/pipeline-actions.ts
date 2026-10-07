@@ -1,10 +1,10 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { validateArticle, type ValidationResult } from "@/lib/seo/article-validator";
+import { validateArticle, type ValidationResult } from "../helpers/article-validator";
 import { fetchAndParseSitemap } from "@/lib/search-console/parse-sitemap";
 import { fetchPageSpeed, type PageSpeedReport } from "@/lib/seo/pagespeed";
-import { fetchCruxReport, type CruxReport } from "@/lib/seo/crux";
+import { fetchCruxReport, type CruxReport } from "../helpers/crux";
 import { regenerateJsonLd } from "@/lib/seo/jsonld-storage";
 import { validateJsonLdComplete, type ValidationReport } from "@/lib/seo/jsonld-validator";
 import { loadSiteUrl } from "@/lib/seo/site-url";

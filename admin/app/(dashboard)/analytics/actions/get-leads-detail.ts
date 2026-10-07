@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { runReport } from "@/lib/analytics/ga4-data-api";
+import { runReport } from "../helpers/ga4-data-api";
 
 /**
  * Visitor Actions drill-down — the actionable page behind the "Visitor Actions" KPI.

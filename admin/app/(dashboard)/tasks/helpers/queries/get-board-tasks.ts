@@ -3,7 +3,7 @@ import { cache } from "react";
 import { db } from "@/lib/db";
 
 import { TASK_STATUSES, type TaskStatusKey } from "@/lib/tasks/task-config";
-import type { BoardTask } from "@/lib/tasks/task-types";
+import type { BoardTask } from "../task-types";
 
 // Re-exported so the existing `helpers/queries` barrel keeps working; the shape
 // itself now lives in lib because `/daily-tasks` consumes it too.

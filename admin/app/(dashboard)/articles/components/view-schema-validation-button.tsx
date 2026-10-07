@@ -5,8 +5,8 @@ import { Loader2, FileSearch } from "lucide-react";
 
 import { useToast } from "@/hooks/use-toast";
 
-import { getSchemaValidationReportAction } from "@/lib/search-console/pipeline-actions";
-import { SchemaValidationDialog } from "@/components/shared/search-console/schema-validation-dialog";
+import { getSchemaValidationReportAction } from "../actions/pipeline-actions";
+import { SchemaValidationDialog } from "./schema-validation-dialog";
 
 import type { ValidationReport } from "@/lib/seo/jsonld-validator";
 

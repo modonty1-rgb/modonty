@@ -3,7 +3,7 @@ import { TrendingUp, MousePointerClick, Eye, Target, AlertCircle, Search, FileTe
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-import { getBingQueryStats, getBingPageStats, getBingRankAndTrafficStats, aggregateBingTraffic, aggregateBingStats, type BingAggregatedStat } from "./helpers/client";
+import { getBingQueryStats, getBingPageStats, getBingRankAndTrafficStats, aggregateBingTraffic, aggregateBingStats, type BingAggregatedStat } from "./helpers/bing-client";
 
 import { SubmitIndexNowCard } from "./components/submit-indexnow-card";
 

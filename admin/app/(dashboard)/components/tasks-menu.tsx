@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { RealtimeEvent, staffChannel } from "@/lib/realtime/channels";
-import { useRealtime } from "@/lib/realtime/use-realtime";
+import { useRealtime } from "@/app/(dashboard)/helpers/use-realtime";
 
 const ITEMS = [
   { href: "/tasks", label: "Board", icon: LayoutGrid, hint: "Four columns — where the work stands" },

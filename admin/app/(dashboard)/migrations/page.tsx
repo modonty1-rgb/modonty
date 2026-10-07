@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 
 import { checkOrdersMigrationGate } from "@/lib/orders-migration-gate";
-import { planRebuild } from "@/lib/orders-migration/plan-rebuild";
-import { RebuildOrdersPanel } from "@/components/shared/orders-migration/rebuild-orders-panel";
+import { planRebuild } from "./helpers/plan-rebuild";
+import { RebuildOrdersPanel } from "./components/rebuild-orders-panel";
 import { planDocuments } from "./helpers/plan-documents";
 import { DocumentsMigrationPanel } from "./components/documents-migration-panel";
 

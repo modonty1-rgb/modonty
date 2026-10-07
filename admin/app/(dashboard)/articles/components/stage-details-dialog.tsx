@@ -10,8 +10,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-import type { ValidationCheck } from "@/lib/seo/article-validator";
-import type { StageDefinition, StageStatusSummary } from "@/lib/seo/pipeline-stages";
+import type { ValidationCheck } from "../helpers/article-validator";
+import type { StageDefinition, StageStatusSummary } from "../helpers/pipeline-stages";
 
 interface Props {
   open: boolean;

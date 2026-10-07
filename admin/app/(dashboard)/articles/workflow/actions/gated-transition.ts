@@ -10,7 +10,7 @@ import { loadSiteUrl } from "@/lib/seo/site-url";
 import { validateArticleFromDb } from "../../helpers/article-validator-db";
 import { startServiceClockOnFirstDelivery } from "../../helpers/start-service-clock";
 import { logAction } from "@/lib/audit/log-action";
-import type { ValidationResult } from "@/lib/seo/article-validator";
+import type { ValidationResult } from "../../helpers/article-validator";
 import { regenerateJsonLd, needsRegeneration } from "@/lib/seo/jsonld-storage";
 import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";
 import { checkYmylPublishGate } from "@/lib/seo/ymyl-helpers";

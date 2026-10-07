@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { logAction } from "@/lib/audit/log-action";
 import { sendEmailWithRetry, type SendEmailParams } from "@/lib/email/resend-client";
-import { buildInvoiceEmail, INVOICE_QR_CID } from "@/lib/invoices/build-invoice-email";
+import { buildInvoiceEmail, INVOICE_QR_CID } from "../helpers/build-invoice-email";
 import { requireSalesDesk } from "@/lib/require-sales-desk";
 
 interface SendInvoiceResult {
