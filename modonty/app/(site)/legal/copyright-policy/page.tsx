@@ -1,15 +1,16 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { generateStructuredData, jsonLdHtmlFromString } from "@/lib/seo";
+import { jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { messages } from "@/lib/i18n/messages";
 
 import { CopyrightPolicyBody } from "./components/copyright-policy-body/CopyrightPolicyBody";
 import { LegalPageSkeleton } from "@/components/shared/legal-page-skeleton/LegalPageSkeleton";
-import { getCopyrightPolicyPageForMetadata } from "./helpers/copyright-policy-metadata";
-import { getCopyrightPolicyPageContent } from "./helpers/copyright-policy-content";
+import { getCopyrightPolicyPageForMetadata } from "./helpers/get-copyright-policy-page-for-metadata";
+import { getCopyrightPolicyPageContent } from "./helpers/get-copyright-policy-page-content";
+import { buildFallbackStructuredData } from "./helpers/build-fallback-structured-data";
 
 const text = messages.copyrightPolicy;
 
@@ -21,11 +22,6 @@ export async function generateMetadata(): Promise<Metadata> {
     fallbackTitle: "سياسة حقوق النشر",
     fallbackDescription: messages.seo.copyrightPolicy.description,
   });
-}
-
-
-function sanitizeJsonLd(json: object): string {
-  return JSON.stringify(json).replace(/</g, '\\u003c');
 }
 
 async function CopyrightPolicyContent() {
@@ -48,14 +44,6 @@ async function CopyrightPolicyContent() {
   const storedJsonLd = page?.jsonLdStructuredData?.includes('"@type":"WebPage"')
     ? page.jsonLdStructuredData.trim()
     : undefined;
-  const buildFallbackStructuredData = () => generateStructuredData({
-    type: "WebPage",
-    // بلا لاحقة الماركة: هذا اسم **الصفحة** في البيانات المنظَّمة، واسم الموقع يعيش على
-    // عقدة `WebSite` وفي `og:site_name`. إلحاقه هنا كرّر الماركة وكتبها في الكود معاً.
-    name: pageTitle,
-    description: messages.seo.copyrightPolicy.description,
-    url: "/legal/copyright-policy",
-  });
 
   return (
     <>
@@ -64,7 +52,7 @@ async function CopyrightPolicyContent() {
         dangerouslySetInnerHTML={{
           __html: storedJsonLd
             ? jsonLdHtmlFromString(storedJsonLd)
-            : sanitizeJsonLd(buildFallbackStructuredData()),
+            : jsonLdHtml(buildFallbackStructuredData(pageTitle)),
         }}
       />
       <div className="container mx-auto max-w-4xl px-4 py-8">

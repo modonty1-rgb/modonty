@@ -1,12 +1,14 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { generateMetadataFromSEO, jsonLdHtmlFromString } from "@/lib/seo";
-import { generateFAQPageStructuredData } from "@/app/(site)/help/faq/helpers/generate-faq-page-structured-data";
+import { jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
+import { generateFAQPageStructuredData } from "./helpers/generate-faq-page-structured-data";
+import { buildFaqFallbackMetadata } from "./helpers/build-faq-fallback-metadata";
+import { getFaqLastUpdated } from "./helpers/get-faq-last-updated";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getActiveFAQs } from "./actions/faq-actions";
+import { getActiveFAQs } from "./actions";
 import { IconArrowRight, IconEmail, IconHelpCircle } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
 import { FAQPageContent } from "./components/faq-page-content";
@@ -16,22 +18,13 @@ const text = messages.faq;
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getListingPageSeo("faq");
 
-  const fallback = () =>
-    generateMetadataFromSEO({
-      title: "الأسئلة الشائعة",
-      description: messages.seo.faq.description,
-      keywords: ["أسئلة", "شائعة", "مساعدة", "دعم"],
-      url: "/help/faq",
-      type: "website",
-    });
-
   // الشرط كان `if (metadata)` — والبلوب المخزَّن موجودٌ **بلا مفتاح `title`** (مقيس على
   // القاعدة: عمود `faqPageMetaTags` بلا `title`). فالكائن صادق، والاحتياط لا يُستدعى أبداً،
   // و«title.template has no effect if a route has not defined a title or title.default»
   // (generate-metadata.md:294) ⇒ تُورَث `default` الجذر. النتيجة على الإنتاج ١ سبتمبر ٢٠٢٦:
   // «مدونتي - منصة المدونات متعددة الشركاء» — عنوان الموقع لا عنوان الصفحة.
   // الشرط الصحيح: بلوبٌ بلا عنوان = لا بلوب.
-  if (!metadata || typeof metadata.title === "undefined") return fallback();
+  if (!metadata || typeof metadata.title === "undefined") return buildFaqFallbackMetadata();
 
   // ومتى وُجد العنوان، يُلفّ كما في بقيّة صفحات القوائم كي لا يُلحق القالب العلامة ثانيةً.
   if (typeof metadata.title === "string") {
@@ -40,23 +33,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata;
 }
 
-function sanitizeJsonLd(json: unknown): string {
-  return JSON.stringify(json).replace(/</g, '\\u003c');
-}
-
 export default async function FAQPage() {
   const [faqs, seo] = await Promise.all([getActiveFAQs(), getListingPageSeo("faq")]);
 
   // Use cached JSON-LD from Settings (escaped — stored blobs are bare-stringified).
-  const buildFallbackJsonLd = () => sanitizeJsonLd(generateFAQPageStructuredData(faqs));
+  const buildFallbackJsonLd = () => jsonLdHtml(generateFAQPageStructuredData(faqs));
   const jsonLdString = seo.jsonLd ? jsonLdHtmlFromString(seo.jsonLd) : buildFallbackJsonLd();
 
-  const lastUpdated = faqs.length > 0
-    ? faqs.reduce((latest, faq) => {
-        const faqDate = faq.lastReviewed || faq.updatedAt;
-        return !latest || (faqDate && faqDate > latest) ? faqDate : latest;
-      }, faqs[0]?.lastReviewed || faqs[0]?.updatedAt)
-    : null;
+  const lastUpdated = getFaqLastUpdated(faqs);
 
   return (
     <>

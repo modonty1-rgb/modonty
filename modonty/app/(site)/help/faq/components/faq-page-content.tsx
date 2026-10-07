@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { FAQAccordion } from "./faq-accordion";
 import { FAQSearch } from "./faq-search";
+import { useFaqSearchPagination } from "../helpers/use-faq-search-pagination";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface FAQ {
@@ -20,37 +20,15 @@ interface FAQPageContentProps {
 }
 
 export function FAQPageContent({ faqs, lastUpdated }: FAQPageContentProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  const filteredFAQs = useMemo(() => {
-    if (!searchQuery.trim()) return faqs;
-
-    const query = searchQuery.toLowerCase();
-    return faqs.filter(
-      (faq) =>
-        faq.question.toLowerCase().includes(query) ||
-        faq.answer.toLowerCase().includes(query)
-    );
-  }, [faqs, searchQuery]);
-
-  const totalPages = Math.ceil(filteredFAQs.length / itemsPerPage);
-  const paginatedFAQs = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredFAQs.slice(startIndex, endIndex);
-  }, [filteredFAQs, currentPage, itemsPerPage]);
-
-  const handleSearchChange = (query: string) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const {
+    searchQuery,
+    currentPage,
+    filteredFAQs,
+    totalPages,
+    paginatedFAQs,
+    handleSearchChange,
+    handlePageChange,
+  } = useFaqSearchPagination(faqs);
 
   return (
     <>
@@ -79,11 +57,9 @@ export function FAQPageContent({ faqs, lastUpdated }: FAQPageContentProps) {
           </div>
 
           {filteredFAQs.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">
-                لم يتم العثور على أسئلة تطابق بحثك
-              </p>
-            </div>
+            <p className="text-center py-8 text-muted-foreground">
+              لم يتم العثور على أسئلة تطابق بحثك
+            </p>
           ) : (
             <>
               <FAQAccordion items={paginatedFAQs} />

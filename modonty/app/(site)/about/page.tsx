@@ -1,18 +1,19 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Suspense } from "react";
-import { generateStructuredData, jsonLdHtmlFromString } from "@/lib/seo";
+import { jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { BecomePartnerBanner } from "@/components/shared/become-partner-banner/BecomePartnerBanner";
 import { getClientsList } from "@/lib/queries/get-clients-list";
 import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
-import { getAboutPageForMetadata } from "./helpers/about-metadata";
+import { getAboutPageForMetadata } from "./helpers/get-about-page-for-metadata";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
-import { getAboutPageContent } from "./helpers/about-content";
+import { getAboutPageContent } from "./helpers/get-about-page-content";
 import { AboutHero } from "./components/about-hero/AboutHero";
 import { Cornerstones } from "./components/cornerstones/Cornerstones";
 import { LiveStats } from "./components/live-stats/LiveStats";
 import { AudienceChips } from "./components/audience/AudienceChips";
 import { EditorialContent } from "./components/editorial-content/EditorialContent";
+import { buildFallbackStructuredData } from "./helpers/build-fallback-structured-data";
 import { messages } from "@/lib/i18n/messages";
 
 const text = messages.about;
@@ -26,10 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
     // (٢٨ أغسطس، `modonty_dev`): ١١ من ١١ صفّاً تحمل عنواناً — فالحذف لا يغيّر شيئاً
     // اليوم، ويجعل الصفّ الفارغ غداً ظاهراً بدل أن يُغطّى بنصّ كتبه الكود.
   });
-}
-
-function sanitizeJsonLd(json: object): string {
-  return JSON.stringify(json).replace(/</g, "\\u003c");
 }
 
 function AboutFallback() {
@@ -59,15 +56,6 @@ async function AboutContent() {
 
   // Prefer the stored, admin-validated card; build live ONLY when it is absent.
   const storedJsonLd = page?.jsonLdStructuredData?.trim();
-  const buildFallbackStructuredData = () =>
-    generateStructuredData({
-      type: "AboutPage",
-      // بلا لاحقة الماركة: هذا اسم **الصفحة** في البيانات المنظَّمة، واسم الموقع يعيش على
-      // عقدة `WebSite` وفي `og:site_name`. إلحاقه هنا كرّر الماركة وكتبها في الكود معاً.
-      name: pageTitle,
-      description: messages.seo.about.description,
-      url: "/about",
-    });
 
   return (
     <>
@@ -76,7 +64,7 @@ async function AboutContent() {
         dangerouslySetInnerHTML={{
           __html: storedJsonLd
             ? jsonLdHtmlFromString(storedJsonLd)
-            : sanitizeJsonLd(buildFallbackStructuredData()),
+            : jsonLdHtml(buildFallbackStructuredData(pageTitle)),
         }}
       />
 

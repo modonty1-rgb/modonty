@@ -8,7 +8,7 @@ export function generateFAQPageStructuredData(faqs: any[]) {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "@id": `${faqPageUrl}#faqpage`,
-    mainEntity: faqs.map((faq, index) => {
+    mainEntity: faqs.map((faq) => {
       const question: any = {
         "@type": "Question",
         name: faq.question,

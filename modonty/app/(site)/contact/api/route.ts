@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { submitContactMessage } from "../actions/contact-actions";
+import { submitContactMessage } from "../actions/submit-contact-message";
 import type { ApiResponse } from "@/lib/types";
 
 const CONTACT_RATE_LIMIT = 3;

@@ -1,7 +1,6 @@
-import { Metadata } from "next";
-import { generateMetadataFromSEO } from "@/lib/seo";
+import type { Metadata } from "next";
+import { generateMetadataFromSEO, generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { messages } from "@/lib/i18n/messages";
 import { HelpHeader } from "../components/help-header/HelpHeader";
 import { HelpLinks } from "../components/help-links/HelpLinks";

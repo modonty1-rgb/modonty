@@ -1,13 +1,14 @@
-import { Metadata } from "next";
-import { generateStructuredData, jsonLdHtmlFromString } from "@/lib/seo";
+import type { Metadata } from "next";
+import { jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ContactForm } from "@/components/shared/contact-form/ContactForm";
 import { auth } from "@/lib/auth";
-import { getContactPageForMetadata } from "./helpers/contact-metadata";
+import { getContactPageForMetadata } from "./helpers/get-contact-page-for-metadata";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
-import { getContactPageContent } from "./helpers/contact-content";
+import { getContactPageContent } from "./helpers/get-contact-page-content";
 import { ContactIntro } from "./components/contact-intro/ContactIntro";
 import { ContactDetails } from "./components/contact-details/ContactDetails";
+import { buildFallbackStructuredData } from "./helpers/build-fallback-structured-data";
 import { getLegalEntity } from "@/lib/seo/organization-jsonld";
 import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { messages } from "@/lib/i18n/messages";
@@ -30,10 +31,6 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-function sanitizeJsonLd(json: object): string {
-  return JSON.stringify(json).replace(/</g, '\\u003c');
-}
-
 export default async function ContactPage() {
   const [session, page, legal] = await Promise.all([
     auth(),
@@ -49,14 +46,6 @@ export default async function ContactPage() {
 
   // Prefer the stored, admin-validated card; build live ONLY when it is absent.
   const storedJsonLd = page?.jsonLdStructuredData?.trim();
-  const buildFallbackStructuredData = () =>
-    generateStructuredData({
-      type: "ContactPage",
-      // بلا لاحقة الماركة: هذا اسم الصفحة، واسم الموقع على عقدة WebSite وفي og:site_name.
-      name: pageTitle,
-      description: FALLBACK_DESCRIPTION,
-      url: "/contact",
-    });
 
   return (
     <>
@@ -65,7 +54,7 @@ export default async function ContactPage() {
         dangerouslySetInnerHTML={{
           __html: storedJsonLd
             ? jsonLdHtmlFromString(storedJsonLd)
-            : sanitizeJsonLd(buildFallbackStructuredData()),
+            : jsonLdHtml(buildFallbackStructuredData(pageTitle)),
         }}
       />
       <div className="container mx-auto max-w-2xl px-4 py-8">

@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { IconLike, IconDislike, IconLoading } from "@/lib/icons";
-import { useState, useEffect, useRef } from "react";
-import { submitFAQFeedback, checkExistingFeedback } from "../actions/faq-feedback-actions";
+import { useState } from "react";
+import { submitFAQFeedback } from "../actions";
+import { useExistingFeedback } from "../helpers/use-existing-feedback";
 
 interface FAQItem {
   id: string;
@@ -24,40 +25,8 @@ interface FAQAccordionProps {
 }
 
 export function FAQAccordion({ items }: FAQAccordionProps) {
-  const [feedbackStates, setFeedbackStates] = useState<Record<string, "helpful" | "not-helpful" | null>>({});
+  const { feedbackStates, setFeedbackStates } = useExistingFeedback(items);
   const [isSubmitting, setIsSubmitting] = useState<Record<string, "helpful" | "not-helpful" | null>>({});
-  const checkedItemsRef = useRef<Set<string>>(new Set());
-
-  // Check for existing feedback on mount (only once per item)
-  useEffect(() => {
-    const checkFeedbacks = async () => {
-      for (const item of items) {
-        // Skip if already checked
-        if (checkedItemsRef.current.has(item.id)) {
-          continue;
-        }
-
-        // Mark as being checked
-        checkedItemsRef.current.add(item.id);
-
-        try {
-          const existing = await checkExistingFeedback(item.id);
-          if (existing.hasFeedback) {
-            setFeedbackStates((prev) => ({
-              ...prev,
-              [item.id]: existing.isHelpful ? "helpful" : "not-helpful",
-            }));
-          }
-        } catch (error) {
-          console.error(`Error checking feedback for FAQ ${item.id}:`, error);
-          // Remove from checked set on error so it can be retried
-          checkedItemsRef.current.delete(item.id);
-        }
-      }
-    };
-
-    checkFeedbacks();
-  }, [items]);
 
   const handleFeedback = async (faqId: string, isHelpful: boolean) => {
     const buttonType = isHelpful ? "helpful" : "not-helpful";
@@ -179,11 +148,9 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
                   </Button>
                 </div>
                 {feedbackState && (
-                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                    <p className="text-xs text-muted-foreground font-medium">
-                      شكراً لملاحظاتك
-                    </p>
-                  </div>
+                  <p className="pt-2 border-t border-border/50 text-xs text-muted-foreground font-medium">
+                    شكراً لملاحظاتك
+                  </p>
                 )}
               </div>
             </AccordionContent>

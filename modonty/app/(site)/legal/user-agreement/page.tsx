@@ -1,15 +1,16 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { generateStructuredData, jsonLdHtmlFromString } from "@/lib/seo";
+import { jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { messages } from "@/lib/i18n/messages";
 
 import { UserAgreementBody } from "./components/user-agreement-body/UserAgreementBody";
 import { LegalPageSkeleton } from "@/components/shared/legal-page-skeleton/LegalPageSkeleton";
-import { getUserAgreementPageForMetadata } from "./helpers/user-agreement-metadata";
-import { getUserAgreementPageContent } from "./helpers/user-agreement-content";
+import { getUserAgreementPageForMetadata } from "./helpers/get-user-agreement-page-for-metadata";
+import { getUserAgreementPageContent } from "./helpers/get-user-agreement-page-content";
+import { buildFallbackStructuredData } from "./helpers/build-fallback-structured-data";
 
 const text = messages.userAgreement;
 
@@ -21,11 +22,6 @@ export async function generateMetadata(): Promise<Metadata> {
     fallbackTitle: "اتفاقية المستخدم",
     fallbackDescription: messages.seo.userAgreement.description,
   });
-}
-
-
-function sanitizeJsonLd(json: object): string {
-  return JSON.stringify(json).replace(/</g, '\\u003c');
 }
 
 async function UserAgreementContent() {
@@ -46,14 +42,6 @@ async function UserAgreementContent() {
 
   // Prefer the stored, admin-validated card; build live ONLY when it is absent.
   const storedJsonLd = page?.jsonLdStructuredData?.trim();
-  const buildFallbackStructuredData = () => generateStructuredData({
-    type: "WebPage",
-    // بلا لاحقة الماركة: هذا اسم **الصفحة** في البيانات المنظَّمة، واسم الموقع يعيش على
-    // عقدة `WebSite` وفي `og:site_name`. إلحاقه هنا كرّر الماركة وكتبها في الكود معاً.
-    name: pageTitle,
-    description: messages.seo.userAgreement.description,
-    url: "/legal/user-agreement",
-  });
 
   return (
     <>
@@ -62,7 +50,7 @@ async function UserAgreementContent() {
         dangerouslySetInnerHTML={{
           __html: storedJsonLd
             ? jsonLdHtmlFromString(storedJsonLd)
-            : sanitizeJsonLd(buildFallbackStructuredData()),
+            : jsonLdHtml(buildFallbackStructuredData(pageTitle)),
         }}
       />
       <div className="container mx-auto max-w-4xl px-4 py-8">
