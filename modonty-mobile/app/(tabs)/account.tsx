@@ -29,6 +29,7 @@ function InfoGroup() {
         { key: 'about', icon: 'info', label: 'عن مدونتي', onPress: page('about') },
         { key: 'help', icon: 'question', label: 'الأسئلة الشائعة', onPress: () => router.push('/help') },
         { key: 'contact', icon: 'email', label: 'تواصل معنا', onPress: () => router.push('/contact') },
+        { key: 'newsletter', icon: 'email', label: 'النشرة البريدية', onPress: () => router.push('/newsletter') },
         { key: 'privacy', icon: 'trust', label: 'سياسة الخصوصية', onPress: page('privacy-policy') },
         { key: 'terms', icon: 'articles', label: 'الشروط والأحكام', onPress: page('terms') },
         { key: 'agreement', icon: 'articles', label: 'اتفاقية المستخدم', onPress: page('user-agreement') },

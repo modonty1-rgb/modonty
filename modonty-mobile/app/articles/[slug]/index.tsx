@@ -18,6 +18,7 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Bone } from '@/components/ui/Skeleton';
 import { ErrorState } from '@/components/ui/StateView';
 import { Tap } from '@/components/ui/Tap';
+import { useReadingAnalytics } from '@/hooks/useReadingAnalytics';
 import { useResource } from '@/hooks/useResource';
 import { compactNumber, fullDate, readingTime } from '@/lib/format';
 import { open, openExternal } from '@/lib/nav';
@@ -62,10 +63,7 @@ export default function ArticleScreen() {
     };
   }, [slug, status, applyCounts]);
 
-  // مشاهدة واحدة لكل فتح؛ الخادم يمنع التكرار بمعرّف الجهاز (`X-Device-Id`).
-  useEffect(() => {
-    actionsApi.viewArticle(slug).catch((error: unknown) => console.warn('[article] view', toApiError(error).message));
-  }, [slug]);
+  const onScroll = useReadingAnalytics(slug);
 
   const c: Counts | null = counts ?? (article ? { ...article.counts, dislikes: 0 } : null);
 
@@ -160,6 +158,8 @@ export default function ArticleScreen() {
       <Header back actions={<IconButton icon="share" label="مشاركة المقال" onPress={() => void share()} />} />
       <ScrollView
         contentContainerStyle={styles.content}
+        onScroll={onScroll}
+        scrollEventThrottle={250}
         refreshControl={<RefreshControl refreshing={res.refreshing} onRefresh={res.refresh} tintColor={colors.primary} colors={[colors.primary]} />}
       >
         {article.featuredImage ? (
@@ -242,7 +242,7 @@ export default function ArticleScreen() {
           </View>
         ) : null}
 
-        <ArticleHtml html={article.html} />
+        <ArticleHtml html={article.html} articleId={article.id} />
 
         {article.gallery.length > 0 ? (
           <View style={styles.section}>

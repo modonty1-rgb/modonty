@@ -90,7 +90,7 @@ export const miscApi = {
   topicAlert: (topic: AlertTopicId) => request<TopicAlertData>('/topic-alerts', { method: 'POST', auth: 'required', body: { topic } }),
   /** مودو بلا بثّ: `fetch` في React Native لا يقرأ الجسم تدريجياً، فيُطلب الجواب كاملاً (`stream:false`) بالغلاف المعتاد. */
   chat: (body: Omit<ChatBody, 'stream'>) => request<ChatData>('/chat', { method: 'POST', auth: 'required', body: { ...body, stream: false } }),
-  chatHistory: (cursor?: string | null) => request<ChatHistoryData>('/chat/history', { auth: 'required', query: { limit: 20, cursor } }),
+  chatHistory: (cursor?: string | null, signal?: AbortSignal) => request<ChatHistoryData>('/chat/history', { auth: 'required', query: { limit: 20, cursor }, signal }),
 };
 
 /** A9–A14 — حسابي. */

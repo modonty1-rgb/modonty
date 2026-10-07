@@ -132,6 +132,7 @@ export default function PartnerScreen() {
     { key: 'reviews', icon: 'rating', label: 'التقييمات', hint: p.counts.reviews > 0 ? `${plainNumber(p.counts.reviews)} تقييم` : 'كن أوّل من يقيّم', onPress: () => router.push({ pathname: '/partners/[slug]/reviews', params: { slug, name: p.name } }) },
     p.counts.gallery > 0 && !isHidden('gallery') ? { key: 'gallery', icon: 'gallery', label: 'الصور', onPress: () => router.push({ pathname: '/partners/[slug]/gallery', params: { slug, name: p.name } }) } : null,
     { key: 'faq', icon: 'question', label: 'الأسئلة والأجوبة', hint: 'اسأل الشريك مباشرة', onPress: () => router.push({ pathname: '/partners/[slug]/faqs', params: { slug, name: p.name, id: p.id } }) },
+    !isHidden('newsletter') ? { key: 'newsletter', icon: 'email', label: 'اشترك في نشرته', onPress: () => router.push({ pathname: '/newsletter', params: { partnerId: p.id, name: p.name } }) } : null,
     { key: 'followers', icon: 'profile', label: 'المتابعون', onPress: () => router.push({ pathname: '/partners/[slug]/followers', params: { slug, name: p.name } }) },
   ] as (NavRowItem | null)[]).filter((x): x is NavRowItem => x !== null);
 

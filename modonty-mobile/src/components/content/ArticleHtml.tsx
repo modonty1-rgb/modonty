@@ -4,6 +4,8 @@ import { memo, useMemo } from 'react';
 import { StyleSheet, useWindowDimensions } from 'react-native';
 
 import { openHref } from '@/lib/nav';
+import { miscApi } from '@/services/api-actions';
+import { toApiError } from '@/services/errors';
 import { useAppTheme } from '@/theme/ThemeProvider';
 import { fonts, media, radius, space, typography, type AppColors } from '@/theme/tokens';
 
@@ -20,9 +22,6 @@ const imageStyles = StyleSheet.create({
 });
 const RENDERERS = { img: HtmlImage };
 
-const RENDERERS_PROPS: Partial<RenderersProps> = {
-  a: { onPress: (_event: unknown, href: string) => openHref(href) },
-};
 
 /**
  * أنماط المتن كائنات صريحة (لا StyleSheet) بأمر توثيق المكتبة. الاتجاه RTL صريح على كل كتلة،
@@ -53,12 +52,26 @@ function htmlStyles(c: AppColors) {
   };
 }
 
-/** متن المقال: `html` المنقّى نفسه الذي ترسمه صفحة الويب (`safeHtml` — article-detail-shape.ts). */
-export const ArticleHtml = memo(function ArticleHtml({ html }: { html: string }) {
+/**
+ * متن المقال: `html` المنقّى نفسه الذي ترسمه صفحة الويب (`safeHtml` — article-detail-shape.ts).
+ * مع `articleId` يُسجَّل نقر الرابط (T2 — نفس article-link-click في الويب) قبل فتحه.
+ */
+export const ArticleHtml = memo(function ArticleHtml({ html, articleId }: { html: string; articleId?: string }) {
   const { colors } = useAppTheme();
   const { width } = useWindowDimensions();
   const styles = useMemo(() => htmlStyles(colors), [colors]);
   const source = useMemo(() => ({ html }), [html]);
+  const renderersProps = useMemo<Partial<RenderersProps>>(
+    () => ({
+      a: {
+        onPress: (_event: unknown, href: string) => {
+          if (articleId) miscApi.linkClick(articleId, href).catch((error: unknown) => console.warn('[article] link click', toApiError(error).message));
+          openHref(href);
+        },
+      },
+    }),
+    [articleId],
+  );
   return (
     <RenderHtml
       source={source}
@@ -67,7 +80,7 @@ export const ArticleHtml = memo(function ArticleHtml({ html }: { html: string })
       tagsStyles={styles.tags}
       systemFonts={SYSTEM_FONTS}
       renderers={RENDERERS}
-      renderersProps={RENDERERS_PROPS}
+      renderersProps={renderersProps}
       ignoredDomTags={['script', 'style', 'iframe', 'form', 'input', 'button']}
     />
   );
