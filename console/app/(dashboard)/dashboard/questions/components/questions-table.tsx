@@ -8,6 +8,9 @@ import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SheetSection } from "@/components/shared/sheet-section";
+import { SheetField } from "@/components/shared/sheet-field";
+import { FilterPill } from "@/components/shared/filter-pill";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -36,24 +39,13 @@ import {
   rejectQuestion,
   restoreQuestion,
 } from "../actions/question-actions";
-import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+import { formatDateTime } from "@/lib/format-date-time";
 
 interface Props {
   questions: VisitorQuestionWithDetails[];
 }
 
 type FilterKey = "all" | ArticleFAQStatus;
-
-function formatDateTime(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(d));
-}
 
 function statusMeta(status: ArticleFAQStatus) {
   const q = ar.questions;
@@ -251,48 +243,6 @@ export function QuestionsTable({ questions }: Props) {
 }
 
 // ─── Sub-components ──────────────────────────────────────────────────
-
-function FilterPill({
-  active,
-  onClick,
-  label,
-  count,
-  tone,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count: number;
-  tone?: "amber" | "emerald" | "red";
-}) {
-  const accent =
-    !active && tone
-      ? {
-          amber: "border-amber-200 text-amber-700",
-          emerald: "border-emerald-200 text-emerald-700",
-          red: "border-red-200 text-red-700",
-        }[tone]
-      : "";
-  return (
-    <Button
-      variant={active ? "default" : "outline"}
-      size="sm"
-      onClick={onClick}
-      className={`gap-2 whitespace-nowrap ${accent}`}
-    >
-      {label}
-      <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
-          active
-            ? "bg-background/20 text-primary-foreground"
-            : "bg-muted text-muted-foreground"
-        }`}
-      >
-        {count}
-      </span>
-    </Button>
-  );
-}
 
 function QuestionRow({
   item,
@@ -529,13 +479,13 @@ function QuestionDetailSheet({
 
         <div className="mt-6 space-y-5">
           {(item.submittedByName || email) && (
-            <Section title={q.submitterSection}>
+            <SheetSection title={q.submitterSection}>
               {item.submittedByName && (
-                <Field label={q.submitterName} value={item.submittedByName} />
+                <SheetField label={q.submitterName} value={item.submittedByName} />
               )}
               {email && (
                 <>
-                  <Field label={q.submitterEmail} value={email} mono />
+                  <SheetField label={q.submitterEmail} value={email} mono />
                   <Button asChild size="sm" variant="outline" className="gap-2">
                     <a href={`mailto:${email}`}>
                       <Mail className="h-3.5 w-3.5" />
@@ -545,90 +495,53 @@ function QuestionDetailSheet({
                   </Button>
                 </>
               )}
-            </Section>
+            </SheetSection>
           )}
 
-          <Section title={q.questionSection}>
+          <SheetSection title={q.questionSection}>
             <div className="rounded-md border bg-muted/30 p-3">
               <p className="text-sm leading-relaxed text-foreground">
                 {item.question}
               </p>
             </div>
-          </Section>
+          </SheetSection>
 
           {item.answer && (
-            <Section title={q.answerSection}>
+            <SheetSection title={q.answerSection}>
               <div className="rounded-md border border-emerald-200 bg-emerald-50/40 p-3">
                 <p className="text-sm leading-relaxed text-foreground">
                   {item.answer}
                 </p>
               </div>
-            </Section>
+            </SheetSection>
           )}
 
-          <Section title={q.articleSection}>
+          <SheetSection title={q.articleSection}>
             <Button asChild size="sm" variant="outline" className="gap-2">
               <Link href={`/dashboard/articles/${item.article.id}`}>
                 {item.article.title}
                 <ExternalLink className="h-3 w-3" />
               </Link>
             </Button>
-          </Section>
+          </SheetSection>
 
-          <Section title={q.timelineSection}>
-            <Field
+          <SheetSection title={q.timelineSection}>
+            <SheetField
               label={q.submittedAt}
               value={formatDateTime(item.createdAt)}
               mono
             />
             {item.status === "PUBLISHED" && (
-              <Field
+              <SheetField
                 label={q.repliedAt}
                 value={formatDateTime(item.updatedAt)}
                 mono
               />
             )}
-          </Section>
+          </SheetSection>
         </div>
       </SheetContent>
     </Sheet>
   );
 }
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="space-y-2">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </h3>
-      <div className="space-y-2">{children}</div>
-    </section>
-  );
-}
-
-function Field({
-  label,
-  value,
-  mono = false,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
-  return (
-    <div className="space-y-0.5">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p
-        className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}
-      >
-        {value}
-      </p>
-    </div>
-  );
-}

@@ -2,8 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
+import { buildReelSlug } from "@/lib/build-reel-slug";
 import { messages } from "@/lib/messages";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import {
@@ -30,21 +31,6 @@ type Result = { success: true } | { success: false; error: string };
 const MAX_DURATION_SEC = 90;
 const MIN_DURATION_SEC = 2;
 
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
-
-/** Unique across the media collection — checked in code, not by a nullable-column index. */
-async function buildReelSlug(): Promise<string> {
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const candidate = `reel-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-    const taken = await db.media.findFirst({ where: { reelSlug: candidate }, select: { id: true } });
-    if (!taken) return candidate;
-  }
-  throw new Error("could not allocate a unique reel slug");
-}
-
 interface VideoUploadTicket {
   mediaId: string;
   endpoint: string;
@@ -64,7 +50,7 @@ interface VideoUploadTicket {
 export async function createVideoUploadTicket(
   filename: string
 ): Promise<{ success: true; ticket: VideoUploadTicket } | { success: false; error: string }> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {
@@ -122,7 +108,7 @@ export async function finalizeVideoReel(
   mediaId: string,
   input: FinalizeVideoInput
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {
@@ -174,7 +160,7 @@ async function discardVideo(mediaId: string, bunnyVideoId: string | null) {
 export async function getVideoEncodingState(
   mediaId: string
 ): Promise<{ ready: boolean; failed: boolean; progress: number }> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { ready: false, failed: false, progress: 0 };
 
   const media = await db.media.findFirst({
@@ -215,7 +201,7 @@ export async function getVideoEncodingState(
  * image route into the reels zone, exactly like a picture reel.
  */
 export async function setVideoCover(mediaId: string, url: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const clean = url.trim();
@@ -247,7 +233,7 @@ export async function setVideoCover(mediaId: string, url: string): Promise<Resul
  * can reach.
  */
 export async function removeVideoReel(mediaId: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {

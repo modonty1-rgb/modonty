@@ -7,6 +7,8 @@ import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SheetSection } from "@/components/shared/sheet-section";
+import { FilterPill } from "@/components/shared/filter-pill";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -39,7 +41,8 @@ import {
   bulkDeleteBookings,
   setBookingConfirmedAt,
 } from "../actions/booking-actions";
-import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+import { formatDateTime } from "@/lib/format-date-time";
+import { buildSelection } from "@/lib/build-selection";
 
 interface Props {
   bookings: BookingWithDetails[];
@@ -47,17 +50,6 @@ interface Props {
 
 type FilterKey = "all" | BookingStatus;
 type ChannelKey = "all" | "form" | "whatsapp";
-
-function formatDateTime(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(d));
-}
 
 function waNumber(phone: string | null): string {
   return (phone ?? "").replace(/\D/g, "");
@@ -132,26 +124,7 @@ export function BookingsList({ bookings }: Props) {
     [bookings]
   );
 
-  const allFilteredSelected = filtered.length > 0 && filtered.every((b) => selected.has(b.id));
-  const someSelected = filtered.some((b) => selected.has(b.id));
-  const indeterminate = someSelected && !allFilteredSelected;
-
-  function toggleAllFiltered(checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      filtered.forEach((b) => (checked ? next.add(b.id) : next.delete(b.id)));
-      return next;
-    });
-  }
-
-  function toggleOne(id: string, checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (checked) next.add(id);
-      else next.delete(id);
-      return next;
-    });
-  }
+  const { allFilteredSelected, indeterminate, toggleAllFiltered, toggleOne } = buildSelection(filtered, selected, setSelected);
 
   function handleStatusChange(id: string, status: BookingStatus) {
     setActionId(id);
@@ -344,42 +317,6 @@ function ChannelPill({
   );
 }
 
-function FilterPill({
-  active,
-  onClick,
-  label,
-  count,
-  tone,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count: number;
-  tone?: "primary" | "amber" | "emerald" | "slate";
-}) {
-  const accent =
-    !active && tone
-      ? {
-          primary: "border-primary/30 text-primary",
-          amber: "border-amber-200 text-amber-700",
-          emerald: "border-emerald-200 text-emerald-700",
-          slate: "border-slate-200 text-slate-600",
-        }[tone]
-      : "";
-  return (
-    <Button variant={active ? "default" : "outline"} size="sm" onClick={onClick} className={`gap-2 whitespace-nowrap ${accent}`}>
-      {label}
-      <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
-          active ? "bg-background/20 text-primary-foreground" : "bg-muted text-muted-foreground"
-        }`}
-      >
-        {count}
-      </span>
-    </Button>
-  );
-}
-
 function BookingRow({
   booking,
   selected,
@@ -561,15 +498,15 @@ function BookingDetailSheet({ booking, onClose }: { booking: BookingWithDetails 
         <div className="mt-6 space-y-5">
           {isWhatsapp ? (
             /* WhatsApp lead — anonymous. We hold proof of hand-off + geo, not a number. */
-            <Section title={s.contactSection}>
+            <SheetSection title={s.contactSection}>
               <div className="flex items-start gap-2 rounded-lg border border-[#25D366]/30 bg-[#25D366]/5 p-3">
                 <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-[#128C7E]" />
                 <p className="text-xs leading-relaxed text-foreground">{s.whatsappLeadNote}</p>
               </div>
               <Field label={s.geoLabel} value={geoText(booking)} />
-            </Section>
+            </SheetSection>
           ) : (
-            <Section title={s.contactSection}>
+            <SheetSection title={s.contactSection}>
               <Field label={s.phone} value={booking.phone || "—"} mono />
               <Field label={s.email} value={booking.email || "—"} mono />
               <div className="flex flex-wrap gap-2 pt-1">
@@ -598,11 +535,11 @@ function BookingDetailSheet({ booking, onClose }: { booking: BookingWithDetails 
                   </Button>
                 )}
               </div>
-            </Section>
+            </SheetSection>
           )}
 
           {/* Confirmed appointment — the provider logs the time they agreed with the visitor */}
-          <Section title={s.confirmedAt}>
+          <SheetSection title={s.confirmedAt}>
             {booking.confirmedAt ? (
               <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-2.5 py-1 text-sm font-medium text-emerald-700 ring-1 ring-emerald-200 tabular-nums">
@@ -629,49 +566,40 @@ function BookingDetailSheet({ booking, onClose }: { booking: BookingWithDetails 
               </div>
             )}
             {!booking.confirmedAt && <p className="mt-1 text-xs text-muted-foreground">{s.noConfirmed}</p>}
-          </Section>
+          </SheetSection>
 
           {!isWhatsapp && (
-            <Section title={s.preferredAt}>
+            <SheetSection title={s.preferredAt}>
               <p className="text-sm text-foreground tabular-nums">
                 {booking.preferredAt ? formatDateTime(booking.preferredAt) : s.noPreferred}
               </p>
-            </Section>
+            </SheetSection>
           )}
 
           {!isWhatsapp && (
-            <Section title={s.messageLabel}>
+            <SheetSection title={s.messageLabel}>
               <div className="rounded-md border bg-muted/30 p-3">
                 <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
                   {booking.message || s.noMessage}
                 </p>
               </div>
-            </Section>
+            </SheetSection>
           )}
 
-          <Section title={s.sourceLabel}>
+          <SheetSection title={s.sourceLabel}>
             <Field label={s.sourceLabel} value={sourceLabel(booking.source)} />
             {booking.article?.title && <Field label={s.articleLabel} value={booking.article.title} />}
             {(booking.city || booking.country) && <Field label={s.geoLabel} value={geoText(booking)} />}
-          </Section>
+          </SheetSection>
 
-          <Section title={s.timeline}>
+          <SheetSection title={s.timeline}>
             <Field label={s.createdAt} value={formatDateTime(booking.createdAt)} mono />
             {booking.ipAddress && <Field label={s.ipAddress} value={booking.ipAddress} mono />}
             {booking.userAgent && <Field label={s.userAgent} value={booking.userAgent} mono />}
-          </Section>
+          </SheetSection>
         </div>
       </SheetContent>
     </Sheet>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="space-y-2">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</h3>
-      <div className="space-y-2">{children}</div>
-    </section>
   );
 }
 

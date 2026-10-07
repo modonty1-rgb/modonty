@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 
 /**
@@ -30,13 +30,8 @@ const addSchema = z.object({
 
 type Result = { ok: true } | { ok: false; error: string };
 
-async function sessionClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
-
 export async function addMyDocument(input: unknown): Promise<Result> {
-  const clientId = await sessionClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { ok: false, error: "غير مصرَّح" };
 
   const parsed = addSchema.safeParse(input);
@@ -61,7 +56,7 @@ export async function addMyDocument(input: unknown): Promise<Result> {
 }
 
 export async function deleteMyDocument(documentId: string): Promise<Result> {
-  const clientId = await sessionClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { ok: false, error: "غير مصرَّح" };
 
   // الملكيّةُ تُفحص قبل الحذف: `deleteMany` بشرط `clientId` يرفض صفَّ غيره بلا استعلامٍ ثانٍ.

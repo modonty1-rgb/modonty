@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { toast } from "sonner";
 import { CommentStatus } from "@prisma/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { FilterPill } from "@/components/shared/filter-pill";
 import { Input } from "@/components/ui/input";
 import {
   Check,
@@ -22,33 +22,15 @@ import {
   deleteClientReview,
   restoreClientReview,
 } from "../actions/client-review-actions";
-import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+import { formatDateTimeValue } from "@/lib/format-date-time-value";
+import { clientFeedbackStatusMeta } from "@/lib/client-feedback-status-meta";
+import { createRunActionWithToast } from "@/lib/run-action-with-toast";
 
 interface Props {
   reviews: ClientReviewWithDetails[];
 }
 
 type FilterKey = "all" | CommentStatus;
-
-function fmt(d: Date | string): string {
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(d));
-}
-
-function statusMeta(status: CommentStatus) {
-  if (status === "PENDING")
-    return { label: "بانتظار المراجعة", classes: "bg-amber-50 text-amber-700 ring-amber-200" };
-  if (status === "APPROVED")
-    return { label: "معتمد", classes: "bg-emerald-50 text-emerald-700 ring-emerald-200" };
-  if (status === "REJECTED")
-    return { label: "مرفوض", classes: "bg-red-50 text-red-700 ring-red-200" };
-  return { label: "محذوف", classes: "bg-slate-100 text-slate-600 ring-slate-200" };
-}
 
 function Stars({ rating }: { rating: number }) {
   return (
@@ -97,19 +79,7 @@ export function ClientReviewsTable({ reviews }: Props) {
     [reviews]
   );
 
-  function run(
-    id: string,
-    fn: () => Promise<{ success: boolean; error?: string }>,
-    msg: string
-  ) {
-    setActionId(id);
-    startTransition(async () => {
-      const res = await fn();
-      if (res.success) toast.success(msg);
-      else toast.error(res.error || "فشل التنفيذ");
-      setActionId(null);
-    });
-  }
+  const run = createRunActionWithToast(setActionId, startTransition);
 
   return (
     <Card className="shadow-sm">
@@ -142,7 +112,7 @@ export function ClientReviewsTable({ reviews }: Props) {
         ) : (
           <div className="space-y-3">
             {filtered.map((c) => {
-              const status = statusMeta(c.status);
+              const status = clientFeedbackStatusMeta(c.status);
               const isWorking = actionId === c.id;
               const isDeleted = c.status === "DELETED";
               const isRejected = c.status === "REJECTED";
@@ -172,7 +142,7 @@ export function ClientReviewsTable({ reviews }: Props) {
                       </p>
                       <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                         <span className="text-xs text-muted-foreground tabular-nums">
-                          {fmt(c.createdAt)}
+                          {formatDateTimeValue(c.createdAt)}
                         </span>
                         <div className="flex flex-wrap gap-1.5">
                           {(isDeleted || isRejected) && (
@@ -236,43 +206,3 @@ export function ClientReviewsTable({ reviews }: Props) {
   );
 }
 
-function FilterPill({
-  active,
-  onClick,
-  label,
-  count,
-  tone,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count: number;
-  tone?: "amber" | "emerald" | "red" | "slate";
-}) {
-  const accent =
-    !active && tone
-      ? {
-          amber: "border-amber-200 text-amber-700",
-          emerald: "border-emerald-200 text-emerald-700",
-          red: "border-red-200 text-red-700",
-          slate: "border-slate-200 text-slate-600",
-        }[tone]
-      : "";
-  return (
-    <Button
-      variant={active ? "default" : "outline"}
-      size="sm"
-      onClick={onClick}
-      className={`gap-2 whitespace-nowrap ${accent}`}
-    >
-      {label}
-      <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
-          active ? "bg-background/20 text-primary-foreground" : "bg-muted text-muted-foreground"
-        }`}
-      >
-        {count}
-      </span>
-    </Button>
-  );
-}

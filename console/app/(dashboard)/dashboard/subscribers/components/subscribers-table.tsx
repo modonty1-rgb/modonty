@@ -6,6 +6,8 @@ import { ar } from "@/lib/ar";
 import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SheetSection } from "@/components/shared/sheet-section";
+import { SheetField } from "@/components/shared/sheet-field";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -36,7 +38,9 @@ import {
   bulkUnsubscribeAction,
   bulkDeleteAction,
 } from "../actions/subscriber-actions";
-import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+import { formatDateTime } from "@/lib/format-date-time";
+import { buildSelection } from "@/lib/build-selection";
+import { formatDate } from "@/lib/format-date";
 
 interface Props {
   subscribers: SubscriberWithDetails[];
@@ -45,26 +49,6 @@ interface Props {
 type FilterKey = "all" | "active" | "unsubscribed" | "consent";
 
 const PAGE_LIMIT = 200;
-
-function formatDate(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(new Date(d));
-}
-
-function formatDateTime(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(d));
-}
 
 export function SubscribersTable({ subscribers }: Props) {
   const s = ar.subscribers;
@@ -103,27 +87,7 @@ export function SubscribersTable({ subscribers }: Props) {
     [subscribers]
   );
 
-  const allFilteredSelected =
-    filtered.length > 0 && filtered.every((x) => selected.has(x.id));
-  const someFilteredSelected = filtered.some((x) => selected.has(x.id));
-  const indeterminate = someFilteredSelected && !allFilteredSelected;
-
-  function toggleAllFiltered(checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      filtered.forEach((x) => (checked ? next.add(x.id) : next.delete(x.id)));
-      return next;
-    });
-  }
-
-  function toggleOne(id: string, checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (checked) next.add(id);
-      else next.delete(id);
-      return next;
-    });
-  }
+  const { allFilteredSelected, indeterminate, toggleAllFiltered, toggleOne } = buildSelection(filtered, selected, setSelected);
 
   function clearSelection() {
     setSelected(new Set());
@@ -621,44 +585,44 @@ function SubscriberDetailSheet({
 
         <div className="mt-6 space-y-6">
           {/* Identity */}
-          <Section title={s.contactInfo}>
-            <Field label={s.email} value={subscriber.email} mono />
-            {subscriber.name && <Field label={s.name} value={subscriber.name} />}
-          </Section>
+          <SheetSection title={s.contactInfo}>
+            <SheetField label={s.email} value={subscriber.email} mono />
+            {subscriber.name && <SheetField label={s.name} value={subscriber.name} />}
+          </SheetSection>
 
           {/* Status + consent */}
-          <Section title={s.consentInfo}>
+          <SheetSection title={s.consentInfo}>
             <div className="flex items-center gap-2">
               <StatusBadge subscribed={subscriber.subscribed} />
               <ConsentBadge consentGiven={subscriber.consentGiven} />
             </div>
             {subscriber.consentGiven && subscriber.consentDate && (
-              <Field
+              <SheetField
                 label={s.consentGivenAt}
                 value={formatDateTime(subscriber.consentDate)}
                 mono
               />
             )}
-          </Section>
+          </SheetSection>
 
           {/* Timeline */}
-          <Section title={s.timeline}>
-            <Field
+          <SheetSection title={s.timeline}>
+            <SheetField
               label={s.subscribedSince}
               value={formatDateTime(subscriber.subscribedAt)}
               mono
             />
             {subscriber.unsubscribedAt && (
-              <Field
+              <SheetField
                 label={s.unsubscribedAt}
                 value={formatDateTime(subscriber.unsubscribedAt)}
                 mono
               />
             )}
-          </Section>
+          </SheetSection>
 
           {/* Preferences */}
-          <Section title={s.preferencesLabel}>
+          <SheetSection title={s.preferencesLabel}>
             {subscriber.preferences ? (
               <pre className="overflow-auto rounded-md border bg-muted/40 p-3 text-xs leading-relaxed">
                 {JSON.stringify(subscriber.preferences, null, 2)}
@@ -666,7 +630,7 @@ function SubscriberDetailSheet({
             ) : (
               <p className="text-sm text-muted-foreground">{s.noPreferences}</p>
             )}
-          </Section>
+          </SheetSection>
 
           {/* Actions */}
           <div className="flex flex-wrap gap-2 border-t pt-4">
@@ -713,38 +677,3 @@ function SubscriberDetailSheet({
   );
 }
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="space-y-2">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </h3>
-      <div className="space-y-2">{children}</div>
-    </section>
-  );
-}
-
-function Field({
-  label,
-  value,
-  mono = false,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
-  return (
-    <div className="space-y-0.5">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}>
-        {value}
-      </p>
-    </div>
-  );
-}

@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { ArticleFAQStatus } from "@prisma/client";
@@ -10,11 +10,6 @@ import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
 import { updateClientPageFaqForClient } from "../helpers/update-client-page-faq";
 
 type Result = { success: true } | { success: false; error: string };
-
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
 
 
 /**
@@ -27,7 +22,7 @@ export async function saveClientPageFaq(input: {
   question: string;
   answer: string;
 }): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const question = stripHtmlTags((input.question ?? "").trim());
@@ -79,13 +74,13 @@ export async function restoreClientPageFaq(id: string): Promise<Result> {
 }
 
 async function setStatus(id: string, status: ArticleFAQStatus): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   return updateClientPageFaqForClient(clientId, id, { status });
 }
 
 export async function deleteClientPageFaq(id: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   try {
     const owned = await db.clientFAQ.findFirst({

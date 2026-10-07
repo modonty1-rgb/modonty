@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
@@ -17,11 +17,6 @@ type BulkResult =
   | { success: true; count: number }
   | { success: false; error: string };
 
-async function getCurrentClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
-
 /** Verifies that a subscriber belongs to the current client (cross-tenant guard). */
 async function ensureOwnedSubscriber(subscriberId: string, clientId: string) {
   return db.subscriber.findFirst({
@@ -31,7 +26,7 @@ async function ensureOwnedSubscriber(subscriberId: string, clientId: string) {
 }
 
 export async function unsubscribeUser(subscriberId: string): Promise<Result> {
-  const clientId = await getCurrentClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {
@@ -51,7 +46,7 @@ export async function unsubscribeUser(subscriberId: string): Promise<Result> {
 }
 
 export async function resubscribeUser(subscriberId: string): Promise<Result> {
-  const clientId = await getCurrentClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {
@@ -71,7 +66,7 @@ export async function resubscribeUser(subscriberId: string): Promise<Result> {
 }
 
 export async function deleteSubscriber(subscriberId: string): Promise<Result> {
-  const clientId = await getCurrentClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {
@@ -89,7 +84,7 @@ export async function deleteSubscriber(subscriberId: string): Promise<Result> {
 // ─── Bulk actions ────────────────────────────────────────────────────
 
 export async function bulkUnsubscribeAction(ids: string[]): Promise<BulkResult> {
-  const clientId = await getCurrentClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   if (ids.length === 0) return { success: true, count: 0 };
 
@@ -106,7 +101,7 @@ export async function bulkUnsubscribeAction(ids: string[]): Promise<BulkResult> 
 }
 
 export async function bulkDeleteAction(ids: string[]): Promise<BulkResult> {
-  const clientId = await getCurrentClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   if (ids.length === 0) return { success: true, count: 0 };
 
@@ -134,7 +129,7 @@ function csvEscape(value: string | null | undefined): string {
 }
 
 export async function exportSubscribers(): Promise<ExportResult> {
-  const clientId = await getCurrentClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {

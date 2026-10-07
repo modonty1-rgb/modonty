@@ -3,9 +3,9 @@ import {
   statusLabel,
   paymentLabel,
   subscriptionProgress,
-  formatSubscriptionDate as formatDate,
   type SubscriptionData,
 } from "@/lib/subscription";
+import { formatDate } from "@/lib/format-date";
 import { formatTermLabel } from "@modonty/shared/lib/commercial/term-label";
 import {
   Card,

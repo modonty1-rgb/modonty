@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { messages } from "@/lib/messages";
 import { approveAwaitingArticle, requestAwaitingArticleChanges } from "@/lib/mobile-api/article-decisions";
 
@@ -13,16 +13,11 @@ import { notifyArticleDecision } from "./notify-article-decision";
  * مستخدم مسجّل يقدر يرسل معرّف عميل آخر ومعرّف مقاله فيعتمده باسمه. والملكية تُحسم بعدها
  * في `approveAwaitingArticle` / `requestAwaitingArticleChanges` (شرط `clientId` في الاستعلام).
  */
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
-
 // TODO: Add compliance check (forbidden keywords/claims) before publishing.
 // Console app cannot import admin's @/lib/seo/pre-publish-audit.
 // Options: (1) shared package in workspace, or (2) admin API endpoint for compliance.
 export async function approveArticle(articleId: string) {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   try {
     const article = await approveAwaitingArticle(articleId, clientId);
@@ -64,7 +59,7 @@ export async function approveArticle(articleId: string) {
 }
 
 export async function requestChanges(articleId: string, feedback: string) {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   try {
     const article = await requestAwaitingArticleChanges(articleId, clientId, feedback);

@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 
 /**
  * Security fix (Khalid, 4 Oct 2026): none of these actions checked the session. Create/list
@@ -13,11 +13,6 @@ import { auth } from "@/lib/auth";
  * session and touches only that partner's rows. The `clientId` arguments stay for the existing
  * callers but must equal the signed-in partner.
  */
-async function sessionClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
-
 function refresh() {
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/seo");
@@ -27,7 +22,7 @@ export async function createCompetitor(
   clientId: string,
   data: { name: string; url?: string | null; notes?: string | null; order?: number }
 ) {
-  const owner = await sessionClientId();
+  const owner = await getSessionClientId();
   if (!owner || owner !== clientId) return { success: false, error: messages.error.unauthorized };
   try {
     await db.clientCompetitor.create({
@@ -50,7 +45,7 @@ export async function updateCompetitor(
   id: string,
   data: { name?: string; url?: string | null; notes?: string | null; order?: number }
 ) {
-  const owner = await sessionClientId();
+  const owner = await getSessionClientId();
   if (!owner) return { success: false, error: messages.error.unauthorized };
   try {
     const res = await db.clientCompetitor.updateMany({
@@ -71,7 +66,7 @@ export async function updateCompetitor(
 }
 
 export async function deleteCompetitor(id: string) {
-  const owner = await sessionClientId();
+  const owner = await getSessionClientId();
   if (!owner) return { success: false, error: messages.error.unauthorized };
   try {
     const res = await db.clientCompetitor.deleteMany({ where: { id, clientId: owner } });
@@ -87,7 +82,7 @@ export async function createKeyword(
   clientId: string,
   data: { keyword: string; intent?: string | null; priority?: number; reason?: string | null }
 ) {
-  const owner = await sessionClientId();
+  const owner = await getSessionClientId();
   if (!owner || owner !== clientId) return { success: false, error: messages.error.unauthorized };
   try {
     await db.clientKeyword.create({
@@ -110,7 +105,7 @@ export async function updateKeyword(
   id: string,
   data: { keyword?: string; intent?: string | null; priority?: number; reason?: string | null }
 ) {
-  const owner = await sessionClientId();
+  const owner = await getSessionClientId();
   if (!owner) return { success: false, error: messages.error.unauthorized };
   try {
     const res = await db.clientKeyword.updateMany({
@@ -131,7 +126,7 @@ export async function updateKeyword(
 }
 
 export async function deleteKeyword(id: string) {
-  const owner = await sessionClientId();
+  const owner = await getSessionClientId();
   if (!owner) return { success: false, error: messages.error.unauthorized };
   try {
     const res = await db.clientKeyword.deleteMany({ where: { id, clientId: owner } });

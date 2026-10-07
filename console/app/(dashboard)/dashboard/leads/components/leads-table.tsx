@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { ar } from "@/lib/ar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SheetSection } from "@/components/shared/sheet-section";
+import { SheetField } from "@/components/shared/sheet-field";
 import { Input } from "@/components/ui/input";
 import {
   Sheet,
@@ -31,7 +33,8 @@ import {
   Users as UsersIcon,
 } from "lucide-react";
 import { LeadWithDetails } from "../helpers/lead-queries";
-import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+import { formatDateTime } from "@/lib/format-date-time";
+import { formatDate } from "@/lib/format-date";
 
 interface Props {
   leads: LeadWithDetails[];
@@ -40,26 +43,6 @@ interface Props {
 type FilterKey = "all" | "hot" | "warm" | "cold" | "qualified";
 
 const PAGE_LIMIT = 200;
-
-function formatDate(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(new Date(d));
-}
-
-function formatDateTime(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(d));
-}
 
 function levelMeta(level: string | null) {
   if (level === "HOT") {
@@ -522,11 +505,11 @@ function LeadDetailSheet({
           </div>
 
           {/* Contact */}
-          <Section title={l.contactInfo}>
+          <SheetSection title={l.contactInfo}>
             {hasContact ? (
               <div className="space-y-2">
-                {email && <Field label="Email" value={email} mono />}
-                {phone && <Field label="Phone" value={phone} mono />}
+                {email && <SheetField label="Email" value={email} mono />}
+                {phone && <SheetField label="Phone" value={phone} mono />}
                 <div className="flex flex-wrap gap-2 pt-1">
                   {email && (
                     <Button asChild size="sm" variant="outline" className="gap-2">
@@ -559,50 +542,28 @@ function LeadDetailSheet({
             ) : (
               <p className="text-sm text-muted-foreground">{l.noContactMethods}</p>
             )}
-          </Section>
+          </SheetSection>
 
           {/* Score breakdown */}
-          <Section title={l.scoreBreakdown}>
+          <SheetSection title={l.scoreBreakdown}>
             <ScoreRow icon={Eye} label={l.scoreView} value={lead.viewScore} />
             <ScoreRow icon={Clock} label={l.scoreTime} value={lead.timeScore} />
             <ScoreRow icon={MousePointerClick} label={l.scoreInteraction} value={lead.interactionScore} />
             <ScoreRow icon={Target} label={l.scoreConversion} value={lead.conversionScore} />
-          </Section>
+          </SheetSection>
 
           {/* Activity */}
-          <Section title={l.activitySection}>
+          <SheetSection title={l.activitySection}>
             <div className="grid grid-cols-2 gap-3">
               <Stat label={l.pagesViewedLabel} value={String(lead.pagesViewed)} />
               <Stat label={l.timeSpentLabel} value={`${(lead.totalTimeSpent / 60).toFixed(1)} min`} />
               <Stat label={l.interactionsLabel} value={String(lead.interactions)} />
               <Stat label={l.conversionsLabel} value={String(lead.conversions)} />
             </div>
-          </Section>
+          </SheetSection>
         </div>
       </SheetContent>
     </Sheet>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="space-y-2">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </h3>
-      <div className="space-y-2">{children}</div>
-    </section>
-  );
-}
-
-function Field({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div className="space-y-0.5">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}>
-        {value}
-      </p>
-    </div>
   );
 }
 

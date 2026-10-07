@@ -7,6 +7,9 @@ import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SheetSection } from "@/components/shared/sheet-section";
+import { SheetField } from "@/components/shared/sheet-field";
+import { FilterPill } from "@/components/shared/filter-pill";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,24 +45,14 @@ import {
   bulkDeleteMessages,
   sendReply,
 } from "../actions/support-actions";
-import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+import { formatDateTime } from "@/lib/format-date-time";
+import { buildSelection } from "@/lib/build-selection";
 
 interface Props {
   messages: ContactMessageWithDetails[];
 }
 
 type FilterKey = "all" | ContactStatus;
-
-function formatDateTime(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(d));
-}
 
 function decodeReferrer(url: string): string {
   try {
@@ -125,27 +118,7 @@ export function MessagesList({ messages }: Props) {
     [messages]
   );
 
-  const allFilteredSelected =
-    filtered.length > 0 && filtered.every((m) => selected.has(m.id));
-  const someSelected = filtered.some((m) => selected.has(m.id));
-  const indeterminate = someSelected && !allFilteredSelected;
-
-  function toggleAllFiltered(checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      filtered.forEach((m) => (checked ? next.add(m.id) : next.delete(m.id)));
-      return next;
-    });
-  }
-
-  function toggleOne(id: string, checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (checked) next.add(id);
-      else next.delete(id);
-      return next;
-    });
-  }
+  const { allFilteredSelected, indeterminate, toggleAllFiltered, toggleOne } = buildSelection(filtered, selected, setSelected);
 
   function handleStatusChange(id: string, status: ContactStatus) {
     setActionId(id);
@@ -368,49 +341,6 @@ export function MessagesList({ messages }: Props) {
 }
 
 // ─── Sub-components ──────────────────────────────────────────────────
-
-function FilterPill({
-  active,
-  onClick,
-  label,
-  count,
-  tone,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count: number;
-  tone?: "primary" | "amber" | "emerald" | "slate";
-}) {
-  const accent =
-    !active && tone
-      ? {
-          primary: "border-primary/30 text-primary",
-          amber: "border-amber-200 text-amber-700",
-          emerald: "border-emerald-200 text-emerald-700",
-          slate: "border-slate-200 text-slate-600",
-        }[tone]
-      : "";
-  return (
-    <Button
-      variant={active ? "default" : "outline"}
-      size="sm"
-      onClick={onClick}
-      className={`gap-2 whitespace-nowrap ${accent}`}
-    >
-      {label}
-      <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
-          active
-            ? "bg-background/20 text-primary-foreground"
-            : "bg-muted text-muted-foreground"
-        }`}
-      >
-        {count}
-      </span>
-    </Button>
-  );
-}
 
 function MessageRow({
   message,
@@ -725,9 +655,9 @@ function MessageDetailSheet({
 
         <div className="mt-6 space-y-5">
           {/* Sender */}
-          <Section title={s.from}>
-            <Field label={s.from} value={message.name} />
-            <Field label="Email" value={message.email} mono />
+          <SheetSection title={s.from}>
+            <SheetField label={s.from} value={message.name} />
+            <SheetField label="Email" value={message.email} mono />
             <Button asChild size="sm" variant="outline" className="gap-2">
               <a href={`mailto:${message.email}`}>
                 <Mail className="h-3.5 w-3.5" />
@@ -735,30 +665,30 @@ function MessageDetailSheet({
                 <ExternalLink className="h-3 w-3" />
               </a>
             </Button>
-          </Section>
+          </SheetSection>
 
           {/* Message body */}
-          <Section title={s.message}>
+          <SheetSection title={s.message}>
             <div className="rounded-md border bg-muted/30 p-3">
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
                 {message.message}
               </p>
             </div>
-          </Section>
+          </SheetSection>
 
           {/* Existing reply */}
           {message.replyBody && (
-            <Section title={s.yourReply}>
+            <SheetSection title={s.yourReply}>
               <div className="rounded-md border-s-2 border-emerald-300 bg-emerald-50/50 p-3">
                 <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
                   {message.replyBody}
                 </p>
               </div>
-            </Section>
+            </SheetSection>
           )}
 
           {/* Reply form */}
-          <Section title={s.reply}>
+          <SheetSection title={s.reply}>
             <Textarea
               value={replyBody}
               onChange={(e) => setReplyBody(e.target.value)}
@@ -788,83 +718,46 @@ function MessageDetailSheet({
               <Send className="h-3.5 w-3.5" />
               {sending ? "…" : s.sendReply}
             </Button>
-          </Section>
+          </SheetSection>
 
           {/* Timeline */}
-          <Section title={s.metaSection}>
-            <Field
+          <SheetSection title={s.metaSection}>
+            <SheetField
               label={s.sentAt}
               value={formatDateTime(message.createdAt)}
               mono
             />
             {message.readAt && (
-              <Field
+              <SheetField
                 label={s.readAt}
                 value={formatDateTime(message.readAt)}
                 mono
               />
             )}
             {message.repliedAt && (
-              <Field
+              <SheetField
                 label={s.repliedAt}
                 value={formatDateTime(message.repliedAt)}
                 mono
               />
             )}
             {message.referrer && (
-              <Field
+              <SheetField
                 label={s.referrer}
                 value={decodeReferrer(message.referrer)}
                 mono
               />
             )}
             {message.ipAddress && (
-              <Field label={s.ipAddress} value={message.ipAddress} mono />
+              <SheetField label={s.ipAddress} value={message.ipAddress} mono />
             )}
             {message.userAgent && (
-              <Field label={s.userAgent} value={message.userAgent} mono />
+              <SheetField label={s.userAgent} value={message.userAgent} mono />
             )}
-          </Section>
+          </SheetSection>
         </div>
       </SheetContent>
     </Sheet>
   );
 }
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="space-y-2">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </h3>
-      <div className="space-y-2">{children}</div>
-    </section>
-  );
-}
-
-function Field({
-  label,
-  value,
-  mono = false,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
-  return (
-    <div className="space-y-0.5">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p
-        className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}
-      >
-        {value}
-      </p>
-    </div>
-  );
-}

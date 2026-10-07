@@ -1,17 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
 
 type Result = { success: true } | { success: false; error: string };
 type Status = "new" | "contacted" | "done" | "archived";
-
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
 
 async function ensureOwnedBooking(
   bookingId: string,
@@ -27,7 +22,7 @@ export async function updateBookingStatus(
   bookingId: string,
   status: Status
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const booking = await ensureOwnedBooking(bookingId, clientId);
@@ -47,7 +42,7 @@ export async function setBookingConfirmedAt(
   bookingId: string,
   iso: string | null
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const booking = await ensureOwnedBooking(bookingId, clientId);
@@ -80,7 +75,7 @@ export async function bulkUpdateBookings(
   bookingIds: string[],
   status: Status
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   if (bookingIds.length === 0) return { success: false, error: messages.error.required };
 
@@ -97,7 +92,7 @@ export async function bulkUpdateBookings(
 }
 
 export async function deleteBooking(bookingId: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const booking = await ensureOwnedBooking(bookingId, clientId);
@@ -113,7 +108,7 @@ export async function deleteBooking(bookingId: string): Promise<Result> {
 }
 
 export async function bulkDeleteBookings(bookingIds: string[]): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   if (bookingIds.length === 0) return { success: false, error: messages.error.required };
 

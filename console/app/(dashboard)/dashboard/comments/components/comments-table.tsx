@@ -8,6 +8,9 @@ import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SheetSection } from "@/components/shared/sheet-section";
+import { SheetField } from "@/components/shared/sheet-field";
+import { FilterPill } from "@/components/shared/filter-pill";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -42,7 +45,8 @@ import {
   bulkRejectComments,
   type BulkRef,
 } from "../actions/comment-actions";
-import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+import { formatDateTime } from "@/lib/format-date-time";
+import { buildSelection } from "@/lib/build-selection";
 
 interface Props {
   comments: CommentWithDetails[];
@@ -51,17 +55,6 @@ interface Props {
 type FilterKey = "all" | CommentStatus;
 /** Second axis of filtering — status says how far along, this says where it came from. */
 type SourceKey = "all" | CommentKind;
-
-function formatDateTime(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(d));
-}
 
 function statusMeta(status: CommentStatus) {
   const c = ar.comments;
@@ -131,27 +124,7 @@ export function CommentsTable({ comments }: Props) {
     [comments]
   );
 
-  const allFilteredSelected =
-    filtered.length > 0 && filtered.every((x) => selected.has(x.id));
-  const someSelected = filtered.some((x) => selected.has(x.id));
-  const indeterminate = someSelected && !allFilteredSelected;
-
-  function toggleAllFiltered(checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      filtered.forEach((x) => (checked ? next.add(x.id) : next.delete(x.id)));
-      return next;
-    });
-  }
-
-  function toggleOne(id: string, checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (checked) next.add(id);
-      else next.delete(id);
-      return next;
-    });
-  }
+  const { allFilteredSelected, indeterminate, toggleAllFiltered, toggleOne } = buildSelection(filtered, selected, setSelected);
 
   /** Which table a row belongs to — the server action needs it to know where to write. */
   function kindOf(id: string): CommentKind {
@@ -393,48 +366,6 @@ export function CommentsTable({ comments }: Props) {
 }
 
 // ─── Sub-components ──────────────────────────────────────────────────
-
-function FilterPill({
-  active,
-  onClick,
-  label,
-  count,
-  tone,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count: number;
-  tone?: "amber" | "emerald" | "red";
-}) {
-  const accent =
-    !active && tone
-      ? {
-          amber: "border-amber-200 text-amber-700",
-          emerald: "border-emerald-200 text-emerald-700",
-          red: "border-red-200 text-red-700",
-        }[tone]
-      : "";
-  return (
-    <Button
-      variant={active ? "default" : "outline"}
-      size="sm"
-      onClick={onClick}
-      className={`gap-2 whitespace-nowrap ${accent}`}
-    >
-      {label}
-      <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
-          active
-            ? "bg-background/20 text-primary-foreground"
-            : "bg-muted text-muted-foreground"
-        }`}
-      >
-        {count}
-      </span>
-    </Button>
-  );
-}
 
 function CommentRow({
   comment,
@@ -725,12 +656,12 @@ function CommentDetailSheet({
 
         <div className="mt-6 space-y-5">
           {/* Author */}
-          <Section title={c.authorSection}>
-            <Field
+          <SheetSection title={c.authorSection}>
+            <SheetField
               label={c.authorName}
               value={comment.author?.name || c.anonymous}
             />
-            {email && <Field label={c.authorEmail} value={email} mono />}
+            {email && <SheetField label={c.authorEmail} value={email} mono />}
             {email && (
               <Button asChild size="sm" variant="outline" className="gap-2">
                 <a href={`mailto:${email}`}>
@@ -740,40 +671,40 @@ function CommentDetailSheet({
                 </a>
               </Button>
             )}
-          </Section>
+          </SheetSection>
 
           {/* Article or reel */}
-          <Section title={comment.kind === "reel" ? "من ريل" : c.fromArticle}>
+          <SheetSection title={comment.kind === "reel" ? "من ريل" : c.fromArticle}>
             <Button asChild size="sm" variant="outline" className="gap-2">
               <Link href={comment.source.href}>
                 {comment.source.title}
                 <ExternalLink className="h-3 w-3" />
               </Link>
             </Button>
-          </Section>
+          </SheetSection>
 
           {/* Comment content */}
-          <Section title={c.commentSection}>
+          <SheetSection title={c.commentSection}>
             <div className="rounded-md border bg-muted/30 p-3">
               <p className="text-sm leading-relaxed text-foreground">
                 {comment.content}
               </p>
             </div>
-          </Section>
+          </SheetSection>
 
           {/* Parent (if reply) */}
           {comment.parent && (
-            <Section title={c.parentSection}>
+            <SheetSection title={c.parentSection}>
               <div className="rounded-md border-s-2 border-muted bg-muted/30 ps-3">
                 <p className="text-xs italic text-muted-foreground">
                   {comment.parent.content}
                 </p>
               </div>
-            </Section>
+            </SheetSection>
           )}
 
           {/* Stats */}
-          <Section title={c.statsSection}>
+          <SheetSection title={c.statsSection}>
             <div className="grid grid-cols-3 gap-3">
               <Mini
                 icon={ThumbsUp}
@@ -791,62 +722,24 @@ function CommentDetailSheet({
                 value={comment._count.replies}
               />
             </div>
-          </Section>
+          </SheetSection>
 
           {/* Timeline */}
-          <Section title={c.timelineSection}>
-            <Field
+          <SheetSection title={c.timelineSection}>
+            <SheetField
               label={c.createdAt}
               value={formatDateTime(comment.createdAt)}
               mono
             />
-            <Field
+            <SheetField
               label={c.updatedAt}
               value={formatDateTime(comment.updatedAt)}
               mono
             />
-          </Section>
+          </SheetSection>
         </div>
       </SheetContent>
     </Sheet>
-  );
-}
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="space-y-2">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </h3>
-      <div className="space-y-2">{children}</div>
-    </section>
-  );
-}
-
-function Field({
-  label,
-  value,
-  mono = false,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
-  return (
-    <div className="space-y-0.5">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p
-        className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}
-      >
-        {value}
-      </p>
-    </div>
   );
 }
 

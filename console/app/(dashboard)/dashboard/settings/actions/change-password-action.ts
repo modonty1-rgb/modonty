@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { CLIENT_PASSWORD_MIN_LENGTH } from "@modonty/shared/lib/constants/client-password";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
@@ -12,16 +12,11 @@ type Result =
   | { success: true }
   | { success: false; error: string; field?: "currentPassword" | "newPassword" };
 
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
-
 export async function changePassword(
   currentPassword: string,
   newPassword: string
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const cur = String(currentPassword ?? "");

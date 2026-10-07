@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { revalidatePath } from "next/cache";
 import { CommentStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
@@ -22,17 +22,12 @@ type BulkResult =
   | { success: true; count: number }
   | { success: false; error: string };
 
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
-
 async function setStatus(
   kind: CommentKind,
   commentId: string,
   next: CommentStatus
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   return setCommentStatusForClient(clientId, kind, commentId, next);
 }
@@ -72,7 +67,7 @@ async function bulkSetStatus(
   refs: BulkRef[],
   next: CommentStatus
 ): Promise<BulkResult> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   if (refs.length === 0) return { success: true, count: 0 };
 

@@ -1,17 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { CommentStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
 
 type Result = { success: true } | { success: false; error: string };
-
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
 
 async function ensureOwned(commentId: string, clientId: string) {
   return db.clientComment.findFirst({
@@ -21,7 +16,7 @@ async function ensureOwned(commentId: string, clientId: string) {
 }
 
 export async function approveClientComment(commentId: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   const owned = await ensureOwned(commentId, clientId);
   if (!owned) return { success: false, error: messages.error.notFound };
@@ -38,7 +33,7 @@ export async function approveClientComment(commentId: string): Promise<Result> {
 }
 
 export async function rejectClientComment(commentId: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   const owned = await ensureOwned(commentId, clientId);
   if (!owned) return { success: false, error: messages.error.notFound };
@@ -55,7 +50,7 @@ export async function rejectClientComment(commentId: string): Promise<Result> {
 }
 
 export async function deleteClientComment(commentId: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   const owned = await ensureOwned(commentId, clientId);
   if (!owned) return { success: false, error: messages.error.notFound };
@@ -72,7 +67,7 @@ export async function deleteClientComment(commentId: string): Promise<Result> {
 }
 
 export async function restoreClientComment(commentId: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   const owned = await ensureOwned(commentId, clientId);
   if (!owned) return { success: false, error: messages.error.notFound };

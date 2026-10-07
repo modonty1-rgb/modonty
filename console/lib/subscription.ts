@@ -1,6 +1,5 @@
 import { ar } from "@/lib/ar";
 import type { ClientPaymentKey } from "@/lib/payments/resolve-client-payment";
-import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 /**
  * Subscription state, derived once and read by both the settings card and the sidebar
@@ -79,13 +78,4 @@ export function subscriptionProgress(
   const daysLeft = Math.max(0, Math.ceil((endMs - now) / 86400000));
   const pct = Math.round((consumed / total) * 100);
   return { daysLeft, pct };
-}
-
-export function formatSubscriptionDate(d: Date | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(new Date(d));
 }

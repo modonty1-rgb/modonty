@@ -8,6 +8,9 @@ import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SheetSection } from "@/components/shared/sheet-section";
+import { SheetField } from "@/components/shared/sheet-field";
+import { FilterPill } from "@/components/shared/filter-pill";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -41,7 +44,9 @@ import {
   bulkPublishFaqsAction,
   bulkRejectFaqsAction,
 } from "../actions/faq-actions";
-import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
+import { formatDateTime } from "@/lib/format-date-time";
+import { buildSelection } from "@/lib/build-selection";
+import { formatDate } from "@/lib/format-date";
 
 const FAQ_PAGE = 20;
 
@@ -50,26 +55,6 @@ interface Props {
 }
 
 type FilterKey = "all" | "PENDING" | "PUBLISHED" | "REJECTED";
-
-function formatDate(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(new Date(d));
-}
-
-function formatDateTime(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(d));
-}
 
 function statusMeta(status: string) {
   if (status === "PENDING") {
@@ -139,27 +124,7 @@ export function FaqsTable({ faqs }: Props) {
     [faqs]
   );
 
-  const allFilteredSelected =
-    filtered.length > 0 && filtered.every((x) => selected.has(x.id));
-  const someSelected = filtered.some((x) => selected.has(x.id));
-  const indeterminate = someSelected && !allFilteredSelected;
-
-  function toggleAllFiltered(checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      filtered.forEach((x) => (checked ? next.add(x.id) : next.delete(x.id)));
-      return next;
-    });
-  }
-
-  function toggleOne(id: string, checked: boolean) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (checked) next.add(id);
-      else next.delete(id);
-      return next;
-    });
-  }
+  const { allFilteredSelected, indeterminate, toggleAllFiltered, toggleOne } = buildSelection(filtered, selected, setSelected);
 
   function startEdit(faq: ClientFAQWithArticle) {
     setEditingId(faq.id);
@@ -425,48 +390,6 @@ export function FaqsTable({ faqs }: Props) {
 }
 
 // ─── Sub-components ──────────────────────────────────────────────────
-
-function FilterPill({
-  active,
-  onClick,
-  label,
-  count,
-  tone,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count: number;
-  tone?: "amber" | "emerald" | "slate";
-}) {
-  const toneAccent =
-    !active && tone
-      ? {
-          amber: "border-amber-200 text-amber-700",
-          emerald: "border-emerald-200 text-emerald-700",
-          slate: "border-slate-200 text-slate-600",
-        }[tone]
-      : "";
-  return (
-    <Button
-      variant={active ? "default" : "outline"}
-      size="sm"
-      onClick={onClick}
-      className={`gap-2 whitespace-nowrap ${toneAccent}`}
-    >
-      {label}
-      <span
-        className={`inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
-          active
-            ? "bg-background/20 text-primary-foreground"
-            : "bg-muted text-muted-foreground"
-        }`}
-      >
-        {count}
-      </span>
-    </Button>
-  );
-}
 
 function FaqRow({
   item,
@@ -808,19 +731,19 @@ function FaqDetailSheet({
 
         <div className="mt-6 space-y-5">
           {/* Source + status */}
-          <Section title={f.source}>
+          <SheetSection title={f.source}>
             <p className="text-sm text-foreground">{src.label}</p>
-          </Section>
+          </SheetSection>
 
           {/* Submitter info — only when present */}
           {(item.submittedByName || item.submittedByEmail) && (
-            <Section title={f.submitterLabel}>
+            <SheetSection title={f.submitterLabel}>
               {item.submittedByName && (
-                <Field label={f.submitterName} value={item.submittedByName} />
+                <SheetField label={f.submitterName} value={item.submittedByName} />
               )}
               {item.submittedByEmail && (
                 <>
-                  <Field label={f.submitterEmail} value={item.submittedByEmail} mono />
+                  <SheetField label={f.submitterEmail} value={item.submittedByEmail} mono />
                   <Button asChild size="sm" variant="outline" className="gap-2">
                     <a href={`mailto:${item.submittedByEmail}`}>
                       <Mail className="h-3.5 w-3.5" />
@@ -830,32 +753,32 @@ function FaqDetailSheet({
                   </Button>
                 </>
               )}
-            </Section>
+            </SheetSection>
           )}
 
           {/* Article link */}
-          <Section title={f.fromArticle}>
+          <SheetSection title={f.fromArticle}>
             <Button asChild size="sm" variant="outline" className="gap-2">
               <Link href={`/dashboard/articles/${item.article.id}`}>
                 {item.article.title}
                 <ExternalLink className="h-3 w-3" />
               </Link>
             </Button>
-          </Section>
+          </SheetSection>
 
           {/* Timeline */}
-          <Section title={f.lastUpdated}>
-            <Field label={f.submittedAt} value={formatDateTime(item.createdAt)} mono />
-            <Field label={f.lastUpdated} value={formatDateTime(item.updatedAt)} mono />
-          </Section>
+          <SheetSection title={f.lastUpdated}>
+            <SheetField label={f.submittedAt} value={formatDateTime(item.createdAt)} mono />
+            <SheetField label={f.lastUpdated} value={formatDateTime(item.updatedAt)} mono />
+          </SheetSection>
 
           {/* Answer */}
           {item.answer && (
-            <Section title={f.answerLabel}>
+            <SheetSection title={f.answerLabel}>
               <p className="rounded-md border bg-muted/30 p-3 text-sm leading-relaxed text-foreground">
                 {item.answer}
               </p>
-            </Section>
+            </SheetSection>
           )}
         </div>
       </SheetContent>
@@ -863,38 +786,3 @@ function FaqDetailSheet({
   );
 }
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="space-y-2">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </h3>
-      <div className="space-y-2">{children}</div>
-    </section>
-  );
-}
-
-function Field({
-  label,
-  value,
-  mono = false,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
-  return (
-    <div className="space-y-0.5">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`break-all text-sm text-foreground ${mono ? "tabular-nums" : ""}`}>
-        {value}
-      </p>
-    </div>
-  );
-}

@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
+import { buildReelSlug } from "@/lib/build-reel-slug";
 import { messages } from "@/lib/messages";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
@@ -55,26 +56,6 @@ export interface ClientReel {
 
 type Result = { success: true } | { success: false; error: string };
 
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
-
-/**
- * A slug for the reel's standalone watch page, unique across the media collection.
- *
- * Checked here rather than by a database index: a unique index on a nullable column
- * would reject the second file that has no slug at all, and most files never get one.
- */
-async function buildReelSlug(): Promise<string> {
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const candidate = `reel-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-    const taken = await db.media.findFirst({ where: { reelSlug: candidate }, select: { id: true } });
-    if (!taken) return candidate;
-  }
-  throw new Error("could not allocate a unique reel slug");
-}
-
 interface CreateImageReelInput {
   url: string;
   /** The uploaded file's own name — stored as the filename, never reused as the title. */
@@ -98,7 +79,7 @@ interface CreateImageReelInput {
  * one. The client writes it on the card, and approval is blocked until then (ق9).
  */
 export async function createImageReel(input: CreateImageReelInput): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const url = (input.url ?? "").trim();
@@ -165,7 +146,7 @@ export async function updateReelDetails(
   mediaId: string,
   input: ReelDetailsInput
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const cleanTitle = input.title.trim();
@@ -227,7 +208,7 @@ export async function updateReelDetails(
  * A reel that also sits in the gallery is managed by that image's tick, not from here.
  */
 export async function removeReel(mediaId: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {

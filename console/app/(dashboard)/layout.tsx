@@ -15,8 +15,8 @@ import {
   statusLabel,
   paymentLabel,
   subscriptionProgress,
-  formatSubscriptionDate,
 } from "@/lib/subscription";
+import { formatDate } from "@/lib/format-date";
 import { DashboardLayoutClient } from "./components/dashboard-layout-client";
 import { ImpersonationBanner } from "./components/impersonation-banner";
 import { AndroidAppBanner } from "./components/android-app-banner";
@@ -138,7 +138,7 @@ export default async function DashboardLayout({
     status: statusLabel(sub.status),
     payment: paymentLabel(paymentKey),
     progress: subscriptionProgress(sub.startedAt, sub.endsAt),
-    endDate: formatSubscriptionDate(sub.endsAt),
+    endDate: formatDate(sub.endsAt),
     siteArticlesEnabled: clientCanSeeSiteArticles,
   };
 

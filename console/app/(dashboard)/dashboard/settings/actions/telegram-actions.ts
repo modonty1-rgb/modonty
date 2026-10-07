@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
@@ -20,11 +20,6 @@ type Result<T = unknown> =
   | ({ success: true } & T)
   | { success: false; error: string };
 
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
-
 const VALID_EVENT_KEYS = new Set<string>(TELEGRAM_EVENTS.map((e) => e.key));
 
 function sanitizeEventPrefs(input: unknown): TelegramEventPreferences {
@@ -42,7 +37,7 @@ function sanitizeEventPrefs(input: unknown): TelegramEventPreferences {
 export async function generateTelegramPairingCodeAction(): Promise<
   Result<{ code: string; expiresAt: string }>
 > {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const res = await generatePairingCode(clientId);
@@ -57,7 +52,7 @@ export async function generateTelegramPairingCodeAction(): Promise<
 }
 
 export async function disconnectTelegramAction(): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const res = await disconnectTelegram(clientId);
@@ -71,7 +66,7 @@ export async function disconnectTelegramAction(): Promise<Result> {
 export async function updateTelegramEventPreferencesAction(
   prefs: TelegramEventPreferences
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const clean = sanitizeEventPrefs(prefs);
@@ -91,7 +86,7 @@ export async function updateTelegramEventPreferencesAction(
 }
 
 export async function sendTelegramTestMessageAction(): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const client = await db.client.findUnique({

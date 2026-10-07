@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 import { messages } from "@/lib/messages";
 import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo";
@@ -34,11 +34,6 @@ type Result = { success: true } | { success: false; error: string };
 /** An "about us" video is not a 90-second reel — five minutes is the ceiling here. */
 const MAX_DURATION_SEC = 300;
 const MIN_DURATION_SEC = 2;
-
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
 
 /**
  * Push the change out to the public page.
@@ -78,7 +73,7 @@ interface IntroVideoTicket {
 export async function createIntroVideoTicket(
   filename: string
 ): Promise<{ success: true; ticket: IntroVideoTicket } | { success: false; error: string }> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {
@@ -129,7 +124,7 @@ export async function finalizeIntroVideo(
   mediaId: string,
   input: FinalizeIntroVideoInput
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {
@@ -184,7 +179,7 @@ export async function updateIntroVideoDetails(
   title: string,
   description: string
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const cleanTitle = title.trim();
@@ -217,7 +212,7 @@ export async function updateIntroVideoDetails(
 export async function getIntroVideoEncodingState(
   mediaId: string
 ): Promise<{ ready: boolean; failed: boolean; progress: number }> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { ready: false, failed: false, progress: 0 };
 
   const media = await db.media.findFirst({
@@ -241,7 +236,7 @@ export async function getIntroVideoEncodingState(
  * the file on Bunny would mean paying to store something nothing can reach.
  */
 export async function removeIntroVideo(): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {

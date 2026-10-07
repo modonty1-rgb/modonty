@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { sendEmail } from "@/lib/email/resend-client";
@@ -11,11 +11,6 @@ type Result =
   | { success: false; error: string };
 
 type Status = "new" | "read" | "replied" | "archived";
-
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
 
 async function ensureOwnedMessage(
   messageId: string,
@@ -31,7 +26,7 @@ export async function updateMessageStatus(
   messageId: string,
   status: Status
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const message = await ensureOwnedMessage(messageId, clientId);
@@ -59,7 +54,7 @@ export async function updateMessageStatus(
 }
 
 export async function deleteMessage(messageId: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const message = await ensureOwnedMessage(messageId, clientId);
@@ -78,7 +73,7 @@ export async function bulkUpdateMessages(
   messageIds: string[],
   status: Status
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   if (messageIds.length === 0) {
@@ -98,7 +93,7 @@ export async function bulkUpdateMessages(
 }
 
 export async function bulkDeleteMessages(messageIds: string[]): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   if (messageIds.length === 0) {
@@ -121,7 +116,7 @@ export async function sendReply(
   replyBody: string,
   replyViaEmail: boolean
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const trimmed = replyBody?.trim();

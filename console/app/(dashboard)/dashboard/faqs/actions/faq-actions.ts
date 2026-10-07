@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { auth } from "@/lib/auth";
+import { getSessionClientId } from "@/lib/get-session-client-id";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
 import { publishFaqAnswer } from "@/lib/faq/publish-faq-answer";
@@ -11,11 +11,6 @@ type Result = { success: true } | { success: false; error: string };
 type BulkResult =
   | { success: true; count: number }
   | { success: false; error: string };
-
-async function getClientId(): Promise<string | null> {
-  const session = await auth();
-  return (session as { clientId?: string })?.clientId ?? null;
-}
 
 async function ensureOwnedFaq(faqId: string, clientId: string) {
   return db.articleFAQ.findFirst({
@@ -30,13 +25,13 @@ async function ensureOwnedFaq(faqId: string, clientId: string) {
  * same button had two different outcomes depending on which screen the partner happened to open.
  */
 export async function approveFaq(faqId: string, answer: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   return publishFaqAnswer(faqId, clientId, answer);
 }
 
 export async function rejectFaq(faqId: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {
@@ -58,7 +53,7 @@ export async function rejectFaq(faqId: string): Promise<Result> {
 
 /** Restore a REJECTED or PUBLISHED FAQ to PENDING (undo). */
 export async function restoreFaqToPendingAction(faqId: string): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   try {
@@ -83,7 +78,7 @@ export async function editPublishedFaqAction(
   faqId: string,
   answer: string
 ): Promise<Result> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   if (!answer.trim()) return { success: false, error: messages.error.required };
 
@@ -113,7 +108,7 @@ export async function editPublishedFaqAction(
 export async function bulkPublishFaqsAction(
   ids: string[]
 ): Promise<BulkResult> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   if (ids.length === 0) return { success: true, count: 0 };
 
@@ -146,7 +141,7 @@ export async function bulkPublishFaqsAction(
 }
 
 export async function bulkRejectFaqsAction(ids: string[]): Promise<BulkResult> {
-  const clientId = await getClientId();
+  const clientId = await getSessionClientId();
   if (!clientId) return { success: false, error: messages.error.unauthorized };
   if (ids.length === 0) return { success: true, count: 0 };
 
