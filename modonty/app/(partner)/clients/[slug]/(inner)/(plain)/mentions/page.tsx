@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getClientPageData } from "../../../helpers/client-page-data";
+import { getClientPageData } from "../../../helpers/get-client-page-data";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -16,8 +16,6 @@ export default async function ClientMentionsPage({ params }: ClientMentionsPageP
   if (!data) {
     notFound();
   }
-
-  const { client } = data;
 
   return (
     <section aria-labelledby="client-mentions-heading" className="space-y-2">

@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   postClientReviewAction,
   type ClientReviewFormState,
-} from "@/app/(partner)/clients/[slug]/actions/client-review-actions";
+} from "../../actions/client-review-actions";
 
 interface ClientReviewFormProps {
   slug: string;

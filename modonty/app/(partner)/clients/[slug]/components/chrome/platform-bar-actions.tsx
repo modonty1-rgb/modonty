@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { IconCheck, IconShare } from "@/lib/icons";
 import { ClientFollowButton } from "@/components/shared/client-follow-button/client-follow-button";
+import { shareClient } from "../../helpers/share-client";
 
 interface PlatformBarActionsProps {
   clientSlug: string;
@@ -41,12 +42,7 @@ export function PlatformBarActions({ clientSlug, initialIsFollowing }: PlatformB
     }
     setShared(true);
     setTimeout(() => setShared(false), 2000);
-    fetch(`/clients/${encodeURIComponent(clientSlug)}/api/share`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ platform }),
-      keepalive: true,
-    }).catch(() => {});
+    shareClient(clientSlug, platform);
   };
 
   return (

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageBlocks } from "../../../components/page-blocks";
-import { getClientPageData } from "../../../helpers/client-page-data";
+import { getClientPageData } from "../../../helpers/get-client-page-data";
 import { getCachedHomeData } from "../../../helpers/get-cached-home-data";
 import { buildPartnerPageMetadata } from "../../../helpers/build-partner-page-metadata";
 

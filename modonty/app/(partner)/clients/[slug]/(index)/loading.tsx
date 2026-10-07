@@ -68,28 +68,26 @@ export default function ClientPageLoading() {
       </section>
 
       {/* BODY — main column + sidebar */}
-      <div className="mx-auto mt-6 max-w-[1128px] px-4">
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-border bg-card p-4">
-                <Skeleton className="mb-3 h-5 w-40" />
-                <Skeleton className="mb-2 h-3.5 w-full" />
-                <Skeleton className="mb-2 h-3.5 w-11/12" />
-                <Skeleton className="h-3.5 w-4/5" />
-              </div>
-            ))}
-          </div>
-          <aside className="hidden space-y-4 lg:block">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-border bg-card p-4">
-                <Skeleton className="mb-3 h-4 w-28" />
-                <Skeleton className="mb-2 h-3 w-full" />
-                <Skeleton className="h-3 w-3/4" />
-              </div>
-            ))}
-          </aside>
+      <div className="mx-auto mt-6 max-w-[1128px] px-4 grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card p-4">
+              <Skeleton className="mb-3 h-5 w-40" />
+              <Skeleton className="mb-2 h-3.5 w-full" />
+              <Skeleton className="mb-2 h-3.5 w-11/12" />
+              <Skeleton className="h-3.5 w-4/5" />
+            </div>
+          ))}
         </div>
+        <aside className="hidden space-y-4 lg:block">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card p-4">
+              <Skeleton className="mb-3 h-4 w-28" />
+              <Skeleton className="mb-2 h-3 w-full" />
+              <Skeleton className="h-3 w-3/4" />
+            </div>
+          ))}
+        </aside>
       </div>
     </div>
   );

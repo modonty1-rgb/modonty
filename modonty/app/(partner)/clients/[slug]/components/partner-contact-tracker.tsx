@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { trackCtaClick } from "@/lib/analytics/cta-tracking";
 import { recordWhatsappLead } from "@/components/shared/booking-form/booking-actions";
+import { getContactKind } from "../helpers/get-contact-kind";
 
 /**
  * The client page's catch-all for «call» and «WhatsApp» — one listener for every button on it.
@@ -18,23 +19,13 @@ import { recordWhatsappLead } from "@/components/shared/booking-form/booking-act
  * click is counted twice. The server credits the article this visitor read
  * (resolve-article-from-recent-view.ts).
  */
-function kindOf(href: string): "whatsapp" | "call" | null {
-  if (href.startsWith("tel:")) return "call";
-  try {
-    const host = new URL(href).hostname.replace(/^www\./, "");
-    return host === "wa.me" || host.endsWith("whatsapp.com") ? "whatsapp" : null;
-  } catch {
-    return null;
-  }
-}
-
 export function PartnerContactTracker({ clientId }: { clientId: string }) {
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
       const anchor = (event.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
       if (!anchor || anchor.closest("[data-cta-tracked]")) return;
       const href = anchor.getAttribute("href") ?? "";
-      const kind = kindOf(href);
+      const kind = getContactKind(href);
       if (!kind) return;
       trackCtaClick({ type: "LINK", label: `partner-site:${kind}`, targetUrl: href, clientId });
       if (kind === "whatsapp") void recordWhatsappLead({ clientId, source: "client_page" });

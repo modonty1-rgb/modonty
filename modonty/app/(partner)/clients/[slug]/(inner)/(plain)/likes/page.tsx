@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getClientEngagementBySlug } from "../../../helpers/client-engagement";
+import { getClientEngagementBySlug } from "../../../helpers/get-client-engagement-by-slug";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };

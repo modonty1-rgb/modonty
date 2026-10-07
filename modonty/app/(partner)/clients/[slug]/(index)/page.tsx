@@ -1,79 +1,39 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
-import { SubscriptionStatus, ArticleStatus } from "@prisma/client";
-import { db } from "@/lib/db";
 import {
   generateMetadataFromSEO,
-  generateStructuredData,
   jsonLdHtml,
   jsonLdHtmlFromString,
   withHonestOpenGraphImageDimensions,
 } from "@/lib/seo";
-import { cacheTag, cacheLife } from "next/cache";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { messages } from "@/lib/i18n/messages";
 import { HOME_FAQ_LIMIT } from "@modonty/shared/components/partner-site/free/faq/faq-accordion";
 import { PageBlocks } from "../components/page-blocks";
-import { getClientPageData } from "../helpers/client-page-data";
-import { getClientPageFaqs } from "../helpers/client-faqs";
-import { getClientGallery } from "../helpers/client-gallery";
+import { getClientSlugs } from "../helpers/get-client-slugs";
+import { getClientForMetadata } from "../helpers/get-client-for-metadata";
+import { getClientRobots } from "../helpers/get-client-robots";
+import { buildKnownImages } from "../helpers/build-known-images";
+import { buildFallbackOrganization } from "../helpers/build-fallback-organization";
+import { getClientPageData } from "../helpers/get-client-page-data";
+import { getClientPageFaqs } from "../helpers/get-client-page-faqs";
+import { getClientGallery } from "../helpers/get-client-gallery";
 import { resolveClientPageState } from "../components/client-page-state";
 import { ClientNotReadyPanel } from "../components/states/client-not-ready-panel";
 import { ClientViewTracker } from "../components/client-view-tracker";
 import { PartnerHomeSkeleton } from "../components/home/partner-home-skeleton";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 import { SITE_URL } from "@/constants";
-import { clientSlugTag } from "@modonty/shared/lib/cache/client-cache-tags";
 
 interface ClientPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  try {
-    const clients = await db.client.findMany({
-      where: { subscriptionStatus: SubscriptionStatus.ACTIVE },
-      select: { slug: true },
-    });
-
-    if (!clients || clients.length === 0) {
-      return [{ slug: "__no_clients__" }];
-    }
-
-    return clients.map((client) => ({
-      slug: client.slug,
-    }));
-  } catch {
-    return [{ slug: "__no_clients__" }];
-  }
-}
-
-// Cached + EXCLUSIVE to metadata (not shared with the dynamic page) so the tags land
-// in the prerendered shell <head> instead of being streamed into <body>.
-async function getClientForMetadata(decodedSlug: string) {
-  "use cache";
-  cacheTag("clients", clientSlugTag(decodedSlug));
-  cacheLife("hours");
-  return db.client.findUnique({
-    where: { slug: decodedSlug, subscriptionStatus: SubscriptionStatus.ACTIVE },
-    select: {
-      name: true,
-      seoTitle: true,
-      seoDescription: true,
-      description: true,
-      nextjsMetadata: true,
-      phone: true,
-      email: true,
-      addressCity: true,
-      achievements: true,
-      logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
-      heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
-      _count: { select: { articles: { where: { status: ArticleStatus.PUBLISHED } } } },
-    },
-  });
+  return getClientSlugs();
 }
 
 export async function generateMetadata({ params }: ClientPageProps): Promise<Metadata> {
@@ -104,25 +64,11 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
     );
 
     // Thin "قيد التجهيز" pages → noindex,follow (perfect-before-index golden rule).
-    let robots: Metadata["robots"] | undefined;
-    const ps = resolveClientPageState({
-      aboutText: client.description || client.seoDescription,
-      servicesCount: 0,
-      articlesCount: client._count.articles,
-      teamCount: 0,
-      achievementsCount: Array.isArray(client.achievements) ? client.achievements.length : 0,
-      galleryCount: 0,
-      hasContact: !!(client.phone || client.email || client.addressCity),
-    });
-    if (ps === "not-ready") robots = { index: false, follow: true };
+    const robots = getClientRobots(client);
 
     const stored = client.nextjsMetadata as Metadata | null;
     if (stored?.title) {
-      const knownImages = [client.heroImageMedia, client.logoMedia].flatMap((media) => {
-        const url = mediaSrc(media);
-        return url ? [{ url, width: media?.width, height: media?.height }] : [];
-      });
-      const honestStored = withHonestOpenGraphImageDimensions(stored, knownImages);
+      const honestStored = withHonestOpenGraphImageDimensions(stored, buildKnownImages(client));
 
       return {
         ...honestStored,
@@ -192,29 +138,12 @@ async function ClientPageMeta({ params }: ClientPageProps) {
       hasContact: !!(client.phone || client.email || client.addressCity || (client.addressLatitude != null && client.addressLongitude != null)),
     });
 
-    const buildFallbackOrganization = () =>
-      generateStructuredData({
-        type: "Client",
-        name: client.name,
-        description: client.description || client.seoDescription || undefined,
-        url: client.url || `/clients/${encodeURIComponent(slug)}`,
-        image: mediaSrc(client.logoMedia) || mediaSrc(client.heroImageMedia) || undefined,
-        "@type": "Organization",
-        legalName: client.legalName || undefined,
-        email: client.email || undefined,
-        telephone: client.phone || undefined,
-        sameAs: client.sameAs.length > 0 ? client.sameAs : undefined,
-        foundingDate: client.foundingDate
-          ? (typeof client.foundingDate === "string" ? (client.foundingDate as string).split("T")[0] : client.foundingDate.toISOString().split("T")[0])
-          : undefined,
-      });
-
     return (
       <>
         {client.jsonLdStructuredData ? (
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(client.jsonLdStructuredData) }} />
         ) : (
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackOrganization()) }} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildFallbackOrganization(client, slug)) }} />
         )}
         {/*
           Only the questions this page actually renders. The accordion below shows

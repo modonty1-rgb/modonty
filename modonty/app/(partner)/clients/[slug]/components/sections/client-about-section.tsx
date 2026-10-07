@@ -1,4 +1,5 @@
-import { SectionCard } from "@/app/(partner)/clients/[slug]/components/sections/section-card";
+import { SectionCard } from "./section-card";
+import { buildLegalRows, type AboutLegal } from "../../helpers/build-legal-rows";
 
 import { ClientVideoEmbed } from "./client-video-embed";
 
@@ -7,16 +8,6 @@ interface AboutCredential {
   authority: string | null;
   year: string | null;
   url: string | null;
-}
-
-interface AboutLegal {
-  legalName?: string | null;
-  commercialRegistrationNumber?: string | null;
-  legalForm?: string | null;
-  vatID?: string | null;
-  numberOfEmployees?: string | null;
-  foundingDate?: Date | null;
-  knowsLanguage?: string[];
 }
 
 interface ClientAboutSectionProps {
@@ -55,24 +46,7 @@ export function ClientAboutSection({
   credentials,
   legal,
 }: ClientAboutSectionProps) {
-  const foundingYear =
-    legal.foundingDate != null ? String(new Date(legal.foundingDate).getFullYear()) : null;
-  const languages =
-    legal.knowsLanguage && legal.knowsLanguage.length > 0 ? legal.knowsLanguage.join("، ") : null;
-
-  const legalRows: Array<{ icon: string; label: string; value: string }> = [
-    legal.legalName ? { icon: "🏛️", label: "الاسم القانوني", value: legal.legalName } : null,
-    legal.commercialRegistrationNumber
-      ? { icon: "📄", label: "السجل التجاري", value: legal.commercialRegistrationNumber }
-      : null,
-    legal.legalForm ? { icon: "⚖️", label: "الشكل القانوني", value: legal.legalForm } : null,
-    legal.vatID ? { icon: "🧾", label: "الرقم الضريبي", value: legal.vatID } : null,
-    legal.numberOfEmployees
-      ? { icon: "👥", label: "حجم الشركة", value: legal.numberOfEmployees }
-      : null,
-    foundingYear ? { icon: "🗓️", label: "سنة التأسيس", value: foundingYear } : null,
-    languages ? { icon: "🌐", label: "اللغات", value: languages } : null,
-  ].filter((row): row is { icon: string; label: string; value: string } => row !== null);
+  const legalRows = buildLegalRows(legal);
 
   const hasVideo = Boolean(videoUrl);
   const hasText = Boolean(aboutText);

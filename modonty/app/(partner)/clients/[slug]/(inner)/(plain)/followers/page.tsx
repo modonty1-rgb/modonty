@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getClientPageData } from "../../../helpers/client-page-data";
-import { getClientFollowers } from "../../../helpers/client-followers";
+import { getClientPageData } from "../../../helpers/get-client-page-data";
+import { getClientFollowers } from "../../../helpers/get-client-followers";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 import { ClientFollowersList } from "../../../components/client-followers-list";

@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
 import { PageBlocks } from "../../components/page-blocks";
-import { Suspense } from "react";
-import { notFound } from "next/navigation";
 import { getPartnerSite } from "../../helpers/get-partner-site";
-import { getClientPageData } from "../../helpers/client-page-data";
 import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
-import { ContactBlock } from "../../components/home/contact-block";
-import { BookingCard, BookingCardSkeleton } from "../../components/home/booking-card";
-import { ClientContactSection } from "../../components/sections/client-contact-section";
 
 interface PageProps {
   params: Promise<{ slug: string }>;

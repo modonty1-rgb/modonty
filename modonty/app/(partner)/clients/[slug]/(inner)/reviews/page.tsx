@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
 import { PageBlocks } from "../../components/page-blocks";
-import { notFound } from "next/navigation";
-import { getClientPageData } from "../../helpers/client-page-data";
+import { getClientPageData } from "../../helpers/get-client-page-data";
 import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
-import { getClientReviewsBySlug } from "../../helpers/client-reviews";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
-import { IconMessage } from "@/lib/icons";
 import { auth } from "@/lib/auth";
 import { ClientReviewForm } from "../../components/sections/client-review-form";
 

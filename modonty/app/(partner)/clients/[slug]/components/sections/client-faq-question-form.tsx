@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-import { submitClientPageQuestion } from "@/app/(partner)/clients/[slug]/actions/client-faq-actions";
+import { submitClientPageQuestion } from "../../actions/client-faq-actions";
 
 interface ClientFaqQuestionFormProps {
   slug: string;

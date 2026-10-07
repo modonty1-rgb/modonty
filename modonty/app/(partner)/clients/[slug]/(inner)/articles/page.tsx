@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
 import { PageBlocks } from "../../components/page-blocks";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { OptimizedImage } from "@modonty/shared/components/optimized-image";
-import { getClientPageData } from "../../helpers/client-page-data";
+import { getClientPageData } from "../../helpers/get-client-page-data";
 import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
 import { messages } from "@/lib/i18n/messages";
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
-
-const DATE_FMT = new Intl.DateTimeFormat(SITE_LOCALE, { day: "numeric", month: "long", year: "numeric" });
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;

@@ -5,7 +5,7 @@ import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 import { trackFollowClient } from "@/lib/analytics/events-registry";
 import type { ReaderActor } from "@/lib/users/reader-actor";
 import type { ClientFollowResult } from "./get-client-follow-state";
-import { fireClientEvent, notifyClientEvent } from "@modonty/shared/lib/mobile-push";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 /**
  * Follow a partner (idempotent upsert) for a known reader — the body of

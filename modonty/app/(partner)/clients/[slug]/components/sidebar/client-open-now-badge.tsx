@@ -1,73 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-interface OpeningHoursSpec {
-  dayOfWeek: string | string[];
-  opens: string;
-  closes: string;
-}
+import type { OpeningHoursSpec } from "../../helpers/opening-hours-spec";
+import { computeOpenStatus, type OpenStatus } from "../../helpers/compute-open-status";
+import { formatArabic12h } from "../../helpers/format-arabic-12h";
 
 interface ClientOpenNowBadgeProps {
   specs: OpeningHoursSpec[];
-}
-
-// schema.org full English day names → JS getDay() index (0 = Sunday).
-const DAY_INDEX: Record<string, number> = {
-  Sunday: 0,
-  Monday: 1,
-  Tuesday: 2,
-  Wednesday: 3,
-  Thursday: 4,
-  Friday: 5,
-  Saturday: 6,
-};
-
-/** "HH:MM" → minutes since midnight, or null if malformed. */
-function toMinutes(time: string): number | null {
-  const match = /^(\d{1,2}):(\d{2})/.exec(time.trim());
-  if (!match) return null;
-  const h = Number(match[1]);
-  const m = Number(match[2]);
-  if (h > 23 || m > 59) return null;
-  return h * 60 + m;
-}
-
-/** "HH:MM" (24h) → Arabic 12h with ص/م (e.g. "6:00 م"). */
-function formatArabic12h(time: string): string {
-  const mins = toMinutes(time);
-  if (mins === null) return time;
-  const h24 = Math.floor(mins / 60);
-  const m = mins % 60;
-  const suffix = h24 >= 12 ? "م" : "ص";
-  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
-  return `${h12}:${m.toString().padStart(2, "0")} ${suffix}`;
-}
-
-type Status =
-  | { kind: "open"; closes: string }
-  | { kind: "closed" };
-
-/** Decide open/closed for the supplied weekday + minute-of-day. */
-function computeStatus(
-  specs: OpeningHoursSpec[],
-  weekday: number,
-  nowMinutes: number
-): Status {
-  for (const spec of specs) {
-    const days = Array.isArray(spec.dayOfWeek) ? spec.dayOfWeek : [spec.dayOfWeek];
-    if (!days.some((d) => DAY_INDEX[d] === weekday)) continue;
-    const opens = toMinutes(spec.opens);
-    const closes = toMinutes(spec.closes);
-    if (opens === null || closes === null) continue;
-    // Same-day window (handles overnight as a simple within-range check).
-    const within =
-      closes > opens
-        ? nowMinutes >= opens && nowMinutes < closes
-        : nowMinutes >= opens || nowMinutes < closes;
-    if (within) return { kind: "open", closes: spec.closes };
-  }
-  return { kind: "closed" };
 }
 
 /**
@@ -75,11 +14,11 @@ function computeStatus(
  * (SSR) paint to avoid a hydration mismatch, then fills in after mount.
  */
 export function ClientOpenNowBadge({ specs }: ClientOpenNowBadgeProps) {
-  const [status, setStatus] = useState<Status | null>(null);
+  const [status, setStatus] = useState<OpenStatus | null>(null);
 
   useEffect(() => {
     const now = new Date();
-    setStatus(computeStatus(specs, now.getDay(), now.getHours() * 60 + now.getMinutes()));
+    setStatus(computeOpenStatus(specs, now.getDay(), now.getHours() * 60 + now.getMinutes()));
   }, [specs]);
 
   if (status === null) {

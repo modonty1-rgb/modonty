@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { getViewerClientLike } from "../../helpers/get-viewer-client-like";
 import { PlatformBarActions } from "./platform-bar-actions";
 
 interface PlatformBarActionsIslandProps {
@@ -16,15 +15,6 @@ interface PlatformBarActionsIslandProps {
  * partner chrome static.
  */
 export async function PlatformBarActionsIsland({ clientSlug }: PlatformBarActionsIslandProps) {
-  const session = await auth();
-  const userId = session?.user?.id;
-  const following = userId
-    ? Boolean(
-        await db.clientLike.findFirst({
-          where: { userId, client: { slug: clientSlug } },
-          select: { id: true },
-        }),
-      )
-    : false;
+  const following = await getViewerClientLike(clientSlug);
   return <PlatformBarActions clientSlug={clientSlug} initialIsFollowing={following} />;
 }

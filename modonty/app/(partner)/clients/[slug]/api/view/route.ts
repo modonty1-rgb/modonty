@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
-import { recordClientView } from "@/lib/analytics/record-client-view";
+import { recordClientView } from "../../helpers/record-client-view";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
 
 // Web door: the dedupe key is the `modonty_view_sid` cookie. The counting rule lives in
-// lib/analytics/record-client-view.ts, shared with the mobile API (keyed on X-Device-Id).
+// ../../helpers/record-client-view.ts, shared with the mobile API (keyed on X-Device-Id).
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ slug: string }> }

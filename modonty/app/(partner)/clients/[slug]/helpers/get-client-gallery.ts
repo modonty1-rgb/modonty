@@ -2,7 +2,7 @@ import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { clientSlugTag } from "@modonty/shared/lib/cache/client-cache-tags";
 
-export interface ClientGalleryImage {
+interface ClientGalleryImage {
   id: string;
   url: string;
   bunnyUrl: string | null;

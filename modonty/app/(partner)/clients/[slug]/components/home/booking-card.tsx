@@ -30,18 +30,16 @@ export async function BookingCard({ clientId, clientName, phone, ctaMode, ctaLab
       // eyebrow right above, under a button that said «احجز موعدك» (review, 4 Oct 2026). Ring, not
       // shadow-2xl — the design system keeps shadows out of the page flow.
       <div id="request" className="scroll-mt-32 rounded-lg bg-card p-6 ring-1 ring-border">
-        <div>
-          <BookingForm
-            clientId={clientId}
-            clientName={clientName}
-            source="client_page"
-            user={user}
-            defaultCountry={h.get("x-vercel-ip-country")}
-            // The admin's button text, like the hero and the closing CTA — the form said
-            // «اطلب اتصال» under a section whose every other button said something else.
-            submitLabel={ctaLabel?.trim() || "أرسل طلبك"}
-          />
-        </div>
+        <BookingForm
+          clientId={clientId}
+          clientName={clientName}
+          source="client_page"
+          user={user}
+          defaultCountry={h.get("x-vercel-ip-country")}
+          // The admin's button text, like the hero and the closing CTA — the form said
+          // «اطلب اتصال» under a section whose every other button said something else.
+          submitLabel={ctaLabel?.trim() || "أرسل طلبك"}
+        />
         {phone ? (
           <div className="mt-3 flex justify-center">
             <WhatsAppAction phone={phone} clientId={clientId} clientName={clientName} source="client_page" variant="quiet" label="أو كلّمه واتساب" />

@@ -5,9 +5,9 @@
  *  - "strong":    rich profile → all sections.
  * Pure function (Server). The shell passes the resolved state down to hero + sections.
  */
-export type ClientPageState = "strong" | "sparse" | "not-ready";
+type ClientPageState = "strong" | "sparse" | "not-ready";
 
-export interface ClientPageStateSignals {
+interface ClientPageStateSignals {
   aboutText?: string | null;
   servicesCount: number;
   articlesCount: number;

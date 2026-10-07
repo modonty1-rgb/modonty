@@ -1,4 +1,4 @@
-import { SectionCard } from "@/app/(partner)/clients/[slug]/components/sections/section-card";
+import { SectionCard } from "./section-card";
 import { Button } from "@/components/ui/button";
 
 interface ClientContactSectionProps {

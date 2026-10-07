@@ -17,7 +17,7 @@ const clientQuestionSchema = z.object({
   question: z.string().min(10, "السؤال يجب أن يكون على الأقل 10 أحرف").max(2000, "السؤال طويل جداً"),
 });
 
-export type ClientQuestionFormData = z.infer<typeof clientQuestionSchema>;
+type ClientQuestionFormData = z.infer<typeof clientQuestionSchema>;
 
 import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
 import { fireClientEvent } from "@modonty/shared/lib/mobile-push";

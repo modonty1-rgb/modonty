@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import type { ApiResponse } from "@/lib/types";
-import { getClientFollowState } from "@/lib/clients/get-client-follow-state";
-import { followClientAs } from "@/lib/clients/follow-client-as";
-import { unfollowClientAs } from "@/lib/clients/unfollow-client-as";
+import { getClientFollowState } from "../../helpers/get-client-follow-state";
+import { followClientAs } from "../../helpers/follow-client-as";
+import { unfollowClientAs } from "../../helpers/unfollow-client-as";
 
-// Web door: identity from the session cookie; the follow logic lives in lib/clients/*
+// Web door: identity from the session cookie; the follow logic lives in ../../helpers/*
 // (shared with the mobile API). Responses are unchanged.
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
@@ -93,7 +93,7 @@ export async function POST(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {

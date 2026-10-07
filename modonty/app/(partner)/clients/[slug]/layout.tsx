@@ -1,4 +1,4 @@
-import { ReactNode, Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import dynamicImport from "next/dynamic";
 import { notFound } from "next/navigation";
 import { hexToHslTriplet, readableInkHsl } from "@modonty/shared/lib/partner-site";

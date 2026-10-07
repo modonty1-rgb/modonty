@@ -2,7 +2,8 @@ import { cache } from "react";
 import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { getClientStats, getRelatedClients } from "./client-stats";
+import { getClientStats } from "./get-client-stats";
+import { getRelatedClients } from "./get-related-clients";
 import { clientSlugTag } from "@modonty/shared/lib/cache/client-cache-tags";
 
 /**

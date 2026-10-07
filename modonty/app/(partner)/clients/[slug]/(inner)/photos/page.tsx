@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { PageBlocks } from "../../components/page-blocks";
-import { notFound } from "next/navigation";
-import { getClientPageData } from "../../helpers/client-page-data";
+import { getClientPageData } from "../../helpers/get-client-page-data";
 import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
-import { ClientPhotosPreview } from "../../components/client-photos-preview";
 
 interface ClientPhotosPageProps {
   params: Promise<{ slug: string }>;

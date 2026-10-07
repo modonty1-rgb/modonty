@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { PageBlocks } from "../../components/page-blocks";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { IconBriefcase } from "@/lib/icons";
 import { getPartnerSite } from "../../helpers/get-partner-site";
 import { buildPartnerPageMetadata } from "../../helpers/build-partner-page-metadata";
 

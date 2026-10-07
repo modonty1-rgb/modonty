@@ -5,7 +5,7 @@ import { getWhatsAppLink, bookingWhatsappMessage } from "@/lib/whatsapp";
 import type { PartnerSite } from "./get-partner-site";
 
 /** The site's menu — a link exists only when its page has content. First-person labels (the business speaks). */
-export function buildSiteLinks(site: PartnerSite): { href: string; label: string }[] {
+function buildSiteLinks(site: PartnerSite): { href: string; label: string }[] {
   const base = `/clients/${encodeURIComponent(site.slug)}`;
   const items = [{ href: base, label: "الرئيسية" }];
   if (site.services.length > 0) items.push({ href: `${base}/services`, label: "خدماتنا" });
