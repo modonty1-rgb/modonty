@@ -6,14 +6,10 @@ import { cn } from "@/lib/utils";
 import type { LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 
 import type { ContactRow } from "../../helpers/build-contact-rows";
+import { mapEmbedUrl } from "../../helpers/map-embed-url";
+import { mapLinkUrl } from "../../helpers/map-link-url";
 
 const text = messages.trust.location;
-
-// The pin is the office address, so it comes from the same row as the address itself.
-// No coordinates on file → no map, rather than a pin pointing at a remembered spot.
-const mapEmbedUrl = (lat: number, lng: number) =>
-  `https://www.google.com/maps?q=${lat},${lng}&hl=ar&z=15&output=embed`;
-const mapLinkUrl = (lat: number, lng: number) => `https://www.google.com/maps?q=${lat},${lng}`;
 
 interface LocationCardProps {
   /** اسم الموقع من `Settings.siteName` — يُمرَّر من الصفحة، لا يُقرأ من ثابتٍ في الكود. */

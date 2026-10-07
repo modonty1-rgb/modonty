@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { SubscribeForm } from "./components/subscribe-form";

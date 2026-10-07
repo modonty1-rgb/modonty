@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
@@ -11,9 +11,8 @@ import { IconEmail, IconCheckCircle, IconForward } from "@/lib/icons";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { messages } from "@/lib/i18n/messages";
 
-// عنوان القسم يُبنى من اسم الموقع في الإعدادات — «أخبار X» تصحّ عربياً ولاتينياً معاً،
-// وبغياب العمود يبقى «الأخبار» وحده: اسم قسمٍ صحيح، لا اسم ماركة قديم.
-const newsTitle = (siteName?: string) => (siteName ? `أخبار ${siteName}` : "الأخبار");
+import { newsTitle } from "../helpers/news-title";
+
 const NEWS_DESCRIPTION = messages.seo.news.description;
 
 export async function generateMetadata(): Promise<Metadata> {

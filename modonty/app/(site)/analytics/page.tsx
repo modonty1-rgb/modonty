@@ -12,6 +12,12 @@ import {
   IconUsers,
 } from "@/lib/icons";
 
+import { ar } from "./helpers/ar";
+import { prettyDate } from "./helpers/pretty-date";
+import { arEvent } from "./helpers/ar-event";
+import { buildDowItems } from "./helpers/build-dow-items";
+import { buildHourItems } from "./helpers/build-hour-items";
+
 // العنوان من اسم الموقع في الإعدادات. كان مكتوباً بالشدّة «مدوّنتي» بينما الموقع كلّه
 // بلا شدّة — تهجئة ثالثة للماركة وُلدت من كتابة الاسم بيدٍ في كل صفحة.
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,41 +38,6 @@ export async function generateMetadata(): Promise<Metadata> {
 // Public Looker Studio report (anyone-with-link, owner credentials) — Google-hosted,
 // read-only proof the numbers come straight from Google Analytics.
 const LOOKER_PUBLIC_URL = "https://datastudio.google.com/s/nBnyGkiUdGw";
-
-// ── format helpers ───────────────────────────────────────────────────────────
-const ar = (n: number) => Math.round(n).toLocaleString(SITE_LOCALE);
-function prettyDate(yyyymmdd: string): string {
-  if (yyyymmdd.length !== 8) return yyyymmdd;
-  return `${yyyymmdd.slice(6, 8)}/${yyyymmdd.slice(4, 6)}`;
-}
-const DAYS_AR = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-
-const EVENT_AR: Record<string, string> = {
-  page_view: "مشاهدة صفحة",
-  user_engagement: "تفاعل",
-  scroll: "تمرير",
-  session_start: "بداية جلسة",
-  first_visit: "زيارة أولى",
-  web_vitals: "قياس أداء",
-  outbound_click: "نقرة رابط خارجي",
-  client_view: "زيارة صفحة عميل",
-  article_view: "قراءة مقال",
-  form_start: "بدء نموذج",
-  click: "نقرة",
-  conversion_complete: "تحويل",
-  follow_client: "متابعة عميل",
-  article_share: "مشاركة مقال",
-  client_share: "مشاركة عميل",
-  client_favorite: "حفظ عميل",
-  article_favorite: "حفظ مقال",
-  article_like: "إعجاب",
-  ask_client_submit: "سؤال مباشر",
-  client_comment_submit: "تعليق",
-  contact_submit: "رسالة تواصل",
-  newsletter_subscribe: "اشتراك نشرة",
-  view_search_results: "بحث",
-};
-const arEvent = (k: string) => EVENT_AR[k] ?? k;
 
 // ── presentational pieces (Server Components, zero client JS) ─────────────────
 function Kpi({ icon: Icon, label, value, sub }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string; sub?: string }) {
@@ -114,7 +85,7 @@ function TimeSeries({ data }: { data: Array<{ date: string; sessions: number; pa
   if (!data.length) return <p className="text-xs text-muted-foreground">لا توجد بيانات بعد.</p>;
   const max = Math.max(1, ...data.map((d) => d.pageViews));
   return (
-    <div>
+    <>
       <div className="flex h-32 items-end gap-px" dir="ltr">
         {data.map((d, i) => (
           <div key={i} className="group relative flex-1 rounded-t bg-accent/80 hover:bg-accentary" style={{ height: `${Math.max(2, (d.pageViews / max) * 100)}%` }} title={`${prettyDate(d.date)} — ${ar(d.pageViews)} مشاهدة · ${ar(d.sessions)} زيارة`} />
@@ -124,7 +95,7 @@ function TimeSeries({ data }: { data: Array<{ date: string; sessions: number; pa
         <span>{prettyDate(data[0]?.date ?? "")}</span>
         <span>{prettyDate(data[data.length - 1]?.date ?? "")}</span>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -142,14 +113,8 @@ export default async function AnalyticsPage() {
   }
 
   const k = a.kpis;
-  const dowItems: NameVal[] = a.byDayOfWeek
-    .slice()
-    .sort((x, y) => Number(x.name) - Number(y.name))
-    .map((d) => ({ name: DAYS_AR[Number(d.name)] ?? d.name, value: d.value }));
-  const hourItems: NameVal[] = a.byHour
-    .slice()
-    .sort((x, y) => Number(x.name) - Number(y.name))
-    .map((h) => ({ name: `${Number(h.name).toLocaleString(SITE_LOCALE)}:٠٠`, value: h.value }));
+  const dowItems: NameVal[] = buildDowItems(a.byDayOfWeek);
+  const hourItems: NameVal[] = buildHourItems(a.byHour);
   const sourceItems: NameVal[] = a.sources.map((s) => ({ name: `${s.source} / ${s.medium}`, value: s.sessions }));
 
   return (

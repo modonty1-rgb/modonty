@@ -6,21 +6,12 @@ import { jsonLdHtml } from "@/lib/seo";
 import { getLegalEntity, buildOrganizationJsonLd } from "@/lib/seo/organization-jsonld";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { messages } from "@/lib/i18n/messages";
-import { TEAM_MEMBERS } from "@/lib/team/team-members";
-import type { TeamDept } from "@/lib/team/team-members";
 
 import { TeamMemberCard } from "./components/team-member-card/TeamMemberCard";
-import { buildTeamJsonLd } from "./helpers/build-team-jsonld";
+import { buildTeamJsonLd } from "./helpers/build-team-json-ld";
+import { TEAM_SECTIONS } from "./helpers/team-sections";
 
 const text = messages.team;
-
-/** Reading order on the page — leadership first, then the people a partner actually deals with. */
-const DEPARTMENTS: readonly TeamDept[] = ["leadership", "content", "creative", "ops", "outreach"];
-const SECTIONS = DEPARTMENTS.map((dept) => ({
-  dept,
-  label: text.departments[dept],
-  members: TEAM_MEMBERS.filter((member) => member.dept === dept),
-})).filter((section) => section.members.length > 0);
 
 /** The first row of the first section is above the fold on desktop — those load eager. */
 const EAGER_COUNT = 3;
@@ -62,7 +53,7 @@ export default async function TeamPage() {
           <p className="max-w-2xl text-base leading-relaxed text-foreground/75">{text.tagline}</p>
         </header>
 
-        {SECTIONS.map((section, sectionIndex) => (
+        {TEAM_SECTIONS.map((section, sectionIndex) => (
           <section key={section.dept} aria-labelledby={`team-${section.dept}`} className="space-y-4">
             <AccentHeading id={`team-${section.dept}`} size="title">
               {section.label}

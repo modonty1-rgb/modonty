@@ -1,0 +1,27 @@
+const EVENT_AR: Record<string, string> = {
+  page_view: "مشاهدة صفحة",
+  user_engagement: "تفاعل",
+  scroll: "تمرير",
+  session_start: "بداية جلسة",
+  first_visit: "زيارة أولى",
+  web_vitals: "قياس أداء",
+  outbound_click: "نقرة رابط خارجي",
+  client_view: "زيارة صفحة عميل",
+  article_view: "قراءة مقال",
+  form_start: "بدء نموذج",
+  click: "نقرة",
+  conversion_complete: "تحويل",
+  follow_client: "متابعة عميل",
+  article_share: "مشاركة مقال",
+  client_share: "مشاركة عميل",
+  client_favorite: "حفظ عميل",
+  article_favorite: "حفظ مقال",
+  article_like: "إعجاب",
+  ask_client_submit: "سؤال مباشر",
+  client_comment_submit: "تعليق",
+  contact_submit: "رسالة تواصل",
+  newsletter_subscribe: "اشتراك نشرة",
+  view_search_results: "بحث",
+};
+
+export const arEvent = (k: string) => EVENT_AR[k] ?? k;

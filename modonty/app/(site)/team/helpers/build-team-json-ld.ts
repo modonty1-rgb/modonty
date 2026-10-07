@@ -3,7 +3,7 @@ import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 import { messages } from "@/lib/i18n/messages";
 import { TEAM_MEMBERS } from "@/lib/team/team-members";
 
-export const TEAM_PAGE_URL = `${SITE_URL}/team`;
+const TEAM_PAGE_URL = `${SITE_URL}/team`;
 const ORGANIZATION_ID = buildSiteEntityIds(SITE_URL).organization;
 
 /**

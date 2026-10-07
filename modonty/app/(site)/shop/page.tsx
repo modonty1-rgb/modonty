@@ -3,7 +3,6 @@ import { PartnerCard } from "@/components/shared/partner-card/PartnerCard";
 import { BecomePartnerBanner } from "@/components/shared/become-partner-banner/BecomePartnerBanner";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { messages, formatCount } from "@/lib/i18n/messages";
-import { SITE_URL } from "@/constants";
 
 import type { Metadata } from "next";
 

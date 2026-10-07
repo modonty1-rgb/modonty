@@ -11,8 +11,8 @@ import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 
-import { getWhatsappContactUrl } from "./helpers/get-whatsapp-contact";
-import { getTrustPageForMetadata } from "./helpers/trust-metadata";
+import { getWhatsappContactUrl } from "./helpers/get-whatsapp-contact-url";
+import { getTrustPageForMetadata } from "./helpers/get-trust-page-for-metadata";
 import { buildLegalFacts } from "./helpers/build-legal-facts";
 import { buildContactRows } from "./helpers/build-contact-rows";
 import { IdentityCard } from "./components/identity-card/IdentityCard";
