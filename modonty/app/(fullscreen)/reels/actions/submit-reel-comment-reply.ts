@@ -1,16 +1,11 @@
 "use server";
 
-import { CommentStatus } from "@prisma/client";
-
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { notifyTelegram } from "@/lib/telegram/notify-telegram";
-import { sanitizeComment, validateCommentContent } from "@/lib/comments/validate-comment";
-import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
+import { submitReelCommentReplyAs } from "@/lib/reels/submit-reel-comment-reply-as";
 
 /**
- * A reply to a reel comment — flat storage with `parentId`, exactly like article replies.
- * Same moderation contract as submitReelComment: PENDING until the console approves.
+ * A reply to a reel comment — PENDING until the console approves.
+ * Web door: identity from the session cookie, logic in `submitReelCommentReplyAs` (shared with the mobile API).
  */
 export async function submitReelCommentReply(
   mediaId: string,
@@ -22,50 +17,10 @@ export async function submitReelCommentReply(
     if (!session?.user?.id) {
       return { success: false, error: "Unauthorized" };
     }
-
-    const reel = await db.media.findFirst({
-      where: { id: mediaId, inReels: true, reelStatus: "PUBLISHED" },
-      select: { id: true, title: true, clientId: true },
-    });
-    if (!reel) return { success: false, error: "Reel not found" };
-
-    const validation = validateCommentContent(content);
-    if (!validation.valid) {
-      return { success: false, error: validation.error };
-    }
-
-    const parent = await db.mediaComment.findUnique({
-      where: { id: parentCommentId },
-      select: { id: true, mediaId: true },
-    });
-    if (!parent || parent.mediaId !== mediaId) {
-      return { success: false, error: "Parent comment not found" };
-    }
-
-    const reply = await db.mediaComment.create({
-      data: {
-        content: sanitizeComment(content),
-        mediaId,
-        authorId: session.user.id,
-        parentId: parentCommentId,
-        status: CommentStatus.PENDING,
-      },
-      select: { id: true, author: { select: { name: true } } },
-    });
-
-    fireClientEvent(reel.clientId, { kind: "media_comment", mediaId, commentId: reply.id });
-    if (reel.clientId) {
-      notifyTelegram(reel.clientId, "commentReply", {
-        title: reel.title ?? "ريل",
-        body: `${reply.author?.name ?? "زائر"}: ${content}`,
-      }).catch(() => {});
-    }
-
-    return {
-      success: true,
-      message: "وصل ردّك — يظهر بعد مراجعة الشريك",
-    };
-  } catch {
+    const result = await submitReelCommentReplyAs(session.user.id, mediaId, parentCommentId, content);
+    return result.success ? { success: true, message: result.message } : { success: false, error: result.error };
+  } catch (error) {
+    console.error("[submitReelCommentReply]", error);
     return { success: false, error: "Failed to submit reply" };
   }
 }

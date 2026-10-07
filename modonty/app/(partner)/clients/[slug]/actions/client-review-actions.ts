@@ -1,12 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { CommentStatus } from "@prisma/client";
-import { z } from "zod";
-
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
+import { postClientReviewAs } from "@/lib/clients/post-client-review-as";
 
 export interface ClientReviewFormState {
   ok: boolean;
@@ -15,19 +10,7 @@ export interface ClientReviewFormState {
   attempt?: number;
 }
 
-const ReviewSchema = z.object({
-  rating: z.coerce
-    .number()
-    .int()
-    .min(1, "اختر تقييمك بالنجوم")
-    .max(5, "التقييم من 1 إلى 5 نجوم"),
-  comment: z
-    .string()
-    .trim()
-    .min(3, "المراجعة قصيرة جداً (3 أحرف على الأقل)")
-    .max(2000, "المراجعة طويلة جداً (2000 حرف كحد أقصى)"),
-});
-
+/** Web door: identity from the session cookie, logic in `postClientReviewAs` (shared with the mobile API). */
 export async function postClientReviewAction(
   prevState: ClientReviewFormState,
   formData: FormData,
@@ -43,63 +26,10 @@ export async function postClientReviewAction(
   if (typeof rawSlug !== "string" || !rawSlug) {
     return { ok: false, message: "طلب غير صالح.", attempt };
   }
-  const decodedSlug = decodeURIComponent(rawSlug);
 
-  const parsed = ReviewSchema.safeParse({
+  const result = await postClientReviewAs(session.user.id, decodeURIComponent(rawSlug), {
     rating: formData.get("rating"),
     comment: formData.get("comment"),
   });
-  if (!parsed.success) {
-    return {
-      ok: false,
-      message: parsed.error.issues[0]?.message ?? "بيانات غير صالحة.",
-      attempt,
-    };
-  }
-  const { rating, comment } = parsed.data;
-
-  const client = await db.client.findUnique({
-    where: { slug: decodedSlug },
-    select: { id: true, userId: true },
-  });
-  if (!client) {
-    return { ok: false, message: "العميل غير موجود.", attempt };
-  }
-
-  // Anti self-review: the client owner can't review their own business page.
-  if (client.userId && client.userId === session.user.id) {
-    return { ok: false, message: "ما تقدر تقيّم نشاطك التجاري بنفسك.", attempt };
-  }
-
-  // One review per visitor per client (@@unique). Editing an existing review
-  // resets it to PENDING for re-moderation.
-  const review = await db.clientReview.upsert({
-    where: {
-      clientId_reviewerId: { clientId: client.id, reviewerId: session.user.id },
-    },
-    create: {
-      clientId: client.id,
-      reviewerId: session.user.id,
-      rating,
-      comment,
-      status: CommentStatus.PENDING,
-    },
-    update: {
-      rating,
-      comment,
-      status: CommentStatus.PENDING,
-    },
-  });
-
-  // Refresh the client page so the APPROVED aggregate/list updates once moderated.
-  revalidatePath(`/clients/${encodeURIComponent(decodedSlug)}`);
-
-  // تقييم جديد أو معدَّل ينتظر موافقة العميل — يرنّ في تطبيقه.
-  fireClientEvent(client.id, { kind: "review", reviewId: review.id, rating });
-
-  return {
-    ok: true,
-    message: "تم إرسال تقييمك. سيظهر بعد الموافقة من الشركة.",
-    attempt,
-  };
+  return { ok: result.ok, message: result.message, attempt };
 }

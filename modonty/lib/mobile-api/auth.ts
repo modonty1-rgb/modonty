@@ -187,9 +187,10 @@ export async function refreshReaderSession(rawRefreshToken: string): Promise<Rea
 
 /**
  * الخروج: يلغي جلسة التوكن المقدَّم وحدها — توكن الوصول (حتى لو أُلغيت الجلسة قبلاً) أو توكن
- * التجديد (لو انتهى توكن الوصول). خروجٌ ثانٍ بنفس التوكن لا يفشل. `false` = لا توكن صالح.
+ * التجديد (لو انتهى توكن الوصول). خروجٌ ثانٍ بنفس التوكن لا يفشل. يُرجع معرّف القارئ صاحب
+ * الجلسة (لتعطيل جهاز الدفع في نقطة الخروج) أو `null` = لا توكن صالح.
  */
-export async function endReaderSession(request: Request, rawRefreshToken: string | undefined): Promise<boolean> {
+export async function endReaderSession(request: Request, rawRefreshToken: string | undefined): Promise<string | null> {
   const access = bearerToken(request);
   const fromAccess = access ? await decodeAccessToken(access) : null;
   if (fromAccess) {
@@ -197,20 +198,20 @@ export async function endReaderSession(request: Request, rawRefreshToken: string
       where: { id: fromAccess.sessionId, userId: fromAccess.userId, ...NOT_REVOKED },
       data: { revokedAt: new Date(), revokedReason: "SignedOut" },
     });
-    return true;
+    return fromAccess.userId;
   }
   const parsed = rawRefreshToken ? parseRefreshToken(rawRefreshToken) : null;
-  if (!parsed) return false;
+  if (!parsed) return null;
   const row = await db.readerSession.findUnique({
     where: { id: parsed.sessionId },
-    select: { id: true, refreshHash: true },
+    select: { id: true, userId: true, refreshHash: true },
   });
-  if (!row || !sameHash(sha256(parsed.secret), row.refreshHash)) return false;
+  if (!row || !sameHash(sha256(parsed.secret), row.refreshHash)) return null;
   await db.readerSession.updateMany({
     where: { id: row.id, ...NOT_REVOKED },
     data: { revokedAt: new Date(), revokedReason: "SignedOut" },
   });
-  return true;
+  return row.userId;
 }
 
 /** التوكن الخام من الرأس — لنقطة التجديد التي تقبل التوكن في `Authorization`. */

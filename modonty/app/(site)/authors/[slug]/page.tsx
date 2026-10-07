@@ -6,7 +6,6 @@ import { cacheTag, cacheLife } from "next/cache";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
-import { ArticleStatus } from "@prisma/client";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
@@ -21,6 +20,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
+import { getAuthorBySlug } from "./data/get-author-by-slug";
+import { AUTHOR_PAGE_SIZE, getAuthorArticles } from "./data/get-author-articles";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 // Channel key → brand icon (registry only; no barrel lucide imports). Others fall back to a
@@ -30,8 +31,6 @@ const CHANNEL_ICON: Record<string, typeof IconExternal> = {
   linkedin: IconLinkedin,
   twitter: IconTwitter,
 };
-
-const AUTHOR_PAGE_SIZE = 20;
 
 interface AuthorPageProps {
   params: Promise<{ slug: string }>;
@@ -54,68 +53,6 @@ export async function generateStaticParams() {
   } catch {
     return [{ slug: "__no_authors__" }];
   }
-}
-
-async function getAuthorBySlug(slug: string) {
-  return db.author.findUnique({
-    where: { slug },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      firstName: true,
-      lastName: true,
-      bio: true,
-      image: true,
-      imageAlt: true,
-      url: true,
-      jobTitle: true,
-      verificationStatus: true,
-      email: true,
-      linkedIn: true,
-      twitter: true,
-      facebook: true,
-      sameAs: true,
-      credentials: true,
-      expertiseAreas: true,
-      memberOf: true,
-      seoTitle: true,
-      seoDescription: true,
-      canonicalUrl: true,
-      jsonLdStructuredData: true,
-      nextjsMetadata: true,
-    },
-  });
-}
-
-async function getAuthorArticles(authorId: string, page: number) {
-  // Cached for the same reason as the helpers below — the publish-date guard reads the
-  // clock, and Next 16 forbids the current time in an uncached prerender scope.
-  "use cache";
-  cacheTag("authors");
-  cacheLife("hours");
-  return db.article.findMany({
-    where: {
-      authorId,
-      status: ArticleStatus.PUBLISHED,
-      OR: [
-        { datePublished: null },
-        { datePublished: { lte: new Date() } },
-      ],
-    },
-    select: {
-      title: true,
-      slug: true,
-      excerpt: true,
-      datePublished: true,
-      featuredImage: {
-        select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true },
-      },
-    },
-    orderBy: { datePublished: "desc" },
-    skip: (page - 1) * AUTHOR_PAGE_SIZE,
-    take: AUTHOR_PAGE_SIZE + 1,
-  });
 }
 
 // Cached + EXCLUSIVE to metadata (not shared with the dynamic page) so the tags land

@@ -11,7 +11,6 @@ import {
   trackBookingAttempt,
   trackBookingFailed,
   trackBookingSubmit,
-  trackBookingWhatsappClick,
   trackBookingFormStart,
   type BookingFailReason,
 } from "@/lib/analytics/events-registry";
@@ -22,6 +21,7 @@ import { sendEmail } from "@/lib/email/resend-client";
 import { bookingNotificationEmail } from "@/lib/email/templates/booking-notification";
 import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { recordWhatsappLeadFor } from "@/lib/booking/record-whatsapp-lead-for";
 
 export type BookingSource =
   | "article_dock"
@@ -78,54 +78,14 @@ export async function recordWhatsappLead(input: {
   source: BookingSource;
   articleId?: string | null;
 }): Promise<void> {
-  // From the client page there is no article on the click — credit the one this visitor read
-  // (resolve-article-from-recent-view.ts). An article on the click always wins.
-  const ctx = { ...input, articleId: input.articleId ?? (await resolveArticleFromRecentView(input.clientId)) };
-  // GA4 counts every click (analytics); the DB lead stays deduped (one source of truth).
-  void trackBookingWhatsappClick({
-    client_id: ctx.clientId,
-    booking_source: ctx.source,
-    ...(ctx.articleId ? { article_id: ctx.articleId } : {}),
-  });
-
+  // Web door: the visit is named by its cookies; the lead logic lives in `recordWhatsappLeadFor`
+  // (shared with the mobile API, which names the visit by X-Device-Id).
   try {
-    const { clientId: visitorId, sessionId } = await getVisitorContext();
-
-    // Dedup: same visitor + client + session → already recorded this visit.
-    const existing = await db.bookingRequest.findFirst({
-      where: { clientId: ctx.clientId, channel: "whatsapp", visitorId, sessionId },
-      select: { id: true },
-    });
-    if (existing) return;
-
-    const h = await headers();
-    const geo = getGeoFromHeaders(h);
-    const ipAddress =
-      h.get("x-forwarded-for")?.split(",")[0].trim() ||
-      h.get("x-real-ip") ||
-      h.get("cf-connecting-ip") ||
-      null;
-
-    const booking = await db.bookingRequest.create({
-      data: {
-        clientId: ctx.clientId,
-        articleId: ctx.articleId ?? null,
-        source: ctx.source,
-        channel: "whatsapp",
-        status: "new",
-        visitorId,
-        sessionId,
-        country: geo.country,
-        city: geo.city,
-        ipAddress,
-        userAgent: h.get("user-agent") || null,
-      },
-      select: { id: true },
-    });
-    // Only a stored, non-duplicate lead alerts the client. No visitor data leaves Modonty.
-    fireClientEvent(ctx.clientId, { kind: "whatsapp_contact", articleId: ctx.articleId ?? null });
-  } catch {
+    const [{ clientId: visitorId, sessionId }, h] = await Promise.all([getVisitorContext(), headers()]);
+    await recordWhatsappLeadFor(input, { visitorId, sessionId, headers: h });
+  } catch (error) {
     // recording must never block the WhatsApp handoff
+    console.error("[recordWhatsappLead]", error);
   }
 }
 

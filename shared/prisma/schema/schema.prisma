@@ -3761,6 +3761,10 @@ model Notification {
   readAt    DateTime?
   relatedId String?  @db.ObjectId // e.g. ContactMessage id
   createdAt DateTime @default(now())
+  /// When the reader-app push dispatcher (`modonty/app/api/mobile/v1/internal/push-dispatch`)
+  /// handled this row — sent to the reader's phones, or skipped because it was already read /
+  /// had no phone. Unset = not handled yet. Staff rows (staffId) never get one.
+  pushedAt  DateTime?
 
   @@index([userId])
   @@index([staffId])
@@ -5260,6 +5264,37 @@ model ReaderSession {
 
   @@index([userId])
   @@map("reader_sessions")
+}
+
+/// One row per installed reader-app phone (modonty mobile) — the reader twin of MobileDevice,
+/// keyed to a User instead of a Client. It owns the Expo push token: one reader may use several
+/// phones and tokens rotate. `expoPushToken` is unique so a sign-in on a phone that another
+/// reader used moves the token to the current reader instead of duplicating it.
+/// No relation on purpose (same as ReaderSession): User stays untouched; account deletion
+/// removes these rows explicitly (`modonty/lib/users/delete-account-as.ts`).
+model ReaderDevice {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  userId        String   @db.ObjectId
+  /// ExpoPushToken[...] or ExponentPushToken[...]
+  expoPushToken String   @unique
+  /// X-Device-Id the app generates once and keeps — lets logout disable THIS phone's row.
+  deviceId      String
+  platform      String // "ios" | "android"
+  deviceName    String?
+  appVersion    String?
+
+  enabled        Boolean   @default(true)
+  lastSeenAt     DateTime  @default(now())
+  disabledAt     DateTime?
+  /// "SignedOut" | "Unregistered" | "Replaced" | "DeviceNotRegistered"
+  disabledReason String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([userId, enabled])
+  @@index([deviceId])
+  @@map("reader_devices")
 }
 
 enum ReelStatus {

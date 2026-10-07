@@ -1,114 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
-import { getOrCreateSessionId, createConversion } from "@/lib/analytics/conversion-tracking";
-import { ConversionType } from "@prisma/client";
-import { sendAdminTelegram } from "@modonty/shared/lib/telegram/client";
-import { notifyTelegram } from "@/lib/telegram/notify-telegram";
-import { trackNewsletterSubscribe } from "@/lib/analytics/events-registry";
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
-import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
+import { getOrCreateSessionId } from "@/lib/analytics/conversion-tracking";
+import { subscribeToClientNewsletter } from "@/lib/newsletter/subscribe-to-client-newsletter";
 
-const subscribeSchema = z.object({
-  email: z.string().email().max(254),
-  clientId: z.string().min(1),
-});
-
+/** Web door: the visit cookie names the conversion; the logic lives in `subscribeToClientNewsletter`. */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const parsed = subscribeSchema.safeParse(body);
+    const result = await subscribeToClientNewsletter({
+      body: await request.json(),
+      headers: request.headers,
+      resolveSessionId: getOrCreateSessionId,
+    });
 
-    if (!parsed.success) {
+    if (result === "invalid") {
       return NextResponse.json(
         { success: false, error: "Invalid request" } as ApiResponse<never>,
         { status: 400 }
       );
     }
-
-    const { email, clientId } = parsed.data;
-
-    // Rate limit: max 5 subscription attempts per email per hour
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    const recentCount = await db.subscriber.count({
-      where: { email, subscribedAt: { gt: oneHourAgo } },
-    });
-    if (recentCount >= 5) {
+    if (result === "rate_limited") {
       return NextResponse.json(
         { success: false, error: "حاول مرة أخرى لاحقاً" } as ApiResponse<never>,
         { status: 429 }
       );
     }
-
-    // Check if already subscribed for this client
-    const existing = await db.subscriber.findFirst({
-      where: {
-        email,
-        clientId,
-      },
-    });
-
-    if (existing) {
-      return NextResponse.json({
-        success: true,
-        data: { message: "Already subscribed to this client" },
-      } as ApiResponse<{ message: string }>);
-    }
-
-    // Create subscriber
-    const [newSubscriber, client] = await Promise.all([
-      db.subscriber.create({
-        data: {
-          email,
-          clientId,
-          subscribed: true,
-          subscribedAt: new Date(),
-          consentGiven: true,
-          consentDate: new Date(),
-        },
-      }),
-      db.client.findUnique({
-        where: { id: clientId },
-        select: { slug: true, name: true, industry: { select: { name: true } } },
-      }),
-    ]);
-    void newSubscriber;
-
-    // Notify Telegram group (admin) — non-blocking
-    const now = new Date().toLocaleString(SITE_LOCALE, { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
-    sendAdminTelegram(`🔔 <b>مشترك جديد</b>\n📧 ${email}\n🏢 ${client?.name || clientId}\n📅 ${now}`).catch(() => null);
-
-    // Notify Client's Telegram (per-client) — non-blocking
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-      request.headers.get("x-real-ip") ||
-      request.headers.get("cf-connecting-ip") ||
-      null;
-    fireClientEvent(clientId, { kind: "subscriber" });
-    notifyTelegram(clientId, "clientSubscribe", {
-      meta: { البريد: email },
-      ipAddress: ip,
-      headers: request.headers,
-    }).catch(() => {});
-
-    const sessionId = await getOrCreateSessionId();
-    await createConversion({
-      type: ConversionType.NEWSLETTER,
-      clientId,
-      sessionId,
-    });
-
-    void trackNewsletterSubscribe({
-      client_id: clientId,
-      client_slug: client?.slug,
-      client_name: client?.name,
-      client_industry: client?.industry?.name,
-    });
-
     return NextResponse.json({
       success: true,
-      data: { message: "Subscribed successfully" },
+      data: { message: result === "exists" ? "Already subscribed to this client" : "Subscribed successfully" },
     } as ApiResponse<{ message: string }>);
   } catch (error) {
     console.error("Error subscribing:", error);

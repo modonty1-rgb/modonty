@@ -9,5 +9,11 @@
       "cloud/**": false,
       "claude/**": false
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/mobile/v1/internal/push-dispatch",
+      "schedule": "*/5 * * * *"
+    }
+  ]
 }
