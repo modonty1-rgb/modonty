@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { notFound } from "next/navigation";
-import { cacheTag, cacheLife } from "next/cache";
 import { IconCategory } from "@/lib/icons";
-import { db } from "@/lib/db";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
-import { getCategoryPageData } from "@/lib/categories/get-category-page-data";
+import { getCategoryPageData } from "./helpers/get-category-page-data";
+import { getCategorySlugs } from "./helpers/get-category-slugs";
+import { getCategoryForMetadata } from "./helpers/get-category-for-metadata";
 import { generateMetadataFromSEO, localizedStoredBreadcrumbJsonLd } from "@/lib/seo";
 import { messages } from "@/lib/i18n/messages";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -19,30 +19,7 @@ interface CategoryDetailPageProps {
 }
 
 export async function generateStaticParams() {
-  try {
-    const categories = await db.category.findMany({ select: { slug: true } });
-    if (!categories || categories.length === 0) return [{ slug: "__no_categories__" }];
-    return categories.map((c) => ({ slug: c.slug }));
-  } catch {
-    return [{ slug: "__no_categories__" }];
-  }
-}
-
-async function getCategoryForMetadata(slug: string) {
-  "use cache";
-  cacheTag("categories");
-  cacheLife("hours");
-  return db.category.findUnique({
-    where: { slug },
-    select: {
-      name: true,
-      description: true,
-      seoTitle: true,
-      seoDescription: true,
-      socialImage: true,
-      nextjsMetadata: true,
-    },
-  });
+  return getCategorySlugs();
 }
 
 export async function generateMetadata({ params }: CategoryDetailPageProps): Promise<Metadata> {
@@ -88,7 +65,7 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
   const coreClientId = await getCoreClientId();
 
   try {
-    // Same reads the reader mobile API serves (lib/categories/get-category-page-data.ts).
+    // Same reads the reader mobile API serves (./helpers/get-category-page-data.ts).
     const data = await getCategoryPageData(slug, coreClientId);
 
     if (!data) notFound();

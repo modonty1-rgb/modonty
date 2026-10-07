@@ -7,13 +7,13 @@
  * on a just-published article and gives new content a small head start.
  */
 
-export interface TrendingScore {
+interface TrendingScore {
   score: number;
   interactions: number;
   ageInHours: number;
 }
 
-export interface TrendingInteractions {
+interface TrendingInteractions {
   views: number;
   likes: number;
   comments: number;

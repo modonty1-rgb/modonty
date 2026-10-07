@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { EntityCard, type EntityCardProps } from "@/components/listing/EntityCard";
-import { Skeleton } from "@/components/ui/skeleton";
+import { CardSkeleton } from "@/components/listing/CardSkeleton";
 import { Button } from "@/components/ui/button";
 import { IconLoading, IconError, IconRefresh } from "@/lib/icons";
 
@@ -19,18 +19,6 @@ const COLUMN_CLASS: Record<3 | 4, string> = {
   3: "sm:grid-cols-2 lg:grid-cols-3",
   4: "sm:grid-cols-2 lg:grid-cols-4",
 };
-
-function CardSkeleton() {
-  return (
-    <div className="overflow-hidden rounded-2xl bg-card shadow-md">
-      <Skeleton className="w-full rounded-none" style={{ aspectRatio: "16/10" }} />
-      <div className="p-4">
-        <Skeleton className="mb-3 h-5 w-3/4" />
-        <Skeleton className="h-10 w-full rounded-xl" />
-      </div>
-    </div>
-  );
-}
 
 export function InfiniteEntityGrid({
   initialItems,

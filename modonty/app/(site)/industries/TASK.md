@@ -14,8 +14,6 @@
 - **مكوّنات القائمة القديمة صارت بلا مستهلك من `/industries`:** `components/listing/{ListingHero,
   EntitySearchForm, EntitySortFilter, InfiniteEntityGrid}` — لم تُحذف، لأنها لسّه تخدم
   `categories/page.tsx` و`tags/page.tsx`. لا تُلمس إلا لو صار قرار توحيد تلك الصفحتين أيضاً.
-- **`app/industries/actions.ts` (`loadMoreIndustries`) صار بلا مستدعٍ** — كان يغذّي
-  `InfiniteEntityGrid` في القائمة القديمة. لم يُحذف.
 
 ## 🔖 مؤجَّل — بعد اكتمال الريفاكتور (نفس دفعة `/clients`)
 

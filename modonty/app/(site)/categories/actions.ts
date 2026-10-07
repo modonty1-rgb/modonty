@@ -1,6 +1,7 @@
 "use server";
 
-import { getCategoriesPage } from "@/app/(site)/categories/helpers/get-categories-page";
+import { getCategoriesPage } from "./helpers/get-categories-page";
+import { categoryToCard } from "./helpers/category-to-card";
 import type { CategoryQueryOptions } from "@/lib/types";
 import type { EntityCardProps } from "@/components/listing/EntityCard";
 
@@ -15,18 +16,7 @@ export async function loadMoreCategories(
   try {
     const { items, hasMore } = await getCategoriesPage(page, options);
 
-    const cards: EntityCardProps[] = items.map((cat) => ({
-      type: "category",
-      name: cat.name,
-      slug: cat.slug,
-      imageUrl: cat.socialImage,
-      imageAlt: cat.socialImageAlt,
-      articleCount: cat.articleCount,
-      recentArticleCount: cat.recentArticleCount,
-      clientPreviews: cat.clientPreviews ?? [],
-      clientCount: cat.clientCount ?? 0,
-      digitalImpact: cat.digitalImpact,
-    }));
+    const cards: EntityCardProps[] = items.map(categoryToCard);
 
     return { items: cards, hasMore };
   } catch (error) {

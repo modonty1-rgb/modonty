@@ -11,10 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SortDropdown } from "./sort-dropdown";
 import type { SortOption } from "./sort-dropdown";
-import type { ClientSortOption } from "../helpers/client-sort";
-
-type SearchScope = "all" | "articles" | "clients";
-type ArticleSortOption = "newest" | "oldest" | "title";
+import type { ClientSortOption } from "../helpers/client-order-by";
+import type { SearchScope, ArticleSortOption } from "../helpers/get-search-results";
+import { buildSearchUrl } from "../helpers/build-search-url";
 
 const ARTICLE_SORT_OPTIONS: { value: ArticleSortOption; label: string }[] = [
   { value: "newest", label: "الأحدث أولاً" },
@@ -27,23 +26,6 @@ interface SearchSortBarProps {
   query: string;
   sortArticles: ArticleSortOption;
   sortClients: ClientSortOption;
-}
-
-function buildSearchUrl(
-  query: string,
-  scope: SearchScope,
-  sortArticles: ArticleSortOption,
-  sortClients: ClientSortOption,
-  overrides: { sort_articles?: ArticleSortOption; sort_clients?: ClientSortOption; page?: number } = {}
-): string {
-  const q = encodeURIComponent(query);
-  const type = scope !== "all" ? `&type=${scope}` : "";
-  const sa = overrides.sort_articles ?? sortArticles;
-  const sc = overrides.sort_clients ?? sortClients;
-  const sortArticlesParam = sa !== "newest" ? `&sort_articles=${sa}` : "";
-  const sortClientsParam = sc !== "name-asc" ? `&sort_clients=${sc}` : "";
-  const pageParam = overrides.page !== undefined && overrides.page !== 1 ? `&page=${overrides.page}` : "";
-  return `/search?q=${q}${type}${sortArticlesParam}${sortClientsParam}${pageParam}`;
 }
 
 export function SearchSortBar({ scope, query, sortArticles, sortClients }: SearchSortBarProps) {

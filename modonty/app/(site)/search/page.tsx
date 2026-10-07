@@ -1,8 +1,12 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { getSearchResults, type SearchScope, type ArticleSortOption } from "./helpers/get-search-results";
-import type { ClientSortOption } from "./helpers/client-sort";
+import { getSearchResults } from "./helpers/get-search-results";
+import { normalizeScope } from "./helpers/normalize-scope";
+import { normalizeArticleSort } from "./helpers/normalize-article-sort";
+import { normalizeClientSort } from "./helpers/normalize-client-sort";
+import { formatResultsCount } from "./helpers/format-results-count";
+import { formatClientResultsCount } from "./helpers/format-client-results-count";
 import { generateMetadataFromSEO } from "@/lib/seo";
 import { messages } from "@/lib/i18n/messages";
 
@@ -20,31 +24,6 @@ interface SearchPageProps {
   searchParams: Promise<{ q?: string; page?: string; type?: string; sort_articles?: string; sort_clients?: string }>;
 }
 
-
-function normalizeScope(type: unknown): SearchScope {
-  return type === "clients" ? "clients" : type === "articles" ? "articles" : "all";
-}
-
-
-function normalizeArticleSort(s: unknown): ArticleSortOption {
-  return s === "oldest" || s === "title" ? s : "newest";
-}
-
-const CLIENT_SORT_OPTIONS: ClientSortOption[] = [
-  "name-asc",
-  "name-desc",
-  "articles-desc",
-  "articles-asc",
-  "newest",
-  "oldest",
-];
-
-function normalizeClientSort(s: unknown): ClientSortOption {
-  return typeof s === "string" && CLIENT_SORT_OPTIONS.includes(s as ClientSortOption)
-    ? (s as ClientSortOption)
-    : "name-asc";
-}
-
 export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q : "";
@@ -58,22 +37,6 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
     url: q ? `/search?q=${encodeURIComponent(q)}${typeParam}` : "/search",
     robots: "noindex,nofollow",
   });
-}
-
-function formatResultsCount(count: number): string {
-  if (count === 0) return "";
-  if (count === 1) return "تم العثور على مقال واحد";
-  if (count === 2) return "تم العثور على مقالين";
-  if (count <= 10) return `تم العثور على ${count} مقالات`;
-  return `تم العثور على ${count} مقال`;
-}
-
-function formatClientResultsCount(count: number): string {
-  if (count === 0) return "";
-  if (count === 1) return "تم العثور على شريك واحد";
-  if (count === 2) return "تم العثور على شريكين";
-  if (count <= 10) return `تم العثور على ${count} شركاء`;
-  return `تم العثور على ${count} شريك`;
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {

@@ -1,7 +1,8 @@
-import { Metadata } from "next";
-import { TrendingArticles } from "@/app/(site)/trending/components/TrendingArticles";
-import { getTrendingArticles } from "@/app/(site)/trending/helpers/get-trending-articles";
-import type { ArticleResponse } from "@/lib/types";
+import type { Metadata } from "next";
+import { TrendingArticles } from "./components/TrendingArticles";
+import { getTrendingArticles } from "./helpers/get-trending-articles";
+import { getPeriodText } from "./helpers/get-period-text";
+import { toTrendingArticle } from "./helpers/to-trending-article";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { TimePeriodFilter } from "./components/time-period-filter";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
@@ -29,35 +30,7 @@ export default async function TrendingPage({ searchParams }: TrendingPageProps) 
   const trendingArticles = await getTrendingArticles(12, days);
   const { jsonLd: storedJsonLd } = await getListingPageSeo("trending");
 
-  // Helper function for period text
-  const getPeriodText = (days: number) => {
-    if (days === 7) return 'آخر 7 أيام';
-    if (days === 14) return 'آخر 14 يوم';
-    if (days === 30) return 'آخر 30 يوم';
-    return `آخر ${days} يوم`;
-  };
-
-  // Map to component format
-  const trending = trendingArticles.map((article: ArticleResponse) => ({
-    id: article.id,
-    title: article.title,
-    excerpt: article.excerpt,
-    slug: article.slug,
-    image: article.image,
-    publishedAt: article.publishedAt,
-    client: {
-      name: article.client.name,
-      slug: article.client.slug,
-      logo: article.client.logo,
-    },
-    category: article.category,
-    interactions: {
-      views: article.interactions.views,
-      likes: article.interactions.likes,
-      comments: article.interactions.comments,
-    },
-    readingTimeMinutes: article.readingTimeMinutes,
-  }));
+  const trending = trendingArticles.map(toTrendingArticle);
 
   const jsonLdToRender = storedJsonLd?.trim() || "";
 

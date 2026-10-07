@@ -1,10 +1,10 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
-import { Prisma, ArticleStatus, ClientCtaMode, SubscriptionStatus } from "@prisma/client";
+import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import type { ClientResponse } from "@/lib/types";
 import { safeLiteralSearch } from "@/lib/search/safe-literal-search";
-import { ClientSortOption, clientOrderBy } from "./client-sort";
+import { type ClientSortOption, clientOrderBy } from "./client-order-by";
 
 export async function getClientsSearch(
   search: string,

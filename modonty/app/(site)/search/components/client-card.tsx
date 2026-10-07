@@ -5,7 +5,7 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { highlightQuery } from "@/lib/highlight-query";
 import { IconArticle, IconViews, IconCheck } from "@/lib/icons";
 
-import { formatMetric } from "../helpers/format-metrics";
+import { formatMetric } from "../helpers/format-metric";
 import { messages } from "@/lib/i18n/messages";
 
 interface ClientCardProps {

@@ -1,8 +1,8 @@
-import { Metadata } from "next";
-import { getCategoriesEnhanced } from "@/app/(site)/categories/helpers/get-categories-enhanced";
+import type { Metadata } from "next";
+import { getCategoriesEnhanced } from "../helpers/get-categories-enhanced";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
-import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
-import { loadMoreCategories } from "@/app/(site)/categories/actions";
+import { jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
+import { loadMoreCategories } from "../actions";
 import { extractOgImageFromMetadata } from "@/lib/seo/og-image";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ListingHero } from "@/components/listing/ListingHero";
@@ -12,8 +12,8 @@ import { InfiniteEntityGrid } from "@/components/listing/InfiniteEntityGrid";
 import { IconSearch } from "@/lib/icons";
 import { parseCategorySearchParams } from "../helpers/parse-category-search-params";
 import type { CategoryPageParams } from "../helpers/category-page-params";
-import type { CategoryResponse } from "@/lib/types";
-import type { EntityCardProps } from "@/components/listing/EntityCard";
+import { categoryToCard } from "../helpers/category-to-card";
+import { buildFallbackJsonLd } from "../helpers/build-fallback-json-ld";
 import { messages } from "@/lib/i18n/messages";
 
 const SORT_OPTIONS: EntitySortOption[] = [
@@ -60,19 +60,6 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
     messages.seo.categories.description;
   const { url: heroImageUrl, alt: heroImageAlt } = extractOgImageFromMetadata(seo.metadata);
 
-  const toCard = (cat: CategoryResponse): EntityCardProps => ({
-    type: "category",
-    name: cat.name,
-    slug: cat.slug,
-    imageUrl: cat.socialImage,
-    imageAlt: cat.socialImageAlt,
-    articleCount: cat.articleCount,
-    recentArticleCount: cat.recentArticleCount,
-    clientPreviews: cat.clientPreviews ?? [],
-    clientCount: cat.clientCount ?? 0,
-    digitalImpact: cat.digitalImpact,
-  });
-
   // كانت `all.slice(0, 20)`، فما بعد العشرين لا يصل الزاحف: بقيّة العناصر تُجلب
   // بجافاسكربت والرابط يُكتب بـ`history.pushState` (InfiniteEntityGrid.tsx:70) — والسيرفر
   // لا يقرأ `page`، فلا وجود لعنوان ثابت يُزحف. وجوجل صريح: «Give each chunk its own
@@ -83,19 +70,13 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
   // فالحلّ ليس بناء مسار `/page/n` لها، بل ما تفعله أخواتها الثلاث أصلاً: تُرسَل كاملةً
   // من السيرفر (tags:79 · industries · clients كلها بلا حدّ). فتُزحف كلها مهما نمت،
   // ويبقى الشريط للعرض لا للجلب.
-  const initialItems = all.map(toCard);
+  const initialItems = all.map(categoryToCard);
   const loadMore = loadMoreCategories.bind(null, { search, sortBy });
 
   // Prefer the admin-generated + validated JSON-LD cache; fall back to a live
   // breadcrumb so the page never ships with zero structured data. The fallback is built
   // inside its own branch — when the cache is present (the normal case) it is never built.
   const storedJsonLd = seo.jsonLd?.trim();
-
-  const buildFallbackJsonLd = () =>
-    generateBreadcrumbStructuredData([
-      { name: "الرئيسية", url: "/" },
-      { name: "الفئات", url: "/categories" },
-    ]);
 
   return (
     <>
@@ -124,42 +105,40 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
         accent="blue"
       />
 
-      <div className="container mx-auto max-w-[1128px] flex-1 px-4 py-8">
-        <section aria-labelledby="all-categories-heading">
-          <h2 id="all-categories-heading" className="sr-only">
-            جميع الفئات
-          </h2>
+      <section aria-labelledby="all-categories-heading" className="container mx-auto max-w-[1128px] flex-1 px-4 py-8">
+        <h2 id="all-categories-heading" className="sr-only">
+          جميع الفئات
+        </h2>
 
-          <div className="mb-8 flex flex-col gap-4 sm:flex-row">
-            <EntitySearchForm basePath="/categories" placeholder="ابحث عن فئة..." defaultValue={search} />
-            <EntitySortFilter basePath="/categories" options={SORT_OPTIONS} currentSort={sortBy} />
-          </div>
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row">
+          <EntitySearchForm basePath="/categories" placeholder="ابحث عن فئة..." defaultValue={search} />
+          <EntitySortFilter basePath="/categories" options={SORT_OPTIONS} currentSort={sortBy} />
+        </div>
 
-          {all.length === 0 ? (
-            <div className="py-16 text-center">
-              <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                <IconSearch className="h-12 w-12" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold text-foreground">لم نجد نتائج</h3>
-              <p className="mx-auto max-w-md text-muted-foreground">
-                {search
-                  ? `لم نتمكن من العثور على فئات تطابق بحثك عن "${search}".`
-                  : "لا توجد فئات بعد."}
-              </p>
+        {all.length === 0 ? (
+          <div className="py-16 text-center">
+            <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-muted text-muted-foreground">
+              <IconSearch className="h-12 w-12" />
             </div>
-          ) : (
-            // key = search+sort → remount on filter change so the grid re-seeds from filtered initialItems.
-            <InfiniteEntityGrid
-              key={`${search ?? ""}|${sortBy}`}
-              initialItems={initialItems}
-              initialHasMore={false}
-              loadMoreAction={loadMore}
-              columns={4}
-              emptyState={null}
-            />
-          )}
-        </section>
-      </div>
+            <h3 className="mb-2 text-xl font-semibold text-foreground">لم نجد نتائج</h3>
+            <p className="mx-auto max-w-md text-muted-foreground">
+              {search
+                ? `لم نتمكن من العثور على فئات تطابق بحثك عن "${search}".`
+                : "لا توجد فئات بعد."}
+            </p>
+          </div>
+        ) : (
+          // key = search+sort → remount on filter change so the grid re-seeds from filtered initialItems.
+          <InfiniteEntityGrid
+            key={`${search ?? ""}|${sortBy}`}
+            initialItems={initialItems}
+            initialHasMore={false}
+            loadMoreAction={loadMore}
+            columns={4}
+            emptyState={null}
+          />
+        )}
+      </section>
     </>
   );
 }

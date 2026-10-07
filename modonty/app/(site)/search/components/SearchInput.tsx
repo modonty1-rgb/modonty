@@ -5,12 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { IconSearch, IconClose } from "@/lib/icons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-type SearchScope = "all" | "articles" | "clients";
-
-function scopeFromParam(type: string | null): SearchScope {
-  return type === "clients" ? "clients" : type === "articles" ? "articles" : "all";
-}
+import type { SearchScope } from "../helpers/get-search-results";
+import { normalizeScope } from "../helpers/normalize-scope";
 
 interface SearchInputProps {
   defaultValue?: string;
@@ -39,7 +35,7 @@ export function SearchInput({
   useEffect(() => {
     const q = searchParams.get("q") ?? "";
     setSearchValue(q);
-    setScope(scopeFromParam(searchParams.get("type")));
+    setScope(normalizeScope(searchParams.get("type")));
   }, [searchParams]);
 
   const handleSubmit = (e: React.FormEvent) => {

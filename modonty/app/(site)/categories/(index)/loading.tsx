@@ -1,17 +1,6 @@
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
-
-function CardSkeleton() {
-  return (
-    <div className="overflow-hidden rounded-2xl bg-card shadow-md">
-      <Skeleton className="w-full rounded-none" style={{ aspectRatio: "16/10" }} />
-      <div className="p-4">
-        <Skeleton className="mb-3 h-5 w-3/4" />
-        <Skeleton className="h-10 w-full rounded-xl" />
-      </div>
-    </div>
-  );
-}
+import { CardSkeleton } from "@/components/listing/CardSkeleton";
 
 export default function CategoriesLoading() {
   return (

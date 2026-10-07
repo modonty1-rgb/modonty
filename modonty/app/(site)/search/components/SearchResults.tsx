@@ -5,10 +5,9 @@ import { SearchSortBar } from "./SearchSortBar";
 import { SearchEmptyState } from "./SearchEmptyState";
 import { SearchNoQueryState } from "./SearchNoQueryState";
 import type { ClientResponse, FeedPost } from "@/lib/types";
-import type { ClientSortOption } from "../helpers/client-sort";
-
-type SearchScope = "all" | "articles" | "clients";
-type ArticleSortOption = "newest" | "oldest" | "title";
+import type { ClientSortOption } from "../helpers/client-order-by";
+import type { SearchScope, ArticleSortOption } from "../helpers/get-search-results";
+import { buildPaginationUrl } from "../helpers/build-pagination-url";
 
 interface SearchResultsProps {
   scope: SearchScope;
@@ -20,21 +19,6 @@ interface SearchResultsProps {
   resultsCountText: string;
   currentPage?: number;
   totalPages?: number;
-}
-
-function buildPaginationUrl(
-  query: string,
-  scope: SearchScope,
-  sortArticles: ArticleSortOption,
-  sortClients: ClientSortOption,
-  page: number
-): string {
-  const q = encodeURIComponent(query);
-  const type = scope !== "all" ? `&type=${scope}` : "";
-  const sortArticlesParam = sortArticles !== "newest" ? `&sort_articles=${sortArticles}` : "";
-  const sortClientsParam = sortClients !== "name-asc" ? `&sort_clients=${sortClients}` : "";
-  const pageParam = page !== 1 ? `&page=${page}` : "";
-  return `/search?q=${q}${type}${sortArticlesParam}${sortClientsParam}${pageParam}`;
 }
 
 export function SearchResults({

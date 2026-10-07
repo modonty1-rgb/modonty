@@ -2,11 +2,10 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 // Uncached shared reader — this body runs inside `unstable_cache`, not a `"use cache"` scope.
 import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { db } from "@/lib/db";
-import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
-import { TagListItem, TagQueryOptions } from "./tag-types";
+import type { TagListItem, TagQueryOptions } from "./tag-types";
 
 /**
  * Tag listing for /tags — same shape as getCategoriesEnhanced, previews fetched

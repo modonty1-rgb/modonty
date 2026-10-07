@@ -1,7 +1,8 @@
 "use server";
 
 import type { TagQueryOptions } from "./helpers/tag-types";
-import { getTagsPage } from "@/app/(site)/tags/helpers/get-tags-page";
+import { getTagsPage } from "./helpers/get-tags-page";
+import { tagToCard } from "./helpers/tag-to-card";
 import type { EntityCardProps } from "@/components/listing/EntityCard";
 
 /**
@@ -16,18 +17,7 @@ export async function loadMoreTags(
   try {
     const { items, hasMore } = await getTagsPage(page, options);
 
-    const cards: EntityCardProps[] = items.map((tag) => ({
-      type: "tag",
-      name: tag.name,
-      slug: tag.slug,
-      imageUrl: tag.socialImage,
-      imageAlt: tag.socialImageAlt,
-      articleCount: tag.articleCount,
-      recentArticleCount: tag.recentArticleCount,
-      clientPreviews: tag.clientPreviews,
-      clientCount: tag.clientCount,
-      digitalImpact: tag.digitalImpact,
-    }));
+    const cards: EntityCardProps[] = items.map(tagToCard);
 
     return { items: cards, hasMore };
   } catch (error) {

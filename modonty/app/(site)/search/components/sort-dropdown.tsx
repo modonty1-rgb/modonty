@@ -58,31 +58,3 @@ export function SortDropdown({ value, onChange }: SortDropdownProps) {
     </DropdownMenu>
   );
 }
-
-export function sortClients<T extends {
-  slug: string;
-  name: string;
-  articleCount: number;
-  createdAt: Date;
-}>(clients: T[], sortBy: SortOption, ga4: Record<string, { total: number }> = {}): T[] {
-  const sorted = [...clients];
-
-  switch (sortBy) {
-    case 'engagement-desc':
-      return sorted.sort((a, b) => (ga4[b.slug]?.total ?? 0) - (ga4[a.slug]?.total ?? 0));
-    case 'name-asc':
-      return sorted.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
-    case 'name-desc':
-      return sorted.sort((a, b) => b.name.localeCompare(a.name, 'ar'));
-    case 'articles-desc':
-      return sorted.sort((a, b) => b.articleCount - a.articleCount);
-    case 'articles-asc':
-      return sorted.sort((a, b) => a.articleCount - b.articleCount);
-    case 'newest':
-      return sorted.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-    case 'oldest':
-      return sorted.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
-    default:
-      return sorted;
-  }
-}

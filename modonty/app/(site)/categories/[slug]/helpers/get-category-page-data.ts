@@ -1,8 +1,9 @@
 import { cacheTag, cacheLife } from "next/cache";
-import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
+import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
+import { getClientsRatings } from "@/lib/clients/get-clients-ratings";
 
 // The four reads below moved here unchanged from `app/(site)/categories/[slug]/page.tsx`
 // (4 Oct 2026) so the page and the reader mobile API read ONE source.
@@ -72,20 +73,6 @@ async function getCategoryClients(slug: string, coreClientId: string | null) {
       slogan: true,
       _count: { select: { articles: true } },
     },
-  });
-}
-
-/** Review averages for the listed partners. Keyed by the id list so a different page of
- *  partners gets its own entry rather than reusing another category's averages. */
-async function getClientsRatings(clientIds: string[]) {
-  "use cache";
-  cacheTag("reviews");
-  cacheLife("hours");
-  if (clientIds.length === 0) return [];
-  return db.clientReview.groupBy({
-    by: ["clientId"],
-    where: { clientId: { in: clientIds }, status: CommentStatus.APPROVED },
-    _avg: { rating: true },
   });
 }
 

@@ -1,6 +1,6 @@
 import { getArticles } from "@/lib/queries/get-articles";
 import { getClientsSearch } from "./get-clients-search";
-import type { ClientSortOption } from "./client-sort";
+import type { ClientSortOption } from "./client-order-by";
 import type { ArticleResponse, ClientResponse, FeedPost } from "@/lib/types";
 
 export type SearchScope = "all" | "articles" | "clients";

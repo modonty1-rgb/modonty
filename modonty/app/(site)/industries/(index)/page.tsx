@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
-import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
+import { jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
-import { getIndustryFeed } from "@/app/(site)/industries/data/get-industry-feed";
+import { getIndustryFeed } from "../data/get-industry-feed";
 import { getClientsList } from "@/lib/queries/get-clients-list";
-import { IndustryPageLayout } from "@/app/(site)/industries/components/page-layout/IndustryPageLayout";
+import { IndustryPageLayout } from "../components/page-layout/IndustryPageLayout";
+import { buildPageHref } from "../helpers/build-page-href";
+import { buildFallbackJsonLd } from "../helpers/build-fallback-json-ld";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { SITE_URL } from "@/constants";
 import { messages } from "@/lib/i18n/messages";
@@ -52,14 +54,7 @@ export default async function IndustriesPage({ searchParams }: IndustriesPagePro
     getClientsList().then((all) => all.filter((partner) => partner.industry)),
   ]);
 
-  const buildPageHref = (targetPage: number) => (targetPage > 1 ? `/industries?page=${targetPage}` : "/industries");
-
   const storedJsonLd = seo.jsonLd?.trim();
-  const buildFallbackJsonLd = () =>
-    generateBreadcrumbStructuredData([
-      { name: "الرئيسية", url: "/" },
-      { name: "المجالات", url: "/industries" },
-    ]);
 
   return (
     <>
