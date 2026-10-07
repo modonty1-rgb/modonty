@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
-import { recordPageView } from "@/lib/analytics/record-page-view";
+import { recordPageView } from "./record-page-view";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -12,7 +12,7 @@ const BOT_UA =
   /bot|crawl|spider|slurp|mediapartners|facebookexternalhit|whatsapp|telegram|embedly|quora|pinterest|vkshare|bingpreview|lighthouse|headless|python-requests|axios|curl|wget|node-fetch|go-http|monitoring/i;
 
 // Web door: cookie session + User-Agent bot filter. The counting rule lives in
-// lib/analytics/record-page-view.ts, shared with the mobile API (keyed on X-Device-Id).
+// ./record-page-view.ts, shared with the mobile API (keyed on X-Device-Id).
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => null);

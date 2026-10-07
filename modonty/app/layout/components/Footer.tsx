@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { messages } from "@/lib/i18n/messages";
 import Link from "next/link";
-import { FooterCopyright } from "@/app/layout/components/FooterCopyright";
-import { FooterStats } from "@/app/layout/components/FooterStats";
+import { FooterCopyright } from "./FooterCopyright";
+import { FooterStats } from "./FooterStats";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { getLegalEntity } from "@/lib/seo/organization-jsonld";

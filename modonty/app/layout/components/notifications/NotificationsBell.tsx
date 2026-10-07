@@ -1,35 +1,11 @@
-import { unstable_noStore } from "next/cache";
 import Link from "next/link";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { getUnreadNotificationCountForViewer } from "../../helpers/get-unread-notification-count-for-viewer";
 import { IconEmail } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 export async function NotificationsBell() {
-  unstable_noStore();
-
-  /**
-   * الجلسة داخل `try`: `auth()` يرمي `JWTSessionError` حين يكون كوكي الزائر تالفاً أو
-   * موقَّعاً بسرٍّ قديم (`JWEInvalid: Failed to base64url decode the iv`)، ويطبعه authjs
-   * في سجلّ الخادم قبل أن يصل المستدعي.
-   *
-   * ولماذا يهمّ هذا **صفحة البيع**: `app/not-found.tsx` يركّب `SiteShell` بنفسه، وNext
-   * يجهّز صفحة ٤٠٤ مع كل طلب — فهذا الجرس يُنفَّذ على `/pay/sa` أيضاً وهي خارج مجموعة
-   * `(site)` تماماً (قيس ١٤ سبتمبر ٢٠٢٦: مرّتان لكل طلب، و٦ أخطاء بكوكي تالف).
-   * فكان سجلّ خادم صفحة بيعٍ لغير المسجَّلين يمتلئ بأخطاء مصادقة لا شأن لها بها،
-   * وتغرق فيها أخطاء الدفع الحقيقية يوم تقع.
-   *
-   * وزائرٌ بكوكي تالف هو زائرٌ غير مسجَّل — فالجرس لا يُرسم، وهو ما تفعله السطور التالية.
-   */
-  const session = await auth().catch(() => null);
-  if (!session?.user?.id) return null;
-
-  const unreadCount = await db.notification.count({
-    where: {
-      userId: session.user.id,
-      OR: [{ readAt: null }, { readAt: { isSet: false } }],
-    },
-  });
+  const unreadCount = await getUnreadNotificationCountForViewer();
+  if (unreadCount === null) return null;
 
   return (
     <Link

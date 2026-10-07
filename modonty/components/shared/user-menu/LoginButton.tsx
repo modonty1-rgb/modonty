@@ -1,8 +1,6 @@
-"use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { MobileAccountBenefitsMenu } from "@/app/layout/components/user-menu/MobileAccountBenefitsMenu";
+import { MobileAccountBenefitsMenu } from "./MobileAccountBenefitsMenu";
 
 // Logged-out header CTA: subscribing is the primary action (→ register), with
 // "دخول" for returning users (→ login). Shown in both the desktop and mobile

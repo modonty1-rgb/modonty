@@ -1,10 +1,15 @@
 // Build trigger: 2026-05-27 v0.63.4 cache rebuild
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { LIVE_SECTORS, isSectorPaused } from "@modonty/shared/lib/sectors/live-sectors";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { SITE_URL } from "@/constants";
+import { maxDate } from "@/lib/sitemap/max-date";
+import { isFixtureSlug } from "@/lib/sitemap/is-fixture-slug";
+import { notTestSlug } from "@/lib/sitemap/not-test-slug";
+import { isIndexableClient } from "@/lib/sitemap/is-indexable-client";
+import { reelVideoEntry } from "@/lib/sitemap/reel-video-entry";
 
 /**
  * Main sitemap (Google's primary trust signal).
@@ -29,146 +34,6 @@ type SitemapArticle = {
 };
 
 type EntityWithUpdatedAt = { slug: string; updatedAt: Date };
-
-function maxDate(dates: Array<Date | null | undefined>): Date | undefined {
-  const valid = dates.filter((d): d is Date => d instanceof Date);
-  if (valid.length === 0) return undefined;
-  return new Date(Math.max(...valid.map((d) => d.getTime())));
-}
-
-/**
- * Fixture slugs, kept out of the sitemap: development leftovers pollute Google's view of the
- * site and spend crawl budget on pages nobody should reach.
- *
- * The rule used to be `endsWith("-test")` alone, and it was applied to five entity types out
- * of seven. Both halves were wrong, and the second one hid the first: the fixtures actually
- * measured in the sitemap on 24 Aug 2026 were `reel-test-mt1ci48p-1`, `dev-modonty-reel-1`
- * and friends — none of which END in `-test`, so widening the reach without widening the
- * pattern would have changed nothing.
- *
- * Every shape here is ASCII with an English prefix. Real content slugs on this site are
- * Arabic, so the false-positive risk is a slug someone deliberately names in English with one
- * of these prefixes — and the fix for that is to rename it, as it always was.
- *
- * This is still a naming convention, not a flag on the row. A real `isFixture` column would
- * be sturdier and is worth doing the day fixtures start being created by anything other than
- * a developer typing a name.
- */
-const FIXTURE_SLUG = /(^|-)(test|dev|demo|e2e|sample|dummy)(-|$)/i;
-
-function isFixtureSlug(slug: string | null | undefined): boolean {
-  return !!slug && FIXTURE_SLUG.test(slug);
-}
-
-function notTestSlug<T extends { slug: string }>(e: T): boolean {
-  return !isFixtureSlug(e.slug);
-}
-
-/**
- * The same "substantive" test `resolveClientPageState` applies before it returns "not-ready",
- * fed by the same three signals `generateMetadata` uses to decide noindex on the partner page
- * (description ?? seoDescription, and the published-article count). Kept as one expression so
- * the two stay readable side by side: if the page's gate moves, this moves with it.
- */
-function isIndexableClient(c: {
-  description: string | null;
-  seoDescription: string | null;
-  _count: { articles: number };
-}): boolean {
-  return !!(c.description || c.seoDescription)?.trim() || c._count.articles > 0;
-}
-
-/**
- * Escapes the five XML metacharacters in free text that reaches the sitemap.
- *
- * Next interpolates `videos` fields into the XML **raw** — verified in
- * `next/dist/build/webpack/loaders/metadata/resolve-route-data.js`, which emits
- * `` `<video:title>${video.title}</video:title>` `` with no escaping of its own. Google requires
- * the opposite: "All HTML entities must be escaped or wrapped in a CDATA block".
- *
- * The stake is the whole file, not the one reel: a single `&` typed into a reel title in the
- * console makes the XML malformed, and a malformed sitemap is rejected entirely — every article,
- * client and category in it stops being submitted. Reel titles and descriptions are the only
- * free text here; slugs and URLs are already safe by construction.
- */
-function xmlText(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
-
-/** Google's published limits for the video tags used below. */
-const VIDEO_DESCRIPTION_MAX = 2048;
-const VIDEO_UPLOADER_MAX = 255;
-const VIDEO_DURATION_MIN = 1;
-const VIDEO_DURATION_MAX = 28800;
-
-type SitemapReel = {
-  reelSlug: string | null;
-  reelPublishedAt: Date | null;
-  thumbnailUrl: string | null;
-  title: string | null;
-  description: string | null;
-  bunnyVideoId: string | null;
-  mp4Url: string | null;
-  durationSec: number | null;
-  viewsCount: number;
-  client: { name: string; slug: string } | null;
-};
-
-type SitemapVideo = NonNullable<MetadataRoute.Sitemap[number]["videos"]>[number];
-
-/**
- * The `<video:video>` block for one reel — the discovery half of what the watch page already
- * says in its `VideoObject`. Structured data is only read once Google has crawled the page;
- * the sitemap hands it the title, thumbnail and file up front, which is what shortens the gap
- * between publishing a reel and it being eligible as a video result.
- *
- * Returns `null` rather than a partial block whenever a required field is missing: Google
- * demands title + thumbnail_loc + description + one of content_loc/player_loc, and a half-formed
- * entry is an invalid entry.
- */
-function reelVideoEntry(r: SitemapReel): SitemapVideo | null {
-  // An image reel is not a video. Its watch page emits `ImageObject`, and a `<video:video>` here
-  // would be a false claim to the crawler about a file that does not exist.
-  if (!r.bunnyVideoId) return null;
-
-  const title = r.title?.trim();
-  const description = r.description?.trim();
-  // `mp4Url` is the progressive file, not the HLS playlist — the same URL the page's
-  // `VideoObject.contentUrl` names, and the reason the console stores it at all. It lives on
-  // Bunny's host, so it can never equal the `<loc>` URL, which Google forbids.
-  if (!title || !description || !r.thumbnailUrl || !r.mp4Url) return null;
-
-  const duration =
-    r.durationSec && r.durationSec >= VIDEO_DURATION_MIN && r.durationSec <= VIDEO_DURATION_MAX
-      ? r.durationSec
-      : undefined;
-
-  return {
-    title: xmlText(title),
-    thumbnail_loc: r.thumbnailUrl,
-    description: xmlText(description.slice(0, VIDEO_DESCRIPTION_MAX)),
-    content_loc: r.mp4Url,
-    family_friendly: "yes",
-    ...(duration && { duration }),
-    ...(r.reelPublishedAt && { publication_date: r.reelPublishedAt.toISOString() }),
-    ...(r.viewsCount > 0 && { view_count: r.viewsCount }),
-    // `info` is passed WITH `content`, never without: Next builds the tag as
-    // `` `<video:uploader${uploader.info && ` info="..."`}>` ``, so an absent `info` interpolates
-    // the string "undefined" and emits `<video:uploaderundefined>` — measured, not assumed.
-    // The client page is on our own host, which is Google's requirement for that attribute.
-    ...(r.client && {
-      uploader: {
-        content: xmlText(r.client.name.slice(0, VIDEO_UPLOADER_MAX)),
-        info: new URL(`/clients/${r.client.slug}`, SITE_URL).href,
-      },
-    }),
-  };
-}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;

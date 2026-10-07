@@ -11,16 +11,8 @@ import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { SITE_URL } from "@/constants";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
-import { getBrandDescription } from "@/lib/settings/get-brand-description";
-
-function escapeXml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
+import { escapeXml } from "@/lib/seo/escape-xml";
+import { getBrandDescription } from "./get-brand-description";
 
 export async function GET() {
   // اسم القناة ووصفها ولغتها من الإعدادات — كانت `BRAND_AR` وجملةً مكتوبةً و`ar` ثابتة،

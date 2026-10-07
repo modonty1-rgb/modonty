@@ -1,4 +1,4 @@
-import { mainNavItems, type MainNavItem } from "@/app/layout/helpers/nav-config";
+import { mainNavItems, type MainNavItem } from "@/lib/nav/nav-config";
 
 /**
  * The destinations the chrome-free reels page offers, in one place for both of its shapes:

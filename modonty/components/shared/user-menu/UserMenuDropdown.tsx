@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import type { Session } from "next-auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,10 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ModontyLogoutMark } from "@/components/icons/modonty-logout-mark";
 import { IconUser, IconSettings, IconEmail } from "@/lib/icons";
-import { handleLogout } from "@/app/layout/components/logout";
-import { UserAvatarButton } from "@/app/layout/components/user-menu/UserAvatarButton";
-
-type SessionUser = NonNullable<Session["user"]>;
+import { handleLogout } from "./handle-logout";
+import { UserAvatarButton } from "./UserAvatarButton";
+import type { SessionUser } from "./session-user";
 
 interface UserMenuDropdownProps {
   user: SessionUser;

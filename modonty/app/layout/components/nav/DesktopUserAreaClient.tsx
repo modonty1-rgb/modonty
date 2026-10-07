@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { UserMenu } from "@/app/layout/components/user-menu/UserMenu";
+import { UserMenu } from "@/components/shared/user-menu/UserMenu";
 
 // UserMenu reads the session promise (`use()`), so it must sit under its own
 // boundary — otherwise the static shell cannot prerender (build error, cacheComponents).

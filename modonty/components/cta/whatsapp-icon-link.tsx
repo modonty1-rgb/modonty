@@ -50,6 +50,3 @@ export function WhatsAppLeadLink({
     </a>
   );
 }
-
-/** Backward-compatible alias: icon-only WhatsApp lead link. */
-export const WhatsAppIconLink = WhatsAppLeadLink;

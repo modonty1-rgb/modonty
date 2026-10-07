@@ -1,12 +1,10 @@
 "use client";
 
 import { forwardRef } from "react";
-import type { Session } from "next-auth";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-
-type SessionUser = NonNullable<Session["user"]>;
+import type { SessionUser } from "./session-user";
 
 interface UserAvatarButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   user: SessionUser;

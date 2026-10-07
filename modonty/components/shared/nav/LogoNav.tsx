@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { messages } from "@/lib/i18n/messages";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { ModontyMark } from "@/components/icons/modonty-mark";

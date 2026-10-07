@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { SearchLink, type SearchLinkLabels } from "@/app/layout/components/nav/SearchLink";
-import { DesktopNavItem } from "@/app/layout/components/nav/DesktopNavItem";
-import { mainNavItemDefs as mainNavItems, type MainNavLabelKey } from "@/app/layout/helpers/nav-items";
-import { getOrbitSteps } from "@/lib/nav/get-orbit-steps";
-import { getNavSectionPath } from "@/lib/nav/get-nav-section-path";
+import { SearchLink, type SearchLinkLabels } from "./SearchLink";
+import { DesktopNavItem } from "./DesktopNavItem";
+import { mainNavItemDefs as mainNavItems, type MainNavLabelKey } from "@/lib/nav/nav-items";
+import { getOrbitSteps } from "../../helpers/get-orbit-steps";
+import { activeIndexFor } from "../../helpers/active-index-for";
 
 /** Distance between two slots on the ring (px) — a 44px circle plus breathing room. */
 const ORBIT_GAP = 54;
@@ -15,19 +14,10 @@ const ACTIVE_CLEARANCE = 10;
 /** The ring's box: every slot from the far left to the far right, plus the active clearance. */
 const RING_WIDTH = (mainNavItems.length - 1) * ORBIT_GAP + 56 + ACTIVE_CLEARANCE * 2;
 
-function activeIndexFor(rawPathname: string | null): number {
-  if (rawPathname === null) return 0;
-  // A page without its own tab takes its parent section's (`/quran` → مدونتي).
-  const pathname = getNavSectionPath(rawPathname);
-  // Home matches the exact root only; others match their path prefix (e.g. /clients/[slug]).
-  const i = mainNavItems.findIndex((item) => (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)));
-  return Math.max(0, i);
-}
-
 /**
  * **الشريط حلقةٌ مركزُها ثابت — مثل شريط الجوّال** (خالد ٢٤ سبتمبر ٢٠٢٦: «السنتر هو الثابت، لما
  * تختار الأيقونة بتتحرّك وتروح للسنتر — نفس فكرة الجالكسي»). مقيسٌ على الجوّال (٣٩٠): النشطُ
- * عند x=190 قبل الضغط وبعده، والباقي يدور حوله. والحسابُ نفسُه (`lib/nav/get-orbit-steps.ts`).
+ * عند x=190 قبل الضغط وبعده، والباقي يدور حوله. والحسابُ نفسُه (`app/layout/helpers/get-orbit-steps.ts`).
  *
  * كلُّ خانةٍ صندوقٌ بعرضٍ واحد (٥٦) يبدأ من المركز ويُزاح بـ`transform` — فتتحرّك الأيقوناتُ
  * بسلاسة، ولا تتغيّر أبعادُ الشريط. والقافزُ من طرفٍ إلى طرف (أكثر من خانتين) يختفي ويظهر بدل أن
@@ -66,12 +56,4 @@ export function DesktopNavList({ pathname, labels }: { pathname: string | null; 
       </nav>
     </div>
   );
-}
-
-// `usePathname` on a route with a dynamic param needs a Suspense boundary under
-// cacheComponents (use-pathname.md, "Good to know") — the caller wraps this and uses
-// <DesktopNavList pathname={null} /> as the fallback.
-export function DesktopNavLinks({ labels }: { labels: { mainNav: string; menuItems: Record<MainNavLabelKey, string> } & SearchLinkLabels }) {
-  const pathname = usePathname();
-  return <DesktopNavList pathname={pathname} labels={labels} />;
 }

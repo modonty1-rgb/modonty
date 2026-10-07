@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { MobileMenuTrigger } from "@/app/layout/components/nav/MobileMenuTrigger";
+import { MobileMenuTrigger } from "./MobileMenuTrigger";
 
 const MobileMenu = dynamic(
-  () => import("@/app/layout/components/nav/MobileMenu").then((m) => ({ default: m.MobileMenu })),
+  () => import("./MobileMenu").then((m) => ({ default: m.MobileMenu })),
   { ssr: false }
 );
 

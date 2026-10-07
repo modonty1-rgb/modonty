@@ -1,15 +1,15 @@
 import type { ComponentType } from "react";
 import { getGa4FooterStats } from "@/lib/analytics/ga4";
-import { getSearchConsoleTotals } from "@/lib/analytics/search-console-totals";
-import { getPlatformCounts } from "@/lib/queries/get-platform-counts";
-import { getFooterStats } from "@/app/layout/helpers/get-footer-stats";
+import { getSearchConsoleTotals } from "../helpers/search-console-totals";
+import { getPlatformCounts } from "../helpers/get-platform-counts";
+import { getFooterStats } from "../helpers/get-footer-stats";
+import { buildFooterHero } from "../helpers/build-footer-hero";
+import { buildFooterCells } from "../helpers/build-footer-cells";
 import {
   IconArticle,
   IconViews,
   IconActivity,
   IconUsers,
-  IconTrending,
-  IconTotal,
 } from "@/lib/icons";
 import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
@@ -41,14 +41,6 @@ function Stat({
   );
 }
 
-/** «+٣٩٦ ألف» — يُقطع للأسفل لا يُقرَّب، فالـ«+» صادقة دائماً (الرقم الحقيقيّ أكبر أو يساوي). */
-function formatHero(n: number): string {
-  const f = (v: number) => v.toLocaleString(SITE_LOCALE, { maximumFractionDigits: 1 });
-  if (n >= 1_000_000) return `+${f(Math.floor(n / 100_000) / 10)} مليون`;
-  if (n >= 10_000) return `+${f(Math.floor(n / 1000))} ألف`;
-  return n.toLocaleString(SITE_LOCALE);
-}
-
 const SECONDARY_COLS: Record<number, string> = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-3", 4: "sm:grid-cols-4", 5: "sm:grid-cols-5" };
 
 /**
@@ -65,58 +57,48 @@ export async function FooterStats() {
   const [ga4, gsc, platform] = await Promise.all([getGa4FooterStats(), getSearchConsoleTotals(), getPlatformCounts()]);
 
   if (ga4 || gsc) {
-    const hero = gsc
-      ? { value: formatHero(gsc.impressions), label: "ظهور في بحث جوجل", source: "Search Console" }
-      : { value: formatHero(ga4!.pageViews), label: "مشاهدة صفحة", source: "Analytics" };
-    const cells = [
-      gsc ? { value: gsc.clicks, label: "زيارة من بحث جوجل", source: "Search Console" } : null,
-      ga4 && gsc ? { value: ga4.pageViews, label: "مشاهدة صفحة", source: "Analytics" } : null,
-      { value: platform.articles, label: "مقالاً منشوراً", source: "مدونتي" },
-      { value: platform.partners, label: "شريكاً موثوقاً", source: "مدونتي" },
-      { value: platform.industries, label: "مجالات", source: "مدونتي" },
-    ].filter((c): c is { value: number; label: string; source: string } => c !== null);
+    const hero = buildFooterHero(ga4, gsc);
+    const cells = buildFooterCells(ga4, gsc, platform);
 
     return (
-      <div className="w-full overflow-hidden rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-[#0d1424] to-[#111827] shadow-[0_0_40px_rgba(99,102,241,0.08)]">
-        <div className="flex divide-x divide-x-reverse divide-white/[0.06]">
+      <div className="w-full overflow-hidden rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-[#0d1424] to-[#111827] shadow-[0_0_40px_rgba(99,102,241,0.08)] flex divide-x divide-x-reverse divide-white/[0.06]">
 
-          <div className="flex flex-1 flex-col divide-y divide-white/[0.06] sm:flex-row sm:divide-x sm:divide-y-0 sm:divide-x-reverse">
-            {/* الرقم الكبير — أكبرُ رقمٍ صادق */}
-            <div className="flex flex-col items-center justify-center px-6 py-5">
-              <span className="text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">{hero.value}</span>
-              <span className="mt-1.5 text-xs font-medium text-white/80">{hero.label}</span>
-              <span className="mt-0.5 text-xs text-white/40">{hero.source}</span>
-            </div>
-            {/* الجوّال: صفوفٌ من ثلاثة والأخيرُ في المنتصف (٥ أرقام = ٣ + ٢)؛ ومن `sm` شبكةٌ بعدد الأرقام. */}
-            <div className={`flex flex-1 flex-wrap justify-center sm:grid sm:divide-x sm:divide-x-reverse sm:divide-white/[0.06] ${SECONDARY_COLS[cells.length] ?? "sm:grid-cols-5"}`}>
-              {cells.map((c) => (
-                <div key={c.label} className="flex w-1/3 flex-col items-center justify-center px-1 py-5 text-center sm:w-auto">
-                  <span className="text-lg font-black leading-none text-white/85 sm:text-xl">{c.value.toLocaleString(SITE_LOCALE)}</span>
-                  <span className="mt-1.5 text-xs font-medium text-white/70">{c.label}</span>
-                  <span className="mt-0.5 text-xs text-white/40">{c.source}</span>
-                </div>
-              ))}
-            </div>
+        <div className="flex flex-1 flex-col divide-y divide-white/[0.06] sm:flex-row sm:divide-x sm:divide-y-0 sm:divide-x-reverse">
+          {/* الرقم الكبير — أكبرُ رقمٍ صادق */}
+          <div className="flex flex-col items-center justify-center px-6 py-5">
+            <span className="text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">{hero.value}</span>
+            <span className="mt-1.5 text-xs font-medium text-white/80">{hero.label}</span>
+            <span className="mt-0.5 text-xs text-white/40">{hero.source}</span>
           </div>
-
-          {/* Google anchor — trust badge */}
-          <div className="hidden sm:flex flex-col items-center justify-center gap-2.5 bg-white/[0.03] px-6 py-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-8 w-8" aria-label="Google">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-            </svg>
-            <p className="text-center text-xs leading-tight text-white/45">
-              موثّق من<br />
-              <span className="font-semibold text-white/65">Analytics · Search Console</span>
-            </p>
-            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-400">
-              ✓ بيانات حقيقية
-            </span>
+          {/* الجوّال: صفوفٌ من ثلاثة والأخيرُ في المنتصف (٥ أرقام = ٣ + ٢)؛ ومن `sm` شبكةٌ بعدد الأرقام. */}
+          <div className={`flex flex-1 flex-wrap justify-center sm:grid sm:divide-x sm:divide-x-reverse sm:divide-white/[0.06] ${SECONDARY_COLS[cells.length] ?? "sm:grid-cols-5"}`}>
+            {cells.map((c) => (
+              <div key={c.label} className="flex w-1/3 flex-col items-center justify-center px-1 py-5 text-center sm:w-auto">
+                <span className="text-lg font-black leading-none text-white/85 sm:text-xl">{c.value.toLocaleString(SITE_LOCALE)}</span>
+                <span className="mt-1.5 text-xs font-medium text-white/70">{c.label}</span>
+                <span className="mt-0.5 text-xs text-white/40">{c.source}</span>
+              </div>
+            ))}
           </div>
-
         </div>
+
+        {/* Google anchor — trust badge */}
+        <div className="hidden sm:flex flex-col items-center justify-center gap-2.5 bg-white/[0.03] px-6 py-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-8 w-8" aria-label="Google">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          <p className="text-center text-xs leading-tight text-white/45">
+            موثّق من<br />
+            <span className="font-semibold text-white/65">Analytics · Search Console</span>
+          </p>
+          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-400">
+            ✓ بيانات حقيقية
+          </span>
+        </div>
+
       </div>
     );
   }
@@ -124,14 +106,12 @@ export async function FooterStats() {
   // Fallback — live DB record counts (GA4 and Search Console both unavailable).
   const stats = await getFooterStats();
   return (
-    <div className="w-full rounded-lg bg-primary overflow-hidden shadow-sm">
-      <div className="grid grid-cols-3 sm:grid-cols-5 divide-x divide-x-reverse divide-primary-foreground/15">
-        <Stat icon={IconArticle}  label="المقالات" value={stats.articles.toLocaleString(SITE_LOCALE)} />
-        <Stat icon={IconViews}    label="مشاهدات"  value={stats.views.toLocaleString(SITE_LOCALE)} highlight />
-        <Stat icon={IconActivity} label="تفاعلات"  value={stats.interactions.toLocaleString(SITE_LOCALE)} />
-        <Stat icon={IconUsers}    label="إعجابات"  value={stats.likes.toLocaleString(SITE_LOCALE)} />
-        <Stat icon={ModontyPartnerMark}  label="الشركاء"  value={stats.partners.toLocaleString(SITE_LOCALE)} />
-      </div>
+    <div className="w-full rounded-lg bg-primary overflow-hidden shadow-sm grid grid-cols-3 sm:grid-cols-5 divide-x divide-x-reverse divide-primary-foreground/15">
+      <Stat icon={IconArticle}  label="المقالات" value={stats.articles.toLocaleString(SITE_LOCALE)} />
+      <Stat icon={IconViews}    label="مشاهدات"  value={stats.views.toLocaleString(SITE_LOCALE)} highlight />
+      <Stat icon={IconActivity} label="تفاعلات"  value={stats.interactions.toLocaleString(SITE_LOCALE)} />
+      <Stat icon={IconUsers}    label="إعجابات"  value={stats.likes.toLocaleString(SITE_LOCALE)} />
+      <Stat icon={ModontyPartnerMark}  label="الشركاء"  value={stats.partners.toLocaleString(SITE_LOCALE)} />
     </div>
   );
 }

@@ -32,8 +32,8 @@ import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
 import { ModontyAudioMark } from "@/components/icons/modonty-audio-mark";
 import { cn } from "@/lib/utils";
-import { navLinksConfig } from "@/app/layout/helpers/nav-links-config";
-import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
+import { navLinksConfig } from "../../helpers/nav-links-config";
+import { ThemeToggle } from "@/components/shared/nav/ThemeToggle";
 
 interface MobileMenuProps {
   open: boolean;

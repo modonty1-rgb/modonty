@@ -14,21 +14,13 @@ import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { SITE_URL } from "@/constants";
+import { escapeXml } from "@/lib/seo/escape-xml";
 
 interface ArticleImagesRow {
   slug: string;
   featuredImage: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null;
   gallery: Array<{ media: { url: string; bunnyUrl: string | null; blurDataURL: string | null } | null }>;
   content: string | null;
-}
-
-function escapeXml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
 }
 
 function extractImagesFromHtml(html: string | null): string[] {

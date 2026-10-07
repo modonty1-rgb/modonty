@@ -1,22 +1,20 @@
 "use client";
 
-import type { Session } from "next-auth";
 import { useSession } from "@/components/providers/SessionContext";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { LoginButton } from "@/app/layout/components/user-menu/LoginButton";
-import { UserAvatarButton } from "@/app/layout/components/user-menu/UserAvatarButton";
+import { LoginButton } from "./LoginButton";
+import { UserAvatarButton } from "./UserAvatarButton";
+import type { SessionUser } from "./session-user";
 
 // The account menu (Radix DropdownMenu) loads on the first tap, not with every page (plan أ١,
 // 3 Oct 2026 — it was part of ~50KB gzip of menu code in every first load). Pointing at or
 // focusing the avatar warms the chunk; the placeholder while it lands holds the same 44px box.
-const loadDropdown = () => import("@/app/layout/components/user-menu/UserMenuDropdown");
+const loadDropdown = () => import("./UserMenuDropdown");
 const UserMenuDropdown = dynamic(() => loadDropdown().then((m) => ({ default: m.UserMenuDropdown })), {
   ssr: false,
   loading: () => <span className="inline-block size-11" aria-hidden />,
 });
-
-type SessionUser = NonNullable<Session["user"]>;
 
 export function UserMenu({ hint = true }: { hint?: boolean } = {}) {
   const { data: session } = useSession();

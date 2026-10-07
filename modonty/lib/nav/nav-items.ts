@@ -12,7 +12,7 @@ import { ModontyAudioMark } from "@/components/icons/modonty-audio-mark";
 /** The `chrome.menuItems` keys the top nav uses — its wording lives in messages/ar.json. */
 export type MainNavLabelKey = "home" | "trending" | "articles" | "partners" | "reels" | "audio" | "about";
 
-export interface MainNavItemDef {
+interface MainNavItemDef {
   icon: ComponentType<{ className?: string }>;
   labelKey: MainNavLabelKey;
   href: string;

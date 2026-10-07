@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { auth } from "@/lib/auth";
-import { countUnreadNotifications } from "@/lib/notifications/count-unread-notifications";
+import { countUnreadNotifications } from "./count-unread-notifications";
 
 /**
  * عدّاد الإشعارات غير المقروءة لشارة الجوّال. صفرٌ لغير المسجَّل — **وصفرٌ أيضاً لمن كوكيه

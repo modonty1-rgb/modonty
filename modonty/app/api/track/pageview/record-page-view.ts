@@ -12,7 +12,7 @@ function classifyPath(path: string): string {
   return "other";
 }
 
-export type PageViewResult =
+type PageViewResult =
   | { recorded: false; reason: "invalid" }
   | { recorded: false; reason: "owned" | "bot" | "deduplicated" }
   | { recorded: true };

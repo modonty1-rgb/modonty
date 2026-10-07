@@ -1,11 +1,11 @@
 import { Suspense } from "react";
 import { messages } from "@/lib/i18n/messages";
 import { TopNavDesktop } from "./TopNavDesktop";
-import { LogoNav } from "@/app/layout/components/nav/LogoNav";
+import { LogoNav } from "@/components/shared/nav/LogoNav";
 import { MobileMenuClient } from "./MobileMenuClient";
-import { SearchLink } from "@/app/layout/components/nav/SearchLink";
-import { UserMenu } from "@/app/layout/components/user-menu/UserMenu";
-import { MobileNotificationBadge } from "@/app/layout/components/notifications/MobileNotificationBadge";
+import { SearchLink } from "./SearchLink";
+import { UserMenu } from "@/components/shared/user-menu/UserMenu";
+import { MobileNotificationBadge } from "../notifications/MobileNotificationBadge";
 
 // Static header: everything here is in the cached shell. The only request-time reads
 // (unread count · notifications bell) stream into their own small boundaries, so the

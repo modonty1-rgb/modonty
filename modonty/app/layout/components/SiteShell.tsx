@@ -1,7 +1,7 @@
 import { Suspense, type ReactNode } from "react";
-import { TopNav } from "@/app/layout/components/nav/TopNav";
-import { OrbitQuickLinks } from "@/components/shared/quick-links/OrbitQuickLinks";
-import { Footer } from "@/app/layout/components/Footer";
+import { TopNav } from "./nav/TopNav";
+import { OrbitQuickLinks } from "./quick-links/OrbitQuickLinks";
+import { Footer } from "./Footer";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 
 /**

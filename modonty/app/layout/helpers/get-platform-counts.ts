@@ -2,7 +2,7 @@ import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
-import { getActivePartnerWhere } from "./get-active-partner-where";
+import { getActivePartnerWhere } from "@/lib/queries/get-active-partner-where";
 
 export interface PlatformCounts {
   /** Verified partners — modonty itself excluded. */

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { getPlatformCounts } from "@/lib/queries/get-platform-counts";
+import { getPlatformCounts } from "./get-platform-counts";
 import { ArticleStatus, CommentStatus } from "@prisma/client";
 import { cacheTag, cacheLife } from "next/cache";
 import { FooterStats } from "./footer-stats-types";

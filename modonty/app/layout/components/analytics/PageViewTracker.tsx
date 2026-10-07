@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { sendPageView } from "../../helpers/send-page-view";
 
 /**
  * Universal page-view beacon. Fires once per genuine navigation, AFTER render
@@ -20,12 +21,7 @@ export function PageViewTracker() {
     if (lastSent.current === pathname) return;
     lastSent.current = pathname;
 
-    fetch("/api/track/pageview", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: pathname }),
-      keepalive: true,
-    }).catch(() => {});
+    sendPageView(pathname);
   }, [pathname]);
 
   return null;

@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 import { messages } from "@/lib/i18n/messages";
-import { LogoNav } from "@/app/layout/components/nav/LogoNav";
-import { DesktopUserAreaClient } from "@/app/layout/components/nav/DesktopUserAreaClient";
-import { DesktopNavLinks, DesktopNavList } from "@/app/layout/components/nav/NavLinksClient";
-import { NotificationsBell } from "@/app/layout/components/notifications/NotificationsBell";
-import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
+import { LogoNav } from "@/components/shared/nav/LogoNav";
+import { DesktopUserAreaClient } from "./DesktopUserAreaClient";
+import { DesktopNavLinks } from "./DesktopNavLinks";
+import { DesktopNavList } from "./DesktopNavList";
+import { NotificationsBell } from "../notifications/NotificationsBell";
+import { ThemeToggle } from "@/components/shared/nav/ThemeToggle";
 
 export function TopNavDesktop() {
   const navLabels = {

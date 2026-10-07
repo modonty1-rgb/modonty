@@ -11,8 +11,8 @@ import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
 import { ModontyArticlesMark } from "@/components/icons/modonty-articles-mark";
 import { ModontyAudioMark } from "@/components/icons/modonty-audio-mark";
 import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
-import { getOrbitSteps as getOrbitStepsIn } from "@/lib/nav/get-orbit-steps";
-import { getNavSectionPath } from "@/lib/nav/get-nav-section-path";
+import { getOrbitSteps as getOrbitStepsIn } from "../../helpers/get-orbit-steps";
+import { getNavSectionPath } from "../../helpers/get-nav-section-path";
 
 interface OrbitQuickLinksProps {
   siteName: string;
@@ -65,7 +65,7 @@ const ORBIT_LINKS = [
   { href: "/modo-chat", label: "مودو", icon: ModoMark },
 ] satisfies readonly OrbitLink[];
 
-/** How many slots away this link sits from the active one — the shared ring maths (`lib/nav/get-orbit-steps.ts`). */
+/** How many slots away this link sits from the active one — the shared ring maths (`app/layout/helpers/get-orbit-steps.ts`). */
 const getOrbitSteps = (index: number, activeIndex: number): number => getOrbitStepsIn(index, activeIndex, ORBIT_LINKS.length);
 
 /**

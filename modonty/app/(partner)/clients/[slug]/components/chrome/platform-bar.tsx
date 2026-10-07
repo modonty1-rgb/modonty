@@ -2,9 +2,9 @@ import { Suspense } from "react";
 import { messages } from "@/lib/i18n/messages";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import Link from "next/link";
-import { LogoNav } from "@/app/layout/components/nav/LogoNav";
-import { ThemeToggle } from "@/app/layout/components/nav/ThemeToggle";
-import { UserMenu } from "@/app/layout/components/user-menu/UserMenu";
+import { LogoNav } from "@/components/shared/nav/LogoNav";
+import { ThemeToggle } from "@/components/shared/nav/ThemeToggle";
+import { UserMenu } from "@/components/shared/user-menu/UserMenu";
 import { PlatformBarActionsIsland } from "./platform-bar-actions-island";
 
 interface PlatformBarProps {

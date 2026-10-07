@@ -1,4 +1,4 @@
-import { getUnreadNotificationCount } from "@/app/layout/components/notifications/get-unread-notification-count";
+import { getUnreadNotificationCount } from "../../helpers/get-unread-notification-count";
 
 // The unread count over the phone header's avatar. Reads the session, so it streams in
 // behind its own <Suspense fallback={null}> — the header itself no longer waits for it.
