@@ -4,7 +4,7 @@ import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { IconWebsite } from "@/lib/icons";
 
 import { BookingCtaLink } from "@/components/cta/booking-cta-link";
-import { ClientFollowButton } from "../client-follow-button";
+import { ClientFollowButton } from "@/components/shared/client-follow-button/client-follow-button";
 import { ShareClientButtonWrapper } from "../share-client-button-wrapper";
 
 interface SocialLink {

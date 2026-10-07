@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ActivityItem } from "./activity-item";
 import { IconActivity, IconChevronLeft, IconChevronRight } from "@/lib/icons";
-import type { ActivityEntry, ActivityPagination } from "../helpers/profile-activity";
+import type { ActivityEntry, ActivityPagination } from "../helpers/get-profile-activity";
 
 interface ActivityFeedProps {
   activities: ActivityEntry[];

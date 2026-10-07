@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { markNotificationAsRead } from "../actions/notifications-actions";
+import { markNotificationAsRead } from "../actions/mark-notification-as-read";
 
 export function MarkAsReadOnOpen({ notificationId }: { notificationId: string | null }) {
   const router = useRouter();

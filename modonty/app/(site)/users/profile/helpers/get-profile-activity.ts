@@ -21,7 +21,7 @@ export interface ActivityPagination {
   totalPages: number;
 }
 
-export interface ProfileActivity {
+interface ProfileActivity {
   activities: ActivityEntry[];
   pagination: ActivityPagination;
 }

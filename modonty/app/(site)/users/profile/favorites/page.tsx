@@ -1,21 +1,14 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
-import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconSaved } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
-import { getProfileFavorites } from "../helpers/profile-favorites";
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
-
-const dateFormatter = new Intl.DateTimeFormat(SITE_LOCALE, {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-});
+import { getProfileFavorites } from "../helpers/get-profile-favorites";
+import { dateFormatter } from "../helpers/date-formatter";
 
 export default async function FavoritesPage() {
   const session = await auth();
@@ -55,11 +48,9 @@ export default async function FavoritesPage() {
               />
             ) : (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">
-                    المقالات المحفوظة ({favorites.length})
-                  </h3>
-                </div>
+                <h3 className="mb-4 text-lg font-semibold">
+                  المقالات المحفوظة ({favorites.length})
+                </h3>
                 <div className="grid gap-4">
                   {favorites.map((article) => (
                     <Link

@@ -16,7 +16,7 @@ import {
   IconEyeOff,
 } from "@/lib/icons";
 import { createPasswordSchema, type CreatePasswordFormData } from "../helpers/schemas/settings-schemas";
-import { createPassword } from "../actions/settings-actions";
+import { createPassword } from "../actions";
 import { useSession } from "@/components/providers/SessionContext";
 
 export function CreatePasswordPrompt() {

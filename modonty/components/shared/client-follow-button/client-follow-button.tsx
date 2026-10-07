@@ -47,7 +47,7 @@ export function ClientFollowButton({
               setFollowersCount(data.data.followersCount);
             }
           }
-        } catch (error) {
+        } catch {
           // Silent fail - keep initial state
         }
       }

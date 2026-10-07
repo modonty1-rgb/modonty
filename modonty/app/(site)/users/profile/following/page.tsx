@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 import Link from "next/link";
-import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { asMedia } from "@modonty/shared/components/optimized-image";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconUsers } from "@/lib/icons";
@@ -9,8 +9,8 @@ import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
-import { ClientFollowButton } from "@/app/(partner)/clients/[slug]/components/client-follow-button";
-import { getProfileFollowing } from "../helpers/profile-following";
+import { ClientFollowButton } from "@/components/shared/client-follow-button/client-follow-button";
+import { getProfileFollowing } from "../helpers/get-profile-following";
 
 export default async function FollowingPage() {
   const session = await auth();
@@ -50,11 +50,9 @@ export default async function FollowingPage() {
               />
             ) : (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">
-                    الشركاء المتابعون ({following.length})
-                  </h3>
-                </div>
+                <h3 className="mb-4 text-lg font-semibold">
+                  الشركاء المتابعون ({following.length})
+                </h3>
                 <div className="grid gap-4">
                   {following.map((client) => (
                     <Card key={client.id} className="hover:shadow-md transition-shadow">

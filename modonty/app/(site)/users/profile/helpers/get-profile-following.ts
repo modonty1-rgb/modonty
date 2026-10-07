@@ -1,7 +1,7 @@
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 
-export interface FollowedClient {
+interface FollowedClient {
   id: string;
   name: string;
   slug: string;

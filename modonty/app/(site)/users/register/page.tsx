@@ -6,7 +6,7 @@ import { Suspense, useEffect } from "react";
 import { RegisterForm } from "./components/register-form";
 
 export default function RegisterPage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
 
   useEffect(() => {

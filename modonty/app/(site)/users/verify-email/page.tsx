@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { db } from "@/lib/db";
 import { IconError, IconSuccess } from "@/lib/icons";
+import { verifyEmailToken } from "./helpers/verify-email-token";
 
 export default async function VerifyEmailPage({
   searchParams,
@@ -14,26 +14,15 @@ export default async function VerifyEmailPage({
     return <VerifyResult success={false} message="رابط التفعيل غير صالح." />;
   }
 
-  const record = await db.verificationToken.findUnique({
-    where: { token },
-  });
+  const result = await verifyEmailToken(token);
 
-  if (!record) {
+  if (result === "invalid") {
     return <VerifyResult success={false} message="الرابط غير صالح أو تم استخدامه مسبقاً." />;
   }
 
-  if (record.expires < new Date()) {
-    await db.verificationToken.delete({ where: { token } }).catch(() => null);
+  if (result === "expired") {
     return <VerifyResult success={false} message="انتهت صلاحية رابط التفعيل. سجّل الدخول وطلب رابطاً جديداً." />;
   }
-
-  await Promise.all([
-    db.user.updateMany({
-      where: { email: record.identifier },
-      data: { emailVerified: new Date() },
-    }),
-    db.verificationToken.delete({ where: { token } }),
-  ]);
 
   redirect("/users/login?verified=1");
 }

@@ -7,7 +7,7 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { CommentCard } from "../components/comment-card";
-import { getProfileComments } from "../helpers/profile-comments";
+import { getProfileComments } from "../helpers/get-profile-comments";
 
 interface CommentsPageProps {
   searchParams: Promise<{ page?: string }>;
@@ -58,11 +58,9 @@ export default async function CommentsPage({ searchParams }: CommentsPageProps) 
               />
             ) : (
               <div className="space-y-4" id="comments">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">
-                    تعليقاتي ({pagination.total})
-                  </h3>
-                </div>
+                <h3 className="mb-4 text-lg font-semibold">
+                  تعليقاتي ({pagination.total})
+                </h3>
                 <div className="grid gap-4">
                   {comments.map((comment) => (
                     <CommentCard key={comment.id} comment={comment} />

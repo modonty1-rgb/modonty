@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { IconCheck, IconShare } from "@/lib/icons";
-import { ClientFollowButton } from "../client-follow-button";
+import { ClientFollowButton } from "@/components/shared/client-follow-button/client-follow-button";
 
 interface PlatformBarActionsProps {
   clientSlug: string;

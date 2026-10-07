@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -16,9 +16,11 @@ import {
   IconLinkOff,
 } from "@/lib/icons";
 import { passwordSchema, type PasswordFormData } from "../helpers/schemas/settings-schemas";
-import { changePassword, disconnectOAuthProvider } from "../actions/settings-actions";
+import { changePassword, disconnectOAuthProvider } from "../actions";
 import { useSession } from "@/components/providers/SessionContext";
 import { PASSWORD_HINT } from "@/lib/auth/password-rule";
+import { getProviderName } from "../helpers/get-provider-name";
+import { useConnectedAccounts } from "../helpers/use-connected-accounts";
 
 export function SecuritySettings() {
   const { data: session } = useSession();
@@ -28,11 +30,7 @@ export function SecuritySettings() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [connectedAccounts, setConnectedAccounts] = useState<any[]>([]);
-  // Start from the session's flag, not `false`: when the accounts fetch failed (a 404 on dev,
-  // QA finding #4/#5, 29 Sep 2026) the current-password field stayed hidden while the server
-  // still required it — no way to change the password at all.
-  const [hasPassword, setHasPassword] = useState<boolean>(Boolean((session?.user as { hasPassword?: boolean } | undefined)?.hasPassword));
+  const { connectedAccounts, setConnectedAccounts, hasPassword } = useConnectedAccounts(session);
 
   const {
     register,
@@ -42,25 +40,6 @@ export function SecuritySettings() {
   } = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
   });
-
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      if (!session?.user?.id) return;
-      try {
-        const response = await fetch(`/users/profile/settings/api/${session.user.id}/accounts`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.data) {
-            setConnectedAccounts(data.data.accounts || []);
-            setHasPassword(data.data.hasPassword || false);
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching accounts:", err);
-      }
-    };
-    fetchAccounts();
-  }, [session?.user?.id]);
 
   const onSubmit = async (data: PasswordFormData) => {
     if (!session?.user?.id) return;
@@ -101,14 +80,6 @@ export function SecuritySettings() {
     } catch (err) {
       setError("حدث خطأ أثناء قطع الاتصال");
     }
-  };
-
-  const getProviderName = (provider: string) => {
-    const names: Record<string, string> = {
-      google: "Google",
-      facebook: "Facebook",
-    };
-    return names[provider] || provider;
   };
 
   return (

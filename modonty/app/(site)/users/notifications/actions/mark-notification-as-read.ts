@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
-import { markNotificationReadAs } from "@/lib/notifications/mark-notification-read-as";
+import { markNotificationReadAs } from "../helpers/mark-notification-read-as";
 
 /** Web door: identity from the session cookie; the update lives in `markNotificationReadAs` (shared with the mobile API). */
 export async function markNotificationAsRead(notificationId: string) {

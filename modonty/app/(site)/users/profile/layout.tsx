@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { generateMetadataFromSEO } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {

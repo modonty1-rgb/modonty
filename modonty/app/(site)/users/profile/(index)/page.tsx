@@ -7,8 +7,8 @@ import { IconUser, IconEmail, IconSettings } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ProfileTabs } from "../components/profile-tabs";
 import { ActivityFeed } from "../components/activity-feed";
-import { getProfileStats, getProfileBio } from "../helpers/profile-stats";
-import { getProfileActivity } from "../helpers/profile-activity";
+import { getProfileStats, getProfileBio } from "../helpers";
+import { getProfileActivity } from "../helpers/get-profile-activity";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ProfilePageProps {
@@ -59,7 +59,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   }).format(stats.joinedAt);
 
   return (
-    <div>
+    <>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
@@ -188,12 +188,10 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             </div>
 
             {/* على الجوّال تاريخ الانضمام صار في الرأس — هذا السطر للديسكتوب وحده. */}
-            <div className="pt-4 border-t max-lg:hidden">
-              <p className="text-sm text-muted-foreground mb-4">انضم في {joinedText}</p>
-            </div>
+            <p className="pt-4 border-t max-lg:hidden text-sm text-muted-foreground mb-4">انضم في {joinedText}</p>
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   );
 }

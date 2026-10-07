@@ -2,9 +2,9 @@ import { db } from "@/lib/db";
 import type { CommentStatus } from "@prisma/client";
 
 /** Excludes DELETED — the helper filters those out before returning. */
-export type VisibleCommentStatus = Exclude<CommentStatus, "DELETED">;
+type VisibleCommentStatus = Exclude<CommentStatus, "DELETED">;
 
-export interface UserComment {
+interface UserComment {
   id: string;
   content: string;
   createdAt: Date;
@@ -20,14 +20,14 @@ export interface UserComment {
   repliesCount: number;
 }
 
-export interface CommentsPagination {
+interface CommentsPagination {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
 }
 
-export interface ProfileComments {
+interface ProfileComments {
   comments: UserComment[];
   pagination: CommentsPagination;
 }

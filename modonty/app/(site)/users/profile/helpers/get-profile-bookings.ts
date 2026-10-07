@@ -1,7 +1,7 @@
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 
-export interface ProfileBooking {
+interface ProfileBooking {
   id: string;
   status: string;
   phone: string | null; // null for legacy/whatsapp leads (form leads always have it)

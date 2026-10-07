@@ -3,15 +3,14 @@ import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { IconLike, IconArticle, IconMessage } from "@/lib/icons";
-import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
+import { IconLike, IconArticle } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { formatRelativeTime } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
-import { getProfileLiked, type LikedItem, type LikedItemType } from "../helpers/profile-liked";
+import { TypeBadge } from "../components/type-badge";
+import { getProfileLiked, type LikedItem } from "../helpers/get-profile-liked";
 
 export default async function LikedPage() {
   const session = await auth();
@@ -51,11 +50,9 @@ export default async function LikedPage() {
               />
             ) : (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">
-                    الإعجابات ({items.length})
-                  </h3>
-                </div>
+                <h3 className="mb-4 text-lg font-semibold">
+                  الإعجابات ({items.length})
+                </h3>
                 <div className="grid gap-4">
                   {items.map((item) => {
                     if (item.type === "article") {
@@ -70,23 +67,6 @@ export default async function LikedPage() {
         </Card>
       </div>
     </>
-  );
-}
-
-function TypeBadge({ type }: { type: LikedItemType }) {
-  const config = {
-    client: { icon: ModontyPartnerMark, label: "عميل" },
-    article: { icon: IconArticle, label: "مقالة" },
-    comment: { icon: IconMessage, label: "تعليق" },
-  } as const;
-
-  const { icon: Icon, label } = config[type];
-
-  return (
-    <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary border-primary/20">
-      <Icon className="h-3 w-3" />
-      <span className="text-xs">{label}</span>
-    </Badge>
   );
 }
 

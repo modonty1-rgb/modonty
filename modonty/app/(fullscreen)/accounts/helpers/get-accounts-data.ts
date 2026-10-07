@@ -5,7 +5,7 @@ import { getPlatformSocialLinks, type SocialLink } from "@/lib/settings/get-plat
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
-export type AccountsData = {
+type AccountsData = {
   socials: SocialLink[];
   /** wa.me link to the sales desk, or null when no sales phone is set in the admin. */
   salesWhatsapp: string | null;

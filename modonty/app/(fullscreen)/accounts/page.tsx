@@ -7,7 +7,6 @@ import { LOGO_URL, PARTNER_SIGNUP_URL, SITE_URL } from "@/constants";
 import { jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
 import { getContentPageRow } from "@/lib/seo/get-content-page-row";
-import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 import {
   IconChevronLeft,
   IconEmail,
@@ -28,6 +27,7 @@ import {
 
 import { AccountLink } from "./components/account-link";
 import { ShareAccountsButton } from "./components/share-accounts-button";
+import { buildFallbackGraph, FALLBACK_DESCRIPTION } from "./helpers/build-fallback-graph";
 import { getAccountHandle } from "./helpers/get-account-handle";
 import { getAccountsData } from "./helpers/get-accounts-data";
 
@@ -54,30 +54,12 @@ import { getAccountsData } from "./helpers/get-accounts-data";
  * صورةُ الهيرو في رأس الصفحة، فرفعٌ واحد يخدم الاثنين. والـJSON-LD يولّده الأدمن ويتحقّق
  * منه: ProfilePage ← mainEntity: Organization (ومعها sameAs = الحسابات).
  */
-const FALLBACK_DESCRIPTION = "كل حسابات مدونتي على منصّات التواصل في مكانٍ واحد.";
-
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadataFromPageRow(await getContentPageRow("accounts"), {
     path: "/accounts",
     fallbackTitle: "حساباتنا",
     fallbackDescription: FALLBACK_DESCRIPTION,
   });
-}
-
-/**
- * قبل أن يُحفظ سجلُّ الصفحة في الأدمن لا يوجد graph مخزَّن — فلا تخرج الصفحةُ بلا بيانات
- * منظّمة: نفسُ الشكل الذي يولّده الأدمن، بأقلّ حقوله.
- */
-function fallbackGraph(sameAs: string[]): object {
-  const { organization } = buildSiteEntityIds(SITE_URL);
-  const url = `${SITE_URL}/accounts`;
-  return {
-    "@context": "https://schema.org",
-    "@graph": [
-      { "@type": "Organization", "@id": organization, url: SITE_URL, ...(sameAs.length ? { sameAs } : {}) },
-      { "@type": "ProfilePage", "@id": `${url}#profilepage`, url, name: "حساباتنا", description: FALLBACK_DESCRIPTION, mainEntity: { "@id": organization } },
-    ],
-  };
 }
 
 type Icon = ComponentType<SVGProps<SVGSVGElement>>;
@@ -138,7 +120,7 @@ export default async function AccountsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: storedJsonLd ? jsonLdHtmlFromString(storedJsonLd) : jsonLdHtml(fallbackGraph(socials.map((s) => s.href))),
+          __html: storedJsonLd ? jsonLdHtmlFromString(storedJsonLd) : jsonLdHtml(buildFallbackGraph(socials.map((s) => s.href))),
         }}
       />
       {/* A soft brand glow behind the header — depth without a second colour competing. */}

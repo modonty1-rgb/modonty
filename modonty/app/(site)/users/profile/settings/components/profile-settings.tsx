@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { IconLoading, IconUpload, IconUser } from "@/lib/icons";
 import { profileSchema, type ProfileFormData } from "../helpers/schemas/settings-schemas";
-import { updateProfile } from "../actions/settings-actions";
+import { updateProfile } from "../actions";
+import { uploadAvatar } from "../helpers/upload-avatar";
 import { useSession } from "@/components/providers/SessionContext";
 
 export function ProfileSettings() {
@@ -84,12 +85,9 @@ export function ProfileSettings() {
     setImagePreview(localPreview);
 
     try {
-      const body = new FormData();
-      body.append("file", file);
-      const res = await fetch("/users/profile/api/avatar", { method: "POST", body });
-      const json = (await res.json()) as { success: boolean; url?: string; error?: string };
+      const { ok, json } = await uploadAvatar(file);
 
-      if (!res.ok || !json.success || !json.url) {
+      if (!ok || !json.success || !json.url) {
         setError(json.error || "فشل رفع الصورة");
         setImagePreview(imageUrl || null);
         return;

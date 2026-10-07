@@ -10,9 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { IconBell, IconLoading } from "@/lib/icons";
 import { ALERT_CHANNELS, ALERT_TOPICS, PHONE_CHANNELS, type AlertChannelId, type AlertTopicId } from "@/lib/users/alert-topics";
-import { DIAL_CODES, OTHER_DIAL } from "@/lib/users/dial-codes";
+import { DIAL_CODES, OTHER_DIAL } from "../helpers/dial-codes";
 
-import { getAlertSettings, updateAlertSettings, type AlertSettings } from "../actions/settings-actions";
+import { getAlertSettings, updateAlertSettings } from "../actions";
+import type { AlertSettings } from "../helpers/schemas/alerts-schema";
 
 /**
  * «التنبيهات» — what the reader wants to hear about, and on which channel (Khalid, 27 Sep 2026:

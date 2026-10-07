@@ -2,7 +2,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 
-export interface FavoritedArticle {
+interface FavoritedArticle {
   id: string;
   title: string;
   slug: string;

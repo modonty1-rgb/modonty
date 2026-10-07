@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 
-export interface ProfileStats {
+interface ProfileStats {
   commentsCount: number;
   articleLikesCount: number;
   commentLikesCount: number;
@@ -55,12 +55,4 @@ export async function getProfileStats(userId: string): Promise<ProfileStats> {
     bookingsCount,
     joinedAt: user?.createdAt ?? new Date(),
   };
-}
-
-export async function getProfileBio(userId: string): Promise<string | null> {
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: { bio: true },
-  });
-  return user?.bio ?? null;
 }

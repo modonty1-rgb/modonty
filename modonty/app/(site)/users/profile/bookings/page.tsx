@@ -8,15 +8,9 @@ import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
-import { getProfileBookings } from "../helpers/profile-bookings";
+import { getProfileBookings } from "../helpers/get-profile-bookings";
+import { dateFormatter } from "../helpers/date-formatter";
 import { messages } from "@/lib/i18n/messages";
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
-
-const dateFormatter = new Intl.DateTimeFormat(SITE_LOCALE, {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-});
 
 // Visitor-friendly status labels (warmer than the internal new/contacted/done/archived).
 const STATUS_META: Record<string, { label: string; classes: string }> = {
@@ -63,9 +57,7 @@ export default async function ProfileBookingsPage() {
               />
             ) : (
               <div className="space-y-4">
-                <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">طلبات الحجز ({bookings.length})</h3>
-                </div>
+                <h3 className="mb-4 text-lg font-semibold">طلبات الحجز ({bookings.length})</h3>
                 <div className="grid gap-4">
                   {bookings.map((booking) => {
                     const status = STATUS_META[booking.status] ?? STATUS_META.new;

@@ -3,15 +3,16 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconEmail } from "@/lib/icons";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { MarkAsReadOnOpen } from "./components/mark-as-read-on-open";
 import { BellRevalidateTrigger } from "./components/bell-revalidate-trigger";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
-import { getReaderNotifications } from "@/lib/notifications/get-reader-notifications";
-import { notificationTargetKind } from "@/lib/notifications/notification-target-kind";
+import { getReaderNotifications } from "./helpers/get-reader-notifications";
+import { getNotificationDetail } from "./helpers/get-notification-detail";
+import { filterNotificationsByTab } from "./helpers/filter-notifications-by-tab";
+import { TAB_ALL, TAB_NEW, TAB_READ, TABS } from "./helpers/notification-tabs";
 
 export const metadata: Metadata = {
   title: "الإشعارات",
@@ -21,15 +22,6 @@ export const metadata: Metadata = {
 interface NotificationsPageProps {
   searchParams: Promise<{ id?: string; tab?: string }>;
 }
-
-const TAB_ALL = "all";
-const TAB_NEW = "new";
-const TAB_READ = "read";
-const TABS = [
-  { value: TAB_ALL, label: "الكل" },
-  { value: TAB_NEW, label: "جديد" },
-  { value: TAB_READ, label: "مقروء" },
-] as const;
 
 /**
  * القشرة: عنوان الصفحة وحده، ثم حدٌّ يتدفّق خلفه كل ما يخصّ صاحب البريد.
@@ -77,72 +69,14 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
   const { id: selectedId, tab: tabParam } = resolved;
   const tab = tabParam === TAB_NEW || tabParam === TAB_READ ? tabParam : TAB_ALL;
 
-  // Same list the mobile API pages through (lib/notifications/get-reader-notifications.ts).
+  // Same list the mobile API pages through (helpers/get-reader-notifications.ts).
   const notifications = await getReaderNotifications(userId, { limit: 50 });
 
-  let selectedNotification = null;
-  let contactMessage = null;
-  let faqReply: { question: string; answer: string | null; article: { title: string; slug: string } } | null = null;
-  // Written by the console when the partner approves a comment (QA finding #11, 29 Sep 2026):
-  // `comment_*` points at an article Comment, `reel_comment_*` at a reel's MediaComment.
-  let commentNotice: { content: string; href: string; where: string } | null = null;
-  let notificationsList = notifications;
-
-  if (selectedId) {
-    selectedNotification = await db.notification.findFirst({
-      where: { id: selectedId, userId },
-    });
-    if (selectedNotification?.relatedId) {
-      // One routing rule for the inbox and the mobile API (lib/notifications/notification-target-kind.ts).
-      const targetKind = notificationTargetKind(selectedNotification.type);
-      if (targetKind === "article_comment") {
-        const c = await db.comment.findUnique({
-          where: { id: selectedNotification.relatedId },
-          select: { id: true, content: true, article: { select: { title: true, slug: true } } },
-        });
-        if (c) commentNotice = { content: c.content, href: `/articles/${c.article.slug}#comment-${c.id}`, where: c.article.title };
-      } else if (targetKind === "reel_comment") {
-        const c = await db.mediaComment.findUnique({
-          where: { id: selectedNotification.relatedId },
-          select: { content: true, media: { select: { title: true, reelSlug: true } } },
-        });
-        if (c?.media.reelSlug) commentNotice = { content: c.content, href: `/reels/${c.media.reelSlug}`, where: c.media.title ?? "الريل" };
-      } else if (targetKind === "faq_reply") {
-        faqReply = await db.articleFAQ.findFirst({
-          where: { id: selectedNotification.relatedId },
-          select: {
-            question: true,
-            answer: true,
-            article: { select: { title: true, slug: true } },
-          },
-        });
-      } else {
-        contactMessage = await db.contactMessage.findFirst({
-          where: { id: selectedNotification.relatedId, userId },
-        });
-      }
-    }
-  }
-
-  let client = null;
-  if (selectedNotification) {
-    const clientId = selectedNotification.clientId ?? contactMessage?.clientId ?? null;
-    if (clientId) {
-      client = await db.client.findUnique({
-        where: { id: clientId },
-        select: { id: true, name: true, email: true, slug: true },
-      });
-    }
-  }
+  const { selectedNotification, contactMessage, faqReply, commentNotice, client } = await getNotificationDetail(userId, selectedId);
 
   const showDetail = selectedNotification && (contactMessage || faqReply || commentNotice);
 
-  const filteredList =
-    tab === TAB_NEW
-      ? notificationsList.filter((n) => n.readAt == null)
-      : tab === TAB_READ
-        ? notificationsList.filter((n) => n.readAt != null)
-        : notificationsList;
+  const filteredList = filterNotificationsByTab(notifications, tab);
 
   // العنوان والحاوية صارا في القشرة أعلاه — هنا المحتوى وحده.
   return (
@@ -248,9 +182,7 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
                 </div>
                 <div className="border-t border-border pt-4">
                   <p className="text-sm text-muted-foreground mb-2">التعليق</p>
-                  <div className="p-4 rounded-lg bg-muted">
-                    <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{commentNotice.content}</p>
-                  </div>
+                  <p className="p-4 rounded-lg bg-muted text-sm text-foreground leading-relaxed whitespace-pre-wrap">{commentNotice.content}</p>
                 </div>
               </div>
             ) : faqReply ? (
@@ -286,20 +218,16 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
                 )}
                 <div className="border-t border-border pt-4">
                   <p className="text-sm text-muted-foreground mb-2">سؤالك</p>
-                  <div className="p-4 rounded-lg bg-muted">
-                    <p className="text-sm text-foreground leading-relaxed">{faqReply.question}</p>
-                  </div>
+                  <p className="p-4 rounded-lg bg-muted text-sm text-foreground leading-relaxed">{faqReply.question}</p>
                 </div>
                 {faqReply.answer && (
                   <div className="border-t border-border pt-4">
                     <p className="text-sm text-muted-foreground mb-2">
                       الرد{client ? ` من ${client.name}` : ""}
                     </p>
-                    <div className="p-4 rounded-lg bg-muted">
-                      <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
-                        {faqReply.answer}
-                      </p>
-                    </div>
+                    <p className="p-4 rounded-lg bg-muted text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                      {faqReply.answer}
+                    </p>
                   </div>
                 )}
               </div>
@@ -346,11 +274,9 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
 
                 <div className="border-t border-border pt-4">
                   <p className="text-sm text-muted-foreground mb-2">الرسالة</p>
-                  <div className="p-4 rounded-lg bg-muted">
-                    <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
-                      {contactMessage.message}
-                    </p>
-                  </div>
+                  <p className="p-4 rounded-lg bg-muted text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                    {contactMessage.message}
+                  </p>
                 </div>
 
                 {contactMessage.replyBody && (
@@ -371,11 +297,9 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
                         (client?.name ?? "—")
                       )}
                     </p>
-                    <div className="p-4 rounded-lg bg-muted">
-                      <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
-                        {contactMessage.replyBody}
-                      </p>
-                    </div>
+                    <p className="p-4 rounded-lg bg-muted text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                      {contactMessage.replyBody}
+                    </p>
                   </div>
                 )}
               </div>

@@ -20,7 +20,7 @@ import {
   IconDownload,
   IconAlertTriangle,
 } from "@/lib/icons";
-import { exportUserData, deleteAccount } from "../actions/settings-actions";
+import { exportUserData, deleteAccount } from "../actions";
 import { useSession } from "@/components/providers/SessionContext";
 import { useRouter } from "next/navigation";
 
@@ -130,22 +130,20 @@ export function AccountSettings() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-md">
-            <div className="flex items-start gap-3">
-              <IconAlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-destructive">
-                  تحذير: هذا الإجراء لا يمكن التراجع عنه
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  سيتم حذف جميع بياناتك بشكل دائم بما في ذلك:
-                </p>
-                <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
-                  <li>جميع تعليقاتك</li>
-                  <li>جميع إعجاباتك ومحفوظاتك</li>
-                  <li>جميع إعداداتك وتفضيلاتك</li>
-                </ul>
-              </div>
+          <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-md flex items-start gap-3">
+            <IconAlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-destructive">
+                تحذير: هذا الإجراء لا يمكن التراجع عنه
+              </p>
+              <p className="text-sm text-muted-foreground">
+                سيتم حذف جميع بياناتك بشكل دائم بما في ذلك:
+              </p>
+              <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                <li>جميع تعليقاتك</li>
+                <li>جميع إعجاباتك ومحفوظاتك</li>
+                <li>جميع إعداداتك وتفضيلاتك</li>
+              </ul>
             </div>
           </div>
 
