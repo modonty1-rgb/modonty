@@ -11,12 +11,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { updateAllSettings, type AllSettings } from "../../actions/settings-actions";
-import { Section } from "../../_shared/section";
-import { Field } from "../../_shared/field";
-import { ImageField } from "../../_shared/image-field";
-import { StatusBadge } from "../../_shared/status-badge";
-import { formatTimeAgo } from "../../_shared/format-time-ago";
-import { SEO_HINTS } from "../../_shared/seo-hints";
+import { Section } from "../../components/section";
+import { Field } from "../../components/field";
+import { ImageField } from "../../components/image-field";
+import { StatusBadge } from "../../components/status-badge";
+import { formatTimeAgo } from "../../helpers/format-time-ago";
+import { SEO_HINTS } from "../../helpers/seo-hints";
 
 interface Props {
   initialSettings: AllSettings;
@@ -87,7 +87,7 @@ export function ModontyForm({ initialSettings, coreClientId }: Props) {
 
   /**
    * Regenerate the homepage's stored meta + JSON-LD, the same button its six sister listing
-   * pages carry (`_shared/listing-page-form.tsx`). The homepage had none: its only rebuild path
+   * pages carry (`components/listing-page-form.tsx`). The homepage had none: its only rebuild path
    * was the dashboard's «إصلاح» row or a full cascade, so a Settings change could sit unbuilt
    * with nothing on this screen to say so.
    */

@@ -1,4 +1,4 @@
-import { SettingsPageHeader } from "../_shared/page-header";
+import { SettingsPageHeader } from "../components/page-header";
 
 import { AdvertisingPlatformsForm } from "./advertising-platforms-form";
 import { getAdvertisingPlatformAccounts, getAdvertisingPlatformCredentialStatus, getAdvertisingPlatformCredentialsForAdmin } from "./actions";

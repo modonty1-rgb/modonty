@@ -26,7 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { createUser, updateUser, deleteUser } from "../actions/users-actions";
-import { STAFF_ROLES, roleMeta } from "../lib/roles";
+import { STAFF_ROLES, roleMeta } from "../helpers/roles";
 import { uploadAvatar } from "../actions/upload-avatar";
 
 interface UserFormProps {

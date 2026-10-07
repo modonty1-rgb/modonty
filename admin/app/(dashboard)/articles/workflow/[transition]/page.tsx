@@ -13,7 +13,7 @@ import {
   isValidTransitionSlug,
   getTransition,
   type TransitionSlug,
-} from "../lib/transitions";
+} from "../helpers/transitions";
 import { TransitionButton } from "../components/transition-button";
 import { GatedTransitionButton } from "../components/gated-transition-button";
 import { ScheduledRowActions } from "../components/scheduled-row-actions";

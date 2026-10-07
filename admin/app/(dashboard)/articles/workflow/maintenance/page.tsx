@@ -8,7 +8,7 @@ import { ArticleStatus } from "@prisma/client";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 import { getStatusLabel, getStatusVariant } from "../../helpers/status-utils";
-import { getRollbackTargets } from "../lib/rollback-targets";
+import { getRollbackTargets } from "../helpers/rollback-targets";
 import { MaintenanceRowActions } from "./components/maintenance-row-actions";
 
 export const dynamic = "force-dynamic";

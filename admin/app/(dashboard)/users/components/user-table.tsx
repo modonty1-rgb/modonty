@@ -8,7 +8,7 @@ import { DataTable } from "@/components/admin/data-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { roleMeta } from "../lib/roles";
+import { roleMeta } from "../helpers/roles";
 
 interface AdminUser {
   id: string;

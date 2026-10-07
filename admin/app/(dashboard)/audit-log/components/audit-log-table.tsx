@@ -7,7 +7,7 @@ import { DataTable, type Column } from "@/components/admin/data-table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { AuditLogRow } from "../actions/audit-log-actions";
-import { friendlyAction, actionTone } from "../lib/audit-labels";
+import { friendlyAction, actionTone } from "../helpers/audit-labels";
 
 interface AuditLogTableProps {
   rows: AuditLogRow[];

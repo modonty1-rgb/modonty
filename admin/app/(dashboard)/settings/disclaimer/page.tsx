@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { SettingsPageHeader } from "../_shared/page-header";
+import { SettingsPageHeader } from "../components/page-header";
 import { getDisclaimerSettings } from "./actions/disclaimer-actions";
 import { DisclaimerForm } from "./components/disclaimer-form";
 

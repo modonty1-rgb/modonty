@@ -1,4 +1,4 @@
-import { SettingsPageHeader } from "../_shared/page-header";
+import { SettingsPageHeader } from "../components/page-header";
 import { getTelegramAdminSettings } from "./actions/telegram-settings-actions";
 import { TelegramSettingsForm } from "./components/telegram-settings-form";
 

@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { YmylCategory, ClientCtaMode } from "@prisma/client";
 
-import { normalizeArabicLabel } from "../lib/normalize-arabic-label";
+import { normalizeArabicLabel } from "../helpers/normalize-arabic-label";
 
 const PATH = "/settings/reference-data";
 

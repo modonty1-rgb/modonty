@@ -12,8 +12,8 @@ import { Field } from "./field";
 import { Section } from "./section";
 import { SaveBar } from "./save-bar";
 import { ImageField } from "./image-field";
-import { formatTimeAgo } from "./format-time-ago";
-import { SEO_HINTS } from "./seo-hints";
+import { formatTimeAgo } from "../helpers/format-time-ago";
+import { SEO_HINTS } from "../helpers/seo-hints";
 
 type ListingKey =
   | "categories"

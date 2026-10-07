@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Loader2 } from "lucide-react";
-import { formatTimeAgo } from "./format-time-ago";
+import { formatTimeAgo } from "../helpers/format-time-ago";
 
 interface Props {
   isDirty: boolean;

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { getAllSettings } from "../actions/settings-actions";
-import { SettingsPageHeader } from "../_shared/page-header";
+import { SettingsPageHeader } from "../components/page-header";
 import { ClientsForm } from "./components/clients-form";
 
 export const maxDuration = 800;

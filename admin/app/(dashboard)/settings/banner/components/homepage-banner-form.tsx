@@ -8,9 +8,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { updateAllSettings, type AllSettings } from "../../actions/settings-actions";
-import { Section } from "../../_shared/section";
-import { Field } from "../../_shared/field";
-import { StatusBadge } from "../../_shared/status-badge";
+import { Section } from "../../components/section";
+import { Field } from "../../components/field";
+import { StatusBadge } from "../../components/status-badge";
 
 interface Props {
   initialSettings: AllSettings;

@@ -7,7 +7,7 @@ import { requiresCrop } from "@/lib/media/media-specs";
 import { createMedia, getClients } from "../../../actions/media-actions";
 import { updateClientLogo, updateClientHero } from "@/app/(dashboard)/clients/actions/clients-actions";
 import { updateClientMobileHero } from "@/app/(dashboard)/clients/actions/clients-actions/update-client-mobile-hero";
-import { validateFile } from "../utils/file-validation";
+import { validateFile } from "../helpers/file-validation";
 import { useBunnyUpload } from "./use-bunny-upload";
 import type { UploadFile, Client, SEOFormData, UploadZoneProps } from "../types";
 

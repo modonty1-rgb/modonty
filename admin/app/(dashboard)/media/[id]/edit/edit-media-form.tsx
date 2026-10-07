@@ -24,7 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatBytes } from "@modonty/shared/lib/utils";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { getMediaSpec, requiresCrop } from "@/lib/media/media-specs";
-import { validateFile } from "../../components/upload-zone/utils/file-validation";
+import { validateFile } from "../../components/upload-zone/helpers/file-validation";
 import { ImageEditorModal } from "@/components/shared/media-upload/image-editor-modal";
 
 interface Media {

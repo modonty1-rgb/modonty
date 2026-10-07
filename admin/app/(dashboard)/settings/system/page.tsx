@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { getAllSettings } from "../actions/settings-actions";
-import { SettingsPageHeader } from "../_shared/page-header";
+import { SettingsPageHeader } from "../components/page-header";
 import { SystemForm } from "./components/system-form";
 import { SeedDevButton } from "./components/seed-dev-button";
 import { CoreClientCard } from "./components/core-client-card";

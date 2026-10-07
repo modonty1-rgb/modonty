@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { Download, RefreshCw, Loader2 } from "lucide-react";
-import { Section } from "../../_shared/section";
+import { Section } from "../../components/section";
 import { applyTechnicalDefaults } from "../../actions/seed-technical-defaults";
 import { recalculateArticleCounts } from "../../actions/recalculate-article-counts";
 import { getAllSettings, type AllSettings } from "../../actions/settings-actions";

@@ -6,7 +6,7 @@ import { Check, Loader2, CircleAlert, CircleCheck, Building2, Newspaper, PanelTo
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { ImageField } from "../../_shared/image-field";
+import { ImageField } from "../../components/image-field";
 import {
   savePlatformDefault,
   type PlatformDefaults,

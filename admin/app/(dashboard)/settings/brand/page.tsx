@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { getAllSettings } from "../actions/settings-actions";
 import { getCoreClientId } from "@modonty/shared/lib/core-client";
-import { SettingsPageHeader } from "../_shared/page-header";
+import { SettingsPageHeader } from "../components/page-header";
 import { BrandAssetsForm } from "./components/brand-assets-form";
 
 // Save triggers the settings cascade via after() — same budget as the Homepage form.

@@ -16,7 +16,7 @@ import {
   actionTone,
   entityCategory,
   type CategoryMeta,
-} from "../../../audit-log/lib/audit-labels";
+} from "@/app/(dashboard)/audit-log/helpers/audit-labels";
 
 interface StaffLogPageProps {
   params: Promise<{ id: string }>;

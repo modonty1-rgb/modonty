@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
 
-import { ROLLBACK_TARGETS, STAGE_RANK } from "../lib/rollback-targets";
+import { ROLLBACK_TARGETS, STAGE_RANK } from "../helpers/rollback-targets";
 import { logAction } from "@/lib/audit/log-action";
 
 /**
