@@ -55,7 +55,13 @@ export interface ChatTurnContext {
  * must come BEFORE parsing, or a flood of malformed bodies still costs a database read each.
  */
 export async function guardChatRequest(
-  request: Request
+  request: Request,
+  /**
+   * A reader the caller already verified (the mobile API's Bearer). Given → the web session is not
+   * read and there is no anonymous trial: the per-account limiter applies to this id. Omitted → the
+   * web's own path, unchanged.
+   */
+  signedIn?: { userId: string }
 ): Promise<{ error: NextResponse } | { ok: ChatTurnContext }> {
   /**
    * A visitor with no account gets three questions before the wall. Khalid (2026-08-18): Modo is
@@ -64,7 +70,7 @@ export async function guardChatRequest(
    *
    * The trial is spent BEFORE any paid call, exactly like the per-account limiter.
    */
-  const session = await auth();
+  const session = signedIn ? { user: { id: signedIn.userId } } : await auth();
   let trialRemaining: number | null = null;
 
   /**

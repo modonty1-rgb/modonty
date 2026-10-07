@@ -17,6 +17,7 @@ import { ACCOUNT_MESSAGES } from "@/lib/mobile-api/messages-account";
 import { readerProfile } from "@/lib/mobile-api/reader-profile";
 import { readBody } from "@/lib/mobile-api/request";
 import { deleteAccountAs } from "@/lib/users/delete-account-as";
+import { updateProfileAs } from "@/lib/users/update-profile-as";
 
 /**
  * A8 — GET /api/mobile/v1/me · Bearer.
@@ -76,4 +77,36 @@ export const DELETE = handle("me-delete", async (request: Request) => {
 
   await deleteAccountAs(reader.id);
   return ok({ deleted: true });
+});
+
+// Shape only — the rules and their Arabic texts (name 2–100 · bio ≤500 · avatar must be a hosted
+// http(s) URL, never `data:`) are `profileSchema`'s, enforced inside updateProfileAs.
+const profilePatchSchema = z.object({
+  name: z.string().max(500),
+  bio: z.string().max(5000).optional(),
+  image: z.string().max(2048).nullable().optional(),
+});
+
+/**
+ * A9 — PATCH /api/mobile/v1/me · Bearer · `{ name, bio?, image? }` (the web form sends all three;
+ * an omitted bio/image is cleared, exactly as there). `updateProfileAs` — the settings action's
+ * logic: server-side `profileSchema`, revalidates `/users/profile` + `/users/profile/settings`.
+ * A new avatar is uploaded first with `POST /me/avatar`, whose `url` goes in `image`.
+ * → `{ user }` (same shape as A8)
+ */
+export const PATCH = handle("me-update", async (request: Request) => {
+  const reader = await readerFromRequest(request);
+  if (!reader) return fail("UNAUTHORIZED", MESSAGES.unauthorized);
+  const body = await readBody(request, profilePatchSchema);
+  if ("response" in body) return body.response;
+
+  const result = await updateProfileAs(reader.id, body.value);
+  if (!result.success) {
+    return result.error === "Failed to update profile"
+      ? fail("INTERNAL_ERROR", MESSAGES.internal)
+      : fail("VALIDATION_ERROR", result.error ?? MESSAGES.invalidBody);
+  }
+  const user = await readerProfile(reader.id);
+  if (!user) return fail("UNAUTHORIZED", MESSAGES.unauthorized);
+  return ok({ user });
 });

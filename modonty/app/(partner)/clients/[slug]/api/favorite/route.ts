@@ -1,22 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
-import { notifyTelegram } from "@/lib/telegram/notify-telegram";
-import { trackClientFavorite } from "@/lib/analytics/events-registry";
-import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
+import { getClientFavoriteState, type ClientFavoriteResult } from "@/lib/clients/get-client-favorite-state";
+import { favoriteClientAs } from "@/lib/clients/favorite-client-as";
+import { unfavoriteClientAs } from "@/lib/clients/unfavorite-client-as";
 
 /**
  * Toggle favorite for the current user on a client page.
  * Idempotent — POST = add, DELETE = remove.
+ *
+ * Web door: identity from the session cookie; the logic lives in lib/clients/*favorite*
+ * (shared with the mobile API). Responses are unchanged.
  */
 
-async function findClient(rawSlug: string) {
-  const slug = decodeURIComponent(rawSlug);
-  return db.client.findUnique({
-    where: { slug },
-    select: { id: true, slug: true, name: true, industry: { select: { name: true } } },
-  });
+function answer(result: ClientFavoriteResult) {
+  if (!result.found) {
+    return NextResponse.json(
+      { success: false, error: "Client not found" } as ApiResponse<never>,
+      { status: 404 }
+    );
+  }
+  return NextResponse.json({
+    success: true,
+    data: { isFavorited: result.isFavorited, count: result.count },
+  } as ApiResponse<{ isFavorited: boolean; count: number }>);
 }
 
 export async function GET(
@@ -33,24 +40,7 @@ export async function GET(
     );
   }
   const { slug } = await params;
-  const client = await findClient(slug);
-  if (!client) {
-    return NextResponse.json(
-      { success: false, error: "Client not found" } as ApiResponse<never>,
-      { status: 404 }
-    );
-  }
-  const [existing, count] = await Promise.all([
-    db.clientFavorite.findUnique({
-      where: { clientId_userId: { clientId: client.id, userId: session.user.id } },
-      select: { id: true },
-    }),
-    db.clientFavorite.count({ where: { clientId: client.id } }),
-  ]);
-  return NextResponse.json({
-    success: true,
-    data: { isFavorited: !!existing, count },
-  } as ApiResponse<{ isFavorited: boolean; count: number }>);
+  return answer(await getClientFavoriteState(session.user.id, decodeURIComponent(slug)));
 }
 
 export async function POST(
@@ -65,53 +55,13 @@ export async function POST(
     );
   }
   const { slug } = await params;
-  const client = await findClient(slug);
-  if (!client) {
-    return NextResponse.json(
-      { success: false, error: "Client not found" } as ApiResponse<never>,
-      { status: 404 }
-    );
-  }
-
-  const existing = await db.clientFavorite.findUnique({
-    where: { clientId_userId: { clientId: client.id, userId: session.user.id } },
-    select: { id: true },
-  });
-
-  if (!existing) {
-    await db.clientFavorite.create({
-      data: { clientId: client.id, userId: session.user.id },
-    });
-
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-      request.headers.get("x-real-ip") ||
-      request.headers.get("cf-connecting-ip") ||
-      null;
-    fireClientEvent(client.id, { kind: "favorite" });
-    notifyTelegram(client.id, "clientFavorite", {
-      title: client.name,
-      meta: { الزائر: session.user.name ?? session.user.email ?? "زائر" },
-      ipAddress: ip,
-      headers: request.headers,
-    }).catch(() => {});
-
-    void trackClientFavorite(
-      {
-        client_id: client.id,
-        client_slug: client.slug,
-        client_name: client.name,
-        client_industry: client.industry?.name,
-      },
-      { userId: session.user.id },
-    );
-  }
-
-  const count = await db.clientFavorite.count({ where: { clientId: client.id } });
-  return NextResponse.json({
-    success: true,
-    data: { isFavorited: true, count },
-  } as ApiResponse<{ isFavorited: boolean; count: number }>);
+  return answer(
+    await favoriteClientAs(
+      { id: session.user.id, name: session.user.name ?? null, email: session.user.email ?? null },
+      decodeURIComponent(slug),
+      request.headers,
+    )
+  );
 }
 
 export async function DELETE(
@@ -126,20 +76,5 @@ export async function DELETE(
     );
   }
   const { slug } = await params;
-  const client = await findClient(slug);
-  if (!client) {
-    return NextResponse.json(
-      { success: false, error: "Client not found" } as ApiResponse<never>,
-      { status: 404 }
-    );
-  }
-
-  await db.clientFavorite.deleteMany({
-    where: { clientId: client.id, userId: session.user.id },
-  });
-  const count = await db.clientFavorite.count({ where: { clientId: client.id } });
-  return NextResponse.json({
-    success: true,
-    data: { isFavorited: false, count },
-  } as ApiResponse<{ isFavorited: boolean; count: number }>);
+  return answer(await unfavoriteClientAs(session.user.id, decodeURIComponent(slug)));
 }
