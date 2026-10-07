@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { siteNumberFormat } from "@/lib/site-number-format";
 import { Input } from "@/components/ui/input";
 import { fill } from "@/lib/i18n/fill";
 
 import { useDebouncedSearch } from "../../../helpers/use-debounced-search";
 import type { ActivitySearch, CompetitionLevel } from "../../helpers/types";
 
-export interface ActivityLookupLabels {
+interface ActivityLookupLabels {
   title: string;
   note: string;
   label: string;
@@ -25,7 +25,6 @@ export interface ActivityLookupLabels {
   hint: string;
 }
 
-const N = new Intl.NumberFormat(SITE_LOCALE);
 const LEVEL_CLASS: Record<CompetitionLevel, string> = {
   busy: "text-destructive",
   medium: "text-foreground/80",
@@ -84,8 +83,8 @@ export function ActivityLookup({ labels: t }: { labels: ActivityLookupLabels }) 
               <li key={a.code} className="py-3">
                 <p className="text-sm font-bold leading-snug">{a.name}</p>
                 <p className="mt-1 flex flex-wrap items-baseline gap-x-2 text-sm">
-                  <span className="text-base font-bold tabular-nums">{fill(t.registrations, { n: N.format(a.count) })}</span>
-                  <span className="text-xs text-muted-foreground">{fill(t.rank, { rank: N.format(a.rank), total: N.format(state.data.total) })}</span>
+                  <span className="text-base font-bold tabular-nums">{fill(t.registrations, { n: siteNumberFormat.format(a.count) })}</span>
+                  <span className="text-xs text-muted-foreground">{fill(t.rank, { rank: siteNumberFormat.format(a.rank), total: siteNumberFormat.format(state.data.total) })}</span>
                 </p>
                 <p className={`mt-0.5 text-xs font-semibold ${LEVEL_CLASS[a.level]}`}>{t.levels[a.level]}</p>
               </li>

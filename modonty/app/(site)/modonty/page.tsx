@@ -1,32 +1,36 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getClientsList } from "@/lib/queries/get-clients-list";
-import { getModontyArticles } from "@/app/(site)/modonty/data/get-modonty-articles";
-import { getModontyGallery } from "@/app/(site)/modonty/data/get-modonty-gallery";
-import { getModontyReels } from "@/app/(site)/modonty/data/get-modonty-reels";
-import { getModontyPhone } from "@/app/(site)/modonty/data/get-modonty-phone";
-import { getModontyMobileHero } from "@/app/(site)/modonty/data/get-modonty-mobile-hero";
+import { getModontyArticles } from "./data/get-modonty-articles";
+import { getModontyGallery } from "./data/get-modonty-gallery";
+import { getModontyReels } from "./data/get-modonty-reels";
+import { getModontyPhone } from "./data/get-modonty-phone";
+import { getModontyMobileHero } from "./data/get-modonty-mobile-hero";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { getLegalEntity } from "@/lib/seo/organization-jsonld";
 import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
-import { ModontyProfileHero } from "@/app/(site)/modonty/components/profile-hero/ModontyProfileHero";
-import { ModontyArticlesFeed } from "@/app/(site)/modonty/components/articles-feed/ModontyArticlesFeed";
-import { FEED_VIEWS, type FeedView } from "@/app/(site)/modonty/components/articles-feed/feed-views";
-import { ModontyRightRail } from "@/app/(site)/modonty/components/right-rail/ModontyRightRail";
-import { SectorRow } from "@/app/(site)/modonty/components/sector-row/SectorRow";
-import { ModontyMobileLanding } from "@/app/(site)/modonty/components/mobile-landing/ModontyMobileLanding";
-import { ModontyLeftRail } from "@/app/(site)/modonty/components/left-rail/ModontyLeftRail";
+import { ModontyProfileHero } from "./components/profile-hero/ModontyProfileHero";
+import { ModontyArticlesFeed } from "./components/articles-feed/ModontyArticlesFeed";
+import type { FeedView } from "./components/articles-feed/feed-views";
+import { ModontyRightRail } from "./components/right-rail/ModontyRightRail";
+import { SectorRow } from "./components/sector-row/SectorRow";
+import { ModontyMobileLanding } from "./components/mobile-landing/ModontyMobileLanding";
+import { ModontyLeftRail } from "./components/left-rail/ModontyLeftRail";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
 import { messages } from "@/lib/i18n/messages";
-import type { FeedPost } from "@/lib/types";
 import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
-import { SITE_URL } from "@/constants";
 import { buildPageAlternates } from "@/lib/seo/build-page-alternates";
 import { buildShareTags } from "@/lib/seo/build-share-tags";
+import { applyView } from "./helpers/apply-view";
+import { buildHref } from "./helpers/build-href";
+import { buildViewHrefs } from "./helpers/build-view-hrefs";
+import { pageUrl } from "./helpers/page-url";
+import { parseFeedView } from "./helpers/parse-feed-view";
+import { parsePageNumber } from "./helpers/parse-page-number";
 import { reveal } from "./helpers/reveal";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
@@ -51,8 +55,7 @@ import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
  */
 export async function generateMetadata({ searchParams }: ModontyPageProps): Promise<Metadata> {
   const { page: pageParam } = await searchParams;
-  const page = Number.isFinite(Number(pageParam)) && Number(pageParam) > 1 ? Number(pageParam) : 1;
-  const pageUrl = (target: number) => (target > 1 ? `${SITE_URL}/modonty?page=${target}` : `${SITE_URL}/modonty`);
+  const page = parsePageNumber(pageParam);
 
   // Both reads are `use cache` and React dedups them against the page's own calls, so
   // asking here costs nothing — and a `rel="next"` that points past the last page is worse
@@ -96,18 +99,6 @@ interface ModontyPageProps {
 }
 
 /**
- * Sorting and filtering happen on the array the page already fetched, not in a second
- * query. `getModontyArticles` returns modonty's whole published set in one read — a
- * few dozen rows — so a per-view query would be a second round trip to reorder data
- * already in memory. Revisit if modonty's own output ever outgrows one page of results.
- */
-function applyView(articles: FeedPost[], view: FeedView): FeedPost[] {
-  if (view === "audio") return articles.filter((article) => article.hasAudio);
-  if (view === "popular") return [...articles].sort((a, b) => b.views - a.views);
-  return articles;
-}
-
-/**
  * modonty's own dedicated page — independent from `/about` (Khalid, 2026-08-16: «About
  * هذا موضوع ثاني»). Every field comes from modonty's own `Client` row, the same one every
  * partner card reads. Three-column shell, same widths/gaps as `/`, `/clients`, `/industries`
@@ -118,8 +109,8 @@ function applyView(articles: FeedPost[], view: FeedView): FeedPost[] {
  */
 export default async function ModontyPage({ searchParams }: ModontyPageProps) {
   const { page: pageParam, view: viewParam } = await searchParams;
-  const page = Number.isFinite(Number(pageParam)) && Number(pageParam) > 1 ? Number(pageParam) : 1;
-  const view: FeedView = FEED_VIEWS.includes(viewParam as FeedView) ? (viewParam as FeedView) : "latest";
+  const page = parsePageNumber(pageParam);
+  const view: FeedView = parseFeedView(viewParam);
   const [partners, coreClientId, { siteName }] = await Promise.all([
     getClientsList(),
     getCoreClientId(),
@@ -137,17 +128,8 @@ export default async function ModontyPage({ searchParams }: ModontyPageProps) {
   ]);
   const legal = toLegalEntityDisplay(legalEntity);
   const visibleArticles = applyView(articles, view);
-  const buildHref = (targetPage: number, targetView: FeedView) => {
-    const params = new URLSearchParams();
-    if (targetView !== "latest") params.set("view", targetView);
-    if (targetPage > 1) params.set("page", String(targetPage));
-    const query = params.toString();
-    return query ? `/modonty?${query}` : "/modonty";
-  };
   const buildPageHref = (targetPage: number) => buildHref(targetPage, view);
-  // Switching the filter always returns to page 1 — page 3 of «الأحدث» is not page 3 of
-  // «الأكثر قراءة», and landing on an empty page after a filter change reads as a bug.
-  const viewHrefs = Object.fromEntries(FEED_VIEWS.map((option) => [option, buildHref(1, option)])) as Record<FeedView, string>;
+  const viewHrefs = buildViewHrefs();
   return (
     <>
     {/* `BreadcrumbList` — measured missing on 22 Aug while `/clients`, `/industries` and

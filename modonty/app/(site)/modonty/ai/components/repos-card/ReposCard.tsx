@@ -1,11 +1,10 @@
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { siteNumberFormat } from "@/lib/site-number-format";
 import { fill, messages } from "@/lib/i18n/messages";
 
 import { GoogleTranslateBadge } from "../../../components/translation-credit/GoogleTranslateBadge";
 import type { Repo } from "../../helpers/types";
 
 const t = messages.modonty.ai;
-const N = new Intl.NumberFormat(SITE_LOCALE);
 
 /** New open-source LLM projects the community is starring — the rail's live card. */
 export function ReposCard({ repos }: { repos: Repo[] | null }) {
@@ -35,7 +34,7 @@ export function ReposCard({ repos }: { repos: Repo[] | null }) {
                     </bdi>
                   )
                 )}
-                <span className="mt-0.5 block text-xs text-muted-foreground tabular-nums">{fill(t.stars, { n: N.format(r.stars) })}</span>
+                <span className="mt-0.5 block text-xs text-muted-foreground tabular-nums">{fill(t.stars, { n: siteNumberFormat.format(r.stars) })}</span>
               </a>
             </li>
           ))}

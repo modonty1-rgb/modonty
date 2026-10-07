@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export type SearchState<T> = { kind: "idle" } | { kind: "loading" } | { kind: "error" } | { kind: "done"; data: T };
+type SearchState<T> = { kind: "idle" } | { kind: "loading" } | { kind: "error" } | { kind: "done"; data: T };
 
 const DEBOUNCE_MS = 300;
 const MIN_LENGTH = 2;

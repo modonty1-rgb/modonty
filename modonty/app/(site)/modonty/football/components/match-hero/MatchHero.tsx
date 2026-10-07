@@ -1,6 +1,7 @@
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { fill, messages } from "@/lib/i18n/messages";
 
+import { formatGoals } from "../../helpers/format-goals";
 import { matchStatusLabel } from "../../helpers/match-status-label";
 import { riyadhDate } from "../../helpers/riyadh-date";
 import { roundNumber } from "../../helpers/round-number";
@@ -25,7 +26,6 @@ export function MatchHero({ match, crests, today }: MatchHeroProps) {
   const round = roundNumber(match.round);
   const dayLabel = riyadhDate(new Date(match.kickoff)) === today ? t.today : t.tomorrow;
   const showScore = match.state === "live" || match.state === "finished";
-  const goals = (n: number | null) => (n ?? 0).toLocaleString(SITE_LOCALE);
 
   return (
     <section
@@ -54,7 +54,7 @@ export function MatchHero({ match, crests, today }: MatchHeroProps) {
           {showScore ? (
             // No `dir="ltr"`: the home side is on the right in RTL, so its goals must read first.
             <p className="text-5xl font-bold tabular-nums">
-              {goals(match.home.goals)} - {goals(match.away.goals)}
+              {formatGoals(match.home.goals)} - {formatGoals(match.away.goals)}
             </p>
           ) : (
             // Before kickoff there is no score; the time under it carries the information.

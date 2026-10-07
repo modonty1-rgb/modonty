@@ -1,13 +1,11 @@
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
-import { fill, messages } from "@/lib/i18n/messages";
+import { Fragment } from "react";
+
+import { messages } from "@/lib/i18n/messages";
 
 import type { FreeCourse } from "../../data/get-free-courses";
+import { formatDuration } from "../../helpers/format-duration";
 
 const t = messages.modonty.education.freeLearning;
-const N = new Intl.NumberFormat(SITE_LOCALE, { maximumFractionDigits: 1 });
-
-/** «ساعة ونص» said as a number: under an hour in minutes, otherwise in hours. */
-const duration = (minutes: number) => (minutes < 60 ? fill(t.minutes, { n: N.format(minutes) }) : fill(t.hours, { n: N.format(Math.round(minutes / 30) / 2) }));
 
 /**
  * «تعلّم مجاناً» (Khalid, 28 Sep 2026: platforms like Google give free courses and certificates —
@@ -35,7 +33,7 @@ export function FreeLearningCard({ courses }: { courses: FreeCourse[] | null }) 
                   {c.title}
                 </a>
                 {c.summary && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-foreground/80">{c.summary}</p>}
-                {c.minutes > 0 && <p className="mt-1 text-xs text-muted-foreground">{duration(c.minutes)}</p>}
+                {c.minutes > 0 && <p className="mt-1 text-xs text-muted-foreground">{formatDuration(c.minutes)}</p>}
               </li>
             ))}
           </ul>
@@ -45,7 +43,7 @@ export function FreeLearningCard({ courses }: { courses: FreeCourse[] | null }) 
 
       {/* Each link opened on 28 Sep 2026 (the server, or the browser where a site turns tools away). */}
       {t.groups.map((g) => (
-        <div key={g.title}>
+        <Fragment key={g.title}>
           <h3 className="mt-5 text-sm font-bold">{g.title}</h3>
           <ul className="mt-2 grid gap-x-6 sm:grid-cols-2">
             {g.items.map((p) => (
@@ -60,7 +58,7 @@ export function FreeLearningCard({ courses }: { courses: FreeCourse[] | null }) 
               </li>
             ))}
           </ul>
-        </div>
+        </Fragment>
       ))}
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{t.hint}</p>
     </section>

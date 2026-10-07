@@ -5,7 +5,7 @@ import { fill } from "@/lib/i18n/fill";
 import type { Drug } from "../../helpers/types";
 import { LookupCard, type LookupLabels } from "../lookup-card/LookupCard";
 
-export interface DrugLookupLabels extends LookupLabels {
+interface DrugLookupLabels extends LookupLabels {
   otc: string;
   prescription: string;
   more: string;

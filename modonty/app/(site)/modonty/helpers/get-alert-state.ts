@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import type { AlertTopicId } from "@/lib/users/alert-topics";
 import { readAlertPreferences } from "@/lib/users/read-alert-preferences";
 
-export type AlertState = { kind: "guest" } | { kind: "member" } | { kind: "on" };
+type AlertState = { kind: "guest" } | { kind: "member" } | { kind: "on" };
 
 /**
  * Where this reader stands with one sector's alert — read per request (it needs the session), so

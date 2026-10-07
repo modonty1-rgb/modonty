@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { IconAi } from "@/lib/icons";
@@ -20,6 +19,7 @@ import { ModelsCard } from "./components/models-card/ModelsCard";
 import { PapersCard } from "./components/papers-card/PapersCard";
 import { ReposCard } from "./components/repos-card/ReposCard";
 import { TranslationCredit } from "../components/translation-credit/TranslationCredit";
+import { formatRiyadhTime } from "../helpers/format-riyadh-time";
 import { getAiPage } from "./data/get-ai-page";
 
 const t = messages.modonty.ai;
@@ -50,11 +50,7 @@ export default async function AiPage() {
     getContentPageRow("ai"),
   ]);
 
-  const updated = page.updatedAt
-    ? fill(t.updated, {
-        time: new Intl.DateTimeFormat(SITE_LOCALE, { timeZone: "Asia/Riyadh", hour: "numeric", minute: "2-digit" }).format(new Date(page.updatedAt)),
-      })
-    : null;
+  const updated = page.updatedAt ? fill(t.updated, { time: formatRiyadhTime(page.updatedAt) }) : null;
 
   const header = (
     <>

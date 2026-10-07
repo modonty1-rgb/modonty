@@ -4,7 +4,8 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { AccentHeading } from "@/components/shared/accent-heading/AccentHeading";
 import { Skeleton } from "@/components/ui/skeleton";
 import { messages } from "@/lib/i18n/messages";
-import type { ModontyGalleryImage } from "@/app/(site)/modonty/data/get-modonty-gallery";
+import type { ModontyGalleryImage } from "../../data/get-modonty-gallery";
+import { shuffle } from "../../helpers/shuffle";
 import type { CSSProperties } from "react";
 
 interface ModontyGalleryProps {
@@ -104,14 +105,4 @@ export function ModontyGallerySkeleton() {
       <Skeleton className="rounded-lg" style={{ width: BOARD.width, height: BOARD.height }} />
     </div>
   );
-}
-
-/** Fisher–Yates on a copy — the pool itself is a cached value and must not be mutated. */
-function shuffle<T>(list: readonly T[]): T[] {
-  const copy = [...list];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
 }

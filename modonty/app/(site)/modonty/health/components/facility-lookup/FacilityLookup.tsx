@@ -2,18 +2,16 @@
 
 import { fill } from "@/lib/i18n/fill";
 
+import { statusClass } from "../../helpers/status-class";
 import type { Facility } from "../../helpers/types";
 import { LookupCard, type LookupLabels } from "../lookup-card/LookupCard";
 
-export interface FacilityLookupLabels extends LookupLabels {
+interface FacilityLookupLabels extends LookupLabels {
   cbahi: string;
   until: string;
   insurance: string;
   more: string;
 }
-
-// «معتمد» good news; a refusal, suspension or withdrawal must stand out.
-const statusClass = (s = "") => (s === "معتمد" ? "text-primary" : /رفض|سحب|تعليق/.test(s) ? "text-destructive" : "text-foreground/80");
 
 /** Is this hospital, clinic or pharmacy accredited — by سباهي, and for insurance by مجلس الضمان الصحي. */
 export function FacilityLookup({ labels: t }: { labels: FacilityLookupLabels }) {

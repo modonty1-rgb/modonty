@@ -1,13 +1,13 @@
 "use client";
 
 import { InfiniteList } from "@modonty/shared/components/infinite-list";
-import type { InfiniteListPage } from "@modonty/shared/components/infinite-list";
 
 import { PostCard } from "@/components/feed/postcard/PostCard";
 import { ModontyArrowMark } from "@/components/icons/modonty-arrow-mark";
 import { IconLoading } from "@/lib/icons";
 import type { FeedPost } from "@/lib/types";
 
+import { fetchModontyArticlesPage } from "../../helpers/fetch-modonty-articles-page";
 import type { FeedView } from "./feed-views";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
@@ -42,25 +42,13 @@ interface MoreModontyArticlesProps {
  * paginated twin behind the scroll. `pageUrl` keeps the address bar honest while it loads.
  */
 export function MoreModontyArticles({ clientSlug, startIndex, initialPage, basePath, view }: MoreModontyArticlesProps) {
-  const fetchPage = async (page: number): Promise<InfiniteListPage<FeedPost>> => {
-    const response = await fetch(`/api/articles?page=${page}&client=${encodeURIComponent(clientSlug)}${view === "latest" ? "" : `&view=${view}`}`);
-    if (!response.ok) throw new Error(`articles endpoint returned ${response.status}`);
-
-    const result = (await response.json()) as { articles: FeedPost[]; hasMore: boolean };
-    return {
-      hasMore: result.hasMore,
-      // JSON carries no Date — the card formats it, so it has to arrive as one.
-      items: result.articles.map((item) => ({ ...item, publishedAt: new Date(item.publishedAt) })),
-    };
-  };
-
   // `basePath` already carries the view («/modonty?view=audio»), so the page separator has
   // to follow what is already there rather than always being «?».
   return (
     <InfiniteList<FeedPost>
       initialPage={initialPage}
       startIndex={startIndex}
-      fetchPage={fetchPage}
+      fetchPage={(page) => fetchModontyArticlesPage(page, clientSlug, view)}
       getKey={(item) => item.id}
       pageUrl={(page) => (page > 1 ? `${basePath}${basePath.includes("?") ? "&" : "?"}page=${page}` : basePath)}
       listClassName="space-y-4 max-lg:space-y-2.5"

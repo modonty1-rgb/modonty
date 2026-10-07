@@ -1,7 +1,7 @@
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { fill, messages } from "@/lib/i18n/messages";
 
-import { formatRiyadhTime } from "./format-riyadh-time";
+import { formatRiyadhTime } from "../../helpers/format-riyadh-time";
 import type { Match } from "./types";
 
 const t = messages.modonty.football;

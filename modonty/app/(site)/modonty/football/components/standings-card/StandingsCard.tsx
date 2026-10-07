@@ -1,14 +1,12 @@
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { cn } from "@/lib/utils";
 import { messages } from "@/lib/i18n/messages";
 
+import { formatNumber } from "../../helpers/format-number";
+import { signedNumber } from "../../helpers/signed-number";
 import type { TableRow } from "../../helpers/types";
 import { TeamMark } from "../team-mark/TeamMark";
 
 const t = messages.modonty.football;
-const n = (v: number) => v.toLocaleString(SITE_LOCALE);
-/** «+١٨» · «−٩» · «٠» — the sign is data, not decoration. */
-const signed = (v: number) => (v > 0 ? `+${n(v)}` : v < 0 ? `−${n(-v)}` : n(0));
 
 /** The full table, all eighteen clubs. Asia and relegation zones come from the source's own column. */
 export function StandingsCard({ rows, crests }: { rows: TableRow[] | null; crests: Record<string, string> }) {
@@ -45,7 +43,7 @@ export function StandingsCard({ rows, crests }: { rows: TableRow[] | null; crest
                       r.zone === "drop" && "before:bg-red-600",
                     )}
                   >
-                    {n(r.position)}
+                    {formatNumber(r.position)}
                   </td>
                   <th scope="row" className="py-2 text-start font-medium">
                     <span className="flex items-center gap-2">
@@ -53,12 +51,12 @@ export function StandingsCard({ rows, crests }: { rows: TableRow[] | null; crest
                       {r.team}
                     </span>
                   </th>
-                  <td className="py-2">{n(r.played)}</td>
-                  <td className="py-2">{n(r.won)}</td>
-                  <td className="py-2">{n(r.drawn)}</td>
-                  <td className="py-2">{n(r.lost)}</td>
-                  <td className="py-2" dir="ltr">{signed(r.goalDifference)}</td>
-                  <td className="py-2 font-bold">{n(r.points)}</td>
+                  <td className="py-2">{formatNumber(r.played)}</td>
+                  <td className="py-2">{formatNumber(r.won)}</td>
+                  <td className="py-2">{formatNumber(r.drawn)}</td>
+                  <td className="py-2">{formatNumber(r.lost)}</td>
+                  <td className="py-2" dir="ltr">{signedNumber(r.goalDifference)}</td>
+                  <td className="py-2 font-bold">{formatNumber(r.points)}</td>
                 </tr>
               ))}
             </tbody>

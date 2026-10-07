@@ -2,11 +2,10 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 
 import type { SectorHero } from "../../data/get-sector-hero";
+import { blurOf } from "../../helpers/blur-of";
 
 /** The line under the headline, the same on every sector's banner. */
 export const heroLineClass = "mt-2 max-w-md text-sm text-white/85 md:text-base";
-
-const blurOf = (img: { blur: string | null }) => (img.blur ? { placeholder: "blur" as const, blurDataURL: img.blur } : {});
 
 /**
  * A sector page's banner: the admin's two images behind live HTML text — never baked into the

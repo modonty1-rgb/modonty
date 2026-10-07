@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { siteNumberFormat } from "@/lib/site-number-format";
 import { fill } from "@/lib/i18n/fill";
 
 import { NumberField } from "./NumberField";
 
-export interface BreakEvenLabels {
+interface BreakEvenLabels {
   title: string;
   fixed: string;
   price: string;
@@ -17,7 +17,6 @@ export interface BreakEvenLabels {
   loss: string;
 }
 
-const N = new Intl.NumberFormat(SITE_LOCALE);
 const DAYS_IN_MONTH = 30;
 
 /** How many items a month cover the fixed costs: fixed ÷ (price − cost per item), rounded up. */
@@ -43,8 +42,8 @@ export function BreakEvenCalculator({ labels: t, currency }: { labels: BreakEven
       {ready &&
         (margin > 0 ? (
           <div className="mt-4 text-sm">
-            <p className="text-base font-bold">{fill(t.units, { n: N.format(units) })}</p>
-            <p className="mt-0.5 text-muted-foreground">{fill(t.perDay, { n: N.format(Math.ceil(units / DAYS_IN_MONTH)) })}</p>
+            <p className="text-base font-bold">{fill(t.units, { n: siteNumberFormat.format(units) })}</p>
+            <p className="mt-0.5 text-muted-foreground">{fill(t.perDay, { n: siteNumberFormat.format(Math.ceil(units / DAYS_IN_MONTH)) })}</p>
           </div>
         ) : (
           <p className="mt-4 text-sm font-semibold text-destructive">{t.loss}</p>

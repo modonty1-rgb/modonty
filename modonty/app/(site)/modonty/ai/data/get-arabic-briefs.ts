@@ -13,7 +13,7 @@ import type { Brief } from "../helpers/types";
 /** Enough for many weeks of one list; the oldest drop out first. */
 const KEEP = 200;
 
-export interface BriefSource {
+interface BriefSource {
   /** Stable per item: «hf:Qwen/Qwen-Image-2.1», «arxiv:2609.12345», «gh:owner/repo». */
   id: string;
   /** The source's own description, any language — Google detects it. */

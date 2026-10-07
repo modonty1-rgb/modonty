@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { siteNumberFormat } from "@/lib/site-number-format";
 import { Input } from "@/components/ui/input";
 import { fill } from "@/lib/i18n/fill";
 
 import { useDebouncedSearch } from "../../../helpers/use-debounced-search";
 import type { AccreditationStatus, ProgramMatch } from "../../helpers/types";
 
-export interface ProgramLookupLabels {
+interface ProgramLookupLabels {
   title: string;
   note: string;
   label: string;
@@ -22,7 +22,6 @@ export interface ProgramLookupLabels {
   hint: string;
 }
 
-const N = new Intl.NumberFormat(SITE_LOCALE);
 const STATUS_CLASS: Record<AccreditationStatus, string> = {
   full: "text-primary",
   conditional: "text-foreground/80",
@@ -73,7 +72,7 @@ export function ProgramLookup({ labels: t }: { labels: ProgramLookupLabels }) {
               ))}
             </ul>
             {state.data.total > state.data.results.length && (
-              <p className="mt-2 text-xs text-muted-foreground">{fill(t.more, { n: N.format(state.data.total - state.data.results.length) })}</p>
+              <p className="mt-2 text-xs text-muted-foreground">{fill(t.more, { n: siteNumberFormat.format(state.data.total - state.data.results.length) })}</p>
             )}
           </>
         )}

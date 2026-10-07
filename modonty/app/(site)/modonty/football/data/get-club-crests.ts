@@ -3,7 +3,7 @@ import { readSnapshot, type Snapshot } from "../../data/read-snapshot";
 const DAY = 24 * 60 * 60 * 1000;
 
 /** API-Football's name for a club → its crest URL. Clubs with a stadium on record come first. */
-export type CrestsByApiName = Record<string, string>;
+type CrestsByApiName = Record<string, string>;
 
 const crestUrl = (id: number) => `https://media.api-sports.io/football/teams/${id}.png`;
 

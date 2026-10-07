@@ -6,7 +6,7 @@ import { getArabicPapers } from "./get-arabic-papers";
 import { getRisingRepos } from "./get-rising-repos";
 import { getTrendingModels } from "./get-trending-models";
 
-export interface AiPage {
+interface AiPage {
   trending: AiModel[] | null;
   arabic: AiModel[] | null;
   papers: Paper[] | null;

@@ -11,7 +11,7 @@ import {
   IconQuran,
 } from "@/lib/icons";
 
-export type SectorSlug =
+type SectorSlug =
   | "quran"
   | "luckyWheel"
   | "modoLink"

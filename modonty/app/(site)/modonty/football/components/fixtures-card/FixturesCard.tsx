@@ -1,8 +1,8 @@
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { cn } from "@/lib/utils";
 import { messages } from "@/lib/i18n/messages";
 
 import type { MatchDay } from "../../data/get-football-page";
+import { formatGoals } from "../../helpers/format-goals";
 import { matchStatusLabel } from "../../helpers/match-status-label";
 import type { Match } from "../../helpers/types";
 import { TeamMark } from "../team-mark/TeamMark";
@@ -11,7 +11,6 @@ const t = messages.modonty.football;
 
 function MatchRow({ match, crests }: { match: Match; crests: Record<string, string> }) {
   const showScore = match.state === "live" || match.state === "finished";
-  const goals = (n: number | null) => (n ?? 0).toLocaleString(SITE_LOCALE);
   return (
     <li className="grid grid-cols-[1fr_5.5rem_1fr] items-center gap-2 py-2.5">
       <span className="flex min-w-0 items-center gap-2 font-medium">
@@ -21,7 +20,7 @@ function MatchRow({ match, crests }: { match: Match; crests: Record<string, stri
       <span className="text-center">
         {showScore && (
           <span className={cn("block font-bold tabular-nums", match.state === "live" && "text-red-600")}>
-            {goals(match.home.goals)} - {goals(match.away.goals)}
+            {formatGoals(match.home.goals)} - {formatGoals(match.away.goals)}
           </span>
         )}
         <span className={cn("block text-xs text-muted-foreground", !showScore && "text-sm font-bold text-foreground")}>

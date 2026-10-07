@@ -2,8 +2,7 @@ import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
-/** First letter of the club, skipping the article: «الهلال» → «ه» · «أبها» → «أ». */
-const initial = (name: string) => name.replace(/^ال/, "").trim().charAt(0) || "·";
+import { clubInitial } from "../../helpers/club-initial";
 
 interface TeamMarkProps {
   name: string;
@@ -35,7 +34,7 @@ export function TeamMark({ name, crest, inset = false, className }: TeamMarkProp
       {crest ? (
         <Image src={crest} alt="" fill sizes="64px" className={cn("object-contain", inset && "p-[18%]")} />
       ) : (
-        initial(name)
+        clubInitial(name)
       )}
     </span>
   );

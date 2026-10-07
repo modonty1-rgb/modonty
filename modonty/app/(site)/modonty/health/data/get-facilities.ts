@@ -1,5 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 
+import { cleanText } from "../helpers/clean-text";
 import { parseCsv } from "../helpers/parse-csv";
 import type { Facility } from "../helpers/types";
 import { downloadOpenDataCsv } from "./download-open-data-csv";
@@ -26,8 +27,6 @@ const TYPE: Record<string, string> = {
   "Home Healthcare": "مراكز الرعاية الصحية المنزلية",
 };
 
-const clean = (s: string | undefined) => (s ?? "").replace(/\s+/g, " ").trim();
-
 // A file that fails throws: a region missing for a day would say its hospitals are not accredited.
 const read = async (id: string) => parseCsv(await downloadOpenDataCsv(id));
 
@@ -50,25 +49,25 @@ export async function getFacilities(): Promise<Facility[]> {
 
   for (const rows of cbahi) {
     for (const r of rows.slice(1)) {
-      const name = clean(r[2]);
+      const name = cleanText(r[2]);
       if (!name) continue;
-      const status = clean(r[6]);
+      const status = cleanText(r[6]);
       out.push({
         name,
-        type: TYPE[clean(r[3])] ?? clean(r[3]),
-        region: clean(r[1]),
-        city: clean(r[4]),
+        type: TYPE[cleanText(r[3])] ?? cleanText(r[3]),
+        region: cleanText(r[1]),
+        city: cleanText(r[4]),
         source: "cbahi",
         status: STATUS[status] ?? status,
-        until: clean(r[7]).split("-")[1]?.trim() || undefined,
+        until: cleanText(r[7]).split("-")[1]?.trim() || undefined,
       });
     }
   }
   for (const rows of chi) {
     for (const r of rows.slice(1)) {
-      const name = clean(r[0]);
+      const name = cleanText(r[0]);
       if (!name) continue;
-      out.push({ name, nameEn: clean(r[1]) || undefined, type: clean(r[2]), region: clean(r[4]), city: clean(r[3]), source: "chi" });
+      out.push({ name, nameEn: cleanText(r[1]) || undefined, type: cleanText(r[2]), region: cleanText(r[4]), city: cleanText(r[3]), source: "chi" });
     }
   }
   return out;

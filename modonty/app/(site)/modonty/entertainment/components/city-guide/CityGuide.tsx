@@ -8,7 +8,7 @@ import { fill } from "@/lib/i18n/fill";
 import { GoogleTranslateBadge } from "../../../components/translation-credit/GoogleTranslateBadge";
 import type { CityOption, CityPlaces } from "../../helpers/types";
 
-export interface CityGuideLabels {
+interface CityGuideLabels {
   title: string;
   note: string;
   tabs: { experiences: string; restaurants: string; family: string };

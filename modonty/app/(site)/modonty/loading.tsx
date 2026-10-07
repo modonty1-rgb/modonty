@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { ModontyGallerySkeleton } from "@/app/(site)/modonty/components/gallery/ModontyGallery";
+import { ModontyGallerySkeleton } from "./components/gallery/ModontyGallery";
 
 export default function ModontyLoading() {
   return (

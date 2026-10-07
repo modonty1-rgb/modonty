@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { IconFootball } from "@/lib/icons";
@@ -22,6 +21,7 @@ import { getFootballPage } from "./data/get-football-page";
 import { SectorArticles } from "../components/sector-articles/SectorArticles";
 import { getSectorArticles } from "../data/get-sector-articles";
 import { getSectorHero } from "../data/get-sector-hero";
+import { formatRiyadhTime } from "../helpers/format-riyadh-time";
 
 const t = messages.modonty.football;
 const PATH = "/modonty/football";
@@ -56,15 +56,7 @@ export default async function FootballPage() {
   ]);
   const hero = page.lead ? null : await getSectorHero("football");
 
-  const updated = page.updatedAt
-    ? fill(t.updated, {
-        time: new Intl.DateTimeFormat(SITE_LOCALE, {
-          timeZone: "Asia/Riyadh",
-          hour: "numeric",
-          minute: "2-digit",
-        }).format(new Date(page.updatedAt)),
-      })
-    : null;
+  const updated = page.updatedAt ? fill(t.updated, { time: formatRiyadhTime(page.updatedAt) }) : null;
 
   const header = (
     <>

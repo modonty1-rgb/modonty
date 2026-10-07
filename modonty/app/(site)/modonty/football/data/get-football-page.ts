@@ -14,7 +14,7 @@ export interface MatchDay {
   known: boolean;
 }
 
-export interface FootballPage {
+interface FootballPage {
   /** The match the page leads with: live, else the next kickoff, else today's last result. */
   lead: Match | null;
   days: { yesterday: MatchDay; today: MatchDay; tomorrow: MatchDay };

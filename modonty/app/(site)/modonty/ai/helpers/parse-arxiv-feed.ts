@@ -6,7 +6,7 @@ const decode = (s: string) =>
 const tag = (block: string, name: string) => block.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`))?.[1] ?? "";
 
 /** A paper as the feed gives it, with its abstract — translated by the caller, not kept. */
-export type FeedPaper = Omit<Paper, "brief"> & { summary: string };
+type FeedPaper = Omit<Paper, "brief"> & { summary: string };
 
 /**
  * The papers in an arXiv API answer (Atom), each with its abstract. A few fixed tags are read by

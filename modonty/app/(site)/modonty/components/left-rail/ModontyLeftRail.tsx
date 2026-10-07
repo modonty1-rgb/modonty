@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { AccentHeading } from "@/components/shared/accent-heading/AccentHeading";
-import { ModontyGallery, ModontyGallerySkeleton } from "@/app/(site)/modonty/components/gallery/ModontyGallery";
+import { ModontyGallery, ModontyGallerySkeleton } from "../gallery/ModontyGallery";
 import { ReelsCard } from "@/components/shared/reels-card/ReelsCard";
 import type { ReelItem } from "@/components/shared/reels-card/ReelsCard";
 import { messages } from "@/lib/i18n/messages";
-import type { ModontyGalleryImage } from "@/app/(site)/modonty/data/get-modonty-gallery";
+import type { ModontyGalleryImage } from "../../data/get-modonty-gallery";
 
 interface ModontyLeftRailProps {
   gallery: ModontyGalleryImage[];

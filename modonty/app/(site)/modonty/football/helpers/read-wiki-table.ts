@@ -1,4 +1,4 @@
-export interface WikiCell {
+interface WikiCell {
   text: string;
   /** Title of the first wiki link in the cell (the team or player page), after the flag. */
   link: string | null;

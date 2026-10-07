@@ -1,13 +1,15 @@
 "use client";
 
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { fill } from "@/lib/i18n/fill";
+import { siteNumberFormat } from "@/lib/site-number-format";
 
+import { daysBetween } from "../../helpers/days-between";
 import { formatDates } from "../../helpers/format-dates";
 import type { CalendarEvent } from "../../helpers/types";
+import { upcomingEvents } from "../../helpers/upcoming-events";
 import { useRiyadhToday } from "../../helpers/use-riyadh-today";
 
-export interface HolidayCountdownLabels {
+interface HolidayCountdownLabels {
   title: string;
   today: string;
   tomorrow: string;
@@ -18,17 +20,13 @@ export interface HolidayCountdownLabels {
   after: string;
 }
 
-const N = new Intl.NumberFormat(SITE_LOCALE);
-const DAY_MS = 86_400_000;
-const daysBetween = (from: string, to: string) => Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / DAY_MS);
-
 /**
  * «كم باقي على الإجازة؟» — the next holiday or school start on the ministry's calendar and the days
  * until it, counted from today in Riyadh. The one question most readers of this page came with.
  */
 export function HolidayCountdown({ events, labels: t }: { events: CalendarEvent[]; labels: HolidayCountdownLabels }) {
   const today = useRiyadhToday();
-  const upcoming = today ? events.filter((e) => e.kind !== "staff" && e.date >= today) : [];
+  const upcoming = upcomingEvents(events, today);
   const [next, after] = upcoming;
 
   return (
@@ -62,7 +60,7 @@ function Remaining({ days, labels: t }: { days: number; labels: HolidayCountdown
   if (days === 1) return <p className="mt-1 text-4xl font-bold text-primary">{t.tomorrow}</p>;
   return (
     <p className="mt-1 flex items-baseline gap-2">
-      <span className="text-5xl font-bold tabular-nums text-primary">{N.format(days)}</span>
+      <span className="text-5xl font-bold tabular-nums text-primary">{siteNumberFormat.format(days)}</span>
       <span className="text-lg font-semibold">{days <= 10 ? t.daysFew : t.daysMany}</span>
     </p>
   );

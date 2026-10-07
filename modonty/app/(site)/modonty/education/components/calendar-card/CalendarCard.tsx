@@ -4,7 +4,7 @@ import { formatDates } from "../../helpers/format-dates";
 import type { CalendarEvent } from "../../helpers/types";
 import { useRiyadhToday } from "../../helpers/use-riyadh-today";
 
-export interface CalendarCardLabels {
+interface CalendarCardLabels {
   title: string;
   note: string;
   staffNote: string;

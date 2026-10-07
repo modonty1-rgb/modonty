@@ -1,4 +1,4 @@
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { siteNumberFormat } from "@/lib/site-number-format";
 import { fill, messages } from "@/lib/i18n/messages";
 
 import { taskLabel } from "../../helpers/task-label";
@@ -6,7 +6,6 @@ import { GoogleTranslateBadge } from "../../../components/translation-credit/Goo
 import type { AiModel } from "../../helpers/types";
 
 const t = messages.modonty.ai;
-const N = new Intl.NumberFormat(SITE_LOCALE);
 
 /**
  * Five Hub models, ranked. The name stays as its author published it (Latin, left-to-right, in its
@@ -27,7 +26,7 @@ export function ModelsCard({ id, title, note, models }: { id: string; title: str
           {models.map((m, i) => (
             <li key={m.id}>
               <a href={m.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 py-2.5 hover:text-link">
-                <span className="mt-0.5 w-5 shrink-0 text-center text-sm font-bold text-muted-foreground tabular-nums">{N.format(i + 1)}</span>
+                <span className="mt-0.5 w-5 shrink-0 text-center text-sm font-bold text-muted-foreground tabular-nums">{siteNumberFormat.format(i + 1)}</span>
                 <span className="min-w-0 flex-1">
                   <bdi dir="ltr" className="block truncate text-sm font-semibold">
                     {m.name}
@@ -41,7 +40,7 @@ export function ModelsCard({ id, title, note, models }: { id: string; title: str
                 </span>
                 <span className="mt-0.5 shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">{taskLabel(m.task)}</span>
                 <span className="mt-1 hidden w-20 shrink-0 text-end text-xs text-muted-foreground tabular-nums sm:block">
-                  {fill(t.likes, { n: N.format(m.likes) })}
+                  {fill(t.likes, { n: siteNumberFormat.format(m.likes) })}
                 </span>
               </a>
             </li>

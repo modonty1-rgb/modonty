@@ -1,7 +1,7 @@
 import { AccentHeading } from "@/components/shared/accent-heading/AccentHeading";
-import { StoryCard } from "@/app/(site)/modonty/components/story-card/StoryCard";
-import { LegalCard } from "@/app/(site)/modonty/components/legal-card/LegalCard";
-import { TeamGalleryCard } from "@/app/(site)/modonty/components/team-gallery/TeamGalleryCard";
+import { StoryCard } from "../story-card/StoryCard";
+import { LegalCard } from "../legal-card/LegalCard";
+import { TeamGalleryCard } from "../team-gallery/TeamGalleryCard";
 import { messages } from "@/lib/i18n/messages";
 import type { LegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 

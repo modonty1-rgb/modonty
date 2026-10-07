@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import { ModontyMark } from "@/components/icons/modonty-mark";
 import { IconChevronRight } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
@@ -33,11 +34,11 @@ export function StoryCard() {
 
       <p className="mt-3 text-sm leading-relaxed text-foreground/75">
         {chapters.map((chapter, index) => (
-          <span key={chapter.title}>
+          <Fragment key={chapter.title}>
             {index > 0 && " "}
             <strong className="font-medium text-link-accent">{chapter.title}</strong>{" "}
             <Teaser text={chapter.teaser} highlight={chapter.highlight} />
-          </span>
+          </Fragment>
         ))}
       </p>
       {/* A person signs, a company doesn't — and it is always the team, never one name

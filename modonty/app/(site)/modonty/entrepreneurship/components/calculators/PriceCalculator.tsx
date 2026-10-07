@@ -6,7 +6,7 @@ import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 import { NumberField } from "./NumberField";
 
-export interface PriceCalculatorLabels {
+interface PriceCalculatorLabels {
   title: string;
   cost: string;
   margin: string;

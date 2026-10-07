@@ -3,13 +3,14 @@
 import { useState } from "react";
 
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { siteNumberFormat } from "@/lib/site-number-format";
 import { Input } from "@/components/ui/input";
 import { fill } from "@/lib/i18n/fill";
 
 import { useDebouncedSearch } from "../../../helpers/use-debounced-search";
 import type { SchoolMatch, SchoolResult } from "../../helpers/types";
 
-export interface SchoolLookupLabels {
+interface SchoolLookupLabels {
   title: string;
   note: string;
   label: string;
@@ -28,7 +29,6 @@ export interface SchoolLookupLabels {
   hint: string;
 }
 
-const N = new Intl.NumberFormat(SITE_LOCALE);
 const YEAR = new Intl.NumberFormat(SITE_LOCALE, { useGrouping: false });
 
 /** A parent or student types a school's name and sees its average and national rank in each test. */
@@ -88,12 +88,12 @@ function ResultRow({ result: r, labels: t }: { result: SchoolResult; labels: Sch
     <li className="rounded-md bg-muted/40 px-3 py-2 text-sm">
       <p className="flex flex-wrap items-baseline justify-between gap-x-3">
         <span className="font-semibold">{fill(t.test, { test: r.test, track: r.track, year: YEAR.format(r.year) })}</span>
-        <span className="text-xs text-muted-foreground tabular-nums">{fill(t.average, { n: N.format(r.average) })}</span>
+        <span className="text-xs text-muted-foreground tabular-nums">{fill(t.average, { n: siteNumberFormat.format(r.average) })}</span>
       </p>
-      <p className="mt-0.5 font-bold tabular-nums">{fill(t.rank, { rank: N.format(r.rank), total: N.format(r.outOf) })}</p>
+      <p className="mt-0.5 font-bold tabular-nums">{fill(t.rank, { rank: siteNumberFormat.format(r.rank), total: siteNumberFormat.format(r.outOf) })}</p>
       {moved !== null && (
         <p className={`text-xs font-semibold ${moved > 0 ? "text-primary" : moved < 0 ? "text-destructive" : "text-muted-foreground"}`}>
-          {moved > 0 ? fill(t.up, { n: N.format(moved) }) : moved < 0 ? fill(t.down, { n: N.format(-moved) }) : t.same}
+          {moved > 0 ? fill(t.up, { n: siteNumberFormat.format(moved) }) : moved < 0 ? fill(t.down, { n: siteNumberFormat.format(-moved) }) : t.same}
         </p>
       )}
     </li>
