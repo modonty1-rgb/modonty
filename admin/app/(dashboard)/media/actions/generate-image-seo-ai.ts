@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { generateImageSeoField, type ImageSeoField } from "@/lib/ai/gemini-image-seo";
+import { toPlainText } from "@/lib/seo-images/to-plain-text";
 
 // AI draft for ONE gallery image, written from the owning client's DATA (NOT from analysing
 // the image — the doctor uploads case photos; the field/city/services are what matter). It
@@ -21,16 +22,6 @@ const CLIENT_CTX = {
 } as const;
 
 const ARTICLE_CTX = { title: true, excerpt: true, content: true } as const;
-
-/** Strip HTML tags/entities from stored article content → plain text for the AI prompt. */
-function toPlainText(html: string | null | undefined): string {
-  if (!html) return "";
-  return html
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&[a-z]+;|&#\d+;/gi, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
 
 export async function generateImageSeoAi(
   mediaId: string,

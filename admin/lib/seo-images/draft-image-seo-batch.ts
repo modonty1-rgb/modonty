@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { generateImageSeoDraft } from "@/lib/ai/generate-image-seo-draft";
+import { toPlainText } from "./to-plain-text";
 
 /**
  * STAGE ONE of the image-SEO repair: let the model write the missing `altText` and
@@ -40,16 +41,6 @@ const CLIENT_CTX = {
 } as const;
 
 const ARTICLE_CTX = { title: true, excerpt: true, content: true } as const;
-
-/** Strip HTML tags/entities from stored article content → plain text for the prompt. */
-function toPlainText(html: string | null | undefined): string {
-  if (!html) return "";
-  return html
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&[a-z]+;|&#\d+;/gi, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
 
 interface DraftBatchResult {
   /** Rows written in this call. */

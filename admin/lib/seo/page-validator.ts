@@ -21,6 +21,7 @@ import type {
   ExtractedData,
   PageType,
 } from "./types";
+import { mapCategory } from "./map-category";
 
 /**
  * Validate full page
@@ -256,24 +257,6 @@ function generateValidationIssues(
       fix: "Review business rules for structured data",
     });
   }
-
-  // Map SEOIssue category to ValidationIssue category
-  const mapCategory = (category: string): ValidationIssue["category"] => {
-    switch (category) {
-      case "meta":
-      case "link":
-        return "seo";
-      case "image":
-        return "media";
-      case "content":
-      case "heading":
-        return "content";
-      case "structure":
-        return "structured-data";
-      default:
-        return "seo";
-    }
-  };
 
   // SEO errors (critical)
   for (const issue of seoAnalysis.issues) {

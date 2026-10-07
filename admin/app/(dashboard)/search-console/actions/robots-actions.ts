@@ -1,7 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { buildRobotsUrl } from "@/lib/seo/url-builders";
+import { requireAuth } from "@/lib/require-auth";
 
 interface RobotsResponse {
   ok: boolean;
@@ -10,12 +10,6 @@ interface RobotsResponse {
   status?: number;
   fetchedAt?: string;
   error?: string;
-}
-
-async function requireAuth() {
-  const session = await auth();
-  if (!session?.user) throw new Error("Unauthorized");
-  return session.user;
 }
 
 export async function fetchRobotsTxtAction(): Promise<RobotsResponse> {

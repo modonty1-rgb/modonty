@@ -1,19 +1,10 @@
 import { Braces, Tags } from "lucide-react";
+import { prettyJson } from "@/components/shared/seo-doctor/pretty-json";
 
 // Read-only technical view for the single Modonty author record — the raw JSON-LD + meta tags
 // the page actually emits (what Google sees). Both are auto-generated on save from Settings +
 // the SEO snippet, so this panel is purely for verification. Same data the shared reference
 // technical page shows for other entities, inlined here since the author is one record.
-
-function prettyJson(value: unknown): string | null {
-  if (value == null) return null;
-  try {
-    if (typeof value === "string") return JSON.stringify(JSON.parse(value), null, 2);
-    return JSON.stringify(value, null, 2);
-  } catch {
-    return typeof value === "string" ? value : null;
-  }
-}
 
 function CodePanel({
   icon: Icon,

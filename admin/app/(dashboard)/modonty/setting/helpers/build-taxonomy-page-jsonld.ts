@@ -11,14 +11,7 @@ import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import { buildSiteOrgAndWebSite } from "./build-clients-page-jsonld";
-
-function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | undefined {
-  if (!url?.trim()) return undefined;
-  const u = url.trim();
-  if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
-  return `https://${u}`;
-}
+import { ensureAbsoluteUrl } from "./ensure-absolute-url";
 
 const SCHEMA_CONTEXT = "https://schema.org";
 

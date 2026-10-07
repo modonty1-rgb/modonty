@@ -30,6 +30,7 @@ import {
 } from "../../actions/gallery-mutations";
 import { uploadImageToBunny } from "@/lib/media/upload-image-to-bunny";
 import type { GalleryImageRow } from "../../helpers/load-galleries";
+import { imgFormat } from "@/lib/media/img-format";
 
 interface Props {
   clientId: string;
@@ -59,14 +60,6 @@ async function uploadGalleryToBunny(file: File, clientId: string) {
     fileSize: file.size ?? null,
     blurDataURL: result.blurDataURL ?? null,
   };
-}
-
-/** "image/webp" → "WEBP", "image/jpeg" → "JPG", … */
-function imgFormat(mime: string): string {
-  const sub = (mime.split("/")[1] || "img").toLowerCase();
-  if (sub === "jpeg") return "JPG";
-  if (sub === "svg+xml") return "SVG";
-  return sub.toUpperCase();
 }
 
 export function ClientGalleryGrid({ clientId, clientName, images }: Props) {

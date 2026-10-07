@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { extractRenderedHTML } from '@/lib/seo/page-renderer';
 import type { ValidationIssue } from '@/lib/seo/types';
+import { mapCategory } from "@/lib/seo/map-category";
 
 /**
  * POST /api/articles/slug/[slug]/validate
@@ -83,24 +84,6 @@ export async function POST(
     const critical: ValidationIssue[] = [];
     const warnings: ValidationIssue[] = [];
     const suggestions: ValidationIssue[] = [];
-
-    // Map SEOIssue category to ValidationIssue category
-    const mapCategory = (category: string): ValidationIssue["category"] => {
-      switch (category) {
-        case "meta":
-        case "link":
-          return "seo";
-        case "image":
-          return "media";
-        case "content":
-        case "heading":
-          return "content";
-        case "structure":
-          return "structured-data";
-        default:
-          return "seo";
-      }
-    };
 
     // Schema validation errors (critical)
     for (const error of structuredDataValidation.adobe.errors) {

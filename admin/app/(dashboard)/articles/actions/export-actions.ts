@@ -3,24 +3,8 @@
 import { db } from "@/lib/db";
 import { ArticleStatus, Prisma } from "@prisma/client";
 import { ArticleFilters } from "./articles-actions";
-
-function escapeCsvValue(value: string | null | undefined): string {
-  if (!value) return "";
-  const stringValue = String(value);
-  if (stringValue.includes(",") || stringValue.includes('"') || stringValue.includes("\n")) {
-    return `"${stringValue.replace(/"/g, '""')}"`;
-  }
-  return stringValue;
-}
-
-function formatDate(date: Date | null | undefined): string {
-  if (!date) return "";
-  return new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
+import { escapeCsvValue } from "@/lib/csv/escape-csv-value";
+import { formatDate } from "@/lib/csv/format-date";
 
 export async function exportArticlesToCSV(filters?: ArticleFilters): Promise<string> {
   try {

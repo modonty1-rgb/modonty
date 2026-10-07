@@ -7,7 +7,7 @@ import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { tightenGooglebot } from "@modonty/shared/lib/seo/tighten-googlebot";
 
-import { ensureAbsoluteUrl } from "./build-meta-from-page";
+import { ensureAbsoluteUrl } from "./ensure-absolute-url";
 
 export interface SettingsForMeta {
   siteUrl?: string | null;

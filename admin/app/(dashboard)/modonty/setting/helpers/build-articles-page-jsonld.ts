@@ -18,16 +18,9 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import type { ArticleForHomeJsonLd, SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
+import { ensureAbsoluteUrl } from "./ensure-absolute-url";
 
 const SCHEMA_CONTEXT = "https://schema.org";
-
-function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | undefined {
-  if (!url?.trim()) return undefined;
-  const u = url.trim();
-  if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
-  return `https://${u}`;
-}
 
 function articleToListItem(article: ArticleForHomeJsonLd, siteUrl: string, index: number): Record<string, unknown> {
   const articleUrl = entityUrl("articles", article.slug, siteUrl);

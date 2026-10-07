@@ -8,27 +8,8 @@ import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import type { SettingsForHomeJsonLd } from "./build-home-jsonld-from-settings";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
-
-function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | undefined {
-  if (!url?.trim()) return undefined;
-  const u = url.trim();
-  if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
-  return `https://${u}`;
-}
-
-function parseLanguageCodes(raw: string | null | undefined, fallback = "ar"): string | string[] {
-  const val = (raw ?? fallback).trim();
-  if (!val) return fallback;
-  const parts = val
-    .split(",")
-    .map((p) => (p.trim().split("_")[0] || p.trim()).trim())
-    .filter(Boolean);
-  const codes = [...new Set(parts)];
-  if (codes.length === 0) return fallback;
-  if (codes.length === 1) return codes[0];
-  return codes;
-}
+import { ensureAbsoluteUrl } from "./ensure-absolute-url";
+import { parseLanguageCodes } from "./parse-language-codes";
 
 const SCHEMA_CONTEXT = "https://schema.org";
 

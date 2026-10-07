@@ -8,6 +8,11 @@ import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 import type { SeoCheck, JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { GoogleIcon } from "@/components/admin/icons/google-icon";
+import { tone } from "@/components/shared/seo-doctor/tone";
+import { prettyJson } from "@/components/shared/seo-doctor/pretty-json";
+import { reportErrorMessages } from "@/components/shared/seo-doctor/report-error-messages";
+import { ScoreBar } from "@/components/shared/seo-doctor/score-bar";
+import { ScorePill } from "@/components/shared/seo-doctor/score-pill";
 
 // The client's SEO guide — the lamp that shows what's wrong and how to fix it, driven by the
 // ONE real scorer (computeClientEntitySeo). Every number here equals the clients table, the
@@ -31,34 +36,6 @@ const DATA_KEYS = new Set([
   "jsonld.local",
 ]);
 
-function tone(score: number): "good" | "warn" | "bad" {
-  if (score >= 80) return "good";
-  if (score >= 60) return "warn";
-  return "bad";
-}
-
-// Flatten validator errors (Adobe + Ajv + custom) into readable strings.
-function reportErrorMessages(report: JsonLdValidationReport | null | undefined): string[] {
-  if (!report) return [];
-  const groups = [report.adobe, report.ajv, report.custom];
-  const out: string[] = [];
-  for (const g of groups) {
-    const errs = g?.errors;
-    if (!Array.isArray(errs)) continue;
-    for (const e of errs) {
-      if (typeof e === "string") {
-        out.push(e);
-      } else if (e && typeof e === "object") {
-        const o = e as Record<string, unknown>;
-        const msg = o.message ?? o.error ?? o.keyword;
-        const path = typeof o.instancePath === "string" && o.instancePath ? ` (${o.instancePath})` : "";
-        out.push(typeof msg === "string" ? `${msg}${path}` : JSON.stringify(e));
-      }
-    }
-  }
-  return out;
-}
-
 // Turn a raw Organization validator message into one plain Arabic line.
 function plainJsonLdError(msg: string): string {
   const m = msg.toLowerCase();
@@ -71,16 +48,6 @@ function plainJsonLdError(msg: string): string {
   if (m.includes("image")) return "الصورة مفقودة أو رابطها غير كامل";
   if (m.includes("name")) return "الاسم مفقود";
   return msg;
-}
-
-function prettyJson(value: unknown): string | null {
-  if (value == null) return null;
-  try {
-    if (typeof value === "string") return JSON.stringify(JSON.parse(value), null, 2);
-    return JSON.stringify(value, null, 2);
-  } catch {
-    return typeof value === "string" ? value : null;
-  }
 }
 
 export default async function ClientTechnicalPage({ params }: { params: Promise<{ id: string }> }) {
@@ -339,40 +306,6 @@ export default async function ClientTechnicalPage({ params }: { params: Promise<
 }
 
 // -- Sub-components -----------------------------------------------------------
-
-function ScoreBar({ label, score }: { label: string; score: number }) {
-  const t = tone(score);
-  const color = t === "good" ? "bg-emerald-500" : t === "warn" ? "bg-amber-500" : "bg-red-500";
-  const text =
-    t === "good"
-      ? "text-emerald-600 dark:text-emerald-400"
-      : t === "warn"
-        ? "text-amber-600 dark:text-amber-400"
-        : "text-red-600 dark:text-red-400";
-  return (
-    <div className="rounded-xl border p-3.5">
-      <div className="mb-2 flex items-baseline justify-between">
-        <span className="text-[13px] font-bold">{label}</span>
-        <span className={`text-lg font-extrabold ${text}`}>{score}%</span>
-      </div>
-      <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-        <div className={`h-full rounded-full ${color}`} style={{ width: `${score}%` }} />
-      </div>
-    </div>
-  );
-}
-
-function ScorePill({ score }: { score: number }) {
-  const t = tone(score);
-  if (t === "good") {
-    return <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-400">{score}% · سليم</span>;
-  }
-  const cls =
-    t === "warn"
-      ? "border-amber-200 bg-amber-50 text-amber-600 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-400"
-      : "border-red-200 bg-red-50 text-red-600 dark:border-red-900 dark:bg-red-950/40 dark:text-red-400";
-  return <span className={`rounded-full border px-2.5 py-0.5 text-xs font-bold ${cls}`}>{score}%</span>;
-}
 
 function GapCard({
   check,

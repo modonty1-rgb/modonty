@@ -1,20 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-
-function esc(value: string | number | null | undefined): string {
-  if (value === null || value === undefined) return "";
-  const str = String(value);
-  if (str.includes(",") || str.includes('"') || str.includes("\n")) {
-    return `"${str.replace(/"/g, '""')}"`;
-  }
-  return str;
-}
-
-function fmtDate(date: Date | null | undefined): string {
-  if (!date) return "";
-  return new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-}
+import { formatDate } from "@/lib/csv/format-date";
+import { escapeCsv } from "../helpers/escape-csv";
 
 function toCsv(headers: string[], rows: string[][]): string {
   return [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
@@ -30,12 +18,12 @@ export async function exportSubscribersToCSV(): Promise<string> {
   return toCsv(
     ["Name", "Email", "Client", "Subscribed", "Subscribed Date", "Unsubscribed Date", "Consent Given"],
     data.map((s) => [
-      esc(s.name),
-      esc(s.email),
-      esc(s.client?.name),
+      escapeCsv(s.name),
+      escapeCsv(s.email),
+      escapeCsv(s.client?.name),
       s.subscribed ? "Yes" : "No",
-      fmtDate(s.subscribedAt),
-      fmtDate(s.unsubscribedAt),
+      formatDate(s.subscribedAt),
+      formatDate(s.unsubscribedAt),
       s.consentGiven ? "Yes" : "No",
     ])
   );
@@ -50,11 +38,11 @@ export async function exportNewsSubscribersToCSV(): Promise<string> {
   return toCsv(
     ["Name", "Email", "Subscribed", "Subscribed Date", "Unsubscribed Date", "Consent Given"],
     data.map((s) => [
-      esc(s.name),
-      esc(s.email),
+      escapeCsv(s.name),
+      escapeCsv(s.email),
       s.subscribed ? "Yes" : "No",
-      fmtDate(s.subscribedAt),
-      fmtDate(s.unsubscribedAt),
+      formatDate(s.subscribedAt),
+      formatDate(s.unsubscribedAt),
       s.consentGiven ? "Yes" : "No",
     ])
   );
@@ -70,14 +58,14 @@ export async function exportContactMessagesToCSV(): Promise<string> {
   return toCsv(
     ["Name", "Email", "Subject", "Message", "Status", "Client", "Reply", "Date"],
     data.map((m) => [
-      esc(m.name),
-      esc(m.email),
-      esc(m.subject),
-      esc(m.message),
-      esc(m.status),
-      esc(m.client?.name),
-      esc(m.replyBody),
-      fmtDate(m.createdAt),
+      escapeCsv(m.name),
+      escapeCsv(m.email),
+      escapeCsv(m.subject),
+      escapeCsv(m.message),
+      escapeCsv(m.status),
+      escapeCsv(m.client?.name),
+      escapeCsv(m.replyBody),
+      formatDate(m.createdAt),
     ])
   );
 }
@@ -95,15 +83,15 @@ export async function exportConversionsToCSV(): Promise<string> {
   return toCsv(
     ["Type", "Article", "Client", "Value", "Currency", "UTM Source", "UTM Medium", "UTM Campaign", "Date"],
     data.map((c) => [
-      esc(c.type),
-      esc(c.article?.title),
-      esc(c.client?.name),
+      escapeCsv(c.type),
+      escapeCsv(c.article?.title),
+      escapeCsv(c.client?.name),
       (c.value ?? "").toString(),
-      esc(c.currency),
-      esc(c.utmSource),
-      esc(c.utmMedium),
-      esc(c.utmCampaign),
-      fmtDate(c.createdAt),
+      escapeCsv(c.currency),
+      escapeCsv(c.utmSource),
+      escapeCsv(c.utmMedium),
+      escapeCsv(c.utmCampaign),
+      formatDate(c.createdAt),
     ])
   );
 }
@@ -121,17 +109,17 @@ export async function exportLeadScoringToCSV(): Promise<string> {
   return toCsv(
     ["Name", "Email", "Client", "Score", "Level", "Qualified", "Pages Viewed", "Time Spent (s)", "Interactions", "Conversions", "Last Activity"],
     data.map((l) => [
-      esc(l.user?.name),
-      esc(l.user?.email || l.email),
-      esc(l.client?.name),
+      escapeCsv(l.user?.name),
+      escapeCsv(l.user?.email || l.email),
+      escapeCsv(l.client?.name),
       l.engagementScore.toString(),
-      esc(l.qualificationLevel),
+      escapeCsv(l.qualificationLevel),
       l.isQualified ? "Yes" : "No",
       l.pagesViewed.toString(),
       l.totalTimeSpent.toFixed(0),
       l.interactions.toString(),
       l.conversions.toString(),
-      fmtDate(l.lastActivityAt),
+      formatDate(l.lastActivityAt),
     ])
   );
 }
@@ -149,10 +137,10 @@ export async function exportSharesToCSV(): Promise<string> {
   return toCsv(
     ["Platform", "Article", "Client", "Date"],
     data.map((s) => [
-      esc(s.platform),
-      esc(s.article?.title),
-      esc(s.client?.name),
-      fmtDate(s.createdAt),
+      escapeCsv(s.platform),
+      escapeCsv(s.article?.title),
+      escapeCsv(s.client?.name),
+      formatDate(s.createdAt),
     ])
   );
 }
@@ -170,17 +158,17 @@ export async function exportCampaignsToCSV(): Promise<string> {
   return toCsv(
     ["Campaign", "Type", "Article", "Client", "UTM Source", "UTM Medium", "Cost", "Impressions", "Clicks", "Conversions", "Date"],
     data.map((c) => [
-      esc(c.campaignName),
-      esc(c.type),
-      esc(c.article?.title),
-      esc(c.client?.name),
-      esc(c.utmSource),
-      esc(c.utmMedium),
+      escapeCsv(c.campaignName),
+      escapeCsv(c.type),
+      escapeCsv(c.article?.title),
+      escapeCsv(c.client?.name),
+      escapeCsv(c.utmSource),
+      escapeCsv(c.utmMedium),
       (c.cost ?? "").toString(),
       (c.impressions ?? "").toString(),
       (c.clicks ?? "").toString(),
       (c.conversions ?? "").toString(),
-      fmtDate(c.createdAt),
+      formatDate(c.createdAt),
     ])
   );
 }

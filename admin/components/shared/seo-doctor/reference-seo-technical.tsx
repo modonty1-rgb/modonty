@@ -4,6 +4,8 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
 import type { SeoCheck, JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
+import { tone } from "./tone";
+import { prettyJson } from "./pretty-json";
 
 // Shared SEO technical view for reference entities (category · tag · author · industry).
 // Driven by computeReferenceSeoScore — the ONE source of truth (same family as article/
@@ -13,22 +15,6 @@ import type { SeoCheck, JsonLdValidationReport } from "@modonty/shared/lib/seo/c
 // Content the admin fills; everything else the system generates (canonical, JSON-LD) —
 // the editor must not be alarmed by those (ownership).
 const WRITER_KEYS = new Set(["title", "description", "ogImage"]);
-
-function tone(score: number): "good" | "warn" | "bad" {
-  if (score >= 80) return "good";
-  if (score >= 60) return "warn";
-  return "bad";
-}
-
-function prettyJson(value: unknown): string | null {
-  if (value == null) return null;
-  try {
-    if (typeof value === "string") return JSON.stringify(JSON.parse(value), null, 2);
-    return JSON.stringify(value, null, 2);
-  } catch {
-    return typeof value === "string" ? value : null;
-  }
-}
 
 interface ReferenceSeoTechnicalProps {
   /** Back link to the entity's detail page. */

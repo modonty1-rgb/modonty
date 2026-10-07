@@ -10,26 +10,13 @@ import { logAction } from "@/lib/audit/log-action";
 import { recordRedirect } from "@/lib/redirect/record-redirect";
 import { generateClientSEO } from "./generate-client-seo";
 import { randomInt } from "crypto";
+import { sendTelegramMessage } from "@/lib/notifications/send-telegram-message";
 
 const OTP_EXPIRY_MINUTES = 10;
 const OTP_RATE_LIMIT = 3; // max requests per window
-const TELEGRAM_API = "https://api.telegram.org";
 
 function generateOtp(): string {
   return randomInt(1000, 10000).toString();
-}
-
-async function sendTelegramMessage(text: string): Promise<void> {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
-  if (!token || !chatId) throw new Error("Telegram credentials not configured");
-
-  const res = await fetch(`${TELEGRAM_API}/bot${token}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
-  });
-  if (!res.ok) throw new Error("Failed to send Telegram message");
 }
 
 // --- Step 1: Request OTP ------------------------------------------------------

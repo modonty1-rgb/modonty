@@ -11,13 +11,7 @@ import { formatBytes } from "@modonty/shared/lib/utils";
 import { saveOptimizedImage } from "../../actions/optimize-image";
 import { reencodeToWebP } from "@/lib/media/reencode-to-webp";
 import type { OptimizableImage } from "../helpers/optimizable";
-
-function fmt(mime: string): string {
-  const sub = (mime.split("/")[1] || "img").toLowerCase();
-  if (sub === "jpeg") return "JPG";
-  if (sub === "svg+xml") return "SVG";
-  return sub.toUpperCase();
-}
+import { imgFormat } from "@/lib/media/img-format";
 
 export function OptimizeImagesSection({ images }: { images: OptimizableImage[] }) {
   const { toast } = useToast();
@@ -79,7 +73,7 @@ export function OptimizeImagesSection({ images }: { images: OptimizableImage[] }
                   {img.filename}
                 </p>
                 <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
-                  <span className="rounded bg-muted px-1 py-0.5 text-[9px] font-bold uppercase">{fmt(img.mimeType)}</span>
+                  <span className="rounded bg-muted px-1 py-0.5 text-[9px] font-bold uppercase">{imgFormat(img.mimeType)}</span>
                   <span className="font-semibold">{formatBytes(img.fileSize)}</span>
                   <span>· {img.type ?? "—"}</span>
                   {img.clientName && <span>· {img.clientName}</span>}

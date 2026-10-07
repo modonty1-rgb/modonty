@@ -1,6 +1,5 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { validateArticle, type ValidationResult } from "@/lib/seo/article-validator";
 import { fetchAndParseSitemap } from "@/lib/gsc/parse-sitemap";
@@ -16,6 +15,7 @@ import {
   type InspectionRecord,
 } from "@/lib/gsc/inspection-cache";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { requireAuth } from "@/lib/require-auth";
 
 interface PipelineRunResponse {
   ok: boolean;
@@ -35,12 +35,6 @@ interface FinalCheckResponse {
   ok: boolean;
   error?: string;
   inspection?: InspectionRecord;
-}
-
-async function requireAuth() {
-  const session = await auth();
-  if (!session?.user) throw new Error("Unauthorized");
-  return session.user;
 }
 
 /** Run stages 1-7, 11 — HTML-based + sitemap inclusion. */

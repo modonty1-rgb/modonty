@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { mediaSrc } from '@modonty/shared/lib/media-src';
+import { mapCategory } from "@/lib/seo/map-category";
 
 /**
  * POST /api/articles/[id]/validate
@@ -123,24 +124,6 @@ ${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ""}
         fix: warning.recommendation || 'Review schema.org guidelines',
       });
     }
-
-    // Map SEOIssue category to ValidationIssue category
-    const mapCategory = (category: string): "schema" | "seo" | "content" | "media" | "structured-data" => {
-      switch (category) {
-        case "meta":
-        case "link":
-          return "seo";
-        case "image":
-          return "media";
-        case "content":
-        case "heading":
-          return "content";
-        case "structure":
-          return "structured-data";
-        default:
-          return "seo";
-      }
-    };
 
     // SEO issues with proper category mapping
     for (const issue of seoAnalysis.issues) {

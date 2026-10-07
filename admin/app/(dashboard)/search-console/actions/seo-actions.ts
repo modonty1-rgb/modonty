@@ -2,11 +2,11 @@
 
 import { revalidateTag } from "next/cache";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { bulkInspect } from "@/lib/gsc/inspection-cache";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
+import { requireAuth } from "@/lib/require-auth";
 
 interface BulkInspectionResponse {
   ok: boolean;
@@ -14,12 +14,6 @@ interface BulkInspectionResponse {
   errorCount?: number;
   errors?: { url: string; message: string }[];
   error?: string;
-}
-
-async function requireAuth() {
-  const session = await auth();
-  if (!session?.user) throw new Error("Unauthorized");
-  return session.user;
 }
 
 /** Bulk inspect — defaults to all PUBLISHED articles when no urls passed. */

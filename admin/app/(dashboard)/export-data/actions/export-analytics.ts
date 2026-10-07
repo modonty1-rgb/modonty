@@ -2,24 +2,8 @@
 
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
-
-function escapeCsv(value: string | number | null | undefined): string {
-  if (value === null || value === undefined) return "";
-  const str = String(value);
-  if (str.includes(",") || str.includes('"') || str.includes("\n")) {
-    return `"${str.replace(/"/g, '""')}"`;
-  }
-  return str;
-}
-
-function formatDate(date: Date | null | undefined): string {
-  if (!date) return "";
-  return new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
+import { formatDate } from "@/lib/csv/format-date";
+import { escapeCsv } from "../helpers/escape-csv";
 
 export async function exportAnalyticsToCSV(): Promise<string> {
   try {

@@ -8,6 +8,8 @@ import { buildListAuthorNode } from "@/lib/seo/build-list-author-node";
 import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
+import { ensureAbsoluteUrl } from "./ensure-absolute-url";
+import { parseLanguageCodes } from "./parse-language-codes";
 
 export interface SettingsForHomeJsonLd {
   siteUrl?: string | null;
@@ -69,14 +71,6 @@ export interface ArticleForHomeJsonLd {
   tags?: { name: string }[];
 }
 
-function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | undefined {
-  if (!url?.trim()) return undefined;
-  const u = url.trim();
-  if (u.startsWith("http://") || u.startsWith("https://")) return u.replace("http://", "https://");
-  if (u.startsWith("/")) return absoluteUrl(u, siteUrl);
-  return `https://${u}`;
-}
-
 /** Normalize a country value to ISO 3166-1 alpha-2 (schema.org recommended). Maps known full names; upper-cases 2-letter codes. */
 function normalizeCountryToISO(raw: string | null | undefined): string | undefined {
   const v = (raw ?? "").trim();
@@ -102,20 +96,6 @@ function normalizeCountryToISO(raw: string | null | undefined): string | undefin
 // screen. Contact hours are published only once a stored value supplies them.
 // Google: "Your structured data must be a true representation of the page content."
 // https://developers.google.com/search/docs/appearance/structured-data/sd-policies
-
-/** Parse language string to BCP 47 format: single string or array for multiple. */
-function parseLanguageCodes(raw: string | null | undefined, fallback = "ar"): string | string[] {
-  const val = (raw ?? fallback).trim();
-  if (!val) return fallback;
-  const parts = val
-    .split(",")
-    .map((p) => (p.trim().split("_")[0] || p.trim()).trim())
-    .filter(Boolean);
-  const codes = [...new Set(parts)];
-  if (codes.length === 0) return fallback;
-  if (codes.length === 1) return codes[0];
-  return codes;
-}
 
 const SCHEMA_CONTEXT = "https://schema.org";
 

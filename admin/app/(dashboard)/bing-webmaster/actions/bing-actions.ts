@@ -1,14 +1,8 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { submitToIndexNow, type IndexNowResult } from "@/lib/indexnow";
 import { buildSitemapUrl } from "@/lib/seo/url-builders";
-
-async function requireAuth() {
-  const session = await auth();
-  if (!session?.user) throw new Error("Unauthorized");
-  return session.user;
-}
+import { requireAuth } from "@/lib/require-auth";
 
 interface IndexNowActionResponse {
   ok: boolean;
