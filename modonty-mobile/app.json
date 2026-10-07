@@ -10,7 +10,8 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.modonty.reader"
+      "bundleIdentifier": "com.modonty.reader",
+      "usesAppleSignIn": true
     },
     "android": {
       "package": "com.modonty.reader",
@@ -27,6 +28,7 @@
       "expo-font",
       "expo-web-browser",
       "expo-video",
+      "expo-apple-authentication",
       [
         "expo-localization",
         {

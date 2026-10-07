@@ -46,6 +46,7 @@ import type {
   SharePlatform,
   ViewData,
 } from './api-types';
+import type { DislikeResult } from './api-types-actions';
 import { request } from './http';
 
 const enc = encodeURIComponent;
@@ -97,6 +98,9 @@ export const contentApi = {
 export const actionsApi = {
   likeArticle: (articleId: string, slug: string) =>
     request<LikeResult>(`/articles/${articleId}/like`, { method: 'POST', auth: 'required', body: { slug } }),
+  /** E2 — `POST /articles/:id/dislike` (toggle) · يلغي الإعجاب كما الويب. */
+  dislikeArticle: (articleId: string, slug: string) =>
+    request<DislikeResult>(`/articles/${articleId}/dislike`, { method: 'POST', auth: 'required', body: { slug } }),
   favoriteArticle: (articleId: string, slug: string) =>
     request<FavoriteResult>(`/articles/${articleId}/favorite`, { method: 'POST', auth: 'required', body: { slug } }),
   comment: (articleId: string, slug: string, content: string) =>
@@ -139,7 +143,7 @@ export const actionsApi = {
 export const accountApi = {
   login: async (email: string, password: string) =>
     request<AuthData>('/auth/login', { method: 'POST', device: true, body: { email, password } }),
-  register: (body: { name: string; email: string; password: string; confirmPassword?: string; marketingConsent?: boolean }) =>
+  register: (body: { name: string; email: string; password: string; marketingConsent?: boolean }) =>
     request<AuthData>('/auth/register', { method: 'POST', device: true, body }),
   forgotPassword: (email: string) =>
     request<ForgotPasswordData>('/auth/forgot-password', { method: 'POST', body: { email } }),

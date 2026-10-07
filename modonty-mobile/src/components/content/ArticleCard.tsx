@@ -41,8 +41,7 @@ export const ArticleCard = memo(function ArticleCard({ item, onOpen, layout = 'c
             {item.title}
           </AppText>
           <AppText variant="secondary" tone="muted" numberOfLines={1}>
-            {item.publisher}
-            {item.meta ? ` · ${item.meta}` : ''}
+            {[item.publisher, item.meta].filter(Boolean).join(' · ')}
           </AppText>
         </View>
         <Icon name="forward" size={control.iconSmall} tone="muted" />
@@ -61,6 +60,7 @@ export const ArticleCard = memo(function ArticleCard({ item, onOpen, layout = 'c
           accessibilityIgnoresInvertColors
         />
       ) : null}
+      {item.publisher ? (
       <View style={styles.publisher}>
         {item.publisherLogo ? <Image source={item.publisherLogo} style={styles.logo} contentFit="cover" /> : null}
         <AppText variant="label" tone="muted" numberOfLines={1} style={styles.flex}>
@@ -69,6 +69,7 @@ export const ArticleCard = memo(function ArticleCard({ item, onOpen, layout = 'c
         {item.verified ? <Icon name="trust" size={control.iconInline} tone="interactive" /> : null}
         {item.hasAudio ? <Icon name="audio" size={control.iconInline} tone="muted" /> : null}
       </View>
+      ) : null}
       <AppText variant="sectionTitle" numberOfLines={2}>
         {item.title}
       </AppText>

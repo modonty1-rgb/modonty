@@ -68,3 +68,34 @@ export function toPartnerCard(c: ClientListItem): PartnerCardModel {
     rating: c.rating && c.rating.count > 0 ? `${c.rating.average.toFixed(1)} (${compactNumber(c.rating.count)})` : null,
   };
 }
+
+/** بطاقة صفّ من مصادر لا تحمل FeedPost كاملاً (الكاتب · الصوت · الرائج · القطاع · الشريك · المفضّلة). */
+export function articleRow(a: {
+  id?: string;
+  slug: string;
+  title: string;
+  excerpt?: string | null;
+  image?: string | null;
+  imageBlur?: string | null;
+  publisher?: string | null;
+  date?: string | null;
+  /** تاريخ جاهز للعرض كما يرسله الخادم (مثل `posts[].date` في صفحة الشريك). */
+  dateLabel?: string | null;
+  readingTimeMinutes?: number | null;
+  hasAudio?: boolean;
+}): ArticleCardModel {
+  return {
+    key: a.id ?? a.slug,
+    slug: a.slug,
+    title: a.title,
+    excerpt: a.excerpt?.trim() || null,
+    image: a.image || null,
+    imageBlur: a.imageBlur || null,
+    publisher: a.publisher ?? '',
+    publisherLogo: null,
+    verified: false,
+    meta: [a.dateLabel ?? cardDate(a.date), readingTime(a.readingTimeMinutes)].filter(Boolean).join(' · '),
+    stats: null,
+    hasAudio: !!a.hasAudio,
+  };
+}

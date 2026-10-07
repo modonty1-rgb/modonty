@@ -181,3 +181,6 @@ export const motion = {
 export const fontScale = {
   max: 1.3,
 } as const;
+
+/** الشعار الكامل في رأس الرئيسية — نسبة الشعار الرسمي (≈ ٢٫٩:١) بارتفاع ٣٢. */
+export const brandWordmark = { width: 92, height: 32 } as const;
