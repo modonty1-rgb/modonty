@@ -1,4 +1,4 @@
-import type { InspectPayload } from "./constants";
+import type { InspectPayload } from "@/lib/inspect/constants";
 import { isDescOk, isTitleOk, META_DESCRIPTION, META_TITLE } from "./seo-rules";
 
 function countJsonNodes(value: unknown): number {

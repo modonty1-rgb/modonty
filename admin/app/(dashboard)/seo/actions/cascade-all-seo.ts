@@ -50,7 +50,7 @@ export async function cascadeSettingsToAllEntities(): Promise<{
   // Uses the SHARED bundle path (generateClientSEO) so image licensing + metaTags + JSON-LD
   // stay identical to the per-client save — no divergence between cascade and single-save.
   const { generateClientSEO } = await import(
-    "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo"
+    "@/lib/clients/generate-client-seo"
   );
   const allClients = await db.client.findMany({ select: { id: true } });
   let clientSuccess = 0;

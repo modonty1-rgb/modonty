@@ -16,7 +16,7 @@ import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { db } from "@/lib/db";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { PAGE_CONFIGS } from "@/app/(dashboard)/modonty/setting/helpers/page-config";
+import { PAGE_CONFIGS } from "@/lib/modonty/page-config";
 
 import type { Prisma } from "@prisma/client";
 

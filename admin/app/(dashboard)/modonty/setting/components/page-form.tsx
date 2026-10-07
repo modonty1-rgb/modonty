@@ -14,7 +14,7 @@ import { RichTextEditor } from "@/app/(dashboard)/articles/components/rich-text-
 import { Save, Loader2, RefreshCw, Eye, FileText, Clock } from "lucide-react";
 import { useState } from "react";
 import { usePageForm, type PageInitialData } from "../helpers/hooks/use-page-form";
-import { getPageConfig } from "../helpers/page-config";
+import { getPageConfig } from "@/lib/modonty/page-config";
 
 export interface SettingsDefaults {
   siteUrl: string;

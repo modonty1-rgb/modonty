@@ -2,7 +2,7 @@
 
 export async function getClientAnalytics(clientId: string) {
   try {
-    const { getAnalyticsData } = await import("@/app/(dashboard)/analytics/actions/analytics-actions");
+    const { getAnalyticsData } = await import("@/lib/analytics/get-analytics-data");
     return await getAnalyticsData({ clientId });
   } catch (error) {
     console.error("Error fetching client analytics:", error);

@@ -11,7 +11,7 @@ export {
   calculateWordCountImproved,
   calculateReadingTime,
   determineContentDepth,
-} from "./word-count";
+} from "@/lib/articles/word-count";
 
 // SEO metadata generation
 export {

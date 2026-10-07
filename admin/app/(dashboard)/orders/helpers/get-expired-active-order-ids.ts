@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { expiredByDateWhere } from "@/app/(dashboard)/clients/segment/segments";
+import { expiredByDateWhere } from "@/lib/clients/segments";
 
 /**
  * **الطلباتُ السارية لعملاءٍ انتهى اشتراكُهم** — ما يعدّه ويعرضه «منتهٍ» في شاشة الاشتراكات.

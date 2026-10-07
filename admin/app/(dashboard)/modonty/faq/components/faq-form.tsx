@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FormInput, FormTextarea } from "@/components/admin/form-field";
 import { CharacterCounter } from "@/components/shared/character-counter";
 import { Loader2, Save, ArrowLeft } from "lucide-react";
-import { createFAQ, updateFAQ } from "../actions/faq-actions";
+import { createFAQ, updateFAQ } from "@/lib/modonty/faq-actions";
 import type { FAQFormData } from "../helpers/faq-schema";
 import { useToast } from "@/hooks/use-toast";
 

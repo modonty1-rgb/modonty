@@ -8,7 +8,7 @@ import { slugify } from "@/lib/utils";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { logAction } from "@/lib/audit/log-action";
 import { recordRedirect } from "@/lib/redirect/record-redirect";
-import { generateClientSEO } from "./generate-client-seo";
+import { generateClientSEO } from "@/lib/clients/generate-client-seo";
 import { randomInt } from "crypto";
 import { sendTelegramMessage } from "@/lib/notifications/send-telegram-message";
 

@@ -14,7 +14,7 @@ import { SettingsTab } from "./tabs/settings-tab";
 import type { ClientPaymentState } from "../../helpers/payment-state";
 import { ClientAnalytics } from "./client-analytics";
 import { ClientArticles } from "./client-articles";
-import { IntakeBrief, type BriefForm } from "./intake-brief";
+import { IntakeBrief, type BriefForm } from "@/components/shared/clients/intake-brief";
 import { ClientSubscriptionDeal } from "./client-subscription-deal";
 import type { ActiveOrderSummary, ClientOrderRow } from "@/lib/orders/resolve-active-order";
 import { ArticleStatus } from "@prisma/client";

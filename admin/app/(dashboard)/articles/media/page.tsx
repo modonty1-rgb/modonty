@@ -2,7 +2,7 @@ import { canDeleteMedia } from "@/lib/media/can-delete-media";
 import { deleteMedia } from "@/lib/media/delete-media";
 // The in-place WebP swap lives with the Media section (it rebuilds client SEO through the
 // clients actions) — same cross-route import Clients › Media makes, noted there.
-import { saveOptimizedImage } from "@/app/(dashboard)/media/actions/optimize-image";
+import { saveOptimizedImage } from "@/lib/media/optimize-image";
 import { MediaPageClient } from "@/components/shared/media-library/media-page-client";
 import { MediaKindToggles, MediaUsageSelect, UrlSearchPicker } from "@/components/shared/media-library/media-filter-bar";
 import { ARTICLE_MEDIA_KINDS, type ArticleMediaKind } from "./helpers/article-media-kinds";

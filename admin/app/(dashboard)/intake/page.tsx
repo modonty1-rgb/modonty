@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ClipboardList, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getIntakeForm } from "./actions/intake-admin-actions";
+import { getIntakeForm } from "@/lib/intake/intake-admin-actions";
 import { IntakeManager } from "./components/intake-manager";
 
 export const dynamic = "force-dynamic";

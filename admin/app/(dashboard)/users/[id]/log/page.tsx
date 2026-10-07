@@ -5,18 +5,18 @@ import { format, formatDistanceToNow } from "date-fns";
 
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { getUserById } from "../../actions/users-actions";
+import { getUserById } from "@/lib/users/users-actions";
 import {
   getAuditLogs,
   getStaffActivitySummary,
-} from "../../../audit-log/actions/audit-log-actions";
-import { AuditLogTable } from "../../../audit-log/components/audit-log-table";
+} from "@/lib/audit-log/audit-log-actions";
+import { AuditLogTable } from "@/components/shared/audit-log/audit-log-table";
 import {
   friendlyAction,
   actionTone,
   entityCategory,
   type CategoryMeta,
-} from "@/app/(dashboard)/audit-log/helpers/audit-labels";
+} from "@/lib/audit-log/audit-labels";
 
 interface StaffLogPageProps {
   params: Promise<{ id: string }>;

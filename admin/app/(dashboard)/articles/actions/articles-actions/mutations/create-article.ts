@@ -92,9 +92,7 @@ export async function createArticle(data: ArticleFormData) {
     // cannot set PUBLISHED — see meta-section). Going live happens ONLY via transitionArticleAction,
     // which runs the single real gate (assertArticlePublishable). One gate, one score.
 
-    const { getModontyAuthor } = await import(
-      "@/app/(dashboard)/authors/actions/authors-actions"
-    );
+    const { getModontyAuthor } = await import("@/lib/authors/get-modonty-author");
     const modontyAuthor = await getModontyAuthor();
     if (!modontyAuthor) {
       return {

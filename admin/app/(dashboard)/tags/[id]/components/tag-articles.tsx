@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Link from "next/link";
 import { ArticleStatus } from "@prisma/client";
-import { getStatusLabel, getStatusVariant } from "../../../articles/helpers/status-utils";
+import { getStatusLabel, getStatusVariant } from "@/lib/articles/status-utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { ArticleRowActions } from "@/app/(dashboard)/articles/components/article-row-actions";
+import { ArticleRowActions } from "@/components/shared/articles/article-row-actions";
 
 interface Article {
   id: string;

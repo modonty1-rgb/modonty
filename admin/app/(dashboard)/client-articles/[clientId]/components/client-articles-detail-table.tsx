@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { ExternalLink, Star, AlertTriangle } from "lucide-react";
 
-import { getStatusLabel } from "../../../articles/helpers/status-utils";
+import { getStatusLabel } from "@/lib/articles/status-utils";
 import { setMainArticle } from "../../actions/set-main-article";
 import type { ClientSiteArticleRow } from "../helpers/load-client-detail";
 

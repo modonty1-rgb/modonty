@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { ImageGalleryManager } from '../image-gallery-manager';
 import { Button } from '@/components/ui/button';
 import { MediaPickerDialog } from '@/components/shared/media-picker-dialog';
-import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
+import { getMediaById } from '@/lib/media/get-media-by-id';
 import { ThumbnailImageView } from '../thumbnail-image-view';
 import { Loader2, ImagePlus, Music, Library, ArrowRight, AlertCircle, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';

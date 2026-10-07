@@ -9,7 +9,7 @@ import { OrdersTable, type ClientGroup, type GroupStanding, type OrderRow } from
 
 import { formatMonths } from "./helpers/format-months";
 import { formatOrderAmount } from "@/lib/orders/format-order-amount";
-import { formatOrderDate } from "./helpers/format-order-date";
+import { formatOrderDate } from "@/lib/orders/format-order-date";
 import { formatOrderMoney } from "@/lib/orders/format-order-money";
 import { getFirstPublishedDates } from "./helpers/get-first-published-dates";
 import { getSubscriptionStanding } from "./helpers/get-subscription-standing";

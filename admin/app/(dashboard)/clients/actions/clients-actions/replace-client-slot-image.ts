@@ -4,9 +4,9 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { deleteMedia } from "@/lib/media/delete-media";
-import { updateClientLogo } from "./update-client-logo";
-import { updateClientHero } from "./update-client-hero";
-import { updateClientMobileHero } from "./update-client-mobile-hero";
+import { updateClientLogo } from "@/lib/clients/update-client-logo";
+import { updateClientHero } from "@/lib/clients/update-client-hero";
+import { updateClientMobileHero } from "@/lib/clients/update-client-mobile-hero";
 
 const schema = z.object({
   clientId: z.string().min(1),

@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 import { getClientById } from "../../actions/clients-actions";
-import { getIndustries } from "../../../industries/actions/industries-actions";
+import { getIndustries } from "@/lib/industries/get-industries";
 import { getClientsForSelect } from "../../actions/clients-actions/get-clients-for-select";
-import { getEditors } from "../../../users/actions/users-actions";
+import { getEditors } from "@/lib/users/users-actions";
 import {
   getActiveCountries,
   getActiveCtaPresets,
-} from "../../../settings/reference-data/actions/reference-data-actions";
+} from "@/lib/settings/reference-data-actions";
 import { ClientForm } from "../../components/client-form";
 
 export default async function EditClientPage({ params }: { params: Promise<{ id: string }> }) {

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Layers } from "lucide-react";
-import { Article } from "../helpers/article-view-types";
+import { Article } from "@/lib/articles/article-view-types";
 import { CopyableId } from "./shared/copyable-id";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 

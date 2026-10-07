@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HelpCircle } from "lucide-react";
-import { Article } from "../helpers/article-view-types";
+import { Article } from "@/lib/articles/article-view-types";
 import { CopyableId } from "./shared/copyable-id";
 
 interface ArticleViewFaqsProps {

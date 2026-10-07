@@ -9,8 +9,8 @@ import { getClients, getClientsStats, ClientFilters } from "./actions/clients-ac
 // «Advanced Table» (Khalid, 27 Sep 2026) — replaces the header wrapper + tabs + table here.
 // The old components stay in the repo until the team confirms the new page.
 import { ClientsBoard } from "./components/clients-board";
-import { getPlatformDefaults } from "../settings/defaults/actions/defaults-actions";
-import { expiredByDateWhere, expiringThisMonthWhere } from "./segment/segments";
+import { getPlatformDefaults } from "@/lib/settings/defaults-actions";
+import { expiredByDateWhere, expiringThisMonthWhere } from "@/lib/clients/segments";
 
 function TableSkeleton() {
   return (

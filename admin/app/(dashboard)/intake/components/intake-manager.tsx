@@ -25,7 +25,7 @@ import {
   createQuestion, updateQuestion, deleteQuestion, setQuestionEnabled,
   moveQuestion, setSectionEnabled,
   type IntakeFormTree, type IntakeQuestionTree, type QuestionInput,
-} from "../actions/intake-admin-actions";
+} from "@/lib/intake/intake-admin-actions";
 
 // Admin-facing answer categories — deliberately few + plain language. The engine
 // supports more internal types (SELECT/CHECKBOX/REPEATED_GROUP/GROUP), but the admin

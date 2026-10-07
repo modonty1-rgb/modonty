@@ -3,8 +3,8 @@ import { ExternalLink, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-import { SeoRowAction } from "./seo-row-action";
-import type { RemovalTrackState } from "../actions/removal-tracking-actions";
+import { SeoRowAction } from "@/components/shared/search-console/seo-row-action";
+import type { RemovalTrackState } from "@/lib/search-console/removal-tracking-actions";
 
 export interface RemovalRow {
   url: string;

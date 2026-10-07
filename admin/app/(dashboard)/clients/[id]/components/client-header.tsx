@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { ImageIcon, Camera, ExternalLink, Pencil } from "lucide-react";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
 import { DeleteClientButton } from "./delete-client-button";
-import { OpenClientConsoleButton } from "../../components/edit-workspace/open-client-console-button";
+import { OpenClientConsoleButton } from "@/components/shared/clients/open-client-console-button";
 import { ClientLogoModal } from "../../components/client-logo-modal";
 import { ClientHeroModal } from "../../components/client-hero-modal";
 import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/shared/lib/seo/ymyl-config";

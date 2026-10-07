@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { deleteBunnyUrl, isBunnyUrl } from "@modonty/shared/lib/bunny";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { generateClientSEO } from "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo";
+import { generateClientSEO } from "@/lib/clients/generate-client-seo";
 
 // Admin management of a client's gallery. Mirrors the console gallery flow EXCEPT it does
 // NOT spawn an image-reel (reels are client-initiated from the console). The file is

@@ -18,9 +18,9 @@ import { Twitter } from "@modonty/shared/components/icons/twitter";
 import { Whatsapp } from "@modonty/shared/components/icons/whatsapp";
 import { Youtube } from "@modonty/shared/components/icons/youtube";
 import { updateAllSettings, type AllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
-import { Section } from "@/app/(dashboard)/settings/components/section";
-import { Field } from "@/app/(dashboard)/settings/components/field";
-import { StatusBadge } from "@/app/(dashboard)/settings/components/status-badge";
+import { Section } from "@/components/shared/settings/section";
+import { Field } from "@/components/shared/settings/field";
+import { StatusBadge } from "@/components/shared/settings/status-badge";
 
 interface Props {
   initialSettings: AllSettings;

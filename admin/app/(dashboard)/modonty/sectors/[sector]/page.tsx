@@ -11,7 +11,7 @@ import { PickToggle } from "@/components/shared/article-picks/pick-toggle";
 import { LIVE_SECTORS, SECTOR_PICK_LIMIT } from "@modonty/shared/lib/sectors/live-sectors";
 import { reorderSectorPicks, setSectorPick } from "../actions";
 import { getPage } from "../../setting/actions/page-actions";
-import { getPageConfig } from "../../setting/helpers/page-config";
+import { getPageConfig } from "@/lib/modonty/page-config";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { PageFormWrapper } from "../../components/page-form-wrapper";
 import { SectorHeroForm } from "./components/sector-hero-form";

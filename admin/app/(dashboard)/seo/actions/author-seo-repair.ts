@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { getModontyAuthor } from "@/app/(dashboard)/authors/actions/authors-actions/get-modonty-author";
+import { getModontyAuthor } from "@/lib/authors/get-modonty-author";
 import { buildModontyAuthorSeo } from "@/app/(dashboard)/authors/helpers/build-modonty-author-seo";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";

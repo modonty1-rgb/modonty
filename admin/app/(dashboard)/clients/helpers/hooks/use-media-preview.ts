@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { getMediaById } from "@/app/(dashboard)/media/actions/get-media-by-id";
+import { getMediaById } from "@/lib/media/get-media-by-id";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 interface MediaPreview {

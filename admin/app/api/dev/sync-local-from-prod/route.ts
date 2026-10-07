@@ -3,7 +3,7 @@ import dnsPromises from "node:dns/promises";
 import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { MongoClient, IndexDescription } from "mongodb";
-import { listRequiredRelations, scanOrphans } from "@/app/(dashboard)/database/actions/orphan-scan";
+import { listRequiredRelations, scanOrphans } from "@/lib/database/orphan-scan";
 
 /**
  * **رابطُ الإنتاج من متغيّر بيئة — لا نصّاً في المستودع** (١٩ سبتمبر ٢٠٢٦).

@@ -6,7 +6,7 @@ import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score"
 import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 import { hasStoredOgImage } from "@modonty/shared/lib/seo/client/meta-score";
 import { getPaymentStates, paymentStateLabel, NO_PAYMENT_STATE } from "../../helpers/payment-state";
-import { getSegment } from "../segments";
+import { getSegment } from "@/lib/clients/segments";
 import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { SegmentPageHeader } from "@/components/shared/segment-page-header";
 import { SegmentTable, type SegmentClient } from "./components/segment-table";

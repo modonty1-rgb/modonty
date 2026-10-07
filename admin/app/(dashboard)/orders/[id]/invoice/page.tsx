@@ -5,7 +5,7 @@ import { AlertTriangle, ArrowRight, CheckCircle2, Mail } from "lucide-react";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
-import { formatOrderDate } from "../../helpers/format-order-date";
+import { formatOrderDate } from "@/lib/orders/format-order-date";
 import { renderOrderInvoiceEmail } from "./helpers/render-order-invoice-email";
 import { EmailPreviewFrame } from "./components/email-preview-frame";
 import { IssueInvoiceButton } from "./components/issue-invoice-button";

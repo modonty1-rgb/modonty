@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { resetArticleStatusAction } from "../../actions/reset-status";
-import { getStatusLabel } from "../../../helpers/status-utils";
+import { getStatusLabel } from "@/lib/articles/status-utils";
 
 interface Props {
   articleId: string;

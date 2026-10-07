@@ -2,7 +2,7 @@
 
 import { CheckCircle2, CircleDashed } from "lucide-react";
 
-import { OpenClientConsoleButton } from "./open-client-console-button";
+import { OpenClientConsoleButton } from "@/components/shared/clients/open-client-console-button";
 
 /**
  * **ما أدخله العميلُ بنفسه — نقرؤه ولا نكتبه.**

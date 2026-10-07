@@ -1,12 +1,12 @@
-import { getOrphanStats } from "@/app/(dashboard)/database/actions/orphan-cleaner";
-import { getIndexHealth } from "@/app/(dashboard)/database/actions/index-health";
-import { getSlugIntegrity } from "@/app/(dashboard)/database/actions/slug-integrity";
-import { getBrokenReferences } from "@/app/(dashboard)/database/actions/broken-references";
-import { getSessionCleanerStats } from "@/app/(dashboard)/database/actions/session-cleaner";
-import { getStaleVersionsStats } from "@/app/(dashboard)/database/actions/stale-versions";
-import { getDuplicateSlugs } from "@/app/(dashboard)/database/actions/duplicate-slugs";
-import { getLegalFormSanitizerStats } from "@/app/(dashboard)/database/actions/legalform-sanitizer";
-import { getCanonicalSanitizerStats } from "@/app/(dashboard)/database/actions/canonical-sanitizer";
+import { getOrphanStats } from "@/lib/database/orphan-cleaner";
+import { getIndexHealth } from "@/lib/database/index-health";
+import { getSlugIntegrity } from "@/lib/database/slug-integrity";
+import { getBrokenReferences } from "@/lib/database/broken-references";
+import { getSessionCleanerStats } from "@/lib/database/session-cleaner";
+import { getStaleVersionsStats } from "@/lib/database/stale-versions";
+import { getDuplicateSlugs } from "@/lib/database/duplicate-slugs";
+import { getLegalFormSanitizerStats } from "@/lib/database/legalform-sanitizer";
+import { getCanonicalSanitizerStats } from "@/lib/database/canonical-sanitizer";
 import { getSiteUrlDriftStatus } from "@/lib/seo/site-url";
 import { MaintenancePageShell } from "./components/maintenance-page-shell";
 

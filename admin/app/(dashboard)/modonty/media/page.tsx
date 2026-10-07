@@ -4,7 +4,7 @@ import { canDeleteMedia } from "@/lib/media/can-delete-media";
 import { deleteMedia } from "@/lib/media/delete-media";
 // Same one cross-route import Clients › Media carries: the in-place WebP swap lives with the
 // Media section and rebuilds SEO through actions that cannot move to lib/ without it.
-import { saveOptimizedImage } from "@/app/(dashboard)/media/actions/optimize-image";
+import { saveOptimizedImage } from "@/lib/media/optimize-image";
 import Link from "next/link";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";

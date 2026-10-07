@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { buildArticleUrl } from "@/lib/seo/url-builders";
 import { getCachedInspection } from "@/lib/gsc/inspection-cache";
 
-import { getManualTrackState } from "../../../search-console/actions/removal-tracking-actions";
+import { getManualTrackState } from "@/lib/search-console/removal-tracking-actions";
 import { PipelineRunner } from "./pipeline-runner";
 
 export default async function IndexingPipelinePage({

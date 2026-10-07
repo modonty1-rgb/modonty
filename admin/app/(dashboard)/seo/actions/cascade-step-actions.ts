@@ -109,7 +109,7 @@ export async function regenerateOneClientCascade(
     if (!session) return { success: false, error: "Unauthorized" };
 
     const { generateClientSEO } = await import(
-      "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo"
+      "@/lib/clients/generate-client-seo"
     );
     const result = await generateClientSEO(clientId);
     return result.success
@@ -186,7 +186,7 @@ export async function getStoredPageTargets(): Promise<StoredPageTarget[]> {
 
   const [{ listListingPageTargets }, { PAGE_CONFIGS }] = await Promise.all([
     import("@/lib/seo/listing-page-seo-generator"),
-    import("@/app/(dashboard)/modonty/setting/helpers/page-config"),
+    import("@/lib/modonty/page-config"),
   ]);
 
   const listings = await listListingPageTargets();

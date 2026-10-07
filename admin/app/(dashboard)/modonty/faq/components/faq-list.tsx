@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Edit, Trash2, ChevronUp, ChevronDown, Eye, EyeOff } from "lucide-react";
-import { deleteFAQ, toggleFAQStatus, bulkUpdatePositions } from "../actions/faq-actions";
+import { deleteFAQ, toggleFAQStatus, bulkUpdatePositions } from "@/lib/modonty/faq-actions";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 

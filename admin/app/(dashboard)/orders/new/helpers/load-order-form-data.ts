@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { getSalesReps } from "@/app/(dashboard)/users/actions/users-actions";
+import { getSalesReps } from "@/lib/users/users-actions";
 
 /**
  * ما تحتاجه شاشة «طلب اشتراك جديد» لترسم نفسها — الباقات بأسعار السوقين، والمدد.

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Link from "next/link";
 import { ArticleStatus } from "@prisma/client";
-import { getStatusLabel, getStatusVariant } from "../../../articles/helpers/status-utils";
+import { getStatusLabel, getStatusVariant } from "@/lib/articles/status-utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

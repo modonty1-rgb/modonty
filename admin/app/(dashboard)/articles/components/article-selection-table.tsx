@@ -13,7 +13,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/h
 import { Search, X, ExternalLink, ChevronDown } from 'lucide-react';
 import { ArticleSelectionItem } from '../actions/articles-actions';
 import { ArticleStatus } from '@prisma/client';
-import { getStatusLabel, getStatusVariant } from '../helpers/status-utils';
+import { getStatusLabel, getStatusVariant } from '@/lib/articles/status-utils';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';

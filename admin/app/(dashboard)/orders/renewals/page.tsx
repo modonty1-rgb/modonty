@@ -10,7 +10,7 @@ import { checkFinanceAdmin } from "@/lib/require-finance-admin";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
 import { getClientSubscriptionsShared } from "@/lib/subscription/get-client-subscriptions";
 import { RENEWAL_SOON_DAYS } from "@/lib/orders/renewal-window";
-import { NOT_INTERNAL } from "@/app/(dashboard)/clients/segment/segments";
+import { NOT_INTERNAL } from "@/lib/clients/segments";
 
 export const dynamic = "force-dynamic";
 

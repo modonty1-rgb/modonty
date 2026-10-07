@@ -1,4 +1,4 @@
-import { getPageConfig } from "./page-config";
+import { getPageConfig } from "@/lib/modonty/page-config";
 /**
  * Build meta tags object from a page-like object. Shared by generate-modonty-page-seo and get-live-preview-seo.
  */

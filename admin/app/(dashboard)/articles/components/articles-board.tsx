@@ -18,7 +18,7 @@ import { getArticleSeoScore } from "@/lib/seo/article-seo-score";
 import { cn } from "@/lib/utils";
 import { STATUS_TONE } from "../helpers/status-colors";
 import { ArticlesFilters } from "./articles-filters";
-import type { Article as ArticleViewType } from "../[id]/helpers/article-view-types";
+import type { Article as ArticleViewType } from "@/lib/articles/article-view-types";
 
 type Article = ArticleViewType & { views: number };
 

@@ -20,21 +20,21 @@
 
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
-import { createCategory } from "@/app/(dashboard)/categories/actions/categories-actions/create-category";
-import { updateCategory } from "@/app/(dashboard)/categories/actions/categories-actions/update-category";
-import { deleteCategory } from "@/app/(dashboard)/categories/actions/categories-actions/delete-category";
+import { createCategory } from "@/lib/categories/create-category";
+import { updateCategory } from "@/lib/categories/update-category";
+import { deleteCategory } from "@/lib/categories/delete-category";
 import { createTag } from "@/app/(dashboard)/tags/actions/tags-actions";
 import { updateTag, deleteTag } from "@/app/(dashboard)/tags/actions/tags-actions";
-import { createIndustry } from "@/app/(dashboard)/industries/actions/industries-actions/create-industry";
-import { updateIndustry } from "@/app/(dashboard)/industries/actions/industries-actions/update-industry";
-import { deleteIndustry } from "@/app/(dashboard)/industries/actions/industries-actions/delete-industry";
+import { createIndustry } from "@/lib/industries/create-industry";
+import { updateIndustry } from "@/lib/industries/update-industry";
+import { deleteIndustry } from "@/lib/industries/delete-industry";
 import { createClient } from "@/app/(dashboard)/clients/actions/clients-actions/create-client";
-import { deleteClient } from "@/app/(dashboard)/clients/actions/clients-actions/delete-client";
+import { deleteClient } from "@/lib/clients/delete-client";
 import { createArticle } from "@/app/(dashboard)/articles/actions/articles-actions/mutations/create-article";
 import { updateArticle } from "@/app/(dashboard)/articles/actions/articles-actions/mutations/update-article";
-import { deleteArticle } from "@/app/(dashboard)/articles/actions/articles-actions/mutations/delete-article";
-import { getModontyAuthor } from "@/app/(dashboard)/authors/actions/authors-actions/get-modonty-author";
-import { createFAQ, updateFAQ, deleteFAQ } from "@/app/(dashboard)/modonty/faq/actions/faq-actions";
+import { deleteArticle } from "@/lib/articles/delete-article";
+import { getModontyAuthor } from "@/lib/authors/get-modonty-author";
+import { createFAQ, updateFAQ, deleteFAQ } from "@/lib/modonty/faq-actions";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 

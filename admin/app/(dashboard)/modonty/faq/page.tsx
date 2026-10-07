@@ -1,4 +1,4 @@
-import { getFAQs } from "./actions/faq-actions";
+import { getFAQs } from "@/lib/modonty/faq-actions";
 import { FAQList } from "./components/faq-list";
 import { FAQCreateDialog } from "./components/faq-create-dialog";
 import { Badge } from "@/components/ui/badge";

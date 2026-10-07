@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { db } from "@/lib/db";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
-import { formatOrderDate } from "@/app/(dashboard)/orders/helpers/format-order-date";
+import { formatOrderDate } from "@/lib/orders/format-order-date";
 import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 import { orderStatusCopy } from "@/lib/orders/order-status-copy";
 import { formatOrderMoney } from "@/lib/orders/format-order-money";

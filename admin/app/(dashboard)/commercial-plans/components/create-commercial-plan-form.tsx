@@ -4,7 +4,7 @@ import { useRef, useTransition } from "react";
 import { Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createCommercialPlan } from "../actions";
+import { createCommercialPlan } from "@/lib/commercial-plans/actions";
 
 export function CreateCommercialPlanForm() {
   const ref = useRef<HTMLFormElement>(null); const [pending, startTransition] = useTransition();

@@ -1,6 +1,6 @@
 import { InvoicePaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { NOT_INTERNAL } from "../../segment/segments";
+import { NOT_INTERNAL } from "@/lib/clients/segments";
 import { REVENUE_ORDER } from "@/lib/orders/revenue-order";
 import { clientIdsWhere, getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { invoiceMinor, isOutstandingInvoice } from "@modonty/shared/lib/payments/collected";

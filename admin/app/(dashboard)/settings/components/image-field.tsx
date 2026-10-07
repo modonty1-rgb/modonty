@@ -6,7 +6,7 @@ import { Library, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MediaPickerDialog } from "@/components/shared/media-picker-dialog";
-import { Field } from "./field";
+import { Field } from "@/components/shared/settings/field";
 
 interface Props {
   /** Empty string renders the control bare (no Field label row) — for cards that

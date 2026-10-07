@@ -5,7 +5,7 @@ import { messages } from "@/lib/messages";
 import { MediaPicker } from "../media-picker";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import type { ClientWithRelations } from "@/lib/types";
-import { updateMedia } from "../../../media/actions/media-actions";
+import { updateMedia } from "@/app/(dashboard)/media/actions/update-media";
 import { useToast } from "@/hooks/use-toast";
 import { useMediaPreview } from "../../helpers/hooks/use-media-preview";
 import { mediaSrc } from "@modonty/shared/lib/media-src";

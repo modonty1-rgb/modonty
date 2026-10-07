@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { getArticleSeoScore } from '@/lib/seo/article-seo-score';
 import { SeoScoreBadge } from '@/components/shared/seo-score-badge';
-import { Article } from '../helpers/article-view-types';
+import { Article } from '@/lib/articles/article-view-types';
 
 // The SEO number comes from shared — the single source of truth for every surface
 // (Khalid 2026-07-13: «أحتاج نتيجة 100% من source of truth واحد»). It scores the STORED,

@@ -5,9 +5,9 @@ import { notFound } from "next/navigation";
 import { ArrowRight, BookOpen, ExternalLink, Facebook, FileText, Ghost, Globe, Image as ImageIcon, Instagram, Linkedin, Link2, MessageCircle, Music2, Share2, ShieldAlert, Twitter, Youtube } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getIntakeForm } from "@/app/(dashboard)/intake/actions/intake-admin-actions";
-import { IntakeBrief, type BriefForm } from "@/app/(dashboard)/clients/[id]/components/intake-brief";
-import { OpenClientConsoleButton } from "@/app/(dashboard)/clients/components/edit-workspace/open-client-console-button";
+import { getIntakeForm } from "@/lib/intake/intake-admin-actions";
+import { IntakeBrief, type BriefForm } from "@/components/shared/clients/intake-brief";
+import { OpenClientConsoleButton } from "@/components/shared/clients/open-client-console-button";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 
 import { getBriefDetail } from "../helpers/load-brief-detail";

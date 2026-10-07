@@ -6,7 +6,7 @@ import { getClientSubscriptions } from "@/lib/subscription/get-client-subscripti
 // (e.g. /clients/verify) hitting Prisma with a malformed id and crashing with a 500.
 const isValidObjectId = (id: string) => /^[a-f\d]{24}$/i.test(id);
 import { getClientById, getClientArticles, getClientAnalytics, getClientMedia } from "../actions/clients-actions";
-import { getIntakeForm } from "@/app/(dashboard)/intake/actions/intake-admin-actions";
+import { getIntakeForm } from "@/lib/intake/intake-admin-actions";
 import { ClientHeader } from "./components/client-header";
 import { ClientTabs } from "./components/client-tabs";
 import { ArticleStatus } from "@prisma/client";

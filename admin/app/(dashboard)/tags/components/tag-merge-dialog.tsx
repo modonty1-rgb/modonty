@@ -16,7 +16,7 @@ import {
   regenerateArticleSeoForMerge,
   finalizeTagMerge,
   type TagMergeImpact,
-} from "../actions/merge-tag-actions";
+} from "@/lib/tags/merge-tag-actions";
 
 export interface TagLite {
   id: string;

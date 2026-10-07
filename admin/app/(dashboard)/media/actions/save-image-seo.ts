@@ -7,7 +7,7 @@ import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { generateClientSEO } from "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo";
+import { generateClientSEO } from "@/lib/clients/generate-client-seo";
 import { generateAndSaveJsonLd } from "@/lib/seo";
 import { logAction } from "@/lib/audit/log-action";
 import { altToFileBase } from "@modonty/shared/lib/seo/media/alt-to-filename";

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
-import { getModontyAuthor } from "./get-modonty-author";
+import { getModontyAuthor } from "@/lib/authors/get-modonty-author";
 import { buildModontyAuthorSeo } from "../../helpers/build-modonty-author-seo";
 import { batchRegenerateArticleSeo } from "@/lib/seo";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { regenerateAllStaleJsonLd } from "./jsonld-integrity";
-import { sanitizeAllCanonicals } from "@/app/(dashboard)/database/actions/canonical-sanitizer";
+import { sanitizeAllCanonicals } from "@/lib/database/canonical-sanitizer";
 import { refreshAllSitemaps } from "./sitemap-freshness";
 import { syncHreflangLocales } from "./hreflang-sync";
 import { regenerateModontyAuthorSeo } from "./author-seo-repair";

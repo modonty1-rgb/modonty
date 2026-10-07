@@ -2,9 +2,9 @@ import Link from "next/link";
 import { X } from "lucide-react";
 
 import { PageHeader } from "@/components/shared/page-header";
-import { getAuditLogs } from "./actions/audit-log-actions";
-import { getUserById } from "../users/actions/users-actions";
-import { AuditLogTable } from "./components/audit-log-table";
+import { getAuditLogs } from "@/lib/audit-log/audit-log-actions";
+import { getUserById } from "@/lib/users/users-actions";
+import { AuditLogTable } from "@/components/shared/audit-log/audit-log-table";
 
 interface AuditLogPageProps {
   searchParams: Promise<{ userId?: string }>;

@@ -1,6 +1,6 @@
 // Re-export all media actions for backward compatibility
 export { getMedia } from "./get-media";
-export { getMediaById } from "./get-media-by-id";
+export { getMediaById } from "@/lib/media/get-media-by-id";
 export { getMediaStats } from "./get-media-stats";
 export { getClients } from "./get-clients";
 export { createMedia } from "@/lib/media/create-media";

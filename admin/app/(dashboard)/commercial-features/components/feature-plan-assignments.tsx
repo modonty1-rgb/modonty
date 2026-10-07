@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Save } from "lucide-react";
-import { setCommercialFeaturePlanAssignments } from "../../commercial-plans/actions";
+import { setCommercialFeaturePlanAssignments } from "@/lib/commercial-plans/actions";
 
 type PlanOption = { id: string; name: string };
 

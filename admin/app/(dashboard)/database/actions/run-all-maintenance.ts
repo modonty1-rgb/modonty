@@ -2,12 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
-import { cleanExpiredOtps } from "./orphan-cleaner";
-import { cleanExpiredSessions } from "./session-cleaner";
-import { cleanStaleVersions } from "./stale-versions";
-import { createTTLIndex, getIndexHealth, ensurePerfIndexes } from "./index-health";
-import { sanitizeAllLegalForms, sanitizeAllOrganizationTypes } from "./legalform-sanitizer";
-import { sanitizeAllCanonicals } from "./canonical-sanitizer";
+import { cleanExpiredOtps } from "@/lib/database/orphan-cleaner";
+import { cleanExpiredSessions } from "@/lib/database/session-cleaner";
+import { cleanStaleVersions } from "@/lib/database/stale-versions";
+import { createTTLIndex, getIndexHealth, ensurePerfIndexes } from "@/lib/database/index-health";
+import { sanitizeAllLegalForms, sanitizeAllOrganizationTypes } from "@/lib/database/legalform-sanitizer";
+import { sanitizeAllCanonicals } from "@/lib/database/canonical-sanitizer";
 import { backfillArticleHreflang } from "./hreflang-backfill";
 import { backfillArticleWordCount } from "./word-count-backfill";
 import { backfillArticleDatePublished } from "./date-published-backfill";
@@ -18,7 +18,7 @@ import { backfillMediaDimensions } from "./dimensions-backfill";
 import { hardDeleteOldSoftDeletedComments } from "./soft-deleted-comments";
 import { seedIntakeForm } from "./seed-intake";
 import { seedAiPrompts } from "./seed-ai-prompts";
-import { scanOrphans } from "./orphan-scan";
+import { scanOrphans } from "@/lib/database/orphan-scan";
 import { pruneDeadMetaTags } from "./prune-dead-meta-tags";
 import { decodeEscapedText } from "./decode-escaped-text";
 import { arabizeAuthorSeo } from "./arabize-author-seo";

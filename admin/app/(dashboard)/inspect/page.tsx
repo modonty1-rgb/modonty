@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { DataSourceCard } from "./components/data-source-card";
-import { SESSION_KEY, type InspectPayload } from "./helpers/constants";
+import { SESSION_KEY, type InspectPayload } from "@/lib/inspect/constants";
 import {
   buildSourceInfoFromPayload,
   countNodesFromJsonString,

@@ -17,7 +17,7 @@ import { DeleteOrderButton } from "../components/delete-order-button";
 import { OrderReceipt } from "../components/order-receipt";
 import { WhatsappInvoiceButton } from "../components/whatsapp-invoice-button";
 import { OrderStatusBadge } from "../components/order-status-badge";
-import { formatOrderDate } from "../helpers/format-order-date";
+import { formatOrderDate } from "@/lib/orders/format-order-date";
 import { formatOrderDateTime } from "../helpers/format-order-date-time";
 import { formatMonths } from "../helpers/format-months";
 import { formatOrderMoney } from "@/lib/orders/format-order-money";

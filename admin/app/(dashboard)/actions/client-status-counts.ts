@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { ClientCtaMode, ArticleStatus, InvoicePaymentStatus } from "@prisma/client";
 import { clientIdsWhere, getClientSubscriptionsShared, type ClientSubscription } from "@/lib/subscription/get-client-subscriptions";
 
-import { getClientIdsMissingCtaMode, getClientImageGaps, getClientDataGaps, NOT_INTERNAL } from "../clients/segment/segments";
+import { getClientIdsMissingCtaMode, getClientImageGaps, getClientDataGaps, NOT_INTERNAL } from "@/lib/clients/segments";
 
 /**
  * Clients, by the states an admin actually acts on (Khalid 2026-07-13).

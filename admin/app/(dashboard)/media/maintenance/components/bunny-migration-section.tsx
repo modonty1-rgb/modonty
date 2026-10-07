@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle2, CloudUpload, AlertTriangle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { migrateMediaBatch, type BunnyMigrationStats } from "../../actions/migrate-media-to-bunny";
+import { migrateMediaBatch, type BunnyMigrationStats } from "@/lib/media/migrate-media-to-bunny";
 
 const BATCH = 5; // small batches — stay well under the shared Cloudinary bandwidth
 

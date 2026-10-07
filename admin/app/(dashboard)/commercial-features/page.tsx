@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { db } from "@/lib/db";
-import { createCommercialFeature, moveCommercialFeature, setCommercialFeatureActive, setCommercialFeatureBillable, setCommercialFeatureHighlighted, updateCommercialFeature } from "../commercial-plans/actions";
+import { createCommercialFeature, moveCommercialFeature, setCommercialFeatureActive, setCommercialFeatureBillable, setCommercialFeatureHighlighted, updateCommercialFeature } from "@/lib/commercial-plans/actions";
 import { FeaturePlanAssignments } from "./components/feature-plan-assignments";
 
 export const dynamic = "force-dynamic";

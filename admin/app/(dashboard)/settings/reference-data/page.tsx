@@ -1,4 +1,4 @@
-import { getReferenceData } from "./actions/reference-data-actions";
+import { getReferenceData } from "@/lib/settings/reference-data-actions";
 import { ReferenceDataClient } from "./components/reference-data-client";
 
 export const dynamic = "force-dynamic";

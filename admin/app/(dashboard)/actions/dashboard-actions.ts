@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { getClientSubscriptionsShared } from "@/lib/subscription/get-client-subscriptions";
 import { startOfMonth, endOfMonth } from "date-fns";
 
-import { NOT_INTERNAL } from "../clients/segment/segments";
+import { NOT_INTERNAL } from "@/lib/clients/segments";
 
 
 export async function getDashboardAlerts() {

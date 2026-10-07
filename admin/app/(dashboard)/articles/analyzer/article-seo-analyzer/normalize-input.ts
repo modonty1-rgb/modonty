@@ -1,7 +1,7 @@
 import { ArticleSEOInput } from "../article-seo-types";
 import { calculateWordCountImproved } from "../../helpers/seo-helpers";
 import { ArticleFormData } from "@/lib/types/form-types";
-import { Article } from "../../[id]/helpers/article-view-types";
+import { Article } from "@/lib/articles/article-view-types";
 
 export type NormalizedInput = {
   title: string;

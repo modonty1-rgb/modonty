@@ -8,7 +8,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { getAllSettings, getSameAsFromSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { generateModontyPageJsonLd, type ModontySiteConfig } from "../helpers/generate-modonty-page-jsonld";
 import { validateModontyPageJsonLdComplete } from "../helpers/modonty-jsonld-validator";
-import { getPageConfig } from "../helpers/page-config";
+import { getPageConfig } from "@/lib/modonty/page-config";
 import { buildMetaFromPageLike } from "../helpers/build-meta-from-page";
 
 export async function generateModontyPageSEO(slug: string) {

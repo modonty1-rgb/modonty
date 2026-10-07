@@ -1,15 +1,15 @@
-import { HealthSummary } from "@/app/(dashboard)/database/components/health-summary";
+import { HealthSummary } from "@/components/shared/database/health-summary";
 import { DbToolsSection } from "@/app/(dashboard)/database/components/db-tools-section";
 import { AutoMaintenancePanel } from "@/app/(dashboard)/database/components/auto-maintenance-panel";
-import type { OrphanStats } from "@/app/(dashboard)/database/actions/orphan-cleaner";
-import type { TTLIndexStatus } from "@/app/(dashboard)/database/actions/index-health";
-import type { SlugIssue } from "@/app/(dashboard)/database/actions/slug-integrity";
-import type { BrokenRefsResult } from "@/app/(dashboard)/database/actions/broken-references";
-import type { SessionCleanerStats } from "@/app/(dashboard)/database/actions/session-cleaner";
-import type { StaleVersionsStats } from "@/app/(dashboard)/database/actions/stale-versions";
-import type { DuplicateSlugStats } from "@/app/(dashboard)/database/actions/duplicate-slugs";
-import type { LegalFormSanitizerStats } from "@/app/(dashboard)/database/actions/legalform-sanitizer";
-import type { CanonicalSanitizerStats } from "@/app/(dashboard)/database/actions/canonical-sanitizer";
+import type { OrphanStats } from "@/lib/database/orphan-cleaner";
+import type { TTLIndexStatus } from "@/lib/database/index-health";
+import type { SlugIssue } from "@/lib/database/slug-integrity";
+import type { BrokenRefsResult } from "@/lib/database/broken-references";
+import type { SessionCleanerStats } from "@/lib/database/session-cleaner";
+import type { StaleVersionsStats } from "@/lib/database/stale-versions";
+import type { DuplicateSlugStats } from "@/lib/database/duplicate-slugs";
+import type { LegalFormSanitizerStats } from "@/lib/database/legalform-sanitizer";
+import type { CanonicalSanitizerStats } from "@/lib/database/canonical-sanitizer";
 import type { SiteUrlDriftStatus } from "@/lib/seo/site-url";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 

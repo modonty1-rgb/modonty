@@ -7,7 +7,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import type { ClientFormData } from "@/lib/types";
 import type { Prisma } from "@prisma/client";
 import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
-import { generateClientSEO } from "./generate-client-seo";
+import { generateClientSEO } from "@/lib/clients/generate-client-seo";
 import { logAction } from "@/lib/audit/log-action";
 import { clientServerSchema } from "./client-server-schema";
 import { normalizeOrganizationType } from "@modonty/shared/lib/constants/client-classification";

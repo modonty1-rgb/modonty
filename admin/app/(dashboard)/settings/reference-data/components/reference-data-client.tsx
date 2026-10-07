@@ -76,7 +76,7 @@ import {
   type CtaPresetDTO,
   type CtaPresetMode,
   type LeadSourceDTO,
-} from "../actions/reference-data-actions";
+} from "@/lib/settings/reference-data-actions";
 
 type Category = AuthorityDTO["category"];
 

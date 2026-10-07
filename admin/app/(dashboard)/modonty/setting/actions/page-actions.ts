@@ -6,7 +6,7 @@ import { optimizeCloudinaryUrl } from "../../helpers/image-seo";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
-import { getPageConfig } from "../helpers/page-config";
+import { getPageConfig } from "@/lib/modonty/page-config";
 import type { PageFormData } from "../helpers/page-schema";
 import { generateModontyPageSEO } from "./generate-modonty-page-seo";
 

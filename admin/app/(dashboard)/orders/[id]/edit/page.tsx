@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
 import { isMigratedOrder } from "../../helpers/is-migrated-order";
-import { getSalesReps } from "@/app/(dashboard)/users/actions/users-actions";
+import { getSalesReps } from "@/lib/users/users-actions";
 import { OrderEditForm, type OrderForEdit } from "./components/order-edit-form";
 
 export const dynamic = "force-dynamic";

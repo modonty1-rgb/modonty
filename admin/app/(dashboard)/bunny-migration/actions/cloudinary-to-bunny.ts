@@ -492,7 +492,7 @@ export async function runScopeBatch(
   switch (scope) {
     case "media": {
       // Reuse the existing media migration — same uploader the Media library button uses.
-      const { migrateMediaBatch } = await import("@/app/(dashboard)/media/actions/migrate-media-to-bunny");
+      const { migrateMediaBatch } = await import("@/lib/media/migrate-media-to-bunny");
       const r = await migrateMediaBatch(ids.length, ids);
       if ("error" in r) {
         failed = ids.length;
@@ -683,7 +683,7 @@ export async function runScopeBatch(
 
     case "clients": {
       const { generateClientSEO } = await import(
-        "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo"
+        "@/lib/clients/generate-client-seo"
       );
       for (const id of ids) {
         try {

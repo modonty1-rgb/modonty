@@ -18,7 +18,7 @@ import {
 
 import { db } from "@/lib/db";
 import { clientSeoQuality, clientStatusCounts } from "@/lib/dashboard/cached";
-import { NOT_INTERNAL } from "@/app/(dashboard)/clients/segment/segments";
+import { NOT_INTERNAL } from "@/lib/clients/segments";
 import { GroupLabel, type Tier } from "../dashboard-ui";
 import { PanelHead } from "../panel-head";
 import { SeoHealthCard } from "../seo-health-card";

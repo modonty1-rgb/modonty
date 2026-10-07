@@ -11,7 +11,7 @@ import {
   savePlatformDefault,
   type PlatformDefaults,
   type DefaultRole,
-} from "../actions/defaults-actions";
+} from "@/lib/settings/defaults-actions";
 
 const ROLES: Array<{
   role: DefaultRole;

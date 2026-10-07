@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { regenerateArticleSeoForMerge } from "@/app/(dashboard)/tags/actions/merge-tag-actions";
+import { regenerateArticleSeoForMerge } from "@/lib/tags/merge-tag-actions";
 import {
   getCategoryMergeImpact,
   prepareCategoryMerge,

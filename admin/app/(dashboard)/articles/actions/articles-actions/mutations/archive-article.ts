@@ -5,7 +5,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import { ArticleStatus } from "@prisma/client";
-import { hasLeftForClientSite, CLIENT_SITE_LOCK_MESSAGE } from "../../../helpers/client-site-guard";
+import { hasLeftForClientSite, CLIENT_SITE_LOCK_MESSAGE } from "@/lib/articles/client-site-guard";
 
 export async function archiveArticle(id: string): Promise<{ success: boolean; error?: string }> {
   try {

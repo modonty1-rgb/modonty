@@ -14,8 +14,8 @@ import {
   Loader2,
   ScanSearch,
 } from 'lucide-react';
-import { openInspect } from '@/app/(dashboard)/inspect/helpers/open-inspect';
-import { validateClientJsonLdComplete } from '../../helpers/client-seo-config/client-jsonld-validator';
+import { openInspect } from '@/lib/inspect/open-inspect';
+import { validateClientJsonLdComplete } from '@/lib/clients/client-jsonld-validator';
 import type { ValidationReport } from '@/lib/seo/jsonld-validator';
 import { format } from 'date-fns';
 

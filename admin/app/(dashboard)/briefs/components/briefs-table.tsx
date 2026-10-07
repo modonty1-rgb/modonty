@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
-import { OpenClientConsoleButton } from "../../clients/components/edit-workspace/open-client-console-button";
+import { OpenClientConsoleButton } from "@/components/shared/clients/open-client-console-button";
 import type { BriefRow } from "../helpers/load-briefs";
 
 const PAGE_SIZE = 15;

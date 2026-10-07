@@ -6,7 +6,7 @@ import {
   calculateWordCountImproved,
   calculateReadingTime,
   determineContentDepth,
-} from "@/app/(dashboard)/articles/helpers/word-count";
+} from "@/lib/articles/word-count";
 
 /**
  * Recompute `wordCount`, `readingTimeMinutes` and `contentDepth` from the article body.

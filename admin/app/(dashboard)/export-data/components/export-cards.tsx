@@ -37,7 +37,7 @@ import { exportClientsToCSV } from "../../clients/actions/export-actions";
 import { exportCategoriesToCSV } from "../../categories/actions/export-actions";
 import { exportTagsToCSV } from "../../tags/actions/export-actions";
 import { exportIndustriesToCSV } from "../../industries/actions/export-actions";
-import { exportAuthorsToCSV } from "../../authors/actions/export-actions";
+import { exportAuthorsToCSV } from "@/lib/authors/export-actions";
 import { exportAnalyticsToCSV } from "../actions/export-analytics";
 import {
   exportSubscribersToCSV,

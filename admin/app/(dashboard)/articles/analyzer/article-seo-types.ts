@@ -1,5 +1,5 @@
 import { ArticleFormData } from '@/lib/types/form-types';
-import { Article } from '../[id]/helpers/article-view-types';
+import { Article } from '@/lib/articles/article-view-types';
 
 /**
  * Article SEO Analyzer Types

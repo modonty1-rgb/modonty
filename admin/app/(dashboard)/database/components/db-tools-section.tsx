@@ -14,19 +14,19 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { OrphanStats } from "../actions/orphan-cleaner";
-import type { TTLIndexStatus } from "../actions/index-health";
-import type { SlugIssue } from "../actions/slug-integrity";
-import type { BrokenRefsResult } from "../actions/broken-references";
-import type { SessionCleanerStats } from "../actions/session-cleaner";
-import type { DuplicateSlugStats } from "../actions/duplicate-slugs";
-import type { LegalFormSanitizerStats } from "../actions/legalform-sanitizer";
-import type { CanonicalSanitizerStats } from "../actions/canonical-sanitizer";
-import { cleanExpiredOtps } from "../actions/orphan-cleaner";
-import { cleanExpiredSessions } from "../actions/session-cleaner";
-import { createTTLIndex } from "../actions/index-health";
-import { sanitizeAllLegalForms } from "../actions/legalform-sanitizer";
-import { sanitizeAllCanonicals } from "../actions/canonical-sanitizer";
+import type { OrphanStats } from "@/lib/database/orphan-cleaner";
+import type { TTLIndexStatus } from "@/lib/database/index-health";
+import type { SlugIssue } from "@/lib/database/slug-integrity";
+import type { BrokenRefsResult } from "@/lib/database/broken-references";
+import type { SessionCleanerStats } from "@/lib/database/session-cleaner";
+import type { DuplicateSlugStats } from "@/lib/database/duplicate-slugs";
+import type { LegalFormSanitizerStats } from "@/lib/database/legalform-sanitizer";
+import type { CanonicalSanitizerStats } from "@/lib/database/canonical-sanitizer";
+import { cleanExpiredOtps } from "@/lib/database/orphan-cleaner";
+import { cleanExpiredSessions } from "@/lib/database/session-cleaner";
+import { createTTLIndex } from "@/lib/database/index-health";
+import { sanitizeAllLegalForms } from "@/lib/database/legalform-sanitizer";
+import { sanitizeAllCanonicals } from "@/lib/database/canonical-sanitizer";
 
 interface Props {
   orphans: OrphanStats;

@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Plus, AlertCircle, Loader2 } from "lucide-react";
-import { createFAQ } from "../actions/faq-actions";
+import { createFAQ } from "@/lib/modonty/faq-actions";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 

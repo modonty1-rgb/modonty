@@ -5,11 +5,11 @@ import { getClientById } from '@/app/(dashboard)/clients/actions/clients-actions
 import { getCategoryById } from '@/app/(dashboard)/categories/actions/categories-actions';
 import { getTagById } from '@/app/(dashboard)/tags/actions/tags-actions';
 import { getIndustryById } from '@/app/(dashboard)/industries/actions/industries-actions';
-import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
-import { getUserById } from '@/app/(dashboard)/users/actions/users-actions';
+import { getMediaById } from '@/lib/media/get-media-by-id';
+import { getUserById } from '@/lib/users/users-actions';
 import { getModontyAuthor } from '@/app/(dashboard)/authors/actions/authors-actions';
 import { getLeadName } from '@/app/(dashboard)/sales-leads/helpers/get-lead';
-import { getCommercialPlanName } from '@/app/(dashboard)/commercial-plans/actions';
+import { getCommercialPlanName } from '@/lib/commercial-plans/actions';
 import { getOrderNumber } from '@/app/(dashboard)/orders/actions';
 
 function normalizeEntityType(type: string): string {

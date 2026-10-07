@@ -36,13 +36,13 @@ import {
   runHtmlPipelineStagesAction,
   runPageSpeedStageAction,
   runFinalIndexCheckAction,
-} from "../../../search-console/actions/pipeline-actions";
+} from "@/lib/search-console/pipeline-actions";
 
-import type { ManualTrackState } from "../../../search-console/actions/removal-tracking-actions";
-import { AutoFixSchemaButton } from "../../../search-console/components/auto-fix-schema-button";
-import { ViewSchemaValidationButton } from "../../../search-console/components/view-schema-validation-button";
-import { StageDetailsDialog } from "../../../search-console/components/stage-details-dialog";
-import { SeoRowAction } from "../../../search-console/components/seo-row-action";
+import type { ManualTrackState } from "@/lib/search-console/removal-tracking-actions";
+import { AutoFixSchemaButton } from "@/components/shared/search-console/auto-fix-schema-button";
+import { ViewSchemaValidationButton } from "@/components/shared/search-console/view-schema-validation-button";
+import { StageDetailsDialog } from "@/components/shared/search-console/stage-details-dialog";
+import { SeoRowAction } from "@/components/shared/search-console/seo-row-action";
 
 import type { ValidationResult, ValidationCheck } from "@/lib/seo/article-validator";
 import type { PageSpeedReport, CWVRating, ElementDetail } from "@/lib/seo/pagespeed";

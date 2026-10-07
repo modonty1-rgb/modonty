@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
-import { PAGE_CONFIGS } from "@/app/(dashboard)/modonty/setting/helpers/page-config";
+import { PAGE_CONFIGS } from "@/lib/modonty/page-config";
 
 /**
  * Canonical URL Sanitizer — full repo coverage

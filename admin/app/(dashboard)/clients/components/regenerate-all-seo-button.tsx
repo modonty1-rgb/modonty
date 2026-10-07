@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, CheckCircle2, XCircle, Loader2 } from "lucide-react";
-import { generateClientSEO } from "../actions/clients-actions/generate-client-seo";
+import { generateClientSEO } from "@/lib/clients/generate-client-seo";
 import type { ClientForList } from "../actions/clients-actions/types";
 
 interface RegenerateAllSeoButtonProps {

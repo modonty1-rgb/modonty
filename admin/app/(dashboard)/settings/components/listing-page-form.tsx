@@ -8,11 +8,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { updateAllSettings, type AllSettings } from "../actions/settings-actions";
-import { Field } from "./field";
-import { Section } from "./section";
+import { Field } from "@/components/shared/settings/field";
+import { Section } from "@/components/shared/settings/section";
 import { SaveBar } from "./save-bar";
 import { ImageField } from "./image-field";
-import { formatTimeAgo } from "../helpers/format-time-ago";
+import { formatTimeAgo } from "@/lib/settings/format-time-ago";
 import { SEO_HINTS } from "../helpers/seo-hints";
 
 type ListingKey =

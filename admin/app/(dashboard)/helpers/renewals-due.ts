@@ -1,5 +1,5 @@
 import { getClientSubscriptionsShared } from "@/lib/subscription/get-client-subscriptions";
-import { NOT_INTERNAL } from "@/app/(dashboard)/clients/segment/segments";
+import { NOT_INTERNAL } from "@/lib/clients/segments";
 import { RENEWAL_SOON_DAYS } from "@/lib/orders/renewal-window";
 
 /**

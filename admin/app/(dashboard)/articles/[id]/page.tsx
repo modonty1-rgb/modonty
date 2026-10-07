@@ -12,7 +12,7 @@ import { ArrowRight, Edit, FileText, Clock, Eye, MessageSquare, Tag, Calendar, S
 import { ArchiveArticleButton } from "./components/archive-article-button";
 import { ArticleLoadError } from "./components/article-load-error";
 import { ArticleStatus } from "@prisma/client";
-import { getStatusLabel, getStatusVariant } from "../helpers/status-utils";
+import { getStatusLabel, getStatusVariant } from "@/lib/articles/status-utils";
 import { ArticleSEOScoreBadge } from "./components/article-seo-score-badge";
 import { ArticleViewFaqs } from "./components/article-view-faqs";
 import { ArticleViewGallery } from "./components/article-view-gallery";

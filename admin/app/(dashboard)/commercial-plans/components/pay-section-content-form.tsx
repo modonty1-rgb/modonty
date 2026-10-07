@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PAY_MARK_NAMES } from "@modonty/shared/lib/commercial/pay-mark-names";
 
-import { updatePaySectionContent } from "../actions";
+import { updatePaySectionContent } from "@/lib/commercial-plans/actions";
 
 /**
  * كلام صفحة البيع لسوق واحد (PAY-G13) — كل ما حول البطاقات: شريط الإعلان والعنوان

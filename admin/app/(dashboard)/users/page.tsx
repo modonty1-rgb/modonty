@@ -1,4 +1,4 @@
-import { getUsers } from "./actions/users-actions";
+import { getUsers } from "@/lib/users/users-actions";
 import { PageHeader } from "@/components/shared/page-header";
 import { UserTable } from "./components/user-table";
 

@@ -11,7 +11,7 @@ import { UnusedMediaList } from "../components/unused-media-list";
 import { FixBrokenMediaButton } from "../components/fix-broken-media-button";
 import { getOptimizableImages } from "./helpers/optimizable";
 import { OptimizeImagesSection } from "./components/optimize-images-section";
-import { getBunnyMigrationStats } from "../actions/migrate-media-to-bunny";
+import { getBunnyMigrationStats } from "@/lib/media/migrate-media-to-bunny";
 import { BunnyMigrationSection } from "./components/bunny-migration-section";
 
 // Housekeeping tools moved off the library browse surface (2026-07-21): unused-files

@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { logAction } from "@/lib/audit/log-action";
-import { generateClientSEO } from "./generate-client-seo";
+import { generateClientSEO } from "@/lib/clients/generate-client-seo";
 
 /**
  * NARROW save for the writer-owned "SEO Client" section: only the two fields the

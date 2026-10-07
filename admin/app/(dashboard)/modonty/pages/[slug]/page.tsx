@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
-import { PAGE_CONFIGS } from "../../setting/helpers/page-config";
+import { PAGE_CONFIGS } from "@/lib/modonty/page-config";
 import { getPage } from "../../setting/actions/page-actions";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { getCoreClientId } from "@modonty/shared/lib/core-client";

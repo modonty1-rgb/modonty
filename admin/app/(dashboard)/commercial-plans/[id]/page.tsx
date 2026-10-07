@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
-import { assignCommercialFeature, deleteCommercialPlan, moveCommercialPlanFeature, removeCommercialPlanFeature, setCommercialPlanPublished, updateCommercialPlanFeature } from "../actions";
+import { assignCommercialFeature, deleteCommercialPlan, moveCommercialPlanFeature, removeCommercialPlanFeature, setCommercialPlanPublished, updateCommercialPlanFeature } from "@/lib/commercial-plans/actions";
 import { ConfirmDeleteButton } from "../components/confirm-delete-button";
 import { DeleteCommercialPlanButton } from "../components/delete-commercial-plan-button";
 

@@ -12,7 +12,7 @@ import { db } from "@/lib/db";
 import { getCachedTopPages } from "./helpers/cached";
 import { parseUrl } from "./helpers/coverage";
 import { getCachedInspectionsByUrls, type InspectionRecord } from "@/lib/gsc/inspection-cache";
-import { fetchAndParseSitemap } from "./helpers/parse-sitemap";
+import { fetchAndParseSitemap } from "@/lib/search-console/parse-sitemap";
 
 import { BackgroundInspector } from "./components/background-inspector";
 import { SitemapManager } from "./components/sitemap-manager";
@@ -21,7 +21,7 @@ import { ForceRefreshButton } from "./components/force-refresh-button";
 import { type UrlRow } from "./components/urls-data-table";
 import { UrlsTabs } from "./components/urls-tabs";
 import { RemovalQueueCard, type RemovalRow } from "./components/removal-queue-card";
-import { getRemovalTrackStates } from "./actions/removal-tracking-actions";
+import { getRemovalTrackStates } from "@/lib/search-console/removal-tracking-actions";
 
 // Source of truth — hardcoded live PROD sitemap. Never local, never staging, never DB.
 const PROD_SITEMAP_URL = "https://www.modonty.com/sitemap.xml";

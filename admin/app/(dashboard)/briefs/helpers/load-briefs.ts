@@ -3,7 +3,7 @@ import { getClientSubscriptions } from "@/lib/subscription/get-client-subscripti
 import { ArticleStatus } from "@prisma/client";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
-import { getIntakeForm } from "@/app/(dashboard)/intake/actions/intake-admin-actions";
+import { getIntakeForm } from "@/lib/intake/intake-admin-actions";
 
 // The content team's client list. Deliberately NOT the admin clients table: a writer
 // opening this needs one question answered first — "has this client told us enough for

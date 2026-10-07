@@ -3,7 +3,7 @@ import { canDeleteMedia } from "@/lib/media/can-delete-media";
 import { deleteMedia } from "@/lib/media/delete-media";
 // The in-place swap still lives with the Media section; it rebuilds client SEO through the
 // clients actions, so it cannot move to lib/ without them. One cross-route import, noted.
-import { saveOptimizedImage } from "@/app/(dashboard)/media/actions/optimize-image";
+import { saveOptimizedImage } from "@/lib/media/optimize-image";
 import { MEDIA_SPECS } from "@/lib/media/media-specs";
 import { MediaPageClient } from "@/components/shared/media-library/media-page-client";
 import { CLIENT_MEDIA_KINDS, type ClientMediaKind } from "./helpers/client-media-kinds";

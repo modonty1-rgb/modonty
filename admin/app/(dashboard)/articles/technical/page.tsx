@@ -12,7 +12,7 @@ import {
   XCircle,
   Code,
 } from "lucide-react";
-import { getStatusLabel, getStatusVariant } from "../helpers/status-utils";
+import { getStatusLabel, getStatusVariant } from "@/lib/articles/status-utils";
 
 interface TechnicalArticleRow {
   id: string;

@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/db";
-import { addCommercialTermPolicy, deleteCommercialPlan, deleteCommercialTermPolicy, moveCommercialPlan, setCommercialPlanPublished, updateCommercialPlan, updateCommercialPlanMarketPrices, updateCommercialTermPolicy, setRecommendedCommercialTerm } from "./actions";
+import { addCommercialTermPolicy, deleteCommercialPlan, deleteCommercialTermPolicy, moveCommercialPlan, setCommercialPlanPublished, updateCommercialPlan, updateCommercialPlanMarketPrices, updateCommercialTermPolicy, setRecommendedCommercialTerm } from "@/lib/commercial-plans/actions";
 import { ConfirmDeleteButton } from "./components/confirm-delete-button";
 import { CreateCommercialPlanForm } from "./components/create-commercial-plan-form";
 import { DeleteCommercialPlanButton } from "./components/delete-commercial-plan-button";

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { getUserById } from "../actions/users-actions";
-import { getStaffActivitySummary } from "../../audit-log/actions/audit-log-actions";
+import { getUserById } from "@/lib/users/users-actions";
+import { getStaffActivitySummary } from "@/lib/audit-log/audit-log-actions";
 import { UserForm } from "../components/user-form";
 import { db } from "@/lib/db";
 import { checkFinanceAdmin } from "@/lib/require-finance-admin";

@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
 import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
-import { getModontyAuthor } from "./get-modonty-author";
+import { getModontyAuthor } from "@/lib/authors/get-modonty-author";
 
 export async function getAuthorsStats() {
   try {

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { SettingsPageHeader } from "../components/page-header";
-import { getPlatformDefaults } from "./actions/defaults-actions";
+import { getPlatformDefaults } from "@/lib/settings/defaults-actions";
 import { DefaultsForm } from "./components/defaults-form";
 
 export const dynamic = "force-dynamic";

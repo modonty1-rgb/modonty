@@ -23,7 +23,7 @@ import {
   updateCtaFields,
   updateClientSiteFields,
 } from "./update-client-grouped";
-import { generateClientSEO } from "./generate-client-seo";
+import { generateClientSEO } from "@/lib/clients/generate-client-seo";
 import { logAction } from "@/lib/audit/log-action";
 
 export async function updateClient(id: string, data: ClientFormData) {

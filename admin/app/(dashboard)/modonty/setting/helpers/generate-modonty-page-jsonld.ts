@@ -6,7 +6,7 @@
 import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
-import { getPageConfig } from "./page-config";
+import { getPageConfig } from "@/lib/modonty/page-config";
 import { ensureAbsoluteUrl } from "./ensure-absolute-url";
 
 export interface ModontySiteConfig {

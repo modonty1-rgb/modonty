@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getFAQById } from "../../actions/faq-actions";
+import { getFAQById } from "@/lib/modonty/faq-actions";
 import { FAQForm } from "../../components/faq-form";
 
 export default async function EditFAQPage({

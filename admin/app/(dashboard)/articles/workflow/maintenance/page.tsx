@@ -7,7 +7,7 @@ import { ArrowLeft, Inbox, Wrench } from "lucide-react";
 import { ArticleStatus } from "@prisma/client";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
-import { getStatusLabel, getStatusVariant } from "../../helpers/status-utils";
+import { getStatusLabel, getStatusVariant } from "@/lib/articles/status-utils";
 import { getRollbackTargets } from "../helpers/rollback-targets";
 import { MaintenanceRowActions } from "./components/maintenance-row-actions";
 

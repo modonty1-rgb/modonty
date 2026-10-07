@@ -8,9 +8,9 @@ import { messages } from "@/lib/messages";
 import { updatePage } from "../../actions/page-actions";
 import { generateModontyPageSEO } from "../../actions/generate-modonty-page-seo";
 import { pageSchema, type PageFormData } from "../page-schema";
-import { PAGE_CONFIGS } from "../page-config";
+import { PAGE_CONFIGS } from "@/lib/modonty/page-config";
 import type { SettingsDefaults } from "../../components/page-form";
-import { getPageConfig } from "../page-config";
+import { getPageConfig } from "@/lib/modonty/page-config";
 
 function deriveInLanguageFromOgLocale(ogLocale: string | null | undefined): string {
   return (ogLocale ?? "ar_SA").split("_")[0] || "ar";

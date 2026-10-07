@@ -127,7 +127,7 @@ export async function getTagById(id: string) {
 
 export async function getTagArticles(tagId: string) {
   try {
-    const { getArticles } = await import("@/app/(dashboard)/articles/actions/articles-actions");
+    const { getArticles } = await import("@/app/(dashboard)/articles/actions/articles-actions/queries/get-articles");
     const articles = await getArticles();
     const tag = await db.tag.findUnique({
       where: { id: tagId },
