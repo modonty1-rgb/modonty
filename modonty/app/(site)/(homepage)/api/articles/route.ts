@@ -1,4 +1,4 @@
-import { getMoreArticles } from "@/app/(site)/(homepage)/data/get-more-articles";
+import { getMoreArticles } from "../../data/get-more-articles";
 
 // Public endpoint for the coming mobile app. It only opens the door — the
 // fetching lives in getMoreArticles, the same function the web already calls.

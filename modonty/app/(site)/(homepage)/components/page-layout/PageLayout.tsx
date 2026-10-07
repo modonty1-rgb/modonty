@@ -1,12 +1,11 @@
 import { ThreeColumnLayout } from "@modonty/shared/components/column-layout/ThreeColumnLayout";
-import { LeftSidebar } from "@/app/(site)/(homepage)/components/left-sidebar/LeftSidebar";
-import { RightSidebar } from "@/app/(site)/(homepage)/components/right-sidebar/RightSidebar";
-import { ScrollButtons } from "@/app/(site)/(homepage)/components/scroll-buttons/ScrollButtons";
-import { ArticlesList } from "@/app/(site)/(homepage)/components/articles-list/ArticlesList";
-import { HomeActions } from "@/app/(site)/(homepage)/components/home-actions/HomeActions";
-import { ReelsCard } from "@/components/shared/reels-card/ReelsCard";
+import { LeftSidebar } from "../left-sidebar/LeftSidebar";
+import { RightSidebar } from "../right-sidebar/RightSidebar";
+import { ScrollButtons } from "../scroll-buttons/ScrollButtons";
+import { ArticlesList } from "../articles-list/ArticlesList";
+import { HomeActions } from "../home-actions/HomeActions";
 import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
-import { ArchiveSearchForm } from "@/components/shared/archive-filters/ArchiveSearchForm";
+import { ArchiveSearchForm } from "../archive-filters/ArchiveSearchForm";
 import { ReadingTimeBar } from "@/components/shared/archive-filters/ReadingTimeBar";
 import type { ReactNode } from "react";
 import type { FeedPost } from "@/lib/types";

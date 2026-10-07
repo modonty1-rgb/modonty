@@ -1,30 +1,21 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { cacheLife, cacheTag } from "next/cache";
-import { PageLayout } from "@/app/(site)/(homepage)/components/page-layout/PageLayout";
-import { getHomeFeedArticles } from "@/app/(site)/(homepage)/data/get-home-feed-articles";
-import { getMoreArticles } from "@/app/(site)/(homepage)/data/get-more-articles";
+import { PageLayout } from "./PageLayout";
+import { getFeedChunk } from "../../data/get-feed-chunk";
 import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
 import { getIndustriesWithCounts } from "@/lib/queries/get-industries-with-counts";
 import { getArticlesArchive } from "@/lib/articles/archive/get-articles-archive";
 import { countByReadingTime } from "@/lib/articles/archive/reading-time-buckets";
-import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { messages } from "@/lib/i18n/messages";
 import { jsonLdHtmlFromString } from "@/lib/seo";
-import type { FeedPost } from "@/lib/types";
 
 interface CachedHomePageProps {
   /** 1 = `/`; n ≥ 2 = `/page/n`. Part of the cache key, so every chunk is cached on its own. */
   page: number;
   /** Per-request slot created outside the cache (reads the session). Passed through, never read. */
   userCard: ReactNode;
-}
-
-async function getFeedChunk(page: number): Promise<{ articles: FeedPost[]; hasMore: boolean }> {
-  if (page > 1) return getMoreArticles(page);
-  const articles = await getHomeFeedArticles();
-  return { articles, hasMore: articles.length >= FEED_PAGE_SIZE };
 }
 
 /**

@@ -1,5 +1,5 @@
-import { Metadata } from "next";
-import { CachedHomePage } from "@/app/(site)/(homepage)/components/page-layout/CachedHomePage";
+import type { Metadata } from "next";
+import { CachedHomePage } from "./components/page-layout/CachedHomePage";
 import { UserCard } from "@/components/shared/user-card/UserCard";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";

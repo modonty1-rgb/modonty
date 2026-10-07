@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { CachedHomePage } from "@/app/(site)/(homepage)/components/page-layout/CachedHomePage";
+import { CachedHomePage } from "../../components/page-layout/CachedHomePage";
 import { UserCard } from "@/components/shared/user-card/UserCard";
 import { SITE_URL } from "@/constants";
 
@@ -8,6 +8,7 @@ import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 import { buildShareTags } from "@/lib/seo/build-share-tags";
 import { messages } from "@/lib/i18n/messages";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { parsePageNumber } from "./helpers/parse-page-number";
 
 // The crawlable half of the homepage's infinite scroll. Google's requirement
 // (developers.google.com/search/docs/crawling-indexing/javascript/lazy-loading):
@@ -19,12 +20,6 @@ import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface PageProps {
   params: Promise<{ pageNumber: string }>;
-}
-
-function parsePageNumber(raw: string): number | null {
-  if (!/^\d+$/.test(raw)) return null;
-  const value = Number(raw);
-  return Number.isSafeInteger(value) && value >= 1 ? value : null;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

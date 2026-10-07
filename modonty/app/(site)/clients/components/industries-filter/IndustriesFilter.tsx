@@ -1,9 +1,9 @@
 import { IndustryTile } from "@/components/shared/industry-tile/IndustryTile";
-import { buildPartnersHref } from "@/app/(site)/clients/helpers/build-partners-href";
+import { buildPartnersHref } from "../../helpers/build-partners-href";
 import { messages, formatCount } from "@/lib/i18n/messages";
 import { industryArtwork } from "@/lib/industry-artwork";
-import type { IndustryFilterRow } from "@/app/(site)/clients/helpers/count-industries";
-import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
+import type { IndustryFilterRow } from "../../helpers/count-industries";
+import type { PartnersQuery } from "../../helpers/parse-partners-query";
 import type { IndustryListItem } from "@/lib/types";
 
 const text = messages.clients.industryFilter;

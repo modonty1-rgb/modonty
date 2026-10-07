@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { ReactNode } from "react";
 import { CommerceActions } from "@/components/shared/commerce-actions/CommerceActions";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
-import { PartnerInviteCard } from "@/components/shared/partner-invite-card/PartnerInviteCard";
+import { PartnerInviteCard } from "../partner-invite-card/PartnerInviteCard";
 import { cn } from "@/lib/utils";
 import { messages } from "@/lib/i18n/messages";
 

@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { PartnerCard } from "@/components/shared/partner-card/PartnerCard";
 import { PartnerCardMobile } from "@/components/shared/partner-card/PartnerCardMobile";
-import { buildPartnersHref } from "@/app/(site)/clients/helpers/build-partners-href";
-import { PARTNERS_PAGE_SIZE } from "@/app/(site)/clients/helpers/partners-page-size";
+import { buildPartnersHref } from "../../helpers/build-partners-href";
+import { PARTNERS_PAGE_SIZE } from "../../helpers/partners-page-size";
 import { buttonVariants } from "@/components/ui/button";
 import { messages, formatCount, fill } from "@/lib/i18n/messages";
 import type { ClientListItem } from "@/lib/queries/get-clients-list";
-import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
+import type { PartnersQuery } from "../../helpers/parse-partners-query";
 
 const text = messages.clients.partnersList;
 const counts = messages.clients.counts;

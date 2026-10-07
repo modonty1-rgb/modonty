@@ -1,8 +1,8 @@
 import { IndustryGrid } from "@/components/shared/industry-grid/IndustryGrid";
-import { buildPartnersHref } from "@/app/(site)/clients/helpers/build-partners-href";
+import { buildPartnersHref } from "../../helpers/build-partners-href";
 import { industryArtwork } from "@/lib/industry-artwork";
-import type { IndustryFilterRow } from "@/app/(site)/clients/helpers/count-industries";
-import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
+import type { IndustryFilterRow } from "../../helpers/count-industries";
+import type { PartnersQuery } from "../../helpers/parse-partners-query";
 import type { IndustryListItem } from "@/lib/types";
 
 interface PartnersFilterBarProps {

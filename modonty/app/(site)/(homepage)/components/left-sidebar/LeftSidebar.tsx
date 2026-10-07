@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { ReactNode } from "react";
 import { CommerceActions } from "@/components/shared/commerce-actions/CommerceActions";
-import { TrustCard } from "@/app/(site)/clients/components/trust-card/TrustCard";
+import { TrustCard } from "@/components/shared/trust-card/TrustCard";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { cn } from "@/lib/utils";
 

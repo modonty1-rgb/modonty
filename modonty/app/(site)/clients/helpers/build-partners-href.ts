@@ -1,4 +1,4 @@
-import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
+import type { PartnersQuery } from "./parse-partners-query";
 
 /**
  * `/clients` with one part of the query changed and the rest kept — so picking an

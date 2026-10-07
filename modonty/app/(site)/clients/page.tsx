@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { UserCard } from "@/components/shared/user-card/UserCard";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
@@ -6,9 +6,9 @@ import { jsonLdHtmlFromString } from "@/lib/seo";
 import { getClientsList } from "@/lib/queries/get-clients-list";
 import { getIndustriesEnhanced } from "@/lib/queries/get-industries-enhanced";
 import { getCoreClientId } from "@/lib/settings/get-core-client-id";
-import { parsePartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
-import { filterPartners } from "@/app/(site)/clients/helpers/filter-partners";
-import { PageLayout } from "@/app/(site)/clients/components/page-layout/PageLayout";
+import { parsePartnersQuery } from "./helpers/parse-partners-query";
+import { filterPartners } from "./helpers/filter-partners";
+import { PageLayout } from "./components/page-layout/PageLayout";
 import { SITE_URL } from "@/constants";
 import { messages } from "@/lib/i18n/messages";
 

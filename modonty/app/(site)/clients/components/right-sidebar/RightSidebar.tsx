@@ -2,11 +2,11 @@ import { cn } from "@/lib/utils";
 import { messages } from "@/lib/i18n/messages";
 import { LinkCard } from "@/components/shared/link-card/LinkCard";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
-import { TrustCard } from "@/app/(site)/clients/components/trust-card/TrustCard";
-import { IndustriesFilter } from "@/app/(site)/clients/components/industries-filter/IndustriesFilter";
+import { TrustCard } from "@/components/shared/trust-card/TrustCard";
+import { IndustriesFilter } from "../industries-filter/IndustriesFilter";
 import { IconPlay, IconVolume2 } from "@/lib/icons";
-import type { IndustryFilterRow } from "@/app/(site)/clients/helpers/count-industries";
-import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
+import type { IndustryFilterRow } from "../../helpers/count-industries";
+import type { PartnersQuery } from "../../helpers/parse-partners-query";
 import type { IndustryListItem } from "@/lib/types";
 
 const text = messages.clients.sidebars;

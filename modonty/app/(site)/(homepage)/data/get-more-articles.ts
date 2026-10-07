@@ -5,7 +5,7 @@ import { FEED_PAGE_SIZE } from "@/lib/queries/feed-constants";
 
 import type { ArticleResponse, FeedPost } from "@/lib/types";
 
-export interface MoreArticlesResult {
+interface MoreArticlesResult {
   articles: FeedPost[];
   hasMore: boolean;
 }

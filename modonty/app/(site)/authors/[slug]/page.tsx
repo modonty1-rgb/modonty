@@ -1,15 +1,10 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import { notFound } from "next/navigation";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { cacheTag, cacheLife } from "next/cache";
 import Link from "next/link";
-import { db } from "@/lib/db";
-import { mediaSrc } from "@modonty/shared/lib/media-src";
-import { ArticleStatus } from "@prisma/client";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-languages";
-import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
@@ -22,6 +17,14 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { FeedPagination } from "@/components/shared/pagination/FeedPagination";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { getAuthorSlugs } from "./data/get-author-slugs";
+import { getAuthorBySlug } from "./data/get-author-by-slug";
+import { getAuthorArticles } from "./data/get-author-articles";
+import { getAuthorForMetadata } from "./data/get-author-for-metadata";
+import { AUTHOR_PAGE_SIZE } from "./helpers/author-page-size";
+import { parseAuthorPage } from "./helpers/parse-author-page";
+import { buildAuthorPaginationLinks } from "./helpers/build-author-pagination-links";
+import { buildAuthorJsonLd } from "./helpers/build-author-json-ld";
 
 // Channel key → brand icon (registry only; no barrel lucide imports). Others fall back to a
 // generic external-link glyph — the Arabic label carries the platform name.
@@ -31,112 +34,13 @@ const CHANNEL_ICON: Record<string, typeof IconExternal> = {
   twitter: IconTwitter,
 };
 
-const AUTHOR_PAGE_SIZE = 20;
-
 interface AuthorPageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string | string[] }>;
 }
 
-function parseAuthorPage(value: string | string[] | undefined): number {
-  const page = Number.parseInt(Array.isArray(value) ? value[0] : value || "", 10);
-  return Number.isFinite(page) && page > 1 ? page : 1;
-}
-
 export async function generateStaticParams() {
-  try {
-    const authors = await db.author.findMany({ select: { slug: true } });
-    if (!authors || authors.length === 0) {
-      // Cache Components needs at least one param at build time.
-      return [{ slug: "__no_authors__" }];
-    }
-    return authors.map((a) => ({ slug: a.slug }));
-  } catch {
-    return [{ slug: "__no_authors__" }];
-  }
-}
-
-async function getAuthorBySlug(slug: string) {
-  return db.author.findUnique({
-    where: { slug },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      firstName: true,
-      lastName: true,
-      bio: true,
-      image: true,
-      imageAlt: true,
-      url: true,
-      jobTitle: true,
-      verificationStatus: true,
-      email: true,
-      linkedIn: true,
-      twitter: true,
-      facebook: true,
-      sameAs: true,
-      credentials: true,
-      expertiseAreas: true,
-      memberOf: true,
-      seoTitle: true,
-      seoDescription: true,
-      canonicalUrl: true,
-      jsonLdStructuredData: true,
-      nextjsMetadata: true,
-    },
-  });
-}
-
-async function getAuthorArticles(authorId: string, page: number) {
-  // Cached for the same reason as the helpers below — the publish-date guard reads the
-  // clock, and Next 16 forbids the current time in an uncached prerender scope.
-  "use cache";
-  cacheTag("authors");
-  cacheLife("hours");
-  return db.article.findMany({
-    where: {
-      authorId,
-      status: ArticleStatus.PUBLISHED,
-      OR: [
-        { datePublished: null },
-        { datePublished: { lte: new Date() } },
-      ],
-    },
-    select: {
-      title: true,
-      slug: true,
-      excerpt: true,
-      datePublished: true,
-      featuredImage: {
-        select: { url: true, bunnyUrl: true, blurDataURL: true, altText: true },
-      },
-    },
-    orderBy: { datePublished: "desc" },
-    skip: (page - 1) * AUTHOR_PAGE_SIZE,
-    take: AUTHOR_PAGE_SIZE + 1,
-  });
-}
-
-// Cached + EXCLUSIVE to metadata (not shared with the dynamic page) so the tags land
-// in the prerendered shell <head> instead of being streamed into <body>.
-async function getAuthorForMetadata(slug: string) {
-  "use cache";
-  cacheTag("authors");
-  cacheLife("hours");
-  return db.author.findUnique({
-    where: { slug },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      seoTitle: true,
-      seoDescription: true,
-      bio: true,
-      image: true,
-      nextjsMetadata: true,
-    },
-  });
+  return getAuthorSlugs();
 }
 
 export async function generateMetadata({ params, searchParams }: AuthorPageProps): Promise<Metadata> {
@@ -159,10 +63,7 @@ export async function generateMetadata({ params, searchParams }: AuthorPageProps
   const baseAuthorUrl = `${siteUrl}/authors/${author.slug}`;
   const authorUrl = page > 1 ? `${baseAuthorUrl}?page=${page}` : baseAuthorUrl;
   const articleChunk = await getAuthorArticles(author.id, page);
-  const pagination = {
-    previous: page > 1 ? (page === 2 ? baseAuthorUrl : `${baseAuthorUrl}?page=${page - 1}`) : undefined,
-    next: articleChunk.length > AUTHOR_PAGE_SIZE ? `${baseAuthorUrl}?page=${page + 1}` : undefined,
-  };
+  const pagination = buildAuthorPaginationLinks(baseAuthorUrl, page, articleChunk.length > AUTHOR_PAGE_SIZE);
 
   if (author.nextjsMetadata && typeof author.nextjsMetadata === "object") {
     const stored = author.nextjsMetadata as Metadata;
@@ -244,47 +145,7 @@ export default async function AuthorPage({ params, searchParams }: AuthorPagePro
   if (author.jsonLdStructuredData) {
     jsonLdString = author.jsonLdStructuredData;
   } else {
-    const sameAs: string[] = [
-      ...(author.linkedIn ? [author.linkedIn] : []),
-      ...(author.twitter ? [author.twitter] : []),
-      ...(author.facebook ? [author.facebook] : []),
-      ...(author.sameAs || []),
-    ];
-    // Modonty = the platform-brand Organization author (same @id as the site #organization
-    // node + every article's author → one authoritative entity). A future individual writer
-    // stays a Person, which is correct for a person.
-    const jsonLd =
-      author.slug === MODONTY_AUTHOR_SLUG
-        ? {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "@id": buildSiteEntityIds(siteUrl).organization,
-            name: author.name,
-            url: siteUrl,
-            logo: { "@type": "ImageObject", url: LOGO_URL },
-            ...(author.bio && { description: author.bio }),
-            ...(author.email && { email: author.email }),
-            ...(sameAs.length > 0 && { sameAs }),
-          }
-        : {
-            "@context": "https://schema.org",
-            "@type": "Person",
-            name: author.name,
-            ...(author.firstName && { givenName: author.firstName }),
-            ...(author.lastName && { familyName: author.lastName }),
-            ...(author.bio && { description: author.bio }),
-            ...(author.image && { image: author.image }),
-            url: `${siteUrl}/authors/${author.slug}`,
-            ...(author.jobTitle && { jobTitle: author.jobTitle }),
-            ...(author.email && { email: author.email }),
-            ...(sameAs.length > 0 && { sameAs }),
-            ...(author.expertiseAreas && author.expertiseAreas.length > 0 && { knowsAbout: author.expertiseAreas }),
-            ...(author.credentials && author.credentials.length > 0 && { hasCredential: author.credentials }),
-            ...(author.memberOf && author.memberOf.length > 0 && {
-              memberOf: author.memberOf.map((org) => ({ "@type": "Organization", name: org })),
-            }),
-          };
-    jsonLdString = JSON.stringify(jsonLd);
+    jsonLdString = JSON.stringify(buildAuthorJsonLd(author, siteUrl));
   }
 
   const breadcrumbJsonLd = generateBreadcrumbStructuredData([

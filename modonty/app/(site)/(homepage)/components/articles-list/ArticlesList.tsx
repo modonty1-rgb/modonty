@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import { PostCard } from '@/components/feed/postcard/PostCard';
 import { AskModo } from '@/components/shared/ask-modo/AskModo';
 import { ReelsCard } from '@/components/shared/reels-card/ReelsCard';
-import { MoreArticlesOnScroll } from '@/app/(site)/(homepage)/components/articles-list/MoreArticlesOnScroll';
+import { MoreArticlesOnScroll } from './MoreArticlesOnScroll';
 import { FEED_PAGE_SIZE } from '@/lib/queries/feed-constants';
 import type { ReelItem } from '@/components/shared/reels-card/ReelsCard';
 import type { FeedPost } from '@/lib/types';

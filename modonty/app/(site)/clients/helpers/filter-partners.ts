@@ -1,5 +1,5 @@
 import type { ClientListItem } from "@/lib/queries/get-clients-list";
-import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
+import type { PartnersQuery } from "./parse-partners-query";
 
 /** Arabic hamza and yaa are typed several ways; folding them makes «احمد» find «أحمد». */
 function fold(text: string): string {

@@ -1,7 +1,7 @@
 import { ModontySearchMark } from "@/components/icons/modonty-search-mark";
 import { ModontyArrowMark } from "@/components/icons/modonty-arrow-mark";
 import { messages } from "@/lib/i18n/messages";
-import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
+import type { PartnersQuery } from "../../helpers/parse-partners-query";
 
 const text = messages.clients.searchBar;
 
