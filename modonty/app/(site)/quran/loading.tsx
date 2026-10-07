@@ -9,7 +9,7 @@ import { messages } from "@/lib/i18n/messages";
  */
 export default function QuranLoading() {
   return (
-    <div>
+    <>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
@@ -29,6 +29,6 @@ export default function QuranLoading() {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }

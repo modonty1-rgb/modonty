@@ -13,6 +13,9 @@ import {
   IconClose,
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
+import { SPEEDS, JUMP } from "@/lib/audio/audio-speeds";
+import { toArabicDigits as toArabic } from "@/lib/audio/to-arabic-digits";
+import { clock } from "@/lib/audio/clock";
 
 interface ArticleAudioPlayerProps {
   /** The article's audio version. Absent on most articles — the tab then sits inert. */
@@ -31,23 +34,6 @@ interface ArticleAudioPlayerProps {
   durationSeconds?: number | null;
   /** The tab class the other four tabs use, so this one is not a lookalike but the same thing. */
   tabClassName: string;
-}
-
-const SPEEDS = [1, 1.25, 1.5, 2] as const;
-const JUMP = 15;
-
-/** Arabic-Indic digits, because every other number the reader sees on this page is in them. */
-const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
-const toArabic = (s: string) => s.replace(/\d/g, (d) => AR_DIGITS[Number(d)]);
-
-/** `2:06:15`, not `126:15` — the hour slot appears only when there is one. */
-function clock(seconds: number) {
-  if (!Number.isFinite(seconds) || seconds < 0) return "٠٠:٠٠";
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return toArabic(h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`);
 }
 
 /**

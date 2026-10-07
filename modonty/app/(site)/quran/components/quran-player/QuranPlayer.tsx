@@ -16,43 +16,21 @@ import {
 import { cn } from "@/lib/utils";
 
 import { hushOtherAudio } from "@/lib/audio/hush-other-audio";
+import { JUMP } from "@/lib/audio/audio-speeds";
+import { toArabicDigits } from "@/lib/audio/to-arabic-digits";
+import { clock } from "@/lib/audio/clock";
+import { shortName } from "../../helpers/short-name";
+import { bareLetters } from "../../helpers/bare-letters";
+import { useResumePoint } from "../../hooks/use-resume-point";
 import { RECITERS, DEFAULT_RECITER, RIWAYA, SOURCE, surahFile } from "../../data/quran-reciters";
 import { SURAHS } from "../../data/quran-surahs";
-
-const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
-const toArabic = (v: number | string) => String(v).replace(/\d/g, (d) => AR_DIGITS[Number(d)]);
-
-function clock(seconds: number) {
-  if (!Number.isFinite(seconds) || seconds < 0) return "٠٠:٠٠";
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return toArabic(h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`);
-}
-
-const JUMP = 15;
-
-/** «سُورَةُ ٱلْكَهۡفِ» → «ٱلْكَهۡفِ». The word «سورة» on every chip is six characters of nothing. */
-const shortName = (name: string) => name.replace(/^\S+\s+/, "");
-
-/** Where the last recitation stopped, kept in this browser only. */
-const RESUME_KEY = "modonty.audio.quran.last";
-/** Under half a minute is not a place anyone wants back. */
-const RESUME_MIN_SECONDS = 30;
-
-interface ResumePoint {
-  n: number;
-  r: number;
-  t: number;
-}
 
 /**
  * كل نصّ يراه الزائر هنا يصل من `messages/ar.json` عبر الصفحة (سيرفر) — لا استيراد للملف
  * في مكوّن عميل حتى لا تدخل الرسائل كلها في باندل المتصفح. الجمل المركّبة تُبنى بكلمات
  * بادئة (prefix) بدل قوالب، فيبقى العميل خالياً من أي منطق قوالب.
  */
-export interface QuranPlayerLabels {
+interface QuranPlayerLabels {
   heading: string;
   provenanceLead: string;
   provenanceRiwaya: string;
@@ -126,53 +104,14 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
   const [duration, setDuration] = useState(0);
   const [failed, setFailed] = useState(false);
   const [query, setQuery] = useState("");
-  const [resume, setResume] = useState<ResumePoint | null>(null);
   /** Set before a source change when playback must land somewhere other than the beginning. */
   const seekTo = useRef<number | null>(null);
-  const savedAt = useRef(0);
 
   const reciterFor = (n: number) =>
     RECITERS.find((r) => r.id === (choice[n] ?? defaultReciter)) ?? RECITERS[0];
 
-  // Read on the client, never during render: the server has no `localStorage`, and a value read
-  // during render would make the first paint disagree with the HTML it is hydrating.
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(RESUME_KEY);
-      if (!raw) return;
-      const v: unknown = JSON.parse(raw);
-      if (
-        typeof v === "object" &&
-        v !== null &&
-        typeof (v as ResumePoint).n === "number" &&
-        typeof (v as ResumePoint).r === "number" &&
-        typeof (v as ResumePoint).t === "number" &&
-        (v as ResumePoint).t >= RESUME_MIN_SECONDS
-      ) {
-        setResume(v as ResumePoint);
-      }
-    } catch {
-      // Private mode, or a value someone else wrote. Losing the bookmark is not worth a crash.
-    }
-  }, []);
-
-  /**
-   * سورة البقرة runs two hours. Without this, closing the tab costs the whole sitting — which is
-   * the single thing that decides whether someone uses this page twice.
-   * Written every five seconds, not every quarter of one: `timeupdate` fires four times a second.
-   */
-  const remember = (t: number) => {
-    if (!surah || t < RESUME_MIN_SECONDS || Math.abs(t - savedAt.current) < 5) return;
-    savedAt.current = t;
-    try {
-      window.localStorage.setItem(
-        RESUME_KEY,
-        JSON.stringify({ n: surah.n, r: reciterFor(surah.n).id, t: Math.floor(t) } satisfies ResumePoint)
-      );
-    } catch {
-      // Storage full or blocked — the recitation keeps playing, which is the part that matters.
-    }
-  };
+  const surah = index === null ? null : SURAHS[index];
+  const { resume, setResume, savedAt, remember } = useResumePoint(surah, reciterFor);
 
   const playResume = () => {
     if (!resume) return;
@@ -189,7 +128,6 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
     requestAnimationFrame(() => void audioRef.current?.play().catch(() => setFailed(true)));
   };
 
-  const surah = index === null ? null : SURAHS[index];
   const src = surah ? surahFile(reciterFor(surah.n).server, surah.n) : undefined;
 
   const playSurah = (i: number) => {
@@ -260,27 +198,9 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
   const pickedReciterId = pickingSurah ? choice[pickingSurah.n] ?? defaultReciter : defaultReciter;
   const defaultReciterName = RECITERS.find((r) => r.id === defaultReciter)?.name ?? RECITERS[0].name;
 
-  // Matched against the bare letters: the stored names carry full diacritics and a leading
-  // «سُورَةُ», neither of which anybody types. The index travels with each match so the play
-  // handler keeps addressing the real position in the mushaf, not a position in the filtered view.
-  //
-  // The range has to reach past ordinary tashkeel into the Qur'anic marks: «الكَهۡفِ» carries a
-  // small high sukun (U+06E1) and «ٱلْفَاتِحَةِ» an alef wasla (U+0671), and neither is on anybody's
-  // keyboard. Stripping only U+064B–U+0652 left «الكهۡف», so typing «الكهف» matched nothing.
-  //
-  // «آلِ عِمۡرَانَ» needed one more: the madda is stored DECOMPOSED — alef U+0627 followed by
-  // U+0653 — while a keyboard produces the single character آ (U+0622). Normalising to NFC first
-  // folds the pair into that one character, and then the alef rule catches it.
-  const bare = (v: string) =>
-    v
-      .normalize("NFC")
-      .replace(/[ً-ٰٕـٖ-ٟۖ-ۭ]/g, "")
-      .replace(/[آأإٱ]/g, "ا")
-      .replace(/ى/g, "ي")
-      .replace(/ة/g, "ه");
-  const q = bare(query.trim());
+  const q = bareLetters(query.trim());
   const shown = SURAHS.map((s, i) => ({ s, i })).filter(
-    ({ s }) => !q || bare(s.name).includes(q) || String(s.n) === q || toArabic(s.n) === q
+    ({ s }) => !q || bareLetters(s.name).includes(q) || String(s.n) === q || toArabicDigits(s.n) === q
   );
 
   return (
@@ -356,7 +276,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
       </div>
       {query && (
         <p className="mt-2 text-xs text-muted-foreground">
-          {toArabic(shown.length)} {labels.searchCountOf} {toArabic(SURAHS.length)} {labels.searchCountUnit}
+          {toArabicDigits(shown.length)} {labels.searchCountOf} {toArabicDigits(SURAHS.length)} {labels.searchCountUnit}
         </p>
       )}
 
@@ -496,7 +416,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                     isCurrent ? "bg-action-listen text-action-listen-foreground" : "border border-border text-muted-foreground"
                   )}
                 >
-                  {toArabic(s.n)}
+                  {toArabicDigits(s.n)}
                 </span>
                 <span className="min-w-0 flex-1">
                   {/* The name without «سُورَةُ»: the page is the mushaf, so the word repeated
@@ -504,7 +424,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                       «سُورَةُ …» on all of them). The full name stays in every aria-label. */}
                   <span className="block truncate text-base font-bold">{shortName(s.name)}</span>
                   <span className="block truncate text-xs text-muted-foreground">
-                    {toArabic(s.a)} {labels.verseUnit} · {s.p} · {labels.juzPrefix} {toArabic(s.j)}
+                    {toArabicDigits(s.a)} {labels.verseUnit} · {s.p} · {labels.juzPrefix} {toArabicDigits(s.j)}
                   </span>
                   {/* The override is now SEEN on the card, not only in the button's aria-label. */}
                   {choice[s.n] !== undefined && (

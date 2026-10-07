@@ -44,22 +44,20 @@ export default function QuranPage() {
       />
       {/* No `--sticky-chrome` top padding: the header is `sticky` (it holds its own space), and
           the 135px that variable still assumes was the icon strip that moved to the bottom bar. */}
-      <div>
-        <Breadcrumb
-          items={[
-            { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-            { label: t.breadcrumbLabel },
-          ]}
-        />
-        {/* `pt-2` under the breadcrumb, not `py-6`: the breadcrumb band is already 44–56px of
-            air, and the old 24px on top of it left the title floating (Khalid: «بكسل بكسل»). */}
-        <div className="container mx-auto max-w-[1128px] px-3 pb-6 pt-2 sm:px-4">
-          {/* Drawn on desktop, spoken on phones: there the breadcrumb right above already reads
-              «القرآن الكريم». The line under the title is the player's provenance — the old
-              `t.intro` said the same facts a second time, so it is gone. */}
-          <h1 className="mb-1 text-2xl font-bold leading-tight text-foreground max-md:sr-only">{t.srTitle}</h1>
-          <QuranPlayer labels={t.player} />
-        </div>
+      <Breadcrumb
+        items={[
+          { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
+          { label: t.breadcrumbLabel },
+        ]}
+      />
+      {/* `pt-2` under the breadcrumb, not `py-6`: the breadcrumb band is already 44–56px of
+          air, and the old 24px on top of it left the title floating (Khalid: «بكسل بكسل»). */}
+      <div className="container mx-auto max-w-[1128px] px-3 pb-6 pt-2 sm:px-4">
+        {/* Drawn on desktop, spoken on phones: there the breadcrumb right above already reads
+            «القرآن الكريم». The line under the title is the player's provenance — the old
+            `t.intro` said the same facts a second time, so it is gone. */}
+        <h1 className="mb-1 text-2xl font-bold leading-tight text-foreground max-md:sr-only">{t.srTitle}</h1>
+        <QuranPlayer labels={t.player} />
       </div>
     </>
   );

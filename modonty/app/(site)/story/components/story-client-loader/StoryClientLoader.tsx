@@ -1,11 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { StorySkeleton } from "./StorySkeleton";
-import type { SalesPitchProps } from "./SalesPitchPage";
+import { StorySkeleton } from "../story-skeleton/StorySkeleton";
+import type { SalesPitchProps } from "../sales-pitch-page/SalesPitchPage";
 
 const SalesPitchPage = dynamic(
-  () => import("./SalesPitchPage").then((m) => ({ default: m.SalesPitchPage })),
+  () => import("../sales-pitch-page/SalesPitchPage").then((m) => ({ default: m.SalesPitchPage })),
   {
     loading: () => <StorySkeleton />,
   },

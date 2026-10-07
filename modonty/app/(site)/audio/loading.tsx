@@ -8,7 +8,7 @@ import { messages } from "@/lib/i18n/messages";
  */
 export default function AudioLoading() {
   return (
-    <div>
+    <>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
@@ -25,6 +25,6 @@ export default function AudioLoading() {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }

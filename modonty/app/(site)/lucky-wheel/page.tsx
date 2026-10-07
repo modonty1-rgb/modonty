@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LuckyWheelGame } from "./lucky-wheel";
+import { LuckyWheelGame } from "./components/lucky-wheel/lucky-wheel";
 
 /**
  * A deliberately unlinked activation route. It is reached from the event QR code, not from

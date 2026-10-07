@@ -1,31 +1,18 @@
 import type { Metadata } from "next";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
-import { StoryClientLoader } from "./StoryClientLoader";
-import { STORY_OG_IMAGE as OG_IMAGE } from "./_constants";
+import { StoryClientLoader } from "./components/story-client-loader/StoryClientLoader";
 import { getLegalEntity, buildOrganizationJsonLd } from "@/lib/seo/organization-jsonld";
 import { toLegalEntityDisplay } from "@/lib/seo/to-legal-entity-display";
 import { buildMetadataFromPageRow } from "@/lib/seo/build-metadata-from-page-row";
-import { getStoryPageForMetadata } from "./helpers/story-metadata";
-import { getStoryOffer } from "./helpers/story-offer";
+import { getStoryPageForMetadata } from "./helpers/get-story-page-for-metadata";
+import { getStoryOffer } from "./helpers/get-story-offer";
+import { STORY_TRANSCRIPT } from "./helpers/story-transcript";
+import { buildPodcastSeries } from "./helpers/build-podcast-series";
+import { STORY_PAGE_URL } from "./helpers/story-constants";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { jsonLdHtml } from "@/lib/seo";
-import storyManifest from "../../../public/help/audio/general-pitch/manifest.json";
 import { SITE_URL } from "@/constants";
 import { messages } from "@/lib/i18n/messages";
-
-const PAGE_URL = `${SITE_URL}/story`;
-const STORY_TRANSCRIPT_IDS = new Set(["02", "03", "04"]);
-const STORY_TRANSCRIPT = storyManifest.sections.flatMap((section) =>
-  STORY_TRANSCRIPT_IDS.has(section.id) && "text" in section
-    ? [
-        {
-          id: section.id,
-          title: section.label.split("—")[0].trim(),
-          text: section.text,
-        },
-      ]
-    : [],
-);
 
 // العنوان والوصف من صفّ الصفحة، يُحرَّران على `/modonty/pages/story`.
 export async function generateMetadata(): Promise<Metadata> {
@@ -41,24 +28,6 @@ export async function generateMetadata(): Promise<Metadata> {
 // Organization schema now comes from the shared canonical builder (@/lib/seo/organization-jsonld)
 // so /story and /trust never drift. The entity itself is read from Settings — the same row
 // feeds both the markup below and the trust strip inside the client component.
-
-// Built per request, not at module load: the Organization now comes from Settings, so the
-// series can only be assembled once that read resolves.
-function buildPodcastSeries(organization: Record<string, unknown>) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "PodcastSeries",
-    name: messages.seo.story.podcastName,
-    alternateName: "Modonty Story",
-    url: PAGE_URL,
-    description: messages.seo.story.podcastDescription,
-    inLanguage: "ar",
-    image: OG_IMAGE,
-    author: organization,
-    publisher: organization,
-    webFeed: PAGE_URL,
-  };
-}
 
 export default async function StoryPage() {
   // The legal entity is one cached read shared with /trust — never a second constant.
@@ -77,7 +46,7 @@ export default async function StoryPage() {
     "@type": "WebPage",
     name: messages.seo.story.podcastName,
     description: messages.seo.story.episodeDescription,
-    url: PAGE_URL,
+    url: STORY_PAGE_URL,
     // اسم الموقع ولغته يعيشان في عقدة الهوية الواحدة — الإشارة إليها بـ`@id` بدل نسخِ
     // الاسم هنا، لأن النسخة الثانية تصير كياناً منافساً بمجرّد أن يتغيّر الاسم من الأدمن.
     isPartOf: { "@id": buildSiteEntityIds(SITE_URL).website },

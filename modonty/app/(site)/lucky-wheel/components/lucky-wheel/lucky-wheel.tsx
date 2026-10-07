@@ -6,22 +6,13 @@ import { IconCheckCircle, IconGift, IconRefresh } from "@/lib/icons";
 import type { Wheel } from "spin-wheel";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
-import { LUCKY_WHEEL_PRIZES, MODONTY_GIFT_INDEX, SPINS_PER_PHONE } from "./prizes";
+import { LUCKY_WHEEL_PRIZES, MODONTY_GIFT_INDEX, SPINS_PER_PHONE } from "@/lib/lucky-wheel/prizes";
+import { celebrateModontyGift } from "../../helpers/celebrate-modonty-gift";
 
 const SPIN_BUTTON =
   "inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#00d8d8] px-6 text-lg font-black text-[#0e065a] shadow-[0_12px_28px_rgba(0,216,216,0.25)] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200";
 
 type SpinResponse = { success?: boolean; error?: string; data?: { index?: number; alreadyPlayed?: boolean; spinsLeft?: number } };
-
-function celebrateModontyGift() {
-  const colors = ["#00d8d8", "#3030ff", "#ffcc66", "#ffffff"];
-
-  confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors });
-  window.setTimeout(() => {
-    void confetti({ particleCount: 50, angle: 60, spread: 55, origin: { x: 0, y: 0.7 }, colors });
-    void confetti({ particleCount: 50, angle: 120, spread: 55, origin: { x: 1, y: 0.7 }, colors });
-  }, 250);
-}
 
 export function LuckyWheelGame() {
   const containerRef = useRef<HTMLDivElement>(null);

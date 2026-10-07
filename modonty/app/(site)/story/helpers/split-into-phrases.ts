@@ -2,7 +2,7 @@
  * Splits a word array into phrase chunks based on Arabic/Latin sentence terminators.
  * Shared between LogoSpotlight + Vision2030Spotlight (synchronized subtitle rendering).
  */
-export interface Phrase {
+interface Phrase {
   start: number;
   end: number;
   text: string;

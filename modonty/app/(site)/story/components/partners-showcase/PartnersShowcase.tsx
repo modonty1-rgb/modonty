@@ -5,7 +5,7 @@ import { m } from "framer-motion";
 import { IconExternal } from "@/lib/icons";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
-import { storyPartnerImage } from "./_constants";
+import { storyPartnerImage } from "../../helpers/story-constants";
 
 interface Partner {
   name: string;

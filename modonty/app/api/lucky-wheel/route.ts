@@ -2,7 +2,7 @@ import { randomInt } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { LUCKY_WHEEL_CAMPAIGN, LUCKY_WHEEL_PRIZES, SPINS_PER_PHONE } from "@/app/(site)/lucky-wheel/prizes";
+import { LUCKY_WHEEL_CAMPAIGN, LUCKY_WHEEL_PRIZES, SPINS_PER_PHONE } from "@/lib/lucky-wheel/prizes";
 import { isWheelRateLimited } from "./is-wheel-rate-limited";
 import { normalizeWheelPhone } from "./normalize-wheel-phone";
 

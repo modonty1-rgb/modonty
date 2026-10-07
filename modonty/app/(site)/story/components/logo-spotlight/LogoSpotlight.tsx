@@ -3,8 +3,8 @@
 import { m, AnimatePresence } from "framer-motion";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { memo, useMemo } from "react";
-import { MODONTY_LOGO_URL } from "./_constants";
-import { splitIntoPhrases } from "./_utils/phrases";
+import { MODONTY_LOGO_URL } from "../../helpers/story-constants";
+import { splitIntoPhrases } from "../../helpers/split-into-phrases";
 
 interface Props {
   activeWord?: string;

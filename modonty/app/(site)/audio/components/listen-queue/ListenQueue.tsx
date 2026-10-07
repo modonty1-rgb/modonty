@@ -17,6 +17,11 @@ import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { cn } from "@/lib/utils";
 
 import { hushOtherAudio } from "@/lib/audio/hush-other-audio";
+import { SPEEDS, JUMP } from "@/lib/audio/audio-speeds";
+import { toArabicDigits } from "@/lib/audio/to-arabic-digits";
+import { clock } from "@/lib/audio/clock";
+import { totalPhrase } from "../../helpers/total-phrase";
+import { sumDurationSeconds } from "../../helpers/sum-duration-seconds";
 import type { AudioArticle } from "../../data/get-audio-articles";
 
 /** أشكال العدد (واحد/اثنان/جمع) تصل جاهزة من `messages/ar.json` عبر الصفحة — لا نصّ في العميل. */
@@ -66,32 +71,6 @@ interface ListenQueueProps {
   compact?: boolean;
 }
 
-const SPEEDS = [1, 1.25, 1.5, 2] as const;
-const JUMP = 15;
-
-const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
-const toArabic = (s: string) => s.replace(/\d/g, (d) => AR_DIGITS[Number(d)]);
-
-function clock(seconds: number) {
-  if (!Number.isFinite(seconds) || seconds < 0) return "٠٠:٠٠";
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return toArabic(h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`);
-}
-
-/** «ساعتان و١٣ دقيقة» — a total is read, not counted, so it is said in words. */
-function totalPhrase(seconds: number, labels: ListenQueueLabels) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.round((seconds % 3600) / 60);
-  const hours =
-    h === 0 ? "" : h === 1 ? labels.hourForms.one : h === 2 ? labels.hourForms.two : `${toArabic(String(h))} ${labels.hourForms.many}`;
-  const mins =
-    m === 0 ? "" : m === 1 ? labels.minuteForms.one : m === 2 ? labels.minuteForms.two : `${toArabic(String(m))} ${labels.minuteForms.many}`;
-  return [hours, mins].filter(Boolean).join(labels.joiner) || labels.underMinute;
-}
-
 /**
  * The listening page is a QUEUE, not a shelf.
  *
@@ -122,7 +101,7 @@ export function ListenQueue({ articles, compact, labels }: ListenQueueProps) {
 
   const track = playable[index];
   const duration = track?.durationSeconds ?? 0;
-  const totalSeconds = playable.reduce((sum, a) => sum + (a.durationSeconds ?? 0), 0);
+  const totalSeconds = sumDurationSeconds(playable);
 
   // Changing track means a new file: play it only if the reader was already listening, so that
   // picking a row and pressing play behave the same way and neither surprises anyone.
@@ -201,7 +180,7 @@ export function ListenQueue({ articles, compact, labels }: ListenQueueProps) {
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <IconListen className="size-4 text-action-listen" aria-hidden />
           <span>
-            {toArabic(String(playable.length))} {labels.countUnit} · {totalPhrase(totalSeconds, labels)}
+            {toArabicDigits(String(playable.length))} {labels.countUnit} · {totalPhrase(totalSeconds, labels)}
           </span>
         </div>
 
@@ -247,7 +226,7 @@ export function ListenQueue({ articles, compact, labels }: ListenQueueProps) {
             // someone reaches for while driving. Phones only, so the rail on desktop is unchanged.
             className="shrink-0 rounded-full border border-border px-2.5 py-1 text-xs font-semibold tabular-nums hover:bg-muted max-md:inline-grid max-md:h-11 max-md:min-w-11 max-md:place-items-center"
           >
-            {toArabic(`×${rate}`)}
+            {toArabicDigits(`×${rate}`)}
           </button>
         </div>
 

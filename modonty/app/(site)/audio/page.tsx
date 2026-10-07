@@ -47,26 +47,24 @@ export default async function AudioArticlesPage() {
       />
       {/* No `--sticky-chrome` top padding any more: the header is `sticky` (it holds its own
           space), and the 135px that variable assumes was the icon strip, now the bottom bar. */}
-      <div>
-        <Breadcrumb
-          items={[
-            { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-            { label: t.breadcrumbLabel },
-          ]}
-        />
-        <div className="container mx-auto max-w-[1128px] px-3 py-3 sm:px-4 sm:py-6">
-          <div className="mx-auto max-w-3xl">
-            <h1 className="text-xl font-bold text-foreground">{t.articlesRail.heading}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{t.intro}</p>
-            {articles.length === 0 ? (
-              <p className="mt-6 flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-4 text-sm leading-relaxed text-muted-foreground">
-                <IconVolume2 className="mt-0.5 size-4 shrink-0" aria-hidden />
-                {t.articlesRail.empty}
-              </p>
-            ) : (
-              <ListenQueue articles={articles} labels={t.queue} />
-            )}
-          </div>
+      <Breadcrumb
+        items={[
+          { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
+          { label: t.breadcrumbLabel },
+        ]}
+      />
+      <div className="container mx-auto max-w-[1128px] px-3 py-3 sm:px-4 sm:py-6">
+        <div className="mx-auto max-w-3xl">
+          <h1 className="text-xl font-bold text-foreground">{t.articlesRail.heading}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t.intro}</p>
+          {articles.length === 0 ? (
+            <p className="mt-6 flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-4 text-sm leading-relaxed text-muted-foreground">
+              <IconVolume2 className="mt-0.5 size-4 shrink-0" aria-hidden />
+              {t.articlesRail.empty}
+            </p>
+          ) : (
+            <ListenQueue articles={articles} labels={t.queue} />
+          )}
         </div>
       </div>
     </>
