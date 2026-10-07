@@ -11,7 +11,6 @@ import {
   MessageSquare,
   HelpCircle,
   ArrowRight,
-  BarChart3,
 } from "lucide-react";
 import { getArticleStats, getArticleComments, getArticleQuestions } from "./helpers/article-stats-queries";
 import { getArticleForApproval } from "../helpers/article-queries";

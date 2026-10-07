@@ -7,7 +7,7 @@ export interface TrafficSourceData {
   percentage: number;
 }
 
-export interface RecentActivity {
+interface RecentActivity {
   type: "article" | "conversion" | "comment" | "subscriber";
   title: string;
   description: string;

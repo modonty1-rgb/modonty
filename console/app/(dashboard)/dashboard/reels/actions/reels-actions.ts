@@ -75,7 +75,7 @@ async function buildReelSlug(): Promise<string> {
   throw new Error("could not allocate a unique reel slug");
 }
 
-export interface CreateImageReelInput {
+interface CreateImageReelInput {
   url: string;
   /** The uploaded file's own name — stored as the filename, never reused as the title. */
   filename: string;
@@ -147,7 +147,7 @@ export async function createImageReel(input: CreateImageReelInput): Promise<Resu
   }
 }
 
-export interface ReelDetailsInput {
+interface ReelDetailsInput {
   title: string;
   description: string;
   /** Ignored for a video reel — a moving picture is described by its title and transcript. */

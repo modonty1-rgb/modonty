@@ -25,7 +25,7 @@ const ADMIN_ORIGIN = "https://admin.modonty.com";
 /** Long enough to swallow a normal upload burst, short enough that a later batch still alerts. */
 const BURST_WINDOW_MS = 10 * 60 * 1000;
 
-export type ReelQueueEntry = "uploaded" | "resubmitted";
+type ReelQueueEntry = "uploaded" | "resubmitted";
 
 export async function notifyReelPending(
   mediaId: string,

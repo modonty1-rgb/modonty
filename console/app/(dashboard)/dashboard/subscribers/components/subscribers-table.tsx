@@ -129,8 +129,6 @@ export function SubscribersTable({ subscribers }: Props) {
     setSelected(new Set());
   }
 
-  // ─── Confirm helper using sonner ─────────────────────────────────
-
   // ─── Single-row actions ──────────────────────────────────────────
   function handleUnsubscribe(id: string) {
     confirmThen(s.confirmUnsubscribeOne, () => {

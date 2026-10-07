@@ -24,7 +24,7 @@ export interface GalleryImage {
   reelStatus: string | null;
 }
 
-export interface AddGalleryInput {
+interface AddGalleryInput {
   url: string;
   publicId?: string | null;
   filename?: string | null;

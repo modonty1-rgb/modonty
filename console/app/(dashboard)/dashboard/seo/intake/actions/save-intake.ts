@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { INTAKE_SCHEMA_VERSION, type ClientIntake } from "../lib/intake-types";
 
-export type SaveIntakeResult =
+type SaveIntakeResult =
   | { ok: true }
   | { ok: false; error: string };
 

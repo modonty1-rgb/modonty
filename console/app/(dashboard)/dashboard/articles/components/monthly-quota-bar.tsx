@@ -1,4 +1,4 @@
-export interface MonthlyQuotaBarProps {
+interface MonthlyQuotaBarProps {
   published: number;
   /** Articles per month in the client's contract — 0 when none is set. */
   quota: number;

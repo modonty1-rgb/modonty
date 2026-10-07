@@ -118,21 +118,13 @@ async function callAnalyticsAPI<TReq, TResp>(method: "runReport", body: TReq): P
   return (await resp.json()) as TResp;
 }
 
-export async function runReport(body: RunReportRequest): Promise<RunReportResponse> {
+async function runReport(body: RunReportRequest): Promise<RunReportResponse> {
   return callAnalyticsAPI<RunReportRequest, RunReportResponse>("runReport", body);
 }
 
 // ─── Helpers — typed query builders ──────────────────────────────────────────
 
-const OUR_EVENTS = [
-  "article_view", "article_like", "article_dislike", "article_favorite", "article_share",
-  "comment_submit", "comment_reply", "comment_like", "comment_dislike",
-  "client_view", "client_share", "client_favorite", "client_comment_submit",
-  "newsletter_subscribe", "follow_client", "outbound_click",
-  "contact_submit", "ask_client_submit", "campaign_interest", "conversion_complete",
-];
-
-export interface ClientOverview {
+interface ClientOverview {
   /** null = that one report failed; the others still show. */
   totalEvents7d: number | null;
   totalEvents28d: number | null;
@@ -197,7 +189,7 @@ export const getClientOverview = unstable_cache(
 
 // ─── Phase 5 Wave 2 — 4 deep-dive helpers ────────────────────────────────────
 
-export interface TopArticle {
+interface TopArticle {
   slug: string;
   title: string | null;
   views: number;
@@ -235,7 +227,7 @@ export const getTopArticles = unstable_cache(
   { revalidate: 300, tags: ["ga4-overview"] },
 );
 
-export interface TrafficSource {
+interface TrafficSource {
   source: string;
   medium: string;
   sessions: number;
@@ -268,7 +260,7 @@ export const getTrafficSources = unstable_cache(
   { revalidate: 300, tags: ["ga4-overview"] },
 );
 
-export interface DayHourCell {
+interface DayHourCell {
   dayOfWeek: number; // 0=Sunday ... 6=Saturday
   hour: number; // 0..23
   events: number;
@@ -298,7 +290,7 @@ export const getDayPattern = unstable_cache(
   { revalidate: 600, tags: ["ga4-overview"] },
 );
 
-export interface ConversionFunnel {
+interface ConversionFunnel {
   views: number;
   engagements: number; // like + favorite + comment + share
   intents: number; // ask_client + contact + newsletter + follow
@@ -337,5 +329,3 @@ export const getConversionFunnel = unstable_cache(
   ["ga4-conversion-funnel"],
   { revalidate: 300, tags: ["ga4-overview"] },
 );
-
-export { OUR_EVENTS };

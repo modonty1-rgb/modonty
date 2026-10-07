@@ -10,8 +10,6 @@ import { db } from "@/lib/db";
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_FAILURES = 5;
 
-export const LOGIN_THROTTLE_WINDOW_SECONDS = WINDOW_MS / 1000;
-
 export function clientIp(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   return forwarded || request.headers.get("x-real-ip")?.trim() || "unknown";

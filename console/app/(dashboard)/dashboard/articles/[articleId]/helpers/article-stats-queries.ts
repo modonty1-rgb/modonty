@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import type { CommentWithDetails } from "../../../comments/helpers/comment-queries";
 import type { VisitorQuestionWithDetails } from "../../../questions/helpers/question-queries";
 
-export interface ArticleStats {
+interface ArticleStats {
   viewsCount: number;
   likesCount: number;
   dislikesCount: number;

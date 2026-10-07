@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { isObjectId } from "./params";
 
-export interface MobileSession {
+interface MobileSession {
   clientId: string;
   email: string | null;
   name: string;
@@ -12,7 +12,7 @@ export interface MobileSession {
   sessionId: string;
 }
 
-export type MobileIdentity = Omit<MobileSession, "sessionId">;
+type MobileIdentity = Omit<MobileSession, "sessionId">;
 
 const MOBILE_TOKEN_SALT = "modonty-console-mobile-v1";
 const TOKEN_TTL_SECONDS = 60 * 60 * 24 * 30;

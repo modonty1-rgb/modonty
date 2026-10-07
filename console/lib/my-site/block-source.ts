@@ -1,7 +1,7 @@
 /** مَن يملك بيانات القسم: الشريك نفسه · الأدمن · نصٌّ ثابت من مدونتي. */
 export type BlockOwner = "client" | "admin" | "modonty";
 
-export interface BlockSource {
+interface BlockSource {
   /** اسم الشاشة كما يراها الشريك في قائمته. */
   where: string;
   /** رابط الشاشة — فارغ حين لا يملك الشريك تعديل القسم. */

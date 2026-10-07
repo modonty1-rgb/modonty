@@ -83,15 +83,6 @@ export async function deleteCompetitor(id: string) {
   }
 }
 
-export async function listCompetitors(clientId: string) {
-  const owner = await sessionClientId();
-  if (!owner || owner !== clientId) return [];
-  return db.clientCompetitor.findMany({
-    where: { clientId: owner },
-    orderBy: { order: "asc" },
-  });
-}
-
 export async function createKeyword(
   clientId: string,
   data: { keyword: string; intent?: string | null; priority?: number; reason?: string | null }
@@ -150,13 +141,4 @@ export async function deleteKeyword(id: string) {
   } catch {
     return { success: false, error: messages.error.serverError };
   }
-}
-
-export async function listKeywords(clientId: string) {
-  const owner = await sessionClientId();
-  if (!owner || owner !== clientId) return [];
-  return db.clientKeyword.findMany({
-    where: { clientId: owner },
-    orderBy: [{ priority: "desc" }, { keyword: "asc" }],
-  });
 }

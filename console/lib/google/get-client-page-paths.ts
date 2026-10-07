@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 
-export interface ClientPagePaths {
+interface ClientPagePaths {
   name: string;
   /** `/clients/<encoded slug>` — the partner page; its sub-pages sit under it. */
   clientPath: string;

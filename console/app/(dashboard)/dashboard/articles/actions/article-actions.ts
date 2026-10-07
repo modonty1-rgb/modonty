@@ -58,7 +58,7 @@ export async function approveArticle(articleId: string) {
     revalidatePath("/dashboard");
 
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false, error: messages.error.serverError };
   }
 }
@@ -95,7 +95,7 @@ export async function requestChanges(articleId: string, feedback: string) {
     revalidatePath(`/dashboard/articles/${articleId}/preview`);
 
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false, error: messages.error.serverError };
   }
 }

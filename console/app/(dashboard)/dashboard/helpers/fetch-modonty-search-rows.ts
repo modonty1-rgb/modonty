@@ -2,7 +2,7 @@ import { queryModontySearch, type SearchRow } from "@modonty/shared/lib/google/q
 
 export type { SearchRow };
 
-export interface ModontySearchRows {
+interface ModontySearchRows {
   /** The chosen window, by page. */
   current: SearchRow[];
   /** The same length just before it, by page — for the trend. */

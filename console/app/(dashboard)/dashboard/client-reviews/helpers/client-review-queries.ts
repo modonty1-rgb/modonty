@@ -11,7 +11,7 @@ export interface ClientReviewWithDetails {
   author: { id: string; name: string | null; email: string | null } | null;
 }
 
-export interface ClientReviewStats {
+interface ClientReviewStats {
   pending: number;
   approved: number;
   rejected: number;

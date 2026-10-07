@@ -7,9 +7,6 @@ import { toast } from "sonner";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, MessageSquare, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
@@ -18,7 +15,6 @@ import { FeedbackForm } from "./feedback-form";
 import { ApproveConfirmDialog } from "./approve-confirm-dialog";
 import type { ArticleWithAllData } from "../helpers/article-queries";
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
-import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { ar } from "@/lib/ar";
 
 interface ArticlePreviewClientProps {

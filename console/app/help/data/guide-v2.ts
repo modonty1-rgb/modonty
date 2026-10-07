@@ -13,7 +13,7 @@
 // TIER 1 — ما هو modonty (intro card)
 // ──────────────────────────────────────────────────────────────────────────
 
-export interface IntroStep {
+interface IntroStep {
   emoji: string;
   title: string;
   body: string;
@@ -41,7 +41,7 @@ export const tier1IntroSteps: IntroStep[] = [
 // TIER 2 — صفحتك على modonty.com (Client page showcase)
 // ──────────────────────────────────────────────────────────────────────────
 
-export interface ClientPageBlock {
+interface ClientPageBlock {
   id: string;
   title: string;
   body: string;
@@ -232,13 +232,13 @@ export const tier3EngagementCards: EngagementCard[] = [
 // TIER 4 — صفحات الـ console (التشغيل اليومي)
 // ──────────────────────────────────────────────────────────────────────────
 
-export interface ConsolePageGroup {
+interface ConsolePageGroup {
   emoji: string;
   title: string;
   pages: ConsolePage[];
 }
 
-export interface ConsolePage {
+interface ConsolePage {
   id: string;
   title: string;
   image: string;
@@ -357,7 +357,7 @@ export const tier4ConsoleGroups: ConsolePageGroup[] = [
 import type { LucideIcon } from "lucide-react";
 import { Gem, Bell, Send as SendIcon, KeyRound } from "lucide-react";
 
-export interface AccountSetting {
+interface AccountSetting {
   emoji: string;
   icon: LucideIcon;
   title: string;
@@ -395,7 +395,7 @@ export const tier5AccountSettings: AccountSetting[] = [
 // TIERS metadata for TOC
 // ──────────────────────────────────────────────────────────────────────────
 
-export interface Tier {
+interface Tier {
   id: string;
   num: string;
   title: string;

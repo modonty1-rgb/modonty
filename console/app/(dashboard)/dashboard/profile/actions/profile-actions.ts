@@ -248,7 +248,7 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
     revalidatePath("/dashboard/settings");
     revalidatePath("/dashboard/seo");
     return { success: true };
-  } catch (_e) {
+  } catch {
     return { success: false, error: messages.error.serverError };
   }
 }

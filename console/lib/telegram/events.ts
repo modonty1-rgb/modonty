@@ -37,7 +37,7 @@ export type TelegramEventKey =
 
 export type TelegramEventGroup = "article" | "clientPage" | "direct";
 
-export interface TelegramEventDef {
+interface TelegramEventDef {
   key: TelegramEventKey;
   group: TelegramEventGroup;
   label: string;

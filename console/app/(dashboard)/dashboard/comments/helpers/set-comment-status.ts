@@ -13,7 +13,7 @@ import { notifyCommentApproved } from "./notify-comment-approved";
  * كان داخل أكشن الويب ويقرأ العميل من جلسة المتصفّح، فلم يستطع التطبيق (جلسة Bearer)
  * أن يعتمد تعليقاً — والعميل صار يصله جرس «تعليق جديد» بلا زرّ يفعل به شيئاً (٥ أكتوبر ٢٠٢٦).
  */
-export type CommentStatusResult = { success: true } | { success: false; error: string };
+type CommentStatusResult = { success: true } | { success: false; error: string };
 
 interface OwnedComment {
   status: CommentStatus;

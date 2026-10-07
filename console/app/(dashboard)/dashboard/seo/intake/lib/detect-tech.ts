@@ -21,7 +21,7 @@ function detectGbpUrl(html: string): string | null {
   return null;
 }
 
-export interface DetectedTech {
+interface DetectedTech {
   gbpUrl: string | null;
 }
 

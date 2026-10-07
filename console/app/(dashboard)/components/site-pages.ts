@@ -18,7 +18,7 @@ import type { LucideIcon } from "lucide-react";
  * screens, so a page added on modonty is added here once. Labels are the partner's own
  * voice («خدماتنا»), not the visitor's («خدماته») — this is his console.
  */
-export interface SitePageDef {
+interface SitePageDef {
   /** URL segment on modonty (`""` = home) and on the console (`/dashboard/site-pages/<key>`). */
   key: string;
   label: string;

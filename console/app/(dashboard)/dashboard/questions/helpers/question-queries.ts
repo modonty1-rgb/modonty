@@ -1,8 +1,6 @@
 import { db } from "@/lib/db";
 import { ArticleFAQStatus } from "@prisma/client";
 
-export type QuestionSource = "chatbot" | "user";
-
 export interface VisitorQuestionWithDetails {
   id: string;
   question: string;

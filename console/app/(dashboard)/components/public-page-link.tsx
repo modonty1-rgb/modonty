@@ -105,8 +105,6 @@ export function PublicPageLink({
       )}
     >
       {/* The brand mark, not a generic globe — it says "this is your page on Modonty"
-          without spending a word on it. */}
-      {/* The brand mark, not a generic globe — it says "this is your page on Modonty"
           without spending a word on it.
           The source SVG draws its artwork across only ~54% of its 100×100 viewBox and
           carries its own white tile, so it renders tiny inside a padded, tinted box.

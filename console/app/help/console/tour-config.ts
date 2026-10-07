@@ -18,7 +18,7 @@
  */
 export type HotspotPriority = "critical" | "important" | "optional";
 
-export interface Hotspot {
+interface Hotspot {
   /** local index within the stop — also used as driver.js anchor `${stopId}-h${n}` */
   n: number;
   /** y position 0-100 (% from top of image) */
@@ -35,7 +35,7 @@ export interface Hotspot {
   priority?: HotspotPriority;
 }
 
-export interface SimulationStop {
+interface SimulationStop {
   id: string;
   image: string;
   pageLabel: string;

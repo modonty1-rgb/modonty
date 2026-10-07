@@ -24,7 +24,7 @@ import { addMyDocument, deleteMyDocument } from "../actions/document-actions";
  */
 const SUGGESTIONS = ["سجلّ تجاريّ", "ترخيص مهنيّ", "شهادة ضريبيّة", "هويّة المالك", "عقد تأسيس"];
 
-export type MyDocument = {
+type MyDocument = {
   id: string;
   label: string;
   url: string;

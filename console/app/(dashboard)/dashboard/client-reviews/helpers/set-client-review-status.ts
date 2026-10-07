@@ -11,7 +11,7 @@ import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo
  * بكل تقييم جديد، فلا بدّ أن يقدر يعتمده أو يرفضه من التطبيق بنفس القاعدة (ومعها تحديث
  * JSON-LD للتقييم المجمّع الذي تقرؤه مدونتي).
  */
-export type ClientReviewStatusResult = { success: true } | { success: false; error: string };
+type ClientReviewStatusResult = { success: true } | { success: false; error: string };
 
 export async function setClientReviewStatusForClient(
   clientId: string,

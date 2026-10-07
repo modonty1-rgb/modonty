@@ -21,8 +21,8 @@ import {
 import { ar } from "@/lib/ar";
 import { IconLightbulb } from "@modonty/shared/lib/icons";
 
-export type KpiInfoKey = "high" | "medium" | "low" | "qualified" | "avg";
-export type KpiIconKey = "flame" | "trending-up" | "snowflake" | "award" | "target";
+type KpiInfoKey = "high" | "medium" | "low" | "qualified" | "avg";
+type KpiIconKey = "flame" | "trending-up" | "snowflake" | "award" | "target";
 
 const ICONS: Record<KpiIconKey, React.ComponentType<{ className?: string }>> = {
   flame: Flame,

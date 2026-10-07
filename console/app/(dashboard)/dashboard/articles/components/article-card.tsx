@@ -1,7 +1,6 @@
 "use client";
 
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
-import { mediaSrc } from "@modonty/shared/lib/media-src";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
@@ -61,14 +60,6 @@ export function ArticleCard({ article, siteUrl }: ArticleCardProps) {
 
   const visibleTags = article.tags.slice(0, 3);
   const remainingTags = Math.max(0, article.tags.length - visibleTags.length);
-
-  // Smart link target — published articles open the live page on modonty.com,
-  // pending articles open the in-console sandbox preview.
-  const viewUrl = isPending
-    ? `/dashboard/articles/${article.id}/preview`
-    : `${siteUrl}/articles/${article.slug}`;
-  const viewTarget = isPending ? undefined : "_blank";
-  const viewRel = isPending ? undefined : "noopener noreferrer";
 
   const runApprove = async () => {
     setLoading(true);

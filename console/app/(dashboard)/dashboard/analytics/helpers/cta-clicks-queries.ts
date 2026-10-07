@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import type { CTAType } from "@prisma/client";
 
-export interface CTAClickData {
+interface CTAClickData {
   type: CTAType;
   label: string | null;
   clicks: number;

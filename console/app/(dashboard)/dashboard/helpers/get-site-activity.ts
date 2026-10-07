@@ -2,7 +2,7 @@ import { ArticleStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 
-export interface SiteActivity {
+interface SiteActivity {
   /** Article views + partner-page views in the window. */
   views: number;
   viewsPrev: number;

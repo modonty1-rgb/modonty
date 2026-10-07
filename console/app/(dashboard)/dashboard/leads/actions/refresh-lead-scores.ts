@@ -9,7 +9,7 @@ import {
 import { messages } from "@/lib/messages";
 import { revalidatePath } from "next/cache";
 
-export type RefreshLeadScoresResult =
+type RefreshLeadScoresResult =
   | { ok: true; result: RefreshResult; refreshedAt: string }
   | { ok: false; error: string };
 

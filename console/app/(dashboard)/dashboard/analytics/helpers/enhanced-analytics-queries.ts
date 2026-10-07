@@ -1,13 +1,6 @@
 import { db } from "@/lib/db";
-import { TrafficSource, ConversionType, CTAType } from "@prisma/client";
 
-export interface TrafficSourceData {
-  source: string;
-  count: number;
-  percentage: number;
-}
-
-export interface CoreWebVitals {
+interface CoreWebVitals {
   lcp: number | null;
   cls: number | null;
   inp: number | null;
@@ -16,7 +9,7 @@ export interface CoreWebVitals {
   fid: number | null;
 }
 
-export interface EngagementMetrics {
+interface EngagementMetrics {
   avgTimeOnPage: number;
   avgScrollDepth: number;
   avgCompletionRate: number;
@@ -33,14 +26,7 @@ export interface EngagementMetrics {
   bouncedSessions: number;
 }
 
-export interface ConversionData {
-  type: string;
-  count: number;
-  percentage: number;
-  value: number | null;
-}
-
-export interface CampaignPerformance {
+interface CampaignPerformance {
   campaignId: string;
   campaignName: string;
   type: string;
@@ -48,44 +34,6 @@ export interface CampaignPerformance {
   clicks: number;
   conversions: number;
   cost: number | null;
-}
-
-export interface ArticlePerformance {
-  articleId: string;
-  title: string;
-  slug: string;
-  views: number;
-  avgTimeOnPage: number;
-  avgScrollDepth: number;
-  conversions: number;
-  category: string | null;
-}
-
-export async function getTrafficSources(
-  clientId: string,
-  days: 7 | 30 | 90 = 30
-): Promise<TrafficSourceData[]> {
-  const since = new Date();
-  since.setDate(since.getDate() - days);
-
-  const sources = await db.analytics.groupBy({
-    by: ["source"],
-    where: {
-      article: { clientId },
-      timestamp: { gte: since },
-    },
-    _count: {
-      source: true,
-    },
-  });
-
-  const total = sources.reduce((sum, s) => sum + s._count.source, 0);
-
-  return sources.map((s) => ({
-    source: s.source,
-    count: s._count.source,
-    percentage: total > 0 ? (s._count.source / total) * 100 : 0,
-  }));
 }
 
 export async function getCoreWebVitals(
@@ -238,51 +186,6 @@ export async function getEngagementMetrics(
   };
 }
 
-export async function getConversions(
-  clientId: string,
-  days: 7 | 30 | 90 = 30
-): Promise<{ conversions: ConversionData[]; total: number; rate: number }> {
-  const since = new Date();
-  since.setDate(since.getDate() - days);
-
-  const conversions = await db.conversion.groupBy({
-    by: ["type"],
-    where: {
-      clientId,
-      createdAt: { gte: since },
-    },
-    _count: {
-      type: true,
-    },
-    _sum: {
-      value: true,
-    },
-  });
-
-  const totalViews = await db.articleView.count({
-    where: {
-      article: { clientId },
-      createdAt: { gte: since },
-    },
-  });
-
-  const totalConversions = conversions.reduce((sum, c) => sum + c._count.type, 0);
-  const conversionRate = totalViews > 0 ? (totalConversions / totalViews) * 100 : 0;
-
-  const conversionData: ConversionData[] = conversions.map((c) => ({
-    type: c.type,
-    count: c._count.type,
-    percentage: totalConversions > 0 ? (c._count.type / totalConversions) * 100 : 0,
-    value: c._sum.value,
-  }));
-
-  return {
-    conversions: conversionData,
-    total: totalConversions,
-    rate: conversionRate,
-  };
-}
-
 export async function getCampaignPerformance(
   clientId: string,
   days: 7 | 30 | 90 = 30
@@ -313,71 +216,4 @@ export async function getCampaignPerformance(
     conversions: c._sum.conversions ?? 0,
     cost: c._sum.cost,
   }));
-}
-
-export async function getArticlePerformance(
-  clientId: string,
-  days: 7 | 30 | 90 = 30,
-  limit: number = 10
-): Promise<ArticlePerformance[]> {
-  const since = new Date();
-  since.setDate(since.getDate() - days);
-
-  const articles = await db.article.findMany({
-    where: {
-      clientId,
-      status: "PUBLISHED",
-    },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      category: { select: { name: true } },
-    },
-    take: 50,
-  });
-
-  const articlesWithMetrics = await Promise.all(
-    articles.map(async (article) => {
-      const [views, analytics, conversions] = await Promise.all([
-        db.articleView.count({
-          where: {
-            articleId: article.id,
-            createdAt: { gte: since },
-          },
-        }),
-        db.analytics.aggregate({
-          where: {
-            articleId: article.id,
-            timestamp: { gte: since },
-          },
-          _avg: {
-            timeOnPage: true,
-            scrollDepth: true,
-          },
-        }),
-        db.conversion.count({
-          where: {
-            articleId: article.id,
-            createdAt: { gte: since },
-          },
-        }),
-      ]);
-
-      return {
-        articleId: article.id,
-        title: article.title,
-        slug: article.slug,
-        views,
-        avgTimeOnPage: analytics._avg.timeOnPage ?? 0,
-        avgScrollDepth: analytics._avg.scrollDepth ?? 0,
-        conversions,
-        category: article.category?.name ?? null,
-      };
-    })
-  );
-
-  return articlesWithMetrics
-    .sort((a, b) => b.views - a.views)
-    .slice(0, limit);
 }

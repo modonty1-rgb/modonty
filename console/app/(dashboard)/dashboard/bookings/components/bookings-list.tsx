@@ -59,15 +59,6 @@ function formatDateTime(d: Date | string | null | undefined): string {
   }).format(new Date(d));
 }
 
-/** Date → "YYYY-MM-DDTHH:mm" for <input type="datetime-local"> (local time). */
-function toDatetimeLocal(d: Date | string | null | undefined): string {
-  if (!d) return "";
-  const date = new Date(d);
-  if (Number.isNaN(date.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
 function waNumber(phone: string | null): string {
   return (phone ?? "").replace(/\D/g, "");
 }

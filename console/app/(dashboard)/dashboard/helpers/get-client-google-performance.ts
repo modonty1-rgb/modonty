@@ -5,7 +5,7 @@ import { getClientPagePaths } from "@/lib/google/get-client-page-paths";
 
 import { fetchModontySearchRows, type SearchRow } from "./fetch-modonty-search-rows";
 
-export interface GoogleTotals {
+interface GoogleTotals {
   clicks: number;
   impressions: number;
   /** Clicks ÷ impressions, as a percentage. */
@@ -14,7 +14,7 @@ export interface GoogleTotals {
   position: number | null;
 }
 
-export interface ClientGooglePerformance {
+interface ClientGooglePerformance {
   current: GoogleTotals;
   previous: GoogleTotals;
   /** Google impressions/clicks with the same page's views on modonty over the same window. */

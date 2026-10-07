@@ -8,8 +8,8 @@ import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
  * notice at a time — the most consequential wins. Returns null when the account is healthy.
  * Ordered by consequence: a lapsed subscription first, then money, then the reminder.
  */
-export type AccountNoticeKind = "expired" | "unpaid" | "ending";
-export type AccountNotice = {
+type AccountNoticeKind = "expired" | "unpaid" | "ending";
+type AccountNotice = {
   kind: AccountNoticeKind;
   tone: "calm" | "attention";
   title: string;
@@ -25,7 +25,7 @@ function daysUntil(d: Date, now: Date): number {
   return Math.round((target.getTime() - startOfToday.getTime()) / 86_400_000);
 }
 
-export function arAccountDate(d: Date): string {
+function arAccountDate(d: Date): string {
   return new Intl.DateTimeFormat(SITE_LOCALE_GREGORIAN, { day: "numeric", month: "long", year: "numeric" }).format(d);
 }
 

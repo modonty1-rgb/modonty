@@ -58,7 +58,7 @@ async function publishToClientPage(clientId: string): Promise<void> {
   }
 }
 
-export interface IntroVideoTicket {
+interface IntroVideoTicket {
   mediaId: string;
   endpoint: string;
   libraryId: string;
@@ -111,7 +111,7 @@ export async function createIntroVideoTicket(
   }
 }
 
-export interface FinalizeIntroVideoInput {
+interface FinalizeIntroVideoInput {
   durationSec: number;
   width: number;
   height: number;

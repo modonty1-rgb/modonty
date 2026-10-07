@@ -12,25 +12,17 @@ import {
   YMYL_CATEGORIES,
   isYmylCategory,
   type AuthorityByCountry,
-  type YmylCategory,
   type YmylCategoryConfig,
-  type YmylField,
 } from "@modonty/shared/lib/seo/ymyl-config";
 
 /** Get the full config for a category. Returns null if category is invalid/missing. */
-export function getYmylConfig(category: string | null | undefined): YmylCategoryConfig | null {
+function getYmylConfig(category: string | null | undefined): YmylCategoryConfig | null {
   if (!isYmylCategory(category)) return null;
   return YMYL_CATEGORIES[category];
 }
 
-/** Required fields for a given category. Empty array if category invalid. */
-export function getRequiredYmylFields(category: string | null | undefined): YmylField[] {
-  const cfg = getYmylConfig(category);
-  return cfg ? cfg.fields.filter((f) => f.required) : [];
-}
-
 /** Authority options for a given category + country (falls back to default). */
-export function getAuthorityOptions(
+function getAuthorityOptions(
   category: string | null | undefined,
   country: string | null | undefined,
   fieldKey: string
@@ -46,27 +38,7 @@ export function getAuthorityOptions(
   return opts.default ?? [];
 }
 
-/**
- * Resolve the schema.org @type for a YMYL client.
- * Specialty-specific mapping wins over base schemaType.
- * Example: medical + dentistry → "Dentist" (not "MedicalClinic").
- */
-export function resolveYmylSchemaType(
-  category: string | null | undefined,
-  ymylData: Record<string, unknown> | null | undefined
-): string | null {
-  const cfg = getYmylConfig(category);
-  if (!cfg) return null;
-  const specialtyValue = ymylData?.specialty;
-  if (typeof specialtyValue === "string") {
-    const specialtyField = cfg.fields.find((f) => f.type === "specialty");
-    const match = specialtyField?.specialties?.find((s) => s.value === specialtyValue);
-    if (match?.schemaSubType) return match.schemaSubType;
-  }
-  return cfg.schemaType;
-}
-
-export interface YmylValidationResult {
+interface YmylValidationResult {
   valid: boolean;
   /** Map of fieldKey → human-readable Arabic error */
   errors: Record<string, string>;
@@ -147,73 +119,4 @@ export function isYmylClientComplete(
     country: client.addressCountry ?? null,
     authorityCodes,
   }).complete;
-}
-
-/**
- * Scan article content for forbidden claims of the client's YMYL category.
- * Returns the list of matched phrases (case-insensitive substring match).
- * Empty array = clean.
- */
-export function findForbiddenClaims(
-  category: string | null | undefined,
-  content: string
-): string[] {
-  const cfg = getYmylConfig(category);
-  if (!cfg || !content) return [];
-  const haystack = content.toLowerCase();
-  return cfg.forbiddenClaims.filter((claim) => haystack.includes(claim.toLowerCase()));
-}
-
-export interface PublishGateResult {
-  canPublish: boolean;
-  blockers: string[];
-  warnings: string[];
-}
-
-/**
- * Pre-publish YMYL gate for an article.
- *
- * BLOCKERS (cannot publish):
- * - Client is YMYL but ymylData incomplete (missing required fields)
- * - Article has no reviewedById (Author reviewer)
- *
- * WARNINGS (can publish but flagged):
- * - Article content contains forbidden claims from this category
- */
-export function checkYmylPublishGate(input: {
-  client: {
-    isYmyl: boolean;
-    ymylCategory: string | null;
-    ymylData: unknown;
-    addressCountry?: string | null;
-  };
-  article: {
-    content: string;
-    reviewedById: string | null;
-  };
-  /** Live Reference Data authority codes — see isYmylClientComplete. */
-  authorityCodes?: string[];
-}): PublishGateResult {
-  const { client, article, authorityCodes } = input;
-  const blockers: string[] = [];
-  const warnings: string[] = [];
-
-  if (!client.isYmyl) {
-    return { canPublish: true, blockers, warnings };
-  }
-
-  if (!isYmylClientComplete(client, authorityCodes)) {
-    blockers.push("بيانات YMYL للعميل غير مكتملة — أكمل التوثيق قبل النشر");
-  }
-
-  if (!article.reviewedById) {
-    blockers.push("مقال YMYL يحتاج مُراجِع مختص — اختر مُراجِع قبل النشر");
-  }
-
-  const forbidden = findForbiddenClaims(client.ymylCategory, article.content);
-  if (forbidden.length > 0) {
-    warnings.push(`المقال يحتوي عبارات غير مسموحة في هذا التخصص: ${forbidden.join(" · ")}`);
-  }
-
-  return { canPublish: blockers.length === 0, blockers, warnings };
 }

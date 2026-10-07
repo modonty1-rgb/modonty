@@ -45,7 +45,7 @@ async function buildReelSlug(): Promise<string> {
   throw new Error("could not allocate a unique reel slug");
 }
 
-export interface VideoUploadTicket {
+interface VideoUploadTicket {
   mediaId: string;
   endpoint: string;
   libraryId: string;
@@ -104,7 +104,7 @@ export async function createVideoUploadTicket(
   }
 }
 
-export interface FinalizeVideoInput {
+interface FinalizeVideoInput {
   durationSec: number;
   width: number;
   height: number;

@@ -9,7 +9,6 @@ import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import {
   MousePointerClick,
-  ArrowLeft,
   ArrowRight,
   Sparkles,
   PlayCircle,

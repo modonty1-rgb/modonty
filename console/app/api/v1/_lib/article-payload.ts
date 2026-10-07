@@ -10,7 +10,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
  * to compute anything, because the moment it does, our SEO quality becomes their
  * implementation quality.
  */
-export interface ArticlePayload {
+interface ArticlePayload {
   id: string;
   slug: string;
   title: string;

@@ -38,7 +38,7 @@ function articleLoc(base: string, slug: string): string {
   return escapeXml(encodeURI(`${base}/${slug}`));
 }
 
-export async function GET(request: Request, { params }: { params: Promise<{ siteId: string }> }) {
+export async function GET(_request: Request, { params }: { params: Promise<{ siteId: string }> }) {
   const { siteId } = await params;
 
   const resolved = await resolveSite(siteId);

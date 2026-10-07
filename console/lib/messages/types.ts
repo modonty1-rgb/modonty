@@ -1,12 +1,3 @@
-// Success toast messages
-export type SuccessKey =
-  | 'saved'
-  | 'updated'
-  | 'approved'
-  | 'rejected'
-  | 'passwordChanged'
-  | 'copied';
-
 // Error toast messages
 export type ErrorKey =
   | 'invalidCredentials'
@@ -19,6 +10,3 @@ export type ErrorKey =
   | 'feedback_required'
   | 'answer_required'
   | 'reply_required';
-
-// Confirmation messages
-export type ConfirmKey = 'delete' | 'approve' | 'reject' | 'logout';

@@ -30,7 +30,7 @@ import type { LucideIcon } from "lucide-react";
  * drifted: «مقالاتك على موقعك» shipped to the rail and was never added to the sheet, so
  * clients on phones had no way to reach the screen at all.
  */
-export interface NavItemConfig {
+interface NavItemConfig {
   href: string;
   icon: LucideIcon;
   label: string;
@@ -45,7 +45,7 @@ export interface NavGroupConfig {
   items: NavItemConfig[];
 }
 
-export interface NavCounts {
+interface NavCounts {
   pendingArticlesCount: number;
   subscribersCount: number;
   leadsCount: number;

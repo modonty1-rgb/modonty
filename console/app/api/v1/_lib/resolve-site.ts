@@ -10,13 +10,13 @@ import { db } from "@/lib/db";
  * that used to sit behind the key, and they are why a suspended client stops the moment
  * the tick goes on rather than whenever someone remembers to change a value.
  */
-export interface ResolvedSite {
+interface ResolvedSite {
   id: string;
   name: string;
   articlesBaseUrl: string | null;
 }
 
-export type ResolveResult =
+type ResolveResult =
   | { ok: true; site: ResolvedSite }
   | { ok: false; status: 403 | 404; error: string };
 

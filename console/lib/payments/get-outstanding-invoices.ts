@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { isOutstandingInvoice, outstandingByCurrency } from "@modonty/shared/lib/payments/collected";
 import type { CurrencyTotal } from "./totals-by-currency";
 
-export interface OutstandingInvoices {
+interface OutstandingInvoices {
   count: number;
   /** لكلّ عملةٍ سطرُها — العملةُ من الفاتورة نفسها. */
   totals: CurrencyTotal[];

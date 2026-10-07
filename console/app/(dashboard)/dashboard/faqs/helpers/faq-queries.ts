@@ -1,7 +1,5 @@
 import { db } from "@/lib/db";
 
-export type FaqSource = "manual" | "chatbot" | "user";
-
 export interface ClientFAQWithArticle {
   id: string;
   question: string;
@@ -84,16 +82,4 @@ export async function getFaqStats(clientId: string): Promise<FaqStats> {
     total: pending + published + rejected,
     fromReaders,
   };
-}
-
-/** Most-recent updatedAt across this client's FAQs — used for "آخر نشاط" badge */
-export async function getFaqsLastActivity(
-  clientId: string
-): Promise<Date | null> {
-  const top = await db.articleFAQ.findFirst({
-    where: { article: { clientId } },
-    orderBy: { updatedAt: "desc" },
-    select: { updatedAt: true },
-  });
-  return top?.updatedAt ?? null;
 }

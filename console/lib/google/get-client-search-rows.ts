@@ -5,7 +5,7 @@ import { queryModontySearch } from "@modonty/shared/lib/google/query-modonty-sea
 
 export type ReportDimension = "date" | "page" | "query";
 
-export interface ClientSearchRow {
+interface ClientSearchRow {
   date?: string;
   /** Article title, or the client's name for the partner page. */
   page?: string;

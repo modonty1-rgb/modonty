@@ -12,7 +12,7 @@ import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo
  * جديد على الصفحة، فلا بدّ أن يقدر يردّ عليه من التطبيق — بنفس النتيجة: الردّ ينشر السؤال
  * في صفحته ويعيد توليد FAQPage JSON-LD.
  */
-export type ClientPageFaqResult = { success: true } | { success: false; error: string };
+type ClientPageFaqResult = { success: true } | { success: false; error: string };
 
 export async function updateClientPageFaqForClient(
   clientId: string,

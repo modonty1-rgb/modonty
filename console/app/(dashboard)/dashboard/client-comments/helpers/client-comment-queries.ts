@@ -11,7 +11,7 @@ export interface ClientCommentWithDetails {
   _count: { replies: number; likes: number; dislikes: number };
 }
 
-export interface ClientCommentStats {
+interface ClientCommentStats {
   pending: number;
   approved: number;
   rejected: number;

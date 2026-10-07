@@ -23,7 +23,7 @@ import {
   type GeoInfo,
 } from "@modonty/shared/lib/telegram/geo";
 
-export interface TelegramEventPayload {
+interface TelegramEventPayload {
   /** Optional human-readable headline shown after the emoji + label. */
   title?: string;
   /** Optional body — e.g. visitor name + comment text. */

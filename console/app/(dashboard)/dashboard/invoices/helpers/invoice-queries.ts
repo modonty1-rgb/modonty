@@ -12,7 +12,7 @@ import { getOutstandingInvoices, totalsByCurrency, type CurrencyTotal } from "@/
  * real (it used to point at Settings, which never showed an invoice — Khalid 2026-07-24).
  */
 
-export interface ClientInvoice {
+interface ClientInvoice {
   id: string;
   number: string;
   issuedAt: Date;
@@ -33,7 +33,7 @@ export interface ClientInvoice {
   subscriptionEnd: Date | null;
 }
 
-export interface InvoiceSummary {
+interface InvoiceSummary {
   invoices: ClientInvoice[];
   unpaidCount: number;
   /** المستحقّ لكلّ عملةٍ وحدها — `getOutstandingInvoices`، نفسُ مصدر الشريط والإعدادات. */

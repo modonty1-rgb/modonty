@@ -74,11 +74,6 @@ function noteFor(key: string, page: BlocksPage, count: number | undefined): stri
   return `الرئيسية تعرض ${s.cap} منها — والباقي في صفحة ${s.rest}.`;
 }
 
-/** «٣ صور» لا «٣ عنصر» — العدّ يُقرأ بوحدته أو لا يُقرأ. */
-function head(count: number, unit: string): string {
-  return `${count} ${unit}`;
-}
-
 /**
  * بيانات القسم نصّاً. لا يُستدعى إلا للقسم غير الفارغ — الفراغ يقرّره `isEmpty` في سجلّ
  * المكوّنات نفسه، فلا يختلف ما تعرضه هذه الشاشة عمّا يرسمه الموقع.

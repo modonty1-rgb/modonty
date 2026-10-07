@@ -9,7 +9,7 @@ import { messages } from "@/lib/messages";
 import { sendEmail } from "@/lib/email/resend-client";
 import { faqReplyEmail } from "@modonty/shared/lib/email/templates/faq-reply";
 
-export type PublishResult = { success: true } | { success: false; error: string };
+type PublishResult = { success: true } | { success: false; error: string };
 
 /**
  * Publishing a partner's answer to a visitor's question — the ONE place it happens.

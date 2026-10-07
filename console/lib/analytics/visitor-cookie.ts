@@ -35,7 +35,7 @@ function parseGaCookieClientId(gaCookie: string): string | null {
  *
  * Must be called from a Server Action or Route Handler context.
  */
-export async function getOrCreateVisitorId(): Promise<string> {
+async function getOrCreateVisitorId(): Promise<string> {
   const store = await cookies();
 
   const ga = store.get(GA_COOKIE)?.value;
@@ -65,7 +65,7 @@ export async function getOrCreateVisitorId(): Promise<string> {
  *
  * Must be called from a Server Action or Route Handler context.
  */
-export async function getSessionId(): Promise<string> {
+async function getSessionId(): Promise<string> {
   const store = await cookies();
 
   const existing = store.get(SESSION_COOKIE)?.value;

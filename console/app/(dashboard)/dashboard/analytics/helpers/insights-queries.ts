@@ -1,33 +1,33 @@
 import { db } from "@/lib/db";
 
-export type DeviceType = "mobile" | "tablet" | "desktop" | "unknown";
+type DeviceType = "mobile" | "tablet" | "desktop" | "unknown";
 
-export interface DeviceBreakdown {
+interface DeviceBreakdown {
   type: DeviceType;
   count: number;
   percentage: number;
 }
 
-export interface NewVsReturning {
+interface NewVsReturning {
   newVisitors: number;
   returningVisitors: number;
   total: number;
   newPercentage: number;
 }
 
-export interface DayOfWeekItem {
+interface DayOfWeekItem {
   day: number; // 0 = Sunday … 6 = Saturday (per JS Date.getDay)
   views: number;
   percentage: number;
 }
 
-export interface HourOfDayItem {
+interface HourOfDayItem {
   hour: number; // 0..23
   views: number;
   percentage: number;
 }
 
-export interface InsightItem {
+interface InsightItem {
   id: string;
   tone: "positive" | "neutral" | "warning";
   title: string;

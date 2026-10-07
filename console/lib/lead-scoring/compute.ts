@@ -5,9 +5,9 @@ const HOT_THRESHOLD = 70;
 const WARM_THRESHOLD = 40;
 const QUALIFIED_THRESHOLD = 60;
 
-export type QualificationLevel = "HOT" | "WARM" | "COLD";
+type QualificationLevel = "HOT" | "WARM" | "COLD";
 
-export interface LeadScorePayload {
+interface LeadScorePayload {
   userId: string | null;
   sessionId: string | null;
   email: string | null;
@@ -321,12 +321,4 @@ export async function refreshLeadScoring(
     updated,
     deletedStale,
   };
-}
-
-/** Backward-compat: thin wrapper used by older callers. */
-export async function upsertLeadScoring(payloads: LeadScorePayload[]): Promise<number> {
-  if (payloads.length === 0) return 0;
-  const clientId = payloads[0].clientId;
-  const result = await refreshLeadScoring(clientId, payloads);
-  return result.processed;
 }

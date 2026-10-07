@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 
 export type BookingStatus = "new" | "contacted" | "done" | "archived";
-export type BookingChannel = "form" | "whatsapp";
 
 export interface BookingWithDetails {
   id: string;

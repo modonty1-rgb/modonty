@@ -13,7 +13,7 @@ import type { ClientReel } from "../actions/reels-actions";
  * `inReels` on — and part on `mimeType`. Nothing in the database knows about it, and the
  * public watch page on modonty.com stays one stable URL regardless.
  */
-export type ReelKind = "image" | "video";
+type ReelKind = "image" | "video";
 
 const PAGE_LIMIT = 60;
 

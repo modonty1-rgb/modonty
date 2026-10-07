@@ -25,7 +25,7 @@ import { compressToWebP } from "@/lib/compress-image";
 /** حدُّ ما يُقبل من الجهاز قبل الضغط — بعده يخرج الضغط نفسه عن جدواه. */
 const IMG_MAX_BYTES = 10 * 1024 * 1024;
 
-export type ImageFieldShape = "wide" | "round";
+type ImageFieldShape = "wide" | "round";
 
 export function ImageField({
   image,

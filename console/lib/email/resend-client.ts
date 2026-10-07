@@ -13,7 +13,7 @@ function getResendClient(): Resend {
   return resendInstance;
 }
 
-export interface SendEmailParams {
+interface SendEmailParams {
   to: string | string[];
   subject: string;
   html?: string;

@@ -10,23 +10,23 @@
 export const INTAKE_SCHEMA_VERSION = 1 as const;
 
 // ─── Voice & Audience (migrated from Profile) ────────────────────────────────
-export interface IntakeVoice {
+interface IntakeVoice {
   tone?: string | null;
   traits?: string[] | null;
 }
 
-export interface IntakeAudience {
+interface IntakeAudience {
   description?: string | null;
 }
 
 // ─── Goals (migrated from Profile.seoGoals) ──────────────────────────────────
-export interface IntakeGoals {
+interface IntakeGoals {
   primary?: string | null;
   kpis?: string | null;
 }
 
 // ─── Policy (migrated from Profile forbidden* + compliance + linkBuilding) ───
-export interface IntakePolicy {
+interface IntakePolicy {
   forbiddenKeywords?: string[] | null;
   forbiddenClaims?: string[] | null;
   restrictedClaims?: string | null;
@@ -35,24 +35,24 @@ export interface IntakePolicy {
 }
 
 // ─── Technical (only Google Business Profile — auto-detected from website URL) ──
-export interface IntakeTechnical {
+interface IntakeTechnical {
   googleBusinessProfileUrl?: string | null;
 }
 
 // ─── Business (migrated from Profile.businessBrief — kept here too for AI brief) ─
-export interface IntakeBusiness {
+interface IntakeBusiness {
   brief?: string | null;
 }
 
 // ─── Story (NEW — E-E-A-T narrative) ─────────────────────────────────────────
-export interface IntakeStory {
+interface IntakeStory {
   foundingStory?: string | null;
   expertise?: string | null;
   seasons?: string[] | null;
 }
 
 // ─── Customer Intelligence (NEW) ─────────────────────────────────────────────
-export interface IntakeCustomers {
+interface IntakeCustomers {
   bigProblem?: string | null;
   objections?: string[] | null;
   faqs?: string | null;
@@ -60,7 +60,7 @@ export interface IntakeCustomers {
 }
 
 // ─── Content Strategy (NEW) ──────────────────────────────────────────────────
-export interface IntakeStrategy {
+interface IntakeStrategy {
   mainProductFocus?: string | null;
   topicIdeas?: string | null;
   evidence?: string | null;
@@ -69,19 +69,19 @@ export interface IntakeStrategy {
 }
 
 // ─── Competition (NEW) ───────────────────────────────────────────────────────
-export interface IntakeCompetitor {
+interface IntakeCompetitor {
   name: string;
   url?: string | null;
   edge?: string | null;
 }
 
-export interface IntakeCompetition {
+interface IntakeCompetition {
   competitors?: IntakeCompetitor[] | null;
   gaps?: string | null;
 }
 
 // ─── YMYL Conditional (NEW) ──────────────────────────────────────────────────
-export interface IntakeYmylReviewer {
+interface IntakeYmylReviewer {
   name?: string | null;
   qualification?: string | null;
   profileUrl?: string | null;
@@ -105,7 +105,3 @@ export interface ClientIntake {
   version: typeof INTAKE_SCHEMA_VERSION;
   updatedAt?: string | null;
 }
-
-export const EMPTY_INTAKE: ClientIntake = {
-  version: INTAKE_SCHEMA_VERSION,
-};

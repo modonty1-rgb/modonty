@@ -71,7 +71,7 @@ function buildCategory(
   return { category, score, passed, total, checks };
 }
 
-export interface FullHealthReport extends OverallHealthReport {
+interface FullHealthReport extends OverallHealthReport {
   /** Raw Google PageSpeed scores — shown separately, not mixed into the aggregate */
   pagespeed: PagespeedScores;
 }

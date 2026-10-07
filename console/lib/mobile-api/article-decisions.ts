@@ -5,7 +5,7 @@ const context = {
   client: { select: { name: true, editor: { select: { name: true, email: true } } } },
 } as const;
 
-export type ArticleDecisionResult =
+type ArticleDecisionResult =
   | { ok: true; articleId: string; articleTitle: string; clientName: string; editorName: string | null }
   | { ok: false; reason: "NOT_FOUND" | "FEEDBACK_REQUIRED" };
 

@@ -30,7 +30,7 @@ import {
   Star,
 } from "lucide-react";
 
-export interface Capability {
+interface Capability {
   emoji: string;
   /** Lucide icon component (preferred — overrides emoji). */
   icon?: LucideIcon;
@@ -209,13 +209,13 @@ export const platformCapabilities: Capability[] = [
 // 25 Engagement Events — Compact view (after the 7 Before/After cards)
 // ──────────────────────────────────────────────────────────────────────────
 
-export interface EngagementEventGroup {
+interface EngagementEventGroup {
   emoji: string;
   groupTitle: string;
   events: EngagementEventCompact[];
 }
 
-export interface EngagementEventCompact {
+interface EngagementEventCompact {
   name: string;
   description: string;
 }
@@ -282,5 +282,4 @@ export const engagementStats = {
   totalEvents: 25,
   schemaTypes: 20,
   conversionTypes: 7,
-  realTimeMetrics: 3, // LCP, CLS, INP
 };

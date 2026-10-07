@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export type MobileApiErrorCode =
+type MobileApiErrorCode =
   | "UNAUTHORIZED"
   | "FORBIDDEN"
   | "NOT_FOUND"

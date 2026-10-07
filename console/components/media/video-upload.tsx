@@ -29,7 +29,7 @@ const MIN_DURATION_SEC = 2;
 const MAX_BYTES = 300 * 1024 * 1024;
 const ACCEPTED = ["video/mp4", "video/quicktime", "video/webm"];
 
-export interface VideoUploadTicket {
+interface VideoUploadTicket {
   mediaId: string;
   endpoint: string;
   libraryId: string;
@@ -38,7 +38,7 @@ export interface VideoUploadTicket {
   expire: number;
 }
 
-export interface VideoUploadProps {
+interface VideoUploadProps {
   /** Reserves the video on Bunny and the row here, and signs this one upload. */
   createTicket: (
     filename: string

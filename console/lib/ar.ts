@@ -353,15 +353,6 @@ export const ar = {
     articlesCount: "مقالة",
   },
 
-  content: {
-    articlesProgress: "تقدم المقالات الشهري",
-    monthlyQuota: "الحصة الشهرية",
-    publishedThisMonth: "المقالات المنشورة هذا الشهر",
-    recentArticles: "آخر المقالات",
-    yourContentLibrary: "مكتبة المحتوى",
-    thisMonth: "هذا الشهر",
-  },
-
   media: {
     mediaLibrary: "الصور والملفات",
     viewMediaAssets:
@@ -1473,12 +1464,5 @@ export const ar = {
     comments: "التعليقات",
     questions: "الأسئلة",
     statsTitle: "إحصائيات المقال",
-  },
-
-  errors: {
-    approveFailed: "ما تمت الموافقة على المقالة. جرّب مرة أخرى.",
-    requestFailed: "ما تم إرسال طلب التعديل. جرّب مرة أخرى.",
-    errorOccurred: "حدث خطأ",
-    somethingWrong: "حدث خطأ. جرّب مرة أخرى.",
   },
 } as const;

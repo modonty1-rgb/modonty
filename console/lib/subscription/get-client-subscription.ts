@@ -16,7 +16,7 @@ import { getActiveOrderForClient, type ActiveOrderView } from "./active-order";
  *
  * والكرتُ يبقى قارئاً لشيءٍ واحد: **الإلغاءُ اليدويّ** (`CANCELLED`) — `resolveSubscriptionStatus`.
  */
-export interface ClientSubscription {
+interface ClientSubscription {
   order: ActiveOrderView | null;
   status: DisplayedSubscriptionStatus;
   state: SubscriptionState | null;
