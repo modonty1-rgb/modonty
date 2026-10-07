@@ -4,21 +4,15 @@ import { useEffect, useRef } from "react";
 
 import { pushGa4Event } from "@/lib/analytics/ga4-browser";
 import { claritySet } from "@/lib/analytics/clarity";
+import { getScrollDepth } from "../../helpers/get-scroll-depth";
+import { sendArticleView } from "../../helpers/send-article-view";
+import { sendArticleLeave } from "../../helpers/send-article-leave";
 
 const BOUNCE_TIME_SEC = 30;
 const BOUNCE_SCROLL_THRESHOLD = 10;
 
 interface ArticleViewTrackerProps {
   articleSlug: string;
-}
-
-function getScrollDepth(): number {
-  if (typeof window === "undefined" || typeof document === "undefined") return 0;
-  const { scrollY, innerHeight } = window;
-  const { scrollHeight } = document.body;
-  if (scrollHeight <= 0) return 0;
-  const depth = ((scrollY + innerHeight) / scrollHeight) * 100;
-  return Math.min(100, Math.round(depth * 10) / 10);
 }
 
 export function ArticleViewTracker({ articleSlug }: ArticleViewTrackerProps) {
@@ -28,16 +22,7 @@ export function ArticleViewTracker({ articleSlug }: ArticleViewTrackerProps) {
 
   useEffect(() => {
     loadTimeRef.current = Date.now();
-    const slug = encodeURIComponent(articleSlug);
-    // Send the real entry context: document.referrer (external source) +
-    // location.href (UTM params) — the fetch's own Referer header is useless
-    // for source attribution (it's always this page).
-    fetch(`/articles/${slug}/api/view`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ referrer: document.referrer || null, url: window.location.href }),
-    })
-      .then((res) => res.json())
+    sendArticleView(articleSlug)
       .then((data) => {
         if (data?.analyticsId) analyticsIdRef.current = data.analyticsId;
         // Only a counted view carries `ga4` — a refresh-in-place returns none, so GA4 and
@@ -66,13 +51,7 @@ export function ArticleViewTracker({ articleSlug }: ArticleViewTrackerProps) {
       const timeOnPage = (Date.now() - loadTimeRef.current) / 1000;
       const scrollDepth = maxScrollRef.current;
       const bounced = timeOnPage < BOUNCE_TIME_SEC && scrollDepth < BOUNCE_SCROLL_THRESHOLD;
-      const payload = JSON.stringify({ timeOnPage, scrollDepth, bounced });
-      fetch(`/articles/${encodeURIComponent(articleSlug)}/api/analytics/${encodeURIComponent(id)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: payload,
-        keepalive: true,
-      }).catch(() => {});
+      sendArticleLeave(articleSlug, id, { timeOnPage, scrollDepth, bounced });
       analyticsIdRef.current = null;
     };
 

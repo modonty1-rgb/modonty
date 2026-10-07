@@ -1,4 +1,6 @@
-export interface ResolvedArticleCta {
+import { isWhatsAppUrl } from "./is-whatsapp-url";
+
+interface ResolvedArticleCta {
   mode: "NONE" | "FORM" | "LINK";
   label: string | null;
   url: string | null;
@@ -37,17 +39,6 @@ export function resolveArticleCta(article: {
     url: article.client?.ctaUrl ?? null,
     own: false,
   };
-}
-
-/** رابطُ واتساب؟ — كي لا يظهر بجانب زرٍّ هو نفسُه واتساب (فلو زرّ المقال، ٣ أكتوبر ٢٠٢٦). */
-export function isWhatsAppUrl(raw: string | null | undefined): boolean {
-  if (!raw) return false;
-  try {
-    const host = new URL(raw).hostname.replace(/^www\./, "");
-    return host === "wa.me" || host.endsWith("whatsapp.com");
-  } catch {
-    return false;
-  }
 }
 
 function withModontyUtm(raw: string, slug: string): string {

@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { likeArticleAs } from "@/lib/articles/like-article-as";
+import { likeArticleAs } from "../helpers/like-article-as";
 
 /** Web door: identity from the session cookie, logic in `likeArticleAs` (shared with the mobile API). */
 export async function likeArticle(articleId: string, articleSlug: string) {

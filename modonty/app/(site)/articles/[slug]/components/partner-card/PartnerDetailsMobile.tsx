@@ -1,34 +1,6 @@
-import type { ComponentType, SVGProps } from "react";
-
 import { IconPhone, IconExternal } from "@/lib/icons";
-import { Linkedin } from "@/components/icons/linkedin";
-import { Twitter } from "@/components/icons/twitter";
-import { Instagram } from "@/components/icons/instagram";
-import { SocialFacebookOutline } from "@/components/icons/facebook";
-import { Youtube } from "@/components/icons/youtube";
-import { TiktokLogoLight } from "@/components/icons/tiktok";
-import { RoundSnapchat } from "@/components/icons/snapchat";
 import { AskClientDialog } from "@/components/client/ask-client-dialog";
-
-type IconC = ComponentType<SVGProps<SVGSVGElement>>;
-
-// sameAs is a flat URL array — derive the platform icon from the host.
-function socialIconFor(url: string): { icon: IconC; label: string } | null {
-  let host = "";
-  try {
-    host = new URL(url).hostname.replace(/^www\./, "").toLowerCase();
-  } catch {
-    return null;
-  }
-  if (host.includes("linkedin")) return { icon: Linkedin, label: "لينكد إن" };
-  if (host === "x.com" || host.endsWith(".x.com") || host.includes("twitter")) return { icon: Twitter, label: "إكس" };
-  if (host.includes("facebook") || host.includes("fb.")) return { icon: SocialFacebookOutline, label: "فيسبوك" };
-  if (host.includes("instagram")) return { icon: Instagram, label: "انستغرام" };
-  if (host.includes("youtube") || host.includes("youtu.be")) return { icon: Youtube, label: "يوتيوب" };
-  if (host.includes("tiktok")) return { icon: TiktokLogoLight, label: "تيك توك" };
-  if (host.includes("snapchat")) return { icon: RoundSnapchat, label: "سناب شات" };
-  return null;
-}
+import { socialIconFor, type SocialIcon } from "../../helpers/social-icon-for";
 
 interface PartnerDetailsMobileProps {
   client: {
@@ -62,7 +34,7 @@ interface PartnerDetailsMobileProps {
 export function PartnerDetailsMobile({ client, askClientProps }: PartnerDetailsMobileProps) {
   const social = (client.sameAs ?? [])
     .map((url) => ({ url, meta: socialIconFor(url) }))
-    .filter((s): s is { url: string; meta: { icon: IconC; label: string } } => Boolean(s.meta));
+    .filter((s): s is { url: string; meta: SocialIcon } => Boolean(s.meta));
 
   const hasPhone = Boolean(client.phone?.trim());
   const hasSite = Boolean(client.url?.trim());

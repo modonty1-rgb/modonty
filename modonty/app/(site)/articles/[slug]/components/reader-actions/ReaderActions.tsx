@@ -1,8 +1,8 @@
-import { getArticleLiveCounts } from "@/app/(site)/articles/[slug]/data/get-article-live-counts";
-import { getMyArticleReactions } from "@/app/(site)/articles/[slug]/data/get-my-article-reactions";
-import { getViewer } from "@/app/(site)/articles/[slug]/helpers/get-viewer";
-import { ArticleTopEngagementBar } from "@/app/(site)/articles/[slug]/components/top-engagement-bar/TopEngagementBarLazy";
-import { EngagementBarOnDemand } from "@/app/(site)/articles/[slug]/components/top-engagement-bar/EngagementBarOnDemand";
+import { getArticleLiveCounts } from "../../data/get-article-live-counts";
+import { getMyArticleReactions } from "../../data/get-my-article-reactions";
+import { getViewer } from "../../helpers/get-viewer";
+import { ArticleTopEngagementBar } from "../top-engagement-bar/TopEngagementBarLazy";
+import { EngagementBarOnDemand } from "../top-engagement-bar/EngagementBarOnDemand";
 
 interface ReaderActionsProps {
   articleId: string;

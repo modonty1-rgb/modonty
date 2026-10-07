@@ -2,7 +2,7 @@ import { cache } from "react";
 
 import { auth } from "@/lib/auth";
 
-export interface Viewer {
+interface Viewer {
   userId: string | null;
   /** Name + email for the forms that prefill them — nothing else of the session travels. */
   box: { name: string | null; email: string | null } | null;

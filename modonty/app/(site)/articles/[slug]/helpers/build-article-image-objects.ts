@@ -18,7 +18,7 @@ import { BUNNY_ASPECT_SUFFIX, bunnyAspectUrl } from "@modonty/shared/lib/bunny";
 
 const ASPECT_RATIOS = ["1:1", "4:3", "16:9"] as const;
 
-export type AspectRatio = (typeof ASPECT_RATIOS)[number];
+type AspectRatio = (typeof ASPECT_RATIOS)[number];
 
 /** Bunny stores pre-generated crops next to the base image (no on-the-fly crop like Cloudinary). */
 function isBunnyImage(url: string): boolean {
@@ -29,7 +29,7 @@ function isBunnyImage(url: string): boolean {
  * Build a single Cloudinary transformation URL for a specific aspect ratio.
  * Returns the original URL if not Cloudinary.
  */
-export function buildAspectRatioUrl(url: string, aspectRatio: AspectRatio, width = 1200): string {
+function buildAspectRatioUrl(url: string, aspectRatio: AspectRatio, width = 1200): string {
   if (url && isBunnyImage(url)) {
     return bunnyAspectUrl(url, BUNNY_ASPECT_SUFFIX[aspectRatio]);
   }
@@ -50,7 +50,7 @@ export function buildAspectRatioUrl(url: string, aspectRatio: AspectRatio, width
  * Build all 3 Google-recommended aspect ratio variants from one source URL.
  * Returns array of 3 URLs (1:1, 4:3, 16:9). Non-Cloudinary URLs return [url] only.
  */
-export interface ArticleImageObject {
+interface ArticleImageObject {
   "@type": "ImageObject";
   url: string;
   width?: number;

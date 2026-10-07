@@ -2,12 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { messages } from "@/lib/i18n/messages";
 import { FaqCollapsibleBody } from "./FaqCollapsibleBody";
-
-interface PendingFaq {
-  id: string;
-  question: string;
-  createdAt: Date;
-}
+import type { PendingFaq } from "@/components/client/ask-client-pending-dialog";
 
 interface FaqItem {
   id: string;

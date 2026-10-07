@@ -8,7 +8,7 @@ import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
  * كانت كلها إلزامية بقيم احتياطية مكتوبة هنا، فعمودٌ فارغ في `Settings` كان يُنشَر بقيمة
  * الكود ولا يُكتشف أبداً. الغياب الآن يبقى غياباً، والمستهلك يحذف الوسم بدل أن يخترع قيمة.
  */
-export type ArticleDefaultsFromSettings = {
+type ArticleDefaultsFromSettings = {
   inLanguage?: string;
   metaRobots?: string;
   ogType: string;

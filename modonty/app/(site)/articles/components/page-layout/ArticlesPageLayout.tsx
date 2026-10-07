@@ -12,14 +12,14 @@ import { ArticlesHeader } from "../articles-header/ArticlesHeader";
 import { AskModo } from "@/components/shared/ask-modo/AskModo";
 import { TrustBox } from "../trust-box/TrustBox";
 import { ResultsLine } from "../results-line/ResultsLine";
-import { FiltersBar } from "@/components/shared/archive-filters/FiltersBar";
+import { FiltersBar } from "../archive-filters/FiltersBar";
 import { ReadingTimeBar } from "@/components/shared/archive-filters/ReadingTimeBar";
 import { ArticlesFeed } from "../articles-feed/ArticlesFeed";
 import { CategoriesNavRail } from "../categories-nav-rail/CategoriesNavRail";
 
 import type { ArchiveState } from "@/lib/articles/archive/build-archive-href";
 import type { ReadingTimeBucket } from "@/lib/articles/archive/reading-time-buckets";
-import type { ArchiveFilters } from "@/lib/articles/archive/get-articles-filters";
+import type { ArchiveFilters } from "../../helpers/get-articles-filters";
 import type { ArchiveArticle } from "@/lib/articles/archive/get-articles-archive";
 import type { ReactNode } from "react";
 

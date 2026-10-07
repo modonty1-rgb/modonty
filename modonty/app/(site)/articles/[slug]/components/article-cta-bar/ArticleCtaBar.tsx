@@ -10,7 +10,7 @@ import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { IconExternal } from "@/lib/icons";
 import { messages } from "@/lib/i18n/messages";
 
-import { isWhatsAppUrl } from "../../helpers/resolve-article-cta";
+import { isWhatsAppUrl } from "../../helpers/is-whatsapp-url";
 
 interface ArticleCtaBarProps {
   clientName: string;

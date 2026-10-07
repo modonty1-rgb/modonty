@@ -4,7 +4,7 @@ export interface ArticleHeading {
   level: number;
 }
 
-export interface ArticleOutline {
+interface ArticleOutline {
   /** The body with a stable `id` on every heading, ready to render. */
   html: string;
   headings: ArticleHeading[];

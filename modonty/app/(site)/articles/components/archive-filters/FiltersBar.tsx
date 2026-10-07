@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { withArchiveChange, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
 import { FOCUS_RING } from "@/lib/articles/archive/focus-ring";
 
-import type { ArchiveFilters } from "@/lib/articles/archive/get-articles-filters";
+import type { ArchiveFilters } from "../../helpers/get-articles-filters";
 
 interface FiltersBarProps {
   filters: ArchiveFilters;

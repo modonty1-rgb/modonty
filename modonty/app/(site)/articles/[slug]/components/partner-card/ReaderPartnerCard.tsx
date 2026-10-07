@@ -1,5 +1,5 @@
-import { getViewer } from "@/app/(site)/articles/[slug]/helpers/get-viewer";
-import { getPendingFaqsForCurrentUser } from "@/app/(site)/articles/[slug]/data/get-pending-faqs-for-current-user";
+import { getViewer } from "../../helpers/get-viewer";
+import { getPendingFaqsForCurrentUser } from "../../data/get-pending-faqs-for-current-user";
 import { PartnerCard } from "./PartnerCard";
 
 interface ReaderPartnerCardProps {

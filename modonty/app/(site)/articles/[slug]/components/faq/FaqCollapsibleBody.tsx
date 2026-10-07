@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 
-import { SectionBar } from "@/app/(site)/articles/[slug]/components/section-bar/SectionBar";
+import { SectionBar } from "../section-bar/SectionBar";
 
 interface FaqCollapsibleBodyProps {
   headingId: string;

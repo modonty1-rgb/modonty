@@ -2,7 +2,7 @@ import { cache } from "react";
 
 import { db } from "@/lib/db";
 
-export interface ArticleLiveCounts {
+interface ArticleLiveCounts {
   likes: number;
   favorites: number;
   comments: number;

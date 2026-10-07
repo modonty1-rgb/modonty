@@ -3,7 +3,7 @@ import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";
 
 import { SITE_URL } from "@/constants";
 
-import { buildArticleImageObjects } from "./image-aspect-ratios";
+import { buildArticleImageObjects } from "./build-article-image-objects";
 
 export function generateArticleStructuredData(article: any) {
   const siteUrl = SITE_URL;

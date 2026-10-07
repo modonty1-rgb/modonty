@@ -10,7 +10,7 @@ import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
 import { messages } from "@/lib/i18n/messages";
 
-import { isWhatsAppUrl } from "../../helpers/resolve-article-cta";
+import { isWhatsAppUrl } from "../../helpers/is-whatsapp-url";
 import type { BookingSource } from "@/components/shared/booking-form/booking-actions";
 
 interface PartnerStripProps {

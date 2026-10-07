@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { IconChevronLeft } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import type { ArticleHeading } from "@/app/(site)/articles/[slug]/helpers/read-article-outline";
+import type { ArticleHeading } from "../../helpers/read-article-outline";
 
 interface ArticleTableOfContentsProps {
   /** Read from the body on the server, so the links exist in the HTML. */

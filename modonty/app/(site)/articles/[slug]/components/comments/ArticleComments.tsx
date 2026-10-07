@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,26 +15,7 @@ import { CommentFormDialog } from "../comment-form/CommentFormDialog";
 import { submitReply } from "../../actions/submit-reply";
 import { likeComment } from "../../actions/like-comment";
 import { fetchArticleComments } from "../../data/fetch-article-comments";
-
-interface Comment {
-  id: string;
-  content: string;
-  createdAt: Date;
-  status?: string;
-  parentId?: string | null;
-  replyingTo?: { id: string; authorName: string } | null;
-  author: {
-    id: string;
-    name: string | null;
-    image: string | null;
-  } | null;
-  _count?: {
-    likes: number;
-    dislikes: number;
-  };
-  likes?: { id: string }[];
-  dislikes?: { id: string }[];
-}
+import { useArticleComments, type Comment } from "../../helpers/use-article-comments";
 
 interface ArticleCommentsProps {
   comments: Comment[];
@@ -47,24 +28,9 @@ interface ArticleCommentsProps {
 }
 
 export function ArticleComments({ comments: initialComments, commentsCount, articleId, articleSlug, userId, sectionTitle }: ArticleCommentsProps) {
-  const [comments, setComments] = useState(initialComments);
   const [commentsOpen, setCommentsOpen] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [fetched, setFetched] = useState(initialComments.length > 0);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!commentsOpen || fetched) return;
-    setLoading(true);
-    setError(null);
-    fetchArticleComments(articleId)
-      .then((data) => {
-        setComments(Array.isArray(data) ? data : []);
-        setFetched(true);
-      })
-      .catch(() => setError("فشل تحميل التعليقات"))
-      .finally(() => setLoading(false));
-  }, [commentsOpen, fetched, articleId, userId]);
+  const { comments, setComments, loading, fetched, setFetched, error, setError } =
+    useArticleComments(initialComments, articleId, userId, commentsOpen);
 
   const retryComments = () => { setFetched(false); setError(null); };
 

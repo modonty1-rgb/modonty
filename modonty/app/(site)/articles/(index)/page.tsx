@@ -6,79 +6,29 @@ import { buildHreflangLanguages } from "@modonty/shared/lib/seo/build-hreflang-l
 import { buildListingPageMetadata } from "@modonty/shared/lib/seo/build-listing-page-metadata";
 
 import { generateBreadcrumbStructuredData, jsonLdHtml } from "@/lib/seo";
-import { getMetadataSettings } from "@/lib/settings/get-metadata-settings";
+import { getMetadataSettings } from "../helpers/get-metadata-settings";
 import { getListingPageSeo } from "@/lib/seo/get-listing-page-seo";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 import { SITE_URL } from "@/constants";
 
-import { getArticlesArchive, type ArchiveSort } from "@/lib/articles/archive/get-articles-archive";
-import { getArticlesFilters } from "@/lib/articles/archive/get-articles-filters";
-import { getTagName } from "../data/get-tag-name";
-import { buildArchiveHref, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
+import { getArticlesArchive } from "@/lib/articles/archive/get-articles-archive";
+import { getArticlesFilters } from "../helpers/get-articles-filters";
+import { buildArchiveHref } from "@/lib/articles/archive/build-archive-href";
 import { ARCHIVE_PAGE_SIZE } from "../helpers/archive-page-size";
+import { readState, type ArchiveSearchParams } from "../helpers/read-state";
+import { describeScope } from "../helpers/describe-scope";
 import {
   countByReadingTime,
   filterByReadingTime,
   READING_TIME_BUCKETS,
-  type ReadingTimeBucket,
 } from "@/lib/articles/archive/reading-time-buckets";
 import { ArticlesPageLayout } from "../components/page-layout/ArticlesPageLayout";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
 import { messages } from "@/lib/i18n/messages";
-import { getCoreClientSlug } from "@/lib/settings/get-core-client-slug";
-
-const SORTS: ArchiveSort[] = ["newest", "mostRead", "mostEngaged"];
-const TIMES: ReadingTimeBucket[] = ["short", "medium", "long"];
+import { getCoreClientSlug } from "../helpers/get-core-client-slug";
 
 interface ArticlesPageProps {
-  searchParams: Promise<{
-    industry?: string;
-    modonty?: string;
-    category?: string;
-    tag?: string;
-    search?: string;
-    time?: string;
-    sort?: string;
-    page?: string;
-  }>;
-}
-
-/** Anything the visitor can type into the URL is narrowed to what the page actually supports. */
-function readState(raw: Awaited<ArticlesPageProps["searchParams"]>): ArchiveState {
-  const page = Number(raw.page);
-  return {
-    modonty: raw.modonty === "1" ? true : undefined,
-    industry: raw.industry?.trim() || undefined,
-    category: raw.category?.trim() || undefined,
-    tag: raw.tag?.trim() || undefined,
-    search: raw.search?.trim() || undefined,
-    time: TIMES.includes(raw.time as ReadingTimeBucket) ? (raw.time as ReadingTimeBucket) : undefined,
-    sort: SORTS.includes(raw.sort as ArchiveSort) ? (raw.sort as ArchiveSort) : undefined,
-    page: Number.isFinite(page) && page > 1 ? Math.floor(page) : undefined,
-  };
-}
-
-/** The filter in words — used in the heading and the title, so both say the same thing. */
-async function describeScope(
-  state: ArchiveState,
-  filters: Awaited<ReturnType<typeof getArticlesFilters>>
-): Promise<string | null> {
-  if (state.modonty) return "مدونتي";
-  const category =
-    state.category &&
-    [...filters.categories, ...filters.categories.flatMap((c) => c.children)].find((c) => c.slug === state.category)?.name;
-  if (category) return category;
-
-  const industry = state.industry && filters.industries.find((i) => i.slug === state.industry)?.name;
-  if (industry) return industry;
-
-  // Tags are not offered in the rail any more, but `/tags/[slug]` still links here — so the name
-  // is looked up rather than carried through the page.
-  if (state.tag) return await getTagName(state.tag);
-
-  if (state.search) return `«${state.search}»`;
-
-  return null;
+  searchParams: Promise<ArchiveSearchParams>;
 }
 
 export async function generateMetadata({ searchParams }: ArticlesPageProps): Promise<Metadata> {

@@ -2,14 +2,7 @@ import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 
-interface ReadMoreItem {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  featuredImage?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
-  clientName?: string | null;
-}
+import type { ReadMoreItem } from "../../helpers/read-more-item";
 
 interface ReadMoreProps {
   articleId: string;

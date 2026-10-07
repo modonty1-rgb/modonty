@@ -1,6 +1,5 @@
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
-import type { ComponentType, SVGProps } from "react";
 
 import { OptimizedImage } from "@modonty/shared/components/optimized-image";
 import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
@@ -8,37 +7,12 @@ import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta/cta-tracked-link";
 import { IconChevronLeft, IconPhone, IconExternal } from "@/lib/icons";
 import { ModontyPartnerMark } from "@/components/icons/modonty-partner-mark";
-import { Linkedin } from "@/components/icons/linkedin";
-import { Twitter } from "@/components/icons/twitter";
-import { Instagram } from "@/components/icons/instagram";
-import { SocialFacebookOutline } from "@/components/icons/facebook";
-import { Youtube } from "@/components/icons/youtube";
-import { TiktokLogoLight } from "@/components/icons/tiktok";
-import { RoundSnapchat } from "@/components/icons/snapchat";
 
 import { AskClientDialog } from "@/components/client/ask-client-dialog";
+import type { PendingFaq } from "@/components/client/ask-client-pending-dialog";
 import { BookingCtaLink } from "@/components/cta/booking-cta-link";
 import type { BookingSource } from "@/components/shared/booking-form/booking-actions";
-
-type IconC = ComponentType<SVGProps<SVGSVGElement>>;
-
-// sameAs is a flat URL array — derive the platform icon from the host.
-function socialIconFor(url: string): { icon: IconC; label: string } | null {
-  let host = "";
-  try {
-    host = new URL(url).hostname.replace(/^www\./, "").toLowerCase();
-  } catch {
-    return null;
-  }
-  if (host.includes("linkedin")) return { icon: Linkedin, label: "لينكد إن" };
-  if (host === "x.com" || host.endsWith(".x.com") || host.includes("twitter")) return { icon: Twitter, label: "إكس" };
-  if (host.includes("facebook") || host.includes("fb.")) return { icon: SocialFacebookOutline, label: "فيسبوك" };
-  if (host.includes("instagram")) return { icon: Instagram, label: "انستغرام" };
-  if (host.includes("youtube") || host.includes("youtu.be")) return { icon: Youtube, label: "يوتيوب" };
-  if (host.includes("tiktok")) return { icon: TiktokLogoLight, label: "تيك توك" };
-  if (host.includes("snapchat")) return { icon: RoundSnapchat, label: "سناب شات" };
-  return null;
-}
+import { socialLinksByPlatform } from "../../helpers/social-links-by-platform";
 
 interface PartnerCardProps {
   client: {
@@ -94,12 +68,6 @@ interface PartnerCardProps {
   };
 }
 
-interface PendingFaq {
-  id: string;
-  question: string;
-  createdAt: Date;
-}
-
 // 44, not 32 — the width of a fingertip, and the floor both platform guidelines set (Apple 44pt,
 // Material 48dp). Measured 19 Aug: six social buttons here were 32×32, small enough that the
 // finger covers the target and the tap lands on the neighbour.
@@ -115,18 +83,7 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
   const hasPhone = !!client.phone?.trim();
   // brief falls back across the fields admins actually fill (DRY, data-agnostic)
   const brief = client.description?.trim() || client.businessBrief?.trim() || client.slogan?.trim() || "";
-  // One icon per platform. A partner with two Facebook URLs rendered two identical buttons,
-  // same glyph and same label, so the visitor picked by coin toss — the first one wins.
-  const social = Array.from(
-    (client.sameAs ?? [])
-      .map((url) => ({ url, meta: socialIconFor(url) }))
-      .filter((s): s is { url: string; meta: { icon: IconC; label: string } } => s.meta !== null)
-      .reduce((byPlatform, s) => {
-        if (!byPlatform.has(s.meta.label)) byPlatform.set(s.meta.label, s);
-        return byPlatform;
-      }, new Map<string, { url: string; meta: { icon: IconC; label: string } }>())
-      .values()
-  );
+  const social = socialLinksByPlatform(client.sameAs);
   const hasContactRow = hasPhone || social.length > 0;
 
   return (

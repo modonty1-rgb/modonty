@@ -1,85 +1,48 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { TwoColumnLayout } from "@modonty/shared/components/column-layout/TwoColumnLayout";
 import { Suspense } from "react";
 import { unstable_rethrow } from "next/navigation";
 
-import { getArticleDefaultsFromSettings } from "@/app/(site)/articles/[slug]/helpers/get-article-defaults-from-settings";
+import { getArticleDefaultsFromSettings } from "./helpers/get-article-defaults-from-settings";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
-import { getArticlePageData } from "@/app/(site)/articles/[slug]/helpers/get-article-page-data";
+import { getArticlePageData } from "./helpers/get-article-page-data";
 import { generateMetadataFromSEO } from "@/lib/seo";
-import { normalizeOgImages } from "@/app/(site)/articles/[slug]/helpers/normalize-og-images";
-import { IconFolder } from "@/lib/icons";
+import { normalizeOgImages } from "./helpers/normalize-og-images";
+import { buildLanguagesMap } from "./helpers/build-languages-map";
+import { withoutTrailingBrand } from "./helpers/without-trailing-brand";
+import { ogLocaleAlternate } from "./helpers/og-locale-alternate";
 import { messages } from "@/lib/i18n/messages";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 
-import {
-  getArticleSlugsForStaticParams,
-  getArticleContentBySlug,
-} from "./data";
+import { getArticleSlugsForStaticParams } from "./data/get-article-slugs-for-static-params";
+import { getArticleContentBySlug } from "./data/get-article-content-by-slug";
 
 // Reused content components.
-import {
-  ArticleHeader,
-  ArticleFeaturedImage,
-  ArticleFooter,
-  ReadingProgressBar,
-  ArticleCitations,
-  ArticleTableOfContents,
-} from "./components";
+import { ReadingProgressBar } from "./components/reading-progress/ReadingProgressBarLazy";
+// Imported directly, not through a `ssr: false` wrapper: the outline has to be in the HTML —
+// a crawler does not run JavaScript, and neither does a visitor whose bundle failed.
+import { ArticleTableOfContents } from "./components/sidebar/TableOfContents";
 // Client-only wrappers — `ssr: false` is only legal inside a 'use client' file, so each one
 // sits beside the component it defers.
 import { GtmTrackerLazy } from "./components/gtm-tracker/GtmTrackerLazy";
 import { ArticleViewTrackerLazy } from "./components/view-tracker/ViewTrackerLazy";
-import { ArticleBodyLinkTrackerLazy } from "./components/body-link-tracker/BodyLinkTrackerLazy";
 
 import { ArticleJsonLd } from "./components/article-json-ld/ArticleJsonLd";
 import { ArticleMainColumn } from "./components/article-main-column/ArticleMainColumn";
-import { AskModoCard } from "./components/ask-modo-card/AskModoCard";
-import { ReaderPartnerCard } from "./components/partner-card/ReaderPartnerCard";
 import { PartnerStrip } from "./components/partner-strip/PartnerStrip";
-import { Gallery } from "./components/gallery/GalleryLazy";
-import { ReadMore } from "./components/read-more/ReadMore";
 import { ArticleCtaBar } from "./components/article-cta-bar/ArticleCtaBar";
 import { resolveArticleCta } from "./helpers/resolve-article-cta";
 import { ClientSheetButton } from "./components/client-sheet/ClientSheetButton";
 import { ReaderActions } from "./components/reader-actions/ReaderActions";
 import { ReadingTools } from "./components/reading-tools/ReadingToolsLazy";
-import { DesktopOnly } from "@/components/shared/desktop-only/DesktopOnly";
-import { ArticleAudioPlayer } from "./components/audio-player/ArticleAudioPlayerLazy";
-import { MobileSection } from "./components/mobile-section/MobileSection";
-import { EngagementFab } from "./components/engagement-fab/EngagementFab";
-import { PartnerCardMobile } from "./components/partner-card/PartnerCardMobile";
+import { DesktopOnly } from "./components/desktop-only/DesktopOnly";
 import { ReaderPartnerDetails } from "./components/partner-card/ReaderPartnerDetails";
-import { ReaderComments } from "./components/comments/ReaderComments";
-import { ReaderFaq } from "./components/faq/ReaderFaq";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
 import { SITE_URL } from "@/constants";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
-}
-
-// Source of truth: Settings.defaultAlternateLanguages (seeded via /seo Auto-Maintenance hreflang Sync step).
-// Entries without `url` default to the article's canonical (Arabic single-source content for all GCC + Egypt).
-function buildLanguagesMap(
-  alternateLanguages: unknown,
-  canonicalUrl: string,
-  siteUrl: string,
-): Record<string, string> {
-  const out: Record<string, string> = {};
-  if (Array.isArray(alternateLanguages)) {
-    for (const entry of alternateLanguages as Array<{ hreflang?: string; url?: string }>) {
-      const key = entry?.hreflang?.trim();
-      if (!key) continue;
-      const url = entry?.url?.trim();
-      out[key] = url
-        ? (url.startsWith("http") ? url : `${siteUrl}${url.startsWith("/") ? url : `/${url}`}`)
-        : canonicalUrl;
-    }
-  }
-  if (!out["x-default"]) out["x-default"] = canonicalUrl;
-  return out;
 }
 
 // Vercel Pro Fluid Compute: default function timeout is 10s.
@@ -104,20 +67,6 @@ export async function generateStaticParams() {
     // Same reasoning as above: ensure we always return at least one param for build-time validation.
     return [{ slug: "__no_articles__" }];
   }
-}
-
-/**
- * The stored title ends with « - {client}» (admin metadata-generator.ts), and the root layout's
- * template appends « | {brand}». When the client IS the brand, Google got «… - مدونتي | مدونتي»
- * — 47 articles in the 2 Oct 2026 study (plan item ب٢). Dropping the client suffix when it is
- * the brand leaves exactly one, from the template.
- */
-function withoutTrailingBrand(title: Metadata["title"], brand: string | undefined): Metadata["title"] {
-  if (typeof title !== "string" || !brand) return title;
-  for (const suffix of [` - ${brand}`, ` | ${brand}`]) {
-    if (title.endsWith(suffix)) return title.slice(0, -suffix.length);
-  }
-  return title;
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
@@ -214,13 +163,6 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       siteUrl,
     );
 
-    // نفس مصدر hreflang، بصياغة أوبن جراف (`ar-SA` ← `ar_SA`)، بلا السوق الأساسي ولا
-    // `x-default` — فالأخير ثابت بروتوكول لا سوقاً. إشارةٌ واحدة من عمودٍ واحد.
-    const ogLocaleAlternate = Object.keys(languages)
-      .filter((code) => code !== "x-default")
-      .map((code) => code.replace("-", "_"))
-      .filter((code) => code !== articleDefaults.ogLocale);
-
     return generateMetadataFromSEO({
       title,
       description,
@@ -233,7 +175,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       // كانت `["ar_EG", "en_US"]` مكتوبةً هنا — سوقان يُعلنان لجوجل من الكود، أحدهما
       // بلغة لا ننشر بها. الأسواق تُحرَّر من الأدمن (`Settings.defaultAlternateLanguages`)،
       // وهي نفسها التي تُبنى منها وسوم hreflang أسفل الصفحة، فتتّفق الإشارتان.
-      localeAlternate: ogLocaleAlternate,
+      localeAlternate: ogLocaleAlternate(languages, articleDefaults.ogLocale),
       publishedTime: articleForGeneration.datePublished || undefined,
       modifiedTime: articleForGeneration.dateModified || articleForGeneration.updatedAt,
       authors: articleForGeneration.author?.name

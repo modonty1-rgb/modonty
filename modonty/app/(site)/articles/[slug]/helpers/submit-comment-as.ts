@@ -13,7 +13,7 @@ import { isPublicArticle } from "@/lib/articles/is-public-article";
 
 import { sanitizeComment, validateCommentContent } from "@/lib/comments/validate-comment";
 import type { ReaderActor } from "@/lib/users/reader-actor";
-import { fireClientEvent, notifyClientEvent } from "@modonty/shared/lib/mobile-push";
+import { notifyClientEvent } from "@modonty/shared/lib/mobile-push";
 
 /**
  * تعليق جديد (PENDING حتى يعتمده الشريك) باسم قارئ معروف — جسم `submitComment` (الويب) كما هو

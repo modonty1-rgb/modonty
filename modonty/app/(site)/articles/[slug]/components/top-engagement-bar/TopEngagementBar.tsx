@@ -3,12 +3,14 @@
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { useState } from "react";
 
-import { CommentFormDialog } from "@/app/(site)/articles/[slug]/components/comment-form/CommentFormDialog";
+import { CommentFormDialog } from "../comment-form/CommentFormDialog";
 import { AuthPromptLazy, warmAuthPrompt } from "@/components/shared/auth-prompt/AuthPromptLazy";
 import { useSession } from "@/components/providers/SessionContext";
-import { likeArticle } from "@/app/(site)/articles/[slug]/actions/like-article";
+import { likeArticle } from "../../actions/like-article";
 import { favoriteArticle } from "@/lib/articles/favorite-article";
-import { ArticleAudioPlayer } from "@/app/(site)/articles/[slug]/components/audio-player/ArticleAudioPlayerLazy";
+import { ArticleAudioPlayer } from "../audio-player/ArticleAudioPlayerLazy";
+import { shareArticle } from "../../helpers/share-article";
+import { sendArticleShare } from "../../helpers/send-article-share";
 import { IconLike, IconSaved, IconComment, IconShare, IconCheck } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -110,11 +112,7 @@ export function ArticleTopEngagementBar({
     if (result === "cancelled") return;
     // Record it — this button used to share without a trace, so the article's and the client's
     // share counts stayed at zero however often readers shared (QA finding #6, 29 Sep 2026).
-    fetch(`/articles/${encodeURIComponent(articleSlug)}/api/share`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ platform: result === "copied" ? "COPY_LINK" : "OTHER" }),
-    }).catch(() => {});
+    sendArticleShare(articleSlug, result === "copied" ? "COPY_LINK" : "OTHER");
     setShared(true);
     setTimeout(() => setShared(false), 2000);
   };
@@ -255,34 +253,4 @@ export function ArticleTopEngagementBar({
       )}
     </div>
   );
-}
-
-/**
- * Share, and say something either way.
- *
- * It used to call the system share sheet and stop — no fallback, no feedback. On a browser
- * without one (most desktops) the tab was simply dead: the reader pressed it and nothing
- * happened at all, which reads as a broken page rather than an unsupported feature. And even
- * where it worked, nothing confirmed the press.
- *
- * Now: the share sheet when the browser has one, the clipboard when it does not, and the icon
- * turns into a tick for two seconds so the press is always answered.
- */
-async function shareArticle(): Promise<"shared" | "copied" | "cancelled"> {
-  const url = typeof location !== "undefined" ? location.href : "";
-  if (typeof navigator !== "undefined" && navigator.share) {
-    try {
-      await navigator.share({ url });
-      return "shared";
-    } catch {
-      // The reader dismissed the sheet — not an error, and not something to fall back from.
-      return "cancelled";
-    }
-  }
-  try {
-    await navigator.clipboard.writeText(url);
-    return "copied";
-  } catch {
-    return "cancelled";
-  }
 }

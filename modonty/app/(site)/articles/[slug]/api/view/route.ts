@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { cookies, headers } from "next/headers";
-import { recordArticleView } from "@/lib/analytics/record-article-view";
-
-const VIEW_SESSION_COOKIE = "modonty_view_sid";
-const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
+import { headers } from "next/headers";
+import { getOrCreateSessionId } from "@/lib/analytics/conversion-tracking";
+import { recordArticleView } from "../../helpers/record-article-view";
 
 // Web door: the dedupe key is the `modonty_view_sid` cookie. The counting rule itself lives in
-// lib/analytics/record-article-view.ts, shared with the mobile API (which keys on X-Device-Id).
+// ../../helpers/record-article-view.ts, shared with the mobile API (which keys on X-Device-Id).
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ slug: string }> }
@@ -29,20 +27,7 @@ export async function POST(
       referrer: body?.referrer?.trim() || null,
       pageUrl: body?.url?.trim() || null,
       headers: await headers(),
-      resolveSessionId: async () => {
-        const cookieStore = await cookies();
-        let sessionId = cookieStore.get(VIEW_SESSION_COOKIE)?.value;
-        if (!sessionId) {
-          sessionId = `view-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
-          cookieStore.set(VIEW_SESSION_COOKIE, sessionId, {
-            maxAge: SESSION_MAX_AGE,
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-          });
-        }
-        return sessionId;
-      },
+      resolveSessionId: getOrCreateSessionId,
       resolveUserId: async () => (await auth())?.user?.id ?? undefined,
     });
 

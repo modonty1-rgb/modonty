@@ -1,5 +1,5 @@
-import { getArticleLiveCounts } from "@/app/(site)/articles/[slug]/data/get-article-live-counts";
-import { getViewer } from "@/app/(site)/articles/[slug]/helpers/get-viewer";
+import { getArticleLiveCounts } from "../../data/get-article-live-counts";
+import { getViewer } from "../../helpers/get-viewer";
 import dynamic from "next/dynamic";
 
 // Code-split, but still server-rendered: no `ssr: false` here on purpose. Comment text is

@@ -10,13 +10,12 @@ import { sanitizeHtml } from "./sanitize-html";
 import { readArticleOutline } from "./read-article-outline";
 import { getArticleDefaultsFromSettings } from "./get-article-defaults-from-settings";
 import { generateArticleStructuredData } from "./generate-article-structured-data";
-import {
-  getArticleBySlugMinimal,
-  getArticleFaqs,
-  getRelatedArticlesByArticleId,
-  getRelatedArticlesByClient,
-  getRelatedArticlesByAuthor,
-} from "../data";
+import { getArticleBySlugMinimal } from "../data/get-article-by-slug-minimal";
+import { getArticleFaqs } from "../data/get-article-faqs";
+import { getRelatedArticlesByArticleId } from "../data/get-related-articles-by-article-id";
+import { getRelatedArticlesByClient } from "../data/get-related-articles-by-client";
+import { getRelatedArticlesByAuthor } from "../data/get-related-articles-by-author";
+import type { ReadMoreItem } from "./read-more-item";
 
 // Consolidated "اقرأ أيضاً" — merge the 4 related sources, dedupe, NO cap (Khalid 2026-06-04:
 // "ما في انتهاء" → max internal linking for SEO; pool already bounded by source query takes).
@@ -31,18 +30,6 @@ type RelatedLike = {
   featuredImage?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
   client?: { name: string } | null;
 };
-
-interface ReadMoreItem {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  // `bunnyUrl` MUST stay on this type. Narrowing it away silently strips the Bunny copy
-  // before `mediaSrc()` ever sees it — the component still calls mediaSrc, gets undefined,
-  // and falls back to Cloudinary. tsc is happy either way (2026-07-30).
-  featuredImage?: { url: string; bunnyUrl: string | null; blurDataURL: string | null; altText: string | null } | null;
-  clientName?: string | null;
-}
 
 // Trimmed to a whole number of rows. The grid is three across, and an uncapped pool left a
 // seventh card alone on the last row — measured 3+3+1.

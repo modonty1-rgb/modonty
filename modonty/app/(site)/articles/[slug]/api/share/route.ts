@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import type { ApiResponse } from "@/lib/types";
-import { recordArticleShare } from "@/lib/analytics/record-article-share";
+import { recordArticleShare } from "../../helpers/record-article-share";
 
 // Web door: the rate-limit key is the `modonty_view_sid` cookie. The share logic lives in
-// lib/analytics/record-article-share.ts, shared with the mobile API (keyed on X-Device-Id).
+// ../../helpers/record-article-share.ts, shared with the mobile API (keyed on X-Device-Id).
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }

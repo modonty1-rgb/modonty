@@ -3,13 +3,13 @@ import { Suspense } from "react";
 import { messages } from "@/lib/i18n/messages";
 import { IconFolder } from "@/lib/icons";
 
-import {
-  ArticleHeader,
-  ArticleFeaturedImage,
-  ArticleFooter,
-  ArticleCitations,
-  ArticleTableOfContents,
-} from "../index";
+import { ArticleHeader } from "../article-header/ArticleHeader";
+import { ArticleFeaturedImage } from "../featured-image/FeaturedImage";
+import { ArticleFooter } from "../article-footer/ArticleFooter";
+import { ArticleCitations } from "../sidebar/Citations";
+// Imported directly, not through a `ssr: false` wrapper: the outline has to be in the HTML —
+// a crawler does not run JavaScript, and neither does a visitor whose bundle failed.
+import { ArticleTableOfContents } from "../sidebar/TableOfContents";
 import { AskModoCard } from "../ask-modo-card/AskModoCard";
 import { ReaderPartnerCard } from "../partner-card/ReaderPartnerCard";
 import { Gallery } from "../gallery/GalleryLazy";
@@ -17,7 +17,7 @@ import { ReadMore } from "../read-more/ReadMore";
 import { NextRead } from "../read-more/NextRead";
 import { ReaderActions } from "../reader-actions/ReaderActions";
 import { ReadingTools } from "../reading-tools/ReadingToolsLazy";
-import { DesktopOnly } from "@/components/shared/desktop-only/DesktopOnly";
+import { DesktopOnly } from "../desktop-only/DesktopOnly";
 import { ArticleAudioPlayer } from "../audio-player/ArticleAudioPlayerLazy";
 import { MobileSection } from "../mobile-section/MobileSection";
 import { EngagementFab } from "../engagement-fab/EngagementFab";

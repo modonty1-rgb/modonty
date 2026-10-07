@@ -13,7 +13,7 @@ import {
 import { isPublicArticle } from "@/lib/articles/is-public-article";
 
 import { sanitizeComment, validateCommentContent } from "@/lib/comments/validate-comment";
-import { fireClientEvent, notifyClientEvent } from "@modonty/shared/lib/mobile-push";
+import { notifyClientEvent } from "@modonty/shared/lib/mobile-push";
 
 export async function submitReply(
   articleId: string,

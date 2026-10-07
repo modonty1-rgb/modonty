@@ -5,8 +5,8 @@ import { IconLoading } from "@/lib/icons";
 
 import { PostCard } from "@/components/feed/postcard/PostCard";
 import { buildArchiveHref, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
+import { fetchArchivePage } from "../../helpers/fetch-archive-page";
 
-import type { InfiniteListPage } from "@modonty/shared/components/infinite-list";
 import type { ArchiveArticle } from "@/lib/articles/archive/get-articles-archive";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
@@ -16,19 +16,6 @@ interface MoreArticlesProps {
   /** How many rows the server already rendered above this list. */
   startIndex: number;
   initialPage: number;
-}
-
-/** The query the endpoint needs, built from the same state the links are built from. */
-function toQuery(current: ArchiveState, page: number): string {
-  const params = new URLSearchParams({ page: String(page) });
-  if (current.modonty) params.set("modonty", "1");
-  if (current.industry) params.set("industry", current.industry);
-  if (current.category) params.set("category", current.category);
-  if (current.tag) params.set("tag", current.tag);
-  if (current.search) params.set("search", current.search);
-  if (current.time) params.set("time", current.time);
-  if (current.sort) params.set("sort", current.sort);
-  return params.toString();
 }
 
 /**
@@ -41,23 +28,11 @@ function toQuery(current: ArchiveState, page: number): string {
  * it is how a site loses everything past article twenty.
  */
 export function MoreArticles({ current, startIndex, initialPage }: MoreArticlesProps) {
-  const fetchPage = async (page: number): Promise<InfiniteListPage<ArchiveArticle>> => {
-    const response = await fetch(`/articles/api/list?${toQuery(current, page)}`);
-    if (!response.ok) throw new Error(`archive endpoint returned ${response.status}`);
-
-    const result = (await response.json()) as { items: ArchiveArticle[]; hasMore: boolean };
-    return {
-      hasMore: result.hasMore,
-      // JSON has no Date — the card formats it, so it must arrive as one.
-      items: result.items.map((item) => ({ ...item, publishedAt: new Date(item.publishedAt) })),
-    };
-  };
-
   return (
     <InfiniteList<ArchiveArticle>
       initialPage={initialPage}
       startIndex={startIndex}
-      fetchPage={fetchPage}
+      fetchPage={(page) => fetchArchivePage(current, page)}
       getKey={(item) => item.id}
       pageUrl={(page) => buildArchiveHref({ ...current, page })}
       // The same one article card the whole site uses (Khalid, 21 Aug) — what the scroll

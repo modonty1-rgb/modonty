@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { submitCommentAs } from "@/lib/comments/submit-comment-as";
+import { submitCommentAs } from "../helpers/submit-comment-as";
 
 /** Web door: identity from the session cookie, logic in `submitCommentAs` (shared with the mobile API). */
 export async function submitComment(

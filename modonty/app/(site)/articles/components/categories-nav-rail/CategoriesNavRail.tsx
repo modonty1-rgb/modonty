@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { withArchiveChange, type ArchiveState } from "@/lib/articles/archive/build-archive-href";
-import type { ArchiveFilters, CategoryOption } from "@/lib/articles/archive/get-articles-filters";
+import type { ArchiveFilters, CategoryOption } from "../../helpers/get-articles-filters";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface CategoriesNavRailProps {
