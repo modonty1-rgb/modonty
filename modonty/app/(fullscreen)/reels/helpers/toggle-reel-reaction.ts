@@ -1,18 +1,18 @@
-"use server";
+import "server-only";
 
 import { updateTag } from "next/cache";
 
 import { auth } from "@/lib/auth";
-import { toggleReelReactionAs, type ToggleResult } from "@/lib/reels/toggle-reel-reaction-as";
+import { toggleReelReactionAs, type ToggleResult } from "./toggle-reel-reaction-as";
 import type { MediaReactionKind } from "@prisma/client";
 
 /**
  * Web door for reel likes/favorites: identity from the session cookie, logic in
  * `toggleReelReactionAs` (shared with the mobile API). The signed-in check stays here and is
  * the ONLY thing enforcing a signed-in user for FAVORITE — removing it would allow anonymous
- * favorites.
+ * favorites. Called from the two Server Actions only — `updateTag` needs that context.
  */
-async function toggleReaction(mediaId: string, kind: MediaReactionKind): Promise<ToggleResult> {
+export async function toggleReelReaction(mediaId: string, kind: MediaReactionKind): Promise<ToggleResult> {
   try {
     const session = await auth();
     const userId = session?.user?.id;
@@ -25,12 +25,4 @@ async function toggleReaction(mediaId: string, kind: MediaReactionKind): Promise
   } catch {
     return { success: false, error: "server" };
   }
-}
-
-export async function toggleReelLike(mediaId: string): Promise<ToggleResult> {
-  return toggleReaction(mediaId, "LIKE");
-}
-
-export async function toggleReelFavorite(mediaId: string): Promise<ToggleResult> {
-  return toggleReaction(mediaId, "FAVORITE");
 }

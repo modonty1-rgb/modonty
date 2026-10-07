@@ -26,7 +26,7 @@ const SITE_MAX_PER_DAY = Number(process.env.MODO_DAILY_QUESTION_CAP) || 2000;
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 
-export interface RateLimitVerdict {
+interface RateLimitVerdict {
   allowed: boolean;
   /** Arabic message ready to show the visitor — empty when allowed. */
   message: string;

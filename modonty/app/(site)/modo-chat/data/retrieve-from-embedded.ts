@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cosineSimilarity } from "../helpers/cosine-similarity";
 import { embedTexts } from "./embed-texts";
 import { rerankDocuments } from "./rerank-documents";
 import type { DocumentForChat } from "./cohere-client";
@@ -29,21 +30,7 @@ const RELEVANCE_THRESHOLD = 0.25;
  */
 const RERANK_MIN_SCORE = 0.7;
 
-function cosineSimilarity(a: number[], b: number[]): number {
-  if (a.length !== b.length) return 0;
-  let dot = 0;
-  let normA = 0;
-  let normB = 0;
-  for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
-  }
-  const denom = Math.sqrt(normA) * Math.sqrt(normB);
-  return denom === 0 ? 0 : dot / denom;
-}
-
-export interface RetrievalResult {
+interface RetrievalResult {
   docs: DocumentForChat[];
   topScore: number;
   topRerankScore: number;

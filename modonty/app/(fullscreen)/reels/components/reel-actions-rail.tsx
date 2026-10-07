@@ -8,8 +8,8 @@ import { ModontyCommentMark } from "@/components/icons/modonty-comment-mark";
 import { ModontyLikeMark } from "@/components/icons/modonty-like-mark";
 import { ModontyShareMark } from "@/components/icons/modonty-share-mark";
 
-import { toggleReelLike, toggleReelFavorite } from "../actions/reel-interactions";
-import { trackReelShareEvent } from "../actions/track-reel-share";
+import { toggleReelLike, toggleReelFavorite } from "../actions";
+import { trackReelShareEvent } from "../actions/track-reel-share-event";
 import { ReelCommentsSheetLazy, warmReelCommentsSheet } from "./reel-comments-sheet-lazy";
 import { ReelViewerAvatar } from "./reel-viewer-avatar";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";

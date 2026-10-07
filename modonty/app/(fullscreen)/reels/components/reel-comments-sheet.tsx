@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -18,11 +18,10 @@ import { AuthPromptLazy, warmAuthPrompt } from "@/components/shared/auth-prompt/
 import { IconLike, IconReply, IconUser } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
-import { fetchReelComments } from "../data/fetch-reel-comments";
+import { useReelComments } from "../helpers/use-reel-comments";
 import { submitReelComment } from "../actions/submit-reel-comment";
 import { submitReelCommentReply } from "../actions/submit-reel-comment-reply";
 import { toggleReelCommentLike } from "../actions/toggle-reel-comment-like";
-import type { ReelComment } from "../data/get-reel-comments";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 
 interface ReelCommentsSheetProps {
@@ -47,25 +46,9 @@ export function ReelCommentsSheet({
   open,
   onOpenChange,
 }: ReelCommentsSheetProps) {
-  const [comments, setComments] = useState<ReelComment[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [fetched, setFetched] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { comments, setComments, loading, fetched, setFetched, error, setError } = useReelComments(mediaId, open);
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
-
-  useEffect(() => {
-    if (!open || fetched) return;
-    setLoading(true);
-    setError(null);
-    fetchReelComments(mediaId)
-      .then((data) => {
-        setComments(data);
-        setFetched(true);
-      })
-      .catch(() => setError("فشل تحميل التعليقات"))
-      .finally(() => setLoading(false));
-  }, [open, fetched, mediaId]);
 
   const handleLike = async (commentId: string) => {
     if (!isLoggedIn) {

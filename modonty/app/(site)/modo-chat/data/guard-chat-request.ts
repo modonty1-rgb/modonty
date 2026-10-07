@@ -17,7 +17,7 @@ import type { ApiResponse } from "@/lib/types";
  * There is no `"system"` role on purpose: a client able to append system instructions could
  * override the trusted prompt built on the server and run the assistant on our account.
  */
-export const chatBodySchema = z.object({
+const chatBodySchema = z.object({
   messages: z
     .array(
       z.object({
@@ -32,7 +32,7 @@ export const chatBodySchema = z.object({
   conversationId: z.string().regex(/^[0-9a-f]{24}$/).optional(),
 });
 
-export interface ChatTurnContext {
+interface ChatTurnContext {
   /** Null for a visitor on the free trial — nothing is saved for them. */
   userId: string | null;
   messages: { role: "user" | "assistant"; content: string }[];

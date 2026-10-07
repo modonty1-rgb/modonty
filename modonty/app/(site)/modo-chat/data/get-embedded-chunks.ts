@@ -14,7 +14,7 @@ export interface EmbeddedChunk {
   articleTitle: string;
 }
 
-export interface ArticleRef {
+interface ArticleRef {
   id: string;
   title: string;
 }
@@ -130,16 +130,4 @@ async function buildAndStore(
     articleId: r.articleId,
     articleTitle: titleById.get(r.articleId) ?? "",
   }));
-}
-
-/**
- * Drops an article's cached chunks so the next question rebuilds them.
- * Call this when an article's body changes.
- */
-export async function invalidateArticleChunks(articleId: string): Promise<void> {
-  try {
-    await db.articleChunk.deleteMany({ where: { articleId } });
-  } catch (err) {
-    console.error("[invalidateArticleChunks]", err);
-  }
 }

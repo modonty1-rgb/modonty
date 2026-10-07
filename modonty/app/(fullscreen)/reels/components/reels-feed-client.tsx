@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
 import { IconVolume2, IconVolumeX, IconChevronUp, IconChevronDown } from "@/lib/icons";
-import { loadMoreReels } from "../actions/load-more";
-import { trackReelView } from "../actions/track-reel-view";
-import { pushGa4Event } from "@/lib/analytics/ga4-browser";
-import { clarityEvent, claritySet } from "@/lib/analytics/clarity";
-import { markReelViewed } from "../helpers/mark-reel-viewed";
+import { clarityEvent } from "@/lib/analytics/clarity";
+import { useActiveReel } from "../helpers/use-active-reel";
+import { useReelViewTracking } from "../helpers/use-reel-view-tracking";
+import { useLoadMoreReels } from "../helpers/use-load-more-reels";
 import type { ReelFeedItemWithState } from "@/lib/queries/reels-feed-shapes";
 import { ReelActionsRail } from "./reel-actions-rail";
 import { ReelVideo } from "./reel-video";
@@ -30,84 +29,16 @@ const WINDOW = 1;
 
 export function ReelsFeedClient({ initialItems, initialCursor, clientSlug, isLoggedIn, userImage, userName }: ReelsFeedClientProps) {
   const [items, setItems] = useState(initialItems);
-  const [active, setActive] = useState(0);
   // Feeds must start muted or the browser refuses to autoplay; one tap turns sound on for all.
   const [muted, setMuted] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<(HTMLElement | null)[]>([]);
-  const stateRef = useRef({ cursor: initialCursor, loading: false });
 
-  // The active reel = the one most in view. A single observer watches every section; whichever
-  // crosses 60% and is the most visible becomes active — it plays, the rest pause.
-  useEffect(() => {
-    const root = scrollRef.current;
-    if (!root) return;
-    const ratios = new Map<number, number>();
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          const i = Number((e.target as HTMLElement).dataset.index);
-          ratios.set(i, e.intersectionRatio);
-        }
-        let best = -1;
-        let bestRatio = 0.6; // must clear the threshold to take over
-        for (const [i, r] of ratios) {
-          if (r >= bestRatio) {
-            bestRatio = r;
-            best = i;
-          }
-        }
-        if (best !== -1) setActive(best);
-      },
-      { root, threshold: [0, 0.6, 0.9] }
-    );
-    sectionsRef.current.forEach((el) => el && io.observe(el));
-    return () => io.disconnect();
-  }, [items.length]);
-
-  // A view = the reel HELD the screen for two seconds — a flick past it counts nothing.
-  // Once per reel per browser session (markReelViewed dedupes in sessionStorage).
-  useEffect(() => {
-    const reel = items[active];
-    if (!reel) return;
-    const timer = setTimeout(() => {
-      if (markReelViewed(reel.id)) {
-        void trackReelView(reel.id).then((ga4) => {
-          if (ga4) {
-            pushGa4Event("reel_view", { ...ga4 });
-            if (ga4.client_slug) claritySet("client", ga4.client_slug); // Clarity tag (plan ج٦)
-          }
-        });
-      }
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [active, items]);
-
-  // Infinite scroll — prefetch two screens before the end so the reader never hits a wall.
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        const s = stateRef.current;
-        if (!entries[0].isIntersecting || s.loading || !s.cursor) return;
-        s.loading = true;
-        loadMoreReels(s.cursor, clientSlug)
-          .then((res) => {
-            setItems((prev) => [...prev, ...res.items]);
-            s.cursor = res.nextCursor;
-          })
-          .finally(() => {
-            s.loading = false;
-          });
-      },
-      { root: scrollRef.current, rootMargin: "200% 0px" }
-    );
-    io.observe(sentinel);
-    return () => io.disconnect();
-  }, [clientSlug]);
+  const active = useActiveReel(scrollRef, sectionsRef, items.length);
+  useReelViewTracking(items, active);
+  useLoadMoreReels({ scrollRef, sentinelRef, initialCursor, clientSlug, setItems });
 
   const hasVideo = items.some((r) => r.isVideo);
 

@@ -7,7 +7,7 @@ import { notifyTelegram } from "@/lib/telegram/notify-telegram";
 /**
  * Toggle a like on one reel comment. Signed-in only — `CommentReaction.userId` is nullable
  * in the schema (it also serves anonymous flows), so this guard is the only thing keeping
- * a reel comment like owned by a real account, same as favorites in reel-interactions.
+ * a reel comment like owned by a real account, same as favorites in toggle-reel-favorite.
  * The rail has no dislike, so a stray `isLike:false` row (if one ever appears) is simply
  * flipped to a like instead of blocking the tap.
  */

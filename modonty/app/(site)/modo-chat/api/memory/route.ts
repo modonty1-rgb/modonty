@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connection } from "next/server";
 
 import { auth } from "@/lib/auth";
-import { getVisitorMemory } from "@/app/(site)/modo-chat/data/get-visitor-memory";
+import { getVisitorMemory } from "../../data/get-visitor-memory";
 
 /** What Modo remembers about the signed-in visitor — empty for everyone else. */
 export async function GET() {

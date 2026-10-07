@@ -17,7 +17,7 @@ function isUniqueViolation(e: unknown): boolean {
 
 /**
  * Toggle a like or a favorite on a reel, for a known reader — the body of the web action
- * (`reel-interactions.ts`) with the identity passed in. Not a Server Action on purpose.
+ * (`toggle-reel-reaction.ts`) with the identity passed in. Not a Server Action on purpose.
  *
  * Cache invalidation is NOT here: the web action calls `updateTag("reels")` (Server Actions
  * only), the mobile route calls `revalidateTag` (Route Handlers) — Next 16 forbids `updateTag`

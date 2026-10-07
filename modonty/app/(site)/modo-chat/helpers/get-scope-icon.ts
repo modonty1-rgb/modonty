@@ -15,7 +15,7 @@ import {
   IconLike,
 } from "@/lib/icons";
 
-export type ScopeIconComponent = ComponentType<{ className?: string }>;
+type ScopeIconComponent = ComponentType<{ className?: string }>;
 
 /**
  * Picks an icon from a scope's Arabic or English name — neither industries nor categories

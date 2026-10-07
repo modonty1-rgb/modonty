@@ -1,24 +1,11 @@
 import "server-only";
 
-import { isGreetingOrShortPleasantry } from "../helpers/is-greeting";
+import { isGreetingOrShortPleasantry } from "../helpers/is-greeting-or-short-pleasantry";
+import { cosineSimilarity } from "../helpers/cosine-similarity";
 import { embedTexts } from "./embed-texts";
 
 /** Relevance threshold: below this = out-of-scope (query not about this category). */
 const OUT_OF_SCOPE_THRESHOLD = 0.52;
-
-function cosineSimilarity(a: number[], b: number[]): number {
-  if (a.length !== b.length) return 0;
-  let dot = 0;
-  let normA = 0;
-  let normB = 0;
-  for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
-  }
-  const denom = Math.sqrt(normA) * Math.sqrt(normB);
-  return denom === 0 ? 0 : dot / denom;
-}
 
 /**
  * Check if user message is out of scope (asking about a different topic/article).

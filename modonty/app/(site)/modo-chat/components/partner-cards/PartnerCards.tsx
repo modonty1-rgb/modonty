@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PartnerAvatar } from "@modonty/shared/components/partner-avatar/PartnerAvatar";
 
-import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
+import { asMedia } from "@modonty/shared/components/optimized-image";
 import { VerifiedBadge } from "@modonty/shared/components/verified-badge/VerifiedBadge";
 import { Card } from "@/components/ui/card";
 import { IconCalendar, IconChevronLeft, IconMapPin } from "@/lib/icons";

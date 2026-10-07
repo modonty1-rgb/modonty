@@ -4,12 +4,12 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 
 /** Khalid's decision (2026-08-18): three free questions, then the sign-in wall. */
-export const FREE_TRIAL_QUESTIONS = 3;
+const FREE_TRIAL_QUESTIONS = 3;
 
 const COOKIE = "modo_trial";
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
-export interface TrialVerdict {
+interface TrialVerdict {
   allowed: boolean;
   /** How many free questions are left AFTER this one. */
   remaining: number;
@@ -43,13 +43,6 @@ function readUsed(raw: string | undefined): number {
   if (!timingSafeEqual(Buffer.from(expected), Buffer.from(mac))) return 0;
   const n = Number.parseInt(count, 10);
   return Number.isFinite(n) && n >= 0 ? n : 0;
-}
-
-/** Reads the trial state without spending anything — for rendering the counter. */
-export async function readAnonymousTrial(): Promise<{ used: number; remaining: number }> {
-  const store = await cookies();
-  const used = readUsed(store.get(COOKIE)?.value);
-  return { used, remaining: Math.max(0, FREE_TRIAL_QUESTIONS - used) };
 }
 
 /** Spends one free question. Call BEFORE any paid upstream call. */

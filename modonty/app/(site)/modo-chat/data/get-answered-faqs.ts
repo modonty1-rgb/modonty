@@ -4,7 +4,7 @@ import { ArticleStatus, ArticleFAQStatus, SubscriptionStatus } from "@prisma/cli
 
 import { db } from "@/lib/db";
 
-export interface AnsweredFaq {
+interface AnsweredFaq {
   question: string;
   answer: string;
   articleId: string;

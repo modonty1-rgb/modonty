@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 const WINDOW_DAYS = 30;
 const MAX_TOPICS = 3;
 
-export interface VisitorMemory {
+interface VisitorMemory {
   /** Scopes this visitor asked in before, newest first — names, not ids. */
   recentScopes: string[];
   /** Their last question, so Modo can pick the thread back up. */

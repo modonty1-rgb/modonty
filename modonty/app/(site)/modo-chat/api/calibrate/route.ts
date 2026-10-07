@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getEmbeddedChunks } from "@/app/(site)/modo-chat/data/get-embedded-chunks";
-import { getIndustryScope } from "@/app/(site)/modo-chat/data/get-industry-scope";
-import { retrieveFromEmbedded } from "@/app/(site)/modo-chat/data/retrieve-from-embedded";
-import { isGreetingOrShortPleasantry } from "@/app/(site)/modo-chat/helpers/is-greeting";
+import { getEmbeddedChunks } from "../../data/get-embedded-chunks";
+import { getIndustryScope } from "../../data/get-industry-scope";
+import { retrieveFromEmbedded } from "../../data/retrieve-from-embedded";
+import { isGreetingOrShortPleasantry } from "../../helpers/is-greeting-or-short-pleasantry";
 
 export const maxDuration = 60;
 

@@ -1,10 +1,11 @@
 import "server-only";
 
 import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
-import { getUserReelFlags } from "@/lib/queries/get-user-reel-flags";
+import { getUserReelFlags } from "./get-user-reel-flags";
+import { withReelState } from "./with-reel-state";
 import type { ReelFeedItemWithState } from "@/lib/queries/reels-feed-shapes";
 
-export interface ReelsPageForReader {
+interface ReelsPageForReader {
   items: ReelFeedItemWithState[];
   nextCursor: string | null;
 }
@@ -28,11 +29,7 @@ export async function getReelsPageFor(
   }
 
   return {
-    items: items.map((i) => ({
-      ...i,
-      likedByMe: liked.has(i.id),
-      favoritedByMe: fav.has(i.id),
-    })),
+    items: withReelState(items, liked, fav),
     nextCursor,
   };
 }

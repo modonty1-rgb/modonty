@@ -5,7 +5,7 @@ import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 
-export interface IndustryScope {
+interface IndustryScope {
   id: string;
   name: string;
   slug: string;

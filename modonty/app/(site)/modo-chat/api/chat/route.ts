@@ -1,21 +1,25 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { ArticleStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
-import { guardChatRequest } from "@/app/(site)/modo-chat/data/guard-chat-request";
-import { getEmbeddedChunks } from "@/app/(site)/modo-chat/data/get-embedded-chunks";
-import { getEmbeddedFaqs } from "@/app/(site)/modo-chat/data/get-embedded-faqs";
-import { getIndustryScope } from "@/app/(site)/modo-chat/data/get-industry-scope";
-import { retrieveFromEmbedded } from "@/app/(site)/modo-chat/data/retrieve-from-embedded";
-import { rankPartners } from "@/app/(site)/modo-chat/data/rank-partners";
-import { streamAnswerResponse } from "@/app/(site)/modo-chat/data/stream-answer-response";
-import { saveChatbotMessage } from "@/app/(site)/modo-chat/data/save-chatbot-message";
-import { isGreetingOrShortPleasantry } from "@/app/(site)/modo-chat/helpers/is-greeting";
-import { isPriceOrAppointmentQuestion } from "@/app/(site)/modo-chat/helpers/is-price-or-appointment-question";
-import { resolveModoPrompt } from "@/lib/ai/resolve-modo-prompt";
+import { guardChatRequest } from "../../data/guard-chat-request";
+import { getEmbeddedChunks } from "../../data/get-embedded-chunks";
+import { getEmbeddedFaqs } from "../../data/get-embedded-faqs";
+import { getIndustryScope } from "../../data/get-industry-scope";
+import { getCategoryScopeArticles } from "../../data/get-category-scope-articles";
+import { getSuggestedArticle } from "../../data/get-suggested-article";
+import { retrieveFromEmbedded } from "../../data/retrieve-from-embedded";
+import { rankPartners } from "../../data/rank-partners";
+import { streamAnswerResponse } from "../../data/stream-answer-response";
+import { saveChatbotMessage } from "../../data/save-chatbot-message";
+import { buildAnswerSources } from "../../helpers/build-answer-sources";
+import { makeSaveStreamedTurn } from "../../helpers/make-save-streamed-turn";
+import { toPartnerCard } from "../../helpers/to-partner-card";
+import { isGreetingOrShortPleasantry } from "../../helpers/is-greeting-or-short-pleasantry";
+import { isPriceOrAppointmentQuestion } from "../../helpers/is-price-or-appointment-question";
+import { resolveModoPrompt } from "../../helpers/resolve-modo-prompt";
 
-import type { ChatMessage } from "@/app/(site)/modo-chat/data/cohere-client";
+import type { ChatMessage } from "../../data/cohere-client";
 import type { ApiResponse } from "@/lib/types";
 
 // Worst path is several upstream calls before the first token; the default limit cuts the stream.
@@ -40,14 +44,11 @@ const SUGGEST_MIN_SCORE = 0.15;
  */
 const CONTEXT_TURNS = 6;
 
-const MAX_SCOPE_ARTICLES = 30;
-
 export async function POST(request: NextRequest) {
   try {
     const guarded = await guardChatRequest(request);
     if ("error" in guarded) return guarded.error;
-    const { userId, messages, lastUserMessage, conversationId, turnIndex, wantStream, trialRemaining, body } =
-      guarded.ok;
+    const { userId, messages, lastUserMessage, conversationId, turnIndex, wantStream, body } = guarded.ok;
 
     const scope = scopeSchema.safeParse(body);
     const { categorySlug, industrySlug } = scope.success ? scope.data : {};
@@ -93,27 +94,7 @@ export async function POST(request: NextRequest) {
       ? { scopeType: "industry" as const, industrySlug: industry.slug, industryId: industry.id }
       : { scopeType: "category" as const, categorySlug, categoryId: category!.id };
 
-    const scopeArticles = industry
-      ? industry.articles
-      : await db.article.findMany({
-          where: {
-            categoryId: category!.id,
-            status: ArticleStatus.PUBLISHED,
-            OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
-          },
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            excerpt: true,
-            // `content` is deliberately NOT selected: chunk embeddings are cached, and shipping
-            // 30 full article bodies into every request was hundreds of kilobytes the answer
-            // never read. Bodies load lazily, only for articles whose cache is cold.
-            client: { select: { name: true, slug: true, ctaMode: true } },
-          },
-          orderBy: [{ datePublished: "desc" }, { createdAt: "desc" }],
-          take: MAX_SCOPE_ARTICLES,
-        });
+    const scopeArticles = industry ? industry.articles : await getCategoryScopeArticles(category!.id);
 
     /**
      * The out-of-scope decision is derived from retrieval — it is NOT a gate in front of it.
@@ -152,51 +133,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    /**
-     * The partners behind the matched articles, with whether they take bookings — this is what
-     * turns an answer into a lead. Naming a doctor in prose and stopping there gave the visitor
-     * nothing to act on: measured live, Modo recommended a doctor with no link and no way to book.
-     */
-    const sourceArticles: { id: string; title: string; slug: string; excerpt: string | null; client: { name: string; slug: string } }[] = [];
-    const partnerBySlug = new Map(scopePartners.map((p) => [p.slug, p]));
-    const partners: {
-      name: string; slug: string; canBook: boolean; whyRecommended: string;
-      logo: string | null; city: string | null; credential: string | null; isVerified: boolean;
-    }[] = [];
-    if (dbDocs.length > 0) {
-      const articleByTitle = new Map(scopeArticles.map((a) => [a.title, a]));
-      const seenArticle = new Set<string>();
-      const seenPartner = new Set<string>();
-      for (const doc of dbDocs) {
-        const firstLine = doc.text.split("\n\n")[0]?.trim();
-        const article = firstLine ? articleByTitle.get(firstLine) : undefined;
-        if (!article || seenArticle.has(article.id)) continue;
-        seenArticle.add(article.id);
-        sourceArticles.push({
-          id: article.id,
-          title: article.title,
-          slug: article.slug,
-          excerpt: article.excerpt ?? null,
-          client: { name: article.client.name, slug: article.client.slug },
-        });
-        if (!seenPartner.has(article.client.slug)) {
-          seenPartner.add(article.client.slug);
-          const full = partnerBySlug.get(article.client.slug);
-          partners.push({
-            name: article.client.name,
-            slug: article.client.slug,
-            canBook: article.client.ctaMode !== "NONE",
-            // The article is the evidence for the recommendation — Khalid's rule: partner first,
-            // article as proof underneath it.
-            whyRecommended: article.title,
-            logo: full?.logo ?? null,
-            city: full?.city ?? null,
-            credential: full?.credential ?? null,
-            isVerified: full?.isVerified ?? false,
-          });
-        }
-      }
-    }
+    const { sourceArticles, partners } = buildAnswerSources(dbDocs, scopeArticles, scopePartners);
 
     /**
      * No article covers the question — but the industry may have partners who do that work.
@@ -223,16 +160,7 @@ export async function POST(request: NextRequest) {
         conversationId,
         type: "message",
         text: answer,
-        partners: relevantPartners.map((p) => ({
-          name: p.name,
-          slug: p.slug,
-          canBook: p.ctaMode !== "NONE",
-          whyRecommended: p.slogan?.trim() || p.description?.trim() || `من شركاء ${scopeName}`,
-          logo: p.logo,
-          city: p.city,
-          credential: p.credential,
-          isVerified: p.isVerified,
-        })),
+        partners: relevantPartners.map((p) => toPartnerCard(p, scopeName)),
       });
     }
 
@@ -258,16 +186,7 @@ export async function POST(request: NextRequest) {
        */
       const suggestedArticle =
         bestArticleId && bestArticleScore >= SUGGEST_MIN_SCORE
-          ? await db.article.findUnique({
-              where: { id: bestArticleId },
-              select: {
-                id: true,
-                title: true,
-                slug: true,
-                excerpt: true,
-                client: { select: { id: true, name: true, slug: true } },
-              },
-            })
+          ? await getSuggestedArticle(bestArticleId)
           : null;
 
       /**
@@ -304,16 +223,7 @@ export async function POST(request: NextRequest) {
         message,
         ...(suggestedArticle && { suggestedArticle }),
         ...(handoff.length > 0 && {
-          partners: handoff.map((p) => ({
-            name: p.name,
-            slug: p.slug,
-            canBook: p.ctaMode !== "NONE",
-            whyRecommended: p.slogan?.trim() || p.description?.trim() || `من شركاء ${scopeName}`,
-            logo: p.logo,
-            city: p.city,
-            credential: p.credential,
-            isVerified: p.isVerified,
-          })),
+          partners: handoff.map((p) => toPartnerCard(p, scopeName)),
         }),
       });
     }
@@ -329,20 +239,16 @@ export async function POST(request: NextRequest) {
       ...messages.filter((m) => m.content.trim().length > 0).slice(-CONTEXT_TURNS),
     ];
 
-    const save = (fullText: string, outcome: "stream" | "error") =>
-      saveChatbotMessage({
-        userId,
-        conversationId,
-        turnIndex,
-        userQuery: lastUserMessage,
-        assistantResponse: fullText,
-        ...scopeColumns,
-        outcome,
-        source: "db",
-      }).catch(() => null);
+    const save = makeSaveStreamedTurn({
+      userId,
+      conversationId,
+      turnIndex,
+      userQuery: lastUserMessage,
+      ...scopeColumns,
+    });
 
     if (!wantStream) {
-      const { askCohere } = await import("@/app/(site)/modo-chat/data/ask-cohere");
+      const { askCohere } = await import("../../data/ask-cohere");
       const response = await askCohere(chatMessages, docs.length > 0 ? docs : undefined);
       const msg = response as { text?: string; message?: { content?: Array<{ text?: string }> } };
       const text = msg.text ?? msg.message?.content?.[0]?.text ?? "";

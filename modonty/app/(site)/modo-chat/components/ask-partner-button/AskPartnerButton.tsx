@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 
-import { askPartnerFromChat } from "@/app/(site)/modo-chat/data/ask-partner-from-chat";
+import { askPartnerFromChat } from "../../data/ask-partner-from-chat";
 import { IconCheck, IconSend } from "@/lib/icons";
 
 interface AskPartnerButtonProps {

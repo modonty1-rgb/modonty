@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { incrementCounters } from "@/lib/counters/increment-counters";
 import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
-export interface ReelViewGa4Params {
+interface ReelViewGa4Params {
   reel_id: string;
   reel_slug: string;
   reel_kind: "video" | "image";

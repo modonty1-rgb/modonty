@@ -2,10 +2,10 @@
 
 import { auth } from "@/lib/auth";
 
-import { getReelsPageFor } from "@/lib/reels/get-reels-page-for";
+import { getReelsPageFor } from "../helpers/get-reels-page-for";
 import type { ReelFeedItemWithState } from "@/lib/queries/reels-feed-shapes";
 
-export interface LoadMoreResult {
+interface LoadMoreResult {
   items: ReelFeedItemWithState[];
   nextCursor: string | null;
 }

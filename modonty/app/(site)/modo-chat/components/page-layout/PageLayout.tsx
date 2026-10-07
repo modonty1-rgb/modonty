@@ -197,7 +197,6 @@ export function PageLayout() {
                 initialInput={draft}
                 articleSlug={articleSlug}
                 userName={session?.user?.name ?? session?.user?.email ?? undefined}
-                userImage={session?.user?.image ?? undefined}
                 userEmail={session?.user?.email ?? undefined}
                 isSignedIn={Boolean(session?.user)}
                 selectedIndustry={selectedIndustry}

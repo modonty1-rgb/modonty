@@ -5,7 +5,7 @@ import { rerankDocuments } from "./rerank-documents";
 
 import type { PartnerForCard } from "./get-industry-scope";
 
-export type RankablePartner = PartnerForCard;
+type RankablePartner = PartnerForCard;
 
 /** Below this a partner is not plausibly related to the question and is not offered at all. */
 const MIN_RELEVANCE = 0.05;

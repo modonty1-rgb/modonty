@@ -2,7 +2,7 @@
 
 import { CHARACTER_URL } from "@/constants";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { IconAi, IconArticle } from "@/lib/icons";
@@ -12,30 +12,20 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Composer } from "../composer/Composer";
-import { PartnerCards, type SuggestedPartner } from "../partner-cards/PartnerCards";
+import { PartnerCards } from "../partner-cards/PartnerCards";
 import { TypingDots } from "../shared/TypingDots";
 import { TrialWall } from "../login-card/TrialWall";
 import { AiDisclaimer } from "@/components/shared/ai-disclaimer/AiDisclaimer";
 import { RateAnswer } from "../shared/RateAnswer";
 import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
 import { getScopeIcon } from "../../helpers/get-scope-icon";
+import { formatPartnerCount } from "../../helpers/format-partner-count";
+import { useChatStream } from "../../helpers/use-chat-stream";
+import { useResumeConversation } from "../../helpers/use-resume-conversation";
+import { useVisitorMemory } from "../../helpers/use-visitor-memory";
+import { useIndustries } from "../../helpers/use-industries";
+import type { ChatMemory, Industry, IndustrySuggestion, Msg, Redirect, SuggestedArticle } from "../../helpers/chat-types";
 import { cn } from "@/lib/utils";
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
-
-/**
- * Silence budget, not a total budget. A stream still delivering tokens is healthy however long
- * it runs — measured live on 2026-08-18, a grounded answer took 45s and a flat total timeout
- * cut it off mid-sentence after the visitor had already read three paragraphs. The timer is
- * therefore reset on every chunk, and only a genuinely stalled upstream trips it.
- */
-const STALL_TIMEOUT_MS = 25_000;
-
-/** «شريك واحد» / «شريكان» / «٢١ شريك» — «1 شريك» is not something anyone says out loud. */
-function formatPartnerCount(count: number): string {
-  if (count === 1) return "شريك واحد جاهز";
-  if (count === 2) return "شريكان جاهزان";
-  return `${new Intl.NumberFormat(SITE_LOCALE).format(count)} شريك جاهز`;
-}
 
 const AskClientDialog = dynamic(
   () =>
@@ -45,63 +35,10 @@ const AskClientDialog = dynamic(
   { ssr: false }
 );
 
-type WebSource = { title: string; link: string };
-type Msg = {
-  role: "user" | "assistant";
-  content: string;
-  /** Partners behind this answer, rendered as bookable cards under it. */
-  partners?: SuggestedPartner[];
-  source?: "web";
-  sources?: WebSource[];
-  noSources?: boolean;
-  /** The saved row this answer became — present only for a signed-in visitor. */
-  messageId?: string;
-  industrySuggestion?: IndustrySuggestion;
-};
-
-type Redirect = {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  client: { name: string; slug: string };
-};
-
-type SuggestedArticle = {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  client: { id: string; name: string; slug: string };
-};
-
-type IndustrySuggestion = {
-  slug: string;
-  name: string;
-};
-
-/** One saved turn as `/modo-chat/api/conversation` returns it. */
-type ResumedTurn = {
-  userQuery: string;
-  assistantResponse: string;
-  source?: "web" | "db" | null;
-  webSources?: WebSource[] | null;
-};
-
-/** One offerable industry as `/modo-chat/api/industries` returns it. */
-type Industry = {
-  name: string;
-  slug: string;
-  description?: string | null;
-  /** How many active partners stand behind it — the reason to pick this one. */
-  partnerCount: number;
-};
-
 interface ArticleChatbotContentProps {
   initialInput?: string;
   articleSlug: string | null;
   userName?: string | null;
-  userImage?: string | null;
   userEmail?: string | null;
   selectedIndustry: { slug: string; name: string } | null;
   onSelectedIndustryChange: (industry: { slug: string; name: string } | null) => void;
@@ -117,7 +54,6 @@ export function ChatList({
   initialInput = "",
   articleSlug,
   userName,
-  userImage,
   userEmail,
   selectedIndustry,
   onSelectedIndustryChange,
@@ -136,7 +72,7 @@ export function ChatList({
   /** Set when the server refuses because the free questions ran out. */
   const [trialEnded, setTrialEnded] = useState(false);
   /** What Modo remembers from earlier visits — scope names only, never a health profile. */
-  const [memory, setMemory] = useState<{ recentScopes: string[]; lastQuestion: string | null }>({
+  const [memory, setMemory] = useState<ChatMemory>({
     recentScopes: [],
     lastQuestion: null,
   });
@@ -163,263 +99,33 @@ export function ChatList({
     if (atBottom) endRef.current?.scrollIntoView({ behavior: "auto", block: "nearest" });
   }, [messages, redirects, suggestedArticle]);
 
-  // Rebuild the last conversation after a reload. Only when the visitor arrived with no
-  // article and no draft — those mean they came to start something specific, not to resume.
-  useEffect(() => {
-    if (startFresh || !isSignedIn) return;
-    if (!resumeConversationId && (articleSlug || initialInput)) return;
-    let cancelled = false;
+  useResumeConversation({
+    startFresh,
+    isSignedIn,
+    resumeConversationId,
+    articleSlug,
+    initialInput,
+    conversationIdRef,
+    setMessages,
+  });
 
-    const url = resumeConversationId
-      ? `/modo-chat/api/conversation?id=${encodeURIComponent(resumeConversationId)}`
-      : "/modo-chat/api/conversation";
-    fetch(url)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (cancelled || !data?.conversationId || !data.turns?.length) return;
-        conversationIdRef.current = data.conversationId;
+  useVisitorMemory({ isSignedIn, articleSlug, setMemory });
 
-        const restored: Msg[] = [];
-        for (const turn of data.turns as ResumedTurn[]) {
-          restored.push({ role: "user", content: turn.userQuery });
-          if (turn.assistantResponse) {
-            restored.push({
-              role: "assistant",
-              content: turn.assistantResponse,
-              ...(turn.source === "web" && { source: "web" as const }),
-              ...(turn.webSources?.length && { sources: turn.webSources }),
-            });
-          }
-        }
-        if (restored.length) setMessages(restored);
-      })
-      .catch(() => {
-        /* resuming is a convenience — failing to resume must never block a new conversation */
-      });
+  useIndustries({ articleSlug, setIndustries, setIndustriesLoading });
 
-    return () => {
-      cancelled = true;
-    };
-  }, [articleSlug, initialInput, resumeConversationId, startFresh, isSignedIn]);
-
-  // Only on an empty chat: recalling a past visit under a running conversation is noise.
-  useEffect(() => {
-    if (!isSignedIn || articleSlug) return;
-    let cancelled = false;
-    fetch("/modo-chat/api/memory")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => { if (!cancelled && data) setMemory(data); })
-      .catch(() => { /* memory is a courtesy, never a blocker */ });
-    return () => { cancelled = true; };
-  }, [isSignedIn, articleSlug]);
-
-  useEffect(() => {
-    if (!articleSlug) {
-      setIndustriesLoading(true);
-      fetch("/modo-chat/api/industries")
-        .then((res) => res.json())
-        .then((data) => data.industries && setIndustries(data.industries))
-        .catch(() => setIndustries([]))
-        .finally(() => setIndustriesLoading(false));
-    } else {
-      setIndustries([]);
-    }
-  }, [articleSlug]);
-
-  const doChat = useCallback(
-    async (text: string, industrySlug: string | null, artSlug: string | null) => {
-      // Remembered so «إعادة المحاولة» can re-send it — the composer was already cleared.
-      lastAttemptRef.current = { text, industrySlug, artSlug };
-      setError(null);
-      setRedirects(null);
-      setSuggestedArticle(null);
-      setLoading(true);
-
-      /**
-       * `submit` calls this before its own `setMessages` has landed, so the question is NOT yet
-       * in `messages` and must be appended. `confirmCategorySuggestion` calls it after the
-       * question was already pushed — appending again sent the model two identical user turns.
-       * Dropping a trailing duplicate covers both callers.
-       */
-      const prior = messages.filter((m) => m.content.trim().length > 0);
-      const last = prior[prior.length - 1];
-      const withoutDuplicate =
-        last?.role === "user" && last.content === text ? prior.slice(0, -1) : prior;
-      const history = [...withoutDuplicate, { role: "user" as const, content: text }];
-      const isIndustry = !artSlug && !!industrySlug;
-      const chatUrl = isIndustry ? "/modo-chat/api/chat" : `/modo-chat/api/article/${artSlug}`;
-      const conversationId = conversationIdRef.current ?? undefined;
-      const chatBody = isIndustry
-        ? { messages: history, industrySlug, stream: true, conversationId }
-        : { messages: history, stream: true, conversationId };
-
-      // Without a deadline a hung upstream leaves the composer disabled and the dots
-      // spinning forever, with reload as the only way out.
-      const controller = new AbortController();
-      abortRef.current = controller;
-      let timeoutId = setTimeout(() => controller.abort(), STALL_TIMEOUT_MS);
-      /** Called on every received chunk — progress means the upstream is alive. */
-      const keepAlive = () => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => controller.abort(), STALL_TIMEOUT_MS);
-      };
-
-      try {
-        const res = await fetch(chatUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(chatBody),
-          signal: controller.signal,
-        });
-
-        if (!res.ok) {
-          const d = await res.json().catch(() => ({}));
-          if (res.status === 401 && d.needsSignIn) {
-            setTrialEnded(true);
-            return;
-          }
-          throw new Error(d.error || `HTTP ${res.status}`);
-        }
-
-        const ct = res.headers.get("content-type") ?? "";
-        if (ct.includes("application/json")) {
-          const d = await res.json();
-          if (d.conversationId) conversationIdRef.current = d.conversationId;
-          if (d.type === "outOfScope") {
-            setMessages((p) => [...p, { role: "assistant", content: d.message ?? "سؤالك خارج نطاق هذا الموضوع." }]);
-            return;
-          }
-          if (d.type === "redirect") {
-            setRedirects(d.articles ?? []);
-            return;
-          }
-          if (d.type === "noSources") {
-            // Partners ride along on this branch too: a price or appointment question has no
-            // answer in our content by definition, and the partner who sets it is the whole point.
-            setMessages((p) => [...p, {
-              role: "assistant",
-              content: d.message ?? "ما لقيت جواباً أضمنه لسؤالك، وما أبغى أخمّن عليك.",
-              noSources: true,
-              ...(d.partners?.length && { partners: d.partners }),
-            }]);
-            return;
-          }
-          if (d.text) {
-            // The partners must ride with the message. Dropping them here turned the
-            // partner-first fallback — «عندي شركاء يقدرون يخدمونك» — into a promise with
-            // nothing under it, in exactly the case where we have no article but 21 partners.
-            setMessages((p) => [
-              ...p,
-              {
-                role: "assistant",
-                content: d.text,
-                ...(d.partners?.length && { partners: d.partners as SuggestedPartner[] }),
-              },
-            ]);
-            if (d.suggestedArticle) setSuggestedArticle(d.suggestedArticle as SuggestedArticle);
-          }
-          return;
-        }
-
-        // Streaming
-        const reader = res.body?.getReader();
-        const dec = new TextDecoder();
-        let buf = "";
-        let assistantText = "";
-        setMessages((p) => [...p, { role: "assistant", content: "" }]);
-
-        if (reader) {
-          let lastMessageId: string | undefined;
-          let lastSource: "web" | undefined;
-          let lastSources: WebSource[] | undefined;
-          let lastSuggestedArticle: SuggestedArticle | undefined;
-          let lastPartners: SuggestedPartner[] | undefined;
-
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            keepAlive();
-            buf += dec.decode(value, { stream: true });
-            const lines = buf.split("\n");
-            buf = lines.pop() ?? "";
-            for (const line of lines) {
-              try {
-                const p = JSON.parse(line);
-                if (p.type === "delta" && p.text) {
-                  assistantText += p.text;
-                  setMessages((prev) => {
-                    const n = [...prev];
-                    const last = n[n.length - 1];
-                    if (last?.role === "assistant") n[n.length - 1] = { ...last, content: assistantText };
-                    return n;
-                  });
-                }
-                if (p.type === "done") {
-                  if (p.conversationId) conversationIdRef.current = p.conversationId;
-                  if (p.messageId) lastMessageId = p.messageId;
-                  if (p.source === "web") lastSource = "web";
-                  if (p.sources?.length) lastSources = p.sources;
-                  if (p.suggestedArticle) lastSuggestedArticle = p.suggestedArticle as SuggestedArticle;
-                  if (p.partners?.length) lastPartners = p.partners as SuggestedPartner[];
-                }
-                if (p.type === "error") setError(p.error ?? "حدث خطأ. حاول مرة أخرى.");
-              } catch {}
-            }
-          }
-
-          if (lastMessageId) {
-            setMessages((prev) => {
-              const n = [...prev];
-              const last = n[n.length - 1];
-              if (last?.role === "assistant") n[n.length - 1] = { ...last, messageId: lastMessageId };
-              return n;
-            });
-          }
-          if (lastPartners?.length) {
-            setMessages((prev) => {
-              const n = [...prev];
-              const last = n[n.length - 1];
-              if (last?.role === "assistant") n[n.length - 1] = { ...last, partners: lastPartners };
-              return n;
-            });
-          }
-          if (lastSource) {
-            setMessages((prev) => {
-              const n = [...prev];
-              const last = n[n.length - 1];
-              if (last?.role === "assistant") n[n.length - 1] = { ...last, source: lastSource, sources: lastSources };
-              return n;
-            });
-          }
-          if (lastSuggestedArticle) setSuggestedArticle(lastSuggestedArticle);
-        }
-      } catch (err) {
-        const aborted = err instanceof DOMException && err.name === "AbortError";
-        setError(
-          aborted
-            ? "الرد تأخّر أكثر من اللازم. جرّب مرة ثانية."
-            : err instanceof Error
-              ? err.message
-              : "صار خطأ. جرّب مرة ثانية."
-        );
-      } finally {
-        clearTimeout(timeoutId);
-        abortRef.current = null;
-        // A stream that died before its first token leaves an empty assistant bubble
-        // behind — drop it, or the transcript keeps a blank reply forever.
-        setMessages((prev) => {
-          const last = prev[prev.length - 1];
-          if (last?.role === "assistant" && last.content === "" && !last.industrySuggestion) {
-            return prev.slice(0, -1);
-          }
-          return prev;
-        });
-        setLoading(false);
-        inputRef.current?.focus();
-      }
-    },
-    [messages]
-  );
+  const doChat = useChatStream({
+    messages,
+    setMessages,
+    setError,
+    setRedirects,
+    setSuggestedArticle,
+    setLoading,
+    setTrialEnded,
+    lastAttemptRef,
+    abortRef,
+    conversationIdRef,
+    inputRef,
+  });
 
   const submit = async () => {
     const text = input.trim();

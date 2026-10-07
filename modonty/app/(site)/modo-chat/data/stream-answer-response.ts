@@ -6,7 +6,7 @@ import { streamCohereAnswer } from "./stream-cohere-answer";
 
 import type { ChatMessage, DocumentForChat } from "./cohere-client";
 
-export interface StreamAnswerParams {
+interface StreamAnswerParams {
   chatMessages: ChatMessage[];
   /** The grounding documents. Absent means "answer from the prompt alone". */
   docs?: DocumentForChat[];

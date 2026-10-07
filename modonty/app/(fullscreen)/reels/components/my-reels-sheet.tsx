@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 
@@ -8,8 +8,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Skeleton } from "@/components/ui/skeleton";
 import { ModontyReelsMark } from "@/components/icons/modonty-reels-mark";
 
-import { fetchMyReels } from "../actions/fetch-my-reels";
-import type { MyReelTile } from "../data/get-my-reels";
+import { useMyReels } from "../helpers/use-my-reels";
 
 type Kind = "LIKE" | "FAVORITE";
 
@@ -34,24 +33,7 @@ interface MyReelsSheetProps {
  */
 export function MyReelsSheet({ open, onOpenChange }: MyReelsSheetProps) {
   const [kind, setKind] = useState<Kind>("LIKE");
-  const [cache, setCache] = useState<Partial<Record<Kind, MyReelTile[]>>>({});
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!open || cache[kind]) return;
-    let alive = true;
-    setLoading(true);
-    fetchMyReels(kind)
-      .then((res) => {
-        if (alive) setCache((c) => ({ ...c, [kind]: res.items }));
-      })
-      .finally(() => {
-        if (alive) setLoading(false);
-      });
-    return () => {
-      alive = false;
-    };
-  }, [open, kind, cache]);
+  const { cache, loading } = useMyReels(open, kind);
 
   const items = cache[kind];
   const tab = TABS.find((t) => t.k === kind)!;

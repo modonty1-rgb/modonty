@@ -1,28 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { SubscriptionStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { embedTexts } from "@/app/(site)/modo-chat/data/embed-texts";
-import { checkRateLimit } from "@/app/(site)/modo-chat/data/check-rate-limit";
+import { embedTexts } from "../../data/embed-texts";
+import { checkRateLimit } from "../../data/check-rate-limit";
+import { cosineSimilarity } from "../../helpers/cosine-similarity";
 
 const bodySchema = z.object({
   message: z.string().min(1).max(500),
 });
 
 const SUGGESTION_THRESHOLD = 0.35;
-
-function cosineSimilarity(a: number[], b: number[]): number {
-  if (a.length !== b.length) return 0;
-  let dot = 0, normA = 0, normB = 0;
-  for (let i = 0; i < a.length; i++) {
-    dot += a[i]! * b[i]!;
-    normA += a[i]! * a[i]!;
-    normB += b[i]! * b[i]!;
-  }
-  const denom = Math.sqrt(normA) * Math.sqrt(normB);
-  return denom === 0 ? 0 : dot / denom;
-}
 
 /**
  * Guesses which INDUSTRY a free-text question belongs to, so the visitor can just type.

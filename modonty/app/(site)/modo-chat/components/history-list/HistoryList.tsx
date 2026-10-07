@@ -1,49 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
-import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
+import { formatRelativeDate } from "../../helpers/format-relative-date";
+import { useChatHistory } from "../../helpers/use-chat-history";
 import {
   IconHistory,
   IconChevronDown,
   IconChevronUp,
   IconExternal,
 } from "@/lib/icons";
-
-type WebSource = { title: string; link: string };
-
-type HistoryItem = {
-  id: string;
-  conversationId: string | null;
-  userQuery: string;
-  assistantResponse: string;
-  scopeType: string;
-  scopeLabel: string | null;
-  articleSlug: string | null;
-  categorySlug: string | null;
-  industrySlug: string | null;
-  outcome: string;
-  source?: string | null;
-  webSources?: WebSource[] | null;
-  createdAt: string;
-};
-
-function formatRelativeDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
-  const time = date.toLocaleTimeString(SITE_LOCALE, { hour: "2-digit", minute: "2-digit" });
-  let label: string;
-  if (diffDays === 0) label = "اليوم";
-  else if (diffDays === 1) label = "أمس";
-  else if (diffDays >= 2 && diffDays < 7) label = `قبل ${diffDays} أيام`;
-  else if (diffDays >= 7 && diffDays < 30) label = `قبل ${Math.floor(diffDays / 7)} أسابيع`;
-  else label = date.toLocaleDateString(SITE_LOCALE);
-  return `${label} ${time}`;
-}
 
 interface HistoryListProps {
   /** Reopens a past thread in the chat tab. Absent means history stays read-only. */
@@ -56,24 +24,8 @@ interface HistoryListProps {
 // modonty did not typecheck at all. The default was never needed: every field here is already
 // optional, and React always passes a props object.
 export function HistoryList({ onResume }: HistoryListProps) {
-  const [items, setItems] = useState<HistoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { items, loading, error } = useChatHistory();
   const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/modo-chat/api/history")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.messages) {
-          setItems(data.messages);
-        } else {
-          setError(data.error ?? "حدث خطأ");
-        }
-      })
-      .catch(() => setError("حدث خطأ"))
-      .finally(() => setLoading(false));
-  }, []);
 
   if (loading) {
     return (

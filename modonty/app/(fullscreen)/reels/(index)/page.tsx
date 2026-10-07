@@ -10,7 +10,8 @@ import { ReelsFeedClient } from "../components/reels-feed-client";
 import { ReelsNavRail } from "../components/reels-nav-rail";
 import { getReelsFeedPage } from "@/lib/queries/get-reels-feed-page";
 import { getReelClientFilterOptions } from "@/lib/queries/get-reels-feed-page";
-import { getUserReelFlags } from "@/lib/queries/get-user-reel-flags";
+import { getUserReelFlags } from "../helpers/get-user-reel-flags";
+import { withReelState } from "../helpers/with-reel-state";
 import { messages } from "@/lib/i18n/messages";
 import { ReelsClientFilter, ReelsClientFilterDesktop } from "../components/reels-client-filter";
 
@@ -56,11 +57,7 @@ export default async function ReelsPage({ searchParams }: { searchParams: Promis
   if (userId && items.length > 0) {
     ({ liked, fav } = await getUserReelFlags(userId, items.map((r) => r.id)));
   }
-  const withState = items.map((r) => ({
-    ...r,
-    likedByMe: liked.has(r.id),
-    favoritedByMe: fav.has(r.id),
-  }));
+  const withState = withReelState(items, liked, fav);
 
   if (withState.length === 0) {
     return (

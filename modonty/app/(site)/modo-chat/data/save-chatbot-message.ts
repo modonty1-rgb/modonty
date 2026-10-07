@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 
 export type WebSource = { title: string; link: string };
-export type RedirectArticle = { id: string; title: string; slug: string; excerpt: string | null };
+type RedirectArticle = { id: string; title: string; slug: string; excerpt: string | null };
 
 type SaveParams = {
   /** Null for a visitor on the free trial — the turn is still logged, just without an owner. */
