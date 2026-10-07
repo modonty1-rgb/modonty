@@ -18,7 +18,7 @@ import { ArticleViewFaqs } from "./components/article-view-faqs";
 import { ArticleViewGallery } from "./components/article-view-gallery";
 import { ArticleViewRelated } from "./components/article-view-related";
 import { ArticleViewRelatedFrom } from "./components/article-view-related-from";
-import { sanitizeHtmlContent } from "@/lib/sanitize-html";
+import { sanitizeHtmlContent } from "../helpers/sanitize-html";
 import { PreviewToc } from "./components/article-toc";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { mediaSrc } from "@modonty/shared/lib/media-src";

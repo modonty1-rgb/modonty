@@ -76,7 +76,7 @@ export async function regenerateOneArticleCascade(
       "@/lib/seo/metadata-storage"
     );
     // The client's name out of the SEO title field first — the metadata is built from it.
-    const { stripClientNameFromSeoTitle } = await import("@/lib/seo/strip-client-name-from-seo-title");
+    const { stripClientNameFromSeoTitle } = await import("../helpers/strip-client-name-from-seo-title");
     await stripClientNameFromSeoTitle(articleId);
     await generateAndSaveJsonLd(articleId);
     await generateAndSaveNextjsMetadata(articleId);

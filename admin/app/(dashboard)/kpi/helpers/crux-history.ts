@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { CWVRating } from "./pagespeed";
+import type { CWVRating } from "@/lib/seo/pagespeed";
 
 /**
  * CrUX History API — real Chrome visitors, one 28-day window per week, up to 40 weeks back.

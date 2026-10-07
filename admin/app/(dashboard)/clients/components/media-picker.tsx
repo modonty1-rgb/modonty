@@ -17,7 +17,7 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { ImageIcon, X, Pencil } from "lucide-react";
 import type { MediaType } from "@prisma/client";
 import { MEDIA_SPECS } from "@/lib/media/media-specs";
-import { MediaPickerDialog } from "./media-picker-dialog";
+import { MediaPickerDialog } from "@/components/shared/media-picker-dialog";
 
 interface MediaPickerProps {
   clientId: string | null;

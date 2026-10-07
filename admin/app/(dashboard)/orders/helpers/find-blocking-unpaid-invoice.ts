@@ -1,6 +1,6 @@
 import { InvoicePaymentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { NOT_ARCHIVED } from "./not-archived";
+import { NOT_ARCHIVED } from "@/lib/invoices/not-archived";
 
 /**
  * We do not sell on credit (Khalid 2026-07-24: «ما في عميل تُصدر له فاتورتان إلا يكون

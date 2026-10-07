@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { MODONTY_KEY } from "@/app/(dashboard)/seo-images/helpers/load-groups";
+import { MODONTY_KEY } from "../helpers/load-groups";
 
 /**
  * The ids the drafter should run over for one group — resolved on the SERVER.

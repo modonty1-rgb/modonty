@@ -10,7 +10,7 @@ import {
   CONTACT_REQUEST_STATUSES,
   CONTACT_REQUEST_STATUS_LABEL,
   type ContactRequestStatus,
-} from "@/lib/contact-requests/contact-request-statuses";
+} from "./helpers/contact-request-statuses";
 import { getContactRequestScope } from "@/lib/contact-requests/get-contact-request-scope";
 
 import { StatusSelect } from "./components/status-select";

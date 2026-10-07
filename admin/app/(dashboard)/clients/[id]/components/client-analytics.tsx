@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Eye, Users, Clock, TrendingDown, BarChart3, Search, Share2, Mail, ExternalLink, FileText, Package, Calendar, AlertCircle, TrendingUp } from "lucide-react";
-import { AnalticCard } from "@/components/shared/analtic-card";
+import { AnalticCard } from "../../components/analtic-card";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { getSubscriptionDaysRemaining, calculateDeliveryRate } from "../../helpers/client-display-utils";

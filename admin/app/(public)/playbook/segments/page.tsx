@@ -9,7 +9,7 @@
 import { DocLayout } from "@/app/(public)/components/doc-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getFeaturedPlanPrice } from "@/lib/pricing/get-featured-plan-price";
+import { getFeaturedPlanPrice } from "../helpers/get-featured-plan-price";
 import { getPlaybookCatalogCopy } from "../helpers/get-playbook-catalog-copy";
 import { ShoppingBag, Stethoscope, Scale, Building2, UtensilsCrossed, Sparkles as BeautyIcon, Plane, Briefcase, AlertTriangle, CheckCircle2, ListChecks } from "lucide-react";
 

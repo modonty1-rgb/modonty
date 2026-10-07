@@ -10,18 +10,18 @@
  */
 
 import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
-import { renderPageToHTML } from "./page-renderer";
-import { extractStructuredData } from "./page-extractor";
-import { validateExtractedData } from "./jsonld-validator";
-import { analyzePageSEO } from "./page-seo-analyzer";
+import { renderPageToHTML } from "@/lib/seo/page-renderer";
+import { extractStructuredData } from "@/lib/seo/page-extractor";
+import { validateExtractedData } from "@/lib/seo/jsonld-validator";
+import { analyzePageSEO } from "@/lib/seo/page-seo-analyzer";
 import type {
   FullPageValidationResult,
   ValidationOptions,
   ValidationIssue,
   ExtractedData,
   PageType,
-} from "./types";
-import { mapCategory } from "./map-category";
+} from "@/lib/seo/types";
+import { mapCategory } from "@/lib/seo/map-category";
 
 /**
  * Validate full page
@@ -32,7 +32,7 @@ export async function validateFullPage(
   options?: ValidationOptions
 ): Promise<FullPageValidationResult> {
   const timestamp = new Date().toISOString();
-  const { loadSiteUrl } = await import("./site-url");
+  const { loadSiteUrl } = await import("@/lib/seo/site-url");
   const baseUrl = options?.baseUrl || (await loadSiteUrl());
 
   try {

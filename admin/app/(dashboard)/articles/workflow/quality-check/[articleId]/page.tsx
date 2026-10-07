@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ExternalLink, Pencil, ShieldCheck, ShieldX, AlertTriangle, CheckCircle2, XCircle, Sparkles } from "lucide-react";
 import { buildArticleUrlForArticle } from "@/lib/seo/url-builders";
 import { loadSiteUrl } from "@/lib/seo/site-url";
-import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
+import { validateArticleFromDb } from "../../../helpers/article-validator-db";
 import { needsRegeneration, regenerateJsonLd } from "@/lib/seo/jsonld-storage";
 import { isYmylClientComplete, listYmylMissingFields } from "@/lib/seo/ymyl-helpers";
 import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";

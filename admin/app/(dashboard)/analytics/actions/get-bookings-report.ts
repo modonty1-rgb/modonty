@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { getBookPageOpens, getBookingFunnel, type BookingFunnel } from "@/lib/analytics/book-funnel";
+import { getBookPageOpens, getBookingFunnel, type BookingFunnel } from "../helpers/book-funnel";
 
 /**
  * Bookings report — the drill-down behind the Bookings card.

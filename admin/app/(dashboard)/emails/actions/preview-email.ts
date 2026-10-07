@@ -10,8 +10,8 @@ import { commentReplyEmail } from "@modonty/shared/lib/email/templates/comment-r
 import { faqReplyEmail } from "@modonty/shared/lib/email/templates/faq-reply";
 import { newsletterWelcomeEmail } from "@modonty/shared/lib/email/templates/newsletter-welcome";
 import type { EmailContent } from "@modonty/shared/lib/email";
-import { articlePendingEmail } from "@/lib/email/templates/article-pending";
-import { articlePublishedEmail } from "@/lib/email/templates/article-published";
+import { articlePendingEmail } from "../helpers/article-pending";
+import { articlePublishedEmail } from "../helpers/article-published";
 import { clientWelcomeEmail } from "@/lib/email/templates/client-welcome";
 import { sendEmailWithRetry } from "@/lib/email/resend-client";
 import { EMAIL_TEMPLATES } from "../email-templates-config";

@@ -6,7 +6,7 @@ import { Loader2, UserCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { activateFromOrder } from "@/lib/orders/activate-from-order";
+import { activateFromOrder } from "../../../actions/activate-from-order";
 
 /**
  * **ضغطةٌ واحدة — ولا حقلَ يُملأ.**

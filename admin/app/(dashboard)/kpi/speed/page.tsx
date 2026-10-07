@@ -1,5 +1,5 @@
 import type { CWVRating } from "@/lib/seo/pagespeed";
-import type { CruxPeriod, CwvKey, CwvValue } from "@/lib/seo/crux-history";
+import type { CruxPeriod, CwvKey, CwvValue } from "../helpers/crux-history";
 import { cn } from "@/lib/utils";
 
 import { getSpeedKpis, SITE_ORIGIN } from "./helpers/get-speed-kpis";

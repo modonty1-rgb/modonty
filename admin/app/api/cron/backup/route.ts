@@ -5,7 +5,7 @@ import { MongoClient } from "mongodb";
 import { NextRequest } from "next/server";
 
 import { db } from "@/lib/db";
-import { runBillingAlert } from "@/lib/atlas/billing-alert";
+import { runBillingAlert } from "../helpers/billing-alert";
 import {
   readBunnyBackupConfig,
   uploadCollection,

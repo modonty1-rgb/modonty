@@ -22,7 +22,7 @@ import { loadSiteUrl } from "@/lib/seo/site-url";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
-import { sanitizeHtmlContent } from "@/lib/sanitize-html";
+import { sanitizeHtmlContent } from "../../../helpers/sanitize-html";
 import { checkArticleCtaUrl } from "../../../helpers/check-article-cta-url";
 
 export async function createArticle(data: ArticleFormData) {

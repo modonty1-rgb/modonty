@@ -14,15 +14,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BookOpen, LogOut, Moon, Sun } from "lucide-react";
-import { Breadcrumb } from "./breadcrumb";
-import { NotificationsBell } from "./notifications-bell";
+import { Breadcrumb } from "@/components/admin/breadcrumb";
+import { NotificationsBell } from "@/components/admin/notifications-bell";
 // «Feedback» left the bar for the sidebar's System group on 2026-09-04 —
 // `app/(dashboard)/feedback/`. The bar could only send; the page also reads back
 // what was sent, which is what the reports were being stored for all along.
-import { DevToolsMenu } from "./dev-tools-menu";
-import { TasksMenu } from "./tasks-menu";
-import { SalesMenu } from "./sales-menu";
-import { CampaignsMenu } from "./campaigns-menu";
+import { DevToolsMenu } from "@/components/admin/dev-tools-menu";
+import { TasksMenu } from "@/components/admin/tasks-menu";
+import { SalesMenu } from "@/components/admin/sales-menu";
+import { CampaignsMenu } from "@/components/admin/campaigns-menu";
 import pkg from "@/package.json";
 
 export function Header({

@@ -8,7 +8,7 @@ import {
   ARTICLE_HEALTH_SELECT,
   checkArticleHealth,
   type HealthArticle,
-} from "@/lib/health/article-health";
+} from "../../helpers/article-health";
 import type { HealthIssue } from "@/lib/health/article-health-types";
 
 /**

@@ -12,7 +12,7 @@ import { logAction } from "@/lib/audit/log-action";
 import { clientServerSchema } from "./client-server-schema";
 import { normalizeOrganizationType } from "@modonty/shared/lib/constants/client-classification";
 import { normalizePhone } from "@modonty/shared/lib/phone";
-import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
+import { DEFAULT_CLIENT_PASSWORD } from "../../helpers/default-client-password";
 import { slugify } from "@/lib/utils";
 import bcrypt from "bcryptjs";
 

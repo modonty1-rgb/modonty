@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Pencil } from "lucide-react";
 
-import { TaskDialog } from "@/components/tasks/task-dialog";
+import { TaskDialog } from "../../components/task-dialog";
 import type { BoardTask } from "@/lib/tasks/task-types";
 
 /**

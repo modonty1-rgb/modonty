@@ -12,7 +12,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { validateFullPage } from "@/lib/seo/page-validator";
+import { validateFullPage } from "../helpers/page-validator";
 import type { PageType, ValidationOptions } from "@/lib/seo/types";
 
 export async function GET(request: NextRequest) {

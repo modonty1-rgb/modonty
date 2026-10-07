@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 
-import { resolveAdminPrompt } from "./ai/resolve-admin-prompt";
+import { resolveAdminPrompt } from "@/lib/ai/resolve-admin-prompt";
 
 interface GeneratedArticleData {
   title: string;

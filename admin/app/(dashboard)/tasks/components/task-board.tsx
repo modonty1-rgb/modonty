@@ -30,7 +30,7 @@ import { archiveTask, moveTask } from "@/lib/tasks/task-actions";
 import type { BoardTask } from "../helpers/queries";
 import { TASK_STATUSES, TASK_STATUS_META, type TaskStatusKey } from "@/lib/tasks/task-config";
 import { TaskCard } from "./task-card";
-import { TaskDialog } from "@/components/tasks/task-dialog";
+import { TaskDialog } from "./task-dialog";
 import { isTaskLate } from "@/lib/tasks/is-task-late";
 
 type Board = Record<TaskStatusKey, BoardTask[]>;

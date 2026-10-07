@@ -1,6 +1,6 @@
 import { getClientSubscriptionsShared } from "@/lib/subscription/get-client-subscriptions";
 import { NOT_INTERNAL } from "@/app/(dashboard)/clients/segment/segments";
-import { RENEWAL_SOON_DAYS } from "./renewal-window";
+import { RENEWAL_SOON_DAYS } from "@/lib/orders/renewal-window";
 
 /**
  * الاشتراكاتُ المنتهية والمقترِبة — تعريفٌ واحد للبطاقة وللفلتر.

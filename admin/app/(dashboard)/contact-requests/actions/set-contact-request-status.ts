@@ -6,7 +6,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
-import { CONTACT_REQUEST_STATUSES, CONTACT_REQUEST_STATUS_LABEL } from "@/lib/contact-requests/contact-request-statuses";
+import { CONTACT_REQUEST_STATUSES, CONTACT_REQUEST_STATUS_LABEL } from "../helpers/contact-request-statuses";
 import { getContactRequestScope } from "@/lib/contact-requests/get-contact-request-scope";
 
 const schema = z.object({

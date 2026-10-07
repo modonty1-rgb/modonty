@@ -65,7 +65,7 @@ export async function cascadeSettingsToAllEntities(): Promise<{
   // 3. Articles — regenerate JSON-LD + metadata in parallel chunks of 5
   const { generateAndSaveJsonLd } = await import("@/lib/seo/jsonld-storage");
   const { generateAndSaveNextjsMetadata } = await import("@/lib/seo/metadata-storage");
-  const { stripClientNameFromSeoTitle } = await import("@/lib/seo/strip-client-name-from-seo-title");
+  const { stripClientNameFromSeoTitle } = await import("../helpers/strip-client-name-from-seo-title");
   const allArticles = await db.article.findMany({ select: { id: true } });
   let articleSuccess = 0;
   for (let i = 0; i < allArticles.length; i += CONCURRENCY) {

@@ -1,7 +1,7 @@
 import "server-only";
 
-import { getAtlasReport } from "./atlas-client";
-import { decideBillingAlert, type BillingAlertOutcome } from "./decide-billing-alert";
+import { getAtlasReport } from "@/lib/atlas/atlas-client";
+import { decideBillingAlert, type BillingAlertOutcome } from "@/lib/atlas/decide-billing-alert";
 
 /**
  * تنبيه فاتورة أطلس على تلغرام — الجلب والإرسال؛ والقرار في `decide-billing-alert.ts`.

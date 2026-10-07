@@ -5,4 +5,3 @@
  */
 
 export { analyzeArticleSEO } from './article-seo-analyzer';
-export type {  } from './article-seo-types';

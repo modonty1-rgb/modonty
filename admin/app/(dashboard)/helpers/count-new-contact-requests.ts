@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 
-import { getContactRequestScope } from "./get-contact-request-scope";
+import { getContactRequestScope } from "@/lib/contact-requests/get-contact-request-scope";
 
 /** The red number on «المبيعات» — new requests this staff member is responsible for. */
 export async function countNewContactRequests(staffId: string): Promise<number> {

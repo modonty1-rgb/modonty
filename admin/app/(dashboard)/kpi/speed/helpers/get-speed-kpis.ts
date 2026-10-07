@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 
-import { fetchCruxHistory, type CruxDevice, type CruxPeriod } from "@/lib/seo/crux-history";
+import { fetchCruxHistory, type CruxDevice, type CruxPeriod } from "../../helpers/crux-history";
 
 export const SITE_ORIGIN = "https://www.modonty.com";
 

@@ -1,6 +1,6 @@
 "use server";
 
-import { generateComprehensiveArticleData } from "@/lib/openai-article-generator";
+import { generateComprehensiveArticleData } from "../helpers/openai-article-generator";
 
 interface GenerateArticleAIRequest {
   keywords: string;

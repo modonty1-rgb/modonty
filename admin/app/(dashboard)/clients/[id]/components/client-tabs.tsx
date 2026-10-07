@@ -11,7 +11,7 @@ import { MediaSocialTab } from "./tabs/media-social-tab";
 import { SecurityTab } from "./tabs/security-tab";
 import { AdditionalTab } from "./tabs/additional-tab";
 import { SettingsTab } from "./tabs/settings-tab";
-import type { ClientPaymentState } from "@/lib/clients/payment-state";
+import type { ClientPaymentState } from "../../helpers/payment-state";
 import { ClientAnalytics } from "./client-analytics";
 import { ClientArticles } from "./client-articles";
 import { IntakeBrief, type BriefForm } from "./intake-brief";

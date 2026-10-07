@@ -257,11 +257,11 @@ export async function saveImageSeo(
   // url as a raw STRING with no relation to follow back. Without this they keep the dead name
   // in their baked SEO — the same dual-field integrity rule updateMedia already enforces.
   let entitySync: Awaited<
-    ReturnType<typeof import("@/lib/media/sync-entity-image-urls").syncEntityImageUrls>
+    ReturnType<typeof import("../helpers/sync-entity-image-urls").syncEntityImageUrls>
   > | null = null;
   if (newSrc && newSrc !== prevSrc) {
     try {
-      const { syncEntityImageUrls } = await import("@/lib/media/sync-entity-image-urls");
+      const { syncEntityImageUrls } = await import("../helpers/sync-entity-image-urls");
       entitySync = await syncEntityImageUrls(mediaId, newSrc, prevSrc);
     } catch {
       // Best-effort — the SEO save itself must not fail on a sync error.

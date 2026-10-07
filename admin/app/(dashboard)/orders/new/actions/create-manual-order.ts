@@ -11,7 +11,7 @@ import { toE164 } from "@modonty/shared/lib/phone";
 import { db } from "@/lib/db";
 import { requireSalesDesk } from "@/lib/require-sales-desk";
 import { logAction } from "@/lib/audit/log-action";
-import { linkOrderToClient } from "@/lib/orders/link-order-to-client";
+import { linkOrderToClient } from "../../actions/link-order-to-client";
 import { findClientByIdentity } from "@/lib/orders/find-client-by-identity";
 import { getSubscriptionTerm } from "@modonty/shared/lib/subscription/subscription-term";
 

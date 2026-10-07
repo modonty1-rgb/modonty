@@ -176,10 +176,10 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
     // URL changed (replace-file or Bunny move) → rewrite every referencing entity's
     // dual-field string + regenerate its baked SEO, else JSON-LD serves a dead link.
     const newSrc = media.bunnyUrl ?? media.url ?? null;
-    let entitySync: Awaited<ReturnType<typeof import("@/lib/media/sync-entity-image-urls").syncEntityImageUrls>> | null = null;
+    let entitySync: Awaited<ReturnType<typeof import("../helpers/sync-entity-image-urls").syncEntityImageUrls>> | null = null;
     if (newSrc && newSrc !== prevSrc) {
       try {
-        const { syncEntityImageUrls } = await import("@/lib/media/sync-entity-image-urls");
+        const { syncEntityImageUrls } = await import("../helpers/sync-entity-image-urls");
         entitySync = await syncEntityImageUrls(id, newSrc, prevSrc);
       } catch {
         // Best-effort — the media edit itself must not fail on sync errors.

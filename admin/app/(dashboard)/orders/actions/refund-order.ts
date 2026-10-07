@@ -6,7 +6,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
 import { requireFinanceAdmin } from "@/lib/require-finance-admin";
-import { refundTamaraOrder } from "@/lib/payments/refund-tamara-order";
+import { refundTamaraOrder } from "../helpers/refund-tamara-order";
 
 /**
  * تسجيلُ استردادٍ حصل — وتنفيذُه لطلبات تمارا وحدها.

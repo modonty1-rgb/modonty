@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { MediaPicker } from "@/components/shared/media-picker";
+import { MediaPicker } from "./media-picker";
 import { updateClientHero } from "../actions/clients-actions";
 import { updateClientMobileHero } from "../actions/clients-actions/update-client-mobile-hero";
 import { useToast } from "@/hooks/use-toast";

@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { getTopPages } from "./analytics";
+import { getTopPages } from "@/lib/gsc/analytics";
 
 const TAG = "gsc-dashboard";
 const REVALIDATE = 60 * 60 * 3;

@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { fetchAndParseSitemap, type ParsedSitemap } from "@/lib/gsc/parse-sitemap";
+import { fetchAndParseSitemap, type ParsedSitemap } from "../helpers/parse-sitemap";
 
 interface ActionResponse {
   ok: boolean;

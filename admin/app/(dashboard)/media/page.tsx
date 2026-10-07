@@ -1,7 +1,7 @@
 import { getMedia, getClients, getMediaStats, deleteMedia, canDeleteMedia, type MediaFilters } from "./actions/media-actions";
-import { MediaFilters as MediaFiltersComponent } from "@/components/shared/media-library/media-filters";
+import { MediaFilters as MediaFiltersComponent } from "./components/media-filters";
 import { MediaPageClient } from "@/components/shared/media-library/media-page-client";
-import { MediaStats } from "@/components/shared/media-library/media-stats";
+import { MediaStats } from "./components/media-stats";
 
 export default async function MediaPage({
   searchParams,

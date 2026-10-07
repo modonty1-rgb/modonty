@@ -8,12 +8,10 @@
 // ============================================
 // Phase 2: Knowledge Graph Generator
 // ============================================
-export {  } from "./knowledge-graph-generator";
 
 // ============================================
 // Phase 3: JSON-LD Validator
 // ============================================
-export {  } from "./jsonld-validator";
 
 
 // ============================================
@@ -33,28 +31,23 @@ export { batchRegenerateArticleSeo } from "./batch-regenerate-article-seo";
 // ============================================
 // Phase 10: Auto-Fix Engine
 // ============================================
-export {  } from "./auto-fix";
 
 // ============================================
 // Phase 10: Pre-Publish Audit
 // ============================================
-export {  } from "./pre-publish-audit";
 
 // ============================================
 // Phase 11: Entity Disambiguator (Wikidata)
 // ============================================
-export {  } from "./entity-disambiguator";
 
 
 // ============================================
 // Phase 12: Core Web Vitals Monitor
 // ============================================
-export {  } from "./cwv-monitor";
 
 // ============================================
 // Phase 13: International SEO
 // ============================================
-export {  } from "./international-seo";
 
 // (Removed 2026-07-14: "Phase 15 Sitemap & Robots.txt" re-exports — generateRobotsTxt and
 // friends had ZERO call sites, and that robots output would CONFLICT with the live

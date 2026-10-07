@@ -8,7 +8,7 @@ import {
   CONTACT_REQUEST_STATUSES,
   CONTACT_REQUEST_STATUS_LABEL,
   type ContactRequestStatus,
-} from "@/lib/contact-requests/contact-request-statuses";
+} from "../helpers/contact-request-statuses";
 
 import { setContactRequestStatus } from "../actions/set-contact-request-status";
 

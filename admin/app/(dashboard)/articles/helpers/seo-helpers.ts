@@ -21,7 +21,6 @@ export {
 } from "./seo-generation";
 
 // SEO validation
-export {  } from "./seo-validation";
 
 // Breadcrumb generation
 export { generateBreadcrumbPath } from "./breadcrumb";

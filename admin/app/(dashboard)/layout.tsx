@@ -6,15 +6,15 @@ import { canSeeReports } from "@/lib/can-see-reports";
 import { db } from "@/lib/db";
 import { TASK_NOT_ARCHIVED } from "@/lib/tasks/not-archived";
 import { countReviewQueue } from "@/lib/tasks/review-queue";
-import { countNewContactRequests } from "@/lib/contact-requests/count-new-contact-requests";
-import { Sidebar } from "@/components/admin/sidebar";
-import { Header } from "@/components/admin/header";
-import { DbBadge } from "@/components/admin/db-badge";
+import { countNewContactRequests } from "@/app/(dashboard)/helpers/count-new-contact-requests";
+import { Sidebar } from "@/app/(dashboard)/components/sidebar";
+import { Header } from "@/app/(dashboard)/components/header";
+import { DbBadge } from "@/app/(dashboard)/components/db-badge";
 import { SidebarProvider } from "@/components/contexts/sidebar-context";
 import { NotAuthorized } from "./components/not-authorized";
 import { getArticleStatusCounts } from "./actions/article-status-counts";
 import { getMissingEssentialSeoFields } from "@/lib/seo/essential-seo-fields";
-import { EssentialSeoDialog } from "@/components/admin/essential-seo-dialog";
+import { EssentialSeoDialog } from "@/app/(dashboard)/components/essential-seo-dialog";
 
 export const dynamic = 'force-dynamic';
 

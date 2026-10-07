@@ -2,7 +2,7 @@
 
 import { UseFormReturn } from "react-hook-form";
 import { messages } from "@/lib/messages";
-import { MediaPicker } from "@/components/shared/media-picker";
+import { MediaPicker } from "../media-picker";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import type { ClientWithRelations } from "@/lib/types";
 import { updateMedia } from "../../../media/actions/media-actions";

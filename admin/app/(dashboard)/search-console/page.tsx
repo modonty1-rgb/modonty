@@ -9,10 +9,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { db } from "@/lib/db";
-import { getCachedTopPages } from "@/lib/gsc/cached";
-import { parseUrl } from "@/lib/gsc/coverage";
+import { getCachedTopPages } from "./helpers/cached";
+import { parseUrl } from "./helpers/coverage";
 import { getCachedInspectionsByUrls, type InspectionRecord } from "@/lib/gsc/inspection-cache";
-import { fetchAndParseSitemap } from "@/lib/gsc/parse-sitemap";
+import { fetchAndParseSitemap } from "./helpers/parse-sitemap";
 
 import { BackgroundInspector } from "./components/background-inspector";
 import { SitemapManager } from "./components/sitemap-manager";

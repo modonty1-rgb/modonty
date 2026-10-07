@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
-import { isMigratedOrder } from "@/lib/orders/is-migrated-order";
+import { isMigratedOrder } from "../../helpers/is-migrated-order";
 import { getSalesReps } from "@/app/(dashboard)/users/actions/users-actions";
 import { OrderEditForm, type OrderForEdit } from "./components/order-edit-form";
 

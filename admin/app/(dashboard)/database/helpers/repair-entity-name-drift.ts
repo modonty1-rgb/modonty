@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 
-import { batchRegenerateArticleSeo } from "./batch-regenerate-article-seo";
+import { batchRegenerateArticleSeo } from "@/lib/seo/batch-regenerate-article-seo";
 
 /**
  * Finds articles whose STORED SEO blobs still carry an entity's OLD name, and rebuilds them.

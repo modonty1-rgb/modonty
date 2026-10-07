@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Inbox } from "lucide-react";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { buildArticleUrlForArticle } from "@/lib/seo/url-builders";
-import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
+import { validateArticleFromDb } from "../../helpers/article-validator-db";
 import {
   isValidTransitionSlug,
   getTransition,

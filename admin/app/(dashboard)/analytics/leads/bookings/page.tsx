@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { getBookingsReport } from "../../actions/get-bookings-report";
-import { FAIL_REASON_LABEL } from "@/lib/analytics/book-funnel";
+import { FAIL_REASON_LABEL } from "../../helpers/book-funnel";
 
 // Bookings & leads — rebuilt decision-first (Khalid 2026-07-23: «تديني حاجة أعرف
 // أتخذ عليها قرار، مش صفحة فيها حشو»). The page answers ONE question: who needs

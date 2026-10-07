@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { validateArticle, type ValidationResult } from "@/lib/seo/article-validator";
-import { fetchAndParseSitemap } from "@/lib/gsc/parse-sitemap";
+import { fetchAndParseSitemap } from "../helpers/parse-sitemap";
 import { fetchPageSpeed, type PageSpeedReport } from "@/lib/seo/pagespeed";
 import { fetchCruxReport, type CruxReport } from "@/lib/seo/crux";
 import { regenerateJsonLd } from "@/lib/seo/jsonld-storage";

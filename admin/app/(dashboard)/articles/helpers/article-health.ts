@@ -4,7 +4,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { bunnyAspectUrl, BUNNY_ASPECT_SUFFIX } from "@modonty/shared/lib/bunny";
 import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
 import type { HeadChecker } from "@/lib/seo/head-check";
-import type { HealthIssue, HealthTarget } from "./article-health-types";
+import type { HealthIssue, HealthTarget } from "@/lib/health/article-health-types";
 
 /**
  * Article health engine — checks the OUTSIDE WORLD, not the database.
@@ -24,7 +24,6 @@ import type { HealthIssue, HealthTarget } from "./article-health-types";
 
 // Vocabulary lives in a client-safe module — this file pulls in the Bunny client and the
 // site-url loader, so anything a UI component needs must not be re-exported through here.
-export type {  } from "./article-health-types";
 
 /** Exactly the fields the checks read — nothing more travels out of the DB. */
 export const ARTICLE_HEALTH_SELECT = {

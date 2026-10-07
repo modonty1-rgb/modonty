@@ -28,7 +28,7 @@ import { buildInvoiceWhatsappLink } from "../helpers/build-invoice-whatsapp-link
 import { getOrderStatement } from "./helpers/get-order-statement";
 import { getSubscriptionStanding } from "../helpers/get-subscription-standing";
 import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
-import { OrderInternalNote } from "@/components/shared/order-internal-note";
+import { OrderInternalNote } from "../components/order-internal-note";
 
 export const dynamic = "force-dynamic";
 

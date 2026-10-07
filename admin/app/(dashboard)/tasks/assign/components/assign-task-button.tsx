@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   TaskDialog,
   type TaskAssigneeOption,
-} from "@/components/tasks/task-dialog";
+} from "../../components/task-dialog";
 
 /**
  * إسنادُ مهمّةٍ لزميل — صار في «Assign Task» (خالد ٢٣ سبتمبر ٢٠٢٦) بعد أن كان زرّاً داخل

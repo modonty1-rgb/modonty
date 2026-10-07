@@ -4,7 +4,7 @@
  */
 
 import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
-import { buildListAuthorNode } from "@/lib/seo/build-list-author-node";
+import { buildListAuthorNode } from "../../helpers/build-list-author-node";
 import { requireSiteUrl } from "@modonty/shared/lib/seo/require-site-url";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { buildSiteEntityIds } from "@modonty/shared/lib/seo/site-entity-ids";

@@ -10,7 +10,7 @@ import {
   subscriberCounts,
   visitorActionsSummary,
 } from "@/lib/dashboard/cached";
-import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
+import { WhatsAppIcon } from "../whatsapp-icon";
 
 const n = (v: number) => v.toLocaleString("en-US");
 

@@ -4,7 +4,7 @@ import "./globals.css";
 import { auth } from "@/lib/auth";
 import { Providers } from "./components/providers/providers";
 import { Toaster } from "@/components/ui/toaster";
-import { GTMContainer } from "@/components/gtm/GTMContainer";
+import { GTMContainer } from "@/app/components/GTMContainer";
 
 // Brand fonts (per modonty Brand Guidelines): Tajawal for Arabic + Montserrat for Latin.
 const tajawal = Tajawal({

@@ -25,7 +25,7 @@ import { TASK_PRIORITIES, TASK_PRIORITY_META, TASK_STATUSES, TASK_STATUS_META, t
 
 import { isTaskLate } from "@/lib/tasks/is-task-late";
 
-import { DueDatePicker, toDateInput } from "./due-date-picker";
+import { DueDatePicker, toDateInput } from "@/components/tasks/due-date-picker";
 
 const UNASSIGNED = "__none__";
 const N = new Intl.NumberFormat("ar-EG");

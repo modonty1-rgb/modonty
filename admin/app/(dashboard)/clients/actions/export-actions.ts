@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { getClientSubscriptions } from "@/lib/subscription/get-client-subscriptions";
 import { ArticleStatus, Prisma } from "@prisma/client";
 import { ClientFilters } from "./clients-actions";
-import { getPaymentStates, paymentStateLabel, NO_PAYMENT_STATE } from "@/lib/clients/payment-state";
+import { getPaymentStates, paymentStateLabel, NO_PAYMENT_STATE } from "../helpers/payment-state";
 import { escapeCsvValue } from "@/lib/csv/escape-csv-value";
 import { formatDate } from "@/lib/csv/format-date";
 

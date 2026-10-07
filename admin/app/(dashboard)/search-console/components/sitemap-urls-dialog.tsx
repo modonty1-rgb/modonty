@@ -29,7 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 
 import { fetchSitemapUrlsAction } from "../actions/sitemap-urls-action";
 
-import type { ParsedSitemap, SitemapPathType } from "@/lib/gsc/parse-sitemap";
+import type { ParsedSitemap, SitemapPathType } from "../helpers/parse-sitemap";
 
 const TYPE_FILTERS: Array<{ key: "all" | SitemapPathType; label: string }> = [
   { key: "all", label: "All" },

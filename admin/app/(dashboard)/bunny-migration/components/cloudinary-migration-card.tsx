@@ -16,7 +16,7 @@ import {
   Square,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { TaskProgress } from "@/components/admin/task-progress";
+import { TaskProgress } from "./task-progress";
 
 import {
   getMigrationStats,

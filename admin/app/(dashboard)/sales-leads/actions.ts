@@ -450,6 +450,6 @@ export async function reopenLead(id: string): Promise<Result> {
  *
  * والمسار الآن واحد: زرُّ «حوّله إلى عميل» يفتح `/orders/new?leadId=` — طلبٌ بمبلغٍ
  * حقيقيّ — ثمّ يُفعَّل بزرّ «فعّل» نفسه، فيُختَم `convertedClientId` من هناك
- * (`lib/orders/activate-from-order.ts`). مصدرٌ واحد للمال، ومَولدٌ واحد للعميل.
+ * (`app/(dashboard)/clients/actions/activate-from-order.ts`). مصدرٌ واحد للمال، ومَولدٌ واحد للعميل.
  */
 

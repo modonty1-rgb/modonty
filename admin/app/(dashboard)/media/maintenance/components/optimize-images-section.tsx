@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { formatBytes } from "@modonty/shared/lib/utils";
 import { saveOptimizedImage } from "../../actions/optimize-image";
-import { reencodeToWebP } from "@/lib/media/reencode-to-webp";
+import { reencodeToWebP } from "../../helpers/reencode-to-webp";
 import type { OptimizableImage } from "../helpers/optimizable";
 import { imgFormat } from "@/lib/media/img-format";
 

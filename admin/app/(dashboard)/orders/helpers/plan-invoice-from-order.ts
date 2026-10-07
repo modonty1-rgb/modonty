@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import { addMonths } from "@/lib/invoices/add-months";
-import { findBlockingUnpaidInvoice } from "@/lib/invoices/find-blocking-unpaid-invoice";
+import { addMonths } from "./add-months";
+import { findBlockingUnpaidInvoice } from "./find-blocking-unpaid-invoice";
 import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 
 /**

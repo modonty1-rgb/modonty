@@ -2,7 +2,7 @@
 
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import { optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
+import { optimizeCloudinaryUrl } from "../../helpers/image-seo";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";

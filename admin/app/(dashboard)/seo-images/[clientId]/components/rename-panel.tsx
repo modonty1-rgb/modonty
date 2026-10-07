@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Tag } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { renameImageBatch } from "@/lib/seo-images/rename-image-batch";
+import { renameImageBatch } from "../../actions/rename-image-batch";
 import type { SeoImageRow } from "../../helpers/load-groups";
 
 /** Matches MAX_PER_CALL on the action; each slice is one round trip and one bar step. */

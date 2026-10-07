@@ -5,7 +5,7 @@ import { CheckCircle2, ListChecks } from "lucide-react";
 
 import { visitorActionsSummary, clientStatusCounts, articleStatusCounts } from "@/lib/dashboard/cached";
 import { getAwaitingActivationTotals } from "@/lib/orders/awaiting-activation";
-import { getRenewalsDue } from "@/lib/orders/renewals-due";
+import { getRenewalsDue } from "@/app/(dashboard)/helpers/renewals-due";
 import { getDashboardAlerts } from "@/app/(dashboard)/actions/dashboard-actions";
 import { getErrorsToFix } from "@/app/(dashboard)/actions/errors-to-fix";
 import { currencyLabel } from "@modonty/shared/lib/commercial/format-money";

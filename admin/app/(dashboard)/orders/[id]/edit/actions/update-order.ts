@@ -8,7 +8,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
 import { requireSalesDesk } from "@/lib/require-sales-desk";
-import { isMigratedOrder } from "@/lib/orders/is-migrated-order";
+import { isMigratedOrder } from "../../../helpers/is-migrated-order";
 import { storeOrderReceipt } from "../helpers/store-order-receipt";
 
 /**
@@ -169,7 +169,7 @@ export async function updateOrderAction(
     bonusServiceMonths: d.bonusServiceMonths,
     /**
      * أوّلُ مقال (`serviceStartedAt`) يُكتب هنا للطلب المُرحَّل وحده (خالد ٢٣ سبتمبر ٢٠٢٦).
-     * غيرُه يختمه وصولُ أوّل مقال (`lib/orders/start-service-clock.ts`)، فما يُرسَل له يُهمَل
+     * غيرُه يختمه وصولُ أوّل مقال (`app/(dashboard)/articles/helpers/start-service-clock.ts`)، فما يُرسَل له يُهمَل
      * — الشاشةُ تخفي الحقل، وهذا الحارسُ لمن يرسل بلا شاشة.
      */
     serviceStartedAt: migrated
@@ -219,7 +219,7 @@ export async function updateOrderAction(
    * **والحصّةُ تُنقل إلى الكرت متى كان هذا هو الطلبَ الساري.**
    *
    * `Client.articlesPerMonth` نسخةُ عرضٍ من الطلب، وكان كاتبُها **واحداً**: زرّ التفعيل
-   * (`lib/orders/activate-from-order.ts:163`). فتعديلُ حصّةِ طلبٍ مفعَّلٍ كان يغيّر الطلبَ
+   * (`app/(dashboard)/clients/actions/activate-from-order.ts:163`). فتعديلُ حصّةِ طلبٍ مفعَّلٍ كان يغيّر الطلبَ
    * ولا يمسّ الكرت — مقيسٌ حيّاً (١٩ سبتمبر ٢٠٢٦): رُفعت حصّةُ «حلويات النيل» إلى ٢٠ فصار
    * الطلب يقول «٢٠/شهر × ٧ = ١٤٠» بينما عمود «This Month» في قائمة العملاء باقٍ على
    * <code>0/8</code>. والعمودُ هو ما يُقاس عليه التسليم، فكان يحاسب فريقَ المحتوى على حصّةٍ
@@ -253,7 +253,7 @@ export async function updateOrderAction(
   /**
    * **و«حسابٌ لنا» ينزل على العميل.**
    *
-   * كان يُنسخ من الطلب إلى العميل مرّةً واحدة يومَ التفعيل (`lib/orders/activate-from-order.ts`)،
+   * كان يُنسخ من الطلب إلى العميل مرّةً واحدة يومَ التفعيل (`app/(dashboard)/clients/actions/activate-from-order.ts`)،
    * والترحيلُ بنى طلباتِ الحسابات الداخليّة بـ`false` — فلا بابَ يصحّحها (خالد ٢٣ سبتمبر ٢٠٢٦).
    * والتقاريرُ والسيجمنتات تقرأ العميل، فتصحيحُ الطلب وحده لا يُخرجه منها.
    */

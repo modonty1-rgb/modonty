@@ -22,7 +22,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { checkCompliance } from "@/lib/seo/pre-publish-audit";
 import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
-import { sanitizeHtmlContent } from "@/lib/sanitize-html";
+import { sanitizeHtmlContent } from "../../../helpers/sanitize-html";
 import { isValidTransition } from "../../../helpers/article-status-machine";
 import { checkArticleCtaUrl } from "../../../helpers/check-article-cta-url";
 

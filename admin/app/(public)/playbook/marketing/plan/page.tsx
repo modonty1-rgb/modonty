@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DocLayout } from "@/app/(public)/components/doc-layout";
 import { getPlaybookCatalogCopy } from "../../helpers/get-playbook-catalog-copy";
-import { getFeaturedPlanPrice } from "@/lib/pricing/get-featured-plan-price";
+import { getFeaturedPlanPrice } from "../../helpers/get-featured-plan-price";
 import {
   Megaphone,
   Globe2,

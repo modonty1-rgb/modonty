@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
-import { buildConsoleAccessUrl } from "@/lib/console-access";
+import { buildConsoleAccessUrl } from "../../helpers/console-access";
 
 /**
  * Mint a short-lived, signed handoff ticket so an admin can open the client's

@@ -12,7 +12,7 @@ import { ClientTabs } from "./components/client-tabs";
 import { ArticleStatus } from "@prisma/client";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { getActiveOrderForClient, getClientOrders } from "@/lib/orders/resolve-active-order";
-import { getPaymentState } from "@/lib/clients/payment-state";
+import { getPaymentState } from "../helpers/payment-state";
 import { computeClientSeoScore } from "@modonty/shared/lib/seo/client/seo-score";
 import { clientToSeoInput } from "@modonty/shared/lib/seo/client/from-client";
 

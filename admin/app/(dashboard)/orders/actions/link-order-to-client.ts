@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { setActiveOrder } from "./resolve-active-order";
+import { setActiveOrder } from "@/lib/orders/resolve-active-order";
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 
 /**

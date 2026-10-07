@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { CreditCard } from "lucide-react";
 
 // من ملفّ الكلمة لا من فهرس المجلّد: الفهرسُ يجرّ `db` إلى حزمة المتصفّح.
-import { paymentStateLabel, paymentStateTone } from "@/lib/clients/payment-state/payment-state-label";
-import type { ClientPaymentState } from "@/lib/clients/payment-state/get-payment-states";
+import { paymentStateLabel, paymentStateTone } from "../../../helpers/payment-state/payment-state-label";
+import type { ClientPaymentState } from "../../../helpers/payment-state/get-payment-states";
 
 interface SettingsTabProps {
   client: {

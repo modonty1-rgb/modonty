@@ -246,7 +246,7 @@ export async function runStepDatePublished(): Promise<MaintenanceStepResult> {
  */
 export async function runStepEntityNameDrift(): Promise<MaintenanceStepResult> {
   try {
-    const { repairEntityNameDrift } = await import("@/lib/seo/repair-entity-name-drift");
+    const { repairEntityNameDrift } = await import("../helpers/repair-entity-name-drift");
     const r = await repairEntityNameDrift();
     return withTags(
       {

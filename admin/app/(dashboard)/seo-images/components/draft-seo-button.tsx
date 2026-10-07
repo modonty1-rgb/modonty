@@ -12,8 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { draftImageSeoBatch } from "@/lib/seo-images/draft-image-seo-batch";
-import { getDraftTargets } from "@/lib/seo-images/get-draft-targets";
+import { draftImageSeoBatch } from "../actions/draft-image-seo-batch";
+import { getDraftTargets } from "../actions/get-draft-targets";
 
 /** Matches MAX_PER_CALL on the action. Small on purpose: each slice is one round trip,
  *  and the bar has to move often enough to read as progress rather than a frozen page. */

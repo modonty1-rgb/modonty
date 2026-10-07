@@ -3,8 +3,8 @@ import type {
   ValidationCheck,
   ValidationResult,
   ValidationStatus,
-} from "./article-validator";
-import type { ValidationReport } from "./jsonld-validator";
+} from "@/lib/seo/article-validator";
+import type { ValidationReport } from "@/lib/seo/jsonld-validator";
 import type { Prisma } from "@prisma/client";
 
 // Google's ONLY quantitative requirement for Article rich results

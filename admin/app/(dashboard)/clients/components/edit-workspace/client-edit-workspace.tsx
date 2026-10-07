@@ -23,7 +23,7 @@ import { EditLeftPanel } from "./edit-left-panel";
 import { ClientPreviewCard } from "./client-preview-card";
 import { ClientOrderPanel, type ClientActiveOrder } from "./client-order-panel";
 import { ConsoleDataCard } from "./console-data-card";
-import { ThreeColumnWorkspace } from "@/components/admin/three-column-workspace";
+import { ThreeColumnWorkspace } from "../three-column-workspace";
 
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import type { ClientWithRelations } from "@/lib/types";

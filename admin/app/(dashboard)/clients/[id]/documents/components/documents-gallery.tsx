@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { MediaPicker } from "@/components/shared/media-picker";
+import { MediaPicker } from "../../../components/media-picker";
 import {
   addClientDocument, updateClientDocument, deleteClientDocument,
 } from "../../../actions/clients-actions/client-documents";

@@ -7,12 +7,12 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
-import { nextInvoiceNumber } from "@/lib/invoices/next-invoice-number";
+import { nextInvoiceNumber } from "./helpers/next-invoice-number";
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 import { setActiveOrder } from "@/lib/orders/resolve-active-order";
 import { requireSalesDesk } from "@/lib/require-sales-desk";
 import { notifyPaymentReceived } from "@modonty/shared/lib/payments/notify-payment-received";
-import { sendInvoiceAction } from "@/lib/invoices/send-invoice-action";
+import { sendInvoiceAction } from "./actions/send-invoice-action";
 import { planInvoiceFromOrder } from "./helpers/plan-invoice-from-order";
 
 /**

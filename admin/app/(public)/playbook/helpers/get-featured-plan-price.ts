@@ -1,5 +1,5 @@
 import "server-only";
-import { getFeaturedPlanPricing, type Country } from "./get-featured-plan-pricing";
+import { getFeaturedPlanPricing, type Country } from "@/lib/pricing/get-featured-plan-pricing";
 
 const arabicNum = new Intl.NumberFormat("ar-SA");
 const enGbNum = new Intl.NumberFormat("en-GB");
