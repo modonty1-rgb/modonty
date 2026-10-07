@@ -23,7 +23,7 @@ import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-statu
 
 const { navy, blue, gray, border } = EMAIL_COLORS;
 
-export interface InvoiceHeroInput {
+interface InvoiceHeroInput {
   title: string;
   /** العنوان الإنجليزيّ تحته — عرفٌ ثابت في الفاتورة الضريبيّة السعوديّة. */
   titleEn?: string;
@@ -74,7 +74,7 @@ export function invoiceHero(h: InvoiceHeroInput): string {
   </table>`;
 }
 
-export interface InvoicePartyView {
+interface InvoicePartyView {
   legalName: string | null;
   vatNumber: string | null;
   crNumber?: string | null;
@@ -115,7 +115,7 @@ export function invoiceParties(
   </table>`;
 }
 
-export interface InvoiceLineView {
+interface InvoiceLineView {
   /** «اشتراك باقة «الزخم»» — ما اشتُري. */
   title: string;
   /** «٦ أشهر مدفوعة + شهر هدية = ٧ أشهر خدمة» — بديل خانة «الكمية». */

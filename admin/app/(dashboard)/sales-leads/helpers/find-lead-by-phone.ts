@@ -10,7 +10,7 @@ import { db } from "@/lib/db";
  * مصر `01001234567` و`+201001234567` ⇒ `001234567` · السعودية `0501234567` و`+966501234567`
  * ⇒ `501234567`.
  */
-export function phoneKey(phone: string): string {
+function phoneKey(phone: string): string {
   return phone.replace(/\D/g, "").slice(-9);
 }
 

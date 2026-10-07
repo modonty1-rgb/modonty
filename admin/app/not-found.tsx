@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { Home, HelpCircle, LayoutDashboard } from "lucide-react";
+import { HelpCircle, LayoutDashboard } from "lucide-react";
 
 import { BRAND_ICON_URL } from "@modonty/shared/lib/brand-assets";
 import { Button } from "@/components/ui/button";

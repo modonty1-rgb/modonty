@@ -14,7 +14,7 @@
 // TYPE DEFINITIONS
 // ============================================================================
 
-export interface FieldMetaTagsMapping {
+interface FieldMetaTagsMapping {
   /** Which MetaTags property this field maps to */
   metaTagsProperty?: string;
   /** Full path in metaTags object (e.g., 'openGraph.images[0].url') */
@@ -25,7 +25,7 @@ export interface FieldMetaTagsMapping {
   required?: boolean;
 }
 
-export interface FieldJsonLdMapping {
+interface FieldJsonLdMapping {
   /** Which JSON-LD node this field maps to (e.g., '@graph[0]', 'organizationNode') */
   jsonLdNode?: string;
   /** Which JSON-LD property this field maps to */
@@ -40,7 +40,7 @@ export interface FieldJsonLdMapping {
   required?: boolean;
 }
 
-export interface FieldMapping {
+interface FieldMapping {
   /** Database field name */
   field: string;
   /** Field category/group */
@@ -76,7 +76,7 @@ export interface FieldMapping {
 // FIELD MAPPINGS
 // ============================================================================
 
-export const CLIENT_FIELD_MAPPINGS: FieldMapping[] = [
+const CLIENT_FIELD_MAPPINGS: FieldMapping[] = [
   // ============================================================================
   // BASIC INFORMATION FIELDS
   // ============================================================================
@@ -885,81 +885,9 @@ export const CLIENT_FIELD_MAPPINGS: FieldMapping[] = [
 
 ];
 
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
-
-/**
- * Get MetaTags mapping for a specific field
- */
-export function getFieldMetaTagsMapping(fieldName: string): FieldMetaTagsMapping | undefined {
-  const mapping = CLIENT_FIELD_MAPPINGS.find((m) => m.field === fieldName);
-  return mapping?.metaTags;
-}
-
-/**
- * Get JSON-LD mapping for a specific field
- */
-export function getFieldJsonLdMapping(fieldName: string): FieldJsonLdMapping | undefined {
-  const mapping = CLIENT_FIELD_MAPPINGS.find((m) => m.field === fieldName);
-  return mapping?.jsonLd;
-}
-
 /**
  * Get all mappings for a specific field
  */
 export function getFieldMapping(fieldName: string): FieldMapping | undefined {
   return CLIENT_FIELD_MAPPINGS.find((m) => m.field === fieldName);
 }
-
-/**
- * Get all fields in a specific category
- */
-export function getFieldsByCategory(category: string): FieldMapping[] {
-  return CLIENT_FIELD_MAPPINGS.filter((m) => m.category === category);
-}
-
-/**
- * Get all fields that map to MetaTags
- */
-export function getMetaTagsFields(): FieldMapping[] {
-  return CLIENT_FIELD_MAPPINGS.filter((m) => m.metaTags !== undefined);
-}
-
-/**
- * Get all fields that map to JSON-LD
- */
-export function getJsonLdFields(): FieldMapping[] {
-  return CLIENT_FIELD_MAPPINGS.filter((m) => m.jsonLd !== undefined);
-}
-
-/**
- * Get recommended length for a field (text fields) or dimensions (media fields)
- */
-export function getFieldRecommendedLength(fieldName: string):
-  | { min?: number; max?: number; optimal?: number }
-  | { width?: number; height?: number; optimal?: { width?: number; height?: number } }
-  | undefined {
-  const mapping = getFieldMapping(fieldName);
-  return mapping?.recommendedLength;
-}
-
-// ============================================================================
-// CATEGORIES
-// ============================================================================
-
-export const FIELD_CATEGORIES = [
-  'Basic Information',
-  'SEO',
-  'Media',
-  'Social & Contact',
-  'Address',
-  'Business Identifiers',
-  'Classification',
-  'Organization Relationships',
-  'Additional',
-  'Twitter Cards',
-  'Integration',
-] as const;
-
-export type FieldCategory = typeof FIELD_CATEGORIES[number];

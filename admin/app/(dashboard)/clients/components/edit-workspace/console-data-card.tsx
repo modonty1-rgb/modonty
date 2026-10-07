@@ -35,7 +35,7 @@ import { OpenClientConsoleButton } from "./open-client-console-button";
  * وعنوانُه لأنّه يبني `LocalBusiness`، ووصفُه لأنّه يغذّي السيو، وقنواتُه لأنّها ما
  * يضغطه الزائر. وما لا يُسأل عنه (الشعار النصّيّ · الاسم البديل) لا يُعرض.
  */
-export type ConsoleData = {
+type ConsoleData = {
   legalName?: string | null;
   commercialRegistrationNumber?: string | null;
   vatID?: string | null;

@@ -10,38 +10,6 @@ import { getPageConfig } from "../helpers/page-config";
 import type { PageFormData } from "../helpers/page-schema";
 import { generateModontyPageSEO } from "./generate-modonty-page-seo";
 
-export type ValidateHeroImageResult =
-  | { valid: true; enhancedUrl: string }
-  | { valid: false; error: string };
-
-/**
- * Validate a hero image URL for a Modonty page.
- *
- * Used to REJECT anything that wasn't `res.cloudinary.com` — which would have blocked
- * every Bunny URL the moment this action got wired to a form. Now it accepts any
- * reachable https image and only applies the Cloudinary transform when the URL actually
- * is a Cloudinary one (`optimizeCloudinaryUrl` passes other hosts through untouched).
- */
-export async function validateHeroImageUrl(url: string): Promise<ValidateHeroImageResult> {
-  const trimmed = (url ?? "").trim();
-  if (!trimmed) return { valid: false, error: "Enter a URL" };
-  if (!/^https:\/\//i.test(trimmed))
-    return { valid: false, error: "Image not correct (must be an https URL)" };
-  try {
-    // A one-byte range GET, NOT a HEAD: Bunny answers HEAD with 404 for a file its edge does
-    // not hold yet, so a valid image URL would be rejected here (measured 31 Aug 2026).
-    const res = await fetch(trimmed, {
-      headers: { range: "bytes=0-0" },
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!res.ok) return { valid: false, error: "Image not correct (URL did not return 200)" };
-    const enhancedUrl = optimizeCloudinaryUrl(trimmed);
-    return { valid: true, enhancedUrl };
-  } catch {
-    return { valid: false, error: "Image not correct (link unreachable)" };
-  }
-}
-
 export async function getPage(slug: string) {
   try {
     const page = await db.modonty.findUnique({

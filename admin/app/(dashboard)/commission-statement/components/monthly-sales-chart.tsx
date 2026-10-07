@@ -2,7 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export interface MonthPoint {
+interface MonthPoint {
   label: string;
   /** Major units (pounds / riyals) — the chart reads amounts, not minor units. */
   sales: number;

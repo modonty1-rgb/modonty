@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { messages } from "@/lib/messages";
 import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { useRouter, usePathname } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';

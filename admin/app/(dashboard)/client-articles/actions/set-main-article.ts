@@ -14,7 +14,7 @@ const schema = z.object({
 /** A hub with nothing under it is a thin page — four articles is the floor. */
 const MIN_ARTICLES_FOR_MAIN = 4;
 
-export interface SetMainArticleResult {
+interface SetMainArticleResult {
   success: boolean;
   error?: string;
 }

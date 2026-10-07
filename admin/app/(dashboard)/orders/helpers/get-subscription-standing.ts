@@ -17,7 +17,7 @@ import { getSubscriptionTerm, type SubscriptionState } from "@modonty/shared/lib
 
 export type { SubscriptionState };
 
-export interface SubscriptionStanding {
+interface SubscriptionStanding {
   state: SubscriptionState;
   endsAt: Date | null;
   /** موجبٌ = باقٍ · سالبٌ = مضى على الانتهاء · null = لم تبدأ الخدمة بعد. */

@@ -44,7 +44,7 @@ const DESC_MAX = 160;
 const ALT_TARGET_MIN = 40;
 const ALT_TARGET_MAX = 80;
 
-export interface ImageSeoDraft {
+interface ImageSeoDraft {
   altText: string;
   description: string;
 }
@@ -64,7 +64,7 @@ export interface ImageSeoDraft {
  * Prevention, not repair: telling the model what is taken is one call, while catching
  * the clash afterwards costs a second call AND leaves the first draft stored.
  */
-export interface DraftSiblings {
+interface DraftSiblings {
   /** Existing alt texts for the same owner — the model must not restate these. */
   takenAlts: string[];
 }

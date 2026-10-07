@@ -1,9 +1,7 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
-
 import { auth } from "@/lib/auth";
-import { listSitemaps, submitSitemap } from "@/lib/gsc/sitemaps";
+import { listSitemaps } from "@/lib/gsc/sitemaps";
 
 import type { GscSitemap } from "@/lib/gsc/types";
 
@@ -26,20 +24,5 @@ export async function listSitemapsAction(): Promise<ActionResponse> {
     return { ok: true, sitemaps };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Failed to list sitemaps" };
-  }
-}
-
-export async function submitSitemapAction(feedpath: string): Promise<ActionResponse> {
-  try {
-    await requireAuth();
-    const normalized = feedpath.trim();
-    if (!normalized.startsWith("http://") && !normalized.startsWith("https://")) {
-      return { ok: false, error: "Sitemap URL must start with http:// or https://" };
-    }
-    await submitSitemap(normalized);
-    revalidateTag("gsc-dashboard", "max");
-    return { ok: true };
-  } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Failed to submit sitemap" };
   }
 }

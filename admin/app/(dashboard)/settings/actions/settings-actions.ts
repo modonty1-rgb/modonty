@@ -10,9 +10,6 @@ import type { Prisma } from "@prisma/client";
 import { cascadeSettingsToAllEntities } from "@/app/(dashboard)/seo/actions/cascade-all-seo";
 import { SETTINGS_SINGLETON_WHERE, ensureSettingsId } from "@/lib/settings/settings-singleton";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type JsonValue = Prisma.InputJsonValue | any;
-
 export interface SEOSettings {
   seoTitleMin: number;
   seoTitleMax: number;
@@ -30,7 +27,7 @@ export interface SEOSettings {
   ogDescriptionRestrict: boolean;
 }
 
-export interface SocialMediaSettings {
+interface SocialMediaSettings {
   facebookUrl: string | null;
   twitterUrl: string | null;
   linkedInUrl: string | null;
@@ -44,7 +41,7 @@ export interface SocialMediaSettings {
   googleBusinessProfileUrl: string | null;
 }
 
-export interface MediaSettings {
+interface MediaSettings {
   logoUrl: string | null;
   logoIconUrl: string | null;
   ogImageUrl: string | null;
@@ -52,7 +49,7 @@ export interface MediaSettings {
   certificateImageUrl: string | null;
 }
 
-export interface ModontySettings {
+interface ModontySettings {
   modontySeoTitle: string | null;
   modontySeoDescription: string | null;
   clientsSeoTitle: string | null;
@@ -73,20 +70,13 @@ export interface ModontySettings {
   platformDescription: string | null;
 }
 
-export interface SettingsJsonLdCache {
+interface SettingsJsonLdCache {
   jsonLdStructuredData: string | null;
   jsonLdLastGenerated: Date | null;
   jsonLdValidationReport: Record<string, unknown> | null;
 }
 
-export interface GeneratedPageSeoCache {
-  metaTags: Record<string, unknown> | null;
-  jsonLdStructuredData: string | null;
-  jsonLdLastGenerated: Date | null;
-  jsonLdValidationReport: Record<string, unknown> | null;
-}
-
-export interface SettingsGeneratedSeo {
+interface SettingsGeneratedSeo {
   homeMetaTags: Record<string, unknown> | null;
   clientsPageMetaTags: Record<string, unknown> | null;
   clientsPageJsonLdStructuredData: string | null;
@@ -118,7 +108,7 @@ export interface SettingsGeneratedSeo {
   industriesPageJsonLdValidationReport: Record<string, unknown> | null;
 }
 
-export interface SiteOrgSettings {
+interface SiteOrgSettings {
   siteUrl: string | null;
   siteName: string | null;
   /** الاسم الثاني للموقع — schema.org alternateName على WebSite وOrganization. يملكه الكود (seed-technical-defaults) لا موظّف. */
@@ -187,7 +177,7 @@ export interface SiteOrgSettings {
   orgFoundingDate: Date | null;
 }
 
-export interface ListingPageImages {
+interface ListingPageImages {
   categoriesPageImage: string | null;
   categoriesPageImageAlt: string | null;
   tagsPageImage: string | null;
@@ -733,267 +723,6 @@ export async function getAllSettings(): Promise<AllSettings> {
   }
 }
 
-async function ensureSettingsExists(): Promise<string> {
-  return ensureSettingsId();
-}
-
-export async function saveSEOSettings(data: Partial<SEOSettings>): Promise<{ success: boolean; error?: string }> {
-  try {
-    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-    const id = await ensureSettingsExists();
-    await db.settings.update({
-      where: { id },
-      data: {
-        seoTitleMin: data.seoTitleMin,
-        seoTitleMax: data.seoTitleMax,
-        seoTitleRestrict: data.seoTitleRestrict,
-        seoDescriptionMin: data.seoDescriptionMin,
-        seoDescriptionMax: data.seoDescriptionMax,
-        seoDescriptionRestrict: data.seoDescriptionRestrict,
-        twitterTitleMax: data.twitterTitleMax,
-        twitterTitleRestrict: data.twitterTitleRestrict,
-        twitterDescriptionMax: data.twitterDescriptionMax,
-        twitterDescriptionRestrict: data.twitterDescriptionRestrict,
-        ogTitleMax: data.ogTitleMax,
-        ogTitleRestrict: data.ogTitleRestrict,
-        ogDescriptionMax: data.ogDescriptionMax,
-        ogDescriptionRestrict: data.ogDescriptionRestrict,
-      },
-    });
-    revalidatePath("/settings");
-    await revalidateModontyTag("settings");
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to save SEO settings";
-    return { success: false, error: message };
-  }
-}
-
-export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "siteUrl" | "siteName" | "brandDescription" | "siteAuthor" | "inLanguage" | "defaultMetaRobots" | "defaultGooglebot" | "defaultOgType" | "defaultOgLocale" | "defaultOgDeterminer" | "defaultTwitterCard" | "defaultSitemapPriority" | "defaultSitemapChangeFreq" | "articleDefaultSitemapChangeFreq" | "articleDefaultSitemapPriority" | "defaultLicense" | "defaultCharset" | "defaultOgImageType" | "defaultOgImageWidth" | "defaultOgImageHeight" | "defaultHreflang" | "defaultPathname" | "defaultTruncationSuffix" | "defaultReferrerPolicy" | "defaultNotranslate" | "twitterSite" | "twitterCreator" | "twitterSiteId" | "twitterCreatorId">>): Promise<{ success: boolean; error?: string }> {
-  try {
-    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-    const id = await ensureSettingsExists();
-    await db.settings.update({
-      where: { id },
-      data: {
-        siteUrl: data.siteUrl,
-        siteName: data.siteName,
-        brandDescription: data.brandDescription,
-        siteAuthor: data.siteAuthor,
-        inLanguage: data.inLanguage,
-        defaultMetaRobots: data.defaultMetaRobots,
-        defaultGooglebot: data.defaultGooglebot,
-        defaultOgType: data.defaultOgType,
-        defaultOgLocale: data.defaultOgLocale,
-        defaultOgDeterminer: data.defaultOgDeterminer,
-        defaultTwitterCard: data.defaultTwitterCard,
-        defaultSitemapPriority: data.defaultSitemapPriority,
-        defaultSitemapChangeFreq: data.defaultSitemapChangeFreq,
-        articleDefaultSitemapChangeFreq: data.articleDefaultSitemapChangeFreq,
-        articleDefaultSitemapPriority: data.articleDefaultSitemapPriority,
-        defaultLicense: data.defaultLicense,
-        defaultCharset: data.defaultCharset,
-        defaultOgImageType: data.defaultOgImageType,
-        defaultOgImageWidth: data.defaultOgImageWidth,
-        defaultOgImageHeight: data.defaultOgImageHeight,
-        defaultHreflang: data.defaultHreflang,
-        defaultPathname: data.defaultPathname,
-        defaultTruncationSuffix: data.defaultTruncationSuffix,
-        defaultReferrerPolicy: data.defaultReferrerPolicy,
-        defaultNotranslate: data.defaultNotranslate,
-        twitterSite: data.twitterSite,
-        twitterCreator: data.twitterCreator,
-        twitterSiteId: data.twitterSiteId,
-        twitterCreatorId: data.twitterCreatorId,
-      },
-    });
-    revalidatePath("/settings");
-    await revalidateModontyTag("settings");
-
-    // Cascade: regenerate SEO for all entities AFTER response is sent.
-    // `after()` keeps the function alive (waitUntil) — admin doesn't wait.
-    after(async () => {
-      try {
-        await cascadeSettingsToAllEntities();
-      } catch (e) {
-        console.error("Settings cascade failed:", e);
-      }
-    });
-
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to save Site settings";
-    return { success: false, error: message };
-  }
-}
-
-export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSettings, "siteUrl" | "siteName" | "brandDescription" | "siteAuthor" | "inLanguage" | "defaultMetaRobots" | "defaultGooglebot" | "defaultOgType" | "defaultOgLocale" | "defaultOgDeterminer" | "defaultTwitterCard" | "defaultSitemapPriority" | "defaultSitemapChangeFreq" | "articleDefaultSitemapChangeFreq" | "articleDefaultSitemapPriority" | "defaultLicense" | "defaultCharset" | "defaultOgImageType" | "defaultOgImageWidth" | "defaultOgImageHeight" | "defaultHreflang" | "defaultPathname" | "defaultTruncationSuffix" | "defaultReferrerPolicy" | "defaultNotranslate" | "twitterSite" | "twitterCreator" | "twitterSiteId" | "twitterCreatorId">>): Promise<{ success: boolean; error?: string }> {
-  try {
-    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-    const id = await ensureSettingsExists();
-    await db.settings.update({
-      where: { id },
-      data: {
-        orgContactType: data.orgContactType,
-        orgContactEmail: data.orgContactEmail,
-        orgContactTelephone: data.orgContactTelephone,
-        orgContactAvailableLanguage: data.orgContactAvailableLanguage,
-        orgContactOption: data.orgContactOption,
-        orgContactHoursAvailable: data.orgContactHoursAvailable,
-        orgAreaServed: data.orgAreaServed,
-        orgStreetAddress: data.orgStreetAddress,
-        orgAddressLocality: data.orgAddressLocality,
-        orgAddressRegion: data.orgAddressRegion,
-        orgAddressCountry: data.orgAddressCountry,
-        orgPostalCode: data.orgPostalCode,
-        orgGeoLatitude: data.orgGeoLatitude,
-        orgGeoLongitude: data.orgGeoLongitude,
-        orgSearchUrlTemplate: data.orgSearchUrlTemplate,
-        orgAddressNeighborhood: data.orgAddressNeighborhood,
-        orgLegalName: data.orgLegalName,
-        orgCommercialRegistrationNumber: data.orgCommercialRegistrationNumber,
-        orgCommercialRegistrationStatus: data.orgCommercialRegistrationStatus,
-        orgUnifiedNationalNumber: data.orgUnifiedNationalNumber,
-        orgLegalForm: data.orgLegalForm,
-        orgCapitalAmount: data.orgCapitalAmount,
-        orgFoundingDate: data.orgFoundingDate,
-      },
-    });
-    revalidatePath("/settings");
-    await revalidateModontyTag("settings");
-
-    // Cascade: regenerate SEO for all entities AFTER response is sent.
-    // `after()` keeps the function alive (waitUntil) — admin doesn't wait.
-    after(async () => {
-      try {
-        await cascadeSettingsToAllEntities();
-      } catch (e) {
-        console.error("Settings cascade failed:", e);
-      }
-    });
-
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to save Organization settings";
-    return { success: false, error: message };
-  }
-}
-
-export async function saveSocialMediaSettings(data: Partial<SocialMediaSettings>): Promise<{ success: boolean; error?: string }> {
-  try {
-    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-    const id = await ensureSettingsExists();
-    await db.settings.update({
-      where: { id },
-      data: {
-        facebookUrl: data.facebookUrl,
-        twitterUrl: data.twitterUrl,
-        linkedInUrl: data.linkedInUrl,
-        instagramUrl: data.instagramUrl,
-        youtubeUrl: data.youtubeUrl,
-        tiktokUrl: data.tiktokUrl,
-        pinterestUrl: data.pinterestUrl,
-        snapchatUrl: data.snapchatUrl,
-        whatsappChannelUrl: data.whatsappChannelUrl,
-        telegramChannelUrl: data.telegramChannelUrl,
-        googleBusinessProfileUrl: data.googleBusinessProfileUrl,
-      },
-    });
-    revalidatePath("/settings");
-    await revalidateModontyTag("settings");
-
-    // Cascade: regenerate SEO for all entities AFTER response is sent.
-    // `after()` keeps the function alive (waitUntil) — admin doesn't wait.
-    after(async () => {
-      try {
-        await cascadeSettingsToAllEntities();
-      } catch (e) {
-        console.error("Settings cascade failed:", e);
-      }
-    });
-
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to save Social Media settings";
-    return { success: false, error: message };
-  }
-}
-
-export async function saveMediaSettings(data: Partial<MediaSettings>): Promise<{ success: boolean; error?: string }> {
-  try {
-    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-    const id = await ensureSettingsExists();
-    await db.settings.update({
-      where: { id },
-      data: {
-        logoUrl: data.logoUrl,
-        logoIconUrl: data.logoIconUrl,
-        ogImageUrl: data.ogImageUrl,
-        altImage: data.altImage,
-      },
-    });
-    revalidatePath("/settings");
-    await revalidateModontyTag("settings");
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to save Media settings";
-    return { success: false, error: message };
-  }
-}
-
-export async function saveModontySettings(data: Partial<ModontySettings>): Promise<{ success: boolean; error?: string }> {
-  try {
-    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-    const id = await ensureSettingsExists();
-    await db.settings.update({
-      where: { id },
-      data: {
-        modontySeoTitle: data.modontySeoTitle,
-        modontySeoDescription: data.modontySeoDescription,
-        clientsSeoTitle: data.clientsSeoTitle,
-        clientsSeoDescription: data.clientsSeoDescription,
-        categoriesSeoTitle: data.categoriesSeoTitle,
-        categoriesSeoDescription: data.categoriesSeoDescription,
-        trendingSeoTitle: data.trendingSeoTitle,
-        articlesSeoTitle: data.articlesSeoTitle,
-        articlesSeoDescription: data.articlesSeoDescription,
-        trendingSeoDescription: data.trendingSeoDescription,
-        faqSeoTitle: data.faqSeoTitle,
-        faqSeoDescription: data.faqSeoDescription,
-        tagsSeoTitle: data.tagsSeoTitle,
-        tagsSeoDescription: data.tagsSeoDescription,
-        industriesSeoTitle: data.industriesSeoTitle,
-        industriesSeoDescription: data.industriesSeoDescription,
-        platformTagline: data.platformTagline,
-        platformDescription: data.platformDescription,
-      },
-    });
-    revalidatePath("/settings");
-    await revalidateModontyTag("settings");
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to save Modonty settings";
-    return { success: false, error: message };
-  }
-}
-
-export async function updateSEOSettings(data: Partial<SEOSettings>) {
-  // Guarded here too, not only in `updateAllSettings` below: this action reads the whole
-  // settings row first, so without its own check an unauthenticated caller could read every
-  // stored value back — including the ones the write guard is there to protect.
-  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-
-  // `getAllSettings` now throws instead of handing back a row of defaults. Catch it here so
-  // the form gets the usual `{ success:false, error }` — and, more importantly, so the spread
-  // below never runs on values we did not actually read.
-  try {
-    const all = await getAllSettings();
-    return updateAllSettings({ ...all, ...data });
-  } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : String(error) };
-  }
-}
-
 export async function updateAllSettings(data: Partial<AllSettings>) {
   try {
     // The six `save*` actions above have carried this guard all along; this one — the action
@@ -1225,84 +954,6 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
   } catch (error) {
     console.error("Error updating settings:", error);
     const message = error instanceof Error ? error.message : "Failed to update settings";
-    return { success: false, error: message };
-  }
-}
-
-/** Build site/org payload from .env (NEXT_PUBLIC_*). Used by seed-from-env. */
-function siteOrgFromEnv(): Partial<SiteOrgSettings> {
-  const lat = process.env.NEXT_PUBLIC_ORG_GEO_LATITUDE;
-  const lng = process.env.NEXT_PUBLIC_ORG_GEO_LONGITUDE;
-  return {
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || null,
-    siteName: process.env.NEXT_PUBLIC_SITE_NAME?.trim() || null,
-    // Read like every other field here, never written in code. This line used to carry the
-    // literal "Modonty — your trusted dental and healthcare platform in the Gulf region." —
-    // English on an Arabic brand, and factually a description of a handful of partners rather
-    // than of a platform that publishes across marketing, business and technology.
-    //
-    // It becomes the Organization `description` in JSON-LD, i.e. the company's own account of
-    // itself, so it belongs where the team can edit it: Settings → Brand. Absent means absent;
-    // no sentence is invented here to fill the gap.
-    brandDescription: process.env.NEXT_PUBLIC_BRAND_DESCRIPTION?.trim() || null,
-    siteAuthor: process.env.NEXT_PUBLIC_SITE_AUTHOR?.trim() || null,
-    inLanguage: process.env.NEXT_PUBLIC_IN_LANGUAGE?.trim() || null,
-    defaultMetaRobots: process.env.NEXT_PUBLIC_DEFAULT_META_ROBOTS?.trim() || null,
-    defaultGooglebot: process.env.NEXT_PUBLIC_DEFAULT_GOOGLEBOT?.trim() || null,
-    defaultOgType: process.env.NEXT_PUBLIC_DEFAULT_OG_TYPE?.trim() || null,
-    defaultOgLocale: process.env.NEXT_PUBLIC_DEFAULT_OG_LOCALE?.trim() || null,
-    defaultOgDeterminer: process.env.NEXT_PUBLIC_DEFAULT_OG_DETERMINER?.trim() || null,
-    defaultTwitterCard: process.env.NEXT_PUBLIC_DEFAULT_TWITTER_CARD?.trim() || null,
-    defaultSitemapPriority: process.env.NEXT_PUBLIC_DEFAULT_SITEMAP_PRIORITY != null && process.env.NEXT_PUBLIC_DEFAULT_SITEMAP_PRIORITY !== "" ? Number(process.env.NEXT_PUBLIC_DEFAULT_SITEMAP_PRIORITY) : null,
-    defaultSitemapChangeFreq: process.env.NEXT_PUBLIC_DEFAULT_SITEMAP_CHANGE_FREQ?.trim() || null,
-    articleDefaultSitemapChangeFreq: process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_CHANGE_FREQ?.trim() || null,
-    articleDefaultSitemapPriority: process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_PRIORITY != null && process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_PRIORITY !== "" ? Number(process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_PRIORITY) : null,
-    defaultLicense: process.env.NEXT_PUBLIC_DEFAULT_LICENSE?.trim() || null,
-    imageOwnerName: null,
-    imageLicenseUrl: null,
-    imageAcquireLicensePageUrl: null,
-    defaultCharset: process.env.NEXT_PUBLIC_DEFAULT_CHARSET?.trim() || null,
-    defaultOgImageType: process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_TYPE?.trim() || null,
-    defaultOgImageWidth: process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_WIDTH != null && process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_WIDTH !== "" ? Number(process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_WIDTH) : null,
-    defaultOgImageHeight: process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_HEIGHT != null && process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_HEIGHT !== "" ? Number(process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_HEIGHT) : null,
-    defaultHreflang: process.env.NEXT_PUBLIC_DEFAULT_HREFLANG?.trim() || null,
-    defaultPathname: process.env.NEXT_PUBLIC_DEFAULT_PATHNAME?.trim() || null,
-    defaultReferrerPolicy: process.env.NEXT_PUBLIC_DEFAULT_REFERRER_POLICY?.trim() || null,
-    defaultNotranslate: process.env.NEXT_PUBLIC_DEFAULT_NOTRANSLATE === "true" ? true : process.env.NEXT_PUBLIC_DEFAULT_NOTRANSLATE === "false" ? false : null,
-    twitterSite: process.env.NEXT_PUBLIC_TWITTER_SITE?.trim() || null,
-    twitterCreator: process.env.NEXT_PUBLIC_TWITTER_CREATOR?.trim() || null,
-    twitterSiteId: process.env.NEXT_PUBLIC_TWITTER_SITE_ID?.trim() || null,
-    twitterCreatorId: process.env.NEXT_PUBLIC_TWITTER_CREATOR_ID?.trim() || null,
-    orgContactType: process.env.NEXT_PUBLIC_ORG_CONTACT_TYPE?.trim() || null,
-    orgContactEmail: process.env.NEXT_PUBLIC_ORG_CONTACT_EMAIL?.trim() || null,
-    orgContactTelephone: process.env.NEXT_PUBLIC_ORG_CONTACT_TELEPHONE?.trim() || null,
-    orgContactAvailableLanguage: process.env.NEXT_PUBLIC_ORG_CONTACT_AVAILABLE_LANGUAGE?.trim() || null,
-    orgContactOption: process.env.NEXT_PUBLIC_ORG_CONTACT_OPTION?.trim() || null,
-    orgContactHoursAvailable: process.env.NEXT_PUBLIC_ORG_CONTACT_HOURS_AVAILABLE?.trim() || null,
-    orgAreaServed: process.env.NEXT_PUBLIC_ORG_AREA_SERVED?.trim() || null,
-    orgStreetAddress: process.env.NEXT_PUBLIC_ORG_STREET_ADDRESS?.trim() || null,
-    orgAddressLocality: process.env.NEXT_PUBLIC_ORG_ADDRESS_LOCALITY?.trim() || null,
-    orgAddressRegion: process.env.NEXT_PUBLIC_ORG_ADDRESS_REGION?.trim() || null,
-    orgAddressCountry: process.env.NEXT_PUBLIC_ORG_ADDRESS_COUNTRY?.trim() || null,
-    orgPostalCode: process.env.NEXT_PUBLIC_ORG_POSTAL_CODE?.trim() || null,
-    orgGeoLatitude: lat != null && lat !== "" ? Number(lat) : null,
-    orgGeoLongitude: lng != null && lng !== "" ? Number(lng) : null,
-    orgSearchUrlTemplate: process.env.NEXT_PUBLIC_ORG_SEARCH_URL_TEMPLATE?.trim() || null,
-  };
-}
-
-/** Populate Settings site/org fields from .env and save to DB. Does not remove .env. */
-export async function seedSiteOrgFromEnv(): Promise<{ success: boolean; error?: string }> {
-  try {
-    // Writes the whole site/org block from env. `updateAllSettings` now refuses an
-    // unauthenticated caller, but this one reads every setting first — so it gets its own.
-    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-
-    const all = await getAllSettings();
-    const fromEnv = siteOrgFromEnv();
-    return await updateAllSettings({ ...all, ...fromEnv });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to seed from .env";
     return { success: false, error: message };
   }
 }

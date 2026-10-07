@@ -1,18 +1,4 @@
-/**
- * Word counting utilities for content analysis
- * Handles both standard and Arabic text word counting
- */
 
-/**
- * Standard word counting function
- * Splits text by whitespace and counts words
- */
-export function calculateWordCount(content: string): number {
-  if (!content) return 0;
-  const stripped = content.replace(/<[^>]*>/g, "");
-  const words = stripped.trim().split(/\s+/).filter(Boolean);
-  return words.length;
-}
 
 /**
  * Improved word counting function with Arabic language support
@@ -123,14 +109,6 @@ export function calculateWordCountImproved(content: string, language?: string): 
   }
 
   return words.length;
-}
-
-/**
- * Detect if text contains Arabic characters
- */
-export function detectArabicText(text: string): boolean {
-  if (!text) return false;
-  return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text);
 }
 
 /**

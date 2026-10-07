@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { cache } from "react";
 import { z } from "zod";
-import { Prisma, type IntakeQuestionType } from "@prisma/client";
+import { type IntakeQuestionType } from "@prisma/client";
 import { db } from "@/lib/db";
 
 // ─── Read ──────────────────────────────────────────────────────────────────
@@ -64,7 +64,6 @@ const sectionSchema = z.object({
 });
 
 export type QuestionInput = z.input<typeof questionSchema>;
-export type SectionInput = z.input<typeof sectionSchema>;
 
 type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -203,68 +202,9 @@ export async function moveQuestion(questionId: string, dir: "up" | "down"): Prom
   }
 }
 
-// ─── Section mutations ───────────────────────────────────────────────────────
-
-export async function createSection(formId: string, raw: SectionInput): Promise<ActionResult> {
-  try {
-    const data = sectionSchema.parse(raw);
-    const last = await db.intakeSection.findFirst({
-      where: { formId },
-      orderBy: { order: "desc" },
-      select: { order: true },
-    });
-    await db.intakeSection.create({
-      data: {
-        formId,
-        key: data.key,
-        title: data.title,
-        description: data.description ?? null,
-        icon: data.icon ?? null,
-        order: (last?.order ?? 0) + 1,
-      },
-    });
-    return done();
-  } catch (e) {
-    return fail(e);
-  }
-}
-
-export async function updateSection(sectionId: string, raw: Omit<SectionInput, "key">): Promise<ActionResult> {
-  try {
-    const data = sectionSchema.omit({ key: true }).parse(raw);
-    await db.intakeSection.update({
-      where: { id: sectionId },
-      data: {
-        title: data.title,
-        description: data.description ?? null,
-        icon: data.icon ?? null,
-      },
-    });
-    return done();
-  } catch (e) {
-    return fail(e);
-  }
-}
-
 export async function setSectionEnabled(sectionId: string, enabled: boolean): Promise<ActionResult> {
   try {
     await db.intakeSection.update({ where: { id: sectionId }, data: { enabled } });
-    return done();
-  } catch (e) {
-    return fail(e);
-  }
-}
-
-// Reserved for future visibility-rule editing from the UI (kept type-safe here).
-export async function setSectionVisibility(
-  sectionId: string,
-  visibility: Record<string, unknown> | null,
-): Promise<ActionResult> {
-  try {
-    await db.intakeSection.update({
-      where: { id: sectionId },
-      data: { visibility: visibility ? (visibility as Prisma.InputJsonValue) : null },
-    });
     return done();
   } catch (e) {
     return fail(e);

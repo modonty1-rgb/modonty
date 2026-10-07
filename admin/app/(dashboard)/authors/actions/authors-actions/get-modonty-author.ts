@@ -8,7 +8,7 @@ import { loadSiteUrl } from "@/lib/seo/site-url";
 
 type ModontyAuthor = Author;
 
-export type ModontyAuthorLookup = {
+type ModontyAuthorLookup = {
   author: ModontyAuthor | null;
   error: string | null;
 };

@@ -23,7 +23,7 @@ const saveClientSeoSchema = z.object({
   seoDescription: z.string().trim().max(320).nullable().optional(),
 });
 
-export type SaveClientSeoInput = z.infer<typeof saveClientSeoSchema>;
+type SaveClientSeoInput = z.infer<typeof saveClientSeoSchema>;
 
 export async function saveClientSeo(
   input: SaveClientSeoInput

@@ -11,17 +11,6 @@ interface ClientWithRelations {
   subscriptionStatus: SubscriptionStatus;
 }
 
-export function getSubscriptionDaysRemaining(client: ClientWithRelations): number | null {
-  if (!client.subscriptionEndDate) {
-    return null;
-  }
-  const now = new Date();
-  const endDate = new Date(client.subscriptionEndDate);
-  const diffTime = endDate.getTime() - now.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
-}
-
 export function calculateDeliveryRate(
   client: ClientWithRelations,
   currentMonthArticles: number
@@ -53,15 +42,4 @@ export function calculateDeliveryRate(
     rate,
     isBehind,
   };
-}
-
-export function isExpiringSoon(
-  client: ClientWithRelations,
-  days: number = 30
-): boolean {
-  const daysRemaining = getSubscriptionDaysRemaining(client);
-  if (daysRemaining === null) {
-    return false;
-  }
-  return daysRemaining > 0 && daysRemaining <= days;
 }

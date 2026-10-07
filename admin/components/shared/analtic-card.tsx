@@ -68,7 +68,7 @@ const iconMap: Record<string, LucideIcon> = {
   AlertCircle,
 };
 
-export interface AnalticCardProps {
+interface AnalticCardProps {
   title: string;
   value: number | string | StatValue;
   icon?: LucideIcon | string;

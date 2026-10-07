@@ -113,14 +113,6 @@ export async function bulkInspect(
   return { results, errors };
 }
 
-/** Read all cached inspections (used by /search-console Coverage tab). */
-export async function getAllCachedInspections(): Promise<InspectionRecord[]> {
-  const rows = await db.gscUrlInspection.findMany({
-    orderBy: { inspectedAt: "desc" },
-  });
-  return rows.map(rowToRecord);
-}
-
 /** Bulk lookup by URL list — for joining inspection data with GSC top pages. */
 export async function getCachedInspectionsByUrls(urls: string[]): Promise<Map<string, InspectionRecord>> {
   if (urls.length === 0) return new Map();
@@ -128,44 +120,6 @@ export async function getCachedInspectionsByUrls(urls: string[]): Promise<Map<st
     where: { url: { in: urls } },
   });
   return new Map(rows.map((r) => [r.url, rowToRecord(r)]));
-}
-
-/** Lightweight summary used by the Dashboard "Technical issues" row. */
-export interface TechHealthSummary {
-  inspected: number;
-  canonicalIssues: number;
-  robotsBlocked: number;
-  mobileFailures: number;
-  softFourOhFour: number;
-}
-
-export async function getTechHealthSummary(): Promise<TechHealthSummary> {
-  const rows = await db.gscUrlInspection.findMany({
-    select: {
-      userCanonical: true,
-      googleCanonical: true,
-      robotsTxtState: true,
-      mobileVerdict: true,
-      pageFetchState: true,
-    },
-  });
-  let canonicalIssues = 0;
-  let robotsBlocked = 0;
-  let mobileFailures = 0;
-  let softFourOhFour = 0;
-  for (const r of rows) {
-    if (r.userCanonical && r.googleCanonical && r.userCanonical !== r.googleCanonical) canonicalIssues += 1;
-    if (r.robotsTxtState === "DISALLOWED") robotsBlocked += 1;
-    if (r.mobileVerdict === "FAIL") mobileFailures += 1;
-    if (r.pageFetchState === "SOFT_404") softFourOhFour += 1;
-  }
-  return {
-    inspected: rows.length,
-    canonicalIssues,
-    robotsBlocked,
-    mobileFailures,
-    softFourOhFour,
-  };
 }
 
 function rowToRecord(row: {

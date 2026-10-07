@@ -5,7 +5,7 @@ import type { TaskStatusKey } from "@/lib/tasks/task-config";
 
 // Declared here rather than imported from the board's route: a route may not
 // reach into a sibling route's folder, and this screen reads different fields.
-export interface DayTask {
+interface DayTask {
   id: string;
   title: string;
   description: string | null;
@@ -18,7 +18,7 @@ export interface DayTask {
   assignedBy: { name: string | null; email: string | null } | null;
 }
 
-export interface StaffDay {
+interface StaffDay {
   staffId: string | null;
   name: string;
   image: string | null;
@@ -28,7 +28,7 @@ export interface StaffDay {
 }
 
 /** Local midnight → next local midnight. `toISOString()` would shift the day. */
-export function dayBounds(day: Date) {
+function dayBounds(day: Date) {
   const from = new Date(day);
   from.setHours(0, 0, 0, 0);
   const to = new Date(from);

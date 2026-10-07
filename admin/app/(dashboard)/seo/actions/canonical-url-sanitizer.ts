@@ -1,8 +1,6 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { revalidatePath } from "next/cache";
-import { logAction } from "@/lib/audit/log-action";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { PAGE_CONFIGS } from "@/app/(dashboard)/modonty/setting/helpers/page-config";
 
@@ -34,7 +32,7 @@ import { PAGE_CONFIGS } from "@/app/(dashboard)/modonty/setting/helpers/page-con
  * deliberate decision — and rewriting it silently re-indexes content we chose to fold.
  * The only thing this sanitizer owns is the ORIGIN (scheme + host + port).
  */
-export type CanonicalFix =
+type CanonicalFix =
   /** Origin and path both correct — nothing to write. */
   | "ok"
   /** Same site wearing the wrong origin (apex vs www, http, a dev host). Swap origin, keep path. */
@@ -46,7 +44,7 @@ export type CanonicalFix =
   /** Points at another site — cross-domain canonicals are legal and deliberate. Never touched. */
   | "external";
 
-export interface CanonicalSample {
+interface CanonicalSample {
   id: string;
   slug: string;
   title: string;
@@ -57,7 +55,7 @@ export interface CanonicalSample {
   reason?: string;
 }
 
-export type EntityType =
+type EntityType =
   | "article"
   | "client"
   | "category"
@@ -66,7 +64,7 @@ export type EntityType =
   | "author"
   | "modonty";
 
-export interface CanonicalSanitizerStats {
+interface CanonicalSanitizerStats {
   total: number;
   withCanonical: number;
   staleCount: number;

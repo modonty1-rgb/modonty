@@ -35,6 +35,3 @@ export const moveTaskSchema = z.object({
   // dragging at once cannot write conflicting float maths.
   toIndex: z.number().int().min(0).max(500),
 });
-
-export type CreateTaskInput = z.infer<typeof createTaskSchema>;
-export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;

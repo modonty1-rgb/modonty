@@ -16,7 +16,7 @@ import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities"
 import { checkYmylPublishGate } from "@/lib/seo/ymyl-helpers";
 import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
-export interface GatedTransitionResult {
+interface GatedTransitionResult {
   success: boolean;
   error?: string;
   validation?: ValidationResult;

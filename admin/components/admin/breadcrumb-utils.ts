@@ -1,4 +1,4 @@
-export interface BreadcrumbItem {
+interface BreadcrumbItem {
   label: string;
   href: string;
   /** True when this segment isn't a real route (only a parent for dynamic children).
@@ -32,13 +32,6 @@ const NON_NAVIGABLE_PATHS = new Set([
   "/modonty",                        // pages are /modonty/faq + /modonty/pages/[slug]
   "/modonty/pages",                  // page is /modonty/pages/[slug]
 ]);
-
-export interface EntityRouteConfig {
-  type: 'article' | 'client' | 'category' | 'tag' | 'author' | 'industry' | 'media' | 'user';
-  id: string;
-  action?: 'view' | 'edit' | 'preview';
-  section?: string;
-}
 
 const routeLabels: Record<string, string> = {
   articles: 'المقالات',
@@ -136,7 +129,7 @@ export function parsePathname(pathname: string): string[] {
   return pathname.split('/').filter(Boolean);
 }
 
-export function getRouteLabel(segment: string, index: number, segments: string[]): string {
+function getRouteLabel(segment: string, index: number, segments: string[]): string {
   // The section above wins over the global maps: `new` is a generic word whose right
   // translation depends on where it sits, and only its parent knows that.
   // An id between them (/clients/[id]/edit) is not the section — look one further up.
@@ -159,53 +152,6 @@ export function getRouteLabel(segment: string, index: number, segments: string[]
   }
 
   return capitalize(segment);
-}
-
-export function getEntityRouteConfig(segments: string[]): EntityRouteConfig | null {
-  for (let i = 0; i < segments.length; i++) {
-    const segment = segments[i];
-
-    if (isObjectId(segment) && i > 0) {
-      const entityType = segments[i - 1] as EntityRouteConfig['type'];
-      const validTypes: EntityRouteConfig['type'][] = [
-        'article',
-        'client',
-        'category',
-        'tag',
-        'author',
-        'industry',
-        'media',
-        'user',
-      ];
-
-      if (validTypes.includes(entityType)) {
-        const config: EntityRouteConfig = {
-          type: entityType,
-          id: segment,
-        };
-
-        if (i + 1 < segments.length) {
-          const nextSegment = segments[i + 1];
-          if (nextSegment === 'edit') {
-            config.action = 'edit';
-            if (i + 2 < segments.length) {
-              config.section = segments[i + 2];
-            }
-          } else if (nextSegment === 'preview') {
-            config.action = 'preview';
-          } else {
-            config.action = 'view';
-          }
-        } else {
-          config.action = 'view';
-        }
-
-        return config;
-      }
-    }
-  }
-
-  return null;
 }
 
 export function generateBreadcrumbs(

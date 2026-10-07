@@ -121,35 +121,3 @@ export interface Article {
     createdBy?: string | null;
   }[];
 }
-
-export interface ContentStats {
-  wordCount: number;
-  characterCount: number;
-  characterCountNoSpaces: number;
-  paragraphCount: number;
-  headingCount: number;
-  linkCount: number;
-  imageCount: number;
-  listCount: number;
-  readingTime: number;
-  isArabic: boolean;
-  countingMethod: "standard" | "arabic";
-}
-
-export interface ArticleClassification {
-  label: string;
-  color: string;
-  bgColor: string;
-  description: string;
-  range: string;
-  minimum: string;
-  recommended: string;
-  bestPractices: string[];
-}
-
-export interface Section {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  condition: boolean;
-}

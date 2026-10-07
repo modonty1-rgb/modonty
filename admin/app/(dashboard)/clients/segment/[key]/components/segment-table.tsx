@@ -71,7 +71,7 @@ function fmt(iso: string | null): string {
 }
 
 /** Where each row's button lands + its label — decided per-segment in segments.ts. */
-export interface SegmentRowAction {
+interface SegmentRowAction {
   label: string;
   path: "account" | "edit" | "seo" | "technical";
 }

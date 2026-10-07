@@ -28,7 +28,7 @@ import {
 /** الأسماءُ الشائعة — اقتراحٌ يُسرّع، والحقلُ يقبل غيرَها. */
 const SUGGESTIONS = ["سجلّ تجاريّ", "ترخيص مهنيّ", "شهادة ضريبيّة", "هويّة المالك", "عقد تأسيس"];
 
-export type DocumentRow = {
+type DocumentRow = {
   id: string;
   label: string;
   url: string;

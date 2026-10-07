@@ -18,7 +18,7 @@ import { db } from "@/lib/db";
  * The caller regenerates JSON-LD and metadata for the client's articles right after, so
  * this deliberately writes the columns only — one rule, one place.
  */
-export interface RebakeResult {
+interface RebakeResult {
   attempted: number;
   updated: number;
   /**

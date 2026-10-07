@@ -21,7 +21,7 @@ export interface NotificationLike {
   createdAt: Date;
 }
 
-export interface NotificationMeta {
+interface NotificationMeta {
   icon: LucideIcon;
   /** Tailwind tone classes — text/bg/ring for the icon chip */
   toneClasses: string;
@@ -102,8 +102,4 @@ const FALLBACK: NotificationMeta = {
 
 export function getNotificationMeta(type: string): NotificationMeta {
   return REGISTRY[type] ?? FALLBACK;
-}
-
-export function isKnownNotificationType(type: string): boolean {
-  return type in REGISTRY;
 }

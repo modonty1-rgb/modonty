@@ -32,7 +32,7 @@ const SAMPLE_LIMIT = 5;
 /** Relations scanned at once — each is a full collection scan with a $lookup. */
 const CONCURRENCY = 4;
 
-export interface RequiredRelation {
+interface RequiredRelation {
   /** Stable identifier, e.g. "ArticleTag.tag". */
   key: string;
   model: string;
@@ -45,12 +45,12 @@ export interface RequiredRelation {
   targetKey: string;
 }
 
-export interface OrphanFinding extends RequiredRelation {
+interface OrphanFinding extends RequiredRelation {
   count: number;
   sampleIds: string[];
 }
 
-export interface OrphanScanResult {
+interface OrphanScanResult {
   relationsScanned: number;
   /** Relations whose scan itself errored — reported, never silently dropped. */
   failed: { key: string; error: string }[];
@@ -193,55 +193,4 @@ export async function scanOrphans(): Promise<OrphanScanResult> {
     totalOrphans: findings.reduce((sum, f) => sum + f.count, 0),
     findings,
   };
-}
-
-/**
- * Delete the orphans of ONE relation, named explicitly.
- *
- * Deliberately not wired into Run-All. The scan re-runs first so the ids are current —
- * deleting from a stale report is how a healthy row gets removed. Capped per call so a
- * mistake stays small.
- */
-export async function deleteOrphansForRelation(
-  key: string
-): Promise<{ ok: boolean; deleted: number; error?: string }> {
-  const { relations } = await listRequiredRelations();
-  const rel = relations.find((r) => r.key === key);
-  if (!rel) return { ok: false, deleted: 0, error: `Unknown relation "${key}"` };
-
-  try {
-    const res = (await db.$runCommandRaw({
-      aggregate: rel.collection,
-      pipeline: [
-        {
-          $lookup: {
-            from: rel.targetCollection,
-            localField: rel.foreignKey,
-            foreignField: rel.targetKey,
-            as: "__target",
-          },
-        },
-        { $match: { __target: { $size: 0 } } },
-        { $limit: 500 },
-        { $project: { _id: 1 } },
-      ],
-      cursor: {},
-    })) as { cursor?: { firstBatch?: { _id?: unknown }[] } };
-
-    // Extended JSON round-trips: the `{ $oid }` shape read here is the shape the delete
-    // needs back, so the ids are passed through untouched rather than re-parsed.
-    const ids = (res?.cursor?.firstBatch ?? [])
-      .map((d) => d._id)
-      .filter((id): id is Prisma.InputJsonValue => id != null);
-    if (ids.length === 0) return { ok: true, deleted: 0 };
-
-    const del = (await db.$runCommandRaw({
-      delete: rel.collection,
-      deletes: [{ q: { _id: { $in: ids } }, limit: 0 }],
-    })) as { n?: number };
-
-    return { ok: true, deleted: del?.n ?? 0 };
-  } catch (e) {
-    return { ok: false, deleted: 0, error: e instanceof Error ? e.message : String(e) };
-  }
 }

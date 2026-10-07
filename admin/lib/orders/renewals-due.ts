@@ -14,7 +14,7 @@ import { RENEWAL_SOON_DAYS } from "./renewal-window";
  * فعميلٌ جدّد يُعدّ «انتهى ولم يُجدَّد»، والحساباتُ الداخليّة معه. الآن: `getClientSubscriptions`
  * بـ`NOT_INTERNAL` — نفسُ ما يعدّه «منتهٍ» في شريحة العملاء وفلتر الاشتراكات.
  */
-export interface RenewalsDue {
+interface RenewalsDue {
   expired: number;
   /** ينتهي خلال ٣٠ يوماً — نافذةُ تجديدٍ واقعيّة لا إنذارُ اللحظة الأخيرة. */
   soon: number;

@@ -102,10 +102,6 @@ export const REEL_VIEW_CONFIG: Record<
   },
 };
 
-export async function getPendingReels(): Promise<PendingReelRow[]> {
-  return getReelsByView("pending");
-}
-
 /** نفس استعلام الطابور، بحالةٍ وترتيبٍ يأتيان من `REEL_VIEW_CONFIG`.
  *  الحقول والحرّاس واحدة عبر الشاشات الأربع — فنسخ الاستعلام كان سيُبقي شاشةً
  *  تعرض حقلاً لا تعرضه أختها بعد أوّل تعديل. */

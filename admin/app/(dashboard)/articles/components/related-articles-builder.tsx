@@ -6,7 +6,7 @@ import { ArticleSelectionTable } from './article-selection-table';
 import { getArticlesForSelection, ArticleSelectionItem } from '../actions/articles-actions';
 import { useArticleForm } from './article-form-context';
 
-export interface RelatedArticleItem {
+interface RelatedArticleItem {
   relatedId: string;
   relationshipType?: 'related' | 'similar' | 'recommended';
 }

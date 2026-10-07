@@ -14,7 +14,7 @@ import { planInvoiceFromOrder } from "../../../helpers/plan-invoice-from-order";
  *  - رمزُ الاستجابة يُرفَق في البريد بـ`cid:`، ولا يُعرض في المتصفّح إلّا كـ`data:` —
  *    فتُستبدل الإشارةُ ببايتات الصورة نفسِها، لا بصورةٍ أخرى.
  */
-export type OrderInvoiceEmail =
+type OrderInvoiceEmail =
   | { ok: true; html: string; subject: string; to: string; isTax: boolean; hasQr: boolean; issued: boolean }
   | { ok: false; error: string };
 

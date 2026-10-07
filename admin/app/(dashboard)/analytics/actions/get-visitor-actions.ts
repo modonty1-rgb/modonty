@@ -21,7 +21,7 @@ const WINDOW_DAYS = 90;
 /** The only FAQ rows a visitor actually wrote. "manual" and "chatbot" are ours. */
 const VISITOR_SOURCE = "user";
 
-export interface VisitorActionsSummary {
+interface VisitorActionsSummary {
   needsAction: { total: number; bookings: number; questions: number; messages: number; comments: number };
   /**
    * `pageViews` = how many times the /clients/<slug>/book page was opened (GA4).

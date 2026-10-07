@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/db";
@@ -12,7 +12,6 @@ import { checkFinanceAdmin } from "@/lib/require-finance-admin";
 import { checkSalesDesk } from "@/lib/require-sales-desk";
 import { confirmOrderPaymentAction } from "../actions";
 import { ConfirmTransferButton } from "../components/confirm-transfer-button";
-import { SendInvoiceButton } from "../components/send-invoice-button";
 import { RefundOrderButton } from "../components/refund-order-button";
 import { DeleteOrderButton } from "../components/delete-order-button";
 import { OrderReceipt } from "../components/order-receipt";

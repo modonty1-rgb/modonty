@@ -9,12 +9,12 @@
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import { validateJsonLd, type ValidationResult, type ValidationReport } from "@/lib/seo/jsonld-validator";
+import { validateJsonLd, type ValidationReport } from "@/lib/seo/jsonld-validator";
 
 /**
  * Business rules validation result
  */
-export interface ClientBusinessValidationResult {
+interface ClientBusinessValidationResult {
   errors: string[];
   warnings: string[];
   info: string[];
@@ -178,7 +178,7 @@ const validateOrganizationSchema = ajv.compile(organizationSchema);
  * Validate JSON-LD using Ajv Organization schema
  * Fast validation for Organization structure
  */
-export function validateClientWithAjv(jsonLd: object): {
+function validateClientWithAjv(jsonLd: object): {
   valid: boolean;
   errors: string[];
   warnings: string[];

@@ -28,7 +28,7 @@ const timeFmt = new Intl.DateTimeFormat("ar-EG", {
   hour: "2-digit", minute: "2-digit", timeZone: "Asia/Riyadh",
 });
 
-export interface FollowUpRow {
+interface FollowUpRow {
   id: string;
   channel: string;
   happenedAt: Date;

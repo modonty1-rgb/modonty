@@ -8,7 +8,7 @@ import { db } from "@/lib/db";
  * (`عيادات-سمايل-تاون-لطب-الفم-و-الأسنان`), and transliterating would produce an address
  * nobody recognises next to the ones that are already live.
  */
-export function slugifyName(name: string): string {
+function slugifyName(name: string): string {
   return name
     .trim()
     .replace(/[.،,؛;:!؟?"'()[\]{}]/g, "")

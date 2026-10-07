@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { classifyOrderKinds, soldOnOf, type OrderKind } from "@/lib/orders/classify-order-kinds";
 
-export type DealKind = OrderKind;
+type DealKind = OrderKind;
 
 export interface CommissionRateRow {
   id: string;

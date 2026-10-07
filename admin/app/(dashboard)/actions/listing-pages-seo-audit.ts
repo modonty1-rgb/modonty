@@ -122,8 +122,6 @@ const CONTENT_PAGES = [
   { slug: "story", label: "قصتنا", path: "/story" },
 ] as const;
 
-export type ContentPageSlug = (typeof CONTENT_PAGES)[number]["slug"];
-
 export async function getContentPagesSeoAudit(): Promise<ListingPageAudit[]> {
   return auditModontyRows(CONTENT_PAGES);
 }

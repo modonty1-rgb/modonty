@@ -31,36 +31,6 @@ export const META_DESCRIPTION = {
   SOURCE: "https://developers.google.com/search/docs/appearance/snippet",
 } as const;
 
-/** Open Graph: required props for rich social sharing. */
-export const OG_REQUIRED = ["og:title", "og:type", "og:image", "og:url"] as const;
-
-/** Open Graph: recommended image size for best display. */
-export const OG_IMAGE = {
-  WIDTH: 1200,
-  HEIGHT: 630,
-  RATIO: "1.91:1",
-  SOURCE: "https://ogp.me/",
-} as const;
-
-/** Schema.org/Google: Article recommended props. */
-export const ARTICLE_RECOMMENDED = [
-  "headline",
-  "image",
-  "datePublished",
-  "dateModified",
-  "author",
-] as const;
-
-/** Schema.org: ItemList recommended — numberOfItems should match itemListElement.length */
-export const ITEMLIST_RECOMMENDED = [
-  "itemListElement",
-  "numberOfItems",
-  "itemListOrder",
-] as const;
-
-/** Schema.org: Organization minimum for rich results */
-export const ORGANIZATION_RECOMMENDED = ["name", "url"] as const;
-
 export function isTitleOk(len: number): boolean {
   return len >= META_TITLE.MIN && len <= META_TITLE.MAX;
 }

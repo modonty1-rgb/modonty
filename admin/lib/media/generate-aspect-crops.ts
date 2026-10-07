@@ -5,7 +5,7 @@ import { loadSharp } from "@/lib/utils/sharp-loader";
 
 import type Sharp from "sharp";
 
-export interface AspectCrop {
+interface AspectCrop {
   suffix: string;
   width: number;
   height: number;

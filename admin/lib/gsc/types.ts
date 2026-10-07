@@ -1,7 +1,6 @@
 export type GscDimension = "query" | "page" | "country" | "device" | "date" | "searchAppearance";
 export type GscSearchType = "web" | "image" | "video" | "news" | "discover" | "googleNews";
-export type GscDevice = "desktop" | "mobile" | "tablet";
-export type GscOperator = "equals" | "notEquals" | "contains" | "notContains" | "includingRegex" | "excludingRegex";
+type GscOperator = "equals" | "notEquals" | "contains" | "notContains" | "includingRegex" | "excludingRegex";
 
 export interface GscFilter {
   dimension: GscDimension;
@@ -67,9 +66,4 @@ export interface GscUrlInspectionResult {
     verdict: string;
     detectedItems?: Array<{ richResultType: string; items: Array<{ name: string; issues: unknown[] }> }>;
   };
-}
-
-export interface GscSite {
-  siteUrl: string;
-  permissionLevel: string;
 }

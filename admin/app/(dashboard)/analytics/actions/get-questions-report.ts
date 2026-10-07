@@ -17,7 +17,7 @@ import { db } from "@/lib/db";
 export type QuestionOrigin = "ARTICLE" | "CLIENT_PAGE";
 export type QuestionKind = "team" | "visitor";
 
-export interface QuestionRow {
+interface QuestionRow {
   id: string;
   origin: QuestionOrigin;
   kind: QuestionKind;
@@ -31,7 +31,7 @@ export interface QuestionRow {
   href: string;
 }
 
-export interface QuestionsReport {
+interface QuestionsReport {
   rows: QuestionRow[];
   kpi: { pending: number; team: number; visitor: number; oldestWaitingDays: number | null; clientsWaiting: number };
   /** True when a table hit MAX_ROWS — the numbers below are then a floor, not a total. */

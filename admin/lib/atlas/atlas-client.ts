@@ -133,8 +133,7 @@ export interface AtlasReport {
 
 // Flex pricing (verified from Atlas docs 2026-06): $8/mo base incl. 5GB + 100 ops/sec, $30/mo hard cap.
 export const FLEX_BASE_USD = 8;
-export const FLEX_CAP_USD = 30;
-export const FLEX_INCLUDED_STORAGE_MB = 5120; // 5 GB included in the base fee
+export const FLEX_CAP_USD = 30; // 5 GB included in the base fee
 
 export async function getAtlasReport(): Promise<AtlasReport | null> {
   const org = process.env.ATLAS_ORG_ID;

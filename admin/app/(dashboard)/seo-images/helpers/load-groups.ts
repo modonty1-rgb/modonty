@@ -39,7 +39,7 @@ import {
  */
 const HARD_CEILING = 5000;
 export const MODONTY_KEY = "__modonty__";
-export const MODONTY_NAME = "صور مدوّنتي — مقالات وعامة";
+const MODONTY_NAME = "صور مدوّنتي — مقالات وعامة";
 // An image is "done" only when its SEO score reaches the green tier (matches SeoScoreBadge).
 const DONE_THRESHOLD = 90;
 
@@ -110,7 +110,7 @@ export interface ProblemBreakdown {
   other: number;
 }
 
-export interface SeoImageGroup {
+interface SeoImageGroup {
   key: string;
   name: string;
   isModonty: boolean;
@@ -274,7 +274,7 @@ export function buildSeoImageRow(m: SeoImageMediaRow, defaults: ModontyImageDefa
   };
 }
 
-export interface SeoImageGroupsResult {
+interface SeoImageGroupsResult {
   groups: SeoImageGroup[];
   /** Every media row that exists, counted in the database — never the length of the list. */
   total: number;

@@ -19,12 +19,3 @@ export function slugify(text: string): string {
     .replace(/^-+/, "")
     .replace(/-+$/, "");
 }
-
-// Slugify then truncate at a word (dash) boundary — keeps slug under maxChars.
-export function slugifyShort(text: string, maxChars = 50): string {
-  const full = slugify(text);
-  if (full.length <= maxChars) return full;
-  const truncated = full.slice(0, maxChars);
-  const lastDash = truncated.lastIndexOf("-");
-  return lastDash > 0 ? truncated.slice(0, lastDash) : truncated;
-}

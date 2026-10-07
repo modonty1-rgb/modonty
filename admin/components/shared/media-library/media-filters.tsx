@@ -18,7 +18,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
-import { MediaType } from "@prisma/client";
 
 interface MediaFiltersProps {
   clients: Array<{ id: string; name: string }>;

@@ -58,7 +58,7 @@ export const STAGE_DOT: Record<Stage, string> = {
   LOST: "bg-rose-500/60",
 };
 
-export { LOST_REASONS, LOST_LABEL, type LostReason } from "@/lib/sales/lost-reason";
+export { LOST_LABEL } from "@/lib/sales/lost-reason";
 
 /**
  * قنوات التواصل — ترتيبها ترتيب استعمالها لا ترتيب الحروف: التليفون والواتساب أوّلاً لأنهما
@@ -74,16 +74,6 @@ export const CHANNEL_LABEL: Record<Channel, string> = {
   MEETING: "اجتماع",
   VISIT: "زيارة",
   NOTE: "ملاحظة",
-};
-
-/** أفعالٌ للماضي — السجلّ يُقرأ كسرد: «كلّمتها»، «بعتّ لها واتساب». */
-export const CHANNEL_VERB: Record<Channel, string> = {
-  CALL: "مكالمة مع",
-  WHATSAPP: "واتساب لـ",
-  EMAIL: "إيميل لـ",
-  MEETING: "اجتماع مع",
-  VISIT: "زيارة لـ",
-  NOTE: "ملاحظة على",
 };
 
 // سقط `TIER_LABEL` (٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد): أسماء باقاتٍ مكتوبة في الكود بلا
@@ -103,7 +93,7 @@ export function formatMoney(amount: number | null | undefined, currency: string 
   return `${n} ${currencyLabel(currency)}`;
 }
 
-export type DueTone = "overdue" | "today" | "soon" | "later" | "none";
+type DueTone = "overdue" | "today" | "soon" | "later" | "none";
 
 /**
  * «متأخر يومين» لا «٢ سبتمبر».

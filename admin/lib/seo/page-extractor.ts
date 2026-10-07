@@ -7,7 +7,7 @@
 
 import WebAutoExtractor from "@marbec/web-auto-extractor";
 
-export interface ExtractedData {
+interface ExtractedData {
   jsonLd: unknown[];
   microdata: unknown[];
   rdfa: unknown[];
@@ -159,24 +159,4 @@ function extractJSONLDScripts(html: string): unknown[] {
   }
 
   return jsonLdData;
-}
-
-/**
- * Extract all structured data formats from HTML and combine into validator format
- */
-export function combineExtractedData(extracted: ExtractedData): unknown {
-  // Create a @graph structure if we have multiple items
-  if (extracted.all.length === 0) {
-    return {};
-  }
-
-  if (extracted.all.length === 1) {
-    return extracted.all[0];
-  }
-
-  // Return as @graph for multiple items
-  return {
-    "@context": "https://schema.org",
-    "@graph": extracted.all,
-  };
 }

@@ -27,7 +27,7 @@ import { normalizeJsonLd } from "./jsonld-processor";
 import { encodeGraphUrls } from "@modonty/shared/lib/seo/encode-url-for-jsonld";
 
 // Result of JSON-LD generation
-export interface JsonLdGenerationResult {
+interface JsonLdGenerationResult {
   success: boolean;
   jsonLd?: object;
   jsonLdString?: string;
@@ -38,7 +38,7 @@ export interface JsonLdGenerationResult {
 /**
  * Fetch article with all relations needed for JSON-LD generation
  */
-export async function fetchArticleForJsonLd(
+async function fetchArticleForJsonLd(
   articleId: string
 ): Promise<ArticleWithFullRelations | null> {
   return db.article.findUnique({
@@ -79,7 +79,7 @@ export async function fetchArticleForJsonLd(
 /**
  * Extract plain text from HTML/Markdown content
  */
-export function extractPlainText(content: string): string {
+function extractPlainText(content: string): string {
   return convert(content, {
     wordwrap: false,
     selectors: [
@@ -237,39 +237,6 @@ export async function regenerateJsonLd(
 }
 
 /**
- * Get cached JSON-LD from database
- */
-export async function getCachedJsonLd(
-  articleId: string
-): Promise<{ jsonLd: object | null; validationReport: ValidationReport | null }> {
-  const article = await db.article.findUnique({
-    where: { id: articleId },
-    select: {
-      jsonLdStructuredData: true,
-      jsonLdValidationReport: true,
-    },
-  });
-
-  if (!article) {
-    return { jsonLd: null, validationReport: null };
-  }
-
-  let jsonLd: object | null = null;
-  if (article.jsonLdStructuredData) {
-    try {
-      jsonLd = JSON.parse(article.jsonLdStructuredData);
-    } catch {
-      jsonLd = null;
-    }
-  }
-
-  return {
-    jsonLd,
-    validationReport: article.jsonLdValidationReport as ValidationReport | null,
-  };
-}
-
-/**
  * Check if JSON-LD needs regeneration
  */
 export async function needsRegeneration(articleId: string): Promise<boolean> {
@@ -336,30 +303,6 @@ export async function batchRegenerateJsonLd(
   }
 
   return { successful, failed, results };
-}
-
-/**
- * Get all articles that need JSON-LD regeneration
- */
-export async function getArticlesNeedingRegeneration(): Promise<string[]> {
-  const articles = await db.article.findMany({
-    where: {
-      status: "PUBLISHED",
-      OR: [
-        { jsonLdLastGenerated: null },
-        {
-          dateModified: {
-            gt: db.article.fields.jsonLdLastGenerated,
-          },
-        },
-      ],
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  return articles.map((a) => a.id);
 }
 
 /**

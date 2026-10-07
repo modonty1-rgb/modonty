@@ -33,7 +33,7 @@ import { saveImageSeo } from "@/app/(dashboard)/media/actions/save-image-seo";
 /** Bounded per call: each rename is a copy+delete on storage plus crop moves. */
 const MAX_PER_CALL = 5;
 
-export interface RenameBatchResult {
+interface RenameBatchResult {
   renamed: number;
   /** Refused or failed, each with the reason — a silent skip would read as success. */
   failed: { id: string; error: string }[];

@@ -6,7 +6,7 @@
  */
 
 import type { Metadata } from "next";
-import type { Article, Client, Author, Category, Media } from "@prisma/client";
+import type { Client, Author, Category, Media } from "@prisma/client";
 import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { SITE_NAME_FALLBACK } from "@/lib/constants/site-name";
 import { loadSiteUrl } from "./site-url";
@@ -125,7 +125,7 @@ function buildLanguagesMap(
   return out;
 }
 
-export interface GenerateMetadataOptions {
+interface GenerateMetadataOptions {
   robots?: string;
   siteUrl?: string;
   /** `Settings.siteName` — the source of truth for og:site_name. See SITE_NAME_FALLBACK. */

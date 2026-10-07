@@ -8,20 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { format } from "date-fns";
-import {
-  ArrowRight,
-  Edit,
-  FileText,
-  Clock,
-  Eye,
-  MessageSquare,
-  Tag,
-  Calendar,
-  Search,
-  Settings,
-  FolderOpen,
-  Globe,
-} from "lucide-react";
+import { ArrowRight, Edit, FileText, Clock, Eye, MessageSquare, Tag, Calendar, Search, Settings, Globe } from "lucide-react";
 import { ArchiveArticleButton } from "./components/archive-article-button";
 import { ArticleLoadError } from "./components/article-load-error";
 import { ArticleStatus } from "@prisma/client";

@@ -15,7 +15,7 @@ import { PROMPT_DEFAULTS } from "@modonty/shared/lib/ai/prompt-defaults";
  * ما يتغيّر في الوصف (العنوان · أين يظهر · ماذا ينكسر) يُحدَّث للصفوف الموجودة، لأنه
  * وصفٌ يملكه الكود لا نصٌّ يملكه المحرّر — وهذه الحقول لا تُحرَّر من الشاشة.
  */
-export interface SeedAiPromptsOutcome {
+interface SeedAiPromptsOutcome {
   created: number;
   metaUpdated: number;
   untouched: number;

@@ -7,16 +7,13 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
-import { addMonths } from "@/lib/invoices/add-months";
-import { findBlockingUnpaidInvoice } from "@/lib/invoices/find-blocking-unpaid-invoice";
 import { nextInvoiceNumber } from "@/lib/invoices/next-invoice-number";
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 import { setActiveOrder } from "@/lib/orders/resolve-active-order";
-import { requireFinanceAdmin } from "@/lib/require-finance-admin";
 import { requireSalesDesk } from "@/lib/require-sales-desk";
 import { notifyPaymentReceived } from "@modonty/shared/lib/payments/notify-payment-received";
 import { sendInvoiceAction } from "@/lib/invoices/send-invoice-action";
-import { planInvoiceFromOrder, type InvoicePlanResult } from "./helpers/plan-invoice-from-order";
+import { planInvoiceFromOrder } from "./helpers/plan-invoice-from-order";
 
 /**
  * Read-only name lookup for the breadcrumb (see breadcrumb-actions.ts), same unguarded
@@ -109,25 +106,6 @@ export async function logInvoiceWhatsappAction(orderId: string): Promise<void> {
   if (!order?.invoiceId) throw new Error("لا فاتورة لهذا الطلب بعد");
   const invoice = await db.invoice.findUnique({ where: { id: order.invoiceId }, select: { number: true } });
   await logAction("invoice.whatsapp", { entity: "Invoice", entityId: order.invoiceId, summary: `${invoice?.number ?? order.invoiceId} · واتساب · من الطلب ${order.number}` });
-}
-
-
-/**
- * PAY-E4: every field comes from the order's own snapshot, never today's catalog —
- * changing a plan's price afterwards must not rewrite a past invoice. ADMIN-only
- * (money), one click, gapless numbering via the same Counter every other invoice uses.
- *
- * `period` is set "monthly" | "annual" (not the card's literal "{paidMonths}m") —
- * measured live: three consumers (sales-report, send-invoice, this account page's own
- * ledger row label) switch on exactly those two strings and silently read anything
- * else as "annual". A third format there is a defect, not a feature; paidMonths===1
- * is the same simplification PAY-E3 already made for the client form's billingCycle.
- */
-/** المرحلةُ الأولى: ما ستحمله الفاتورة — بلا كتابة. */
-export async function previewInvoiceFromOrderAction(orderId: string): Promise<InvoicePlanResult> {
-  // معاينةُ الفاتورة جزءٌ من إصدارها — نفسُ الحارس (خالد ٢٠ سبتمبر ٢٠٢٦).
-  await requireSalesDesk();
-  return planInvoiceFromOrder(orderId);
 }
 
 /**

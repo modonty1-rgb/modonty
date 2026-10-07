@@ -7,7 +7,7 @@ import { buildModontyAuthorSeo } from "@/app/(dashboard)/authors/helpers/build-m
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
-export interface AuthorSeoRepairResult {
+interface AuthorSeoRepairResult {
   ok: boolean;
   /** true when the stored JSON-LD was NOT already the Organization entity (i.e. a real fix). */
   changed: boolean;

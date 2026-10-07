@@ -29,7 +29,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
  * تجديد بينما يبقى القديم في سجلّه بسعره القديم.
  */
 
-export type ActivateFromOrderResult =
+type ActivateFromOrderResult =
   | { ok: true; clientId: string; slug: string }
   | { ok: false; error: string };
 

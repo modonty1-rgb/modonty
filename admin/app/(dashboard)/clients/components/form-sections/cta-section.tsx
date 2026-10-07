@@ -30,7 +30,7 @@ import { SelectItem } from "@/components/ui/select";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 
 /** Structural shape — matches the `industries` / `countries` props already threaded here. */
-export interface CtaPresetOption {
+interface CtaPresetOption {
   id: string;
   labelAr: string;
   mode: "FORM" | "LINK";

@@ -15,7 +15,7 @@ import { INTAKE_SEED } from "./intake-seed-definition";
  * Runs through the admin app's own DB connection (dev locally, prod in prod) —
  * no standalone script, per project policy.
  */
-export interface SeedIntakeOutcome {
+interface SeedIntakeOutcome {
   formCreated: boolean;
   sectionsCreated: number;
   questionsCreated: number;

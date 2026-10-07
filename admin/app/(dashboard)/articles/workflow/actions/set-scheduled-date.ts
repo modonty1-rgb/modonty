@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
 import { logAction } from "@/lib/audit/log-action";
 
-export interface SetScheduledResult {
+interface SetScheduledResult {
   success: boolean;
   error?: string;
 }

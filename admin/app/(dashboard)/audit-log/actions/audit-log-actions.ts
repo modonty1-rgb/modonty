@@ -24,7 +24,7 @@ interface GetAuditLogsOptions {
   limit?: number;
 }
 
-export interface StaffActivitySummary {
+interface StaffActivitySummary {
   total: number;
   last7: number;
   last30: number;

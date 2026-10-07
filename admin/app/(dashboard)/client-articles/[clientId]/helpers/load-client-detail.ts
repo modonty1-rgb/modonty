@@ -14,7 +14,7 @@ export interface ClientSiteArticleRow {
   publicUrl: string | null;
 }
 
-export interface ClientSiteDetail {
+interface ClientSiteDetail {
   id: string;
   name: string;
   articlesBaseUrl: string;

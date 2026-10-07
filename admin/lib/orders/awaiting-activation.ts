@@ -27,7 +27,7 @@ export const AWAITING_ACTIVATION = {
   OR: [{ clientId: null }, { clientId: { isSet: false } }],
 } satisfies Prisma.CheckoutOrderWhereInput;
 
-export type AwaitingActivationTotals = {
+type AwaitingActivationTotals = {
   count: number;
   /** Sum per currency — never a single number. Adding SAR to EGP is the bug decision 4 exists to stop. */
   byCurrency: Array<{ currency: string; totalMinor: number }>;

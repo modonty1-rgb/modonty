@@ -3,7 +3,7 @@ import "server-only";
 import { db } from "@/lib/db";
 import { getMarketCatalog } from "@modonty/shared/lib/commercial/get-market-catalog";
 
-export interface PlaybookCatalogCopy {
+interface PlaybookCatalogCopy {
   /** عرضُ السنة من صفّ مدّة الـ١٢ شهراً — `null` إن لم يكن معروضاً للبيع. */
   annual: { paid: number; total: number } | null;
   /** حصّةُ المقالات من الباقات المنشورة — «من ٨ إلى ١٦…» أو رقمٌ واحد، و`null` حين لا حصّة. */

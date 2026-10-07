@@ -1,6 +1,6 @@
 "use client";
 
-export interface ExtractedLink {
+interface ExtractedLink {
   url: string;
   text: string;
   rel?: string;
@@ -50,7 +50,7 @@ const AUTHORITATIVE_PATTERNS = [
 /**
  * Check if domain is authoritative - SAFE & COMPLETE
  */
-export function isAuthoritativeDomain(domain: string): boolean {
+function isAuthoritativeDomain(domain: string): boolean {
   const lowerDomain = domain.toLowerCase();
   
   return AUTHORITATIVE_PATTERNS.some(pattern => {

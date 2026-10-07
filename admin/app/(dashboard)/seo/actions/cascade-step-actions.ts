@@ -164,7 +164,7 @@ export async function regenerateBulkIndustriesCascade(): Promise<{
 }
 
 /** One stored-blob page: which generator owns it, plus the name the panel shows. */
-export interface StoredPageTarget {
+interface StoredPageTarget {
   kind: "listing" | "content";
   key: string;
   label: string;

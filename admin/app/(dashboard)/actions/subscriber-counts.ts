@@ -8,7 +8,7 @@ import { db } from "@/lib/db";
  * are what earn attention; unsubscribes are a plain fact.
  */
 
-export interface SubscriberCounts {
+interface SubscriberCounts {
   total: number;
   active: number;
   unsubscribed: number;

@@ -1,7 +1,7 @@
 // Shared plain-English labels + colours + entity grouping for the audit log.
 // Used by both the log table and the per-staff activity page so they never drift.
 
-export const ACTION_LABEL: Record<string, string> = {
+const ACTION_LABEL: Record<string, string> = {
   "article.create": "Created article",
   "article.update": "Edited article",
   "article.delete": "Deleted article",

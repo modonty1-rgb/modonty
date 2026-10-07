@@ -9,7 +9,7 @@ import { ArticleStatus, type Prisma } from "@prisma/client";
 
 // No "orphan" segment: Article.clientId is a required field, so an article without
 // a client cannot exist. A card that can never fill is noise.
-export type ArticleSegmentKey =
+type ArticleSegmentKey =
   | "published"
   | "published-on-client-site"
   | "awaiting-approval"

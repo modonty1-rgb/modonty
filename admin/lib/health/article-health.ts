@@ -24,12 +24,7 @@ import type { HealthIssue, HealthTarget } from "./article-health-types";
 
 // Vocabulary lives in a client-safe module — this file pulls in the Bunny client and the
 // site-url loader, so anything a UI component needs must not be re-exported through here.
-export type {
-  HealthCheckId,
-  HealthSeverity,
-  HealthIssue,
-  HealthTarget,
-} from "./article-health-types";
+export type {  } from "./article-health-types";
 
 /** Exactly the fields the checks read — nothing more travels out of the DB. */
 export const ARTICLE_HEALTH_SELECT = {
@@ -72,7 +67,7 @@ export interface HealthArticle {
   } | null;
 }
 
-export interface HealthContext {
+interface HealthContext {
   head: HeadChecker;
   siteUrl: string;
   /** Cap on body images probed per article — a photo essay must not stall the sweep. */

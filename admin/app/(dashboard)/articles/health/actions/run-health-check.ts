@@ -29,7 +29,7 @@ const DEFAULT_BATCH = 20;
 const MAX_BATCH = 50;
 const CONCURRENCY = 10;
 
-export interface HealthBatchResult {
+interface HealthBatchResult {
   ok: true;
   issues: HealthIssue[];
   /** Articles examined by this batch. */
@@ -42,7 +42,7 @@ export interface HealthBatchResult {
   requests: number;
 }
 
-export type HealthBatchResponse = HealthBatchResult | { ok: false; error: string };
+type HealthBatchResponse = HealthBatchResult | { ok: false; error: string };
 
 export async function runArticleHealthBatch(input: {
   skip: number;

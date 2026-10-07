@@ -35,7 +35,7 @@ interface IndustryData {
   socialImageAlt?: string | null;
 }
 
-export async function buildIndustryMetadata(industry: IndustryData, s: SeoSettings) {
+async function buildIndustryMetadata(industry: IndustryData, s: SeoSettings) {
   const pageUrl = industry.canonicalUrl || entityUrl("industries", industry.slug, s.siteUrl);
   const title = industry.seoTitle || industry.name;
   // The row's own text, or none. A sentence written here becomes a meta description Google
@@ -77,7 +77,7 @@ export async function buildIndustryMetadata(industry: IndustryData, s: SeoSettin
   };
 }
 
-export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings) {
+async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings) {
   const pageUrl = industry.canonicalUrl || entityUrl("industries", industry.slug, s.siteUrl);
   const siteIds = buildSiteEntityIds(s.siteUrl);
   const title = industry.seoTitle || industry.name;

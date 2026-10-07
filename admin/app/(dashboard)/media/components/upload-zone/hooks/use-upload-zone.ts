@@ -3,7 +3,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { MediaType } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
-import { messages } from "@/lib/messages";
 import { requiresCrop } from "@/lib/media/media-specs";
 import { createMedia, getClients } from "../../../actions/media-actions";
 import { updateClientLogo, updateClientHero } from "@/app/(dashboard)/clients/actions/clients-actions";

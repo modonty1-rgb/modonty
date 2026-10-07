@@ -1,6 +1,6 @@
 export type OrderKind = "new" | "renewal";
 
-export interface OrderKindInput {
+interface OrderKindInput {
   id: string;
   status: string;
   clientId: string | null;

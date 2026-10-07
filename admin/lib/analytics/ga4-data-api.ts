@@ -86,7 +86,7 @@ export interface DimensionFilter {
   orGroup?: { expressions: DimensionFilter[] };
 }
 
-export interface RunReportRequest {
+interface RunReportRequest {
   dimensions?: Array<{ name: string }>;
   metrics: Array<{ name: string }>;
   dateRanges: Array<{ startDate: string; endDate: string; name?: string }>;

@@ -48,7 +48,7 @@ export interface SendEmailParams {
 /**
  * Email result type
  */
-export interface SendEmailResult {
+interface SendEmailResult {
   id: string;
   success: true;
 }
@@ -214,24 +214,4 @@ export async function sendEmailWithRetry(
  */
 export async function sendEmail(params: SendEmailParams): Promise<SendEmailResult> {
   return sendEmailWithRetry(params, 1);
-}
-
-/**
- * Validate email configuration
- */
-export function validateEmailConfig(): { valid: boolean; errors: string[] } {
-  const errors: string[] = [];
-
-  if (!process.env.RESEND_API_KEY?.trim()) {
-    errors.push("RESEND_API_KEY is not configured");
-  }
-
-  if (!process.env.RESEND_FROM?.trim()) {
-    errors.push("RESEND_FROM is not configured");
-  }
-
-  return {
-    valid: errors.length === 0,
-    errors,
-  };
 }

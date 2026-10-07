@@ -14,7 +14,7 @@ export interface SearchOption {
   count?: number;
 }
 
-export interface SearchComboboxProps {
+interface SearchComboboxProps {
   options: SearchOption[];
   value: string | null;
   onChange: (id: string | null) => void;

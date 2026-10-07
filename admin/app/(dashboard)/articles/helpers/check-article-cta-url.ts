@@ -5,7 +5,7 @@
  * في أيّ مكان». المتجرُ يبيع في أمازون ونون وسلّة وموقعه، فقيدُ النطاق كان يرفض روابطَ العميل نفسه.
  * يبقى الفحصُ أنّه رابطٌ حقيقيّ (http/https) — قاعدةٌ واحدة للنموذج والخادم.
  */
-export type ArticleCtaCheck = { ok: true; url: string } | { ok: false; error: string };
+type ArticleCtaCheck = { ok: true; url: string } | { ok: false; error: string };
 
 /** `https://www.Noon.com/x` → `noon.com` · نصٌّ بلا بروتوكول يُقرأ https. */
 export function hostOf(raw: string | null | undefined): string | null {

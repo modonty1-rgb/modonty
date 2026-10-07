@@ -23,7 +23,7 @@ export interface GoogleWindow {
   topPage: { path: string; clicks: number; share: number } | null;
 }
 
-export interface ModontyGoogleSummary {
+interface ModontyGoogleSummary {
   /** The last day Google has finalised — every window ends here. */
   lastFinalDay: string;
   windows: GoogleWindow[];

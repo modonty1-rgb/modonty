@@ -1,4 +1,4 @@
-import type { AdCampaignStatus, AdChannel, AdObjective, AdSite } from "@prisma/client";
+import type { AdChannel, AdObjective, AdSite } from "@prisma/client";
 
 /**
  * مواقعنا وأصولها — الوجهة التي يوصّل إليها الإعلان.
@@ -7,12 +7,12 @@ import type { AdCampaignStatus, AdChannel, AdObjective, AdSite } from "@prisma/c
  * يوصّل إلى صفحة خطأ. و`www` مقصودة في الاثنين — جبر سيو يطبّع الأبكس إليها في
  * `lib/seo-meta.ts:97`، ومدونتي كذلك.
  */
-export const SITES: { code: AdSite; label: string; base: string }[] = [
+const SITES: { code: AdSite; label: string; base: string }[] = [
   { code: "MODONTY", label: "مدونتي", base: "https://www.modonty.com/" },
   { code: "JBRSEO", label: "جبر سيو", base: "https://www.jbrseo.com/" },
 ];
 
-export const siteOf = (code: AdSite) => SITES.find((s) => s.code === code) ?? SITES[0];
+const siteOf = (code: AdSite) => SITES.find((s) => s.code === code) ?? SITES[0];
 
 /**
  * القنوات والأسواق — كلّ ما يحتاجه الكود ليرسم حملةً ويصل رابطها.
@@ -23,7 +23,7 @@ export const siteOf = (code: AdSite) => SITES.find((s) => s.code === code) ?? SI
  */
 
 /** ما يُكتب في `utm_source` — الاسم الذي تعرفه المنصّة عن نفسها، لا ترجمتنا العربية. */
-export const CHANNEL_UTM: Record<AdChannel, string> = {
+const CHANNEL_UTM: Record<AdChannel, string> = {
   TIKTOK: "tiktok",
   YOUTUBE: "youtube",
   SNAPCHAT: "snapchat",
@@ -52,7 +52,7 @@ export const CHANNEL_UTM: Record<AdChannel, string> = {
  *
  * حملةٌ قديمة على قناةٍ خرجت من القائمة تبقى تُعرض باسمها — القائمة للاختيار الجديد لا للقراءة.
  */
-export const CHANNELS_BY_MARKET: Record<string, AdChannel[]> = {
+const CHANNELS_BY_MARKET: Record<string, AdChannel[]> = {
   SA: ["TIKTOK", "YOUTUBE", "SNAPCHAT", "INSTAGRAM", "FACEBOOK", "GOOGLE"],
   EG: ["FACEBOOK", "YOUTUBE", "TIKTOK", "INSTAGRAM", "GOOGLE"],
   AE: ["TIKTOK", "FACEBOOK", "YOUTUBE", "INSTAGRAM", "LINKEDIN", "GOOGLE"],
@@ -98,29 +98,7 @@ export const OBJECTIVE_LABEL: Record<AdObjective, string> = {
   AWARENESS: "وعي",
 };
 
-export const STATUS_LABEL: Record<AdCampaignStatus, string> = {
-  DRAFT: "مسوّدة",
-  ACTIVE: "شغّالة",
-  PAUSED: "موقوفة",
-  ENDED: "منتهية",
-};
-
-/** نبرة الحالة — نفس أعراف اللون في بقيّة الأدمن: أخضر يعمل، كهرمانيّ واقف، رماديّ انتهى. */
-export const STATUS_TONE: Record<AdCampaignStatus, string> = {
-  DRAFT: "text-muted-foreground",
-  ACTIVE: "text-emerald-700 dark:text-emerald-400",
-  PAUSED: "text-amber-700 dark:text-amber-400",
-  ENDED: "text-slate-600 dark:text-slate-400",
-};
-
-export const STATUS_DOT: Record<AdCampaignStatus, string> = {
-  DRAFT: "bg-muted-foreground",
-  ACTIVE: "bg-emerald-500",
-  PAUSED: "bg-amber-500",
-  ENDED: "bg-slate-400",
-};
-
-export interface MarketMeta {
+interface MarketMeta {
   code: string;
   label: string;
   currency: string;
@@ -144,28 +122,6 @@ export const MARKETS: MarketMeta[] = [
 
 export const marketOf = (code: string): MarketMeta =>
   MARKETS.find((m) => m.code === code) ?? MARKETS[0];
-
-/**
- * عدد أيام الحملة — شاملاً طرفيها.
- *
- * حملةٌ من الأوّل إلى الأوّل يومٌ واحد لا صفر، ولذلك `+ 1`: القسمة على صفرٍ تُخرج `Infinity`
- * وتصعد إلى الشاشة رقماً بلا معنى.
- */
-export function campaignDays(startAt: Date, endAt: Date | null): number {
-  // No end = ongoing: count up to today, so the total is what was spent (Khalid, 29 Sep 2026).
-  const end = endAt ?? new Date();
-  const n = Math.round((end.getTime() - startAt.getTime()) / 86_400_000) + 1;
-  return n > 0 ? n : 1;
-}
-
-/**
- * الإجماليّ **مشتقٌّ** لا مخزَّن (خالد ٥ سبتمبر) — والمخزَّن `dailyBudget` وحده.
- *
- * تخزينه يخلق رقماً ثانياً يكذب عند أوّل تمديد: مدُّ الحملة أسبوعاً يُبقي الإجماليَّ على حاله
- * ويخفض اليوميَّ سرّاً إلى رقمٍ لم يضبطه أحد في أيّ منصّة، ثم يُبنى عليه تقرير.
- */
-export const totalBudget = (dailyBudget: number, startAt: Date, endAt: Date | null): number =>
-  dailyBudget * campaignDays(startAt, endAt);
 
 /**
  * المسار يُنظَّف قبل أن يُلصق بالأصل.
@@ -209,39 +165,4 @@ export function trackedUrl(input: {
   });
   if (input.platformCampaignId?.trim()) q.set("utm_id", input.platformCampaignId.trim());
   return `${base}?${q.toString()}`;
-}
-
-/**
- * وسمٌ يُقترح من السوق والقناة والاسم — ويبقى قابلاً للتعديل قبل الحفظ.
- *
- * لاتينيّ صغير بشرطات: العربيّ في `utm_campaign` يصل مرمَّزاً بالنسبة المئوية فيصير غير
- * مقروءٍ في أي تقرير، والفراغات تُكسر الرابط.
- *
- * ── ولماذا الشهر جزءٌ منه ──────────────────────────────────────────────────────────────
- * أسماء حملاتنا عربية، والتنقية تمحو العربيّ كلّه — فكان الناتج `sa-snapchat` لكلّ حملةٍ
- * سعودية على سناب مهما اختلف اسمها (مقيس حيّاً على «تقويم الأسنان — سبتمبر»). والوسم **فريدٌ
- * في القاعدة**، فثاني حملةٍ منها كانت سترفض الحفظ برسالة تعارض.
- *
- * فالشهر والسنة يدخلان في الوسم: `sa-snapchat-2609` — وهو ما يقوله مشتري الإعلانات أصلاً حين
- * يسمّي حملةً («سناب سبتمبر»). وتبقى الفرادة تحرس الحالة الباقية: حملتان على نفس القناة في
- * نفس الشهر — وهناك يُطلب منه تمييزٌ صريح، وهو مطلبٌ صحيح لا عائق.
- */
-export function suggestUtm(
-  countryCode: string,
-  channel: AdChannel,
-  name: string,
-  startAt?: Date,
-): string {
-  const latin = name
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-
-  const d = startAt && !Number.isNaN(startAt.getTime()) ? startAt : new Date();
-  const stamp = `${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, "0")}`;
-
-  return [countryCode.toLowerCase(), CHANNEL_UTM[channel], latin, stamp].filter(Boolean).join("-");
 }

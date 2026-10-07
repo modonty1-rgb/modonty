@@ -9,7 +9,7 @@ import { normalizeOrganizationType } from "@modonty/shared/lib/constants/client-
 import { normalizePhone } from "@modonty/shared/lib/phone";
 import bcrypt from "bcryptjs";
 
-export interface GroupUpdateResult {
+interface GroupUpdateResult {
   success: boolean;
   error?: string;
   groupName: string;

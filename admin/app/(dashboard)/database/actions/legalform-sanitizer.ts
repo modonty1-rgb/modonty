@@ -22,7 +22,7 @@ import { assertRegenerated } from "../helpers/assert-regenerated";
 
 type ClassificationField = "legalForm" | "organizationType";
 
-export interface ClassificationIssue {
+interface ClassificationIssue {
   id: string;
   name: string | null;
   before: string;
@@ -38,7 +38,7 @@ export interface SanitizerStats {
   unmapped: ClassificationIssue[];
 }
 
-export interface SanitizerResult {
+interface SanitizerResult {
   attempted: number;
   successful: number;
   failed: number;
@@ -124,9 +124,6 @@ async function sanitize(field: ClassificationField): Promise<SanitizerResult> {
 
   return result;
 }
-
-// ─── legalForm (legacy export names preserved for existing UI) ───────────────
-export type LegalFormIssue = ClassificationIssue;
 export type LegalFormSanitizerStats = SanitizerStats;
 
 export async function getLegalFormSanitizerStats(): Promise<SanitizerStats> {
@@ -134,11 +131,6 @@ export async function getLegalFormSanitizerStats(): Promise<SanitizerStats> {
 }
 export async function sanitizeAllLegalForms(): Promise<SanitizerResult> {
   return sanitize("legalForm");
-}
-
-// ─── organizationType ────────────────────────────────────────────────────────
-export async function getOrganizationTypeSanitizerStats(): Promise<SanitizerStats> {
-  return scan("organizationType");
 }
 export async function sanitizeAllOrganizationTypes(): Promise<SanitizerResult> {
   return sanitize("organizationType");

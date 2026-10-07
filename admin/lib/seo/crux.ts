@@ -198,11 +198,3 @@ function rate(
       return value <= 800 ? "good" : value <= 1800 ? "needs-improvement" : "poor";
   }
 }
-
-export function isCruxReady(report: CruxReport | null): boolean {
-  if (!report) return false;
-  const lcpOk = report.lcp?.rating === "good";
-  const clsOk = report.cls?.rating === "good";
-  const inpOk = report.inp?.rating === "good";
-  return lcpOk && clsOk && inpOk;
-}

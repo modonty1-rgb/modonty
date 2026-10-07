@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 
 export type Country = "SA" | "EG";
 
-export interface FeaturedPlanPricing {
+interface FeaturedPlanPricing {
   name: string;
   articlesPerMonth: number;
   monthly: number;

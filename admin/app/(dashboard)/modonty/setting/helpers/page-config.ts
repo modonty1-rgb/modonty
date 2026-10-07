@@ -1,6 +1,6 @@
 import { LIVE_SECTORS } from "@modonty/shared/lib/sectors/live-sectors";
 
-export interface PageConfig {
+interface PageConfig {
   slug: string;
   label: string;
   description: string;
@@ -139,8 +139,4 @@ export const PAGE_CONFIGS: PageConfig[] = [
 
 export function getPageConfig(slug: string): PageConfig | undefined {
   return PAGE_CONFIGS.find((config) => config.slug === slug);
-}
-
-export function getDefaultPageConfig(): PageConfig {
-  return PAGE_CONFIGS[0];
 }

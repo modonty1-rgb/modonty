@@ -9,7 +9,7 @@
  * (مثاله KW1: إلزام تسجيل الكلمات المفتاحية قبل الكتابة).
  */
 
-export type Person = {
+type Person = {
   id: string;
   /** مفتاح القسم — تسحب به صفحة كل قسم أهله ومهامهم. */
   deptKey: string;
@@ -52,7 +52,7 @@ export const PEOPLE: Person[] = [
  * · «متابعة العملاء» سقط — دُمج في المبيعات (قرار خالد، اليوم نفسه).
  * · الحروف اللاتينية (On-page · Technical · Off-page) صارت عربيةً، فقد كانت تنكسر داخل الجملة.
  */
-export type RoleAsk = { dept: string; who: string; question: string; answer: string };
+type RoleAsk = { dept: string; who: string; question: string; answer: string };
 
 export const ROLE_ASKS: RoleAsk[] = [
   {
@@ -99,7 +99,7 @@ export const ROLE_ASKS: RoleAsk[] = [
   },
 ];
 
-export type Stage = { key: string; title: string };
+type Stage = { key: string; title: string };
 
 export const STAGES: Stage[] = [
   { key: "acq", title: "الاكتساب — كيف يصل إلينا شريك" },

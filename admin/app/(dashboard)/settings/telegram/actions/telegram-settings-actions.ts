@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { SETTINGS_SINGLETON_WHERE, ensureSettingsId } from "@/lib/settings/settings-singleton";
 
-export interface TelegramAdminSettings {
+interface TelegramAdminSettings {
   mirrorAll: boolean;
 }
 

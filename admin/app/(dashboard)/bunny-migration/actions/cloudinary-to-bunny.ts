@@ -304,7 +304,7 @@ function clientsZonePathOf(url: string | null): string | null {
 
 // ── scope listing ────────────────────────────────────────────────────────────
 
-export interface ScopeTargets {
+interface ScopeTargets {
   scope: MigrationScope;
   /** Item ids (or synthetic keys) the client will feed back in batches. */
   ids: string[];
@@ -442,7 +442,7 @@ export async function listScope(scope: MigrationScope): Promise<ScopeTargets> {
 
 // ── batch execution ──────────────────────────────────────────────────────────
 
-export interface BatchResult {
+interface BatchResult {
   done: number;
   failed: number;
   /** Human-readable reasons, capped — surfaced so a failure is never silent. */

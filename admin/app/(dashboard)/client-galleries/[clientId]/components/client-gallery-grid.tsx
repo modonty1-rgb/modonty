@@ -61,25 +61,6 @@ async function uploadGalleryToBunny(file: File, clientId: string) {
   };
 }
 
-/**
- * ⛔ RETIRED (2026-07-29, tripwire rule) — the old direct-to-Cloudinary gallery upload,
- * kept as text only. Never call: throws so a hidden Cloudinary path can't fail silently.
- */
-export async function uploadToCloudinaryRETIRED(): Promise<never> {
-  throw new Error("RETIRED: Cloudinary gallery upload is disabled — gallery uploads now go to Bunny.");
-  /* Original implementation (text, for reference):
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-  const form = new FormData();
-  form.append("file", file);
-  form.append("upload_preset", uploadPreset);
-  form.append("asset_folder", `clients/${clientId}`);
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: "POST", body: form });
-  const r = await res.json();
-  return { url: r.secure_url || r.url, publicId: r.public_id ?? null, ... };
-  */
-}
-
 /** "image/webp" → "WEBP", "image/jpeg" → "JPG", … */
 function imgFormat(mime: string): string {
   const sub = (mime.split("/")[1] || "img").toLowerCase();

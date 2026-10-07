@@ -1,4 +1,4 @@
-import type { TaskPriority, TaskStatus } from "@prisma/client";
+import type { TaskPriority } from "@prisma/client";
 
 // The four columns, in board order. This array is the ONLY place the order
 // lives: the board renders from it, the counters map over it, and the move menu
@@ -59,21 +59,3 @@ export const TASK_PRIORITY_META: Record<TaskPriority, { label: string; labelAr: 
   HIGH: { label: "High", labelAr: "عالية", tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
   URGENT: { label: "Urgent", labelAr: "عاجلة", tone: "bg-red-500/15 text-red-600 dark:text-red-400" },
 };
-
-/** Sort order for priority — by severity, never alphabetically. */
-export const TASK_PRIORITY_WEIGHT: Record<TaskPriority, number> = {
-  URGENT: 0,
-  HIGH: 1,
-  NORMAL: 2,
-  LOW: 3,
-};
-
-export function isTaskStatus(value: string): value is TaskStatusKey {
-  return (TASK_STATUSES as readonly string[]).includes(value);
-}
-
-/** `in-progress` → `IN_PROGRESS`. Returns null for anything not a real column. */
-export function statusFromSlug(slug: string): TaskStatus | null {
-  const hit = TASK_STATUSES.find((s) => TASK_STATUS_META[s].slug === slug);
-  return hit ?? null;
-}

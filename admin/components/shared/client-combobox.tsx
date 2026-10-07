@@ -2,7 +2,7 @@
 
 import { SearchCombobox } from "./search-combobox";
 
-export interface ClientOption {
+interface ClientOption {
   id: string;
   name: string;
   /** Optional number shown at the end of the row (e.g. how many files the client has). */

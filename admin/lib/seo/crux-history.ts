@@ -52,7 +52,7 @@ interface RawHistory {
 }
 
 /** Google's Core Web Vitals thresholds (web.dev/articles/vitals). */
-export function rateCwv(metric: CwvKey, value: number): CWVRating {
+function rateCwv(metric: CwvKey, value: number): CWVRating {
   if (metric === "lcp") return value <= 2500 ? "good" : value <= 4000 ? "needs-improvement" : "poor";
   if (metric === "inp") return value <= 200 ? "good" : value <= 500 ? "needs-improvement" : "poor";
   return value <= 0.1 ? "good" : value <= 0.25 ? "needs-improvement" : "poor";

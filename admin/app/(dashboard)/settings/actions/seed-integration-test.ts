@@ -18,7 +18,7 @@
  * Author: Single-author system (Modonty) — auto-created via getModontyAuthor()
  */
 
-import { writeFile, readFile, mkdir } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { createCategory } from "@/app/(dashboard)/categories/actions/categories-actions/create-category";
 import { updateCategory } from "@/app/(dashboard)/categories/actions/categories-actions/update-category";
@@ -1087,25 +1087,6 @@ export async function runSeedSection(section: SeedSection): Promise<SectionResul
 
   const logFile = await writeLog([result]);
   return { ...result, logFile };
-}
-
-export async function runAllSeedSections(): Promise<{ sections: SectionResult[]; logFile: string }> {
-  // Guarded here as well, not only through `runSeedSection`: this is its own endpoint, and a
-  // caller blocked section-by-section would otherwise still get seven blocked rounds and a log.
-  const blocked = await assertSeedAllowed();
-  if (blocked) {
-    return {
-      sections: [{ section: "Blocked", results: [{ action: "seed guard", phase: "validate", status: "fail", detail: blocked }], passed: 0, failed: 1 }],
-      logFile: "",
-    };
-  }
-
-  const order: SeedSection[] = ["categories", "tags", "industries", "clients", "articles", "faqs", "interactions"];
-  const sections: SectionResult[] = [];
-  for (const s of order) sections.push(await runSeedSection(s));
-
-  const logFile = await writeLog(sections);
-  return { sections, logFile };
 }
 
 // Save combined log from UI (called after all sections finish)

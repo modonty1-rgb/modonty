@@ -5,7 +5,6 @@ import { LeadDealRail } from "../components/lead-deal-rail";
 import { LeadHeader } from "../components/lead-header";
 import { LeadProfileRail } from "../components/lead-profile-rail";
 import { countLeadFollowUps, getLead } from "../helpers/get-lead";
-import { suggestSlug } from "../helpers/convert-lead";
 import { getLeadSourceLabels } from "../helpers/get-lead-source-labels";
 import { getLeadCatalog } from "../helpers/get-lead-catalog";
 import { priceLeadDeal } from "../helpers/price-lead-deal";

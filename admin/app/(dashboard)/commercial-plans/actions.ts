@@ -167,14 +167,6 @@ export async function setCommercialPlanPublished(id: string, isPublished: boolea
   await revalidateCatalog(id);
 }
 
-export async function updateCommercialPlanPrice(id: string, form: FormData) {
-  await requireFinanceAdmin();
-  const amount = Number(form.get("amount"));
-  if (!Number.isInteger(amount) || amount < 0) throw new Error("سعر غير صحيح");
-  await db.commercialPlanPrice.update({ where: { id }, data: { monthlyBase: amount } });
-  await revalidateCatalog(String(form.get("planId")));
-}
-
 export async function updateCommercialPlanMarketPrices(planId: string, form: FormData) {
   await requireFinanceAdmin();
   const sa = Number(value(form, "sa")); const eg = Number(value(form, "eg"));

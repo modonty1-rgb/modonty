@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export interface FAQItem {
+interface FAQItem {
   question: string;
   answer: string;
   position?: number;

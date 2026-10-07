@@ -68,7 +68,7 @@ export function PipelineRow({
   );
 }
 
-export interface BudgetSegment {
+interface BudgetSegment {
   key: string;
   href: string;
   label: string;

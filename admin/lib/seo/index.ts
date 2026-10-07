@@ -8,58 +8,23 @@
 // ============================================
 // Phase 2: Knowledge Graph Generator
 // ============================================
-export {
-  generateArticleKnowledgeGraph,
-  stringifyKnowledgeGraph,
-  stringifyKnowledgeGraphPretty,
-  type ArticleWithFullRelations,
-  type JsonLdGraph,
-  type JsonLdNode,
-} from "./knowledge-graph-generator";
+export {  } from "./knowledge-graph-generator";
 
 // ============================================
 // Phase 3: JSON-LD Validator
 // ============================================
-export {
-  validateJsonLd,
-  validateBusinessRules,
-  validateJsonLdComplete,
-  getValidationSummary,
-  type ValidationResult,
-  type ValidationError,
-  type ValidationWarning,
-  type ValidationReport,
-  type BusinessValidationResult,
-} from "./jsonld-validator";
+export {  } from "./jsonld-validator";
 
 
 // ============================================
 // Phase 4: JSON-LD Storage
 // ============================================
-export {
-  fetchArticleForJsonLd,
-  extractPlainText,
-  generateAndSaveJsonLd,
-  regenerateJsonLd,
-  getCachedJsonLd,
-  needsRegeneration,
-  batchRegenerateJsonLd,
-  getArticlesNeedingRegeneration,
-  getJsonLdStats,
-  type JsonLdGenerationResult,
-} from "./jsonld-storage";
+export { generateAndSaveJsonLd, getJsonLdStats } from "./jsonld-storage";
 
 // Rebuilds BOTH stored blobs (JSON-LD + Next.js metadata) for a set of articles. Reach for
 // this whenever a renamed entity cascades onto its articles — `batchRegenerateJsonLd` above
 // rebuilds only half the published surface and leaves the Open Graph tags on the old name.
 export { batchRegenerateArticleSeo } from "./batch-regenerate-article-seo";
-
-// ============================================
-// Phase 5: JSON-LD Validation Action (Preview)
-// ============================================
-export {
-  validateJsonLdPreview,
-} from "./jsonld-validation-action";
 
 // (Removed 2026-07-14: "Phase 9 AI Crawler Optimization" re-exports — ai-crawler-optimizer
 // had ZERO call sites anywhere (GEO audit, بند ٩); the file is deleted with them.)
@@ -68,76 +33,28 @@ export {
 // ============================================
 // Phase 10: Auto-Fix Engine
 // ============================================
-export {
-  autoFixArticle,
-  batchAutoFix,
-  findArticlesNeedingFix,
-  previewAutoFix,
-  type AutoFixResult,
-  type FixAction,
-} from "./auto-fix";
+export {  } from "./auto-fix";
 
 // ============================================
 // Phase 10: Pre-Publish Audit
 // ============================================
-export {
-  auditBeforePublish,
-  checkCompliance,
-  getAuditSummary,
-  groupIssuesByCategory,
-  type AuditResult,
-  type AuditIssue,
-  type ClientForCompliance,
-} from "./pre-publish-audit";
+export {  } from "./pre-publish-audit";
 
 // ============================================
 // Phase 11: Entity Disambiguator (Wikidata)
 // ============================================
-export {
-  searchWikidata,
-  getWikidataEntity,
-  findWikidataEntity,
-  enrichKeywordsWithWikidata,
-  extractKeywordsForEntityLinking,
-  formatSemanticKeywordsForStorage,
-  type WikidataEntity,
-} from "./entity-disambiguator";
+export {  } from "./entity-disambiguator";
 
 
 // ============================================
 // Phase 12: Core Web Vitals Monitor
 // ============================================
-export {
-  CWV_THRESHOLDS,
-  JSONLD_PERFORMANCE_BUDGETS,
-  assessJsonLdPerformanceImpact,
-  getJsonLdPlacementRecommendation,
-  checkStructuredDataBudget,
-  optimizeJsonLdForPerformance,
-  getCWVScoreLabel,
-  type CWVMetrics,
-  type CWVThresholds,
-  type JsonLdPerformanceAssessment,
-  type PlacementRecommendation,
-} from "./cwv-monitor";
+export {  } from "./cwv-monitor";
 
 // ============================================
 // Phase 13: International SEO
 // ============================================
-export {
-  SUPPORTED_LANGUAGES,
-  generateHreflangLinks,
-  generateHreflangHTML,
-  generateMultilingualJsonLd,
-  isRTLLanguage,
-  optimizeForArabicContent,
-  validateArabicJsonLd,
-  getOGLocale,
-  generateInternationalSEOData,
-  type HreflangLink,
-  type MultilingualArticle,
-  type InternationalSEOData,
-} from "./international-seo";
+export {  } from "./international-seo";
 
 // (Removed 2026-07-14: "Phase 15 Sitemap & Robots.txt" re-exports — generateRobotsTxt and
 // friends had ZERO call sites, and that robots output would CONFLICT with the live
@@ -153,13 +70,7 @@ export {
 // ============================================
 // Phase 14: Alert System
 // ============================================
-export {
-  sendAlert,
-  createAlertFromError,
-  getAlertConfig,
-  type AlertConfig,
-  type Alert,
-} from "./alert-system";
+export { getAlertConfig } from "./alert-system";
 
 // ============================================
 // Phase 14: Weekly Report Generator (SERVER-ONLY)
@@ -171,14 +82,7 @@ export {
 // ============================================
 // Legacy (Backward Compatibility)
 // ============================================
-export {
-  generateArticleStructuredData,
-  generateBreadcrumbStructuredData,
-  generateAuthorStructuredData,
-  generateOrganizationStructuredData,
-} from "./structured-data";
 
 // ============================================
 // Metadata Generation (for Preview Pages)
 // ============================================
-export { generateMetadataFromSEO, type SEOData, type SEOOptions } from "./seo-metadata";

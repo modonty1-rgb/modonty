@@ -14,7 +14,7 @@ import { runReport } from "@/lib/analytics/ga4-data-api";
 
 const WINDOW_DAYS = 90;
 
-export interface BookPageOpens {
+interface BookPageOpens {
   /** slug → views, only for paths that really are /clients/<slug>/book */
   bySlug: Map<string, number>;
   /** Total of bySlug — the number both surfaces display. */

@@ -137,10 +137,6 @@ export const PIPELINE_STAGES: StageDefinition[] = [
   },
 ];
 
-export function getStageByKey(key: StageKey): StageDefinition | undefined {
-  return PIPELINE_STAGES.find((s) => s.key === key);
-}
-
 export interface StageStatusSummary {
   status: "locked" | "ready" | "warnings" | "critical" | "not-run" | "placeholder";
   passed: number;

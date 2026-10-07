@@ -9,7 +9,7 @@ import { getJsonLdStats } from "./jsonld-storage";
 import type { ErrorTrend } from "./search-console-api";
 import { sendAlert, getAlertConfig, type Alert } from "./alert-system";
 
-export interface WeeklyReport {
+interface WeeklyReport {
   period: {
     start: Date;
     end: Date;
@@ -312,17 +312,4 @@ function generateReportSummary(report: WeeklyReport): string {
   }
 
   return lines.join("\n");
-}
-
-/**
- * Schedule weekly report generation
- */
-export async function scheduleWeeklyReport(): Promise<void> {
-  try {
-    const report = await generateWeeklyReport();
-    const config = getAlertConfig();
-    await sendWeeklyReport(report, config);
-  } catch (error) {
-    console.error("Failed to generate weekly report:", error);
-  }
 }

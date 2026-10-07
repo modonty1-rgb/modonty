@@ -5,5 +5,3 @@ export const MODONTY_AUTHOR_SLUG = "modonty";
 // {"@type":"Person","name":"Modonty"} on the homepage alone). Display spelling, no tashkeel —
 // the vocalised "مُدَوَّنَتِي" belongs to voice scripts only.
 export const MODONTY_AUTHOR_NAME = "مدونتي";
-// www — matches the canonical host every other generator emits.
-export const MODONTY_AUTHOR_URL = "https://www.modonty.com";

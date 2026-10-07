@@ -13,7 +13,7 @@ import { generateClientSEO } from "@/app/(dashboard)/clients/actions/clients-act
 // uploaded client-side to Cloudinary; here we only store the Media row (type=GALLERY,
 // scope=CLIENT) so it flows into the client page + Organization.image[] JSON-LD.
 
-export interface AddGalleryInput {
+interface AddGalleryInput {
   url: string;
   publicId?: string | null;
   filename?: string | null;

@@ -2,7 +2,7 @@ import OpenAI from "openai";
 
 import { resolveAdminPrompt } from "./ai/resolve-admin-prompt";
 
-export interface GeneratedArticleData {
+interface GeneratedArticleData {
   title: string;
   content: string; // TipTap HTML format
   excerpt: string;

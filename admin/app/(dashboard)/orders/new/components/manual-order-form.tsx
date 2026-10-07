@@ -145,7 +145,7 @@ function Choice({
  * يمرّ مبلغٌ من المتصفّح إلى الصفّ.
  */
 /** تعبئةُ الهويّة من عميلٍ محتمَل — ولا مبلغَ فيها: المال يكتبه الموظّف بما اتُّفق عليه. */
-export type OrderPrefill = {
+type OrderPrefill = {
   buyerName: string;
   businessName: string;
   buyerEmail: string;

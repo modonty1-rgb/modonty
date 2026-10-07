@@ -10,11 +10,11 @@ import { checkFinanceAdmin } from "@/lib/require-finance-admin";
  */
 
 /** قاعدةُ التجارب — فيها يُعاد الترحيل ما شاء الفريق؛ وخارجَها مرّةٌ واحدة. */
-export function isDevDatabase(): boolean {
+function isDevDatabase(): boolean {
   return (process.env.DATABASE_URL ?? "").includes("modonty_dev");
 }
 
-export type MigrationGate =
+type MigrationGate =
   | { allowed: true; isDev: boolean; orders: number }
   | { allowed: false; reason: "unauthenticated" | "forbidden"; orders: number };
 

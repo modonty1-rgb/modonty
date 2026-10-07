@@ -43,7 +43,7 @@ export async function getTagMergeImpact(sourceId: string, targetId: string): Pro
   };
 }
 
-export interface PrepareTagMergeResult {
+interface PrepareTagMergeResult {
   success: boolean;
   error?: string;
   sourceName?: string;
@@ -149,7 +149,7 @@ export async function prepareTagMerge(input: {
   }
 }
 
-export interface RegenerateArticleResult {
+interface RegenerateArticleResult {
   success: boolean;
   articleId: string;
   title?: string;

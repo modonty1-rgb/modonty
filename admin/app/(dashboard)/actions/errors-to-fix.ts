@@ -13,7 +13,7 @@ import { db } from "@/lib/db";
  * together, a landline, an unknown format) — the deep-link would go nowhere.
  */
 
-export interface FixItem {
+interface FixItem {
   id: string;
   /** Primary label (e.g. client name). */
   label: string;
@@ -23,7 +23,7 @@ export interface FixItem {
   href: string;
 }
 
-export interface ErrorCategory {
+interface ErrorCategory {
   key: string;
   title: string;
   items: FixItem[];

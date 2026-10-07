@@ -380,24 +380,6 @@ export async function setLeadQuality(id: string, quality: "GOOD" | "WEAK" | "INV
   }
 }
 
-export async function setLeadStage(
-  id: string,
-  stage: "NEW" | "CONTACTED" | "QUOTED" | "NEGOTIATING",
-): Promise<Result> {
-  const gate = await requireAdmin();
-  if ("error" in gate) return { success: false, error: gate.error };
-  try {
-    await db.salesLead.update({
-      where: { id },
-      data: { stage, status: STATUS_FROM_STAGE[stage] ?? "ACTIVE" },
-    });
-    revalidateLead(id);
-    return { success: true, id };
-  } catch {
-    return { success: false, error: "ما قدرنا نحدّث. يُرجى المحاولة مرة ثانية." };
-  }
-}
-
 /**
  * **حذفُ العميل المحتمل نهائياً** — حلّ محلّ «خسرناه» (خالد ٢٨ سبتمبر ٢٠٢٦: «بدل خسرناه نعملها
  * حذف، لأن كل ما خسرناه هذا أساساً ما له داعي»).

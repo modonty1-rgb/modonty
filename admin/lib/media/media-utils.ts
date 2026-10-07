@@ -26,22 +26,3 @@ export function getMediaTypeBadgeVariant(type: MediaType): BadgeProps["variant"]
       return "secondary";
   }
 }
-
-export function getMediaTypeColor(type: MediaType): string {
-  switch (type) {
-    case "LOGO":
-      return "bg-primary text-primary-foreground";
-    case "POST":
-      return "bg-secondary text-secondary-foreground";
-    case "OGIMAGE":
-      return "bg-accent text-accent-foreground";
-    case "CLIENT_MINI":
-      return "bg-accent text-accent-foreground";
-    case "TWITTER_IMAGE":
-      return "bg-blue-500 text-white";
-    case "GENERAL":
-      return "bg-muted text-muted-foreground";
-    default:
-      return "bg-muted text-muted-foreground";
-  }
-}

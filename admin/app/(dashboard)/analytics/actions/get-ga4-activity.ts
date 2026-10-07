@@ -83,7 +83,7 @@ const CHANNEL_MAP: Record<string, string> = {
   "Cross-network": "PAID",
 };
 
-export interface GA4ActivityFilters {
+interface GA4ActivityFilters {
   clientSlug?: string;
   articleSlug?: string;
   startDate?: Date;

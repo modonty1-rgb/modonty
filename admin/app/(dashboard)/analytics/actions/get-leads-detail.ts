@@ -27,7 +27,7 @@ export interface LeadRow {
   href: string | null; // existing admin detail page when one exists
 }
 
-export interface LeadsDetail {
+interface LeadsDetail {
   rows: LeadRow[];
   /** Tile numbers — from GA4 (SOT). booking_submit starts counting from deploy day. */
   ga4Counts: { bookings: number; messages: number; questions: number; comments: number };

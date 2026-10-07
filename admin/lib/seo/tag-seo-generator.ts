@@ -35,7 +35,7 @@ interface TagData {
   socialImageAlt?: string | null;
 }
 
-export async function buildTagMetadata(tag: TagData, s: SeoSettings) {
+async function buildTagMetadata(tag: TagData, s: SeoSettings) {
   const pageUrl = tag.canonicalUrl || entityUrl("tags", tag.slug, s.siteUrl);
   const title = tag.seoTitle || tag.name;
   // The row's own description, or none. A sentence written here would be a meta description
@@ -77,7 +77,7 @@ export async function buildTagMetadata(tag: TagData, s: SeoSettings) {
   };
 }
 
-export async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
+async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
   const pageUrl = tag.canonicalUrl || entityUrl("tags", tag.slug, s.siteUrl);
   const siteIds = buildSiteEntityIds(s.siteUrl);
   const title = tag.seoTitle || tag.name;

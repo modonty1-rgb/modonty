@@ -46,7 +46,7 @@ export interface SettingsForMeta {
   defaultNotranslate?: boolean | null;
 }
 
-export interface BuildMetaFromSettingsOverrides {
+interface BuildMetaFromSettingsOverrides {
   title?: string;
   description?: string;
   path?: string;
@@ -78,7 +78,7 @@ function imageMimeFromUrl(url: string | undefined): string | undefined {
   return undefined;
 }
 
-export function buildMetaFromSettings(
+function buildMetaFromSettings(
   settings: SettingsForMeta,
   overrides?: BuildMetaFromSettingsOverrides
 ): Record<string, unknown> {
@@ -175,7 +175,7 @@ export function buildMetaFromSettings(
   return built;
 }
 
-export type PageTypeForMeta =
+type PageTypeForMeta =
   | "home"
   | "clients"
   | "categories"

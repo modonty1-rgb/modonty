@@ -1,6 +1,6 @@
 import { ArticleStatus } from "@prisma/client";
 
-export const statusLabels: Record<ArticleStatus, string> = {
+const statusLabels: Record<ArticleStatus, string> = {
   WRITING: "Writing",
   DRAFT: "Draft",
   AWAITING_APPROVAL: "Awaiting Approval",
@@ -12,7 +12,7 @@ export const statusLabels: Record<ArticleStatus, string> = {
   ARCHIVED: "Archived",
 };
 
-export const statusVariants = {
+const statusVariants = {
   WRITING: "outline",
   DRAFT: "secondary",
   AWAITING_APPROVAL: "outline",
@@ -32,8 +32,4 @@ export function getStatusVariant(
   status: ArticleStatus
 ): "default" | "secondary" | "destructive" | "outline" {
   return statusVariants[status] || "secondary";
-}
-
-export function getAvailableStatuses(): ArticleStatus[] {
-  return Object.values(ArticleStatus);
 }

@@ -1,7 +1,5 @@
 "use server";
 
-import { Prisma } from "@prisma/client";
-
 import { db } from "@/lib/db";
 
 /**
@@ -34,43 +32,7 @@ const STAGE_FROM_STATUS: Record<string, string> = {
   ARCHIVED: "LOST",
 };
 
-export interface SalesLeadBackfillStats {
-  /** كل الصفوف في المجموعة. */
-  total: number;
-  /** صفوف بلا `stage` — هذه التي تُسقط الشاشة. */
-  missingStage: number;
-  /**
-   * صفوف عندها كلامٌ في `notes`. **مرشَّح لا نتيجة**: لا يطرح منها ما نُقل فعلاً، لأن معرفة
-   * ذلك تحتاج قراءة جدول المتابعة لكل صفّ — والتمريرة نفسها تتخطّى المنقول بشرطها الخاصّ.
-   */
-  notesPresent: number;
-  /** صفوف المتابعة الموجودة الآن. */
-  followUps: number;
-}
-
-/**
- * القراءة بأمر خام كذلك — `db.salesLead.count()` نفسها تمرّ بطبقة التحقّق، ولا يصحّ أن تكون
- * شاشةُ التشخيص أوّلَ ما ينكسر حين يكون هناك ما يُشخَّص.
- */
-export async function getSalesLeadBackfillStats(): Promise<SalesLeadBackfillStats> {
-  // `$runCommandRaw` تقبل `InputJsonObject` لا `Record<string, unknown>` — والفرق حقيقيّ
-  // (الأولى ترفض `undefined` والدوالّ)، فيُمرَّر المرشِّح بنوعه الذي تقبله بدل توسيعه.
-  const countWhere = async (filter: Prisma.InputJsonObject): Promise<number> => {
-    const res = (await db.$runCommandRaw({ count: COLLECTION, query: filter })) as { n?: number };
-    return res?.n ?? 0;
-  };
-
-  const [total, missingStage, notesPresent, followUps] = await Promise.all([
-    countWhere({}),
-    countWhere({ stage: { $exists: false } }),
-    countWhere({ notes: { $nin: [null, ""] } }),
-    db.$runCommandRaw({ count: "sales_lead_followups", query: {} }).then((r) => (r as { n?: number })?.n ?? 0),
-  ]);
-
-  return { total, missingStage, notesPresent, followUps };
-}
-
-export interface SalesLeadBackfillResult {
+interface SalesLeadBackfillResult {
   stagesWritten: number;
   notesMigrated: number;
   /** صفوف بقيت بلا `stage` بعد التمريرة — فوق الصفر يعني أن الشاشة ستظلّ تنهار. */

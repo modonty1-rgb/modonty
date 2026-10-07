@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
 import { Loader2, Search, Upload, RefreshCw } from "lucide-react";
 import { getMedia, type MediaFilters } from "@/app/(dashboard)/media/actions/media-actions";

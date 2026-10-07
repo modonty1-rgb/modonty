@@ -6,14 +6,14 @@ import { db } from "@/lib/db";
 import type { Market } from "./markets";
 import { resolveLeadPlan } from "./resolve-lead-plan";
 
-export interface LeadDealColumns {
+interface LeadDealColumns {
   expectedTier: string | null;
   expectedMonthly: number | null;
   expectedMonths: number | null;
   currency: string | null;
 }
 
-export type ResolvedLeadDeal =
+type ResolvedLeadDeal =
   | { ok: true; data: LeadDealColumns }
   | { ok: false; fieldErrors: Record<string, string[]> };
 

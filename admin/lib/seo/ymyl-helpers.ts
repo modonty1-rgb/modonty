@@ -8,14 +8,7 @@
  * - JSON-LD generator (read schemaType + specialty sub-type)
  */
 
-import {
-  YMYL_CATEGORIES,
-  isYmylCategory,
-  type AuthorityByCountry,
-  type YmylCategory,
-  type YmylCategoryConfig,
-  type YmylField,
-} from "@modonty/shared/lib/seo/ymyl-config";
+import { YMYL_CATEGORIES, isYmylCategory, type AuthorityByCountry, type YmylCategoryConfig } from "@modonty/shared/lib/seo/ymyl-config";
 
 /** Get the full config for a category. Returns null if category is invalid/missing. */
 export function getYmylConfig(category: string | null | undefined): YmylCategoryConfig | null {
@@ -23,14 +16,8 @@ export function getYmylConfig(category: string | null | undefined): YmylCategory
   return YMYL_CATEGORIES[category];
 }
 
-/** Required fields for a given category. Empty array if category invalid. */
-export function getRequiredYmylFields(category: string | null | undefined): YmylField[] {
-  const cfg = getYmylConfig(category);
-  return cfg ? cfg.fields.filter((f) => f.required) : [];
-}
-
 /** Authority options for a given category + country (falls back to default). */
-export function getAuthorityOptions(
+function getAuthorityOptions(
   category: string | null | undefined,
   country: string | null | undefined,
   fieldKey: string
@@ -66,7 +53,7 @@ export function resolveYmylSchemaType(
   return cfg.schemaType;
 }
 
-export interface YmylValidationResult {
+interface YmylValidationResult {
   valid: boolean;
   /** Map of fieldKey → human-readable Arabic error */
   errors: Record<string, string>;
@@ -82,7 +69,7 @@ export interface YmylValidationResult {
  *
  * Does NOT throw — returns a structured result for UI display.
  */
-export function validateYmylData(
+function validateYmylData(
   category: string | null | undefined,
   ymylData: unknown,
   options: { country?: string | null; authorityCodes?: string[] } = {}
@@ -190,7 +177,7 @@ export function isYmylClientComplete(
  * Returns the list of matched phrases (case-insensitive substring match).
  * Empty array = clean.
  */
-export function findForbiddenClaims(
+function findForbiddenClaims(
   category: string | null | undefined,
   content: string
 ): string[] {
@@ -200,7 +187,7 @@ export function findForbiddenClaims(
   return cfg.forbiddenClaims.filter((claim) => haystack.includes(claim.toLowerCase()));
 }
 
-export interface PublishGateResult {
+interface PublishGateResult {
   canPublish: boolean;
   blockers: string[];
   warnings: string[];

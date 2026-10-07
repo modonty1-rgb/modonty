@@ -4,7 +4,7 @@ import { getFeaturedPlanPricing, type Country } from "./get-featured-plan-pricin
 const arabicNum = new Intl.NumberFormat("ar-SA");
 const enGbNum = new Intl.NumberFormat("en-GB");
 
-export interface FormattedPrice {
+interface FormattedPrice {
   monthly: string;        // "1,199"
   yearly: string;         // "14,388"
   monthlyAr: string;      // "١٬١٩٩"

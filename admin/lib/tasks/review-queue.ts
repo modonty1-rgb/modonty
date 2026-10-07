@@ -16,7 +16,7 @@ import { TASK_NOT_ARCHIVED } from "./not-archived";
  * `assigneeId ≠ أنا`: المهمّةُ التي كتبها الموظّفُ لنفسه ونقلها إلى REVIEW حدثٌ داخليّ،
  * لا مراجعةَ فيها لأحد — نفسُ حارس `notifyReviewer`.
  */
-export function reviewQueueWhere(reviewerId: string): Prisma.TaskWhereInput {
+function reviewQueueWhere(reviewerId: string): Prisma.TaskWhereInput {
   return {
     createdById: reviewerId,
     status: "REVIEW",
@@ -28,7 +28,7 @@ export const countReviewQueue = cache(async (reviewerId: string): Promise<number
   db.task.count({ where: reviewQueueWhere(reviewerId) }).catch(() => 0),
 );
 
-export type ReviewQueueTask = {
+type ReviewQueueTask = {
   id: string;
   title: string;
   description: string | null;

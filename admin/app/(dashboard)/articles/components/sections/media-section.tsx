@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { MediaPickerDialog } from '@/components/shared/media-picker-dialog';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
 import { ThumbnailImageView } from '@/components/shared/thumbnail-image-view';
-import { Image as ImageIcon, Loader2, ImagePlus, Music, Library, ArrowRight, AlertCircle, Search } from 'lucide-react';
+import { Loader2, ImagePlus, Music, Library, ArrowRight, AlertCircle, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ImageSeoStrip } from '../image-seo-strip';
 

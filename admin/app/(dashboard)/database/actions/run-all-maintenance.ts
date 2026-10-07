@@ -15,7 +15,6 @@ import { backfillClientSiteFlag } from "./client-site-flag-backfill";
 import { backfillMediaReelsFields } from "./media-reels-backfill";
 import { backfillBlurPlaceholders } from "./blur-backfill";
 import { backfillMediaDimensions } from "./dimensions-backfill";
-import { sweepCloudinaryOrphans } from "./cloudinary-orphans";
 import { hardDeleteOldSoftDeletedComments } from "./soft-deleted-comments";
 import { seedIntakeForm } from "./seed-intake";
 import { seedAiPrompts } from "./seed-ai-prompts";
@@ -381,21 +380,6 @@ export async function runStepOrphanRows(): Promise<MaintenanceStepResult> {
     };
   } catch (e) {
     return fail("orphanRows", "Orphan Rows (broken required relations)", e);
-  }
-}
-
-export async function runStepCloudinaryOrphans(): Promise<MaintenanceStepResult> {
-  try {
-    const r = await sweepCloudinaryOrphans();
-    return {
-      key: "cloudinary",
-      label: "Cloudinary Orphans Swept",
-      ok: r.failed === 0,
-      count: r.successful,
-      detail: r.failed > 0 ? `${r.failed} failed` : undefined,
-    };
-  } catch (e) {
-    return fail("cloudinary", "Cloudinary Orphans Swept", e);
   }
 }
 

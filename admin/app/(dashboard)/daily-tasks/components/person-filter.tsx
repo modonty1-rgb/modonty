@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
-export interface PersonCount {
+interface PersonCount {
   key: string;
   name: string;
   total: number;

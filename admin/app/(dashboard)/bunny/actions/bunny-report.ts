@@ -126,7 +126,7 @@ function buildTree(items: WalkedFile[]): FolderNode[] {
     .sort(bySize);
 }
 
-export interface MediaReport {
+interface MediaReport {
   cardsTotal: number;
   cardsOnBunny: number;
   cardsPending: number;
@@ -197,7 +197,7 @@ export async function getMediaReport(): Promise<MediaReport | { error: string }>
   };
 }
 
-export interface BillingReport {
+interface BillingReport {
   balance: number;
   thisMonthCharges: number;
   monthlyBandwidthBytes: number;

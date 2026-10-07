@@ -19,8 +19,8 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 
 type AnyObj = Record<string, unknown>;
 
-export interface BriefOption { value: string; label: string }
-export interface BriefQuestion {
+interface BriefOption { value: string; label: string }
+interface BriefQuestion {
   id: string;
   key: string;
   label: string;

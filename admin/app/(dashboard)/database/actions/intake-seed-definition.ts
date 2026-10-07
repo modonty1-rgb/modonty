@@ -14,13 +14,13 @@ import type { IntakeQuestionType } from "@prisma/client";
  * `Client.intake` (e.g. "policy.forbiddenKeywords"). Never change a key.
  */
 
-export interface SeedOption {
+interface SeedOption {
   value: string;
   label: string;
   marketScope?: "SA" | "EG" | null;
 }
 
-export interface SeedQuestion {
+interface SeedQuestion {
   key: string;
   label: string;
   type: IntakeQuestionType;
@@ -33,7 +33,7 @@ export interface SeedQuestion {
   options?: SeedOption[];
 }
 
-export interface SeedSection {
+interface SeedSection {
   key: string;
   title: string;
   description?: string;
@@ -43,7 +43,7 @@ export interface SeedSection {
   questions: SeedQuestion[];
 }
 
-export interface SeedForm {
+interface SeedForm {
   key: string;
   title: string;
   description?: string;

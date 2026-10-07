@@ -198,15 +198,6 @@ export function applyLinkDecisions(content: string, decisions: LinkDecision[]): 
   });
 }
 
-/** The links the writer has to resolve before the article can be saved. */
-export function findLinksNeedingReview(
-  content: string,
-  siteUrl: string,
-  backlinkUrl?: string | null,
-): AuditedLink[] {
-  return auditContentLinks(content, siteUrl, backlinkUrl).filter((l) => l.issues.length > 0);
-}
-
 /**
  * Folds the measured reachability result into the audit. A link is only marked dead
  * when the check actually answered — if the probe itself failed (network, timeout),

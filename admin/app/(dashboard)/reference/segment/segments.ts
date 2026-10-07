@@ -7,7 +7,7 @@
  * why one scorer and one table serve all of them.
  */
 
-export type ReferenceKey = "categories" | "tags" | "industries" | "authors";
+type ReferenceKey = "categories" | "tags" | "industries" | "authors";
 
 interface ReferenceSegment {
   title: string;

@@ -12,7 +12,7 @@ import { createHmac } from "crypto";
 const SECRET = process.env.ADMIN_CONSOLE_ACCESS_SECRET;
 
 /** Sign a short-lived admin→console access ticket for one client (default 60s). */
-export function signConsoleAccessToken(clientId: string, ttlSeconds = 60): string {
+function signConsoleAccessToken(clientId: string, ttlSeconds = 60): string {
   if (!SECRET) throw new Error("ADMIN_CONSOLE_ACCESS_SECRET is not set");
   const payload = { clientId, exp: Date.now() + ttlSeconds * 1000 };
   const payloadB64 = Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");

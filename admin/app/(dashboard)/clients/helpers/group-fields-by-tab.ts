@@ -5,7 +5,7 @@ import type { ClientFormData } from "@/lib/types";
  * Maps field names to their tab/group IDs
  * Used to organize updates by form tabs for better performance and security
  */
-export function getFieldToGroupMap(): Record<string, string> {
+function getFieldToGroupMap(): Record<string, string> {
   const fieldToGroupMap: Record<string, string> = {};
   
   clientFormSections.forEach((section) => {
@@ -47,15 +47,4 @@ export function groupFieldsByTab(data: ClientFormData): Record<string, Partial<C
 export function getFieldsForGroup(groupId: string): string[] {
   const section = clientFormSections.find((s) => s.id === groupId);
   return section?.fields || [];
-}
-
-/**
- * Checks if a group has any non-null/undefined values in the data
- */
-export function hasGroupData(groupId: string, data: Partial<ClientFormData>): boolean {
-  const fields = getFieldsForGroup(groupId);
-  return fields.some((field) => {
-    const value = (data as Record<string, unknown>)[field];
-    return value !== undefined && value !== null && value !== "";
-  });
 }

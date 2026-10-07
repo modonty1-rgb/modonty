@@ -35,7 +35,7 @@ interface CategoryData {
   socialImageAlt?: string | null;
 }
 
-export async function buildCategoryMetadata(category: CategoryData, s: SeoSettings) {
+async function buildCategoryMetadata(category: CategoryData, s: SeoSettings) {
   const pageUrl = category.canonicalUrl || entityUrl("categories", category.slug, s.siteUrl);
   const title = category.seoTitle || category.name;
   // The row's own text, or none. A sentence written here becomes a meta description Google
@@ -77,7 +77,7 @@ export async function buildCategoryMetadata(category: CategoryData, s: SeoSettin
   };
 }
 
-export async function buildCategoryJsonLd(category: CategoryData, s: SeoSettings) {
+async function buildCategoryJsonLd(category: CategoryData, s: SeoSettings) {
   const pageUrl = category.canonicalUrl || entityUrl("categories", category.slug, s.siteUrl);
   const siteIds = buildSiteEntityIds(s.siteUrl);
   const title = category.seoTitle || category.name;

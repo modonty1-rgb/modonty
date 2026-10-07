@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
-export interface DashboardTab {
+interface DashboardTab {
   key: string;
   label: string;
   /** Short count beside the label — omitted when the tab has no single headline number. */

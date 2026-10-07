@@ -62,7 +62,7 @@ export interface HealthIssue {
  * emits, so the explanation shown to a writer can never drift from the rule that judged
  * them. Change a severity here and both the finding and its documentation move together.
  */
-export interface HealthCheckInfo {
+interface HealthCheckInfo {
   label: string;
   severity: HealthSeverity;
   /** What the check actually measures. */

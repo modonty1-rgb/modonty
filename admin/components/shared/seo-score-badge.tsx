@@ -9,7 +9,7 @@ import { GoogleIcon } from "@/components/admin/icons/google-icon";
 //
 // Tiers (locked with Khalid 2026-07-21): ≥90 green · 50–89 amber · <50 red.
 
-export type SeoScoreSize = "sm" | "md" | "lg";
+type SeoScoreSize = "sm" | "md" | "lg";
 
 interface SeoScoreBadgeProps {
   score: number;

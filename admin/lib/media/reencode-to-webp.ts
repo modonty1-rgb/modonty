@@ -2,7 +2,7 @@ import { compressToWebP } from "@/lib/compress-image";
 import { uploadImageToBunny } from "@/lib/media/upload-image-to-bunny";
 
 /** What re-encoding needs to know about the stored file. */
-export interface ReencodeSource {
+interface ReencodeSource {
   /** The served address (Bunny when the row has a copy — see `mediaSrc`). */
   url: string;
   filename: string | null;

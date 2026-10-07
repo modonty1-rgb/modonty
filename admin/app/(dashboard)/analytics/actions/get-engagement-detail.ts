@@ -23,7 +23,7 @@ const ENGAGEMENT_EVENTS = [
   "follow_client",
 ];
 
-export interface EngagementDetail {
+interface EngagementDetail {
   byEvent: Array<{ event: string; count: number }>;
   byDay: Array<{ date: string; count: number }>;
   byPage: Array<{ path: string; count: number }>;

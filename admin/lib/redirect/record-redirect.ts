@@ -4,7 +4,7 @@ import type { Prisma } from "@prisma/client";
  * Sections served by modonty's proxy.ts 308 layer (must match its matcher).
  * A redirect is one permanent hop: (section, fromSlug) → toSlug, both in the same section.
  */
-export type RedirectSection = "articles" | "categories" | "tags" | "industries" | "clients";
+type RedirectSection = "articles" | "categories" | "tags" | "industries" | "clients";
 
 /** Minimal surface both `db` and an interactive-transaction client satisfy. */
 type RedirectDb = Pick<Prisma.TransactionClient, "redirect">;

@@ -17,24 +17,6 @@ export async function getChangelogs() {
   });
 }
 
-export async function createChangelog(data: {
-  version: string;
-  title: string;
-  items: Array<{ type: "fix" | "feature" | "improve"; text: string }>;
-}) {
-  const session = await auth();
-  if (!session) return { success: false, error: "Unauthorized" };
-
-  const changelog = await db.changelog.create({
-    data: {
-      version: data.version,
-      title: data.title,
-      items: data.items,
-    },
-  });
-  return { success: true, changelog };
-}
-
 // ─── Admin Notes ───
 
 export async function getAdminNotes() {

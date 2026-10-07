@@ -29,30 +29,7 @@ const NO_BLUR = {
 const HAS_SOURCE = { bunnyUrl: { not: null } };
 const IS_IMAGE = { mimeType: { startsWith: "image/" } };
 
-export interface BlurBackfillStats {
-  totalImages: number;
-  withBlur: number;
-  /** Reachable image rows still missing a placeholder — what this step would fix. */
-  missing: number;
-  sample: Array<{ id: string; filename: string }>;
-}
-
-export async function getBlurBackfillStats(): Promise<BlurBackfillStats> {
-  const [totalImages, withBlur, missing, sample] = await Promise.all([
-    db.media.count({ where: IS_IMAGE }),
-    db.media.count({ where: { AND: [IS_IMAGE, { blurDataURL: { not: null } }] } }),
-    db.media.count({ where: { AND: [IS_IMAGE, HAS_SOURCE, NO_BLUR] } }),
-    db.media.findMany({
-      where: { AND: [IS_IMAGE, HAS_SOURCE, NO_BLUR] },
-      select: { id: true, filename: true },
-      take: 5,
-    }),
-  ]);
-
-  return { totalImages, withBlur, missing, sample };
-}
-
-export interface BlurBackfillResult {
+interface BlurBackfillResult {
   attempted: number;
   filled: number;
   failed: number;

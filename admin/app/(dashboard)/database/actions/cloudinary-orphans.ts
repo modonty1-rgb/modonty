@@ -86,61 +86,6 @@ async function listAllResourcesForPrefix(
   return all;
 }
 
-export interface CloudinaryOrphanStats {
-  scannedPrefixes: number;
-  totalInScope: number;
-  orphanCount: number;
-  sample: Array<{ publicId: string; resourceType: string; createdAt: string | null }>;
-  configured: boolean;
-}
-
-export async function getCloudinaryOrphanStats(): Promise<CloudinaryOrphanStats> {
-  const cloudinary = await getCloudinary();
-  if (!cloudinary) {
-    return { scannedPrefixes: 0, totalInScope: 0, orphanCount: 0, sample: [], configured: false };
-  }
-
-  // Pull all in-scope assets from Cloudinary
-  const allResources: CloudinaryResource[] = [];
-  for (const prefix of MODONTY_PREFIXES) {
-    const res = await listAllResourcesForPrefix(cloudinary, prefix);
-    allResources.push(...res);
-  }
-
-  // Pull all known cloudinaryPublicIds from DB
-  const dbRows = await db.media.findMany({
-    where: { cloudinaryPublicId: { not: null } },
-    select: { cloudinaryPublicId: true },
-  });
-  const knownIds = new Set(dbRows.map((r) => r.cloudinaryPublicId!).filter(Boolean));
-
-  // Age threshold to skip in-flight uploads
-  const cutoff = new Date(Date.now() - MIN_AGE_HOURS * 60 * 60 * 1000);
-
-  // Diff: in Cloudinary AND in-scope prefix AND not in DB AND older than cutoff
-  const orphans = allResources.filter((r) => {
-    if (!MODONTY_PREFIXES.some((p) => r.public_id.startsWith(p))) return false; // double-check scope
-    if (knownIds.has(r.public_id)) return false;
-    if (r.created_at) {
-      const created = new Date(r.created_at);
-      if (created > cutoff) return false; // too recent — could be in-flight
-    }
-    return true;
-  });
-
-  return {
-    scannedPrefixes: MODONTY_PREFIXES.length,
-    totalInScope: allResources.length,
-    orphanCount: orphans.length,
-    sample: orphans.slice(0, 5).map((o) => ({
-      publicId: o.public_id,
-      resourceType: o.resource_type ?? "image",
-      createdAt: o.created_at ?? null,
-    })),
-    configured: true,
-  };
-}
-
 export async function sweepCloudinaryOrphans(): Promise<{
   attempted: number;
   successful: number;

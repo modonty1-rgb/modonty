@@ -11,7 +11,7 @@ import { db } from "@/lib/db";
  * (newsletter) and /users (admins).
  */
 
-export interface MemberCounts {
+interface MemberCounts {
   total: number;
   /** Signed in with Google (OAuth, no password) — email auto-verified. */
   google: number;

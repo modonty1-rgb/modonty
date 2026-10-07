@@ -10,7 +10,7 @@ import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-statu
  * مرحلتين: بريفيو ثمّ تأكيد الإرسال»)، فما يُعرَض قبل الضغط هو ما يُكتب بعده حرفاً بحرف.
  * حسابٌ في مكانٍ وعرضٌ في مكانٍ آخر هو كيف تكذب شاشةُ المعاينة.
  */
-export interface InvoicePlan {
+interface InvoicePlan {
   orderId: string;
   orderNumber: string;
   clientId: string;
@@ -36,7 +36,7 @@ export interface InvoicePlan {
   foundingInvoice: boolean;
 }
 
-export type InvoicePlanResult = { ok: true; plan: InvoicePlan } | { ok: false; error: string };
+type InvoicePlanResult = { ok: true; plan: InvoicePlan } | { ok: false; error: string };
 
 export async function planInvoiceFromOrder(orderId: string): Promise<InvoicePlanResult> {
   const order = await db.checkoutOrder.findUnique({ where: { id: orderId } });

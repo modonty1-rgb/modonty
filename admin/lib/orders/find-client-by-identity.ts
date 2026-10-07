@@ -2,7 +2,7 @@ import { toE164 } from "@modonty/shared/lib/phone";
 
 import { db } from "@/lib/db";
 
-export interface ExistingClient {
+interface ExistingClient {
   id: string;
   name: string;
   /** Which identifier matched — said in the message, so the rep knows what to check. */

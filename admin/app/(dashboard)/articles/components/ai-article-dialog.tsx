@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Loader2, Sparkles, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
+import { Loader2, Sparkles, CheckCircle, RefreshCw } from 'lucide-react';
 import { generateArticleAI } from '../actions/generate-article-ai';
 import { useArticleForm } from './article-form-context';
 import { useToast } from '@/hooks/use-toast';

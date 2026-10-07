@@ -19,26 +19,6 @@ function fmt(mime: string): string {
   return sub.toUpperCase();
 }
 
-// The re-encode itself lives in lib/media/reencode-to-webp (shared with Clients › Media).
-
-/**
- * ⛔ RETIRED (2026-07-29, tripwire rule) — the old re-upload-to-Cloudinary step, kept as
- * text only. Never call: throws so a hidden Cloudinary path can't fail silently.
- */
-export async function reencodeToCloudinaryRETIRED(): Promise<never> {
-  throw new Error("RETIRED: Cloudinary re-upload is disabled — the optimizer now uploads to Bunny.");
-  /* Original implementation (text, for reference):
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-  const form = new FormData();
-  form.append("file", webp);
-  form.append("upload_preset", uploadPreset);
-  const up = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: "POST", body: form });
-  const r = await up.json();
-  return { url: r.secure_url || r.url, publicId: r.public_id ?? null, ... };
-  */
-}
-
 export function OptimizeImagesSection({ images }: { images: OptimizableImage[] }) {
   const { toast } = useToast();
   const router = useRouter();

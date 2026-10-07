@@ -11,27 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getFeaturedPlanPrice } from "@/lib/pricing/get-featured-plan-price";
 import { getPlaybookCatalogCopy } from "../helpers/get-playbook-catalog-copy";
-import {
-  ShoppingBag,
-  Stethoscope,
-  Scale,
-  Building2,
-  UtensilsCrossed,
-  Sparkles as BeautyIcon,
-  Plane,
-  Briefcase,
-  Users,
-  AlertTriangle,
-  CheckCircle2,
-  MapPin,
-  CalendarRange,
-  TrendingUp,
-  Smartphone,
-  Globe,
-  Lightbulb,
-  Target,
-  ListChecks,
-} from "lucide-react";
+import { ShoppingBag, Stethoscope, Scale, Building2, UtensilsCrossed, Sparkles as BeautyIcon, Plane, Briefcase, AlertTriangle, CheckCircle2, ListChecks } from "lucide-react";
 
 // ─── ICP type ──────────────────────────────────────────────────
 interface ICP {

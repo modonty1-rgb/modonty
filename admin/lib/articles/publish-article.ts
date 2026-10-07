@@ -28,7 +28,7 @@ import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
  * تفحص · تنشر · تسجّل · تُحدّث الكاش. ولا تتحقّق من هويّة المنادي — ذاك عملُ المنادي
  * نفسِه: السيرفر أكشن يفحص الجلسة، والمسارُ يفحص `CRON_SECRET`.
  */
-export type PublishResult =
+type PublishResult =
   | { ok: true; to: ArticleStatus }
   | { ok: false; error: string };
 

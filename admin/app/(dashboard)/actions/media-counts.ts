@@ -30,7 +30,7 @@ const FAILING = 60;
 
 export type MediaSegmentKey = "unused" | "no-alt" | "failing-seo" | "no-dimensions";
 
-export interface MediaCounts {
+interface MediaCounts {
   total: number;
   /** Nothing points at them — safe to delete, and they are costing you storage. */
   unused: number;

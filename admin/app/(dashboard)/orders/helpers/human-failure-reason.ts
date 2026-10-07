@@ -13,7 +13,7 @@
  * تحت الجملة: من يريد الجملة يقرؤها، ومن يريد التشخيص يجده.
  */
 
-export interface HumanFailureReason {
+interface HumanFailureReason {
   /** الجملة القصيرة — ماذا حدث. */
   title: string;
   /** ماذا يعني ذلك لمن يقرأ، وما الخطوة إن وُجدت. */

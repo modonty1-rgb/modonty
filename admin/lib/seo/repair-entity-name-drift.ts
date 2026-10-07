@@ -23,7 +23,7 @@ import { batchRegenerateArticleSeo } from "./batch-regenerate-article-seo";
  */
 
 /** Rebuilt articles and how many were found drifting, so a caller can report both. */
-export interface NameDriftRepairResult {
+interface NameDriftRepairResult {
   drifted: number;
   successful: number;
   failed: number;

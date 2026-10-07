@@ -1,6 +1,6 @@
 import { formatCount } from "./format-count";
 
-export type SilenceTone = "fresh" | "warm" | "cold" | "dead";
+type SilenceTone = "fresh" | "warm" | "cold" | "dead";
 
 /**
  * **من متى ساكت؟** — السؤال الذي لم تكن الشاشة تسأله.
@@ -33,9 +33,6 @@ export function describeSilence(
   const tone: SilenceTone = days >= 30 ? "dead" : days >= 14 ? "cold" : days >= 7 ? "warm" : "fresh";
   return { days, text, tone };
 }
-
-/** حدّ «الساكت» — الرقم نفسه الذي تعدّه البطاقة ويرشّح به الجدول، فلا يفترقان. */
-export const SILENT_AFTER_DAYS = 30;
 
 /**
  * درجات `700` في الفاتح — مقيسةً على الأبيض: `amber-600 3.19` و`orange-600 3.56` ترسبان

@@ -38,7 +38,7 @@ export async function getIndustryMergeImpact(sourceId: string, targetId: string)
   return { movedCount, affectedCount: movedCount };
 }
 
-export interface PrepareIndustryMergeResult {
+interface PrepareIndustryMergeResult {
   success: boolean;
   error?: string;
   sourceName?: string;
@@ -131,7 +131,7 @@ export async function prepareIndustryMerge(input: {
   }
 }
 
-export interface RegenerateClientResult {
+interface RegenerateClientResult {
   success: boolean;
   clientId: string;
   title?: string;

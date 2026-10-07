@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { ArticleStatus, Prisma } from "@prisma/client";
 
-export interface ArticleSelectionFilters {
+interface ArticleSelectionFilters {
   excludeArticleId?: string;
   categoryId?: string;
   tagIds?: string[];

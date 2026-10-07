@@ -1,6 +1,6 @@
 import { ArticleStatus } from "@prisma/client";
 
-export interface TransitionConfig {
+interface TransitionConfig {
   from: ArticleStatus;
   to: ArticleStatus;
   fromLabel: string;

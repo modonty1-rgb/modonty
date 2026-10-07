@@ -3,7 +3,6 @@
 import { Prisma } from "@prisma/client";
 import { mediaUsedWhere, mediaUnusedWhere } from "@/lib/media/usage-where";
 import { getMediaLinks } from "@/lib/media/media-links";
-import { mediaSearchWhere } from "@/lib/media/media-search-where";
 import { listMedia, DEFAULT_MEDIA_PER_PAGE } from "@/lib/media/list-media";
 import type { MediaFilters } from "./types";
 

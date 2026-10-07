@@ -2,7 +2,7 @@ import type { StaffRole } from "@prisma/client";
 
 // Single source of truth for staff roles — the edit-form dropdown and the table badge
 // both read this, so labels/colours never drift. Add a role here → it appears everywhere.
-export interface RoleMeta {
+interface RoleMeta {
   value: StaffRole;
   label: string;
   description: string;

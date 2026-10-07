@@ -24,7 +24,7 @@ import { db } from "@/lib/db";
  */
 
 /** Dotted, stable keys. Add here; never invent one at a call site — the log screen filters on these. */
-export type AuditAction =
+type AuditAction =
   // 🔴 Destructive — no way back
   | "article.delete"
   | "client.delete"
@@ -115,7 +115,7 @@ export type AuditAction =
   // A canonical decides which URL Google indexes — every rewrite keeps its before/after.
   | "seo.canonicalSanitize";
 
-export type AuditEntity =
+type AuditEntity =
   | "Article"
   | "Client"
   | "Category"

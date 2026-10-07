@@ -1,5 +1,5 @@
 import { InvoicePaymentStatus } from "@prisma/client";
-import { baseTemplate, divider, heading, paragraph } from "@modonty/shared/lib/email";
+import { baseTemplate, divider, paragraph } from "@modonty/shared/lib/email";
 import { INVOICE_STATUS_LABEL } from "@modonty/shared/lib/payments/invoice-status-label";
 import type { EmailContent } from "@modonty/shared/lib/email";
 import { invoiceHero, invoiceParties, invoiceLine, invoiceQr, invoiceContact } from "./invoice-parts";
@@ -89,18 +89,6 @@ function detailRow(label: string, value: string): string {
     <td style="padding:9px 12px;font-size:13px;color:#5b5b5b;border-bottom:1px solid #f0f0f0;">${label}</td>
     <td style="padding:9px 12px;font-size:13px;color:#0E065A;font-weight:bold;text-align:left;border-bottom:1px solid #f0f0f0;">${value}</td>
   </tr>`;
-}
-
-function partyBlock(title: string, p: InvoiceParty, fallbackName: string): string {
-  const lines = [
-    `<strong style="color:#0E065A;">${p.legalName || fallbackName}</strong>`,
-    p.vatNumber ? `الرقم الضريبي: ${p.vatNumber}` : null,
-    p.crNumber ? `السجل التجاري: ${p.crNumber}` : null,
-    p.address || null,
-  ].filter(Boolean);
-  return `<td valign="top" style="width:50%;padding:10px 12px;font-size:12.5px;line-height:1.7;color:#333;">
-    <div style="font-size:11px;color:#8a8a8a;margin-bottom:4px;">${title}</div>${lines.join("<br/>")}
-  </td>`;
 }
 
 /**

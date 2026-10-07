@@ -376,9 +376,7 @@ export const clientSeoFormSchema = z
 // ============================================
 // MEDIA-ONLY SCHEMA (for modal use only)
 // ============================================
-export const clientMediaSchema = z.object({
+const clientMediaSchema = z.object({
   logoMediaId: z.string().optional().nullable(),
   heroImageMediaId: z.string().optional().nullable(),
 });
-
-export type ClientMediaSchemaType = z.infer<typeof clientMediaSchema>;

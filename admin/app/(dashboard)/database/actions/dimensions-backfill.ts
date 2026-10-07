@@ -45,32 +45,7 @@ const NO_DIMS = {
 const HAS_SOURCE = { bunnyUrl: { not: null } };
 const IS_IMAGE = { mimeType: { startsWith: "image/" } };
 
-export interface DimensionsBackfillStats {
-  totalImages: number;
-  withDims: number;
-  /** Reachable image rows still missing dimensions — what this step would fix. */
-  missing: number;
-  sample: Array<{ id: string; filename: string }>;
-}
-
-export async function getDimensionsBackfillStats(): Promise<DimensionsBackfillStats> {
-  const [totalImages, withDims, missing, sample] = await Promise.all([
-    db.media.count({ where: IS_IMAGE }),
-    db.media.count({
-      where: { AND: [IS_IMAGE, { width: { not: null } }, { height: { not: null } }] },
-    }),
-    db.media.count({ where: { AND: [IS_IMAGE, HAS_SOURCE, NO_DIMS] } }),
-    db.media.findMany({
-      where: { AND: [IS_IMAGE, HAS_SOURCE, NO_DIMS] },
-      select: { id: true, filename: true },
-      take: 5,
-    }),
-  ]);
-
-  return { totalImages, withDims, missing, sample };
-}
-
-export interface DimensionsBackfillResult {
+interface DimensionsBackfillResult {
   attempted: number;
   filled: number;
   failed: number;

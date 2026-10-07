@@ -2,7 +2,7 @@
  * Breadcrumb generation utilities
  */
 
-export interface BreadcrumbItem {
+interface BreadcrumbItem {
   name: string;
   url: string;
 }

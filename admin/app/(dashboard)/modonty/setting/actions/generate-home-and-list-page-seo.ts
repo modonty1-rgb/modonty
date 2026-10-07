@@ -43,7 +43,7 @@ export type PageKey =
   | "articles";
 
 // Preview result (no DB save)
-export interface PreviewSeoData {
+interface PreviewSeoData {
   metaTags: unknown;
   jsonLd: string;
   report: unknown;
@@ -51,7 +51,7 @@ export interface PreviewSeoData {
   errors: string[];
 }
 
-export interface PreviewSeoResult {
+interface PreviewSeoResult {
   success: boolean;
   error?: string;
   data?: PreviewSeoData;

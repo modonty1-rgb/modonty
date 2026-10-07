@@ -29,14 +29,14 @@ export interface ValidationResult {
   unavailable?: boolean;
 }
 
-export interface ValidationError {
+interface ValidationError {
   message: string;
   path?: string;
   property?: string;
   type?: string;
 }
 
-export interface ValidationWarning {
+interface ValidationWarning {
   message: string;
   path?: string;
   property?: string;
@@ -197,7 +197,7 @@ export async function validateJsonLd(jsonLd: object): Promise<ValidationResult> 
 /**
  * Business rules validation (custom rules beyond schema.org)
  */
-export interface BusinessValidationResult {
+interface BusinessValidationResult {
   errors: string[];
   warnings: string[];
   info: string[];
@@ -359,7 +359,7 @@ const validateArticleSchema = ajv.compile(articleSchema);
  * Validate JSON-LD using Ajv custom business rules
  * Fast validation for business logic beyond schema.org
  */
-export function validateWithAjv(jsonLd: object): {
+function validateWithAjv(jsonLd: object): {
   valid: boolean;
   errors: string[];
   warnings: string[];
@@ -645,81 +645,4 @@ export async function validateExtractedData(
       },
     };
   }
-}
-
-/**
- * Validate full HTML page
- * This is a convenience wrapper that combines extraction and validation
- */
-export async function validateFullPageHTML(
-  html: string,
-  options?: {
-    requirePublisherLogo?: boolean;
-    requireHeroImage?: boolean;
-    requireAuthorBio?: boolean;
-    minHeadlineLength?: number;
-    maxHeadlineLength?: number;
-  }
-): Promise<ValidationReport> {
-  try {
-    // Import extractor dynamically to avoid loading issues
-    const { extractStructuredData, combineExtractedData } = await import("./page-extractor");
-    
-    // Extract structured data from HTML
-    const extracted = await extractStructuredData(html);
-    
-    // Combine into validator format
-    const combined = combineExtractedData(extracted);
-    
-    // Validate combined data
-    return await validateJsonLdComplete(combined as object, options);
-  } catch (error) {
-    return {
-      adobe: {
-        valid: false,
-        errors: [
-          {
-            message: `Page validation failed: ${error instanceof Error ? error.message : String(error)}`,
-            type: "PAGE_VALIDATION_FAILED",
-          },
-        ],
-        warnings: [],
-        timestamp: new Date().toISOString(),
-      },
-      custom: {
-        errors: [`Page validation error: ${error instanceof Error ? error.message : String(error)}`],
-        warnings: [],
-        info: [],
-      },
-    };
-  }
-}
-
-/**
- * Get human-readable validation summary
- */
-export function getValidationSummary(report: ValidationReport): string {
-  const parts: string[] = [];
-
-  if (report.adobe) {
-    if (report.adobe.valid) {
-      parts.push("✅ Schema.org validation passed");
-    } else {
-      parts.push(`❌ ${report.adobe.errors.length} schema error(s)`);
-    }
-    if (report.adobe.warnings.length > 0) {
-      parts.push(`⚠️ ${report.adobe.warnings.length} warning(s)`);
-    }
-  }
-
-  if (report.custom) {
-    if (report.custom.errors.length > 0) {
-      parts.push(`❌ ${report.custom.errors.length} business error(s)`);
-    }
-    if (report.custom.warnings.length > 0) {
-      parts.push(`⚠️ ${report.custom.warnings.length} business warning(s)`);
-    }
-  }
-
-  return parts.join(" | ");
 }

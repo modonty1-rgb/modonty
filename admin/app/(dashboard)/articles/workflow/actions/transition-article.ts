@@ -8,7 +8,7 @@ import { isValidTransition } from "../../helpers/article-status-machine";
 import { logAction } from "@/lib/audit/log-action";
 import { publishArticle } from "@/lib/articles/publish-article";
 
-export interface TransitionResult {
+interface TransitionResult {
   success: boolean;
   error?: string;
 }

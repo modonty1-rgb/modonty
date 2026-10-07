@@ -51,7 +51,7 @@ function toPlainText(html: string | null | undefined): string {
     .trim();
 }
 
-export interface DraftBatchResult {
+interface DraftBatchResult {
   /** Rows written in this call. */
   written: number;
   /** Rows that could not be drafted, with the reason — never silently dropped. */

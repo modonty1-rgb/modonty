@@ -8,7 +8,7 @@ import { getArticleSeoScoreDetail, ARTICLE_SEO_SELECT } from "@/lib/seo/article-
 /** Publish requires the REAL SEO score (shared scorer on the generated page) to reach this. */
 export const MIN_SEO_SCORE = 60;
 
-export type PublishGateResult = { ok: true } | { ok: false; error: string };
+type PublishGateResult = { ok: true } | { ok: false; error: string };
 
 /**
  * The single publish gate — one source of truth for "is this article good enough to go live".

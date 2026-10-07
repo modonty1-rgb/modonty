@@ -10,7 +10,7 @@ interface TableInfo {
   group: string;
 }
 
-export interface DatabaseHealth {
+interface DatabaseHealth {
   tables: TableInfo[];
   totalRecords: number;
   lastChecked: string;

@@ -45,7 +45,7 @@ const isoDay = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 /** ما تُحمَّل به الشاشة عند التعديل — التاريخان `YYYY-MM-DD` كما تقرؤهما خانة التاريخ. */
-export interface CampaignInitial {
+interface CampaignInitial {
   name?: string;
   countryCode?: Market;
   site?: AdSite;

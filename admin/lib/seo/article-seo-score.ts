@@ -35,7 +35,7 @@ export const ARTICLE_SEO_SELECT = {
   _count: { select: { relatedFrom: true } },
 } as const;
 
-export interface ArticleSeoRow {
+interface ArticleSeoRow {
   title?: string | null;
   nextjsMetadata?: unknown;
   jsonLdStructuredData?: string | null;

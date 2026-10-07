@@ -1,4 +1,4 @@
-import Link from "next/link";
+
 import { CheckCircle2, XCircle } from "lucide-react";
 
 import { ModontyMark } from "@modonty/shared/components/icons/modonty-mark";

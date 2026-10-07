@@ -8,7 +8,7 @@ import { db } from "@/lib/db";
  * states an admin acts on: growth, the compliance gap (no consent), and unsubscribes.
  */
 
-export interface NewsSubscriberCounts {
+interface NewsSubscriberCounts {
   total: number;
   active: number;
   unsubscribed: number;

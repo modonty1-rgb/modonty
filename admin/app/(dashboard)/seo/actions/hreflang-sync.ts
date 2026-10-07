@@ -25,38 +25,6 @@ const HREFLANG_TARGETS: ReadonlyArray<string> = [
   "x-default",
 ] as const;
 
-interface HreflangSyncStats {
-  configured: boolean;
-  target: number;
-  existing: string[];
-  missing: string[];
-}
-
-function readExistingHreflangs(raw: unknown): string[] {
-  if (!Array.isArray(raw)) return [];
-  const set = new Set<string>();
-  for (const entry of raw as Array<unknown>) {
-    if (entry && typeof entry === "object" && "hreflang" in entry) {
-      const value = (entry as { hreflang?: unknown }).hreflang;
-      if (typeof value === "string" && value.trim()) set.add(value.trim());
-    }
-  }
-  return Array.from(set);
-}
-
-export async function getHreflangSyncStats(): Promise<HreflangSyncStats> {
-  const settings = await db.settings.findUnique({
-    where: SETTINGS_SINGLETON_WHERE,
-    select: { defaultAlternateLanguages: true },
-  });
-  if (!settings) {
-    return { configured: false, target: HREFLANG_TARGETS.length, existing: [], missing: [...HREFLANG_TARGETS] };
-  }
-  const existing = readExistingHreflangs(settings.defaultAlternateLanguages);
-  const missing = HREFLANG_TARGETS.filter((t) => !existing.includes(t));
-  return { configured: true, target: HREFLANG_TARGETS.length, existing, missing };
-}
-
 export async function syncHreflangLocales(): Promise<{
   added: number;
   kept: number;

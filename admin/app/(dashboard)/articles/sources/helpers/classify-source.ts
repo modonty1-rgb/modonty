@@ -11,7 +11,7 @@
 
 export type SourceVerdict = "trusted" | "neutral" | "suspect";
 
-export interface Classification {
+interface Classification {
   verdict: SourceVerdict;
   /** سببٌ يُعرض للمحرّر — لا رمزٌ داخليّ. */
   reason: string;

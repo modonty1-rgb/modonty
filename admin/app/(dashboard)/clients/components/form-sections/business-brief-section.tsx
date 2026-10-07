@@ -3,7 +3,6 @@
 import { UseFormReturn, useWatch } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { FormInput } from "@/components/admin/form-field";
 import { CharacterCounter } from "@/components/shared/character-counter";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 

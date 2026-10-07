@@ -27,8 +27,3 @@ export async function submitSitemap(feedpath: string): Promise<void> {
   const gsc = getGscWriteClient();
   await gsc.sitemaps.submit({ siteUrl: GSC_PROPERTY, feedpath });
 }
-
-export async function deleteSitemap(feedpath: string): Promise<void> {
-  const gsc = getGscWriteClient();
-  await gsc.sitemaps.delete({ siteUrl: GSC_PROPERTY, feedpath });
-}

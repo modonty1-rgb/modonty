@@ -5,7 +5,7 @@ import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-acti
 
 const KNOWN_SITEMAPS = ["/sitemap.xml", "/image-sitemap.xml"] as const;
 
-export interface SitemapFreshnessStats {
+interface SitemapFreshnessStats {
   configured: boolean;
   totalKnown: number;
   staleCount: number;

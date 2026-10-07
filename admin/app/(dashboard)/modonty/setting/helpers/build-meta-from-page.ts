@@ -146,7 +146,7 @@ function withBothArabicMarkets(
   return result;
 }
 
-export interface PageLikeForMeta {
+interface PageLikeForMeta {
   slug: string;
   title?: string | null;
   seoTitle?: string | null;
@@ -177,7 +177,7 @@ export interface PageLikeForMeta {
   twitterImageAlt?: string | null;
 }
 
-export interface BuildMetaOptions {
+interface BuildMetaOptions {
   siteUrl: string;
   existingMeta?: Record<string, unknown>;
   author?: string;

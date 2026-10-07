@@ -1,6 +1,6 @@
 import type { CheckoutOrderStatus } from "@prisma/client";
 
-export interface OrderStatusCopy {
+interface OrderStatusCopy {
   label: string;
   /** جملةٌ تقول من ينتظر ماذا — تظهر عند وقوف المؤشّر على الشارة أو الحبّة. */
   hint: string;

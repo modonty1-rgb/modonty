@@ -84,4 +84,3 @@ export const pageSchema = z.object({
 });
 
 export type PageFormData = z.infer<typeof pageSchema>;
-export type OrganizationSeoForm = NonNullable<PageFormData["organizationSeo"]>;

@@ -18,7 +18,7 @@ export const INVOICE_QR_CID = "zatca-qr";
  * والمصدرُ لقطةٌ من الفاتورة (أو من خطّة إصدارها قبل أن تُكتب)، لا من الكتالوج الحيّ —
  * إلّا تواريخَ الاشتراك: تلك من مدّة الطلب (انظر `subscriptionStart` أدناه).
  */
-export interface InvoiceEmailSource {
+interface InvoiceEmailSource {
   number: string;
   tierName: string;
   period: string;
@@ -44,7 +44,7 @@ export interface InvoiceEmailSource {
   bonusServiceMonths: number | null;
 }
 
-export type BuiltInvoiceEmail =
+type BuiltInvoiceEmail =
   | { ok: true; content: EmailContent; email: string; isTax: boolean; qrPng: Buffer | null }
   | { ok: false; error: string };
 

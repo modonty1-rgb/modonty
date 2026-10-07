@@ -2,7 +2,7 @@ import { ArticleStatus } from "@prisma/client";
 
 /** The three fields any guard needs to judge an article. Kept as a shape, not a
  *  Prisma type, so callers can `select` exactly these and nothing more. */
-export interface ClientSiteGuardInput {
+interface ClientSiteGuardInput {
   isClientSiteArticle: boolean;
   status: ArticleStatus;
   lastFetchedAt: Date | null;

@@ -1,4 +1,4 @@
-import { ArticleStatus, SubscriptionStatus, UserRole, ClientCtaMode } from "@prisma/client";
+import { ArticleStatus, SubscriptionStatus, ClientCtaMode } from "@prisma/client";
 
 export interface FAQItem {
   question: string;
@@ -305,58 +305,6 @@ export interface AuthorFormData {
   socialImageAlt?: string | null;
   cloudinaryPublicId?: string | null;
   canonicalUrl?: string;
-}
-
-export interface CategoryFormData {
-  name: string;
-  slug: string;
-  description?: string;
-  parentId?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  canonicalUrl?: string;
-  socialImage?: string | null;
-  socialImageAlt?: string | null;
-  cloudinaryPublicId?: string | null;
-}
-
-export interface TagFormData {
-  name: string;
-  slug: string;
-  description?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  canonicalUrl?: string;
-  socialImage?: string | null;
-  socialImageAlt?: string | null;
-  cloudinaryPublicId?: string | null;
-}
-
-export interface TagFormDataOld {
-  name: string;
-  slug: string;
-}
-
-export interface IndustryFormData {
-  name: string;
-  slug: string;
-  description?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  canonicalUrl?: string;
-  socialImage?: string | null;
-  socialImageAlt?: string | null;
-  cloudinaryPublicId?: string | null;
-}
-
-export interface UserFormData {
-  name?: string;
-  email?: string;
-  password?: string;
-  role?: UserRole;
-  avatar?: string;
-  image?: string;
-  clientAccess?: string[];
 }
 
 export interface FormSubmitResult {

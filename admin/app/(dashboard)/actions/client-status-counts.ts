@@ -11,7 +11,7 @@ import { getClientIdsMissingCtaMode, getClientImageGaps, getClientDataGaps, NOT_
  * Money first — an expired or overdue client is the one that costs you today.
  */
 
-export interface ClientStatusCounts {
+interface ClientStatusCounts {
   total: number;
   /** Things that cost you money or trust today. */
   needsYou: {

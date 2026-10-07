@@ -58,7 +58,7 @@ export async function getPromptsForApp(app: "modonty" | "admin"): Promise<Prompt
   });
 }
 
-export interface SavePromptResult {
+interface SavePromptResult {
   ok: boolean;
   error?: string;
   /** أسماء المتغيّرات الناقصة — تُسمّى في الرسالة كي لا يخمّن المحرّر أين العطل. */

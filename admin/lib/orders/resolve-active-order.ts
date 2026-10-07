@@ -11,7 +11,7 @@ import { db } from "@/lib/db";
  * existed: the most recent PAID order the client owns. It is deliberately NOT a general
  * "latest order" — an unpaid or failed attempt must never govern a client.
  */
-export async function resolveActiveOrderId(clientId: string): Promise<string | null> {
+async function resolveActiveOrderId(clientId: string): Promise<string | null> {
   const latestPaid = await db.checkoutOrder.findFirst({
     where: { clientId, status: "PAID" },
     orderBy: [{ paidAt: "desc" }, { createdAt: "desc" }],

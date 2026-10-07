@@ -2,7 +2,7 @@ import "server-only";
 
 import { db } from "@/lib/db";
 
-export interface LeadSourceChoice {
+interface LeadSourceChoice {
   value: string;
   label: string;
 }

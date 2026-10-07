@@ -16,7 +16,7 @@ import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-acti
 import { getArticleDefaultsFromSettings } from "@/app/(dashboard)/settings/helpers/get-article-defaults-from-settings";
 
 // Result of metadata generation
-export interface MetadataGenerationResult {
+interface MetadataGenerationResult {
   success: boolean;
   metadata?: any; // Next.js Metadata type
   generationTimeMs?: number;
@@ -26,7 +26,7 @@ export interface MetadataGenerationResult {
 /**
  * Fetch article with all relations needed for metadata generation
  */
-export async function fetchArticleForMetadata(
+async function fetchArticleForMetadata(
   articleId: string
 ): Promise<ArticleWithMetadataRelations | null> {
   return db.article.findUnique({

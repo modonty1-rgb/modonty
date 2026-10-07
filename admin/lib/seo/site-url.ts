@@ -4,8 +4,6 @@ import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
 import { SiteUrlMissingError } from "./site-url-error";
 
-export { SiteUrlMissingError };
-
 /**
  * Single source of truth for the site's base URL.
  *
@@ -44,19 +42,6 @@ export async function loadSiteUrl(): Promise<string> {
   const envValue = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (envValue) return envValue;
   throw new SiteUrlMissingError();
-}
-
-/**
- * Synchronous resolution from a pre-fetched Settings row.
- * Use when you already have settings loaded (avoids extra DB hit).
- *
- * Throws for the same reason `loadSiteUrl` does — a caller holding a blank Settings row is
- * exactly the case that used to publish an invented host.
- */
-export function resolveSiteUrl(settings?: { siteUrl?: string | null } | null): string {
-  const value = settings?.siteUrl?.trim() || process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!value) throw new SiteUrlMissingError();
-  return value;
 }
 
 export interface SiteUrlDriftStatus {

@@ -10,7 +10,7 @@ import * as jsonld from "jsonld";
 
 import { schemaOrgDocumentLoader } from "@/lib/seo/schema-org-document-loader";
 
-export interface ModontyValidationReport {
+interface ModontyValidationReport {
   adobe: { valid: boolean; errors: Array<{ message: string; path?: string }>; warnings: unknown[] };
   ajv: { valid: boolean; errors: string[]; warnings: string[] };
   jsonldJs: { valid: boolean; errors: string[] };
@@ -271,47 +271,4 @@ export async function validateModontyPageJsonLdComplete(
   ]);
   const custom = validateModontyPageBusinessRules(jsonLd);
   return { adobe, ajv: ajvResult, jsonldJs: jsonldJsResult, custom };
-}
-
-const META_REQUIRED_KEYS = [
-  "title",
-  "description",
-  "canonical",
-  "robots",
-  "openGraph",
-  "twitter",
-  "hreflang",
-] as const;
-
-export interface MetaValidationReport {
-  valid: boolean;
-  errors: string[];
-  warnings: string[];
-}
-
-export function validateMetaTags(meta: unknown): MetaValidationReport {
-  const errors: string[] = [];
-  const warnings: string[] = [];
-  if (meta == null || typeof meta !== "object") {
-    return { valid: false, errors: ["Meta tags must be an object"], warnings: [] };
-  }
-  const obj = meta as Record<string, unknown>;
-  for (const key of META_REQUIRED_KEYS) {
-    if (!(key in obj)) {
-      errors.push(`Missing required key: ${key}`);
-    }
-  }
-  if (obj.openGraph != null && typeof obj.openGraph === "object") {
-    const og = obj.openGraph as Record<string, unknown>;
-    if (!("title" in og) || !("url" in og) || !("locale" in og)) {
-      warnings.push("openGraph should have title, url, locale");
-    }
-  }
-  if (obj.twitter != null && typeof obj.twitter === "object") {
-    const tw = obj.twitter as Record<string, unknown>;
-    if (!("card" in tw)) {
-      warnings.push("twitter should have card");
-    }
-  }
-  return { valid: errors.length === 0, errors, warnings };
 }

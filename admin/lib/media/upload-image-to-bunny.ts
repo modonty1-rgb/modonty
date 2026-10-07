@@ -15,7 +15,7 @@ const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
 
 const IMAGE_MIME = /^image\//;
 
-export interface BunnyUploadResult {
+interface BunnyUploadResult {
   success: boolean;
   url?: string;
   width?: number;

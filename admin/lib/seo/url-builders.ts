@@ -1,5 +1,5 @@
 import "server-only";
-import { absoluteUrl, entityUrl, siteOrigin } from "@modonty/shared/lib/seo/absolute-url";
+import { absoluteUrl, entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 
 import { loadSiteUrl } from "./site-url";
 
@@ -52,67 +52,16 @@ export async function buildArticleUrl(slug: string): Promise<string> {
   return buildArticleUrlFromBase(slug, base);
 }
 
-/** Client (publisher) public URL: {siteUrl}/clients/{slug} */
-export async function buildClientUrl(slug: string): Promise<string> {
-  const base = await loadSiteUrl();
-  return buildClientUrlFromBase(slug, base);
-}
-
-/** Category listing URL: {siteUrl}/categories/{slug} */
-export async function buildCategoryUrl(slug: string): Promise<string> {
-  const base = await loadSiteUrl();
-  return buildCategoryUrlFromBase(slug, base);
-}
-
-/** Tag listing URL: {siteUrl}/tags/{slug} */
-export async function buildTagUrl(slug: string): Promise<string> {
-  const base = await loadSiteUrl();
-  return buildTagUrlFromBase(slug, base);
-}
-
-/** Industry listing URL: {siteUrl}/industries/{slug} */
-export async function buildIndustryUrl(slug: string): Promise<string> {
-  const base = await loadSiteUrl();
-  return buildIndustryUrlFromBase(slug, base);
-}
-
-/** Author profile URL: {siteUrl}/authors/{slug} */
-export async function buildAuthorUrl(slug: string): Promise<string> {
-  const base = await loadSiteUrl();
-  return buildAuthorUrlFromBase(slug, base);
-}
-
-/** Homepage URL: {siteUrl} (no trailing slash) */
-export async function buildHomeUrl(): Promise<string> {
-  const base = await loadSiteUrl();
-  return buildHomeUrlFromBase(base);
-}
-
 /** Sitemap URL: {siteUrl}/sitemap.xml */
 export async function buildSitemapUrl(): Promise<string> {
   const base = await loadSiteUrl();
   return buildSitemapUrlFromBase(base);
 }
 
-/** Image sitemap URL: {siteUrl}/image-sitemap.xml */
-export async function buildImageSitemapUrl(): Promise<string> {
-  const base = await loadSiteUrl();
-  return buildImageSitemapUrlFromBase(base);
-}
-
 /** Robots.txt URL: {siteUrl}/robots.txt */
 export async function buildRobotsUrl(): Promise<string> {
   const base = await loadSiteUrl();
   return buildRobotsUrlFromBase(base);
-}
-
-/**
- * Generic absolute URL builder for arbitrary paths.
- * Use ONLY when no specific entity builder fits (e.g. /story, /about, /legal/*).
- */
-export async function buildAbsoluteUrl(path: string): Promise<string> {
-  const base = await loadSiteUrl();
-  return buildAbsoluteUrlFromBase(path, base);
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -145,42 +94,10 @@ export function buildArticleUrlForArticle(
   return buildArticleUrlFromBase(article.slug, modontyBaseUrl);
 }
 
-export function buildClientUrlFromBase(slug: string, baseUrl: string): string {
-  return entityUrl(PATHS.clients, slug, baseUrl);
-}
-
-export function buildCategoryUrlFromBase(slug: string, baseUrl: string): string {
-  return entityUrl(PATHS.categories, slug, baseUrl);
-}
-
-export function buildTagUrlFromBase(slug: string, baseUrl: string): string {
-  return entityUrl(PATHS.tags, slug, baseUrl);
-}
-
-export function buildIndustryUrlFromBase(slug: string, baseUrl: string): string {
-  return entityUrl(PATHS.industries, slug, baseUrl);
-}
-
-export function buildAuthorUrlFromBase(slug: string, baseUrl: string): string {
-  return entityUrl(PATHS.authors, slug, baseUrl);
-}
-
-export function buildHomeUrlFromBase(baseUrl: string): string {
-  return siteOrigin(baseUrl);
-}
-
 export function buildSitemapUrlFromBase(baseUrl: string): string {
   return absoluteUrl(PATHS.sitemap, baseUrl);
 }
 
-export function buildImageSitemapUrlFromBase(baseUrl: string): string {
-  return absoluteUrl(PATHS.imageSitemap, baseUrl);
-}
-
-export function buildRobotsUrlFromBase(baseUrl: string): string {
+function buildRobotsUrlFromBase(baseUrl: string): string {
   return absoluteUrl(PATHS.robots, baseUrl);
-}
-
-export function buildAbsoluteUrlFromBase(path: string, baseUrl: string): string {
-  return absoluteUrl(path, baseUrl);
 }

@@ -30,7 +30,7 @@ export interface MediaSpec {
 }
 
 /** Ratio match tolerance — absorbs sub-pixel rounding from the cropper. */
-export const RATIO_TOLERANCE = 0.02;
+const RATIO_TOLERANCE = 0.02;
 
 export const MEDIA_SPECS: Record<MediaType, MediaSpec> = {
   // Sector page heroes (27 Sep 2026) — `SectorPage.heroMedia` / `heroMobileMedia`. The headline and
@@ -244,7 +244,7 @@ export function isFormatIssue(issue: string): boolean {
   return / — should be (PNG or )?WebP$/.test(issue);
 }
 
-export interface ComplianceResult {
+interface ComplianceResult {
   /** true = the stored image matches its role spec on every checked dimension. */
   ok: boolean;
   /** Short English reasons it fails (admin UI is English). Empty when ok. */

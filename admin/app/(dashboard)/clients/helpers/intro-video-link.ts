@@ -8,9 +8,9 @@
 // `introVideoMediaId` and nulls this in the same write), so the badge disappears on its
 // own. Nothing here needs a cleanup pass.
 
-export type IntroVideoHost = "youtube" | "facebook" | "drive" | "other";
+type IntroVideoHost = "youtube" | "facebook" | "drive" | "other";
 
-export interface IntroVideoLinkInfo {
+interface IntroVideoLinkInfo {
   host: IntroVideoHost;
   /** Arabic label for the badge. */
   label: string;

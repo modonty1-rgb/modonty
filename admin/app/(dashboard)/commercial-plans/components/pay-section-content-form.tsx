@@ -13,7 +13,7 @@ import { updatePaySectionContent } from "../actions";
  * أيضاً؟»)، وتبويبٌ يُخفي أحدهما يجعل السؤال يحتاج نقرتين وذاكرة.
  */
 
-export interface PaySectionValues {
+interface PaySectionValues {
   announcement: string | null;
   headline: string | null;
   subheadline: string | null;

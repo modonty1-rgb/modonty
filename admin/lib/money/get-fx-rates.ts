@@ -23,7 +23,7 @@
 const ENDPOINT = "https://open.er-api.com/v6/latest/SAR";
 const ONE_DAY = 86_400;
 
-export type FxRates = {
+type FxRates = {
   /** كم وحدةً من هذه العملة يساوي ريالاً واحداً — وهو ما يُقسَم عليه للتحويل إلى الريال. */
   perSar: Record<string, number>;
   fetchedAt: string | null;

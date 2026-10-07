@@ -10,7 +10,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 // no invoice, no opening balance, no password hash. `articlesPerMonth` is here because
 // it is a content commitment — how many pieces we owe — not a sum of money.
 
-export interface BriefArticle {
+interface BriefArticle {
   id: string;
   title: string;
   status: ArticleStatus;
@@ -19,7 +19,7 @@ export interface BriefArticle {
 }
 
 /** One of the client's images — sized, because a designer's first question is "how big?". */
-export interface BriefImage {
+interface BriefImage {
   id: string;
   url: string;
   altText: string | null;
@@ -47,7 +47,7 @@ const ROLE_LABELS: Record<string, string> = {
   GENERAL: "عامة",
 };
 
-export interface BriefDetail {
+interface BriefDetail {
   id: string;
   name: string;
   slug: string;

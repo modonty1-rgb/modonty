@@ -13,7 +13,7 @@ import { getAiPrompt, renderPrompt } from "@modonty/shared/lib/ai/get-ai-prompt"
  * والنداء نفسه يستغرق ثوانيَ عند النموذج. قراءةُ صفٍّ قبله لا تُقاس — بينما الكاش
  * كان سيؤخّر ظهور تعديلٍ حفظه خالد قبل ثانية.
  */
-export type AdminPromptKey =
+type AdminPromptKey =
   | "admin.article.system"
   | "admin.article.user"
   | "admin.image.article"

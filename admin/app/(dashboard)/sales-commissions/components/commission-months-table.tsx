@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 
 import { recordCommissionPayoutAction } from "../actions/record-commission-payout";
 
-export interface CommissionRow {
+interface CommissionRow {
   orderId: string;
   number: string;
   clientName: string;

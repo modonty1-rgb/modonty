@@ -18,7 +18,7 @@ import { db } from "@/lib/db";
  * نفسُ القاعدة المستعملة في تقرير المبيعات (`get-sales-report.ts:86`) — مصدرٌ واحد
  * لقراءة العملة، فلا يفترق رقمُ الترحيل عن رقم التقرير.
  */
-export function marketForCountry(country: string | null): { market: "SA" | "EG"; currency: "SAR" | "EGP" } | null {
+function marketForCountry(country: string | null): { market: "SA" | "EG"; currency: "SAR" | "EGP" } | null {
   const c = (country ?? "").trim().toLowerCase();
   if (!c) return null;
   if (/مصر|egypt|\beg\b/.test(c)) return { market: "EG", currency: "EGP" };
@@ -27,7 +27,7 @@ export function marketForCountry(country: string | null): { market: "SA" | "EG";
 }
 
 /** دورةُ الفوترة → شهورٌ مدفوعة. `annual` سنةٌ كاملة، `monthly` شهرٌ واحد. */
-export function monthsForCycle(cycle: string | null): number | null {
+function monthsForCycle(cycle: string | null): number | null {
   if (cycle === "annual") return 12;
   if (cycle === "monthly") return 1;
   return null;

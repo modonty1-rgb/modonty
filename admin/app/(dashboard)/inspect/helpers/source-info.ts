@@ -1,7 +1,7 @@
 import type { InspectPayload } from "./constants";
 import { isDescOk, isTitleOk, META_DESCRIPTION, META_TITLE } from "./seo-rules";
 
-export function countJsonNodes(value: unknown): number {
+function countJsonNodes(value: unknown): number {
   if (value === null || typeof value !== "object") return 0;
   let n = 1;
   for (const v of Object.values(value)) {

@@ -1,14 +1,6 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from "react";
 import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import {
   AlertDialog,
@@ -39,15 +31,7 @@ import {
 import { checkLinksAction } from "../actions/check-links";
 import { InternalLinkReviewDialog } from "./internal-link-review-dialog";
 import { useToast } from "@/hooks/use-toast";
-import {
-  FileText,
-  Edit,
-  Search,
-  Image,
-  Tag,
-  CheckCircle,
-  Code,
-} from "lucide-react";
+import { FileText, Edit, Search, Image, Tag, CheckCircle } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import {
   calculateStepValidation,
@@ -57,7 +41,7 @@ import {
 } from "../helpers/step-validation-helpers";
 import { analyzeArticleSEO } from "../analyzer";
 
-export interface SectionConfig {
+interface SectionConfig {
   id: string;
   label: string;
   icon: LucideIcon;
@@ -157,7 +141,7 @@ const ArticleFormContext = createContext<ArticleFormContextType | undefined>(
 );
 
 /** Partial form data for SOT-from-Settings fields used in the form (display only; not persisted to Article). */
-export type SettingsArticleDefaults = Partial<
+type SettingsArticleDefaults = Partial<
   Pick<
     ArticleFormData,
     | "inLanguage"

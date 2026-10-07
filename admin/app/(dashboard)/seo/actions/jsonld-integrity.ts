@@ -5,13 +5,13 @@ import { revalidatePath } from "next/cache";
 import { batchRegenerateJsonLd } from "@/lib/seo/jsonld-storage";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 
-export interface StaleArticleSample {
+interface StaleArticleSample {
   id: string;
   slug: string;
   title: string;
 }
 
-export interface JsonLdIntegrityStats {
+interface JsonLdIntegrityStats {
   total: number;
   withCache: number;
   staleCount: number;

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-export interface FilterItem {
+interface FilterItem {
   href: string;
   label: string;
   count: number;
@@ -22,7 +22,7 @@ export interface FilterItem {
   hint?: string;
 }
 
-export interface FilterSection {
+interface FilterSection {
   title: string;
   items: FilterItem[];
 }

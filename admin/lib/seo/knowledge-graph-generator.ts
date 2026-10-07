@@ -134,7 +134,7 @@ export interface ArticleWithFullRelations extends Article {
 }
 
 // Platform-wide branding from Settings — used when author is the platform brand (Modonty)
-export interface PlatformBranding {
+interface PlatformBranding {
   siteName?: string | null;
   siteUrl?: string | null;
   brandDescription?: string | null;
@@ -1066,11 +1066,4 @@ function generateBreadcrumbNode(
  */
 export function stringifyKnowledgeGraph(graph: JsonLdGraph): string {
   return JSON.stringify(graph);
-}
-
-/**
- * Convert Knowledge Graph to formatted JSON string (for preview)
- */
-export function stringifyKnowledgeGraphPretty(graph: JsonLdGraph): string {
-  return JSON.stringify(graph, null, 2);
 }

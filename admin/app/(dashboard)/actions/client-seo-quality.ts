@@ -47,7 +47,7 @@ const CHECK_META: Record<string, { label: string; bucket: "content" | "system" }
   "jsonld.warnings": { label: "JSON-LD warnings", bucket: "system" },
 };
 
-export interface ClientSeoQuality {
+interface ClientSeoQuality {
   /** Average SEO score across all clients (sum of scores ÷ count) — the real level. */
   avgScore: number;
   /** Raw sum of every client score — lets the platform overall combine exactly. */

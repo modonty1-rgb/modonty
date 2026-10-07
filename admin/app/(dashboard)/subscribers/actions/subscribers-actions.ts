@@ -34,22 +34,3 @@ export async function updateSubscriberStatus(id: string, subscribed: boolean) {
     return { success: false, error: message };
   }
 }
-
-export async function deleteSubscriber(id: string) {
-  try {
-    await db.subscriber.delete({ where: { id } });
-    revalidatePath("/subscribers");
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to delete subscriber";
-    return { success: false, error: message };
-  }
-}
-
-export async function getClients() {
-  try {
-    return await db.client.findMany({ orderBy: { name: "asc" } });
-  } catch (error) {
-    return [];
-  }
-}

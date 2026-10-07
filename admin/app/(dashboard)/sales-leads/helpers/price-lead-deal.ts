@@ -4,7 +4,7 @@ import type { LeadCatalog, PlanOption } from "./get-lead-catalog";
 import { MARKETS, type Market } from "./markets";
 import { resolveLeadPlan } from "./resolve-lead-plan";
 
-export interface LeadDeal {
+interface LeadDeal {
   /** الباقة من كتالوج سوق العميل — `null` حين لا باقة أو لم تعد تُباع. */
   plan: PlanOption | null;
   /** إجماليّ المدّة = سعر الشهر × الأشهر المدفوعة. `null` حين لا تُسعَّر الصفقة. */

@@ -35,7 +35,7 @@ export interface ModontySiteConfig {
   areaServed?: string;
 }
 
-export interface ModontyPageForJsonLd {
+interface ModontyPageForJsonLd {
   slug: string;
   title: string;
   seoTitle: string | null;

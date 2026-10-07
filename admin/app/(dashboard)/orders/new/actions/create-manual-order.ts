@@ -98,9 +98,9 @@ const Body = z.object({
   renewFromOrderId: z.string().regex(/^[0-9a-f]{24}$/i).optional(),
 });
 
-export type CreateManualOrderInput = z.input<typeof Body>;
+type CreateManualOrderInput = z.input<typeof Body>;
 
-export type CreateManualOrderResult =
+type CreateManualOrderResult =
   | { ok: true; id: string; number: string }
   /** `renewHref` — the buyer is already a client: renew from his current order instead. */
   | { ok: false; error: string; renewHref?: string };

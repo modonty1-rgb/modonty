@@ -5,14 +5,14 @@ import { fetchCruxHistory, type CruxDevice, type CruxPeriod } from "@/lib/seo/cr
 export const SITE_ORIGIN = "https://www.modonty.com";
 
 /** One page per kind. CrUX has no «page type» — only an origin or an exact URL. */
-export const PAGE_TYPES = [
+const PAGE_TYPES = [
   { label: "Home", path: "/" },
   { label: "Articles", path: "/articles" },
   { label: "Clients", path: "/clients" },
   { label: "Reels", path: "/reels" },
 ] as const;
 
-export interface DeviceSpeed {
+interface DeviceSpeed {
   device: CruxDevice;
   /** Latest 28-day window, or null when Google has no record for the site on this device. */
   latest: CruxPeriod | null;
@@ -20,14 +20,14 @@ export interface DeviceSpeed {
   months: CruxPeriod[];
 }
 
-export interface PageTypeSpeed {
+interface PageTypeSpeed {
   label: string;
   path: string;
   /** Latest phone window for this exact URL; null = too few Chrome visitors for Google to report it. */
   latest: CruxPeriod | null;
 }
 
-export interface SpeedKpis {
+interface SpeedKpis {
   devices: DeviceSpeed[];
   pages: PageTypeSpeed[];
   fetchedAt: string;

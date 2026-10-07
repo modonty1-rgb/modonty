@@ -9,7 +9,7 @@ import { logAction } from "@/lib/audit/log-action";
 const escapeHtml = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-export interface ContactMessageFilters {
+interface ContactMessageFilters {
   status?: string;
   clientId?: string;
   startDate?: Date;
@@ -266,15 +266,5 @@ export async function getContactMessagesStats() {
       replied: 0,
       archived: 0,
     };
-  }
-}
-
-export async function getNewContactMessagesCount() {
-  try {
-    const count = await db.contactMessage.count({ where: { status: "new" } });
-    return count;
-  } catch (error) {
-    console.error("Error fetching new contact messages count:", error);
-    return 0;
   }
 }

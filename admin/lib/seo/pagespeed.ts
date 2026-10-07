@@ -224,11 +224,3 @@ function rate(metric: "lcp" | "cls" | "inp" | "fid" | "fcp" | "ttfb", value: num
       return value <= 800 ? "good" : value <= 1800 ? "needs-improvement" : "poor";
   }
 }
-
-/** "All Core Web Vitals = good" → ready */
-export function isCwvReady(report: PageSpeedReport): boolean {
-  const lcpOk = report.lcp?.rating === "good";
-  const clsOk = report.cls?.rating === "good";
-  const inpOk = report.inp?.rating === "good" || report.fid?.rating === "good";
-  return lcpOk && clsOk && inpOk;
-}

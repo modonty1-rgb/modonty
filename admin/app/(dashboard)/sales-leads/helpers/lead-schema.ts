@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LOST_REASONS, PICKABLE_STAGES, STAGES } from "./funnel";
+import { PICKABLE_STAGES } from "./funnel";
 
 /**
  * One schema, enforced on the server. The form mirrors it for instant feedback, but the
@@ -44,7 +44,7 @@ const MOBILE = {
 } as const;
 
 /** هل يصحّ هذا الرقم في هذا السوق؟ — المنطق نفسه الذي تستعمله الشاشة، فلا ينفصل الاثنان. */
-export function isMobileFor(phone: string, country: "SA" | "EG"): boolean {
+function isMobileFor(phone: string, country: "SA" | "EG"): boolean {
   const m = MOBILE[country];
   return m.test.test(m.strip((phone ?? "").replace(/\D/g, "")));
 }
@@ -219,6 +219,4 @@ export const leadSchema = z.object({
   });
 
 export type LeadInput = z.input<typeof leadSchema>;
-export type LeadParsed = z.output<typeof leadSchema>;
 
-export { LOST_REASONS, STAGES };

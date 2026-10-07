@@ -72,7 +72,7 @@ export interface CanonicalSanitizerStats {
   issues: CanonicalIssue[];
 }
 
-export interface CanonicalSanitizerResult {
+interface CanonicalSanitizerResult {
   attempted: number;
   successful: number;
   failed: number;

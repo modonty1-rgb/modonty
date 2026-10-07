@@ -1,7 +1,7 @@
 import { baseTemplate, ctaButton, divider, heading, paragraph, warningBox } from "@modonty/shared/lib/email";
 import type { EmailContent } from "@modonty/shared/lib/email";
 
-export interface ClientWelcomeEmailParams {
+interface ClientWelcomeEmailParams {
   clientName: string;
   email: string;
   password: string;

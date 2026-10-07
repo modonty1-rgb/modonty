@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ReactNode } from "react";
 
 interface FormFieldProps {
@@ -34,7 +34,7 @@ interface FormFieldProps {
  * هذا **المصدرُ المشترك** لحقول الأدمن كلِّها، فالكثافةُ تتغيّر مرّةً وتسري على الجميع.
  * و٤٠px يبقى مقاسَ صفّ الجدول (معيار الأدمن #٣): الجدولُ يُمسح بالعين، والنموذجُ يُملأ.
  */
-export function FormField({ label, name, error, required, hint, children }: FormFieldProps) {
+function FormField({ label, name, error, required, hint, children }: FormFieldProps) {
   return (
     <div className="space-y-1">
       <Label htmlFor={name} className="block cursor-default text-[11px] font-medium leading-none text-muted-foreground">

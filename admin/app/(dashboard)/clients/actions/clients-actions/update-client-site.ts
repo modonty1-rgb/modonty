@@ -36,8 +36,6 @@ const schema = z.object({
   apiKeySuspended: z.boolean(),
 });
 
-export type UpdateClientSiteInput = z.infer<typeof schema>;
-
 export async function updateClientSite(
   clientId: string,
   input: unknown,

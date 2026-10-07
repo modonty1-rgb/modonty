@@ -15,7 +15,7 @@
 import { getYmylConfig, resolveYmylSchemaType } from "./ymyl-helpers";
 import type { YmylCategory } from "@modonty/shared/lib/seo/ymyl-config";
 
-export interface YmylClientForJsonLd {
+interface YmylClientForJsonLd {
   id: string;
   name: string;
   url?: string | null;
@@ -25,7 +25,7 @@ export interface YmylClientForJsonLd {
   addressCountry?: string | null;
 }
 
-export interface YmylReviewerForJsonLd {
+interface YmylReviewerForJsonLd {
   id: string;
   name: string;
   jobTitle?: string | null;
@@ -36,7 +36,7 @@ export interface YmylReviewerForJsonLd {
   imageUrl?: string | null;
 }
 
-export interface YmylArticleContext {
+interface YmylArticleContext {
   /** Canonical URL of the article page */
   pageUrl: string;
   /** YYYY-MM-DD ISO string */
@@ -53,7 +53,7 @@ export interface YmylArticleContext {
  * `WebPage @id .../علاج-الديسك` and `MedicalWebPage @id .../علاج-الديسك#webpage`, with
  * `reviewedBy` sitting on the second. Passing the ids in is what keeps them one node.
  */
-export interface YmylGraphIds {
+interface YmylGraphIds {
   /** @id of the client's Organization node in the main graph. */
   organization: string;
   /** @id of the page's WebPage node in the main graph. */

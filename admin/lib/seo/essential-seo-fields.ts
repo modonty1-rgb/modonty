@@ -10,7 +10,7 @@ export interface EssentialSeoField {
 // Non-negotiable SEO/brand fields for modonty.com's homepage + Organization.
 // Single source of truth = Settings DB. No hardcoded fallback — if any is empty,
 // the admin is alerted (EssentialSeoDialog) to fill it in Modonty settings.
-export const ESSENTIAL_SEO_FIELDS: readonly EssentialSeoField[] = [
+const ESSENTIAL_SEO_FIELDS: readonly EssentialSeoField[] = [
   { key: "siteName", label: "Site Name" },
   { key: "brandDescription", label: "Brand Description" },
   { key: "modontySeoTitle", label: "Homepage SEO Title" },

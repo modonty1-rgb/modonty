@@ -8,9 +8,7 @@
 
 // Word counting and content analysis
 export {
-  calculateWordCount,
   calculateWordCountImproved,
-  detectArabicText,
   calculateReadingTime,
   determineContentDepth,
 } from "./word-count";
@@ -23,20 +21,10 @@ export {
 } from "./seo-generation";
 
 // SEO validation
-export {
-  validateSEOTitle,
-  validateSEODescription,
-  type ValidationResult,
-} from "./seo-validation";
+export {  } from "./seo-validation";
 
 // Breadcrumb generation
-export {
-  generateBreadcrumbPath,
-  type BreadcrumbItem,
-} from "./breadcrumb";
-
-// Content extraction
-export { extractExcerpt } from "./content-extraction";
+export { generateBreadcrumbPath } from "./breadcrumb";
 
 // Re-export slug utilities from utils
-export { slugify, slugifyShort } from "@/lib/utils";
+export { slugify } from "@/lib/utils";

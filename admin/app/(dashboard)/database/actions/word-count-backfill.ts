@@ -29,52 +29,6 @@ import {
 /** Below this ratio of difference a row is left alone — the helper's own rounding. */
 const TOLERANCE = 0.02;
 
-export interface WordCountBackfillStats {
-  /** Every article in the database — counted, not capped. */
-  totalArticles: number;
-  /** How many of them this pass actually read. Below `totalArticles` = the rest went unexamined. */
-  scanned: number;
-  /** Rows whose stored count disagrees with their body. */
-  wrong: number;
-  sample: Array<{ id: string; title: string; stored: number | null; real: number }>;
-}
-
-export async function getWordCountBackfillStats(): Promise<WordCountBackfillStats> {
-  // The cap is real, so it is REPORTED rather than hidden. This read `take: 1000` and then
-  // handed the caller `rows.length` as `totalArticles` — so past a thousand articles the
-  // screen would say "1000 articles, 0 wrong" while the rest of the library went unexamined.
-  // A silent truncation reads as "we covered everything", which is worse than a visible
-  // failure: nobody investigates good news.
-  //
-  // The cap stays (each row carries a full article body; lifting it turns one dashboard click
-  // into a multi-megabyte read), but the true total is counted separately and the difference
-  // is surfaced through `scanned` / `totalArticles`.
-  const SCAN_CAP = 1000;
-  const totalArticles = await db.article.count();
-  const rows = await db.article.findMany({
-    select: { id: true, title: true, content: true, wordCount: true, jsonLdStructuredData: true },
-    take: SCAN_CAP,
-  });
-
-  const wrongRows = rows
-    // No language argument: the helper detects Arabic from the text itself, and the
-    // Article row does not carry a language — forcing "ar" would mis-count an English body.
-    .map((r) => ({ ...r, real: calculateWordCountImproved(r.content ?? "") }))
-    .filter((r) => r.real > 0 && isStale(r.wordCount, r.jsonLdStructuredData, r.real));
-
-  return {
-    totalArticles,
-    scanned: rows.length,
-    wrong: wrongRows.length,
-    sample: wrongRows.slice(0, 5).map((r) => ({
-      id: r.id,
-      title: r.title,
-      stored: r.wordCount,
-      real: r.real,
-    })),
-  };
-}
-
 function withinTolerance(stored: number | null, real: number): boolean {
   if (stored == null) return false;
   return Math.abs(stored - real) <= Math.max(1, real * TOLERANCE);
@@ -94,7 +48,7 @@ function isStale(stored: number | null, card: string | null, real: number): bool
   return inCard !== null && !withinTolerance(inCard, real);
 }
 
-export interface WordCountBackfillResult {
+interface WordCountBackfillResult {
   attempted: number;
   successful: number;
   failed: number;

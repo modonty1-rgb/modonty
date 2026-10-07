@@ -4,7 +4,7 @@
  * Automated alerts for SEO issues via Slack, Discord, and Email.
  */
 
-export interface AlertConfig {
+interface AlertConfig {
   slackWebhookUrl?: string;
   discordWebhookUrl?: string;
   emailRecipients?: string[];
@@ -232,28 +232,6 @@ function getDiscordColorForSeverity(severity: Alert["severity"]): number {
     default:
       return 0x666666; // Gray
   }
-}
-
-/**
- * Create alert from structured data error
- */
-export function createAlertFromError(
-  error: { url: string; type: string; description: string; severity?: "ERROR" | "WARNING" },
-  baseUrl?: string
-): Alert {
-  return {
-    type: error.severity === "ERROR" ? "error" : "warning",
-    title: `Structured Data Error: ${error.type}`,
-    message: error.description,
-    url: error.url.startsWith("http") ? error.url : `${baseUrl}${error.url}`,
-    timestamp: new Date(),
-    severity:
-      error.severity === "ERROR" ? "high" : "medium",
-    metadata: {
-      errorType: error.type,
-      url: error.url,
-    },
-  };
 }
 
 /**

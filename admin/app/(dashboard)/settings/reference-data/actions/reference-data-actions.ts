@@ -121,10 +121,10 @@ const leadSourceSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-export type CountryInput = z.input<typeof countrySchema>;
-export type AuthorityInput = z.input<typeof authoritySchema>;
-export type CtaPresetInput = z.input<typeof ctaPresetSchema>;
-export type LeadSourceInput = z.input<typeof leadSourceSchema>;
+type CountryInput = z.input<typeof countrySchema>;
+type AuthorityInput = z.input<typeof authoritySchema>;
+type CtaPresetInput = z.input<typeof ctaPresetSchema>;
+type LeadSourceInput = z.input<typeof leadSourceSchema>;
 
 const LEAD_SOURCE_SELECT = {
   id: true,
@@ -216,20 +216,6 @@ export async function getReferenceData(): Promise<{
     }),
   ]);
   return { countries, authorities, ctaPresets: ctaPresets.map(toCtaPresetDTO), leadSources };
-}
-
-/**
- * Active sources only — for the «مصدر العميل» dropdown on the lead form.
- *
- * Retired options are excluded here but still resolve to a label on old leads, so a source
- * Khalid stops using disappears from the picker without erasing where past clients came from.
- */
-export async function getActiveLeadSources(): Promise<LeadSourceDTO[]> {
-  return db.leadSourceOption.findMany({
-    where: { isActive: true },
-    orderBy: [{ order: "asc" }, { label: "asc" }],
-    select: LEAD_SOURCE_SELECT,
-  });
 }
 
 /** Active presets only, for the CTA picker on the client form. */

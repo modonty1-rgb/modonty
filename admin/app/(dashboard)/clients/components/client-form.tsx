@@ -4,7 +4,6 @@ import Link from "next/link";
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, AlertTriangle, X, PenLine } from "lucide-react";
 import { useSidebar } from "@/components/contexts/sidebar-context";

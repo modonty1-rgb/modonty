@@ -27,7 +27,7 @@ function usd(n: number): string {
 }
 
 /** ما يحتاجه القرار من التقرير — مفصولٌ عن `AtlasReport` كي يُختبَر القرار بأرقام مكتوبة. */
-export interface BillingFacts {
+interface BillingFacts {
   /** معرّف المنظمة في أطلس — لبناء رابط يفتح لوحة الفوترة مباشرةً. */
   orgId?: string | null;
   pendingUsd: number;

@@ -128,7 +128,7 @@ export async function getReferrals(): Promise<ReferralRow[]> {
   }));
 }
 
-export interface ReferralStats {
+interface ReferralStats {
   total: number;
   byStatus: Record<ReferralLeadStatus, number>;
 }
@@ -159,7 +159,7 @@ export async function getClientOptions(): Promise<Array<{ id: string; name: stri
   return rows.map((c) => ({ id: c.id, name: c.name ?? "بلا اسم" }));
 }
 
-export interface TransitionInput {
+interface TransitionInput {
   /** إلزامي مع «رفض» و«انقطع» — بلا سبب يصير التقرير أرقاماً بلا تفسير. */
   closingNote?: string;
   /**
@@ -169,7 +169,7 @@ export interface TransitionInput {
   convertedClientId?: string;
 }
 
-export interface TransitionResult {
+interface TransitionResult {
   ok: boolean;
   error?: string;
 }

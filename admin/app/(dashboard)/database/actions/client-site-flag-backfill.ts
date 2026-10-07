@@ -18,7 +18,7 @@ import { db } from "@/lib/db";
  * Idempotent: a second run updates zero documents.
  */
 
-export interface ClientSiteFlagBackfillResult {
+interface ClientSiteFlagBackfillResult {
   /** Documents that had no `isClientSiteArticle` key before this ran. */
   missing: number;
   /** Documents actually written. */
@@ -30,7 +30,7 @@ interface UpdateCommandResult {
   nModified?: number;
 }
 
-export async function getClientSiteFlagBackfillStats(): Promise<{ missing: number }> {
+async function getClientSiteFlagBackfillStats(): Promise<{ missing: number }> {
   const result = (await db.$runCommandRaw({
     count: "articles",
     query: { isClientSiteArticle: { $exists: false } },

@@ -14,7 +14,7 @@ type AllSettings = Awaited<ReturnType<typeof getAllSettings>>;
 // Google resolves ONE authoritative Modonty entity (E-E-A-T). Author-as-Organization is
 // official (Google: link to the org's home page). Individual writers, if added later,
 // stay Person — Person is correct for a person, not the brand.
-export interface ModontyAuthorSeoSource {
+interface ModontyAuthorSeoSource {
   name: string;
   slug: string;
   bio?: string | null;

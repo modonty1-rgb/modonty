@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
-import { ImageIcon, X, Upload, Pencil } from "lucide-react";
+import { ImageIcon, X, Pencil } from "lucide-react";
 import type { MediaType } from "@prisma/client";
 import { MEDIA_SPECS } from "@/lib/media/media-specs";
 import { MediaPickerDialog } from "./media-picker-dialog";

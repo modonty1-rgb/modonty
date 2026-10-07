@@ -41,7 +41,7 @@ export async function getCategoryMergeImpact(sourceId: string, targetId: string)
   return { movedCount, childrenCount, affectedCount: movedCount };
 }
 
-export interface PrepareCategoryMergeResult {
+interface PrepareCategoryMergeResult {
   success: boolean;
   error?: string;
   sourceName?: string;

@@ -24,7 +24,7 @@ export async function getBunnyMigrationStats(): Promise<BunnyMigrationStats> {
   return { total, migrated, pending: total - migrated };
 }
 
-export interface BunnyMigrationResult {
+interface BunnyMigrationResult {
   attempted: number;
   migrated: number;
   failed: number;

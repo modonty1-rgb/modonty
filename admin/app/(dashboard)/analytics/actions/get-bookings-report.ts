@@ -18,7 +18,7 @@ const WINDOW_DAYS = 90;
  *  Stays unexported — a "use server" file may only export async functions. */
 const BOOKING_SOURCES = ["article_dock", "article_card", "client_page", "client_list"] as const;
 
-export interface BookingRow {
+interface BookingRow {
   id: string;
   name: string | null; // null for whatsapp / legacy leads
   email: string | null;
@@ -34,7 +34,7 @@ export interface BookingRow {
   createdAt: string;
 }
 
-export interface BookingsReport {
+interface BookingsReport {
   rows: BookingRow[];
   kpi: {
     total: number;

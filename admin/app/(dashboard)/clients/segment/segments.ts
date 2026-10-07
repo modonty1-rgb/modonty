@@ -26,7 +26,7 @@ import { hasStoredOgImage } from "@modonty/shared/lib/seo/client/meta-score";
  * Both resolve to an id list and are handed back as `{ id: { in: ids } }`.
  */
 
-export type SegmentKey =
+type SegmentKey =
   | "overdue"
   | "expired"
   | "expiring-soon"
@@ -57,7 +57,7 @@ export type SegmentKey =
   | "unreachable";
 
 /** Where a row's action button lands — the page where THIS segment's problem is fixed. */
-export type SegmentAction = { label: string; path: "account" | "edit" | "seo" | "technical" };
+type SegmentAction = { label: string; path: "account" | "edit" | "seo" | "technical" };
 
 interface Segment {
   title: string;
@@ -166,7 +166,7 @@ export async function getClientIdsMissingCtaMode(): Promise<string[]> {
 }
 
 /** The record fields that keep the money and the schema honest. */
-export type DataGapKey = "no-end-date" | "no-address" | "no-social" | "no-description";
+type DataGapKey = "no-end-date" | "no-address" | "no-social" | "no-description";
 
 /**
  * Which clients have holes in their record (Khalid 2026-07-14, live test: the dashboard
@@ -243,7 +243,7 @@ export async function getClientDataGaps(): Promise<Record<DataGapKey, string[]>>
 }
 
 /** The three pictures a client page and its search/social preview are built from. */
-export type ImageGapKey = "no-logo" | "no-hero" | "no-og" | "no-image";
+type ImageGapKey = "no-logo" | "no-hero" | "no-og" | "no-image";
 
 /**
  * Which clients are missing which image (Khalid 2026-07-13: «العميل اللي ما عنده logo

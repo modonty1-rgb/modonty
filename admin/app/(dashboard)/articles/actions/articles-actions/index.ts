@@ -1,18 +1,15 @@
 export type { ArticleFilters } from "./queries/get-articles";
 export { getArticles } from "./queries/get-articles";
 export type {
-  ArticleSelectionFilters,
   ArticleSelectionItem,
 } from "./queries/get-articles-for-selection";
 export { getArticlesForSelection } from "./queries/get-articles-for-selection";
 export { getArticleById, getArticleEngagementCounts, loadArticleOrProblem } from "./queries/get-article-by-id";
-export { getArticleBySlug } from "./queries/get-article-by-slug";
 export { getClients } from "./queries/get-articles-clients";
 export { getWritableClients } from "./queries/get-writable-clients";
 export { getCategories } from "./queries/get-articles-categories";
 export { getAuthors } from "./queries/get-articles-authors";
 export { createArticle } from "./mutations/create-article";
 export { updateArticle } from "./mutations/update-article";
-export { deleteArticle } from "./mutations/delete-article";
 export { archiveArticle, unarchiveArticle } from "./mutations/archive-article";
 

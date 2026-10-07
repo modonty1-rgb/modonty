@@ -3,7 +3,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 
 // Best-practice ceiling for a web image. Anything heavier — or any non-WebP format —
 // is flagged for the maintenance optimizer. WebP masters average ~130KB in this library.
-export const OVERSIZE_BYTES = 300 * 1024;
+const OVERSIZE_BYTES = 300 * 1024;
 
 export interface OptimizableImage {
   id: string;

@@ -54,7 +54,7 @@ const schema = z.object({
   // let the displayed name and the real one drift apart.
 });
 
-export type SaveImageSeoInput = z.infer<typeof schema>;
+type SaveImageSeoInput = z.infer<typeof schema>;
 
 /** The object's file name as stored on Bunny, decoded and without its extension. */
 function bunnyStem(url: string): string {

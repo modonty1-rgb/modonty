@@ -11,8 +11,8 @@
 
 import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { renderPageToHTML } from "./page-renderer";
-import { extractStructuredData, combineExtractedData } from "./page-extractor";
-import { validateExtractedData, validateJsonLdComplete } from "./jsonld-validator";
+import { extractStructuredData } from "./page-extractor";
+import { validateExtractedData } from "./jsonld-validator";
 import { analyzePageSEO } from "./page-seo-analyzer";
 import type {
   FullPageValidationResult,
@@ -316,24 +316,4 @@ function generateValidationIssues(
   }
 
   return { critical, warnings, suggestions };
-}
-
-// `generateHTMLFromDatabase` was deleted on 27 Aug 2026 with the fallback that called it.
-// It assembled a title, a description and one JSON-LD block — no canonical, no robots, no
-// hreflang, no Open Graph — and the validator judged that as if it were the page. A page
-// we could not render is not a page with less markup; leaving the builder here would only
-// invite the same swap back.
-
-/**
- * Escape HTML to prevent XSS
- */
-function escapeHtml(text: string): string {
-  const map: Record<string, string> = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;",
-  };
-  return text.replace(/[&<>"']/g, (m) => map[m]);
 }

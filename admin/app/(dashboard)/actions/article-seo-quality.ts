@@ -41,7 +41,7 @@ const CHECK_META: Record<string, { label: string; bucket: "content" | "system" }
   "jsonld.publisher": { label: "JSON-LD publisher", bucket: "system" },
 };
 
-export interface ArticleSeoQuality {
+interface ArticleSeoQuality {
   /** Average SEO score across all articles (sum of scores ÷ count) — the real level. */
   avgScore: number;
   /** Raw sum of every article score — lets the platform overall combine exactly. */

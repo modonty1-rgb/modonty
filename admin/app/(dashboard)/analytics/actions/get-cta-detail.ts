@@ -8,7 +8,7 @@ import { runReport } from "@/lib/analytics/ga4-data-api";
  * GA4 event name verified: outbound_click (events-registry.ts).
  */
 
-export interface CtaDetail {
+interface CtaDetail {
   byDay: Array<{ date: string; count: number }>;
   byPage: Array<{ path: string; count: number }>;
   bySource: Array<{ source: string; count: number }>;

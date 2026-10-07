@@ -33,7 +33,7 @@ export type PlanAction =
   | "needs-decision" // URL's Media row is owned by ANOTHER client — reported, never touched
   | "done"; // already converted — idempotent skip
 
-export interface PlanItem {
+interface PlanItem {
   action: PlanAction;
   label: string;
   url?: string;

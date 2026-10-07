@@ -19,7 +19,7 @@ import { Loader2, CheckCircle2, XCircle } from "lucide-react";
  * The elapsed clock always ticks from real time, so even in indeterminate mode the operator
  * has a truthful signal that work is still happening.
  */
-export interface TaskProgressProps {
+interface TaskProgressProps {
   /** true while the job runs. Flipping to false with no error renders the success state. */
   active: boolean;
   /** Items completed — omit for indeterminate mode. */

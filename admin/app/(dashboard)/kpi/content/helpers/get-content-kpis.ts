@@ -46,7 +46,7 @@ export interface WriterKpi {
   clients: ClientKpi[];
 }
 
-export interface ContentKpis {
+interface ContentKpis {
   writers: WriterKpi[];
   /** prevStart/prevEnd are null for «All time» — there is no earlier window to compare with. */
   range: { start: string; end: string; prevStart: string | null; prevEnd: string | null };

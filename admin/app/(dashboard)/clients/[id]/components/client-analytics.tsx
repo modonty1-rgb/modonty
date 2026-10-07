@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { Eye, Users, Clock, TrendingDown, MousePointerClick, BarChart3, Search, Share2, Mail, ExternalLink, FileText, Package, Calendar, AlertCircle, TrendingUp } from "lucide-react";
+import { Eye, Users, Clock, TrendingDown, BarChart3, Search, Share2, Mail, ExternalLink, FileText, Package, Calendar, AlertCircle, TrendingUp } from "lucide-react";
 import { AnalticCard } from "@/components/shared/analtic-card";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";

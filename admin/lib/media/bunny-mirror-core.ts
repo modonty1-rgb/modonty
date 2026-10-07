@@ -8,7 +8,7 @@ import { generateBlurDataUrl } from "./generate-blur";
 
 import type { MediaType, MediaScope } from "@prisma/client";
 
-export interface MirrorImageInput {
+interface MirrorImageInput {
   sourceUrl: string; // the Cloudinary image to copy
   filename: string;
   type?: MediaType;
@@ -17,7 +17,7 @@ export interface MirrorImageInput {
   cloudinaryPublicId?: string | null;
 }
 
-export interface UploadImageBufferInput {
+interface UploadImageBufferInput {
   buffer: Buffer;
   contentType?: string;
   filename: string;
@@ -95,4 +95,3 @@ export async function mirrorImageToBunny(
   return { bunnyUrl: uploaded.bunnyUrl, blurDataURL };
 }
 
-export type { MediaType, MediaScope };

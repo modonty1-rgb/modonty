@@ -26,7 +26,7 @@
  *                   may be perfectly fine for a human; never counted against anyone.
  * - `inconclusive`— timeout, DNS failure, reset. Unknown, not proven dead.
  */
-export type HeadVerdict = "ok" | "dead" | "blocked" | "inconclusive";
+type HeadVerdict = "ok" | "dead" | "blocked" | "inconclusive";
 
 export interface HeadResult {
   url: string;

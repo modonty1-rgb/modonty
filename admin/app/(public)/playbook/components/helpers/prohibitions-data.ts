@@ -8,9 +8,9 @@ import { FileText, Film, Hash, Link2, Share2, Shield } from "lucide-react";
  * اللوقو (خالد، ١٢ سبتمبر ٢٠٢٦: «كل واحد وديه على قسمه»). و`dept` هو ما يسحب به كل
  * قسم ما يخصّه، وتبقى الصفحة الجامعة فهرسًا يدلّ عليها.
  */
-export type Severity = "critical" | "high" | "medium";
+type Severity = "critical" | "high" | "medium";
 
-export interface Prohibition {
+interface Prohibition {
   name: string;
   /** قسمٌ يخالف قسم المجموعة — البند هو ما يقع فيه الموظّف، لا عنوان المجموعة. */
   dept?: string;
@@ -18,7 +18,7 @@ export interface Prohibition {
   severity: Severity;
 }
 
-export interface ProhibitionCategory {
+interface ProhibitionCategory {
   category: string;
   /** مفتاح القسم: design · marketing · content · tech */
   dept: string;

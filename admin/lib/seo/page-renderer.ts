@@ -6,10 +6,9 @@
  */
 
 import { entityUrl } from "@modonty/shared/lib/seo/absolute-url";
-import { db } from "@/lib/db";
 import type { PageType } from "./types";
 
-export interface RenderOptions {
+interface RenderOptions {
   /** Settings.siteUrl, from `loadSiteUrl()`. Required — see getPageUrl below. */
   baseUrl: string;
   includeMetadata?: boolean;

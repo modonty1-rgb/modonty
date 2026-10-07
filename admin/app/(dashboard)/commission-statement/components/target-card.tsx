@@ -3,7 +3,7 @@ import { Target } from "lucide-react";
 
 import { formatOrderMoney } from "@/lib/orders/format-order-money";
 
-export interface TargetCardProps {
+interface TargetCardProps {
   monthLabel: string;
   /** Null when no target is set for this month. */
   targetSarMinor: number | null;

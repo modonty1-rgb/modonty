@@ -20,7 +20,7 @@ import { generateAndSaveNextjsMetadata } from "@/lib/seo/metadata-storage";
 // globally — run this optimizer in PRODUCTION only (same rule as the Orphans cleaner), or a
 // prod page still pointing at the old public_id would break.
 
-export interface OptimizedImageInput {
+interface OptimizedImageInput {
   url: string;
   publicId?: string | null;
   mimeType: string;

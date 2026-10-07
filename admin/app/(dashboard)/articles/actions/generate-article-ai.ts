@@ -2,14 +2,14 @@
 
 import { generateComprehensiveArticleData } from "@/lib/openai-article-generator";
 
-export interface GenerateArticleAIRequest {
+interface GenerateArticleAIRequest {
   keywords: string;
   length: "short" | "medium" | "long";
   clientId?: string;
   categoryId?: string;
 }
 
-export interface GenerateArticleAIResponse {
+interface GenerateArticleAIResponse {
   success: boolean;
   data?: {
     title: string;

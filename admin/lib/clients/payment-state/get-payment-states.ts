@@ -1,4 +1,4 @@
-import { CheckoutOrderStatus, InvoicePaymentStatus } from "@prisma/client";
+import { CheckoutOrderStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { NOT_ARCHIVED } from "@/lib/invoices/not-archived";
 import {
@@ -93,6 +93,3 @@ export async function getPaymentStates(clientIds: string[]): Promise<Map<string,
   }
   return out;
 }
-
-/** فحصٌ سريع: هل على هذا العميل فاتورةٌ تمنع إصدار التالية؟ يقرأ `NOT_ARCHIVED` نفسه. */
-export const UNPAID_INVOICE_WHERE = { paymentStatus: { not: InvoicePaymentStatus.PAID }, ...NOT_ARCHIVED } as const;

@@ -2,26 +2,7 @@ import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-im
 import { tileAspectRatio, shouldContainTile } from "@modonty/shared/lib/justify-rows";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowRight,
-  BookOpen,
-  Building2,
-  ExternalLink,
-  Facebook,
-  FileText,
-  Ghost,
-  Globe,
-  Image as ImageIcon,
-  Instagram,
-  Linkedin,
-  Link2,
-  MessageCircle,
-  Music2,
-  Share2,
-  ShieldAlert,
-  Twitter,
-  Youtube,
-} from "lucide-react";
+import { ArrowRight, BookOpen, ExternalLink, Facebook, FileText, Ghost, Globe, Image as ImageIcon, Instagram, Linkedin, Link2, MessageCircle, Music2, Share2, ShieldAlert, Twitter, Youtube } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { getIntakeForm } from "@/app/(dashboard)/intake/actions/intake-admin-actions";

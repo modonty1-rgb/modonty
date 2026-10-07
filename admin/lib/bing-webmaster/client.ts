@@ -50,7 +50,7 @@ async function bingGet<T>(endpoint: string): Promise<T> {
 //     10 times). Sorting raw rows ranks single days, so a top-10 table repeated the
 //     same URL. Always aggregate through `aggregateBingStats` before ranking.
 //   • `AvgClickPosition: -1` is Bing's "no clicks" sentinel, not a position.
-export interface BingQueryStat {
+interface BingQueryStat {
   Query?: string | null;
   Page?: string | null;
   Date?: string;
@@ -61,7 +61,7 @@ export interface BingQueryStat {
 }
 
 /** Same wire shape as BingQueryStat — GetPageStats returns QueryStats objects. */
-export type BingPageStat = BingQueryStat;
+type BingPageStat = BingQueryStat;
 
 /** One row per distinct query/URL, summed across every day Bing reported. */
 export interface BingAggregatedStat {
@@ -106,23 +106,12 @@ export function aggregateBingStats(
   }));
 }
 
-export interface BingRankAndTraffic {
+interface BingRankAndTraffic {
   Date: string; // /Date(timestamp)/ format
   Clicks: number;
   Impressions: number;
   AvgClickPosition?: number;
   AvgImpressionPosition?: number;
-}
-
-export interface BingCrawlStat {
-  Date: string;
-  CrawledPages: number;
-  CrawlErrors: number;
-  HttpStatus2xx?: number;
-  HttpStatus3xx?: number;
-  HttpStatus4xx?: number;
-  HttpStatus5xx?: number;
-  InLinks?: number;
 }
 
 export async function getBingQueryStats(): Promise<BingQueryStat[]> {
@@ -137,23 +126,10 @@ export async function getBingRankAndTrafficStats(): Promise<BingRankAndTraffic[]
   return bingGet<BingRankAndTraffic[]>("GetRankAndTrafficStats");
 }
 
-export async function getBingCrawlStats(): Promise<BingCrawlStat[]> {
-  return bingGet<BingCrawlStat[]>("GetCrawlStats");
-}
-
-/**
- * Convert Bing's "/Date(1747526400000+0000)/" format to JS Date.
- */
-export function parseBingDate(s: string): Date | null {
-  const m = s.match(/\/Date\((\d+)([+-]\d{4})?\)\//);
-  if (!m) return null;
-  return new Date(Number(m[1]));
-}
-
 /**
  * Aggregate daily trafffic data into a single totals object.
  */
-export interface BingTotals {
+interface BingTotals {
   totalClicks: number;
   totalImpressions: number;
   ctr: number;

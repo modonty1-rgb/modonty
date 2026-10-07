@@ -60,7 +60,7 @@ const CLIENT_TYPE_USED: MediaType[] = [MediaType.GALLERY, MediaType.CLIENT_MINI]
  * Every back-relation that makes a file «used». `media-links.ts` reads each one from its
  * pointer field; its `Record` type fails to compile when a relation is added here and not there.
  */
-export const MEDIA_USAGE_RELATIONS = [
+const MEDIA_USAGE_RELATIONS = [
   "featuredArticles",
   "articleGallery",
   "logoClients",

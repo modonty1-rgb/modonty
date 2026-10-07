@@ -22,7 +22,7 @@ import { logAction } from "@/lib/audit/log-action";
  *   - The target must be an earlier stage than the current one (backward only).
  */
 
-export interface ResetStatusResult {
+interface ResetStatusResult {
   success: boolean;
   error?: string;
 }

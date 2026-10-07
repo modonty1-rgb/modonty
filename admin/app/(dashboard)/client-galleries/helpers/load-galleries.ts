@@ -50,7 +50,7 @@ export interface GalleryImageRow {
   createdAt: string;
 }
 
-export interface ClientGalleryData {
+interface ClientGalleryData {
   client: { id: string; name: string };
   images: GalleryImageRow[];
 }

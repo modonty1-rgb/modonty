@@ -25,7 +25,7 @@ const CONSOLE_URL = process.env.CONSOLE_URL || "https://console.modonty.com";
  */
 const ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
 
-export function generateWelcomePassword(length = 14): string {
+function generateWelcomePassword(length = 14): string {
   let out = "";
   for (let i = 0; i < length; i++) out += ALPHABET[randomInt(ALPHABET.length)];
   return out;

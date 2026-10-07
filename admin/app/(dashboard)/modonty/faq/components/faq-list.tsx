@@ -16,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Edit, Trash2, ChevronUp, ChevronDown, Eye, EyeOff, GripVertical } from "lucide-react";
+import { Edit, Trash2, ChevronUp, ChevronDown, Eye, EyeOff } from "lucide-react";
 import { deleteFAQ, toggleFAQStatus, bulkUpdatePositions } from "../actions/faq-actions";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";

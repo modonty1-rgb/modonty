@@ -10,7 +10,7 @@ import type { Prisma } from "@prisma/client";
 // Google's ONLY quantitative requirement for Article rich results
 const MIN_IMAGE_PIXELS = 50_000;
 
-export interface DbArticleInput {
+interface DbArticleInput {
   id: string;
   slug: string;
   title: string;
@@ -547,19 +547,6 @@ function pushScheduledAtCheck(checks: ValidationCheck[], a: DbArticleInput) {
     detail: ok ? undefined : "The article is scheduled, but its scheduled time is missing or already passed",
     fix: ok ? undefined : "Edit article → set a future date in Schedule field.",
   });
-}
-
-// ═══ Helpers ═══
-
-function countWords(content: string): number {
-  if (!content) return 0;
-  const text = content
-    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  return text ? text.split(/\s+/).length : 0;
 }
 
 function extractImagesFromContent(html: string): { src: string; alt: string }[] {

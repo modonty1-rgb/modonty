@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SearchCombobox, type SearchOption } from "@/components/shared/search-combobox";
 
 /** Writes one filter to the URL, back to page 1, inside a transition so the control can show it. */
-export function useFilterParam() {
+function useFilterParam() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

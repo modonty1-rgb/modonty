@@ -7,7 +7,7 @@ import { ChevronDown, ChevronUp, Loader2, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-export interface SlotRow {
+interface SlotRow {
   id: string;
   title: string;
   /** The grey line under the title — the industry on the homepage, the partner on a sector. */

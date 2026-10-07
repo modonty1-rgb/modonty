@@ -39,7 +39,7 @@ async function loadGoogleApis() {
 
 type JWTType = import("google-auth-library").JWT;
 
-export interface SearchConsoleCredentials {
+interface SearchConsoleCredentials {
   clientEmail: string;
   privateKey: string;
   siteUrl: string;
@@ -52,19 +52,6 @@ export interface StructuredDataError {
   description: string;
   firstDetected: Date;
   affectedItems?: number;
-}
-
-export interface PerformanceData {
-  clicks: number;
-  impressions: number;
-  ctr: number;
-  position: number;
-  date: Date;
-  hourlyBreakdown?: Array<{
-    hour: number;
-    clicks: number;
-    impressions: number;
-  }>;
 }
 
 /**
@@ -131,7 +118,7 @@ export async function initSearchConsoleClient(
  * Outcome of one URL Inspection call, with "we did not read it" kept apart from
  * "we read it and it was clean". An empty error list means nothing on its own.
  */
-export type RichResultsInspection =
+type RichResultsInspection =
   | { status: "unknown"; url: string; reason: string }
   | { status: "clean"; url: string; verdict: string; errors: [] }
   | { status: "issues"; url: string; verdict: string; errors: StructuredDataError[] };
@@ -147,7 +134,7 @@ export type RichResultsInspection =
  * `severity` is one of SEVERITY_UNSPECIFIED · WARNING · ERROR. VERDICT_UNSPECIFIED (or a
  * missing `richResultsResult`) is *not* a pass — Google did not answer, so we say so.
  */
-export async function inspectRichResults(
+async function inspectRichResults(
   siteUrl: string,
   auth: JWTType,
   inspectionUrl: string = siteUrl
@@ -230,55 +217,6 @@ export async function fetchStructuredDataErrors(
     );
   }
   return inspection.errors;
-}
-
-/**
- * Fetch performance data (clicks, impressions, CTR, position)
- * Includes hourly breakdown if available (April 2025 API update)
- */
-export async function fetchHourlyPerformanceData(
-  siteUrl: string,
-  auth: JWTType,
-  date: Date
-): Promise<PerformanceData | null> {
-  try {
-    const { google: googleApi } = await loadGoogleApis();
-    const searchconsole = googleApi.searchconsole("v1");
-
-    const dateString = date.toISOString().split("T")[0];
-
-    const response = await searchconsole.searchanalytics.query({
-      auth,
-      siteUrl,
-      requestBody: {
-        startDate: dateString,
-        endDate: dateString,
-        dimensions: ["date"],
-        rowLimit: 100,
-      },
-    });
-
-    if (!response.data.rows || response.data.rows.length === 0) {
-      return null;
-    }
-
-    const row = response.data.rows[0];
-    const clicks = row.clicks || 0;
-    const impressions = row.impressions || 0;
-    const ctr = impressions > 0 ? (clicks / impressions) * 100 : 0;
-    const position = row.position || 0;
-
-    return {
-      clicks,
-      impressions,
-      ctr,
-      position,
-      date,
-    };
-  } catch (error) {
-    console.error("Failed to fetch performance data:", error);
-    return null;
-  }
 }
 
 /**

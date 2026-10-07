@@ -5,7 +5,7 @@ import { metaMinorToMajor } from "../helpers/meta-minor-to-major";
 import { readMetaCredentials } from "../helpers/read-meta-credentials";
 
 export type Brand = "modonty" | "jbrseo";
-export type Platform = "all" | "facebook" | "instagram";
+type Platform = "all" | "facebook" | "instagram";
 
 type MetaValue = { value?: string };
 type MetaResult = { indicator?: string; values?: MetaValue[] };
@@ -109,7 +109,7 @@ const GOAL_ACTION: Record<string, string> = {
  * 26 s measured in the dev log — for figures Meta itself updates only every few minutes. The URL carries
  * the period and breakdown, so each filter combination is its own entry; the tag lets a refresh drop them.
  */
-export const META_REPORT_TAG = "meta-report";
+const META_REPORT_TAG = "meta-report";
 const META_CACHE = { next: { revalidate: 300, tags: [META_REPORT_TAG] } };
 
 const num = (v: string | undefined) => {

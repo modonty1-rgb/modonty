@@ -1,6 +1,6 @@
 import { SEODoctorConfig } from "@/components/shared/seo-doctor";
 
-export interface SEOScoreResult {
+interface SEOScoreResult {
   score: number;
   maxScore: number;
   percentage: number;

@@ -588,50 +588,6 @@ function absoluteUrl(href: string, base: string): string {
   }
 }
 
-export async function validateArticles(
-  articles: InputArticle[],
-  concurrency = 3,
-): Promise<ValidationResult[]> {
-  const results: ValidationResult[] = [];
-  let cursor = 0;
-
-  async function worker() {
-    while (cursor < articles.length) {
-      const idx = cursor++;
-      const article = articles[idx];
-      try {
-        results[idx] = await validateArticle(article);
-      } catch (e) {
-        results[idx] = {
-          url: article.url,
-          articleId: article.id,
-          slug: article.slug,
-          title: article.title,
-          status: "critical",
-          fetchOk: false,
-          fetchStatus: 0,
-          passedCount: 0,
-          failedCount: 1,
-          totalChecks: 1,
-          checks: [
-            {
-              id: "fetch",
-              label: "Validation run",
-              severity: "critical",
-              passed: false,
-              detail: e instanceof Error ? e.message : "Validator crashed",
-            },
-          ],
-          validatedAt: new Date().toISOString(),
-        };
-      }
-    }
-  }
-
-  await Promise.all(Array.from({ length: Math.min(concurrency, articles.length) }, worker));
-  return results;
-}
-
 function matchTag(html: string, re: RegExp): string | undefined {
   const m = html.match(re);
   return m ? m[1] : undefined;

@@ -39,20 +39,6 @@ export async function getFAQs() {
   }
 }
 
-export async function getActiveFAQs() {
-  try {
-    const faqs = await db.fAQ.findMany({
-      where: { isActive: true },
-      select: faqListSelect,
-      orderBy: { position: "asc" },
-    });
-    return faqs;
-  } catch (error) {
-    console.error("Error fetching active FAQs:", error);
-    return [];
-  }
-}
-
 export async function getFAQById(id: string) {
   try {
     const faq = await db.fAQ.findUnique({
@@ -193,27 +179,6 @@ export async function deleteFAQ(id: string) {
   }
 }
 
-export async function reorderFAQs(ids: string[]) {
-  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-  try {
-    const updates = ids.map((id, index) => ({
-      where: { id },
-      data: { position: index },
-    }));
-
-    await Promise.all(updates.map((update) => db.fAQ.update(update)));
-
-    revalidatePath("/modonty/faq");
-    revalidatePath("/help/faq");
-    await revalidateModontyTag("faqs");
-    await regenerateFaqSeoCache();
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to reorder FAQs";
-    return { success: false, error: message };
-  }
-}
-
 export async function toggleFAQStatus(id: string) {
   const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
@@ -234,25 +199,6 @@ export async function toggleFAQStatus(id: string) {
     return { success: true, faq: updated };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to toggle FAQ status";
-    return { success: false, error: message };
-  }
-}
-
-export async function updateLastReviewed(id: string) {
-  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-  try {
-    const faq = await db.fAQ.update({
-      where: { id },
-      data: { lastReviewed: new Date() },
-    });
-
-    revalidatePath("/modonty/faq");
-    revalidatePath("/help/faq");
-    await revalidateModontyTag("faqs");
-    await regenerateFaqSeoCache();
-    return { success: true, faq };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update last reviewed";
     return { success: false, error: message };
   }
 }
