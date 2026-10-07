@@ -1,10 +1,8 @@
 import NextAuth from "next-auth";
-import { ConversionType } from "@prisma/client";
 import { authConfig } from "../auth.config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./db";
-import { createConversion } from "./analytics/conversion-tracking";
-import { trackSignupComplete } from "./analytics/events-registry";
+import { recordOAuthSignup } from "./auth/record-oauth-signup";
 
 // Required for deployment. See: https://authjs.dev/getting-started/deployment
 // Set AUTH_SECRET in your deployment env (Vercel, etc.). Generate: pnpm exec auth secret
@@ -35,17 +33,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // Fires only for adapter-created users (OAuth / Google first sign-in).
     // Credentials users are created in registerUser, which counts its own
     // signup_complete — so there's no double-count here.
+    // Body shared with the reader app's Google/Apple sign-in (lib/auth/record-oauth-signup.ts);
+    // it never throws, so the auth flow is never blocked.
     async createUser({ user }) {
       if (!user?.id) return;
-      try {
-        await createConversion({ type: ConversionType.SIGNUP, userId: user.id });
-        void trackSignupComplete(
-          { signup_method: "google", signup_source: "page" },
-          { userId: user.id },
-        );
-      } catch {
-        // never block the auth flow
-      }
+      await recordOAuthSignup(user.id, "google", "page");
     },
   },
   logger: {

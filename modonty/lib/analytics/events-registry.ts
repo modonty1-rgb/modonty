@@ -130,8 +130,10 @@ export interface ConversionCompleteParams extends ClientContext {
 export interface FollowConversionParams extends ClientContext {}
 
 // ─── Signup funnel (3) — visitor → registered user ───────────────────────────
-type SignupSource = "header" | "banner" | "page";
-type SignupMethod = "google" | "email";
+/** `app` = the modonty reader mobile app (`/api/mobile/v1/auth/*`). */
+type SignupSource = "header" | "banner" | "page" | "app";
+/** `apple` = Sign in with Apple — reader mobile app only (`/api/mobile/v1/auth/apple`). */
+type SignupMethod = "google" | "email" | "apple";
 export interface SignupViewParams {
   signup_source?: SignupSource;
 }
