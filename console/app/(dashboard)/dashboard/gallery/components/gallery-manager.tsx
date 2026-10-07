@@ -16,9 +16,9 @@ import {
   addGalleryImage,
   updateGalleryImageAlt,
   deleteGalleryImage,
-  setImageInReels,
   type GalleryImage,
 } from "../actions/gallery-actions";
+import { setImageInReels } from "@/lib/reels/actions/set-image-in-reels";
 
 /** Gallery row plus the state of its reel, if the client chose to have one. */
 type GalleryItem = GalleryImage & { inReels: boolean; reelStatus: string | null };

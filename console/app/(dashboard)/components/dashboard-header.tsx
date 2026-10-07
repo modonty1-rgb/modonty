@@ -7,7 +7,7 @@ import { ar } from "@/lib/ar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
-import { findSitePage } from "./site-pages";
+import { findSitePage } from "../helpers/site-pages";
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;

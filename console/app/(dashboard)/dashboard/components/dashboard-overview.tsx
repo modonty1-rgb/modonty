@@ -3,8 +3,8 @@ import { Sparkles } from "lucide-react";
 import { ar } from "@/lib/ar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { getClientGooglePerformance } from "../helpers/get-client-google-performance";
-import { getSiteActivity } from "../helpers/get-site-activity";
+import { getClientGooglePerformance } from "@/lib/google-performance/get-client-google-performance";
+import { getSiteActivity } from "@/lib/google-performance/get-site-activity";
 import { JourneyStrip } from "./journey-strip";
 import { OverviewCharts } from "./overview-charts";
 

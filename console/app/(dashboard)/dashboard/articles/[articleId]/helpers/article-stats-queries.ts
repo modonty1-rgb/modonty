@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import type { CommentWithDetails } from "../../../comments/helpers/comment-queries";
-import type { VisitorQuestionWithDetails } from "../../../questions/helpers/question-queries";
+import type { CommentWithDetails } from "@/lib/comments/comment-with-details";
+import type { VisitorQuestionWithDetails } from "@/lib/questions/visitor-question-with-details";
 
 interface ArticleStats {
   viewsCount: number;

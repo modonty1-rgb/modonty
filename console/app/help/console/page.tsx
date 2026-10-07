@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ConsoleTourClient } from "./ConsoleTourClient";
+import { ConsoleTourClient } from "./components/ConsoleTourClient";
 
 export const metadata: Metadata = {
   title: "جولة تفاعلية في الكونسول — مودونتي",

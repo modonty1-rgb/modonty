@@ -5,7 +5,7 @@ import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { rejectMalformedIds } from "@/lib/mobile-api/params";
 import { CLIENT_READABLE_STATUSES } from "@/lib/articles/client-visible-statuses";
-import { arabicCount, arabicMetaLine, arabicNumber } from "@/lib/mobile-api/arabic-format";
+import { arabicCount, arabicMetaLine, arabicNumber } from "../../helpers/arabic-format";
 
 const statusLabels: Record<string, string> = { AWAITING_APPROVAL: "بانتظار قرارك", NEEDS_REVISION: "طلبت تعديله", APPROVED: "وافقت عليه — بانتظار الموعد", SCHEDULED: "مجدول للنشر", PUBLISHED: "منشور", PUBLISHED_ON_CLIENT_SITE: "منشور على موقعك" };
 

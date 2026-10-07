@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server";
-import { arabicNumber } from "@/lib/mobile-api/arabic-format";
+import { arabicNumber } from "../../helpers/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { getClientGooglePerformance } from "@/app/(dashboard)/dashboard/helpers/get-client-google-performance";
-import { getSiteActivity } from "@/app/(dashboard)/dashboard/helpers/get-site-activity";
+import { getClientGooglePerformance } from "@/lib/google-performance/get-client-google-performance";
+import { getSiteActivity } from "@/lib/google-performance/get-site-activity";
 
 /**
  * بطاقة «زوّارك آخر ٢٨ يوماً» في رئيسية التطبيق — نفس أرقام رئيسية الكونسول على الويب

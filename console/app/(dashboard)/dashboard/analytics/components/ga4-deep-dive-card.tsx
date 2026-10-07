@@ -6,7 +6,7 @@ import {
   getTrafficSources,
   getDayPattern,
   getConversionFunnel,
-} from "@/lib/analytics/ga4-data-api";
+} from "../helpers/ga4-data-api";
 import { IconAlertTriangle } from "@modonty/shared/lib/icons";
 
 const DAY_NAMES_AR = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];

@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Info } from "lucide-react";
 
-import { getClientReels } from "../reels/helpers/reel-queries";
+import { getClientReels } from "@/lib/reels/get-client-reels";
 import { VideosManager } from "./components/videos-manager";
 
 export const dynamic = "force-dynamic";

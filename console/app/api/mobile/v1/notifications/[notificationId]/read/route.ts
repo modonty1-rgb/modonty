@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { rejectMalformedIds } from "@/lib/mobile-api/params";
-import { clientInboxWhere, countClientUnread } from "@/lib/mobile-api/client-inbox";
+import { clientInboxWhere, countClientUnread } from "../../../helpers/client-inbox";
 
 /**
  * وسم تنبيه واحد كمقروء.

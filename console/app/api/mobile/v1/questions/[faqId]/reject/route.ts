@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { rejectMalformedIds } from "@/lib/mobile-api/params";
-import { updateClientPageFaqForClient } from "@/app/(dashboard)/dashboard/page-faq/helpers/update-client-page-faq";
+import { updateClientPageFaqForClient } from "@/lib/page-faq/update-client-page-faq";
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ faqId: string }> }) {
   const session = await mobileSessionFromRequest(request);

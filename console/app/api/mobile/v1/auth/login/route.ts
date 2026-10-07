@@ -3,8 +3,8 @@ import { z } from "zod";
 import { findClientByIdentifier } from "@/lib/find-client-by-identifier";
 import { mobileTokenTtlSeconds, startMobileSession } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { clearLoginFailures, clientIp, loginBlockedForSeconds, loginThrottleKey, recordLoginFailure } from "@/lib/mobile-api/login-throttle";
-import { readBody } from "@/lib/mobile-api/request";
+import { clearLoginFailures, clientIp, loginBlockedForSeconds, loginThrottleKey, recordLoginFailure } from "../../helpers/login-throttle";
+import { readBody } from "../../helpers/request";
 
 /**
  * المعرّف بريدٌ **أو** اسم الحساب (slug)، بلا حساسيّة لحالة الأحرف — نفس قاعدة دخول الويب

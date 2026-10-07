@@ -1,6 +1,6 @@
 "use client";
 
-import { ErrorView } from "@/components/error-view";
+import { ErrorView } from "@/components/shared/error-view";
 
 /**
  * Root boundary — the one that catches a failing `(dashboard)/layout.tsx`.

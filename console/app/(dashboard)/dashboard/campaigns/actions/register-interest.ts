@@ -4,8 +4,8 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { CampaignReach } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { notifyTelegram } from "@/lib/telegram/notify";
-import { trackCampaignInterest } from "@/lib/analytics/events-registry";
+import { notifyTelegram } from "../helpers/notify-telegram";
+import { trackCampaignInterest } from "../helpers/events-registry";
 
 const NOTIFICATION_TYPE = "campaign_interest";
 

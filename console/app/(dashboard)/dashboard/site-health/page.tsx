@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { Card, CardContent } from "@/components/ui/card";
 import { Info, Loader2 } from "lucide-react";
-import { runHealthCheck } from "@/lib/health/aggregator";
+import { runHealthCheck } from "./helpers/health/aggregator";
 import { ScoreHero } from "./components/score-hero";
 import { CategorySection } from "./components/category-section";
 import { PagespeedCard } from "./components/pagespeed-card";

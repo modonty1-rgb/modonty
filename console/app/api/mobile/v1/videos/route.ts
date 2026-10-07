@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { ReelStatus, ReelUploader } from "@prisma/client";
 import { db } from "@/lib/db";
-import { arabicDayLabel, arabicMetaLine, arabicNumber } from "@/lib/mobile-api/arabic-format";
+import { arabicDayLabel, arabicMetaLine, arabicNumber } from "../helpers/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 

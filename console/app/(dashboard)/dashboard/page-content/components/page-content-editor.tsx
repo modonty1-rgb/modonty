@@ -11,10 +11,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Trash2, Save, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PAGE_LABELS, type BlocksPage } from "@/lib/my-site/page-keys";
-import type { BlockView } from "@/lib/my-site/build-page-view";
-import { SITE_PAGE_TOOLS } from "@/app/(dashboard)/components/site-page-tools";
+import type { BlockView } from "../helpers/build-page-view";
+import { SITE_PAGE_TOOLS } from "@/app/(dashboard)/helpers/site-page-tools";
 import { SiteToolButton } from "@/app/(dashboard)/components/site-tool-button";
-import { VideoUpload } from "@/components/media/video-upload";
+import { VideoUpload } from "@/components/shared/video-upload";
 import {
   createIntroVideoTicket,
   finalizeIntroVideo,

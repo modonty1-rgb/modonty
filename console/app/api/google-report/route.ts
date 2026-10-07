@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
-import { getClientSearchRows, type ReportDimension } from "@/lib/google/get-client-search-rows";
-import { verifyGoogleReportKey } from "@/lib/google/verify-google-report-key";
+import { getClientSearchRows, type ReportDimension } from "./helpers/get-client-search-rows";
+import { verifyGoogleReportKey } from "./helpers/verify-google-report-key";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;

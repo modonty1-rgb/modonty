@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { HelpClient } from "../HelpClient";
+import { HelpClient } from "../components/HelpClient";
 
 export const metadata: Metadata = {
   title: "دليل استخدام بوابة العملاء — مودونتي",

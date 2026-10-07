@@ -1,7 +1,7 @@
 "use client";
 
 import "./globals.css";
-import { ErrorView } from "@/components/error-view";
+import { ErrorView } from "@/components/shared/error-view";
 
 /**
  * Last resort — the root layout itself failed, so this file REPLACES it and has to bring

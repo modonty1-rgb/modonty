@@ -1,10 +1,10 @@
 import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { arabicNumber } from "@/lib/mobile-api/arabic-format";
+import { arabicNumber } from "../helpers/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { readBody } from "@/lib/mobile-api/request";
+import { readBody } from "../helpers/request";
 
 /**
  * S14 «المساعدة والدعم» — the client writing TO the Modonty team.

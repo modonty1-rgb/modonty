@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
-import { NEXT_BOOKING_STATUS } from "@/lib/mobile-api/booking-status";
+import { NEXT_BOOKING_STATUS } from "../../helpers/booking-status";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { rejectMalformedIds } from "@/lib/mobile-api/params";
 

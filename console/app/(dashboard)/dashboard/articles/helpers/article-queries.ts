@@ -472,18 +472,6 @@ export async function getArticleForApproval(
   return article as ArticleWithAllData | null;
 }
 
-/**
- * Whether publishing to the client's own website is switched on. It no longer decides a
- * tab — every client sees «مقالاتك على موقعك», and a client without it gets the offer —
- * but the plan block in the sidebar still marks the feature as live from this flag.
- */
-export async function canSeeSiteArticles(clientId: string): Promise<boolean> {
-  const client = await db.client.findUnique({
-    where: { id: clientId },
-    select: { canPublishToOwnSite: true },
-  });
-  return client?.canPublishToOwnSite ?? false;
-}
 
 /**
  * How much of this month's contracted quota is already out. It moved here with the strip
@@ -499,15 +487,6 @@ export async function getMonthlyPublishedCount(clientId: string): Promise<number
       clientId,
       createdAt: { gte: start },
       status: ArticleStatus.PUBLISHED,
-    },
-  });
-}
-
-export async function getPendingArticlesCount(clientId: string): Promise<number> {
-  return db.article.count({
-    where: {
-      clientId,
-      status: ArticleStatus.AWAITING_APPROVAL,
     },
   });
 }

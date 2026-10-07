@@ -57,11 +57,6 @@ export async function getContactMessages(
   });
 }
 
-export async function getNewSupportMessagesCount(clientId: string): Promise<number> {
-  return db.contactMessage.count({
-    where: { clientId, status: "new" },
-  });
-}
 
 export async function getMessageStats(clientId: string): Promise<MessageStats> {
   const [total, newMessages, readMessages, repliedMessages, archivedMessages] =

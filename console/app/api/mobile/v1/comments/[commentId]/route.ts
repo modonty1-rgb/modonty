@@ -5,8 +5,8 @@ import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { rejectMalformedIds } from "@/lib/mobile-api/params";
-import { setCommentStatusForClient } from "@/app/(dashboard)/dashboard/comments/helpers/set-comment-status";
-import { setClientReviewStatusForClient } from "@/app/(dashboard)/dashboard/client-reviews/helpers/set-client-review-status";
+import { setCommentStatusForClient } from "@/lib/comments/set-comment-status";
+import { setClientReviewStatusForClient } from "@/lib/client-reviews/set-client-review-status";
 
 /**
  * قرار العميل على تعليق قارئ من التطبيق: اعتماد أو رفض — تعليق مقال أو ريل، أو تقييم صفحته.

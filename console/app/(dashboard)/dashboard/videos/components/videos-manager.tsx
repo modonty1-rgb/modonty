@@ -4,9 +4,9 @@ import { useState } from "react";
 import { Video } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { ReelCard } from "../../reels/components/reels-manager";
-import type { ClientReel } from "../../reels/actions/reels-actions";
-import { VideoUpload } from "@/components/media/video-upload";
+import { ReelCard } from "@/components/shared/reel-card";
+import type { ClientReel } from "@/lib/reels/client-reel";
+import { VideoUpload } from "@/components/shared/video-upload";
 import {
   createVideoUploadTicket,
   finalizeVideoReel,

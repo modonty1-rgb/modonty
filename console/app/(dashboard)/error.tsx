@@ -1,6 +1,6 @@
 "use client";
 
-import { ErrorView } from "@/components/error-view";
+import { ErrorView } from "@/components/shared/error-view";
 
 /**
  * Dashboard boundary — a page failed, the shell did not.

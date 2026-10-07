@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 import { messages } from "@/lib/messages";
-import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo";
+import { regenerateClientSeo } from "@/lib/regenerate-client-seo";
 import {
   createTusTicket,
   deleteStreamVideo,

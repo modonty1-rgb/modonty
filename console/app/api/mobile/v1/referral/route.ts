@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { db } from "@/lib/db";
-import { arabicRelativeTime } from "@/lib/mobile-api/arabic-format";
+import { arabicRelativeTime } from "../helpers/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 

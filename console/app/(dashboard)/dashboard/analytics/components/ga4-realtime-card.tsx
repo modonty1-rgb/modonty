@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, AlertTriangle, Users, Eye, Sparkles } from "lucide-react";
-import { getClientOverview } from "@/lib/analytics/ga4-data-api";
+import { getClientOverview } from "../helpers/ga4-data-api";
 
 const EVENT_LABEL_AR: Record<string, string> = {
   article_view: "مشاهدة مقال",

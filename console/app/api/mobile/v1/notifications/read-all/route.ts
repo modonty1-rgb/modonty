@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { clientUnreadWhere, countClientUnread } from "@/lib/mobile-api/client-inbox";
+import { clientUnreadWhere, countClientUnread } from "../../helpers/client-inbox";
 
 /**
  * «تعليم الكل كمقروء» — خالد ٥ أكتوبر ٢٠٢٦: صندوق فيه تنبيهات نشاط (مشاركة · متابعة) لا

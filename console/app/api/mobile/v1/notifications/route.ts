@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server";
 import { db } from "@/lib/db";
-import { arabicNumber, arabicRelativeTime } from "@/lib/mobile-api/arabic-format";
+import { arabicNumber, arabicRelativeTime } from "../helpers/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { clientInboxWhere, countClientUnread } from "@/lib/mobile-api/client-inbox";
+import { clientInboxWhere, countClientUnread } from "../helpers/client-inbox";
 
 /**
  * S12 «التنبيهات» — the client's own inbox, read from `Notification` (`notifications`).

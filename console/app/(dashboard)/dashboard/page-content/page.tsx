@@ -3,7 +3,7 @@ import { getHomeData } from "@modonty/shared/lib/partner-site";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { buildPageView, type BlockView } from "@/lib/my-site/build-page-view";
+import { buildPageView, type BlockView } from "./helpers/build-page-view";
 import { BLOCKS_PAGES, type BlocksPage } from "@/lib/my-site/page-keys";
 import { PageContentEditor } from "./components/page-content-editor";
 

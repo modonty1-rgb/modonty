@@ -7,7 +7,7 @@ import { Switch } from "@modonty/shared/components/ui/switch";
 import type { HomeBlockKey, HomeData } from "@modonty/shared/components/partner-site/free/home";
 
 import { cn } from "@/lib/utils";
-import { saveHiddenBlocks } from "@/lib/my-site/save-hidden-blocks";
+import { saveHiddenBlocks } from "../actions/save-hidden-blocks";
 import { PAGE_BLOCKS } from "@/lib/my-site/page-blocks";
 
 import type { BlocksPage } from "../helpers/blocks-pages";

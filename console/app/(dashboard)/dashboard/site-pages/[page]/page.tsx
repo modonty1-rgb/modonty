@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
-import { findSitePage } from "@/app/(dashboard)/components/site-pages";
+import { findSitePage } from "@/app/(dashboard)/helpers/site-pages";
 import { getHomeData } from "@modonty/shared/lib/partner-site";
 import { db } from "@/lib/db";
 import { PageBlocksEditor } from "../components/page-blocks-editor";

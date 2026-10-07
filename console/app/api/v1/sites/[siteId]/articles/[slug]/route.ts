@@ -1,9 +1,9 @@
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 
-import { ARTICLE_PAYLOAD_SELECT, toArticlePayload, type ArticleRow } from "../../../../_lib/article-payload";
-import { checkRateLimit, jsonError, jsonWithEtag } from "../../../../_lib/respond";
-import { resolveSite } from "../../../../_lib/resolve-site";
+import { ARTICLE_PAYLOAD_SELECT, toArticlePayload, type ArticleRow } from "../../../../helpers/article-payload";
+import { checkRateLimit, jsonError, jsonWithEtag } from "../../../../helpers/respond";
+import { resolveSite } from "../../../../helpers/resolve-site";
 
 /**
  * GET /api/v1/sites/{siteId}/articles/{slug} — one article, and only if it is this site's.

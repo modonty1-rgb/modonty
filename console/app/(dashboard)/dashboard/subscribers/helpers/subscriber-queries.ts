@@ -39,11 +39,6 @@ export async function getSubscribers(
   }) as Promise<SubscriberWithDetails[]>;
 }
 
-export async function getSubscribersCount(clientId: string): Promise<number> {
-  return db.subscriber.count({
-    where: { clientId, subscribed: true },
-  });
-}
 
 export async function getSubscriberStats(
   clientId: string

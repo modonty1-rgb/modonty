@@ -6,7 +6,7 @@ import { PageFrame, PARTNER_PAGE_TITLE_PREFIX } from "@modonty/shared/components
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getMySiteData } from "@/lib/my-site/get-my-site-data";
-import { buildPreviewChrome } from "@/lib/my-site/build-preview-chrome";
+import { buildPreviewChrome } from "./helpers/build-preview-chrome";
 import { isBlocksPage } from "@/lib/my-site/page-keys";
 import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 

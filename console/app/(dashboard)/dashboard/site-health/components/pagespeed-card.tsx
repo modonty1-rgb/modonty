@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Gauge, ExternalLink, Smartphone, Monitor } from "lucide-react";
-import type { PagespeedScores, PagespeedStrategyScores } from "@/lib/health/pagespeed";
+import type { PagespeedScores, PagespeedStrategyScores } from "../helpers/health/pagespeed";
 import { IconAlertTriangle } from "@modonty/shared/lib/icons";
 
 function colorFor(score: number | null): string {

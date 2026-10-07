@@ -5,8 +5,8 @@ import { requestAwaitingArticleChanges } from "@/lib/mobile-api/article-decision
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { rejectMalformedIds } from "@/lib/mobile-api/params";
-import { readBody } from "@/lib/mobile-api/request";
-import { notifyArticleDecision } from "@/app/(dashboard)/dashboard/articles/actions/notify-article-decision";
+import { readBody } from "../../../helpers/request";
+import { notifyArticleDecision } from "@/lib/articles/notify-article-decision";
 
 const input = z.object({ feedback: z.string().trim().min(1, "اكتب ملاحظتك أولًا.").max(1000) });
 

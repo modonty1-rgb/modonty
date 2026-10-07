@@ -59,9 +59,6 @@ export async function getBookings(clientId: string): Promise<BookingWithDetails[
   });
 }
 
-export async function getNewBookingsCount(clientId: string): Promise<number> {
-  return db.bookingRequest.count({ where: { clientId, status: "new" } });
-}
 
 export async function getBookingStats(clientId: string): Promise<BookingStats> {
   const [total, newCount, contacted, done, archived, whatsapp] = await Promise.all([

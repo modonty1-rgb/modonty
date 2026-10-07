@@ -6,11 +6,10 @@ import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 import { buildReelSlug } from "@/lib/build-reel-slug";
 import { messages } from "@/lib/messages";
-import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { discardVideo } from "@/lib/reels/discard-video";
 import {
   bestRendition,
   createTusTicket,
-  deleteStreamVideo,
   getStreamVideo,
   streamUrls,
 } from "@modonty/shared/lib/bunny-stream";
@@ -144,12 +143,6 @@ export async function finalizeVideoReel(
   }
 }
 
-/** Drop both sides at once — the row here and the file on Bunny. */
-async function discardVideo(mediaId: string, bunnyVideoId: string | null) {
-  if (bunnyVideoId) await deleteStreamVideo(bunnyVideoId);
-  await db.media.delete({ where: { id: mediaId } });
-}
-
 /**
  * Called by the client while the card shows "نجهّز المقطع".
  *
@@ -190,88 +183,4 @@ export async function getVideoEncodingState(
     revalidatePath("/dashboard/videos");
   }
   return { ready, failed: state.status === 5, progress: state.encodeProgress };
-}
-
-/**
- * Replace the cover (ق9 — the third field the client owns for a video).
- *
- * Bunny extracts a frame automatically, and that frame is sometimes a blink or a blur.
- * The cover is the first thing a visitor sees and the `thumbnailUrl` Google requires, so
- * the client can override it with a still of their own — uploaded through the ordinary
- * image route into the reels zone, exactly like a picture reel.
- */
-export async function setVideoCover(mediaId: string, url: string): Promise<Result> {
-  const clientId = await getSessionClientId();
-  if (!clientId) return { success: false, error: messages.error.unauthorized };
-
-  const clean = url.trim();
-  if (!clean.startsWith("https://")) return { success: false, error: messages.error.serverError };
-
-  try {
-    const owned = await db.media.findFirst({
-      where: { id: mediaId, clientId, inReels: true },
-      select: { id: true, reelStatus: true },
-    });
-    if (!owned) return { success: false, error: messages.error.notFound };
-
-    // Same freeze as the text: an approved reel shows the cover Modonty signed off on.
-    if (owned.reelStatus === "APPROVED" || owned.reelStatus === "PUBLISHED") {
-      return { success: false, error: "المقطع معتمد — كلّم مُدَوَّنَتِي لتغيير الغلاف" };
-    }
-
-    await db.media.update({ where: { id: mediaId }, data: { thumbnailUrl: clean } });
-    revalidatePath("/dashboard/videos");
-    return { success: true };
-  } catch {
-    return { success: false, error: messages.error.serverError };
-  }
-}
-
-/**
- * Remove a video reel. Same archive-vs-delete rule as an image reel, with one addition:
- * a real delete has to take the file off Bunny too, or we keep paying for storage nobody
- * can reach.
- */
-export async function removeVideoReel(mediaId: string): Promise<Result> {
-  const clientId = await getSessionClientId();
-  if (!clientId) return { success: false, error: messages.error.unauthorized };
-
-  try {
-    const owned = await db.media.findFirst({
-      where: { id: mediaId, clientId, inReels: true },
-      select: {
-        id: true,
-        bunnyVideoId: true,
-        reelStatus: true,
-        commentsCount: true,
-        likesCount: true,
-      },
-    });
-    if (!owned) return { success: false, error: messages.error.notFound };
-
-    const seenByVisitors =
-      owned.reelStatus === "APPROVED" || owned.reelStatus === "PUBLISHED";
-    const hasEngagement = owned.commentsCount > 0 || owned.likesCount > 0;
-
-    if (seenByVisitors || hasEngagement) {
-      // Archived, not destroyed — visitors' comments and likes hang off this row.
-      await db.media.update({
-        where: { id: mediaId },
-        data: { inReels: false, reelStatus: "ARCHIVED" },
-      });
-    } else {
-      await discardVideo(owned.id, owned.bunnyVideoId);
-    }
-
-    // A reel the visitors could already see has to leave modonty NOW. `revalidatePath` below
-    // busts this console route only — modonty caches the feed and each watch page under its
-    // own "reels" tag, so without this hit the removed reel kept serving at HTTP 200 for the
-    // whole cache window (measured 25 Aug 2026).
-    if (seenByVisitors) await revalidateModontyTag("reels").catch(() => {});
-
-    revalidatePath("/dashboard/videos");
-    return { success: true };
-  } catch {
-    return { success: false, error: messages.error.serverError };
-  }
 }

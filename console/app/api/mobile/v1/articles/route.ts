@@ -3,7 +3,7 @@ import { ArticleFAQStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { arabicCount, arabicLongDate, arabicMetaLine, arabicNumber } from "@/lib/mobile-api/arabic-format";
+import { arabicCount, arabicLongDate, arabicMetaLine, arabicNumber } from "../helpers/arabic-format";
 
 const ALLOWED_STATUSES = new Set(Object.values(ArticleStatus));
 const ARTICLE_SCOPE = ["published", "decision"] as const;

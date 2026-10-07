@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { ar } from "@/lib/ar";
-import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
+import { useConfirm } from "@/lib/hooks/use-confirm";
 import {
   Card,
   CardContent,

@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server";
 import { db } from "@/lib/db";
-import { arabicCount, arabicMetaLine, arabicNumber, arabicRelativeTime } from "@/lib/mobile-api/arabic-format";
+import { arabicCount, arabicMetaLine, arabicNumber, arabicRelativeTime } from "../helpers/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { NEXT_BOOKING_STATUS } from "@/lib/mobile-api/booking-status";
+import { NEXT_BOOKING_STATUS } from "../helpers/booking-status";
 
 /**
  * طلبات التواصل (S15) — قناتان في جدول واحد، ولا تُخلطان.

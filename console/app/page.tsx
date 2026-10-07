@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { Lock, BarChart3, Shield, Activity, Share2 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { ar } from "@/lib/ar";
-import { LoginForm } from "@/app/(auth)/login/components/login-form";
+import { LoginForm } from "@/app/components/login-form";
 import { ModontyLogo } from "@/app/components/modonty-logo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 

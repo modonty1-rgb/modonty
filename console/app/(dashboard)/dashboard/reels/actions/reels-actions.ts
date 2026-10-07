@@ -7,9 +7,8 @@ import { getSessionClientId } from "@/lib/get-session-client-id";
 import { db } from "@/lib/db";
 import { buildReelSlug } from "@/lib/build-reel-slug";
 import { messages } from "@/lib/messages";
-import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
-import { notifyReelPending } from "./notify-reel-pending";
+import { notifyReelPending } from "@/lib/notify-reel-pending";
 
 /**
  * The client's own reels section — independent of the gallery (Khalid 2026-08-04).
@@ -25,34 +24,6 @@ import { notifyReelPending } from "./notify-reel-pending";
  * Nothing here publishes anything. Every row starts at PENDING_APPROVAL — the promise
  * shown to the client is "بعد اعتماد مُدَوَّنَتِي", and this is the code that keeps it.
  */
-
-export interface ClientReel {
-  id: string;
-  /** Derived from `mimeType` — there is no separate type column any more. */
-  isVideo: boolean;
-  url: string;
-  bunnyUrl: string | null;
-  blurDataURL: string | null;
-  thumbnailUrl: string | null;
-  /** Videos only — the plain MP4 the card plays, and the file Google fetches. */
-  mp4Url: string | null;
-  title: string | null;
-  description: string | null;
-  /** Image reels only — Google reads it to understand a still picture. */
-  altText: string | null;
-  status: string | null;
-  rejectionReason: string | null;
-  width: number | null;
-  height: number | null;
-  /** Also a gallery image — the client manages it from the gallery tick, not from here. */
-  inGallery: boolean;
-  /** Cached on the row itself, so the card costs no extra query (ق10). */
-  views: number;
-  likes: number;
-  comments: number;
-  favorites: number;
-  createdAt: Date;
-}
 
 type Result = { success: true } | { success: false; error: string };
 
@@ -120,130 +91,6 @@ export async function createImageReel(input: CreateImageReelInput): Promise<Resu
     after(async () => {
       await notifyReelPending(created.id, clientId, "uploaded");
     });
-
-    revalidatePath("/dashboard/reels");
-    return { success: true };
-  } catch {
-    return { success: false, error: messages.error.serverError };
-  }
-}
-
-interface ReelDetailsInput {
-  title: string;
-  description: string;
-  /** Ignored for a video reel — a moving picture is described by its title and transcript. */
-  altText: string;
-}
-
-/**
- * The three fields the client owns (ق9, 2026-08-05): title, description, and — for an
- * image reel — the alt text. Everything else Google wants is derived, so this is the only
- * writing surface the client gets, and Modonty corrects it at approval.
- *
- * Editable while the reel is waiting or was rejected; frozen once approved.
- */
-export async function updateReelDetails(
-  mediaId: string,
-  input: ReelDetailsInput
-): Promise<Result> {
-  const clientId = await getSessionClientId();
-  if (!clientId) return { success: false, error: messages.error.unauthorized };
-
-  const cleanTitle = input.title.trim();
-  if (!cleanTitle) return { success: false, error: "العنوان ما يصير فاضي" };
-
-  try {
-    const owned = await db.media.findFirst({
-      where: { id: mediaId, clientId, inReels: true },
-      select: { id: true, reelStatus: true, mimeType: true },
-    });
-    if (!owned) return { success: false, error: messages.error.notFound };
-
-    // Once approved or live, the text is what Modonty signed off on — editing it silently
-    // would let published wording change after review.
-    if (owned.reelStatus === "APPROVED" || owned.reelStatus === "PUBLISHED") {
-      return { success: false, error: "الريل معتمد — كلّم مُدَوَّنَتِي لتعديل النص" };
-    }
-
-    await db.media.update({
-      where: { id: mediaId },
-      data: {
-        title: cleanTitle.slice(0, 100),
-        description: input.description.trim().slice(0, 500) || null,
-        // Only an image carries alt text; writing it on a video would put a caption
-        // nobody reads on a file Google judges by its VideoObject instead.
-        ...(owned.mimeType.startsWith("image/")
-          ? { altText: input.altText.trim().slice(0, 200) || null }
-          : {}),
-        // A rejected reel the client fixed goes back into the queue.
-        ...(owned.reelStatus === "REJECTED"
-          ? { reelStatus: "PENDING_APPROVAL" as const, reelRejectionReason: null }
-          : {}),
-      },
-    });
-
-    // A fix after a rejection re-enters the same queue, so it needs the same signal —
-    // otherwise the client waits on a correction nobody was told about.
-    if (owned.reelStatus === "REJECTED") {
-      after(async () => {
-        await notifyReelPending(mediaId, clientId, "resubmitted");
-      });
-    }
-
-    revalidatePath("/dashboard/reels");
-    return { success: true };
-  } catch {
-    return { success: false, error: messages.error.serverError };
-  }
-}
-
-/**
- * Remove a reel the client created here.
- *
- * Same rule as the gallery tick: a reel visitors may already have seen is archived, not
- * destroyed, so their comments and likes survive. Anything still unseen is deleted —
- * and because the row IS the file, that delete is the file's delete too, which is why
- * only a reel with nothing hanging off it is allowed to go.
- *
- * A reel that also sits in the gallery is managed by that image's tick, not from here.
- */
-export async function removeReel(mediaId: string): Promise<Result> {
-  const clientId = await getSessionClientId();
-  if (!clientId) return { success: false, error: messages.error.unauthorized };
-
-  try {
-    const owned = await db.media.findFirst({
-      where: { id: mediaId, clientId, inReels: true },
-      select: {
-        id: true,
-        reelStatus: true,
-        inGallery: true,
-        commentsCount: true,
-        likesCount: true,
-      },
-    });
-    if (!owned) return { success: false, error: messages.error.notFound };
-
-    if (owned.inGallery) {
-      return { success: false, error: "هذا الريل من معرض الصور — شيل العلامة من الصورة نفسها" };
-    }
-
-    const seenByVisitors =
-      owned.reelStatus === "APPROVED" || owned.reelStatus === "PUBLISHED";
-    const hasEngagement = owned.commentsCount > 0 || owned.likesCount > 0;
-    if (seenByVisitors || hasEngagement) {
-      await db.media.update({
-        where: { id: mediaId },
-        data: { inReels: false, reelStatus: "ARCHIVED" },
-      });
-    } else {
-      await db.media.delete({ where: { id: mediaId } });
-    }
-
-    // A reel visitors could already see has to leave modonty NOW — `revalidatePath` below
-    // busts this console route only, and modonty caches the feed and every watch page under
-    // its own "reels" tag.
-    if (seenByVisitors) await revalidateModontyTag("reels").catch(() => {});
 
     revalidatePath("/dashboard/reels");
     return { success: true };

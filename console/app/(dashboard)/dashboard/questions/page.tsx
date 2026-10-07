@@ -6,7 +6,7 @@ import {
   getVisitorQuestionStats,
   type QuestionStats,
 } from "./helpers/question-queries";
-import { QuestionsTable } from "./components/questions-table";
+import { QuestionsTable } from "@/components/shared/questions-table";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Clock,

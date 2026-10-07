@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { uploadToBunny } from "@modonty/shared/lib/bunny";
 import { auth } from "@/lib/auth";
-import { generateBlurDataUrl } from "@/lib/media/generate-blur";
+import { generateBlurDataUrl } from "./helpers/generate-blur";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;

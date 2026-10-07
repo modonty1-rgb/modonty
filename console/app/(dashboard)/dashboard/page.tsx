@@ -4,12 +4,14 @@ import { auth } from "@/lib/auth";
 import { ar } from "@/lib/ar";
 import { db } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { getGoogleReportUrl } from "@/lib/google/get-google-report-url";
+import { getGoogleReportUrl } from "./helpers/get-google-report-url";
 import { GoogleIcon } from "@modonty/shared/components/icons/google-icon";
 import { getTrafficSources, getRecentActivity } from "./helpers/dashboard-queries";
-import { getPendingArticlesCount } from "./articles/helpers/article-queries";
-import { getPendingCommentsCount } from "./comments/helpers/comment-queries";
-import { getNewSupportMessagesCount } from "./support/helpers/support-queries-enhanced";
+import {
+  getPendingArticlesCount,
+  getPendingCommentsCount,
+  getNewSupportMessagesCount,
+} from "@/lib/nav-counts";
 import { getDashboardPeriod } from "./helpers/get-dashboard-period";
 import { BarChart3, MessageSquare, Target, FileText, Clock, CheckCircle2 } from "lucide-react";
 import { TrafficChart } from "./components/traffic-chart";

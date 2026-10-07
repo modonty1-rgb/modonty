@@ -5,9 +5,9 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { ArticleFAQStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
-import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo";
+import { regenerateClientSeo } from "@/lib/regenerate-client-seo";
 import { stripHtmlTags } from "@modonty/shared/lib/strip-html-tags";
-import { updateClientPageFaqForClient } from "../helpers/update-client-page-faq";
+import { updateClientPageFaqForClient } from "@/lib/page-faq/update-client-page-faq";
 
 type Result = { success: true } | { success: false; error: string };
 

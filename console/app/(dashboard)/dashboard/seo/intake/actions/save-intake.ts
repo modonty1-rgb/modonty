@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { INTAKE_SCHEMA_VERSION, type ClientIntake } from "../lib/intake-types";
+import { INTAKE_SCHEMA_VERSION, type ClientIntake } from "../helpers/intake-types";
 
 type SaveIntakeResult =
   | { ok: true }

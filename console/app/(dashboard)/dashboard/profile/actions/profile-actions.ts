@@ -8,7 +8,7 @@ import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { validateYmylData } from "@/lib/seo/ymyl-helpers";
 import { getYmylAuthorityCodes } from "@modonty/shared/lib/seo/ymyl-authorities";
 import { normalizePhone } from "@modonty/shared/lib/phone";
-import { regenerateClientSeo } from "./regenerate-client-seo";
+import { regenerateClientSeo } from "@/lib/regenerate-client-seo";
 import { normalizeLegalForm, normalizeOrganizationType } from "@modonty/shared/lib/constants/client-classification";
 
 function str(v: string | undefined | null) {

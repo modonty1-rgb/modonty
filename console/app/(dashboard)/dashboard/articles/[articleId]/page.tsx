@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import { getArticleStats, getArticleComments, getArticleQuestions } from "./helpers/article-stats-queries";
 import { getArticleForApproval } from "../helpers/article-queries";
-import { CommentsTable } from "../../comments/components/comments-table";
-import { QuestionsTable } from "../../questions/components/questions-table";
+import { CommentsTable } from "@/components/shared/comments-table";
+import { QuestionsTable } from "@/components/shared/questions-table";
 import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 export const dynamic = "force-dynamic";

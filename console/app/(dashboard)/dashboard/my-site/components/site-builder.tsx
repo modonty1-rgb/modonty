@@ -17,9 +17,9 @@ import {
 
 import { cn } from "@/lib/utils";
 import { PAGE_LABELS, type BlocksPage } from "@/lib/my-site/page-keys";
-import type { MissingBlock } from "@/lib/my-site/build-missing-data";
+import type { MissingBlock } from "../helpers/build-missing-data";
 import type { MySiteData } from "@/lib/my-site/get-my-site-data";
-import { SITE_PAGE_TOOLS } from "@/app/(dashboard)/components/site-page-tools";
+import { SITE_PAGE_TOOLS } from "@/app/(dashboard)/helpers/site-page-tools";
 import { SiteToolButton } from "@/app/(dashboard)/components/site-tool-button";
 
 import { saveMySite } from "../actions/save-my-site";

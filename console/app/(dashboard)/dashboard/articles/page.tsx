@@ -8,9 +8,9 @@ import {
   getPublishedArticles,
   getAllArticles,
   getSiteArticles,
-  getPendingArticlesCount,
   getMonthlyPublishedCount,
 } from "./helpers/article-queries";
+import { getPendingArticlesCount } from "@/lib/nav-counts";
 import { ArticlesPageClient } from "./components/articles-page-client";
 import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 

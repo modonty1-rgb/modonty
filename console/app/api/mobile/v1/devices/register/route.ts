@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { readBody } from "@/lib/mobile-api/request";
+import { readBody } from "../../helpers/request";
 
 const input = z.object({ expoPushToken: z.string().regex(/^(Expo|Exponent)PushToken\[[^\]]+\]$/, "Expo push token غير صالح."), platform: z.enum(["android", "ios"]), deviceName: z.string().trim().max(120).optional(), appVersion: z.string().trim().max(40).optional() });
 

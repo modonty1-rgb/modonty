@@ -4,7 +4,7 @@ import { approveAwaitingArticle } from "@/lib/mobile-api/article-decisions";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { rejectMalformedIds } from "@/lib/mobile-api/params";
-import { notifyArticleDecision } from "@/app/(dashboard)/dashboard/articles/actions/notify-article-decision";
+import { notifyArticleDecision } from "@/lib/articles/notify-article-decision";
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ articleId: string }> }) {
   const session = await mobileSessionFromRequest(request);

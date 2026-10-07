@@ -6,7 +6,7 @@ import { getSessionClientId } from "@/lib/get-session-client-id";
 import { messages } from "@/lib/messages";
 import { approveAwaitingArticle, requestAwaitingArticleChanges } from "@/lib/mobile-api/article-decisions";
 
-import { notifyArticleDecision } from "./notify-article-decision";
+import { notifyArticleDecision } from "@/lib/articles/notify-article-decision";
 
 /**
  * العميل من الجلسة، لا من المتصفّح. كانت الدالّتان تأخذان `clientId` من الواجهة، فأيّ

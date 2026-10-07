@@ -6,7 +6,7 @@ import {
   getCommentStats,
   type CommentStats,
 } from "./helpers/comment-queries";
-import { CommentsTable } from "./components/comments-table";
+import { CommentsTable } from "@/components/shared/comments-table";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   MessageSquare,

@@ -4,7 +4,7 @@ import { getHomeData } from "@modonty/shared/lib/partner-site";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getMySiteData } from "@/lib/my-site/get-my-site-data";
-import { buildMissingData } from "@/lib/my-site/build-missing-data";
+import { buildMissingData } from "./helpers/build-missing-data";
 import { isBlocksPage } from "@/lib/my-site/page-keys";
 import { SiteBuilder } from "./components/site-builder";
 

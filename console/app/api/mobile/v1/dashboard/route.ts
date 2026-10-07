@@ -1,10 +1,10 @@
 import type { NextRequest } from "next/server";
 import { ArticleStatus, ArticleFAQStatus, CommentStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { arabicNumber } from "@/lib/mobile-api/arabic-format";
+import { arabicNumber } from "../helpers/arabic-format";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
-import { countClientUnread } from "@/lib/mobile-api/client-inbox";
+import { countClientUnread } from "../helpers/client-inbox";
 import { getClientSubscription } from "@/lib/subscription/get-client-subscription";
 
 const subscriptionStatusLabels: Record<string, string> = { ACTIVE: "نشط", PENDING: "بانتظار التفعيل", EXPIRED: "منتهي", SUSPENDED: "معلّق", CANCELLED: "ملغي" };

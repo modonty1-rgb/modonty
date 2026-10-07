@@ -3,7 +3,7 @@
 import { getSessionClientId } from "@/lib/get-session-client-id";
 import { CommentStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
-import { setClientReviewStatusForClient } from "../helpers/set-client-review-status";
+import { setClientReviewStatusForClient } from "@/lib/client-reviews/set-client-review-status";
 
 type Result = { success: true } | { success: false; error: string };
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { HelpLanding } from "./HelpLanding";
+import { HelpLanding } from "./components/HelpLanding";
 
 export const metadata: Metadata = {
   title: "مركز المساعدة — مودونتي",

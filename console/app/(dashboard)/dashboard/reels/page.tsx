@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Info } from "lucide-react";
 
 import { ReelsManager } from "./components/reels-manager";
-import { getClientReels } from "./helpers/reel-queries";
+import { getClientReels } from "@/lib/reels/get-client-reels";
 
 export const dynamic = "force-dynamic";
 

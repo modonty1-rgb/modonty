@@ -1,11 +1,8 @@
 import { auth } from "@/lib/auth";
 import { ar } from "@/lib/ar";
 import { redirect } from "next/navigation";
-import {
-  getClientFaqs,
-  getFaqStats,
-  type FaqStats,
-} from "./helpers/faq-queries";
+import { getClientFaqs } from "./helpers/faq-queries";
+import { getFaqStats, type FaqStats } from "@/lib/nav-counts";
 import { FaqsTable } from "./components/faqs-table";
 import { Card, CardContent } from "@/components/ui/card";
 import {

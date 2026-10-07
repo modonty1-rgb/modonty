@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { GTMContainer } from "@/components/gtm/GTMContainer";
+import { GTMContainer } from "@/app/components/gtm-container";
 import { Providers } from "@/app/components/providers/providers";
 import { ThemeProvider } from "@/app/components/providers/theme-provider";
 import { ar } from "@/lib/ar";

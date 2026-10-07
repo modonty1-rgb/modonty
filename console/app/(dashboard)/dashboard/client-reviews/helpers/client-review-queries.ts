@@ -21,13 +21,6 @@ interface ClientReviewStats {
   averageRating: number;
 }
 
-export async function getPendingClientReviewsCount(
-  clientId: string
-): Promise<number> {
-  return db.clientReview.count({
-    where: { clientId, status: CommentStatus.PENDING },
-  });
-}
 
 export async function getClientReviewStats(
   clientId: string

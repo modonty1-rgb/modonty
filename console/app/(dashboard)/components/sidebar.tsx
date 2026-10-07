@@ -8,7 +8,7 @@ import { ar } from "@/lib/ar";
 import { ChevronLeft, LogOut, Settings } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { SidebarGroups } from "./sidebar-groups";
-import { buildNavGroups, buildPinnedNavItems, SITE_HEALTH_ITEM } from "./nav-config";
+import { buildNavGroups, buildPinnedNavItems, SITE_HEALTH_ITEM } from "../helpers/nav-config";
 import { PublicPageLink } from "./public-page-link";
 import { SidebarSubscription } from "./sidebar-subscription";
 import { SidebarIconLink } from "./sidebar-icon-link";

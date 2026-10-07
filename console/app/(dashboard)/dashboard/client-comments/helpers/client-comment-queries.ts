@@ -19,13 +19,6 @@ interface ClientCommentStats {
   total: number;
 }
 
-export async function getPendingClientCommentsCount(
-  clientId: string
-): Promise<number> {
-  return db.clientComment.count({
-    where: { clientId, status: CommentStatus.PENDING },
-  });
-}
 
 export async function getClientCommentStats(
   clientId: string

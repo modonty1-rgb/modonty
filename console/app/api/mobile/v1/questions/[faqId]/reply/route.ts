@@ -3,11 +3,11 @@ import { ArticleFAQStatus } from "@prisma/client";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { publishFaqAnswer } from "@/lib/faq/publish-faq-answer";
-import { updateClientPageFaqForClient } from "@/app/(dashboard)/dashboard/page-faq/helpers/update-client-page-faq";
+import { updateClientPageFaqForClient } from "@/lib/page-faq/update-client-page-faq";
 import { mobileSessionFromRequest } from "@/lib/mobile-api/auth";
 import { fail, ok } from "@/lib/mobile-api/http";
 import { rejectMalformedIds } from "@/lib/mobile-api/params";
-import { readBody } from "@/lib/mobile-api/request";
+import { readBody } from "../../../helpers/request";
 
 /** Mirrors the character counter the reply screen shows — the client must not be able to
  *  type past a limit the server would then reject silently. */

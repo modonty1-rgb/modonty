@@ -8,7 +8,7 @@ import { isOwnBunnyUrl } from "@/lib/bunny/is-own-bunny-url";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { messages } from "@/lib/messages";
-import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo";
+import { regenerateClientSeo } from "@/lib/regenerate-client-seo";
 import type { AchievementInput } from "../helpers/page-content-types";
 
 type Result = { success: true } | { success: false; error: string };

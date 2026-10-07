@@ -1,0 +1,84 @@
+"use client";
+
+import { useState } from "react";
+import { ExternalLink } from "lucide-react";
+import { ScrollProgress } from "./ScrollProgress";
+import { ImageModal } from "./ImageModal";
+import { HeroV2 } from "./v2/HeroV2";
+import { TocSidebarV2 } from "./v2/TocSidebarV2";
+import { Tier0Platform } from "./v2/Tier0Platform";
+import { Tier1Intro } from "./v2/Tier1Intro";
+import { Tier2ClientPage } from "./v2/Tier2ClientPage";
+import { Tier3Engagement } from "./v2/Tier3Engagement";
+import { AllEngagementSummary } from "./v2/AllEngagementSummary";
+import { Tier4ConsolePages } from "./v2/Tier4ConsolePages";
+import { Tier5Account } from "./v2/Tier5Account";
+import { SalesPitchPlayer } from "../console/components/SalesPitchPlayer";
+
+interface ModalState {
+  src: string;
+  alt: string;
+}
+
+export function HelpClient() {
+  const [modal, setModal] = useState<ModalState | null>(null);
+
+  const openImage = (src: string, alt: string) => setModal({ src, alt });
+
+  // pt-28 on the ROOT clears both fixed bars (back bar 44px + tools bar 54px). It is not on
+  // the content wrapper because on phones the table of contents renders in normal flow above
+  // the content, and would otherwise start underneath them.
+  return (
+    <div className="min-h-dvh bg-background pt-28">
+      {/* Tools bar — sits under the layout's back bar (h-11), never on top of it */}
+      <div className="fixed top-11 inset-x-0 z-40 backdrop-blur-md bg-background/90 border-b border-border shadow-sm">
+        <div className="max-w-[1100px] mx-auto px-4 md:px-6 py-2.5 flex items-center justify-end gap-3">
+          <a
+            href={`${process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com"}/story`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex max-md:min-h-11 max-md:min-w-11 items-center justify-center gap-1.5 bg-background hover:bg-muted text-foreground text-xs md:text-sm font-medium px-3 py-2 rounded-full border border-border transition-colors"
+            aria-label="افتح الصفحة العامة للقصة"
+            title="افتح القصة كصفحة عامة على modonty.com (للمشاركة)"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">الصفحة العامة</span>
+          </a>
+          <SalesPitchPlayer
+            mode="elevenlabs"
+            manifestUrl="/help/audio/general-pitch/manifest.json"
+            audioBase="/help/audio/general-pitch"
+            label="اسمع شرح مودونتي"
+          />
+        </div>
+      </div>
+
+      <ScrollProgress />
+      <TocSidebarV2 />
+      <div className="max-w-[1100px] md:ms-[284px] lg:ms-[304px] mx-auto px-4 md:px-6 py-6">
+        <main>
+          <HeroV2 />
+          <Tier0Platform />
+          <Tier1Intro />
+          <Tier2ClientPage onImageClick={openImage} />
+          <Tier3Engagement onImageClick={openImage} />
+          <AllEngagementSummary />
+          <Tier4ConsolePages onImageClick={openImage} />
+          <Tier5Account onImageClick={openImage} />
+
+          <footer className="text-center text-xs text-muted-foreground py-8 border-t border-border mt-8">
+            <p className="mb-1">
+              دليل بوابة العملاء — <b className="text-foreground">مودونتي</b>
+            </p>
+            <p>كل لقطات الشاشة من موقعك الحقيقي · يُحدّث باستمرار</p>
+          </footer>
+        </main>
+      </div>
+      <ImageModal
+        src={modal?.src ?? null}
+        alt={modal?.alt ?? ""}
+        onClose={() => setModal(null)}
+      />
+    </div>
+  );
+}

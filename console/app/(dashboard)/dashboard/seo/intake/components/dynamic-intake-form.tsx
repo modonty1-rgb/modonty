@@ -12,8 +12,8 @@ import {
   CheckCircle2, AlertCircle, Loader2,
 } from "lucide-react";
 import { saveIntakeAction } from "../actions/save-intake";
-import type { ClientIntake } from "../lib/intake-types";
-import type { IntakeFormDef, IntakeQuestionDef, IntakeOptionDef } from "../lib/intake-queries";
+import type { ClientIntake } from "../helpers/intake-types";
+import type { IntakeFormDef, IntakeQuestionDef, IntakeOptionDef } from "../helpers/intake-queries";
 import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 
 // lucide icon name (stored on section.icon) → component

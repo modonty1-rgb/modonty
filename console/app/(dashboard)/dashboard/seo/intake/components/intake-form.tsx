@@ -12,8 +12,8 @@ import {
   CheckCircle2, AlertCircle, Loader2,
 } from "lucide-react";
 import { saveIntakeAction } from "../actions/save-intake";
-import type { ClientIntake } from "../lib/intake-types";
-import { INTAKE_SCHEMA_VERSION } from "../lib/intake-types";
+import type { ClientIntake } from "../helpers/intake-types";
+import { INTAKE_SCHEMA_VERSION } from "../helpers/intake-types";
 import { SITE_LOCALE_GREGORIAN } from "@modonty/shared/lib/constants/locale";
 import { IconAlertTriangle, IconCheck, IconCheckCircle, IconLightbulb } from "@modonty/shared/lib/icons";
 

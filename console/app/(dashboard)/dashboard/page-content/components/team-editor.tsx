@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
+import { useConfirm } from "@/lib/hooks/use-confirm";
 
 import { ImageField } from "./image-field";
 import type { TeamMemberInput } from "../helpers/page-content-types";

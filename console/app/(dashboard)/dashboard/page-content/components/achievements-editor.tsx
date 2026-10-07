@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
+import { useConfirm } from "@/lib/hooks/use-confirm";
 
 import { ImageField } from "./image-field";
 import type { AchievementInput } from "../helpers/page-content-types";

@@ -1,8 +1,8 @@
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 
-import { jsonError } from "../../../_lib/respond";
-import { resolveSite } from "../../../_lib/resolve-site";
+import { jsonError } from "../../../helpers/respond";
+import { resolveSite } from "../../../helpers/resolve-site";
 
 /**
  * GET /api/v1/sites/{siteId}/sitemap.xml — the client's article sitemap, hosted by us.

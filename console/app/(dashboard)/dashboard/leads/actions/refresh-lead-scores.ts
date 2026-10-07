@@ -5,7 +5,7 @@ import {
   computeLeadScoresForClient,
   refreshLeadScoring,
   type RefreshResult,
-} from "@/lib/lead-scoring/compute";
+} from "../helpers/lead-scoring/compute";
 import { messages } from "@/lib/messages";
 import { revalidatePath } from "next/cache";
 

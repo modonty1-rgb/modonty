@@ -20,22 +20,22 @@ import { formatDate } from "@/lib/format-date";
 import { DashboardLayoutClient } from "./components/dashboard-layout-client";
 import { ImpersonationBanner } from "./components/impersonation-banner";
 import { AndroidAppBanner } from "./components/android-app-banner";
-import { AccountNotice } from "./dashboard/components/account-notice";
+import { AccountNotice } from "./components/account-notice";
 import {
   getPendingArticlesCount,
   canSeeSiteArticles,
-} from "./dashboard/articles/helpers/article-queries";
-import { getPendingCommentsCount } from "./dashboard/comments/helpers/comment-queries";
-import { getPendingQuestionsCount } from "./dashboard/questions/helpers/question-queries";
-import { getSubscribersCount } from "./dashboard/subscribers/helpers/subscriber-queries";
-import { getLeadsCount } from "./dashboard/leads/helpers/lead-queries";
-import { getNewBookingsCount } from "./dashboard/bookings/helpers/booking-queries";
-import { getNewSupportMessagesCount } from "./dashboard/support/helpers/support-queries-enhanced";
-import { getFaqStats } from "./dashboard/faqs/helpers/faq-queries";
-import { getPendingPageFaqCount } from "./dashboard/page-faq/helpers/page-faq-queries";
-import { getPendingClientCommentsCount } from "./dashboard/client-comments/helpers/client-comment-queries";
-import { getPendingClientReviewsCount } from "./dashboard/client-reviews/helpers/client-review-queries";
-import { getMediaSectionCounts } from "./dashboard/reels/helpers/reel-queries";
+  getPendingCommentsCount,
+  getPendingQuestionsCount,
+  getSubscribersCount,
+  getLeadsCount,
+  getNewBookingsCount,
+  getNewSupportMessagesCount,
+  getFaqStats,
+  getPendingPageFaqCount,
+  getPendingClientCommentsCount,
+  getPendingClientReviewsCount,
+  getMediaSectionCounts,
+} from "@/lib/nav-counts";
 
 export const dynamic = "force-dynamic";
 

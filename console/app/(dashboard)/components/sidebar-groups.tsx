@@ -7,7 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { SidebarNavItem } from "./sidebar-nav";
 import { cn } from "@/lib/utils";
 
-import type { NavGroupConfig } from "./nav-config";
+import type { NavGroupConfig } from "../helpers/nav-config";
 
 /** Same rule the nav item itself uses, so a group can never disagree with its own link. */
 function isHrefActive(pathname: string, href: string): boolean {

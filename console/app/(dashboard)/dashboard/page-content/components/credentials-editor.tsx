@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useConfirm } from "@/app/(dashboard)/components/use-confirm";
+import { useConfirm } from "@/lib/hooks/use-confirm";
 
 import type { CredentialInput } from "../helpers/page-content-types";
 import { updateCredentials } from "../actions/update-credentials";

@@ -4,10 +4,10 @@ import { db } from "@/lib/db";
 import { SeoSubNav } from "../components/seo-sub-nav";
 import { IntakeForm } from "./components/intake-form";
 import { DynamicIntakeForm } from "./components/dynamic-intake-form";
-import type { ClientIntake } from "./lib/intake-types";
-import { detectTech } from "./lib/detect-tech";
-import { getIntakeFormDefinition } from "./lib/intake-queries";
-import { isYmylIndustry } from "./lib/ymyl";
+import type { ClientIntake } from "./helpers/intake-types";
+import { detectTech } from "./helpers/detect-tech";
+import { getIntakeFormDefinition } from "./helpers/intake-queries";
+import { isYmylIndustry } from "./helpers/ymyl";
 
 export const dynamic = "force-dynamic";
 
