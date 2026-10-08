@@ -30,6 +30,7 @@ import type { ArticleCountsData } from '@/services/api-types';
 import { toApiError } from '@/services/errors';
 import { useAppTheme } from '@/theme/ThemeProvider';
 import { control, media, radius, space } from '@/theme/tokens';
+import { haptic } from '@/lib/haptics';
 
 type Mine = { liked: boolean; disliked: boolean; favorited: boolean };
 type Counts = { likes: number; dislikes: number; favorites: number; comments: number; views: number };
@@ -75,6 +76,7 @@ export default function ArticleScreen() {
         try {
           if (kind === 'like') {
             const r = await actionsApi.likeArticle(article.id, article.slug);
+            haptic.success();
             setCounts((x) => (x ? { ...x, likes: r.likesCount, dislikes: r.dislikesCount } : x));
             setMine((m) => ({ ...(m ?? { favorited: false }), liked: r.liked, disliked: false }));
           } else if (kind === 'dislike') {
@@ -83,6 +85,7 @@ export default function ArticleScreen() {
             setMine((m) => ({ ...(m ?? { favorited: false }), disliked: r.disliked, liked: false }));
           } else {
             const r = await actionsApi.favoriteArticle(article.id, article.slug);
+            haptic.success();
             setCounts((x) => (x ? { ...x, favorites: r.favoritesCount } : x));
             setMine((m) => ({ ...(m ?? { liked: false, disliked: false }), favorited: r.favorited }));
             toast.show(r.favorited ? 'حُفظ في مفضّلتك' : 'أُزيل من مفضّلتك', 'success');

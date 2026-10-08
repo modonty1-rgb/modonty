@@ -9,6 +9,7 @@ import { useToast } from '@/providers/ToastProvider';
 import { actionsApi } from '@/services/api';
 import { reelActionsApi } from '@/services/api-actions';
 import { toApiError } from '@/services/errors';
+import { haptic } from '@/lib/haptics';
 
 /** أفعال الريل المشتركة بين الفيد وصفحة الريل الواحد: E16 إعجاب/حفظ (تبديل) · E18 مشاركة. */
 export function useReelActions(update: (id: string, fn: (s: ReelSlideModel) => ReelSlideModel) => void): ReelSlideActions {
@@ -20,6 +21,7 @@ export function useReelActions(update: (id: string, fn: (s: ReelSlideModel) => R
         requireAuth(async () => {
           try {
             const r = await actionsApi.likeReel(id);
+            haptic.success();
             update(id, (s) => ({ ...s, liked: r.active, likes: r.count }));
           } catch (error) {
             toast.show(toApiError(error).message, 'error');
@@ -29,6 +31,7 @@ export function useReelActions(update: (id: string, fn: (s: ReelSlideModel) => R
         requireAuth(async () => {
           try {
             const r = await actionsApi.favoriteReel(id);
+            haptic.success();
             update(id, (s) => ({ ...s, favorited: r.active, favorites: r.count }));
             toast.show(r.active ? 'حُفظ في ريلزك' : 'أُزيل من ريلزك', 'success');
           } catch (error) {

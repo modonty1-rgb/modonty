@@ -30,6 +30,7 @@ import { partnerActionsApi } from '@/services/api-actions';
 import { toApiError } from '@/services/errors';
 import { useAppTheme } from '@/theme/ThemeProvider';
 import { control, media, radius, space } from '@/theme/tokens';
+import { haptic } from '@/lib/haptics';
 
 /** «home:<key>» أو المفتاح المجرّد — نفس قاعدة الويب (`clients/[slug]/components/page-blocks.tsx:44-46`). */
 function hiddenChecker(hidden: string[]) {
@@ -75,6 +76,7 @@ export default function PartnerScreen() {
       requireAuth(async () => {
         try {
           const r = favorited ? await partnerActionsApi.unfavorite(slug) : await partnerActionsApi.favorite(slug);
+          haptic.success();
           setFavorited(r.favorited);
           toast.show(r.favorited ? 'أُضيف إلى مفضّلتك' : 'أُزيل من مفضّلتك', 'success');
         } catch (error) {

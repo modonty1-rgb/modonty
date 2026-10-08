@@ -1,13 +1,14 @@
 import { router } from 'expo-router';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ModontyWordmark } from '@/components/brand/ModontyWordmark';
-import { ArticleCard } from '@/components/content/ArticleCard';
+import { FeedCard } from '@/components/content/FeedCard';
 import { FollowButton } from '@/components/content/FollowButton';
 import { ReelTile, type ReelTileModel } from '@/components/content/ReelTile';
 import { AppText } from '@/components/ui/AppText';
+import { Icon } from '@/components/ui/Icon';
 import { IconButton } from '@/components/ui/IconButton';
 import { PagedList } from '@/components/ui/PagedList';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -33,6 +34,8 @@ export default function HomeScreen() {
   const { unreadNotifications, requireAuth } = useAuth();
   const { width } = useWindowDimensions();
   const sections = useRef<Sections | null>(null);
+  // من يتابع مدونتي لا يُطلب منه المتابعة (ملاحظة خالد ٨ أكتوبر) — يختفي البانر لحظة ثبوت المتابعة.
+  const [followsModonty, setFollowsModonty] = useState(false);
 
   const list = usePagedList<ArticleCardModel, number>(async (page, signal) => {
     if (page === null) {
@@ -45,7 +48,11 @@ export default function HomeScreen() {
     return { items: next.items.map(toArticleCard), next: next.hasMore ? page + 1 : null };
   }, []);
 
-  const renderItem = useCallback(({ item }: { item: ArticleCardModel }) => <ArticleCard item={item} onOpen={open.article} />, []);
+  // تصميم الموقع: الأولى واجهة، والبقيّة مدمجة (MobilePostCard).
+  const renderItem = useCallback(
+    ({ item, index }: { item: ArticleCardModel; index: number }) => <FeedCard item={item} onOpen={open.article} hero={index === 0} />,
+    [],
+  );
   const s = list.status === 'success' ? sections.current : null;
   const reelWidth = (width - space.screen * 2 - space.xs * 2) / REELS_VISIBLE;
   const reels = useMemo<ReelTileModel[]>(
@@ -63,17 +70,17 @@ export default function HomeScreen() {
 
   const header = (
     <View style={styles.sections}>
-      {s?.coreClientSlug ? (
+      {s?.coreClientSlug && !followsModonty ? (
         <View style={[styles.follow, { backgroundColor: colors.primaryContainer }]}>
           <AppText variant="label" tone="onPrimaryContainer" style={styles.flex}>
             تابع مدونتي ليصلك كل جديد
           </AppText>
-          <FollowButton slug={s.coreClientSlug} compact />
+          <FollowButton slug={s.coreClientSlug} compact onFollowingChange={setFollowsModonty} />
         </View>
       ) : null}
       {reels.length > 0 ? (
         <View style={styles.block}>
-          <SectionHeader title="ريلز" onMore={() => router.navigate('/reels')} />
+          <SectionHeader title="الطلّات" onMore={() => router.navigate('/reels')} />
           <FlatList
             horizontal
             data={reels}
@@ -138,9 +145,19 @@ export default function HomeScreen() {
   return (
     <Screen>
       <View style={[styles.top, { paddingTop: insets.top, backgroundColor: colors.page, borderBottomColor: colors.border }]}>
+        {/* مثل رأس الموقع على الجوال (TopNav.tsx): الشعار · خانة بحث عريضة · الحساب — الخانة تبدو «اكتب هنا» من أوّل نظرة. */}
         <View style={styles.topRow}>
           <ModontyWordmark width={brandWordmark.width} height={brandWordmark.height} />
-          <View style={styles.flex} />
+          <Tap
+            label="ابحث في المقالات والشركاء"
+            onPress={() => router.navigate('/search')}
+            style={[styles.searchBox, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          >
+            <Icon name="search" size={control.iconSmall} tone="muted" />
+            <AppText variant="secondary" tone="muted" numberOfLines={1} style={styles.flex}>
+              ابحث في مدونتي…
+            </AppText>
+          </Tap>
           <IconButton
             icon="notifications"
             label={unreadNotifications > 0 ? 'الإشعارات — غير مقروءة' : 'الإشعارات'}
@@ -163,7 +180,17 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   top: { borderBottomWidth: StyleSheet.hairlineWidth },
-  topRow: { height: control.header, flexDirection: 'row', alignItems: 'center', paddingStart: space.screen, paddingEnd: space.xxs },
+  topRow: { height: control.header, flexDirection: 'row', alignItems: 'center', gap: space.xs, paddingStart: space.screen, paddingEnd: space.xxs },
+  searchBox: {
+    flex: 1,
+    height: 40,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.xs,
+    paddingHorizontal: space.sm,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   flex: { flex: 1 },
   sections: { gap: space.section, paddingTop: space.md },
   block: { gap: space.sm },

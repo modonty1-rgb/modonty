@@ -1,0 +1,51 @@
+/* ألوان موقع مدونتي نفسها — منقولة من modonty/app/globals.css (:root و .dark) بقيمها المحلولة،
+   حتى يكون التطبيق والموقع كياناً واحداً. أيّ تغيير في ألوان العلامة يبدأ من هناك ثم يُنقل هنا. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 45 8% 95%;
+  --foreground: 245.71 87.5% 18.82%;
+  --card: 0 0% 100%;
+  --card-foreground: 245.71 87.5% 18.82%;
+  --primary: 240 100% 59.41%;
+  --primary-foreground: 0 0% 100%;
+  --link: 240 100% 59.41%;
+  --link-accent: 180 100% 23%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 245.71 87.5% 18.82%;
+  --accent: 180 100% 42.35%;
+  --accent-foreground: 245.71 87.5% 18.82%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 35.69%;
+  --destructive: 0 84.2% 60.2%;
+  --border: 0 0% 85.88%;
+  --input: 0 0% 85.88%;
+  --ring: 240 100% 59.41%;
+  --star: 38 91% 55%;
+  --header: 210 40% 96%;
+}
+
+.dark:root {
+  --background: 245 8% 9%;
+  --foreground: 0 0% 98%;
+  --card: 245 7% 13%;
+  --card-foreground: 0 0% 98%;
+  --primary: 240 100% 68%;
+  --primary-foreground: 0 0% 100%;
+  --link: 240 100% 72%;
+  --link-accent: 180 100% 50%;
+  --secondary: 245 8% 24%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 180 100% 50%;
+  --accent-foreground: 245 87% 19%;
+  --muted: 245 7% 16%;
+  --muted-foreground: 215 20% 85%;
+  --destructive: 0 62.8% 50%;
+  --border: 245 8% 45%;
+  --input: 245 8% 45%;
+  --ring: 240 100% 65%;
+  --star: 38 91% 55%;
+  --header: 245 7% 13%;
+}

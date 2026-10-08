@@ -1,3 +1,4 @@
+import '../global.css';
 import { Tajawal_400Regular } from '@expo-google-fonts/tajawal/400Regular';
 import { Tajawal_500Medium } from '@expo-google-fonts/tajawal/500Medium';
 import { Tajawal_700Bold } from '@expo-google-fonts/tajawal/700Bold';

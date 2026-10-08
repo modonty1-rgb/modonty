@@ -3,7 +3,8 @@
  *
  * الأرقام من `documents/mobile/UIUX-RULES.md` (قيم نهائية لا مدى)، والهوية من
  * `documents/mobile/BRANDING-STANDARD.md`: الكحلي `#0E065A` · الأزرق `#3030FF` · التركواز `#00D8D8` أكسنت فقط.
- * الأسطح والنصوص منقولة من لوحة الكونسول المقيسة (`console-mobile/src/theme/tokens.ts`) — كل زوج نصّ/سطح
+ * الأسطح والنصوص = ألوان موقع مدونتي (modonty/app/globals.css :root و .dark — ٨ أكتوبر، طلب خالد: التطبيق توأم الموقع).
+ * كانت منقولة من لوحة الكونسول المقيسة (`console-mobile/src/theme/tokens.ts`) — كل زوج نصّ/سطح
  * هناك مقيس ≥ ٤٫٥:١ — حتى لا تكون للماركة نسختان من نفس الدرجة.
  */
 
@@ -14,24 +15,24 @@ export const brandColors = {
 } as const;
 
 const light = {
-  page: '#EEF0FB',
+  page: '#F3F3F1',
   surface: '#FFFFFF',
-  surfaceRaised: '#E4E6FA',
-  surfaceHigh: '#D6D9F5',
-  border: '#D6D9F5',
-  text: '#0E1230',
+  surfaceRaised: '#F5F5F5',
+  surfaceHigh: '#EBEBEB',
+  border: '#DBDBDB',
+  text: brandColors.navy as string,
   // 7.66:1 على الأبيض · 6.20:1 على surfaceRaised.
-  muted: '#4A5272',
-  primary: brandColors.blue,
+  muted: '#5B5B5B',
+  primary: brandColors.blue as string,
   onPrimary: '#FFFFFF',
-  primaryContainer: '#DCDDFF',
-  onPrimaryContainer: '#16168F',
+  primaryContainer: '#E8E8FF',
+  onPrimaryContainer: brandColors.navy as string,
   accent: brandColors.accent,
   navy: brandColors.navy,
   // التركواز الداكن: 7.37:1 على الأبيض — للنصّ التفاعلي والتعبئة البراندية في الفاتح.
-  interactive: '#0B605E',
-  brandFill: '#0B605E',
-  onBrandFill: '#FFFFFF',
+  interactive: '#007575',
+  brandFill: brandColors.accent,
+  onBrandFill: brandColors.navy,
   danger: '#B4241A',
   dangerContainer: '#FFDAD6',
   onDangerContainer: '#7A1410',
@@ -39,30 +40,30 @@ const light = {
   onPositiveContainer: '#00403F',
   warningContainer: '#FFE2BC',
   onWarningContainer: '#5C2E00',
-  inputSurface: '#EBF0F8',
-  inputBorder: '#6E7787',
-  placeholder: '#54637A',
+  inputSurface: '#FFFFFF',
+  inputBorder: '#A0A0A0',
+  placeholder: '#5B5B5B',
   scrim: 'rgba(3,5,14,0.45)',
   // سطح الريلز وصفحة الفيديو داكن في الوضعين — الفيديو يُشاهَد على أسود.
   reelsBackground: '#000000',
   onReels: '#FFFFFF',
   onReelsMuted: 'rgba(255,255,255,0.88)',
   reelsScrim: 'rgba(0,0,0,0.45)',
-  skeleton: '#D6D9F5',
+  skeleton: '#EBEBEB',
 };
 
 const dark: typeof light = {
-  page: '#070B16',
-  surface: '#121A3C',
-  surfaceRaised: '#1B2452',
-  surfaceHigh: '#283166',
-  border: '#283166',
-  text: '#FFFFFF',
+  page: '#151519',
+  surface: '#1F1F23',
+  surfaceRaised: '#26262C',
+  surfaceHigh: '#393842',
+  border: '#302F37',
+  text: '#FAFAFA',
   // 9.19:1 على surface · 8.02:1 على surfaceRaised.
-  muted: '#B6BEDC',
-  primary: brandColors.blue,
+  muted: '#D1D7E0',
+  primary: '#5C5CFF',
   onPrimary: '#FFFFFF',
-  primaryContainer: '#2A3290',
+  primaryContainer: '#2A2A66',
   onPrimaryContainer: '#E2E3FF',
   accent: brandColors.accent,
   navy: brandColors.navy,
@@ -76,15 +77,15 @@ const dark: typeof light = {
   onPositiveContainer: '#8AF3F2',
   warningContainer: '#3F2B06',
   onWarningContainer: '#FFCF85',
-  inputSurface: '#0B1024',
-  inputBorder: '#606B7F',
+  inputSurface: '#1F1F23',
+  inputBorder: '#6B6A7C',
   placeholder: '#7D87A0',
   scrim: 'rgba(3,5,14,0.6)',
   reelsBackground: '#000000',
   onReels: '#FFFFFF',
   onReelsMuted: 'rgba(255,255,255,0.88)',
   reelsScrim: 'rgba(0,0,0,0.45)',
-  skeleton: '#283166',
+  skeleton: '#302F37',
 };
 
 export const palettes = { light, dark };

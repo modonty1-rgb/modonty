@@ -1,6 +1,8 @@
 import type { Tabs } from 'expo-router';
-import { memo, type ComponentProps } from 'react';
+import * as Haptics from 'expo-haptics';
+import { memo, useEffect, type ComponentProps, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { ModontyIconName } from '@/components/brand/ModontyIcon';
@@ -14,7 +16,7 @@ import { control, radius, space } from '@/theme/tokens';
 const TABS: Record<string, { label: string; icon: ModontyIconName }> = {
   index: { label: 'الرئيسية', icon: 'home' },
   discover: { label: 'استكشف', icon: 'categories' },
-  reels: { label: 'ريلز', icon: 'reels' },
+  reels: { label: 'الطلّات', icon: 'reels' },
   search: { label: 'بحث', icon: 'search' },
   account: { label: 'حسابي', icon: 'profile' },
 };
@@ -42,7 +44,10 @@ export const TabBar = memo(function TabBar({ state, navigation }: BottomTabBarPr
         const badge = route.name === 'account' && unreadNotifications > 0;
         const onPress = () => {
           const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-          if (!focused && !event.defaultPrevented) navigation.navigate(route.name, route.params);
+          if (!focused && !event.defaultPrevented) {
+            Haptics.selectionAsync().catch(() => undefined);
+            navigation.navigate(route.name, route.params);
+          }
         };
         return (
           <Tap
@@ -53,10 +58,10 @@ export const TabBar = memo(function TabBar({ state, navigation }: BottomTabBarPr
             onPress={onPress}
             style={styles.tab}
           >
-            <View style={[styles.indicator, focused && { backgroundColor: colors.primaryContainer }]}>
+            <TabIndicator focused={focused} fill={colors.primaryContainer}>
               <Icon name={tab.icon} tone={focused ? 'onPrimaryContainer' : 'muted'} />
               {badge ? <View style={[styles.badge, { backgroundColor: colors.danger, borderColor: colors.surface }]} /> : null}
-            </View>
+            </TabIndicator>
             <AppText variant="tabLabel" fixedSize tone={focused ? 'text' : 'muted'}>
               {tab.label}
             </AppText>
@@ -66,6 +71,22 @@ export const TabBar = memo(function TabBar({ state, navigation }: BottomTabBarPr
     </View>
   );
 });
+
+/** المؤشّر يكبر بنابض حين يصير التبويب نشطاً (Reanimated — خيط الواجهة، بلا إعادة رسم React). */
+function TabIndicator({ focused, fill, children }: { focused: boolean; fill: string; children: ReactNode }) {
+  const on = useSharedValue(focused ? 1 : 0);
+  useEffect(() => {
+    on.value = withSpring(focused ? 1 : 0, { damping: 16, stiffness: 220 });
+  }, [focused, on]);
+  const pill = useAnimatedStyle(() => ({ opacity: on.value, transform: [{ scaleX: 0.6 + on.value * 0.4 }] }));
+  const icon = useAnimatedStyle(() => ({ transform: [{ scale: 1 + on.value * 0.08 }] }));
+  return (
+    <View style={styles.indicator}>
+      <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: fill, borderRadius: radius.pill }, pill]} />
+      <Animated.View style={icon}>{children}</Animated.View>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   bar: { flexDirection: 'row', borderTopWidth: StyleSheet.hairlineWidth },
