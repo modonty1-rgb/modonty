@@ -11,6 +11,7 @@ import { I18nManager } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { UpdateGate } from '@/components/system/UpdateGate';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { PushProvider } from '@/providers/PushProvider';
 import { ToastProvider } from '@/providers/ToastProvider';
@@ -66,6 +67,7 @@ export default function RootLayout() {
             <PushProvider>
               <ToastProvider>
                 <RootStack />
+                <UpdateGate />
               </ToastProvider>
             </PushProvider>
           </AuthProvider>
