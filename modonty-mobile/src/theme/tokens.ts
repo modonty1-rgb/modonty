@@ -50,6 +50,14 @@ const light = {
   onReelsMuted: 'rgba(255,255,255,0.88)',
   reelsScrim: 'rgba(0,0,0,0.45)',
   skeleton: '#EBEBEB',
+  // ألوان بطاقات وقت القراءة في الموقع (modonty/app/globals.css — --action-listen/save/share):
+  // على الماشي · فنجان قهوة · جلسة روقان، ولون النصّ فوق كلٍّ حين تُختار.
+  actionListen: '#27B07D',
+  onActionListen: '#FFFFFF',
+  actionSave: '#F59F0A',
+  onActionSave: brandColors.navy as string,
+  actionShare: '#7C3BED',
+  onActionShare: '#FFFFFF',
 };
 
 const dark: typeof light = {
@@ -86,6 +94,12 @@ const dark: typeof light = {
   onReelsMuted: 'rgba(255,255,255,0.88)',
   reelsScrim: 'rgba(0,0,0,0.45)',
   skeleton: '#302F37',
+  actionListen: '#2ED195',
+  onActionListen: brandColors.navy as string,
+  actionSave: '#F6AE31',
+  onActionSave: '#0E065A',
+  actionShare: '#9B68F3',
+  onActionShare: '#0E065A',
 };
 
 export const palettes = { light, dark };

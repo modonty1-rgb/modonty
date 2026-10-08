@@ -396,6 +396,8 @@ export interface ArchiveFilters {
  */
 export interface ArchiveData extends Paged<ArchiveArticle> {
   filters?: ArchiveFilters;
+  /** Page 1 only, servers from 9 Oct 2026 — the whole archive per reading time, narrowed by the search alone. */
+  readingTimeCounts?: Record<ArchiveReadingTime, number>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────

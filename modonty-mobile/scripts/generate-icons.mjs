@@ -68,6 +68,10 @@ const ICONS = {
   education: 'modonty-sector-marks.tsx#ModontyEducationMark',
   health: 'modonty-sector-marks.tsx#ModontyHealthMark',
   idea: 'modonty-sector-marks.tsx#ModontyIdeaMark',
+  // بطاقات وقت القراءة (`ReadingTimeBar.tsx` — IconFootprints · IconCoffee · IconArmchair).
+  footprints: 'modonty-utility-marks.tsx#ModontyFootprintsMark',
+  coffee: 'modonty-coffee-mark.tsx',
+  armchair: 'modonty-armchair-mark.tsx',
   ai: 'modonty-brand-icons.tsx#ModontyAiMark',
   link: 'modonty-brand-icons.tsx#ModontyLinkMark',
 };
@@ -106,6 +110,10 @@ function convert(name, spec) {
     const next = src.indexOf('export function', start + 1);
     src = src.slice(start, next < 0 ? undefined : next);
   }
+  // ملفّ الأدوات يلفّ كل علامة بـ`<Base>` ويضيف الماسة بـ`<Diamond/>` — يُفكّان هنا إلى svg وrect.
+  const diamond = readFileSync(join(iconsDir, file), 'utf8').match(/const Diamond = \(\) => (<rect[^>]*\/>)/);
+  src = src.replace(/<Base[^>]*>/, '<svg>').replace('</Base>', '</svg>');
+  if (diamond) src = src.replace(/<Diamond\s*\/>/g, diamond[1]);
   const exports = src.match(/export function/g) ?? [];
   if (exports.length !== 1) throw new Error(`${spec}: expected one export, found ${exports.length}`);
   const body = src.match(/<svg[^>]*>([\s\S]*?)<\/svg>/);

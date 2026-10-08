@@ -6,13 +6,13 @@ import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { ModontyWordmark } from '@/components/brand/ModontyWordmark';
 import type { ModontyIconName } from '@/components/brand/ModontyIcon';
 import { ArticleCard } from '@/components/content/ArticleCard';
+import { FollowCtaBar } from '@/components/content/FollowCtaBar';
 import { TopBar } from '@/components/navigation/TopBar';
 import { AppText } from '@/components/ui/AppText';
 import { Icon } from '@/components/ui/Icon';
 import { PagedList } from '@/components/ui/PagedList';
 import { Screen } from '@/components/ui/Screen';
 import { Tap } from '@/components/ui/Tap';
-import { useFollow } from '@/hooks/useFollow';
 import { usePagedList } from '@/hooks/usePagedList';
 import { articleRow, type ArticleCardModel } from '@/lib/models';
 import { open, openExternal } from '@/lib/nav';
@@ -137,7 +137,11 @@ function LandingHeader({ landing }: { landing: Landing | null }) {
             </View>
           ))}
         </View>
-        {landing ? <CtaPair slug={landing.slug} /> : null}
+        {landing ? (
+          <View style={styles.ctas}>
+            <FollowCtaBar slug={landing.slug} secondary={{ label: 'صِر شريكاً', icon: 'partner', onPress: () => openExternal(PARTNER_SIGNUP_URL) }} />
+          </View>
+        ) : null}
       </View>
 
       <View style={styles.grid}>
@@ -163,34 +167,6 @@ function LandingHeader({ landing }: { landing: Landing | null }) {
   );
 }
 
-/** «تابع مدونتي» (متابعة حقيقية — FollowCtaButton) و«صِر شريكاً» (pay.modonty.com) جنباً إلى جنب كما في الموقع. */
-function CtaPair({ slug }: { slug: string }) {
-  const { colors } = useAppTheme();
-  const { following, busy, toggle } = useFollow(slug);
-  const label = following === null ? 'جارٍ التحقّق…' : busy ? (following ? 'يُلغى…' : 'يُتابَع…') : following ? 'تتابع مدونتي' : 'تابع مدونتي';
-  return (
-    <View style={styles.ctas}>
-      <Tap
-        label={label}
-        onPress={toggle}
-        disabled={busy || following === null}
-        style={[styles.cta, { backgroundColor: following ? colors.surface : colors.brandFill, borderColor: colors.brandFill }]}
-      >
-        <Icon name={following ? 'check' : 'notifications'} size={20} tone="text" monochrome={!following} />
-        <AppText variant="label" style={styles.bold}>
-          {label}
-        </AppText>
-      </Tap>
-      <Tap label="صِر شريكاً" role="link" onPress={() => openExternal(PARTNER_SIGNUP_URL)} style={[styles.cta, { backgroundColor: colors.surface, borderColor: colors.brandFill }]}>
-        <Icon name="partner" size={20} />
-        <AppText variant="label" style={styles.bold}>
-          صِر شريكاً
-        </AppText>
-      </Tap>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   wrap: { gap: space.lg, paddingTop: space.sm, paddingBottom: space.sm },
   hero: { alignItems: 'center', paddingHorizontal: space.screen, gap: space.xs },
@@ -209,17 +185,7 @@ const styles = StyleSheet.create({
   },
   value: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: space.sm },
   bold: { fontWeight: '700' },
-  ctas: { flexDirection: 'row', gap: space.xs, alignSelf: 'stretch', marginTop: space.sm },
-  cta: {
-    flex: 1,
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: space.xxs,
-    borderRadius: radius.card,
-    borderWidth: 1,
-  },
+  ctas: { alignSelf: 'stretch', marginTop: space.sm },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: GRID_GAP, paddingHorizontal: space.screen },
   door: {
     height: 72,

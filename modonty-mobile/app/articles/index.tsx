@@ -1,47 +1,45 @@
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useSegments } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { ArticleCard } from '@/components/content/ArticleCard';
+import { FeedCard } from '@/components/content/FeedCard';
+import { FollowCtaBar } from '@/components/content/FollowCtaBar';
+import { ReadingTimeBar } from '@/components/content/ReadingTimeBar';
+import { SearchField } from '@/components/content/SearchField';
+import { TopBar } from '@/components/navigation/TopBar';
 import { AppText } from '@/components/ui/AppText';
 import { ChipRow, type ChipOption } from '@/components/ui/ChipRow';
 import { Header } from '@/components/ui/Header';
 import { PagedList } from '@/components/ui/PagedList';
 import { Screen } from '@/components/ui/Screen';
+import { useCoreSlug } from '@/hooks/useCoreSlug';
 import { usePagedList } from '@/hooks/usePagedList';
-import { plainNumber } from '@/lib/format';
 import { toArticleCard, type ArticleCardModel } from '@/lib/models';
 import { open } from '@/lib/nav';
 import { contentApi } from '@/services/api';
-import type { ArchiveFilters, ArchiveReadingTime, ArchiveSort } from '@/services/api-types';
+import type { ArchiveFilters, ArchiveReadingTime } from '@/services/api-types';
+import { useAppTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
 
-const SORTS: ChipOption<ArchiveSort>[] = [
-  { value: 'newest', label: 'الأحدث' },
-  { value: 'mostRead', label: 'الأكثر قراءة' },
-  { value: 'mostEngaged', label: 'الأكثر تفاعلاً' },
-];
-const TIMES: ChipOption<'any' | ArchiveReadingTime>[] = [
-  { value: 'any', label: 'أي مدّة' },
-  { value: 'short', label: 'قصيرة' },
-  { value: 'medium', label: 'متوسطة' },
-  { value: 'long', label: 'طويلة' },
-];
 const ALL = '__all__';
 
 /**
- * S04 — أرشيف المقالات بفلاتره (C3): المجال · التصنيف · وقت القراءة · الترتيب. خيارات الفلتر من
- * `withFilters=1` في الصفحة الأولى (نفس getArticlesFilters) — لا قائمة مكتوبة في التطبيق.
- * تقبل `?category=` و`?tag=` و`?industry=` حين تُفتح من صفحة تصنيف أو وسم أو مجال.
+ * S04 — صفحة `/articles` في الموقع على الجوال (`ArticlesPageLayout`): شريط «تابع مدونتي · شاهد الطلّات» ·
+ * «المقالات» ووعدها · بحث فوري بالعنوان · صفّ التصنيفات · بطاقات وقت القراءة بأعدادها · البطاقات.
+ * الموقع لا يعرض على الجوال صفّ المجالات ولا الترتيب (خالد ٢١–٢٣ أغسطس) — فلا يعرضهما التطبيق.
+ * تاباً في الشريط تُرسم برأس الموقع؛ ومفتوحةً من بطاقة وقت أو تصنيف أو وسم أو مجال برأس رجوع وعنوانها.
  */
 export default function ArchiveScreen() {
   const params = useLocalSearchParams<{ category?: string; tag?: string; industry?: string; title?: string; time?: ArchiveReadingTime }>();
-  const [sort, setSort] = useState<ArchiveSort>('newest');
-  const [time, setTime] = useState<'any' | ArchiveReadingTime>(params.time ?? 'any');
-  const [industry, setIndustry] = useState<string>(params.industry ?? ALL);
+  const inTabs = useSegments()[0] === '(tabs)';
+  const { colors } = useAppTheme();
+  const coreSlug = useCoreSlug();
+  const [time, setTime] = useState<ArchiveReadingTime | null>(params.time ?? null);
   const [category, setCategory] = useState<string>(params.category ?? ALL);
+  const [search, setSearch] = useState('');
   const filters = useRef<ArchiveFilters | null>(null);
-  const [total, setTotal] = useState<number | null>(null);
+  const [counts, setCounts] = useState<Record<ArchiveReadingTime, number> | undefined>(undefined);
+  const [filtersReady, setFiltersReady] = useState(false);
 
   const list = usePagedList<ArticleCardModel, number>(
     async (page, signal) => {
@@ -49,77 +47,86 @@ export default function ArchiveScreen() {
       const data = await contentApi.archive(
         {
           page: p,
-          sort,
-          time: time === 'any' ? undefined : time,
-          industry: industry === ALL ? undefined : industry,
+          time: time ?? undefined,
+          industry: params.industry,
           category: category === ALL ? undefined : category,
           tag: params.tag,
+          search: search || undefined,
           withFilters: p === 1 && filters.current === null,
         },
         signal,
       );
       if (data.filters) {
         filters.current = data.filters;
-        setTotal(data.filters.total);
+        setFiltersReady(true);
       }
+      if (data.readingTimeCounts) setCounts(data.readingTimeCounts);
       return { items: data.items.map(toArticleCard), next: data.hasMore ? p + 1 : null };
     },
-    [sort, time, industry, category, params.tag],
+    [time, category, search, params.industry, params.tag],
   );
 
-  const industryOptions = useMemo<ChipOption<string>[]>(
-    () => [{ value: ALL, label: 'كل المجالات' }, ...(filters.current?.industries ?? []).map((i) => ({ value: i.slug, label: `${i.name} (${plainNumber(i.count)})` }))],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [total],
-  );
+  // صفّ واحد كالموقع (`FiltersBar.tsx`): «كل التصنيفات» ثم الجذور، وأبناء المفتوح منها بعده بـ«↳».
   const categoryOptions = useMemo<ChipOption<string>[]>(() => {
-    const all = filters.current?.categories ?? [];
-    const visible = industry === ALL ? all : all.filter((c) => c.industrySlugs.includes(industry));
-    return [{ value: ALL, label: 'كل التصنيفات' }, ...visible.map((c) => ({ value: c.slug, label: `${c.name} (${plainNumber(c.count)})` }))];
+    const roots = filters.current?.categories ?? [];
+    const options: ChipOption<string>[] = [{ value: ALL, label: 'كل التصنيفات' }];
+    for (const c of roots) {
+      options.push({ value: c.slug, label: c.name });
+      const isOpen = category === c.slug || c.children.some((k) => k.slug === category);
+      if (isOpen) for (const k of c.children) options.push({ value: k.slug, label: `↳ ${k.name}` });
+    }
+    return options;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [total, industry]);
+  }, [filtersReady, category]);
 
-  const renderItem = useCallback(({ item }: { item: ArticleCardModel }) => <ArticleCard item={item} onOpen={open.article} />, []);
+  const renderItem = useCallback(({ item }: { item: ArticleCardModel }) => <FeedCard item={item} onOpen={open.article} />, []);
 
   const header = (
-    <View style={styles.filters}>
-      {params.tag ? null : (
-        <>
-          {industryOptions.length > 1 ? (
-            <ChipRow label="المجال" options={industryOptions} value={industry} onChange={(v) => { setIndustry(v); setCategory(ALL); }} />
-          ) : null}
-          {categoryOptions.length > 1 ? <ChipRow label="التصنيف" options={categoryOptions} value={category} onChange={setCategory} /> : null}
-        </>
-      )}
-      <ChipRow label="وقت القراءة" options={TIMES} value={time} onChange={setTime} />
-      <ChipRow label="الترتيب" options={SORTS} value={sort} onChange={setSort} />
-      {total !== null ? (
-        <AppText variant="secondary" tone="muted" style={styles.total}>
-          {`${plainNumber(total)} مقالاً في الأرشيف`}
-        </AppText>
+    <View style={styles.head}>
+      {coreSlug ? (
+        <View style={styles.pad}>
+          <FollowCtaBar slug={coreSlug} secondary={{ label: 'شاهد الطلّات', icon: 'reels', onPress: () => router.navigate('/reels') }} />
+        </View>
       ) : null}
+      {inTabs ? (
+        <View style={styles.pad}>
+          <View style={styles.titleRow}>
+            <View style={[styles.accentBar, { backgroundColor: colors.accent }]} />
+            <AppText variant="pageTitle" accessibilityRole="header" style={styles.h1}>
+              المقالات
+            </AppText>
+          </View>
+          <AppText variant="body" style={styles.promise}>
+            اقرأ اللي يهمّك — بأقلام أهل التخصص.
+          </AppText>
+        </View>
+      ) : null}
+      <SearchField placeholder="اكتب كلمة من العنوان..." onChange={setSearch} />
+      {params.tag || categoryOptions.length < 2 ? null : (
+        <ChipRow label="تصفية بالتصنيف" shape="filter" options={categoryOptions} value={category} onChange={(v) => setCategory(v === category ? ALL : v)} />
+      )}
+      <ReadingTimeBar value={time} counts={counts} onChange={setTime} />
     </View>
   );
 
   return (
     <Screen>
-      <Header back title={params.title ?? 'المقالات'} />
+      {inTabs ? <TopBar /> : <Header back title={params.title ?? 'المقالات'} />}
       <PagedList
         list={list}
         renderItem={renderItem}
         keyOf={(a) => a.key}
         what="المقالات"
         header={header}
+        inTabs={inTabs}
         empty={{
           icon: 'filter',
           title: 'لا مقالات بهذه الفلاتر',
-          body: 'جرّب مدّة قراءة أخرى أو مجالاً آخر.',
+          body: 'جرّب وقت قراءة آخر أو تصنيفاً آخر.',
           actionLabel: 'إزالة الفلاتر',
           onAction: () => {
-            setTime('any');
-            setIndustry(ALL);
+            setTime(null);
             setCategory(ALL);
-            setSort('newest');
           },
         }}
       />
@@ -128,6 +135,10 @@ export default function ArchiveScreen() {
 }
 
 const styles = StyleSheet.create({
-  filters: { paddingTop: space.xs },
-  total: { paddingHorizontal: space.screen, paddingTop: space.xs },
+  head: { gap: space.sm, paddingTop: space.sm, paddingBottom: space.xs },
+  pad: { paddingHorizontal: space.screen },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
+  accentBar: { width: 3, height: 26, borderRadius: 2 },
+  h1: { fontSize: 28, lineHeight: 34, fontWeight: '900' },
+  promise: { marginTop: 4, paddingStart: space.xs + 3, lineHeight: 26 },
 });

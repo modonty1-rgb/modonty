@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { getArticlesArchive } from "@/lib/articles/archive/get-articles-archive";
 import { getArticlesFilters } from "@/lib/articles/archive/get-articles-filters";
-import { filterByReadingTime } from "@/lib/articles/archive/reading-time-buckets";
+import { countByReadingTime, filterByReadingTime } from "@/lib/articles/archive/reading-time-buckets";
 import { ARCHIVE_PAGE_SIZE } from "@/app/(site)/articles/helpers/archive-page-size";
 import { handle, ok, PUBLIC_CACHE } from "@/lib/mobile-api/http";
 import { PAGE_MAX, readQuery } from "@/lib/mobile-api/request";
@@ -24,13 +24,15 @@ const querySchema = z.object({
  * `/articles` with its filters — the same three steps `articles/api/list/route.ts` takes:
  * `getArticlesArchive` → `filterByReadingTime` → slice by `ARCHIVE_PAGE_SIZE`.
  * `withFilters=1` adds the filter options (`getArticlesFilters`) for the first screen.
+ * Page 1 also carries `readingTimeCounts` — the web page's strip (`articles/(index)/page.tsx`): the
+ * WHOLE archive counted, narrowed only by the search, never by the picked field.
  */
 export const GET = handle("articles-archive", async (request: Request) => {
   const query = readQuery(request, querySchema);
   if ("response" in query) return query.response;
   const q = query.value;
 
-  const [matches, filters] = await Promise.all([
+  const [matches, filters, whole] = await Promise.all([
     getArticlesArchive({
       coreOnly: q.modonty === "1",
       industrySlug: q.industry,
@@ -40,6 +42,7 @@ export const GET = handle("articles-archive", async (request: Request) => {
       sort: q.sort,
     }),
     q.withFilters === "1" ? getArticlesFilters() : Promise.resolve(undefined),
+    q.page === 1 ? getArticlesArchive({ search: q.search, sort: q.sort }) : Promise.resolve(undefined),
   ]);
 
   const articles = filterByReadingTime(matches, q.time);
@@ -47,7 +50,13 @@ export const GET = handle("articles-archive", async (request: Request) => {
   const items = articles.slice(start, start + ARCHIVE_PAGE_SIZE);
 
   return ok(
-    { items, page: q.page, hasMore: articles.length > start + items.length, ...(filters ? { filters } : {}) },
+    {
+      items,
+      page: q.page,
+      hasMore: articles.length > start + items.length,
+      ...(filters ? { filters } : {}),
+      ...(whole ? { readingTimeCounts: countByReadingTime(whole) } : {}),
+    },
     PUBLIC_CACHE,
   );
 });
