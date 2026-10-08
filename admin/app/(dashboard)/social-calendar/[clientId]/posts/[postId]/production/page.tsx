@@ -36,6 +36,8 @@ export default async function SocialPostProductionPage({ params }: Props) {
         }
         title={`يوم ${post.scheduledFor.getUTCDate()} — ${post.idea || "بدون فكرة"}`}
         clientName={client.name}
+        maxWidth="max-w-4xl"
+        showFlowLink
       />
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-5 pt-6 lg:grid-cols-[1fr_280px]">
         <ProductionForm

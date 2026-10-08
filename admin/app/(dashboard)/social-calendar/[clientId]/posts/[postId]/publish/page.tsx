@@ -36,6 +36,7 @@ export default async function SocialPostPublishPage({ params }: Props) {
         title={`يوم ${post.scheduledFor.getUTCDate()} — ${post.idea || "بدون فكرة"}`}
         clientName={client.name}
         maxWidth="max-w-2xl"
+        showFlowLink
       />
       <div className="mx-auto max-w-2xl pt-6">
         <PublishForm

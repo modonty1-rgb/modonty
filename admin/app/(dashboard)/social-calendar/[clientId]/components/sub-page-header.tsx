@@ -4,7 +4,8 @@ import { ArrowRight, Sparkles } from "lucide-react";
 
 /**
  * رأس الصفحات الفرعية للمنشور (جديد · تعديل · إنتاج · نشر · تفصيل) — نفس رأس القديم:
- * «← الشهر / شارة الصفحة + العنوان» ثم «سير العمل» واسم العميل.
+ * «← الشهر / شارة الصفحة + العنوان» ثم اسم العميل. «سير العمل» في صفحتَي الإنتاج والنشر فقط،
+ * كالقديم (`production/[id]/page.tsx:49-52`، `publish/[id]/page.tsx:46-49`) — لا في الإنشاء والتعديل.
  */
 export function SubPageHeader({
   backHref,
@@ -13,6 +14,7 @@ export function SubPageHeader({
   title,
   clientName,
   maxWidth = "max-w-6xl",
+  showFlowLink = false,
 }: {
   backHref: string;
   backLabel: string;
@@ -20,6 +22,7 @@ export function SubPageHeader({
   title: ReactNode;
   clientName: string;
   maxWidth?: string;
+  showFlowLink?: boolean;
 }) {
   return (
     <header className="sticky top-0 z-10 -mx-4 -mt-4 border-b border-border bg-card px-4 py-3 shadow-sm sm:-mx-6 sm:-mt-6">
@@ -36,6 +39,7 @@ export function SubPageHeader({
           {badge}
           <h1 className="truncate text-sm font-semibold text-foreground">{title}</h1>
         </div>
+        {showFlowLink && (
         <Link
           href="/social-calendar/flow"
           className="ms-auto inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
@@ -43,7 +47,8 @@ export function SubPageHeader({
           <Sparkles className="h-3 w-3" />
           سير العمل
         </Link>
-        <span className="shrink-0 text-xs text-muted-foreground opacity-60">{clientName}</span>
+        )}
+        <span className={`shrink-0 text-xs text-muted-foreground opacity-60 ${showFlowLink ? "" : "ms-auto"}`}>{clientName}</span>
       </div>
     </header>
   );

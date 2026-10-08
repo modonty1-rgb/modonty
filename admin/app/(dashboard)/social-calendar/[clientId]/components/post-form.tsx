@@ -3,19 +3,7 @@
 import { useEffect, useRef, useState, type ChangeEventHandler, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { SocialChannel, SocialFunnelStage, SocialPostFormat } from "@prisma/client";
-import {
-  ChevronDown,
-  Clapperboard,
-  ClipboardList,
-  Image as ImageIcon,
-  Layers,
-  Megaphone,
-  ShoppingBag,
-  Smartphone,
-  ThumbsUp,
-  Video,
-  type LucideIcon,
-} from "lucide-react";
+import { ChevronDown, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -27,8 +15,9 @@ import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 import { createSocialPost, updateSocialPost } from "../../actions";
+import { FORMAT_ICON, FUNNEL_ICON } from "../../components/brief-icons";
 import { CHANNEL_ICON } from "../../components/channel-icon";
-import { MONTH_LABELS, dayName, daysInMonth, formatDayInput } from "../../helpers/dates";
+import { MONTH_LABELS, daysInMonth, formatDayInput } from "../../helpers/dates";
 import {
   CHANNEL_META,
   CHANNEL_ORDER,
@@ -57,22 +46,12 @@ export interface PostFormValues {
   notes: string;
 }
 
-const FORMAT_ICON: Record<SocialPostFormat, LucideIcon> = {
-  VIDEO: Video,
-  CAROUSEL: Layers,
-  POST: ImageIcon,
-  STORY: Smartphone,
-  REEL: Clapperboard,
-};
-
-const FUNNEL_ICON: Record<SocialFunnelStage, LucideIcon> = {
-  AWARENESS: Megaphone,
-  ENGAGEMENT: ThumbsUp,
-  LEADS: ClipboardList,
-  CONVERSION: ShoppingBag,
-};
-
 const labelClass = "text-xs font-semibold text-foreground";
+
+/** «Thu» — رأس تقويم اليوم كما في القديم (`dayDetail` — `EntryPageForm.tsx:238-244`)، من السنة الحقيقية. */
+function weekdayShortEn(year: number, month: number, day: number): string {
+  return new Date(Date.UTC(year, month, day)).toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" });
+}
 
 function Section({
   title,
@@ -208,7 +187,9 @@ export function PostForm({
     setData((prev) => ({ ...prev, [key]: value }));
 
   const sameMonth = data.year === initial.year && data.month === initial.month;
-  const todayInView = todayYmd.year === data.year && todayYmd.month === data.month ? todayYmd.day : null;
+  // كالقديم (`EntryPageForm.tsx:115`): قفل الماضي وحلقة اليوم في الإنشاء فقط.
+  const todayInView =
+    mode === "create" && todayYmd.year === data.year && todayYmd.month === data.month ? todayYmd.day : null;
   const additionalFilled = [data.voiceTone, data.inspiration, data.scriptUrl, data.notes].filter((v) => v.trim()).length;
   const yearOptions = Array.from({ length: 5 }, (_, i) => todayYmd.year - 2 + i);
   if (!yearOptions.includes(data.year)) yearOptions.unshift(data.year);
@@ -276,7 +257,7 @@ export function PostForm({
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[200px_1fr_200px]">
         {/* اليمين — اليوم */}
         <div className="order-2 space-y-4 lg:sticky lg:top-20 lg:order-1">
-          <SidebarCard detail={`${dayName(data.year, data.month, data.day)} · ${data.day} ${MONTH_LABELS[data.month]} ${data.year}`}>
+          <SidebarCard detail={`${weekdayShortEn(data.year, data.month, data.day)} · ${data.day} ${MONTH_LABELS[data.month]} ${data.year}`}>
             {mode === "edit" && (
               <div className="flex gap-1.5 px-1 pb-2">
                 <select
@@ -492,8 +473,17 @@ export function PostForm({
 
       {/* شريط الحفظ */}
       <div className="sticky bottom-0 z-10 -mx-4 mt-5 flex items-center gap-3 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-sm">
-        <Button type="submit" disabled={saving || !data.idea.trim()} className="h-10 min-w-36 font-semibold">
-          {saving ? "جاري الحفظ..." : mode === "create" ? "إضافة المنشور" : "حفظ التعديلات"}
+        <Button type="submit" disabled={saving || !data.idea.trim()} className="h-10 min-w-36 gap-1.5 font-semibold">
+          {saving ? (
+            "جاري الحفظ..."
+          ) : mode === "create" ? (
+            <>
+              <Plus className="h-4 w-4" />
+              إضافة المنشور
+            </>
+          ) : (
+            "حفظ التعديلات"
+          )}
         </Button>
         <Button type="button" variant="outline" className="h-10" onClick={() => router.push(cancelHref)}>
           إلغاء
