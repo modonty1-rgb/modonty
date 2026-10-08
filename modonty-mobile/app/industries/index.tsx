@@ -40,7 +40,8 @@ function artwork(image: string | undefined): string | null {
 export default function IndustriesScreen() {
   const inTabs = useSegments()[0] === '(tabs)';
   const { colors } = useAppTheme();
-  const tile = (useWindowDimensions().width - space.screen * 2 - GAP * 2) / 3;
+  // floor: الكسور تجمع أكثر من العرض على بعض الشاشات فيلتفّ الصفّ إلى عمودين (مقيس على جوال خالد).
+  const tile = Math.floor((useWindowDimensions().width - space.screen * 2 - GAP * 2) / 3);
 
   const data = useResource(async (signal) => {
     const [industries, partners] = await Promise.all([contentApi.industries({ page: 1 }, signal), contentApi.partners({ page: 1 }, signal)]);

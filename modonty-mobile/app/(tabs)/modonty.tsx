@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { ModontyWordmark } from '@/components/brand/ModontyWordmark';
@@ -65,7 +65,10 @@ type Landing = { slug: string; art: string | null; cover: string | null };
  * الشريك نفسه ومقالاته.
  */
 export default function ModontyScreen() {
+  // ref للمحمِّل (لا يعيد الطلب لكل صفحة) وstate للرسم — الرأس كان يُرسم من الـref وحده فيبقى فارغاً حين لا
+  // يتبدّل شيء آخر بعد التحميل (مقيس على جوال خالد ٩ أكتوبر: لا صورة ولا «تابع مدونتي»).
   const landing = useRef<Landing | null>(null);
+  const [shown, setShown] = useState<Landing | null>(null);
 
   const list = usePagedList<ArticleCardModel, number>(async (page, signal) => {
     let slug = landing.current?.slug;
@@ -75,6 +78,7 @@ export default function ModontyScreen() {
       slug = home.coreClientSlug;
       const profile = await contentApi.partner(slug, signal);
       landing.current = { slug, art: profile.partner.mobileHero ?? null, cover: profile.partner.hero };
+      setShown(landing.current);
     }
     const p = page ?? 1;
     const d = await moreContentApi.partnerArticles(slug, p, signal);
@@ -85,7 +89,6 @@ export default function ModontyScreen() {
   }, []);
 
   const renderItem = useCallback(({ item }: { item: ArticleCardModel }) => <ArticleCard item={item} onOpen={open.article} />, []);
-  const l = list.status === 'success' ? landing.current : null;
 
   return (
     <Screen>
@@ -95,7 +98,7 @@ export default function ModontyScreen() {
         renderItem={renderItem}
         keyOf={(a) => a.key}
         what="مدونتي"
-        header={<LandingHeader landing={l} />}
+        header={<LandingHeader landing={shown} />}
         inTabs
         empty={{ icon: 'articles', title: 'ما نشرنا مقالات بعد', body: 'تابعنا، جايين قريب.' }}
       />
@@ -108,7 +111,7 @@ const GRID_GAP = 10;
 function LandingHeader({ landing }: { landing: Landing | null }) {
   const { colors } = useAppTheme();
   // ٣×٣ متساوية كالموقع: العرض محسوب لا نسبة — النسبة مع `gap` كانت تلفّ الصفّ إلى عمودين (مقيس على المحاكي).
-  const doorWidth = (useWindowDimensions().width - space.screen * 2 - GRID_GAP * 2) / 3;
+  const doorWidth = Math.floor((useWindowDimensions().width - space.screen * 2 - GRID_GAP * 2) / 3);
   return (
     <View style={styles.wrap}>
       <View style={styles.hero}>
