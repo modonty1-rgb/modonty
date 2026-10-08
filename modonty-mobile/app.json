@@ -20,7 +20,8 @@
         "foregroundImage": "./assets/brand/app-icon-foreground.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "googleServicesFile": "./google-services.json"
     },
     "plugins": [
       "expo-router",
@@ -45,6 +46,13 @@
           "backgroundColor": "#0E065A"
         }
       ]
-    ]
+    ],
+    "owner": "modontys-team",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4cde38a2-5bc3-4f21-ba91-1cabff468b54"
+      }
+    }
   }
 }
