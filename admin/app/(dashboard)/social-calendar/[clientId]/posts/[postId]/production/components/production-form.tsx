@@ -43,6 +43,7 @@ import {
   updateSocialAssetLabel,
 } from "../../../../../actions";
 import { AssetMedia } from "../../../../../components/asset-media";
+import { FORMAT_ICON, FUNNEL_ICON } from "../../../../../components/brief-icons";
 import { ChannelIcon } from "../../../../../components/channel-icon";
 import { MONTH_LABELS, dayName } from "../../../../../helpers/dates";
 import { ASSETS_LOCKED_STATUSES } from "../../../../../helpers/post-transitions";
@@ -166,6 +167,7 @@ export function ProductionForm({
   const editable = canProduce && !locked;
   const isReview = post.status === "READY_FOR_REVIEW";
   const d = post.scheduledFor;
+  const FormatIcon = post.format ? FORMAT_ICON[post.format] : ImageIcon;
   const dayLine = `${dayName(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())} ${d.getUTCDate()} ${MONTH_LABELS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 
   async function copyUrl(id: string, url: string) {
@@ -370,7 +372,10 @@ export function ProductionForm({
         {post.format && (
           <>
             <div className="h-4 w-px shrink-0 bg-border" />
-            <span className="shrink-0 text-sm font-semibold text-primary">{FORMAT_LABEL[post.format]}</span>
+            <span className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary">
+              <FormatIcon className="h-3 w-3" />
+              {FORMAT_LABEL[post.format]}
+            </span>
           </>
         )}
         {post.channels.length > 0 && (
@@ -387,11 +392,15 @@ export function ProductionForm({
           <>
             <div className="h-4 w-px shrink-0 bg-border" />
             <div className="flex flex-wrap gap-1.5">
-              {post.funnelStages.map((s) => (
-                <span key={s} className="rounded-full bg-muted/60 px-2.5 py-1 text-[10px] font-semibold text-foreground">
-                  {FUNNEL_SHORT_LABEL[s]}
-                </span>
-              ))}
+              {post.funnelStages.map((s) => {
+                const Icon = FUNNEL_ICON[s];
+                return (
+                  <span key={s} className="flex items-center gap-1 rounded-full bg-muted/60 px-2.5 py-1 text-[10px] font-semibold text-foreground">
+                    <Icon className="h-2.5 w-2.5 text-muted-foreground" />
+                    {FUNNEL_SHORT_LABEL[s]}
+                  </span>
+                );
+              })}
             </div>
           </>
         )}

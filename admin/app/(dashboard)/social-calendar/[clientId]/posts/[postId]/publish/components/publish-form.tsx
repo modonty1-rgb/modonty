@@ -20,7 +20,6 @@ import {
   CHANNEL_META,
   CURRENCY_OPTIONS,
   FORMAT_LABEL,
-  PAID_LABEL,
   PAID_ORDER,
   STATUS_LABEL,
   type SocialCurrency,
@@ -63,6 +62,9 @@ function ChipRadio<T extends string>({
     </div>
   );
 }
+
+/** نصّ الخيارين كما يظهر في القديم حرفياً (`ORG_PAID_OPTIONS` — `constants.ts:29`). */
+const PAID_CHIP_LABEL: Record<SocialPaidKind, string> = { ORGANIC: "organic", SPONSORED: "sponsored" };
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -232,7 +234,7 @@ export function PublishForm({
       <Section title="إعدادات الحملة">
         <div className="space-y-1.5">
           <Label className="text-xs font-medium text-foreground">عضوي / مدفوع</Label>
-          <ChipRadio options={PAID_ORDER} labels={PAID_LABEL} value={paidKind} onChange={setPaidKind} disabled={!editable} />
+          <ChipRadio options={PAID_ORDER} labels={PAID_CHIP_LABEL} value={paidKind} onChange={setPaidKind} disabled={!editable} />
         </div>
         {paidKind === "SPONSORED" && (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">

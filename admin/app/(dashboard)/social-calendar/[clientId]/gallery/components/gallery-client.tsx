@@ -229,11 +229,15 @@ export function GalleryClient({
                         ) : (
                           <video src={tile.asset.url} muted preload="metadata" className="h-full w-full bg-black object-contain" />
                         )}
-                        {tile.asset.kind === "VIDEO" && (
-                          <span className="absolute bottom-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/60">
-                            <Play className="h-3 w-3 text-white" />
-                          </span>
-                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                        <span
+                          className={cn(
+                            "absolute bottom-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 transition-opacity",
+                            tile.asset.kind === "VIDEO" ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                          )}
+                        >
+                          {tile.asset.kind === "VIDEO" ? <Play className="h-3 w-3 text-white" /> : <ImageIcon className="h-3 w-3 text-white" />}
+                        </span>
                       </button>
                       <div className="px-0.5">
                         <p className="truncate text-xs font-medium leading-tight text-foreground">
@@ -247,7 +251,9 @@ export function GalleryClient({
                           {tile.asset.bytes ? (
                             <span className="text-[10px] text-muted-foreground/70">{formatBytes(tile.asset.bytes)}</span>
                           ) : null}
-                          <StatusBadge status={tile.post.status} className="px-1.5 py-px" />
+                        </div>
+                        <div className="mt-0.5">
+                          <StatusBadge status={tile.post.status} dot={false} className="px-1.5 py-px" />
                         </div>
                       </div>
                     </div>
@@ -268,7 +274,7 @@ export function GalleryClient({
                   {active.post.idea || `يوم ${active.post.scheduledFor.getUTCDate()}`}
                 </DialogTitle>
                 <span className="shrink-0 text-[11px] text-muted-foreground">{cardDate(active.post)}</span>
-                <StatusBadge status={active.post.status} />
+                <StatusBadge status={active.post.status} dot={false} className="px-2 py-px" />
                 <DownloadButton url={active.asset.url} filename={active.asset.label || active.post.idea || "ملف"} className="h-7" />
                 {canDeleteActive && (
                   <button
@@ -313,6 +319,34 @@ export function GalleryClient({
                     </span>
                   ) : null}
                   {active.asset.bytes ? <span>{formatBytes(active.asset.bytes)}</span> : null}
+                </div>
+              )}
+              {/* ملفات المنشور نفسه (القديم `GalleryClient.tsx:416-433`) — النقر ينقل المعاينة إليها. */}
+              {active.post.assets.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto border-t border-border px-4 py-3">
+                  {active.post.assets.map((a) => {
+                    const idx = filtered.findIndex((c) => c.asset.id === a.id);
+                    return (
+                      <button
+                        key={a.id}
+                        type="button"
+                        disabled={idx < 0}
+                        onClick={() => setPreview(idx)}
+                        aria-label={a.label || "ملف"}
+                        className={cn(
+                          "relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border-2 transition-all disabled:opacity-40",
+                          a.id === active.asset.id ? "border-primary" : "border-transparent hover:border-border",
+                        )}
+                      >
+                        {a.kind === "IMAGE" ? (
+                          // eslint-disable-next-line @next/next/no-img-element -- مصغّر 48px من CDN.
+                          <img src={a.url} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <video src={a.url} muted preload="metadata" className="h-full w-full object-cover" />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </>

@@ -13,10 +13,13 @@ export function StatusBadge({
   status,
   href,
   className,
+  dot = true,
 }: {
   status: SocialPostStatus;
   href?: string;
   className?: string;
+  /** القديم يرسم النقطة في الجدول فقط؛ الأرشيف والمعرض شارة نصّ بلا نقطة. */
+  dot?: boolean;
 }) {
   const cls = cn(
     "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[10px] font-semibold",
@@ -26,7 +29,7 @@ export function StatusBadge({
   );
   const inner = (
     <>
-      <span className={cn("h-1.5 w-1.5 shrink-0 rounded-full", STATUS_DOT[status])} />
+      {dot && <span className={cn("h-1.5 w-1.5 shrink-0 rounded-full", STATUS_DOT[status])} />}
       {STATUS_LABEL[status]}
     </>
   );

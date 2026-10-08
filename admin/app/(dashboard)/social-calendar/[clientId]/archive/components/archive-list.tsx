@@ -93,7 +93,7 @@ export function ArchiveList({
                           {FUNNEL_LABEL[s]}
                         </span>
                       ))}
-                      <StatusBadge status={p.status} />
+                      <StatusBadge status={p.status} dot={false} className="px-2" />
                     </div>
                   </div>
                   {canRestore && (
