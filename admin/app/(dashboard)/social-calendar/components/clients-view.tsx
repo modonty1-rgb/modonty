@@ -3,9 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Calendar, LayoutGrid, Table2 } from "lucide-react";
+import { LayoutGrid, Table2 } from "lucide-react";
 
-import { CountTab } from "@/components/admin/count-tab";
 import { DataTable, type Column } from "@/components/admin/data-table";
 import { cn } from "@/lib/utils";
 
@@ -31,8 +30,9 @@ function monthLabel(param: string | undefined): string {
 
 /**
  * عرض كروت/جدول، والاختيار محفوظ في المتصفّح كالقديم (`ClientsView.tsx:72-93`).
- * فلتر «النوع» (وسائل تواصل/مقالات) سقط مع حقل النوع (س١٢)؛ مكانه «الكل / لهم منشورات» —
- * عملاء مدونتي كلّهم يظهرون هنا، ومَن لم يُكتب له منشور بعد يُخفى بنقرة.
+ * الكرت كالقديم (`ClientsView.tsx:191-237`): شريط علوي، الاسم، ثم «منشور | شهر»، والكرت كلّه رابط.
+ * الفرق المفروض: لون العميل صار شعاره (مدونتي بلا `color`)، وفلتر «النوع» (وسائل تواصل/مقالات)
+ * سقط مع حقل النوع (س١٢)؛ مكانه «الكل / لهم منشورات» بنفس الشكل — عملاء مدونتي كلّهم هنا.
  */
 export function ClientsView({ clients, currentMonth }: { clients: CalendarClientRow[]; currentMonth: string }) {
   const router = useRouter();
@@ -103,14 +103,35 @@ export function ClientsView({ clients, currentMonth }: { clients: CalendarClient
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5">
-          <CountTab label="الكل" count={clients.length} active={filter === "all"} onClick={() => setFilter("all")} />
-          <CountTab
-            label="لهم منشورات"
-            count={activeCount}
-            active={filter === "active"}
-            onClick={() => setFilter(filter === "active" ? "all" : "active")}
-          />
+        {/* فلتر بنفس شكل فلتر النوع في القديم (`ClientsView.tsx:112-138`): مجموعة مقسّمة بعدّادات. */}
+        <div className="inline-flex overflow-hidden rounded-lg border border-border bg-card">
+          {(
+            [
+              { f: "all", label: "الكل", count: clients.length },
+              { f: "active", label: "لهم منشورات", count: activeCount },
+            ] as const
+          ).map(({ f, label, count }) => (
+            <button
+              key={f}
+              type="button"
+              onClick={() => setFilter(f)}
+              aria-pressed={filter === f}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors",
+                filter === f ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
+            >
+              {label}
+              <span
+                className={cn(
+                  "min-w-4 rounded-full px-1 text-center text-[10px] font-bold leading-4 tabular-nums",
+                  filter === f ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground",
+                )}
+              >
+                {count}
+              </span>
+            </button>
+          ))}
         </div>
 
         <div className="inline-flex overflow-hidden rounded-lg border border-border bg-card">
@@ -157,19 +178,15 @@ export function ClientsView({ clients, currentMonth }: { clients: CalendarClient
             <Link
               key={c.id}
               href={`/social-calendar/${c.id}/${firstMonth(c, currentMonth)}`}
-              className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+              className="group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
-              <div className="flex flex-1 flex-col gap-3 p-3">
-                <div className="flex min-w-0 items-center gap-2">
-                  <ClientAvatar name={c.name} logoUrl={c.logoUrl} />
-                  <div className="min-w-0">
-                    <h2 className="truncate text-xs font-semibold leading-snug text-foreground">{c.name}</h2>
-                    <p className="truncate font-mono text-[10px] text-muted-foreground" dir="ltr">
-                      {c.slug}
-                    </p>
-                  </div>
+              <div className="h-1 w-full bg-primary" />
+              <div className="flex flex-1 flex-col p-3">
+                <div className="mb-2 flex items-start gap-1.5">
+                  <h2 className="min-w-0 flex-1 break-words text-xs font-semibold leading-snug text-foreground">{c.name}</h2>
+                  <ClientAvatar name={c.name} logoUrl={c.logoUrl} className="h-6 w-6 rounded-md text-[11px]" />
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="mt-auto flex items-center gap-3">
                   <div>
                     <p className="text-lg font-bold leading-none tabular-nums text-foreground">{c.totalPosts}</p>
                     <p className="mt-0.5 text-[10px] text-muted-foreground">منشور</p>
@@ -177,18 +194,9 @@ export function ClientsView({ clients, currentMonth }: { clients: CalendarClient
                   <div className="h-6 w-px bg-border" />
                   <div>
                     <p className="text-lg font-bold leading-none tabular-nums text-foreground">{c.activeMonths.length}</p>
-                    <p className="mt-0.5 text-[10px] text-muted-foreground">شهر نشط</p>
+                    <p className="mt-0.5 text-[10px] text-muted-foreground">شهر</p>
                   </div>
                 </div>
-                {c.activeMonths.length > 0 && (
-                  <p className="line-clamp-2 text-[10px] text-muted-foreground">
-                    {c.activeMonths.slice(-4).map(monthLabel).join(" · ")}
-                  </p>
-                )}
-                <span className="mt-auto inline-flex items-center justify-center gap-1.5 rounded-lg border border-border py-1.5 text-xs font-semibold text-foreground transition-colors group-hover:bg-muted">
-                  <Calendar className="h-3.5 w-3.5" />
-                  فتح الكالندر
-                </span>
               </div>
             </Link>
           ))}
