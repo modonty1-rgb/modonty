@@ -51,7 +51,7 @@ export default function SearchScreen() {
           name: c.name,
           logo: c.logo ?? null,
           line: c.description ?? null,
-          meta: [c.industry?.name, c.articleCount > 0 ? `${plainNumber(c.articleCount)} مقال` : null].filter(Boolean).join(' · '),
+          meta: [c.industry?.name, c.articleCount > 0 ? `${plainNumber(c.articleCount)} مقال` : null].filter(Boolean).join('، '),
           verified: c.isVerified,
           rating: null,
         }));

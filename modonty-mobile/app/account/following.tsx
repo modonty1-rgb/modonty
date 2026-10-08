@@ -22,7 +22,7 @@ export default function FollowingScreen() {
             name: c.name,
             logo: c.logo,
             line: c.description,
-            meta: [c.industry?.name, `${plainNumber(c.articleCount)} مقال`].filter(Boolean).join(' · '),
+            meta: [c.industry?.name, `${plainNumber(c.articleCount)} مقال`].filter(Boolean).join('، '),
             verified: false,
             rating: null,
           }))

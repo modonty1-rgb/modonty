@@ -30,7 +30,7 @@ export default function MyCommentsScreen() {
             title={item.article.title}
             body={item.content}
             badge={STATUS[item.status]}
-            meta={[cardDate(item.createdAt), item.likesCount > 0 ? `${plainNumber(item.likesCount)} إعجاب` : null, item.repliesCount > 0 ? `${plainNumber(item.repliesCount)} ردّ` : null].filter(Boolean).join(' · ')}
+            meta={[cardDate(item.createdAt), item.likesCount > 0 ? `${plainNumber(item.likesCount)} إعجاب` : null, item.repliesCount > 0 ? `${plainNumber(item.repliesCount)} ردّ` : null].filter(Boolean).join('، ')}
             onPress={() => open.article(item.article.slug)}
           />
         )}

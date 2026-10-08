@@ -117,7 +117,7 @@ export default function PartnerScreen() {
   }
 
   const cover = home?.hero.coverUrl ?? p.hero;
-  const subtitle = [home?.hero.industry ?? p.industry, home?.hero.city ?? p.address.city].filter(Boolean).join(' · ');
+  const subtitle = [home?.hero.industry ?? p.industry, home?.hero.city ?? p.address.city].filter(Boolean).join('، ');
   const stats = [
     { label: 'متابع', value: followers ?? d.stats.followers },
     { label: 'مشاهدة', value: d.stats.totalViews },
@@ -228,7 +228,7 @@ export default function PartnerScreen() {
             </View>
             {home.trust.credentials.map((c, i) => (
               <AppText key={i} variant="body">
-                {[c.name, c.authority, c.year].filter(Boolean).join(' · ')}
+                {[c.name, c.authority, c.year].filter(Boolean).join('، ')}
               </AppText>
             ))}
           </View>

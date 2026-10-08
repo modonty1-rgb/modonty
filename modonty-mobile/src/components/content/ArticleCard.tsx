@@ -41,7 +41,7 @@ export const ArticleCard = memo(function ArticleCard({ item, onOpen, layout = 'c
             {item.title}
           </AppText>
           <AppText variant="secondary" tone="muted" numberOfLines={1}>
-            {[item.publisher, item.meta].filter(Boolean).join(' · ')}
+            {[item.publisher, item.meta].filter(Boolean).join('، ')}
           </AppText>
         </View>
         <Icon name="forward" size={control.iconSmall} tone="muted" />
@@ -80,7 +80,7 @@ export const ArticleCard = memo(function ArticleCard({ item, onOpen, layout = 'c
       ) : null}
       <View style={styles.footer}>
         <AppText variant="secondary" tone="muted" numberOfLines={1} style={styles.flex}>
-          {[item.meta, item.stats].filter(Boolean).join(' · ')}
+          {[item.meta, item.stats].filter(Boolean).join('، ')}
         </AppText>
         <Icon name="forward" size={control.iconSmall} tone="muted" />
       </View>

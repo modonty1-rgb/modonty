@@ -23,7 +23,7 @@ export default function LikedScreen() {
             title={item.item.title ?? item.item.name ?? ''}
             body={item.item.excerpt ?? item.item.description}
             badge={KIND[item.type]}
-            meta={[item.item.client?.name, cardDate(item.likedAt)].filter(Boolean).join(' · ')}
+            meta={[item.item.client?.name, cardDate(item.likedAt)].filter(Boolean).join('، ')}
             onPress={item.type === 'client' ? () => open.partner(item.item.slug) : item.type === 'article' ? () => open.article(item.item.slug) : undefined}
           />
         )}

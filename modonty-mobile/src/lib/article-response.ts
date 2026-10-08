@@ -15,8 +15,8 @@ export function fromArticleResponse(a: ArticleResponse): ArticleCardModel {
     publisher: a.client.name,
     publisherLogo: a.client.logo ?? null,
     verified: false,
-    meta: [cardDate(a.publishedAt), readingTime(a.readingTimeMinutes)].filter(Boolean).join(' · '),
-    stats: [i.views > 0 ? `${compactNumber(i.views)} مشاهدة` : null, i.likes > 0 ? `${compactNumber(i.likes)} إعجاب` : null].filter(Boolean).join(' · ') || null,
+    meta: [cardDate(a.publishedAt), readingTime(a.readingTimeMinutes)].filter(Boolean).join('، '),
+    stats: [i.views > 0 ? `${compactNumber(i.views)} مشاهدة` : null, i.likes > 0 ? `${compactNumber(i.likes)} إعجاب` : null].filter(Boolean).join('، ') || null,
     hasAudio: !!a.hasAudio,
   };
 }

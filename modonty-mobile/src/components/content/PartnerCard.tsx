@@ -50,7 +50,7 @@ export const PartnerCard = memo(function PartnerCard({ item, onOpen }: { item: P
             ) : null}
             {item.meta ? (
               <AppText variant="secondary" tone="muted" numberOfLines={1} style={styles.flexShrink}>
-                {item.rating ? ` · ${item.meta}` : item.meta}
+                {item.rating ? `، ${item.meta}` : item.meta}
               </AppText>
             ) : null}
           </View>

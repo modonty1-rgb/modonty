@@ -106,7 +106,7 @@ export default function CommentsScreen() {
 
   return (
     <Screen>
-      <Header back title={title ? `التعليقات · ${title}` : 'التعليقات'} />
+      <Header back title={title ? `التعليقات، ${title}` : 'التعليقات'} />
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.flex}>
           {res.status === 'loading' ? (

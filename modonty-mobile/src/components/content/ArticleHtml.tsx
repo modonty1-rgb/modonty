@@ -28,7 +28,9 @@ const RENDERERS = { img: HtmlImage };
  * والرابط مسطَّر لا ملوَّن فقط (WCAG 1.4.1).
  */
 function htmlStyles(c: AppColors) {
-  const rtl = { textAlign: 'right' as const, writingDirection: 'rtl' as const };
+  // نفس AppText: 'auto' يتبع I18nManager. التطبيق يفرض RTL، وReact Native يعكس left/right في Text
+  // عندها — فـ'right' كانت تُرسم يساراً (مقيس على الجوال ٨ أكتوبر).
+  const rtl = { textAlign: 'auto' as const, writingDirection: 'auto' as const };
   return {
     base: { color: c.text, fontFamily: fonts.regular, fontSize: typography.reading.fontSize, lineHeight: typography.reading.lineHeight, ...rtl },
     tags: {

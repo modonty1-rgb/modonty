@@ -97,7 +97,7 @@ export default function NotificationsScreen() {
           </AppText>
           {item.when ? (
             <AppText variant="secondary" tone="muted">
-              {item.readAt ? item.when : `جديد · ${item.when}`}
+              {item.readAt ? item.when : `جديد، ${item.when}`}
             </AppText>
           ) : null}
         </View>

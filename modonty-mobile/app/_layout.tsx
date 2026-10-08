@@ -41,7 +41,7 @@ function RootStack() {
       >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="auth" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="reels/[slug]" options={{ contentStyle: { backgroundColor: colors.reelsBackground } }} />
+        <Stack.Screen name="reels/[slug]/index" options={{ contentStyle: { backgroundColor: colors.reelsBackground } }} />
       </Stack>
     </>
   );

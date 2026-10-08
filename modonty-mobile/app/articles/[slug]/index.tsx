@@ -151,7 +151,7 @@ export default function ArticleScreen() {
   const published = fullDate(article.datePublished ?? article.createdAt);
   const meta = [published, readingTime(article.readingTimeMinutes), c && c.views > 0 ? `${compactNumber(c.views)} مشاهدة` : null]
     .filter(Boolean)
-    .join(' · ');
+    .join('، ');
 
   return (
     <Screen>
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: space.xs },
   tag: { minHeight: control.touch, paddingHorizontal: space.sm, borderRadius: radius.pill, borderWidth: control.border, justifyContent: 'center' },
   faqs: { marginHorizontal: space.screen, borderRadius: radius.card, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' },
-  faqTitle: { textAlign: 'right' },
+  faqTitle: { textAlign: 'auto', writingDirection: 'auto' },
   faqAnswer: { paddingHorizontal: space.card, paddingBottom: space.card },
   readMore: {
     marginHorizontal: space.screen,

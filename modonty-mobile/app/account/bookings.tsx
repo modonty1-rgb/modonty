@@ -25,7 +25,7 @@ export default function BookingsScreen() {
             title={item.client.name}
             body={item.message ?? item.article?.title}
             badge={STATUS[item.status] ?? STATUS.new}
-            meta={[item.preferredAt ? `الموعد المفضّل: ${dateTime(item.preferredAt)}` : null, `أُرسل ${fullDate(item.createdAt)}`].filter(Boolean).join(' · ')}
+            meta={[item.preferredAt ? `الموعد المفضّل: ${dateTime(item.preferredAt)}` : null, `أُرسل ${fullDate(item.createdAt)}`].filter(Boolean).join('، ')}
             onPress={() => open.partner(item.client.slug)}
           />
         )}

@@ -18,14 +18,14 @@ export type ArticleCardModel = {
 };
 
 export function toArticleCard(p: FeedPost | ArchiveArticle): ArticleCardModel {
-  const meta = [cardDate(p.publishedAt), readingTime(p.readingTimeMinutes)].filter(Boolean).join(' · ');
+  const meta = [cardDate(p.publishedAt), readingTime(p.readingTimeMinutes)].filter(Boolean).join('، ');
   const stats = [
     p.views > 0 ? `${compactNumber(p.views)} مشاهدة` : null,
     p.likes > 0 ? `${compactNumber(p.likes)} إعجاب` : null,
     p.comments > 0 ? `${compactNumber(p.comments)} تعليق` : null,
   ]
     .filter(Boolean)
-    .join(' · ');
+    .join('، ');
   return {
     key: p.id,
     slug: p.slug,
@@ -56,7 +56,7 @@ export type PartnerCardModel = {
 export function toPartnerCard(c: ClientListItem): PartnerCardModel {
   const meta = [c.industry?.name, c.city, c.articleCount > 0 ? `${compactNumber(c.articleCount)} مقال` : null]
     .filter(Boolean)
-    .join(' · ');
+    .join('، ');
   return {
     key: c.id,
     slug: c.slug,
@@ -94,7 +94,7 @@ export function articleRow(a: {
     publisher: a.publisher ?? '',
     publisherLogo: null,
     verified: false,
-    meta: [a.dateLabel ?? cardDate(a.date), readingTime(a.readingTimeMinutes)].filter(Boolean).join(' · '),
+    meta: [a.dateLabel ?? cardDate(a.date), readingTime(a.readingTimeMinutes)].filter(Boolean).join('، '),
     stats: null,
     hasAudio: !!a.hasAudio,
   };
