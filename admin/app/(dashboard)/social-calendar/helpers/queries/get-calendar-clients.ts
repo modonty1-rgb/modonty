@@ -34,8 +34,8 @@ export async function getCalendarClients(): Promise<CalendarClientRow[]> {
     }),
     db.socialPost.aggregateRaw({
       pipeline: [
-        // `clientId` شرطٌ لا زينة: مجموعة `social_posts` على dev فيها صفّ من ميزة قديمة حُذفت
-        // (نشر فيسبوك: articleId/platform/caption) بلا clientId ولا scheduledFor — كان يُسقط اللوحة.
+        // `clientId` و`scheduledFor` شرطان دفاعيّان: كانت الميزة على `social_posts` التي تحمل صفوف
+        // ميزة نشر فيسبوك قديمة (بلا clientId) فتُسقط اللوحة — نُقلت إلى `social_calendar_posts` (قرار خالد ٩ أكتوبر).
         { $match: { archivedAt: null, clientId: { $type: "objectId" }, scheduledFor: { $type: "date" } } },
         {
           $group: {

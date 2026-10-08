@@ -5721,7 +5721,7 @@ model SocialPost {
   @@index([clientId, status])
   @@index([status, scheduledFor])
   @@index([archivedAt, clientId])
-  @@map("social_posts")
+  @@map("social_calendar_posts")
 }
 
 /// أصل إبداعيّ (صورة/فيديو) مرفوع لمنشور. جدولٌ خاصّ لا صفٌّ في Media: Media محمّل بدلالات
@@ -5754,5 +5754,5 @@ model SocialPostAsset {
   createdAt DateTime @default(now())
 
   @@index([postId, order])
-  @@map("social_post_assets")
+  @@map("social_calendar_post_assets")
 }
