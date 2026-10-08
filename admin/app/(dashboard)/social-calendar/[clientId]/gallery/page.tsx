@@ -26,7 +26,7 @@ export default async function SocialGalleryPage({ params }: { params: Promise<{ 
     <div className="-m-4 flex h-[calc(100%+2rem)] flex-col bg-background sm:-m-6 sm:h-[calc(100%+3rem)]">
       <ClientPageHeader
         client={client}
-        backHref={`/social-calendar/${client.id}/${currentMonth}`}
+        backHref="/social-calendar"
         subtitle={
           <>
             <Images className="h-3 w-3" />

@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CountTab } from "@/components/admin/count-tab";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -345,29 +344,46 @@ export function CalendarTable({
       <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
         {/* شريط الأدوات */}
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex flex-wrap items-center gap-1">
+          <div className="flex items-center gap-1">
             <span className="ms-1 shrink-0 text-[10px] font-semibold text-muted-foreground/60">الحالة</span>
-            <CountTab label="الكل" count={posts.length} active={filterStatus === "all"} onClick={() => setParam("status", null)} />
-            {STATUS_ORDER.map((s) => (
-              <CountTab
-                key={s}
-                label={STATUS_LABEL[s]}
-                count={statusCounts[s]}
-                active={filterStatus === s}
-                onClick={() => setParam("status", filterStatus === s ? null : s)}
-              />
-            ))}
+            {(["all", ...STATUS_ORDER] as const).map((s) => {
+              const active = filterStatus === s;
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setParam("status", s === "all" ? null : s)}
+                  aria-pressed={active}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[11px] font-medium transition-all",
+                    active
+                      ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                      : "border-transparent bg-transparent text-muted-foreground hover:border-border hover:text-foreground",
+                  )}
+                >
+                  {s === "all" ? "الكل" : STATUS_LABEL[s]}
+                  <span
+                    className={cn(
+                      "min-w-4 rounded-full px-1 text-center text-[10px] font-bold leading-4 tabular-nums",
+                      active ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground",
+                    )}
+                  >
+                    {s === "all" ? posts.length : statusCounts[s]}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           <div className="h-5 w-px bg-border" />
 
-          <div className="flex flex-wrap items-center gap-1">
+          <div className="flex items-center gap-1">
             <span className="ms-1 shrink-0 text-[10px] font-semibold text-muted-foreground/60">النوع</span>
             {(["all", ...FORMAT_ORDER] as const).map((f) => (
               <button
                 key={f}
                 type="button"
-                onClick={() => setParam("format", f === "all" || filterFormat === f ? null : f)}
+                onClick={() => setParam("format", f === "all" ? null : f)}
                 className={cn(
                   "rounded-md border px-2.5 py-1 text-[11px] font-medium transition-all",
                   filterFormat === f

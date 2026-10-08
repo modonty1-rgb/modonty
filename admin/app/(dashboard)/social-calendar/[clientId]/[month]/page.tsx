@@ -67,6 +67,7 @@ export default async function ClientCalendarPage({ params }: Props) {
           <span className="text-muted-foreground/80">
             <span className="font-bold tabular-nums text-foreground">{posts.length}</span> total
           </span>
+          <span className="h-3 w-px bg-border" />
           {monthCounts.map(({ status, count }) =>
             count > 0 ? (
               <span
@@ -79,6 +80,8 @@ export default async function ClientCalendarPage({ params }: Props) {
             ) : null,
           )}
         </div>
+
+        <div className="h-6 w-px shrink-0 bg-border" />
 
         <div className="flex items-center gap-2.5 rounded-lg border border-border bg-muted/30 px-3 py-1.5 text-[11px]">
           <span className="font-medium text-muted-foreground">All months</span>
