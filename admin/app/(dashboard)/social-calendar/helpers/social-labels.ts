@@ -127,3 +127,17 @@ export const ASSET_KIND_LABEL: Record<SocialAssetKind, string> = {
   IMAGE: "صورة",
   VIDEO: "فيديو",
 };
+
+// ── سجلّ التدقيق ─────────────────────────────────────────────────────────────
+
+/** عناوين مفاتيح `socialPost.*` في سجلّ صفحة المنشور (عربية — صفحة الفريق عربية). */
+export const AUDIT_ACTION_LABEL: Record<string, string> = {
+  "socialPost.create": "أنشأ المنشور",
+  "socialPost.update": "عدّل المنشور",
+  "socialPost.transition": "نقل المرحلة",
+  "socialPost.reject": "رفض الإبداع",
+  "socialPost.publish": "نشر المنشور",
+  "socialPost.archive": "أرشف المنشور",
+  "socialPost.restore": "استرجع المنشور",
+  "socialPost.assetDelete": "حذف ملف إبداع",
+};
