@@ -1,0 +1,17 @@
+{
+  "build": {
+    "production": {
+      "channel": "production",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://www.modonty.com",
+        "EXPO_PUBLIC_WEB_URL": "https://www.modonty.com",
+        "EXPO_PUBLIC_EAS_PROJECT_ID": "4cde38a2-5bc3-4f21-ba91-1cabff468b54",
+        "ORG_GRADLE_PROJECT_reactNativeArchitectures": "armeabi-v7a,arm64-v8a"
+      }
+    }
+  }
+}
