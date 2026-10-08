@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useSegments } from 'expo-router';
 import { memo, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,6 +21,9 @@ type Props = {
 export const Header = memo(function Header({ title, back, actions, overlay }: Props) {
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
+  // شاشة تُعرض تاباً في الشريط (المقالات · المجالات · الشركاء …) جذرٌ لا تفاصيل — فلا رجوع منها.
+  const segments = useSegments();
+  const showBack = back && segments[0] !== '(tabs)';
   return (
     <View
       style={[
@@ -30,7 +33,7 @@ export const Header = memo(function Header({ title, back, actions, overlay }: Pr
       ]}
     >
       <View style={styles.row}>
-        {back ? (
+        {showBack ? (
           <IconButton
             icon="back"
             label="رجوع"

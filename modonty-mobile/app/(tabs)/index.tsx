@@ -114,6 +114,9 @@ export default function HomeScreen() {
             label={unreadNotifications > 0 ? 'الإشعارات — غير مقروءة' : 'الإشعارات'}
             onPress={() => requireAuth(() => router.push('/account/notifications'))}
           />
+          {/* «حسابي» خرج من الشريط السفلي (تابات الموقع السبع) — مكانه رأس الرئيسية كما في رأس الموقع. */}
+          <IconButton icon="profile" label="حسابي" onPress={() => router.navigate('/account')} />
+
         </View>
       </View>
       <PagedList
