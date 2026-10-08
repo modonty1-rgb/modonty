@@ -56,7 +56,7 @@ export async function getPartnerSite(decodedSlug: string) {
       logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       heroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true, width: true, height: true } },
       // صورة الجوال (`Client.mobileHeroImageMedia`) — تطبيق القارئ يرسمها أعلى صفحة مدونتي كما يرسمها الموقع (get-modonty-mobile-hero.ts).
-      mobileHeroImageMedia: { select: { url: true, bunnyUrl: true } },
+      mobileHeroImageMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
       _count: {
         select: {
           articles: { where: { status: ArticleStatus.PUBLISHED } },
