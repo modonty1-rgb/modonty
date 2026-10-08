@@ -42,3 +42,13 @@ packages:
   # صفحة الدفع مرّتين وهي لا تستورده — وقد قيس أن الترابط بينهما صفر في الاتجاهين.
   - 'payment'
   - 'modonty-mobile'
+
+# react-native-worklets 0.5.1 (Reanimated 4 · تطبيق القارئ) تستدعي @babel/generator و traverse و types
+# في إضافة Babel دون أن تعلنها — تعمل مع npm لأنها مرفوعة، وتفشل في pnpm («Cannot find module @babel/types»)
+# أو تلتقط Babel 8 المرفوع فتنكسر. الإعلان هنا بنسخة 7 هو طريقة pnpm الرسمية (packageExtensions).
+packageExtensions:
+  react-native-worklets@0.5.1:
+    dependencies:
+      "@babel/generator": "^7.28.0"
+      "@babel/traverse": "^7.28.0"
+      "@babel/types": "^7.28.0"
