@@ -5297,6 +5297,20 @@ model ReaderDevice {
   @@map("reader_devices")
 }
 
+/// تذكرة Expo لدفعة واحدة إلى جوال قارئ — تُحفظ عند الإرسال ويُقرأ إيصالها بعد ١٥ دقيقة
+/// (توثيق Expo: «checking push receipts 15 minutes after sending»، والإيصال يُمسح بعد ٢٤ ساعة).
+/// الإيصال وحده يقول إن Google/Apple اعتبرا الجهاز محذوفاً (DeviceNotRegistered).
+model ReaderPushTicket {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  ticketId       String   @unique
+  expoPushToken  String
+  notificationId String   @db.ObjectId
+  createdAt      DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("reader_push_tickets")
+}
+
 enum ReelStatus {
   DRAFT
   PENDING_APPROVAL // client upload awaiting admin approval

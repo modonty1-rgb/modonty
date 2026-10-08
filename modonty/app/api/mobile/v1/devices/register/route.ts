@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { readerFromRequest } from "@/lib/mobile-api/auth";
 import { fail, handle, MESSAGES, ok } from "@/lib/mobile-api/http";
 import { readBody } from "@/lib/mobile-api/request";
-import { disableReaderDevices } from "@/lib/push/disable-reader-devices";
+import { disableReaderDevices } from "@modonty/shared/lib/reader-push/disable-reader-devices";
 import { READER_DEVICE_SELECT } from "@/lib/push/reader-device-shape";
 
 const bodySchema = z.object({

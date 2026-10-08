@@ -2,15 +2,15 @@ import { timingSafeEqual } from "node:crypto";
 
 import { db } from "@/lib/db";
 import { fail, handle, ok } from "@/lib/mobile-api/http";
-import { resolveNotificationTargets } from "@/lib/mobile-api/notification-targets";
-import { notifyReader, type ReaderPush } from "@/lib/push/notify-reader";
+import { checkReaderPushReceipts } from "@modonty/shared/lib/reader-push/check-reader-push-receipts";
+import { NOT_PUSHED, pushReaderNotifications } from "@modonty/shared/lib/reader-push/push-reader-notifications";
 
 export const maxDuration = 60;
 
 const WINDOW_MS = 24 * 60 * 60 * 1000;
-const BATCH = 200;
-/** «لم يُعالَج» — null صراحةً **أو** غائب (صفوف ما قبل الحقل). `null` وحده لا يطابق الغائب في مونغو. */
-const NOT_PUSHED = { OR: [{ pushedAt: null }, { pushedAt: { isSet: false } }] };
+/** الكونسول يدفع لحظة الكتابة (`fireReaderPush`)؛ لا تنافسه على صفّ عمره أقلّ من دقيقتين. */
+const GRACE_MS = 2 * 60 * 1000;
+const BATCH = 500;
 
 function authorized(request: Request, expected: string): boolean {
   const provided = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim() ?? "";
@@ -20,22 +20,14 @@ function authorized(request: Request, expected: string): boolean {
 }
 
 /**
- * N4 — GET /api/mobile/v1/internal/push-dispatch · Vercel Cron (`vercel.json`, every 5 minutes) ·
- * `Authorization: Bearer $CRON_SECRET` (Vercel sends it to cron paths). Fails closed when unset.
+ * N4 — GET /api/mobile/v1/internal/push-dispatch · Vercel Cron كل ١٥ دقيقة (`vercel.json`) ·
+ * `Authorization: Bearer $CRON_SECRET` — Vercel يرسله لمسارات الكرون (توثيق Vercel: Securing cron jobs).
+ * يرفض العمل إن لم يُضبط.
  *
- * Reader notifications are written by the console (comment / reel-comment approved, FAQ answered)
- * and the admin (contact reply) — code this package cannot change — so instead of a call at the
- * write site, this sweep pushes them: reader rows (`userId` set) from the last 24h not handled yet,
- * oldest first, ≤200 per run.
- *
- * 1. Each row is CLAIMED (`pushedAt = now`, conditional on still unset) — two overlapping runs never
- *    push the same row twice.
- * 2. Already read on the web → claimed and skipped (no push for something seen).
- * 3. The rest go through `notifyReader` with their deep link (`resolveNotificationTargets`, the inbox's
- *    own routing). A row whose Expo request failed is un-claimed, so the next run retries it.
- *
- * No actor is passed: `Notification` has no actor column, and every type it carries today is caused by
- * a partner or staff member, never by the reader who receives it.
+ * الدفع نفسه يحدث لحظة الحدث في الكونسول. هذه المهمّة شبكة أمان، وتعيد العمل بأمان لو تكرّرت أو فاتت
+ * (توثيق Vercel: «idempotent and reconciliation-based»):
+ *   ١. ما فات — إشعار قارئ من آخر ٢٤ ساعة لم يُدفع (سقوط شبكة/Expo) ← يُدفع الآن، بنفس الحجز.
+ *   ٢. الإيصالات — تذاكر عمرها ١٥ دقيقة فأكثر ← DeviceNotRegistered يوقف الجهاز.
  */
 export const GET = handle("internal-push-dispatch", async (request: Request) => {
   const expected = process.env.CRON_SECRET;
@@ -45,51 +37,20 @@ export const GET = handle("internal-push-dispatch", async (request: Request) => 
   }
   if (!authorized(request, expected)) return fail("UNAUTHORIZED", "Unauthorized");
 
-  const candidates = await db.notification.findMany({
+  const now = Date.now();
+  const missed = await db.notification.findMany({
     where: {
       userId: { not: null },
-      createdAt: { gte: new Date(Date.now() - WINDOW_MS) },
+      createdAt: { gte: new Date(now - WINDOW_MS), lte: new Date(now - GRACE_MS) },
       ...NOT_PUSHED,
     },
     orderBy: { createdAt: "asc" },
     take: BATCH,
-    select: { id: true, userId: true, type: true, title: true, body: true, readAt: true, relatedId: true },
+    select: { id: true },
   });
 
-  const now = new Date();
-  const claims = await Promise.all(
-    candidates.map((n) => db.notification.updateMany({ where: { id: n.id, ...NOT_PUSHED }, data: { pushedAt: now } })),
-  );
-  const claimed = candidates.filter((n, i) => claims[i].count === 1 && n.userId);
-  const toSend = claimed.filter((n) => !n.readAt);
+  const pushed = await pushReaderNotifications(missed.map((n) => n.id));
+  const receipts = await checkReaderPushReceipts();
 
-  const targets = await resolveNotificationTargets(toSend);
-  const pushes: ReaderPush[] = toSend.map((n) => {
-    const target = targets.get(n.id) ?? null;
-    return {
-      notificationId: n.id,
-      userId: n.userId!,
-      type: n.type,
-      title: n.title,
-      body: n.body,
-      articleSlug: target?.kind === "article" ? target.slug : null,
-      reelSlug: target?.kind === "reel" ? target.slug : null,
-      actorUserId: null,
-    };
-  });
-  const result = await notifyReader(pushes);
-
-  const retry = toSend.filter((n) => !result.settled.has(n.id)).map((n) => n.id);
-  if (retry.length) {
-    await db.notification.updateMany({ where: { id: { in: retry } }, data: { pushedAt: null } });
-  }
-
-  return ok({
-    candidates: candidates.length,
-    claimed: claimed.length,
-    skippedRead: claimed.length - toSend.length,
-    sent: result.sent,
-    retryLater: retry.length,
-    disabledDevices: result.disabledDevices,
-  });
+  return ok({ missed: missed.length, ...pushed, receipts });
 });

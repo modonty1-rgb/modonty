@@ -1,6 +1,4 @@
-import "server-only";
-
-import { db } from "@/lib/db";
+import { db } from "../db";
 
 export type ReaderDeviceDisableReason = "SignedOut" | "Unregistered" | "Replaced" | "DeviceNotRegistered";
 

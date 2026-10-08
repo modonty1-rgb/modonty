@@ -3,7 +3,7 @@ import { readerFromRequest } from "@/lib/mobile-api/auth";
 import { fail, handle, MESSAGES, ok } from "@/lib/mobile-api/http";
 import { ACCOUNT_MESSAGES } from "@/lib/mobile-api/messages-account";
 import { isObjectId } from "@/lib/mobile-api/params";
-import { disableReaderDevices } from "@/lib/push/disable-reader-devices";
+import { disableReaderDevices } from "@modonty/shared/lib/reader-push/disable-reader-devices";
 import { READER_DEVICE_SELECT } from "@/lib/push/reader-device-shape";
 
 type Ctx = { params: Promise<{ ref: string }> };

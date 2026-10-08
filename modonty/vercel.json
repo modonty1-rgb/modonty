@@ -13,7 +13,7 @@
   "crons": [
     {
       "path": "/api/mobile/v1/internal/push-dispatch",
-      "schedule": "*/5 * * * *"
+      "schedule": "*/15 * * * *"
     }
   ]
 }

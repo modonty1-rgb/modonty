@@ -11,7 +11,7 @@ import { MarkAsReadOnOpen } from "./components/mark-as-read-on-open";
 import { BellRevalidateTrigger } from "./components/bell-revalidate-trigger";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
 import { getReaderNotifications } from "@/lib/notifications/get-reader-notifications";
-import { notificationTargetKind } from "@/lib/notifications/notification-target-kind";
+import { notificationTargetKind } from "@modonty/shared/lib/reader-push/notification-target-kind";
 
 export const metadata: Metadata = {
   title: "الإشعارات",
@@ -93,7 +93,7 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
       where: { id: selectedId, userId },
     });
     if (selectedNotification?.relatedId) {
-      // One routing rule for the inbox and the mobile API (lib/notifications/notification-target-kind.ts).
+      // One routing rule for the inbox and the mobile API (shared/lib/reader-push/notification-target-kind.ts).
       const targetKind = notificationTargetKind(selectedNotification.type);
       if (targetKind === "article_comment") {
         const c = await db.comment.findUnique({

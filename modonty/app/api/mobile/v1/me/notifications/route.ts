@@ -4,7 +4,7 @@ import { getReaderNotifications } from "@/lib/notifications/get-reader-notificat
 import { countUnreadNotifications } from "@/lib/notifications/count-unread-notifications";
 import { readerFromRequest } from "@/lib/mobile-api/auth";
 import { fail, handle, MESSAGES, ok } from "@/lib/mobile-api/http";
-import { resolveNotificationTargets } from "@/lib/mobile-api/notification-targets";
+import { resolveNotificationTargets } from "@modonty/shared/lib/reader-push/notification-targets";
 import { readQuery } from "@/lib/mobile-api/request";
 
 const querySchema = z.object({

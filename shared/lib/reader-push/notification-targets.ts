@@ -1,7 +1,5 @@
-import "server-only";
-
-import { db } from "@/lib/db";
-import { notificationTargetKind } from "@/lib/notifications/notification-target-kind";
+import { db } from "../db";
+import { notificationTargetKind } from "./notification-target-kind";
 
 export type NotificationTarget =
   | { kind: "article"; slug: string; title: string; href: string }
