@@ -14,7 +14,7 @@ export interface CalendarClientRow {
 }
 
 interface MonthGroup {
-  _id: { c: { $oid: string } | string; y: number; m: number };
+  _id: { c?: { $oid: string } | string | null; y: number; m: number };
   n: number;
 }
 
@@ -29,11 +29,14 @@ export async function getCalendarClients(): Promise<CalendarClientRow[]> {
     db.client.findMany({
       where: { OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }] },
       select: { id: true, name: true, slug: true, logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } } },
-      orderBy: { name: "asc" },
+      // ترتيب القديم (`getClients` — `clients.ts:26-29`): الأقدم أوّلاً.
+      orderBy: { createdAt: "asc" },
     }),
     db.socialPost.aggregateRaw({
       pipeline: [
-        { $match: { archivedAt: null } },
+        // `clientId` شرطٌ لا زينة: مجموعة `social_posts` على dev فيها صفّ من ميزة قديمة حُذفت
+        // (نشر فيسبوك: articleId/platform/caption) بلا clientId ولا scheduledFor — كان يُسقط اللوحة.
+        { $match: { archivedAt: null, clientId: { $type: "objectId" }, scheduledFor: { $type: "date" } } },
         {
           $group: {
             _id: { c: "$clientId", y: { $year: "$scheduledFor" }, m: { $month: "$scheduledFor" } },
@@ -46,7 +49,9 @@ export async function getCalendarClients(): Promise<CalendarClientRow[]> {
 
   const byClient = new Map<string, { total: number; months: string[] }>();
   for (const g of groups) {
-    const id = typeof g._id.c === "string" ? g._id.c : g._id.c.$oid;
+    const c = g._id.c;
+    if (!c) continue;
+    const id = typeof c === "string" ? c : c.$oid;
     const entry = byClient.get(id) ?? { total: 0, months: [] };
     entry.total += g.n;
     entry.months.push(formatMonthParam(g._id.y, g._id.m - 1));
