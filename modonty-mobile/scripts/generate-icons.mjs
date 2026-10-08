@@ -59,6 +59,17 @@ const ICONS = {
   keypoints: 'modonty-keypoints-mark.tsx',
   toc: 'modonty-toc-mark.tsx',
   feedback: 'modonty-feedback-mark.tsx',
+  // خانات صفحة /modonty (`modonty/app/(site)/modonty/helpers/sectors.ts`) — ملفّات بعدّة علامات: `ملف#الدالّة`.
+  quran: 'modonty-sector-marks.tsx#ModontyQuranMark',
+  luckyWheel: 'modonty-sector-marks.tsx#ModontyLuckyWheelMark',
+  football: 'modonty-sector-marks.tsx#ModontyFootballMark',
+  markets: 'modonty-sector-marks.tsx#ModontyMarketsMark',
+  entertainment: 'modonty-sector-marks.tsx#ModontyEntertainmentMark',
+  education: 'modonty-sector-marks.tsx#ModontyEducationMark',
+  health: 'modonty-sector-marks.tsx#ModontyHealthMark',
+  idea: 'modonty-sector-marks.tsx#ModontyIdeaMark',
+  ai: 'modonty-brand-icons.tsx#ModontyAiMark',
+  link: 'modonty-brand-icons.tsx#ModontyLinkMark',
 };
 
 const TAGS = { path: 'Path', rect: 'Rect', circle: 'Circle', g: 'G', ellipse: 'Ellipse', line: 'Line', polyline: 'Polyline', polygon: 'Polygon' };
@@ -81,10 +92,22 @@ function parseAttrs(src) {
   return attrs;
 }
 
-function convert(name, file) {
-  const src = readFileSync(join(iconsDir, file), 'utf8');
+function convert(name, spec) {
+  const [file, fn] = spec.split('#');
+  let src = readFileSync(join(iconsDir, file), 'utf8');
+  // `{...stroke}` في ملفّ العلامات المتعدّدة: كائن مشترك أعلى الملفّ (`const stroke = { stroke: "currentColor", … }`).
+  const shared = {};
+  const sharedBlock = src.match(/const stroke = \{([\s\S]*?)\}/);
+  if (sharedBlock) for (const [, k, v] of sharedBlock[1].matchAll(/(\w+):\s*"?([^",\n]+)"?/g)) shared[k] = v.trim();
+  if (fn) {
+    // ملفّ بعدّة علامات: نقصّ دالّة العلامة المطلوبة وحدها حتى الدالّة التالية.
+    const start = src.indexOf(`export function ${fn}(`);
+    if (start < 0) throw new Error(`${spec}: export not found`);
+    const next = src.indexOf('export function', start + 1);
+    src = src.slice(start, next < 0 ? undefined : next);
+  }
   const exports = src.match(/export function/g) ?? [];
-  if (exports.length !== 1) throw new Error(`${file}: expected one export, found ${exports.length}`);
+  if (exports.length !== 1) throw new Error(`${spec}: expected one export, found ${exports.length}`);
   const body = src.match(/<svg[^>]*>([\s\S]*?)<\/svg>/);
   if (!body) throw new Error(`${file}: no <svg> body`);
   const inner = body[1].replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
@@ -94,9 +117,10 @@ function convert(name, file) {
   let m;
   while ((m = tagRe.exec(inner))) {
     const [, closing, tag, rawAttrs, selfClosing] = m;
-    if (closing) { if (TAGS[tag]) stack.pop(); continue; }
+    // `</path>` الصريح لا يُغلق شيئاً — `g` وحده يفتح مستوى.
+    if (closing) { if (tag === 'g') stack.pop(); continue; }
     if (!TAGS[tag]) throw new Error(`${file}: unsupported <${tag}> — port by hand`);
-    const a = parseAttrs(rawAttrs);
+    const a = { ...(rawAttrs.includes('{...stroke}') ? shared : {}), ...parseAttrs(rawAttrs) };
     const node = { t: TAGS[tag] };
     for (const [k, v] of Object.entries(a)) {
       if (k === 'fill' || k === 'stroke') node[k] = paint(v);

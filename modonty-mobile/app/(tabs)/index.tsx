@@ -1,14 +1,12 @@
-import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FeedCard } from '@/components/content/FeedCard';
 import { FollowButton } from '@/components/content/FollowButton';
+import { TopBar } from '@/components/navigation/TopBar';
 import { AppText } from '@/components/ui/AppText';
 import { Icon } from '@/components/ui/Icon';
-import { IconButton } from '@/components/ui/IconButton';
 import { PagedList } from '@/components/ui/PagedList';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Tap } from '@/components/ui/Tap';
@@ -16,7 +14,6 @@ import { Screen } from '@/components/ui/Screen';
 import { usePagedList } from '@/hooks/usePagedList';
 import { toArticleCard, type ArticleCardModel } from '@/lib/models';
 import { open } from '@/lib/nav';
-import { useAuth } from '@/providers/AuthProvider';
 import { contentApi } from '@/services/api';
 import type { HomeData } from '@/services/api-types';
 import { useAppTheme } from '@/theme/ThemeProvider';
@@ -33,9 +30,7 @@ const READING_TIMES = [
 
 /** S01 — الرئيسية: نفس قراءات صفحة الويب الأولى (`GET /home`)، ثم صفحات الفيد (`GET /articles?page`). */
 export default function HomeScreen() {
-  const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
-  const { unreadNotifications, requireAuth } = useAuth();
   const sections = useRef<Sections | null>(null);
   // من يتابع مدونتي لا يُطلب منه المتابعة (ملاحظة خالد ٨ أكتوبر) — يختفي البانر لحظة ثبوت المتابعة.
   const [followsModonty, setFollowsModonty] = useState(false);
@@ -95,30 +90,7 @@ export default function HomeScreen() {
 
   return (
     <Screen>
-      <View style={[styles.top, { paddingTop: insets.top, backgroundColor: colors.page, borderBottomColor: colors.border }]}>
-        {/* مثل رأس الموقع على الجوال (TopNav.tsx): الشعار · خانة بحث عريضة · الحساب — الخانة تبدو «اكتب هنا» من أوّل نظرة. */}
-        <View style={styles.topRow}>
-          <Image source={require('../../assets/brand/modonty-mark.png')} style={styles.mark} contentFit="contain" accessibilityLabel="مدونتي" />
-          <Tap
-            label="ابحث في المقالات والشركاء"
-            onPress={() => router.navigate('/search')}
-            style={[styles.searchBox, { backgroundColor: colors.surface, borderColor: colors.border }]}
-          >
-            <Icon name="search" size={control.iconSmall} tone="muted" />
-            <AppText variant="secondary" tone="muted" numberOfLines={1} style={styles.flex}>
-              بحث متقدم
-            </AppText>
-          </Tap>
-          <IconButton
-            icon="notifications"
-            label={unreadNotifications > 0 ? 'الإشعارات — غير مقروءة' : 'الإشعارات'}
-            onPress={() => requireAuth(() => router.push('/account/notifications'))}
-          />
-          {/* «حسابي» خرج من الشريط السفلي (تابات الموقع السبع) — مكانه رأس الرئيسية كما في رأس الموقع. */}
-          <IconButton icon="profile" label="حسابي" onPress={() => router.navigate('/account')} />
-
-        </View>
-      </View>
+      <TopBar />
       <PagedList
         list={list}
         renderItem={renderItem}
@@ -133,19 +105,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  top: { borderBottomWidth: StyleSheet.hairlineWidth },
-  topRow: { height: control.header, flexDirection: 'row', alignItems: 'center', gap: space.xs, paddingStart: space.screen, paddingEnd: space.xxs },
-  mark: { width: 36, height: 36 },
-  searchBox: {
-    flex: 1,
-    height: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space.xs,
-    paddingHorizontal: space.sm,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
   flex: { flex: 1 },
   times: { flexDirection: 'row', gap: space.xs, paddingHorizontal: space.screen },
   time: { flex: 1, alignItems: 'center', gap: 2, paddingVertical: space.sm, paddingHorizontal: space.xxs, borderRadius: radius.card, borderWidth: StyleSheet.hairlineWidth },

@@ -913,6 +913,8 @@ export interface PartnerProfile {
   seoDescription: string | null;
   logo: string | null;
   hero: string | null;
+  /** Phone art (2:1) for /modonty — absent on servers before 9 Oct 2026, hence optional. */
+  mobileHero?: string | null;
   /** Industry name. */
   industry: string | null;
   isVerified: boolean;

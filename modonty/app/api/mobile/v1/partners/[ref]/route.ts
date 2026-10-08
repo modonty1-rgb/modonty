@@ -36,6 +36,8 @@ export const GET = handle("partner", async (_request: Request, { params }: { par
         seoDescription: site.seoDescription ?? null,
         logo: mediaSrc(site.logoMedia) ?? null,
         hero: mediaSrc(site.heroImageMedia) ?? null,
+        /** Phone art (2:1, transparent) when the admin set one — the web's `/modonty` hero on phones. */
+        mobileHero: mediaSrc(site.mobileHeroImageMedia) ?? null,
         industry: site.industry?.name ?? null,
         isVerified: site.isVerified,
         phone: site.phone ?? null,

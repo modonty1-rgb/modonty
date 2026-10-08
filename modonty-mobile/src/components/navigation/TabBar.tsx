@@ -20,7 +20,7 @@ type Glyph = { kind: 'mark' } | { kind: 'modo' } | { kind: 'icon'; name: Modonty
 
 /** نفس التابات وترتيبها في شريط الموقع على الجوال (`OrbitQuickLinks.tsx` — ORBIT_LINKS). */
 const ORBIT: { route: string; label: string; glyph: Glyph }[] = [
-  { route: 'index', label: 'مدونتي', glyph: { kind: 'mark' } },
+  { route: 'modonty', label: 'مدونتي', glyph: { kind: 'mark' } },
   { route: 'articles-tab', label: 'المقالات', glyph: { kind: 'icon', name: 'articles' } },
   { route: 'industries-tab', label: 'المجالات', glyph: { kind: 'icon', name: 'industries' } },
   { route: 'reels', label: 'الطلّات', glyph: { kind: 'icon', name: 'reels' } },
@@ -49,7 +49,8 @@ type BottomTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tab
 /**
  * الشريط السفلي = شريط الموقع على الجوال: النشط ثابت في المنتصف بدائرة زرقاء عليها اسمه، والباقي يدور
  * حوله في حلقة (٣٠٠ms هادئة). ما يقفز من طرف لطرف يختفي ويظهر بدل أن يعبر الشريط — كما في الموقع.
- * الشاشات خارج الحلقة (البحث · حسابي · استكشف) تُبقي «مدونتي» في المنتصف — مثل `getNavSectionPath`.
+ * الشاشات خارج الحلقة (الرئيسية «/» · البحث · حسابي · استكشف) تُبقي «مدونتي» في المنتصف — مثل `getNavSectionPath`،
+ * والضغط عليها يفتح صفحة مدونتي `/modonty` كما في الموقع (مقيس على متصفّح الجوال ٩ أكتوبر).
  */
 export const TabBar = memo(function TabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
@@ -151,7 +152,7 @@ function OrbitItem({
             <Glyph glyph={item.glyph} focused={focused} />
           </Animated.View>
           {focused ? (
-            <Animated.Text entering={FadeInDown.duration(220).delay(80)} style={[styles.label, { color: colors.onPrimary }]} numberOfLines={1}>
+            <Animated.Text entering={FadeInDown.duration(220).delay(80)} maxFontSizeMultiplier={1} style={[styles.label, { color: colors.onPrimary }]} numberOfLines={1}>
               {item.label}
             </Animated.Text>
           ) : null}
