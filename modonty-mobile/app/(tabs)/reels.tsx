@@ -123,7 +123,7 @@ export default function ReelsScreen() {
 
       <View style={[styles.top, { paddingTop: insets.top }]} pointerEvents="box-none">
         <AppText variant="pageTitle" tone="onReels" accessibilityRole="header">
-          {selected ?? 'ريلز'}
+          {selected ?? 'الطلّات'}
         </AppText>
         <IconButton icon="filter" label="تصفية حسب الشريك" tone="onReels" onPress={() => setFilterOpen(true)} />
       </View>

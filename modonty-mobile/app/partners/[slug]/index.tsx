@@ -278,7 +278,7 @@ export default function PartnerScreen() {
 
         {home && !isHidden('reels') && home.reels.length > 0 ? (
           <View style={styles.block}>
-            <SectionHeader title="ريلز" />
+            <SectionHeader title="الطلّات" />
             <FlatList
               horizontal
               data={home.reels}

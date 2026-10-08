@@ -35,9 +35,9 @@ function htmlStyles(c: AppColors) {
     base: { color: c.text, fontFamily: fonts.regular, fontSize: typography.reading.fontSize, lineHeight: typography.reading.lineHeight, ...rtl },
     tags: {
       p: { marginTop: space.sm, marginBottom: 0, ...rtl },
-      h2: { fontFamily: fonts.medium, fontSize: typography.pageTitle.fontSize, lineHeight: typography.pageTitle.lineHeight, marginTop: space.xl, marginBottom: 0, fontWeight: '500' as const, ...rtl },
-      h3: { fontFamily: fonts.medium, fontSize: typography.sectionTitle.fontSize, lineHeight: typography.sectionTitle.lineHeight, marginTop: space.md, marginBottom: 0, fontWeight: '500' as const, ...rtl },
-      h4: { fontFamily: fonts.medium, fontSize: typography.body.fontSize, marginTop: space.md, marginBottom: 0, fontWeight: '500' as const, ...rtl },
+      h2: { fontFamily: fonts.bold, fontSize: typography.pageTitle.fontSize, lineHeight: typography.pageTitle.lineHeight, marginTop: space.xl, marginBottom: 0, fontWeight: '700' as const, ...rtl },
+      h3: { fontFamily: fonts.bold, fontSize: typography.sectionTitle.fontSize, lineHeight: typography.sectionTitle.lineHeight, marginTop: space.md, marginBottom: 0, fontWeight: '700' as const, ...rtl },
+      h4: { fontFamily: fonts.bold, fontSize: typography.body.fontSize, marginTop: space.md, marginBottom: 0, fontWeight: '700' as const, ...rtl },
       strong: { fontFamily: fonts.bold, fontWeight: '700' as const },
       b: { fontFamily: fonts.bold, fontWeight: '700' as const },
       a: { color: c.interactive, textDecorationLine: 'underline' as const },
@@ -84,6 +84,9 @@ export const ArticleHtml = memo(function ArticleHtml({ html, articleId }: { html
       renderers={RENDERERS}
       renderersProps={renderersProps}
       ignoredDomTags={['script', 'style', 'iframe', 'form', 'input', 'button']}
+      // «justify» المكتوب في HTML الويب يفتح فجوات بين الكلمات العربية على الجوال (مقيس ٩ أكتوبر) —
+      // المحاذاة من اتجاه الكتابة وحده.
+      ignoredStyles={['textAlign']}
     />
   );
 });

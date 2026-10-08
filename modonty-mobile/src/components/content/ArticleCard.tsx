@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { FeedCard } from '@/components/content/FeedCard';
 import { AppText } from '@/components/ui/AppText';
 import { Icon } from '@/components/ui/Icon';
 import { Tap } from '@/components/ui/Tap';
@@ -48,6 +49,8 @@ export const ArticleCard = memo(function ArticleCard({ item, onOpen, layout = 'c
       </Tap>
     );
   }
+  // كل قوائم المقالات بالبطاقة المدمجة نفسها التي في الموقع (MobilePostCard) — بطاقة واحدة لا نسختان.
+  if (layout === 'card') return <FeedCard item={item} onOpen={onOpen} />;
   return (
     <Tap label={item.title} role="link" onPress={() => onOpen(item.slug)} style={[styles.card, surface]}>
       {item.image ? (

@@ -29,6 +29,8 @@ function ChipRowInner<V extends string>({ options, value, onChange, label }: Pro
             role="button"
             accessibilityState={{ selected: active }}
             onPress={() => onChange(o.value)}
+            minTarget={false}
+            hitSlop={6}
             style={[
               styles.chip,
               {
@@ -50,10 +52,12 @@ function ChipRowInner<V extends string>({ options, value, onChange, label }: Pro
 export const ChipRow = memo(ChipRowInner) as typeof ChipRowInner;
 
 const styles = StyleSheet.create({
-  row: { paddingHorizontal: space.screen, gap: space.xs, paddingVertical: space.xs },
+  row: { paddingHorizontal: space.screen, gap: space.xs, paddingVertical: 4 },
   chip: {
-    minHeight: control.touch,
-    paddingHorizontal: space.md,
+    // ٣٦ مثل فلاتر الموقع (h-9)؛ الهدف ٤٨ يكمله hitSlop.
+    height: 36,
+    justifyContent: 'center',
+    paddingHorizontal: space.sm,
     borderRadius: radius.pill,
     borderWidth: control.border,
     alignItems: 'center',
