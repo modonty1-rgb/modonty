@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { fireReaderPush } from "@modonty/shared/lib/reader-push/push-reader-notifications";
 
 import type { CommentKind } from "./comment-queries";
 
@@ -63,7 +64,9 @@ export async function notifyCommentApproved(kind: CommentKind, commentId: string
         relatedId: commentId,
       });
     }
-    if (notices.length) await db.notification.createMany({ data: notices });
+    // واحداً واحداً لا createMany: مونغو لا يُرجع المعرّفات منها، والدفع يحتاجها.
+    const created = await Promise.all(notices.map((data) => db.notification.create({ data, select: { id: true } })));
+    fireReaderPush(created.map((n) => n.id));
   } catch (error) {
     console.error("[notifyCommentApproved]", error);
   }

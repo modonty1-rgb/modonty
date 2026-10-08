@@ -3,5 +3,17 @@
   "buildCommand": "pnpm --filter @modonty/modonty build",
   "installCommand": "pnpm install --filter @modonty/modonty...",
   "framework": "nextjs",
-  "ignoreCommand": "[ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] && git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- ./ ../shared ../pnpm-lock.yaml ../package.json"
+  "ignoreCommand": "[ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] && git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- ./ ../shared ../pnpm-lock.yaml ../package.json",
+  "git": {
+    "deploymentEnabled": {
+      "cloud/**": false,
+      "claude/**": false
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/mobile/v1/internal/push-dispatch",
+      "schedule": "*/15 * * * *"
+    }
+  ]
 }

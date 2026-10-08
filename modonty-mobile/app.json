@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "مدونتي",
+    "slug": "modonty-reader",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/brand/app-icon.png",
+    "scheme": "modonty",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.modonty.reader",
+      "usesAppleSignIn": true
+    },
+    "android": {
+      "package": "com.modonty.reader",
+      "adaptiveIcon": {
+        "backgroundColor": "#0E065A",
+        "foregroundImage": "./assets/brand/app-icon-foreground.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "googleServicesFile": "./google-services.json"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font",
+      "expo-web-browser",
+      "expo-video",
+      "expo-apple-authentication",
+      [
+        "expo-localization",
+        {
+          "supportsRTL": true,
+          "forcesRTL": true
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/brand/modonty-mark.png",
+          "imageWidth": 120,
+          "resizeMode": "contain",
+          "backgroundColor": "#0E065A"
+        }
+      ]
+    ],
+    "owner": "modontys-team",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4cde38a2-5bc3-4f21-ba91-1cabff468b54"
+      }
+    }
+  }
+}

@@ -8,6 +8,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { messages } from "@/lib/messages";
 import { sendEmail } from "@/lib/email/resend-client";
 import { faqReplyEmail } from "@modonty/shared/lib/email/templates/faq-reply";
+import { fireReaderPush } from "@modonty/shared/lib/reader-push/push-reader-notifications";
 
 export type PublishResult = { success: true } | { success: false; error: string };
 
@@ -56,7 +57,8 @@ export async function publishFaqAnswer(
           select: { id: true },
         });
         if (user) {
-          await db.notification.create({
+          const notice = await db.notification.create({
+            select: { id: true },
             data: {
               userId: user.id,
               clientId: faq.article.clientId ?? undefined,
@@ -67,6 +69,7 @@ export async function publishFaqAnswer(
               readAt: null,
             },
           });
+          fireReaderPush([notice.id]);
         }
       } catch {
         // Notification failure must not block the reply.

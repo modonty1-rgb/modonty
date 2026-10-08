@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { sendEmail } from "@/lib/email/resend-client";
 import { messages } from "@/lib/messages";
+import { fireReaderPush } from "@modonty/shared/lib/reader-push/push-reader-notifications";
 
 type Result =
   | { success: true; emailFailed?: boolean }
@@ -160,7 +161,8 @@ export async function sendReply(
       const snippet =
         trimmed.length > 200 ? `${trimmed.slice(0, 200)}...` : trimmed;
       try {
-        await db.notification.create({
+        const notice = await db.notification.create({
+          select: { id: true },
           data: {
             userId: message.userId,
             clientId,
@@ -170,6 +172,7 @@ export async function sendReply(
             relatedId: message.id,
           },
         });
+        fireReaderPush([notice.id]);
       } catch {
         // Notification failure must not block the reply
       }

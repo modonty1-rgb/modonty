@@ -1,38 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { cookies } from "next/headers";
-import { SharePlatform } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
-import { notifyTelegram } from "@/lib/telegram/notify-telegram";
-import { trackClientShare } from "@/lib/analytics/events-registry";
-import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
+import { recordClientShare } from "@/lib/analytics/record-client-share";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
 
-const PLATFORM_MAP: Record<string, SharePlatform> = {
-  TWITTER: SharePlatform.TWITTER,
-  LINKEDIN: SharePlatform.LINKEDIN,
-  FACEBOOK: SharePlatform.FACEBOOK,
-  WHATSAPP: SharePlatform.WHATSAPP,
-  EMAIL: SharePlatform.EMAIL,
-  COPY_LINK: SharePlatform.COPY_LINK,
-  OTHER: SharePlatform.OTHER,
-};
-
-// Arabic labels for the Telegram notification (enum values are English).
-const SHARE_PLATFORM_AR: Record<SharePlatform, string> = {
-  [SharePlatform.TWITTER]: "إكس (تويتر)",
-  [SharePlatform.LINKEDIN]: "لينكدإن",
-  [SharePlatform.FACEBOOK]: "فيسبوك",
-  [SharePlatform.WHATSAPP]: "واتساب",
-  [SharePlatform.EMAIL]: "البريد",
-  [SharePlatform.COPY_LINK]: "نسخ الرابط",
-  [SharePlatform.PRINT]: "طباعة",
-  [SharePlatform.OTHER]: "أخرى",
-};
-
+/** Web door: the visit cookie names the session; the share logic lives in `recordClientShare`. */
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -49,18 +24,6 @@ export async function POST(
       );
     }
 
-    const client = await db.client.findFirst({
-      where: { slug },
-      select: { id: true, slug: true, name: true, industry: { select: { name: true } } },
-    });
-
-    if (!client) {
-      return NextResponse.json(
-        { success: false, error: "Client not found" } as ApiResponse<never>,
-        { status: 404 }
-      );
-    }
-
     const cookieStore = await cookies();
     let sessionId = cookieStore.get(VIEW_SESSION_COOKIE)?.value;
     if (!sessionId) {
@@ -73,43 +36,27 @@ export async function POST(
       });
     }
 
-    const sharePlatform = PLATFORM_MAP[platform] ?? SharePlatform.OTHER;
-
-    const session = await auth();
-    await db.share.create({
-      data: {
-        clientId: client.id,
-        userId: session?.user?.id ?? undefined,
-        platform: sharePlatform,
-        sessionId,
-      },
-    });
-
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-      request.headers.get("x-real-ip") ||
-      request.headers.get("cf-connecting-ip") ||
-      null;
-    fireClientEvent(client.id, { kind: "page_share" });
-    notifyTelegram(client.id, "clientShare", {
-      meta: { المنصة: SHARE_PLATFORM_AR[sharePlatform] },
-      ipAddress: ip,
+    const result = await recordClientShare({
+      slug,
+      platform,
+      sessionId,
+      resolveUserId: async () => (await auth())?.user?.id ?? undefined,
       headers: request.headers,
-    }).catch(() => {});
-
-    void trackClientShare({
-      client_id: client.id,
-      client_slug: client.slug,
-      client_name: client.name,
-      client_industry: client.industry?.name,
-      share_platform: String(sharePlatform).toLowerCase(),
     });
+
+    if (result === "not_found") {
+      return NextResponse.json(
+        { success: false, error: "Client not found" } as ApiResponse<never>,
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
       data: { message: "Share tracked" },
     } as ApiResponse<{ message: string }>);
-  } catch {
+  } catch (error) {
+    console.error("[clients/api/share]", error);
     return NextResponse.json(
       { success: false, error: "Failed to track share" } as ApiResponse<never>,
       { status: 500 }
