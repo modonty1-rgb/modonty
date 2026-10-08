@@ -1,12 +1,11 @@
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ModontyWordmark } from '@/components/brand/ModontyWordmark';
 import { FeedCard } from '@/components/content/FeedCard';
 import { FollowButton } from '@/components/content/FollowButton';
-import { ReelTile, type ReelTileModel } from '@/components/content/ReelTile';
 import { AppText } from '@/components/ui/AppText';
 import { Icon } from '@/components/ui/Icon';
 import { IconButton } from '@/components/ui/IconButton';
@@ -21,18 +20,22 @@ import { useAuth } from '@/providers/AuthProvider';
 import { contentApi } from '@/services/api';
 import type { HomeData } from '@/services/api-types';
 import { useAppTheme } from '@/theme/ThemeProvider';
-import { brandWordmark, control, radius, space } from '@/theme/tokens';
+import { control, radius, space } from '@/theme/tokens';
 
 type Sections = Omit<HomeData, 'articles' | 'hasMore'>;
 
-const REELS_VISIBLE = 2.6;
+/** نفس بطاقات وقت القراءة في الموقع (ArticlesList · ReadingTimeBucket). */
+const READING_TIMES = [
+  { key: 'short', title: 'على الماشي', hint: '٣ دقائق أو أقل' },
+  { key: 'medium', title: 'فنجان قهوة', hint: '٤ إلى ٧ دقائق' },
+  { key: 'long', title: 'جلسة روقان', hint: '٨ دقائق فأكثر' },
+] as const;
 
 /** S01 — الرئيسية: نفس قراءات صفحة الويب الأولى (`GET /home`)، ثم صفحات الفيد (`GET /articles?page`). */
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
   const { unreadNotifications, requireAuth } = useAuth();
-  const { width } = useWindowDimensions();
   const sections = useRef<Sections | null>(null);
   // من يتابع مدونتي لا يُطلب منه المتابعة (ملاحظة خالد ٨ أكتوبر) — يختفي البانر لحظة ثبوت المتابعة.
   const [followsModonty, setFollowsModonty] = useState(false);
@@ -54,20 +57,9 @@ export default function HomeScreen() {
     [],
   );
   const s = list.status === 'success' ? sections.current : null;
-  const reelWidth = (width - space.screen * 2 - space.xs * 2) / REELS_VISIBLE;
-  const reels = useMemo<ReelTileModel[]>(
-    () =>
-      (s?.reels ?? []).map((r) => ({
-        key: r.id,
-        slug: r.slug,
-        title: r.title,
-        poster: r.posterUrl ?? r.imageUrl,
-        publisher: r.clientName,
-        isVideo: r.isVideo,
-      })),
-    [s],
-  );
 
+  // ترتيب الموقع على الجوال (جرد الجوّال ٣ أكتوبر، لقطة ١): «أحدث المقالات» ثم وقت القراءة ثم الفيد.
+  // الطلّات والمجالات والشركاء لها تبويباتها وصفحاتها — الرئيسية للقراءة.
   const header = (
     <View style={styles.sections}>
       {s?.coreClientSlug && !followsModonty ? (
@@ -78,67 +70,26 @@ export default function HomeScreen() {
           <FollowButton slug={s.coreClientSlug} compact onFollowingChange={setFollowsModonty} />
         </View>
       ) : null}
-      {reels.length > 0 ? (
-        <View style={styles.block}>
-          <SectionHeader title="الطلّات" onMore={() => router.navigate('/reels')} />
-          <FlatList
-            horizontal
-            data={reels}
-            keyExtractor={(r) => r.key}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.hList}
-            renderItem={({ item }) => <ReelTile item={item} onOpen={open.reel} width={reelWidth} />}
-          />
-        </View>
-      ) : null}
-      {s && s.industries.length > 0 ? (
-        <View style={styles.block}>
-          <SectionHeader title="المجالات" onMore={() => router.push('/industries')} />
-          <FlatList
-            horizontal
-            data={s.industries}
-            keyExtractor={(i) => i.id}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.hList}
-            renderItem={({ item }) => (
-              <Tap
-                label={item.name}
-                role="link"
-                onPress={() => open.industry(item.slug)}
-                style={[styles.pill, { backgroundColor: colors.surface, borderColor: colors.border }]}
-              >
-                <AppText variant="label">{item.name}</AppText>
-              </Tap>
-            )}
-          />
-        </View>
-      ) : null}
-      {s && s.partners.length > 0 ? (
-        <View style={styles.block}>
-          <SectionHeader title="شركاء انضمّوا حديثاً" onMore={() => router.push('/partners')} />
-          <View style={styles.partners}>
-            {s.partners.map((p) => (
-              <Tap
-                key={p.id}
-                label={p.name}
-                role="link"
-                onPress={() => open.partner(p.slug)}
-                style={[styles.partner, { backgroundColor: colors.surface, borderColor: colors.border }]}
-              >
-                <AppText variant="label" numberOfLines={1}>
-                  {p.name}
-                </AppText>
-                {p.industry ? (
-                  <AppText variant="secondary" tone="muted" numberOfLines={1}>
-                    {p.industry}
-                  </AppText>
-                ) : null}
-              </Tap>
-            ))}
-          </View>
-        </View>
-      ) : null}
       <SectionHeader title="أحدث المقالات" onMore={() => router.push('/articles')} moreLabel="الأرشيف" />
+      <View style={styles.times}>
+        {READING_TIMES.map((t) => (
+          <Tap
+            key={t.key}
+            label={`${t.title} — ${t.hint}`}
+            role="link"
+            onPress={() => router.push({ pathname: '/articles', params: { time: t.key, title: t.title } })}
+            style={[styles.time, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          >
+            <Icon name="clock" size={control.iconSmall} tone="interactive" />
+            <AppText variant="label" numberOfLines={1}>
+              {t.title}
+            </AppText>
+            <AppText variant="secondary" tone="muted" numberOfLines={1}>
+              {t.hint}
+            </AppText>
+          </Tap>
+        ))}
+      </View>
     </View>
   );
 
@@ -147,7 +98,7 @@ export default function HomeScreen() {
       <View style={[styles.top, { paddingTop: insets.top, backgroundColor: colors.page, borderBottomColor: colors.border }]}>
         {/* مثل رأس الموقع على الجوال (TopNav.tsx): الشعار · خانة بحث عريضة · الحساب — الخانة تبدو «اكتب هنا» من أوّل نظرة. */}
         <View style={styles.topRow}>
-          <ModontyWordmark width={brandWordmark.width} height={brandWordmark.height} />
+          <Image source={require('../../assets/brand/modonty-mark.png')} style={styles.mark} contentFit="contain" accessibilityLabel="مدونتي" />
           <Tap
             label="ابحث في المقالات والشركاء"
             onPress={() => router.navigate('/search')}
@@ -155,7 +106,7 @@ export default function HomeScreen() {
           >
             <Icon name="search" size={control.iconSmall} tone="muted" />
             <AppText variant="secondary" tone="muted" numberOfLines={1} style={styles.flex}>
-              ابحث في مدونتي…
+              بحث متقدم
             </AppText>
           </Tap>
           <IconButton
@@ -181,9 +132,10 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   top: { borderBottomWidth: StyleSheet.hairlineWidth },
   topRow: { height: control.header, flexDirection: 'row', alignItems: 'center', gap: space.xs, paddingStart: space.screen, paddingEnd: space.xxs },
+  mark: { width: 36, height: 36 },
   searchBox: {
     flex: 1,
-    height: 40,
+    height: 44,
     flexDirection: 'row',
     alignItems: 'center',
     gap: space.xs,
@@ -192,6 +144,8 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
   },
   flex: { flex: 1 },
+  times: { flexDirection: 'row', gap: space.xs, paddingHorizontal: space.screen },
+  time: { flex: 1, alignItems: 'center', gap: 2, paddingVertical: space.sm, paddingHorizontal: space.xxs, borderRadius: radius.card, borderWidth: StyleSheet.hairlineWidth },
   sections: { gap: space.section, paddingTop: space.md },
   block: { gap: space.sm },
   hList: { paddingHorizontal: space.screen, gap: space.xs },

@@ -1,42 +1,40 @@
-import type { Tabs } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { memo, useEffect, type ComponentProps, type ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import type { Tabs } from 'expo-router';
+import { memo, useEffect, type ComponentProps } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { ModontyIconName } from '@/components/brand/ModontyIcon';
-import { AppText } from '@/components/ui/AppText';
 import { Icon } from '@/components/ui/Icon';
 import { Tap } from '@/components/ui/Tap';
 import { useAuth } from '@/providers/AuthProvider';
 import { useAppTheme } from '@/theme/ThemeProvider';
-import { control, radius, space } from '@/theme/tokens';
+import { fonts } from '@/theme/tokens';
 
 const TABS: Record<string, { label: string; icon: ModontyIconName }> = {
-  index: { label: 'الرئيسية', icon: 'home' },
+  index: { label: 'مدونتي', icon: 'home' },
   discover: { label: 'استكشف', icon: 'categories' },
   reels: { label: 'الطلّات', icon: 'reels' },
   search: { label: 'بحث', icon: 'search' },
   account: { label: 'حسابي', icon: 'profile' },
 };
 
+const IDLE = 48;
+const ACTIVE = 60;
+
 type BottomTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
-const INDICATOR = { width: 56, height: 32 } as const;
-const BADGE = 18;
-
 /**
- * التبويب السفلي: ٦٤dp + insets.bottom (UIUX §٥)، الرئيسية أوّلاً في RTL، والوجهة النشطة بمؤشّر
- * مرئي لا باللون وحده (BRANDING). أيقونات ModontyIcon — لذلك شريط مرسوم لا التابات الأصلية
- * (NativeTabs تقبل رموز النظام أو صوراً نقطية فقط، والماركة SVG).
+ * الشريط السفلي بهويّة موقع مدونتي على الجوال (`OrbitQuickLinks` — جرد الجوّال ٣ أكتوبر):
+ * دوائر بإطار رفيع، والوجهة النشطة دائرة زرقاء أكبر عليها اسمها. الانتقال هادئ (١٨٠ms) بلا ارتداد.
  */
 export const TabBar = memo(function TabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
   const { unreadNotifications } = useAuth();
   return (
-    <View style={[styles.bar, { paddingBottom: insets.bottom, backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+    <View style={[styles.bar, { paddingBottom: insets.bottom + 8, backgroundColor: colors.page, borderTopColor: colors.border }]}>
       {state.routes.map((route, index) => {
         const tab = TABS[route.name];
         if (!tab) return null;
@@ -56,15 +54,9 @@ export const TabBar = memo(function TabBar({ state, navigation }: BottomTabBarPr
             role="tab"
             accessibilityState={{ selected: focused }}
             onPress={onPress}
-            style={styles.tab}
+            style={styles.slot}
           >
-            <TabIndicator focused={focused} fill={colors.primaryContainer}>
-              <Icon name={tab.icon} tone={focused ? 'onPrimaryContainer' : 'muted'} />
-              {badge ? <View style={[styles.badge, { backgroundColor: colors.danger, borderColor: colors.surface }]} /> : null}
-            </TabIndicator>
-            <AppText variant="tabLabel" fixedSize tone={focused ? 'text' : 'muted'}>
-              {tab.label}
-            </AppText>
+            <OrbitButton focused={focused} icon={tab.icon} label={tab.label} badge={badge} />
           </Tap>
         );
       })}
@@ -72,31 +64,47 @@ export const TabBar = memo(function TabBar({ state, navigation }: BottomTabBarPr
   );
 });
 
-/** المؤشّر يكبر بنابض حين يصير التبويب نشطاً (Reanimated — خيط الواجهة، بلا إعادة رسم React). */
-function TabIndicator({ focused, fill, children }: { focused: boolean; fill: string; children: ReactNode }) {
+function OrbitButton({ focused, icon, label, badge }: { focused: boolean; icon: ModontyIconName; label: string; badge: boolean }) {
+  const { colors } = useAppTheme();
   const on = useSharedValue(focused ? 1 : 0);
   useEffect(() => {
-    on.value = withSpring(focused ? 1 : 0, { damping: 16, stiffness: 220 });
+    on.value = withTiming(focused ? 1 : 0, { duration: 180, easing: Easing.out(Easing.quad) });
   }, [focused, on]);
-  const pill = useAnimatedStyle(() => ({ opacity: on.value, transform: [{ scaleX: 0.6 + on.value * 0.4 }] }));
-  const icon = useAnimatedStyle(() => ({ transform: [{ scale: 1 + on.value * 0.08 }] }));
+  const size = useAnimatedStyle(() => {
+    const d = IDLE + (ACTIVE - IDLE) * on.value;
+    return { width: d, height: d, borderRadius: d / 2 };
+  });
   return (
-    <View style={styles.indicator}>
-      <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: fill, borderRadius: radius.pill }, pill]} />
-      <Animated.View style={icon}>{children}</Animated.View>
-    </View>
+    <Animated.View
+      style={[
+        styles.circle,
+        size,
+        focused
+          ? { backgroundColor: colors.primary, borderColor: colors.primary }
+          : { backgroundColor: colors.surface, borderColor: colors.border },
+      ]}
+    >
+      <Icon name={icon} size={focused ? 22 : 24} tone={focused ? 'onPrimary' : 'text'} monochrome={focused} />
+      {focused ? (
+        <Text style={[styles.label, { color: colors.onPrimary }]} numberOfLines={1}>
+          {label}
+        </Text>
+      ) : null}
+      {badge ? <View style={[styles.badge, { backgroundColor: colors.danger, borderColor: colors.surface }]} /> : null}
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: { flexDirection: 'row', borderTopWidth: StyleSheet.hairlineWidth },
-  tab: { flex: 1, height: control.footer, alignItems: 'center', justifyContent: 'center', gap: space.xxs },
-  indicator: {
-    width: INDICATOR.width,
-    height: INDICATOR.height,
-    borderRadius: radius.pill,
+  bar: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
+    paddingTop: 8,
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
-  badge: { position: 'absolute', top: 2, end: 12, width: BADGE / 2, height: BADGE / 2, borderRadius: radius.pill, borderWidth: 1 },
+  slot: { alignItems: 'center', justifyContent: 'center', minWidth: ACTIVE, height: ACTIVE },
+  circle: { alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
+  label: { fontFamily: fonts.bold, fontSize: 10, lineHeight: 13, marginTop: 1 },
+  badge: { position: 'absolute', top: 6, end: 8, width: 10, height: 10, borderRadius: 5, borderWidth: 1.5 },
 });

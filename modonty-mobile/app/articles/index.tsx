@@ -35,9 +35,9 @@ const ALL = '__all__';
  * تقبل `?category=` و`?tag=` و`?industry=` حين تُفتح من صفحة تصنيف أو وسم أو مجال.
  */
 export default function ArchiveScreen() {
-  const params = useLocalSearchParams<{ category?: string; tag?: string; industry?: string; title?: string }>();
+  const params = useLocalSearchParams<{ category?: string; tag?: string; industry?: string; title?: string; time?: ArchiveReadingTime }>();
   const [sort, setSort] = useState<ArchiveSort>('newest');
-  const [time, setTime] = useState<'any' | ArchiveReadingTime>('any');
+  const [time, setTime] = useState<'any' | ArchiveReadingTime>(params.time ?? 'any');
   const [industry, setIndustry] = useState<string>(params.industry ?? ALL);
   const [category, setCategory] = useState<string>(params.category ?? ALL);
   const filters = useRef<ArchiveFilters | null>(null);

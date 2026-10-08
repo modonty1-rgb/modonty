@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { Icon } from '@/components/ui/Icon';
 import type { ArticleCardModel } from '@/lib/models';
@@ -20,7 +20,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
  * بطاقة الفيد بتصميم موقع مدونتي على الجوال (`modonty/components/feed/postcard/MobilePostCard.tsx`،
  * الهجين الذي اعتمده خالد ٢٣ أغسطس): بطاقة واجهة واحدة بغلاف ١٦:٩ فوق، وبقيّة البطاقات مدمجة —
  * النصّ ثم صورة ١٢٤ بنسبة ٤:٣ بجانبه — فيرى القارئ ضعف البطاقات في الشاشة.
- * الضغط ينكمش بنابض (Reanimated، على خيط الواجهة) ثم يعود.
+ * الضغط ينكمش ١٫٥٪ ويعود بهدوء (Reanimated) — لمسة لا استعراض (خالد ٨ أكتوبر: «جنتل وأنيق»).
  */
 export const FeedCard = memo(function FeedCard({ item, onOpen, hero }: Props) {
   const scale = useSharedValue(1);
@@ -52,32 +52,33 @@ export const FeedCard = memo(function FeedCard({ item, onOpen, hero }: Props) {
       accessibilityRole="link"
       accessibilityLabel={item.title}
       onPress={() => onOpen(item.slug)}
-      onPressIn={() => (scale.value = withSpring(0.97, { damping: 18, stiffness: 320 }))}
-      onPressOut={() => (scale.value = withSpring(1, { damping: 14, stiffness: 260 }))}
+      onPressIn={() => (scale.value = withTiming(0.985, { duration: 90, easing: Easing.out(Easing.quad) }))}
+      onPressOut={() => (scale.value = withTiming(1, { duration: 140, easing: Easing.out(Easing.quad) }))}
       style={pressStyle}
       className="overflow-hidden rounded-2xl border border-border bg-card p-2.5"
     >
       {hero ? (
         <>
           {item.image ? (
-            <Image
-              source={item.image}
-              placeholder={item.imageBlur ? { uri: item.imageBlur } : undefined}
-              style={{ marginHorizontal: -10, marginTop: -10, marginBottom: 10, aspectRatio: 16 / 9 }}
-              contentFit="cover"
-              transition={250}
-              accessibilityIgnoresInvertColors
-            />
-          ) : null}
-          <View className="mb-1 flex-row items-center gap-2">
-            <View className="rounded-full bg-accent px-2 py-0.5">
-              <Text className="font-tajawal-bold text-[11px] text-accent-foreground">الأحدث</Text>
+            <View style={{ marginHorizontal: -10, marginTop: -10, marginBottom: 10 }}>
+              <Image
+                source={item.image}
+                placeholder={item.imageBlur ? { uri: item.imageBlur } : undefined}
+                style={{ aspectRatio: 16 / 9 }}
+                contentFit="cover"
+                transition={250}
+                accessibilityIgnoresInvertColors
+              />
+              {/* مثل الموقع: الشارة فوق الغلاف في الركن الأوّل، كحلية. */}
+              <View className="absolute start-3 top-3 rounded-full bg-foreground px-3 py-1">
+                <Text className="font-tajawal-bold text-xs text-background">الأحدث</Text>
+              </View>
             </View>
-            {publisher}
-          </View>
-          <Text className="font-tajawal-bold text-lg leading-7 text-card-foreground" numberOfLines={2}>
+          ) : null}
+          <Text className="font-tajawal-bold text-xl leading-8 text-card-foreground" numberOfLines={2}>
             {item.title}
           </Text>
+          <View className="mt-1.5">{publisher}</View>
           {item.excerpt ? (
             <Text className="mt-1 font-tajawal text-sm leading-6 text-muted-foreground" numberOfLines={2}>
               {item.excerpt}

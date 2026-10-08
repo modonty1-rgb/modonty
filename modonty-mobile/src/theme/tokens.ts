@@ -108,7 +108,7 @@ export const space = {
   /** داخل البطاقة. */
   card: 16,
   /** بين قسم وقسم. */
-  section: 24,
+  section: 16,
   /** بين تسمية وحقلها. */
   label: 8,
 } as const;
@@ -130,14 +130,14 @@ export const fonts = {
 
 /** جدول الخطوط النهائي (UIUX §٤) — ٧٠٠ لرقم واحد أو قرار حرج واحد فقط. */
 export const typography = {
-  pageTitle: { fontFamily: fonts.medium, fontSize: 18, lineHeight: 26 },
-  sectionTitle: { fontFamily: fonts.medium, fontSize: 16, lineHeight: 24 },
+  pageTitle: { fontFamily: fonts.bold, fontSize: 20, lineHeight: 30 },
+  sectionTitle: { fontFamily: fonts.bold, fontSize: 17, lineHeight: 26 },
   body: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 23 },
   label: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 20 },
   secondary: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 18 },
   tabLabel: { fontFamily: fonts.medium, fontSize: 11, lineHeight: 16 },
   /** نصّ المقال المقروء — نفس دور «نصّ» (١٥/٢٣) بارتفاع سطر قراءة أطول داخل المتن فقط. */
-  reading: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 26 },
+  reading: { fontFamily: fonts.regular, fontSize: 16, lineHeight: 29 },
   /** رقم بارز واحد في الشاشة. */
   numeral: { fontFamily: fonts.bold, fontSize: 18, lineHeight: 26 },
 } as const;
