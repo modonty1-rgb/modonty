@@ -23,7 +23,7 @@ interface CtaBarLink {
 // ٤٤px (خالد ٣ أكتوبر ٢٠٢٦): نزل من ٤٨ إلى ٤٠ ثم رجع ٤٤ — حدُّ أبل الأدنى للّمس. هذا الزرُّ مصدرُ دخل
 // العميل فالضغطةُ لازم تكون مضمونة، والفرقُ ٤px من ٨٤٤ (٧٩٪→٧٨٪ للمحتوى). الشريطُ ٦٥→٥٧.
 export const CTA_BAR_PRIMARY_CLASS = cn(
-  "h-11 max-md:h-11 min-w-0 flex-1 gap-1.5 rounded-lg px-2.5 text-[13px] ring-1 ring-accent/35 focus-visible:ring-accent",
+  "h-11 max-lg:h-11 min-w-0 flex-1 gap-1.5 rounded-lg px-2.5 text-[13px] ring-1 ring-accent/35 focus-visible:ring-accent",
   "bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground",
   "[--modonty-booking-accent:white] [--modonty-booking-check:hsl(var(--accent))] [--modonty-shopping-accent:white] [--modonty-shopping-hub:hsl(var(--accent))]",
 );
@@ -79,7 +79,7 @@ export function MobileCtaBar({ ariaLabel, primary, primarySlot, secondary, middl
     // them to white, where accent-on-accent would vanish.
     <nav
       aria-label={ariaLabel}
-      // `lg:hidden`, not `md:hidden` (Khalid, 21 Aug — mobile refactor): the columns only go
+      // `lg:hidden`, not `lg:hidden` (Khalid, 21 Aug — mobile refactor): the columns only go
       // side by side at `lg`, so 768–1023 is still a single-column reading screen and still
       // wants the bar. It is a PAIR with `lg:pb-0` on the column layouts — the padding that
       // clears this bar has to end exactly where the bar does, or it covers the last block.
@@ -117,7 +117,7 @@ export function MobileCtaBar({ ariaLabel, primary, primarySlot, secondary, middl
           href={secondary.href}
           {...(secondary.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           aria-label={secondary.iconOnly ? secondary.label : undefined}
-          className={cn(buttonVariants({ variant: "ghost" }), cn("h-11 max-md:h-11 min-w-0 gap-1.5 rounded-lg px-2.5 text-[13px] ring-1 ring-accent/35 focus-visible:ring-accent", "bg-accent/10 text-link-accent hover:text-link-accent", secondary.iconOnly ? "w-11 flex-none px-0" : "flex-1"))}
+          className={cn(buttonVariants({ variant: "ghost" }), cn("h-11 max-lg:h-11 min-w-0 gap-1.5 rounded-lg px-2.5 text-[13px] ring-1 ring-accent/35 focus-visible:ring-accent", "bg-accent/10 text-link-accent hover:text-link-accent", secondary.iconOnly ? "w-11 flex-none px-0" : "flex-1"))}
         >
           <SecondaryIcon // `!` needed: the Button's own `[&_svg]:size-4` rule outranks a plain class, which
           // pinned the mark at 16px next to a 14px/700 label. Material 3 puts the standard

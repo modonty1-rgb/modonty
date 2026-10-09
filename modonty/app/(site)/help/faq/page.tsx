@@ -74,18 +74,18 @@ export default async function FAQPage() {
         />
 
         <div className="mb-6">
-          <h1 className="text-3xl font-semibold mb-2">{text.title}</h1>
+          <h1 className="text-h1 mb-2">{text.title}</h1>
           <p className="text-muted-foreground">{text.intro}</p>
         </div>
 
         <div className="flex flex-wrap gap-3 mb-6">
-          <Button asChild variant="outline" size="sm" className="max-md:h-11">
+          <Button asChild variant="outline" size="sm" className="max-lg:h-11">
             <Link href="/help">
-              <IconArrowRight className="h-4 w-4 ml-2 rtl:rotate-180" />
+              <IconArrowRight className="h-4 w-4 ml-2" />
               {text.backToHelp}
             </Link>
           </Button>
-          <Button asChild variant="outline" size="sm" className="max-md:h-11">
+          <Button asChild variant="outline" size="sm" className="max-lg:h-11">
             <Link href="/contact">
               <IconEmail className="h-4 w-4 ml-2" />
               {text.contactUs}
@@ -97,13 +97,13 @@ export default async function FAQPage() {
           <Card className="text-center py-12">
             <CardContent>
               <IconHelpCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{text.empty.title}</h3>
+              <h3 className="text-lg font-bold mb-2">{text.empty.title}</h3>
               <p className="text-muted-foreground mb-6">{text.empty.description}</p>
               <div className="flex gap-4 justify-center">
-                <Button asChild variant="default" className="max-md:h-11">
+                <Button asChild variant="default" className="max-lg:h-11">
                   <Link href="/contact">{text.empty.contact}</Link>
                 </Button>
-                <Button asChild variant="outline" className="max-md:h-11">
+                <Button asChild variant="outline" className="max-lg:h-11">
                   <Link href="/help/feedback">{text.empty.feedback}</Link>
                 </Button>
               </div>

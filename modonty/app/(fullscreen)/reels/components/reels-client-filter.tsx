@@ -41,12 +41,12 @@ export function ReelsClientFilterDesktop({ clients, selectedClient }: ReelsClien
               "م"
             )}
           </span>
-          <IconChevronDown className="size-3.5 shrink-0" aria-hidden />
+          <IconChevronDown className="size-4 shrink-0" aria-hidden />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="max-h-[min(60dvh,26rem)] w-64 overflow-y-auto bg-neutral-950 text-white" style={{ direction: "rtl" }}>
         <DropdownMenuItem onSelect={() => select()} className="min-h-11 cursor-pointer gap-2.5 text-white focus:bg-white/10 focus:text-white">
-          <span className="grid size-7 shrink-0 place-items-center rounded-full bg-white/10 text-xs font-black">م</span>
+          <span className="grid size-7 shrink-0 place-items-center rounded-full bg-white/10 text-xs font-bold">م</span>
           <span className="flex-1">كل الريلز</span>
           {!selectedClient && <IconCheck className="size-4 text-primary" aria-label="محدد" />}
         </DropdownMenuItem>
@@ -92,7 +92,7 @@ export function ReelsClientFilter({ clients, selectedClient }: ReelsClientFilter
         aria-label={`تصفية الريلز: ${label}`}
         className="pointer-events-auto inline-flex h-11 items-center gap-1.5 rounded-full bg-black/55 pe-3 ps-1 text-white backdrop-blur transition hover:bg-black/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
-        <span className="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 text-xs font-black">
+        <span className="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 text-xs font-bold">
           {selectedClient?.logoUrl ? (
             <OptimizedImage media={asMedia(selectedClient.logoUrl)} alt="" fill sizes="36px" className="object-contain" />
           ) : (
@@ -111,7 +111,7 @@ export function ReelsClientFilter({ clients, selectedClient }: ReelsClientFilter
             onClick={() => select()}
             className="flex min-h-12 w-full items-center gap-2.5 border-b border-neutral-800 px-3 text-start transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
-            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white/10 text-xs font-black">م</span>
+            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white/10 text-xs font-bold">م</span>
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-bold">كل الريلز</span>
               <span className="block text-xs text-neutral-400">كل الشركاء</span>

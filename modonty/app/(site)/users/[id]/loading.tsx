@@ -27,7 +27,7 @@ export default function UserProfileLoading() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="flex items-center gap-2">
                   <Skeleton className="h-4 w-4" />
                   <Skeleton className="h-4 w-48" />
@@ -47,7 +47,7 @@ export default function UserProfileLoading() {
 
         <section aria-label="المقالات">
           <Skeleton className="h-8 w-32 mb-6" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <Card key={i} className="h-full">
                 <CardHeader>

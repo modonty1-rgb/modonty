@@ -11,7 +11,7 @@ import { getAlertState } from "../../../helpers/get-alert-state";
 const t = messages.modonty.football.alerts;
 const shared = messages.modonty.sectorPage.alerts;
 const links = alertLinks("football", "/modonty/football");
-const primary = "inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90";
+const primary = "inline-flex h-9 max-lg:h-11 items-center rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90";
 
 /**
  * The alert strip shown under a match (on days without one, the hero carries the invitation
@@ -29,7 +29,7 @@ export async function AlertsCard() {
         <Link href={links.register} className={primary}>
           {shared.register}
         </Link>
-        <Link href={links.login} className="inline-flex h-9 items-center rounded-md px-3 text-sm font-medium text-link hover:underline">
+        <Link href={links.login} className="inline-flex h-9 max-lg:h-11 items-center rounded-md px-3 text-sm font-medium text-link hover:underline">
           {shared.login}
         </Link>
       </Shell>

@@ -16,7 +16,9 @@ import { PARTNER_SIGNUP_URL } from "@/constants";
 // the link can answer — it takes the hover colour on touch-down (Apple: respond on
 // pointer-down, never only on release). Phones only; the desktop footer is unchanged.
 const linkClass =
-  "inline-flex max-lg:min-h-11 max-lg:min-w-11 max-lg:justify-center items-center gap-1.5 text-xs text-muted-foreground hover:text-link max-lg:active:text-link transition-colors";
+  // WEB-STANDARD-v1 §4 «Footer link»: label 14/500 on a 32px row (44 on phones) — it was 12px text
+  // on a 16px target on every page, under WCAG 2.2 SC 2.5.8 (24×24).
+  "inline-flex min-h-8 max-lg:min-h-11 max-lg:min-w-11 max-lg:justify-center items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-link max-lg:active:text-link transition-colors";
 
 function FooterStatsSkeleton() {
   return <div className="w-full h-[76px] rounded-lg bg-primary/80 skeleton-shimmer" aria-hidden />;
@@ -48,7 +50,7 @@ export async function Footer() {
         rel="noopener noreferrer"
         label="Footer CTA — صِر شريكاً"
         type="LINK"
-        className="text-xs font-semibold text-link hover:underline max-lg:active:underline inline-flex max-lg:min-h-11 items-center gap-1"
+        className="text-sm font-bold text-link hover:underline max-lg:active:underline inline-flex min-h-8 max-lg:min-h-11 items-center gap-1"
       >
         {messages.chrome.footer.ctaQuestion} <span aria-hidden="true">↗</span>
       </CtaTrackedLink>
@@ -77,13 +79,13 @@ export async function Footer() {
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
           {legal.contactEmail && (
             <a href={`mailto:${legal.contactEmail}`} dir="ltr" className={linkClass}>
-              <IconEmail className="h-3.5 w-3.5" aria-hidden />
+              <IconEmail className="h-4 w-4" aria-hidden />
               {legal.contactEmail}
             </a>
           )}
           {legal.contactTelephone && (
             <a href={`tel:${legal.contactTelephone}`} dir="ltr" className={linkClass}>
-              <IconPhone className="h-3.5 w-3.5" aria-hidden />
+              <IconPhone className="h-4 w-4" aria-hidden />
               {legal.contactTelephone}
             </a>
           )}

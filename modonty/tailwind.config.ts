@@ -15,7 +15,49 @@ const config: Config = {
     "../shared/components/**/*.{ts,tsx}",
   ],
   theme: {
+    // WEB-STANDARD-v1 §2: Tajawal is loaded at 400 · 500 · 700 only (`app/layout.tsx`). Any other weight
+    // was synthesised by the browser (×278 in the 9 Oct audit). Mapping every name onto a REAL weight
+    // here — not in `extend` — makes a fake weight impossible in this app, including in the shared
+    // primitives it renders, without touching admin or console.
+    fontWeight: {
+      thin: "400",
+      extralight: "400",
+      light: "400",
+      normal: "400",
+      medium: "500",
+      semibold: "700",
+      bold: "700",
+      extrabold: "700",
+      black: "700",
+    },
     extend: {
+      // WEB-STANDARD-v1 §2 — the type roles. `text-xs` is redefined as the 13/20 caption (it was 12/16,
+      // the most common style, ×1897, and too small for Tajawal's ≈0.45em x-height). The four
+      // responsive roles (display · h1 · h2 · h3 · body-lg) are classes in globals.css, because a
+      // fontSize token cannot change per breakpoint.
+      fontSize: {
+        xs: ["0.8125rem", { lineHeight: "1.25rem" }],
+        caption: ["0.8125rem", { lineHeight: "1.25rem", fontWeight: "400" }],
+        label: ["0.875rem", { lineHeight: "1.25rem", fontWeight: "500" }],
+        body: ["1rem", { lineHeight: "1.625rem", fontWeight: "400" }],
+        title: ["1rem", { lineHeight: "1.5rem", fontWeight: "700" }],
+      },
+      // §3 — three elevations, navy-tinted, never coloured glows.
+      boxShadow: {
+        e1: "0 1px 2px rgb(14 6 90 / 0.06)",
+        e2: "0 4px 12px rgb(14 6 90 / 0.10)",
+        e3: "0 8px 24px rgb(14 6 90 / 0.16)",
+      },
+      // §1 — three content containers and the LinkedIn 225 · 555 · 300 shell (24 gaps = 1128).
+      maxWidth: {
+        feed: "1128px",
+        reading: "768px",
+        form: "480px",
+      },
+      gridTemplateColumns: {
+        shell: "225px 555px 300px",
+        "shell-lg": "225px minmax(0, 1fr)",
+      },
       fontFamily: {
         sans: [
           "var(--font-tajawal)",
@@ -110,10 +152,14 @@ const config: Config = {
           "5": "hsl(var(--chart-5))",
         },
       },
+      // WEB-STANDARD-v1 §3: the radius VALUES are 4 · 8 · 12 · 16 · full. `md` was 6 and `3xl` 24 — both
+      // off-scale (6px ×153 in the 9 Oct audit). Names stay so no call site moves: sm 4 · md/lg 8 ·
+      // xl 12 · 2xl/3xl 16 · full.
       borderRadius: {
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
+        md: "var(--radius)",
         sm: "calc(var(--radius) - 4px)",
+        "3xl": "1rem",
       },
       // Article typography. `maxWidth: none` is kept because every consumer already
       // sets its own column width — the plugin's 65ch would narrow eleven live pages.
@@ -127,6 +173,10 @@ const config: Config = {
             // dark on its own and no page needs `dark:prose-invert`. Without this the
             // plugin's own near-black defaults ship to every consumer: /terms lost its
             // headings and bold text into the dark background the moment it was enabled.
+            // Tajawal ships 400·500·700 only: the plugin's `strong` 600 (and 800 inside headings)
+            // were synthesised by the browser. WEB-STANDARD-v1 §2 — bold is 700, nothing heavier.
+            strong: { fontWeight: "700" },
+            "h1 strong, h2 strong, h3 strong, h4 strong, thead th, th": { fontWeight: "700" },
             "--tw-prose-body": "hsl(var(--foreground))",
             "--tw-prose-headings": "hsl(var(--foreground))",
             "--tw-prose-lead": "hsl(var(--muted-foreground))",

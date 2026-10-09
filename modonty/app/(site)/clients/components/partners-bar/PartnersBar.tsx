@@ -31,10 +31,10 @@ export function PartnersBar({ query }: PartnersBarProps) {
             defaultValue={query.q}
             placeholder={text.inputPlaceholder}
             aria-label={text.inputAriaLabel}
-            className="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+            className="min-w-0 flex-1 self-stretch bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
           <button type="submit" aria-label={text.submitButtonAriaLabel} className="grid size-8 shrink-0 place-items-center rounded-full text-link transition-colors sm:hover:bg-muted">
-            <ModontyArrowMark className="h-4 w-4 rtl:rotate-180" aria-hidden />
+            <ModontyArrowMark className="h-4 w-4" aria-hidden />
           </button>
         </div>
       </form>

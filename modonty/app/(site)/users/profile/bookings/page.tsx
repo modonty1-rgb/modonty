@@ -64,7 +64,7 @@ export default async function ProfileBookingsPage() {
             ) : (
               <div className="space-y-4">
                 <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">طلبات الحجز ({bookings.length})</h3>
+                  <h3 className="text-lg font-bold">طلبات الحجز ({bookings.length})</h3>
                 </div>
                 <div className="grid gap-4">
                   {bookings.map((booking) => {
@@ -92,7 +92,7 @@ export default async function ProfileBookingsPage() {
                               <div className="flex flex-wrap items-center gap-2">
                                 <Link
                                   href={`/clients/${booking.client.slug}`}
-                                  className="font-semibold text-foreground transition-colors hover:text-primary"
+                                  className="font-bold text-foreground transition-colors hover:text-primary"
                                 >
                                   {booking.client.name}
                                 </Link>

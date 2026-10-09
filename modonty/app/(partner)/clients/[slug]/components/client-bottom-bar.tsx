@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { useSession } from "@/components/providers/SessionContext";
 import { BRAND_AVATAR_RADIUS } from "@/constants";
-import { IconUsers, IconCheck, IconShare, IconFeatured, IconClients, IconSaved } from "@/lib/icons";
+import { IconUsers, IconCheck, IconShare, IconFeatured, IconClients, IconSaved, IconSavedFilled } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -72,7 +72,7 @@ export function ClientBottomBar({
         : null;
 
   const col =
-    "flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-[hsl(var(--primary-ink,var(--primary)))]";
+    "flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-[hsl(var(--primary-ink,var(--primary)))]";
   const chipClass =
     "group absolute inset-x-0 bottom-1.5 mx-auto flex w-[72px] flex-col items-center gap-0.5";
 
@@ -162,7 +162,7 @@ export function ClientBottomBar({
           title={messages.shared.badges.verifiedPartnerLabel}
           aria-hidden
         >
-          <IconCheck className="size-3" />
+          <IconCheck className="size-4" />
         </span>
       </span>
       {badgeLabel && (
@@ -235,7 +235,7 @@ export function ClientBottomBar({
             aria-label="حفظ في المفضلة"
             className={cn(col, favorited && "text-[hsl(var(--primary-ink,var(--primary)))]")}
           >
-            <IconSaved className={cn("size-6", favorited && "fill-current")} />
+            {favorited ? <IconSavedFilled className="size-6" /> : <IconSaved className="size-6" />}
             <span>{favorited ? "محفوظ" : "حفظ"}</span>
           </button>
           <button type="button" onClick={handleReview} aria-label="اكتب تقييم" className={col}>

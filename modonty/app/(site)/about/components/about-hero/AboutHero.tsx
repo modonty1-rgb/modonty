@@ -24,7 +24,7 @@ export function AboutHero() {
           <ModontyMark className="h-11 w-11 text-white sm:h-14 sm:w-14" />
         </span>
         <p className="text-xs font-medium tracking-wide text-white/70">{text.eyebrow}</p>
-        <h1 className="text-3xl font-bold text-white sm:text-4xl">{text.title}</h1>
+        <h1 className="text-display text-white">{text.title}</h1>
         <p className="max-w-lg text-balance text-sm leading-7 text-white/85 sm:text-base">{text.tagline}</p>
       </div>
 

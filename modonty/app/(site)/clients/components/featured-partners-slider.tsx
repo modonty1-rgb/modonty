@@ -68,7 +68,7 @@ export function FeaturedPartnersSlider({ partners }: FeaturedPartnersSliderProps
         />
         <div className="relative mx-auto flex max-w-[1128px] flex-col items-center justify-center px-4 py-12 text-center sm:py-16">
           <span className="text-3xl sm:text-4xl">⭐</span>
-          <h2 className="mt-3 text-xl font-black sm:text-2xl">كن شريكنا المميّز</h2>
+          <h2 className="mt-3 text-xl font-bold sm:text-2xl">كن شريكنا المميّز</h2>
           <p className="mt-2 max-w-md text-sm text-white/80 sm:text-base">
             اشترك سنوياً لتتصدّر علامتك هذه المساحة أمام آلاف الزوار في صدارة الشركاء.
           </p>
@@ -156,12 +156,12 @@ function PartnerSlide({ partner, priority }: { partner: FeaturedPartner; priorit
       {/* scrim — keeps the bottom caption legible over any cover */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
-      <span className="absolute top-3.5 start-4 inline-flex items-center gap-1.5 rounded-full bg-amber-500 px-3 py-1 text-xs font-black text-amber-950 shadow sm:top-4 sm:start-6">
+      <span className="absolute top-3.5 start-4 inline-flex items-center gap-1.5 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-amber-950 shadow sm:top-4 sm:start-6">
         ⭐ شريك مميّز
       </span>
 
       {partner.articleCount === 0 && (
-        <span className="absolute top-3.5 end-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-3 py-1 text-xs font-black text-white shadow ring-1 ring-white/30 sm:top-4 sm:end-6">
+        <span className="absolute top-3.5 end-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-3 py-1 text-xs font-bold text-white shadow ring-1 ring-white/30 sm:top-4 sm:end-6">
           ✨ قريباً
         </span>
       )}
@@ -177,11 +177,11 @@ function PartnerSlide({ partner, priority }: { partner: FeaturedPartner; priorit
             className="shadow-lg"
           />
           <div className="min-w-0 flex-1">
-            <h3 className="flex items-center gap-2 text-lg font-black text-white drop-shadow sm:text-xl lg:text-2xl">
+            <h3 className="flex items-center gap-2 text-lg font-bold text-white drop-shadow sm:text-xl lg:text-2xl">
               <span className="truncate">{partner.name}</span>
               {partner.isVerified && (
                 <span className="grid h-5 w-5 flex-shrink-0 place-items-center rounded-full bg-accent text-white">
-                  <IconCheck className="h-3 w-3" />
+                  <IconCheck className="size-4" />
                 </span>
               )}
             </h3>

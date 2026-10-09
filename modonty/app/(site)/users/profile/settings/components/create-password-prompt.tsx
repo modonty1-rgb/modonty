@@ -73,7 +73,7 @@ export function CreatePasswordPrompt() {
               </div>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-primary">
+              <h3 className="text-lg font-bold text-primary">
                 تم إنشاء كلمة المرور بنجاح
               </h3>
               <p className="text-sm text-muted-foreground mt-2">
@@ -123,7 +123,7 @@ export function CreatePasswordPrompt() {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-md:size-11"
+                className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-lg:size-11"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -152,7 +152,7 @@ export function CreatePasswordPrompt() {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-md:size-11"
+                className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-lg:size-11"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? (

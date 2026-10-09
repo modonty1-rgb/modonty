@@ -11,7 +11,7 @@ interface ContactIntroProps {
 export function ContactIntro({ title, html }: ContactIntroProps) {
   return (
     <>
-      <h1 className="text-3xl font-bold mb-6">{title}</h1>
+      <h1 className="text-h1 mb-6">{title}</h1>
       {html ? (
         <div
           className="prose prose-neutral dark:prose-invert max-w-none mb-8"

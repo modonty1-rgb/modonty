@@ -83,11 +83,11 @@ export default async function ReelsPage({ searchParams }: { searchParams: Promis
 
       {/* Floating header above the feed. `md:ps-*` keeps its title clear of the nav rail. */}
       <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4 md:ps-24 lg:ps-60">
-        <div className="hidden min-w-0 items-center gap-2 md:flex">
+        <div className="hidden min-w-0 items-center gap-2 lg:flex">
           <h1 className="shrink-0 rounded-full bg-black/40 px-4 py-1.5 text-sm font-bold text-white backdrop-blur">الريلز</h1>
           <ReelsClientFilterDesktop clients={reelClients} selectedClient={selectedClient} />
         </div>
-        <div className="md:hidden"><ReelsClientFilter clients={reelClients} selectedClient={selectedClient} /></div>
+        <div className="lg:hidden"><ReelsClientFilter clients={reelClients} selectedClient={selectedClient} /></div>
         <Link
           href="/"
           aria-label="الصفحة الرئيسية"

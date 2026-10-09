@@ -19,7 +19,7 @@ export function SimpleFooter({ data, preview = false }: { data: FooterData; prev
           <ul className="flex flex-wrap items-center gap-x-8 gap-y-1 text-sm text-muted-foreground">
             {data.pages.map((p) => (
               <li key={p.href}>
-                <SiteLink href={p.href} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{p.label}</SiteLink>
+                <SiteLink href={p.href} className="transition-colors hover:text-foreground max-lg:inline-flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center">{p.label}</SiteLink>
               </li>
             ))}
           </ul>
@@ -28,7 +28,7 @@ export function SimpleFooter({ data, preview = false }: { data: FooterData; prev
             {data.phone && (
               // هدف ٤٤ على الجوّال: المقيس كان ٢٠×٩٢ — رقم الهاتف في الذيل هو نداء
               // الفعل الأخير في الصفحة، ولا يُضغط بإبهام على عشرين بكسلاً (Apple HIG).
-              <SiteLink href={`tel:${data.phone}`} dir="ltr" className="inline-flex items-center text-sm text-muted-foreground transition-colors hover:text-foreground max-md:min-h-11">
+              <SiteLink href={`tel:${data.phone}`} dir="ltr" className="inline-flex items-center text-sm text-muted-foreground transition-colors hover:text-foreground max-lg:min-h-11">
                 {data.phone}
               </SiteLink>
             )}

@@ -47,7 +47,7 @@ export function PageFrame({ siteName, base, eyebrow, title, intro, children }: P
               مقيس ٤٠px لاسم شريك طويل التفّ سطرين تحت الإبهام. */}
           {/* One line each: with a long partner name both crumbs wrapped to two lines on a phone
               (review, 4 Oct 2026). They truncate; the full title is the h1 right below. */}
-          <SiteLink href={base} className="inline-flex min-h-6 min-w-0 max-w-[45%] items-center hover:text-foreground max-md:min-h-11">
+          <SiteLink href={base} className="inline-flex min-h-6 min-w-0 max-w-[45%] items-center hover:text-foreground max-lg:min-h-11">
             <span className="truncate">{siteName}</span>
           </SiteLink>
           <IconChevronRight className="h-4 w-4 shrink-0 rtl:rotate-180" aria-hidden />

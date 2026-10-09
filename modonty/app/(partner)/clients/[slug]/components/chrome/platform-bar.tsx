@@ -25,7 +25,7 @@ export async function PlatformBar({ isVerified, clientSlug }: PlatformBarProps) 
   // الخطّ: 12px على الجوّال كان تحت أصغر مقاس مقروء؛ صار 14 هناك و12 على الديسكتوب
   // حيث المسافة إلى العين أقصر.
   return (
-      <div className="bg-[#0b0d1f] text-sm text-[#c9ccdf] md:text-xs">
+      <div className="bg-[#0b0d1f] text-sm text-[#c9ccdf] lg:text-xs">
         {/* الارتفاع: كان 44 على الجوّال — وهو الحدّ الأدنى لهدف اللمس لا المريح
             (Apple HIG · Layout: 44×44pt أدنى · Material: 48dp). صار 56 ليتنفّس الصفّ
             ويصله الإصبع بلا تصويب. الديسكتوب يبقى 36.
@@ -45,10 +45,10 @@ export async function PlatformBar({ isVerified, clientSlug }: PlatformBarProps) 
                   والشارة كانت أصلاً أوّل ما تقع عليه العين. */}
               <Link
                 href="/trust"
-                className="relative flex items-center gap-1 whitespace-nowrap hover:text-white max-md:min-h-11 max-md:after:absolute max-md:after:left-1/2 max-md:after:top-1/2 max-md:after:size-11 max-md:after:-translate-x-1/2 max-md:after:-translate-y-1/2 max-md:after:content-['']"
+                className="relative flex min-h-6 items-center gap-1 whitespace-nowrap hover:text-white max-lg:min-h-11 max-md:after:absolute max-md:after:left-1/2 max-md:after:top-1/2 max-md:after:size-11 max-md:after:-translate-x-1/2 max-md:after:-translate-y-1/2 max-md:after:content-['']"
                 aria-label="شريك موثّق — كيف نتأكّد؟"
               >
-                <VerifiedBadge className="h-3.5 w-3.5" label="شريك موثّق" />
+                <VerifiedBadge className="h-4 w-4" label="شريك موثّق" />
                 {/* Badge alone on the phone — the words cost the room follow/share need. */}
                 <span className="max-md:sr-only">شريك موثّق</span>
               </Link>
@@ -60,11 +60,16 @@ export async function PlatformBar({ isVerified, clientSlug }: PlatformBarProps) 
               <PlatformBarActionsIsland clientSlug={clientSlug} />
             </Suspense>
             {/* من `md` فأعلى: على الجوّال لا مكان له، والزائر يصل قائمة الشركاء من مدونتي نفسها. */}
-            <Link href="/clients" className="hidden whitespace-nowrap hover:text-white md:inline">تصفّح الشركاء</Link>
+            <Link href="/clients" className="hidden whitespace-nowrap hover:text-white lg:inline-flex lg:min-h-6 lg:items-center">تصفّح الشركاء</Link>
             <ThemeToggle labels={messages.chrome.theme} />
-            <Suspense fallback={<span className="inline-block h-8 w-8" aria-hidden />}>
-              <UserMenu hint={false} />
-            </Suspense>
+            {/* The guest «دخول» button paints its own light surface but inherits the bar's #c9ccdf
+                text — 1.43:1 on 13 partner pages (9 Oct audit). Reset the text to the page colour
+                for this control only; the bar's own links keep their light text. */}
+            <span className="contents text-foreground">
+              <Suspense fallback={<span className="inline-block h-8 w-8" aria-hidden />}>
+                <UserMenu hint={false} />
+              </Suspense>
+            </span>
           </span>
         </div>
       </div>

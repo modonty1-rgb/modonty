@@ -97,7 +97,7 @@ export function ProfileTabs() {
           );
         })}
       </div>
-      <div className="w-full hidden lg:grid grid-cols-3 md:grid-cols-6 gap-2 p-1 bg-muted rounded-lg">
+      <div className="w-full hidden lg:grid grid-cols-3 lg:grid-cols-6 gap-2 p-1 bg-muted rounded-lg">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.value;

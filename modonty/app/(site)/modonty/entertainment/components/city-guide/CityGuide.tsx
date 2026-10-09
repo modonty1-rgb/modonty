@@ -71,7 +71,7 @@ export function CityGuide({ cities, initial, labels: t }: { cities: CityOption[]
             type="button"
             onClick={() => pick(c.key)}
             aria-pressed={c.key === data.city}
-            className={`rounded-full px-3 py-1 text-xs font-semibold max-md:min-h-11 max-md:min-w-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+            className={`rounded-full px-3 py-1 text-xs font-bold max-lg:min-h-11 max-lg:min-w-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
               c.key === data.city ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-muted/70"
             }`}
           >
@@ -91,7 +91,7 @@ export function CityGuide({ cities, initial, labels: t }: { cities: CityOption[]
               setTab(x);
               setShown(PAGE);
             }}
-            className={`-mb-px border-b-2 pb-2 text-sm font-semibold max-md:min-h-11 ${x === tab ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+            className={`-mb-px border-b-2 pb-2 text-sm font-bold max-lg:min-h-11 ${x === tab ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
           >
             {t.tabs[x]} <span className="text-xs font-normal text-muted-foreground">({data[x].length})</span>
           </button>
@@ -112,7 +112,7 @@ export function CityGuide({ cities, initial, labels: t }: { cities: CityOption[]
           <button
             type="button"
             onClick={() => setShown((n) => n + PAGE)}
-            className="mt-3 w-full rounded-md border border-border py-2 text-sm font-semibold hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="mt-3 w-full rounded-md border border-border py-2 text-sm font-bold max-lg:min-h-11 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             {fill(t.more, { n: String(list.length - shown) })}
           </button>
@@ -124,7 +124,7 @@ export function CityGuide({ cities, initial, labels: t }: { cities: CityOption[]
 }
 
 function PlaceItem({ place: p, labels: t }: { place: EntertainmentPlace; labels: CityGuideLabels }) {
-  const link = "text-xs font-semibold text-link underline-offset-2 hover:underline";
+  const link = "inline-flex min-h-8 max-lg:min-h-11 items-center text-xs font-bold text-link underline-offset-2 hover:underline";
   return (
     <li className="rounded-md bg-muted/40 p-3">
       <p className="text-sm font-bold leading-snug" lang={p.nameEn ? "ar-x-mtfrom-en" : undefined}>

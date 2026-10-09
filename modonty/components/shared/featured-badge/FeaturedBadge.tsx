@@ -31,7 +31,7 @@ export function FeaturedBadge({ variant = "full", className }: FeaturedBadgeProp
 
   return (
     <span className={cn("inline-flex items-center gap-1 font-medium text-link-accent", className)}>
-      <ModontyFeaturedMark className="h-3.5 w-3.5" />
+      <ModontyFeaturedMark className="h-4 w-4" />
       {messages.shared.badges.featuredPartnerLabel}
     </span>
   );

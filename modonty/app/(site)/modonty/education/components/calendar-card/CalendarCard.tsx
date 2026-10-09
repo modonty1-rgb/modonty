@@ -28,7 +28,7 @@ export function CalendarCard({ events, labels: t }: { events: CalendarEvent[]; l
           const d = formatDates(e.date, e.hijri);
           return (
             <li key={`${e.date}-${e.name}`} className="py-2 text-sm">
-              <p className={`leading-snug ${e.kind === "staff" ? "" : "font-semibold"}`}>{e.name}</p>
+              <p className={`leading-snug ${e.kind === "staff" ? "" : "font-bold"}`}>{e.name}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {d.gregorian} · {d.hijri} هـ{e.kind === "staff" && ` · ${t.staffNote}`}
               </p>

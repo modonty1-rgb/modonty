@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/
 import { LUCKY_WHEEL_PRIZES, MODONTY_GIFT_INDEX, SPINS_PER_PHONE } from "./prizes";
 
 const SPIN_BUTTON =
-  "inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#00d8d8] px-6 text-lg font-black text-[#0e065a] shadow-[0_12px_28px_rgba(0,216,216,0.25)] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200";
+  "inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#00d8d8] px-6 text-lg font-bold text-[#0e065a] shadow-[0_12px_28px_rgba(0,216,216,0.25)] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200";
 
 type SpinResponse = { success?: boolean; error?: string; data?: { index?: number; alreadyPlayed?: boolean; spinsLeft?: number } };
 
@@ -208,7 +208,7 @@ export function LuckyWheelGame() {
     <section className="relative isolate min-h-[calc(100dvh-3.5rem)] overflow-hidden bg-[#0e1023] px-4 py-4 text-white sm:px-6 lg:py-8">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_20%,rgba(48,48,255,0.36),transparent_32rem),radial-gradient(circle_at_12%_84%,rgba(0,216,216,0.18),transparent_28rem)]" />
       <header className="mx-auto mb-4 max-w-5xl text-center lg:mb-6">
-        <h1 className="text-2xl font-black leading-tight sm:text-3xl">لفّ واربح مع مدونتي</h1>
+        <h1 className="text-h1">لفّ واربح مع مدونتي</h1>
         <p className="mt-1 text-sm text-cyan-100/80">حتى {SPINS_PER_PHONE} لفّات لكل رقم جوال</p>
       </header>
       <div className="mx-auto grid w-full max-w-5xl items-center gap-4 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-12">
@@ -236,7 +236,7 @@ export function LuckyWheelGame() {
 
           <Sheet open={formSheetOpen} onOpenChange={setFormSheetOpen}>
             <SheetContent side="bottom" dir="rtl" className="rounded-t-2xl border-white/15 bg-[#101a3b] p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] text-white lg:hidden">
-              <SheetTitle className="text-lg font-black text-white">سجّل ولفّ العجلة</SheetTitle>
+              <SheetTitle className="text-lg font-bold text-white">سجّل ولفّ العجلة</SheetTitle>
               <SheetDescription className="mb-3 text-sm text-cyan-50/80">حتى {SPINS_PER_PHONE} لفّات لكل رقم جوال — ونتواصل معك على الرقم لتسليم جائزتك.</SheetDescription>
               {renderForm()}
             </SheetContent>
@@ -248,7 +248,7 @@ export function LuckyWheelGame() {
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-sm text-cyan-100">{code ? "مبروك، ربحت" : "هذه المرة"}</p>
-                    <p className="truncate text-xl font-black">{wonModontyOffer ? "خصم 35% + 30% محتوى إضافي" : won.label}</p>
+                    <p className="truncate text-xl font-bold">{wonModontyOffer ? "خصم 35% + 30% محتوى إضافي" : won.label}</p>
                   </div>
                   {code && <p className="shrink-0 select-all rounded-lg bg-black/20 px-3 py-1.5 text-center font-mono text-sm tracking-wider text-cyan-100">{code}</p>}
                 </div>
@@ -265,7 +265,7 @@ export function LuckyWheelGame() {
                   <div className="mb-4 grid size-16 place-items-center rounded-2xl border border-cyan-100/30 bg-cyan-300/15 text-cyan-200 shadow-[0_0_32px_rgba(0,216,216,0.32)]">
                     <IconCheckCircle className="size-9" aria-hidden />
                   </div>
-                  <DialogTitle className="text-2xl font-black tracking-tight text-white">أهلًا بك في منظومة مدونتي</DialogTitle>
+                  <DialogTitle className="text-2xl font-bold tracking-tight text-white">أهلًا بك في منظومة مدونتي</DialogTitle>
                   <DialogDescription className="mx-auto mt-2 flex w-full flex-col items-center gap-1 text-center text-sm leading-6 text-cyan-50/85">
                     <span className="block w-full text-center">تم تسجيل جائزتك بنجاح.</span>
                     <span className="block w-full text-center">سيتواصل معك فريق مدونتي</span>
@@ -276,12 +276,12 @@ export function LuckyWheelGame() {
                 <div className="relative mt-5 rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-right">
                   <div className="flex items-center justify-between gap-3">
                     <span className="inline-flex items-center gap-1.5 text-sm font-bold text-cyan-100"><IconGift className="size-4" aria-hidden /> جائزتك</span>
-                    <span className="font-black text-white">{wonModontyOffer ? "هدية مدونتي" : won?.label}</span>
+                    <span className="font-bold text-white">{wonModontyOffer ? "هدية مدونتي" : won?.label}</span>
                   </div>
                   {code && <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-center font-mono text-sm tracking-wider text-cyan-100">{code}</p>}
                 </div>
 
-                <button type="button" onClick={() => setSuccessDialogOpen(false)} className="relative mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#00d8d8] px-4 font-black text-[#0e065a] transition hover:bg-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-100">
+                <button type="button" onClick={() => setSuccessDialogOpen(false)} className="relative mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#00d8d8] px-4 font-bold text-[#0e065a] transition hover:bg-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-100">
                   ممتاز، شكرًا
                 </button>
               </div>

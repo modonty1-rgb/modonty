@@ -26,7 +26,7 @@ export function PromisesCard() {
             <li key={c.title} className="flex gap-3">
               <IconSuccess className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
               <div>
-                <span className="block font-semibold">{c.title}</span>
+                <span className="block font-bold">{c.title}</span>
                 <span className="text-sm text-muted-foreground">{c.desc}</span>
               </div>
             </li>

@@ -23,7 +23,7 @@ export function EditorialContent({ title, html }: EditorialContentProps) {
         {title}
       </h2>
       <div
-        className="prose prose-sm mt-3 max-w-none prose-headings:font-bold prose-headings:text-foreground prose-h2:mt-8 prose-h2:border-b prose-h2:border-border prose-h2:pb-2 prose-h2:text-lg prose-h2:text-link prose-h3:mt-6 prose-h3:text-base prose-h3:text-link-accent prose-p:leading-7 prose-p:text-muted-foreground prose-strong:text-foreground prose-li:leading-6 prose-li:text-muted-foreground"
+        className="prose mt-3 max-w-none prose-headings:font-bold prose-headings:text-foreground prose-h2:mt-8 prose-h2:border-b prose-h2:border-border prose-h2:pb-2 prose-h2:text-lg prose-h2:text-link prose-h3:mt-6 prose-h3:text-base prose-h3:text-link-accent prose-p:leading-7 prose-p:text-muted-foreground prose-strong:text-foreground prose-li:leading-6 prose-li:text-muted-foreground"
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </section>

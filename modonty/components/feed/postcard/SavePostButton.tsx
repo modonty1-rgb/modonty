@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { ModontyBookmarkMark } from "@/components/icons/modonty-bookmark-mark";
+import { ModontyBookmarkFilledMark } from "@/components/icons/modonty-bookmark-filled-mark";
 import { AuthPromptLazy, warmAuthPrompt } from "@/components/shared/auth-prompt/AuthPromptLazy";
 import { favoriteArticle } from "@/lib/articles/favorite-article";
 import { cn } from "@/lib/utils";
@@ -83,12 +84,13 @@ export function SavePostButton({ articleId, articleSlug }: SavePostButtonProps) 
             nine cards out of ten. Khalid's rule is absolute: «الماسة دائماً أعطها لون
             الأكسنت — في الدارك مود أو في اللايت مود». So the diamond is always there and
             always accent, and the RIBBON carries the state instead: a muted outline while
-            unsaved, accent-coloured and tinted once saved. An empty shape becoming a full
+            unsaved, accent-coloured and filled once saved (the Filled mark, ICON-STANDARD-v2 §6). An empty shape becoming a full
             one is still the signal — it is just the ribbon doing it, not the signature. */}
-        <ModontyBookmarkMark
-          className={cn("size-5", saved && "[&>path]:fill-[hsl(var(--accent)/0.2)]")}
-          aria-hidden
-        />
+        {saved ? (
+          <ModontyBookmarkFilledMark className="size-5 [--modonty-knockout:hsl(var(--card))]" aria-hidden />
+        ) : (
+          <ModontyBookmarkMark className="size-5" aria-hidden />
+        )}
       </button>
       {promptOpen && <AuthPromptLazy open={promptOpen} onOpenChange={setPromptOpen} action="save" />}
     </>

@@ -6,7 +6,7 @@ const text = messages.feedback;
 export function FeedbackIntro() {
   return (
     <>
-      <h1 className="text-3xl font-bold mb-6">{text.title}</h1>
+      <h1 className="text-h1 mb-6">{text.title}</h1>
       <p className="text-muted-foreground mb-8">{text.intro}</p>
     </>
   );

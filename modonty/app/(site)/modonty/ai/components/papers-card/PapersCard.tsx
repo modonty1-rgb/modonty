@@ -22,7 +22,7 @@ export function PapersCard({ papers }: { papers: Paper[] | null }) {
           {papers.map((p) => (
             <li key={p.id}>
               <a href={p.url} target="_blank" rel="noopener noreferrer" className="block py-2.5 hover:text-link">
-                <bdi dir="ltr" className="line-clamp-2 block text-start text-sm font-semibold leading-snug">
+                <bdi dir="ltr" className="line-clamp-2 block text-start text-sm font-bold leading-snug">
                   {p.title}
                 </bdi>
                 {p.brief && <span lang={`ar-x-mtfrom-${p.brief.from}`} className="mt-1 line-clamp-3 block text-sm leading-relaxed text-foreground/80">{p.brief.text}</span>}

@@ -259,11 +259,11 @@ export function ReelsFeedClient({ initialItems, initialCursor, clientSlug, isLog
                       <OptimizedImage media={asMedia(reel.clientLogoUrl)} alt="" fill sizes="28px" className="object-contain" />
                     )}
                   </span>
-                  <span className="text-[clamp(0.75rem,3.5vw,0.875rem)] font-bold text-white">{reel.clientName}</span>
+                  <span className="text-[clamp(0.8125rem,3.5vw,0.875rem)] font-bold text-white">{reel.clientName}</span>
                 </Link>
-                <h2 className="text-[clamp(0.9375rem,4.5vw,1.125rem)] font-extrabold leading-snug text-white">{reel.title}</h2>
+                <h2 className="text-[clamp(0.9375rem,4.5vw,1.125rem)] font-bold leading-snug text-white">{reel.title}</h2>
                 {reel.description && (
-                  <p className="mt-1 line-clamp-2 text-[clamp(0.75rem,3.5vw,0.875rem)] leading-relaxed text-neutral-300">{reel.description}</p>
+                  <p className="mt-1 line-clamp-2 text-[clamp(0.8125rem,3.5vw,0.875rem)] leading-relaxed text-neutral-300">{reel.description}</p>
                 )}
                 </div>
               </div>

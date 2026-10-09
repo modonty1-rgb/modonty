@@ -245,7 +245,7 @@ export function ListenQueue({ articles, compact, labels }: ListenQueueProps) {
             dir="ltr"
             // 31×26 measured on a phone — under the 44px floor, and it is the one control here
             // someone reaches for while driving. Phones only, so the rail on desktop is unchanged.
-            className="shrink-0 rounded-full border border-border px-2.5 py-1 text-xs font-semibold tabular-nums hover:bg-muted max-md:inline-grid max-md:h-11 max-md:min-w-11 max-md:place-items-center"
+            className="shrink-0 rounded-full border border-border px-2.5 py-1 text-xs font-bold tabular-nums hover:bg-muted max-md:inline-grid max-lg:h-11 max-lg:min-w-11 max-md:place-items-center"
           >
             {toArabic(`×${rate}`)}
           </button>
@@ -361,7 +361,7 @@ export function ListenQueue({ articles, compact, labels }: ListenQueueProps) {
                 <Link
                   href={`/articles/${encodeURIComponent(article.slug)}`}
                   className={cn(
-                    "shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-semibold hover:bg-muted",
+                    "shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-bold hover:bg-muted",
                     compact && "hidden"
                   )}
                 >

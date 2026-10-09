@@ -42,7 +42,7 @@ export function SchoolLookup({ labels: t }: { labels: SchoolLookupLabels }) {
         {t.title}
       </h2>
       <p className="mt-0.5 text-xs text-muted-foreground">{t.note}</p>
-      <label htmlFor="school-q" className="mt-4 block text-sm font-semibold">
+      <label htmlFor="school-q" className="mt-4 block text-sm font-bold">
         {t.label}
       </label>
       <Input
@@ -87,12 +87,12 @@ function ResultRow({ result: r, labels: t }: { result: SchoolResult; labels: Sch
   return (
     <li className="rounded-md bg-muted/40 px-3 py-2 text-sm">
       <p className="flex flex-wrap items-baseline justify-between gap-x-3">
-        <span className="font-semibold">{fill(t.test, { test: r.test, track: r.track, year: YEAR.format(r.year) })}</span>
+        <span className="font-bold">{fill(t.test, { test: r.test, track: r.track, year: YEAR.format(r.year) })}</span>
         <span className="text-xs text-muted-foreground tabular-nums">{fill(t.average, { n: N.format(r.average) })}</span>
       </p>
       <p className="mt-0.5 font-bold tabular-nums">{fill(t.rank, { rank: N.format(r.rank), total: N.format(r.outOf) })}</p>
       {moved !== null && (
-        <p className={`text-xs font-semibold ${moved > 0 ? "text-primary" : moved < 0 ? "text-destructive" : "text-muted-foreground"}`}>
+        <p className={`text-xs font-bold ${moved > 0 ? "text-primary" : moved < 0 ? "text-destructive" : "text-muted-foreground"}`}>
           {moved > 0 ? fill(t.up, { n: N.format(moved) }) : moved < 0 ? fill(t.down, { n: N.format(-moved) }) : t.same}
         </p>
       )}

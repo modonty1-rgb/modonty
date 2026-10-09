@@ -21,12 +21,12 @@ export function UtilityHeader({ data }: { data: HeaderData }) {
       {/* لون الشريك يحمل أبيض (اللوحة مقيسة)، والافتراضي يستعمل زوج التوكن: الأبيض اليدوي
           على `bg-primary` قِيس ٣٫٦٨:١ — تحت حدّ WCAG 1.4.3 لنصّ ١٢px. */}
       <div className={cn(data.primaryColor ? "text-white" : "bg-primary text-primary-foreground")} style={brand}>
-        <div className="mx-auto flex max-w-[1128px] items-center justify-between px-6 text-sm max-md:min-h-11 md:h-9 md:text-xs">
+        <div className="mx-auto flex max-w-[1128px] items-center justify-between px-6 text-sm max-lg:min-h-11 md:h-9 md:text-xs">
           <div className="flex items-center gap-6">
             {data.phone && (
               // الشريط ٣٦px، فالرابط داخله كان هدفاً ١٦px ارتفاعاً على الجوّال (المقيس
               // ١٦×٩٩) — دون حدّ Apple HIG ٤٤. يتمدّد لملء الشريط على الجوّال وحده.
-              <SiteLink href={`tel:${data.phone}`} className="flex items-center gap-1.5 max-md:min-h-11">
+              <SiteLink href={`tel:${data.phone}`} className="flex items-center gap-1.5 max-lg:min-h-11">
                 <Phone className="h-3.5 w-3.5" aria-hidden /> <span dir="ltr">{data.phone}</span>
               </SiteLink>
             )}
@@ -44,7 +44,7 @@ export function UtilityHeader({ data }: { data: HeaderData }) {
                 <WhatsAppIcon size={14} /> راسلنا على واتساب
               </span>
             ) : (
-              <SiteLink href={data.whatsappHref} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 max-md:min-h-11">
+              <SiteLink href={data.whatsappHref} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 max-lg:min-h-11">
                 <WhatsAppIcon size={14} /> راسلنا على واتساب
               </SiteLink>
             )
@@ -52,7 +52,7 @@ export function UtilityHeader({ data }: { data: HeaderData }) {
         </div>
       </div>
       <HeaderBar>
-        <SiteLink href={data.homeHref} className="min-w-0 max-md:flex max-md:min-h-11 max-md:items-center">
+        <SiteLink href={data.homeHref} className="min-w-0 max-lg:flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center">
           <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} size="standard" />
         </SiteLink>
         {data.verified ? <VerifiedBadge /> : null}

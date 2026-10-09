@@ -131,7 +131,7 @@ export function ClientHeroV2({
             )}
 
             {featured && (
-              <span className="absolute top-3.5 start-4 inline-flex items-center gap-1.5 rounded-full border border-accent/55 bg-black/35 px-3 py-1 text-xs font-extrabold text-white backdrop-blur-sm">
+              <span className="absolute top-3.5 start-4 inline-flex items-center gap-1.5 rounded-full border border-accent/55 bg-black/35 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
                 ⭐ شريك مميّز
               </span>
             )}
@@ -155,14 +155,14 @@ export function ClientHeroV2({
                     aria-label={messages.shared.badges.verifiedPartnerLabel}
                     title={messages.shared.badges.verifiedPartnerLabel}
                   >
-                    <IconCheck className="h-3.5 w-3.5" />
+                    <IconCheck className="h-4 w-4" />
                   </span>
                 )}
               </div>
 
               {/* Name + tagline + chips */}
               <div className="min-w-0">
-                <h1 className="truncate text-[20px] font-black leading-tight tracking-tight text-foreground">
+                <h1 className="truncate text-[20px] font-bold leading-tight tracking-tight text-foreground">
                   {client.name}
                 </h1>
                 {tagline && (
@@ -197,11 +197,11 @@ export function ClientHeroV2({
 
             {/* MOBILE: stacked — logo + booking/follow/share live in the sticky ClientBottomBar */}
             <div className="lg:hidden">
-              <h1 className="text-[18px] font-black leading-snug tracking-tight text-foreground">
+              <h1 className="text-[18px] font-bold leading-snug tracking-tight text-foreground">
                 {client.name}
               </h1>
               {tagline && (
-                <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">{tagline}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{tagline}</p>
               )}
               <HeroChips client={client} />
               {/* stats strip + «موثّق من Google» box side-by-side (box at the strip's end) */}
@@ -220,7 +220,7 @@ export function ClientHeroV2({
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={link.platform.name}
-                      className="grid h-[38px] w-[38px] place-items-center rounded-[9px] border border-border bg-card text-muted-foreground transition-colors hover:border-primary hover:text-[hsl(var(--primary-ink,var(--primary)))] [&>svg]:h-[18px] [&>svg]:w-[18px]"
+                      className="grid h-[38px] w-[38px] place-items-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:border-primary hover:text-[hsl(var(--primary-ink,var(--primary)))] [&>svg]:size-5"
                     >
                       <span aria-hidden="true">{link.platform.icon}</span>
                     </a>

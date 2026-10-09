@@ -22,14 +22,14 @@ export function ClientTeamSection({ teamMembers }: Props) {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         {items.map((m, i) => (
           <div key={i} className="rounded-md border bg-muted/40 p-[15px_10px] text-center">
-            <div className="relative mx-auto mb-2.5 grid h-[58px] w-[58px] place-items-center overflow-hidden rounded-full bg-gradient-to-br from-foreground to-accent text-[20px] font-extrabold text-white">
+            <div className="relative mx-auto mb-2.5 grid h-[58px] w-[58px] place-items-center overflow-hidden rounded-full bg-gradient-to-br from-foreground to-accent text-[20px] font-bold text-white">
               {m.photoUrl?.trim() ? (
                 <TeamAvatar src={m.photoUrl} name={m.name} />
               ) : (
                 m.name.trim().charAt(0)
               )}
             </div>
-            <h4 className="text-[12.5px] font-extrabold text-foreground">{m.name}</h4>
+            <h4 className="text-xs font-bold text-foreground">{m.name}</h4>
             {m.role?.trim() && <span className="text-xs text-muted-foreground">{m.role}</span>}
             {m.bio?.trim() && (
               <p className="mt-1.5 text-xs leading-[1.45] text-muted-foreground">{m.bio}</p>

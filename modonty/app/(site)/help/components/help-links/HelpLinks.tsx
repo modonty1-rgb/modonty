@@ -39,7 +39,7 @@ const LINKS: HelpLink[] = [
 
 export function HelpLinks() {
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-6 lg:grid-cols-2">
       {LINKS.map(({ href, icon: Icon, title, description }) => (
         <Link key={href} href={href}>
           <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">

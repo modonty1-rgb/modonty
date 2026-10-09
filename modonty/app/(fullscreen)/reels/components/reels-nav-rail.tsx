@@ -22,7 +22,7 @@ export function ReelsNavRail() {
   return (
     <nav
       aria-label="أقسام الموقع"
-      className="fixed inset-y-0 start-0 z-30 hidden w-16 flex-col gap-1 overflow-y-auto border-e border-white/10 bg-neutral-950/80 px-2 py-4 backdrop-blur md:flex lg:w-60 lg:px-3"
+      className="fixed inset-y-0 start-0 z-30 hidden w-16 flex-col gap-1 overflow-y-auto border-e border-white/10 bg-neutral-950/80 px-2 py-4 backdrop-blur lg:flex lg:w-60 lg:px-3"
     >
       {reelsRailItems.map((item) => (
         <Link

@@ -48,7 +48,7 @@ export function ActivityLookup({ labels: t }: { labels: ActivityLookupLabels }) 
       </h2>
       <p className="mt-0.5 text-xs text-muted-foreground">{t.note}</p>
 
-      <label htmlFor="activity-q" className="mt-4 block text-sm font-semibold">
+      <label htmlFor="activity-q" className="mt-4 block text-sm font-bold">
         {t.label}
       </label>
       <Input
@@ -67,7 +67,7 @@ export function ActivityLookup({ labels: t }: { labels: ActivityLookupLabels }) 
             key={ex}
             type="button"
             onClick={() => setQuery(ex)}
-            className="rounded-full bg-muted px-2.5 py-1 font-medium hover:bg-muted/70 max-md:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="rounded-full bg-muted px-2.5 py-1 font-medium hover:bg-muted/70 max-lg:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             {ex}
           </button>
@@ -87,7 +87,7 @@ export function ActivityLookup({ labels: t }: { labels: ActivityLookupLabels }) 
                   <span className="text-base font-bold tabular-nums">{fill(t.registrations, { n: N.format(a.count) })}</span>
                   <span className="text-xs text-muted-foreground">{fill(t.rank, { rank: N.format(a.rank), total: N.format(state.data.total) })}</span>
                 </p>
-                <p className={`mt-0.5 text-xs font-semibold ${LEVEL_CLASS[a.level]}`}>{t.levels[a.level]}</p>
+                <p className={`mt-0.5 text-xs font-bold ${LEVEL_CLASS[a.level]}`}>{t.levels[a.level]}</p>
               </li>
             ))}
           </ul>

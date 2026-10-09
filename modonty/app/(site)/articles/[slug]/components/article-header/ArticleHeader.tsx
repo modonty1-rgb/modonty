@@ -50,7 +50,7 @@ export function ArticleHeader({
           30px/600 the title was quieter than the partner's 57px call-to-action beside it. */}
       {/* على الجوال يتدرّج مع العرض (خالد ٣ أكتوبر ٢٠٢٦: «الفونتات لازم تكون دايناميك»): ٢٤px عند ٣٦٠ ← ٣٠px عند ٤٣٠،
           خطٌّ مستقيم بينهما. كان ٣٠ ثابتاً فيأخذ العنوانُ ٤ أسطر من أوّل شاشة على ٣٦٠ و٣٩٠. */}
-      <h1 className="mb-4 break-words text-[clamp(1.5rem,calc(8.57vw_-_6.86px),1.875rem)] font-bold leading-tight tracking-tight md:text-[2.5rem]">
+      <h1 className="text-h1 mb-4 break-words">
         {title}
       </h1>
 
@@ -59,7 +59,7 @@ export function ArticleHeader({
           per opening section instead of one paragraph. It stays in the HTML for the crawler and
           returns in full from  up, where the screen can afford both. */}
       {excerpt && (
-        <p className={cn("text-base md:text-lg text-muted-foreground mb-6 leading-relaxed", hasKeyPoints && "max-sm:hidden")}>
+        <p className={cn("text-base lg:text-lg text-muted-foreground mb-6 leading-relaxed", hasKeyPoints && "max-sm:hidden")}>
           {excerpt}
         </p>
       )}
@@ -86,7 +86,7 @@ export function ArticleHeader({
           <span className="text-muted-foreground">راجعه واعتمده</span>
           <Link
             href={`/clients/${reviewer.slug}`}
-            className="font-semibold text-foreground underline-offset-4 hover:text-primary hover:underline"
+            className="inline-flex min-h-6 items-center font-bold text-foreground underline-offset-4 hover:text-primary hover:underline max-lg:min-h-11"
           >
             {reviewer.name}
           </Link>
@@ -107,13 +107,13 @@ export function ArticleHeader({
         {readingTimeMinutes && (
           // أيقونةُ الموقع لا إيموجي (٣ أكتوبر ٢٠٢٦): ⏱️ كانت ترسم بلون نظام التشغيل بجانب أيقوناتنا.
           <span className="inline-flex items-center gap-1">
-            <IconClock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <IconClock className="h-4 w-4 shrink-0" aria-hidden />
             {readingTimeMinutes.toLocaleString(SITE_LOCALE)} دقيقة قراءة
           </span>
         )}
         {wordCount && (
           <span className="inline-flex items-center gap-1 max-sm:hidden">
-            <IconArticle className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <IconArticle className="h-4 w-4 shrink-0" aria-hidden />
             {wordCount.toLocaleString(SITE_LOCALE)} كلمة
           </span>
         )}
@@ -131,7 +131,7 @@ export function ArticleHeader({
             className="relative flex items-center gap-1 transition-colors after:absolute after:left-1/2 after:top-1/2 after:size-11 after:-translate-x-1/2 after:-translate-y-1/2 after:content-[''] hover:text-primary"
             aria-label="انتقل إلى الأسئلة الشائعة"
           >
-            <IconHelp className="h-3.5 w-3.5 shrink-0" />
+            <IconHelp className="h-4 w-4 shrink-0" />
             <span className="tabular-nums">{questionsCount.toLocaleString(SITE_LOCALE)}</span>
           </a>
         )}

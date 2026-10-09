@@ -68,7 +68,7 @@ export function NewsSubscribeForm() {
               <Input
                 id="news-email"
                 type="email"
-                className="max-md:h-11"
+                className="max-lg:h-11"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -81,7 +81,7 @@ export function NewsSubscribeForm() {
                 {error}
               </div>
             )}
-            <Button type="submit" disabled={isSubmitting} className="w-full max-md:h-11">
+            <Button type="submit" disabled={isSubmitting} className="w-full max-lg:h-11">
               {isSubmitting ? (
                 <>
                   <IconLoading className="mr-2 h-4 w-4 animate-spin" />

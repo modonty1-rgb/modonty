@@ -141,7 +141,7 @@ export function SecuritySettings() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-md:size-11"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-lg:size-11"
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   >
                     {showCurrentPassword ? (
@@ -170,7 +170,7 @@ export function SecuritySettings() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-md:size-11"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-lg:size-11"
                   onClick={() => setShowNewPassword(!showNewPassword)}
                 >
                   {showNewPassword ? (
@@ -201,7 +201,7 @@ export function SecuritySettings() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-md:size-11"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 max-md:left-0 max-lg:size-11"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (

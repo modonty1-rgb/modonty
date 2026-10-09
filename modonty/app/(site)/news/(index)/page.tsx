@@ -68,7 +68,7 @@ export default async function NewsPage() {
       />
 
       <div className="mt-8">
-        <h1 className="text-3xl font-bold mb-6">{title}</h1>
+        <h1 className="text-h1 mb-6">{title}</h1>
         <p className="text-muted-foreground mb-8">
           نقطة التجمع لكل ما هو جديد من مدونتي. اشترك في النشرة لتحصل على أهم الأخبار
           والمقالات في رسالة أسبوعية مختصرة.
@@ -98,7 +98,7 @@ export default async function NewsPage() {
               ))}
             </ul>
 
-            <Button asChild className="w-full sm:w-auto max-md:h-11">
+            <Button asChild className="w-full sm:w-auto max-lg:h-11">
               <Link href="/news/subscribe" className="inline-flex items-center gap-2">
                 اشترك في النشرة الآن
                 <IconForward className="h-4 w-4" />
@@ -113,7 +113,7 @@ export default async function NewsPage() {
 
         {articles.length > 0 && (
           <section aria-labelledby="news-articles-heading">
-            <h2 id="news-articles-heading" className="text-sm font-semibold text-foreground mb-3">
+            <h2 id="news-articles-heading" className="text-sm font-bold text-foreground mb-3">
               من أحدث المقالات على مدونتي
             </h2>
             <ul className="space-y-2">
@@ -121,17 +121,17 @@ export default async function NewsPage() {
                 <li key={a.id}>
                   <Link
                     href={`/articles/${a.slug}`}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5 max-md:min-h-11"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex min-h-6 items-center gap-1.5 max-lg:min-h-11"
                   >
                     <span>{a.title}</span>
-                    <IconForward className="h-3.5 w-3.5" />
+                    <IconForward className="h-4 w-4" />
                   </Link>
                 </li>
               ))}
             </ul>
             <Link
               href="/"
-              className="inline-block mt-4 text-sm text-primary font-medium hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center"
+              className="mt-4 inline-flex min-h-6 items-center text-sm text-primary font-medium hover:underline max-lg:min-h-11"
             >
               تصفح كل المقالات ←
             </Link>

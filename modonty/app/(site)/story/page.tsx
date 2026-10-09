@@ -113,7 +113,7 @@ export default async function StoryPage() {
       >
         <h2
           id="story-transcript-heading"
-          className="text-2xl font-extrabold text-foreground sm:text-3xl"
+          className="text-2xl font-bold text-foreground sm:text-3xl"
         >
           اقرأ قصة مدونتي
         </h2>

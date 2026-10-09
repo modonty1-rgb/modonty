@@ -166,7 +166,7 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
                     slug={article.slug}
                     durationSeconds={article.audioDurationSeconds}
                     // Sized to the tools beside it.
-                    tabClassName="relative flex size-9 shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg bg-muted text-xs font-semibold leading-none transition-transform active:scale-[0.94] motion-reduce:active:scale-100"
+                    tabClassName="relative flex size-9 shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg bg-muted text-xs font-bold leading-none transition-transform active:scale-[0.94] motion-reduce:active:scale-100"
                   />
                 ) : null}
               </span>
@@ -275,7 +275,7 @@ export function ArticleMainColumn({ data }: ArticleMainColumnProps) {
                 href={`/categories/${article.category.slug}`}
                 className="inline-flex max-lg:min-h-11 items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-muted"
               >
-                <IconFolder className="h-3.5 w-3.5" />
+                <IconFolder className="h-4 w-4" />
                 {article.category.name}
               </a>
             )}

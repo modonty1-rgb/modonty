@@ -40,6 +40,7 @@ export { ModontyCategoriesMark as IconCategories } from '../components/icons/mod
 export { ModontyTagsMark  as IconCategory      } from '../components/icons/modonty-tags-mark';
 export { ModontyPartnerMark as IconClients } from '../components/icons/modonty-partner-mark';
 export { ModontyIndustriesMark as IconIndustry } from '../components/icons/modonty-industries-mark';
+export { ModontyReelsMark as IconReels } from '../components/icons/modonty-reels-mark';
 export { ModontyBookmarkMark as IconSaved      } from '../components/icons/modonty-bookmark-mark';
 export { ModontyNotificationsMark as IconNotifications } from '../components/icons/modonty-notifications-mark';
 export { ModontySearchMark as IconSearch       } from '../components/icons/modonty-search-mark';
@@ -223,9 +224,7 @@ export { ModontyRemoveMark as IconRemove } from '../components/icons/modonty-bra
 // ── Selected state (Filled) — ICON-STANDARD-v2 §6 ────────────────────────────
 // Bottom nav / tabs when active, and toggles in their "on" state (liked, saved).
 export { ModontyArticlesFilledMark as IconArticleFilled } from '../components/icons/modonty-articles-filled-mark';
-export { ModontyIndustriesFilledMark as IconIndustryFilled } from '../components/icons/modonty-industries-filled-mark';
 export { ModontyReelsFilledMark as IconReelsFilled } from '../components/icons/modonty-reels-filled-mark';
-export { ModontyPartnerFilledMark as IconClientsFilled } from '../components/icons/modonty-partner-filled-mark';
 export { ModontyAudioFilledMark as IconAudioFilled } from '../components/icons/modonty-audio-filled-mark';
 export { ModontyHomeFilledMark as IconHomeFilled } from '../components/icons/modonty-home-filled-mark';
 export { ModontyProfileFilledMark as IconUserFilled } from '../components/icons/modonty-profile-filled-mark';

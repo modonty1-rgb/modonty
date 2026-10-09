@@ -16,7 +16,7 @@ const legalPages = [
 export function LegalIndexBody() {
   return (
     <>
-      <h1 className="text-3xl font-bold mb-2">{text.title}</h1>
+      <h1 className="text-h1 mb-2">{text.title}</h1>
       <p className="text-muted-foreground mb-8">{text.intro}</p>
       <ul className="space-y-4">
         {legalPages.map((page) => (

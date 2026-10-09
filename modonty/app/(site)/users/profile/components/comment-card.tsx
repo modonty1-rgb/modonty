@@ -55,7 +55,7 @@ export function CommentCard({ comment, showAuthor = false, showLikedAt = false }
           <div className="space-y-3">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <h4 className="font-semibold text-sm text-primary flex-1">
+                <h4 className="font-bold text-sm text-primary flex-1">
                   {comment.article.title}
                 </h4>
                 {comment.status && (
@@ -85,19 +85,19 @@ export function CommentCard({ comment, showAuthor = false, showLikedAt = false }
               <div className="flex items-center gap-3">
                 {typeof comment.likesCount === "number" && (
                   <span className="flex items-center gap-1">
-                    <IconLike className="h-3 w-3" />
+                    <IconLike className="size-4" />
                     {comment.likesCount}
                   </span>
                 )}
                 {typeof comment.dislikesCount === "number" && (
                   <span className="hidden">
-                    <IconLike className="h-3 w-3" />
+                    <IconLike className="size-4" />
                     {comment.dislikesCount}
                   </span>
                 )}
                 {typeof comment.repliesCount === "number" && (
                   <span className="flex items-center gap-1">
-                    <IconComment className="h-3 w-3" />
+                    <IconComment className="size-4" />
                     {comment.repliesCount}
                   </span>
                 )}

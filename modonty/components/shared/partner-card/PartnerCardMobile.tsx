@@ -106,7 +106,7 @@ export function PartnerCardMobile({ partner, isLcp = false }: PartnerCardMobileP
               {partner.industry?.name && <span className="truncate font-medium text-link-accent">{partner.industry.name}</span>}
               {partner.city && (
                 <span className="inline-flex items-center gap-0.5">
-                  <IconMapPin className="h-3 w-3" aria-hidden />
+                  <IconMapPin className="size-4" aria-hidden />
                   {partner.city}
                 </span>
               )}
@@ -131,13 +131,13 @@ export function PartnerCardMobile({ partner, isLcp = false }: PartnerCardMobileP
             {partner.rating && <RatingStars average={partner.rating.average} count={partner.rating.count} />}
             {partner.articleCount > 0 && (
               <span className="inline-flex items-center gap-1">
-                <ModontyArticlesMark className="size-3.5" aria-hidden />
+                <ModontyArticlesMark className="size-4" aria-hidden />
                 {formatCount(partner.articleCount, counts.articlesCount)}
               </span>
             )}
             {partner.reelCount > 0 && (
               <span className="inline-flex items-center gap-1">
-                <ModontyReelsMark className="size-3.5" aria-hidden />
+                <ModontyReelsMark className="size-4" aria-hidden />
                 {formatCount(partner.reelCount, counts.reelsCount)}
               </span>
             )}

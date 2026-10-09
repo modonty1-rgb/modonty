@@ -512,7 +512,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
         key={sec.id}
         type="button"
         onClick={() => handleSectionClick(idx)}
-        className={`text-start text-[12px] md:text-[13px] font-medium px-3 py-2 max-md:min-h-11 max-md:items-center rounded-lg transition-all duration-200 flex items-start gap-2 group ${
+        className={`text-start text-xs md:text-[13px] font-medium px-3 py-2 max-lg:min-h-11 max-md:items-center rounded-lg transition-all duration-200 flex items-start gap-2 group ${
           isActive
             ? "bg-gradient-to-l from-primary to-primary/80 text-primary-foreground shadow-md shadow-primary/30 font-bold scale-[1.02]"
             : isDraft
@@ -562,7 +562,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
           }}
         />
         <div className="max-w-[1600px] mx-auto px-3 md:px-4 h-full">
-          <div className="flex flex-col md:flex-row gap-3 md:gap-4 h-full">
+          <div className="flex flex-col lg:flex-row gap-3 md:gap-4 h-full">
 
             {/* RIGHT COLUMN (RTL natural first read): MENU */}
             {/* On a phone the three columns stack, and DOM order put the chapter list first:
@@ -584,7 +584,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ type: "spring", stiffness: 400, damping: 22 }}
-                    className="flex w-full items-center justify-center gap-2 px-3 py-2 max-md:min-h-11 rounded-full bg-gradient-to-l from-emerald-700/25 via-emerald-600/20 to-amber-500/20 hover:from-emerald-700/40 hover:via-emerald-600/35 hover:to-amber-500/35 border border-emerald-600/40 hover:border-emerald-500/70 shadow-sm shadow-emerald-700/15 hover:shadow-emerald-600/30 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                    className="flex w-full items-center justify-center gap-2 px-3 py-2 max-lg:min-h-11 rounded-full bg-gradient-to-l from-emerald-700/25 via-emerald-600/20 to-amber-500/20 hover:from-emerald-700/40 hover:via-emerald-600/35 hover:to-amber-500/35 border border-emerald-600/40 hover:border-emerald-500/70 shadow-sm shadow-emerald-700/15 hover:shadow-emerald-600/30 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                     aria-label="اسمع: نساهم في رؤية المملكة ٢٠٣٠"
                     title="اضغط للاستماع: مدونتي ٢٠٣٠ — لبنة في الرؤية"
                   >
@@ -629,7 +629,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                           key={opt.id}
                           type="button"
                           onClick={() => handleSectionClick(idx)}
-                          className={`text-start text-[13px] md:text-[14px] font-medium px-3 py-2.5 max-md:min-h-11 max-md:items-center rounded-xl transition-all duration-200 flex items-start gap-2.5 group ${
+                          className={`text-start text-[13px] md:text-[14px] font-medium px-3 py-2.5 max-lg:min-h-11 max-md:items-center rounded-xl transition-all duration-200 flex items-start gap-2.5 group ${
                             isActive
                               ? "bg-gradient-to-l from-amber-400/95 to-amber-500/90 text-amber-950 shadow-md shadow-amber-400/30 font-bold scale-[1.02]"
                               : "bg-amber-400/10 hover:bg-amber-400/20 hover:translate-x-[-2px] text-foreground border border-amber-400/30 hover:border-amber-400/60"
@@ -679,10 +679,10 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                           onClick={() => toggleCategory(cat.label)}
                           aria-expanded={!isCollapsed}
                           aria-controls={`cat-body-${cat.label}`}
-                          className="w-full flex items-center gap-1.5 px-2 py-1.5 max-md:min-h-11 rounded-md hover:bg-muted/60 active:bg-muted transition-colors group sticky top-0 bg-gradient-to-b from-card to-card/85 backdrop-blur z-10 -mx-2"
+                          className="w-full flex items-center gap-1.5 px-2 py-1.5 max-lg:min-h-11 rounded-md hover:bg-muted/60 active:bg-muted transition-colors group sticky top-0 bg-gradient-to-b from-card to-card/85 backdrop-blur z-10 -mx-2"
                         >
                           {cat.emoji && <span className="text-base shrink-0" aria-hidden>{cat.emoji}</span>}
-                          <span className="text-xs uppercase tracking-wider font-extrabold text-foreground/85 flex-1 text-start">
+                          <span className="text-xs uppercase tracking-wider font-bold text-foreground/85 flex-1 text-start">
                             {cat.label}
                           </span>
                           {count > 0 && (
@@ -692,7 +692,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                           )}
                           <IconChevronDown
                             aria-hidden
-                            className={`w-3.5 h-3.5 text-foreground/60 shrink-0 transition-transform duration-200 ${isCollapsed ? "-rotate-90" : ""}`}
+                            className={`w-4 h-4 text-foreground/60 shrink-0 transition-transform duration-200 ${isCollapsed ? "-rotate-90" : ""}`}
                           />
                         </button>
                         <AnimatePresence initial={false}>
@@ -760,12 +760,12 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       {offerHook && (
                         <>
                           <span aria-hidden className="opacity-60">·</span>
-                          <span className="font-extrabold">{offerHook}</span>
+                          <span className="font-bold">{offerHook}</span>
                         </>
                       )}
                     </span>
                     {/* MAIN LINE */}
-                    <span className="relative flex items-center gap-1.5 text-[13px] font-extrabold">
+                    <span className="relative flex items-center gap-1.5 text-[13px] font-bold">
                       <span aria-hidden>🚀</span>
                       <span>خطوتك الأولى مع البنيان</span>
                     </span>
@@ -781,7 +781,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
             >
               <div className="border-b border-border bg-muted/30 px-3 md:px-5 py-2 shrink-0">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <div className="flex items-center gap-x-3 gap-y-1 text-xs md:text-xs text-foreground/75 flex-wrap">
+                  <div className="flex items-center gap-x-3 gap-y-1 text-xs lg:text-xs text-foreground/75 flex-wrap">
                     <span className="inline-flex items-center gap-1">
                       <span aria-hidden className="text-amber-500">⏱</span>
                       <span>خمس دقائق فقط</span>
@@ -792,12 +792,12 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       <span>بدون اتصال بيع</span>
                     </span>
                     <span aria-hidden className="hidden md:inline text-foreground/30">·</span>
-                    <span className="hidden md:inline-flex items-center gap-1">
+                    <span className="hidden lg:inline-flex items-center gap-1">
                       <span aria-hidden className="text-amber-500">🚫</span>
                       <span>بدون PDF</span>
                     </span>
                     <span aria-hidden className="hidden md:inline text-foreground/30">·</span>
-                    <span className="hidden md:inline-flex items-center gap-1">
+                    <span className="hidden lg:inline-flex items-center gap-1">
                       <span aria-hidden className="text-amber-500">👂</span>
                       <span>اسمع · احكم · قرّر</span>
                     </span>
@@ -808,7 +808,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                     <DialogTrigger asChild>
                       <button
                         type="button"
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 max-md:min-h-11 max-md:px-4 rounded-full border border-border bg-background/40 hover:bg-muted/40 text-xs font-bold text-foreground/75 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 max-lg:min-h-11 max-md:px-4 rounded-full border border-border bg-background/40 hover:bg-muted/40 text-xs font-bold text-foreground/75 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                         title="اقرأ النص الكامل للمقطع الحالي"
                         aria-label="افتح نص المقطع الحالي"
                       >
@@ -821,7 +821,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       dir="rtl"
                     >
                       <DialogHeader className="px-6 pt-6 pb-3 border-b border-border shrink-0">
-                        <DialogTitle className="text-base md:text-lg font-extrabold text-foreground text-start">
+                        <DialogTitle className="text-base lg:text-lg font-bold text-foreground text-start">
                           {currentSection?.label ? stripTashkeel(currentSection.label) : "نص المقطع"}
                         </DialogTitle>
                         <DialogDescription className="sr-only">
@@ -830,7 +830,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       </DialogHeader>
                       <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4 scrollbar-thin">
                         <p
-                          className="text-sm md:text-base leading-loose text-foreground/90 select-text"
+                          className="text-sm lg:text-base leading-loose text-foreground/90 select-text"
                           dir="rtl"
                         >
                           {currentSection?.text ? stripTashkeel(currentSection.text) : ""}
@@ -842,7 +842,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                 <button
                   type="button"
                   onClick={() => setAutoplay((v) => !v)}
-                  className="inline-flex items-center gap-1.5 max-md:min-h-11 max-md:px-2 text-xs font-medium text-foreground/80 hover:text-foreground transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded"
+                  className="inline-flex min-h-6 items-center gap-1.5 max-lg:min-h-11 max-md:px-2 text-xs font-medium text-foreground/80 hover:text-foreground transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded"
                   role="switch"
                   aria-checked={autoplay}
                   aria-label="تشغيل تلقائي للمقاطع التالية"
@@ -889,7 +889,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                         initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4, delay: 0.05, ease: "easeOut" }}
-                        className="text-base md:text-lg font-extrabold text-foreground mb-3 pb-2 border-b border-border"
+                        className="text-base lg:text-lg font-bold text-foreground mb-3 pb-2 border-b border-border"
                       >
                         {currentSection?.label ? stripTashkeel(currentSection.label) : ""}
                       </m.h2>
@@ -928,7 +928,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
 
                     {!currentSection?.media && (
                       <p
-                        className="text-base md:text-lg leading-loose text-foreground/90 font-medium"
+                        className="text-base lg:text-lg leading-loose text-foreground/90 font-medium"
                         dir="rtl"
                       >
                         {words.map((w, i) => {
@@ -941,7 +941,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                               "bg-gradient-to-r from-amber-300 to-amber-400 dark:from-amber-500/50 dark:to-amber-400/50 text-foreground rounded-md px-1 shadow-sm";
                           } else if (isHighlight) {
                             cls +=
-                              "font-extrabold text-amber-700 dark:text-amber-400 underline decoration-amber-500/40 decoration-2 underline-offset-4";
+                              "font-bold text-amber-700 dark:text-amber-400 underline decoration-amber-500/40 decoration-2 underline-offset-4";
                           } else if (isPassed) {
                             cls += "text-foreground/50";
                           } else {
@@ -1004,7 +1004,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                     // 6px tall is a mouse target, not a thumb one — measured 246×6 on an
                     // iPhone 12. `h-11` gives the range its 44px row; the native track stays
                     // its own thickness, centred, so only the touchable area grows.
-                    className="flex-1 h-1.5 max-md:h-11 max-md:bg-transparent rounded-full bg-muted accent-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                    className="flex-1 h-6 max-lg:h-11 bg-transparent rounded-full accent-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                     aria-label="موضع المقطع"
                     aria-valuetext={`${formatTime(currentTime)} من ${formatTime(duration)}`}
                   />
@@ -1020,7 +1020,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       className="w-11 h-11 rounded-full bg-muted hover:bg-muted/70 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label="المقطع السابق"
                     >
-                      <IconSkipBack className="w-4 h-4 rtl:rotate-180" />
+                      <IconSkipBack className="w-4 h-4" />
                     </button>
                     <div className="relative">
                       <m.span
@@ -1066,7 +1066,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       className="w-11 h-11 rounded-full bg-muted hover:bg-muted/70 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label="المقطع التالي"
                     >
-                      <IconSkipForward className="w-4 h-4 rtl:rotate-180" />
+                      <IconSkipForward className="w-4 h-4" />
                     </button>
                     <button
                       type="button"
@@ -1074,7 +1074,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       className="w-11 h-11 rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center transition-colors ms-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label="إعادة من البداية"
                     >
-                      <IconReplay className="w-3.5 h-3.5" />
+                      <IconReplay className="w-4 h-4" />
                     </button>
                   </div>
 
@@ -1082,14 +1082,14 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                     <button
                       type="button"
                       onClick={handleSpeedToggle}
-                      className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 max-md:min-h-11 max-md:min-w-11 rounded-md bg-muted hover:bg-muted/70 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                      className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 max-lg:min-h-11 max-lg:min-w-11 rounded-md bg-muted hover:bg-muted/70 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label={`تغيير السرعة (الحالية ${speed} مرة)`}
                     >
-                      <IconSpeed className="w-3.5 h-3.5" />
+                      <IconSpeed className="w-4 h-4" />
                       {speed}×
                     </button>
-                    <div className="hidden md:flex items-center gap-1.5">
-                      <IconVolume2 className="w-3.5 h-3.5 text-muted-foreground" />
+                    <div className="hidden lg:flex items-center gap-1.5">
+                      <IconVolume2 className="w-4 h-4 text-muted-foreground" />
                       <input
                         type="range"
                         min={0}
@@ -1097,7 +1097,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                         step={0.05}
                         value={volume}
                         onChange={(e) => setVolume(parseFloat(e.target.value))}
-                        className="w-20 h-1 rounded-full bg-muted accent-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                        className="w-20 h-6 rounded-full bg-transparent accent-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                         aria-label="مستوى الصوت"
                         aria-valuetext={`${Math.round(volume * 100)}٪`}
                       />
@@ -1163,7 +1163,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.1 }}
-                      className="text-xs md:text-xs uppercase tracking-[0.35em] font-bold text-amber-400/90 mb-4"
+                      className="text-xs lg:text-xs uppercase tracking-[0.35em] font-bold text-amber-400/90 mb-4"
                     >
                       الفصل التالي
                     </m.p>
@@ -1171,7 +1171,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       initial={{ opacity: 0, scale: 0.85, filter: "blur(8px)" }}
                       animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                       transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                      className="text-[88px] md:text-[120px] lg:text-[150px] font-extrabold leading-none bg-gradient-to-br from-primary via-white to-primary/60 bg-clip-text text-transparent select-none"
+                      className="text-[88px] lg:text-[150px] font-bold leading-none bg-gradient-to-br from-primary via-white to-primary/60 bg-clip-text text-transparent select-none"
                     >
                       {nextChapter.id}
                     </m.div>
@@ -1179,7 +1179,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       initial={{ opacity: 0, y: 14 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                      className="mt-4 text-xl md:text-2xl lg:text-3xl font-bold text-white/95 text-center max-w-2xl"
+                      className="mt-4 text-xl lg:text-3xl font-bold text-white/95 text-center max-w-2xl"
                     >
                       {stripTashkeel(
                         nextChapter.label
@@ -1205,7 +1205,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                           setNextChapter(null);
                           handleSectionClick(target);
                         }}
-                        className="text-xs text-white/85 hover:text-white transition-colors underline decoration-dotted underline-offset-4 max-md:inline-flex max-md:items-center max-md:min-h-11 max-md:px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded"
+                        className="text-xs text-white/85 hover:text-white transition-colors underline decoration-dotted underline-offset-4 max-lg:inline-flex max-lg:items-center max-lg:min-h-11 max-md:px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 rounded"
                         aria-label="ابدأ الفصل التالي الآن"
                       >
                         ابدأ الآن ▸
@@ -1219,7 +1219,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                           }
                           setNextChapter(null);
                         }}
-                        className="text-xs text-white/50 hover:text-white/80 transition-colors max-md:inline-flex max-md:items-center max-md:min-h-11 max-md:px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded"
+                        className="text-xs text-white/50 hover:text-white/80 transition-colors max-lg:inline-flex max-lg:items-center max-lg:min-h-11 max-md:px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded"
                         aria-label="إلغاء الانتقال التلقائي والبقاء في هذا المقطع"
                       >
                         ابقَ هنا ✕
@@ -1264,13 +1264,13 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                     {/* The page's one focal point on a phone, now that it is the first thing
                         in the stack — 30px was sized for a third column, not for a 390px
                         screen where nothing competes with it. */}
-                    <h1 className="text-3xl max-md:text-[34px] md:text-4xl lg:text-5xl font-extrabold mb-1 leading-[1.05] bg-gradient-to-l from-primary via-foreground to-primary bg-clip-text text-transparent">
+                    <h1 className="text-3xl max-lg:text-[34px] lg:text-5xl font-bold mb-1 leading-[1.05] bg-gradient-to-l from-primary via-foreground to-primary bg-clip-text text-transparent">
                       قصة مدونتي
                     </h1>
-                    <p className="text-sm md:text-base lg:text-lg text-foreground/55 italic mb-6 leading-snug">
+                    <p className="text-sm lg:text-lg text-foreground/55 italic mb-6 leading-snug">
                       البنيان الرقمي للعالم العربي
                     </p>
-                    <blockquote className="relative border-r-[4px] border-amber-400 pr-4 mb-5 text-[15px] md:text-base text-foreground/95 leading-relaxed font-medium">
+                    <blockquote className="relative border-r-[4px] border-amber-400 pr-4 mb-5 text-[15px] lg:text-base text-foreground/95 leading-relaxed font-medium">
                       <span className="absolute -top-2 -right-2 text-3xl text-amber-400/30 leading-none font-serif select-none" aria-hidden>
                         ❝
                       </span>
@@ -1288,7 +1288,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
                       transition={{ type: "spring", stiffness: 400, damping: 22 }}
-                      className="w-full mb-6 inline-flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground text-base font-extrabold shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                      className="w-full mb-6 inline-flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground text-base font-bold shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label="ابدأ الاستماع للقصة الآن"
                     >
                       <IconPlay className="w-5 h-5" fill="currentColor" />
@@ -1299,11 +1299,11 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       href={PARTNER_SIGNUP_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group mb-4 flex items-center justify-between gap-2 px-3 py-2.5 max-md:min-h-11 rounded-lg border border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                      className="group mb-4 flex items-center justify-between gap-2 px-3 py-2.5 max-lg:min-h-11 rounded-lg border border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                       aria-label="افتح صفحة الباقات في تاب جديد"
                     >
                       <span className="flex flex-col gap-0 min-w-0">
-                        <span className="text-[12px] font-bold text-foreground/80 group-hover:text-foreground truncate transition-colors">
+                        <span className="text-xs font-bold text-foreground/80 group-hover:text-foreground truncate transition-colors">
                           شوف الباقات
                         </span>
                         <span className="text-xs text-foreground/50 truncate">
@@ -1326,7 +1326,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                         href={salesWhatsappUrl(siteName)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-center gap-2 text-[12px] py-1 max-md:min-h-11 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 rounded"
+                        className="group flex items-center gap-2 text-xs py-1 max-lg:min-h-11 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 rounded"
                         aria-label={`واتساب المبيعات — ${SALES_WHATSAPP_DISPLAY}`}
                       >
                         <WhatsAppIcon className="w-4 h-4 text-emerald-500/80 shrink-0" />
@@ -1340,7 +1340,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       </a>
                       <a
                         href={SALES_EMAIL_URL}
-                        className="group flex items-center gap-2 text-[12px] py-1 max-md:min-h-11 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
+                        className="group flex items-center gap-2 text-xs py-1 max-lg:min-h-11 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
                         aria-label={`إيميل المبيعات — ${SALES_EMAIL}`}
                       >
                         <IconEmail className="w-4 h-4 text-foreground/50 shrink-0" />
@@ -1379,7 +1379,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                               {/* The shield is a claim of good standing — it goes with the
                                   status, not with the mere presence of one. */}
                               {legal.isRegistrationActive && (
-                                <IconShieldCheck className="w-3 h-3" aria-hidden />
+                                <IconShieldCheck className="size-4" aria-hidden />
                               )}
                               {legal.crStatus}
                             </span>
@@ -1389,7 +1389,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                               href={SAUDI_BUSINESS_VERIFY_URL}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-xs font-bold text-primary hover:underline whitespace-nowrap max-md:inline-flex max-md:items-center max-md:justify-center max-md:min-h-11 max-md:min-w-11 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
+                              className="text-xs font-bold text-primary hover:underline whitespace-nowrap max-lg:inline-flex max-lg:items-center max-md:justify-center max-lg:min-h-11 max-lg:min-w-11 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
                               aria-label={`ابحث بالرقم ${legal.cr} في وزارة التجارة`}
                             >
                               تحقّق
@@ -1420,7 +1420,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                             className="inline-flex items-baseline gap-1"
                             aria-label={`رأس المال ${legal.capital} ${CAPITAL_CURRENCY_LABEL}`}
                           >
-                            <IconWallet className="w-3 h-3 text-amber-600 dark:text-amber-400 self-center" aria-hidden />
+                            <IconWallet className="size-4 text-amber-600 dark:text-amber-400 self-center" aria-hidden />
                             <span className="text-foreground/65 text-xs" aria-hidden>
                               رأس المال
                             </span>
@@ -1438,7 +1438,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                         )}
                         {(legal.city || legal.country || legal.foundedYear) && (
                           <span className="inline-flex items-center gap-1 text-foreground/65">
-                            <IconMapPin className="w-3 h-3" aria-hidden />
+                            <IconMapPin className="size-4" aria-hidden />
                             <span>
                               {[legal.city, legal.country, legal.foundedYear]
                                 .filter(Boolean)
@@ -1476,7 +1476,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
 
                     <div className="relative mb-4 flex items-center justify-center">
                       <div
-                        className="text-[72px] md:text-[88px] lg:text-[104px] font-extrabold leading-none bg-gradient-to-br from-primary via-foreground to-primary/70 bg-clip-text text-transparent select-none"
+                        className="text-[72px] lg:text-[104px] font-bold leading-none bg-gradient-to-br from-primary via-foreground to-primary/70 bg-clip-text text-transparent select-none"
                         style={{ fontFeatureSettings: '"tnum"' }}
                       >
                         {(() => {
@@ -1517,7 +1517,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                                 />
                                 <span
                                   aria-hidden
-                                  className="text-foreground/40 font-light"
+                                  className="text-foreground/40 font-normal"
                                   style={{ fontSize: "0.42em" }}
                                 >
                                   ×
@@ -1608,7 +1608,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                       </svg>
                     </div>
 
-                    <h2 className="text-lg md:text-xl lg:text-2xl font-extrabold text-foreground mb-4 leading-snug text-center">
+                    <h2 className="text-lg lg:text-2xl font-bold text-foreground mb-4 leading-snug text-center">
                       {currentSection?.label
                         ? stripTashkeel(currentSection.label.split("—")[0]).trim()
                         : ""}
@@ -1639,7 +1639,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                                   duration: 0.7,
                                   ease: [0.16, 1, 0.3, 1],
                                 }}
-                                className={`flex items-start gap-2 text-[12px] md:text-[13px] leading-snug pr-2 py-1.5 transition-colors duration-500 rounded-md ${
+                                className={`flex items-start gap-2 text-xs md:text-[13px] leading-snug pr-2 py-1.5 transition-colors duration-500 rounded-md ${
                                   isPresent
                                     ? "border-r-[3px] border-amber-400 text-amber-700 dark:text-amber-300 font-bold bg-amber-400/10"
                                     : "text-foreground/50"
@@ -1692,7 +1692,7 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                             href={salesWhatsappUrl(siteName)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-7 h-7 max-md:w-11 max-md:h-11 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center transition-colors shadow-sm"
+                            className="w-7 h-7 max-lg:w-11 max-lg:h-11 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center transition-colors shadow-sm"
                             aria-label={`واتساب فريق المبيعات — ${SALES_WHATSAPP_DISPLAY}`}
                             title={`واتساب — ${SALES_WHATSAPP_DISPLAY}`}
                           >
@@ -1700,11 +1700,11 @@ export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer 
                           </a>
                           <a
                             href={SALES_EMAIL_URL}
-                            className="w-7 h-7 max-md:w-11 max-md:h-11 rounded-full bg-foreground/15 hover:bg-foreground/25 text-foreground flex items-center justify-center transition-colors"
+                            className="w-7 h-7 max-lg:w-11 max-lg:h-11 rounded-full bg-foreground/15 hover:bg-foreground/25 text-foreground flex items-center justify-center transition-colors"
                             aria-label={`إيميل فريق المبيعات — ${SALES_EMAIL}`}
                             title={`إيميل — ${SALES_EMAIL}`}
                           >
-                            <IconEmail className="w-3.5 h-3.5" />
+                            <IconEmail className="w-4 h-4" />
                           </a>
                         </div>
                       </div>

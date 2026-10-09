@@ -86,7 +86,7 @@ export function GalleryLightboxOverlay({ images, index, onIndexChange, onClose }
       {count > 1 && (
         <span
           dir="ltr"
-          className="absolute top-4 start-4 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold tabular-nums text-white/90 backdrop-blur-sm"
+          className="absolute top-4 start-4 rounded-full bg-white/10 px-3 py-1 text-xs font-bold tabular-nums text-white/90 backdrop-blur-sm"
         >
           {index + 1} / {count}
         </span>

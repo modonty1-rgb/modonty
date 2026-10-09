@@ -59,7 +59,7 @@ export default async function CommentsPage({ searchParams }: CommentsPageProps) 
             ) : (
               <div className="space-y-4" id="comments">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">
+                  <h3 className="text-lg font-bold">
                     تعليقاتي ({pagination.total})
                   </h3>
                 </div>

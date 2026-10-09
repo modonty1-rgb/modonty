@@ -42,7 +42,7 @@ export function LookupCard<T>({
         {t.title}
       </h2>
       <p className="mt-0.5 text-xs text-muted-foreground">{t.note}</p>
-      <label htmlFor={`${id}-q`} className="mt-4 block text-sm font-semibold">
+      <label htmlFor={`${id}-q`} className="mt-4 block text-sm font-bold">
         {t.label}
       </label>
       <Input

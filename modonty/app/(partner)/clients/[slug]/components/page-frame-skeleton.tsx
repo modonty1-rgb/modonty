@@ -19,7 +19,7 @@ export function PageFrameSkeleton({ body = "grid" }: { body?: "grid" | "rows" })
           <Skeleton className="h-4 w-20" />
           <Skeleton className="mt-3 h-8 w-56" />
           {body === "grid" ? (
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="mt-8 grid gap-4 lg:grid-cols-3">
               {Array.from({ length: 6 }, (_, i) => (
                 <Skeleton key={i} className="h-44 rounded-2xl" />
               ))}

@@ -73,7 +73,7 @@ function Kpi({ icon: Icon, label, value, sub }: { icon: React.ComponentType<{ cl
   return (
     <div className="rounded-xl border bg-card p-4 flex flex-col gap-1">
       <Icon className="h-4 w-4 text-primary" />
-      <span className="text-2xl font-extrabold tabular-nums leading-none">{value}</span>
+      <span className="text-2xl font-bold tabular-nums leading-none">{value}</span>
       <span className="text-xs text-muted-foreground">{label}</span>
       {sub ? <span className="text-xs text-muted-foreground/70">{sub}</span> : null}
     </div>
@@ -103,7 +103,7 @@ function Bars({ items, format = ar, labelMap }: { items: NameVal[]; format?: (n:
           <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-muted">
             <div className="absolute inset-y-0 end-0 rounded-full bg-accent" style={{ width: `${(it.value / max) * 100}%` }} />
           </div>
-          <span className="w-14 shrink-0 text-start font-semibold tabular-nums">{format(it.value)}</span>
+          <span className="w-14 shrink-0 text-start font-bold tabular-nums">{format(it.value)}</span>
         </div>
       ))}
     </div>
@@ -135,7 +135,7 @@ export default async function AnalyticsPage() {
   if (!a) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <h1 className="text-2xl font-bold">{heading}</h1>
+        <h1 className="text-h1">{heading}</h1>
         <p className="mt-4 text-muted-foreground">التحاليل غير متاحة حاليًا. حاول لاحقًا.</p>
       </main>
     );
@@ -156,7 +156,7 @@ export default async function AnalyticsPage() {
     <main className="mx-auto max-w-5xl px-4 py-8 md:py-12">
       {/* Header */}
       <header className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight">{heading}</h1>
+        <h1 className="text-h1">{heading}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           أرقام حقيقية مباشرة من Google Analytics — لا تقديرات. كل النشاط على منصة مدوّنتي.
         </p>
@@ -164,9 +164,9 @@ export default async function AnalyticsPage() {
           href={LOOKER_PUBLIC_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-2 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold shadow-sm transition-colors hover:bg-muted max-md:min-h-11"
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border bg-card px-4 py-2.5 text-sm font-bold shadow-sm transition-colors hover:bg-muted max-lg:min-h-11"
         >
-          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[conic-gradient(at_center,_#ea4335,_#fbbc05,_#34a853,_#4285f4,_#ea4335)] text-xs font-black text-white">G</span>
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[conic-gradient(at_center,_#ea4335,_#fbbc05,_#34a853,_#4285f4,_#ea4335)] text-xs font-bold text-white">G</span>
           شاهد الأرقام مباشرة على Google
           <span aria-hidden>↗</span>
         </a>
@@ -233,7 +233,7 @@ export default async function AnalyticsPage() {
                 <div key={i} className="flex items-center gap-3 text-xs">
                   <span className="min-w-0 flex-1 truncate" title={p.title || p.path}>{p.title || p.path}</span>
                   <span className="shrink-0 truncate text-muted-foreground/70 max-md:min-w-0 max-md:shrink" dir="ltr">{p.path}</span>
-                  <span className="w-14 shrink-0 text-start font-semibold tabular-nums">{ar(p.views)}</span>
+                  <span className="w-14 shrink-0 text-start font-bold tabular-nums">{ar(p.views)}</span>
                 </div>
               ))
             )}

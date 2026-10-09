@@ -78,17 +78,17 @@ export function ArticleFooter({
 
   return (
     <footer className="my-8 border-t pt-6 md:my-12 md:pt-8">
-      <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
+      <div className="grid gap-x-10 gap-y-6 lg:grid-cols-2">
         {/* Who wrote it */}
         {author && (
           <section aria-labelledby="article-author-heading">
-            <h2 id="article-author-heading" className="mb-3 text-xs font-semibold text-muted-foreground">
+            <h2 id="article-author-heading" className="mb-3 text-xs font-bold text-muted-foreground">
               عن الكاتب
             </h2>
             <div className="flex items-center gap-3">
               <Avatar className="size-10 shrink-0 ring-2 ring-primary/20">
                 <AvatarImage src={author.image ?? undefined} alt={author.name} />
-                <AvatarFallback className="bg-secondary text-sm font-semibold text-secondary-foreground">
+                <AvatarFallback className="bg-secondary text-sm font-bold text-secondary-foreground">
                   {author.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
@@ -96,12 +96,12 @@ export function ArticleFooter({
                 {author.slug ? (
                   <Link
                     href={`/authors/${author.slug}`}
-                    className="block truncate text-sm font-semibold text-link hover:underline max-lg:flex max-lg:min-h-11 max-lg:items-center max-lg:active:underline"
+                    className="block truncate py-0.5 text-sm font-bold text-link hover:underline max-lg:flex max-lg:min-h-11 max-lg:items-center max-lg:active:underline"
                   >
                     {author.name}
                   </Link>
                 ) : (
-                  <span className="block truncate text-sm font-semibold">{author.name}</span>
+                  <span className="block truncate text-sm font-bold">{author.name}</span>
                 )}
                 {author.jobTitle && (
                   <p className="truncate text-xs text-muted-foreground">{author.jobTitle}</p>
@@ -136,7 +136,7 @@ export function ArticleFooter({
                   className="inline-flex max-lg:min-h-11 shrink-0 items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-foreground transition-colors hover:bg-muted/50"
                 >
                   صفحة الكاتب
-                  <IconChevronLeft className="size-3 ltr:rotate-180" aria-hidden />
+                  <IconChevronLeft className="size-4 ltr:rotate-180" aria-hidden />
                 </Link>
               )}
             </div>
@@ -154,7 +154,7 @@ export function ArticleFooter({
                 file already uses above. Phone only; the desktop table keeps its 17px rhythm. */}
             <Link
               href={`/clients/${client.slug}`}
-              className="font-medium text-link hover:underline max-lg:flex max-lg:min-h-11 max-lg:items-center"
+              className="font-medium text-link hover:underline max-lg:flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center"
             >
               {client.name}
             </Link>
@@ -180,7 +180,7 @@ export function ArticleFooter({
                   href={license}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-link hover:underline max-lg:flex max-lg:min-h-11 max-lg:items-center"
+                  className="text-link hover:underline max-lg:flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center"
                 >
                   سياسة حقوق النشر
                 </Link>
@@ -201,7 +201,7 @@ export function ArticleFooter({
           rel="noopener noreferrer"
           label="Article Footer CTA — عملاء بلا إعلانات"
           type="BANNER"
-          className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-link hover:underline max-lg:min-h-11 max-lg:active:underline"
+          className="inline-flex min-h-6 shrink-0 items-center gap-1 text-sm font-bold text-link hover:underline max-lg:min-h-11 max-lg:active:underline"
         >
           عملاء بلا إعلانات <span aria-hidden="true">↗</span>
         </CtaTrackedLink>

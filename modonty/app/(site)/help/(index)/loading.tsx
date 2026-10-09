@@ -11,7 +11,7 @@ export default function HelpLoading() {
       </div>
       <Skeleton className="h-9 w-48 mb-6" />
       <Skeleton className="h-5 w-96 mb-8 max-md:w-full" />
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Three doors, title + one line each — `HelpLinks` has no button (it drew two cards
             with a button each until 24 Sep 2026). */}
         {Array.from({ length: 3 }).map((_, i) => (

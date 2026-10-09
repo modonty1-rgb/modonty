@@ -51,7 +51,7 @@ export default async function FollowingPage() {
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">
+                  <h3 className="text-lg font-bold">
                     الشركاء المتابعون ({following.length})
                   </h3>
                 </div>
@@ -75,7 +75,7 @@ export default async function FollowingPage() {
                           </Link>
                           <div className="flex-1 min-w-0">
                             <Link href={`/clients/${client.slug}`}>
-                              <h4 className="font-semibold text-lg hover:text-primary transition-colors">
+                              <h4 className="font-bold text-lg hover:text-primary transition-colors">
                                 {client.name}
                               </h4>
                             </Link>

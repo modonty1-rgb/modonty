@@ -43,7 +43,7 @@ export function ProgramLookup({ labels: t }: { labels: ProgramLookupLabels }) {
         {t.title}
       </h2>
       <p className="mt-0.5 text-xs text-muted-foreground">{t.note}</p>
-      <label htmlFor="program-q" className="mt-4 block text-sm font-semibold">
+      <label htmlFor="program-q" className="mt-4 block text-sm font-bold">
         {t.label}
       </label>
       <Input
@@ -68,7 +68,7 @@ export function ProgramLookup({ labels: t }: { labels: ProgramLookupLabels }) {
                   <p className="text-xs text-muted-foreground">
                     {p.institution} · {p.city} · {p.degree}
                   </p>
-                  <p className={`mt-0.5 text-xs font-semibold ${STATUS_CLASS[p.status]}`}>{t.statuses[p.status]}</p>
+                  <p className={`mt-0.5 text-xs font-bold ${STATUS_CLASS[p.status]}`}>{t.statuses[p.status]}</p>
                 </li>
               ))}
             </ul>

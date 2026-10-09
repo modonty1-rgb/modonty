@@ -43,7 +43,7 @@ export default function ForgotPasswordPage() {
           <CardContent>
             <Link
               href="/users/login"
-              className="text-primary text-sm hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-3"
+              className="text-primary text-sm hover:underline max-lg:inline-flex max-lg:min-h-11 max-lg:items-center max-md:px-3"
             >
               العودة لتسجيل الدخول
             </Link>
@@ -70,7 +70,7 @@ export default function ForgotPasswordPage() {
                 id="email"
                 name="email"
                 type="email"
-                className="max-md:h-11"
+                className="max-lg:h-11"
                 placeholder="example@email.com"
                 required
                 disabled={isPending}
@@ -88,7 +88,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center text-sm">
               <Link
                 href="/users/login"
-                className="text-muted-foreground hover:text-primary max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-3"
+                className="text-muted-foreground hover:text-primary max-lg:inline-flex max-lg:min-h-11 max-lg:items-center max-md:px-3 lg:inline-flex lg:min-h-6 lg:items-center"
               >
                 العودة لتسجيل الدخول
               </Link>

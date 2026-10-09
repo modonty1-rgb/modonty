@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { CommentForm } from "@/components/shared/comment-form/CommentForm";
 import { AuthPromptLazy, warmAuthPrompt } from "@/components/shared/auth-prompt/AuthPromptLazy";
-import { IconLike, IconReply, IconUser } from "@/lib/icons";
+import { IconLike, IconLikeFilled, IconReply, IconUser } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 import { fetchReelComments } from "../data/fetch-reel-comments";
@@ -139,7 +139,7 @@ export function ReelCommentsSheet({
                     {comment.author?.image && (
                       <AvatarImage src={comment.author.image} alt={comment.author.name ?? undefined} />
                     )}
-                    <AvatarFallback className="bg-neutral-800 text-xs font-semibold text-white">
+                    <AvatarFallback className="bg-neutral-800 text-xs font-bold text-white">
                       {comment.author?.name?.charAt(0) ?? <IconUser className="size-4" />}
                     </AvatarFallback>
                   </Avatar>
@@ -155,7 +155,7 @@ export function ReelCommentsSheet({
                     </div>
                     {comment.replyingTo && (
                       <p className="mt-0.5 flex items-center gap-1 text-xs text-neutral-500">
-                        <IconReply className="size-3" aria-hidden />
+                        <IconReply className="size-4" aria-hidden />
                         رداً على @{comment.replyingTo.authorName}
                       </p>
                     )}
@@ -172,7 +172,7 @@ export function ReelCommentsSheet({
                         aria-pressed={comment.likedByMe}
                         aria-label="إعجاب بالتعليق"
                       >
-                        <IconLike className={cn("size-3.5", comment.likedByMe && "fill-current")} />
+                        {comment.likedByMe ? <IconLikeFilled className="size-4 [--modonty-knockout:transparent]" /> : <IconLike className="size-4" />}
                         {comment.likesCount > 0 && <span>{comment.likesCount}</span>}
                       </button>
                       <button
@@ -184,7 +184,7 @@ export function ReelCommentsSheet({
                         }
                         className="flex items-center gap-1 text-xs text-neutral-400 transition hover:text-white"
                       >
-                        <IconReply className="size-3.5" />
+                        <IconReply className="size-4" />
                         رد
                       </button>
                     </div>
@@ -221,7 +221,7 @@ export function ReelCommentsSheet({
                 onPointerEnter={warmAuthPrompt}
                 onPointerDown={warmAuthPrompt}
                 onClick={() => setAuthOpen(true)}
-                className="h-11 w-full font-semibold"
+                className="h-11 w-full font-bold"
               >
                 سجّل دخولك عشان تعلّق
               </Button>

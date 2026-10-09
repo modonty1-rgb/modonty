@@ -56,7 +56,7 @@ export default async function AudioArticlesPage() {
         />
         <div className="container mx-auto max-w-[1128px] px-3 py-3 sm:px-4 sm:py-6">
           <div className="mx-auto max-w-3xl">
-            <h1 className="text-xl font-bold text-foreground">{t.articlesRail.heading}</h1>
+            <h1 className="text-h1 text-foreground">{t.articlesRail.heading}</h1>
             <p className="mt-1 text-sm text-muted-foreground">{t.intro}</p>
             {articles.length === 0 ? (
               <p className="mt-6 flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 p-4 text-sm leading-relaxed text-muted-foreground">

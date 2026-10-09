@@ -34,7 +34,7 @@ export function PostCardFooter({ post }: PostCardProps) {
       <div className="flex items-center justify-between">
         <span
           aria-hidden="true"
-          className="relative z-10 inline-flex items-center gap-1 text-sm font-semibold text-link pointer-events-none"
+          className="relative z-10 inline-flex items-center gap-1 text-sm font-bold text-link pointer-events-none"
         >
           اقرأ المزيد
           <IconChevronLeft className="h-4 w-4" />

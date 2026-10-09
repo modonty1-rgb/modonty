@@ -41,11 +41,11 @@ export function ClientSheetContent({
         <div className="flex items-center gap-3">
           <PartnerAvatar media={client.logoMedia ?? null} name={client.name} size="standard" />
           <div className="min-w-0">
-            <p className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
-              {client.isVerified && <VerifiedBadge className="h-3.5 w-3.5" label="شريك موثّق" />}
+            <p className="flex items-center gap-1 text-xs font-bold text-muted-foreground">
+              {client.isVerified && <VerifiedBadge className="h-4 w-4" label="شريك موثّق" />}
               {reviewedLabel}
             </p>
-            <SheetTitle className="text-lg font-extrabold leading-tight">{client.name}</SheetTitle>
+            <SheetTitle className="text-lg font-bold leading-tight">{client.name}</SheetTitle>
             {sub ? <SheetDescription className="mt-0.5 text-[13px] leading-relaxed">{sub}</SheetDescription> : null}
           </div>
         </div>

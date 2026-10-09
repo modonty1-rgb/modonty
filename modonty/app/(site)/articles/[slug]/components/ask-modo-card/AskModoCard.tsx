@@ -28,7 +28,7 @@ export function AskModoCard({ slug }: AskModoCardProps) {
         <ModoCharacter sizes="36px" decorative />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-semibold text-foreground">
+        <span className="block text-sm font-bold text-foreground">
           عندك سؤال عن المقال؟ اسأل مودو
         </span>
         <span className="block text-xs text-muted-foreground">

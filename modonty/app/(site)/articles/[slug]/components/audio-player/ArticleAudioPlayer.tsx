@@ -169,7 +169,7 @@ export function ArticleAudioPlayer({ src, slug, tabClassName, durationSeconds }:
       >
         {/* Text for screen readers, not aria-label/aria-disabled: both are prohibited on a span
             with no role (axe «aria-prohibited-attr», plan هـ٦) and were silently ignored. */}
-        <IconListenOff className="size-[18px]" aria-hidden />
+        <IconListenOff className="size-5" aria-hidden />
         <span className="sr-only">لا توجد نسخة صوتية لهذا المقال</span>
       </span>
     );
@@ -189,11 +189,11 @@ export function ArticleAudioPlayer({ src, slug, tabClassName, durationSeconds }:
         className={cn(tabClassName, "overflow-hidden bg-action-listen text-action-listen-foreground")}
       >
         {failed ? (
-          <IconAlertTriangle className="size-[18px]" />
+          <IconAlertTriangle className="size-5" />
         ) : playing ? (
-          <IconPause className="size-[18px]" />
+          <IconPause className="size-5" />
         ) : (
-          <IconListen className="size-[18px]" />
+          <IconListen className="size-5" />
         )}
         {/* Idle it shows how long the recording is; running, how far in the reader is. */}
         {!failed && duration > 0 && (
@@ -267,7 +267,7 @@ export function ArticleAudioPlayer({ src, slug, tabClassName, durationSeconds }:
                   // The multiplication sign is direction-neutral, so `×١` renders as `١×` inside
                   // the Arabic panel. Latin direction pins it to the shape people read as a rate.
                   dir="ltr"
-                  className="ms-auto rounded-full border border-border px-2.5 py-1 text-xs font-semibold tabular-nums hover:bg-muted"
+                  className="ms-auto rounded-full border border-border px-2.5 py-1 text-xs font-bold tabular-nums hover:bg-muted"
                 >
                   {toArabic(`×${rate}`)}
                 </button>
@@ -306,7 +306,7 @@ export function ArticleAudioPlayer({ src, slug, tabClassName, durationSeconds }:
                   type="button"
                   onClick={() => nudge(-JUMP)}
                   aria-label="رجوع ١٥ ثانية"
-                  className="flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg border border-border text-xs font-semibold hover:bg-muted"
+                  className="flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg border border-border text-xs font-bold hover:bg-muted"
                 >
                   <IconReplay className="size-4" aria-hidden />
                   {toArabic("١٥")}
@@ -315,7 +315,7 @@ export function ArticleAudioPlayer({ src, slug, tabClassName, durationSeconds }:
                   type="button"
                   onClick={() => nudge(JUMP)}
                   aria-label="تقديم ١٥ ثانية"
-                  className="flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg border border-border text-xs font-semibold hover:bg-muted"
+                  className="flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg border border-border text-xs font-bold hover:bg-muted"
                 >
                   <IconAdvance className="size-4" aria-hidden />
                   {toArabic("١٥")}

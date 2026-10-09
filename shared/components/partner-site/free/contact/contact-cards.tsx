@@ -21,7 +21,7 @@ export function ContactCards({ data }: { data: HomeData; preview?: boolean }) {
           <div className="rounded-[var(--ps-radius-card,0.5rem)] p-6 ring-1 ring-border">
             <p className="flex items-center gap-2 text-sm font-medium"><MapPin className="h-4 w-4 text-[hsl(var(--primary-ink,var(--primary)))]" aria-hidden /> العنوان</p>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">{c.address}</p>
-            {c.mapHref && <SiteLink href={c.mapHref} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center text-sm font-medium max-md:min-h-11 text-[hsl(var(--primary-ink,var(--primary)))]">افتح الاتجاهات</SiteLink>}
+            {c.mapHref && <SiteLink href={c.mapHref} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-6 items-center text-sm font-medium max-lg:min-h-11 text-[hsl(var(--primary-ink,var(--primary)))]">افتح الاتجاهات</SiteLink>}
           </div>
         )}
         {c.hours.length > 0 && (
@@ -38,8 +38,8 @@ export function ContactCards({ data }: { data: HomeData; preview?: boolean }) {
         <div className="rounded-[var(--ps-radius-card,0.5rem)] p-6 ring-1 ring-border">
           <p className="flex items-center gap-2 text-sm font-medium"><Phone className="h-4 w-4 text-[hsl(var(--primary-ink,var(--primary)))]" aria-hidden /> اتصل أو راسل</p>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            {data.phone && <li><SiteLink href={`tel:${data.phone}`} dir="ltr" className="hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.phone}</SiteLink></li>}
-            {c.email && <li className="flex items-center gap-2"><Mail className="h-4 w-4" aria-hidden /><SiteLink href={`mailto:${c.email}`} className="hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{c.email}</SiteLink></li>}
+            {data.phone && <li><SiteLink href={`tel:${data.phone}`} dir="ltr" className="hover:text-foreground max-lg:inline-flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center">{data.phone}</SiteLink></li>}
+            {c.email && <li className="flex items-center gap-2"><Mail className="h-4 w-4" aria-hidden /><SiteLink href={`mailto:${c.email}`} className="hover:text-foreground max-lg:inline-flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center">{c.email}</SiteLink></li>}
           </ul>
           {data.whatsappHref && <div className="mt-4"><WhatsAppButton href={data.whatsappHref} /></div>}
         </div>

@@ -682,7 +682,7 @@ export function ChatList({
                       const Icon = getScopeIcon(m.industrySuggestion!.name);
                       return <Icon className="h-4 w-4 text-primary shrink-0" />;
                     })()}
-                    <span className="text-sm font-semibold text-primary">{m.industrySuggestion.name}</span>
+                    <span className="text-sm font-bold text-primary">{m.industrySuggestion.name}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">صح؟</p>
                   <div className="flex gap-2">
@@ -823,12 +823,12 @@ export function ChatList({
             <div className="rounded-2xl border border-primary/15 bg-gradient-to-br from-background to-primary/5 p-4 space-y-3 shadow-sm">
               <div className="flex items-center gap-2">
                 <div className="h-6 w-6 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                  <IconArticle className="h-3.5 w-3.5 text-primary" />
+                  <IconArticle className="h-4 w-4 text-primary" />
                 </div>
                 <p className="text-xs font-medium text-muted-foreground">هل تريد قراءة أعمق؟</p>
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground leading-snug line-clamp-2">
+                <p className="text-sm font-bold text-foreground leading-snug line-clamp-2">
                   {suggestedArticle.title}
                 </p>
                 {suggestedArticle.excerpt && (

@@ -46,11 +46,11 @@ export function IdentityCard({ ogImageUrl, siteName, legal }: IdentityCardProps)
       </div>
       <div className="px-6 pb-6 pt-5">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          {siteName && <h1 className="text-2xl font-semibold">{siteName}</h1>}
+          {siteName && <h1 className="text-h1">{siteName}</h1>}
           {/* A verification claim needs a live registration behind it — otherwise the
               badge would contradict the status row below it. */}
           {legal.cr && legal.isRegistrationActive && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-sm font-semibold text-primary">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-sm font-bold text-primary">
               <VerifiedBadge className="h-4 w-4" label={text.verified} />
               {text.verified}
             </span>

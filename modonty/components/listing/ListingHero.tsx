@@ -81,7 +81,7 @@ export function ListingHero({
           <span className={`h-1.5 w-1.5 rounded-full ${a.dot}`} />
           {badgeText}
         </div>
-        <h1 className="mb-4 max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-white [text-shadow:0_2px_30px_rgba(0,0,0,0.8)] sm:text-5xl">
+        <h1 className="text-display mb-4 max-w-3xl text-white [text-shadow:0_2px_30px_rgba(0,0,0,0.8)]">
           {title}
         </h1>
         <p className="max-w-xl text-[15px] leading-relaxed text-zinc-200 [text-shadow:0_1px_14px_rgba(0,0,0,0.85)]">

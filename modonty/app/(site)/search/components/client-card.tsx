@@ -59,12 +59,12 @@ export function ClientCard(props: ClientCardProps) {
             <OptimizedImage media={asMedia(cover)} alt="" fill sizes="(max-width: 768px) 100vw, 380px" className="object-cover" />
           )}
           {props.isFeatured && (
-            <span className="absolute top-2.5 start-2.5 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-0.5 text-xs font-black text-amber-950 shadow-sm">
+            <span className="absolute top-2.5 start-2.5 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-0.5 text-xs font-bold text-amber-950 shadow-sm">
               ⭐ مميّز
             </span>
           )}
           {props.articleCount === 0 && (
-            <span className="absolute top-2.5 end-2.5 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-2.5 py-0.5 text-xs font-black text-white shadow-sm ring-1 ring-white/30">
+            <span className="absolute top-2.5 end-2.5 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm ring-1 ring-white/30">
               ✨ قريباً
             </span>
           )}
@@ -78,24 +78,24 @@ export function ClientCard(props: ClientCardProps) {
             size="standard"
           />
           <span
-            className="absolute -bottom-1 -start-1 grid h-[18px] w-[18px] place-items-center rounded-full border-2 border-white bg-accent text-white"
+            className="absolute -bottom-1 -start-1 grid size-5 place-items-center rounded-full border-2 border-white bg-accent text-white"
             aria-label={messages.shared.badges.verifiedPartnerLabel}
           >
-            <IconCheck className="h-2.5 w-2.5" />
+            <IconCheck className="size-4" />
           </span>
         </div>
 
         {/* Body */}
         <div className="px-4 pb-4 pt-8">
-          <h3 className="line-clamp-1 text-base font-black leading-tight text-foreground transition-colors group-hover:text-primary">
+          <h3 className="line-clamp-1 text-base font-bold leading-tight text-foreground transition-colors group-hover:text-primary">
             {nameContent}
           </h3>
           {location && <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">{location}</p>}
 
-          <div className="mt-3 flex gap-4 border-t border-border pt-3 text-[12.5px] text-muted-foreground">
+          <div className="mt-3 flex gap-4 border-t border-border pt-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <IconArticle className="h-3.5 w-3.5" />
-              <b className="font-black text-foreground">{formatMetric(props.articleCount)}</b> مقالات
+              <IconArticle className="h-4 w-4" />
+              <b className="font-bold text-foreground">{formatMetric(props.articleCount)}</b> مقالات
             </span>
             <span className="flex items-center gap-1.5">
               {props.ga4Total !== undefined ? (
@@ -106,19 +106,19 @@ export function ClientCard(props: ClientCardProps) {
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
               ) : (
-                <IconViews className="h-3.5 w-3.5" />
+                <IconViews className="h-4 w-4" />
               )}
               {displayViews === 0 ? (
                 <span>لا توجد</span>
               ) : (
                 <>
-                  <b className="font-black text-foreground">{formatMetric(displayViews)}</b> {viewsLabel}
+                  <b className="font-bold text-foreground">{formatMetric(displayViews)}</b> {viewsLabel}
                 </>
               )}
             </span>
           </div>
 
-          <div className="mt-3 flex items-center justify-center gap-1.5 rounded-[10px] bg-primary/[0.08] py-2 text-[13px] font-bold text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+          <div className="mt-3 flex items-center justify-center gap-1.5 rounded-md bg-primary/[0.08] py-2 text-[13px] font-bold text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
             زيارة الصفحة <span aria-hidden="true">←</span>
           </div>
         </div>

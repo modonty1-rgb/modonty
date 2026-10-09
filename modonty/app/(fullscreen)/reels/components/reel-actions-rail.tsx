@@ -6,6 +6,8 @@ import { AuthPromptLazy, warmAuthPrompt } from "@/components/shared/auth-prompt/
 import { ModontyBookmarkMark } from "@/components/icons/modonty-bookmark-mark";
 import { ModontyCommentMark } from "@/components/icons/modonty-comment-mark";
 import { ModontyLikeMark } from "@/components/icons/modonty-like-mark";
+import { ModontyLikeFilledMark } from "@/components/icons/modonty-like-filled-mark";
+import { ModontyBookmarkFilledMark } from "@/components/icons/modonty-bookmark-filled-mark";
 import { ModontyShareMark } from "@/components/icons/modonty-share-mark";
 
 import { toggleReelLike, toggleReelFavorite } from "../actions/reel-interactions";
@@ -34,7 +36,8 @@ const btn =
 // TikTok-style action rail: familiar bare symbols and counts keep the video primary. The
 // shadow is deliberately subtle — contrast support, never a visible UI surface.
 const iconWrap = "flex size-11 items-center justify-center rounded-full transition";
-const iconGlyph = "size-8 drop-shadow-[0_1px_2px_rgba(0,0,0,0.78)]";
+// Over video there is no surface to cut back to, so a Filled mark keeps no knockout ring.
+const iconGlyph = "size-8 drop-shadow-[0_1px_2px_rgba(0,0,0,0.78)] [--modonty-knockout:transparent]";
 const actionLabel = "text-xs font-bold [text-shadow:0_1px_2px_rgba(0,0,0,0.82)]";
 
 export function ReelActionsRail({
@@ -166,7 +169,7 @@ export function ReelActionsRail({
               carries the primary token itself, the way TikTok's heart turns colour rather
               than gaining a background. */}
           <span className={`${iconWrap} ${liked ? "text-primary" : ""}`}>
-            <ModontyLikeMark className={iconGlyph} aria-hidden />
+            {liked ? <ModontyLikeFilledMark className={iconGlyph} aria-hidden /> : <ModontyLikeMark className={iconGlyph} aria-hidden />}
           </span>
           {likes > 0 && <span className={actionLabel}>{likes.toLocaleString(SITE_LOCALE)}</span>}
         </button>
@@ -196,7 +199,7 @@ export function ReelActionsRail({
               plate behind it. The old «accent circle + dark glyph» exception is gone with the
               circle, so the diamond keeps its normal accent colour again. */}
           <span className={`${iconWrap} ${saved ? "text-accent" : ""}`}>
-            <ModontyBookmarkMark className={`${iconGlyph} ${saved ? "[&>rect]:fill-current" : ""}`} aria-hidden />
+            {saved ? <ModontyBookmarkFilledMark className={iconGlyph} aria-hidden /> : <ModontyBookmarkMark className={iconGlyph} aria-hidden />}
           </span>
           {saves > 0 && <span className={actionLabel}>{saves.toLocaleString(SITE_LOCALE)}</span>}
         </button>

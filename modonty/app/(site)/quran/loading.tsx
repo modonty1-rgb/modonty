@@ -17,9 +17,9 @@ export default function QuranLoading() {
         ]}
       />
       <div className="container mx-auto max-w-[1128px] px-3 pb-6 pt-2 sm:px-4" aria-hidden>
-        <Skeleton className="mb-2 h-8 w-40 max-md:hidden" />
+        <Skeleton className="mb-2 h-8 w-40 max-lg:hidden" />
         <Skeleton className="mb-4 h-4 w-3/4 max-md:mb-3" />
-        <div className="flex flex-col gap-3 md:flex-row">
+        <div className="flex flex-col gap-3 lg:flex-row">
           <Skeleton className="h-11 w-full rounded-xl md:w-80" />
           <Skeleton className="h-11 w-full flex-1 rounded-xl" />
         </div>

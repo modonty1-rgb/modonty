@@ -43,7 +43,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -52,7 +52,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-semibold text-foreground">
+          <p className="text-2xl font-bold text-foreground">
             {followersCount.toLocaleString(SITE_LOCALE)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -69,7 +69,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-semibold text-foreground">
+          <p className="text-2xl font-bold text-foreground">
             {favoritesCount.toLocaleString(SITE_LOCALE)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -86,7 +86,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-semibold text-foreground">
+          <p className="text-2xl font-bold text-foreground">
             {articleLikesCount.toLocaleString(SITE_LOCALE)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">

@@ -18,7 +18,7 @@ export function NumberField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-xs font-semibold text-foreground/80">
+      <label htmlFor={id} className="block text-xs font-bold text-foreground/80">
         {label}
       </label>
       <div className="mt-1 flex items-center gap-2">

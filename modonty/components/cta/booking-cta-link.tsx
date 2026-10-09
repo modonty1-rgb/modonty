@@ -35,7 +35,7 @@ export function BookingCtaLink({ clientSlug, label, source, articleId, className
         // no dark ground reaches the 3:1 a control's boundary needs (pure black caps at 2.99).
         // A visible edge is the alternative the rule allows, so the button keeps the exact
         // brand colour instead of being lightened away from it.
-        "inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
+        "inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-bold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
       }
     >
       <IconCalendar className="h-4 w-4" />

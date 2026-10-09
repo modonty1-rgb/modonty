@@ -62,7 +62,7 @@ export async function SectorAlertBody({
     <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-white">
       <IconCheck className="size-6 shrink-0 text-brand-teal" aria-hidden />
       <span className="text-lg font-bold">{t.onTitle}</span>
-      <span className="text-sm text-white/85 md:text-base">{onLine}</span>
+      <span className="text-sm text-white/85 lg:text-base">{onLine}</span>
     </p>
   );
 }

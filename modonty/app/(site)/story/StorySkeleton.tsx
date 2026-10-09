@@ -20,7 +20,7 @@ export function StorySkeleton() {
       dir="rtl"
     >
       <div className="mx-auto h-full max-w-[1600px] px-3 md:px-4">
-        <div className="flex h-full flex-col gap-3 md:flex-row md:gap-4">
+        <div className="flex h-full flex-col gap-3 lg:flex-row md:gap-4">
           <div className="flex w-full flex-col gap-2 rounded-2xl bg-card p-3 ring-1 ring-border/60 max-md:order-3 md:h-full md:w-64 md:shrink-0 lg:w-72">
             <div className={`${pulse} h-9 w-full rounded-lg`} />
             {Array.from({ length: 7 }).map((_, i) => (

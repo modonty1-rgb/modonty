@@ -140,7 +140,7 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
               <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-muted text-muted-foreground">
                 <IconSearch className="h-12 w-12" />
               </div>
-              <h3 className="mb-2 text-xl font-semibold text-foreground">لم نجد نتائج</h3>
+              <h3 className="mb-2 text-xl font-bold text-foreground">لم نجد نتائج</h3>
               <p className="mx-auto max-w-md text-muted-foreground">
                 {search
                   ? `لم نتمكن من العثور على فئات تطابق بحثك عن "${search}".`

@@ -29,7 +29,7 @@ export function ClientNotReadyPanel({ clientId, clientName, clientSlug, ctaMode,
             <path d="M12 6v6l4 2" />
           </svg>
         </span>
-        <h2 className="mb-2 text-lg font-black text-foreground">صفحة هذا الشريك قيد التجهيز</h2>
+        <h2 className="mb-2 text-lg font-bold text-foreground">صفحة هذا الشريك قيد التجهيز</h2>
         <p className="mx-auto mb-[18px] max-w-[440px] text-[13px] leading-[1.75] text-muted-foreground">
           نعمل مع «{clientName}» على تجهيز محتواها وخدماتها. تابعها ليصلك أول محتوى، أو تواصل معها مباشرة.
         </p>

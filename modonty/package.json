@@ -18,7 +18,8 @@
     "diagnose-comments": "tsx ../scripts/diagnose-comments.ts",
     "diagnose-article-comments": "tsx ../scripts/diagnose-article-comments.ts",
     "approve-comments": "tsx ../scripts/approve-and-revalidate.ts",
-    "gen:section": "node scripts/generate-section.mjs"
+    "gen:section": "node scripts/generate-section.mjs",
+    "check:ui": "node scripts/check-ui-standard.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.2",

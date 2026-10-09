@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { cn } from "@/lib/utils";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
-import { IconReply, IconLike, IconUser } from "@/lib/icons";
+import { IconReply, IconLike, IconLikeFilled, IconUser } from "@/lib/icons";
 import { SectionBar } from "../section-bar/SectionBar";
 import { CommentForm } from "@/components/shared/comment-form/CommentForm";
 import { CommentFormDialog } from "../comment-form/CommentFormDialog";
@@ -149,7 +149,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
         {/* Reply indicator */}
         {comment.replyingTo && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-            <IconReply className="h-3 w-3" />
+            <IconReply className="size-4" />
             <span>رداً على</span>
             <span className="font-medium text-foreground">
               @{comment.replyingTo.authorName}
@@ -163,12 +163,12 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
             {comment.author?.image ? (
               <>
                 <AvatarImage src={comment.author.image} alt={comment.author.name ?? undefined} />
-                <AvatarFallback className="bg-secondary text-secondary-foreground font-semibold">
+                <AvatarFallback className="bg-secondary text-secondary-foreground font-bold">
                   {comment.author.name?.charAt(0) ?? <IconUser className="h-4 w-4" />}
                 </AvatarFallback>
               </>
             ) : (
-              <AvatarFallback className="bg-secondary text-secondary-foreground font-semibold">
+              <AvatarFallback className="bg-secondary text-secondary-foreground font-bold">
                 {comment.author?.name ? comment.author.name.charAt(0) : <IconUser className="h-4 w-4" />}
               </AvatarFallback>
             )}
@@ -197,7 +197,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                   onClick={() => setShowReplyForm(!showReplyForm)}
                   className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
                 >
-                  <IconReply className="h-3 w-3" />
+                  <IconReply className="size-4" />
                   رد
                 </button>
               )}
@@ -211,7 +211,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                       userLiked ? "text-primary" : "text-muted-foreground"
                     )}
                   >
-                    <IconLike className={cn("h-3 w-3", userLiked && "fill-current")} />
+                    {userLiked ? <IconLikeFilled className="size-4" /> : <IconLike className="size-4" />}
                     {likesCount > 0 && <span>{likesCount}</span>}
                   </button>
                   
@@ -270,13 +270,13 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                         {author.image ? (
                           <>
                             <AvatarImage src={author.image} alt={author.name ?? undefined} />
-                            <AvatarFallback className="text-xs bg-secondary text-secondary-foreground font-semibold">
-                              {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
+                            <AvatarFallback className="text-xs bg-secondary text-secondary-foreground font-bold">
+                              {author.name?.charAt(0) ?? <IconUser className="size-4" />}
                             </AvatarFallback>
                           </>
                         ) : (
-                          <AvatarFallback className="text-xs bg-secondary text-secondary-foreground font-semibold">
-                            {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
+                          <AvatarFallback className="text-xs bg-secondary text-secondary-foreground font-bold">
+                            {author.name?.charAt(0) ?? <IconUser className="size-4" />}
                           </AvatarFallback>
                         )}
                       </Avatar>

@@ -52,7 +52,7 @@ export function ClientReviewForm({ slug, isLoggedIn }: ClientReviewFormProps) {
 
   if (state.ok) {
     return (
-      <div className="mt-3 flex items-center gap-2 rounded-md border border-success/30 bg-success/10 px-4 py-3 text-[12.5px] font-bold text-success">
+      <div className="mt-3 flex items-center gap-2 rounded-md border border-success/30 bg-success/10 px-4 py-3 text-xs font-bold text-success">
         <IconSuccess className="h-4 w-4 shrink-0" aria-hidden />
         {state.message || "تم إرسال تقييمك. سيظهر بعد موافقة الشركة."}
       </div>
@@ -75,7 +75,7 @@ export function ClientReviewForm({ slug, isLoggedIn }: ClientReviewFormProps) {
       <input type="hidden" name="clientSlug" value={slug} />
       <input type="hidden" name="rating" value={rating} />
 
-      <p className="text-[12.5px] font-extrabold text-foreground">اكتب تقييمك</p>
+      <p className="text-xs font-bold text-foreground">اكتب تقييمك</p>
 
       <div className="flex items-center gap-1" role="radiogroup" aria-label="تقييمك بالنجوم">
         {[1, 2, 3, 4, 5].map((n) => (
@@ -105,7 +105,7 @@ export function ClientReviewForm({ slug, isLoggedIn }: ClientReviewFormProps) {
       />
 
       {state.message && !state.ok && (
-        <div className="rounded-md bg-destructive/10 px-3 py-2 text-[12px] text-destructive">
+        <div className="rounded-md bg-destructive/10 px-3 py-2 text-xs text-destructive">
           <p>{state.message}</p>
           {needsLogin && (
             <Button

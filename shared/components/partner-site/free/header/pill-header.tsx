@@ -22,7 +22,7 @@ export function PillHeader({ data }: { data: HeaderData }) {
         {/* اسم النشاط لا ينكمش على الديسكتوب: كان الوحيد الذي يحمل `min-w-0` في الشريط،
             فانضغط إلى ١٣٠px وهو يحتاج ١٥٣ فبُتِر (مقيس ١٢٨٠ · ٣١ أغسطس). شريط الروابط
             يملك ٥٧٨px ففيه فائضٌ يكفي، والاسم أهمّ من مسافة بين الروابط. */}
-        <SiteLink href={data.homeHref} className="min-w-0 xl:shrink-0 max-md:flex max-md:min-h-11 max-md:items-center">
+        <SiteLink href={data.homeHref} className="min-w-0 xl:shrink-0 max-lg:flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center">
           {/* «الكبسولة» تنفق عرضها على شريط الروابط وزرّي الهاتف والقائمة، فلا يبقى للعلامة
               إلا ١٥٥px — والسطر التعريفي يحتاج ١٩٢ فيُبتَر «السياحة العلاجية · الإسكندري…»
               على ٣٩٠ **وعلى ١٢٨٠ معاً** (مقيس ٣١ أغسطس). سطرٌ نصفه لا يفيد، فيُحذف من هذا
@@ -57,10 +57,10 @@ export function PillHeader({ data }: { data: HeaderData }) {
               href={`tel:${data.phone}`}
               aria-label="اتصال"
               // ٤٤×٤٤ على الجوّال: المقيس كان ٤٠×٤٠ — دون حدّ Apple HIG، ومخالف لجاره
-              // زرّ واتساب المدوّر الذي يكبر بـ`max-md:h-11 max-md:w-11` في نفس الشريط.
+              // زرّ واتساب المدوّر الذي يكبر بـ`max-lg:h-11 max-lg:w-11` في نفس الشريط.
               // الحبر لا اللون الخام: أيقونة بلون الشريك على الأرضية الداكنة قِيست ٢٫٧٣:١،
               // وWCAG 1.4.11 يفرض ٣:١ للعناصر غير النصّية. المتغيّر يحمل النسخة المقروءة.
-              className="grid h-10 w-10 place-items-center rounded-full border text-[hsl(var(--primary-ink,var(--primary)))] max-md:h-11 max-md:w-11"
+              className="grid h-10 w-10 place-items-center rounded-full border text-[hsl(var(--primary-ink,var(--primary)))] max-lg:h-11 max-lg:w-11"
             >
               <Phone className="h-4 w-4" />
             </SiteLink>

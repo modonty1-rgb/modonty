@@ -17,7 +17,7 @@ const duration = (minutes: number) => (minutes < 60 ? fill(t.minutes, { n: N.for
  * reached — the platforms still show.
  */
 export function FreeLearningCard({ courses }: { courses: FreeCourse[] | null }) {
-  const link = "text-xs font-semibold text-link underline-offset-2 hover:underline";
+  const link = "inline-flex min-h-8 max-lg:min-h-11 items-center text-xs font-bold text-link underline-offset-2 hover:underline";
   return (
     <section aria-labelledby="free-learning" className="rounded-lg bg-card p-5 ring-1 ring-border">
       <h2 id="free-learning" className="text-lg font-bold">

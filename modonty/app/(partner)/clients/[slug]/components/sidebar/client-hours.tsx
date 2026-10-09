@@ -157,10 +157,10 @@ export function ClientHours({ openingHours }: ClientHoursProps) {
         {rows.map((row, idx) => (
           <div
             key={`${row.label}-${idx}`}
-            className="flex items-center justify-between border-b border-dashed border-border py-[5px] text-[12.5px] last:border-0"
+            className="flex items-center justify-between border-b border-dashed border-border py-[5px] text-xs last:border-0"
           >
             <span className="text-muted-foreground">{row.label}</span>
-            <span className={row.isToday ? "font-extrabold text-success" : "font-extrabold text-foreground"}>
+            <span className={row.isToday ? "font-bold text-success" : "font-bold text-foreground"}>
               {row.time}
             </span>
           </div>

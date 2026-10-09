@@ -53,7 +53,7 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
   return (
     <div className="flex items-baseline justify-between gap-3">
       <dt className="text-muted-foreground">{label}</dt>
-      <dd className={`tabular-nums ${strong ? "text-base font-bold text-foreground" : "font-semibold"}`}>{value}</dd>
+      <dd className={`tabular-nums ${strong ? "text-base font-bold text-foreground" : "font-bold"}`}>{value}</dd>
     </div>
   );
 }

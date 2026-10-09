@@ -35,12 +35,12 @@ export function AccentHeading({ id, size, children, className }: AccentHeadingPr
         className,
       )}
     >
-      {/* `rounded-[2px]` before the rotation, so the corners land soft at 45° the way the
+      {/* `rounded-sm` before the rotation, so the corners land soft at 45° the way the
           icon set's `rx="2"` diamond does — a hard-cornered square reads as a bullet. */}
       <span
         aria-hidden
         className={cn(
-          "shrink-0 rotate-45 rounded-[2px] bg-accent",
+          "shrink-0 rotate-45 rounded-sm bg-accent",
           size === "title" ? "size-2.5" : "size-2",
         )}
       />

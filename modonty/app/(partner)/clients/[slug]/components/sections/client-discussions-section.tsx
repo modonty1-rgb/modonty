@@ -39,21 +39,21 @@ export function ClientDiscussionsSection({ comments }: Props) {
             className="flex gap-3 rounded-md border bg-muted/40 p-3"
           >
             <span
-              className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-[13px] font-extrabold text-white"
+              className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-[13px] font-bold text-white"
               aria-hidden
             >
               {initial(c.author.name)}
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="text-[12.5px] font-extrabold text-foreground">
+                <span className="text-xs font-bold text-foreground">
                   {c.author.name || "زائر"}
                 </span>
                 <span className="ms-auto text-xs text-muted-foreground">
                   {fmtDate(c.createdAt)}
                 </span>
               </div>
-              <p className="mt-1 text-[12.5px] leading-relaxed text-foreground">
+              <p className="mt-1 text-xs leading-relaxed text-foreground">
                 {c.content}
               </p>
               {c.article && (

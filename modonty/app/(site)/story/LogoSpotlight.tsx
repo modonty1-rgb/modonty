@@ -43,7 +43,7 @@ function LogoSpotlightImpl({
         className="relative mx-auto w-full flex-[7] min-h-[180px] overflow-hidden rounded-2xl"
       >
         <m.div
-          className="absolute inset-0 -z-10 rounded-[2rem]"
+          className="absolute inset-0 -z-10 rounded-2xl"
           animate={{
             background: hasLogoWord
               ? "radial-gradient(ellipse at center, rgba(251,191,36,0.42), rgba(0,0,0,0) 65%)"
@@ -128,7 +128,7 @@ function LogoSpotlightImpl({
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              className="text-center text-lg md:text-xl lg:text-2xl font-semibold leading-snug text-foreground"
+              className="text-center text-lg lg:text-2xl font-bold leading-snug text-foreground"
             >
               {activePhrase.text}
             </m.p>
@@ -140,7 +140,7 @@ function LogoSpotlightImpl({
               animate={{ opacity: 0.55 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-center text-sm md:text-base text-foreground/60 italic"
+              className="text-center text-sm lg:text-base text-foreground/60 italic"
             >
               اضغط تشغيل لتسمع القصة..
             </m.p>

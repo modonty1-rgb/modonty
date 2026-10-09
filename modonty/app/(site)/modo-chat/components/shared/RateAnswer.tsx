@@ -56,7 +56,7 @@ export function RateAnswer({ messageId }: { messageId: string }) {
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           )}
         >
-          <Icon className="h-3.5 w-3.5" aria-hidden />
+          <Icon className="h-4 w-4" aria-hidden />
         </button>
       ))}
     </div>

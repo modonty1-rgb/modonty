@@ -53,7 +53,7 @@ export function PageLayout({ posts, hasMore, page, industries, reels, userCard, 
                 navbar on every page, so the homepage no longer renders its own copy. */}
             {/* Modo leads the feed — except on phones (<768px), where the bottom bar already
                 carries him (Khalid, 21 Aug 2026: two Modo doors on one screen is one too many). */}
-            <div className="max-md:hidden">
+            <div className="max-lg:hidden">
               <HomeActions />
             </div>
             {/* The small-laptop reels card moved INTO the feed (after the second article) on
@@ -74,7 +74,7 @@ export function PageLayout({ posts, hasMore, page, industries, reels, userCard, 
                   and stays visible — a visitor who refreshed mid-scroll needs to see where
                   the feed resumes. `/` keeps its sr-only site h1 above this. */}
               {page > 1 ? (
-                <h1 id="articles-feed-heading" className="text-base font-bold text-foreground">
+                <h1 id="articles-feed-heading" className="text-title text-foreground">
                   آخر المقالات — الصفحة {pageArabic}
                 </h1>
               ) : (

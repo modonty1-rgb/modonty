@@ -29,7 +29,7 @@ export function AskPartnerButton({ partnerSlug, partnerName, question }: AskPart
   if (result?.ok) {
     return (
       <p className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
-        <IconCheck className="h-3.5 w-3.5 shrink-0" aria-hidden />
+        <IconCheck className="h-4 w-4 shrink-0" aria-hidden />
         {result.text}
       </p>
     );

@@ -126,7 +126,7 @@ export default async function TagPage({ params }: TagPageProps) {
               />
               <div className="absolute inset-0 bg-black/50" />
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">{tag.name}</h1>
+                <h1 className="text-display text-white mb-2">{tag.name}</h1>
                 {tag.description && (
                   <p className="text-white/80 text-base max-w-xl mx-auto">{tag.description}</p>
                 )}
@@ -140,7 +140,7 @@ export default async function TagPage({ params }: TagPageProps) {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border bg-muted">
                 <IconHash className="h-8 w-8 text-primary/50" />
               </div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">{tag.name}</h1>
+              <h1 className="text-display text-foreground mb-2">{tag.name}</h1>
               {tag.description && (
                 <p className="text-muted-foreground text-base max-w-xl mx-auto">{tag.description}</p>
               )}

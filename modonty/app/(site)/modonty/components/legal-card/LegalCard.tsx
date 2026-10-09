@@ -109,7 +109,7 @@ export function LegalCard({ legal, clientId, clientName, whatsappPhone }: LegalC
                 <span dir="ltr">{whatsappPhone}</span>
               </span>
               <span className="grid h-4 w-4 shrink-0 place-items-center" aria-hidden>
-                <IconExternal className="h-3.5 w-3.5 text-foreground/35 transition-colors group-hover:text-[#25D366]" />
+                <IconExternal className="h-4 w-4 text-foreground/35 transition-colors group-hover:text-[#25D366]" />
               </span>
             </WhatsAppLeadLink>
           </li>
@@ -144,8 +144,8 @@ function Fact({ icon: Icon, label, value, href, hrefLabel }: FactProps) {
       {/* Same box as the leading icon so both columns sit on one axis: chevron = stays on the
           site, arrow-out = leaves it. */}
       <span className="grid h-4 w-4 shrink-0 place-items-center" aria-hidden>
-        {href && internal && <IconChevronRight className="h-3.5 w-3.5 text-foreground/35 transition-colors rtl:rotate-180 group-hover:text-primary" />}
-        {href && !internal && <IconExternal className="h-3.5 w-3.5 text-foreground/35 transition-colors group-hover:text-primary" />}
+        {href && internal && <IconChevronRight className="h-4 w-4 text-foreground/35 transition-colors rtl:rotate-180 group-hover:text-primary" />}
+        {href && !internal && <IconExternal className="h-4 w-4 text-foreground/35 transition-colors group-hover:text-primary" />}
       </span>
     </>
   );

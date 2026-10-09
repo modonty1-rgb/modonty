@@ -8,8 +8,8 @@ interface ClientFooterCtaProps {
 export function ClientFooterCta({ clientId }: ClientFooterCtaProps) {
   return (
     <div className="rounded-lg bg-gradient-to-l from-foreground to-primary p-[22px] text-center">
-      <h3 className="text-[17px] font-black text-white">نشاطك التجاري يستحق نفس الحضور</h3>
-      <p className="mt-[5px] mb-[14px] text-[12.5px] text-white/[.88]">
+      <h3 className="text-[17px] font-bold text-white">نشاطك التجاري يستحق نفس الحضور</h3>
+      <p className="mt-[5px] mb-[14px] text-xs text-white/[.88]">
         انضم لشركاء مدوّنتي واجعل Google يجلب لك العملاء — بلا إعلانات.
       </p>
       <CtaTrackedLink

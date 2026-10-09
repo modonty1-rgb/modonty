@@ -175,7 +175,7 @@ export default async function AccountsPage() {
           >
             <OptimizedImage media={asMedia(LOGO_URL)} alt="مدونتي — الصفحة الرئيسية" fill sizes="208px" className="object-contain px-5 py-2.5" preload={!hero} loading="eager" />
           </AccountLink>
-          <h1 className="mt-3 inline-flex items-center gap-1.5 text-[clamp(1.25rem,0.85rem+2vw,1.625rem)] font-black leading-tight">
+          <h1 className="text-h1 mt-3 inline-flex items-center gap-1.5">
             {name}
             <VerifiedBadge className="size-[clamp(1rem,0.8rem+1vw,1.25rem)]" label="الحساب الرسمي" />
           </h1>
@@ -204,7 +204,7 @@ export default async function AccountsPage() {
                 id={id}
                 href={href}
                 external={external}
-                className={`${secondary.length % 2 === 1 && i === secondary.length - 1 ? "col-span-2" : ""} flex min-h-[clamp(2.75rem,2.4rem+1.7vw,3rem)] items-center justify-center gap-[clamp(0.25rem,0.1rem+0.7vw,0.5rem)] whitespace-nowrap rounded-2xl border bg-card px-[clamp(0.5rem,0.2rem+1.4vw,0.75rem)] text-[clamp(0.75rem,0.6rem+0.75vw,0.875rem)] font-bold shadow-sm transition hover:bg-muted motion-safe:active:scale-[0.98]`}
+                className={`${secondary.length % 2 === 1 && i === secondary.length - 1 ? "col-span-2" : ""} flex min-h-[clamp(2.75rem,2.4rem+1.7vw,3rem)] items-center justify-center gap-[clamp(0.25rem,0.1rem+0.7vw,0.5rem)] whitespace-nowrap rounded-2xl border bg-card px-[clamp(0.5rem,0.2rem+1.4vw,0.75rem)] text-[clamp(0.8125rem,0.6rem+0.75vw,0.875rem)] font-bold shadow-sm transition hover:bg-muted motion-safe:active:scale-[0.98]`}
               >
                 <I className="size-[clamp(1rem,0.85rem+0.7vw,1.125rem)] shrink-0" aria-hidden />
                 {label}
@@ -216,7 +216,7 @@ export default async function AccountsPage() {
         {/* ── Accounts ── each on its brand colour, with the handle a visitor recognises. */}
         {socials.length > 0 && (
           <section aria-labelledby="accounts-socials" className="mt-9">
-            <h2 id="accounts-socials" className="mb-3 text-[clamp(0.75rem,0.6rem+0.45vw,0.8125rem)] font-bold text-muted-foreground">
+            <h2 id="accounts-socials" className="mb-3 text-[clamp(0.8125rem,0.6rem+0.45vw,0.8125rem)] font-bold text-muted-foreground">
               تابعنا
             </h2>
             <ul className="flex flex-col gap-2">
@@ -243,7 +243,7 @@ export default async function AccountsPage() {
                       <span className="flex min-w-0 flex-1 flex-col">
                         <span className="text-[clamp(0.875rem,0.75rem+0.6vw,1rem)] font-bold leading-snug">{s.label}</span>
                         {handle && (
-                          <span dir="ltr" className="truncate text-end text-[clamp(0.75rem,0.67rem+0.4vw,0.8125rem)] text-muted-foreground">
+                          <span dir="ltr" className="truncate text-end text-[clamp(0.8125rem,0.67rem+0.4vw,0.8125rem)] text-muted-foreground">
                             {handle}
                           </span>
                         )}

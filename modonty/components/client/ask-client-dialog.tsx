@@ -68,7 +68,7 @@ export function AskClientDialog({
     <>
       <Button
         variant="outline"
-        className={cn("w-full h-auto py-2 whitespace-normal justify-center bg-amber-500 border-amber-500 text-black font-semibold hover:bg-amber-400 hover:border-amber-400 shadow-sm", triggerClassName)}
+        className={cn("w-full h-auto py-2 whitespace-normal justify-center bg-amber-500 border-amber-500 text-black font-bold hover:bg-amber-400 hover:border-amber-400 shadow-sm", triggerClassName)}
         type="button"
         aria-haspopup="dialog"
         onPointerEnter={() => void loadForm()}

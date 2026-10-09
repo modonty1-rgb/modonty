@@ -47,7 +47,7 @@ export function BreakEvenCalculator({ labels: t, currency }: { labels: BreakEven
             <p className="mt-0.5 text-muted-foreground">{fill(t.perDay, { n: N.format(Math.ceil(units / DAYS_IN_MONTH)) })}</p>
           </div>
         ) : (
-          <p className="mt-4 text-sm font-semibold text-destructive">{t.loss}</p>
+          <p className="mt-4 text-sm font-bold text-destructive">{t.loss}</p>
         ))}
     </div>
   );

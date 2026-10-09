@@ -1,5 +1,5 @@
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
-import { IconArticle, IconImage, IconPlay, IconVideo } from "@/lib/icons";
+import { IconArticle, IconImage, IconReels, IconVideo } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { messages } from "@/lib/i18n/messages";
 import type { ComponentType } from "react";
@@ -27,7 +27,7 @@ function collect(capabilities: PartnerCapabilities): Capability[] {
   if (capabilities.hasWhatsapp) found.push({ icon: WhatsAppIcon, label: text.whatsappChat });
   if (capabilities.galleryCount) found.push({ icon: IconImage, label: withCount(text.photoGallery, capabilities.galleryCount) });
   if (capabilities.hasVideo) found.push({ icon: IconVideo, label: text.introVideo });
-  if (capabilities.reelCount) found.push({ icon: IconPlay, label: withCount(text.reels, capabilities.reelCount) });
+  if (capabilities.reelCount) found.push({ icon: IconReels, label: withCount(text.reels, capabilities.reelCount) });
   if (capabilities.articleCount) found.push({ icon: IconArticle, label: withCount(text.articles, capabilities.articleCount) });
   return found;
 }
@@ -55,7 +55,7 @@ export function CapabilityIcons({ className, ...capabilities }: CapabilityIconsP
           title={label}
           className="grid size-7 place-items-center rounded-full bg-muted/60 text-muted-foreground transition-colors sm:hover:bg-primary/10 sm:hover:text-link"
         >
-          <Icon className="h-3.5 w-3.5" />
+          <Icon className="h-4 w-4" />
           <span className="sr-only">{label}</span>
         </li>
       ))}

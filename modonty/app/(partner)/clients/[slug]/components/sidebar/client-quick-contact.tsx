@@ -31,14 +31,14 @@ export function ClientQuickContact({ phone, email, clientId }: ClientQuickContac
             className="flex items-center gap-[11px] rounded-md border bg-card p-[11px] transition-colors hover:bg-muted"
           >
             <span
-              className="grid h-[35px] w-[35px] shrink-0 place-items-center rounded-[9px] bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]"
+              className="grid h-[35px] w-[35px] shrink-0 place-items-center rounded-md bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]"
               aria-hidden
             >
-              <IconPhone className="h-[18px] w-[18px]" />
+              <IconPhone className="size-5" />
             </span>
             <span className="min-w-0">
               <b className="block text-xs font-bold text-muted-foreground">اتصال</b>
-              <span className="block truncate text-[12.5px] font-bold text-foreground">{phone}</span>
+              <span className="block truncate text-xs font-bold text-foreground">{phone}</span>
             </span>
           </CtaTrackedLink>
         )}
@@ -52,14 +52,14 @@ export function ClientQuickContact({ phone, email, clientId }: ClientQuickContac
             className="flex items-center gap-[11px] rounded-md border bg-card p-[11px] transition-colors hover:bg-muted"
           >
             <span
-              className="grid h-[35px] w-[35px] shrink-0 place-items-center rounded-[9px] bg-accent/15 text-accent-foreground"
+              className="grid h-[35px] w-[35px] shrink-0 place-items-center rounded-md bg-accent/15 text-accent-foreground"
               aria-hidden
             >
-              <IconEmail className="h-[18px] w-[18px]" />
+              <IconEmail className="size-5" />
             </span>
             <span className="min-w-0">
               <b className="block text-xs font-bold text-muted-foreground">البريد</b>
-              <span className="block truncate text-[12.5px] font-bold text-foreground">{email}</span>
+              <span className="block truncate text-xs font-bold text-foreground">{email}</span>
             </span>
           </CtaTrackedLink>
         )}

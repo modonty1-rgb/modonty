@@ -21,7 +21,7 @@ export function TrustStrip({ data }: { data: HomeData; preview?: boolean }) {
     // «what is this» (4 Oct 2026). Hidden heading + a real list; the look is unchanged.
     <section id="trust" aria-labelledby="trust-heading" className="border-y bg-muted/30">
       <h2 id="trust-heading" className="sr-only">اعتمادات {data.name}</h2>
-      <ul className="mx-auto flex max-w-[1128px] flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 py-4 text-sm text-muted-foreground max-md:flex-col max-md:items-start">
+      <ul className="mx-auto flex max-w-[1128px] flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 py-4 text-sm text-muted-foreground max-lg:flex-col max-md:items-start">
         {items.map((c) => (
           // Phones: one credential per line, start-aligned — centred and wrapped, «اعتماد CBAHI» split
           // across three ragged lines (review, 4 Oct 2026).

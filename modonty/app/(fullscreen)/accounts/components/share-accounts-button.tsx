@@ -37,7 +37,7 @@ export function ShareAccountsButton({ url, title }: { url: string; title: string
       type="button"
       onClick={share}
       aria-label={copied ? "انتسخ الرابط" : "شارك الصفحة"}
-      className="inline-flex h-9 items-center gap-1.5 rounded-full border bg-card px-3.5 max-md:h-11 text-[clamp(0.75rem,0.65rem+0.5vw,0.8125rem)] font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground motion-safe:active:scale-95"
+      className="inline-flex h-9 items-center gap-1.5 rounded-full border bg-card px-3.5 max-lg:h-11 text-xs font-bold text-muted-foreground transition hover:bg-muted hover:text-foreground motion-safe:active:scale-95"
     >
       {copied ? <IconCheck className="size-4" aria-hidden /> : <IconShare className="size-4" aria-hidden />}
       {copied ? "انتسخ الرابط" : "شارك"}

@@ -74,7 +74,7 @@ export function ContactForm({ clientId, defaultName, defaultEmail }: ContactForm
             <Input
               id="name"
               type="text"
-              className="max-md:h-11"
+              className="max-lg:h-11"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
@@ -87,7 +87,7 @@ export function ContactForm({ clientId, defaultName, defaultEmail }: ContactForm
             <Input
               id="email"
               type="email"
-              className="max-md:h-11"
+              className="max-lg:h-11"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
@@ -100,7 +100,7 @@ export function ContactForm({ clientId, defaultName, defaultEmail }: ContactForm
             <Input
               id="subject"
               type="text"
-              className="max-md:h-11"
+              className="max-lg:h-11"
               value={formData.subject}
               onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
               required
@@ -132,7 +132,7 @@ export function ContactForm({ clientId, defaultName, defaultEmail }: ContactForm
             </div>
           )}
 
-          <Button type="submit" disabled={isSubmitting} className="w-full max-md:h-11">
+          <Button type="submit" disabled={isSubmitting} className="w-full max-lg:h-11">
             {isSubmitting ? (
               <>
                 <IconLoading className="mr-2 h-4 w-4 animate-spin" />

@@ -45,7 +45,7 @@ export function MobileMenu({ data, light = false, hideAt = "md:hidden" }: Mobile
         aria-expanded={open}
         aria-haspopup="dialog"
         className={cn(
-          "grid h-11 w-11 cursor-pointer place-items-center rounded-full",
+          "grid h-11 w-11 shrink-0 cursor-pointer place-items-center rounded-full",
           hideAt,
           "motion-safe:transition-transform motion-safe:active:scale-95",
           light ? "text-white" : "text-foreground",

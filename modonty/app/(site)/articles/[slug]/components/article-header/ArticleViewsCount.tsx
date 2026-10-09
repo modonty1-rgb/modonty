@@ -8,7 +8,7 @@ export function ViewsCount({ views }: { views: number }) {
   if (views <= 0) return null;
   return (
     <span className="flex items-center gap-1">
-      <IconViews className="h-3.5 w-3.5 shrink-0" />
+      <IconViews className="h-4 w-4 shrink-0" />
       <span className="tabular-nums">{views.toLocaleString(SITE_LOCALE)}</span>
     </span>
   );

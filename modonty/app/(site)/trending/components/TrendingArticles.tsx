@@ -54,14 +54,14 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {articles.map((article, index) => (
           <Link key={article.id} href={`/articles/${article.slug}`}>
             <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer h-full relative overflow-hidden group">
               {/* Trending Badge */}
               <div className="absolute top-2 right-2 z-10">
                 <Badge className="bg-accent text-accent-foreground flex items-center gap-1">
-                  <IconTrending className="h-3 w-3" />
+                  <IconTrending className="size-4" />
                   <span>#{index + 1}</span>
                 </Badge>
               </div>
@@ -102,7 +102,7 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
                   )}
                 </div>
 
-                <h3 className="font-semibold text-base line-clamp-2 group-hover:text-primary transition-colors">
+                <h3 className="font-bold text-base line-clamp-2 group-hover:text-primary transition-colors">
                   {article.title}
                 </h3>
 
@@ -119,14 +119,14 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
                   {SHOW_ARTICLE_ENGAGEMENT_STATS ? (
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1">
-                      <IconViews className="h-3.5 w-3.5" />
+                      <IconViews className="h-4 w-4" />
                       <span>{article.interactions.views}</span>
                     </div>
                     <div className="flex items-center gap-1 hidden" aria-hidden>
                       <span>{article.interactions.likes}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <IconComment className="h-3.5 w-3.5" />
+                      <IconComment className="h-4 w-4" />
                       <span>{article.interactions.comments}</span>
                     </div>
                   </div>

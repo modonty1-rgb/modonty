@@ -18,7 +18,7 @@ interface ArticlesHeaderProps {
 export function ArticlesHeader({ page }: ArticlesHeaderProps) {
   return (
     <header className="min-[1240px]:sr-only">
-      <h1 className="relative ps-3 text-[28px] font-black leading-[1.15] tracking-tight text-foreground before:absolute before:inset-y-1 before:start-0 before:w-[3px] before:rounded-full before:bg-accent">
+      <h1 className="text-h1 relative ps-3 text-foreground before:absolute before:inset-y-1 before:start-0 before:w-[3px] before:rounded-full before:bg-accent">
         {page > 1 ? `المقالات — صفحة ${page.toLocaleString(SITE_LOCALE)}` : "المقالات"}
       </h1>
       {/* Aimed at someone who came to read, not at someone deciding whether to buy — the

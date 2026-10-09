@@ -20,13 +20,13 @@ export function PillarsCard() {
         <CardDescription>{text.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-3">
           {PILLARS.map(({ Icon, title, desc }) => (
             <div key={title} className="rounded-lg border border-border p-5">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Icon className="h-5 w-5" />
               </div>
-              <h3 className="mb-1.5 text-base font-semibold">{title}</h3>
+              <h3 className="mb-1.5 text-base font-bold">{title}</h3>
               <p className="text-sm text-muted-foreground">{desc}</p>
             </div>
           ))}
