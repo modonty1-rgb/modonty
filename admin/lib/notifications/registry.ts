@@ -7,6 +7,7 @@ import {
   ClipboardCheck,
   CheckCircle2,
   Undo2,
+  CalendarDays,
   type LucideIcon,
 } from "lucide-react";
 
@@ -84,6 +85,17 @@ const REGISTRY: Record<string, NotificationMeta> = {
     toneClasses: "bg-amber-100 text-amber-700 ring-amber-200",
     label: "تعدّلت مهمّتك",
     href: () => "/tasks",
+  },
+  /**
+   * تقويم السوشيال — منشور تحرّك بين المراحل ويخصّك (جاهز لمراجعتك · جاهز للنشر · رُفض · نُشر).
+   * يفتح صفحة المنشور نفسها: `clientId` على الصفّ و`relatedId` هو المنشور.
+   */
+  social_post: {
+    icon: CalendarDays,
+    toneClasses: "bg-rose-100 text-rose-700 ring-rose-200",
+    label: "تقويم السوشيال",
+    href: (n) =>
+      n.clientId && n.relatedId ? `/social-calendar/${n.clientId}/posts/${n.relatedId}` : "/social-calendar",
   },
   faq_reply: {
     icon: HelpCircle,

@@ -109,6 +109,16 @@ export type AuditAction =
   | "industry.create"
   | "industry.update"
   | "industry.delete"
+  // 📅 Social Calendar (تقويم السوشيال) — مَن كتب البريف، ومَن نقل المنشور بين المراحل، ومَن نشر.
+  //   metadata: { from, to } على كل انتقال حالة (PRD §٥.٢).
+  | "socialPost.create"
+  | "socialPost.update"
+  | "socialPost.transition"
+  | "socialPost.reject"
+  | "socialPost.publish"
+  | "socialPost.archive"
+  | "socialPost.restore"
+  | "socialPost.assetDelete"
   // 🟡 Touches everything at once
   | "database.maintenance"
   | "seo.cascade"
@@ -133,7 +143,8 @@ export type AuditEntity =
   | "Industry"
   | "Settings"
   | "Database"
-  | "Seo";
+  | "Seo"
+  | "SocialPost";
 
 interface LogOptions {
   entity: AuditEntity;
