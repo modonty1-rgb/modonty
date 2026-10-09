@@ -1,35 +1,24 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty NOTIFICATIONS mark — الإشعارات / التنبيهات.
- *
- * Traced verbatim from the approved original in
- * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="notifications"`),
- * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
- * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
- * attributes became JSX.
- *
- * Approved concept: جرس تنبيه كلاسيكي واضح مع تطبيقين للماسة: ماسة مفرغة كعلامة وصول جديد، وماسة ممتلئة كلسان الرنين.
- *
- * Category: Brand / Utility · System alerts, new updates, unread messages
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
- * takes the size and colour of the text around it, two CSS hooks — `--modonty-notifications-body` · `--modonty-notifications-accent` (the diamond).
+ * The modonty NOTIFICATIONS mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-notifications-body` · `--modonty-notifications-accent` (the diamond).
  */
-export function ModontyNotificationsMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyNotificationsMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M6.5 14V8.5a5.5 5.5 0 0 1 11 0V14l1.75 2H4.75Z" stroke="var(--modonty-notifications-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 18.38A0.5 0.5 0 0 1 12.35 18.38L14.12 20.15A0.5 0.5 0 0 1 14.12 20.85L12.35 22.62A0.5 0.5 0 0 1 11.65 22.62L9.88 20.85A0.5 0.5 0 0 1 9.88 20.15Z" fill="var(--modonty-notifications-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <circle cx="60" cy="17" r="6" fill="var(--modonty-notifications-body, currentColor)"/>
-      <path d="M78 31C72 25 65 22 58 22C43 22 32 32 30 47L28 68C27 78 24 83 18 88C14 91 16 99 22 99H98C104 99 106 91 102 88C96 83 93 78 92 68L90 48" stroke="var(--modonty-notifications-body, currentColor)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="80" y="26" width="20" height="20" rx="4" transform="rotate(30 90 36)" fill="#FFFFFF" stroke="var(--modonty-notifications-accent, var(--modonty-accent, #00d8d8))" strokeWidth="5"/>
-      <rect x="50" y="98" width="20" height="20" rx="4" transform="rotate(30 60 108)" fill="var(--modonty-notifications-accent, var(--modonty-accent, #00d8d8))"/>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M4.25 8.75V5.5a3.75 3.75 0 0 1 7.5 0V8.75l1.25 1.5H3Z" stroke="var(--modonty-notifications-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 12.44A0.3 0.3 0 0 1 8.21 12.44L9.56 13.79A0.3 0.3 0 0 1 9.56 14.21L8.21 15.56A0.3 0.3 0 0 1 7.79 15.56L6.44 14.21A0.3 0.3 0 0 1 6.44 13.79Z" fill="var(--modonty-notifications-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

@@ -1,40 +1,26 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty PARTNER mark — the «M» with the diamond above it (supplied by Khalid,
- * 21 Aug 2026: «keep this as icon for partner»). Same icon contract as `ModontyMark`
- * and `ModontyIndustriesMark`: `currentColor` + `1em` box, with two CSS hooks so a
- * caller can split the M and the diamond into two colours:
- * `--modonty-partner-body` (the M) · `--modonty-partner-accent` (the diamond).
+ * The modonty PARTNER mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-partner-body` · `--modonty-partner-accent` (the diamond).
  */
-export function ModontyPartnerMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyPartnerMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <circle cx="8.5" cy="12" r="5.5" stroke="var(--modonty-partner-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="15.5" cy="12" r="5.5" stroke="var(--modonty-partner-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-partner-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      {/* Rotation origin at x=60 — the M's own centre line — so the diamond sits dead
-          centre above it (Khalid, 21 Aug: it rendered shifted to one side). */}
-      <rect
-        x="60"
-        y="10"
-        width="22"
-        height="22"
-        rx="4"
-        transform="rotate(45 60 10)"
-        fill="var(--modonty-partner-accent, var(--modonty-accent, #00d8d8))"
-      />
-      <path
-        d="M18 94 V57 C18 49 26 45 32 51 L52 71 C57 76 63 76 68 71 L88 51 C94 45 102 49 102 57 V94"
-        stroke="var(--modonty-partner-body, currentColor)"
-        strokeWidth="13"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <circle cx="5.25" cy="8" r="3.6" stroke="var(--modonty-partner-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="10.75" cy="8" r="3.6" stroke="var(--modonty-partner-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-partner-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

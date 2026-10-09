@@ -1,63 +1,30 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty CALENDAR mark — a publish date, «نُشر في…», any plain point in time.
- *
- * NOT the approved `booking` mark, and the difference is the whole reason this exists:
- * `booking` is "Calendar + Confirm" — a calendar with a check inside, which says «موعد
- * محجوز». Putting that on an article's publish date would promise the reader a booking.
- * Same silhouette, different statement.
- *
- * Drawn to the file's Geometry Standard rather than traced (the approved 38 have no plain
- * calendar): 120 canvas · 8px main stroke · 6px for the hangers, which the standard allows
- * for secondary detail · round caps and joins · inside the 16px safe margin.
- *
- * The diamond IS the marked day, not an ornament — the reference's own note on the
- * calendar family: "نقاط الأيام يمكن أن تتحول إلى Diamond geometry", and its Diamond Role
- * rule: "a functional node, status marker, central trigger". It is the one day this
- * calendar is about.
- *
- * Contract: `currentColor` + a `1em` box, two CSS hooks — `--modonty-calendar-body` ·
- * `--modonty-calendar-accent` (the day).
+ * The modonty CALENDAR mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-calendar-body` · `--modonty-calendar-accent` (the diamond).
  */
-export function ModontyCalendarMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyCalendarMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <rect x="5" y="5.5" width="14" height="13" rx="2" stroke="var(--modonty-calendar-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5 9.5H19" stroke="var(--modonty-calendar-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9 3.5V6.5" stroke="var(--modonty-calendar-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M15 3.5V6.5" stroke="var(--modonty-calendar-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14.15 11.88A0.5 0.5 0 0 1 14.85 11.88L16.62 13.65A0.5 0.5 0 0 1 16.62 14.35L14.85 16.12A0.5 0.5 0 0 1 14.15 16.12L12.38 14.35A0.5 0.5 0 0 1 12.38 13.65Z" fill="var(--modonty-calendar-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path
-        d="M30 30H90C94.4 30 98 33.6 98 38V90C98 94.4 94.4 98 90 98H30C25.6 98 22 94.4 22 90V38C22 33.6 25.6 30 30 30Z"
-        stroke="var(--modonty-calendar-body, currentColor)"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M22 52H98"
-        stroke="var(--modonty-calendar-body, currentColor)"
-        strokeWidth="8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M42 20V38M78 20V38"
-        stroke="var(--modonty-calendar-body, currentColor)"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
-      <rect
-        x="50"
-        y="65"
-        width="20"
-        height="20"
-        rx="4"
-        transform="rotate(30 60 75)"
-        fill="var(--modonty-calendar-accent, var(--modonty-accent, #00d8d8))"
-      />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <rect x="3" y="4" width="10" height="9" rx="1.5" stroke="var(--modonty-calendar-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 6.5H11" stroke="var(--modonty-calendar-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.75 2.5V4" stroke="var(--modonty-calendar-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10.25 2.5V4" stroke="var(--modonty-calendar-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.29 8.19A0.3 0.3 0 0 1 9.71 8.19L11.06 9.54A0.3 0.3 0 0 1 11.06 9.96L9.71 11.31A0.3 0.3 0 0 1 9.29 11.31L7.94 9.96A0.3 0.3 0 0 1 7.94 9.54Z" fill="var(--modonty-calendar-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

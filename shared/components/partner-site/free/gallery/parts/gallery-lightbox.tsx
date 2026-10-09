@@ -97,8 +97,7 @@ export function GalleryLightbox({ images, index, onIndexChange, onClose }: Props
 
       {count > 1 && (
         <>
-          {/* RTL: previous sits on the start (right) side. Both chevrons are the one arrow mark,
-              drawn pointing left — so this one is turned to point right. */}
+          {/* RTL: previous sits on the start (right) side, pointing right ▷ */}
           <button
             type="button"
             onClick={(e) => {
@@ -108,7 +107,7 @@ export function GalleryLightbox({ images, index, onIndexChange, onClose }: Props
             aria-label="الصورة السابقة"
             className="absolute start-3 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20 sm:grid lg:start-6"
           >
-            <IconChevronRight className="h-6 w-6 rotate-180" />
+            <IconChevronRight className="h-6 w-6" />
           </button>
           {/* RTL: next sits on the end (left) side, pointing left ◁ */}
           <button

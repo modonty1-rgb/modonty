@@ -1,34 +1,24 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty VIEWS / EYE mark — المشاهدات / عدد الزوار.
- *
- * Traced verbatim from the approved original in
- * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="views"`),
- * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
- * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
- * attributes became JSX.
- *
- * Approved concept: محيط عين متناظر مع حلقة الحدقة، وبؤرة الإبصار المركزية هي ماسة مدونتي الفاقعة.
- *
- * Category: Analytics / Metrics · Post views count, impression metrics, eye visibility
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
- * takes the size and colour of the text around it, two CSS hooks — `--modonty-views-body` · `--modonty-views-accent` (the diamond).
+ * The modonty VIEWS mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-views-body` · `--modonty-views-accent` (the diamond).
  */
-export function ModontyViewsMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyViewsMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M3 12C5.2 8 8.3 6 12 6s6.8 2 9 6c-2.2 4-5.3 6-9 6s-6.8-2-9-6Z" stroke="var(--modonty-views-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-views-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M16 60C30 36 90 36 104 60C90 84 30 84 16 60Z" stroke="var(--modonty-views-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="60" cy="60" r="16" stroke="var(--modonty-views-body, currentColor)" strokeWidth="6"/>
-      <rect x="50" y="50" width="20" height="20" rx="4" transform="rotate(30 60 60)" fill="var(--modonty-views-accent, var(--modonty-accent, #00d8d8))"/>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M2 8C3.6 5.4 5.6 4 8 4s4.4 1.4 6 4c-1.6 2.6-3.6 4-6 4s-4.4-1.4-6-4Z" stroke="var(--modonty-views-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-views-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

@@ -1,33 +1,32 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty KEY POINTS / LIGHTNING mark — النقاط الجوهرية / الخلاصة.
- *
- * Traced verbatim from the approved original in
- * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="keypoints"`),
- * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
- * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
- * attributes became JSX.
- *
- * Approved concept: وميض كهربائي خاطف بخطوط 45° حادة متناسقة، تتوسطه شارة التركيز الماسية.
- *
- * Category: Content / Highlights · Summary takeaways, lightning highlights, quick tips
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
- * takes the size and colour of the text around it, two CSS hooks — `--modonty-keypoints-body` · `--modonty-keypoints-accent` (the diamond).
+ * The modonty KEYPOINTS mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-keypoints-body` · `--modonty-keypoints-accent` (the diamond).
  */
-export function ModontyKeypointsMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyKeypointsMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M14.75 6.5H3.25" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14.75 12H3.25" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14.75 17.5H4.5" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M19.25 12h.01" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M19.25 17.5h.01" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M18.9 4.38A0.5 0.5 0 0 1 19.6 4.38L21.37 6.15A0.5 0.5 0 0 1 21.37 6.85L19.6 8.62A0.5 0.5 0 0 1 18.9 8.62L17.13 6.85A0.5 0.5 0 0 1 17.13 6.15Z" fill="var(--modonty-keypoints-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M66 18L34 62H62L54 102L86 54H58L66 18Z" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="50" y="50" width="20" height="20" rx="4" transform="rotate(30 60 60)" fill="var(--modonty-keypoints-accent, var(--modonty-accent, #00d8d8))"/>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M9.25 4.25H3" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.25 8H4.75" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.25 11.75H6.5" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.75 8h.01" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.75 11.75h.01" stroke="var(--modonty-keypoints-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.54 2.69A0.3 0.3 0 0 1 12.96 2.69L14.31 4.04A0.3 0.3 0 0 1 14.31 4.46L12.96 5.81A0.3 0.3 0 0 1 12.54 5.81L11.19 4.46A0.3 0.3 0 0 1 11.19 4.04Z" fill="var(--modonty-keypoints-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

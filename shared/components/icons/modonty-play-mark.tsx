@@ -1,36 +1,24 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The approved Modonty play mark.
- *
- * Geometry is preserved from the approved 120 x 120 SVG supplied for
- * IconPlay. Optimization compacts equivalent path commands, adopts the shared
- * 1em sizing contract, and exposes body/accent CSS hooks while retaining the
- * approved cyan accent fallback.
+ * The modonty PLAY mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-play-body` · `--modonty-play-accent` (the diamond).
  */
-export function ModontyPlayMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyPlayMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M7 4L20 12L7 20Z" stroke="var(--modonty-play-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.15 9.88A0.5 0.5 0 0 1 11.85 9.88L13.62 11.65A0.5 0.5 0 0 1 13.62 12.35L11.85 14.12A0.5 0.5 0 0 1 11.15 14.12L9.38 12.35A0.5 0.5 0 0 1 9.38 11.65Z" fill="var(--modonty-play-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path
-        d="M38.5 22C35.2 22 32.8 24.8 32.8 28.1v20.7c1.6 0 2.7.7 3.9 1.9l5.6 5.6c1.1 1.1 1.5 2.4 1.5 3.8 0 1.3-.5 2.3-1.5 3.3l-6.2 6.1C35.2 70.3 34.1 70.4 32.8 70.2v22.7c0 3.5 2.6 5.9 5.9 5.9 1.8 0 3.5-.5 5.2-1.6L94 64.9c1.8-1.2 2.7-3.1 2.7-5.6 0-2.2-1.1-4.1-3.2-5.5L43.2 23.1c-1.5-.7-3.1-1.1-4.7-1.1Z"
-        fill="var(--modonty-play-body, currentColor)"
-      />
-      <rect
-        x="27.3"
-        y="53.7"
-        width="11.6"
-        height="11.6"
-        rx="1.8"
-        transform="rotate(45 33.1 59.5)"
-        fill="var(--modonty-play-accent, #00D8D8)"
-      />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M4 2L13 8L4 14Z" stroke="var(--modonty-play-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6.99 6.44A0.3 0.3 0 0 1 7.41 6.44L8.76 7.79A0.3 0.3 0 0 1 8.76 8.21L7.41 9.56A0.3 0.3 0 0 1 6.99 9.56L5.64 8.21A0.3 0.3 0 0 1 5.64 7.79Z" fill="var(--modonty-play-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

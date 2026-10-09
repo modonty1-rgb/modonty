@@ -1,31 +1,24 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The approved Modonty check mark.
- *
- * Geometry is preserved from the approved 120 x 120 SVG supplied for
- * IconCheck. Optimization compacts equivalent path commands, adopts the shared
- * 1em sizing contract, and exposes body/accent CSS hooks while retaining the
- * approved cyan accent fallback.
+ * The modonty CHECK mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-check-body` · `--modonty-check-accent` (the diamond).
  */
-export function ModontyCheckMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyCheckMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M4 12L10 18L20 8" stroke="var(--modonty-check-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9.65 9.63A0.5 0.5 0 0 1 10.35 9.63L12.12 11.4A0.5 0.5 0 0 1 12.12 12.1L10.35 13.87A0.5 0.5 0 0 1 9.65 13.87L7.88 12.1A0.5 0.5 0 0 1 7.88 11.4Z" fill="var(--modonty-check-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <g fill="var(--modonty-check-body, currentColor)">
-        <path d="M14.34 55.86 13.08 56.94 12.18 58.56v.54l-.18.18v1.8l.18.18v.54l.9 1.62.36.36h.18l.36.36v.18l.54.54h.18l.36.36v.18l2.52 2.52h.18l.18.37 19.1 18.91 7.02-7.03v-.18L20.11 56.04l-1.09-.54-1.08-.18-.18-.18h-1.44l-.18.18h-.54l-.18.18h-.36Z" />
-        <path d="M106.2 26.5h-.18l-.72-.54-1.08-.18-.18-.18h-1.62l-.18.18-1.08.18-.72.54h-.18L47.12 79.81v.18l6.85 6.85h.18L80.08 60.9v-.18l.36-.36h.18l2.16-2.16v-.18l1.27-1.26.36-.18.18-.36.36-.18v-.18l19.63-19.63v-.18l2.7-2.71.54-1.08v-.36l.18-.18.18-1.62-.18-.18v-.72l-.18-.18v-.36l-.54-1.08Z" />
-      </g>
-      <path
-        fill="var(--modonty-check-accent, #00D8D8)"
-        d="m45.32 81.61-.18.18h-.36l-2.88 2.89v.18l-.54.54h-.18v.18l-1.08 1.08-.36.18-.36.72v1.08l.18.36 4.32 4.32v.18l.36.36h.18l.72.54h1.08l.36-.18L51.8 89v-.36l.18-.18v-.9l-.18-.36-5.4-5.41Z"
-      />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M3 8.5L6 11.5L12.5 5" stroke="var(--modonty-check-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.79 5.19A0.3 0.3 0 0 1 6.21 5.19L7.56 6.54A0.3 0.3 0 0 1 7.56 6.96L6.21 8.31A0.3 0.3 0 0 1 5.79 8.31L4.44 6.96A0.3 0.3 0 0 1 4.44 6.54Z" fill="var(--modonty-check-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

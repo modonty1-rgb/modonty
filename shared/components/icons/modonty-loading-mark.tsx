@@ -1,41 +1,24 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The approved Modonty loading mark.
- *
- * Geometry is preserved from the approved 120 x 120 SVG supplied for
- * IconLoading. Optimization removes authoring metadata, adopts the shared 1em
- * sizing contract, converts SVG attributes to JSX, and exposes body/accent CSS
- * hooks while retaining the approved cyan accent fallback.
+ * The modonty LOADING mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-loading-body` · `--modonty-loading-accent` (the diamond).
  */
-export function ModontyLoadingMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyLoadingMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M12 4A8 8 0 1 1 4 12" stroke="var(--modonty-loading-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5.99 4.22A0.5 0.5 0 0 1 6.69 4.22L8.46 5.99A0.5 0.5 0 0 1 8.46 6.69L6.69 8.46A0.5 0.5 0 0 1 5.99 8.46L4.22 6.69A0.5 0.5 0 0 1 4.22 5.99Z" fill="var(--modonty-loading-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <g
-        stroke="var(--modonty-loading-body, currentColor)"
-        strokeWidth="8"
-        strokeLinecap="round"
-      >
-        <path d="M30 32 A38 38 0 0 1 56 23" />
-        <path d="M27 42 A38 38 0 0 0 43 94" />
-        <path d="M50 96 A38 38 0 0 0 94 43" />
-      </g>
-      <rect
-        x="69"
-        y="25"
-        width="14"
-        height="14"
-        rx="2.5"
-        transform="rotate(45 76 32)"
-        fill="var(--modonty-loading-accent, #00D8D8)"
-      />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M8 2.5A5.5 5.5 0 1 1 2.5 8" stroke="var(--modonty-loading-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.9 2.55A0.3 0.3 0 0 1 4.32 2.55L5.67 3.9A0.3 0.3 0 0 1 5.67 4.32L4.32 5.67A0.3 0.3 0 0 1 3.9 5.67L2.55 4.32A0.3 0.3 0 0 1 2.55 3.9Z" fill="var(--modonty-loading-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

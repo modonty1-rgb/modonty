@@ -1,59 +1,27 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty AUDIO mark — «اسمع», the audio-version badge on an article card.
- *
- * NOT in the approved 38, so it follows the file's Geometry Standard: 120 canvas · 8px
- * main stroke · 7px for the wave, which the standard allows for secondary detail · round
- * caps and joins · inside the 16px safe margin.
- *
- * Speaker, one wave, and the diamond where a second wave would be — the diamond IS the
- * sound leaving the speaker, which is the Diamond Role the reference asks for ("a
- * functional node, status marker, central trigger"). Two arcs plus a diamond would be the
- * micro-detail the standard forbids below 18px, so the outer arc became the signature
- * instead of sitting beside it.
- *
- * The two parts are meant to be coloured SEPARATELY (Khalid, 22 Aug: «the speaker itself
- * with the muted colour and the dot with our branding colour»): the body inherits
- * `currentColor` so a caller can keep it quiet, and the diamond ignores it and takes the
- * brand accent. On the feed card that reads as a quiet grey speaker with one teal spark —
- * the badge stays a footnote, and the brand is what your eye catches.
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box, two CSS hooks
- * — `--modonty-audio-body` · `--modonty-audio-accent` (the diamond).
+ * The modonty AUDIO mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-audio-body` · `--modonty-audio-accent` (the diamond).
  */
-export function ModontyAudioMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyAudioMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M13 4.5L17 9H20a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H17L13 19.5Z" stroke="var(--modonty-audio-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M17 9V15" stroke="var(--modonty-audio-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9.25 8.5A8.54 8.54 0 0 0 9.25 15.5" stroke="var(--modonty-audio-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M3.3 9.88A0.5 0.5 0 0 1 4 9.88L5.77 11.65A0.5 0.5 0 0 1 5.77 12.35L4 14.12A0.5 0.5 0 0 1 3.3 14.12L1.53 12.35A0.5 0.5 0 0 1 1.53 11.65Z" fill="var(--modonty-audio-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path
-        d="M30 48H46L66 28V92L46 72H30C25.6 72 22 68.4 22 64V56C22 51.6 25.6 48 30 48Z"
-        stroke="var(--modonty-audio-body, currentColor)"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M80 46C88 54 88 66 80 74"
-        stroke="var(--modonty-audio-body, currentColor)"
-        strokeWidth="7"
-        strokeLinecap="round"
-      />
-      <rect
-        x="90"
-        y="50"
-        width="20"
-        height="20"
-        rx="4"
-        transform="rotate(30 100 60)"
-        fill="var(--modonty-audio-accent, var(--modonty-accent, #00d8d8))"
-      />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M10 2.5L12.5 5.25H13.75a.5.5 0 0 1 .5.5V10.25a.5.5 0 0 1-.5.5H12.5L10 13.5Z" stroke="var(--modonty-audio-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.25 5.5A4.54 4.54 0 0 0 7.25 10.5" stroke="var(--modonty-audio-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2.79 6.44A0.3 0.3 0 0 1 3.21 6.44L4.56 7.79A0.3 0.3 0 0 1 4.56 8.21L3.21 9.56A0.3 0.3 0 0 1 2.79 9.56L1.44 8.21A0.3 0.3 0 0 1 1.44 7.79Z" fill="var(--modonty-audio-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

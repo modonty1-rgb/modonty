@@ -81,7 +81,7 @@ export default async function FAQPage() {
         <div className="flex flex-wrap gap-3 mb-6">
           <Button asChild variant="outline" size="sm" className="max-md:h-11">
             <Link href="/help">
-              <IconArrowRight className="h-4 w-4 ml-2" />
+              <IconArrowRight className="h-4 w-4 ml-2 rtl:rotate-180" />
               {text.backToHelp}
             </Link>
           </Button>

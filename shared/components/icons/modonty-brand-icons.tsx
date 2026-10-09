@@ -1,442 +1,723 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
-/** Approved Modonty brand icons extracted verbatim from documents/design/icon_branding.html. */
-export function ModontyActivityMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty ACTIVITY mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-activity-body` · `--modonty-activity-accent` (the diamond).
+ */
+export function ModontyActivityMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M3 13H6.5L9.5 7L14.5 19.5L17 13H21" stroke="var(--modonty-activity-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9.15 4.88A0.5 0.5 0 0 1 9.85 4.88L11.62 6.65A0.5 0.5 0 0 1 11.62 7.35L9.85 9.12A0.5 0.5 0 0 1 9.15 9.12L7.38 7.35A0.5 0.5 0 0 1 7.38 6.65Z" fill="var(--modonty-activity-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M14 64.6 H30.5 L37.4 52.5 L49.3 84.1 L60.4 41.4" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4.7"></path>
-    <path d="M65.7 41.4 L76.9 79.3 L85.3 64.6 H106" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4.7"></path>
-    <rect fill="#00D8D8" height="8.7" rx="53.05" transform="rotate(30 63.05 33.95)" width="8.7" x="58.7" y="23.95"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M2 8.5H4.5L6.5 4.5L9.5 12.5L11 8.5H14" stroke="var(--modonty-activity-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6.29 2.94A0.3 0.3 0 0 1 6.71 2.94L8.06 4.29A0.3 0.3 0 0 1 8.06 4.71L6.71 6.06A0.3 0.3 0 0 1 6.29 6.06L4.94 4.71A0.3 0.3 0 0 1 4.94 4.29Z" fill="var(--modonty-activity-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyAiMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty AI mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-ai-body` · `--modonty-ai-accent` (the diamond).
+ */
+export function ModontyAiMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M10.5 6Q11.5 12.5 18 13.5Q11.5 14.5 10.5 21Q9.5 14.5 3 13.5Q9.5 12.5 10.5 6Z" stroke="var(--modonty-ai-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M18.4 3.63A0.5 0.5 0 0 1 19.1 3.63L20.87 5.4A0.5 0.5 0 0 1 20.87 6.1L19.1 7.87A0.5 0.5 0 0 1 18.4 7.87L16.63 6.1A0.5 0.5 0 0 1 16.63 5.4Z" fill="var(--modonty-ai-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path clipRule="evenodd" d="M17.71 25.42L13.97 29.63L12.10 33.36L11.17 36.17L11.17 38.50L10.70 38.97L10.70 91.31L11.17 91.78L11.64 96.45L14.91 102.52L20.05 107.20L24.25 109.07L28.46 109.53L28.93 110.00L77.52 110.00L77.99 109.53L80.33 109.53L83.13 108.60L89.21 104.86L92.01 101.59L94.35 97.38L95.28 94.58L95.28 91.78L95.75 91.31L95.75 45.98L93.88 46.92L92.01 46.92L91.54 48.32L91.54 93.18L89.67 97.85L85.00 102.99L81.73 104.86L78.46 105.79L27.52 105.79L23.32 104.39L18.18 100.19L15.37 95.05L15.37 93.64L14.91 93.18L14.91 38.04L15.84 34.77L17.71 31.50L22.85 26.82L27.99 24.95L73.32 24.95L73.79 24.02L77.52 21.21L77.52 20.75L77.06 21.21L76.59 20.75L29.39 20.75L28.93 21.21L26.12 21.21L23.32 22.15ZM45.28 48.32L43.41 49.25L42.01 51.59L42.01 52.52L40.14 55.79L38.27 60.93L29.86 78.69L29.39 81.96L31.26 83.36L33.60 82.90L35.93 78.69L36.87 75.89L37.80 74.95L54.16 74.95L57.90 82.90L60.70 83.36L61.64 82.90L62.57 81.50L60.70 75.89L56.50 67.48L56.50 66.54L55.09 64.21L55.09 63.27L51.36 55.79L51.36 54.86L49.02 49.72L46.68 48.32ZM72.38 48.32L70.05 50.19L70.05 81.50L70.98 82.90L73.79 83.36L75.19 81.96L75.19 49.72L74.25 48.79ZM45.75 55.79L47.62 58.60L49.02 62.80L52.29 69.35L51.82 70.28L40.14 70.28L39.67 69.81Z" fill="var(--modonty-ai-body, #0E065A)" fillRule="evenodd"></path>
-    <path clipRule="evenodd" d="M92.01 10.00L77.99 23.55L76.12 25.89L76.12 28.22L78.93 30.56L89.21 41.31L92.01 43.64L93.41 43.64L108.36 29.16L109.30 27.76L109.30 25.89L94.35 10.47ZM92.01 17.48L93.41 17.48L101.82 25.89L101.82 27.76L93.41 36.17L92.01 36.17L83.60 27.76L83.60 25.89Z" fill="#00D8D8" fillRule="evenodd"></path>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M7 4Q8.2 8 12 9Q8.2 10 7 14Q5.8 10 2 9Q5.8 8 7 4Z" stroke="var(--modonty-ai-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.04 2.19A0.3 0.3 0 0 1 12.46 2.19L13.81 3.54A0.3 0.3 0 0 1 13.81 3.96L12.46 5.31A0.3 0.3 0 0 1 12.04 5.31L10.69 3.96A0.3 0.3 0 0 1 10.69 3.54Z" fill="var(--modonty-ai-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyFolderMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty FOLDER mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-folder-body` · `--modonty-folder-accent` (the diamond).
+ */
+export function ModontyFolderMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M3.5 6.5A2 2 0 0 1 5.5 4.5H9.25L11.5 7H18.5A2 2 0 0 1 20.5 9V17.5A2 2 0 0 1 18.5 19.5H5.5A2 2 0 0 1 3.5 17.5Z" stroke="var(--modonty-folder-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 11.08A0.5 0.5 0 0 1 12.35 11.08L14.12 12.85A0.5 0.5 0 0 1 14.12 13.55L12.35 15.32A0.5 0.5 0 0 1 11.65 15.32L9.88 13.55A0.5 0.5 0 0 1 9.88 12.85Z" fill="var(--modonty-folder-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M18 38
-           C18 32.5 22.5 28 28 28
-           H47
-           L57 38
-           H92
-           C97.5 38 102 42.5 102 48
-           V88
-           C102 93.5 97.5 98 92 98
-           H28
-           C22.5 98 18 93.5 18 88
-           Z" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 53 34)" width="12" x="47" y="28"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M2.5 4A1.5 1.5 0 0 1 4 2.5H6.2L7.5 4.25H12A1.5 1.5 0 0 1 13.5 5.75V11.5A1.5 1.5 0 0 1 12 13H4A1.5 1.5 0 0 1 2.5 11.5Z" stroke="var(--modonty-folder-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 7.04A0.3 0.3 0 0 1 8.21 7.04L9.56 8.39A0.3 0.3 0 0 1 9.56 8.81L8.21 10.16A0.3 0.3 0 0 1 7.79 10.16L6.44 8.81A0.3 0.3 0 0 1 6.44 8.39Z" fill="var(--modonty-folder-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyDownloadMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty DOWNLOAD mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-download-body` · `--modonty-download-accent` (the diamond).
+ */
+export function ModontyDownloadMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M12 9.5V16" stroke="var(--modonty-download-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8.25 12.25L12 16L15.75 12.25" stroke="var(--modonty-download-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M3.5 13.5V18.5A2 2 0 0 0 5.5 20.5H18.5A2 2 0 0 0 20.5 18.5V13.5" stroke="var(--modonty-download-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 3.08A0.5 0.5 0 0 1 12.35 3.08L14.12 4.85A0.5 0.5 0 0 1 14.12 5.55L12.35 7.32A0.5 0.5 0 0 1 11.65 7.32L9.88 5.55A0.5 0.5 0 0 1 9.88 4.85Z" fill="var(--modonty-download-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M60 28V72" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M43 57L60 74L77 57" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <path d="M28 82V88C28 94.627 33.373 100 40 100H80C86.627 100 92 94.627 92 88V82" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 60 22)" width="12" x="54" y="16"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M8 6.6V10.2" stroke="var(--modonty-download-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.8 8L8 10.2L10.2 8" stroke="var(--modonty-download-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2.5 9V12A1.5 1.5 0 0 0 4 13.5H12A1.5 1.5 0 0 0 13.5 12V9" stroke="var(--modonty-download-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 1.64A0.3 0.3 0 0 1 8.21 1.64L9.56 2.99A0.3 0.3 0 0 1 9.56 3.41L8.21 4.76A0.3 0.3 0 0 1 7.79 4.76L6.44 3.41A0.3 0.3 0 0 1 6.44 2.99Z" fill="var(--modonty-download-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyAnalyticsMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty ANALYTICS mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-analytics-body` · `--modonty-analytics-accent` (the diamond).
+ */
+export function ModontyAnalyticsMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M3.5 3.5V19A1.5 1.5 0 0 0 5 20.5H20.5" stroke="var(--modonty-analytics-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M7.5 16L11 12L14 14.5L18.5 7.5" stroke="var(--modonty-analytics-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M18.15 5.38A0.5 0.5 0 0 1 18.85 5.38L20.62 7.15A0.5 0.5 0 0 1 20.62 7.85L18.85 9.62A0.5 0.5 0 0 1 18.15 9.62L16.38 7.85A0.5 0.5 0 0 1 16.38 7.15Z" fill="var(--modonty-analytics-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M77 16H31
-           C20 16 13 23 13 34
-           V89
-           C13 100 21 108 32 108
-           H89
-           C99 108 104 101 104 91
-           V39" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5"></path>
-
-    <rect fill="#0E065A" height="19" rx="5" width="10" x="29" y="79"></rect>
-    <rect fill="#0E065A" height="34" rx="5" width="10" x="54" y="64"></rect>
-    <rect fill="#0E065A" height="48" rx="5" width="10" x="79" y="50"></rect>
-
-    <path d="M32 68L57 51L84 37" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5"></path>
-
-    <circle cx="32" cy="68" fill="white" r="5" stroke="#0E065A" strokeWidth="4"></circle>
-    <circle cx="57" cy="51" fill="white" r="5" stroke="#0E065A" strokeWidth="4"></circle>
-    <circle cx="84" cy="37" fill="white" r="5" stroke="#0E065A" strokeWidth="4"></circle>
-
-    <path d="M97 12L107 22L97 32L87 22Z" stroke="#00D8D8" strokeLinejoin="round" strokeWidth="5.5"></path>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M2.5 2.5V12A1.5 1.5 0 0 0 4 13.5H13.5" stroke="var(--modonty-analytics-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.5 10L7.5 7.5L9.5 9L12 4.8" stroke="var(--modonty-analytics-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M11.79 3.24A0.3 0.3 0 0 1 12.21 3.24L13.56 4.59A0.3 0.3 0 0 1 13.56 5.01L12.21 6.36A0.3 0.3 0 0 1 11.79 6.36L10.44 5.01A0.3 0.3 0 0 1 10.44 4.59Z" fill="var(--modonty-analytics-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyUploadMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty UPLOAD mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-upload-body` · `--modonty-upload-accent` (the diamond).
+ */
+export function ModontyUploadMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M3.5 15V18.5a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V15" stroke="var(--modonty-upload-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M7.5 7.5L12 3L16.5 7.5" stroke="var(--modonty-upload-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 3V12" stroke="var(--modonty-upload-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 12.38A0.5 0.5 0 0 1 12.35 12.38L14.12 14.15A0.5 0.5 0 0 1 14.12 14.85L12.35 16.62A0.5 0.5 0 0 1 11.65 16.62L9.88 14.85A0.5 0.5 0 0 1 9.88 14.15Z" fill="var(--modonty-upload-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M60 72V32" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M43 47L60 30L77 47" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <path d="M28 82V88C28 94.627 33.373 100 40 100H80C86.627 100 92 94.627 92 88V82" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 60 18)" width="12" x="54" y="12"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M2.5 10V12a1.5 1.5 0 0 0 1.5 1.5h8a1.5 1.5 0 0 0 1.5-1.5V10" stroke="var(--modonty-upload-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.25 4.75L8 2L10.75 4.75" stroke="var(--modonty-upload-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 2V7" stroke="var(--modonty-upload-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 7.69A0.3 0.3 0 0 1 8.21 7.69L9.56 9.04A0.3 0.3 0 0 1 9.56 9.46L8.21 10.81A0.3 0.3 0 0 1 7.79 10.81L6.44 9.46A0.3 0.3 0 0 1 6.44 9.04Z" fill="var(--modonty-upload-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyWebsiteMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty WEBSITE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-website-body` · `--modonty-website-accent` (the diamond).
+ */
+export function ModontyWebsiteMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <circle cx="12" cy="12" r="6.5" stroke="var(--modonty-website-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <ellipse cx="12" cy="12" rx="3.2" ry="6.5" stroke="var(--modonty-website-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5.5 12H18.5" stroke="var(--modonty-website-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-website-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <rect height="76" rx="14" stroke="#0E065A" strokeWidth="7" width="88" x="16" y="22"></rect>
-
-    <path d="M16 44H104" stroke="#0E065A" strokeLinecap="round" strokeWidth="7"></path>
-
-    <rect fill="#00D8D8" height="10" rx="1.6" transform="rotate(45 32 33)" width="10" x="27" y="28"></rect>
-
-    <path d="M47 33H84" stroke="#0E065A" strokeLinecap="round" strokeWidth="7"></path>
-
-    <circle cx="60" cy="70" r="20" stroke="#0E065A" strokeWidth="6"></circle>
-    <path d="M40 70H80" stroke="#0E065A" strokeLinecap="round" strokeWidth="5"></path>
-    <path d="M60 50C53 57 51 63 51 70C51 77 53 83 60 90" stroke="#0E065A" strokeLinecap="round" strokeWidth="5"></path>
-    <path d="M60 50C67 57 69 63 69 70C69 77 67 83 60 90" stroke="#0E065A" strokeLinecap="round" strokeWidth="5"></path>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <circle cx="8" cy="8" r="4.5" stroke="var(--modonty-website-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <ellipse cx="8" cy="8" rx="1.9" ry="4.5" stroke="var(--modonty-website-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-website-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontySuccessMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty SUCCESS mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-success-body` · `--modonty-success-accent` (the diamond).
+ */
+export function ModontySuccessMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <circle cx="12" cy="12" r="9" stroke="var(--modonty-success-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8 9.25L10.5 11.75L15.5 6.75" stroke="var(--modonty-success-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10.15 14.13A0.5 0.5 0 0 1 10.85 14.13L12.62 15.9A0.5 0.5 0 0 1 12.62 16.6L10.85 18.37A0.5 0.5 0 0 1 10.15 18.37L8.38 16.6A0.5 0.5 0 0 1 8.38 15.9Z" fill="var(--modonty-success-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <circle cx="60" cy="60" r="42" stroke="#0E065A" strokeWidth="7"></circle>
-
-    <path d="M38 61L53 76L82 47" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <rect fill="#00D8D8" height="10" rx="4" transform="rotate(45 53 76)" width="10" x="48" y="71"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <circle cx="8" cy="8" r="6.25" stroke="var(--modonty-success-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.75 5.75L7.25 7.25L10 4.5" stroke="var(--modonty-success-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.04 9.19A0.3 0.3 0 0 1 7.46 9.19L8.81 10.54A0.3 0.3 0 0 1 8.81 10.96L7.46 12.31A0.3 0.3 0 0 1 7.04 12.31L5.69 10.96A0.3 0.3 0 0 1 5.69 10.54Z" fill="var(--modonty-success-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyAlertTriangleMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty ALERT TRIANGLE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-alert-triangle-body` · `--modonty-alert-triangle-accent` (the diamond).
+ */
+export function ModontyAlertTriangleMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M12 3L21 21H3Z" stroke="var(--modonty-alert-triangle-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 9.25V12.25" stroke="var(--modonty-alert-triangle-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 14.48A0.5 0.5 0 0 1 12.35 14.48L14.12 16.25A0.5 0.5 0 0 1 14.12 16.95L12.35 18.72A0.5 0.5 0 0 1 11.65 18.72L9.88 16.95A0.5 0.5 0 0 1 9.88 16.25Z" fill="var(--modonty-alert-triangle-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M55.2 18.5
-           C57.3 14.9 62.7 14.9 64.8 18.5
-           L104.2 86.5
-           C106.3 90.1 103.7 94.6 99.5 94.6
-           H20.5
-           C16.3 94.6 13.7 90.1 15.8 86.5
-           Z" stroke="#0E065A" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <path d="M60 42V66" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-
-    <rect fill="#00D8D8" height="10" rx="4" transform="rotate(45 60 79)" width="10" x="55" y="74"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M8 2.25L14.25 14.25H1.75Z" stroke="var(--modonty-alert-triangle-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 6.25V7.5" stroke="var(--modonty-alert-triangle-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 9.34A0.3 0.3 0 0 1 8.21 9.34L9.56 10.69A0.3 0.3 0 0 1 9.56 11.11L8.21 12.46A0.3 0.3 0 0 1 7.79 12.46L6.44 11.11A0.3 0.3 0 0 1 6.44 10.69Z" fill="var(--modonty-alert-triangle-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontySettingsMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty SETTINGS mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-settings-body` · `--modonty-settings-accent` (the diamond).
+ */
+export function ModontySettingsMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M10.54 5.67L10.92 3.82L13.08 3.82L13.46 5.67A6.5 6.5 0 0 1 16.75 7.57L18.55 6.98L19.62 8.84L18.22 10.1A6.5 6.5 0 0 1 18.22 13.9L19.62 15.16L18.55 17.02L16.75 16.43A6.5 6.5 0 0 1 13.46 18.33L13.08 20.18L10.92 20.18L10.54 18.33A6.5 6.5 0 0 1 7.25 16.43L5.45 17.02L4.38 15.16L5.78 13.9A6.5 6.5 0 0 1 5.78 10.1L4.38 8.84L5.45 6.98L7.25 7.57A6.5 6.5 0 0 1 10.54 5.67Z" stroke="var(--modonty-settings-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-settings-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M52 16
-           H68
-           L70.5 28.5
-           C75.5 30 80 31.8 84.2 34.7
-           L94.8 27.6
-           L106.1 38.9
-           L99 49.5
-           C101.9 53.7 103.7 58.2 105.2 63.2
-           L117 66
-           V82
-           L104.8 84.5
-           C103.3 89.5 101.5 94 98.6 98.2
-           L105.7 108.8
-           L94.4 120.1
-           L83.8 113
-           C79.6 115.9 75.1 117.7 70.1 119.2
-           L67.6 131.4
-           H51.6
-           L49.1 119.2
-           C44.1 117.7 39.6 115.9 35.4 113
-           L24.8 120.1
-           L13.5 108.8
-           L20.6 98.2
-           C17.7 94 15.9 89.5 14.4 84.5
-           L2.2 82
-           V66
-           L14.4 63.5
-           C15.9 58.5 17.7 54 20.6 49.8
-           L13.5 39.2
-           L24.8 27.9
-           L35.4 35
-           C39.6 32.1 44.1 30.3 49.1 28.8
-           Z" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8" transform="translate(0 -7)"></path>
-
-    <circle cx="60" cy="60" r="22" stroke="#0E065A" strokeWidth="8"></circle>
-
-    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M7.35 4.1L7.48 3.03L8.52 3.03L8.65 4.1A3.95 3.95 0 0 1 11.05 5.49L12.05 5.06L12.57 5.97L11.7 6.62A3.95 3.95 0 0 1 11.7 9.38L12.57 10.03L12.05 10.94L11.05 10.51A3.95 3.95 0 0 1 8.65 11.9L8.52 12.97L7.48 12.97L7.35 11.9A3.95 3.95 0 0 1 4.95 10.51L3.95 10.94L3.43 10.03L4.3 9.38A3.95 3.95 0 0 1 4.3 6.62L3.43 5.97L3.95 5.06L4.95 5.49A3.95 3.95 0 0 1 7.35 4.1Z" stroke="var(--modonty-settings-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-settings-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyThemeLightMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty THEME LIGHT mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-theme-light-body` · `--modonty-theme-light-accent` (the diamond).
+ */
+export function ModontyThemeLightMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <circle cx="12" cy="12" r="4.5" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 3V4.25" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 19.75V21" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M3 12H4.25" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M19.75 12H21" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M17.48 6.52L18.36 5.64" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M17.48 17.48L18.36 18.36" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6.52 6.52L5.64 5.64" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6.52 17.48L5.64 18.36" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-theme-light-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <circle cx="60" cy="60" r="24" stroke="currentColor" strokeWidth="8"></circle>
-
-    <path d="M60 14V26" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M60 94V106" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M14 60H26" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M94 60H106" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M27.5 27.5L36 36" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M84 84L92.5 92.5" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M84 36L92.5 27.5" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M27.5 92.5L36 84" stroke="currentColor" strokeLinecap="round" strokeWidth="8"></path>
-
-    <rect fill="#00D8D8" height="20" rx="4" transform="rotate(45 60 60)" width="20" x="53" y="53"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <circle cx="8" cy="8" r="3.5" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 1.63V2.25" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 13.75V14.38" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M1.63 8H2.25" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13.75 8H14.38" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.07 3.93L12.51 3.49" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.07 12.07L12.51 12.51" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.93 3.93L3.49 3.49" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.93 12.07L3.49 12.51" stroke="var(--modonty-theme-light-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-theme-light-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyThemeDarkMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty THEME DARK mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-theme-dark-body` · `--modonty-theme-dark-accent` (the diamond).
+ */
+export function ModontyThemeDarkMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M12 3A6.36 6.36 0 0 0 21 12A9 9 0 1 1 12 3Z" stroke="var(--modonty-theme-dark-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M16.15 5.38A0.5 0.5 0 0 1 16.85 5.38L18.62 7.15A0.5 0.5 0 0 1 18.62 7.85L16.85 9.62A0.5 0.5 0 0 1 16.15 9.62L14.38 7.85A0.5 0.5 0 0 1 14.38 7.15Z" fill="var(--modonty-theme-dark-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path clipRule="evenodd" d="M59.94 16.0 L53.26 16.9 L44.39 19.85 L36.94 24.22 L30.13 30.26 L25.25 36.68 L21.27 44.65 L19.08 52.48 L18.44 60.96 L19.47 69.44 L22.29 77.92 L26.79 85.76 L33.09 92.82 L39.0 97.32 L43.88 100.02 L47.6 101.56 L54.93 103.49 L63.66 104.0 L71.24 102.97 L76.25 101.43 L82.29 98.6 L88.71 94.11 L93.72 88.97 L97.19 83.96 L100.15 77.79 L101.56 72.27 L100.27 70.6 L98.48 70.47 L92.95 73.68 L89.1 74.97 L84.86 75.61 L78.82 75.22 L73.3 73.55 L69.06 71.24 L64.95 67.9 L62.12 64.69 L59.16 59.81 L56.98 53.13 L56.6 45.8 L57.75 40.15 L60.19 34.63 L63.28 30.26 L68.93 25.25 L74.71 22.29 L75.48 21.4 L75.74 19.85 L74.58 18.06 L71.37 17.03 L65.85 16.13 Z M60.19 20.11 L65.59 20.24 L68.29 20.88 L63.28 24.48 L58.39 29.87 L54.8 36.3 L53.13 41.56 L52.48 45.68 L52.87 53.38 L54.41 59.04 L57.49 65.2 L61.09 69.83 L64.56 73.04 L69.7 76.38 L74.32 78.31 L80.49 79.59 L86.14 79.59 L90.51 78.82 L96.04 76.89 L94.11 81.13 L91.02 85.76 L84.34 92.31 L79.33 95.52 L75.09 97.45 L69.57 99.12 L64.05 99.89 L55.95 99.5 L47.99 97.32 L41.44 93.98 L35.01 88.97 L30.0 83.19 L26.15 76.51 L23.32 67.9 L22.55 61.35 L23.19 52.87 L25.38 45.42 L28.72 38.87 L33.47 32.7 L39.51 27.43 L46.45 23.45 L54.28 20.88 Z" fill="currentColor" fillRule="evenodd"></path>
-
-    <path d="M42.98 67.0 L34.24 76.12 L43.11 84.86 L51.97 75.99 Z" fill="#00D8D8"></path>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M8 2A4.24 4.24 0 0 0 14 8A6 6 0 1 1 8 2Z" stroke="var(--modonty-theme-dark-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10.79 3.44A0.3 0.3 0 0 1 11.21 3.44L12.56 4.79A0.3 0.3 0 0 1 12.56 5.21L11.21 6.56A0.3 0.3 0 0 1 10.79 6.56L9.44 5.21A0.3 0.3 0 0 1 9.44 4.79Z" fill="var(--modonty-theme-dark-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyDeleteMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty DELETE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-delete-body` · `--modonty-delete-accent` (the diamond).
+ */
+export function ModontyDeleteMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M3.5 9H20.5" stroke="var(--modonty-delete-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6 9V19A2 2 0 0 0 8 21H16A2 2 0 0 0 18 19V9" stroke="var(--modonty-delete-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 12.5V17.5" stroke="var(--modonty-delete-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14 12.5V17.5" stroke="var(--modonty-delete-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 2.38A0.5 0.5 0 0 1 12.35 2.38L14.12 4.15A0.5 0.5 0 0 1 14.12 4.85L12.35 6.62A0.5 0.5 0 0 1 11.65 6.62L9.88 4.85A0.5 0.5 0 0 1 9.88 4.15Z" fill="var(--modonty-delete-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M34 35H86" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-
-    <path d="M48 35V28C48 24.7 50.7 22 54 22H66C69.3 22 72 24.7 72 28V35" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <path d="M40 44L44 92C44.5 97.7 49.3 102 55 102H65C70.7 102 75.5 97.7 76 92L80 44" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <path d="M53 55V80" stroke="#0E065A" strokeLinecap="round" strokeWidth="6"></path>
-    <path d="M67 55V80" stroke="#0E065A" strokeLinecap="round" strokeWidth="6"></path>
-
-    <rect fill="#00D8D8" height="10" rx="4" transform="rotate(45 60 87)" width="10" x="55" y="82"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M2.5 6.5H13.5" stroke="var(--modonty-delete-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.5 6.5V12A1.5 1.5 0 0 0 5 13.5H11A1.5 1.5 0 0 0 12.5 12V6.5" stroke="var(--modonty-delete-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6.4 8.7V11.3" stroke="var(--modonty-delete-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.6 8.7V11.3" stroke="var(--modonty-delete-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 1.54A0.3 0.3 0 0 1 8.21 1.54L9.56 2.89A0.3 0.3 0 0 1 9.56 3.31L8.21 4.66A0.3 0.3 0 0 1 7.79 4.66L6.44 3.31A0.3 0.3 0 0 1 6.44 2.89Z" fill="var(--modonty-delete-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyCircleMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty CIRCLE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-circle-body` · `--modonty-circle-accent` (the diamond).
+ */
+export function ModontyCircleMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <circle cx="12" cy="12" r="9" stroke="var(--modonty-circle-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-circle-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <circle cx="60" cy="60" r="38" stroke="#0E065A" strokeWidth="8"></circle>
-
-    <rect fill="#00D8D8" height="10" rx="4" transform="rotate(45 60 60)" width="10" x="55" y="55"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <circle cx="8" cy="8" r="6" stroke="var(--modonty-circle-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-circle-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyLinkMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty LINK mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-link-body` · `--modonty-link-accent` (the diamond).
+ */
+export function ModontyLinkMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M10.3 12.85a4.25 4.25 0 0 0 6.41.46l2.55-2.55a4.25 4.25 0 0 0-6.01-6.01l-1.46 1.45" stroke="var(--modonty-link-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M13.7 11.15a4.25 4.25 0 0 0-6.41-.46l-2.55 2.55a4.25 4.25 0 0 0 6.01 6.01l1.46-1.45" stroke="var(--modonty-link-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-link-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <rect height="26" rx="13" stroke="var(--modonty-link-body, #0E065A)" strokeWidth="8" transform="rotate(-45 80 37)" width="46" x="57" y="24"></rect>
-
-    <rect height="26" rx="13" stroke="var(--modonty-link-body, #0E065A)" strokeWidth="8" transform="rotate(-45 40 83)" width="46" x="17" y="70"></rect>
-
-    <path d="M45 75L75 45" stroke="var(--modonty-link-body, #0E065A)" strokeLinecap="round" strokeWidth="8"></path>
-
-    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M6.87 8.57a2.83 2.83 0 0 0 4.28.31l1.7-1.7a2.83 2.83 0 0 0-4-4l-.98.97" stroke="var(--modonty-link-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.13 7.43a2.83 2.83 0 0 0-4.28-.31l-1.7 1.7a2.83 2.83 0 0 0 4 4l.98-.97" stroke="var(--modonty-link-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-link-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyLinkOffMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty LINK OFF mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-link-off-body` · `--modonty-link-off-accent` (the diamond).
+ */
+export function ModontyLinkOffMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M16.95 13.07L19.26 10.76A4.25 4.25 0 0 0 13.25 4.75L11.79 6.2" stroke="var(--modonty-link-off-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M7.05 10.93L4.74 13.24A4.25 4.25 0 0 0 10.75 19.25L12.21 17.8" stroke="var(--modonty-link-off-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M4.5 4.5L19.5 19.5" stroke="var(--modonty-link-off-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-link-off-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M45 49
-           L28 59
-           C19 64 16 76 21 85
-           C26 94 38 97 47 92
-           L62 83" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <path d="M75 71
-           L92 61
-           C101 56 104 44 99 35
-           C94 26 82 23 73 28
-           L58 37" stroke="#0E065A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <path d="M60 24V32" stroke="#00D8D8" strokeLinecap="round" strokeWidth="6"></path>
-    <path d="M47 29L52 35" stroke="#00D8D8" strokeLinecap="round" strokeWidth="6"></path>
-    <path d="M73 29L68 35" stroke="#00D8D8" strokeLinecap="round" strokeWidth="6"></path>
-    <path d="M60 88V96" stroke="#00D8D8" strokeLinecap="round" strokeWidth="6"></path>
-    <path d="M47 91L52 85" stroke="#00D8D8" strokeLinecap="round" strokeWidth="6"></path>
-    <path d="M73 91L68 85" stroke="#00D8D8" strokeLinecap="round" strokeWidth="6"></path>
-
-    <rect fill="#00D8D8" height="12" rx="4" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M11.61 8.42L12.85 7.18A2.83 2.83 0 0 0 8.85 3.18L7.87 4.15" stroke="var(--modonty-link-off-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4.39 7.58L3.15 8.82A2.83 2.83 0 0 0 7.15 12.82L8.13 11.85" stroke="var(--modonty-link-off-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.5 3.5L12.5 12.5" stroke="var(--modonty-link-off-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-link-off-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyListMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty LIST mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-list-body` · `--modonty-list-accent` (the diamond).
+ */
+export function ModontyListMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M3 6H14.5" stroke="var(--modonty-list-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M3 12H14.5" stroke="var(--modonty-list-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M3 18H14.5" stroke="var(--modonty-list-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="19.25" cy="12" r="0.9" stroke="var(--modonty-list-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="19.25" cy="18" r="0.9" stroke="var(--modonty-list-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M18.9 3.88A0.5 0.5 0 0 1 19.6 3.88L21.37 5.65A0.5 0.5 0 0 1 21.37 6.35L19.6 8.12A0.5 0.5 0 0 1 18.9 8.12L17.13 6.35A0.5 0.5 0 0 1 17.13 5.65Z" fill="var(--modonty-list-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <rect height="20" rx="4" stroke="#0E065A" strokeWidth="6" width="20" x="18" y="24"></rect>
-    <path d="M46 31H98" stroke="#0E065A" strokeLinecap="round" strokeWidth="7"></path>
-
-    <rect height="20" rx="4" stroke="#0E065A" strokeWidth="6" width="20" x="18" y="53"></rect>
-    <path d="M46 60H98" stroke="#0E065A" strokeLinecap="round" strokeWidth="7"></path>
-
-    <rect fill="#00D8D8" height="10" rx="4" transform="rotate(45 25 85)" width="10" x="20" y="80"></rect>
-    <path d="M46 85H98" stroke="#0E065A" strokeLinecap="round" strokeWidth="7"></path>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M2 3.5H8.5" stroke="var(--modonty-list-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 8H8.5" stroke="var(--modonty-list-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 12.5H8.5" stroke="var(--modonty-list-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12.5" cy="8" r="0.6" stroke="var(--modonty-list-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12.5" cy="12.5" r="0.6" stroke="var(--modonty-list-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.29 1.94A0.3 0.3 0 0 1 12.71 1.94L14.06 3.29A0.3 0.3 0 0 1 14.06 3.71L12.71 5.06A0.3 0.3 0 0 1 12.29 5.06L10.94 3.71A0.3 0.3 0 0 1 10.94 3.29Z" fill="var(--modonty-list-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-/** Approved Industries / Categories grid, reused as IconGrid. */
-export function ModontyGridMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty GRID mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-grid-body` · `--modonty-grid-accent` (the diamond).
+ */
+export function ModontyGridMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <rect x="4.5" y="4.5" width="5" height="5" rx="1.25" stroke="var(--modonty-grid-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="14.5" y="4.5" width="5" height="5" rx="1.25" stroke="var(--modonty-grid-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="4.5" y="14.5" width="5" height="5" rx="1.25" stroke="var(--modonty-grid-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="14.5" y="14.5" width="5" height="5" rx="1.25" stroke="var(--modonty-grid-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-grid-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" width="1em" height="1em" viewBox="0 0 120 120" {...props}>
-      <rect x="32" y="32" width="22" height="22" rx="5" stroke="#0E065A" strokeWidth="8" />
-      <rect x="66" y="32" width="22" height="22" rx="5" stroke="#0E065A" strokeWidth="8" />
-      <rect x="32" y="66" width="22" height="22" rx="5" stroke="#0E065A" strokeWidth="8" />
-      <path d="M77 64L91 78L77 92L63 78Z" fill="#00D8D8" />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <rect x="2.5" y="2.5" width="3.5" height="3.5" rx="1" stroke="var(--modonty-grid-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="10" y="2.5" width="3.5" height="3.5" rx="1" stroke="var(--modonty-grid-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="2.5" y="10" width="3.5" height="3.5" rx="1" stroke="var(--modonty-grid-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="10" y="10" width="3.5" height="3.5" rx="1" stroke="var(--modonty-grid-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-grid-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyMoreHorizontalMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty MORE HORIZONTAL mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-more-horizontal-body` · `--modonty-more-horizontal-accent` (the diamond).
+ */
+export function ModontyMoreHorizontalMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <circle cx="4.9" cy="12" r="1.9" stroke="var(--modonty-more-horizontal-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="19.1" cy="12" r="1.9" stroke="var(--modonty-more-horizontal-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-more-horizontal-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <circle cx="28" cy="60" fill="#0E065A" r="8"></circle>
-
-    <rect fill="#00D8D8" height="12" rx="2" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
-
-    <circle cx="92" cy="60" fill="#0E065A" r="8"></circle>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <circle cx="3.25" cy="8" r="1.15" stroke="var(--modonty-more-horizontal-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12.75" cy="8" r="1.15" stroke="var(--modonty-more-horizontal-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-more-horizontal-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyMoreVerticalMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty DESKTOP mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-desktop-body` · `--modonty-desktop-accent` (the diamond).
+ */
+export function ModontyDesktopMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <rect x="3.5" y="4" width="17" height="11.5" rx="2" stroke="var(--modonty-desktop-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 15.5V20" stroke="var(--modonty-desktop-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8.5 20H15.5" stroke="var(--modonty-desktop-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 7.63A0.5 0.5 0 0 1 12.35 7.63L14.12 9.4A0.5 0.5 0 0 1 14.12 10.1L12.35 11.87A0.5 0.5 0 0 1 11.65 11.87L9.88 10.1A0.5 0.5 0 0 1 9.88 9.4Z" fill="var(--modonty-desktop-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <circle cx="60" cy="28" fill="#0E065A" r="8"></circle>
-
-    <rect fill="#00D8D8" height="12" rx="2" transform="rotate(45 60 60)" width="12" x="54" y="54"></rect>
-
-    <circle cx="60" cy="92" fill="#0E065A" r="8"></circle>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <rect x="2" y="2.5" width="12" height="8.5" rx="1.5" stroke="var(--modonty-desktop-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 11V13.5" stroke="var(--modonty-desktop-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.5 13.5H10.5" stroke="var(--modonty-desktop-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 5.19A0.3 0.3 0 0 1 8.21 5.19L9.56 6.54A0.3 0.3 0 0 1 9.56 6.96L8.21 8.31A0.3 0.3 0 0 1 7.79 8.31L6.44 6.96A0.3 0.3 0 0 1 6.44 6.54Z" fill="var(--modonty-desktop-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyDesktopMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty MOBILE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-mobile-body` · `--modonty-mobile-accent` (the diamond).
+ */
+export function ModontyMobileMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <rect x="6" y="3" width="12" height="18" rx="2" stroke="var(--modonty-mobile-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 14.68A0.5 0.5 0 0 1 12.35 14.68L14.12 16.45A0.5 0.5 0 0 1 14.12 17.15L12.35 18.92A0.5 0.5 0 0 1 11.65 18.92L9.88 17.15A0.5 0.5 0 0 1 9.88 16.45Z" fill="var(--modonty-mobile-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <rect height="58" rx="10" stroke="#0E065A" strokeWidth="8" width="88" x="16" y="22"></rect>
-
-    <path d="M60 80V94" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M42 100H78" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 60 51)" width="10" x="55" y="46"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <rect x="4" y="2" width="8" height="12" rx="1.5" stroke="var(--modonty-mobile-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 8.84A0.3 0.3 0 0 1 8.21 8.84L9.56 10.19A0.3 0.3 0 0 1 9.56 10.61L8.21 11.96A0.3 0.3 0 0 1 7.79 11.96L6.44 10.61A0.3 0.3 0 0 1 6.44 10.19Z" fill="var(--modonty-mobile-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyMobileMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty SPEED mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-speed-body` · `--modonty-speed-accent` (the diamond).
+ */
+export function ModontySpeedMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M5.99 19.01A8.5 8.5 0 1 1 18.01 19.01" stroke="var(--modonty-speed-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 13L15.75 9.25" stroke="var(--modonty-speed-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 10.88A0.5 0.5 0 0 1 12.35 10.88L14.12 12.65A0.5 0.5 0 0 1 14.12 13.35L12.35 15.12A0.5 0.5 0 0 1 11.65 15.12L9.88 13.35A0.5 0.5 0 0 1 9.88 12.65Z" fill="var(--modonty-speed-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <rect height="92" rx="12" stroke="#0E065A" strokeWidth="8" width="52" x="34" y="14"></rect>
-
-    <path d="M52 28H68" stroke="#0E065A" strokeLinecap="round" strokeWidth="6"></path>
-
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 60 89)" width="10" x="55" y="84"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M4.11 12.64A5.5 5.5 0 1 1 11.89 12.64" stroke="var(--modonty-speed-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 8.75L10.1 6.65" stroke="var(--modonty-speed-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 7.19A0.3 0.3 0 0 1 8.21 7.19L9.56 8.54A0.3 0.3 0 0 1 9.56 8.96L8.21 10.31A0.3 0.3 0 0 1 7.79 10.31L6.44 8.96A0.3 0.3 0 0 1 6.44 8.54Z" fill="var(--modonty-speed-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontySpeedMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty SKIP BACK mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-skip-back-body` · `--modonty-skip-back-accent` (the diamond).
+ */
+export function ModontySkipBackMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M5.5 5V19" stroke="var(--modonty-skip-back-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M20 5.5L10.5 12L20 18.5Z" stroke="var(--modonty-skip-back-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5.15 9.88A0.5 0.5 0 0 1 5.85 9.88L7.62 11.65A0.5 0.5 0 0 1 7.62 12.35L5.85 14.12A0.5 0.5 0 0 1 5.15 14.12L3.38 12.35A0.5 0.5 0 0 1 3.38 11.65Z" fill="var(--modonty-skip-back-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M24 76
-           C24 56 40 40 60 40
-           C80 40 96 56 96 76" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-
-    <path d="M33 64L39 67" stroke="#0E065A" strokeLinecap="round" strokeWidth="6"></path>
-    <path d="M60 46V53" stroke="#0E065A" strokeLinecap="round" strokeWidth="6"></path>
-    <path d="M87 64L81 67" stroke="#0E065A" strokeLinecap="round" strokeWidth="6"></path>
-
-    <path d="M60 78L78 58" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-
-    <rect fill="#00D8D8" height="12" rx="2" transform="rotate(45 60 78)" width="12" x="54" y="72"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M3.5 3.5V12.5" stroke="var(--modonty-skip-back-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13.5 3.5L7.5 8L13.5 12.5Z" stroke="var(--modonty-skip-back-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.29 6.44A0.3 0.3 0 0 1 3.71 6.44L5.06 7.79A0.3 0.3 0 0 1 5.06 8.21L3.71 9.56A0.3 0.3 0 0 1 3.29 9.56L1.94 8.21A0.3 0.3 0 0 1 1.94 7.79Z" fill="var(--modonty-skip-back-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontySkipBackMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty SKIP FORWARD mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-skip-forward-body` · `--modonty-skip-forward-accent` (the diamond).
+ */
+export function ModontySkipForwardMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M4.5 3.5V20.5L16.5 12Z" stroke="var(--modonty-skip-forward-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M19.5 3.5V20.5" stroke="var(--modonty-skip-forward-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9.15 9.88A0.5 0.5 0 0 1 9.85 9.88L11.62 11.65A0.5 0.5 0 0 1 11.62 12.35L9.85 14.12A0.5 0.5 0 0 1 9.15 14.12L7.38 12.35A0.5 0.5 0 0 1 7.38 11.65Z" fill="var(--modonty-skip-forward-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M30 34V86" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-
-    <path d="M82 34L45 60L82 86Z" stroke="#0E065A" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 30 60)" width="10" x="25" y="55"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M2.5 2V14L11.5 8Z" stroke="var(--modonty-skip-forward-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13.5 5V11" stroke="var(--modonty-skip-forward-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.69 6.44A0.3 0.3 0 0 1 6.11 6.44L7.46 7.79A0.3 0.3 0 0 1 7.46 8.21L6.11 9.56A0.3 0.3 0 0 1 5.69 9.56L4.34 8.21A0.3 0.3 0 0 1 4.34 7.79Z" fill="var(--modonty-skip-forward-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontySkipForwardMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty REMOVE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-remove-body` · `--modonty-remove-accent` (the diamond).
+ */
+export function ModontyRemoveMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M3 12H21" stroke="var(--modonty-remove-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-remove-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M38 34L75 60L38 86Z" stroke="#0E065A" strokeLinejoin="round" strokeWidth="8"></path>
-
-    <path d="M90 34V86" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 90 60)" width="10" x="85" y="55"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M2 8H14" stroke="var(--modonty-remove-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-remove-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyRemoveMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty ADD mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-add-body` · `--modonty-add-accent` (the diamond).
+ */
+export function ModontyAddMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M12 3.5V20.5" stroke="var(--modonty-add-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M3.5 12H20.5" stroke="var(--modonty-add-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-add-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M24 60H52" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M68 60H96" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 60 60)" width="10" x="55" y="55"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M8 2.5V13.5" stroke="var(--modonty-add-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2.5 8H13.5" stroke="var(--modonty-add-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-add-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyAddMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty COPY mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-copy-body` · `--modonty-copy-accent` (the diamond).
+ */
+export function ModontyCopyMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <rect x="3.5" y="9" width="11" height="11.5" rx="2" stroke="var(--modonty-copy-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9 9V5.5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 2 2V13a2 2 0 0 1-2 2H14.5" stroke="var(--modonty-copy-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8.65 12.63A0.5 0.5 0 0 1 9.35 12.63L11.12 14.4A0.5 0.5 0 0 1 11.12 15.1L9.35 16.87A0.5 0.5 0 0 1 8.65 16.87L6.88 15.1A0.5 0.5 0 0 1 6.88 14.4Z" fill="var(--modonty-copy-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <path d="M24 60H52" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M68 60H96" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M60 24V52" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <path d="M60 68V96" stroke="#0E065A" strokeLinecap="round" strokeWidth="8"></path>
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 60 60)" width="10" x="55" y="55"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <rect x="2.5" y="6.5" width="7" height="7" rx="1.25" stroke="var(--modonty-copy-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6 6.5V4a1.5 1.5 0 0 1 1.5-1.5h4.5a1.5 1.5 0 0 1 1.5 1.5V8a1.5 1.5 0 0 1-1.5 1.5H9.5" stroke="var(--modonty-copy-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.79 8.44A0.3 0.3 0 0 1 6.21 8.44L7.56 9.79A0.3 0.3 0 0 1 7.56 10.21L6.21 11.56A0.3 0.3 0 0 1 5.79 11.56L4.44 10.21A0.3 0.3 0 0 1 4.44 9.79Z" fill="var(--modonty-copy-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyCopyMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty PAUSE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-pause-body` · `--modonty-pause-accent` (the diamond).
+ */
+export function ModontyPauseMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M6.5 5V19" stroke="var(--modonty-pause-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M17.5 5V19" stroke="var(--modonty-pause-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-pause-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <rect height="56" rx="10" stroke="#0E065A" strokeWidth="8" width="56" x="22" y="22"></rect>
-    <rect fill="white" height="56" rx="10" stroke="#0E065A" strokeWidth="8" width="56" x="42" y="42"></rect>
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 69 69)" width="10" x="64" y="64"></rect>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M4 3V13" stroke="var(--modonty-pause-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12 3V13" stroke="var(--modonty-pause-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-pause-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
 
-export function ModontyPauseMark(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg aria-hidden="true" fill="none" height="1em" viewBox="0 0 120 120" width="1em" {...props}>
-    <rect fill="#0E065A" height="68" rx="8" width="16" x="30" y="26"></rect>
-    <rect fill="#0E065A" height="68" rx="8" width="16" x="74" y="26"></rect>
-    <rect fill="#00D8D8" height="10" rx="2" transform="rotate(45 60 60)" width="10" x="55" y="55"></rect>
-    </svg>
-  );
-}

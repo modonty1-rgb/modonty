@@ -1,34 +1,26 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty PROFILE / ACCOUNT mark — الملف الشخصي / الحساب.
- *
- * Traced verbatim from the approved original in
- * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="profile"`),
- * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
- * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
- * attributes became JSX.
- *
- * Approved concept: صورة ظلية لهيكل الشخص عبر رأس دائري وقوس كتفين متناظر، تستقر في صدره ماسة الهوية الشخصية.
- *
- * Category: Navigation / Identity · User settings, account profile, author identity
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
- * takes the size and colour of the text around it, two CSS hooks — `--modonty-profile-body` · `--modonty-profile-accent` (the diamond).
+ * The modonty PROFILE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-profile-body` · `--modonty-profile-accent` (the diamond).
  */
-export function ModontyProfileMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyProfileMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <circle cx="12" cy="6.5" r="3" stroke="var(--modonty-profile-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M4 21v-1a6.75 6.75 0 0 1 6.75-6.75h2.5a6.75 6.75 0 0 1 6.75 6.75v1" stroke="var(--modonty-profile-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 16.13A0.5 0.5 0 0 1 12.35 16.13L14.12 17.9A0.5 0.5 0 0 1 14.12 18.6L12.35 20.37A0.5 0.5 0 0 1 11.65 20.37L9.88 18.6A0.5 0.5 0 0 1 9.88 17.9Z" fill="var(--modonty-profile-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <circle cx="60" cy="46" r="18" stroke="var(--modonty-profile-body, currentColor)" strokeWidth="8"/>
-      <path d="M26 94C26 76 41 72 60 72C79 72 94 76 94 94" stroke="var(--modonty-profile-body, currentColor)" strokeWidth="8" strokeLinecap="round"/>
-      <rect x="50" y="83" width="20" height="20" rx="4" transform="rotate(30 60 93)" fill="var(--modonty-profile-accent, var(--modonty-accent, #00d8d8))"/>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <circle cx="8" cy="4" r="2" stroke="var(--modonty-profile-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 14.25v-.75a4.75 4.75 0 0 1 4.75-4.75h2.5a4.75 4.75 0 0 1 4.75 4.75v.75" stroke="var(--modonty-profile-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 11.19A0.3 0.3 0 0 1 8.21 11.19L9.56 12.54A0.3 0.3 0 0 1 9.56 12.96L8.21 14.31A0.3 0.3 0 0 1 7.79 14.31L6.44 12.96A0.3 0.3 0 0 1 6.44 12.54Z" fill="var(--modonty-profile-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

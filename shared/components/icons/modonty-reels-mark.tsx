@@ -1,74 +1,26 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty REELS / VIDEO mark — ريلز / مقاطع الفيديو.
- *
- * Third drawing, 22 Aug 2026. The history matters because each version failed for a
- * measurable reason, not a taste one:
- *
- * 1. The approved original (`data-icon-id="reels"`) drew a film strip: a square frame with
- *    two full-width rails and four sprocket ticks, all at 6px. This mark ships at 20px in
- *    the phone tab strip, where one unit is 0.167px — so every line landed at 1px with
- *    gaps thinner than the lines, and the strip fused into a GRID. The reference's own
- *    Geometry Standard forbids exactly that: "No micro-lines that collapse below 18px".
- * 2. Cutting it back to one rail fixed the legibility and broke the meaning — a square
- *    frame with a bar across the top is a WINDOW, and Khalid read it as one immediately:
- *    «not video at all».
- *
- * So the silhouette carries the meaning now, not the internal detail. A PORTRAIT frame
- * says «reel» before anything inside it is resolved — a short vertical video is the one
- * screen shape nothing else on this site uses (every other frame here is square or wide),
- * and it is the shape the whole format is known by. The solid play triangle then confirms
- * it in one element instead of six, and a filled shape survives any size a stroke does not.
- *
- * The diamond moved OUT to the frame's top corner. Inside, it competed with the triangle
- * for the same centre and the eye read two symbols; on the corner it does what it does on
- * `bookmark` and `audio` — signs the mark without being read as part of it.
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box, two CSS hooks
- * — `--modonty-reels-body` · `--modonty-reels-accent` (the diamond).
+ * The modonty REELS mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-reels-body` · `--modonty-reels-accent` (the diamond).
  */
-export function ModontyReelsMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyReelsMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M5 11.5H19V18a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2Z" stroke="var(--modonty-reels-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5 11.5L18.52 7.88L17.94 5.7L4.42 9.33Z" stroke="var(--modonty-reels-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 13.63A0.5 0.5 0 0 1 12.35 13.63L14.12 15.4A0.5 0.5 0 0 1 14.12 16.1L12.35 17.87A0.5 0.5 0 0 1 11.65 17.87L9.88 16.1A0.5 0.5 0 0 1 9.88 15.4Z" fill="var(--modonty-reels-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <rect
-        x="34"
-        y="18"
-        width="52"
-        height="84"
-        rx="14"
-        stroke="var(--modonty-reels-body, currentColor)"
-        strokeWidth="8"
-        strokeLinejoin="round"
-      />
-      {/* Solid, not stroked. A 8px-stroked triangle at 20px leaves a 3px hole in the middle
-          and reads as an outline of nothing; filled, it stays a triangle at any size. */}
-      <path
-        d="M52 44L76 60L52 76Z"
-        fill="var(--modonty-reels-body, currentColor)"
-        stroke="var(--modonty-reels-body, currentColor)"
-        strokeWidth="6"
-        strokeLinejoin="round"
-      />
-      {/* Fourth pass, 12 Sep 2026 (Khalid): bigger, tilted 30 instead of 45, and pushed into
-          the body so it covers the white notch at the top-right corner instead of floating
-          beside it. A perfect 45 diamond read as a separate speck at 20px. */}
-      <rect
-        x="73"
-        y="11"
-        width="20"
-        height="20"
-        rx="4"
-        transform="rotate(30 83 21)"
-        fill="var(--modonty-reels-accent, var(--modonty-accent, #00d8d8))"
-      />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M3.5 6H12.5V12a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 12Z" stroke="var(--modonty-reels-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.5 6L12.19 3.67" stroke="var(--modonty-reels-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 8.19A0.3 0.3 0 0 1 8.21 8.19L9.56 9.54A0.3 0.3 0 0 1 9.56 9.96L8.21 11.31A0.3 0.3 0 0 1 7.79 11.31L6.44 9.96A0.3 0.3 0 0 1 6.44 9.54Z" fill="var(--modonty-reels-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }
