@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>اتجاهات واجهة التطبيق</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.wrap{max-width:1100px;margin:0 auto}
+.picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:6px 0 34px}
+.pick{display:block;background:var(--pg-card);border:1px solid var(--pg-line);border-radius:22px;padding:18px;transition:transform .2s}
+.pick:hover{transform:translateY(-3px)}
+.pick .sw{height:110px;border-radius:16px;margin-bottom:14px;position:relative;overflow:hidden}
+.pick h2{font-size:21px;font-weight:900}
+.pick p{font-size:14.5px;line-height:1.8;color:var(--pg-muted);margin-top:6px}
+.pick .go{display:inline-flex;margin-top:12px;height:40px;align-items:center;padding:0 16px;border-radius:999px;background:#3030FF;color:#fff;font-weight:800;font-size:14px}
+.sw1{background:url('https://modonty-clients.b-cdn.net/post/مدونتي/مدونتي-في-techne-summit-2026-f001e2b477.webp') center/cover}
+.sw1::after{content:"";position:absolute;bottom:12px;inset-inline:14px;height:40px;border-radius:999px;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.7);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.sw2{background:#F7F6FF;display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px;padding:8px}
+.sw2 i{border-radius:14px}.sw2 i:nth-child(1){background:#3030FF;border-radius:22px 22px 22px 6px}.sw2 i:nth-child(2){background:#27B07D}.sw2 i:nth-child(3){background:#7C3BED;border-radius:22px 8px}
+.sw3{background:#0F0F12;display:flex;gap:10px;align-items:center;padding:0 16px}
+.sw3 i{width:46px;height:46px;border-radius:50%;background:conic-gradient(#00D8D8,#3030FF,#00D8D8);box-shadow:inset 0 0 0 4px #0F0F12}
+h2.t{font-size:22px;font-weight:900;margin:8px 0 12px}
+table{width:100%;border-collapse:collapse;background:var(--pg-card);border-radius:18px;overflow:hidden;border:1px solid var(--pg-line);font-size:14.5px}
+th,td{padding:12px 14px;text-align:right;vertical-align:top;border-bottom:1px solid var(--pg-line);line-height:1.7}
+th{font-size:13px;color:var(--pg-muted);font-weight:800;background:color-mix(in srgb,var(--pg-card) 85%,var(--pg-line))}
+td b{font-weight:800}
+.y{color:#007575;font-weight:800}.p{color:#B26A00;font-weight:800}.n{color:#B4241A;font-weight:800}
+:root[data-theme="dark"] .y{color:#00D8D8}:root[data-theme="dark"] .p{color:#F6AE31}:root[data-theme="dark"] .n{color:#FF7272}
+.tags span{display:inline-block;font-size:12px;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--pg-line);margin:2px}
+.box{background:var(--pg-card);border:1px solid var(--pg-line);border-radius:18px;padding:16px 18px;font-size:14.5px;line-height:1.9;margin-top:14px}
+.src{font-size:13px;line-height:2;color:var(--pg-muted)}
+.src a{text-decoration:underline}
+@media (max-width:700px){table{font-size:13.5px}th:nth-child(5),td:nth-child(5){display:none}}
+</style>
+</head>
+<body>
+<header class="page-head">
+  <div>
+    <div class="crumbs">تطبيق القارئ · modonty-mobile · ٩ أكتوبر ٢٠٢٦</div>
+    <h1>ثلاثة اتجاهات لواجهة التطبيق — اختر واحداً</h1>
+    <p class="lead">بحثت في أقوى اتجاهات تصميم الجوال لعام ٢٠٢٦ وصفّيت منها ما يناسب تطبيق قراءة عربي. كل اتجاه مبني على نفس المحتوى الحقيقي من الإنتاج ونفس الشاشات الثلاث، لتكون المقارنة على الأسلوب فقط.</p>
+  </div>
+  <div class="page-tools"><button data-toggle-theme>فاتح / داكن</button></div>
+</header>
+
+<div class="wrap">
+  <a class="pick" href="4-combined.html" style="margin:6px 0 14px;border:2px solid #3030FF"><h2>٤ — المزيج (أحسن ما في الثلاثة)</h2><p>هيكل «زجاج سائل» + لمسات «تعبيري» + راحة «قارئ هادئ»، بلا تمويه ليبقى خفيفاً على أندرويد.</p><span class="go">افتح النموذج</span></a>
+  <div class="picks">
+    <a class="pick" href="1-glass.html"><div class="sw sw1"></div><h2>١ — زجاج سائل</h2><p>المحتوى بعرض الشاشة، والتنقّل كبسولة زجاج تطفو وتنكمش. أنيق وهادئ وقريب من iOS 26. الأقرب لتطبيقات Apple.</p><span class="go">افتح النموذج</span></a>
+    <a class="pick" href="2-expressive.html"><div class="sw sw2"><i></i><i></i><i></i></div><h2>٢ — تعبيري</h2><p>ألوان جريئة وأشكال متنوّعة وحركة نابضة، والرئيسية شبكة بنتو. فيه طاقة وشخصية، ويبرز ألوان وقت القراءة. الأقرب لأندرويد ١٦.</p><span class="go">افتح النموذج</span></a>
+    <a class="pick" href="3-calm.html"><div class="sw sw3"><i></i><i></i><i></i><i></i></div><h2>٣ — قارئ هادئ</h2><p>نمط الجرائد: الطلّات قصص في الأعلى، و«اكمل من حيث وقفت»، وقراءة بلا إطار مع حجم خط وخلفية ورقية. يفتح داكناً. الأقرب لتطبيقات الأخبار.</p><span class="go">افتح النموذج</span></a>
+  </div>
+
+  <h2 class="t">أقوى ١٠ اتجاهات للجوال في ٢٠٢٦ — وما يصلح منها لمدونتي</h2>
+  <table>
+    <thead><tr><th>#</th><th>الاتجاه</th><th>باختصار</th><th>لمدونتي؟</th><th>في أي نموذج</th></tr></thead>
+    <tbody>
+      <tr><td>١</td><td><b>زجاج للتنقّل</b> (Liquid Glass)</td><td>الأشرطة والأزرار زجاج شفّاف يطفو فوق المحتوى، والشريط السفلي كبسولة تنكمش عند التمرير.</td><td class="y">نعم</td><td class="tags"><span>١</span></td></tr>
+      <tr><td>٢</td><td><b>التصميم التعبيري</b> (Material 3 Expressive)</td><td>حركة نابضة، و٣٥ شكلاً جديداً، وخطوط أثقل وأكبر. جوجل تقول إن المستخدم يلقى العنصر المهمّ أسرع بأربع مرّات.</td><td class="y">نعم</td><td class="tags"><span>٢</span></td></tr>
+      <tr><td>٣</td><td><b>شبكة البنتو</b></td><td>مربّعات بأحجام مختلفة، والأكبر هو الأهمّ. ممتازة للملخّصات، وضعيفة للقراءة الطويلة.</td><td class="p">للرئيسية فقط</td><td class="tags"><span>٢</span></td></tr>
+      <tr><td>٤</td><td><b>شريط سفلي بـ٣–٥ وجهات</b></td><td>Apple وMaterial يحدّان الشريط بخمس وجهات كحدّ أعلى. اليوم عندنا ٧.</td><td class="y">نعم — مقترح أدناه</td><td class="tags"><span>١</span><span>٢</span><span>٣</span></td></tr>
+      <tr><td>٥</td><td><b>الداكن أوّلاً</b></td><td>يُصمَّم الوضع الداكن أوّلاً ثم الفاتح، مع اختيار الثيم.</td><td class="y">نعم</td><td class="tags"><span>٣</span><span>الكل فيه تبديل</span></td></tr>
+      <tr><td>٦</td><td><b>تفاعلات صغيرة</b></td><td>ردّة فعل ملموسة لكل ضغطة: حركة نابضة، واهتزاز، وتأكيد.</td><td class="y">نعم</td><td class="tags"><span>٢</span><span>١</span></td></tr>
+      <tr><td>٧</td><td><b>تخصيص بالذكاء الاصطناعي</b></td><td>الواجهة تتكيّف مع القارئ: «لك» و«اكمل من حيث وقفت» ومساعد يقترح.</td><td class="p">جزئياً — يحتاج بيانات</td><td class="tags"><span>٣</span><span>مودو في الكل</span></td></tr>
+      <tr><td>٨</td><td><b>التنقّل بالإيماءات</b></td><td>السحب بدل الأزرار: بين التبويبات، وللمقال التالي، وفي الطلّات.</td><td class="y">نعم</td><td class="tags"><span>٣</span></td></tr>
+      <tr><td>٩</td><td><b>المحتوى أوّلاً، بلا زحمة</b></td><td>واجهة قليلة العناصر، والمحتوى هو البطل.</td><td class="y">نعم</td><td class="tags"><span>١</span><span>٣</span></td></tr>
+      <tr><td>١٠</td><td><b>الصوت</b></td><td>الاستماع والأوامر الصوتية. عندنا «اسمع» أصلاً.</td><td class="p">الاستماع نعم، الأوامر لا</td><td class="tags"><span>الكل</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="box"><b>استبعدتها:</b> <span class="n">الواقع المعزّز</span> (لا يخدم القراءة) · <span class="n">النيومورفيزم</span> (تباينه ضعيف ويفشل في معايير الوصول) · <span class="n">الدخول بلا كلمة مرور</span> (عندنا أصلاً: جوجل وApple).</div>
+
+  <div class="box"><b>مقترح مشترك في الثلاثة — ٥ تابات بدل ٧:</b> مدونتي · المقالات · الطلّات · اسمع · <b>اكتشف</b>. «اكتشف» يجمع المجالات والشركاء، ومودو ينتقل لزرّ في الرأس. السبب: Apple وMaterial يحدّان الشريط بخمس وجهات، وسبع وجهات على شاشة ٣٦٠ تصغّر كل زرّ تحت الحدّ المريح. يبقى قرارك، ويمكن إرجاع السبعة في أي اتجاه تختاره.</div>
+
+  <h2 class="t" style="margin-top:28px">المصادر</h2>
+  <div class="src">
+    <a href="https://www.learnui.design/blog/ios-design-guidelines-templates.html">iOS 26 Design Guidelines — Learn UI Design</a> ·
+    <a href="https://www.apple.com/newsroom/2025/06/apple-introduces-a-delightful-and-elegant-new-software-design/">Apple Newsroom — Liquid Glass</a> ·
+    <a href="https://bitrig.com/blog/liquid-glass-best-practices">Liquid Glass Best Practices — Bitrig</a> ·
+    <a href="https://m3.material.io/blog/whats-new-at-io26">Material Design — What's new at I/O 2026</a> ·
+    <a href="https://supercharge.design/blog/material-3-expressive">Material 3 Expressive — Supercharge</a> ·
+    <a href="https://9to5google.com/guides/material-3-expressive/">Material 3 Expressive — 9to5Google</a> ·
+    <a href="https://www.designstudiouiux.com/blog/mobile-app-ui-ux-design-trends/">16 Mobile App UI/UX Trends 2026 — Design Studio</a> ·
+    <a href="https://www.mindinventory.com/blog/mobile-app-ui-ux-design-trends/">Mobile App UI/UX Trends 2026 — MindInventory</a> ·
+    <a href="https://www.designveloper.com/blog/mobile-app-design-trends/">15 Mobile App Design Trends 2026 — Designveloper</a> ·
+    <a href="https://espiolabs.com/blog/posts/ux-trends-2025-from-ai-assisted-design-to-bento-grids-what-actually-works">UX Trends: Bento Grids — Espio Labs</a> ·
+    <a href="https://www.yellowslice.in/blog/bento-grid-layouts-the-new-ux-trend-explained">Bento Grid Layouts — Yellowslice</a>
+  </div>
+</div>
+<script src="shared.js"></script>
+<script>themeToggle(false)</script>
+</body>
+</html>

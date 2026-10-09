@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>اتجاه ١ — زجاج سائل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ===== اتجاه ١: زجاج سائل (iOS 26 Liquid Glass) — المحتوى بعرض الشاشة، والتنقّل زجاج يطفو فوقه ===== */
+.A{--bg:#F3F3F1;--surface:#fff;--text:#0E065A;--muted:#5B5B5B;--line:rgba(14,6,90,.08);--primary:#3030FF;--accent:#00D8D8;
+  --glass:rgba(255,255,255,.62);--glass-line:rgba(255,255,255,.75);--glass-shadow:0 10px 30px -8px rgba(14,6,90,.28),inset 0 1px 0 rgba(255,255,255,.8);
+  background:var(--bg);color:var(--text)}
+:root[data-theme="dark"] .A{--bg:#0E0E12;--surface:#1A1A20;--text:#FAFAFA;--muted:#C3C8D2;--line:rgba(255,255,255,.08);--primary:#7B7BFF;
+  --glass:rgba(38,38,46,.58);--glass-line:rgba(255,255,255,.14);--glass-shadow:0 10px 30px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.12)}
+.A .statusbar{color:var(--text)}
+#a-art .statusbar{color:#fff}
+.A .glass{background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%)}
+
+/* رأس صغير يظهر بعد التمرير، والعنوان الكبير يختفي تحته */
+.A .mini{position:absolute;top:0;inset-inline:0;height:84px;padding:38px 18px 0;z-index:20;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;opacity:0;transform:translateY(-6px);transition:opacity .2s,transform .2s;pointer-events:none}
+.A .mini.on{opacity:1;transform:none}
+.A .mini::before{content:"";position:absolute;inset:0;background:var(--glass);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);border-bottom:1px solid var(--line);z-index:-1}
+.A .big{padding:46px 18px 6px;display:flex;align-items:flex-end;justify-content:space-between}
+.A .big h2{font-size:34px;font-weight:900;letter-spacing:-.5px;line-height:1.1}
+.A .big small{display:block;font-size:14px;font-weight:500;color:var(--muted);margin-bottom:4px}
+.A .hd-btns{display:flex;gap:8px}
+.A .circ{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--text)}
+.A .circ.modo{color:#fff;background:linear-gradient(135deg,#3030FF,#00D8D8);border:0}
+
+.A .sec{display:flex;align-items:baseline;justify-content:space-between;padding:22px 18px 10px}
+.A .sec h3{font-size:19px;font-weight:800}
+.A .sec a{font-size:14px;font-weight:700;color:var(--primary);display:inline-flex;align-items:center;gap:2px}
+
+/* بطاقات البطل: صورة كاملة وعنوان أبيض على تدرّج */
+.A .rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 18px 6px;scrollbar-width:none}
+.A .rail::-webkit-scrollbar{display:none}
+.A .hero{position:relative;flex:0 0 290px;height:370px;border-radius:30px;overflow:hidden;scroll-snap-align:center;background:#222}
+.A .hero img{width:100%;height:100%;object-fit:cover}
+.A .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(5,3,30,.88))}
+.A .hero .chip{position:absolute;top:14px;right:14px;z-index:2;display:flex;align-items:center;gap:6px;height:32px;padding:0 10px 0 4px;border-radius:999px;font-size:13px;font-weight:700;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.A .hero .chip img{width:24px;height:24px;border-radius:50%;background:#fff;object-fit:contain}
+.A .hero .txt{position:absolute;inset-inline:16px;bottom:16px;z-index:2;color:#fff}
+.A .hero h4{font-size:20px;font-weight:800;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.A .hero .meta{margin-top:8px;font-size:13px;opacity:.9;display:flex;gap:10px;align-items:center}
+.A .meta span{display:inline-flex;align-items:center;gap:4px}
+
+.A .dots{display:flex;gap:6px;justify-content:center;padding-top:10px}
+.A .dots i{width:6px;height:6px;border-radius:9px;background:var(--line)}
+.A .dots i.on{width:18px;background:var(--primary)}
+
+/* الأكثر قراءة: رقم كبير + صورة صغيرة */
+.A .rank{margin:0 18px;background:var(--surface);border-radius:24px;padding:4px 14px}
+.A .rank li{list-style:none;display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.A .rank li:last-child{border:0}
+.A .rank .n{font-size:30px;font-weight:900;color:var(--primary);width:26px;text-align:center;line-height:1}
+.A .rank .t{flex:1;font-size:15px;font-weight:700;line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.A .rank .t small{display:block;font-size:12.5px;font-weight:500;color:var(--muted);margin-top:2px}
+.A .rank img{width:64px;height:64px;border-radius:16px;object-fit:cover}
+
+.A .reel{position:relative;flex:0 0 128px;height:214px;border-radius:22px;overflow:hidden;scroll-snap-align:start;background:#222}
+.A .reel img{width:100%;height:100%;object-fit:cover}
+.A .reel::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.75))}
+.A .reel b{position:absolute;bottom:10px;inset-inline:10px;z-index:2;color:#fff;font-size:13px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.A .reel .pl{position:absolute;top:10px;left:10px;z-index:2;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.22);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+
+.A .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px}
+.A .chips button{display:flex;align-items:center;gap:8px;height:42px;padding:0 14px 0 6px;border-radius:999px;background:var(--surface);font-size:14px;font-weight:700;border:1px solid var(--line)}
+.A .chips img{width:30px;height:30px;border-radius:50%;object-fit:cover}
+
+.A .card{margin:0 18px 16px}
+.A .card .im{position:relative;border-radius:26px;overflow:hidden;aspect-ratio:16/10;background:#222}
+.A .card .im img{width:100%;height:100%;object-fit:cover}
+.A .card .im .t{position:absolute;bottom:10px;right:10px;height:28px;padding:0 10px;border-radius:999px;display:flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;color:#fff;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.3);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.A .card h4{font-size:17px;font-weight:800;line-height:1.55;margin-top:10px}
+.A .card .by{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13px;color:var(--muted)}
+.A .card .by img{width:22px;height:22px;border-radius:50%;object-fit:contain;background:#fff}
+
+/* شريط التابات: كبسولة زجاج تطفو، وتنكمش عند النزول */
+.A .tabbar{position:absolute;bottom:16px;inset-inline:14px;z-index:25;display:flex;gap:8px;align-items:center;justify-content:center;transition:all .35s cubic-bezier(.2,.9,.3,1.15)}
+.A .caps{flex:1;height:64px;border-radius:999px;display:flex;align-items:center;justify-content:space-around;padding:0 6px;transition:all .35s cubic-bezier(.2,.9,.3,1.15)}
+.A .caps button{position:relative;flex:1;height:54px;border-radius:999px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:700;color:var(--text);transition:all .25s}
+.A .caps button.on{color:var(--primary);background:rgba(48,48,255,.1)}
+:root[data-theme="dark"] .A .caps button.on{background:rgba(123,123,255,.18)}
+.A .caps button:active{transform:scale(.9)}
+.A .srch{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;color:var(--text)}
+.A .tabbar.min .caps{flex:0 0 64px}
+.A .tabbar.min .caps button:not(.on){display:none}
+.A .tabbar.min .caps button span{display:none}
+.A .tabbar.min{justify-content:space-between}
+
+/* شاشة المقال */
+.A .art-hero{position:relative;height:430px}
+.A .art-hero img{width:100%;height:100%;object-fit:cover}
+.A .art-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),transparent 30%)}
+.A .art-top{position:absolute;top:44px;inset-inline:16px;z-index:22;display:flex;justify-content:space-between}
+.A .art-top div{display:flex;gap:8px}
+.A .art-top .circ{color:var(--text)}
+.A .sheet{position:relative;margin-top:-34px;background:var(--bg);border-radius:32px 32px 0 0;padding:22px 20px 140px;z-index:3}
+.A .sheet .who{display:flex;align-items:center;gap:10px}
+.A .sheet .who img{width:40px;height:40px;border-radius:50%;object-fit:contain;background:#fff;border:1px solid var(--line)}
+.A .sheet .who b{font-size:15px;display:flex;align-items:center;gap:4px}
+.A .sheet .who b svg{color:var(--primary)}
+.A .sheet .who small{display:block;font-size:12.5px;color:var(--muted)}
+.A .sheet .who .fol{margin-inline-start:auto;height:36px;padding:0 16px;border-radius:999px;background:var(--primary);color:#fff;font-weight:800;font-size:14px}
+.A .sheet h1{font-size:25px;font-weight:900;line-height:1.5;margin:16px 0 10px}
+.A .sheet .meta{color:var(--muted);font-size:13.5px;gap:14px}
+.A .sheet p.lead{font-size:17.5px;line-height:2;margin-top:16px}
+.A .sk{height:12px;border-radius:6px;background:var(--line);margin-top:14px}
+.A .sk.s{width:70%}
+.A .sk-cap{font-size:12px;color:var(--muted);margin-top:14px}
+.A .actions{position:absolute;bottom:18px;inset-inline:22px;z-index:25;height:62px;border-radius:999px;display:flex;align-items:center;justify-content:space-between;padding:0 8px}
+.A .actions button{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:var(--text)}
+.A .actions .listen{width:auto;white-space:nowrap;padding:0 18px;gap:6px;display:flex;align-items:center;background:var(--primary);color:#fff;border-radius:999px;font-weight:800;font-size:14.5px}
+.A .read-prog{position:absolute;top:0;inset-inline:0;height:3px;z-index:31;background:transparent}
+.A .read-prog i{display:block;height:100%;width:0;background:var(--accent)}
+
+.A .seg{display:flex;gap:6px;padding:4px;margin:6px 18px 4px;border-radius:999px;height:46px}
+.A .seg button{flex:1;white-space:nowrap;border-radius:999px;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--muted)}
+.A .seg button.on{background:var(--surface);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.A .sfield{margin:6px 18px 0;height:46px;border-radius:16px;background:var(--surface);display:flex;align-items:center;gap:8px;padding:0 14px;color:var(--muted);font-size:15px;border:1px solid var(--line)}
+.A .spacer{height:110px}
+</style>
+</head>
+<body>
+<header class="page-head">
+  <div>
+    <div class="crumbs"><a href="index.html">اتجاهات واجهة التطبيق</a> · ١ من ٣</div>
+    <h1>اتجاه ١ — «زجاج سائل»</h1>
+    <p class="lead">المحتوى يملأ الشاشة، والتنقّل كبسولة زجاج شفّافة تطفو فوقه. مأخوذ من تصميم Apple الجديد (iOS 26). مناسب لتطبيق قراءة لأن الصور والعناوين هي البطل، والأزرار تتوارى.</p>
+  </div>
+  <div class="page-tools"><button data-toggle-theme>فاتح / داكن</button></div>
+</header>
+
+<section class="why">
+  <div><b>العنوان الكبير ينكمش</b>«مدونتي» بخط ٣٤ يتحوّل لرأس زجاجي صغير لما تنزل. جرّب التمرير داخل الجوال.</div>
+  <div><b>الشريط ينكمش وقت القراءة</b>تنزل فيصغر للتاب الحالي فقط، وتطلع فيرجع كاملاً. مساحة أكبر للقراءة.</div>
+  <div><b>البحث جزيرة مستقلّة</b>زرّ دائري بجانب الشريط، كما في iOS 26. ومودو زرّ ملوّن في الرأس.</div>
+  <div><b>صفحة المقال غامرة</b>الصورة بعرض الشاشة، والأفعال (إعجاب · حفظ · اسمع · شارك) كبسولة واحدة تحت الإبهام.</div>
+</section>
+
+<div class="phones">
+  <div class="phone-wrap"><div class="phone"><div class="screen A" id="a-home"></div></div><div class="phone-cap">الرئيسية — تاب «مدونتي»</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen A" id="a-list"></div></div><div class="phone-cap">تاب «المقالات»</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen A" id="a-art"></div></div><div class="phone-cap">صفحة المقال</div></div>
+</div>
+<p class="note">كل النصوص والصور حقيقية من الإنتاج (<code>/api/mobile/v1/home</code> و<code>trending</code> و<code>categories</code>). الخطوط الرمادية في صفحة المقال مكان بقية النصّ.</p>
+
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>
+const D = window.MODONTY;
+const status = '<div class="statusbar"><span>٩:٤١</span><span>100%</span></div>';
+const tabbar = (active) => `<nav class="tabbar"><div class="caps glass">${TABS.map(t => `<button class="${t.id===active?'on':''}">${icon(t.icon,22)}<span>${t.label}</span></button>`).join('')}</div><button class="srch glass" aria-label="بحث">${icon('search',22)}</button></nav>`;
+
+// ===== الرئيسية
+document.getElementById('a-home').innerHTML = status + `
+<div class="mini" data-mini>مدونتي</div>
+<div class="scroll" data-scroll>
+  <div class="big"><div><small>صباح الخير</small><h2>مدونتي</h2></div>
+    <div class="hd-btns"><button class="circ glass">${icon('bell',20)}</button><button class="circ modo" aria-label="مودو">${icon('sparkles',20)}</button></div></div>
+  <div class="rail">${D.articles.slice(0,5).map(a=>`
+    <article class="hero"><img src="${a.image}" alt="">
+      <span class="chip"><img src="${a.clientLogo}" alt="">${esc(a.clientName)}</span>
+      <div class="txt"><h4>${esc(a.title)}</h4><div class="meta"><span>${icon('clock',14)}${mins(a.readingTimeMinutes)}</span><span>${ago(a.publishedAt)}</span></div></div>
+    </article>`).join('')}</div>
+  <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  <div class="sec"><h3>الأكثر قراءة هذا الأسبوع</h3></div>
+  <ol class="rank">${D.trending.map((a,i)=>`<li><span class="n">${num(i+1)}</span><div class="t">${esc(a.title)}<small>${esc(a.clientName)}</small></div><img src="${a.image}" alt=""></li>`).join('')}</ol>
+  <div class="sec"><h3>الطلّات</h3><a>الكل ${icon('more',16)}</a></div>
+  <div class="rail">${D.reels.map(r=>`<div class="reel"><img src="${r.imageUrl}" alt=""><span class="pl">${icon('play',14)}</span><b>${esc(r.title)}</b></div>`).join('')}</div>
+  <div class="sec"><h3>اكتشف المجالات</h3><a>الكل ${icon('more',16)}</a></div>
+  <div class="chips">${D.industries.map(i=>`<button><img src="${i.socialImage}" alt="">${esc(i.name)}</button>`).join('')}</div>
+  <div class="sec"><h3>أحدث المقالات</h3></div>
+  ${D.articles.slice(5,8).map(a=>`<article class="card"><div class="im"><img src="${a.image}" alt=""><span class="t">${icon('clock',13)}${mins(a.readingTimeMinutes)}</span></div><h4>${esc(a.title)}</h4><div class="by"><img src="${a.clientLogo}" alt="">${esc(a.clientName)} · ${ago(a.publishedAt)}</div></article>`).join('')}
+  <div class="spacer"></div>
+</div>` + tabbar('home');
+
+// ===== المقالات
+document.getElementById('a-list').innerHTML = status + `
+<div class="mini" data-mini>المقالات</div>
+<div class="scroll" data-scroll>
+  <div class="big"><div><small>${num(D.categories.reduce((s,c)=>s+c.articleCount,0))} مقالاً</small><h2>المقالات</h2></div>
+    <div class="hd-btns"><button class="circ glass">${icon('bookmark',20)}</button></div></div>
+  <div class="sfield">${icon('search',18)} ابحث في المقالات</div>
+  <div class="seg glass"><button class="on">الكل</button><button>${icon('walk',15)}ماشي</button><button>${icon('coffee',15)}قهوة</button><button>${icon('sofa',15)}روقان</button></div>
+  <div class="sec" style="padding-top:12px"><h3>التصنيفات</h3></div>
+  <div class="rail">${D.categories.map(c=>`<button style="flex:0 0 auto;height:40px;padding:0 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:700;font-size:14px">${esc(c.name.trim())} <span style="color:var(--muted);font-weight:500">${num(c.articleCount)}</span></button>`).join('')}</div>
+  <div style="height:14px"></div>
+  ${D.articles.concat(D.trending).slice(0,8).map(a=>`<article class="card"><div class="im"><img src="${a.image}" alt="">${a.readingTimeMinutes?`<span class="t">${icon('clock',13)}${mins(a.readingTimeMinutes)}</span>`:''}</div><h4>${esc(a.title)}</h4><div class="by"><img src="${a.clientLogo}" alt="">${esc(a.clientName)}${a.publishedAt?' · '+ago(a.publishedAt):''}</div></article>`).join('')}
+  <div class="spacer"></div>
+</div>` + tabbar('articles');
+
+// ===== صفحة المقال
+const art = D.articles[1];
+document.getElementById('a-art').innerHTML = status + `
+<div class="read-prog"><i data-prog></i></div>
+<div class="scroll" data-scroll>
+  <div class="art-hero"><img src="${art.image}" alt=""></div>
+  <div class="sheet">
+    <div class="who"><img src="${art.clientLogo}" alt=""><div><b>${esc(art.clientName)} ${icon('verified',16)}</b><small>شريك موثّق</small></div><button class="fol">تابع</button></div>
+    <h1>${esc(art.title)}</h1>
+    <div class="meta"><span>${icon('clock',15)}${mins(art.readingTimeMinutes)}</span><span>${icon('eye',15)}${num(art.views)}</span><span>${ago(art.publishedAt)}</span></div>
+    <p class="lead">${esc(art.excerpt)}</p>
+    <div class="sk-cap">بقية نصّ المقال</div>
+    ${'<div class="sk"></div><div class="sk"></div><div class="sk s"></div>'.repeat(5)}
+  </div>
+</div>
+<div class="art-top"><button class="circ glass" aria-label="رجوع">${icon('back',20)}</button><div><button class="circ glass">${icon('bookmark',20)}</button><button class="circ glass">${icon('share',20)}</button></div></div>
+<div class="actions glass"><button aria-label="إعجاب">${icon('heart',22)}</button><button aria-label="حفظ">${icon('bookmark',22)}</button><button class="listen">${icon('listen',18)} اسمع المقال</button><button aria-label="مشاركة">${icon('share',22)}</button></div>`;
+
+// السلوك: العنوان الكبير → رأس صغير · الشريط ينكمش عند النزول · شريط تقدّم القراءة
+document.querySelectorAll('.A').forEach(scr => {
+  const sc = scr.querySelector('[data-scroll]'), mini = scr.querySelector('[data-mini]'), bar = scr.querySelector('.tabbar'), prog = scr.querySelector('[data-prog]');
+  let last = 0;
+  sc.addEventListener('scroll', () => {
+    const y = sc.scrollTop;
+    if (mini) mini.classList.toggle('on', y > 60);
+    if (bar) { if (y > last + 4 && y > 120) bar.classList.add('min'); else if (y < last - 4) bar.classList.remove('min'); }
+    if (prog) prog.style.width = (y / (sc.scrollHeight - sc.clientHeight) * 100) + '%';
+    last = y;
+  }, { passive: true });
+});
+themeToggle(false);
+</script>
+</body>
+</html>

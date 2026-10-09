@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>اتجاه ٣ — قارئ هادئ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ===== اتجاه ٣: قارئ هادئ (تحريري · قصص · مخصّص · داكن أوّلاً) — الحرف هو البطل، والواجهة تختفي وقت القراءة ===== */
+.C{--bg:#FBFAF7;--s1:#fff;--s2:#F1EFEA;--text:#0E065A;--muted:#5E5C66;--line:rgba(14,6,90,.1);--accent:#007575;--kick:#3030FF;--ring1:#00D8D8;--ring2:#3030FF;
+  background:var(--bg);color:var(--text)}
+:root[data-theme="dark"] .C{--bg:#0F0F12;--s1:#18181D;--s2:#212128;--text:#EDEDF0;--muted:#A9AEB9;--line:rgba(255,255,255,.09);--accent:#00D8D8;--kick:#8C8CFF}
+.C .statusbar{color:var(--text)}
+
+.C .hd{padding:42px 18px 0;display:flex;align-items:center;gap:6px}
+.C .hd .g{flex:1}
+.C .hd .g b{display:block;font-size:22px;font-weight:800}
+.C .hd .g small{font-size:13px;color:var(--muted)}
+.C .ib{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--text)}
+.C .ib.modo{color:var(--accent)}
+
+/* قصص: الطلّات دوائر بحلقة ملوّنة — نمط مألوف من إنستقرام وسناب */
+.C .stories{display:flex;gap:14px;overflow-x:auto;padding:16px 18px 6px;scrollbar-width:none}
+.C .stories::-webkit-scrollbar{display:none}
+.C .st{flex:0 0 72px;text-align:center;font-size:12px;line-height:1.4;color:var(--muted)}
+.C .st .ring{width:72px;height:72px;border-radius:50%;padding:3px;background:conic-gradient(var(--ring1),var(--ring2),var(--ring1));margin-bottom:6px}
+.C .st .ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--bg)}
+.C .st span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* اكمل القراءة */
+.C .cont{margin:14px 18px 0;padding:12px;border-radius:20px;background:var(--s1);border:1px solid var(--line);display:flex;gap:12px;align-items:center}
+.C .cont img{width:60px;height:60px;border-radius:14px;object-fit:cover}
+.C .cont .t{flex:1;min-width:0}
+.C .cont small{font-size:12.5px;color:var(--accent);font-weight:800}
+.C .cont b{display:block;font-size:14.5px;line-height:1.5;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.C .prog{height:4px;border-radius:4px;background:var(--line);margin-top:8px;overflow:hidden}
+.C .prog i{display:block;height:100%;background:var(--accent);border-radius:4px}
+
+/* تبويبات علوية بخطّ تحتها */
+.C .tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:22px;padding:20px 18px 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.C .tabs::-webkit-scrollbar{display:none}
+.C .tabs button{flex:0 0 auto;position:relative;height:42px;font-size:15.5px;font-weight:700;color:var(--muted)}
+.C .tabs button.on{color:var(--text)}
+.C .tabs button.on::after{content:"";position:absolute;bottom:-1px;inset-inline:0;height:3px;border-radius:3px 3px 0 0;background:var(--accent)}
+
+/* القائمة التحريرية */
+.C .lead{padding:18px 18px 16px;border-bottom:1px solid var(--line)}
+.C .lead img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:14px}
+.C .kick{font-size:12.5px;font-weight:800;color:var(--kick);margin-top:12px;display:flex;align-items:center;gap:6px}
+.C .kick img{width:18px!important;height:18px;border-radius:50%;aspect-ratio:auto!important;background:#fff;object-fit:contain!important}
+.C .lead h4{font-size:21px;font-weight:800;line-height:1.55;margin-top:6px}
+.C .lead p{font-size:15px;line-height:1.85;color:var(--muted);margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.C .meta{display:flex;gap:12px;align-items:center;font-size:12.5px;color:var(--muted);margin-top:10px}
+.C .meta span{display:inline-flex;gap:4px;align-items:center}
+.C .meta .sv{margin-inline-start:auto;color:var(--text)}
+.C .it{display:flex;gap:14px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.C .it .t{flex:1;min-width:0}
+.C .it .kick{margin-top:0}
+.C .it h4{font-size:16px;font-weight:800;line-height:1.6;margin-top:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.C .it>img{width:92px;height:92px;border-radius:12px;object-fit:cover;flex:0 0 auto}
+.C .sec{padding:26px 18px 10px;font-size:13px;font-weight:800;color:var(--muted);letter-spacing:.3px}
+.C .topics{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px}
+.C .topics button{height:40px;padding:0 14px;border-radius:12px;border:1px solid var(--line);font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.C .topics button small{color:var(--muted);font-weight:500}
+
+/* الشريط السفلي: كلاسيكي هادئ، يختفي عند النزول ويرجع عند الطلوع */
+.C .nav{position:absolute;bottom:0;inset-inline:0;z-index:25;height:80px;padding:6px 6px 18px;background:var(--bg);border-top:1px solid var(--line);display:flex;transition:transform .3s ease}
+.C .nav.hide{transform:translateY(100%)}
+.C .nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px;font-weight:700;color:var(--muted);position:relative}
+.C .nav button.on{color:var(--text)}
+.C .nav button.on::before{content:"";position:absolute;top:0;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+
+/* القارئ */
+.C .rbar{position:absolute;top:0;inset-inline:0;z-index:22;padding:38px 10px 6px;background:var(--bg);display:flex;align-items:center;transition:transform .3s;border-bottom:1px solid var(--line)}
+.C .rbar.hide{transform:translateY(-100%)}
+.C .rbar .left{margin-inline-start:auto;display:flex}
+.C .rbar .left-time{font-size:12.5px;color:var(--muted);margin-inline-start:6px}
+.C .rprog{position:absolute;bottom:-1px;inset-inline:0;height:2px}
+.C .rprog i{display:block;height:100%;width:0;background:var(--accent)}
+.C .rd{padding:100px 22px 140px}
+.C .rd .kick{margin-top:0;font-size:13px}
+.C .rd h1{font-size:27px;font-weight:900;line-height:1.55;margin-top:8px}
+.C .rd .by{display:flex;align-items:center;gap:10px;margin-top:16px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.C .rd .by img{width:40px;height:40px;border-radius:50%;object-fit:contain;background:#fff}
+.C .rd .by b{font-size:14.5px;display:flex;gap:4px;align-items:center}.C .rd .by b svg{color:var(--accent)}
+.C .rd .by small{display:block;font-size:12.5px;color:var(--muted)}
+.C .rd .by button{margin-inline-start:auto;height:36px;padding:0 14px;border-radius:999px;border:1.5px solid var(--text);font-weight:800;font-size:13.5px}
+.C .rd .hero{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;margin-top:18px}
+.C .rd p{font-size:var(--fs,18px);line-height:2.1;margin-top:18px}
+.C .sk{height:12px;border-radius:6px;background:var(--line);margin-top:16px}.C .sk.s{width:62%}
+.C .sk-cap{font-size:12px;color:var(--muted);margin-top:16px}
+.C .next{margin-top:30px;padding:16px;border-radius:18px;background:var(--s2);display:flex;gap:12px;align-items:center}
+.C .next img{width:64px;height:64px;border-radius:12px;object-fit:cover}
+.C .next small{font-size:12px;color:var(--accent);font-weight:800}
+.C .next b{display:block;font-size:14.5px;line-height:1.55;margin-top:2px}
+.C .rdock{position:absolute;bottom:0;inset-inline:0;z-index:25;height:76px;padding:6px 14px 18px;background:var(--bg);border-top:1px solid var(--line);display:flex;align-items:center;gap:4px;transition:transform .3s}
+.C .rdock.hide{transform:translateY(100%)}
+.C .rdock .pl{flex:1;height:48px;border-radius:14px;background:var(--s2);display:flex;align-items:center;gap:10px;padding:0 6px 0 12px;font-size:14px;font-weight:700}
+.C .rdock .pl span:first-child{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--bg);display:grid;place-items:center}
+.C .rdock .pl small{color:var(--muted);font-weight:500;margin-inline-start:auto;padding-inline-end:6px}
+/* لوحة حجم الخط والخلفية */
+.C .aa{position:absolute;top:84px;left:12px;z-index:30;width:240px;padding:14px;border-radius:18px;background:var(--s1);border:1px solid var(--line);box-shadow:0 18px 40px -12px rgba(0,0,0,.35);display:none}
+.C .aa.on{display:block}
+.C .aa .sz{display:flex;align-items:center;gap:10px}
+.C .aa .sz button{width:40px;height:40px;border-radius:12px;background:var(--s2);font-weight:900}
+.C .aa .sz input{flex:1;accent-color:var(--accent)}
+.C .aa .bgs{display:flex;gap:8px;margin-top:12px}
+.C .aa .bgs button{flex:1;height:40px;border-radius:12px;font-size:13px;font-weight:800;border:1.5px solid var(--line)}
+.C .spacer{height:100px}
+</style>
+</head>
+<body>
+<header class="page-head">
+  <div>
+    <div class="crumbs"><a href="index.html">اتجاهات واجهة التطبيق</a> · ٣ من ٣</div>
+    <h1>اتجاه ٣ — «قارئ هادئ»</h1>
+    <p class="lead">الحرف هو البطل والواجهة تختفي وقت القراءة. يجمع نمط الجرائد (عنوان صغير ملوّن فوق كل مقال)، والقصص في الأعلى للطلّات، و«اكمل من حيث وقفت». يفتح داكناً، وفيه لوحة لحجم الخط ولون الخلفية.</p>
+  </div>
+  <div class="page-tools"><button data-toggle-theme>فاتح / داكن</button></div>
+</header>
+
+<section class="why">
+  <div><b>الطلّات قصص</b>دوائر بحلقة ملوّنة أعلى الرئيسية، نفس عادة القارئ العربي في إنستقرام وسناب. ضغطة وتشتغل.</div>
+  <div><b>«اكمل من حيث وقفت»</b>آخر مقال ما خلّصته، مع شريط التقدّم. <i>يحتاج حفظ مكان القراءة لكل مستخدم (غير موجود اليوم).</i></div>
+  <div><b>«لك · الأحدث · الأكثر قراءة»</b>تبويبات علوية بخطّ تحتها، تنتقل بينها بالسحب.</div>
+  <div><b>القراءة بلا إطار</b>الرأس والشريط يختفيان عند النزول، والوقت المتبقّي يظهر فوق. جرّب زرّ <b style="display:inline">Aa</b> في صفحة المقال.</div>
+</section>
+
+<div class="phones">
+  <div class="phone-wrap"><div class="phone"><div class="screen C" id="c-home"></div></div><div class="phone-cap">الرئيسية — تاب «مدونتي»</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen C" id="c-list"></div></div><div class="phone-cap">تاب «المقالات»</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen C" id="c-art"></div></div><div class="phone-cap">صفحة المقال (القارئ)</div></div>
+</div>
+<p class="note">كل النصوص والصور حقيقية من الإنتاج. نسبة التقدّم في «اكمل من حيث وقفت» (٤٠٪) للعرض فقط. الخطوط الرمادية مكان بقية نصّ المقال.</p>
+
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script>
+const D = window.MODONTY;
+const status = '<div class="statusbar"><span>٩:٤١</span><span>100%</span></div>';
+const nav = (active) => `<nav class="nav" data-hide>${TABS.map(t=>`<button class="${t.id===active?'on':''}">${icon(t.icon,23)}${t.label}</button>`).join('')}</nav>`;
+const kick = (a) => `<div class="kick">${a.clientLogo?`<img src="${a.clientLogo}" alt="">`:''}${esc(a.clientName)}</div>`;
+const meta = (a) => `<div class="meta">${a.readingTimeMinutes?`<span>${icon('clock',14)}${mins(a.readingTimeMinutes)}</span>`:''}${a.publishedAt?`<span>${ago(a.publishedAt)}</span>`:''}<span class="sv">${icon('bookmark',18)}</span></div>`;
+const item = (a) => `<article class="it"><div class="t">${kick(a)}<h4>${esc(a.title)}</h4>${meta(a)}</div><img src="${a.image}" alt=""></article>`;
+
+const lead = D.articles[0];
+document.getElementById('c-home').innerHTML = status + `
+<div class="scroll" data-scroll>
+  <div class="hd"><div class="g"><b>مساء الخير</b><small>${new Intl.DateTimeFormat('ar-SA',{weekday:'long',day:'numeric',month:'long',timeZone:'Asia/Riyadh',calendar:'gregory'}).format(new Date())}</small></div>
+    <button class="ib modo" aria-label="مودو">${icon('sparkles',22)}</button><button class="ib">${icon('search',22)}</button><button class="ib">${icon('bell',22)}</button></div>
+  <div class="stories">${D.reels.map(r=>`<div class="st"><div class="ring"><img src="${r.imageUrl}" alt=""></div><span>${esc(r.title)}</span></div>`).join('')}</div>
+  <div class="cont"><img src="${D.articles[4].image}" alt=""><div class="t"><small>اكمل من حيث وقفت</small><b>${esc(D.articles[4].title)}</b><div class="prog"><i style="width:40%"></i></div></div></div>
+  <div class="tabs"><button class="on">لك</button><button>الأحدث</button><button>الأكثر قراءة</button><button>المتابَعون</button></div>
+  <article class="lead"><img src="${lead.image}" alt="">${kick(lead)}<h4>${esc(lead.title)}</h4><p>${esc(lead.excerpt)}</p>${meta(lead)}</article>
+  ${D.trending.concat(D.articles.slice(1,4)).map(item).join('')}
+  <div class="sec">مجالات تهمّك</div>
+  <div class="topics">${D.industries.map(i=>`<button>${esc(i.name)}</button>`).join('')}</div>
+  ${D.articles.slice(5,8).map(item).join('')}
+  <div class="spacer"></div>
+</div>` + nav('home');
+
+document.getElementById('c-list').innerHTML = status + `
+<div class="scroll" data-scroll>
+  <div class="hd"><div class="g"><b>المقالات</b><small>${num(D.readingTimeCounts.short+D.readingTimeCounts.medium+D.readingTimeCounts.long)} مقالاً منشوراً</small></div>
+    <button class="ib">${icon('search',22)}</button><button class="ib">${icon('bookmark',22)}</button></div>
+  <div class="tabs"><button class="on">الكل</button>${D.categories.map(c=>`<button>${esc(c.name.trim())}</button>`).join('')}</div>
+  <div class="sec">حسب وقتك</div>
+  <div class="topics">
+    <button>${icon('walk',16)}على الماشي <small>${num(D.readingTimeCounts.short)}</small></button>
+    <button>${icon('coffee',16)}فنجان قهوة <small>${num(D.readingTimeCounts.medium)}</small></button>
+    <button>${icon('sofa',16)}جلسة روقان <small>${num(D.readingTimeCounts.long)}</small></button></div>
+  <div style="height:8px"></div>
+  ${D.articles.concat(D.trending).map(item).join('')}
+  <div class="spacer"></div>
+</div>` + nav('articles');
+
+const art = D.articles[3];
+document.getElementById('c-art').innerHTML = status + `
+<div class="rbar" data-hide-top><button class="ib" aria-label="رجوع">${icon('back',22)}</button><span class="left-time" data-left>متبقٍّ ${num(art.readingTimeMinutes)} دقائق</span>
+  <div class="left"><button class="ib" data-aa style="font-weight:900;font-size:16px">Aa</button><button class="ib">${icon('share',21)}</button></div><div class="rprog"><i data-prog></i></div></div>
+<div class="aa" data-aa-panel><div class="sz"><button data-sz="-1">أ</button><input type="range" min="15" max="23" value="18" data-range><button data-sz="1" style="font-size:20px">أ</button></div>
+  <div class="bgs"><button data-bg="light" style="background:#FBFAF7;color:#0E065A">فاتح</button><button data-bg="paper" style="background:#F4ECD8;color:#3B2F1E">ورقي</button><button data-bg="dark" style="background:#0F0F12;color:#EDEDF0">داكن</button></div></div>
+<div class="scroll" data-scroll>
+  <div class="rd" data-rd>
+    ${kick(art)}
+    <h1>${esc(art.title)}</h1>
+    <div class="by"><img src="${art.clientLogo}" alt=""><div><b>${esc(art.clientName)} ${icon('verified',15)}</b><small>${mins(art.readingTimeMinutes)} · ${ago(art.publishedAt)} · ${num(art.views)} مشاهدة</small></div><button>تابع</button></div>
+    <img class="hero" src="${art.image}" alt="">
+    <p>${esc(art.excerpt)}</p>
+    <div class="sk-cap">بقية نصّ المقال</div>
+    ${'<div class="sk"></div><div class="sk"></div><div class="sk s"></div>'.repeat(6)}
+    <div class="next"><img src="${D.articles[5].image}" alt=""><div><small>المقال التالي — اسحب للأعلى</small><b>${esc(D.articles[5].title)}</b></div></div>
+  </div>
+</div>
+<div class="rdock" data-hide><div class="pl"><span>${icon('play',16)}</span>اسمع المقال<small>${num(art.readingTimeMinutes)} د</small></div><button class="ib">${icon('heart',22)}</button><button class="ib">${icon('bookmark',22)}</button></div>`;
+
+// السلوك: الشريط والرأس يختفيان عند النزول · التقدّم والوقت المتبقّي · لوحة Aa
+document.querySelectorAll('.C').forEach(scr => {
+  const sc = scr.querySelector('[data-scroll]'), downs = scr.querySelectorAll('[data-hide],[data-hide-top]'), prog = scr.querySelector('[data-prog]'), left = scr.querySelector('[data-left]');
+  let last = 0;
+  sc.addEventListener('scroll', () => {
+    const y = sc.scrollTop, r = y / (sc.scrollHeight - sc.clientHeight);
+    downs.forEach(el => { if (y > last + 4 && y > 80) el.classList.add('hide'); else if (y < last - 4) el.classList.remove('hide'); });
+    if (prog) prog.style.width = (r * 100) + '%';
+    if (left) { const m = Math.max(1, Math.round(art.readingTimeMinutes * (1 - r))); left.textContent = `متبقٍّ ${num(m)} ${m > 2 && m < 11 ? 'دقائق' : 'دقيقة'}`; }
+    last = y;
+  }, { passive: true });
+});
+const cart = document.getElementById('c-art'), panel = cart.querySelector('[data-aa-panel]'), rd = cart.querySelector('[data-rd]'), range = cart.querySelector('[data-range]');
+cart.querySelector('[data-aa]').addEventListener('click', () => panel.classList.toggle('on'));
+const setFs = v => { range.value = v; rd.style.setProperty('--fs', v + 'px'); };
+range.addEventListener('input', () => setFs(range.value));
+cart.querySelectorAll('[data-sz]').forEach(b => b.addEventListener('click', () => setFs(+range.value + +b.dataset.sz)));
+cart.querySelectorAll('[data-bg]').forEach(b => b.addEventListener('click', () => {
+  const v = { light: ['#FBFAF7', '#0E065A'], paper: ['#F4ECD8', '#3B2F1E'], dark: ['#0F0F12', '#EDEDF0'] }[b.dataset.bg];
+  cart.style.setProperty('--bg', v[0]); cart.style.setProperty('--text', v[1]);
+}));
+document.querySelectorAll('.C .tabs').forEach(n => n.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  n.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+}));
+themeToggle(true);
+</script>
+</body>
+</html>
