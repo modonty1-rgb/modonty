@@ -128,7 +128,7 @@ export function ArticleTopEngagementBar({
     setLikeN(liked ? likeN - 1 : likeN + 1);
     try {
       const r = await likeArticle(articleId, articleSlug);
-      if (r.success && r.data) { setLikeN(r.data.likes); setLiked(r.data.liked); }
+      if (r.success && "data" in r && r.data) { setLikeN(r.data.likes); setLiked(r.data.liked); }
       else { setLiked(prevLiked); setLikeN(prevN); }
     } catch { setLiked(prevLiked); setLikeN(prevN); }
     finally { setBusy(null); }
@@ -143,7 +143,7 @@ export function ArticleTopEngagementBar({
     setFavN(saved ? favN - 1 : favN + 1);
     try {
       const r = await favoriteArticle(articleId, articleSlug);
-      if (r.success && r.data) { setFavN(r.data.favorites); setSaved(r.data.favorited); }
+      if (r.success && "data" in r && r.data) { setFavN(r.data.favorites); setSaved(r.data.favorited); }
       else { setSaved(prevSaved); setFavN(prevN); }
     } catch { setSaved(prevSaved); setFavN(prevN); }
     finally { setBusy(null); }
