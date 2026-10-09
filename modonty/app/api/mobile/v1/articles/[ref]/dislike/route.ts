@@ -25,7 +25,7 @@ export const POST = handle("article-dislike", async (request: Request, { params 
   if ("response" in body) return body.response;
 
   const result = await dislikeArticleAs(reader, id, body.value.slug);
-  if (!result.success || !result.data) {
+  if (!result.success) {
     return result.error === "Article not found"
       ? fail("NOT_FOUND", MESSAGES.articleNotFound)
       : fail("INTERNAL_ERROR", MESSAGES.internal);

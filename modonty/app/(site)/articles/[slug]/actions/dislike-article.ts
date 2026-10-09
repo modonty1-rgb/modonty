@@ -2,9 +2,10 @@
 
 import { auth } from "@/lib/auth";
 import { dislikeArticleAs } from "@/lib/articles/dislike-article-as";
+import type { EngagementResult } from "@/lib/articles/engagement-result";
 
 /** Web door: identity from the session cookie, logic in `dislikeArticleAs` (shared with the mobile API). */
-export async function dislikeArticle(articleId: string, articleSlug: string) {
+export async function dislikeArticle(articleId: string, articleSlug: string): Promise<EngagementResult<{ likes: number; dislikes: number; disliked: boolean }>> {
   try {
     const session = await auth();
     if (!session?.user?.id) {

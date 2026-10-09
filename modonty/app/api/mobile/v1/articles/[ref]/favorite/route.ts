@@ -24,7 +24,7 @@ export const POST = handle("article-favorite", async (request: Request, { params
   if ("response" in body) return body.response;
 
   const result = await favoriteArticleAs(reader, id, body.value.slug);
-  if (!result.success || !result.data) {
+  if (!result.success) {
     return result.error === "Article not found"
       ? fail("NOT_FOUND", MESSAGES.articleNotFound)
       : fail("INTERNAL_ERROR", MESSAGES.internal);

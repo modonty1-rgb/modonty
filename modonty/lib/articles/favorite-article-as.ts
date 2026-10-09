@@ -7,12 +7,13 @@ import { isPublicArticle } from "./is-public-article";
 import { fireEngagement } from "./fire-engagement";
 import { incrementCounters } from "@/lib/counters/increment-counters";
 import type { ReaderActor } from "@/lib/users/reader-actor";
+import type { EngagementResult } from "@/lib/articles/engagement-result";
 
 /**
  * حفظ/إلغاء حفظ مقال باسم قارئ معروف — جسم `favoriteArticle` (الويب) كما هو بعد فصل الهويّة.
  * يناديه الأكشن ونقطة التطبيق. ليس Server Action عن قصد.
  */
-export async function favoriteArticleAs(actor: Pick<ReaderActor, "id" | "name">, articleId: string, articleSlug: string) {
+export async function favoriteArticleAs(actor: Pick<ReaderActor, "id" | "name">, articleId: string, articleSlug: string): Promise<EngagementResult<{ favorites: number; favorited: boolean }>> {
   try {
     const userId = actor.id;
 

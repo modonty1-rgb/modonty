@@ -6,12 +6,13 @@ import { db } from "@/lib/db";
 import { isPublicArticle } from "@/lib/articles/is-public-article";
 import { fireEngagement } from "@/lib/articles/fire-engagement";
 import type { ReaderActor } from "@/lib/users/reader-actor";
+import type { EngagementResult } from "@/lib/articles/engagement-result";
 
 /**
  * «لا يعجبني» مقال (toggle) باسم قارئ معروف — جسم `dislikeArticle` (الويب) كما هو بعد فصل الهويّة.
  * يناديه الأكشن (من كوكي الجلسة) ونقطة التطبيق (من Bearer). ليس Server Action عن قصد.
  */
-export async function dislikeArticleAs(actor: Pick<ReaderActor, "id" | "name">, articleId: string, articleSlug: string) {
+export async function dislikeArticleAs(actor: Pick<ReaderActor, "id" | "name">, articleId: string, articleSlug: string): Promise<EngagementResult<{ likes: number; dislikes: number; disliked: boolean }>> {
   try {
     const userId = actor.id;
 
