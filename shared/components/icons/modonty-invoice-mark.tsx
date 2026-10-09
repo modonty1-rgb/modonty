@@ -1,34 +1,28 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty INVOICE / RECEIPT mark — الفاتورة / الإيصال.
- *
- * Traced verbatim from the approved original in
- * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="invoice"`),
- * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
- * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
- * attributes became JSX.
- *
- * Approved concept: ورقة فاتورة كلاسيكية بقاعدة مسننة، تتضمن أسطر البيانات وختم المصادقة الماسي.
- *
- * Category: Billing / Financial · Subscription receipts, billing invoices, purchase history
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
- * takes the size and colour of the text around it, two CSS hooks — `--modonty-invoice-body` · `--modonty-invoice-accent` (the diamond).
+ * The modonty INVOICE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-invoice-body` · `--modonty-invoice-accent` (the diamond).
  */
-export function ModontyInvoiceMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyInvoiceMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M5.5 5.5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2V20.75L15.25 19L12 20.75L8.75 19L5.5 20.75Z" stroke="var(--modonty-invoice-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8.5 9.5H13.5" stroke="var(--modonty-invoice-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10.5 14.5H15.25" stroke="var(--modonty-invoice-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M13.15 7.38A0.5 0.5 0 0 1 13.85 7.38L15.62 9.15A0.5 0.5 0 0 1 15.62 9.85L13.85 11.62A0.5 0.5 0 0 1 13.15 11.62L11.38 9.85A0.5 0.5 0 0 1 11.38 9.15Z" fill="var(--modonty-invoice-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M30 20H90V96L80 90L70 96L60 90L50 96L40 90L30 96V20Z" stroke="var(--modonty-invoice-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M44 38H76M44 50H76" stroke="var(--modonty-invoice-body, currentColor)" strokeWidth="6" strokeLinecap="round"/>
-      <rect x="50" y="62" width="20" height="20" rx="4" transform="rotate(30 60 72)" fill="var(--modonty-invoice-accent, var(--modonty-accent, #00d8d8))"/>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M3.5 4A1.5 1.5 0 0 1 5 2.5h6A1.5 1.5 0 0 1 12.5 4V13.5L10.25 12L8 13.5L5.75 12L3.5 13.5Z" stroke="var(--modonty-invoice-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.5 6H8.5" stroke="var(--modonty-invoice-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7 9.75H10" stroke="var(--modonty-invoice-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8.29 4.44A0.3 0.3 0 0 1 8.71 4.44L10.06 5.79A0.3 0.3 0 0 1 10.06 6.21L8.71 7.56A0.3 0.3 0 0 1 8.29 7.56L6.94 6.21A0.3 0.3 0 0 1 6.94 5.79Z" fill="var(--modonty-invoice-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

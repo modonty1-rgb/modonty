@@ -1,35 +1,27 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty COMMENT / DISCUSSION mark — التعليقات / النقاش.
- *
- * Traced verbatim from the approved original in
- * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="comment"`),
- * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
- * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
- * attributes became JSX.
- *
- * Approved concept: فقاعة حوار هندسية واضحة بزاوية سفلية رشيقة، تتوسطها ثلاث نقاط ماسية متتابعة تمثل صوت المستخدم.
- *
- * Category: Engagement / Social · Post feedback, comments section, thread reply
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
- * takes the size and colour of the text around it, two CSS hooks — `--modonty-comment-body` · `--modonty-comment-accent` (the diamond).
+ * The modonty COMMENT mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-comment-body` · `--modonty-comment-accent` (the diamond).
  */
-export function ModontyCommentMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyCommentMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M7.5 3H16.5A2.5 2.5 0 0 1 19 5.5V21L15.5 17.5H7.5A2.5 2.5 0 0 1 5 15V5.5A2.5 2.5 0 0 1 7.5 3Z" stroke="var(--modonty-comment-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M15.5 7.5H9.5" stroke="var(--modonty-comment-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M15.5 12.25H14.25" stroke="var(--modonty-comment-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9.4 10.13A0.5 0.5 0 0 1 10.1 10.13L11.87 11.9A0.5 0.5 0 0 1 11.87 12.6L10.1 14.37A0.5 0.5 0 0 1 9.4 14.37L7.63 12.6A0.5 0.5 0 0 1 7.63 11.9Z" fill="var(--modonty-comment-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M24 58C24 38.1 40.1 22 60 22C79.9 22 96 38.1 96 58C96 77.9 79.9 94 60 94C53.2 94 46.8 92.1 41.3 88.8L22 94L27.5 76.2C25.3 70.8 24 64.6 24 58Z" stroke="var(--modonty-comment-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="36" y="48" width="20" height="20" rx="4" transform="rotate(30 46 58)" fill="var(--modonty-comment-body, currentColor)"/>
-      <rect x="50" y="48" width="20" height="20" rx="4" transform="rotate(30 60 58)" fill="var(--modonty-comment-accent, var(--modonty-accent, #00d8d8))"/>
-      <rect x="64" y="48" width="20" height="20" rx="4" transform="rotate(30 74 58)" fill="var(--modonty-comment-body, currentColor)"/>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M4.5 2H11.5A1.5 1.5 0 0 1 13 3.5V14L11.5 11.75H4.5A1.5 1.5 0 0 1 3 10.25V3.5A1.5 1.5 0 0 1 4.5 2Z" stroke="var(--modonty-comment-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M11 4.75H5.5" stroke="var(--modonty-comment-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.29 6.94A0.3 0.3 0 0 1 9.71 6.94L11.06 8.29A0.3 0.3 0 0 1 11.06 8.71L9.71 10.06A0.3 0.3 0 0 1 9.29 10.06L7.94 8.71A0.3 0.3 0 0 1 7.94 8.29Z" fill="var(--modonty-comment-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

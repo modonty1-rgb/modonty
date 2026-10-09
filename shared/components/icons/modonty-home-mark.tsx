@@ -1,34 +1,26 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty HOME mark — الرئيسية.
- *
- * Traced verbatim from the approved original in
- * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="home"`),
- * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
- * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
- * attributes became JSX.
- *
- * Approved concept: سقف جمالوني متوازن بزاويا ناعمة، وقاعدة مستقيمة متينة يتوسط مدخلها ماسة مدونتي السماوية كنقطة ارتكاز وهوية.
- *
- * Category: Navigation · Main landing, dashboard home, root navigation
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
- * takes the size and colour of the text around it, two CSS hooks — `--modonty-home-body` · `--modonty-home-accent` (the diamond).
+ * The modonty HOME mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-home-body` · `--modonty-home-accent` (the diamond).
  */
-export function ModontyHomeMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyHomeMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M3.5 11.75L12 3.25L20.5 11.75" stroke="var(--modonty-home-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5.5 10V18.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V10" stroke="var(--modonty-home-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 12.88A0.5 0.5 0 0 1 12.35 12.88L14.12 14.65A0.5 0.5 0 0 1 14.12 15.35L12.35 17.12A0.5 0.5 0 0 1 11.65 17.12L9.88 15.35A0.5 0.5 0 0 1 9.88 14.65Z" fill="var(--modonty-home-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M22 56L56.5 25.5C58.5 23.8 61.5 23.8 63.5 25.5L98 56" stroke="var(--modonty-home-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M32 52V92C32 96.4 35.6 100 40 100H80C84.4 100 88 96.4 88 92V52" stroke="var(--modonty-home-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="50" y="68" width="20" height="20" rx="4" transform="rotate(30 60 78)" fill="var(--modonty-home-accent, var(--modonty-accent, #00d8d8))"/>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M2.5 7.5L8 2L13.5 7.5" stroke="var(--modonty-home-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.5 6.5V12a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V6.5" stroke="var(--modonty-home-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 8.19A0.3 0.3 0 0 1 8.21 8.19L9.56 9.54A0.3 0.3 0 0 1 9.56 9.96L8.21 11.31A0.3 0.3 0 0 1 7.79 11.31L6.44 9.96A0.3 0.3 0 0 1 6.44 9.54Z" fill="var(--modonty-home-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

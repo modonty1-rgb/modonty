@@ -1,33 +1,24 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty RATING / STAR mark — التقييم / النجمة.
- *
- * Traced verbatim from the approved original in
- * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="rating"`),
- * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
- * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
- * attributes became JSX.
- *
- * Approved concept: نجمة خماسية متناسقة الزوايا بحواف مدورة، تتوسطها ماسة الجودة السماوية.
- *
- * Category: Feedback / Quality · User review, 5-star scoring, product ratings
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
- * takes the size and colour of the text around it, two CSS hooks — `--modonty-rating-body` · `--modonty-rating-accent` (the diamond).
+ * The modonty RATING mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-rating-body` · `--modonty-rating-accent` (the diamond).
  */
-export function ModontyRatingMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyRatingMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M12 3.5L14.79 9.16L21.04 10.06L16.52 14.47L17.58 20.69L12 17.75L6.42 20.69L7.48 14.47L2.96 10.06L9.21 9.16Z" stroke="var(--modonty-rating-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 10.88A0.5 0.5 0 0 1 12.35 10.88L14.12 12.65A0.5 0.5 0 0 1 14.12 13.35L12.35 15.12A0.5 0.5 0 0 1 11.65 15.12L9.88 13.35A0.5 0.5 0 0 1 9.88 12.65Z" fill="var(--modonty-rating-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M60 18L72.4 43.1L100 47.1L80 66.6L84.7 94L60 81L35.3 94L40 66.6L20 47.1L47.6 43.1L60 18Z" stroke="var(--modonty-rating-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="50" y="46" width="20" height="20" rx="4" transform="rotate(30 60 56)" fill="var(--modonty-rating-accent, var(--modonty-accent, #00d8d8))"/>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M8 2L10.06 5.92L14.42 6.66L11.33 9.83L11.97 14.21L8 12.25L4.03 14.21L4.67 9.83L1.58 6.66L5.94 5.92Z" stroke="var(--modonty-rating-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 7.19A0.3 0.3 0 0 1 8.21 7.19L9.56 8.54A0.3 0.3 0 0 1 9.56 8.96L8.21 10.31A0.3 0.3 0 0 1 7.79 10.31L6.44 8.96A0.3 0.3 0 0 1 6.44 8.54Z" fill="var(--modonty-rating-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

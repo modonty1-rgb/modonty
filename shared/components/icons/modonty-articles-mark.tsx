@@ -1,58 +1,27 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty ARTICLE mark — a written piece: the articles tab, and the empty frame a
- * card falls back to when an article has no cover.
- *
- * NOT in the approved 38 — "Article / Newspaper" sits on the master reference's own
- * missing list — so it is drawn to the file's Geometry Standard rather than traced:
- * 120 canvas · 8px main stroke · 7px for the text lines, which the standard allows for
- * secondary detail · round caps and joins · inside the 16px safe margin. Redrawn 22 Aug
- * 2026 from an earlier stroke-8-on-a-different-grid version that predated the standard.
- *
- * The diamond is the folded corner, not a badge stuck on a page: the fold is where a page
- * turns, and the reference asks the diamond to be "a functional node… or core branding
- * focal point" rather than an ornament laid on top.
- *
- * TWO text lines, not three or four. The standard forbids detail that collapses at small
- * sizes ("No micro-lines that collapse below 18px render resolution"), and this mark ships
- * at 20px on a feed card.
- *
- * Contract: `currentColor` + a `1em` box, two CSS hooks — `--modonty-articles-body` ·
- * `--modonty-articles-accent` (the folded corner).
+ * The modonty ARTICLES mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-articles-body` · `--modonty-articles-accent` (the diamond).
  */
-export function ModontyArticlesMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyArticlesMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <rect x="6" y="4" width="12" height="16.5" rx="2" stroke="var(--modonty-articles-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14.25 13H9.75" stroke="var(--modonty-articles-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14.25 16.75H11.75" stroke="var(--modonty-articles-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12.3 6.28A0.5 0.5 0 0 1 13 6.28L14.77 8.05A0.5 0.5 0 0 1 14.77 8.75L13 10.52A0.5 0.5 0 0 1 12.3 10.52L10.53 8.75A0.5 0.5 0 0 1 10.53 8.05Z" fill="var(--modonty-articles-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path
-        d="M34 22H70L94 46V90C94 94.4 90.4 98 86 98H34C29.6 98 26 94.4 26 90V30C26 25.6 29.6 22 34 22Z"
-        stroke="var(--modonty-articles-body, currentColor)"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M42 60H72M42 78H62"
-        stroke="var(--modonty-articles-body, currentColor)"
-        strokeWidth="7"
-        strokeLinecap="round"
-      />
-      <rect
-        x="60"
-        y="12"
-        width="20"
-        height="20"
-        rx="4"
-        transform="rotate(30 70 22)"
-        fill="var(--modonty-articles-accent, var(--modonty-accent, #00d8d8))"
-      />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <rect x="3.5" y="2.5" width="9" height="11" rx="1.5" stroke="var(--modonty-articles-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.5 10.5H6.5" stroke="var(--modonty-articles-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 4.69A0.3 0.3 0 0 1 8.21 4.69L9.56 6.04A0.3 0.3 0 0 1 9.56 6.46L8.21 7.81A0.3 0.3 0 0 1 7.79 7.81L6.44 6.46A0.3 0.3 0 0 1 6.44 6.04Z" fill="var(--modonty-articles-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

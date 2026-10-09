@@ -1,15 +1,30 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
-/** Brand control for advancing audio by 15 seconds. */
-export function ModontyAdvanceMark(props: SVGProps<SVGSVGElement>) {
+/**
+ * The modonty ADVANCE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-advance-body` · `--modonty-advance-accent` (the diamond).
+ */
+export function ModontyAdvanceMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M20 12.5A8.5 8.5 0 1 1 17.5 6.5" stroke="var(--modonty-advance-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M17.5 3.5V6.5H14" stroke="var(--modonty-advance-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 12.5H13" stroke="var(--modonty-advance-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.5 11V14" stroke="var(--modonty-advance-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M19.65 10.38A0.5 0.5 0 0 1 20.35 10.38L22.12 12.15A0.5 0.5 0 0 1 22.12 12.85L20.35 14.62A0.5 0.5 0 0 1 19.65 14.62L17.88 12.85A0.5 0.5 0 0 1 17.88 12.15Z" fill="var(--modonty-advance-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg viewBox="0 0 120 120" fill="none" width="1em" height="1em" aria-hidden="true" {...props}>
-      <title>Modonty IconAdvance — Forward 15 Seconds</title>
-      <path d="M88 31 C79 22 67 18 55 19 C34 20 18 37 18 59 C18 82 36 100 59 100 C76 100 90 91 97 78" stroke="#0E065A" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M84 49H99" stroke="#0E065A" strokeWidth="8" strokeLinecap="round" />
-      <path d="M94 39L105 50L94 61" stroke="#0E065A" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M41.14 66.15 L46.36 66.15 L46.36 51.34 L41.00 52.45 L41.00 48.42 L46.32 47.32 L51.94 47.32 L51.94 66.15 L57.16 66.15 L57.16 70.23 L41.14 70.23 L41.14 66.15 Z M62.65 47.32 L77.34 47.32 L77.34 51.66 L67.37 51.66 L67.37 55.21 Q68.04 55.02 68.73 54.93 Q69.41 54.82 70.14 54.82 Q74.33 54.82 76.67 56.92 Q79.00 59.02 79.00 62.76 Q79.00 66.47 76.46 68.58 Q73.92 70.68 69.41 70.68 Q67.46 70.68 65.55 70.30 Q63.64 69.93 61.75 69.16 L61.75 64.51 Q63.62 65.58 65.30 66.12 Q66.98 66.66 68.47 66.66 Q70.62 66.66 71.85 65.61 Q73.09 64.56 73.09 62.76 Q73.09 60.95 71.85 59.91 Q70.62 58.86 68.47 58.86 Q67.20 58.86 65.75 59.19 Q64.31 59.52 62.65 60.21 L62.65 47.32 Z" fill="#0E065A" />
-      <rect x="54" y="78" width="12" height="12" rx="2" transform="rotate(45 60 84)" fill="#00D8D8" />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M13 8.5A5.5 5.5 0 1 1 11.4 4.6" stroke="var(--modonty-advance-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M11.4 2.2V4.6H9" stroke="var(--modonty-advance-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6.5 8.5H8.5" stroke="var(--modonty-advance-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.5 7.5V9.5" stroke="var(--modonty-advance-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.79 6.94A0.3 0.3 0 0 1 13.21 6.94L14.56 8.29A0.3 0.3 0 0 1 14.56 8.71L13.21 10.06A0.3 0.3 0 0 1 12.79 10.06L11.44 8.71A0.3 0.3 0 0 1 11.44 8.29Z" fill="var(--modonty-advance-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

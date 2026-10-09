@@ -146,7 +146,7 @@ export function ReelsFeedClient({ initialItems, initialCursor, clientSlug, isLog
           aria-label="الطلّة السابقة"
           className="grid size-11 place-items-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
-          <IconChevronUp className="size-5 rotate-90" />
+          <IconChevronUp className="size-5" />
         </button>
         <button
           type="button"
@@ -155,7 +155,7 @@ export function ReelsFeedClient({ initialItems, initialCursor, clientSlug, isLog
           aria-label="الطلّة التالية"
           className="grid size-11 place-items-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
-          <IconChevronDown className="size-5 -rotate-90" />
+          <IconChevronDown className="size-5" />
         </button>
       </div>
 
