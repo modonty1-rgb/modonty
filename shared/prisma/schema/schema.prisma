@@ -948,6 +948,8 @@ model Client {
 
   // Relationships
   articles          Article[]
+  /// تقويم السوشيال (أدمن › Social Calendar) — منشورات العميل الاجتماعية. انظر `SocialPost`.
+  socialPosts       SocialPost[] @relation("ClientSocialPosts")
   subscribers       Subscriber[]
   // الإحالات التي رفعها هذا العميل. الاتجاه واحد: العميل مُحيلٌ لا مُحالٌ إليه —
   // المُرشَّح ليس عميلاً بعد، وحين يصير عميلاً يُسجَّل معرّفه في `convertedClientId`.
@@ -5591,4 +5593,166 @@ model SectorPage {
   updatedAt         DateTime @updatedAt
 
   @@map("sector_pages")
+}
+
+// ============================================
+// SOCIAL CALENDAR — تقويم محتوى السوشيال (أدمن › Social Calendar)
+// ============================================
+//
+// نُقل من تطبيق JBRSEO/content (v1.6.0) طبق الأصل — نفس الحقول وسير العمل — مع ما يفرضه
+// الأدمن فقط: العميل هو `Client` مدونتي (لا جدول عملاء ثانٍ)، التاريخ بسنة كاملة
+// (`scheduledFor` بدل month+day بلا سنة)، والحالة تعداد لا نصّ عربي.
+// PRD: documents/prd/content-calendar-admin-PRD.md §٣.
+
+/// حالة منشور السوشيال — أربع حالات ثابتة بأمر سير العمل.
+/// تعداد لا نصّ عربي: التطبيق القديم خزّن «قيد الإنتاج» نصّاً فكُتبت المقارنة ١٤ مرّة بيدٍ.
+enum SocialPostStatus {
+  IN_PRODUCTION // قيد الإنتاج
+  READY_FOR_REVIEW // جاهز للمراجعة
+  READY_TO_PUBLISH // جاهز للنشر
+  PUBLISHED // تم النشر
+}
+
+enum SocialPostFormat {
+  VIDEO // vid
+  CAROUSEL
+  POST
+  STORY
+  REEL
+}
+
+enum SocialFunnelStage {
+  AWARENESS
+  ENGAGEMENT
+  LEADS
+  CONVERSION
+}
+
+/// قنوات النشر الاجتماعي. تعدادٌ جديد لا إعادة استخدام لـ AdChannel: ذاك للشراء الإعلاني
+/// (فيه GOOGLE، وTWITTER بدل X، وبلا THREADS) ويقود utm_source؛ تغييره يمسّ الحملات.
+enum SocialChannel {
+  INSTAGRAM
+  TIKTOK
+  X
+  FACEBOOK
+  YOUTUBE
+  LINKEDIN
+  SNAPCHAT
+  THREADS
+}
+
+enum SocialPaidKind {
+  ORGANIC
+  SPONSORED
+}
+
+enum SocialAssetKind {
+  IMAGE
+  VIDEO
+}
+
+/// منشور واحد في تقويم السوشيال لعميل واحد. يحمل البريف (كاتب المحتوى) وبيانات النشر
+/// (الميديا باير)؛ الأصول في جدولها.
+model SocialPost {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  /// العميل: إلزاميّ. القديم كان اختياريّاً لبقايا مسار /calendar بلا عميل.
+  clientId String @db.ObjectId
+  client   Client @relation("ClientSocialPosts", fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  /// يوم المنشور بسنة كاملة — منتصف ليل UTC لذلك اليوم. يحلّ محلّ month+day (بلا سنة) في القديم.
+  scheduledFor DateTime
+
+  // ── الحالة والخطّ الزمني
+  status                SocialPostStatus @default(IN_PRODUCTION)
+  statusUpdatedAt       DateTime         @default(now())
+  productionStartedAt   DateTime?
+  productionCompletedAt DateTime?
+  publishedAt           DateTime?
+
+  // ── بريف كاتب المحتوى
+  format       SocialPostFormat?
+  funnelStages SocialFunnelStage[]
+  channels     SocialChannel[]
+  idea         String
+  text         String?
+  hook         String?
+  cta          String?
+  /// كان `script` في القديم — رابط خارجيّ للسيناريو.
+  scriptUrl    String?
+  voiceTone    String?
+  inspiration  String?
+  notes        String?
+
+  // ── المراجعة
+  /// يُكتب عند الرفض، يُمسح عند الموافقة.
+  rejectionNote  String?
+  /// كم مرّة رُفض — للتقارير.
+  rejectionCount Int     @default(0)
+
+  // ── الميديا باير
+  paidKind       SocialPaidKind?
+  budget         Float?
+  /// "SAR" | "USD" | "EGP" — نصّ كـ AdCampaign.currency.
+  currency       String?
+  adDurationDays Int?
+  /// موعد النشر: يدمج scheduledDate + scheduledTime القديمين في لحظة واحدة (توقيت الرياض عند الإدخال).
+  publishAt      DateTime?
+  /// { "INSTAGRAM": "https://..." } — نفس شكل القديم بمفاتيح التعداد.
+  channelLinks   Json?
+
+  // ── مَن (Staff)
+  createdById        String? @db.ObjectId
+  creativeAssigneeId String? @db.ObjectId
+  publishedById      String? @db.ObjectId
+
+  /// أرشفة ناعمة بتاريخ (نفس قرار Task.archivedAt).
+  archivedAt DateTime?
+
+  /// ترحيل: معرّف الصفّ في jbr-content.ContentEntry — يجعل سكربت الترحيل idempotent.
+  legacyEntryId String? @unique
+
+  assets SocialPostAsset[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId, scheduledFor])
+  @@index([clientId, status])
+  @@index([status, scheduledFor])
+  @@index([archivedAt, clientId])
+  @@map("social_calendar_posts")
+}
+
+/// أصل إبداعيّ (صورة/فيديو) مرفوع لمنشور. جدولٌ خاصّ لا صفٌّ في Media: Media محمّل بدلالات
+/// السيو والمعرض (inGallery افتراضيّه true)، والإبداع الاجتماعيّ داخليّ.
+model SocialPostAsset {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  postId String     @db.ObjectId
+  post   SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  kind   SocialAssetKind
+  /// رابط CDN العامّ (للفيديو: ملفّ MP4 من Bunny Stream).
+  url    String
+  /// مسار التخزين على Bunny (للحذف) — null للأصول القديمة المُشار إليها برابطها، وللفيديو.
+  path   String?
+  label  String?
+  bytes  Int?
+  width  Int?
+  height Int?
+  order  Int             @default(0)
+
+  /// Bunny Stream للفيديو: guid + HLS.
+  bunnyVideoId String?
+  playbackUrl  String?
+
+  /// AssetItem.id في القديم.
+  legacyAssetId String?
+  uploadedById  String? @db.ObjectId
+
+  createdAt DateTime @default(now())
+
+  @@index([postId, order])
+  @@map("social_calendar_post_assets")
 }

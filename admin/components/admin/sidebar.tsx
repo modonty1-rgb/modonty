@@ -98,6 +98,8 @@ import { Trophy,
   Target,
   PenLine,
   Gauge,
+  CalendarDays,
+  Sparkles,
 } from "lucide-react";
 import { LIVE_SECTORS, type LiveSectorSlug } from "@modonty/shared/lib/sectors/live-sectors";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
@@ -187,6 +189,18 @@ const rawMenuGroups: MenuGroup[] = [
       // تحت «Clients» لا تحت قسم مستقلّ: الإحالة يرفعها عميلٌ قائم عن مُرشَّح، فمصدرها
       // وصاحب مكافأتها كلاهما عميل — والفريق يفتحها وهو يفكّر في العملاء لا في التسويق.
       { icon: Handshake, label: "Referrals", href: "/referrals" },
+    ],
+  },
+  // تقويم السوشيال (PRD content-calendar-admin §٤، س١٤): مجموعة مستقلّة لا بند تحت Clients —
+  // الميديا باير والمصمم يعيشون فيها طوال اليوم، فلا تُخفى خلف مجموعة مطويّة لموضوع آخر.
+  {
+    title: "Social Calendar",
+    icon: CalendarDays,
+    section: "Core work",
+    defaultOpen: false,
+    items: [
+      { icon: CalendarDays, label: "Clients", href: "/social-calendar", exact: true },
+      { icon: Sparkles, label: "Workflow", href: "/social-calendar/flow" },
     ],
   },
   {

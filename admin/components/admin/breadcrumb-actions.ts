@@ -11,6 +11,7 @@ import { getModontyAuthor } from '@/app/(dashboard)/authors/actions/authors-acti
 import { getLeadName } from '@/app/(dashboard)/sales-leads/helpers/get-lead';
 import { getCommercialPlanName } from '@/app/(dashboard)/commercial-plans/actions';
 import { getOrderNumber } from '@/app/(dashboard)/orders/actions';
+import { getPostCrumb } from '@/app/(dashboard)/social-calendar/helpers/queries/get-post-crumb';
 
 function normalizeEntityType(type: string): string {
   const pluralToSingular: Record<string, string> = {
@@ -28,6 +29,9 @@ function normalizeEntityType(type: string): string {
     'sales-leads': 'sales-lead',
     'commercial-plans': 'commercial-plan',
     orders: 'order',
+    // /social-calendar/[clientId]/posts/[postId] — العميل باسمه، والمنشور بتاريخه وفكرته.
+    'social-calendar': 'client',
+    posts: 'social-post',
   };
   return pluralToSingular[type] || type;
 }
@@ -76,6 +80,9 @@ export async function getEntityName(type: string, id: string): Promise<string | 
       }
       case 'order': {
         return await getOrderNumber(id);
+      }
+      case 'social-post': {
+        return await getPostCrumb(id);
       }
       default:
         return null;

@@ -47,6 +47,14 @@ export const ACTION_LABEL: Record<string, string> = {
   "settings.update": "Updated settings",
   "database.maintenance": "Ran maintenance",
   "seo.cascade": "Regenerated SEO",
+  "socialPost.create": "Created social post",
+  "socialPost.update": "Edited social post",
+  "socialPost.transition": "Moved social post stage",
+  "socialPost.reject": "Rejected social creative",
+  "socialPost.publish": "Published social post",
+  "socialPost.archive": "Archived social post",
+  "socialPost.restore": "Restored social post",
+  "socialPost.assetDelete": "Deleted social creative",
 };
 
 export function friendlyAction(action: string): string {
@@ -100,6 +108,8 @@ export function entityCategory(entity: string): CategoryMeta {
     case "User":
     case "Staff":
       return { key: "staff", label: "Staff", bar: "bg-pink-500" };
+    case "SocialPost":
+      return { key: "social", label: "Social Calendar", bar: "bg-rose-500" };
     default:
       // Settings · Database · Seo · ContactMessage
       return { key: "system", label: "System", bar: "bg-slate-500" };
