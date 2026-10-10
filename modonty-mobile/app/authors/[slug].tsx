@@ -44,7 +44,7 @@ export default function AuthorScreen() {
           a ? (
             <View style={styles.head}>
               <View style={styles.row}>
-                {a.image ? <Image source={a.image} style={styles.avatar} contentFit="cover" accessibilityLabel={a.imageAlt ?? a.name} /> : <Icon name="profile" size={control.iconLarge} />}
+                {a.image ? <Image cachePolicy="memory-disk" source={a.image} style={styles.avatar} contentFit="cover" accessibilityLabel={a.imageAlt ?? a.name} /> : <Icon name="profile" size={control.iconLarge} />}
                 <View style={styles.flex}>
                   <View style={styles.row}>
                     <AppText variant="pageTitle">{a.name}</AppText>

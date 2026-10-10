@@ -34,6 +34,7 @@ import type {
   TopicAlertData,
   AlertTopicId,
   WhatsappLeadData,
+  BookingSourceWire,
 } from './api-types-actions';
 import type { DeleteAccountData } from './api-types-account';
 import { request } from './http';
@@ -62,8 +63,12 @@ export const partnerActionsApi = {
     request<ReviewCreateData>(`/partners/${enc(slug)}/reviews`, { method: 'POST', auth: 'required', body }),
   ask: (slug: string, body: QuestionCreateBody) =>
     request<OkData>(`/partners/${enc(slug)}/questions`, { method: 'POST', auth: 'required', body }),
-  whatsappLead: (partnerId: string, articleId?: string) =>
-    request<WhatsappLeadData>(`/partners/${partnerId}/whatsapp-lead`, { method: 'POST', device: true, body: { source: articleId ? 'article_card' : 'client_page', articleId: articleId ?? null } }),
+  whatsappLead: (partnerId: string, articleId?: string, source?: BookingSourceWire) =>
+    request<WhatsappLeadData>(`/partners/${partnerId}/whatsapp-lead`, {
+      method: 'POST',
+      device: true,
+      body: { source: source ?? (articleId ? 'article_card' : 'client_page'), articleId: articleId ?? null },
+    }),
   subscribe: (partnerId: string, email: string) =>
     request<PartnerSubscribeData>(`/partners/${partnerId}/subscribe`, { method: 'POST', device: true, body: { email } }),
 };

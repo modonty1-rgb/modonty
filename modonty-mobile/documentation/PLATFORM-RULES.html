@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>قواعد المنصّتين</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F3F1;--card:#fff;--text:#0E065A;--muted:#5B5B5B;--line:#DBDBDB;--warn:#8A4B00;--warnbg:#FFF1DC;--link:#3030FF}
+@media (prefers-color-scheme:dark){:root{--bg:#121216;--card:#1C1C22;--text:#F2F2F5;--muted:#B9BFCA;--line:#2E2E36;--warn:#F6C26B;--warnbg:#3A2A0E;--link:#8C8CFF}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans-serif;padding:28px 16px 60px;line-height:1.8}
+.w{max-width:1120px;margin:0 auto}
+h1{font-size:28px;font-weight:900}
+.sub{color:var(--muted);font-size:14px}
+h2{font-size:19px;font-weight:900;margin:28px 0 10px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;font-size:14px}
+th,td{padding:10px 12px;text-align:right;vertical-align:top;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-size:12.5px;font-weight:800;color:var(--muted);background:color-mix(in srgb,var(--card) 88%,var(--line))}
+td:first-child{font-weight:800}
+td.rule{font-weight:700}
+code{font-size:12px;direction:ltr;unicode-bidi:embed;background:color-mix(in srgb,var(--card) 80%,var(--line));padding:1px 5px;border-radius:5px}
+a{color:var(--link)}
+.risk td{background:var(--warnbg)}
+.risk td:first-child{color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>قواعد المنصّتين — تصميم واحد لـ iOS وAndroid</h1>
+<div class="sub">قاعدة ذهبية (خالد ٩ أكتوبر ٢٠٢٦): لا نسختان. حيث يختلف النظامان نأخذ الأشدّ، وما يملكه النظام نتركه للنظام. المصادر رسمية فقط — آخر جمع ٩ أكتوبر ٢٠٢٦.</div>
+
+<h2>١ · الواجهة</h2>
+<table>
+<thead><tr><th>البند</th><th>Apple (رسمي)</th><th>Android (رسمي)</th><th>قاعدتنا الواحدة</th></tr></thead>
+<tbody>
+<tr><td>مساحة اللمس</td><td>44×44pt افتراضي · 28×28 حدّ أدنى</td><td>48×48dp</td><td class="rule">48dp لكل عنصر يُضغط (الأشدّ)</td></tr>
+<tr><td>التباين</td><td>4.5:1 حتى 17pt · 3:1 من 18pt أو العريض</td><td>4.5:1 تحت 18sp (أو عريض تحت 14sp) · 3:1 غيره</td><td class="rule">4.5:1 لكل نصّ وعنوان صغير · 3:1 فقط للعناوين ≥18</td></tr>
+<tr><td>تكبير الخطّ</td><td>دعم التكبير ٢٠٠٪ على الأقل · الخطّ المخصّص لازم يطبّق Dynamic Type وBold Text</td><td>Android 14: حتى ٢٠٠٪ وغير خطّي · النصّ بـsp · lineHeight بـsp · لا ارتفاعات ثابتة</td><td class="rule">كل شاشة تصمد على ٢٠٠٪ (لا ١٣٠٪): لا قصّ كلمة · الأزرار تكبر طولاً · لا ارتفاع ثابت لحاوية نصّ · Tajawal يتبع إعداد النظام</td></tr>
+<tr><td>أصغر خطّ</td><td>11pt</td><td>—</td><td class="rule">12 (عندنا في المقاييس)</td></tr>
+<tr><td>تقليل الحركة</td><td>شدّ النوابض · تتبّع الإيماءة · استبدال الانتقالات بتلاشٍ</td><td>إعداد «إزالة الحركة»</td><td class="rule">لما يكون مفعّلاً: النابض ← تلاشٍ قصير · لا قلب طائر · لا تكبير</td></tr>
+<tr><td>المساحات الآمنة</td><td>احترام safe area · Dynamic Island · مؤشّر الرئيسية</td><td>edge-to-edge إلزامي على Android 16 (SDK 36) · insets لشريط الحالة والتنقّل والنتوء والإيماءات</td><td class="rule">تطبيقنا Expo 54 → targetSdk 36 = <b>إلزامي</b>. كل شاشة تأخذ insets من <code>react-native-safe-area-context</code> · الكبسولة فوق مؤشّر الرئيسية وفوق شريط أندرويد (إيماءات أو ٣ أزرار)</td></tr>
+<tr><td>الرجوع</td><td>زرّ رجوع + سحب من الحافّة البادئة (في RTL: الحافّة اليمنى)</td><td>Predictive Back افتراضي من Android 15 · لا اعتراض لزرّ الرجوع</td><td class="rule">الرجوع للنظام في الاثنين · لا إيماءة أفقية تبدأ من حافّة الشاشة · الإغلاق للوحات عبر واجهة النظام</td></tr>
+<tr><td>شريط التابات</td><td>ظاهر دائماً (إلا تحت نافذة مؤقّتة) · تسمية بكلمة واحدة · تصغير مع التمرير مسموح · الشارة الحمراء للمهمّ فقط · للتنقّل لا للأفعال</td><td>Material: ٣–٥ وجهات</td><td class="rule">٤ تابات + جزيرة مدونتي ✓ · كلمة واحدة ✓ · الشارة الحمراء للإشعارات غير المقروءة فقط</td></tr>
+<tr><td>RTL</td><td>ينقلب: الرجوع · التقدّم · المنزلقات · ترتيب القوائم. لا ينقلب: أزرار التشغيل · الساعات · الصور · الشعارات · أرقام الجوال</td><td>supportsRtl + start/end</td><td class="rule">▶ لا ينقلب أبداً · أرقام الجوال LTR ولاتينية · الصور والشعارات لا تنعكس · الفقرات الطويلة تُحاذى للغة</td></tr>
+<tr><td>ما يملكه النظام</td><td>المشاركة · التنبيهات · المنتقيات · الكيبورد · الأذونات</td><td>نفسها</td><td class="rule">لا نرسمها: نستعمل الأصلي في كل نظام. «اسحب للتحديث» = <code>RefreshControl</code> الأصلي (شكله يختلف طبيعياً بين النظامين)</td></tr>
+</tbody>
+</table>
+
+<h2>٢ · شروط المتجرين (رفض إن نقصت)</h2>
+<table>
+<thead><tr><th>البند</th><th>App Store</th><th>Google Play</th><th>وضعنا</th></tr></thead>
+<tbody>
+<tr><td>حذف الحساب</td><td>5.1.1(v): «إن دعمت إنشاء حساب، فاسمح بحذفه داخل التطبيق»</td><td>مسار داخل التطبيق + رابط ويب لطلب الحذف</td><td>داخل التطبيق ✓ (حسابي) · <b>رابط الويب: يحتاج تحقّق</b></td></tr>
+<tr><td>الدخول</td><td>4.8: لو دخول بجوجل لازم بديل يحفظ خصوصية الإيميل (Sign in with Apple)</td><td>—</td><td>جوجل + Apple + إيميل ✓</td></tr>
+<tr class="risk"><td>الحدّ الأدنى للوظيفة</td><td>4.2: «أكثر من موقع مُعاد تغليفه» · 4.2.2: لا مجموعة روابط</td><td>—</td><td><b>خطر:</b> عجلة الحظ · مودو لينك · القرآن تُفتح اليوم من الموقع (<code>app/(tabs)/modonty.tsx</code> → <code>openExternal</code>). قبل التقديم لـ App Store: شاشات أصلية أو إخفاؤها</td></tr>
+</tbody>
+</table>
+
+<h2>المصادر</h2>
+<div class="sub">
+<a href="https://developer.apple.com/design/human-interface-guidelines/accessibility">Apple HIG — Accessibility</a> ·
+<a href="https://developer.apple.com/design/human-interface-guidelines/tab-bars">Apple HIG — Tab bars</a> ·
+<a href="https://developer.apple.com/design/human-interface-guidelines/right-to-left">Apple HIG — Right to left</a> ·
+<a href="https://developer.apple.com/design/human-interface-guidelines/layout">Apple HIG — Layout</a> ·
+<a href="https://developer.apple.com/design/human-interface-guidelines/typography">Apple HIG — Typography</a> ·
+<a href="https://developer.apple.com/app-store/review/guidelines/">App Store Review Guidelines</a> ·
+<a href="https://developer.android.com/guide/topics/ui/accessibility/apps">Android — Accessibility</a> ·
+<a href="https://developer.android.com/develop/ui/views/layout/edge-to-edge">Android — Edge-to-edge</a> ·
+<a href="https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture">Android — Predictive back</a> ·
+<a href="https://developer.android.com/about/versions/14/features#non-linear-font-scaling">Android 14 — Font scaling</a> ·
+<a href="https://support.google.com/googleplay/android-developer/answer/13327111">Google Play — Account deletion</a> ·
+Expo — <code>sdk-compatibility.json</code> (SDK 54 → targetSdk 36) و<code>system-bars.mdx</code>
+</div>
+</div>
+</body>
+</html>

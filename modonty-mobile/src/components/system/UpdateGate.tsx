@@ -68,9 +68,9 @@ export function UpdateGate() {
   return (
     <Animated.View entering={FadeIn.duration(220)} style={[StyleSheet.absoluteFill, styles.scrim, { backgroundColor: colors.page }]}>
       <View style={styles.card} accessibilityRole="progressbar" accessibilityLabel="نحدّث مدونتي لك">
-        <Image source={require('../../../assets/brand/modonty-mark.png')} style={styles.mark} contentFit="contain" />
-        <Text style={[styles.title, { color: colors.text }]}>نحدّث مدونتي لك…</Text>
-        <Text style={[styles.body, { color: colors.muted }]}>نسخة أحدث جاهزة — ثوانٍ ونكمل من حيث كنت.</Text>
+        <Image cachePolicy="memory-disk" source={require('../../../assets/brand/modonty-mark.png')} style={styles.mark} contentFit="contain" />
+        <Text maxFontSizeMultiplier={1.2} style={[styles.title, { color: colors.text }]}>نحدّث مدونتي لك…</Text>
+        <Text maxFontSizeMultiplier={1.2} style={[styles.body, { color: colors.muted }]}>نسخة أحدث جاهزة — ثوانٍ ونكمل من حيث كنت.</Text>
         <View style={[styles.track, { backgroundColor: colors.surfaceHigh }]}>
           <View style={[styles.fill, { width: `${Math.round(progress * 100)}%`, backgroundColor: colors.primary }]} />
         </View>

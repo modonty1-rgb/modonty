@@ -1,36 +1,35 @@
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, RefreshControl, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { List } from 'react-native-paper';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, Text, View, useWindowDimensions, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import Animated, { Easing, runOnJS, useAnimatedReaction, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ArticleCard } from '@/components/content/ArticleCard';
-import { FollowButton } from '@/components/content/FollowButton';
-import { ReelTile } from '@/components/content/ReelTile';
-import { AppText } from '@/components/ui/AppText';
-import { Button } from '@/components/ui/Button';
+import { ArticleChrome } from '@/components/article/ArticleChrome';
+import { AboutBlock, BlockTitle, ContactBlock, FaqBlock, GalleryBlock, InfoChip, PostsBlock, ReelsBlock, ServicesBlock, TrustCard } from '@/components/partner/PartnerBlocks';
 import { Header } from '@/components/ui/Header';
 import { Icon } from '@/components/ui/Icon';
-import { IconButton } from '@/components/ui/IconButton';
-import { NavGroup, type NavRowItem } from '@/components/ui/NavGroup';
 import { Screen } from '@/components/ui/Screen';
-import { Stars } from '@/components/ui/Stars';
-import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Bone } from '@/components/ui/Skeleton';
 import { ErrorState } from '@/components/ui/StateView';
+import { Stars } from '@/components/ui/Stars';
+import { Tap } from '@/components/ui/Tap';
+import { useFollow } from '@/hooks/useFollow';
 import { useResource } from '@/hooks/useResource';
-import { compactNumber, plainNumber } from '@/lib/format';
-import { articleRow } from '@/lib/models';
-import { open, openExternal, openHref } from '@/lib/nav';
+import { plainNumber } from '@/lib/format';
+import { openExternal } from '@/lib/nav';
 import { shareLink } from '@/lib/share';
-import { useAuth } from '@/providers/AuthProvider';
+import { whatsappHref } from '@/lib/whatsapp';
 import { useToast } from '@/providers/ToastProvider';
 import { actionsApi, contentApi } from '@/services/api';
 import { partnerActionsApi } from '@/services/api-actions';
 import { toApiError } from '@/services/errors';
 import { useAppTheme } from '@/theme/ThemeProvider';
-import { control, media, radius, space } from '@/theme/tokens';
-import { haptic } from '@/lib/haptics';
+import { ds, dsFontScale, dsMotion } from '@/theme/tokens';
+
+const HERO = 224;
+const TABS_H = 48;
 
 /** «home:<key>» أو المفتاح المجرّد — نفس قاعدة الويب (`clients/[slug]/components/page-blocks.tsx:44-46`). */
 function hiddenChecker(hidden: string[]) {
@@ -38,53 +37,104 @@ function hiddenChecker(hidden: string[]) {
   return (key: string) => set.has(`home:${key}`) || set.has(key);
 }
 
-function whatsappLink(phone: string): string | null {
-  const digits = phone.replace(/[^\d]/g, '');
-  return digits ? `https://wa.me/${digits}` : null;
-}
+type TabKey = 'overview' | 'services' | 'gallery' | 'posts' | 'faqs';
 
-/** S09 — صفحة الشريك (C12): كتل الصفحة الرئيسية للشريك بترتيب الويب، مع متابعة (E9) وحجز (E14). */
+/**
+ * صفحة الشريك — Screens B · 08. الترتيب: مَن أنت ← هل أثق بك ← الدليل ← كيف أتواصل.
+ * الغلاف صورة حقيقية من معرض الشريك (لا بانر الكمبيوتر ٢٤٠٠×٤٠٠) وعليها عدد الصور · الشعار يتداخل مع الورقة ·
+ * المجال · الاسم والتوثيق · الشعار النصّي · المدينة والتأسيس والدوام · الإجراء الأساسي + واتساب + اتصال ·
+ * الاعتمادات وأرقام المؤسسة · تبويبات تثبت تحت الشريط وتتبع التمرير · الكتل · شريط حجز سفلي يظهر حين تختفي أزرار الأعلى.
+ * «تابع» جرس في الرأس، وأرقام المتابعين والمشاهدات مخفية (قرار ٩ أكتوبر).
+ */
 export default function PartnerScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
-  const { colors } = useAppTheme();
-  const { width } = useWindowDimensions();
-  const { requireAuth, status } = useAuth();
+  const { colors, scheme } = useAppTheme();
+  const insets = useSafeAreaInsets();
+  const reduced = useReducedMotion();
   const toast = useToast();
   const res = useResource((signal) => contentApi.partner(slug, signal), [slug]);
-  const [followers, setFollowers] = useState<number | null>(null);
-  const [favorited, setFavorited] = useState<boolean | null>(null);
+  const follow = useFollow(slug);
 
   useEffect(() => {
     actionsApi.viewPartner(slug).catch((error: unknown) => console.warn('[partner] view', toApiError(error).message));
   }, [slug]);
-
-  useEffect(() => {
-    if (status !== 'signedIn') return setFavorited(false);
-    partnerActionsApi
-      .favoriteState(slug)
-      .then((d) => setFavorited(d.favorited))
-      .catch((error: unknown) => console.warn('[partner] favorite state', toApiError(error).message));
-  }, [slug, status]);
 
   const d = res.data;
   const p = d?.partner;
   const home = d?.home ?? null;
   const isHidden = useMemo(() => hiddenChecker(d?.hiddenSections ?? []), [d?.hiddenSections]);
 
-  const toggleFavorite = useCallback(
-    () =>
-      requireAuth(async () => {
-        try {
-          const r = favorited ? await partnerActionsApi.unfavorite(slug) : await partnerActionsApi.favorite(slug);
-          haptic.success();
-          setFavorited(r.favorited);
-          toast.show(r.favorited ? 'أُضيف إلى مفضّلتك' : 'أُزيل من مفضّلتك', 'success');
-        } catch (error) {
-          toast.show(toApiError(error).message, 'error');
-        }
-      }),
-    [favorited, requireAuth, slug, toast],
+  // التمرير يكتب قيماً مشتركة فقط؛ الحالة تتغيّر لحظة عبور العتبات (تثبيت التبويبات · شريط الحجز · التبويب النشط).
+  const scrollY = useSharedValue(0);
+  const scrollRef = useRef<ScrollView>(null);
+  const tabsY = useSharedValue(Number.MAX_SAFE_INTEGER);
+  const ctaBottom = useSharedValue(Number.MAX_SAFE_INTEGER);
+  const sections = useRef<Partial<Record<TabKey, number>>>({});
+  const [stuck, setStuck] = useState(false);
+  const [active, setActive] = useState<TabKey>('overview');
+  const barShown = useSharedValue(0);
+  const top = insets.top + ds.layout.appbarCollapsed;
+
+  useAnimatedReaction(
+    () => scrollY.value > tabsY.value - top,
+    (now, prev) => {
+      if (now !== prev) runOnJS(setStuck)(now);
+    },
+    [top],
   );
+  useAnimatedReaction(
+    () => scrollY.value > ctaBottom.value - top,
+    (now, prev) => {
+      if (now === prev) return;
+      barShown.value = withTiming(now ? 1 : 0, { duration: reduced ? dsMotion.reducedFade : 220, easing: Easing.bezier(0.2, 0, 0, 1) });
+    },
+    [top, reduced],
+  );
+  const barStyle = useAnimatedStyle(() => ({
+    opacity: reduced ? barShown.value : 1,
+    transform: [{ translateY: reduced ? 0 : (1 - barShown.value) * 140 }],
+  }));
+
+  // تبديل فاتح/داكن يعيد رسم الصفحة فيرجع أندرويد التمرير للأعلى بلا حدث — نعيد الموضع بعد القياس الجديد
+  // (نفس علاج صفحة المقال، مقيس ١٠ أكتوبر).
+  const lastY = useRef(0);
+  const restoreY = useRef<number | null>(null);
+  const prevScheme = useRef(scheme);
+  useEffect(() => {
+    if (prevScheme.current === scheme) return;
+    prevScheme.current = scheme;
+    restoreY.current = lastY.current;
+    const t = setTimeout(() => (restoreY.current = null), 1500);
+    return () => clearTimeout(t);
+  }, [scheme]);
+  const onContentSize = useCallback(() => {
+    if (restoreY.current != null) scrollRef.current?.scrollTo({ y: restoreY.current, animated: false });
+  }, []);
+
+  const activeRef = useRef<TabKey>('overview');
+  const onScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const y = e.nativeEvent.contentOffset.y;
+      scrollY.value = y;
+      lastY.current = y;
+      // التبويب النشط: آخر كتلة بلغ رأسها ثلث الشاشة تحت التبويبات المثبّتة (لا أعلاها — يتأخّر الإحساس).
+      const line = y + top + TABS_H + 140;
+      let now: TabKey = 'overview';
+      for (const [k, v] of Object.entries(sections.current) as [TabKey, number][]) if (v <= line && v >= (sections.current[now] ?? 0)) now = k;
+      if (now !== activeRef.current) {
+        activeRef.current = now;
+        setActive(now);
+      }
+    },
+    [scrollY, top],
+  );
+  const mark = (key: TabKey) => (e: LayoutChangeEvent) => {
+    sections.current[key] = e.nativeEvent.layout.y;
+  };
+  const goTo = (key: TabKey) => {
+    const y = key === 'overview' ? tabsY.value - top + 1 : (sections.current[key] ?? 0) - top - TABS_H + 8;
+    scrollRef.current?.scrollTo({ y: Math.max(0, y), animated: !reduced });
+  };
 
   const share = useCallback(async () => {
     if (!p) return;
@@ -99,12 +149,12 @@ export default function PartnerScreen() {
   if (res.status === 'loading') {
     return (
       <Screen>
-        <Header back />
+        <View style={[styles.hero, { backgroundColor: colors.skeleton }]} />
         <View style={styles.skeleton}>
-          <View style={[styles.cover, { backgroundColor: colors.skeleton }]} />
-          <Bone height={22} width="60%" />
-          <Bone height={14} width="40%" />
-          <Bone height={48} />
+          <Bone height={84} width={84} />
+          <Bone height={26} width="70%" />
+          <Bone height={16} width="50%" />
+          <Bone height={52} />
         </View>
       </Screen>
     );
@@ -118,329 +168,365 @@ export default function PartnerScreen() {
     );
   }
 
-  const cover = home?.hero.coverUrl ?? p.hero;
-  const subtitle = [home?.hero.industry ?? p.industry, home?.hero.city ?? p.address.city].filter(Boolean).join('، ');
-  const stats = [
-    { label: 'متابع', value: followers ?? d.stats.followers },
-    { label: 'مشاهدة', value: d.stats.totalViews },
-    { label: 'مقال', value: p.counts.articles },
-  ];
-  const book = p.cta.mode === 'FORM';
-  const wa = p.phone ? whatsappLink(p.phone) : null;
-  const reelWidth = (width - space.screen * 2 - space.xs * 2) / 2.6;
+  const gallery = home && !isHidden('gallery') ? home.gallery : [];
+  // الغلاف: صورة حقيقية من المعرض، وإلا صورة الجوال — لا بانر الكمبيوتر (٢٤٠٠×٤٠٠ بنصّ يُقصّ على الجوال،
+  // مقيس ١٠ أكتوبر). من لا يملك صورة يأخذ تدرّج العلامة (٢٩ من ٤٦ بلا معرض).
+  const cover = gallery[0]?.url ?? p.mobileHero ?? null;
+  const industry = home?.hero.industry ?? p.industry;
+  const slogan = home?.hero.slogan ?? p.slogan;
+  const city = home?.hero.city ?? p.address.city;
+  const founded = home?.hero.foundingYear;
+  const hours = home?.contact.hours ?? [];
+  const wa = p.phone ? whatsappHref(p.phone) : null;
+  const credentials = home && !isHidden('trust') ? home.trust.credentials.map((c) => c.name).filter(Boolean) : [];
+  const figures = home && !isHidden('stats') ? home.stats : [];
+  const about = home && !isHidden('about') ? (home.about.description ?? p.description) : p.description;
+  const services = home && !isHidden('services') ? home.services : [];
+  const reels = home && !isHidden('reels') ? home.reels : [];
+  const posts = home && !isHidden('blog') ? home.posts : [];
+  const faqs = home && !isHidden('faq') ? home.faqs : [];
+  const testimonials = home && !isHidden('testimonials') ? home.testimonials : [];
+  const team = home && !isHidden('team') ? home.team : [];
 
-  const more = ([
-    p.counts.articles > 0 ? { key: 'articles', icon: 'articles', label: 'كل المقالات', hint: `${plainNumber(p.counts.articles)} مقال`, onPress: () => router.push({ pathname: '/partners/[slug]/articles', params: { slug, name: p.name } }) } : null,
-    { key: 'reviews', icon: 'rating', label: 'التقييمات', hint: p.counts.reviews > 0 ? `${plainNumber(p.counts.reviews)} تقييم` : 'كن أوّل من يقيّم', onPress: () => router.push({ pathname: '/partners/[slug]/reviews', params: { slug, name: p.name } }) },
-    p.counts.gallery > 0 && !isHidden('gallery') ? { key: 'gallery', icon: 'gallery', label: 'الصور', onPress: () => router.push({ pathname: '/partners/[slug]/gallery', params: { slug, name: p.name } }) } : null,
-    { key: 'faq', icon: 'question', label: 'الأسئلة والأجوبة', hint: 'اسأل الشريك مباشرة', onPress: () => router.push({ pathname: '/partners/[slug]/faqs', params: { slug, name: p.name, id: p.id } }) },
-    !isHidden('newsletter') ? { key: 'newsletter', icon: 'email', label: 'اشترك في نشرته', onPress: () => router.push({ pathname: '/newsletter', params: { partnerId: p.id, name: p.name } }) } : null,
-    { key: 'followers', icon: 'profile', label: 'المتابعون', onPress: () => router.push({ pathname: '/partners/[slug]/followers', params: { slug, name: p.name } }) },
-  ] as (NavRowItem | null)[]).filter((x): x is NavRowItem => x !== null);
+  const openWhatsapp = () => {
+    if (!wa) return;
+    partnerActionsApi.whatsappLead(p.id).catch((error: unknown) => console.warn('[partner] whatsapp lead', toApiError(error).message));
+    void openExternal(wa);
+  };
+  const call = p.phone ? () => void openExternal(`tel:${p.phone}`) : null;
+  const book = () => router.push({ pathname: '/partners/[slug]/book', params: { slug, partnerId: p.id, name: p.name, source: 'client_page' } });
+  // الإجراء الأساسي: حجز (FORM) · رابط الشريك (LINK) · وإلا واتساب ثم اتصال.
+  const primary =
+    p.cta.mode === 'FORM'
+      ? { label: p.cta.label ?? 'احجز الآن', icon: 'booking' as const, onPress: book, kind: 'book' as const }
+      : p.cta.mode === 'LINK' && p.cta.url
+        ? { label: p.cta.label ?? 'زيارة', icon: 'external' as const, onPress: () => void openExternal(p.cta.url!), kind: 'link' as const }
+        : wa
+          ? { label: 'راسلنا واتساب', icon: 'whatsapp' as const, onPress: openWhatsapp, kind: 'wa' as const }
+          : null;
+  const SUB = { gallery: '/partners/[slug]/gallery', articles: '/partners/[slug]/articles', faqs: '/partners/[slug]/faqs', reviews: '/partners/[slug]/reviews' } as const;
+  const pushSub = (route: keyof typeof SUB) => router.push({ pathname: SUB[route], params: { slug, name: p.name, id: p.id } });
+
+  const tabs: { key: TabKey; label: string; n?: number }[] = [
+    { key: 'overview', label: 'نظرة عامة' },
+    ...(services.length ? [{ key: 'services' as const, label: 'الخدمات' }] : []),
+    ...(gallery.length ? [{ key: 'gallery' as const, label: 'الصور', n: gallery.length }] : []),
+    ...(posts.length ? [{ key: 'posts' as const, label: 'المقالات', n: p.counts.articles }] : []),
+    ...(faqs.length ? [{ key: 'faqs' as const, label: 'الأسئلة', n: faqs.length }] : []),
+  ];
+  const tabBar = tabs.length > 2 ? <Tabs tabs={tabs} active={active} onPick={goTo} /> : null;
+
+  const chrome = [
+    {
+      icon: follow.following ? ('notificationsFilled' as const) : ('notifications' as const),
+      label: follow.following ? `إلغاء متابعة ${p.name}` : `تابع ${p.name}`,
+      onPress: follow.toggle,
+    },
+    { icon: 'share' as const, label: 'مشاركة صفحة الشريك', onPress: () => void share() },
+  ];
 
   return (
     <Screen>
-      <Header
-        back
-        title={p.name}
-        actions={
-          <>
-            <IconButton icon="bookmark" label={favorited ? 'إزالة من المفضّلة' : 'إضافة إلى المفضّلة'} selected={!!favorited} tone={favorited ? 'interactive' : 'text'} onPress={toggleFavorite} />
-            <IconButton icon="share" label="مشاركة صفحة الشريك" onPress={() => void share()} />
-          </>
-        }
-      />
       <ScrollView
-        contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={res.refreshing} onRefresh={res.refresh} tintColor={colors.primary} colors={[colors.primary]} />}
+        ref={scrollRef}
+        onScroll={onScroll}
+        onContentSizeChange={onContentSize}
+        scrollEventThrottle={16}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 112 }}
+        refreshControl={<RefreshControl refreshing={res.refreshing} onRefresh={res.refresh} tintColor={colors.primary} colors={[colors.primary]} progressViewOffset={insets.top + 48} />}
       >
-        {cover ? <Image source={cover} style={styles.cover} contentFit="cover" accessibilityLabel={p.name} /> : null}
+        {/* شارة شفّافة فوق صورة، وشعار مقصوص بظلّ: طبقات جاهزة على أندرويد (توثيق React Native › Performance). */}
+        <View renderToHardwareTextureAndroid style={[styles.hero, { backgroundColor: colors.navy }]}>
+          {cover ? (
+            <Image cachePolicy="memory-disk" source={cover} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} accessibilityLabel={gallery[0]?.alt ?? p.name} />
+          ) : (
+            <LinearGradient colors={[colors.navy, colors.primary]} start={{ x: 1, y: 0 }} end={{ x: 0, y: 1 }} style={StyleSheet.absoluteFill} />
+          )}
+          {gallery.length ? (
+            <Tap label={`معرض الصور، ${plainNumber(gallery.length)} صورة`} role="link" minTarget={false} onPress={() => pushSub('gallery')} style={[styles.photos, { backgroundColor: 'rgba(14,6,90,0.82)' }]}>
+              <Icon name="gallery" size={16} tone="onReels" monochrome />
+              <Text style={styles.photosText} maxFontSizeMultiplier={1.2}>{`${plainNumber(gallery.length)} صورة`}</Text>
+            </Tap>
+          ) : null}
+        </View>
 
-        <View style={styles.pad}>
+        <View style={[styles.sheet, { backgroundColor: colors.page }]}>
+          <View renderToHardwareTextureAndroid style={[styles.logo, { backgroundColor: '#FFFFFF', borderColor: colors.page }]}>
+            {p.logo ? <Image cachePolicy="memory-disk" source={p.logo} style={StyleSheet.absoluteFill} contentFit="cover" accessibilityIgnoresInvertColors /> : <Icon name="company" size={36} tone="muted" />}
+          </View>
           <View style={styles.identity}>
-            {p.logo ? <Image source={p.logo} style={[styles.logo, { backgroundColor: colors.surface, borderColor: colors.border }]} contentFit="contain" /> : null}
-            <View style={styles.flex}>
-              <View style={styles.rowCenter}>
-                <AppText variant="pageTitle" accessibilityRole="header" style={styles.shrink}>
-                  {p.name}
-                </AppText>
-                {p.isVerified ? <Icon name="trust" size={control.iconSmall} tone="interactive" /> : null}
+            {industry ? (
+              <Text style={[styles.industry, { color: colors.interactive }]} maxFontSizeMultiplier={1.2}>
+                {industry}
+              </Text>
+            ) : null}
+            <View style={styles.nameRow}>
+              <Text style={[styles.name, { color: colors.text }]} accessibilityRole="header" maxFontSizeMultiplier={1.2}>
+                {p.name}
+              </Text>
+              {p.isVerified ? <Icon name="trust" size={22} tone="interactive" /> : null}
+            </View>
+            {slogan ? (
+              <Text style={[styles.slogan, { color: colors.textSecondary }]} maxFontSizeMultiplier={dsFontScale.max}>
+                {slogan}
+              </Text>
+            ) : null}
+            {city || founded || hours.length ? (
+              <View style={styles.chips}>
+                {city ? <InfoChip icon="location" label={city} /> : null}
+                {founded ? <InfoChip icon="professionals" label={`منذ ${founded}`} /> : null}
+                {hours[0] ? <InfoChip icon="clock" label={`${hours[0].day} ${hours[0].time}`} /> : null}
               </View>
-              {subtitle ? (
-                <AppText variant="secondary" tone="muted">
-                  {subtitle}
-                </AppText>
+            ) : null}
+            <View style={styles.cta} onLayout={(e) => (ctaBottom.value = e.nativeEvent.layout.y + e.nativeEvent.layout.height + HERO - 28)}>
+              {primary ? (
+                <Tap label={primary.label} scale={0.97} onPress={primary.onPress} style={[styles.primary, { backgroundColor: primary.kind === 'wa' ? colors.whatsapp : colors.primary }]}>
+                  <Icon name={primary.icon} size={20} tone={primary.kind === 'wa' ? 'onWhatsapp' : 'onPrimary'} monochrome />
+                  <Text style={[styles.primaryText, { color: primary.kind === 'wa' ? colors.onWhatsapp : colors.onPrimary }]} numberOfLines={1} maxFontSizeMultiplier={1.2}>
+                    {primary.label}
+                  </Text>
+                </Tap>
+              ) : null}
+              {wa && primary?.kind !== 'wa' ? (
+                <Tap label="واتساب" scale={0.94} onPress={openWhatsapp} style={[styles.round, { backgroundColor: colors.whatsapp }]}>
+                  <Icon name="whatsapp" size={22} tone="onWhatsapp" monochrome />
+                </Tap>
+              ) : null}
+              {call ? (
+                <Tap label={`اتصال ${p.phone}`} scale={0.94} onPress={call} style={[styles.round, { backgroundColor: colors.sunken }]}>
+                  <Icon name="phone" size={22} tone="text" monochrome />
+                </Tap>
               ) : null}
             </View>
-          </View>
-          {home?.hero.slogan ?? p.slogan ? <AppText variant="body">{home?.hero.slogan ?? p.slogan}</AppText> : null}
-
-          <View style={[styles.stats, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            {stats.map((s) => (
-              <View key={s.label} style={styles.stat} accessible accessibilityLabel={`${plainNumber(s.value)} ${s.label}`}>
-                <AppText variant="sectionTitle">{compactNumber(s.value)}</AppText>
-                <AppText variant="secondary" tone="muted">
-                  {s.label}
-                </AppText>
-              </View>
-            ))}
-          </View>
-
-          <View style={styles.actions}>
-            <View style={styles.flex}>
-              <FollowButton slug={p.slug} onCount={setFollowers} />
-            </View>
-            {book ? (
-              <View style={styles.flex}>
-                <Button
-                  label={p.cta.label ?? 'احجز'}
-                  kind="outlined"
-                  icon="booking"
-                  onPress={() => router.push({ pathname: '/partners/[slug]/book', params: { slug, partnerId: p.id, name: p.name, source: 'client_page' } })}
-                />
-              </View>
-            ) : p.cta.mode === 'LINK' && p.cta.url ? (
-              <View style={styles.flex}>
-                <Button label={p.cta.label ?? 'زيارة'} kind="outlined" icon="directions" onPress={() => void openExternal(p.cta.url!)} />
-              </View>
-            ) : null}
-          </View>
-          <View style={styles.contactRow}>
-            {p.phone ? <IconButton icon="phone" label={`اتصال ${p.phone}`} onPress={() => void openExternal(`tel:${p.phone}`)} /> : null}
-            {wa ? (
-              <IconButton
-                icon="whatsapp"
-                label="واتساب"
-                onPress={() => {
-                  partnerActionsApi.whatsappLead(p.id).catch((error: unknown) => console.warn('[partner] whatsapp lead', toApiError(error).message));
-                  void openExternal(wa);
-                }}
-              />
-            ) : null}
-            {p.email ? <IconButton icon="email" label={`مراسلة ${p.email}`} onPress={() => void openExternal(`mailto:${p.email}`)} /> : null}
-            {home?.contact.mapHref ? <IconButton icon="location" label="الموقع على الخريطة" onPress={() => void openExternal(home.contact.mapHref!)} /> : null}
           </View>
         </View>
 
-        {home && !isHidden('trust') && home.trust.credentials.length > 0 ? (
-          <View style={[styles.box, styles.mx, { backgroundColor: colors.surfaceRaised }]}>
-            <View style={styles.rowCenter}>
-              <Icon name="trust" />
-              <AppText variant="sectionTitle">الاعتمادات</AppText>
-            </View>
-            {home.trust.credentials.map((c, i) => (
-              <AppText key={i} variant="body">
-                {[c.name, c.authority, c.year].filter(Boolean).join('، ')}
-              </AppText>
-            ))}
+        {credentials.length || figures.length ? <TrustCard credentials={credentials} stats={figures} /> : null}
+
+        {tabBar ? (
+          <View style={styles.tabsWrap} onLayout={(e) => (tabsY.value = e.nativeEvent.layout.y)}>
+            {tabBar}
           </View>
         ) : null}
 
-        {home && !isHidden('about') && (home.about.description ?? p.description) ? (
+        {about ? <AboutBlock text={about} /> : null}
+        {services.length ? (
+          <View onLayout={mark('services')}>
+            <ServicesBlock services={services} />
+          </View>
+        ) : null}
+        {reels.length ? <ReelsBlock reels={reels} /> : null}
+        {gallery.length ? (
+          <View onLayout={mark('gallery')}>
+            <GalleryBlock images={gallery.map((g) => ({ url: g.url, alt: g.alt }))} onOpen={() => pushSub('gallery')} />
+          </View>
+        ) : null}
+        {posts.length ? (
+          <View onLayout={mark('posts')}>
+            <PostsBlock posts={posts} total={p.counts.articles} onAll={() => pushSub('articles')} />
+          </View>
+        ) : null}
+        {faqs.length ? (
+          <View onLayout={mark('faqs')}>
+            <FaqBlock faqs={faqs} onAll={() => pushSub('faqs')} />
+          </View>
+        ) : null}
+
+        {testimonials.length ? (
           <View style={styles.block}>
-            <SectionHeader title={`عن ${p.name}`} />
-            <AppText variant="body" style={styles.mx}>
-              {home.about.description ?? p.description}
-            </AppText>
-          </View>
-        ) : null}
-
-        {home && !isHidden('services') && home.services.length > 0 ? (
-          <View style={styles.block}>
-            <SectionHeader title="الخدمات" />
-            <View style={[styles.group, styles.mx, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-              {home.services.map((s, i) => (
-                <View key={i} style={[styles.serviceRow, i > 0 && { borderTopColor: colors.border, borderTopWidth: StyleSheet.hairlineWidth }]}>
-                  <AppText variant="label">{s.title}</AppText>
-                  {s.description ? (
-                    <AppText variant="secondary" tone="muted">
-                      {s.description}
-                    </AppText>
-                  ) : null}
-                </View>
-              ))}
-            </View>
-          </View>
-        ) : null}
-
-        {home && !isHidden('stats') && home.stats.length > 0 ? (
-          <View style={[styles.statsGrid, styles.mx]}>
-            {home.stats.map((s, i) => (
-              <View key={i} style={[styles.statTile, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                <AppText variant="sectionTitle">{s.value}</AppText>
-                <AppText variant="secondary" tone="muted">
-                  {s.label}
-                </AppText>
+            <BlockTitle title="آراء العملاء" more={{ label: 'الكل', a11y: 'كل التقييمات', onPress: () => pushSub('reviews') }} />
+            {testimonials.slice(0, 3).map((t, i) => (
+              <View key={i} style={[styles.quote, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <Stars value={t.rating} />
+                <Text style={[styles.quoteText, { color: colors.text }]} numberOfLines={5} maxFontSizeMultiplier={dsFontScale.max}>
+                  {t.comment}
+                </Text>
+                <Text style={[styles.quoteBy, { color: colors.muted }]} maxFontSizeMultiplier={1.2}>
+                  {t.author}
+                </Text>
               </View>
             ))}
           </View>
         ) : null}
 
-        {home && !isHidden('reels') && home.reels.length > 0 ? (
+        {team.length ? (
           <View style={styles.block}>
-            <SectionHeader title="الطلّات" />
-            <FlatList
-              horizontal
-              data={home.reels}
-              keyExtractor={(r) => r.href}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.hList}
-              renderItem={({ item }) => (
-                <ReelTile
-                  item={{ key: item.href, slug: item.href, title: item.title, poster: item.imageUrl, publisher: p.name, isVideo: false }}
-                  onOpen={openHref}
-                  width={reelWidth}
-                />
-              )}
-            />
-          </View>
-        ) : null}
-
-        {home && !isHidden('blog') && home.posts.length > 0 ? (
-          <View style={styles.block}>
-            <SectionHeader
-              title="أحدث المقالات"
-              onMore={p.counts.articles > home.posts.length ? () => router.push({ pathname: '/partners/[slug]/articles', params: { slug, name: p.name } }) : undefined}
-            />
-            <View style={[styles.mx, styles.gapList]}>
-              {home.posts.slice(0, 4).map((post) => (
-                <ArticleCard
-                  key={post.href}
-                  layout="row"
-                  item={articleRow({ slug: post.href, title: post.title, image: post.imageUrl, dateLabel: post.date, publisher: post.category })}
-                  onOpen={openHref}
-                />
-              ))}
-            </View>
-          </View>
-        ) : null}
-
-        {home && !isHidden('testimonials') && home.testimonials.length > 0 ? (
-          <View style={styles.block}>
-            <SectionHeader title="آراء العملاء" onMore={() => router.push({ pathname: '/partners/[slug]/reviews', params: { slug, name: p.name } })} />
-            <FlatList
-              horizontal
-              data={home.testimonials.slice(0, 8)}
-              keyExtractor={(_, i) => String(i)}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.hList}
-              renderItem={({ item }) => (
-                <View style={[styles.testimonial, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                  <Stars value={item.rating} />
-                  <AppText variant="body" numberOfLines={5}>
-                    {item.comment}
-                  </AppText>
-                  <AppText variant="secondary" tone="muted">
-                    {item.author}
-                  </AppText>
-                </View>
-              )}
-            />
-          </View>
-        ) : null}
-
-        {home && !isHidden('team') && home.team.length > 0 ? (
-          <View style={styles.block}>
-            <SectionHeader title="الفريق" />
-            <FlatList
-              horizontal
-              data={home.team}
-              keyExtractor={(t, i) => `${t.name}-${i}`}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.hList}
-              renderItem={({ item }) => (
-                <View style={styles.member}>
-                  {item.photoUrl ? <Image source={item.photoUrl} style={styles.memberPhoto} contentFit="cover" /> : <View style={[styles.memberPhoto, { backgroundColor: colors.surfaceRaised }]} />}
-                  <AppText variant="label" numberOfLines={1} align="center">
-                    {item.name}
-                  </AppText>
-                  {item.role ? (
-                    <AppText variant="secondary" tone="muted" numberOfLines={1} align="center">
-                      {item.role}
-                    </AppText>
+            <BlockTitle title="الفريق" />
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.team} style={styles.bleed}>
+              {team.map((m, i) => (
+                <View key={i} style={styles.member} accessible accessibilityLabel={[m.name, m.role].filter(Boolean).join('، ')}>
+                  {m.photoUrl ? <Image cachePolicy="memory-disk" source={m.photoUrl} style={styles.memberPhoto} contentFit="cover" /> : <View style={[styles.memberPhoto, { backgroundColor: colors.sunken }]} />}
+                  <Text style={[styles.memberName, { color: colors.text }]} numberOfLines={2} maxFontSizeMultiplier={1.2}>
+                    {m.name}
+                  </Text>
+                  {m.role ? (
+                    <Text style={[styles.memberRole, { color: colors.muted }]} numberOfLines={1} maxFontSizeMultiplier={1.2}>
+                      {m.role}
+                    </Text>
                   ) : null}
                 </View>
-              )}
-            />
-          </View>
-        ) : null}
-
-        {home && !isHidden('faq') && home.faqs.length > 0 ? (
-          <View style={styles.block}>
-            <SectionHeader title="أسئلة شائعة" />
-            <View style={[styles.group, styles.mx, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-              {home.faqs.slice(0, 5).map((f, i) => (
-                <List.Accordion key={i} title={f.question} titleNumberOfLines={3} style={{ backgroundColor: colors.surface }} right={({ isExpanded }) => <Icon name={isExpanded ? 'close' : 'question'} size={control.iconSmall} tone="muted" />}>
-                  <AppText variant="body" tone="muted" style={styles.faqAnswer}>
-                    {f.answer}
-                  </AppText>
-                </List.Accordion>
               ))}
-            </View>
+            </ScrollView>
           </View>
         ) : null}
 
-        {home && !isHidden('contact') && (home.contact.address || home.contact.hours.length > 0) ? (
-          <View style={styles.block}>
-            <SectionHeader title="التواصل" />
-            <View style={[styles.box, styles.mx, { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: StyleSheet.hairlineWidth }]}>
-              {home.contact.address ? (
-                <View style={styles.rowCenter}>
-                  <Icon name="location" size={control.iconSmall} tone="muted" />
-                  <AppText variant="body" style={styles.flex}>
-                    {home.contact.address}
-                  </AppText>
-                </View>
-              ) : null}
-              {home.contact.hours.map((h, i) => (
-                <View key={i} style={styles.hours}>
-                  <AppText variant="label">{h.day}</AppText>
-                  <AppText variant="secondary" tone="muted">
-                    {h.time}
-                  </AppText>
-                </View>
-              ))}
-            </View>
-          </View>
+        {home && !isHidden('contact') ? (
+          <ContactBlock address={home.contact.address} mapHref={home.contact.mapHref} hours={hours} phone={p.phone} email={p.email ?? home.contact.email} sameAs={p.sameAs} />
         ) : null}
 
-        <View style={styles.mx}>
-          <NavGroup title="المزيد عن الشريك" items={more} />
+        <View style={styles.block}>
+          <Tap label={p.counts.reviews > 0 ? `التقييمات، ${plainNumber(p.counts.reviews)}` : 'التقييمات — كن أوّل من يقيّم'} role="link" onPress={() => pushSub('reviews')} style={[styles.row, { borderColor: colors.border, backgroundColor: colors.surface }]}>
+            <Icon name="rating" size={20} tone="text" monochrome />
+            <Text style={[styles.rowText, { color: colors.text }]} maxFontSizeMultiplier={dsFontScale.max}>
+              {p.counts.reviews > 0 ? `التقييمات · ${plainNumber(p.counts.reviews)}` : 'التقييمات — كن أوّل من يقيّم'}
+            </Text>
+            <Icon name="chevron" size={18} tone="muted" monochrome />
+          </Tap>
+          {!isHidden('newsletter') ? (
+            <Tap label={`اشترك في نشرة ${p.name}`} role="link" onPress={() => router.push({ pathname: '/newsletter', params: { partnerId: p.id, name: p.name } })} style={[styles.row, { borderColor: colors.border, backgroundColor: colors.surface }]}>
+              <Icon name="email" size={20} tone="text" monochrome />
+              <Text style={[styles.rowText, { color: colors.text }]} maxFontSizeMultiplier={dsFontScale.max}>
+                اشترك في نشرته
+              </Text>
+              <Icon name="chevron" size={18} tone="muted" monochrome />
+            </Tap>
+          ) : null}
         </View>
       </ScrollView>
+
+      {tabBar && stuck ? <View style={[styles.stuck, { top, backgroundColor: colors.page }]}>{tabBar}</View> : null}
+
+      {primary ? (
+        <Animated.View style={[styles.bar, { paddingBottom: insets.bottom + 16, backgroundColor: colors.surface, borderTopColor: colors.border }, barStyle]}>
+          <View style={styles.barId}>
+            {p.logo ? <Image cachePolicy="memory-disk" source={p.logo} style={[styles.barLogo, { borderColor: colors.border }]} contentFit="cover" /> : null}
+            <Text style={[styles.barName, { color: colors.text }]} numberOfLines={1} maxFontSizeMultiplier={1.2}>
+              {p.name}
+            </Text>
+          </View>
+          {wa && primary.kind !== 'wa' ? (
+            <Tap label="واتساب" scale={0.94} onPress={openWhatsapp} style={[styles.barRound, { backgroundColor: colors.whatsapp }]}>
+              <Icon name="whatsapp" size={22} tone="onWhatsapp" monochrome />
+            </Tap>
+          ) : null}
+          <Tap label={primary.label} scale={0.97} onPress={primary.onPress} style={[styles.barPrimary, { backgroundColor: primary.kind === 'wa' ? colors.whatsapp : colors.primary }]}>
+            <Icon name={primary.icon} size={18} tone={primary.kind === 'wa' ? 'onWhatsapp' : 'onPrimary'} monochrome />
+            <Text style={[styles.barPrimaryText, { color: primary.kind === 'wa' ? colors.onWhatsapp : colors.onPrimary }]} numberOfLines={1} maxFontSizeMultiplier={1.2}>
+              {primary.label}
+            </Text>
+          </Tap>
+        </Animated.View>
+      ) : null}
+
+      <ArticleChrome scrollY={scrollY} title={p.name} remaining={null} onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))} actions={chrome} heroHeight={HERO} />
     </Screen>
   );
 }
 
-const TESTIMONIAL_WIDTH = 260;
-const MEMBER_WIDTH = 104;
+/** تبويبات ٤٨ — النشط بخطّ ٣ أسفله ووزن أثقل؛ الضغط يمرّر لكتلته. */
+function Tabs({ tabs, active, onPick }: { tabs: { key: TabKey; label: string; n?: number }[]; active: TabKey; onPick: (k: TabKey) => void }) {
+  const { colors } = useAppTheme();
+  const { width } = useWindowDimensions();
+  // التبويب النشط يُرى دائماً — يُمرَّر الصفّ إليه حين يتغيّر مع التمرير.
+  const row = useRef<ScrollView>(null);
+  const place = (e: LayoutChangeEvent) => {
+    const { x, width: w } = e.nativeEvent.layout;
+    row.current?.scrollTo({ x: Math.max(0, x + w / 2 - width / 2), animated: true });
+  };
+  return (
+    <ScrollView ref={row} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs} style={{ borderBottomColor: colors.border, borderBottomWidth: StyleSheet.hairlineWidth }}>
+      {tabs.map((t) => {
+        const on = t.key === active;
+        return (
+          <Tap key={t.key} label={t.n != null ? `${t.label}، ${plainNumber(t.n)}` : t.label} role="tab" accessibilityState={{ selected: on }} onPress={() => onPick(t.key)} onLayout={on ? place : undefined} style={[styles.tab, on && { borderBottomColor: colors.primary, borderBottomWidth: 3 }]}>
+            <Text style={[styles.tabText, { color: on ? colors.text : colors.muted, fontFamily: on ? 'Tajawal_700Bold' : 'Tajawal_500Medium' }]} maxFontSizeMultiplier={1.2}>
+              {t.label}
+            </Text>
+            {t.n != null ? (
+              <Text style={[styles.tabCount, { color: colors.muted }]} maxFontSizeMultiplier={1.2}>
+                {plainNumber(t.n)}
+              </Text>
+            ) : null}
+          </Tap>
+        );
+      })}
+    </ScrollView>
+  );
+}
 
 const styles = StyleSheet.create({
-  content: { gap: space.section, paddingBottom: space.xxl },
-  skeleton: { gap: space.sm, padding: space.screen },
-  cover: { width: '100%', aspectRatio: media.partnerHeroAspect },
-  pad: { paddingHorizontal: space.screen, gap: space.md, paddingTop: space.md },
-  mx: { marginHorizontal: space.screen },
-  identity: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
-  logo: { width: control.avatarLarge, height: control.avatarLarge, borderRadius: radius.card, borderWidth: StyleSheet.hairlineWidth },
-  flex: { flex: 1 },
-  shrink: { flexShrink: 1 },
-  rowCenter: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
-  stats: { flexDirection: 'row', borderRadius: radius.card, borderWidth: StyleSheet.hairlineWidth, paddingVertical: space.sm },
-  stat: { flex: 1, alignItems: 'center', gap: space.xxs },
-  actions: { flexDirection: 'row', gap: space.sm },
-  contactRow: { flexDirection: 'row', gap: space.xs, justifyContent: 'center' },
-  box: { borderRadius: radius.card, padding: space.card, gap: space.xs },
-  block: { gap: space.sm },
-  group: { borderRadius: radius.card, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' },
-  serviceRow: { padding: space.card, gap: space.xxs },
-  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.xs },
-  statTile: { flexGrow: 1, flexBasis: '45%', borderRadius: radius.card, borderWidth: StyleSheet.hairlineWidth, padding: space.card, gap: space.xxs },
-  hList: { paddingHorizontal: space.screen, gap: space.xs },
-  gapList: { gap: space.listGap },
-  testimonial: { width: TESTIMONIAL_WIDTH, borderRadius: radius.card, borderWidth: StyleSheet.hairlineWidth, padding: space.card, gap: space.xs },
-  member: { width: MEMBER_WIDTH, alignItems: 'center', gap: space.xxs },
-  memberPhoto: { width: control.avatarLarge, height: control.avatarLarge, borderRadius: radius.pill },
-  faqAnswer: { paddingHorizontal: space.card, paddingBottom: space.card },
-  hours: { flexDirection: 'row', justifyContent: 'space-between', gap: space.sm },
+  hero: { height: HERO, overflow: 'hidden' },
+  skeleton: { padding: ds.layout.gutter, gap: ds.space.s3 },
+  photos: { position: 'absolute', bottom: 40, end: 16, height: 32, paddingHorizontal: 12, borderRadius: 16, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  photosText: { color: '#FFFFFF', fontFamily: 'Tajawal_700Bold', fontSize: 13, lineHeight: 18 },
+  sheet: { marginTop: -28, borderTopStartRadius: 28, borderTopEndRadius: 28, paddingHorizontal: ds.layout.gutter },
+  logo: {
+    position: 'absolute',
+    top: -36,
+    start: ds.layout.gutter,
+    width: 84,
+    height: 84,
+    borderRadius: 22,
+    borderWidth: 3,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#0E065A',
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
+  },
+  identity: { paddingTop: 56, gap: ds.space.s2 },
+  industry: { fontFamily: 'Tajawal_700Bold', fontSize: 13, lineHeight: 20 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  name: { flexShrink: 1, fontFamily: 'Tajawal_900Black', fontSize: 24, lineHeight: 34 },
+  slogan: { fontFamily: 'Tajawal_400Regular', fontSize: 15, lineHeight: 24 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, paddingTop: 4 },
+  cta: { flexDirection: 'row', gap: ds.space.s2, paddingTop: ds.space.s2 },
+  primary: { flex: 1, height: 52, borderRadius: 26, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 12 },
+  primaryText: { fontFamily: 'Tajawal_800ExtraBold', fontSize: 16, lineHeight: 24 },
+  round: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
+  tabsWrap: { marginTop: ds.space.s4 },
+  tabs: { paddingHorizontal: 6 },
+  tab: { height: TABS_H, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center', gap: 4, borderBottomColor: 'transparent', borderBottomWidth: 3 },
+  tabText: { fontSize: 15, lineHeight: 24 },
+  tabCount: { fontFamily: 'Tajawal_500Medium', fontSize: 12, lineHeight: 16 },
+  stuck: { position: 'absolute', start: 0, end: 0, zIndex: 4 },
+  block: { paddingHorizontal: ds.layout.gutter, paddingTop: ds.space.s6, gap: 10 },
+  bleed: { marginHorizontal: -ds.layout.gutter },
+  quote: { borderRadius: 16, borderWidth: 1, padding: 14, gap: 6 },
+  quoteText: { fontFamily: 'Tajawal_400Regular', fontSize: 15, lineHeight: 24 },
+  quoteBy: { fontFamily: 'Tajawal_500Medium', fontSize: 13, lineHeight: 20 },
+  team: { gap: 12, paddingHorizontal: ds.layout.gutter },
+  member: { width: 96, alignItems: 'center', gap: 4 },
+  memberPhoto: { width: 72, height: 72, borderRadius: 36 },
+  memberName: { fontFamily: 'Tajawal_700Bold', fontSize: 13, lineHeight: 18, textAlign: 'center' },
+  memberRole: { fontFamily: 'Tajawal_500Medium', fontSize: 12, lineHeight: 16 },
+  row: { minHeight: 56, borderRadius: 16, borderWidth: 1, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  rowText: { flex: 1, fontFamily: 'Tajawal_700Bold', fontSize: 15, lineHeight: 22 },
+  bar: {
+    position: 'absolute',
+    start: 0,
+    end: 0,
+    bottom: 0,
+    paddingTop: 12,
+    paddingHorizontal: ds.layout.gutter,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    zIndex: 3,
+    shadowColor: '#0E065A',
+    shadowOpacity: 0.1,
+    shadowRadius: 32,
+    shadowOffset: { width: 0, height: -12 },
+    elevation: 12,
+  },
+  barId: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  barLogo: { width: 36, height: 36, borderRadius: 10, borderWidth: 1 },
+  barName: { flexShrink: 1, fontFamily: 'Tajawal_700Bold', fontSize: 13, lineHeight: 18 },
+  barRound: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
+  barPrimary: { height: 48, paddingHorizontal: 20, borderRadius: 24, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  barPrimaryText: { fontFamily: 'Tajawal_800ExtraBold', fontSize: 15, lineHeight: 20 },
 });

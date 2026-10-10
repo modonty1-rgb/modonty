@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap"><style>body{margin:0;background:#ECEBE7;font-family:Tajawal,sans-serif;color:#0E065A;-webkit-font-smoothing:antialiased}a{color:#3030FF}a:hover{color:#2323C8}*{box-sizing:border-box}</style></helmet>
+<div dir="rtl" style="max-width:1200px;margin:0 auto;padding:40px 24px 96px;display:flex;flex-direction:column;gap:24px">
+
+<header style="background:#0E065A;color:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:14px">
+  <span style="font:500 14px/20px Tajawal;color:#B8B6E0">مدونتي · تسليم للمطوّر · React Native (Expo) + React Native Paper MD3</span>
+  <h1 style="margin:0;font:900 32px/42px Tajawal">Modonty Handoff</h1>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+    <sc-for list="{{ rules }}" as="r" hint-placeholder-count="6"><div style="background:#1B1270;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 13px/20px Tajawal;color:#00D8D8">{{ r.k }}</span><span style="font:400 13px/21px Tajawal;color:#DCDAF2">{{ r.v }}</span></div></sc-for>
+  </div>
+  <nav style="display:flex;gap:8px;flex-wrap:wrap">
+    <a href="#theme" style="height:40px;padding:0 14px;border-radius:999px;background:#FFFFFF;color:#0E065A;display:flex;align-items:center;font:700 14px/1 Tajawal;text-decoration:none">١ · الثيم والتوكنز</a>
+    <a href="#components" style="height:40px;padding:0 14px;border-radius:999px;background:#FFFFFF;color:#0E065A;display:flex;align-items:center;font:700 14px/1 Tajawal;text-decoration:none">٢ · المكوّنات</a>
+    <a href="#mapping" style="height:40px;padding:0 14px;border-radius:999px;background:#FFFFFF;color:#0E065A;display:flex;align-items:center;font:700 14px/1 Tajawal;text-decoration:none">٣ · خريطة Paper</a>
+    <a href="#screens" style="height:40px;padding:0 14px;border-radius:999px;background:#FFFFFF;color:#0E065A;display:flex;align-items:center;font:700 14px/1 Tajawal;text-decoration:none">٤ · فهرس الشاشات</a>
+    <a href="#compliance" style="height:40px;padding:0 14px;border-radius:999px;background:#00D8D8;color:#0E065A;display:flex;align-items:center;font:800 14px/1 Tajawal;text-decoration:none">٥ · التوافق مع المنصّتين</a>
+  </nav>
+</header>
+
+<section id="theme" style="background:#FFFFFF;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:16px">
+  <h2 style="margin:0;font:800 22px/32px Tajawal">١ · توكنز الألوان (فاتح / داكن) ومفاتيح ثيم Paper</h2>
+  <div style="display:grid;grid-template-columns:minmax(0,1.3fr) 104px 104px minmax(0,1.3fr) minmax(0,1.4fr);gap:0;font:500 13px/20px Tajawal;border:1px solid #E6E4DE;border-radius:14px;overflow:hidden">
+    <span style="padding:8px 12px;background:#F3F3F1;font-weight:800">التوكن</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">فاتح</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">داكن</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">MD3 theme key</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">الاستخدام</span>
+    <sc-for list="{{ tokens }}" as="c" hint-placeholder-count="40">
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;font:700 12px/20px ui-monospace,monospace" dir="ltr">{{ c.n }}</span>
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;display:flex;align-items:center;gap:6px;font:500 11px/20px ui-monospace,monospace" dir="ltr"><span style="width:16px;height:16px;border-radius:4px;flex:none;border:1px solid rgba(0,0,0,.12);background:{{ c.l }}"></span>{{ c.l }}</span>
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;display:flex;align-items:center;gap:6px;font:500 11px/20px ui-monospace,monospace" dir="ltr"><span style="width:16px;height:16px;border-radius:4px;flex:none;border:1px solid rgba(0,0,0,.12);background:{{ c.d }}"></span>{{ c.d }}</span>
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;font:500 12px/20px ui-monospace,monospace;color:#4A4670" dir="ltr">{{ c.k }}</span>
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;color:#4A4670">{{ c.u }}</span>
+    </sc-for>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+    <sc-for list="{{ scales }}" as="s" hint-placeholder-count="4"><div style="background:#F3F3F1;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px"><span style="font:800 14px/20px Tajawal">{{ s.k }}</span><span style="font:500 12px/20px ui-monospace,monospace;color:#4A4670" dir="ltr">{{ s.v }}</span></div></sc-for>
+  </div>
+</section>
+
+<section id="components" style="display:flex;flex-direction:column;gap:20px">
+  <h2 style="margin:0;padding:8px 4px 0;font:800 22px/32px Tajawal">٢ · المكوّنات</h2>
+  <sc-for list="{{ comps }}" as="c" hint-placeholder-count="6">
+    <article id="{{ c.id }}" style="background:#FFFFFF;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+        <div style="display:flex;align-items:baseline;gap:10px"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">{{ c.num }}</span><h3 style="margin:0;font:800 20px/30px Tajawal">{{ c.name }}</h3></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span style="height:28px;padding:0 10px;border-radius:6px;background:#E8E8FF;color:#2323C8;display:flex;align-items:center;font:700 12px/1 ui-monospace,monospace" dir="ltr">{{ c.paper }}</span><span style="height:28px;padding:0 10px;border-radius:6px;background:#F3F3F1;color:#4A4670;display:flex;align-items:center;font:700 12px/1 Tajawal">{{ c.ref }}</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:800 13px/20px Tajawal;color:#625F82">التشريح</span>
+          <ol style="margin:0;padding:0 18px 0 0;display:flex;flex-direction:column;gap:2px;font:500 14px/22px Tajawal;color:#0E065A"><sc-for list="{{ c.anatomy }}" as="a" hint-placeholder-count="4"><li>{{ a.t }}</li></sc-for></ol>
+          <span style="font:800 13px/20px Tajawal;color:#625F82;padding-top:8px">الحالات</span>
+          <div style="display:flex;flex-direction:column;border:1px solid #E6E4DE;border-radius:12px;overflow:hidden">
+            <sc-for list="{{ c.states }}" as="s" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:7px 12px;border-bottom:1px solid #F0EEE9;font:500 13px/20px Tajawal"><span style="font-weight:800">{{ s.k }}</span><span style="color:#4A4670" dir="auto">{{ s.v }}</span></div></sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:800 13px/20px Tajawal;color:#625F82">القياسات والتوكنز (dp)</span>
+          <div style="display:flex;flex-direction:column;border:1px solid #E6E4DE;border-radius:12px;overflow:hidden">
+            <sc-for list="{{ c.spec }}" as="s" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:10px;padding:7px 12px;border-bottom:1px solid #F0EEE9;font:500 13px/20px Tajawal"><span style="font-weight:700">{{ s.k }}</span><span style="font:500 12px/20px ui-monospace,monospace;color:#0E065A" dir="ltr">{{ s.v }}</span></div></sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px">
+        <div style="background:#F3F3F1;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px"><span style="font:800 12px/18px Tajawal;color:#625F82">الحركة</span><span style="font:500 13px/21px Tajawal" dir="auto">{{ c.motion }}</span></div>
+        <div style="background:#F3F3F1;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px"><span style="font:800 12px/18px Tajawal;color:#625F82">إمكانية الوصول</span><span style="font:500 13px/21px Tajawal" dir="auto">{{ c.a11y }}</span></div>
+        <div style="background:#F3F3F1;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px"><span style="font:800 12px/18px Tajawal;color:#625F82">RTL</span><span style="font:500 13px/21px Tajawal" dir="auto">{{ c.rtl }}</span></div>
+      </div>
+    </article>
+  </sc-for>
+</section>
+
+<section id="mapping" style="background:#FFFFFF;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:16px">
+  <h2 style="margin:0;font:800 22px/32px Tajawal">٣ · خريطة React Native Paper</h2>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.8fr);border:1px solid #E6E4DE;border-radius:14px;overflow:hidden;font:500 13px/20px Tajawal">
+    <span style="padding:8px 12px;background:#F3F3F1;font-weight:800">المكوّن</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">نقطة البداية</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">Props / theme keys</span>
+    <sc-for list="{{ mapping }}" as="m" hint-placeholder-count="20">
+      <a href="{{ m.href }}" style="padding:7px 12px;border-top:1px solid #F0EEE9;font-weight:700;color:#0E065A;text-decoration:none">{{ m.name }}</a>
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;font:700 12px/20px ui-monospace,monospace" dir="ltr">{{ m.paper }}</span>
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;font:500 12px/20px ui-monospace,monospace;color:#4A4670" dir="ltr">{{ m.keys }}</span>
+    </sc-for>
+  </div>
+</section>
+
+<section id="screens" style="background:#FFFFFF;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:16px">
+  <h2 style="margin:0;font:800 22px/32px Tajawal">٤ · فهرس الشاشات</h2>
+  <div style="display:grid;grid-template-columns:150px 64px minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.6fr);border:1px solid #E6E4DE;border-radius:14px;overflow:hidden;font:500 13px/20px Tajawal">
+    <span style="padding:8px 12px;background:#F3F3F1;font-weight:800">الملف</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">الإطار</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">الشاشة</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">المكوّنات</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">التمرير والتثبيت</span>
+    <sc-for list="{{ screens }}" as="s" hint-placeholder-count="30">
+      <a href="{{ s.href }}" style="padding:7px 12px;border-top:1px solid #F0EEE9;font:600 12px/20px ui-monospace,monospace;color:#3030FF;text-decoration:none" dir="ltr">{{ s.f }}</a>
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;font-weight:800">{{ s.n }}</span>
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;font-weight:700">{{ s.t }}</span>
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;color:#4A4670">{{ s.c }}</span>
+      <span style="padding:7px 12px;border-top:1px solid #F0EEE9;color:#4A4670">{{ s.b }}</span>
+    </sc-for>
+  </div>
+</section>
+<section id="compliance" style="background:#FFFFFF;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:16px">
+  <h2 style="margin:0;font:800 22px/32px Tajawal">٥ · التوافق مع المنصّتين (iOS + Android، تصميم واحد)</h2>
+  <div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,1.3fr) 84px;border:1px solid #E6E4DE;border-radius:14px;overflow:hidden;font:500 13px/21px Tajawal">
+    <span style="padding:8px 12px;background:#F3F3F1;font-weight:800">القاعدة</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">التنفيذ</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">يؤثّر على</span><span style="padding:8px 12px;background:#F3F3F1;font-weight:800">الحالة</span>
+    <sc-for list="{{ compliance }}" as="r" hint-placeholder-count="10">
+      <span style="padding:8px 12px;border-top:1px solid #F0EEE9;font-weight:800">{{ r.rule }}</span>
+      <span style="padding:8px 12px;border-top:1px solid #F0EEE9;color:#4A4670" dir="auto">{{ r.how }}</span>
+      <span style="padding:8px 12px;border-top:1px solid #F0EEE9;color:#4A4670">{{ r.where }}</span>
+      <span style="padding:8px 12px;border-top:1px solid #F0EEE9"><span style="display:inline-flex;height:26px;padding:0 10px;border-radius:6px;align-items:center;font:700 12px/1 Tajawal;background:{{ r.bg }};color:{{ r.fg }}">{{ r.status }}</span></span>
+    </sc-for>
+  </div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const rules = [
+      { k: 'الوحدات', v: 'كل القياسات dp. الخطوط sp وتتبع مقياس النظام (allowFontScaling). الأيقونات والمسافات لا تتبع المقياس.' },
+      { k: 'الاتجاه', v: 'I18nManager.forceRTL(true). استخدم start/end (marginStart, paddingEnd) لا left/right. البداية = اليمين.' },
+      { k: 'الألوان', v: 'لا hex داخل المكوّنات. كل لون عبر توكن من الجدول ١ (theme.colors أو theme.modonty).' },
+      { k: 'حافة لحافة', v: 'كل شاشة خلف شريط الحالة والتنقّل وتُحشى بـ useSafeAreaInsets. لا SafeAreaView بلون.' },
+      { k: 'الظلال', v: 'elevation على Android + shadow* على iOS. لا blur ولا BlurView في أي مكان.' },
+      { k: 'الأرقام', v: 'الواجهة بأرقام عربية-هندية (Intl ar-SA nu-arab). أرقام الجوال لاتينية LTR بصيغة E.164.' },
+      { k: 'الأيقونات', v: 'Lucide مؤقتاً (24 · stroke 1.75). تُستبدل بمجموعة مدونتي بنفس الأسماء والأحجام.' },
+    ];
+    const T = (n, l, d, k, u) => ({ n, l, d, k, u });
+    const tokens = [
+      T('bg.page','#FAF9F6','#151519','background','خلفية الشاشات'),
+      T('bg.sunken','#F3F3F1','#1B1B20','modonty.bgSunken','حقل البحث، الأزرار الدائرية'),
+      T('surface.1','#FFFFFF','#1F1F23','surface · elevation.level1','بطاقات، sheet (فاتح)'),
+      T('surface.2','#F3F3F1','#28282E','surfaceVariant · elevation.level2','تعبئة نغمية؛ الكبسولة والـsheet (داكن)'),
+      T('surface.3','#ECEBE7','#323238','surfaceDisabled · elevation.level3','هيكل التحميل، الزر المعطّل'),
+      T('text.primary','#0E065A','#F2F1F7','onSurface · onBackground','النص الأساسي'),
+      T('text.secondary','#4A4670','#B8B6CB','onSurfaceVariant','الأوصاف، الأيقونات غير النشطة'),
+      T('text.muted','#625F82','#9C9AB0','onSurfaceDisabled','البيانات الوصفية، نص الزر المعطّل'),
+      T('border.subtle','#E6E4DE','#2E2E35','outlineVariant','فواصل، حدود البطاقات'),
+      T('border.strong','#CFCCC4','#45454E','outline','حدود الحقول والأزرار الثانوية'),
+      T('primary','#3030FF','#5C5CFF','primary','تعبئة الإجراء الأساسي'),
+      T('primary.pressed','#2323C8','#4A4AE6','modonty.primaryPressed','الزر الأساسي مضغوطاً'),
+      T('on.primary','#FFFFFF','#FFFFFF','onPrimary','4.74:1 داكن · 6.9:1 فاتح'),
+      T('primary.text','#3030FF','#9C9CFF','modonty.primaryText','روابط، مؤشر التبويب'),
+      T('primary.container','#E8E8FF','#26265E','primaryContainer','زر نغمي، فقاعة خفيفة'),
+      T('on.primary.container','#2323C8','#C9C9FF','onPrimaryContainer',''),
+      T('accent','#00D8D8','#00D8D8','tertiary','تعبئة فقط (ممنوع كنص على الفاتح)'),
+      T('on.accent','#0E065A','#0E065A','onTertiary',''),
+      T('accent.text','#007575','#00D8D8','modonty.accentText','التوثيق، كيكر المجال'),
+      T('accent.container','#CCF5F5','#0F3A3D','tertiaryContainer','شرائح ISO، نجاح الحجز'),
+      T('on.accent.container','#005A5A','#7FEDED','onTertiaryContainer',''),
+      T('success','#1C7A55','#5BD69F','modonty.success','حالة ناجحة، تحقق الجوال'),
+      T('warning.container','#FDF0D9','#3D2C0C','modonty.warningContainer','«قيد المراجعة»، تجاوز الحد'),
+      T('on.warning.container','#8A4F00','#FFBE4D','modonty.onWarningContainer',''),
+      T('danger','#C2261F','#FF8A80','error','خطأ، حذف الحساب، نقطة غير مقروء'),
+      T('danger.container','#FDE6E4','#4A1F1C','errorContainer',''),
+      T('on.danger.container','#B0221B','#FFB4AB','onErrorContainer',''),
+      T('gold','#E0A100','#E0A100','modonty.gold','حلقة وإطار «المميّزون» (زخرفي)'),
+      T('gold.text','#7A5A00','#E9C46A','modonty.goldText','كلمة «مميّز»'),
+      T('inverse.surface','#0E065A','#F2F1F7','inverseSurface','Toast، شريط عدم الاتصال (فاتح)'),
+      T('inverse.on','#FFFFFF','#0E065A','inverseOnSurface',''),
+      T('inverse.action','#00D8D8','#3030FF','inversePrimary','إجراء داخل الـToast'),
+      T('read.go / on','#27B07D','#06291C','modonty.read.go','على الماشي (ثابت في الوضعين)'),
+      T('read.coffee / on','#F59F0A','#3A2300','modonty.read.coffee','فنجان قهوة'),
+      T('read.long / on','#7C3BED','#FFFFFF','modonty.read.long','جلسة روقان'),
+      T('whatsapp / on','#25D366','#06291C','modonty.whatsapp','زر واتساب (ثابت)'),
+      T('scrim','#0E065A7A','#0000008F','backdrop','تعتيم خلف الـsheet (48% / 56%)'),
+      T('media.scrim','#080628CC','#080628CC','modonty.mediaScrim','تدرّج أعلى الصور: 80%→0 خلال 128dp'),
+      T('reels.surface','#080628','#080628','modonty.reels','خلفية الطلّات (داكنة دائماً)'),
+    ];
+    const scales = [
+      { k: 'المسافات', v: 'space-1 4 · 2 8 · 3 12 · 4 16 · 5 20 · 6 24 · 8 32 · 10 40 · 12 48 · 16 64' },
+      { k: 'الزوايا', v: 'r-xs 6 · r-sm 10 · r-md 14 · r-ml 16 · r-lg 20 · r-xl 28 · r-full 999 · r-feature 28/8' },
+      { k: 'الخط (Tajawal)', v: 'display 34/44 900 · headline 28/38 800 · title-lg 22/32 800 · title-md 18/28 700 · title-sm 16/24 700 · reader 18/36 400 · body 16/28 · body-sm 14/22 · label-lg 16/24 700 · label 14/20 700 · caption 12/18 500' },
+      { k: 'الارتفاع', v: 'elev-1 (1dp) بطاقات · elev-2 (6dp) الكبسولة والأزرار العائمة · elev-3 (12dp) sheet وToast والمشغّل. في الداكن: surface أفتح + خط علوي 6–8% أبيض' },
+    ];
+    const C = (o) => ({ ...o,
+      anatomy: o.anatomy.map(t => ({ t })),
+      spec: o.spec.map(([k, v]) => ({ k, v })),
+      states: o.states.map(([k, v]) => ({ k, v })) });
+    const comps = [
+      C({ id:'c-capsule', name:'كبسولة التبويب', paper:'custom tabBar', ref:'Components 01 · D ح١٣ ح١٤',
+        anatomy:['الحاوية (حبة)','٤ عناصر: الرئيسية · المقالات · الطلّات · اكتشف','التبويب النشط: حبة ممتلئة = أيقونة + اسم','غير النشط: أيقونة فقط'],
+        spec:[['height · padding','56 · 4'],['item','48×48 · active pad 0 16 start / 14 end · gap 6'],['icon · label','22 · label 14/20 w700'],['radius','r-full'],['position','bottom 12 + insets.bottom (iOS 34 · gesture 24 · 3-button 48) · start 12'],['bg','surface.1 (dark surface.2 + top line 6% white)'],['active','bg primary · fg on.primary'],['inactive fg','text.secondary'],['shadow','elev-2'],['Reels screen','dark variant always'],['fontScale ≥ 1.3','icon-only · active pill 64×48']],
+        states:[['افتراضي','active pill + 3 icons'],['مضغوط','inactive: circle 48 overlay 10% + icon .92 · active: overlay 16% + .96'],['مطويّ','scroll down > 24dp: only active pill visible'],['إعادة نقر','scroll to top 300ms + expand']],
+        motion:'motion.tab.spring للتوسّع · motion.nav.collapse للطيّ · motion.press.*',
+        a11y:'accessibilityRole="tablist"، كل عنصر role="tab" + accessibilityState.selected + label بالاسم دائماً (حتى بدون نص ظاهر). مساحة ٤٨.',
+        rtl:'الترتيب من اليمين: الرئيسية أولاً. الكبسولة عند البداية (يمين) والجزيرة عند النهاية (يسار).' }),
+      C({ id:'c-island', name:'جزيرة مدونتي', paper:'custom (Pressable)', ref:'Components 01',
+        anatomy:['دائرة منفصلة','حلقة accent','شعار مدونتي'],
+        spec:[['size','Ø56 · gap to capsule 8'],['border','2 accent'],['logo','Ø40 on #FFFFFF'],['bg','surface.1 (dark surface.2)'],['shadow','elev-2']],
+        states:[['افتراضي','—'],['مضغوط','scale .97 + overlay 8%'],['نشط','على صفحة مدونتي: bg brand.immersive']],
+        motion:'motion.press.*', a11y:'role="button" · label «مدونتي» · Ø56.', rtl:'دائماً عند طرف النهاية (يسار).' }),
+      C({ id:'c-topbar', name:'الشريط العلوي (كبير / مطوي)', paper:'Appbar.Header', ref:'Components 02',
+        anatomy:['تحية (اختياري)','عنوان كبير','أزرار: بحث · مودو · الصورة الرمزية','مطوي: رجوع + عنوان + إجراءات'],
+        spec:[['large padding','12 16 4'],['greeting · title','body 16/24 text.secondary · display 34/44 w900 text.primary'],['action button','Ø48 bg.sunken · icon 22 text.primary · gap 6'],['Modo button','Ø48 gradient 135° primary→accent · icon on.primary'],['avatar','Ø48 primary.container · unread dot 12 danger + 2 ring bg.page'],['collapsed','height 56 · surface.1 · border-bottom 1 border.subtle'],['collapsed title','title-md 18/28 w700']],
+        states:[['كبير','أعلى المحتوى'],['مطوي','بعد تمرير العنوان الكبير'],['فوق صورة','floating circles Ø48 surface.1 elev-2 + media.scrim']],
+        motion:'motion.appbar (180ms) عند الانتقال للمطوي',
+        a11y:'العنوان accessibilityRole="header". كل زر أيقونة له label («بحث»، «مودو»، «حسابك، ٣ إشعارات»).',
+        rtl:'سهم الرجوع arrow-right عند البداية (يمين). الإجراءات عند النهاية.' }),
+      C({ id:'c-button', name:'الأزرار', paper:'Button · IconButton', ref:'Components 03 · D ح٧',
+        anatomy:['حاوية','أيقونة (اختياري، عند البداية)','نص'],
+        spec:[['L','height 52 · pad 0 24 · label-lg 16/24 w700 · gap 8'],['M','height 44 (hit 48) · pad 0 18 · label 14/20'],['icon button','Ø48 · icon 22'],['radius','r-full'],['primary','primary / on.primary'],['secondary','surface.1 · border 1 border.strong · text.primary'],['tonal','primary.container / on.primary.container'],['whatsapp','whatsapp / on.whatsapp'],['listen','read.go / on.read.go'],['danger','surface.1 · border 1 danger · danger'],['text','primary.text']],
+        states:[['مضغوط','scale .97 · primary → primary.pressed · others overlay 12%'],['معطّل','surface.3 / text.muted (5.06:1) · not pressable'],['تحميل','spinner 20 stroke 2.5 on-color + «جارٍ الإرسال…» · same width'],['fontScale ≥ 1.3 → 2.0','height grows (min 56/64) · label wraps centered, never truncated'],['hit area','visual < 48 → hitSlop to 48']],
+        motion:'motion.press.in / out', a11y:'role="button" · accessibilityState.disabled/busy · hit ≥ 48.', rtl:'الأيقونة قبل النص (يمين). chevron-left للتقدّم.' }),
+      C({ id:'c-chip', name:'الشرائح والشارات', paper:'Chip', ref:'Components 04',
+        anatomy:['فلتر: نص + عدد','حقيقة: أيقونة 16 + نص','شريك مختار: شعار + اسم + ✕','مجال: صورة 32 + اسم','شارة: نص'],
+        spec:[['filter','h 40 · pad 0 16 · label 14/20 w700 · count caption 13 w500'],['filter selected','bg text.primary · fg bg.page'],['filter default','surface.1 · border 1 border.strong'],['fact','h 28–32 · pad 0 10 · bg.sunken · text.secondary'],['ISO','accent.container / on.accent.container'],['partner','h 40 · logo 32 · close 32 (hitSlop → 48) · primary.container'],['industry','h 44 · art 32 · surface.1 border.subtle'],['badge','h 24–28 · r-xs · قريباً primary.container · قيد المراجعة warning.container · مميّز gold border + gold.text'],['row','gap 8 · start pad 16 · end fade 16']],
+        states:[['مضغوط','overlay 12% + scale .97 + border.strong'],['مختار','انظر selected'],['معطّل','text.muted · no border']],
+        motion:'motion.press.*', a11y:'فلتر: role="button" + accessibilityState.selected. زر ✕ label «إزالة التصفية».', rtl:'العدد بعد النص. ✕ عند النهاية. التلاشي عند اليسار.' }),
+      C({ id:'c-tabs', name:'التبويبات المسطّرة', paper:'custom (scrollable)', ref:'Components 04 · A 01 03',
+        anatomy:['صف قابل للتمرير','تبويب: نص','مؤشر 3dp تحت النشط','فاصل سفلي','تلاشي النهاية'],
+        spec:[['tab','min-h 48 · pad 0 12'],['active','title-sm 16/24 w700 text.primary · indicator 3 primary.text'],['inactive','16/24 w500 text.muted'],['divider','1 border.subtle'],['end fade','16 · bg of container → transparent'],['sticky','top 0 (under status bar) · bg bg.page']],
+        states:[['نشط','مؤشر + w700'],['مضغوط','overlay 6%'],['التمرير','fade hidden at scroll end']],
+        motion:'المؤشر ينزلق 200ms bezier(.2,0,0,1)', a11y:'role="tablist"/"tab" + selected.', rtl:'يبدأ من اليمين؛ التلاشي على اليسار.' }),
+      C({ id:'c-seg', name:'المقطّع', paper:'SegmentedButtons', ref:'Components 04 · B 09 11',
+        anatomy:['مسار','٢–٣ خيارات: أيقونة 18 + نص'],
+        spec:[['height','48 (booking 52) · pad 4'],['track','bg.sunken (dark bg.sunken + border.subtle)'],['selected','surface.1 + elev-1 (dark surface.3)'],['label','label 14/20 w700 · selected text.primary · other text.secondary'],['radius','r-full']],
+        states:[['مختار','انظر selected'],['مضغوط','overlay 12%'],['قابل للإلغاء','فترة الحجز: نقرة ثانية تلغي']],
+        motion:'background 200ms bezier(.2,0,0,1)', a11y:'role="radiogroup" / "radio" + checked.', rtl:'الخيار الأول يمين.' }),
+      C({ id:'c-readtime', name:'أزرار «عندك كم دقيقة؟»', paper:'custom (Pressable)', ref:'A 01 03',
+        anatomy:['أيقونة','عدد المقالات','الاسم'],
+        spec:[['grid','3 cols · gap 8'],['tile','min-h 76 · pad 10 12 · r-ml'],['colors','read.go · read.coffee · read.long + matching on-color'],['icon · count · label','20 · 15/20 w800 · 14/20 w700']],
+        states:[['مضغوط','scale .97 + overlay 12% ink black'],['fontScale 1.3','height grows · label wraps balanced']],
+        motion:'motion.press.*', a11y:'label «على الماشي، ٨ مقالات».', rtl:'الأيقونة يمين، العدد يسار.' }),
+      C({ id:'c-row', name:'صف مقال (قائمة)', paper:'custom (Pressable)', ref:'Components 05 · A 01',
+        anatomy:['كيكر: شعار 20 + اسم الشريك','العنوان','بيانات: نقطة مدة القراءة · مدة · تاريخ','حفظ','صورة 88'],
+        spec:[['padding','16 · gap 14 · divider border.subtle'],['kicker','label 13/20 w700 primary.text'],['title','title-sm 16/24 w700 · max 3 lines'],['meta','caption 12/18 text.muted · dot 8 read.*'],['save','icon 20 · hit 40 (+hitSlop 48)'],['image','88×88 r-md']],
+        states:[['مضغوط','overlay 6% full width · no scale'],['محفوظ','bookmark filled primary.text'],['تحميل','skeleton: 12/14/14/10 bars + 88 block']],
+        motion:'motion.press.*', a11y:'الصف زر واحد label = العنوان + المدة. زر الحفظ عنصر مستقل.', rtl:'الصورة عند النهاية (يسار).' }),
+      C({ id:'c-hero', name:'بطاقة الهيرو', paper:'Card', ref:'Components 05 · A 01',
+        anatomy:['صورة 176','شارة «مميّز اليوم» (الأولى فقط)','كيكر','عنوان','بيانات','نقاط الصفحات'],
+        spec:[['width','screen − 32'],['radius','r-feature: 28 · top-start 8 (first only) · others r-xl'],['image','height 176'],['badge','h 32 · pad 0 12 · accent / on.accent · radius 0 0 0 14'],['body','pad 14 16 16 · gap 8 · title title-md 18/28 w800 balanced'],['dots','active 20×6 primary · other 6 border.strong · gap 6']],
+        states:[['مضغوط','scale .97 + overlay 8%'],['تحميل','skeleton matches radius']],
+        motion:'pager snap · dots width 200ms', a11y:'role="button" · الصفحات تُعلن «١ من ٥».', rtl:'التمرير من اليمين؛ الزاوية الحادّة عند البداية.' }),
+      C({ id:'c-reel', name:'بطاقة طلّة 9:16', paper:'custom', ref:'Components 05 · A 01',
+        anatomy:['صورة الغلاف','مدة (أعلى البداية)','تدرّج سفلي','عنوان','شعار + اسم الشريك'],
+        spec:[['size','122×204 · r-lg · row gap 12'],['duration','h 26 · pad 0 9 · bg brand.immersive · caption 12 w700'],['overlay','bottom 64% · navy 96→90→0%'],['title','14/20 w700 white · max 3 lines (2 at fontScale ≥ 1.3)'],['partner','logo 18 · caption 12 #DCDAF2 · hidden at fontScale ≥ 1.3'],['last item','«شاهد الكل» tile surface.2']],
+        states:[['مضغوط','scale .97 + overlay 8%'],['تحميل','122×204 skeleton']],
+        motion:'motion.press.*', a11y:'label = العنوان + الشريك + المدة.', rtl:'الصف يبدأ يميناً؛ التلاشي يساراً.' }),
+      C({ id:'c-partner', name:'بطاقة شريك', paper:'Card', ref:'Components 05 · B 07',
+        anatomy:['شعار 56','كيكر المجال','اسم + توثيق','وصف سطران','شرائح الحقائق','واتساب + الصفحة'],
+        spec:[['card','pad 16 · gap 12 · r-lg · surface.1 · border 1 border.subtle'],['featured','border 1.5 gold + badge'],['logo','56 r-md border.subtle'],['kicker · name','13/20 w700 accent.text · 16/24 w800 + verified 18 accent.text'],['desc','body-sm 14/22 text.secondary · 2 lines'],['actions','grid 1fr auto · gap 8 · h 48']],
+        states:[['مضغوط','scale .97 + overlay 8% (outside buttons)'],['بدون واتساب','الصفحة full width']],
+        motion:'motion.press.*', a11y:'الاسم header؛ الأزرار مستقلة.', rtl:'الشعار عند البداية.' }),
+      C({ id:'c-industry', name:'بلاطة مجال + البطاقة الرئيسية', paper:'Card', ref:'Components 05 · B 06',
+        anatomy:['رسم دائري (كامل، بلا قص)','الاسم','عدد الشركاء'],
+        spec:[['grid','2 cols · gap 12'],['tile','pad 16 10 14 · r-lg · surface.1 border.subtle'],['art','Ø76 contain'],['name · count','15/22 w800 balanced · 13/20 text.muted'],['lead card','primary.container · r-lg · art Ø96 · CTA h 48 text.primary']],
+        states:[['مضغوط','scale .97 + overlay 8%']],
+        motion:'motion.press.*', a11y:'label «السياحة العلاجية، ٣٤ شريكاً».', rtl:'—' }),
+      C({ id:'c-sheet', name:'Bottom sheet', paper:'@gorhom/bottom-sheet (Paper لا يوفّره)', ref:'Components 06 · A 05b',
+        anatomy:['مقبض','عنوان + وصف','إغلاق','المحتوى'],
+        spec:[['radius','top r-xl'],['padding','8 20 24 (+ safeArea)'],['handle','32×4 border.strong'],['bg','surface.1 (dark surface.2 + top line 8%)'],['max height','88%'],['scrim','scrim'],['grid (partners)','3 cols · gap 14 8 · logo Ø64']],
+        states:[['مفتوح / مغلق','—'],['عنصر مختار','ring 2 primary.text']],
+        motion:'motion.sheet.open / close · motion.scrim · swipe down to dismiss', a11y:'تركيز داخل الـsheet · زر إغلاق label «إغلاق» · Back يغلق.', rtl:'زر الإغلاق عند النهاية.' }),
+      C({ id:'c-field', name:'الحقول + الجوال', paper:'TextInput (outlined)', ref:'Components 07 · B 09 · D ح٦ ح١٦',
+        anatomy:['تسمية + «اختياري/المطلوب الوحيد»','رمز الدولة','الحقل','سطر مساعدة / خطأ'],
+        spec:[['height','56 (64 at fontScale 1.3)'],['radius','r-md'],['border','1 border.strong · focus 2 primary · error 2 danger'],['country','w 96 (108) · +966 Latin'],['value','17 w600 Latin LTR · placeholder text.muted'],['helper','13/20 + icon 16 · text.secondary / danger / success']],
+        states:[['تركيز','border 2 primary'],['خطأ','after blur or submit only'],['صحيح','helper success + E.164'],['معطّل','surface.3']],
+        motion:'border 150ms · shake 200ms on blocked submit', a11y:'label مرئي مرتبط · الخطأ accessibilityLiveRegion="polite" · keyboardType="phone-pad".', rtl:'حاوية الجوال direction ltr؛ التسمية RTL.' }),
+      C({ id:'c-accordion', name:'الأكورديون (أسئلة)', paper:'List.Accordion', ref:'Components 08 · B 08',
+        anatomy:['سؤال','chevron','جواب'],
+        spec:[['container','r-ml · surface.1 · border.subtle'],['header','min-h 56 · pad 12 16 · 15–16/24 w700'],['answer','pad 0 16 16 · 15/28 text.secondary']],
+        states:[['مغلق / مفتوح','chevron 0° / 180°'],['مضغوط','overlay 6%']],
+        motion:'height + rotate 200ms bezier(.2,0,0,1)', a11y:'role="button" + accessibilityState.expanded.', rtl:'chevron عند النهاية.' }),
+      C({ id:'c-feedback', name:'هيكل · فارغ · خطأ', paper:'custom', ref:'Components 08 · D ح١ ح٩ ح١٢',
+        anatomy:['هيكل بشكل العنصر','فارغ: أيقونة 56 + عنوان + سطر + إجراء واحد','خطأ: نفسه بألوان danger + إعادة المحاولة'],
+        spec:[['skeleton','surface.3 · highlight #F6F5F2 (dark #3A3A41) · same radius as element'],['empty icon','56 r-ml · surface.2 / text.secondary'],['error icon','danger.container / on.danger.container'],['title · body','16/24 w800 · 14/22 text.secondary'],['action','tonal M (empty) · secondary M (error)']],
+        states:[['تحميل','skeleton'],['فارغ','one action'],['خطأ','retry']],
+        motion:'motion.skeleton · motion.skeleton.swap', a11y:'الهيكل accessibilityLabel «جارٍ التحميل» مرة واحدة للقسم.', rtl:'اللمعة من اليمين لليسار.' }),
+      C({ id:'c-toast', name:'Toast + شريط عدم الاتصال', paper:'Snackbar · Banner', ref:'Components 08 · D ح٣ ح٧',
+        anatomy:['أيقونة','رسالة','إجراء'],
+        spec:[['toast','min-h 56 · r-ml · inverse.surface · inverse.on · action inverse.action · elev-3'],['toast position','above bottom bar + 8'],['offline','full width under status bar · inverse.surface (dark surface.3) · pad 6 16 8 · button h 44 border 1'],['icon','20 · error toast danger (dark tone)']],
+        states:[['معلومة','auto 4s'],['خطأ','auto 8s + retry'],['offline','persistent · «رجع الاتصال» 2s']],
+        motion:'motion.toast · motion.offline', a11y:'accessibilityLiveRegion="polite" (offline: assertive مرة واحدة).', rtl:'الإجراء عند النهاية.' }),
+      C({ id:'c-player', name:'المشغّل المصغّر + المضمّن', paper:'custom', ref:'Components 08 · A 03 04b',
+        anatomy:['صورة 40','عنوان + حالة','تشغيل/إيقاف','خط التقدّم'],
+        spec:[['mini','h 56 · r-ml · surface.1 elev-3 · bottom 76 (above capsule) · start/end 12'],['play button','Ø40 (hit 48) read.go / on.read.go'],['progress','2 · track surface.3 · fill read.go'],['inline','in action capsule · Ø48 play · track 4 + thumb 14 success · speed chip h 44'],['fade band','172 · bg.page 0→100% at 26%']],
+        states:[['يعمل / متوقف','pause / play glyph'],['تحميل','spinner in button']],
+        motion:'motion.listen.morph', a11y:'role="adjustable" للشريط مع accessibilityValue (الوقت).', rtl:'التقدّم يمتلئ من اليمين؛ رمز التشغيل لا ينعكس.' }),
+      C({ id:'c-article', name:'المقال: الهيدر والإجراءات', paper:'custom', ref:'A 04 04b · C D04',
+        anatomy:['صورة الهيرو 316','دوائر عائمة: رجوع · Aa · مشاركة','الورقة (r-xl top)','الشريط المضغوط + المتبقي + خط التقدّم','كبسولة الإجراءات: اسمع · حفظ · إعجاب'],
+        spec:[['media.scrim','top 128 · 80→50→0%'],['floating','Ø48 surface.1 elev-2 · top 36 · start/end 16'],['sheet overlap','−28'],['compact bar','h 56 surface.1 · progress 2 primary (dark primary.text)'],['action capsule','h 64 · pad 8 · listen flex 1 h 48 · icons 48'],['reader','reader 18/36 · Aa 16–22 × system scale · max 28'],['Aa panel','r-lg surface.1 elev-3 · backgrounds light / paper #F7F1E3 / dark']],
+        states:[['قبل التمرير','floating + scrim'],['بعد 250dp','compact bar'],['بدون صوت','زر «اسمع» مخفي؛ حفظ + إعجاب فقط']],
+        motion:'motion.appbar · motion.listen.morph', a11y:'العنوان header · المتبقي يُعلن عند فتح الشريط.', rtl:'التقدّم من اليمين.' }),
+      C({ id:'c-reels', name:'واجهة الطلّات', paper:'custom (FlashList pagingEnabled)', ref:'A 05 05b · C D05 · D ح١٠–١٢',
+        anatomy:['الفيديو','scrim أعلى','الشريط العلوي: العنوان · لك/المتابَعون · الشركاء · الصوت','عمود الإجراءات (يسار)','الشريك + العنوان + الوصف + CTA','شريط التقدّم','الكبسولة الداكنة'],
+        spec:[['top scrim','200 · 94→82→0%'],['bottom scrim','400 · reels.surface 48%→0'],['action column','start of end side · bottom 248 · items 52 · icon 28'],['partner row','logo 40 · name 15/22 w800 · follow h 32 border 1.5 white'],['CTA','h 48 · white / brand.immersive or whatsapp'],['progress','3 · white 28% track · bottom 84 (paused: 4 + thumb 14 + times)'],['filter chip','h 40 · top 96 · surface.1']],
+        states:[['يعمل','progress only'],['متوقف','center Ø76 play · scrub'],['إعجاب','burst 104 + filled icon + count'],['أعداد صفرية','icon only']],
+        motion:'motion.reel.pause · motion.reel.like · motion.reel.scrub', a11y:'كل زر label + العدد إن وجد. نقرتان لها بديل: زر الإعجاب.', rtl:'عمود الإجراءات على اليسار. التقدّم من اليمين.' }),
+      C({ id:'c-modo', name:'مودو', paper:'custom', ref:'B 12 13 · D ح٤ ح٥',
+        anatomy:['هيدر: وجه + الاسم + السجل','فقاعة المستخدم','فقاعة مودو + المصدر','تقييم + نسخ','بطاقة الشريك','اسأل الشريك مباشرة','نطاق + المُدخل + التنبيه'],
+        spec:[['user bubble','primary / on.primary · r 20 20 20 6 (tail end-bottom) · max 78%'],['modo bubble','surface.1 border.subtle · r 6 20 20 20'],['source chip','h 36 surface.2'],['rating icons','44 · thumbs-up / thumbs-down / copy'],['partner card','border 1.5 primary · r-lg · actions h 48'],['ask partner','full width secondary h 52 · logo 28'],['composer','h 56 r-full · send Ø48 primary · stop Ø48 brand.immersive'],['rate limit','warning.container r-ml']],
+        states:[['يكتب','typing dots + cursor · composer disabled + stop'],['مكتمل','source + rating + partner'],['تقييم مُرسَل','one-shot: icon filled, other hidden'],['تجاوز الحد','banner + time · composer disabled']],
+        motion:'motion.modo.stream', a11y:'الجواب accessibilityLiveRegion="polite" عند الاكتمال فقط. زر الإيقاف label «إيقاف الجواب».', rtl:'فقاعة المستخدم عند البداية (يمين).' }),
+      C({ id:'c-booking', name:'منتقي الموعد + شريط الإرسال', paper:'custom', ref:'B 09 09b · D ح٦–٨ ح١٦',
+        anatomy:['«أي وقت» + ٧ أيام','الفترة (مقطّع)','شريط الإرسال الثابت'],
+        spec:[['day','min-w 64 («أي وقت» 88) · min-h 72 · r-ml'],['day selected','primary / on.primary'],['day default','surface.1 · border 1 border.strong'],['row','gap 8 · bleed to edges · start pad 16 · end fade'],['CTA band','pad 12 16 14 · button h 56 · caption 12/18 · total 108 (146 at 1.3)'],['scroll padding','band height + 16']],
+        states:[['زر معطّل','until phone valid'],['جارٍ الإرسال','spinner · no double submit'],['فشل','toast + retry · input kept']],
+        motion:'background 150ms', a11y:'الأيام radio مع label كامل «الأحد ١١».', rtl:'اليوم الأقرب يميناً.' }),
+    ];
+    comps.forEach((c, i) => { c.num = String(i + 1).padStart(2, '0'); });
+    const extra = {
+      'c-capsule':'theme.colors.primary/onPrimary · elevation.level2 · tabBarStyle custom',
+      'c-island':'theme.modonty.accent · elevation.level2',
+      'c-topbar':'Appbar.Header mode="large"|"small" · Appbar.Action · fonts.displaySmall → display',
+      'c-button':'mode contained|outlined|contained-tonal|text · contentStyle={height} · labelStyle · buttonColor/textColor for whatsapp/listen',
+      'c-chip':'mode flat|outlined · selected · selectedColor · compact; badges → custom View',
+      'c-tabs':'react-native-tab-view TabBar scrollEnabled · indicatorStyle primaryText · custom end fade (LinearGradient)',
+      'c-seg':'SegmentedButtons + theme.colors.secondaryContainer → surface.1 override',
+      'c-readtime':'custom Pressable · theme.modonty.read.*',
+      'c-row':'custom Pressable android_ripple {color: onSurface 6%}',
+      'c-hero':'Card mode="elevated" + Card.Cover · custom borderRadius',
+      'c-reel':'custom · expo-image',
+      'c-partner':'Card mode="outlined" · theme.colors.outlineVariant',
+      'c-industry':'Card mode="outlined"',
+      'c-sheet':'@gorhom/bottom-sheet · backgroundStyle surface · backdropComponent backdrop',
+      'c-field':'TextInput mode="outlined" · outlineColor outline · activeOutlineColor primary · error',
+      'c-accordion':'List.Accordion · titleStyle · style',
+      'c-feedback':'custom · react-native-reanimated',
+      'c-toast':'Snackbar (theme inverseSurface/inverseOnSurface/inversePrimary) · Banner for offline',
+      'c-player':'custom · ProgressBar optional',
+      'c-article':'custom · Reanimated scroll handler',
+      'c-reels':'custom · expo-video · FlashList',
+      'c-modo':'custom · TextInput (flat) for composer',
+      'c-booking':'custom · SegmentedButtons for period',
+    };
+    const mapping = comps.map(c => ({ name: c.name, paper: c.paper, keys: extra[c.id] || '', href: '#' + c.id }));
+    const S = (f, n, t, c, b) => ({ f, n, t, c, b, href: f + '.dc.html' });
+    const A = 'Modonty Screens A', B = 'Modonty Screens B', Cd = 'Modonty Screens C', D = 'Modonty Screens D';
+    const screens = [
+      S(A,'٠١','الرئيسية','topbar · reel · hero · readtime · tabs · row · chip · capsule · island','vertical · tabs sticky top 0 · capsule collapses on scroll down · reels & chips horizontal'),
+      S(A,'٠٢','صفحة مدونتي','immersive header · button · bento · sector tiles · row','vertical · status bar on brand.immersive'),
+      S(A,'٠٣','المقالات','topbar · search · readtime · tabs · row · mini player','tabs sticky · mini player fixed bottom 76 + fade band'),
+      S(A,'٠٤','المقال','article header · reader · next card · action capsule','compact bar after 250dp · progress line · action capsule fixed + fade band'),
+      S(A,'٠٤ب','المقال · القراءة','compact bar · Aa panel · inline player','Aa panel overlays under bar'),
+      S(A,'٠٥','الطلّات','reels · capsule (dark)','vertical paging · one per screen'),
+      S(A,'٠٥ب','الطلّات · الشركاء','sheet · partner grid','sheet 88% max'),
+      S(B,'٠٦','اكتشف','topbar · search · industry lead + tiles','vertical · capsule collapses'),
+      S(B,'٠٧','دليل الشركاء','topbar (back) · chips · featured row · partner card','chips sticky · featured horizontal'),
+      S(B,'٠٨','صفحة الشريك','cover + scrim · buttons · chips · tabs · accordion · reel · gallery','tabs sticky top 24 · bottom booking bar after top buttons leave (≈470dp)'),
+      S(B,'٠٩','طلب حجز','field · day picker · segmented · CTA band','scroll area ends above band · CTA band fixed'),
+      S(B,'٠٩ب','طلب حجز · مفعّل','same · CTA enabled','same'),
+      S(B,'١٠','وصل طلبك','summary list · button · whatsapp','static'),
+      S(B,'١١','الحساب','tiles · saved row · logos · list · segmented','vertical · capsule'),
+      S(B,'١٢','مودو · ترحيب','modo header · industry buttons · composer','composer fixed bottom'),
+      S(B,'١٣','مودو · محادثة','bubbles · source · rating · partner card · composer','follows last message'),
+      S(Cd,'د٠١','الرئيسية · داكن','= A ٠١','= A ٠١'),
+      S(Cd,'د٠٤','المقال · داكن','= A ٠٤','= A ٠٤'),
+      S(Cd,'د٠٥','الطلّات · مُصفّاة','reels · filter chip','= A ٠٥'),
+      S(D,'ح١','أول تحميل','skeleton','sections swap independently'),
+      S(D,'ح٢','سحب للتحديث','refresh indicator · capsule re-tap','pull from top'),
+      S(D,'ح٣','بدون اتصال','offline banner','banner pushes content'),
+      S(D,'ح٤','مودو يكتب','modo streaming · stop','auto-follow'),
+      S(D,'ح٥','مودو · الحد','rate-limit banner','—'),
+      S(D,'ح٦','حجز · رقم خاطئ','field error · disabled CTA','—'),
+      S(D,'ح٧','حجز · فشل','toast · CTA states','—'),
+      S(D,'ح٨','حجز · النهاية','scroll padding','band + 16'),
+      S(D,'ح٩','الحساب · فارغ','empty state','—'),
+      S(D,'ح١٠','الطلّات · إيقاف','pause · scrub','—'),
+      S(D,'ح١١','الطلّات · إعجاب','like burst','—'),
+      S(D,'ح١٢','المتابَعون · فارغ','empty (dark)','—'),
+      S(D,'ح١٣','الضغط','row · chip · card · tab','—'),
+      S(D,'ح١٤','حافة لحافة · iOS','capsule · island · home indicator','capsule bottom 12 + 34'),
+      S(D,'ح١٥','حافة لحافة · إيماءات','capsule · gesture bar','capsule bottom 12 + 24'),
+      S(D,'ح١٦','حافة لحافة · ٣ أزرار','capsule · system nav bar','capsule bottom 12 + 48'),
+      S(D,'ح١٧','مناطق الرجوع','edge zones 24dp','horizontal gestures hitSlop −24'),
+      S(D,'ح١٨','تقليل الحركة','reels like (reduced)','—'),
+      S(D,'ح١٩','الرئيسية ٢٠٠٪','topbar · reel (title below) · readtime rows · tabs · row (stacked) · capsule icon-only','vertical'),
+      S(D,'ح٢٠','المقال ٢٠٠٪','article · author row wraps · action capsule','vertical'),
+      S(D,'ح٢١','الحجز ٢٠٠٪','field stacked · days · radio periods · CTA band in flow','scroll area ends above band'),
+      S(D,'ح٢٢','بطاقة شريك ٢٠٠٪','partner card stacked actions','vertical'),
+      S(D,'ح٢٣','الحساب ٢٠٠٪','tile list · saved row · radio settings','vertical'),
+    ];
+const st = { pass:['نجح','#E2F4EC','#1C7A55'], fixed:['أُصلح','#E8E8FF','#2323C8'], open:['قرار مفتوح','#FDF0D9','#8A4F00'] };
+    const Q = (rule, how, where, s) => ({ rule, how, where, status: st[s][0], bg: st[s][1], fg: st[s][2] });
+    const compliance = [
+      Q('١ · مساحة لمس ٤٨dp','كل أزرار الأيقونات ورابط «الكل» وإجراء الـToast وزر عدم الاتصال وأزرار التقييم والسرعة رُفعت إلى ٤٨ (٣٠ موضعاً). العناصر المرئية الأصغر (شريحة ٤٠، «تابع» في الطلّات ٣٢، ✕ الشريحة ٣٢، حفظ الصف ٤٠، الزر M ٤٤) تأخذ hitSlop حتى ٤٨.','كل الملفات · المكوّنات ٠٣ ٠٤ ٠٩ ١٩ ٢٢','fixed'),
+      Q('٢ · تكبير الخط حتى ٢٠٠٪','مقياس غير خطي (٣٤←٤٨، ١٦←٣٢). بلا ارتفاعات ثابتة لحاويات النص؛ الأزرار تكبر ارتفاعاً؛ الصفوف تصبح أعمدة؛ المقطّع يصبح radio. الكبسولة أيقونات فقط من ١٫٣. أُزيلت إطارات ١٣٠٪.','D ح١٩–ح٢٣ · capsule · button · chip · seg · row · reel · partner · booking','fixed'),
+      Q('٣ · حافة لحافة إلزامي','Expo SDK 54 → targetSdk 36. كل شاشة تُرسم تحت الأشرطة وتُحشى بـ useSafeAreaInsets: الأعلى insets.top + ١٢، الكبسولة ١٢ + insets.bottom، القوائم ٨٨ + insets.bottom. لا خلفية مرسومة خلف شريط ٣ أزرار (النظام يضع طبقته). الإطارات الأخرى مرسومة بـ insets.bottom = ٠ للتبسيط.','D ح١٤ (iOS) · ح١٥ (إيماءات) · ح١٦ (٣ أزرار) · كل الشاشات','fixed'),
+      Q('٤ · الرجوع ملك النظام','iOS: سحب من الحافة اليمنى (RTL) + زر الهيدر عبر native-stack. Android: الرجوع التنبؤي. الإيماءات الأفقية (الكاروسيل، صفوف الطلّات والشرائح، الأيام) hitSlop {left:-24,right:-24}. الطلّات والـsheet عمودية فقط. Back يغلق الـsheet واللوحات أولاً.','D ح١٧ · hero · reels row · chips · day picker · sheet','fixed'),
+      Q('٥ · واجهات النظام','سحب للتحديث = RefreshControl الأصلي (tintColor / colors فقط). المشاركة = Share API. تأكيد الخروج وحذف الحساب = Alert.alert. لوحة المفاتيح والأذونات من النظام. لا منتقي تاريخ (الحجز يستخدم أياماً جاهزة).','D ح٢ · زر المشاركة · الحساب ١١ · الحجز','fixed'),
+      Q('٦ · تقليل الحركة','عمود «مع تقليل الحركة» لكل توكن حركة؛ لا قلب طائر، لا نبض، لا تصغير، لا لمعة. الكشف عبر useReducedMotion.','Tokens ١٠ · D ح١٨ · capsule · sheet · reels · skeleton','fixed'),
+      Q('٧ · الشارة الحمراء','الأحمر كشارة فقط للإشعارات غير المقروءة: نقطة الصورة الرمزية في الرئيسية، وبلاطة «إشعارات جديدة». «قريباً» و«مميّز» و«قيد المراجعة» تسميات بألوان أخرى وليست شارات.','topbar · Account ١١ · D ح٩','pass'),
+      Q('٨ · RTL','أيقونات التشغيل/الإيقاف/التقديم لا تنعكس. الجوال لاتيني LTR. الصور والشعارات وفن مودو والمجالات لا تنعكس. الفقرات العربية بمحاذاة البداية (يمين) والإنجليزية داخلها dir="ltr".','reels · player · field · كل الصور','pass'),
+      Q('٨أ · اتجاه شريط تقدّم الوسائط','القرار: التعبئة من اليمين في RTL لشريط الطلّات والمشغّل المصغّر والمضمّن، على المنصّتين. أيقونات التشغيل/الإيقاف/التقديم لا تنعكس. المصدر: Apple HIG Right-to-left — flip controls that show progress… sliders and progress indicators in the RTL context. سلوك واحد على iOS وAndroid.','reels progress · mini/inline player','pass'),
+      Q('٩ · أسماء التبويبات','كلمة واحدة لكل تبويب: الرئيسية · المقالات · الطلّات · اكتشف.','capsule','pass'),
+    ];
+    return { rules, tokens, scales, comps, mapping, screens, compliance };
+  }
+}
+</script>
+</body>
+</html>

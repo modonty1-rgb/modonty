@@ -1,4 +1,7 @@
+import { router } from 'expo-router';
+
 import { InfoRow } from '@/components/content/InfoRow';
+import { HeaderCircle } from '@/components/navigation/TabHeader';
 import { Header } from '@/components/ui/Header';
 import { Screen } from '@/components/ui/Screen';
 import { SimpleList } from '@/components/ui/SimpleList';
@@ -14,7 +17,8 @@ const KIND = { article: 'مقال', client: 'شريك', comment: 'تعليق' } 
 export default function LikedScreen() {
   return (
     <Screen>
-      <Header back title="ما أعجبني" />
+      {/* «ما لم يعجبني» يعيش هنا لا في الحساب (Screens B · 11: «نشاطي» ٤ صفوف). */}
+      <Header back title="ما أعجبني" actions={<HeaderCircle icon="dislike" label="ما لم يعجبني" onPress={() => router.push('/account/disliked')} />} />
       <SimpleList<Item>
         load={async (signal) => (await meApi.liked(signal)).items}
         renderItem={({ item }) => (

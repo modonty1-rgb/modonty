@@ -20,7 +20,7 @@ export const PartnerCard = memo(function PartnerCard({ item, onOpen }: { item: P
       style={[styles.row, { backgroundColor: colors.surface, borderColor: colors.border }]}
     >
       {item.logo ? (
-        <Image source={item.logo} style={[styles.logo, { backgroundColor: colors.surfaceRaised }]} contentFit="contain" />
+        <Image cachePolicy="memory-disk" recyclingKey={item.key} source={item.logo} style={[styles.logo, { backgroundColor: colors.surfaceRaised }]} contentFit="contain" />
       ) : (
         <View style={[styles.logo, styles.logoFallback, { backgroundColor: colors.surfaceRaised }]}>
           <Icon name="company" tone="muted" />

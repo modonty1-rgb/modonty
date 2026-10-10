@@ -26,7 +26,7 @@ export default function PartnerFollowersScreen() {
         renderItem={({ item }) => {
           const body = (
             <>
-              {item.image ? <Image source={item.image} style={styles.avatar} contentFit="cover" /> : <Icon name="profile" tone="muted" />}
+              {item.image ? <Image cachePolicy="memory-disk" source={item.image} style={styles.avatar} contentFit="cover" /> : <Icon name="profile" tone="muted" />}
               <AppText variant="label" style={styles.flex}>
                 {item.name}
               </AppText>

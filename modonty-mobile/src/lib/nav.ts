@@ -12,7 +12,8 @@ export const open = {
   reel: (slug: string) => router.push({ pathname: '/reels/[slug]', params: { slug } }),
   category: (slug: string) => router.push({ pathname: '/categories/[slug]', params: { slug } }),
   tag: (slug: string) => router.push({ pathname: '/tags/[slug]', params: { slug } }),
-  industry: (slug: string) => router.push({ pathname: '/industries/[slug]', params: { slug } }),
+  // صفحة المجال = دليل الشركاء ورقاقة المجال مختارة (هرم «اكتشف» المعتمد ٩ أكتوبر).
+  industry: (slug: string) => router.push({ pathname: '/partners', params: { industry: slug } }),
   author: (slug: string) => router.push({ pathname: '/authors/[slug]', params: { slug } }),
   user: (id: string) => router.push({ pathname: '/users/[id]', params: { id } }),
 };

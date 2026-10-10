@@ -24,7 +24,7 @@ export const TopBar = memo(function TopBar() {
     <View style={[styles.top, { paddingTop: insets.top, backgroundColor: colors.page, borderBottomColor: colors.border }]}>
       <View style={styles.row}>
         <Tap label="الرئيسية" minTarget={false} onPress={() => router.navigate('/')} style={styles.markTap}>
-          <Image source={require('../../../assets/brand/modonty-mark.png')} style={styles.mark} contentFit="contain" />
+          <Image cachePolicy="memory-disk" source={require('../../../assets/brand/modonty-mark.png')} style={styles.mark} contentFit="contain" />
         </Tap>
         <Tap
           label="ابحث في المقالات والشركاء"

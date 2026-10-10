@@ -38,7 +38,7 @@ export default function PublicUserScreen() {
         header={
           d ? (
             <View style={styles.head}>
-              {d.user.image ? <Image source={d.user.image} style={styles.avatar} contentFit="cover" /> : <Icon name="profile" size={control.iconLarge} />}
+              {d.user.image ? <Image cachePolicy="memory-disk" source={d.user.image} style={styles.avatar} contentFit="cover" /> : <Icon name="profile" size={control.iconLarge} />}
               {d.user.name ? <AppText variant="pageTitle">{d.user.name}</AppText> : null}
               <AppText variant="secondary" tone="muted">{`عضو منذ ${fullDate(d.user.createdAt) ?? ''}`}</AppText>
               {d.author ? <Button label={`صفحة الكاتب: ${d.author.name}`} kind="outlined" compact onPress={() => open.author(d.author!.slug)} /> : null}

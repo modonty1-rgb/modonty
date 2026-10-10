@@ -1,5 +1,5 @@
 import type { ArchiveArticle, ClientListItem, FeedPost } from '@/services/api-types';
-import { cardDate, compactNumber, readingTime } from './format';
+import { ago, cardDate, compactNumber, readMinutesShort, readingTime } from './format';
 
 /** نموذج بطاقة المقال — يُحسب مرّة عند وصول البيانات لا داخل البطاقة (ENGINEERING §١ب٥). */
 export type ArticleCardModel = {
@@ -97,5 +97,39 @@ export function articleRow(a: {
     meta: [a.dateLabel ?? cardDate(a.date), readingTime(a.readingTimeMinutes)].filter(Boolean).join('، '),
     stats: null,
     hasAudio: !!a.hasAudio,
+  };
+}
+
+/** وقت القراءة بفئات الموقع (ReadingTimeBucket): ≤٣ على الماشي · ٤–٧ فنجان قهوة · ≥٨ جلسة روقان. */
+export type ReadBucket = 'short' | 'medium' | 'long';
+export function readBucket(minutes: number | null | undefined): ReadBucket | null {
+  if (!minutes || minutes <= 0) return null;
+  return minutes <= 3 ? 'short' : minutes <= 7 ? 'medium' : 'long';
+}
+
+/** صفّ المقال في نظام التصميم ١٫٠ (Screens A · 01): الناشر · العنوان · نقطة الفئة + «٩ د قراءة · قبل ٨ أيام» · صورة ٨٨. */
+export type ArticleRowModel = {
+  key: string;
+  slug: string;
+  title: string;
+  image: string | null;
+  imageBlur: string | null;
+  publisher: string;
+  publisherLogo: string | null;
+  meta: string;
+  bucket: ReadBucket | null;
+};
+
+export function toArticleRow(p: FeedPost | ArchiveArticle): ArticleRowModel {
+  return {
+    key: p.id,
+    slug: p.slug,
+    title: p.title,
+    image: p.image || null,
+    imageBlur: p.imageBlur || null,
+    publisher: p.clientName,
+    publisherLogo: p.clientLogo || null,
+    meta: [readMinutesShort(p.readingTimeMinutes), ago(p.publishedAt)].filter(Boolean).join(' · '),
+    bucket: readBucket(p.readingTimeMinutes),
   };
 }

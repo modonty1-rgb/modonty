@@ -81,7 +81,7 @@ export default function ProfileScreen() {
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <View style={styles.avatarRow}>
           {image ? (
-            <Image source={image} style={styles.avatar} contentFit="cover" accessibilityLabel="صورتك" />
+            <Image cachePolicy="memory-disk" source={image} style={styles.avatar} contentFit="cover" accessibilityLabel="صورتك" />
           ) : (
             <View style={[styles.avatar, styles.center, { backgroundColor: colors.primaryContainer }]}>
               <Icon name="profile" tone="onPrimaryContainer" />

@@ -36,7 +36,7 @@ export const CommentItem = memo(function CommentItem({
   return (
     <View style={[styles.wrap, item.isReply && styles.reply, item.isReply && { borderStartColor: colors.border }]}>
       <View style={styles.head}>
-        {item.avatar ? <Image source={item.avatar} style={styles.avatar} contentFit="cover" /> : <Icon name="profile" size={control.iconSmall} tone="muted" />}
+        {item.avatar ? <Image cachePolicy="memory-disk" source={item.avatar} style={styles.avatar} contentFit="cover" /> : <Icon name="profile" size={control.iconSmall} tone="muted" />}
         <AppText variant="label" style={styles.flex} numberOfLines={1}>
           {item.author}
         </AppText>

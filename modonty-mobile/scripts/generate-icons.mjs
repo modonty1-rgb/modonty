@@ -57,7 +57,6 @@ const ICONS = {
   support: 'modonty-support-mark.tsx',
   company: 'modonty-company-mark.tsx',
   keypoints: 'modonty-keypoints-mark.tsx',
-  toc: 'modonty-toc-mark.tsx',
   feedback: 'modonty-feedback-mark.tsx',
   // خانات صفحة /modonty (`modonty/app/(site)/modonty/helpers/sectors.ts`) — ملفّات بعدّة علامات: `ملف#الدالّة`.
   quran: 'modonty-sector-marks.tsx#ModontyQuranMark',
@@ -74,6 +73,49 @@ const ICONS = {
   armchair: 'modonty-armchair-mark.tsx',
   ai: 'modonty-brand-icons.tsx#ModontyAiMark',
   link: 'modonty-brand-icons.tsx#ModontyLinkMark',
+  // v2 (ICON-STANDARD-v2): علامات جديدة — `close` صارت علامة عادية بلا قناع.
+  close: 'modonty-close-mark.tsx',
+  chevron: 'modonty-chevron-mark.tsx',
+  arrowUp: 'modonty-arrow-up-mark.tsx',
+  external: 'modonty-external-mark.tsx',
+  lock: 'modonty-lock-mark.tsx',
+  viewsOff: 'modonty-views-off-mark.tsx',
+  // كتم الصوت (زرّ الطلّات) — نفس علامة IconVolumeX في سجلّ الويب.
+  listenOff: 'modonty-utility-marks.tsx#ModontyListenOffMark',
+  listen: 'modonty-utility-marks.tsx#ModontyListenMark',
+  // مشغّل المقال المضمّن (Screens A · 04ب).
+  pause: 'modonty-brand-icons.tsx#ModontyPauseMark',
+  // دليل الشركاء (Screens B · 07): شارة «مميّز» · الخبرة · الاعتماد.
+  featured: 'modonty-featured-mark.tsx',
+  professionals: 'modonty-professionals-mark.tsx',
+  success: 'modonty-brand-icons.tsx#ModontySuccessMark',
+  // فترات «متى يناسبك؟» في الحجز (Screens B · 09): الصباح · الظهر · المساء.
+  sun: 'modonty-brand-icons.tsx#ModontyThemeLightMark',
+  moon: 'modonty-brand-icons.tsx#ModontyThemeDarkMark',
+  add: 'modonty-brand-icons.tsx#ModontyAddMark',
+  // صفحة الحساب (Screens B · 11): تعديل الملف · المظهر «تلقائي» · حذف الحساب.
+  settings: 'modonty-brand-icons.tsx#ModontySettingsMark',
+  device: 'modonty-brand-icons.tsx#ModontyMobileMark',
+  delete: 'modonty-brand-icons.tsx#ModontyDeleteMark',
+  // مودو (Screens B · 13): نسخ الجواب.
+  copy: 'modonty-brand-icons.tsx#ModontyCopyMark',
+  // روابط الشريك الاجتماعية (Screens B · 08) — نفس ملفّات الويب (بشبكات ٥١٢/٢٥٦/١٢٨ تُصغَّر إلى ٢٤).
+  facebook: 'facebook.tsx',
+  instagram: 'instagram.tsx',
+  snapchat: 'snapchat.tsx',
+  tiktok: 'tiktok.tsx',
+  youtube: 'youtube.tsx',
+  twitter: 'twitter.tsx',
+  linkedin: 'linkedin.tsx',
+  // Filled = الحالة المحدّدة فقط (التبويب النشط · أعجبني · محفوظ) — ICON-STANDARD-v2 §6.
+  homeFilled: 'modonty-home-filled-mark.tsx',
+  articlesFilled: 'modonty-articles-filled-mark.tsx',
+  reelsFilled: 'modonty-reels-filled-mark.tsx',
+  profileFilled: 'modonty-profile-filled-mark.tsx',
+  audioFilled: 'modonty-audio-filled-mark.tsx',
+  bookmarkFilled: 'modonty-bookmark-filled-mark.tsx',
+  likeFilled: 'modonty-like-filled-mark.tsx',
+  notificationsFilled: 'modonty-notifications-filled-mark.tsx',
 };
 
 const TAGS = { path: 'Path', rect: 'Rect', circle: 'Circle', g: 'G', ellipse: 'Ellipse', line: 'Line', polyline: 'Polyline', polygon: 'Polygon' };
@@ -83,6 +125,8 @@ const ACCENT = /accent|#00d8d8/i;
 function paint(value) {
   const v = value.trim();
   if (v === 'none') return 'none';
+  // حلقة الماسة في Filled تأخذ لون السطح تحتها (`--modonty-knockout`).
+  if (/knockout/.test(v)) return 'white';
   if (ACCENT.test(v)) return 'accent';
   if (/^#fff(fff)?$/i.test(v)) return 'white';
   return 'primary';
@@ -119,6 +163,8 @@ function convert(name, spec) {
   const body = src.match(/<svg[^>]*>([\s\S]*?)<\/svg>/);
   if (!body) throw new Error(`${file}: no <svg> body`);
   const inner = body[1].replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
+  // شبكة غير ٢٤ (أيقونات السوشيال): تُلفّ في G يصغّرها إلى ٢٤ — ModontyIcon يبقى على viewBox ٠ ٠ ٢٤ ٢٤.
+  const vb = src.match(/<svg[^>]*viewBox="([^"]+)"/)?.[1]?.trim().split(/[\s,]+/).map(Number);
   const root = { children: [] };
   const stack = [root];
   const tagRe = /<(\/?)([a-zA-Z]+)([^>]*?)(\/?)>/g;
@@ -137,6 +183,10 @@ function convert(name, spec) {
     }
     if (tag === 'g' && !selfClosing) { node.children = []; stack.at(-1).children.push(node); stack.push(node); }
     else stack.at(-1).children.push(node);
+  }
+  if (vb && vb.length === 4 && !(vb[0] === 0 && vb[1] === 0 && vb[2] === 24 && vb[3] === 24)) {
+    const k = 24 / Math.max(vb[2], vb[3]);
+    return [{ t: 'G', transform: `scale(${k}) translate(${-vb[0]} ${-vb[1]})`, children: root.children }];
   }
   return root.children;
 }

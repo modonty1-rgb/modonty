@@ -31,7 +31,7 @@ export const TermRow = memo(function TermRow({ item, icon, onOpen }: { item: Ter
         {item.meta || item.logos.length > 0 ? (
           <View style={styles.metaRow}>
             {item.logos.slice(0, 4).map((l) => (
-              <Image key={l} source={l} style={[styles.logo, { borderColor: colors.surface }]} contentFit="cover" />
+              <Image cachePolicy="memory-disk" key={l} source={l} style={[styles.logo, { borderColor: colors.surface }]} contentFit="cover" />
             ))}
             {item.meta ? (
               <AppText variant="secondary" tone="muted">
