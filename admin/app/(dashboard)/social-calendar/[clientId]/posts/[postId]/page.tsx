@@ -12,6 +12,7 @@ import { postHref } from "../../../helpers/post-href";
 import { getCalendarClient, getPostAuditTrail, getPostDetail } from "../../../helpers/queries";
 import { AUDIT_ACTION_LABEL } from "../../../helpers/social-labels";
 import { requireSocialActor } from "../../../helpers/require-social-actor";
+import { ReviewActions } from "./components/review-actions";
 
 type Props = { params: Promise<{ clientId: string; postId: string }> };
 
@@ -65,6 +66,10 @@ export default async function SocialPostDetailPage({ params }: Props) {
             <Archive className="h-4 w-4 shrink-0" />
             هذا المنشور في الأرشيف — يُسترجع من صفحة الأرشيف.
           </div>
+        )}
+
+        {!post.archivedAt && post.status === "READY_FOR_REVIEW" && canSocial(actor.role, "review") && (
+          <ReviewActions post={post} />
         )}
 
         <div className="flex flex-wrap gap-2">

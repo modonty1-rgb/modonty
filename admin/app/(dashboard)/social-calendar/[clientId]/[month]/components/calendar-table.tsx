@@ -31,6 +31,7 @@ import { archiveSocialPost } from "../../../actions";
 import { ChannelIcon } from "../../../components/channel-icon";
 import { StatusBadge } from "../../../components/status-badge";
 import { dayName, daysInMonth } from "../../../helpers/dates";
+import Link from "next/link";
 import { postHref } from "../../../helpers/post-href";
 import type { SocialPostRow } from "../../../helpers/queries";
 import {
@@ -270,7 +271,7 @@ export function CalendarTable({
       <TableRow
         key={p.id}
         className={cn(
-          "group/row relative border-r-2 transition-all duration-150 hover:bg-muted/40",
+          "group/row relative cursor-pointer border-r-2 transition-all duration-150 hover:bg-muted/40",
           STATUS_ROW_BORDER[p.status],
         )}
       >
@@ -278,18 +279,26 @@ export function CalendarTable({
           <DayCell year={year} month={month} day={day} muted={!firstOfDay} isToday={day === todayDay} />
         </TableCell>
         <TableCell className="px-3 py-2.5">
-          <p className="text-sm font-medium leading-snug text-foreground" title={p.idea}>
+          {/* The whole row opens the post (its ::after covers the row); the status badge, channel links,
+              creative preview and row actions sit above it with z-[1]. */}
+          <Link
+            href={postHref(clientId, p.id)}
+            className="block text-sm font-medium leading-snug text-foreground after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-primary"
+            title={p.idea}
+          >
             {p.idea || <span className="text-xs italic text-muted-foreground">بدون فكرة</span>}
-          </p>
+          </Link>
         </TableCell>
         {visible("status") && (
           <TableCell className="px-3 py-2.5">
-            <StatusBadge status={p.status} href={postHref(clientId, p.id, { stage: p.status })} />
+            <span className="relative z-[1] inline-flex">
+              <StatusBadge status={p.status} href={postHref(clientId, p.id, { stage: p.status })} />
+            </span>
           </TableCell>
         )}
         {visible("channels") && (
           <TableCell className="px-3 py-2.5">
-            <div className="flex items-center gap-1.5">
+            <div className="relative z-[1] flex items-center gap-1.5">
               {p.channels.map((ch) => (
                 <ChannelIcon key={ch} channel={ch} href={links[ch]} />
               ))}
@@ -297,7 +306,9 @@ export function CalendarTable({
           </TableCell>
         )}
         <TableCell className="px-2 py-2.5 text-center">
-          <CreativeCell post={p} />
+          <span className="relative z-[1] inline-flex">
+            <CreativeCell post={p} />
+          </span>
         </TableCell>
         {visible("format") && (
           <TableCell className="px-3 py-2.5">

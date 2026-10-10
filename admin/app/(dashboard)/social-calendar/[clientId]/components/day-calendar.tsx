@@ -4,10 +4,10 @@ import { Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { daysInMonth } from "../../helpers/dates";
+import { DAY_NAMES, daysInMonth } from "../../helpers/dates";
 
-/** رؤوس الأسبوع كما في القديم حرفياً (`EntryPageForm.tsx:100`). */
-const WEEK_HEADERS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"] as const;
+/** رؤوس الأسبوع بالعربية (الحرف المميّز لكل يوم) — الاسم الكامل في التلميح. */
+const WEEK_HEADERS = ["ح", "ن", "ث", "ر", "خ", "ج", "س"] as const;
 
 /**
  * تقويم الشهر في نموذج المنشور — نسخة القديم (`DayCalendar` — `EntryPageForm.tsx:102-176`).
@@ -42,9 +42,9 @@ export function DayCalendar({
   return (
     <div className="space-y-0.5">
       <div className="mb-1 grid grid-cols-7">
-        {WEEK_HEADERS.map((h) => (
-          <div key={h} className="flex h-5 items-center justify-center">
-            <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground/40">{h}</span>
+        {WEEK_HEADERS.map((h, i) => (
+          <div key={h} className="flex h-5 items-center justify-center" title={DAY_NAMES[i]}>
+            <span className="text-[11px] font-semibold text-muted-foreground/70">{h}</span>
           </div>
         ))}
       </div>
@@ -62,8 +62,9 @@ export function DayCalendar({
                 key={d}
                 className={cn(
                   "flex h-7 flex-col items-center justify-center gap-px rounded-md text-[11px] font-medium leading-none",
-                  hasPost ? "bg-emerald-500/15 text-emerald-600" : "bg-red-400/10 text-red-400/70",
+                  hasPost ? "bg-emerald-500/15 text-emerald-600" : "bg-muted/40 text-muted-foreground/40",
                 )}
+                title={hasPost ? "يوم مضى — فيه منشور" : "يوم مضى"}
               >
                 <span>{d}</span>
                 {hasPost && <Check className="h-1.5 w-1.5" strokeWidth={4} />}
@@ -91,6 +92,13 @@ export function DayCalendar({
           );
         })}
       </div>
+      {today !== null && (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1.5 text-[11px] text-muted-foreground">
+          <span className="inline-flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-sm ring-1 ring-inset ring-primary/40 bg-primary/10" />اليوم</span>
+          <span className="inline-flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-sm bg-emerald-500/30" />مضى وفيه منشور</span>
+          <span className="inline-flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-sm bg-muted" />مضى</span>
+        </div>
+      )}
     </div>
   );
 }

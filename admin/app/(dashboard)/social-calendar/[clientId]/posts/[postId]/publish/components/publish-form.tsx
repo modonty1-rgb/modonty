@@ -200,10 +200,10 @@ export function PublishForm({
             لا يوجد إبداع مرفق بعد
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {post.assets.map((a, i) => (
               <div key={a.id} className="overflow-hidden rounded-xl border border-border shadow-sm">
-                <AssetMedia asset={a} className="h-auto max-h-[420px] w-full bg-black/5" />
+                <AssetMedia asset={a} className="h-64 w-full bg-black/5 object-contain" />
                 <div className="flex items-center gap-2 border-t border-border bg-muted/20 px-3 py-2">
                   <span className="flex-1 truncate text-sm font-medium text-foreground">{a.label || `ملف ${i + 1}`}</span>
                   <span className="rounded-full border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground/70">

@@ -3,7 +3,7 @@ import type { SocialPostStatus } from "@prisma/client";
 
 import { ClientPageHeader } from "../components/client-page-header";
 import { canSocial } from "../../helpers/post-permissions";
-import { MONTH_LABELS, MONTH_LABELS_EN, parseMonthParam, riyadhToday } from "../../helpers/dates";
+import { MONTH_LABELS, parseMonthParam, riyadhToday } from "../../helpers/dates";
 import { getCalendarClient, getClientStatusTotals, getMonthPosts, getYearMonthCounts } from "../../helpers/queries";
 import { requireSocialActor } from "../../helpers/require-social-actor";
 import { STATUS_BADGE, STATUS_ORDER } from "../../helpers/social-labels";
@@ -58,14 +58,14 @@ export default async function ClientCalendarPage({ params }: Props) {
 
   return (
     <div className="-m-4 flex h-[calc(100%+2rem)] flex-col bg-background sm:-m-6 sm:h-[calc(100%+3rem)]">
-      <ClientPageHeader client={client} subtitle="Content Calendar" backHref="/social-calendar">
+      <ClientPageHeader client={client} subtitle="تقويم المحتوى" backHref="/social-calendar">
         <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-1.5 text-[11px]">
           <span className="font-semibold text-foreground">
-            {MONTH_LABELS_EN[cm.month]} {cm.year}
+            {MONTH_LABELS[cm.month]} {cm.year}
           </span>
           <span className="h-3 w-px bg-border" />
           <span className="text-muted-foreground/80">
-            <span className="font-bold tabular-nums text-foreground">{posts.length}</span> total
+            <span className="font-bold tabular-nums text-foreground">{posts.length}</span> منشور
           </span>
           <span className="h-3 w-px bg-border" />
           {monthCounts.map(({ status, count }) =>
@@ -84,16 +84,16 @@ export default async function ClientCalendarPage({ params }: Props) {
         <div className="h-6 w-px shrink-0 bg-border" />
 
         <div className="flex items-center gap-2.5 rounded-lg border border-border bg-muted/30 px-3 py-1.5 text-[11px]">
-          <span className="font-medium text-muted-foreground">All months</span>
+          <span className="font-medium text-muted-foreground">كل الشهور</span>
           <span className="h-3 w-px bg-border" />
           <span className="text-muted-foreground/80">
-            <span className="font-bold tabular-nums text-foreground">{totals.total}</span> total
+            <span className="font-bold tabular-nums text-foreground">{totals.total}</span> منشور
           </span>
           <span className="text-muted-foreground/80">
-            <span className="font-bold tabular-nums text-green-600">{totals.PUBLISHED}</span> published
+            <span className="font-bold tabular-nums text-green-600">{totals.PUBLISHED}</span> نُشر
           </span>
           <span className="text-muted-foreground/80">
-            <span className="font-bold tabular-nums text-orange-500">{totals.IN_PRODUCTION}</span> pending
+            <span className="font-bold tabular-nums text-orange-500">{totals.IN_PRODUCTION}</span> قيد الإنتاج
           </span>
         </div>
 

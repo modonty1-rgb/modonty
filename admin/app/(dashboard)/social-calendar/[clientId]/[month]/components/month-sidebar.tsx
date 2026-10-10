@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { MONTH_LABELS_EN, formatMonthParam } from "../../../helpers/dates";
+import { MONTH_LABELS, formatMonthParam } from "../../../helpers/dates";
 
 /**
  * شريط الشهور — ١٢ شهراً بعدّاداتها وزرّ «منشور جديد» (القديم `MonthSidebar.tsx`).
@@ -59,7 +59,7 @@ export function MonthSidebar({
       </div>
 
       <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto px-2 py-2">
-        {MONTH_LABELS_EN.map((label, i) => {
+        {MONTH_LABELS.map((label, i) => {
           const count = counts[i] ?? 0;
           const isActive = i === activeMonth;
           return (

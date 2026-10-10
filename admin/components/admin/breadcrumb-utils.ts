@@ -123,6 +123,28 @@ const scopedLabels: Record<string, Record<string, string>> = {
   leads: { bookings: 'الحجوزات', questions: 'الأسئلة' },
 };
 
+/**
+ * تقويم السوشيال عربي كلّه، ومساراته لا تُفهم بالقواعد العامة: الشهر `2026-10` و`new` تحته
+ * و`posts` (مجلّد بلا صفحة). لذلك تُقرأ كلماته من خريطة واحدة متى كان المسار تحت التقويم.
+ */
+const socialCalendarLabels: Record<string, string> = {
+  'social-calendar': 'تقويم السوشيال',
+  flow: 'سير العمل',
+  archive: 'الأرشيف',
+  gallery: 'المعرض',
+  new: 'منشور جديد',
+  edit: 'تعديل',
+  production: 'الإنتاج',
+  publish: 'النشر',
+};
+const MONTHS_AR = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+
+function socialCalendarLabel(segment: string): string | undefined {
+  const m = /^(\d{4})-(\d{2})$/.exec(segment);
+  if (m && MONTHS_AR[Number(m[2]) - 1]) return `${MONTHS_AR[Number(m[2]) - 1]} ${m[1]}`;
+  return socialCalendarLabels[segment];
+}
+
 export function isObjectId(str: string): boolean {
   return /^[0-9a-fA-F]{24}$/.test(str);
 }
@@ -215,17 +237,22 @@ export function generateBreadcrumbs(
   const segments = parsePathname(pathname);
   const items: BreadcrumbItem[] = [];
   let currentPath = '';
+  const inSocialCalendar = segments[0] === 'social-calendar';
 
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
     currentPath += `/${segment}`;
 
-    if (isObjectId(segment) && i > 0) {
+    if (inSocialCalendar && !isObjectId(segment)) {
+      // `posts` مجلّد بلا صفحة — يُتخطّى، فيأتي المنشور بعد العميل مباشرةً.
+      if (segment === 'posts') continue;
+      items.push({ label: socialCalendarLabel(segment) ?? capitalize(segment), href: currentPath });
+    } else if (isObjectId(segment) && i > 0) {
       const entityType = segments[i - 1];
       const entityName = getEntityName?.(entityType, segment);
 
       items.push({
-        label: entityName || `${capitalize(entityType)} ${segment.slice(0, 8)}...`,
+        label: entityName || (inSocialCalendar ? '…' : `${capitalize(entityType)} ${segment.slice(0, 8)}...`),
         href: currentPath,
       });
     } else if (segment === 'edit' && i > 1 && isObjectId(segments[i - 1])) {

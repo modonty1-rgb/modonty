@@ -9,3 +9,4 @@ export { getPostDetail } from "./get-post-detail";
 export { getPostAuditTrail, type PostAuditRow } from "./get-post-audit-trail";
 export { getClientGallery, type GalleryPost, type GalleryAsset } from "./get-client-gallery";
 export { getArchivedPosts } from "./get-archived-posts";
+export { getPostCrumb } from "./get-post-crumb";
