@@ -1,33 +1,24 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty BOOKMARK mark — حفظ المقال / الإشارات المرجعية.
- *
- * Traced verbatim from the approved original in
- * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="bookmark"`),
- * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
- * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
- * attributes became JSX.
- *
- * Approved concept: شريط إشارة مرجعية كلاسيكي بقطع سفلي متقن، تعلوه ماسة التمييز كعلامة حفظ نشطة.
- *
- * Category: Utility / Reader · Save for later, bookmarks library, reading list
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
- * takes the size and colour of the text around it, two CSS hooks — `--modonty-bookmark-body` · `--modonty-bookmark-accent` (the diamond).
+ * The modonty BOOKMARK mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-bookmark-body` · `--modonty-bookmark-accent` (the diamond).
  */
-export function ModontyBookmarkMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyBookmarkMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M5.5 5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2V21L12 17.25L5.5 21Z" stroke="var(--modonty-bookmark-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 7.88A0.5 0.5 0 0 1 12.35 7.88L14.12 9.65A0.5 0.5 0 0 1 14.12 10.35L12.35 12.12A0.5 0.5 0 0 1 11.65 12.12L9.88 10.35A0.5 0.5 0 0 1 9.88 9.65Z" fill="var(--modonty-bookmark-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M34 26C34 21.6 37.6 18 42 18H78C82.4 18 86 21.6 86 26V100L60 82L34 100V26Z" stroke="var(--modonty-bookmark-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="50" y="36" width="20" height="20" rx="4" transform="rotate(30 60 46)" fill="var(--modonty-bookmark-accent, var(--modonty-accent, #00d8d8))"/>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M3.5 4a1.5 1.5 0 0 1 1.5-1.5h6a1.5 1.5 0 0 1 1.5 1.5V14L8 11.4L3.5 14Z" stroke="var(--modonty-bookmark-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 4.94A0.3 0.3 0 0 1 8.21 4.94L9.56 6.29A0.3 0.3 0 0 1 9.56 6.71L8.21 8.06A0.3 0.3 0 0 1 7.79 8.06L6.44 6.71A0.3 0.3 0 0 1 6.44 6.29Z" fill="var(--modonty-bookmark-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

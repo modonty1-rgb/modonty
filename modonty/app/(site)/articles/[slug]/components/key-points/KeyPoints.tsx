@@ -26,7 +26,7 @@ export function KeyPoints({ title, points }: { title: string; points: string[] }
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="mt-1.5 text-[13px] font-semibold text-link hover:underline lg:hidden"
+          className="mt-1.5 inline-flex min-h-11 items-center text-[13px] font-bold text-link hover:underline lg:hidden"
         >
           اعرض الملخص كاملاً (+{N.format(rest)})
         </button>

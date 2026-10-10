@@ -97,7 +97,7 @@ function Vision2030SpotlightImpl({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.85 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-emerald-600/95 text-white text-xs font-extrabold whitespace-nowrap shadow-md"
+                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-emerald-600/95 text-white text-xs font-bold whitespace-nowrap shadow-md"
                   >
                     ١.٧ مليون منشأة
                   </m.div>
@@ -156,7 +156,7 @@ function Vision2030SpotlightImpl({
                 style={{ transform: "scale(1.65)" }}
               />
             </div>
-            <p className="text-xs font-extrabold text-primary/90 tracking-widest mt-2">
+            <p className="text-xs font-bold text-primary/90 tracking-widest mt-2">
               مدونتي
             </p>
           </m.div>
@@ -176,7 +176,7 @@ function Vision2030SpotlightImpl({
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              className="text-center text-base md:text-lg lg:text-xl font-semibold leading-snug text-foreground"
+              className="text-center text-base lg:text-xl font-bold leading-snug text-foreground"
             >
               {activePhrase.text}
             </m.p>
@@ -188,7 +188,7 @@ function Vision2030SpotlightImpl({
               animate={{ opacity: 0.55 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-center text-sm md:text-base text-foreground/60 italic"
+              className="text-center text-sm lg:text-base text-foreground/60 italic"
             >
               نساهم في رؤية المملكة ٢٠٣٠
             </m.p>

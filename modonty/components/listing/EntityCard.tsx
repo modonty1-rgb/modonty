@@ -96,9 +96,9 @@ export function EntityCard({
 
           <span className="absolute top-2 end-2 inline-flex items-center gap-1 rounded-full bg-black/40 px-2 py-0.5 text-xs font-bold text-white backdrop-blur-sm">
             {type === "industry" ? (
-              <ModontyIndustriesMark className="h-2.5 w-2.5" aria-hidden />
+              <ModontyIndustriesMark className="size-4" aria-hidden />
             ) : (
-              <IconArticle className="h-2.5 w-2.5" aria-hidden />
+              <IconArticle className="size-4" aria-hidden />
             )}
             {articleCount}
             {type === "industry" && " شركة"}
@@ -106,7 +106,7 @@ export function EntityCard({
         </div>
 
         <div className="p-4">
-          <h3 className="mb-3 line-clamp-2 text-[15px] font-extrabold leading-snug text-card-foreground">
+          <h3 className="mb-3 line-clamp-2 text-[15px] font-bold leading-snug text-card-foreground">
             {name}
           </h3>
 

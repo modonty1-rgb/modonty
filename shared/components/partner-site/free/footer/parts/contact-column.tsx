@@ -22,14 +22,14 @@ export function ContactColumn({ data, title = "تواصل معنا", social = fa
       <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
         {data.phone && (
           <li>
-            <SiteLink href={`tel:${data.phone}`} className="flex items-center gap-2 transition-colors hover:text-foreground max-md:min-h-11">
+            <SiteLink href={`tel:${data.phone}`} className="flex min-h-6 items-center gap-2 transition-colors hover:text-foreground max-lg:min-h-11">
               <Phone className="h-4 w-4" aria-hidden /> <span dir="ltr">{data.phone}</span>
             </SiteLink>
           </li>
         )}
         {data.email && (
           <li>
-            <SiteLink href={`mailto:${data.email}`} className="flex items-center gap-2 transition-colors hover:text-foreground max-md:min-h-11">
+            <SiteLink href={`mailto:${data.email}`} className="flex min-h-6 items-center gap-2 transition-colors hover:text-foreground max-lg:min-h-11">
               <Mail className="h-4 w-4" aria-hidden /> {data.email}
             </SiteLink>
           </li>

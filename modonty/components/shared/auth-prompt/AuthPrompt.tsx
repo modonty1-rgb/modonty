@@ -81,7 +81,7 @@ export function AuthPrompt({ open, onOpenChange, action }: AuthPromptProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <Button onClick={withGoogle} disabled={busy} className="h-11 w-full gap-2 font-semibold">
+        <Button onClick={withGoogle} disabled={busy} className="h-11 w-full gap-2 font-bold">
           {busy ? (
             <IconLoading className="size-4 animate-spin" aria-hidden />
           ) : (
@@ -93,15 +93,15 @@ export function AuthPrompt({ open, onOpenChange, action }: AuthPromptProps) {
         {/* An email account holder had no way in from here — only «أنشئ حساباً», which invites a
             duplicate sign-up (QA finding #12, 29 Sep 2026). */}
         <DialogFooter className="flex-col gap-1 sm:flex-col sm:justify-center">
-          <p className="text-center text-[12px] text-muted-foreground">
+          <p className="text-center text-xs text-muted-foreground">
             عندك حساب بالإيميل؟{" "}
-            <Link href={`/users/login${back}`} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline">
+            <Link href={`/users/login${back}`} className="inline-flex min-h-11 items-center font-bold text-link hover:underline">
               سجّل دخولك
             </Link>
           </p>
-          <p className="text-center text-[12px] text-muted-foreground">
+          <p className="text-center text-xs text-muted-foreground">
             جديد هنا؟{" "}
-            <Link href={`/users/register${back}`} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline">
+            <Link href={`/users/register${back}`} className="inline-flex min-h-11 items-center font-bold text-link hover:underline">
               أنشئ حساباً بالإيميل
             </Link>
           </p>

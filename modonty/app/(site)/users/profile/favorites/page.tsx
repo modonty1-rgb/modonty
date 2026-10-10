@@ -56,7 +56,7 @@ export default async function FavoritesPage() {
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">
+                  <h3 className="text-lg font-bold">
                     المقالات المحفوظة ({favorites.length})
                   </h3>
                 </div>
@@ -82,7 +82,7 @@ export default async function FavoritesPage() {
                               </div>
                             )}
                             <div className="flex-1 min-w-0">
-                              <h4 className="font-semibold text-lg line-clamp-2 mb-2">
+                              <h4 className="font-bold text-lg line-clamp-2 mb-2">
                                 {article.title}
                               </h4>
                               {article.excerpt && (

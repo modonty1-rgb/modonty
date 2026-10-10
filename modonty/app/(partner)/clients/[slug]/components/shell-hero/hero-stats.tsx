@@ -67,8 +67,8 @@ export function HeroStats({ stats, pageState, layout = "strip", className }: Her
                 className={`size-4 ${isRating ? "fill-current text-star" : "text-muted-foreground"}`}
                 aria-hidden
               />
-              <b className="text-[15px] font-black leading-none text-foreground">{c.value}</b>
-              <span className="text-[12px] text-muted-foreground">{c.label}</span>
+              <b className="text-[15px] font-bold leading-none text-foreground">{c.value}</b>
+              <span className="text-xs text-muted-foreground">{c.label}</span>
             </div>
           );
         })}
@@ -92,9 +92,9 @@ export function HeroStats({ stats, pageState, layout = "strip", className }: Her
                 className={`size-4 ${isRating ? "fill-current text-star" : "text-muted-foreground"}`}
                 aria-hidden
               />
-              <b className="text-[18px] font-black leading-none text-foreground">{c.value}</b>
+              <b className="text-[18px] font-bold leading-none text-foreground">{c.value}</b>
             </span>
-            <span className="whitespace-nowrap text-[12px] text-muted-foreground">{c.label}</span>
+            <span className="whitespace-nowrap text-xs text-muted-foreground">{c.label}</span>
           </div>
         );
       })}

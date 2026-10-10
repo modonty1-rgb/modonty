@@ -69,7 +69,7 @@ export function IndustriesCarousel({ industries, headingId }: IndustriesCarousel
           href="/industries"
           prefetch={false}
           aria-label="عرض كل المجالات"
-          className="absolute left-1 inline-flex min-h-8 min-w-11 items-center justify-center gap-1 whitespace-nowrap rounded-lg px-2 text-xs font-semibold text-muted-foreground transition-colors after:absolute after:-inset-y-1.5 after:inset-x-0 after:content-[''] active:bg-accent/40 active:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="absolute left-1 inline-flex min-h-8 min-w-11 items-center justify-center gap-1 whitespace-nowrap rounded-lg px-2 text-xs font-bold text-muted-foreground transition-colors after:absolute after:-inset-y-1.5 after:inset-x-0 after:content-[''] active:bg-accent/40 active:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           <span>عرض كل المجالات</span>
           <IconChevronLeft className="size-4" aria-hidden />
@@ -93,7 +93,7 @@ export function IndustriesCarousel({ industries, headingId }: IndustriesCarousel
               className="flex w-[clamp(6rem,27vw,6.75rem)] shrink-0 snap-start flex-col gap-1.5 rounded-xl border border-border/70 bg-muted/20 p-1.5 transition-colors active:border-accent/70 active:bg-accent/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
             >
               <IndustryVisual industry={industry} index={index} />
-              <span className="block w-full min-w-0 truncate px-1 pb-0.5 text-center text-xs font-semibold leading-4 text-foreground">
+              <span className="block w-full min-w-0 truncate px-1 pb-0.5 text-center text-xs font-bold leading-4 text-foreground">
                 {industry.name}
               </span>
             </Link>

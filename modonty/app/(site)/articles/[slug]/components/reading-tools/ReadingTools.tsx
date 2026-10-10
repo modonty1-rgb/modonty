@@ -277,13 +277,13 @@ export function ReadingTools({ bare = false, compact = false, labels }: ReadingT
         onClick={toggleImages}
         title={imagesHidden ? labels.showImages : labels.hideImages}
         className={cn(
-          "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors",
+          "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold transition-colors",
           imagesHidden
             ? "bg-secondary text-secondary-foreground"
             : "bg-background/70 text-muted-foreground hover:text-foreground",
         )}
       >
-        {imagesHidden ? <IconEyeOff className="size-3.5" /> : <IconEye className="size-3.5" />}
+        {imagesHidden ? <IconEyeOff className="size-4" /> : <IconEye className="size-4" />}
         {imagesHidden ? labels.noImages : labels.images}
       </button>
     </div>

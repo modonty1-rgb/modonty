@@ -68,7 +68,7 @@ export function Breadcrumb({ items = [], className, maxItems = 3 }: BreadcrumbPr
                 </span>
               ) : isLast ? (
                 <span
-                  className="flex min-w-0 max-w-[250px] sm:max-w-[min(100%,420px)] md:max-w-[480px] items-center gap-1.5 font-semibold text-foreground"
+                  className="flex min-w-0 max-w-[250px] sm:max-w-[min(100%,420px)] md:max-w-[480px] items-center gap-1.5 font-bold text-foreground"
                   aria-current="page"
                 >
                   {item.icon}
@@ -77,10 +77,10 @@ export function Breadcrumb({ items = [], className, maxItems = 3 }: BreadcrumbPr
               ) : (
                 <Link
                   href={item.href!}
-                  // `max-md:min-h-11` + `max-md:active:…`: on a phone this trail link measured
+                  // `max-lg:min-h-11` + `max-md:active:…`: on a phone this trail link measured
                   // 70×20 — half a fingertip — in the one place a lost reader taps to get back.
                   // 44px tall and it answers on touch-down; the desktop trail keeps its 20px line.
-                  className="flex min-w-11 max-w-[min(100%,280px)] items-center justify-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground max-md:min-h-11 max-md:active:text-foreground md:max-w-none"
+                  className="flex min-w-11 max-w-[min(100%,280px)] items-center justify-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground min-h-8 max-lg:min-h-11 max-md:active:text-foreground md:max-w-none"
                 >
                   {item.icon}
                   <span className="min-w-0 flex-1 truncate hover:underline md:max-w-none">

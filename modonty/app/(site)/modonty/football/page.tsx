@@ -76,7 +76,7 @@ export default async function FootballPage() {
         ]}
       />
       <div className="mt-4">
-        <h1 className="flex items-center gap-2.5 text-3xl font-bold">
+        <h1 className="text-h1 flex items-center gap-2.5">
           <IconFootball aria-hidden className="size-8 text-primary" />
           {t.title}
         </h1>

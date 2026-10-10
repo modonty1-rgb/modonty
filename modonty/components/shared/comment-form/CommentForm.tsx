@@ -156,7 +156,7 @@ export function CommentForm({
         >
           {isSubmitting ? (
             <>
-              <IconLoading className={cn("animate-spin", compact ? "h-3 w-3" : "h-4 w-4")} />
+              <IconLoading className={cn("animate-spin", compact ? "size-4" : "h-4 w-4")} />
               {compact ? "..." : "جاري الإرسال..."}
             </>
           ) : (

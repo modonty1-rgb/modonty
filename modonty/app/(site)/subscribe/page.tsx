@@ -23,7 +23,7 @@ export default function SubscribePage() {
           { label: "اشترك في النشرة" },
         ]}
       />
-      <h1 className="text-3xl font-bold mb-6">اشترك في النشرة الإخبارية</h1>
+      <h1 className="text-h1 mb-6">اشترك في النشرة الإخبارية</h1>
       <p className="text-muted-foreground mb-8">
         ابق على اطلاع بآخر الأخبار والمقالات من مدونتي. اشترك الآن واحصل على المحتوى
         الأفضل مباشرة في بريدك الإلكتروني.

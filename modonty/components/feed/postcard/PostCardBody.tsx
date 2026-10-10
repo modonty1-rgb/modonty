@@ -14,7 +14,7 @@ export function PostCardBody({ post, highlightQuery: query, featured }: PostCard
         // making the entire card clickable while keeping other z-10 elements interactive.
         <h3
           itemProp="headline"
-          className={`font-semibold break-words hyphens-auto ${featured ? "text-xl line-clamp-3" : "text-base line-clamp-2 min-h-[2.8rem]"}`}
+          className={`font-bold break-words hyphens-auto ${featured ? "text-xl line-clamp-3" : "text-base line-clamp-2 min-h-[2.8rem]"}`}
         >
           <CtaTrackedLink
             href={`/articles/${post.slug}`}

@@ -216,7 +216,7 @@ export function HistoryList({ onResume }: HistoryListProps) {
                         }}
                         className="inline-flex min-h-[44px] items-center gap-1.5 text-sm font-medium text-primary hover:underline"
                       >
-                        <IconHistory className="h-3.5 w-3.5" />
+                        <IconHistory className="h-4 w-4" />
                         أكمل هذه المحادثة
                       </button>
                     )}
@@ -226,7 +226,7 @@ export function HistoryList({ onResume }: HistoryListProps) {
                         className="inline-flex min-h-[44px] items-center gap-1.5 text-sm text-primary hover:underline"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <IconExternal className="h-3.5 w-3.5" />
+                        <IconExternal className="h-4 w-4" />
                         {item.articleSlug ? "فتح المقال" : "فتح الموضوع"}
                       </Link>
                     )}

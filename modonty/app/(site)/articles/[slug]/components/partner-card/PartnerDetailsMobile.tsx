@@ -112,7 +112,7 @@ export function PartnerDetailsMobile({ client, askClientProps }: PartnerDetailsM
             user={askClientProps.user ?? null}
             pendingFaqs={askClientProps.pendingFaqs}
             triggerOnly
-            triggerClassName="w-auto h-9 px-3 text-[13px] bg-transparent border-border text-foreground font-semibold hover:bg-muted/60 hover:border-border shadow-none"
+            triggerClassName="w-auto h-9 px-3 text-[13px] bg-transparent border-border text-foreground font-bold hover:bg-muted/60 hover:border-border shadow-none"
           />
         </div>
       )}

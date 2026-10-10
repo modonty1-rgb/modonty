@@ -9,7 +9,7 @@ import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle } from "@/app/(site)/articles/[slug]/actions/like-article";
 import { favoriteArticle } from "@/lib/articles/favorite-article";
 import { ArticleAudioPlayer } from "@/app/(site)/articles/[slug]/components/audio-player/ArticleAudioPlayerLazy";
-import { IconLike, IconSaved, IconComment, IconShare, IconCheck } from "@/lib/icons";
+import { IconLike, IconLikeFilled, IconSaved, IconSavedFilled, IconComment, IconShare, IconCheck } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 interface ArticleTopEngagementBarProps {
@@ -84,7 +84,7 @@ export function ArticleTopEngagementBar({
 
   // The glyph shrinks in the bar so the count can sit inside the tab instead of hanging off its
   // corner, where it collided with the bar edge.
-  const glyph = size === "compact" ? "size-[16px]" : "size-[18px]";
+  const glyph = size === "compact" ? "size-[16px]" : "size-5";
 
   const showEngagement = show !== "listen";
   const showListen = show !== "engagement";
@@ -175,14 +175,14 @@ export function ArticleTopEngagementBar({
   // binds where there are fingers; a pointer is precise and the shorter tab gives the rail back
   // 8px. One class, not two components.
   const item = cn(
-    "relative flex shrink-0 flex-col items-center justify-center gap-0.5 font-semibold leading-none shadow-md transition-transform",
+    "relative flex shrink-0 flex-col items-center justify-center gap-0.5 font-bold leading-none shadow-md transition-transform",
     size === "compact"
       // 44 — the same face as the listen tab it sits beside (Khalid, 21 Aug): two sizes in one
       // row read as two kinds of control. It is also the fingertip floor, so no invisible hit
       // area is needed any more. The outline title truncates to make room; the controls do not.
       // ٣٦ وبلا ألوان (خالد ٣ أكتوبر ٢٠٢٦ — تدقيق الجوال): في شريط الفهرس المثبَّت كانت ٤ مربّعات ٤٤px
       // بأربعة ألوان صارخة تأكل العنوان («جدو…») وتصيح فوق النصّ وقت القراءة. اللونُ يبقى للأيقونة فقط.
-      ? "size-9 rounded-lg text-xs !shadow-none"
+      ? "relative size-9 rounded-lg text-xs !shadow-none after:absolute after:-inset-1 after:content-['']"
       : "size-12 rounded-xl text-xs lg:size-10",
     size === "compact" ? "" : attached
       // Hanging from the navbar (Khalid, 19 Aug): the radius is flipped — square where it meets
@@ -209,12 +209,12 @@ export function ArticleTopEngagementBar({
     >
       {showEngagement && (
         <>
-          <button type="button" data-engagement="like" onClick={handleLike} disabled={busy === "like"} className={cn(item, size === "compact" ? "bg-muted text-foreground" : "bg-action-like text-action-like-foreground")} aria-pressed={liked} aria-label={labels.like}>
-            <IconLike className={cn(glyph, liked && "fill-current")} />
+          <button type="button" data-engagement="like" onClick={handleLike} disabled={busy === "like"} className={cn(item, size === "compact" ? "bg-muted text-foreground [--modonty-knockout:hsl(var(--muted))]" : "bg-action-like text-action-like-foreground [--modonty-knockout:hsl(var(--action-like))]")} aria-pressed={liked} aria-label={labels.like}>
+            {liked ? <IconLikeFilled className={glyph} /> : <IconLike className={glyph} />}
             {likeN > 0 && <span className={badge}>{likeN.toLocaleString(SITE_LOCALE)}</span>}
           </button>
-          <button type="button" data-engagement="save" onClick={handleSave} disabled={busy === "save"} className={cn(item, size === "compact" ? "bg-muted text-foreground" : "bg-action-save text-action-save-foreground")} aria-pressed={saved} aria-label={labels.save}>
-            <IconSaved className={cn(glyph, saved && "fill-current")} />
+          <button type="button" data-engagement="save" onClick={handleSave} disabled={busy === "save"} className={cn(item, size === "compact" ? "bg-muted text-foreground [--modonty-knockout:hsl(var(--muted))]" : "bg-action-save text-action-save-foreground [--modonty-knockout:hsl(var(--action-save))]")} aria-pressed={saved} aria-label={labels.save}>
+            {saved ? <IconSavedFilled className={glyph} /> : <IconSaved className={glyph} />}
             {favN > 0 && <span className={badge}>{favN.toLocaleString(SITE_LOCALE)}</span>}
           </button>
           <CommentFormDialog

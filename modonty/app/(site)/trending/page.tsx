@@ -91,7 +91,7 @@ export default async function TrendingPage({ searchParams }: TrendingPageProps) 
               <span className="h-5 w-1.5 rounded-sm bg-white" />
             </div>
             <div className="relative z-10">
-              <h1 className="mb-2 text-3xl font-bold text-white">
+              <h1 className="text-display mb-2 text-white">
                 المقالات الرائجة
               </h1>
               <p className="mb-4 text-white/70">

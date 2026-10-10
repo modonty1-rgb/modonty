@@ -40,6 +40,7 @@ export { ModontyCategoriesMark as IconCategories } from '../components/icons/mod
 export { ModontyTagsMark  as IconCategory      } from '../components/icons/modonty-tags-mark';
 export { ModontyPartnerMark as IconClients } from '../components/icons/modonty-partner-mark';
 export { ModontyIndustriesMark as IconIndustry } from '../components/icons/modonty-industries-mark';
+export { ModontyReelsMark as IconReels } from '../components/icons/modonty-reels-mark';
 export { ModontyBookmarkMark as IconSaved      } from '../components/icons/modonty-bookmark-mark';
 export { ModontyNotificationsMark as IconNotifications } from '../components/icons/modonty-notifications-mark';
 export { ModontySearchMark as IconSearch       } from '../components/icons/modonty-search-mark';
@@ -47,10 +48,10 @@ export { ModontyMenuMark as IconMenu } from '../components/icons/modonty-utility
 
 // ── Directional ──────────────────────────────────────────────────────────────
 export { ModontyArrowMark as IconForward } from '../components/icons/modonty-arrow-mark';
-export { ModontyArrowMark as IconChevronLeft } from '../components/icons/modonty-arrow-mark';
-export { ModontyArrowMark as IconChevronRight } from '../components/icons/modonty-arrow-mark';
-export { ModontyArrowMark as IconChevronDown } from '../components/icons/modonty-arrow-mark';
-export { ModontyArrowMark as IconChevronUp } from '../components/icons/modonty-arrow-mark';
+export { ModontyChevronMark as IconChevronLeft } from '../components/icons/modonty-chevron-mark';
+export { ModontyChevronRightMark as IconChevronRight } from '../components/icons/modonty-chevron-right-mark';
+export { ModontyChevronDownMark as IconChevronDown } from '../components/icons/modonty-chevron-down-mark';
+export { ModontyChevronUpMark as IconChevronUp } from '../components/icons/modonty-chevron-up-mark';
 export { ModontySortMark  as IconSort          } from '../components/icons/modonty-sort-mark';
 
 // ── Auth & User ───────────────────────────────────────────────────────────────
@@ -84,7 +85,7 @@ export { ModontyWebsiteMark as IconWebsite } from '../components/icons/modonty-b
 export { ModontyPhoneMark as IconPhone         } from '../components/icons/modonty-phone-mark';
 export { ModontyEmailMark as IconEmail         } from '../components/icons/modonty-email-mark';
 export { ModontyCopyMark as IconCopy } from '../components/icons/modonty-brand-icons';
-export { ModontyArrowMark as IconExternal } from '../components/icons/modonty-arrow-mark';
+export { ModontyExternalMark as IconExternal } from '../components/icons/modonty-external-mark';
 export { Linkedin as IconLinkedin } from '../components/icons/linkedin';
 export { Twitter as IconTwitter } from '../components/icons/twitter';
 export { SocialFacebookOutline as IconFacebook } from '../components/icons/facebook';
@@ -116,7 +117,7 @@ export { ModontyGalleryMark as IconImage       } from '../components/icons/modon
 // Technology / programming scope: the approved AI mark is the closest Modonty digital-technology symbol.
 export { ModontyAiMark as IconCode } from '../components/icons/modonty-brand-icons';
 export { ModontyProfessionalsMark as IconBriefcase } from '../components/icons/modonty-professionals-mark';
-export { ModontyAiMark as IconLightbulb } from '../components/icons/modonty-brand-icons';
+export { ModontyIdeaMark as IconLightbulb } from '../components/icons/modonty-sector-marks';
 export { ModontyActivityMark as IconZap } from '../components/icons/modonty-brand-icons';
 export { ModontyCoffeeMark as IconCoffee } from '../components/icons/modonty-coffee-mark';
 export { ModontyFootprintsMark as IconFootprints } from '../components/icons/modonty-utility-marks';
@@ -124,8 +125,6 @@ export { ModontyArmchairMark as IconArmchair } from '../components/icons/modonty
 export { ModontyTrendingMark as IconRocket } from '../components/icons/modonty-trending-mark';
 export { ModontyDirectionsMark as IconTarget } from '../components/icons/modonty-directions-mark';
 export { ModontyClockMark as IconClock         } from '../components/icons/modonty-clock-mark';
-export { ModontyTocMark   as IconAlignJustify  } from '../components/icons/modonty-toc-mark';
-export { ModontyTocMark   as IconContent       } from '../components/icons/modonty-toc-mark';
 export { ModontyPlayMark  as IconPlay          } from '../components/icons/modonty-play-mark';
 export { ModontyVideoMark as IconVideo } from '../components/icons/modonty-utility-marks';
 export { ModontyTrustMark as IconFileCheck } from '../components/icons/modonty-trust-mark';
@@ -135,7 +134,7 @@ export { ModontyCalendarMark as IconCalendar   } from '../components/icons/modon
 export { ModontyBookingMark as IconCalendarCheck } from '../components/icons/modonty-booking-mark';
 export { ModontyShoppingMark as IconShoppingBag } from '../components/icons/modonty-shopping-mark';
 export { ModontyCheckMark as IconCheck } from '../components/icons/modonty-check-mark';
-export { ModontyArrowMark as IconScrollTop } from '../components/icons/modonty-arrow-mark';
+export { ModontyArrowUpMark as IconScrollTop } from '../components/icons/modonty-arrow-up-mark';
 export { ModontyRefreshMark as IconRefresh     } from '../components/icons/modonty-refresh-mark';
 
 // ── Status & Feedback ────────────────────────────────────────────────────────
@@ -158,12 +157,12 @@ export { ModontyDeleteMark as IconDelete } from '../components/icons/modonty-bra
 export { ModontySettingsMark as IconSettings } from '../components/icons/modonty-brand-icons';
 
 // ── Aliases & extras ─────────────────────────────────────────────────────────
-export { ModontyArrowMark as IconArrowRight } from '../components/icons/modonty-arrow-mark';
+export { ModontyArrowRightMark as IconArrowRight } from '../components/icons/modonty-arrow-right-mark';
 export { ModontyNotificationsMark as IconBell  } from '../components/icons/modonty-notifications-mark';
 export { ModontyProfileMark as IconRegister } from '../components/icons/modonty-profile-mark';
 export { ModontyQuestionMark as IconFaqQuestion } from '../components/icons/modonty-question-mark';
 export { ModontyQuestionMark as IconHelpCircle } from '../components/icons/modonty-question-mark';
-export { ModontyViewsMark as IconEyeOff } from '../components/icons/modonty-views-mark';
+export { ModontyViewsOffMark as IconEyeOff } from '../components/icons/modonty-views-off-mark';
 // Lucide visibility glyph paired with IconEyeOff; IconViews uses the branded analytics mark.
 export { ModontyViewsMark as IconEye } from '../components/icons/modonty-views-mark';
 // The three text-size marks — an A shrinking, an A and a small a, an A growing. The shape a
@@ -177,13 +176,12 @@ export { ModontyListenOffMark as IconListenOff } from '../components/icons/modon
 export { ModontyLinkOffMark as IconLinkOff } from '../components/icons/modonty-brand-icons';
 export { ModontyClockMark as IconHistory } from '../components/icons/modonty-clock-mark';
 export { ModontyShareMark as IconSend } from '../components/icons/modonty-share-mark';
-export { ModontyMoreVerticalMark as IconMoreVertical } from '../components/icons/modonty-brand-icons';
 // 404 / missing-route state: an error is clearer than a generic file-question glyph.
 export { ModontyErrorMark as IconFileQuestion } from '../components/icons/modonty-error-mark';
 export { ModontyDownloadMark as IconDownload } from '../components/icons/modonty-brand-icons';
 export { ModontyAlertTriangleMark as IconAlertTriangle } from '../components/icons/modonty-brand-icons';
 export { ModontyAudioMark as IconVolume2 } from '../components/icons/modonty-audio-mark';
-export { ModontyAudioMark as IconVolumeX } from '../components/icons/modonty-audio-mark';
+export { ModontyListenOffMark as IconVolumeX } from '../components/icons/modonty-utility-marks';
 export { ModontyPauseMark as IconPause } from '../components/icons/modonty-brand-icons';
 export { ModontyCircleMark as IconCircle } from '../components/icons/modonty-brand-icons';
 export { ModontyMoreHorizontalMark as IconMoreHorizontal } from '../components/icons/modonty-brand-icons';
@@ -222,3 +220,14 @@ export { ModontyPartnerMark as IconHandshake } from '../components/icons/modonty
 export { ModontyRemoveMark as IconRemove } from '../components/icons/modonty-brand-icons';
 
 // ── Entities ─────────────────────────────────────────────────────────────────
+
+// ── Selected state (Filled) — ICON-STANDARD-v2 §6 ────────────────────────────
+// Bottom nav / tabs when active, and toggles in their "on" state (liked, saved).
+export { ModontyArticlesFilledMark as IconArticleFilled } from '../components/icons/modonty-articles-filled-mark';
+export { ModontyReelsFilledMark as IconReelsFilled } from '../components/icons/modonty-reels-filled-mark';
+export { ModontyAudioFilledMark as IconAudioFilled } from '../components/icons/modonty-audio-filled-mark';
+export { ModontyHomeFilledMark as IconHomeFilled } from '../components/icons/modonty-home-filled-mark';
+export { ModontyProfileFilledMark as IconUserFilled } from '../components/icons/modonty-profile-filled-mark';
+export { ModontyBookmarkFilledMark as IconSavedFilled } from '../components/icons/modonty-bookmark-filled-mark';
+export { ModontyLikeFilledMark as IconLikeFilled } from '../components/icons/modonty-like-filled-mark';
+export { ModontyNotificationsFilledMark as IconNotificationsFilled } from '../components/icons/modonty-notifications-filled-mark';

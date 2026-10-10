@@ -91,7 +91,7 @@ export function SearchResults({
       />
       {(scope === "all" || scope === "clients") && clients.length > 0 && (
         <div className={scope === "clients" ? "" : "mb-8"}>
-          <h3 className="text-lg font-semibold text-foreground mb-3">الشركاء</h3>
+          <h3 className="text-lg font-bold text-foreground mb-3">الشركاء</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {clients.map((client) => (
               <ClientCard
@@ -121,9 +121,9 @@ export function SearchResults({
       {(scope === "all" || scope === "articles") && posts.length > 0 && (
         <>
           {scope === "all" && clients.length > 0 && (
-            <h3 className="text-lg font-semibold text-foreground mb-3">المقالات</h3>
+            <h3 className="text-lg font-bold text-foreground mb-3">المقالات</h3>
           )}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {posts.map((post, index) => (
               <PostCard
                 key={post.id}

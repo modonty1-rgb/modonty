@@ -65,9 +65,9 @@ export function PlatformBarActions({ clientSlug, initialIsFollowing }: PlatformB
         type="button"
         onClick={share}
         aria-label={shared ? "تم — الرابط جاهز" : "مشاركة"}
-        className="relative flex h-7 items-center justify-center gap-1.5 rounded-md border border-white/25 px-3 text-xs text-white transition-colors hover:bg-white/10 max-md:size-9 max-md:px-0 max-md:after:absolute max-md:after:-inset-1.5 max-md:after:content-['']"
+        className="relative flex h-7 items-center justify-center gap-1.5 rounded-md border border-white/25 px-3 text-xs text-white transition-colors hover:bg-white/10 max-lg:size-9 max-lg:px-0 max-lg:after:absolute max-lg:after:-inset-1.5 max-lg:after:content-['']"
       >
-        {shared ? <IconCheck className="h-3.5 w-3.5" aria-hidden /> : <IconShare className="h-3.5 w-3.5" aria-hidden />}
+        {shared ? <IconCheck className="h-4 w-4" aria-hidden /> : <IconShare className="h-4 w-4" aria-hidden />}
         <span className="max-md:sr-only">{shared ? "تم" : "مشاركة"}</span>
       </button>
     </span>

@@ -21,7 +21,7 @@ import {
   IconNotifications,
   IconHelpCircle,
   IconFaqQuestion,
-  IconCompass,
+  IconCategories,
   IconSaved,
   IconChevronLeft,
   IconTrending,
@@ -139,11 +139,11 @@ export function MobileMenu({ open, onOpenChange, contentId, labels, themeLabels,
           {/* Account — first, because signing in is what a returning reader opened this for */}
           {isLoggedOut && (
             <>
-              <p className="px-3 pt-3 pb-1.5 text-xs font-semibold text-muted-foreground/70 tracking-wide">
+              <p className="px-3 pt-3 pb-1.5 text-xs font-bold text-muted-foreground/70 tracking-wide">
                 {labels.yourAccount}
               </p>
               <div className="flex flex-col gap-2 px-3 pb-1">
-                <Button asChild className="h-11 w-full rounded-xl text-sm font-semibold">
+                <Button asChild className="h-11 w-full rounded-xl text-sm font-bold">
                   <Link href="/users/register" onClick={close}>
                     {labels.signUpFree}
                   </Link>
@@ -163,7 +163,7 @@ export function MobileMenu({ open, onOpenChange, contentId, labels, themeLabels,
           )}
 
           {/* Browse Section */}
-          <p className="px-3 pt-3 pb-1.5 text-xs font-semibold text-muted-foreground/70 tracking-wide">
+          <p className="px-3 pt-3 pb-1.5 text-xs font-bold text-muted-foreground/70 tracking-wide">
             {sections.browse}
           </p>
           <SheetLink
@@ -192,7 +192,7 @@ export function MobileMenu({ open, onOpenChange, contentId, labels, themeLabels,
           />
           <SheetLink
             href="/categories"
-            icon={IconCompass}
+            icon={IconCategories}
             label={items.categories}
             isActive={pathname === "/categories" || pathname.startsWith("/categories/")}
             onClick={close}
@@ -233,7 +233,7 @@ export function MobileMenu({ open, onOpenChange, contentId, labels, themeLabels,
           <div className="my-2 mx-3 border-t border-border/40" />
 
           {/* Company Section */}
-          <p className="px-3 pt-2 pb-1.5 text-xs font-semibold text-muted-foreground/70 tracking-wide">
+          <p className="px-3 pt-2 pb-1.5 text-xs font-bold text-muted-foreground/70 tracking-wide">
             {sections.modonty}
           </p>
           {navLinksConfig.company.map((link) => {
@@ -257,7 +257,7 @@ export function MobileMenu({ open, onOpenChange, contentId, labels, themeLabels,
           <div className="my-2 mx-3 border-t border-border/40" />
 
           {/* Support Section */}
-          <p className="px-3 pt-2 pb-1.5 text-xs font-semibold text-muted-foreground/70 tracking-wide">
+          <p className="px-3 pt-2 pb-1.5 text-xs font-bold text-muted-foreground/70 tracking-wide">
             {sections.support}
           </p>
           {navLinksConfig.support

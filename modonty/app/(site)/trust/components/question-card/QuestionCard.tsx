@@ -18,7 +18,7 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
   return (
     <Card>
       <CardContent className="py-8 text-center">
-        <h2 className="text-xl font-semibold">{text.title}</h2>
+        <h2 className="text-xl font-bold">{text.title}</h2>
         <p className="mt-1.5 text-muted-foreground">{text.description}</p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
           {whatsappHref ? (
@@ -28,7 +28,7 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
               rel="noopener noreferrer"
               label="Trust Page CTA — تواصل واتساب"
               type="BUTTON"
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 max-md:min-h-11"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 max-lg:min-h-11"
             >
               <IconMessage className="h-4 w-4" />
               {text.whatsapp}
@@ -36,7 +36,7 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
           ) : (
             <Link
               href="/contact"
-              className="rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 max-md:inline-flex max-md:min-h-11 max-md:items-center"
+              className="rounded-md bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 max-lg:inline-flex max-lg:min-h-11 max-lg:items-center"
             >
               {text.contact}
             </Link>
@@ -47,7 +47,7 @@ export function QuestionCard({ whatsappHref }: QuestionCardProps) {
             rel="noopener noreferrer"
             label="Trust Page CTA — شوف الباقات (جبر SEO)"
             type="BUTTON"
-            className="inline-flex items-center gap-1 rounded-md border border-primary px-6 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 max-md:min-h-11"
+            className="inline-flex items-center gap-1 rounded-md border border-primary px-6 py-2.5 text-sm font-bold text-primary transition-colors hover:bg-primary/10 max-lg:min-h-11"
           >
             {text.pricing} <span aria-hidden="true">↗</span>
           </CtaTrackedLink>

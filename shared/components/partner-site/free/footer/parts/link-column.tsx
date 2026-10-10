@@ -17,7 +17,7 @@ export function LinkColumn({ title, links, limit }: { title: string; links: Foot
             {/* On a phone the row becomes the target, not the word: `flex` + `min-h-11` gives a
                 44px tap area across the column instead of a 41×19 sliver. Desktop keeps the
                 inline anchor exactly as it was. */}
-            <SiteLink href={l.href} className="transition-colors hover:text-foreground max-md:flex max-md:min-h-11 max-md:items-center">
+            <SiteLink href={l.href} className="transition-colors hover:text-foreground max-lg:flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center">
               {l.label}
             </SiteLink>
           </li>

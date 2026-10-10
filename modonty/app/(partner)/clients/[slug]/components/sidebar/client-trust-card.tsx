@@ -51,9 +51,9 @@ function ShieldIcon({ className }: { className?: string }) {
 // One «.vRow» — key on the start, value on the end, dashed divider.
 function VRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-dashed border-border py-2.5 text-[12.5px] last:border-0">
+    <div className="flex items-center justify-between gap-3 border-b border-dashed border-border py-2.5 text-xs last:border-0">
       <span className="text-muted-foreground">{label}</span>
-      <span className="text-end font-extrabold text-foreground">{value}</span>
+      <span className="text-end font-bold text-foreground">{value}</span>
     </div>
   );
 }
@@ -119,7 +119,7 @@ export function ClientTrustCard({
           <ShieldIcon className="h-6 w-6" />
         </span>
         <div className="min-w-0">
-          <h4 className="text-[13.5px] font-extrabold text-foreground">
+          <h4 className="text-[13.5px] font-bold text-foreground">
             {messages.shared.badges.verifiedPartnerLabel}
           </h4>
           {commercialRegistrationNumber && (
@@ -133,7 +133,7 @@ export function ClientTrustCard({
               <Button
                 variant="ghost"
                 size="sm"
-                className="mt-1.5 h-auto p-0 text-xs font-extrabold text-[hsl(var(--primary-ink,var(--primary)))] hover:bg-transparent hover:underline"
+                className="mt-1.5 h-auto p-0 text-xs font-bold text-[hsl(var(--primary-ink,var(--primary)))] hover:bg-transparent hover:underline"
               >
                 عرض التوثيق ›
               </Button>
@@ -142,11 +142,11 @@ export function ClientTrustCard({
             <DialogContent className="max-w-[440px] gap-0 overflow-hidden p-0">
               {/* gradient header */}
               <div className="flex items-center gap-3 bg-gradient-to-l from-foreground to-primary p-4 text-white">
-                <span className="grid h-[38px] w-[38px] shrink-0 place-items-center rounded-[10px] bg-white/[0.18]">
+                <span className="grid h-[38px] w-[38px] shrink-0 place-items-center rounded-md bg-white/[0.18]">
                   <ShieldIcon className="h-5 w-5" />
                 </span>
                 <div className="min-w-0">
-                  <DialogTitle className="text-sm font-black text-white">
+                  <DialogTitle className="text-sm font-bold text-white">
                     توثيق {name}
                   </DialogTitle>
                   <DialogDescription className="text-xs text-white/85">
@@ -166,7 +166,7 @@ export function ClientTrustCard({
                     href={maaroofUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3.5 flex items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-[13px] font-extrabold text-white"
+                    className="mt-3.5 flex items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-[13px] font-bold text-white"
                   >
                     تحقّق رسمياً عبر «معروف»
                     <IconExternal className="h-4 w-4" />

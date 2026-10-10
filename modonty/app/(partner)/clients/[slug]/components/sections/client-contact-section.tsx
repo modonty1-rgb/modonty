@@ -65,20 +65,20 @@ export function ClientContactSection({
         <div className="mt-3.5 rounded-md border bg-muted/40 p-[15px]">
           <div className="mb-3.5 flex items-center gap-3">
             <span
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-[11px] border bg-white text-[23px] font-black text-[#4285F4] shadow-[0_6px_16px_-6px_rgba(66,133,244,0.5)]"
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-md border bg-white text-[23px] font-bold text-[#4285F4] shadow-[0_6px_16px_-6px_rgba(66,133,244,0.5)]"
               aria-hidden
             >
               G
             </span>
             <div className="min-w-0">
-              <b className="block text-[13px] font-extrabold text-foreground">
+              <b className="block text-[13px] font-bold text-foreground">
                 بطاقة العمل على Google
               </b>
               <span className="text-xs text-muted-foreground">{clientName}</span>
             </div>
           </div>
           <div className="flex gap-2.5">
-            <Button asChild variant="outline" size="sm" className="flex-1 gap-1.5 text-[12.5px]">
+            <Button asChild variant="outline" size="sm" className="flex-1 gap-1.5 text-xs">
               <a href={viewHref} target="_blank" rel="noopener noreferrer">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
                   <circle cx="11" cy="11" r="7" />
@@ -87,7 +87,7 @@ export function ClientContactSection({
                 عرض على Google
               </a>
             </Button>
-            <Button asChild size="sm" className="flex-1 gap-1.5 text-[12.5px]">
+            <Button asChild size="sm" className="flex-1 gap-1.5 text-xs">
               <a href={directionsHref} target="_blank" rel="noopener noreferrer">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
                   <path d="M3 11l19-9-9 19-2-8-8-2z" />
@@ -100,7 +100,7 @@ export function ClientContactSection({
       )}
 
       {hasAddress && (
-        <div className="mt-3.5 flex items-center justify-center gap-1.5 text-[12px] text-muted-foreground">
+        <div className="mt-3.5 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
           <span aria-hidden>📍</span>
           {addressLine}
         </div>

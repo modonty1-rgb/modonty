@@ -38,7 +38,7 @@ export function PostCardAvatar({
       href={`/clients/${clientSlug}`}
       aria-label={`زيارة صفحة ${clientName}`}
     >
-      <div className={`h-10 w-10 ${BRAND_AVATAR_RADIUS} bg-muted overflow-hidden flex items-center justify-center text-xs font-semibold text-foreground`}>
+      <div className={`h-10 w-10 ${BRAND_AVATAR_RADIUS} bg-muted overflow-hidden flex items-center justify-center text-xs font-bold text-foreground`}>
         {optimizedLogo ? (
           <OptimizedImage
             media={asMedia(optimizedLogo, clientName)}

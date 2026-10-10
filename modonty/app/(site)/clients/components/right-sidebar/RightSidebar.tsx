@@ -4,7 +4,7 @@ import { LinkCard } from "@/components/shared/link-card/LinkCard";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
 import { TrustCard } from "@/app/(site)/clients/components/trust-card/TrustCard";
 import { IndustriesFilter } from "@/app/(site)/clients/components/industries-filter/IndustriesFilter";
-import { IconPlay, IconVolume2 } from "@/lib/icons";
+import { IconReels, IconVolume2 } from "@/lib/icons";
 import type { IndustryFilterRow } from "@/app/(site)/clients/helpers/count-industries";
 import type { PartnersQuery } from "@/app/(site)/clients/helpers/parse-partners-query";
 import type { IndustryListItem } from "@/lib/types";
@@ -32,7 +32,7 @@ export function RightSidebar({ rows, industries, total, query, className }: Righ
       <div className="space-y-4">
         <TrustCard variant="directory" />
         <IndustriesFilter rows={rows} industries={industries} total={total} query={query} />
-        <LinkCard href="/reels" title={text.reelsCardTitle} description={text.reelsCardSubtitle} icon={IconPlay} />
+        <LinkCard href="/reels" title={text.reelsCardTitle} description={text.reelsCardSubtitle} icon={IconReels} />
         <LinkCard href="/audio" title={text.audioCardTitle} description={text.audioCardSubtitle} icon={IconVolume2} />
       </div>
     </StickyRail>

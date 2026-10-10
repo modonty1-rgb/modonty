@@ -17,7 +17,7 @@ export function SectionHeading({ eyebrow, title, more }: SectionHeadingProps) {
           <span className="h-0.5 w-6 rounded-full bg-accent" aria-hidden />
           {eyebrow}
         </p>
-        <h2 className="mt-2 text-2xl font-bold leading-tight text-foreground md:text-[28px]">{title}</h2>
+        <h2 className="mt-2 text-2xl font-bold leading-tight text-foreground lg:text-[28px]">{title}</h2>
       </div>
       {more ? (
         <Link href={more.href} className="flex shrink-0 items-center gap-1 text-sm text-[hsl(var(--primary-ink,var(--primary)))] hover:underline underline-offset-4">

@@ -62,7 +62,7 @@ export async function TrustCard({ variant = "home" }: { variant?: "home" | "dire
                         </span>
                       )}
                       <span className="flex min-w-0 flex-col">
-                        <span className="truncate text-[12.5px] font-bold leading-tight">{p.name}</span>
+                        <span className="truncate text-xs font-bold leading-tight">{p.name}</span>
                         <span className="mt-0.5 truncate text-xs text-muted-foreground">
                           {p.industry ? `${p.industry} · ` : ""}
                           {text.joinedPrefix} {JOINED.format(p.joinedAt)}
@@ -78,7 +78,7 @@ export async function TrustCard({ variant = "home" }: { variant?: "home" | "dire
           ) : null}
 
           <p className="mt-2 flex items-center justify-center gap-1.5 text-xs leading-tight text-action-listen">
-            <IconVerified className="size-3.5 shrink-0" aria-hidden />
+            <IconVerified className="size-4 shrink-0" aria-hidden />
             {text.trustLine}
           </p>
 
@@ -92,7 +92,7 @@ export async function TrustCard({ variant = "home" }: { variant?: "home" | "dire
           <ul className="mt-1.5 flex flex-col gap-1.5">
             {[text.verifyRegister, text.verifyContact, text.verifyReview].map((line) => (
               <li key={line} className="flex items-start gap-1.5 text-xs leading-5">
-                <IconVerified className="mt-0.5 size-3.5 shrink-0 text-action-listen" aria-hidden />
+                <IconVerified className="mt-0.5 size-4 shrink-0 text-action-listen" aria-hidden />
                 <span>{line}</span>
               </li>
             ))}

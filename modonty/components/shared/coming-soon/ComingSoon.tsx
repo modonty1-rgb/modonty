@@ -45,7 +45,7 @@ export function ComingSoon({ name, blurb, icon: Icon }: ComingSoonProps) {
         >
           {/* `left-1/2`, not `start-1/2`: centring is direction-free, and `start` in RTL would
               need a mirrored translate to land on the same point. */}
-          <span className="absolute -top-2 left-1/2 size-4 -translate-x-1/2 rotate-45 rounded-[3px] bg-accent shadow-[0_0_12px_hsl(var(--accent)/0.7)]" />
+          <span className="absolute -top-2 left-1/2 size-4 -translate-x-1/2 rotate-45 rounded-sm bg-accent shadow-[0_0_12px_hsl(var(--accent)/0.7)]" />
         </div>
         <div className="grid size-28 place-items-center rounded-full bg-card shadow-lg ring-1 ring-border">
           <Icon className="size-14 text-foreground [--modonty-ai-body:currentColor] [--modonty-link-body:currentColor]" aria-hidden />
@@ -57,7 +57,7 @@ export function ComingSoon({ name, blurb, icon: Icon }: ComingSoonProps) {
         {t.badge}
       </span>
 
-      <h1 className="mt-3 text-balance text-3xl font-black leading-tight text-foreground sm:text-4xl">{name}</h1>
+      <h1 className="text-display mt-3 text-balance text-foreground">{name}</h1>
       <p className="mt-3 text-balance text-base leading-relaxed text-foreground/85 sm:text-lg">{blurb}</p>
       <p className="mt-2 text-balance text-sm text-muted-foreground">{t.lead}</p>
 

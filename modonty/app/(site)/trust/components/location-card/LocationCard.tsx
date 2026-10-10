@@ -32,7 +32,7 @@ export function LocationCard({ contact, map, legal, siteName }: LocationCardProp
         <CardDescription>{text.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className={cn("grid gap-6", map && "md:grid-cols-2")}>
+        <div className={cn("grid gap-6", map && "lg:grid-cols-2")}>
           <ul className="space-y-4">
             {contact.map(({ Icon, k, v, ltr }) => (
               <li key={k} className="flex gap-3">
@@ -41,7 +41,7 @@ export function LocationCard({ contact, map, legal, siteName }: LocationCardProp
                 </span>
                 <div>
                   <div className="text-xs text-muted-foreground">{k}</div>
-                  <div className={cn("font-semibold", ltr && "[direction:ltr]")}>{v}</div>
+                  <div className={cn("font-bold", ltr && "[direction:ltr]")}>{v}</div>
                 </div>
               </li>
             ))}
@@ -63,10 +63,10 @@ export function LocationCard({ contact, map, legal, siteName }: LocationCardProp
             href={mapLinkUrl(map.lat, map.lng)}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary underline underline-offset-4 hover:opacity-80 max-md:min-h-11"
+            className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-primary underline underline-offset-4 hover:opacity-80 max-lg:min-h-11"
           >
             {text.openInMaps}
-            <IconExternal className="h-3.5 w-3.5" />
+            <IconExternal className="h-4 w-4" />
           </a>
         )}
       </CardContent>

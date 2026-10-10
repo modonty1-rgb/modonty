@@ -58,10 +58,10 @@ function TestimonialPlayerImpl() {
         <div className="flex items-center gap-2">
           <span aria-hidden className="text-2xl">💬</span>
           <div className="flex flex-col">
-            <p className="text-sm md:text-base font-extrabold text-foreground leading-tight">
+            <p className="text-sm lg:text-base font-bold text-foreground leading-tight">
               شركاء النجاح
             </p>
-            <p className="text-xs md:text-xs text-foreground/65 leading-tight">
+            <p className="text-xs lg:text-xs text-foreground/65 leading-tight">
               تجارب حقيقية موثّقة على قناة مدونتي
             </p>
           </div>
@@ -70,11 +70,11 @@ function TestimonialPlayerImpl() {
           href={active.watchUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 max-md:min-h-11 max-md:px-4 rounded-full bg-muted hover:bg-muted/70 text-xs font-bold text-foreground/80 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+          className="inline-flex items-center gap-1 px-2.5 py-1.5 max-lg:min-h-11 max-md:px-4 rounded-full bg-muted hover:bg-muted/70 text-xs font-bold text-foreground/80 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
           aria-label="افتح في YouTube"
         >
           <span>YouTube</span>
-          <IconExternal className="w-3 h-3" />
+          <IconExternal className="size-4" />
         </a>
       </div>
 
@@ -117,13 +117,13 @@ function TestimonialPlayerImpl() {
               }`}
             >
               <div className="flex items-center gap-1.5 mb-0.5">
-                <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-primary" : "text-foreground/55"}`} />
-                <span className="text-xs md:text-[12px] font-extrabold truncate">{v.label}</span>
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-primary" : "text-foreground/55"}`} />
+                <span className="text-xs lg:text-xs font-bold truncate">{v.label}</span>
               </div>
-              <p className="text-xs md:text-xs text-foreground/55 truncate">
+              <p className="text-xs lg:text-xs text-foreground/55 truncate">
                 {v.duration} · {v.hint}
               </p>
-              <p className="mt-0.5 text-xs md:text-xs font-bold text-emerald-600 dark:text-emerald-400 truncate flex items-center gap-1">
+              <p className="mt-0.5 text-xs lg:text-xs font-bold text-emerald-600 dark:text-emerald-400 truncate flex items-center gap-1">
                 <span aria-hidden>📈</span>
                 <span className="truncate">{v.outcome}</span>
               </p>
@@ -164,13 +164,13 @@ function TestimonialPlayerImpl() {
       </div>
 
       {/* FOOTER NOTE */}
-      <p className="text-xs md:text-xs text-center text-foreground/55 px-3 leading-relaxed">
+      <p className="text-xs lg:text-xs text-center text-foreground/55 px-3 leading-relaxed">
         شهادة موثّقة على قناة مدونتي الرسمية —{" "}
         <a
           href="https://www.youtube.com/@modonty"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary hover:underline max-md:inline-flex max-md:items-center max-md:justify-center max-md:min-h-11 max-md:min-w-11 max-md:px-2 max-md:align-middle"
+          className="text-primary hover:underline max-lg:inline-flex max-lg:items-center max-md:justify-center max-lg:min-h-11 max-lg:min-w-11 max-md:px-2 max-md:align-middle lg:inline-flex lg:min-h-6 lg:items-center"
         >
           @modonty
         </a>

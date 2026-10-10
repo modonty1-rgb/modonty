@@ -35,7 +35,7 @@ export function PostCardHeroImage({
       className="absolute top-2 start-2 z-10 hidden items-center gap-1 rounded-full bg-teal-500/90 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm lg:inline-flex"
       aria-label="نسخة صوتية متاحة"
     >
-      <IconVolume2 className="h-3 w-3" aria-hidden />
+      <IconVolume2 className="size-4" aria-hidden />
       <span>نسخة صوتية</span>
     </span>
   ) : null;

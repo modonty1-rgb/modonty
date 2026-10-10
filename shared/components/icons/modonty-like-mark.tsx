@@ -1,33 +1,24 @@
-import type { SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The modonty LIKE / FAVORITE mark — الإعجاب.
- *
- * Traced verbatim from the approved original in
- * `documents/design/modonty_icon_system_MASTER_COMPLETE.html` (`data-icon-id="like"`),
- * which that file names the single source of truth: "لا يتم إعادة تصميم الأيقونة أثناء
- * مرحلة SVG". Nothing here was redrawn — only the colours became CSS hooks and the
- * attributes became JSX.
- *
- * Approved concept: قلب انسيابي متماثل بانحناءات هندسية نقية، يتوسطه نبض الماسة السماوية المشعة.
- *
- * Category: Engagement / Social · Upvote, article appreciation, favorite posts
- *
- * Icon contract, same as the rest of the set: `currentColor` + a `1em` box so the mark
- * takes the size and colour of the text around it, two CSS hooks — `--modonty-like-body` · `--modonty-like-accent` (the diamond).
+ * The modonty LIKE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-like-body` · `--modonty-like-accent` (the diamond).
  */
-export function ModontyLikeMark(props: SVGProps<SVGSVGElement>) {
+export function ModontyLikeMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M12 20.5C12 20.5 3.5 15.5 3.5 9.5A4.75 4.75 0 0 1 12 6.6A4.75 4.75 0 0 1 20.5 9.5C20.5 15.5 12 20.5 12 20.5Z" stroke="var(--modonty-like-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.63A0.5 0.5 0 0 1 12.35 9.63L14.12 11.4A0.5 0.5 0 0 1 14.12 12.1L12.35 13.87A0.5 0.5 0 0 1 11.65 13.87L9.88 12.1A0.5 0.5 0 0 1 9.88 11.4Z" fill="var(--modonty-like-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M60 98C60 98 20 74 20 46C20 32 32 22 45 22C52 22 57 26 60 30C63 26 68 22 75 22C88 22 100 32 100 46C100 74 60 98 60 98Z" stroke="var(--modonty-like-body, currentColor)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="50" y="42" width="20" height="20" rx="4" transform="rotate(30 60 52)" fill="var(--modonty-like-accent, var(--modonty-accent, #00d8d8))"/>
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M8 13.5C8 13.5 2.5 10 2.5 6.25A3.25 3.25 0 0 1 8 4.2A3.25 3.25 0 0 1 13.5 6.25C13.5 10 8 13.5 8 13.5Z" stroke="var(--modonty-like-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.69A0.3 0.3 0 0 1 8.21 6.69L9.56 8.04A0.3 0.3 0 0 1 9.56 8.46L8.21 9.81A0.3 0.3 0 0 1 7.79 9.81L6.44 8.46A0.3 0.3 0 0 1 6.44 8.04Z" fill="var(--modonty-like-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

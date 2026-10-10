@@ -180,7 +180,7 @@ export function RegisterForm() {
               <Input
                 id="name"
                 autoComplete="name"
-                className="max-md:h-11"
+                className="max-lg:h-11"
                 placeholder="يظهر على تعليقاتك"
                 {...register("name")}
                 disabled={isSubmitting}
@@ -196,7 +196,7 @@ export function RegisterForm() {
                 id="email"
                 type="email"
                 autoComplete="email"
-                className="max-md:h-11"
+                className="max-lg:h-11"
                 placeholder="example@email.com"
                 {...register("email")}
                 disabled={isSubmitting}
@@ -214,14 +214,14 @@ export function RegisterForm() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
                   placeholder={PASSWORD_HINT}
-                  className="pe-10 max-md:h-11 max-md:pe-12"
+                  className="pe-10 max-lg:h-11 max-md:pe-12"
                   {...register("password")}
                   disabled={isSubmitting}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute inset-y-0 end-2 flex items-center text-muted-foreground hover:text-foreground max-md:end-0 max-md:w-11 max-md:justify-center"
+                  className="absolute inset-y-0 end-2 flex w-8 items-center justify-center text-muted-foreground hover:text-foreground max-md:end-0 max-lg:w-11"
                   aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
                 >
                   {showPassword ? <IconEyeOff className="h-5 w-5" /> : <IconViews className="h-5 w-5" />}
@@ -253,7 +253,7 @@ export function RegisterForm() {
                   type="checkbox"
                   checked={alertOn}
                   onChange={(e) => setAlertOn(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+                  className="mt-0.5 size-5 shrink-0 cursor-pointer accent-primary"
                   disabled={isSubmitting}
                 />
                 <label htmlFor="alertConsent" className="cursor-pointer text-sm font-medium leading-relaxed">
@@ -266,7 +266,7 @@ export function RegisterForm() {
               <input
                 id="marketingConsent"
                 type="checkbox"
-                className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+                className="mt-0.5 size-5 shrink-0 cursor-pointer accent-primary"
                 disabled={isSubmitting}
                 {...register("marketingConsent")}
               />
@@ -300,7 +300,7 @@ export function RegisterForm() {
             <span className="text-muted-foreground">لديك حساب بالفعل؟ </span>
             <Link
               href={callbackUrl === "/" ? "/users/login" : `/users/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-              className="text-primary hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-2"
+              className="text-primary hover:underline max-lg:inline-flex max-lg:min-h-11 max-lg:items-center max-md:px-2 lg:inline-flex lg:min-h-6 lg:items-center"
             >
               تسجيل الدخول
             </Link>

@@ -23,7 +23,7 @@ export default async function ClientMentionsPage({ params }: ClientMentionsPageP
     <section aria-labelledby="client-mentions-heading" className="space-y-2">
       <h2
         id="client-mentions-heading"
-        className="text-xl font-semibold leading-snug text-foreground"
+        className="text-xl font-bold leading-snug text-foreground"
       >
         الإشارات
       </h2>

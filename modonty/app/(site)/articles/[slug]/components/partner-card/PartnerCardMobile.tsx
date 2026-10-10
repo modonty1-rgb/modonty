@@ -63,10 +63,10 @@ export function PartnerCardMobile({ client, articleId, credential, details, labe
         <span className="min-w-0 flex-1">
           {/* The claim first, small: it is what the reader is checking before they read, and it
               frames the name underneath instead of repeating beside it. */}
-          <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
+          <span className="flex items-center gap-1 text-xs font-bold text-muted-foreground">
             {/* // مشروطةٌ بخانة الأدمن منذ ١٧ سبتمبر — كانت تُرسم لكل شريك بلا استثناء.
                 والنصّ «راجعه واعتمده» عن المقال فيبقى بلا شرط. */}
-            {client.isVerified && <VerifiedBadge className="h-3.5 w-3.5" label={labels.verifiedBadge} />}
+            {client.isVerified && <VerifiedBadge className="h-4 w-4" label={labels.verifiedBadge} />}
             {labels.reviewed}
           </span>
           <span className="mt-0.5 block truncate text-[15px] font-bold leading-tight text-foreground">

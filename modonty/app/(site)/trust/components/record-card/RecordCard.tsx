@@ -29,7 +29,7 @@ export function RecordCard({ certificateSrc, siteName, legal, facts }: RecordCar
         <CardDescription>{text.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2">
           <figure className="m-0">
             <a href={certificateSrc} target="_blank" rel="noopener noreferrer" className="block">
               <OptimizedImage
@@ -71,7 +71,7 @@ export function RecordCard({ certificateSrc, siteName, legal, facts }: RecordCar
                     <span className="text-muted-foreground">{f.k}</span>
                     <span
                       className={cn(
-                        "text-end font-semibold",
+                        "text-end font-bold",
                         f.ltr && "[direction:ltr]",
                         f.active && "text-green-600"
                       )}
@@ -86,15 +86,15 @@ export function RecordCard({ certificateSrc, siteName, legal, facts }: RecordCar
 
             {legal.cr && (
               <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                <span className="font-semibold">{text.verifyYourself}</span>
+                <span className="font-bold">{text.verifyYourself}</span>
                 <a
                   href={SAUDI_BUSINESS_VERIFY_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 font-semibold text-primary underline underline-offset-4 hover:opacity-80"
+                  className="inline-flex items-center gap-1 font-bold text-primary underline underline-offset-4 hover:opacity-80"
                 >
                   {text.verifyLink}
-                  <IconExternal className="h-3.5 w-3.5" />
+                  <IconExternal className="h-4 w-4" />
                 </a>
               </div>
             )}
@@ -102,9 +102,9 @@ export function RecordCard({ certificateSrc, siteName, legal, facts }: RecordCar
             {legal.legalName && (
               <p className="mt-4 border-t border-border pt-4 text-sm text-muted-foreground">
                 {text.umbrellaLead}{" "}
-                <span className="font-semibold text-foreground">{siteName}</span>{" "}
+                <span className="font-bold text-foreground">{siteName}</span>{" "}
                 {text.umbrellaMid}{" "}
-                <span className="font-semibold text-foreground">{legal.legalName}</span>{" "}
+                <span className="font-bold text-foreground">{legal.legalName}</span>{" "}
                 {text.umbrellaTail}
               </p>
             )}

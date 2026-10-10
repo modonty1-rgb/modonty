@@ -33,12 +33,12 @@ export function FacilityLookup({ labels: t }: { labels: FacilityLookupLabels }) 
                   {f.type} · {f.city || f.region}
                 </p>
                 {f.source === "cbahi" ? (
-                  <p className={`mt-0.5 text-xs font-semibold ${statusClass(f.status)}`}>
+                  <p className={`mt-0.5 text-xs font-bold ${statusClass(f.status)}`}>
                     {fill(t.cbahi, { status: f.status ?? "" })}
                     {f.until && f.status === "معتمد" ? ` · ${fill(t.until, { date: f.until })}` : ""}
                   </p>
                 ) : (
-                  <p className="mt-0.5 text-xs font-semibold text-primary">{t.insurance}</p>
+                  <p className="mt-0.5 text-xs font-bold text-primary">{t.insurance}</p>
                 )}
               </li>
             ))}

@@ -105,20 +105,20 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
               className="text-right hover:no-underline py-5 px-2 -mx-2 rounded-md hover:bg-muted/50 transition-all"
             >
               <div className="flex items-center justify-between w-full gap-4">
-                <span className="font-semibold text-base text-foreground leading-relaxed flex-1 text-right">
+                <span className="font-bold text-base text-foreground leading-relaxed flex-1 text-right">
                   {item.question}
                 </span>
                 <div className="flex items-center gap-3 text-xs shrink-0">
                   <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary/5 border border-primary/10">
-                    <IconLike className="h-3.5 w-3.5 text-primary" />
-                    <span className="font-semibold text-primary tabular-nums">
+                    <IconLike className="h-4 w-4 text-primary" />
+                    <span className="font-bold text-primary tabular-nums">
                       {upvoteCount}
                     </span>
                     <span className="text-muted-foreground hidden sm:inline">مفيد</span>
                   </div>
                   <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-destructive/5 border border-destructive/10">
-                    <IconDislike className="h-3.5 w-3.5 text-destructive" />
-                    <span className="font-semibold text-destructive tabular-nums">
+                    <IconDislike className="h-4 w-4 text-destructive" />
+                    <span className="font-bold text-destructive tabular-nums">
                       {downvoteCount}
                     </span>
                     <span className="text-muted-foreground hidden sm:inline">غير مفيد</span>
@@ -134,11 +134,11 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
             >
               <div
                 dangerouslySetInnerHTML={{ __html: item.answer }}
-                className="prose prose-sm max-w-none text-muted-foreground mb-6"
+                className="prose max-w-none text-muted-foreground mb-6"
               />
               <div className="flex flex-col gap-4 pt-6 mt-6 border-t border-border bg-muted/20 rounded-lg p-4 -mx-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-foreground">هل كان هذا مفيداً؟</span>
+                  <span className="text-sm font-bold text-foreground">هل كان هذا مفيداً؟</span>
                 </div>
                 <div className="flex gap-3">
                   <Button
@@ -148,8 +148,8 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
                     disabled={isSubmittingHelpful || isSubmittingNotHelpful}
                     className={
                       feedbackState === "helpful"
-                        ? "max-md:h-11 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 shadow-sm"
-                        : "max-md:h-11 hover:bg-primary/5 border border-transparent hover:border-primary/10"
+                        ? "max-lg:h-11 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 shadow-sm"
+                        : "max-lg:h-11 hover:bg-primary/5 border border-transparent hover:border-primary/10"
                     }
                   >
                     {isSubmittingHelpful ? (
@@ -166,8 +166,8 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
                     disabled={isSubmittingHelpful || isSubmittingNotHelpful}
                     className={
                       feedbackState === "not-helpful"
-                        ? "max-md:h-11 bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20 shadow-sm"
-                        : "max-md:h-11 hover:bg-destructive/5 border border-transparent hover:border-destructive/10"
+                        ? "max-lg:h-11 bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20 shadow-sm"
+                        : "max-lg:h-11 hover:bg-destructive/5 border border-transparent hover:border-destructive/10"
                     }
                   >
                     {isSubmittingNotHelpful ? (

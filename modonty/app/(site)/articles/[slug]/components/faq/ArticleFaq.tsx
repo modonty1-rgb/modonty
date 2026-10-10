@@ -39,7 +39,7 @@ export function ArticleFaq({ articleId: _articleId, faqsCount, faqs, pendingFaqs
             {faqs.map((faq) => (
               <Card key={faq.id}>
                 <CardHeader className="p-4 pb-0">
-                  <CardTitle className="text-base font-semibold">{faq.question}</CardTitle>
+                  <CardTitle className="text-base font-bold">{faq.question}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-2">
                   <p className="text-sm text-muted-foreground leading-relaxed">
@@ -50,13 +50,13 @@ export function ArticleFaq({ articleId: _articleId, faqsCount, faqs, pendingFaqs
             ))}
             {pendingFaqs.length > 0 && (
               <>
-                <p className="text-xs font-semibold text-muted-foreground uppercase pt-2">
+                <p className="text-xs font-bold text-muted-foreground uppercase pt-2">
                   أسئلتك المعلقة
                 </p>
                 {pendingFaqs.map((faq) => (
                   <Card key={faq.id}>
                     <CardHeader className="p-4 pb-0">
-                      <CardTitle className="text-base font-semibold">{faq.question}</CardTitle>
+                      <CardTitle className="text-base font-bold">{faq.question}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 pt-2">
                       <Badge className="text-xs bg-accent text-accent-foreground">

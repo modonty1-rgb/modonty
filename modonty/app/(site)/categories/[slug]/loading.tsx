@@ -15,7 +15,7 @@ export default function CategoryDetailLoading() {
 
       <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-background border-b">
         <div className="container mx-auto max-w-[1128px] px-4 py-12 md:py-16">
-          <div className="flex flex-col md:flex-row gap-8 items-start">
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
             <Skeleton className="w-full md:w-48 aspect-video md:aspect-square rounded-xl" />
 
             <div className="flex-1">
@@ -64,7 +64,7 @@ export default function CategoryDetailLoading() {
 
         <section className="mt-12 pt-8 border-t">
           <Skeleton className="h-7 w-40 mb-4" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="p-4 border rounded-lg space-y-3">
                 <Skeleton className="h-5 w-24" />

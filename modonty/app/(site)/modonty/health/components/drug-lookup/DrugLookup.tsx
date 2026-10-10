@@ -34,7 +34,7 @@ export function DrugLookup({ labels: t }: { labels: DrugLookupLabels }) {
                 </bdi>
                 <p className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs">
                   {d.dispensing !== "other" && (
-                    <span className={`font-semibold ${DISPENSING_CLASS[d.dispensing]}`}>{d.dispensing === "otc" ? t.otc : t.prescription}</span>
+                    <span className={`font-bold ${DISPENSING_CLASS[d.dispensing]}`}>{d.dispensing === "otc" ? t.otc : t.prescription}</span>
                   )}
                   <bdi dir="ltr" className="text-muted-foreground">
                     {d.manufacturer}

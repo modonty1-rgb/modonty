@@ -16,8 +16,8 @@ interface TermsBodyProps {
 /** The readable half of the page: heading, last-updated line, and the terms themselves. */
 export function TermsBody({ title, html, updatedAt }: TermsBodyProps) {
   return (
-    <div className="prose prose-sm max-w-none">
-      <h1 className="text-3xl font-bold mb-6">{title}</h1>
+    <div className="prose max-w-none">
+      <h1 className="text-h1 mb-6">{title}</h1>
       {updatedAt && (
         <p className="text-sm text-muted-foreground mb-6">
           {text.lastUpdatedLabel}{" "}

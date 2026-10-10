@@ -22,7 +22,7 @@ export function ReposCard({ repos }: { repos: Repo[] | null }) {
           {repos.map((r) => (
             <li key={r.name}>
               <a href={r.url} target="_blank" rel="noopener noreferrer" className="block py-2.5 hover:text-link">
-                <bdi dir="ltr" className="block truncate text-sm font-semibold">
+                <bdi dir="ltr" className="block truncate text-sm font-bold">
                   {r.name}
                 </bdi>
                 {/* Arabic first; the owner's own words only when no translation came back. */}

@@ -132,7 +132,7 @@ export function RouteError({ error, retry, what, back }: RouteErrorProps) {
           <IconError className="h-12 w-12 text-destructive" aria-hidden />
 
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">{what} ما فتحت</h1>
+            <h1 className="text-h1">{what} ما فتحت</h1>
             <p className="text-sm text-muted-foreground">
               صار خلل من عندنا، مو من عندك. جرّب مرة ثانية — وإذا تكرّر، خبّرنا.
             </p>

@@ -21,7 +21,7 @@ export default function TagLoading() {
       </div>
 
       <div className="container mx-auto max-w-[1128px] px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="rounded-lg border overflow-hidden">
               <Skeleton className="aspect-video w-full" />

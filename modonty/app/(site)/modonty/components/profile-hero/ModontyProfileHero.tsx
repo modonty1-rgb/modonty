@@ -97,7 +97,7 @@ export function ModontyProfileHero({
             {/* A 3px teal rule above the name: the brand's colour anchoring the block
                 without drawing the mark a third time. Phones only — desktop has the avatar
                 doing that job. */}
-            <h1 className="shrink-0 text-[28px] font-black leading-[1.15] tracking-tight text-foreground max-lg:relative max-lg:ps-3 max-lg:before:absolute max-lg:before:inset-y-1 max-lg:before:start-0 max-lg:before:w-[3px] max-lg:before:rounded-full max-lg:before:bg-accent sm:text-3xl sm:font-bold sm:leading-tight sm:tracking-normal sm:ps-0 sm:before:hidden">
+            <h1 className="text-h1 shrink-0 text-foreground max-lg:relative max-lg:ps-3 max-lg:before:absolute max-lg:before:inset-y-1 max-lg:before:start-0 max-lg:before:w-[3px] max-lg:before:rounded-full max-lg:before:bg-accent sm:tracking-normal sm:ps-0 sm:before:hidden">
               {name}
             </h1>
             {/* NOT `description`. That field is modonty's sales line — «تكتب باسمك،
@@ -129,7 +129,7 @@ export function ModontyProfileHero({
             type="BANNER"
             // <768px the bottom bar already carries «صِر شريكاً» (Khalid, 21 Aug: two of
             // the same door on one screen is one too many) — desktop has no bottom bar.
-            className={buttonVariants({ className: "mb-1 shrink-0 max-md:hidden" })}
+            className={buttonVariants({ className: "mb-1 shrink-0 max-lg:hidden" })}
           >
             <IconAdd aria-hidden />
             {messages.becomePartner.cta}
@@ -170,7 +170,7 @@ function TrustStrip() {
         </p>
         <Link
           href="/trust"
-          className="group inline-flex shrink-0 items-center gap-1 rounded-sm text-sm font-medium text-primary transition-[color,transform] hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-safe:active:scale-[0.98]"
+          className="group inline-flex shrink-0 min-h-8 items-center gap-1 rounded-sm text-sm font-medium text-primary transition-[color,transform] hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-safe:active:scale-[0.98]"
         >
           {TRUST.moreLabel}
           <IconChevronRight className="h-4 w-4 rtl:rotate-180 transition-transform group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5" aria-hidden />

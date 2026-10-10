@@ -46,7 +46,7 @@ export function StoryCard() {
 
       <Link
         href="/story"
-        className="group mt-4 inline-flex items-center gap-1 rounded-sm text-sm font-medium text-primary transition-[color,transform] hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-safe:active:scale-[0.98]"
+        className="group mt-4 inline-flex min-h-8 items-center gap-1 rounded-sm text-sm font-medium text-primary transition-[color,transform] hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-safe:active:scale-[0.98]"
       >
         {SUMMARY.moreLabel}
         <IconChevronRight

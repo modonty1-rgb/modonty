@@ -29,7 +29,7 @@ export function ModelsCard({ id, title, note, models }: { id: string; title: str
               <a href={m.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 py-2.5 hover:text-link">
                 <span className="mt-0.5 w-5 shrink-0 text-center text-sm font-bold text-muted-foreground tabular-nums">{N.format(i + 1)}</span>
                 <span className="min-w-0 flex-1">
-                  <bdi dir="ltr" className="block truncate text-sm font-semibold">
+                  <bdi dir="ltr" className="block truncate text-sm font-bold">
                     {m.name}
                   </bdi>
                   {m.author && (

@@ -20,13 +20,13 @@ export function CenteredFooter({ data, preview = false }: { data: FooterData; pr
               <li key={p.href}>
                 {/* الارتفاع كان ٤٤ سليماً والعرض ٣٨–٤٣ للتسميات القصيرة («خدماتنا» ٤١ ·
                     «أعمالنا» ٣٨). الهدف مربّع لا خطّ: `min-w-11` يكمل البُعد الثاني. */}
-                <SiteLink href={p.href} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:min-w-11 max-md:items-center max-md:justify-center">{p.label}</SiteLink>
+                <SiteLink href={p.href} className="transition-colors hover:text-foreground max-lg:inline-flex max-lg:min-h-11 max-lg:min-w-11 max-lg:items-center max-md:justify-center lg:inline-flex lg:min-h-6 lg:items-center">{p.label}</SiteLink>
               </li>
             ))}
           </ul>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
-            {data.phone && <SiteLink href={`tel:${data.phone}`} dir="ltr" className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.phone}</SiteLink>}
-            {data.email && <SiteLink href={`mailto:${data.email}`} className="transition-colors hover:text-foreground max-md:inline-flex max-md:min-h-11 max-md:items-center">{data.email}</SiteLink>}
+            {data.phone && <SiteLink href={`tel:${data.phone}`} dir="ltr" className="transition-colors hover:text-foreground max-lg:inline-flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center">{data.phone}</SiteLink>}
+            {data.email && <SiteLink href={`mailto:${data.email}`} className="transition-colors hover:text-foreground max-lg:inline-flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center">{data.email}</SiteLink>}
             <WhatsAppButton href={data.whatsappHref} variant="text" />
           </div>
           <SocialLinks urls={data.socialLinks} inert={preview} />

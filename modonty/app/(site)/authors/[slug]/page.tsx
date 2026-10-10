@@ -269,7 +269,7 @@ export default async function AuthorPage({ params, searchParams }: AuthorPagePro
               </div>
 
               <div className="space-y-1">
-                <h1 className="flex items-center justify-center gap-2 text-3xl font-bold tracking-tight">
+                <h1 className="text-h1 flex items-center justify-center gap-2">
                   {author.name}
                   {author.verificationStatus && (
                     <span title="ناشر موثّق" className="inline-flex text-primary">
@@ -294,9 +294,9 @@ export default async function AuthorPage({ params, searchParams }: AuthorPagePro
                         href={s.href}
                         target="_blank"
                         rel="me noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-xs font-medium max-md:min-h-11 text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
+                        className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-xs font-medium max-lg:min-h-11 text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
                       >
-                        <Icon className="h-3.5 w-3.5" />
+                        <Icon className="h-4 w-4" />
                         {s.label}
                       </a>
                     );
@@ -311,7 +311,7 @@ export default async function AuthorPage({ params, searchParams }: AuthorPagePro
                   <>
                     <span className="mx-1 text-border">·</span>
                     <a href={`mailto:${author.email}`} className="inline-flex items-center gap-1 hover:text-primary">
-                      <IconEmail className="h-3.5 w-3.5" />
+                      <IconEmail className="h-4 w-4" />
                       تواصل
                     </a>
                   </>
@@ -329,7 +329,7 @@ export default async function AuthorPage({ params, searchParams }: AuthorPagePro
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-2xl font-bold">{author.name}</h1>
+              <h1 className="text-h1">{author.name}</h1>
               {author.jobTitle && <p className="text-muted-foreground mt-1">{author.jobTitle}</p>}
             </div>
             {author.bio && (
@@ -350,12 +350,12 @@ export default async function AuthorPage({ params, searchParams }: AuthorPagePro
         {/* Articles */}
         {articles.length > 0 && (
           <section aria-labelledby="author-articles-heading">
-            <h2 id="author-articles-heading" className="text-xl font-semibold mb-6">
+            <h2 id="author-articles-heading" className="text-xl font-bold mb-6">
               {isOrg
                 ? messages.shared.author.orgArticlesTitle
                 : messages.shared.author.articlesTitle}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {articles.map((article) => (
                 <Link key={article.slug} href={`/articles/${article.slug}`}>
                   <Card className="overflow-hidden hover:shadow-md transition-shadow h-full">
@@ -371,7 +371,7 @@ export default async function AuthorPage({ params, searchParams }: AuthorPagePro
                       </div>
                     )}
                     <CardContent className="p-4">
-                      <h3 className="font-semibold line-clamp-2">{article.title}</h3>
+                      <h3 className="font-bold line-clamp-2">{article.title}</h3>
                       {article.excerpt && (
                         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{article.excerpt}</p>
                       )}

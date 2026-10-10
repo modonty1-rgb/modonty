@@ -15,7 +15,7 @@ export function ClassicHeader({ data }: { data: HeaderData }) {
   return (
     <header className="relative border-b bg-background">
       <HeaderBar>
-        <SiteLink href={data.homeHref} className="min-w-0 max-md:flex max-md:min-h-11 max-md:items-center">
+        <SiteLink href={data.homeHref} className="min-w-0 max-lg:flex max-lg:min-h-11 max-lg:items-center lg:inline-flex lg:min-h-6 lg:items-center">
           <BrandLogo name={data.name} tagline={data.tagline} logoUrl={data.logoUrl} />
         </SiteLink>
         {data.verified ? <VerifiedBadge /> : null}

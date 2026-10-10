@@ -64,11 +64,11 @@ export function PartnerStrip({ client, cta }: PartnerStripProps) {
         <div className="min-w-0 flex-1">
           <Link
             href={`/clients/${client.slug}`}
-            className="flex items-center gap-1 text-[13px] font-semibold leading-tight text-foreground hover:text-primary"
+            className="flex min-h-6 items-center gap-1 text-[13px] font-bold leading-tight text-foreground hover:text-primary max-lg:min-h-11"
           >
             <span className="truncate">{client.name}</span>
             {/* // مشروطةٌ بخانة الأدمن منذ ١٧ سبتمبر — كانت تُرسم لكل شريك بلا استثناء. */}
-            {client.isVerified && <VerifiedBadge className="size-3.5" label="شريك موثّق" />}
+            {client.isVerified && <VerifiedBadge className="size-4" label="شريك موثّق" />}
           </Link>
           {credential && (
             <p className="mt-0.5 line-clamp-1 text-xs leading-tight text-muted-foreground">
@@ -95,7 +95,7 @@ export function PartnerStrip({ client, cta }: PartnerStripProps) {
                screen). The solid one stays where the reader has finished and is deciding; this
                one steps down to a standing reminder. `--link` rather than `--primary` for the
                blue: as text/edge on dark, primary measures 3.5:1 and 2.77:1 — see globals.css. */
-            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md border border-link bg-transparent px-3 py-2.5 text-sm font-semibold text-link transition-colors hover:bg-primary/10"
+            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md border border-link bg-transparent px-3 py-2.5 text-sm font-bold text-link transition-colors hover:bg-primary/10"
           />
           <WhatsAppAction
             phone={client.phone}
@@ -120,7 +120,7 @@ export function PartnerStrip({ client, cta }: PartnerStripProps) {
             clientId={client.id}
             target="_blank"
             rel="noopener"
-            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-[13px] font-semibold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
+            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-[13px] font-bold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
           >
             {isWhatsAppUrl(cta.url) ? <WhatsAppIcon className="h-4 w-4 shrink-0" /> : <IconExternal className="h-4 w-4 shrink-0" />}
             {cta.label?.trim() || "تسوّق الآن"}
@@ -144,7 +144,7 @@ export function PartnerStrip({ client, cta }: PartnerStripProps) {
         <div className="mt-2.5 flex items-stretch gap-2">
           <Link
             href={`/clients/${client.slug}`}
-            className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md border border-link bg-transparent px-3 py-2 text-[13px] font-semibold text-link transition-colors hover:bg-primary/10"
+            className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md border border-link bg-transparent px-3 py-2 text-[13px] font-bold text-link transition-colors hover:bg-primary/10"
           >
             <ModontyPartnerMark className="h-4 w-4 shrink-0" aria-hidden />
             <span className="truncate">{messages.article.cta.clientPage} {client.name}</span>

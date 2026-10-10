@@ -743,3 +743,24 @@ footer[role="contentinfo"] {
 
 /* شريطُ الأزرار ثابتٌ تحت الهيدر طوال القراءة (خالد ٣ أكتوبر ٢٠٢٦، بعد تجربة إخفائه بـCSS): فيه شعارُ العميل
    وزرُّ التحويل — «العميل محتاج يظهر»، والقرارُ يُتّخذ غالباً في منتصف المقال لا آخره. */
+
+/* ── WEB-STANDARD-v1 (9 Oct 2026) — type roles, containers, shell, targets ────────────────────────
+   Source of every number: documents/design/WEB-STANDARD-v1.md (Claude Design study of 69 templates ×
+   3 viewports). Responsive roles live here because a Tailwind fontSize token cannot change per
+   breakpoint; the fixed roles (title · body · label · caption) are tokens in tailwind.config.ts.
+   TWO standards (Khalid, 9 Oct 2026): touch = phone AND tablet (< 1024, one set of values) ·
+   desktop = lg ≥ 1024, where the top nav takes over. Weight is always 700 — Tajawal ships 400·500·700. */
+@layer components {
+  .text-display { @apply text-[32px] leading-[42px] font-bold lg:text-[40px] lg:leading-[52px]; }
+  .text-h1 { @apply text-[26px] leading-[36px] font-bold lg:text-[30px] lg:leading-[42px]; }
+  .text-h2 { @apply text-[20px] leading-[30px] font-bold lg:text-[24px] lg:leading-[34px]; }
+  .text-h3 { @apply text-[18px] leading-[28px] font-bold lg:text-[20px] lg:leading-[30px]; }
+  .text-body-lg { @apply text-[17px] leading-[30px] lg:text-[18px] lg:leading-[32px]; }
+
+  .container-feed { @apply mx-auto w-full max-w-feed px-4 md:px-6; }
+  .container-reading { @apply mx-auto w-full max-w-reading px-4 md:px-6; }
+  .container-form { @apply mx-auto w-full max-w-form px-4; }
+
+  /* Interactive target: ≥24 everywhere (WCAG 2.2 SC 2.5.8), 32 on desktop, 44 on touch. */
+  .target { @apply inline-flex min-h-8 min-w-6 items-center max-lg:min-h-11; }
+}

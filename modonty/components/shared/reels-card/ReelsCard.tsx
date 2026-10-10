@@ -87,7 +87,7 @@ function ReelPreviewTile({ item, layout, itemCount }: ReelPreviewTileProps) {
       <span className={cn("absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent", layout === "feed" && "hidden lg:block")} aria-hidden />
       {/* Centred, 32px: with no visible title this mark alone says «video» (YouTube/Instagram). */}
       <span className={cn("absolute start-1/2 top-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-link shadow-sm", layout === "feed" ? "size-7 lg:size-8" : "size-8")}>
-        <IconPlay className={cn(layout === "feed" ? "size-3.5 lg:size-4" : "size-4")} aria-hidden />
+        <IconPlay className={cn(layout === "feed" ? "size-4" : "size-4")} aria-hidden />
       </span>
       <span className={cn("absolute inset-x-2 bottom-2", layout === "feed" && "hidden lg:block")}>
         <span className={cn("line-clamp-1 block font-normal drop-shadow-sm", layout === "feed" ? "text-xs leading-4 lg:line-clamp-2 lg:text-xs lg:leading-5" : "text-xs leading-5")}>{item.title}</span>

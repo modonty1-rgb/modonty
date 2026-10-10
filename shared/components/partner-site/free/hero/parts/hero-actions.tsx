@@ -20,14 +20,14 @@ export function HeroActions({ data, preview = false, className }: { data: HomeDa
         <SiteLink
           href={preview ? undefined : mainHref!}
           {...(b.mode === "LINK" ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-          className="inline-flex h-10 items-center rounded-[var(--ps-radius-control,9999px)] bg-primary px-6 text-sm font-bold text-primary-foreground max-md:h-11"
+          className="inline-flex h-10 items-center rounded-[var(--ps-radius-control,9999px)] bg-primary px-6 text-sm font-bold text-primary-foreground max-lg:h-11"
         >
           {bookingLabel(b)}
         </SiteLink>
       )}
       {(!hasMain || !mainIsWa) && <WhatsAppButton href={data.whatsappHref} variant={hasMain ? "outline-light" : "solid"} className={hasMain ? "border-border text-foreground" : undefined} />}
       {(!hasMain || mainIsWa || !data.whatsappHref) && data.phone && (
-        <SiteLink href={`tel:${data.phone}`} className="inline-flex h-10 items-center rounded-[var(--ps-radius-control,9999px)] border px-5 text-sm font-medium text-foreground max-md:h-11">
+        <SiteLink href={`tel:${data.phone}`} className="inline-flex h-10 items-center rounded-[var(--ps-radius-control,9999px)] border px-5 text-sm font-medium text-foreground max-lg:h-11">
           اتصل بنا
         </SiteLink>
       )}

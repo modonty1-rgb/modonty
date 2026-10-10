@@ -66,10 +66,10 @@ export function ClientContactSheet({
           <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-muted-foreground/30" aria-hidden />
 
           <SheetHeader className="space-y-1 text-start">
-            <SheetTitle className="text-[16px] font-extrabold text-foreground">
+            <SheetTitle className="text-[16px] font-bold text-foreground">
               {hasBooking ? `احجز موعدك مع ${clientName}` : `تواصل مع ${clientName}`}
             </SheetTitle>
-            <SheetDescription className="text-[12.5px] text-muted-foreground">
+            <SheetDescription className="text-xs text-muted-foreground">
               {hasCta ? "ابدأ بالإجراء التالي، أو تواصل مباشرة" : "اختر الطريقة الأنسب لك"}
             </SheetDescription>
           </SheetHeader>
@@ -105,7 +105,7 @@ export function ClientContactSheet({
 
           {/* Divider between the CTA and the direct contact channels */}
           {hasCta && hasContact && (
-            <div className="my-4 flex items-center gap-3 text-xs font-semibold text-muted-foreground">
+            <div className="my-4 flex items-center gap-3 text-xs font-bold text-muted-foreground">
               <span className="h-px flex-1 bg-border" />
               أو تواصل مباشرة
               <span className="h-px flex-1 bg-border" />
@@ -145,7 +145,7 @@ export function ClientContactSheet({
                   className={`${row} hover:bg-muted`}
                 >
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]">
-                    <IconPhone className="h-[18px] w-[18px]" />
+                    <IconPhone className="size-5" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <b className="block text-[13.5px] font-bold text-foreground">اتصال هاتفي</b>
@@ -165,7 +165,7 @@ export function ClientContactSheet({
                   className={`${row} hover:bg-muted`}
                 >
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent/15 text-accent-foreground">
-                    <IconEmail className="h-[18px] w-[18px]" />
+                    <IconEmail className="size-5" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <b className="block text-[13.5px] font-bold text-foreground">أرسل بريدًا</b>

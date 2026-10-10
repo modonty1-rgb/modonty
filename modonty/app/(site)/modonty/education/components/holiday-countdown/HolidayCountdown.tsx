@@ -40,14 +40,14 @@ export function HolidayCountdown({ events, labels: t }: { events: CalendarEvent[
         <span aria-hidden className="mt-4 block h-24 animate-pulse rounded-lg bg-muted" />
       ) : next ? (
         <div className="mt-3">
-          <p className="text-base font-semibold">{next.name}</p>
+          <p className="text-base font-bold">{next.name}</p>
           <Remaining days={daysBetween(today, next.date)} labels={t} />
           <p className="mt-1 text-sm text-muted-foreground">{fill(t.on, formatDates(next.date, next.hijri))}</p>
           {next.moon && <p className="mt-1 text-xs text-muted-foreground">{t.moon}</p>}
           {after && (
             <p className="mt-3 border-t border-border pt-3 text-sm">
               <span className="text-muted-foreground">{t.after}: </span>
-              <span className="font-semibold">{after.name}</span>
+              <span className="font-bold">{after.name}</span>
               <span className="text-muted-foreground"> · {formatDates(after.date, after.hijri).gregorian}</span>
             </p>
           )}
@@ -63,7 +63,7 @@ function Remaining({ days, labels: t }: { days: number; labels: HolidayCountdown
   return (
     <p className="mt-1 flex items-baseline gap-2">
       <span className="text-5xl font-bold tabular-nums text-primary">{N.format(days)}</span>
-      <span className="text-lg font-semibold">{days <= 10 ? t.daysFew : t.daysMany}</span>
+      <span className="text-lg font-bold">{days <= 10 ? t.daysFew : t.daysMany}</span>
     </p>
   );
 }

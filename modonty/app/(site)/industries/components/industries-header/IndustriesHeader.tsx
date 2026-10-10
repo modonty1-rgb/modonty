@@ -11,7 +11,7 @@ export function IndustriesHeader() {
     <div className="flex items-center gap-3">
       <ModontyIndustriesMark className="size-11 shrink-0 text-foreground" aria-hidden />
       <div>
-        <p className="text-lg font-black leading-tight text-foreground">المجالات</p>
+        <p className="text-lg font-bold leading-tight text-foreground">المجالات</p>
         <p className="mt-0.5 text-xs text-muted-foreground">اختر مجالك — مقالات وشركاء موثوقون فيه</p>
       </div>
     </div>

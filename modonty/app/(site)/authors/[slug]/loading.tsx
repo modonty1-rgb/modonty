@@ -23,7 +23,7 @@ export default function AuthorLoading() {
         </div>
       </div>
       <Skeleton className="mb-6 h-6 w-36" />
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {Array.from({ length: 4 }).map((_, i) => (
           <Skeleton key={i} className="h-60 w-full rounded-lg" />
         ))}

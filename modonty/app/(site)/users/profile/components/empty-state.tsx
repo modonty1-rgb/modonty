@@ -27,7 +27,7 @@ export function EmptyState({
         <div className={cn("rounded-full bg-muted p-4 mb-4 text-muted-foreground", iconWrapperClassName)}>
           <Icon className="h-12 w-12" />
         </div>
-        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <h3 className="text-xl font-bold mb-2">{title}</h3>
         <p className="text-muted-foreground mb-6 max-w-md">{description}</p>
         {/* `min-h-11`: measured 24 Aug on `/users/profile/liked` at 390 — the button came out
             147×40, the only sub-44 target on the page, and it is the ONE way out of an empty

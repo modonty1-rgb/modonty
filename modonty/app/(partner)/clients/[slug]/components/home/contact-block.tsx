@@ -29,7 +29,7 @@ export function ContactBlock({ site }: ContactBlockProps) {
   return (
     <section id="contact" className="mx-auto max-w-[1216px] px-4">
       <SectionHeading eyebrow="تواصل" title={site.addressCity ? `في ${site.addressCity} — ونردّ عليك بأقرب وقت` : "نردّ عليك بأقرب وقت"} />
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
+      <div className="mt-8 grid gap-4 lg:grid-cols-3">
         {address ? (
           <div className="rounded-lg bg-card ring-1 ring-border p-6">
             <p className="flex items-center gap-2 text-sm text-muted-foreground"><IconMapPin className="h-4 w-4" aria-hidden /> العنوان</p>

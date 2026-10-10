@@ -34,7 +34,7 @@ export function CoverHero({ data, preview = false }: { data: HomeData; preview?:
           {/* الشعار فوق النصّ على الجوّال، لا بجانبه. المقيس على ٣٩٠: الشعار الكبير والفجوة
               والحشو تأكل ١٦٨px، فيبقى للعنوان ٢٢٢ — ثلاثة أسطر بأربعة عشر محرفاً في السطر،
               والمدى المريح للعناوين ٢٠–٤٠. مكدّساً يأخذ العنوان العرض كلّه. */}
-          <div className="flex min-w-0 items-end gap-5 max-md:flex-col max-md:items-start max-md:gap-3">
+          <div className="flex min-w-0 items-end gap-5 max-lg:flex-col max-md:items-start max-md:gap-3">
             {/* Was a white square with a ring — the halo, and the square kept the white corners
                 of a partner logo file visible. */}
             {/* `relative z-10` ليس زينة: البانر فوقه `relative` والشعار كان `static`، وفي نفس

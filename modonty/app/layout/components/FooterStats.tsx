@@ -7,7 +7,7 @@ import {
   IconArticle,
   IconViews,
   IconActivity,
-  IconUsers,
+  IconLike,
   IconTrending,
   IconTotal,
 } from "@/lib/icons";
@@ -33,7 +33,7 @@ function Stat({
   return (
     <div className="flex flex-col items-center gap-1 px-2 py-3 text-center">
       <Icon className={`h-4 w-4 ${highlight ? "text-primary-foreground" : "text-primary-foreground/55"}`} />
-      <span className="text-xl font-extrabold tabular-nums leading-none text-primary-foreground">
+      <span className="text-xl font-bold tabular-nums leading-none text-primary-foreground">
         {value}
       </span>
       <span className="text-xs font-medium text-primary-foreground/70 leading-tight">{label}</span>
@@ -83,7 +83,7 @@ export async function FooterStats() {
           <div className="flex flex-1 flex-col divide-y divide-white/[0.06] sm:flex-row sm:divide-x sm:divide-y-0 sm:divide-x-reverse">
             {/* الرقم الكبير — أكبرُ رقمٍ صادق */}
             <div className="flex flex-col items-center justify-center px-6 py-5">
-              <span className="text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">{hero.value}</span>
+              <span className="text-3xl font-bold leading-none tracking-tight text-white sm:text-4xl">{hero.value}</span>
               <span className="mt-1.5 text-xs font-medium text-white/80">{hero.label}</span>
               <span className="mt-0.5 text-xs text-white/40">{hero.source}</span>
             </div>
@@ -91,7 +91,7 @@ export async function FooterStats() {
             <div className={`flex flex-1 flex-wrap justify-center sm:grid sm:divide-x sm:divide-x-reverse sm:divide-white/[0.06] ${SECONDARY_COLS[cells.length] ?? "sm:grid-cols-5"}`}>
               {cells.map((c) => (
                 <div key={c.label} className="flex w-1/3 flex-col items-center justify-center px-1 py-5 text-center sm:w-auto">
-                  <span className="text-lg font-black leading-none text-white/85 sm:text-xl">{c.value.toLocaleString(SITE_LOCALE)}</span>
+                  <span className="text-lg font-bold leading-none text-white/85 sm:text-xl">{c.value.toLocaleString(SITE_LOCALE)}</span>
                   <span className="mt-1.5 text-xs font-medium text-white/70">{c.label}</span>
                   <span className="mt-0.5 text-xs text-white/40">{c.source}</span>
                 </div>
@@ -109,7 +109,7 @@ export async function FooterStats() {
             </svg>
             <p className="text-center text-xs leading-tight text-white/45">
               موثّق من<br />
-              <span className="font-semibold text-white/65">Analytics · Search Console</span>
+              <span className="font-bold text-white/65">Analytics · Search Console</span>
             </p>
             <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-400">
               ✓ بيانات حقيقية
@@ -129,7 +129,7 @@ export async function FooterStats() {
         <Stat icon={IconArticle}  label="المقالات" value={stats.articles.toLocaleString(SITE_LOCALE)} />
         <Stat icon={IconViews}    label="مشاهدات"  value={stats.views.toLocaleString(SITE_LOCALE)} highlight />
         <Stat icon={IconActivity} label="تفاعلات"  value={stats.interactions.toLocaleString(SITE_LOCALE)} />
-        <Stat icon={IconUsers}    label="إعجابات"  value={stats.likes.toLocaleString(SITE_LOCALE)} />
+        <Stat icon={IconLike}     label="إعجابات"  value={stats.likes.toLocaleString(SITE_LOCALE)} />
         <Stat icon={ModontyPartnerMark}  label="الشركاء"  value={stats.partners.toLocaleString(SITE_LOCALE)} />
       </div>
     </div>

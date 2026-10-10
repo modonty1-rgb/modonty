@@ -99,12 +99,11 @@ export default async function ReelWatchPage({ params }: ReelPageProps) {
           latest four, so older reels had no inbound link and Google never found them. Same
           place and look as the feed's arrows; an end of the list shows a dimmed placeholder so
           the pair never shifts. */}
-      <nav aria-label="تنقّل بين الريلز" className="fixed end-4 top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-3 md:flex">
+      <nav aria-label="تنقّل بين الريلز" className="fixed end-4 top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
         {[
-          // The brand arrow points left; turn it to point up / down (modonty-arrow-mark.tsx).
-          { slug: newer, label: "الطلّة السابقة", Icon: IconChevronUp, turn: "rotate-90" },
-          { slug: older, label: "الطلّة التالية", Icon: IconChevronDown, turn: "-rotate-90" },
-        ].map(({ slug: target, label, Icon, turn }) =>
+          { slug: newer, label: "الطلّة السابقة", Icon: IconChevronUp },
+          { slug: older, label: "الطلّة التالية", Icon: IconChevronDown },
+        ].map(({ slug: target, label, Icon }) =>
           target ? (
             <Link
               key={label}
@@ -112,11 +111,11 @@ export default async function ReelWatchPage({ params }: ReelPageProps) {
               aria-label={label}
               className="grid size-11 place-items-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
-              <Icon className={`size-5 ${turn}`} />
+              <Icon className="size-5" />
             </Link>
           ) : (
             <span key={label} aria-hidden className="grid size-11 place-items-center rounded-full bg-white/10 text-white opacity-30">
-              <Icon className={`size-5 ${turn}`} />
+              <Icon className="size-5" />
             </span>
           ),
         )}
@@ -131,7 +130,7 @@ export default async function ReelWatchPage({ params }: ReelPageProps) {
         >
           <span className="text-sm font-bold text-white">{reel.clientName}</span>
         </Link>
-        <h1 className="text-lg font-extrabold text-white">{reel.title}</h1>
+        <h1 className="text-lg font-bold text-white">{reel.title}</h1>
         {reel.description && <p className="mt-1 text-sm text-neutral-300">{reel.description}</p>}
       </div>
     </div>

@@ -26,14 +26,14 @@ export function ArticleTags({ client, category, tags }: ArticleTagsProps) {
     <div className="flex flex-wrap gap-2 mb-6">
       <Link href={`/clients/${client.slug}`}>
         <Badge variant="secondary" className="text-sm flex items-center gap-1.5">
-          <ModontyPartnerMark className="h-3.5 w-3.5" />
+          <ModontyPartnerMark className="h-4 w-4" />
           {client.name}
         </Badge>
       </Link>
       {category && (
         <Link href={`/categories/${category.slug}`}>
           <Badge variant="outline" className="text-sm flex items-center gap-1.5">
-            <IconFolder className="h-3.5 w-3.5" />
+            <IconFolder className="h-4 w-4" />
             {category.name}
           </Badge>
         </Link>
@@ -44,7 +44,7 @@ export function ArticleTags({ client, category, tags }: ArticleTagsProps) {
             variant="outline"
             className="text-sm flex items-center gap-1.5 bg-primary/10 text-primary border-border/60 hover:bg-primary/20 hover:border-border transition-colors"
           >
-            <IconCategory className="h-3.5 w-3.5" />
+            <IconCategory className="h-4 w-4" />
             {articleTag.tag.name}
           </Badge>
         </Link>
@@ -52,7 +52,7 @@ export function ArticleTags({ client, category, tags }: ArticleTagsProps) {
       {tags.length > 0 && (
         <Link href="/tags">
           <Badge variant="secondary" className="text-sm flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
-            <IconHash className="h-3.5 w-3.5" />
+            <IconHash className="h-4 w-4" />
             عرض كل الوسوم
           </Badge>
         </Link>

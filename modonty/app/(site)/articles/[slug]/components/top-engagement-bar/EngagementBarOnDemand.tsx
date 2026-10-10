@@ -60,7 +60,7 @@ export function EngagementBarOnDemand(props: BarProps) {
             type="button"
             aria-label={props.labels[a]}
             onClick={() => setPending(a)}
-            className="relative flex size-9 shrink-0 flex-col items-center justify-center rounded-lg bg-muted text-xs font-semibold leading-none text-foreground"
+            className="relative flex size-9 shrink-0 flex-col items-center justify-center rounded-lg bg-muted after:absolute after:-inset-1 after:content-[''] text-xs font-bold leading-none text-foreground"
           >
             <Icon className="size-[16px]" />
             {n > 0 && (

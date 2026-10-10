@@ -300,19 +300,19 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
           intro line up top AND a bordered box of fine print at the bottom. One unboxed line
           holds the facts and the credit; the «we don't host it» explanation moved into the
           reciter dialog, where the question of whose voice this is actually comes up. */}
-      <p className="mb-4 text-sm leading-relaxed text-muted-foreground [text-wrap:balance] max-md:mb-3 max-md:text-xs">
-        <span className="font-semibold text-foreground">{labels.provenanceLead}</span> {labels.provenanceRiwaya}{" "}
-        <span className="font-semibold text-foreground">{RIWAYA}</span>
+      <p className="mb-4 text-sm leading-relaxed text-muted-foreground [text-wrap:balance] max-md:mb-3 max-lg:text-xs">
+        <span className="font-bold text-foreground">{labels.provenanceLead}</span> {labels.provenanceRiwaya}{" "}
+        <span className="font-bold text-foreground">{RIWAYA}</span>
         {/* On a phone the line breaks here on purpose — between «what» and «who/where from» —
             instead of wherever it happens to, which left «·» opening the second line. */}
-        <span className="max-md:hidden"> · </span>
-        <br className="md:hidden" />
+        <span className="max-lg:hidden"> · </span>
+        <br className="lg:hidden" />
         {labels.provenanceMiddle.replace(/^·\s*/, "")}{" "}
         <a
           href={SOURCE.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-semibold text-link hover:underline"
+          className="font-bold text-link hover:underline"
           dir="ltr"
         >
           {SOURCE.name}
@@ -324,7 +324,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
           into 104px of form above the list. Stacked on phones.
           The reciter is shown at EVERY size since 26 Sep 2026 — it was phone-only, so on desktop
           the only way to change the voice was one surah at a time, 114 times. */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-center">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="flex items-center gap-2 md:w-80 md:shrink-0">
           <span className="shrink-0 text-xs text-muted-foreground">{labels.reciterLabel}</span>
           <button
@@ -364,7 +364,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
         <button
           type="button"
           onClick={playResume}
-          className="mt-3 flex w-full items-center gap-3 rounded-xl border border-action-listen/40 bg-action-listen/10 p-3 text-start motion-safe:transition-transform motion-safe:active:scale-95 md:hidden"
+          className="mt-3 flex w-full items-center gap-3 rounded-xl border border-action-listen/40 bg-action-listen/10 p-3 text-start motion-safe:transition-transform motion-safe:active:scale-95 lg:hidden"
         >
           <span className="grid size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground">
             <IconPlay className="size-5" aria-hidden />
@@ -408,7 +408,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
               <p className="truncate text-xs leading-tight text-muted-foreground">
                 {failed ? (
                   <span className="flex items-center gap-1 text-destructive">
-                    <IconAlertTriangle className="size-3 shrink-0" aria-hidden />
+                    <IconAlertTriangle className="size-4 shrink-0" aria-hidden />
                     {labels.loadFailed}
                   </span>
                 ) : (
@@ -492,7 +492,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
-                    "grid size-10 max-md:size-11 shrink-0 place-items-center rounded-full text-xs font-bold tabular-nums",
+                    "grid size-10 max-lg:size-11 shrink-0 place-items-center rounded-full text-xs font-bold tabular-nums",
                     isCurrent ? "bg-action-listen text-action-listen-foreground" : "border border-border text-muted-foreground"
                   )}
                 >
@@ -508,7 +508,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                   </span>
                   {/* The override is now SEEN on the card, not only in the button's aria-label. */}
                   {choice[s.n] !== undefined && (
-                    <span className="block truncate text-xs font-semibold text-action-listen">{r.name}</span>
+                    <span className="block truncate text-xs font-bold text-action-listen">{r.name}</span>
                   )}
                 </span>
 
@@ -522,7 +522,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                     aria-label={`${labels.pickReciterForPrefix} ${s.name} — ${labels.currentPrefix} ${r.name}`}
                     title={`${labels.pickReciterForPrefix} — ${r.name}`}
                     className={cn(
-                    "grid size-10 max-md:size-11 shrink-0 place-items-center rounded-full motion-safe:transition-transform motion-safe:active:scale-95",
+                    "grid size-10 max-lg:size-11 shrink-0 place-items-center rounded-full motion-safe:transition-transform motion-safe:active:scale-95",
                       choice[s.n] === undefined
                         ? "border border-border text-muted-foreground hover:border-action-listen/60 hover:text-foreground"
                         : "bg-action-listen/15 text-action-listen ring-1 ring-action-listen/40"
@@ -534,7 +534,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                     type="button"
                     onClick={() => playSurah(i)}
                     aria-label={`${labels.recitePrefix} ${s.name}`}
-                    className="grid size-10 max-md:size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground motion-safe:transition-transform motion-safe:active:scale-95"
+                    className="grid size-10 max-lg:size-11 shrink-0 place-items-center rounded-full bg-action-listen text-action-listen-foreground motion-safe:transition-transform motion-safe:active:scale-95"
                   >
                     {isCurrent && playing ? <IconPause className="size-4" /> : <IconPlay className="size-4" />}
                   </button>
@@ -605,7 +605,7 @@ export function QuranPlayer({ labels }: QuranPlayerProps) {
                 an answer to "whose voice is this?", which is the question this dialog asks. */}
             <p className="mt-3 border-t border-border pt-3 text-xs leading-relaxed text-muted-foreground">
               {labels.provenanceMiddle.replace(/^·\s*/, "")}{" "}
-              <a href={SOURCE.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-link hover:underline" dir="ltr">
+              <a href={SOURCE.url} target="_blank" rel="noopener noreferrer" className="font-bold text-link hover:underline" dir="ltr">
                 {SOURCE.name}
               </a>
               {labels.provenanceDisclaimer}

@@ -79,7 +79,7 @@ export function PartnerCards({
                   <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
                     {partner.city && (
                       <span className="inline-flex items-center gap-1">
-                        <IconMapPin className="h-3 w-3 shrink-0" aria-hidden />
+                        <IconMapPin className="size-4 shrink-0" aria-hidden />
                         {partner.city}
                       </span>
                     )}
@@ -97,7 +97,7 @@ export function PartnerCards({
               {partner.canBook && (
                 <Link
                   href={`/clients/${partner.slug}/book`}
-                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
                 >
                   <IconCalendar className="h-4 w-4 shrink-0" aria-hidden />
                   احجز موعدك

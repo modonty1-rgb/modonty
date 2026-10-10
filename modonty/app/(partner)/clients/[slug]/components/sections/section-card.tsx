@@ -45,13 +45,13 @@ export function SectionCard({
       <div className="flex items-center justify-between gap-2 border-b px-4 py-3.5">
         <h3
           className={cn(
-            "inline-flex items-center gap-2.5 font-extrabold text-foreground",
+            "inline-flex items-center gap-2.5 font-bold text-foreground",
             feature ? "text-[17px]" : "text-[15px]"
           )}
         >
           <span
             className={cn(
-              "grid h-[31px] w-[31px] shrink-0 place-items-center rounded-[9px] text-[17px]",
+              "grid h-[31px] w-[31px] shrink-0 place-items-center rounded-md text-[17px]",
               feature
                 ? "bg-gradient-to-br from-primary to-accent text-white"
                 : "bg-primary/[0.08] text-[hsl(var(--primary-ink,var(--primary)))]"

@@ -90,7 +90,7 @@ export default function SettingsPage() {
         ]}
       />
       {/* عنوان مرئي لا sr-only: بدونه يهبط الداخل على «الملف الشخصي» بلا سياق للصفحة. */}
-      <h1 className="mt-4 text-2xl font-bold">الإعدادات</h1>
+      <h1 className="text-h1 mt-4">الإعدادات</h1>
       <p className="mt-1 text-sm text-muted-foreground">بياناتك وأمان حسابك — كلها في صفحة واحدة</p>
     </>
   );

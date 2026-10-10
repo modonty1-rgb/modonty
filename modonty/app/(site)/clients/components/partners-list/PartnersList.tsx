@@ -34,7 +34,7 @@ export function PartnersList({ partners, industryCount, industryName, query }: P
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         {/* The heading names what is on screen: filtering to «المميّزون» while the title
             still said «كل الشركاء» told the visitor the wrong thing (measured 21 Aug). */}
-        <h1 id="partners-heading" className="text-base font-bold text-foreground">
+        <h1 id="partners-heading" className="text-title text-foreground">
           {query.featuredOnly
             ? industryName
               ? `الشركاء المميّزون في ${industryName}`
@@ -104,7 +104,7 @@ export function PartnersList({ partners, industryCount, industryName, query }: P
         <nav aria-label={text.paginationNavAriaLabel} className="flex items-center justify-between gap-3 border-t border-border pt-4">
           {query.page > 1 ? (
             <Link href={buildPartnersHref(query, { page: query.page - 1 })} // 44px touch floor below the desktop breakpoint; ≥1240px the link keeps its old box.
-              className="inline-flex items-center text-sm font-medium text-link hover:underline max-[1239px]:min-h-11">
+              className="inline-flex min-h-8 items-center text-sm font-medium text-link hover:underline max-[1239px]:min-h-11">
               {text.previousPageLink}
             </Link>
           ) : (
@@ -112,7 +112,7 @@ export function PartnersList({ partners, industryCount, industryName, query }: P
           )}
           {hasMore && (
             <Link href={buildPartnersHref(query, { page: query.page + 1 })} // 44px touch floor below the desktop breakpoint; ≥1240px the link keeps its old box.
-              className="inline-flex items-center text-sm font-medium text-link hover:underline max-[1239px]:min-h-11">
+              className="inline-flex min-h-8 items-center text-sm font-medium text-link hover:underline max-[1239px]:min-h-11">
               {text.nextPageLink}
             </Link>
           )}

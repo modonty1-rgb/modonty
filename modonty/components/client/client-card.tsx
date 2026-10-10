@@ -85,22 +85,22 @@ export function ClientCard({
         {/* Meta chips */}
         <div className="flex items-center gap-1.5 flex-wrap">
           {addressCity && (
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
-              <IconMapPin className="h-2.5 w-2.5 shrink-0" />
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
+              <IconMapPin className="size-4 shrink-0" />
               {addressCity}
             </span>
           )}
           {averageRating > 0 && (
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">
-              <IconFeatured className="h-2.5 w-2.5 shrink-0 fill-current" />
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">
+              <IconFeatured className="size-4 shrink-0 fill-current" />
               {averageRating.toFixed(1)}
             </span>
           )}
-          <span className="inline-flex items-center text-xs font-semibold text-muted-foreground/70 bg-muted/40 px-2 py-0.5 rounded-full">
+          <span className="inline-flex items-center text-xs font-bold text-muted-foreground/70 bg-muted/40 px-2 py-0.5 rounded-full">
             {articleCount} مقال
           </span>
           {googleTotal > 0 && (
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">
               <svg viewBox="0 0 24 24" className="h-2.5 w-2.5 shrink-0" aria-hidden>
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -140,13 +140,13 @@ export function ClientCard({
                 </a>
               )}
               <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-muted/50 text-muted-foreground">
-                <IconChevronLeft className="h-3.5 w-3.5 rtl:rotate-180" />
+                <IconChevronLeft className="h-4 w-4" />
               </span>
             </>
           ) : (
             <span className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary/8 px-3 py-2 text-xs font-bold text-primary">
               عرض الملف الكامل
-              <IconChevronLeft className="h-3.5 w-3.5 rtl:rotate-180" />
+              <IconChevronLeft className="h-4 w-4" />
             </span>
           )}
         </div>

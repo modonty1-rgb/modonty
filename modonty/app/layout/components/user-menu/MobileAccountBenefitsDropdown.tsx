@@ -42,7 +42,7 @@ function AccountBenefitsActions() {
         </Link>
       </DropdownMenuItem>
       <DropdownMenuItem asChild className="justify-center p-0 focus:bg-transparent">
-        <Link href="/users/login" className="inline-flex min-h-11 items-center justify-center px-4 text-sm font-semibold text-link motion-safe:transition-transform motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:underline">
+        <Link href="/users/login" className="inline-flex min-h-11 items-center justify-center px-4 text-sm font-bold text-link motion-safe:transition-transform motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:underline">
           لدي حساب
         </Link>
       </DropdownMenuItem>

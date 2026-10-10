@@ -19,7 +19,7 @@ export function TopActivitiesCard({ activities }: { activities: ActivityMatch[] 
           <li key={a.code} className="flex items-baseline gap-3 py-2 text-sm">
             <span className="w-5 shrink-0 text-xs text-muted-foreground tabular-nums">{N.format(a.rank)}</span>
             <span className="min-w-0 flex-1 leading-snug">{a.name}</span>
-            <span className="shrink-0 font-semibold tabular-nums">{N.format(a.count)}</span>
+            <span className="shrink-0 font-bold tabular-nums">{N.format(a.count)}</span>
           </li>
         ))}
       </ol>

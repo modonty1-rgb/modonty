@@ -77,7 +77,7 @@ export function ArticleTableOfContents({
             "block w-full scroll-mt-20 py-0.5 text-right text-xs transition-colors hover:text-primary max-lg:flex max-lg:min-h-11 max-lg:items-center",
             heading.level === 3 && "pe-3",
             heading.level === 4 && "pe-6",
-            activeId === heading.id ? "font-semibold text-primary" : "text-muted-foreground"
+            activeId === heading.id ? "font-bold text-primary" : "text-muted-foreground"
           )}
         >
           {heading.text}
@@ -111,12 +111,12 @@ export function ArticleTableOfContents({
             /* Feedback on the press, not on the release — and `active:` fires on pointer-down.
                `min-h-11` is the fingertip floor; the label alone was 20px tall. */
             // ٣٦ مع الأزرار بجانبه (تدقيق الجوال ٣ أكتوبر ٢٠٢٦): الشريطُ المثبَّت كان ٥٧px فوق النصّ وقت القراءة.
-            className="-mx-1 flex min-h-9 min-w-0 items-center gap-1.5 rounded-lg px-1 transition-transform active:scale-[0.97] motion-reduce:active:scale-100"
+            className="-mx-1 flex min-h-11 min-w-0 items-center gap-1.5 rounded-lg px-1 transition-transform active:scale-[0.97] motion-reduce:active:scale-100"
             aria-expanded={open}
           >
             {/* Small text wants tracking slightly OPEN, not tight — tight tracking is for display
                 sizes, where letters drift apart as they grow. This label is 12px. */}
-            <span className="truncate text-xs font-semibold text-muted-foreground">جدول المحتويات</span>
+            <span className="truncate text-xs font-bold text-muted-foreground">جدول المحتويات</span>
             <IconChevronLeft className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", open ? "rotate-90" : "-rotate-90")} />
           </button>
           {actions}
@@ -136,7 +136,7 @@ export function ArticleTableOfContents({
   return (
     <Card className="min-w-0">
       <div className="rounded-t-lg bg-muted/40 px-4 py-3">
-        <span className="text-xs font-semibold tracking-tight text-muted-foreground">جدول المحتويات</span>
+        <span className="text-xs font-bold tracking-tight text-muted-foreground">جدول المحتويات</span>
       </div>
       <div className="border-b border-border" />
       {list}

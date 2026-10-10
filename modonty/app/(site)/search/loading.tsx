@@ -22,7 +22,7 @@ export default function SearchLoading() {
               <Skeleton className="h-9 w-28 rounded-md" />
               <Skeleton className="h-9 w-24 rounded-md" />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <InfiniteFeedSkeleton count={6} />
             </div>
           </section>

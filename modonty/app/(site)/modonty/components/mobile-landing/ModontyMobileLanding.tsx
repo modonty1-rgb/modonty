@@ -65,7 +65,7 @@ export function ModontyMobileLanding({ hero, clientSlug }: { hero: MobileHero | 
       </div>
 
       {/* The page's h1 on phones; the desktop h1 lives in the profile hero, hidden here. */}
-      <h1 className="mt-3 text-balance text-[clamp(1.25rem,1rem+1.6vw,1.5rem)] font-black leading-tight text-foreground">
+      <h1 className="text-h1 mt-3 text-balance text-foreground">
         {t.headline} <span className="text-link-accent">{t.headlineAccent}</span>
       </h1>
       <p className="mx-auto mt-1.5 max-w-xs text-balance text-sm leading-relaxed text-muted-foreground">{t.sub}</p>

@@ -30,7 +30,7 @@ export function ArticlesFeed({ articles, page, industryName, buildPageHref }: Ar
 
   return (
     <section aria-labelledby="industry-feed-heading" className="space-y-4">
-      <h1 id="industry-feed-heading" className="text-base font-bold text-foreground">
+      <h1 id="industry-feed-heading" className="text-title text-foreground">
         {page > 1 ? `${title} — الصفحة ${page.toLocaleString(SITE_LOCALE)}` : title}
       </h1>
 

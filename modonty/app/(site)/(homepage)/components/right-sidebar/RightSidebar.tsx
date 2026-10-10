@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { LinkCard } from "@/components/shared/link-card/LinkCard";
 import { AboutCard } from "@/components/shared/about-card/AboutCard";
 import { StickyRail } from "@modonty/shared/components/sticky-rail/StickyRail";
-import { IconCompass, IconPlay, IconVolume2 } from "@/lib/icons";
+import { IconIndustry, IconReels, IconVolume2 } from "@/lib/icons";
 
 interface RightSidebarProps {
   className?: string;
@@ -24,8 +24,8 @@ export function RightSidebar({ className }: RightSidebarProps) {
       <div className="space-y-4">
         {/* Same skeleton and height as the account card across the page (Khalid, 2026-08-16). */}
         <AboutCard />
-        <LinkCard href="/industries" title="استكشف المجالات" description="اختر المجال الأقرب لاحتياجك" icon={IconCompass} />
-        <LinkCard href="/reels" title="الطلّات" description="مقاطع قصيرة من الشركاء" icon={IconPlay} />
+        <LinkCard href="/industries" title="استكشف المجالات" description="اختر المجال الأقرب لاحتياجك" icon={IconIndustry} />
+        <LinkCard href="/reels" title="الطلّات" description="مقاطع قصيرة من الشركاء" icon={IconReels} />
         <LinkCard href="/audio" title="استمع" description="المقالات صوتاً وأنت ماشي" icon={IconVolume2} />
       </div>
     </StickyRail>

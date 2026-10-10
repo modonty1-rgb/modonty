@@ -110,7 +110,7 @@ export function PhoneField({ defaultCountry, onChange, onFirstTouch, id = "booki
           }}
           aria-label="اختر الدولة"
           aria-expanded={open}
-          className="flex h-12 shrink-0 items-center gap-1.5 rounded-md border border-input bg-background px-3 text-sm font-semibold"
+          className="flex h-12 shrink-0 items-center gap-1.5 rounded-md border border-input bg-background px-3 text-sm font-bold"
         >
           <span className="text-base">{country.flag}</span>
           <span dir="ltr">+{country.dial}</span>
@@ -160,7 +160,7 @@ export function PhoneField({ defaultCountry, onChange, onFirstTouch, id = "booki
                   aria-selected={c.code === country.code}
                   onClick={() => pickCountry(c)}
                   className={`flex w-full items-center gap-2 rounded px-2.5 py-2 text-sm hover:bg-accent ${
-                    c.code === country.code ? "bg-accent/60 font-semibold" : ""
+                    c.code === country.code ? "bg-accent/60 font-bold" : ""
                   }`}
                 >
                   <span className="text-base">{c.flag}</span>

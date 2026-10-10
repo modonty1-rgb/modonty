@@ -155,10 +155,10 @@ export default async function UserPage({ params }: UserPageProps) {
                         src={author?.image || user?.image || undefined}
                         alt={author?.name || user?.name || "مستخدم"}
                       />
-                      <AvatarFallback className="text-2xl font-semibold bg-secondary text-secondary-foreground">{initials}</AvatarFallback>
+                      <AvatarFallback className="text-2xl font-bold bg-secondary text-secondary-foreground">{initials}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <h1 id="profile-heading" className="text-2xl mb-2">
+                      <h1 id="profile-heading" className="text-h1 mb-2">
                         {author?.name || user?.name || "مستخدم"}
                       </h1>
                     {author?.jobTitle && (
@@ -171,7 +171,7 @@ export default async function UserPage({ params }: UserPageProps) {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {/* السطر الوحيد الذي يتغيّر بتغيّر الزائر — خلف حدّه، فلا يحجز الصفحة.
                       لا هيكل عظمي في الـfallback: سطرٌ لا يراه إلا صاحب الملف، وإظهار
                       مكانه لغيره يخبره أن ثمّة شيئاً مخفيّاً. */}
@@ -203,7 +203,7 @@ export default async function UserPage({ params }: UserPageProps) {
             {articles.length > 0 && (
               <section aria-labelledby="articles-heading">
                 <h2 id="articles-heading" className="text-2xl font-bold mb-6">المقالات</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {(articles as Array<{
                     id: string;
                     title: string;

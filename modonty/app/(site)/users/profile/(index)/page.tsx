@@ -74,7 +74,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
               <div className="relative ms-6 max-lg:ms-0">
                 <Avatar className="h-20 w-20 shrink-0 max-lg:h-16 max-lg:w-16">
                   <AvatarImage src={user.image || undefined} alt={user.name || ""} />
-                  <AvatarFallback className="text-2xl font-semibold bg-secondary text-secondary-foreground">
+                  <AvatarFallback className="text-2xl font-bold bg-secondary text-secondary-foreground">
                     {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
                   </AvatarFallback>
                 </Avatar>
@@ -82,7 +82,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
               <div className="min-w-0 flex-1">
                 <h1 className="sr-only">الملف الشخصي</h1>
                 {/* على الجوّال الاسم أولاً — ولو ناقص نرحّب بدل «مستخدم / غير محدد» (عقد PROFILEMOB). */}
-                <h2 className="text-xl font-semibold truncate max-lg:hidden">{user.name || "مستخدم"}</h2>
+                <h2 className="text-xl font-bold truncate max-lg:hidden">{user.name || "مستخدم"}</h2>
                 <h2 className="hidden text-lg font-bold truncate max-lg:block">{user.name || "أهلاً بك 👋"}</h2>
                 <p className="text-muted-foreground truncate max-lg:text-xs" title={user.email ?? undefined}>
                   {user.email}
@@ -116,7 +116,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             </div>
 
             {/* صندوقا الاسم/البريد يكرّران الرأس — يختفيان على الجوّال فقط (عقد PROFILEMOB). */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-lg:hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-lg:hidden">
               <div className="flex items-center gap-3 p-4 border rounded-md">
                 <IconUser className="h-5 w-5 text-muted-foreground" />
                 <div>

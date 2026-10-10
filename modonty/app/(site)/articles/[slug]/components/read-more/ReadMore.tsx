@@ -55,7 +55,7 @@ export function ReadMore({ articleId, clientId, items }: ReadMoreProps) {
                 {a.clientName && (
                   <p className="mb-1 text-xs text-muted-foreground">في {a.clientName}</p>
                 )}
-                <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-foreground">{a.title}</h3>
+                <h3 className="line-clamp-2 text-sm font-bold leading-snug text-foreground">{a.title}</h3>
                 {a.excerpt && (
                   <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">{a.excerpt}</p>
                 )}

@@ -53,7 +53,7 @@ export default async function DislikedPage() {
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">
+                  <h3 className="text-lg font-bold">
                     غير المعجبة ({items.length})
                   </h3>
                 </div>
@@ -84,7 +84,7 @@ function TypeBadge({ type }: { type: DislikedItemType }) {
 
   return (
     <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary border-primary/20">
-      <Icon className="h-3 w-3" />
+      <Icon className="size-4" />
       <span className="text-xs">{label}</span>
     </Badge>
   );
@@ -107,14 +107,14 @@ function ClientDislikeCard({ item }: { item: DislikedItem }) {
               />
             ) : (
               <Avatar className="h-16 w-16 flex-shrink-0">
-                <AvatarFallback className="text-xl font-semibold bg-secondary text-secondary-foreground">
+                <AvatarFallback className="text-xl font-bold bg-secondary text-secondary-foreground">
                   {item.item.name?.charAt(0) || "C"}
                 </AvatarFallback>
               </Avatar>
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2 mb-1">
-                <h4 className="font-semibold text-lg">{item.item.name}</h4>
+                <h4 className="font-bold text-lg">{item.item.name}</h4>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <TypeBadge type={item.type} />
                 </div>
@@ -152,7 +152,7 @@ function ArticleDislikeCard({ item }: { item: DislikedItem }) {
               />
             ) : (
               <Avatar className="h-16 w-16 flex-shrink-0">
-                <AvatarFallback className="text-xl font-semibold bg-secondary text-secondary-foreground">
+                <AvatarFallback className="text-xl font-bold bg-secondary text-secondary-foreground">
                   <IconArticle className="h-8 w-8" />
                 </AvatarFallback>
               </Avatar>
@@ -160,7 +160,7 @@ function ArticleDislikeCard({ item }: { item: DislikedItem }) {
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2 mb-1">
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-lg line-clamp-1">{item.item.title}</h4>
+                  <h4 className="font-bold text-lg line-clamp-1">{item.item.title}</h4>
                   {item.item.client && (
                     <p className="text-xs text-muted-foreground">{item.item.client.name}</p>
                   )}
@@ -204,7 +204,7 @@ function CommentDislikeCard({ item }: { item: DislikedItem }) {
               />
             ) : (
               <Avatar className="h-10 w-10 flex-shrink-0">
-                <AvatarFallback className="font-semibold bg-secondary text-secondary-foreground">
+                <AvatarFallback className="font-bold bg-secondary text-secondary-foreground">
                   {item.item.author?.name?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>

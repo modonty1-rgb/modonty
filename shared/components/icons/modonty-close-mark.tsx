@@ -1,63 +1,26 @@
-import { useId, type SVGProps } from "react";
+import { markSize, type MarkProps } from "./mark-size";
 
 /**
- * The approved Modonty close mark.
- *
- * Geometry is preserved from the approved 120 x 120 SVG supplied for
- * IconClose. The mask keeps the intentional clear space around the center
- * diamond; useId prevents collisions when several marks render on one page.
+ * The modonty CLOSE mark — v2 (documents/design/ICON-STANDARD-v2.md).
+ * Two masters: M24 (stroke 1.75) from 20 px up, M16 (stroke 1.25) below. Hooks:
+ * `--modonty-close-body` · `--modonty-close-accent` (the diamond).
  */
-export function ModontyCloseMark(props: SVGProps<SVGSVGElement>) {
-  const centerGapId = useId();
-
+export function ModontyCloseMark({ size, ...props }: MarkProps) {
+  const m = markSize(size, props.className);
+  if (!m.small) {
+    return (
+      <svg viewBox="0 0 24 24" {...m.box} {...props}>
+        <path d="M5.5 5.5L18.5 18.5" stroke="var(--modonty-close-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M18.5 5.5L5.5 18.5" stroke="var(--modonty-close-body, currentColor)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11.65 9.88A0.5 0.5 0 0 1 12.35 9.88L14.12 11.65A0.5 0.5 0 0 1 14.12 12.35L12.35 14.12A0.5 0.5 0 0 1 11.65 14.12L9.88 12.35A0.5 0.5 0 0 1 9.88 11.65Z" fill="var(--modonty-close-accent, var(--modonty-accent, #00D8D8))" />
+      </svg>
+    );
+  }
   return (
-    <svg
-      viewBox="0 0 120 120"
-      fill="none"
-      width="1em"
-      height="1em"
-      aria-hidden="true"
-      {...props}
-    >
-      <defs>
-        <mask
-          id={centerGapId}
-          maskUnits="userSpaceOnUse"
-          x="0"
-          y="0"
-          width="120"
-          height="120"
-        >
-          <rect width="120" height="120" fill="white" />
-          <rect
-            x="51"
-            y="51"
-            width="18"
-            height="18"
-            rx="2.5"
-            transform="rotate(45 60 60)"
-            fill="black"
-          />
-        </mask>
-      </defs>
-      <g
-        stroke="var(--modonty-close-body, currentColor)"
-        strokeWidth="12.2"
-        strokeLinecap="round"
-        mask={`url(#${centerGapId})`}
-      >
-        <path d="M25.4 25.4 94.6 94.6" />
-        <path d="M94.6 25.4 25.4 94.6" />
-      </g>
-      <rect
-        x="54"
-        y="54"
-        width="12"
-        height="12"
-        rx="2"
-        transform="rotate(45 60 60)"
-        fill="var(--modonty-close-accent, #00D8D8)"
-      />
+    <svg viewBox="0 0 16 16" {...m.box} {...props}>
+      <path d="M3.5 3.5L12.5 12.5" stroke="var(--modonty-close-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.5 3.5L3.5 12.5" stroke="var(--modonty-close-body, currentColor)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.79 6.44A0.3 0.3 0 0 1 8.21 6.44L9.56 7.79A0.3 0.3 0 0 1 9.56 8.21L8.21 9.56A0.3 0.3 0 0 1 7.79 9.56L6.44 8.21A0.3 0.3 0 0 1 6.44 7.79Z" fill="var(--modonty-close-accent, var(--modonty-accent, #00D8D8))" />
     </svg>
   );
 }

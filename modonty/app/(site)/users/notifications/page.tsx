@@ -45,7 +45,7 @@ export default function NotificationsPage({ searchParams }: NotificationsPagePro
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto max-w-[1128px] px-4 py-8">
-        <h1 className="text-2xl font-semibold leading-tight text-foreground mb-6">
+        <h1 className="text-h1 text-foreground mb-6">
           صندوق البريد
         </h1>
         <Suspense fallback={<NotificationsSkeleton />}>
@@ -157,7 +157,7 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="lg:col-span-1 border-border hover:shadow-md transition-shadow flex flex-col max-h-[min(70vh,32rem)] lg:max-h-[70vh]">
             <CardHeader className="p-4 shrink-0">
-              <CardTitle className="text-lg font-semibold flex items-center gap-2">
+              <CardTitle className="text-lg font-bold flex items-center gap-2">
                 <IconEmail className="h-5 w-5" />
                 القائمة
               </CardTitle>
@@ -168,7 +168,7 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
                 <Link
                   key={t.value}
                   href={`/users/notifications?tab=${t.value}`}
-                  className={`px-3 py-2 text-sm font-medium transition-colors rounded-t-md max-md:inline-flex max-md:min-h-11 max-md:items-center ${
+                  className={`px-3 py-2 text-sm font-medium transition-colors rounded-t-md max-md:inline-flex max-lg:min-h-11 max-md:items-center ${
                     tab === t.value
                       ? "bg-secondary text-secondary-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -227,7 +227,7 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
 
         <Card className="lg:col-span-2 border-border hover:shadow-md transition-shadow">
           <CardHeader className="p-4">
-            <CardTitle className="text-lg font-semibold">تفاصيل الرسالة</CardTitle>
+            <CardTitle className="text-lg font-bold">تفاصيل الرسالة</CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0">
             {!showDetail ? (
@@ -241,7 +241,7 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
                   <p className="text-sm text-muted-foreground mb-1">المكان</p>
                   <Link
                     href={commentNotice.href}
-                    className="text-sm text-primary underline hover:opacity-80 transition-opacity max-md:inline-flex max-md:min-h-11 max-md:items-center"
+                    className="text-sm text-primary underline hover:opacity-80 transition-opacity max-lg:inline-flex max-lg:min-h-11 max-lg:items-center"
                   >
                     {commentNotice.where}
                   </Link>
@@ -264,7 +264,7 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
                         label="Visit client from notification"
                         type="LINK"
                         clientId={client.id}
-                        className="font-medium text-primary underline hover:opacity-80 transition-opacity max-md:inline-flex max-md:min-h-11 max-md:items-center"
+                        className="font-medium text-primary underline hover:opacity-80 transition-opacity max-lg:inline-flex max-lg:min-h-11 max-lg:items-center"
                       >
                         {client.name}
                       </CtaTrackedLink>
@@ -278,7 +278,7 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
                     <p className="text-sm text-muted-foreground mb-1">المقال</p>
                     <Link
                       href={`/articles/${faqReply.article.slug}`}
-                      className="text-sm text-primary underline hover:opacity-80 transition-opacity max-md:inline-flex max-md:min-h-11 max-md:items-center"
+                      className="text-sm text-primary underline hover:opacity-80 transition-opacity max-lg:inline-flex max-lg:min-h-11 max-lg:items-center"
                     >
                       {faqReply.article.title}
                     </Link>
@@ -314,7 +314,7 @@ async function NotificationsContent({ searchParams }: NotificationsPageProps) {
                         label="Visit client from notification"
                         type="LINK"
                         clientId={client.id}
-                        className="font-medium text-primary underline hover:opacity-80 transition-opacity max-md:inline-flex max-md:min-h-11 max-md:items-center"
+                        className="font-medium text-primary underline hover:opacity-80 transition-opacity max-lg:inline-flex max-lg:min-h-11 max-lg:items-center"
                       >
                         {client.name}
                       </CtaTrackedLink>

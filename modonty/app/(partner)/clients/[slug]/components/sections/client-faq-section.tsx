@@ -41,7 +41,7 @@ export function ClientFaqSection({ faqs, slug }: ClientFaqSectionProps) {
         <>
           <p className="mb-3 text-xs text-muted-foreground">
             أجبنا على{" "}
-            <b className="font-extrabold text-foreground">
+            <b className="font-bold text-foreground">
               {answeredCountLabel(faqs.length)}
             </b>{" "}
             من أسئلة قرّائنا الحقيقية.
@@ -53,12 +53,12 @@ export function ClientFaqSection({ faqs, slug }: ClientFaqSectionProps) {
                 value={faq.id}
                 className="overflow-hidden rounded-md border bg-muted/40"
               >
-                <AccordionTrigger className="px-4 py-3 text-start text-[13px] font-extrabold text-foreground no-underline hover:no-underline">
+                <AccordionTrigger className="px-4 py-3 text-start text-[13px] font-bold text-foreground no-underline hover:no-underline">
                   {faq.question}
                 </AccordionTrigger>
                 {/* keepMounted: the partner page emits FAQPage JSON-LD for all of these, but
                     only `faqs[0]` opens by default — the rest were absent from the HTML. */}
-                <AccordionContent keepMounted className="px-4 pb-3.5 pt-0 text-[12.5px] leading-[1.65] text-muted-foreground">
+                <AccordionContent keepMounted className="px-4 pb-3.5 pt-0 text-xs leading-[1.65] text-muted-foreground">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -66,7 +66,7 @@ export function ClientFaqSection({ faqs, slug }: ClientFaqSectionProps) {
           </Accordion>
         </>
       ) : (
-        <p className="mb-3 text-[12.5px] leading-[1.65] text-muted-foreground">
+        <p className="mb-3 text-xs leading-[1.65] text-muted-foreground">
           لا توجد أسئلة منشورة بعد — اطرح سؤالك وسنجيبك مباشرةً.
         </p>
       )}

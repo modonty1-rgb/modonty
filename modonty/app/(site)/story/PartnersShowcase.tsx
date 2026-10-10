@@ -53,10 +53,10 @@ function PartnersShowcaseImpl() {
       <div className="flex items-center gap-2 px-2">
         <span aria-hidden className="text-2xl">🤝</span>
         <div className="flex flex-col">
-          <p className="text-sm md:text-base font-extrabold text-foreground leading-tight">
+          <p className="text-sm lg:text-base font-bold text-foreground leading-tight">
             يثقون بنا في السعودية ومصر
           </p>
-          <p className="text-xs md:text-xs text-foreground/65 leading-tight">
+          <p className="text-xs lg:text-xs text-foreground/65 leading-tight">
             ٥ شركاء أوائل اختاروا مدونتي
           </p>
         </div>
@@ -64,7 +64,7 @@ function PartnersShowcaseImpl() {
 
       {/* GRID */}
       <div className="relative flex-1 min-h-[260px] overflow-hidden rounded-2xl bg-gradient-to-b from-card/60 via-transparent to-muted/30 px-3 py-4 flex items-center justify-center">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 w-full max-w-[520px] [&>*:nth-last-child(1):nth-child(odd)]:col-span-2 [&>*:nth-last-child(1):nth-child(odd)]:max-w-[calc(50%-6px)] [&>*:nth-last-child(1):nth-child(odd)]:mx-auto md:[&>*:nth-last-child(1):nth-child(odd)]:col-span-1 md:[&>*:nth-last-child(1):nth-child(odd)]:max-w-none md:[&>*:nth-last-child(1):nth-child(odd)]:mx-0">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 w-full max-w-[520px] [&>*:nth-last-child(1):nth-child(odd)]:col-span-2 [&>*:nth-last-child(1):nth-child(odd)]:max-w-[calc(50%-6px)] [&>*:nth-last-child(1):nth-child(odd)]:mx-auto md:[&>*:nth-last-child(1):nth-child(odd)]:col-span-1 md:[&>*:nth-last-child(1):nth-child(odd)]:max-w-none md:[&>*:nth-last-child(1):nth-child(odd)]:mx-0">
           {PARTNERS.map((partner, idx) => {
             const card = (
               <m.div
@@ -91,7 +91,7 @@ function PartnersShowcaseImpl() {
                     aria-hidden
                     className="absolute top-1.5 left-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
-                    <IconExternal className="w-3 h-3 text-primary" />
+                    <IconExternal className="size-4 text-primary" />
                   </span>
                 )}
               </m.div>
@@ -113,7 +113,7 @@ function PartnersShowcaseImpl() {
                 ) : (
                   <div title={partner.name}>{card}</div>
                 )}
-                <p className="mt-1.5 text-xs md:text-xs text-center text-foreground/65 font-bold truncate px-1">
+                <p className="mt-1.5 text-xs lg:text-xs text-center text-foreground/65 font-bold truncate px-1">
                   {partner.name}
                 </p>
               </div>
@@ -123,7 +123,7 @@ function PartnersShowcaseImpl() {
       </div>
 
       {/* FOOTER NOTE */}
-      <p className="text-xs md:text-xs text-center text-foreground/55 px-3 leading-relaxed">
+      <p className="text-xs lg:text-xs text-center text-foreground/55 px-3 leading-relaxed">
         شركاء فعليون مع مدونتي منذ ٢٠٢٤
       </p>
     </div>

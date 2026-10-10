@@ -58,7 +58,7 @@ export default async function TeamPage() {
         />
 
         <header className="space-y-3">
-          <h1 className="text-2xl font-bold leading-tight text-foreground sm:text-3xl">{text.title}</h1>
+          <h1 className="text-h1 text-foreground">{text.title}</h1>
           <p className="max-w-2xl text-base leading-relaxed text-foreground/75">{text.tagline}</p>
         </header>
 

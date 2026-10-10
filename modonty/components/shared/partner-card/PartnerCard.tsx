@@ -86,7 +86,7 @@ export function PartnerCard({ partner }: PartnerCardProps) {
         <PartnerAvatar media={partner.logo ? asMedia(partner.logo, partner.name) : null} name={partner.name} size="small" />
         <div className="min-w-0 flex-1">
           <h2 className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-            <Link href={href} className="truncate rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:hover:text-link max-md:-my-3 max-md:min-w-11 max-md:py-3">
+            <Link href={href} className="truncate rounded-sm py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:hover:text-link max-lg:-my-3 max-lg:min-w-11 max-lg:py-3">
               {partner.name}
             </Link>
             {/* The mark is the whole promise of this page: this one was checked. It draws
@@ -103,7 +103,7 @@ export function PartnerCard({ partner }: PartnerCardProps) {
           <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
             {partner.city && (
               <span className="inline-flex items-center gap-1">
-                <IconMapPin className="h-3.5 w-3.5" aria-hidden />
+                <IconMapPin className="h-4 w-4" aria-hidden />
                 {partner.city}
               </span>
             )}

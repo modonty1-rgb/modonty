@@ -47,11 +47,11 @@ function VerifyResult({ success, message }: { success: boolean; message: string 
               ? <IconSuccess className="h-10 w-10 text-emerald-600 dark:text-emerald-400" aria-hidden />
               : <IconError className="h-10 w-10 text-destructive" aria-hidden />}
         </div>
-        <h1 className="text-xl font-semibold">{success ? "تم تفعيل حسابك!" : "تعذّر التفعيل"}</h1>
+        <h1 className="text-h1">{success ? "تم تفعيل حسابك!" : "تعذّر التفعيل"}</h1>
         <p className="text-muted-foreground text-sm">{message}</p>
         <Link
           href="/users/login"
-          className="inline-block text-primary hover:underline text-sm max-md:inline-flex max-md:min-h-11 max-md:items-center max-md:px-3"
+          className="inline-flex min-h-6 items-center text-primary hover:underline text-sm max-lg:min-h-11 max-md:px-3"
         >
           تسجيل الدخول
         </Link>

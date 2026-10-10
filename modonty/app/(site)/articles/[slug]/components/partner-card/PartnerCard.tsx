@@ -169,14 +169,14 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
           {logoMedia && (
             <PartnerAvatar media={logoMedia} name={client.name} size="standard" />
           )}
-          <h2 className="flex items-center gap-1.5 text-base font-semibold leading-tight">
+          <h2 className="flex items-center gap-1.5 text-base font-bold leading-tight">
             <CtaTrackedLink
               href={`/clients/${client.slug}`}
               label={client.name}
               type="LINK"
               articleId={askClientProps?.articleId}
               clientId={client.id}
-              className="inline-flex items-center gap-1 text-foreground transition-colors hover:text-primary"
+              className="inline-flex min-h-6 items-center gap-1 text-foreground transition-colors hover:text-primary max-lg:min-h-11"
             >
               {client.name}
               {/* مشروطةٌ بخانة الأدمن منذ ١٧ سبتمبر — كانت تُرسم لكل شريك بلا استثناء. */}
@@ -232,7 +232,7 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
                   user={askClientProps.user}
                   pendingFaqs={askClientProps.pendingFaqs}
                   triggerOnly
-                  triggerClassName="w-auto h-11 px-4 bg-transparent border-border text-foreground font-semibold hover:bg-muted/60 hover:border-border shadow-none"
+                  triggerClassName="w-auto h-11 px-4 bg-transparent border-border text-foreground font-bold hover:bg-muted/60 hover:border-border shadow-none"
                 />
               )}
               {cta && !cta.hideOwnCta && cta.mode === "FORM" && (
@@ -241,7 +241,7 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
                   articleId={cta.articleId}
                   source={cta.source}
                   label={cta.label}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-bold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
                 />
               )}
             </div>
@@ -256,7 +256,7 @@ export function PartnerCard({ client, askClientProps, cta }: PartnerCardProps) {
             clientId={client.id}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-bold text-primary-foreground ring-1 ring-inset ring-white/25 transition-opacity hover:opacity-90"
           >
             <IconExternal className="h-4 w-4" />
             {cta.label?.trim() || "تسوّق الآن"}

@@ -22,10 +22,10 @@ export default function FaqLoading() {
         <Skeleton className="h-5 w-80" />
       </div>
       <div className="flex gap-3 mb-6">
-        <Skeleton className="h-9 w-44 rounded-md max-md:h-11" />
-        <Skeleton className="h-9 w-24 rounded-md max-md:h-11" />
+        <Skeleton className="h-9 w-44 rounded-md max-lg:h-11" />
+        <Skeleton className="h-9 w-24 rounded-md max-lg:h-11" />
       </div>
-      <Skeleton className="h-9 w-full rounded-md mb-6 max-md:h-11" />
+      <Skeleton className="h-9 w-full rounded-md mb-6 max-lg:h-11" />
       <Card className="shadow-sm">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">

@@ -18,7 +18,7 @@ interface RatingStarsProps {
 export function RatingStars({ average, count, className }: RatingStarsProps) {
   return (
     <span className={cn("inline-flex items-center gap-1 font-medium text-foreground", className)}>
-      <IconFeatured className="h-3.5 w-3.5 fill-current text-amber-500" aria-hidden />
+      <IconFeatured className="h-4 w-4 fill-current text-amber-500" aria-hidden />
       {average.toLocaleString(SITE_LOCALE, { maximumFractionDigits: 1 })}
       <span className="font-normal text-muted-foreground">({count.toLocaleString(SITE_LOCALE)})</span>
       <span className="sr-only">{messages.shared.badges.ratingScreenReaderLabel}</span>

@@ -19,7 +19,7 @@ export function ReelsBottomBar() {
       aria-label="أقسام الموقع"
       // `pb-[env(safe-area-inset-bottom)]`: on a gesture-bar iPhone the last 34px belong to the
       // system, and a tap target sitting in them is a tap the OS eats. The bar grows instead.
-      className="fixed inset-x-0 bottom-0 z-30 flex items-stretch justify-around border-t border-white/10 bg-black/70 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 flex items-stretch justify-around border-t border-white/10 bg-black/70 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
     >
       {reelsBarItems.map((item) => (
         <Link

@@ -43,7 +43,7 @@ export function ResultsLine({ total, scopeLabel, current }: ResultsLineProps) {
             FOCUS_RING
           }
         >
-          <IconClose className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          <IconClose className="h-4 w-4 shrink-0" aria-hidden />
           امسح التصفية ({activeCount.toLocaleString(SITE_LOCALE)})
         </Link>
       )}

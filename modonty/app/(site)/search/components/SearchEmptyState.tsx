@@ -16,7 +16,7 @@ export function SearchEmptyState({ query }: SearchEmptyStateProps) {
             <IconSearch className="h-12 w-12" />
           </div>
         </div>
-        <h3 className="text-xl font-semibold text-foreground mb-2">
+        <h3 className="text-xl font-bold text-foreground mb-2">
           لم يتم العثور على نتائج
         </h3>
         <p className="text-muted-foreground mb-6 max-w-md mx-auto">
