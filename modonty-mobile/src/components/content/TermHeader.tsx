@@ -33,7 +33,7 @@ export const TermHeader = memo(function TermHeader({
   return (
     <View style={styles.wrap}>
       <View style={styles.intro}>
-        {image ? <Image source={image} style={styles.image} contentFit="cover" accessibilityLabel={imageAlt ?? name} /> : null}
+        {image ? <Image cachePolicy="memory-disk" source={image} style={styles.image} contentFit="cover" accessibilityLabel={imageAlt ?? name} /> : null}
         <AppText variant="pageTitle" accessibilityRole="header">
           {name}
         </AppText>
@@ -59,7 +59,7 @@ export const TermHeader = memo(function TermHeader({
             contentContainerStyle={styles.hList}
             renderItem={({ item }) => (
               <Tap label={item.name} role="link" onPress={() => open.partner(item.slug)} style={[styles.partner, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                {item.logo ? <Image source={item.logo} style={styles.logo} contentFit="contain" /> : null}
+                {item.logo ? <Image cachePolicy="memory-disk" source={item.logo} style={styles.logo} contentFit="contain" /> : null}
                 <AppText variant="label" numberOfLines={1}>
                   {item.name}
                 </AppText>

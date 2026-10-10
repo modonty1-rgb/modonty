@@ -50,7 +50,7 @@ export default function SectorScreen() {
       ) : (
         <ScrollView contentContainerStyle={styles.content}>
           {d.hero?.mobile ?? d.hero?.desktop ? (
-            <Image source={(d.hero.mobile ?? d.hero.desktop)!.src} style={styles.hero} contentFit="cover" accessibilityLabel={(d.hero.mobile ?? d.hero.desktop)!.alt} />
+            <Image cachePolicy="memory-disk" source={(d.hero.mobile ?? d.hero.desktop)!.src} style={styles.hero} contentFit="cover" accessibilityLabel={(d.hero.mobile ?? d.hero.desktop)!.alt} />
           ) : null}
           {d.hero?.title ? <AppText variant="pageTitle">{d.hero.title}</AppText> : null}
           {d.hero?.subtitle ? (

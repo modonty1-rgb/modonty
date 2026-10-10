@@ -5,7 +5,6 @@
 // بينما التطبيق وreact-native على 19.1.0 — نسختان في حزمة واحدة = «Invalid hook call» عند الإقلاع.
 // الحلّ: كل طلب لـ`react` أو `react/*` يُحلّ من مجلّد هذا التطبيق، أيّاً كان الملف الطالب.
 const { getDefaultConfig } = require('expo/metro-config');
-const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
 
 const config = getDefaultConfig(__dirname);
@@ -29,5 +28,4 @@ if (process.env.EXPO_NO_METRO_WORKSPACE_ROOT) {
   config.watchFolders = [...new Set([...(config.watchFolders ?? []), path.resolve(__dirname, '..')])];
 }
 
-// NativeWind v4 (توثيق nativewind.dev): ألوان الموقع من global.css.
-module.exports = withNativeWind(config, { input: './global.css' });
+module.exports = config;

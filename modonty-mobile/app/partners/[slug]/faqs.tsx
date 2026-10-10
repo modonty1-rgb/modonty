@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { List } from 'react-native-paper';
 
@@ -20,10 +20,15 @@ import { control, radius, space } from '@/theme/tokens';
 
 /** S09f — أسئلة الشريك (C13 faqs) + اسأل الشريك (E13 — حدّ ٥ أسئلة معلّقة يردّ به الخادم). */
 export default function PartnerFaqsScreen() {
-  const { slug, name } = useLocalSearchParams<{ slug: string; name?: string }>();
+  const { slug, name, ask } = useLocalSearchParams<{ slug: string; name?: string; ask?: string }>();
   const { colors } = useAppTheme();
   const { requireAuth } = useAuth();
+  // «اسأل الشريك مباشرة» من مودو يفتح النموذج نفسه مباشرة (`?ask=1`) — الدخول مطلوب كزرّ الصفحة.
   const [asking, setAsking] = useState(false);
+  useEffect(() => {
+    if (ask === '1') requireAuth(() => setAsking(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ask]);
   const res = useResource((signal) => moreContentApi.partnerFaqs(slug, signal), [slug]);
 
   if (asking) {

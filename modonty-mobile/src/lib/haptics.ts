@@ -6,4 +6,6 @@ import * as Haptics from 'expo-haptics';
  */
 export const haptic = {
   success: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined),
+  /** نقرة اختيار خفيفة — خطوة منزلق أو تبديل خيار. */
+  selection: () => Haptics.selectionAsync().catch(() => undefined),
 };

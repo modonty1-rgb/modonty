@@ -34,7 +34,7 @@ export default function PartnerGalleryScreen() {
           contentContainerStyle={styles.list}
           ItemSeparatorComponent={() => <View style={styles.gap} />}
           renderItem={({ item }) => (
-            <Image source={item.url} style={[styles.image, { aspectRatio: item.width && item.height ? item.width / item.height : 4 / 3 }]} contentFit="contain" accessibilityLabel={item.alt} transition={200} />
+            <Image cachePolicy="memory-disk" source={item.url} style={[styles.image, { aspectRatio: item.width && item.height ? item.width / item.height : 4 / 3 }]} contentFit="contain" accessibilityLabel={item.alt} transition={200} />
           )}
         />
       )}

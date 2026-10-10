@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, type PropsWithChildren } from 'react';
 import { useColorScheme } from 'react-native';
-import { configureFonts, MD3DarkTheme, MD3LightTheme, PaperProvider, type MD3Theme } from 'react-native-paper';
+import { configureFonts, MD3DarkTheme, MD3LightTheme, PaperProvider, ThemeProvider as PaperThemeProvider, type MD3Theme } from 'react-native-paper';
 
 import { ModontyIcon, type ModontyIconName } from '@/components/brand/ModontyIcon';
 import { palettes, radius, typography, type AppColors, type ColorScheme } from './tokens';
@@ -120,6 +120,20 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       <PaperProvider theme={paper} settings={settings}>
         {children}
       </PaperProvider>
+    </ThemeContext.Provider>
+  );
+}
+
+/**
+ * ثيم موضعي لجزء من الشاشة (خلفية القراءة في المقال): كل ما بداخله يقرأ ألوان `scheme`
+ * مع تعديلات `override` — ومكوّنات Paper بداخله كذلك.
+ */
+export function ThemeScope({ scheme, override, children }: PropsWithChildren<{ scheme: ColorScheme; override?: Partial<AppColors> }>) {
+  const value = useMemo<AppTheme>(() => ({ scheme, colors: { ...palettes[scheme], ...override } }), [scheme, override]);
+  const paper = useMemo(() => paperTheme(scheme, value.colors), [scheme, value.colors]);
+  return (
+    <ThemeContext.Provider value={value}>
+      <PaperThemeProvider theme={paper}>{children}</PaperThemeProvider>
     </ThemeContext.Provider>
   );
 }

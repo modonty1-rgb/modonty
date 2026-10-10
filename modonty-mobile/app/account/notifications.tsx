@@ -1,16 +1,15 @@
 import { useCallback, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-import { AppText } from '@/components/ui/AppText';
-import { Button } from '@/components/ui/Button';
-import { ChipRow } from '@/components/ui/ChipRow';
+import type { ModontyIconName } from '@/components/brand/ModontyIcon';
+import { FeedTabs } from '@/components/home/FeedTabs';
 import { Header } from '@/components/ui/Header';
 import { Icon } from '@/components/ui/Icon';
 import { PagedList } from '@/components/ui/PagedList';
 import { Screen } from '@/components/ui/Screen';
 import { Tap } from '@/components/ui/Tap';
 import { usePagedList } from '@/hooks/usePagedList';
-import { dateTime } from '@/lib/format';
+import { agoFine } from '@/lib/format';
 import { open } from '@/lib/nav';
 import { useAuth } from '@/providers/AuthProvider';
 import { useToast } from '@/providers/ToastProvider';
@@ -18,17 +17,29 @@ import { accountApi } from '@/services/api';
 import type { NotificationItem, NotificationTab } from '@/services/api-types';
 import { toApiError } from '@/services/errors';
 import { useAppTheme } from '@/theme/ThemeProvider';
-import { control, radius, space } from '@/theme/tokens';
+import { ds, dsFontScale } from '@/theme/tokens';
 
-const TABS = [
-  { value: 'all', label: 'الكل' },
-  { value: 'unread', label: 'غير المقروءة' },
-  { value: 'read', label: 'المقروءة' },
-] as const satisfies readonly { value: NotificationTab; label: string }[];
+const TABS: { key: NotificationTab; label: string }[] = [
+  { key: 'all', label: 'الكل' },
+  { key: 'unread', label: 'غير المقروءة' },
+  { key: 'read', label: 'المقروءة' },
+];
 
 type Row = NotificationItem & { when: string | null };
 
-/** S16 — الإشعارات (N1/N2): غير المقروء أوّلاً، والضغط يقرأ ويفتح الوجهة. */
+/** أيقونة النوع — نفس قاعدة التوجيه في الخادم (`notification-target-kind.ts:9-14`). */
+function iconOf(type: string): ModontyIconName {
+  if (type.startsWith('reel_comment')) return 'reels';
+  if (type.startsWith('comment')) return 'comment';
+  if (type === 'faq_reply') return 'question';
+  return 'email';
+}
+
+/**
+ * S16 — الإشعارات (N1/N2) على نظام التصميم: رأس برجوع و«قرأتها كلها» حين يوجد غير مقروء · تبويبات
+ * الكل/غير المقروءة/المقروءة · صفوف بعرض الشاشة: أيقونة النوع في دائرة · العنوان أثقل ونقطة زرقاء للجديد ·
+ * النصّ ٣ أسطر · الوقت. غير المقروء أوّلاً (ترتيب الخادم)، والضغط يقرأ ويفتح الوجهة.
+ */
 export default function NotificationsScreen() {
   const { colors } = useAppTheme();
   const { setUnread } = useAuth();
@@ -42,7 +53,7 @@ export default function NotificationsScreen() {
       const d = await accountApi.notifications({ tab, cursor }, signal);
       setUnreadLocal(d.unreadCount);
       setUnread(d.unreadCount);
-      return { items: d.items.map((n) => ({ ...n, when: dateTime(n.createdAt) })), next: d.nextCursor };
+      return { items: d.items.map((n) => ({ ...n, when: agoFine(n.createdAt) })), next: d.nextCursor };
     },
     [tab],
   );
@@ -80,55 +91,65 @@ export default function NotificationsScreen() {
   };
 
   const renderItem = useCallback(
-    ({ item }: { item: Row }) => (
-      <Tap
-        label={`${item.readAt ? '' : 'غير مقروء: '}${item.title}`}
-        role="link"
-        onPress={() => void openRow(item)}
-        style={[styles.row, { backgroundColor: item.readAt ? colors.surface : colors.primaryContainer, borderColor: colors.border }]}
-      >
-        <Icon name={item.target?.kind === 'reel' ? 'reels' : item.target?.kind === 'contact' ? 'email' : 'comment'} tone={item.readAt ? 'muted' : 'onPrimaryContainer'} />
-        <View style={styles.text}>
-          <AppText variant="label" tone={item.readAt ? 'text' : 'onPrimaryContainer'}>
-            {item.title}
-          </AppText>
-          <AppText variant="body" tone={item.readAt ? 'muted' : 'onPrimaryContainer'} numberOfLines={3}>
-            {item.body}
-          </AppText>
-          {item.when ? (
-            <AppText variant="secondary" tone="muted">
-              {item.readAt ? item.when : `جديد، ${item.when}`}
-            </AppText>
-          ) : null}
-        </View>
-        {item.target && item.target.kind !== 'contact' ? <Icon name="forward" size={control.iconSmall} tone="muted" /> : null}
-      </Tap>
-    ),
+    ({ item }: { item: Row }) => {
+      const fresh = !item.readAt;
+      const goes = item.target && item.target.kind !== 'contact';
+      return (
+        <Tap label={`${fresh ? 'جديد: ' : ''}${item.title}`} role={goes ? 'link' : 'button'} onPress={() => void openRow(item)} style={[styles.row, { borderBottomColor: colors.border }]}>
+          <View style={[styles.icon, { backgroundColor: fresh ? colors.primaryContainer : colors.sunken }]}>
+            <Icon name={iconOf(item.type)} size={20} tone={fresh ? 'primaryText' : 'textSecondary'} monochrome />
+          </View>
+          <View style={styles.text}>
+            <View style={styles.titleRow}>
+              <Text style={[styles.title, { color: colors.text, fontFamily: fresh ? 'Tajawal_800ExtraBold' : 'Tajawal_700Bold' }]} numberOfLines={3} maxFontSizeMultiplier={dsFontScale.max}>
+                {item.title}
+              </Text>
+              {fresh ? <View style={[styles.dot, { backgroundColor: colors.primary }]} /> : null}
+            </View>
+            {item.body ? (
+              <Text style={[styles.body, { color: colors.textSecondary }]} numberOfLines={3} maxFontSizeMultiplier={dsFontScale.max}>
+                {item.body}
+              </Text>
+            ) : null}
+            {item.when ? (
+              <Text style={[styles.when, { color: colors.muted }]} maxFontSizeMultiplier={1.2}>
+                {item.when}
+              </Text>
+            ) : null}
+          </View>
+        </Tap>
+      );
+    },
     [colors, openRow],
   );
 
   return (
     <Screen>
-      <Header back title="الإشعارات" />
+      <Header
+        back
+        title="الإشعارات"
+        actions={
+          unread > 0 ? (
+            <Tap label="تعليم الكل كمقروء" disabled={marking} onPress={() => void readAll()} style={styles.readAll}>
+              {marking ? <ActivityIndicator size="small" color={colors.primary} /> : <Icon name="check" size={18} tone="primaryText" monochrome />}
+              <Text style={[styles.readAllText, { color: colors.primaryText }]} maxFontSizeMultiplier={1.2}>
+                قرأتها كلها
+              </Text>
+            </Tap>
+          ) : undefined
+        }
+      />
+      <FeedTabs tabs={TABS} value={tab} onChange={setTab} />
       <PagedList
         list={list}
         renderItem={renderItem}
         keyOf={(n) => n.id}
         what="الإشعارات"
         skeleton="row"
-        header={
-          <View>
-            <ChipRow label="عرض" options={TABS} value={tab} onChange={setTab} />
-            {unread > 0 ? (
-              <View style={styles.readAll}>
-                <Button label="تعليم الكل كمقروء" kind="text" compact icon="check" onPress={() => void readAll()} busy={marking} busyLabel="يُعلَّم…" />
-              </View>
-            ) : null}
-          </View>
-        }
+        flush
         empty={{
           icon: 'notifications',
-          title: tab === 'unread' ? 'لا إشعارات غير مقروءة' : 'لا إشعارات بعد',
+          title: tab === 'unread' ? 'لا إشعارات غير مقروءة' : tab === 'read' ? 'لا إشعارات مقروءة' : 'لا إشعارات بعد',
           body: 'يصلك إشعار حين يعتمد الشريك تعليقك أو يردّ على سؤالك.',
         }}
       />
@@ -137,7 +158,14 @@ export default function NotificationsScreen() {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', gap: space.sm, alignItems: 'flex-start', borderRadius: radius.card, borderWidth: StyleSheet.hairlineWidth, padding: space.card },
-  text: { flex: 1, gap: space.xxs },
-  readAll: { alignItems: 'flex-start', paddingHorizontal: space.screen - space.xs },
+  row: { paddingHorizontal: ds.layout.gutter, paddingVertical: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderBottomWidth: StyleSheet.hairlineWidth },
+  icon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  text: { flex: 1, gap: 4 },
+  titleRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
+  title: { flex: 1, fontSize: 15, lineHeight: 22 },
+  dot: { width: 10, height: 10, borderRadius: 5, marginTop: 6 },
+  body: { fontFamily: 'Tajawal_400Regular', fontSize: 14, lineHeight: 22 },
+  when: { fontFamily: 'Tajawal_500Medium', fontSize: 12, lineHeight: 18 },
+  readAll: { height: 48, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', gap: 4 },
+  readAllText: { fontFamily: 'Tajawal_700Bold', fontSize: 14, lineHeight: 20 },
 });

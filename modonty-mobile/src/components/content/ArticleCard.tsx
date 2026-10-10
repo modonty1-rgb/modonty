@@ -28,12 +28,11 @@ export const ArticleCard = memo(function ArticleCard({ item, onOpen, layout = 'c
     return (
       <Tap label={item.title} role="link" onPress={() => onOpen(item.slug)} style={[styles.row, surface]}>
         {item.image ? (
-          <Image
+          <Image cachePolicy="memory-disk" recyclingKey={item.key}
             source={item.image}
             placeholder={item.imageBlur ? { uri: item.imageBlur } : undefined}
             style={styles.thumb}
             contentFit="cover"
-            transition={200}
             accessibilityIgnoresInvertColors
           />
         ) : null}
@@ -54,18 +53,17 @@ export const ArticleCard = memo(function ArticleCard({ item, onOpen, layout = 'c
   return (
     <Tap label={item.title} role="link" onPress={() => onOpen(item.slug)} style={[styles.card, surface]}>
       {item.image ? (
-        <Image
+        <Image cachePolicy="memory-disk" recyclingKey={item.key}
           source={item.image}
           placeholder={item.imageBlur ? { uri: item.imageBlur } : undefined}
           style={styles.cover}
           contentFit="cover"
-          transition={200}
           accessibilityIgnoresInvertColors
         />
       ) : null}
       {item.publisher ? (
       <View style={styles.publisher}>
-        {item.publisherLogo ? <Image source={item.publisherLogo} style={styles.logo} contentFit="cover" /> : null}
+        {item.publisherLogo ? <Image cachePolicy="memory-disk" recyclingKey={item.key} source={item.publisherLogo} style={styles.logo} contentFit="cover" /> : null}
         <AppText variant="label" tone="muted" numberOfLines={1} style={styles.flex}>
           {item.publisher}
         </AppText>

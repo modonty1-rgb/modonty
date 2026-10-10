@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap"><style>body{margin:0;background:#ECEBE7;font-family:Tajawal,sans-serif;color:#0E065A;-webkit-font-smoothing:antialiased}a{color:#3030FF}a:hover{color:#2323C8}*{box-sizing:border-box}</style></helmet>
+<div dir="rtl" style="max-width:1240px;margin:0 auto;padding:48px 32px 96px;display:flex;flex-direction:column;gap:28px">
+
+<header style="display:flex;flex-direction:column;gap:20px;background:#0E065A;color:#FFFFFF;border-radius:28px;padding:40px">
+  <div style="display:flex;align-items:center;gap:14px">
+    <div style="position:relative;width:56px;height:56px;border-radius:16px;background:#FFFFFF;display:flex;align-items:center;justify-content:center">
+      <span style="font:900 34px/1 Tajawal,sans-serif;color:#0E065A;margin-top:-4px" dir="ltr">m</span>
+      <span style="position:absolute;top:9px;left:13px;width:8px;height:8px;background:#00D8D8;transform:rotate(45deg)"></span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="font:500 14px/20px Tajawal;color:#B8B6E0">نظام تصميم مدونتي · الإصدار ١٫٠</span>
+      <span style="font:900 34px/44px Tajawal">الأساسات (Tokens)</span>
+    </div>
+  </div>
+  <p style="margin:0;font:400 16px/28px Tajawal;color:#DCDAF2;max-width:760px;text-wrap:pretty">الخطوة ١ من ٣. كل قيمة هنا هي ما ستُبنى عليه المكوّنات والشاشات لاحقاً، ولن يظهر في أي شاشة لون أو مسافة أو حجم خط خارج هذه الصفحة. نسب التباين محسوبة آلياً من القيم الفعلية، وليست مكتوبة يدوياً.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+    <div style="background:#1B1270;border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px"><span style="font:800 14px/20px Tajawal;color:#00D8D8">قرار ١ · ألوان «عندك كم دقيقة؟»</span><span style="font:400 14px/24px Tajawal;color:#DCDAF2;text-wrap:pretty">النص الأبيض على الأخضر #27B07D تباينه ٢٫٧٧ فقط، وعلى البرتقالي أقل. أبقيت ألوان الموقع كما هي، وأعطيت كل لون نصاً داكناً من نفس درجته، والبنفسجي فقط نصه أبيض.</span></div>
+    <div style="background:#1B1270;border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px"><span style="font:800 14px/20px Tajawal;color:#00D8D8">قرار ٢ · زر واتساب</span><span style="font:400 14px/24px Tajawal;color:#DCDAF2;text-wrap:pretty">الأخضر #25D366 لا يحتمل نصاً أبيض (١٫٩٨). النص والأيقونة عليه داكنان #06291C، كما في الوايرفريم.</span></div>
+    <div style="background:#1B1270;border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px"><span style="font:800 14px/20px Tajawal;color:#00D8D8">قرار ٣ · ألوان القطاعات (مُعاد)</span><span style="font:400 14px/24px Tajawal;color:#DCDAF2;text-wrap:pretty">أُعيد اختيار الستة في فراغات دائرة الألوان بعيداً عن الأزرق والتركوازي والأخضر والكهرماني والأحمر والذهبي. زاوية كل لون وأقرب دور له محسوبة في القسم ٠٥.</span></div>
+  </div>
+</header>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">01</span><h2 style="margin:0;font:800 22px/32px Tajawal">المسافات</h2><span style="font:400 14px/24px Tajawal;color:#625F82">مبنية على وحدة ٤dp. هامش الشاشة الأفقي ١٦، والفاصل بين الأقسام ٣٢.</span></div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <sc-for list="{{ spacing }}" as="s" hint-placeholder-count="11">
+      <div style="display:grid;grid-template-columns:96px 64px minmax(0,1fr) minmax(0,1.4fr);align-items:center;gap:16px;padding:6px 0;border-bottom:1px solid #F0EEE9">
+        <span style="font:600 13px/1 ui-monospace,monospace;color:#0E065A" dir="ltr">{{ s.name }}</span>
+        <span style="font:600 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">{{ s.v }}dp</span>
+        <div style="display:flex"><div style="height:16px;background:#3030FF;border-radius:3px;width:{{ s.w }}"></div></div>
+        <span style="font:400 14px/22px Tajawal;color:#4A4670">{{ s.use }}</span>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">02</span><h2 style="margin:0;font:800 22px/32px Tajawal">الزوايا</h2><span style="font:400 14px/24px Tajawal;color:#625F82">ست درجات فقط. الزاوية غير المتماثلة محجوزة لبطاقة «مميّز اليوم».</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px">
+    <sc-for list="{{ radii }}" as="r" hint-placeholder-count="7">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="height:96px;background:#E8E8FF;border:2px solid #3030FF;border-radius:{{ r.css }}"></div>
+        <span style="font:600 13px/1 ui-monospace,monospace" dir="ltr">{{ r.name }} · {{ r.v }}</span>
+        <span style="font:400 13px/20px Tajawal;color:#4A4670">{{ r.use }}</span>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">03</span><h2 style="margin:0;font:800 22px/32px Tajawal">الخطوط · Tajawal</h2><span style="font:400 14px/24px Tajawal;color:#625F82">ارتفاع السطر للعربية أعلى من اللاتينية (١٫٣ للعناوين، ١٫٧–٢ للنص) حتى لا تتصادم النقاط والتشكيل. أصغر حجم مسموح ١٢.</span></div>
+  <div style="display:flex;flex-direction:column">
+    <sc-for list="{{ type }}" as="t" hint-placeholder-count="11">
+      <div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;align-items:center;padding:16px 0;border-bottom:1px solid #F0EEE9">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font:700 13px/1.4 ui-monospace,monospace" dir="ltr">{{ t.name }}</span>
+          <span style="font:500 12px/1.4 ui-monospace,monospace;color:#625F82" dir="ltr">{{ t.size }}/{{ t.lh }} · {{ t.w }}</span>
+          <span style="font:400 13px/20px Tajawal;color:#4A4670">{{ t.use }}</span>
+        </div>
+        <span style="font-family:Tajawal;font-size:{{ t.px }};line-height:{{ t.lhpx }};font-weight:{{ t.w }};color:#0E065A;text-wrap:balance">{{ t.sample }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+    <div style="background:#F3F3F1;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font:800 14px/20px Tajawal">الأرقام</span><span style="font:400 14px/24px Tajawal;color:#4A4670">أرقام عربية-هندية في كل الواجهة: ٢٥٢ مقالاً · ١١ د · ١:٠٥. الأسماء البرمجية في هذه الصفحة فقط باللاتيني.</span></div>
+    <div style="background:#F3F3F1;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font:800 14px/20px Tajawal">موازنة العناوين</span><span style="font:400 14px/24px Tajawal;color:#4A4670">كل عنوان يستخدم موازنة الأسطر (text-wrap: balance، وفي RN كسر يدوي محسوب) فلا تبقى كلمة وحيدة في السطر الأخير.</span></div>
+    <div style="background:#F3F3F1;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font:800 14px/20px Tajawal">الأوزان</span><span style="font:400 14px/24px Tajawal;color:#4A4670">خمسة فقط: ٤٠٠ نص · ٥٠٠ بيانات · ٧٠٠ أزرار وعناوين صغيرة · ٨٠٠ عناوين · ٩٠٠ العنوان الكبير.</span></div>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">04</span><h2 style="margin:0;font:800 22px/32px Tajawal">أدوار الألوان</h2><span style="font:400 14px/24px Tajawal;color:#625F82">كل نسبة تُقاس على أسوأ خلفية يظهر عليها اللون فعلاً. الحد ٤٫٥ لكل النصوص.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:20px">
+    <div style="background:#FAF9F6;border:1px solid #E6E4DE;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:4px">
+      <span style="font:800 18px/28px Tajawal;color:#0E065A;padding-bottom:8px">فاتح</span>
+      <sc-for list="{{ light }}" as="c" hint-placeholder-count="20">
+        <div style="display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;align-items:center;padding:8px 0;border-bottom:1px solid #ECEBE7">
+          <div style="height:48px;border-radius:10px;border:1px solid rgba(14,6,90,.10);background:{{ c.sw }};display:flex;align-items:center;justify-content:center;font:800 16px/1 Tajawal;color:{{ c.ink }}">{{ c.glyph }}</div>
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+            <div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><span style="font:700 13px/1.4 ui-monospace,monospace;color:#0E065A" dir="ltr">{{ c.t }}</span><span style="font:500 12px/1.4 ui-monospace,monospace;color:#625F82" dir="ltr">{{ c.hex }}</span></div>
+            <span style="font:400 13px/20px Tajawal;color:#4A4670">{{ c.use }}</span>
+          </div>
+          <span style="font:700 12px/1 ui-monospace,monospace;padding:6px 8px;border-radius:999px;background:{{ c.badgeBg }};color:{{ c.badgeInk }};white-space:nowrap" dir="ltr">{{ c.badge }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="background:#151519;border:1px solid #2E2E35;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:4px">
+      <span style="font:800 18px/28px Tajawal;color:#F2F1F7;padding-bottom:8px">داكن</span>
+      <sc-for list="{{ dark }}" as="c" hint-placeholder-count="20">
+        <div style="display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;align-items:center;padding:8px 0;border-bottom:1px solid #26262C">
+          <div style="height:48px;border-radius:10px;border:1px solid rgba(255,255,255,.10);background:{{ c.sw }};display:flex;align-items:center;justify-content:center;font:800 16px/1 Tajawal;color:{{ c.ink }}">{{ c.glyph }}</div>
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+            <div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><span style="font:700 13px/1.4 ui-monospace,monospace;color:#F2F1F7" dir="ltr">{{ c.t }}</span><span style="font:500 12px/1.4 ui-monospace,monospace;color:#9C9AB0" dir="ltr">{{ c.hex }}</span></div>
+            <span style="font:400 13px/20px Tajawal;color:#B8B6CB">{{ c.use }}</span>
+          </div>
+          <span style="font:700 12px/1 ui-monospace,monospace;padding:6px 8px;border-radius:999px;background:{{ c.badgeBgD }};color:{{ c.badgeInkD }};white-space:nowrap" dir="ltr">{{ c.badge }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">05</span><h2 style="margin:0;font:800 22px/32px Tajawal">ألوان وظيفية</h2><span style="font:400 14px/24px Tajawal;color:#625F82">ثابتة في الوضعين. التعبئة لون الموقع كما هو، والنص فوقها «on-color» خاص بكل لون.</span></div>
+  <span style="font:700 16px/26px Tajawal">مدة القراءة · واتساب</span>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px">
+    <sc-for list="{{ functional }}" as="f" hint-placeholder-count="4">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="height:56px;border-radius:16px;background:{{ f.fill }};color:{{ f.on }};display:flex;align-items:center;justify-content:center;gap:8px;font:800 16px/1 Tajawal">{{ f.label }}</div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span style="font:600 12px/1.4 ui-monospace,monospace" dir="ltr">{{ f.t }}</span><span style="font:700 12px/1.4 ui-monospace,monospace;color:#1C7A55" dir="ltr">{{ f.ratio }}</span></div>
+        <span style="font:500 12px/1.4 ui-monospace,monospace;color:#625F82" dir="ltr">fill {{ f.fill }} · on {{ f.on }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <span style="font:700 16px/26px Tajawal;padding-top:8px">قطاعات «عالم مدونتي»</span>
+  <p style="margin:0;font:400 14px/24px Tajawal;color:#4A4670;text-wrap:pretty">الزوايا بنظام OKLCH (إدراكي، أدق من HSL). الأدوار المحجوزة: أحمر ٢٨٫٥° · كهرماني ٦٣° · ذهبي ٨٠° · أخضر ١٦٢° · تركوازي ١٩٥° · أزرق ٢٦٩°. أقل مسافة بين أي قطاع وأي دور أو قطاع آخر ٢٦°. ملاحظة صريحة: البنفسجي ٣٠٥° يبعد ١٢° عن بنفسجي «جلسة روقان» (٢٩٣°)، وهو تصنيف وليس حالة، ولا يظهران في نفس المكوّن.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
+    <sc-for list="{{ sectors }}" as="f" hint-placeholder-count="6">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-radius:20px;overflow:hidden;height:92px">
+          <div style="background:{{ f.fill }};color:#FFFFFF;display:flex;align-items:flex-end;padding:12px;font:800 15px/20px Tajawal">{{ f.label }}</div>
+          <div style="background:#151519;padding:6px;display:flex"><div style="flex:1;border-radius:14px;background:{{ f.dark }};color:#FFFFFF;display:flex;align-items:flex-end;padding:8px;font:800 13px/18px Tajawal">داكن</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span style="font:700 12px/1.4 ui-monospace,monospace" dir="ltr">h {{ f.hue }}°</span><span style="font:700 12px/1.4 ui-monospace,monospace;color:#1C7A55" dir="ltr">{{ f.ratio }} · {{ f.ratioD }}</span></div>
+        <span style="font:500 12px/1.4 ui-monospace,monospace;color:#625F82" dir="ltr">{{ f.fill }} · dark {{ f.dark }}</span>
+        <span style="font:400 12px/18px Tajawal;color:#4A4670">أقرب دور: {{ f.near }}</span>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">06</span><h2 style="margin:0;font:800 22px/32px Tajawal">الارتفاع (ظلال فقط)</h2><span style="font:400 14px/24px Tajawal;color:#625F82">لا blur ولا شفافية زجاجية. الأشرطة العائمة لونها صلب ٩٧٪ مع ظل. في الداكن يأتي الارتفاع من درجة السطح أكثر من الظل.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:20px">
+    <div style="background:#F3F3F1;border-radius:20px;padding:28px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+      <sc-for list="{{ elev }}" as="e" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:stretch">
+          <div style="height:88px;border-radius:16px;background:#FFFFFF;box-shadow:{{ e.light }}"></div>
+          <span style="font:700 13px/1.3 ui-monospace,monospace" dir="ltr">{{ e.name }}</span>
+          <span style="font:400 12px/18px Tajawal;color:#4A4670">{{ e.use }}</span>
+          <span style="font:500 11px/1.4 ui-monospace,monospace;color:#625F82" dir="ltr">android elevation {{ e.dp }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="background:#151519;border-radius:20px;padding:28px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+      <sc-for list="{{ elev }}" as="e" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:stretch">
+          <div style="height:88px;border-radius:16px;background:{{ e.darkBg }};box-shadow:{{ e.dark }};border-top:1px solid {{ e.darkEdge }}"></div>
+          <span style="font:700 13px/1.3 ui-monospace,monospace;color:#F2F1F7" dir="ltr">{{ e.name }}</span>
+          <span style="font:500 12px/1.4 ui-monospace,monospace;color:#9C9AB0" dir="ltr">{{ e.darkBg }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:28px">
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">07</span><h2 style="margin:0;font:800 22px/32px Tajawal">شبكة الأيقونات</h2></div>
+  <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start">
+    <div style="position:relative;width:240px;height:240px;flex:none;background-color:#FAF9F6;background-image:linear-gradient(#E6E4DE 1px,transparent 1px),linear-gradient(90deg,#E6E4DE 1px,transparent 1px);background-size:10px 10px;border:1px solid #CFCCC4">
+      <div style="position:absolute;inset:20px;border:1.5px dashed #DD3C3C"></div>
+      <div style="position:absolute;inset:20px;border-radius:50%;border:1.5px solid #3030FF"></div>
+      <div style="position:absolute;inset:30px;border:1.5px solid #007575;border-radius:20px"></div>
+      <div style="position:absolute;top:30px;bottom:30px;left:50px;right:50px;border:1.5px solid #7C3BED;border-radius:20px"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:220px;flex:1">
+      <div style="display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #F0EEE9;padding-bottom:8px"><span style="font:500 14px/22px Tajawal;color:#4A4670">اللوحة</span><span style="font:700 13px/22px ui-monospace,monospace" dir="ltr">24 × 24dp</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #F0EEE9;padding-bottom:8px"><span style="font:500 14px/22px Tajawal;color:#DD3C3C">المنطقة الآمنة</span><span style="font:700 13px/22px ui-monospace,monospace" dir="ltr">2dp padding → 20dp</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #F0EEE9;padding-bottom:8px"><span style="font:500 14px/22px Tajawal;color:#3030FF">دائرة</span><span style="font:700 13px/22px ui-monospace,monospace" dir="ltr">Ø 20dp</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #F0EEE9;padding-bottom:8px"><span style="font:500 14px/22px Tajawal;color:#007575">مربع · مستطيلات</span><span style="font:700 13px/22px ui-monospace,monospace" dir="ltr">18 · 14×18 · 18×14</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #F0EEE9;padding-bottom:8px"><span style="font:500 14px/22px Tajawal;color:#4A4670">سُمك الخط</span><span style="font:700 13px/22px ui-monospace,monospace" dir="ltr">1.75dp · round cap/join</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px"><span style="font:500 14px/22px Tajawal;color:#4A4670">العائلة</span><span style="font:700 13px/22px ui-monospace,monospace" dir="ltr">Modonty brand icon set</span></div>
+    </div>
+  </div>
+  <div style="background:#F3F3F1;border-radius:14px;padding:16px;display:flex;gap:16px;align-items:center">
+    <div style="display:flex;gap:12px;align-items:center;flex:none">
+      <span style="width:20px;height:20px;padding:2px;display:flex"><span style="flex:1;border:1.5px solid #625F82;border-radius:5px"></span></span>
+      <span style="width:24px;height:24px;padding:2px;display:flex"><span style="flex:1;border:1.5px solid #625F82;border-radius:6px"></span></span>
+      <span style="width:28px;height:28px;padding:2px;display:flex"><span style="flex:1;border:1.5px solid #625F82;border-radius:7px"></span></span>
+    </div>
+    <span style="font:400 14px/24px Tajawal;color:#4A4670;text-wrap:pretty">في المكوّنات والشاشات تُستخدم أيقونات Lucide مؤقتاً بنفس القواعد (٢٤، سُمك ١٫٧٥). في الخطوة ٤ تُعاد رسم مجموعة مدونتي على هذه الشبكة وتحلّ محلها.</span>
+  </div>
+  <div style="background:#F3F3F1;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font:800 14px/20px Tajawal">تنعكس في RTL</span><span style="font:400 14px/24px Tajawal;color:#4A4670;text-wrap:pretty">الرجوع (يشير لليمين) · الأسهم والـchevron · إرسال · القائمة والنص · التقدّم. لا تنعكس: التشغيل ▶ · الساعة · العلامات التجارية · الأرقام.</span></div>
+  <div style="background:#F3F3F1;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font:800 14px/20px Tajawal">أحجام</span><span style="font:400 14px/24px Tajawal;color:#4A4670">٢٠ داخل النص والشرائح · ٢٤ الافتراضي · ٢٨ أزرار الطلّات الجانبية. السُمك ثابت ١٫٧٥ في كل الأحجام.</span></div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">08</span><h2 style="margin:0;font:800 22px/32px Tajawal">مساحات اللمس</h2></div>
+  <p style="margin:0;font:400 14px/24px Tajawal;color:#4A4670;text-wrap:pretty">الحد الأدنى ٤٨dp لكل عنصر قابل للضغط. الحجم المرئي قد يكون أصغر، والفرق يُكمَّل بـ hitSlop (المنطقة المتقطّعة).</p>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+    <sc-for list="{{ targets }}" as="g" hint-placeholder-count="6">
+      <div style="background:#FAF9F6;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center">
+        <div style="height:72px;display:flex;align-items:center;justify-content:center">
+          <div style="width:{{ g.hitW }};height:{{ g.hitH }};border:1.5px dashed #DD3C3C;border-radius:{{ g.hitR }};display:flex;align-items:center;justify-content:center">
+            <div style="width:{{ g.visW }};height:{{ g.visH }};border-radius:{{ g.visR }};background:{{ g.bg }}"></div>
+          </div>
+        </div>
+        <span style="font:700 14px/20px Tajawal">{{ g.label }}</span>
+        <span style="font:500 12px/1.4 ui-monospace,monospace;color:#625F82" dir="ltr">{{ g.spec }}</span>
+      </div>
+    </sc-for>
+  </div>
+</section>
+</div>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">09</span><h2 style="margin:0;font:800 22px/32px Tajawal">التخطيط</h2><span style="font:400 14px/24px Tajawal;color:#625F82">مرجع الشاشة ٣٦٠×٨٠٠dp.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:28px;align-items:start">
+    <div style="position:relative;width:360px;max-width:100%;height:440px;background:#FAF9F6;border:1px solid #CFCCC4;border-radius:24px;overflow:hidden;margin:0 auto">
+      <div style="position:absolute;top:0;bottom:0;right:0;width:16px;background:rgba(48,48,255,.12)"></div>
+      <div style="position:absolute;top:0;bottom:0;left:0;width:16px;background:rgba(48,48,255,.12)"></div>
+      <div style="position:absolute;top:24px;right:16px;left:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="height:120px;border-radius:20px;background:#FFFFFF;border:1px solid #E6E4DE"></div>
+        <div style="height:120px;border-radius:20px;background:#FFFFFF;border:1px solid #E6E4DE"></div>
+        <div style="height:120px;border-radius:20px;background:#FFFFFF;border:1px solid #E6E4DE"></div>
+        <div style="height:120px;border-radius:20px;background:#FFFFFF;border:1px solid #E6E4DE"></div>
+      </div>
+      <div style="position:absolute;bottom:12px;right:12px;left:12px;height:56px;display:flex;gap:8px;flex-direction:row-reverse">
+        <div style="width:56px;height:56px;border-radius:50%;background:#FFFFFF;box-shadow:0 6px 16px rgba(14,6,90,.12),0 2px 4px rgba(14,6,90,.08);flex:none"></div>
+        <div style="flex:1;height:56px;border-radius:999px;background:#FFFFFF;box-shadow:0 6px 16px rgba(14,6,90,.12),0 2px 4px rgba(14,6,90,.08)"></div>
+      </div>
+      <div style="position:absolute;bottom:68px;right:16px;left:16px;height:20px;border-top:1.5px dashed #DD3C3C;display:flex;align-items:center;justify-content:center;font:600 11px/1 ui-monospace,monospace;color:#DD3C3C" dir="ltr">content inset 88 = 12 + 56 + 20</div>
+    </div>
+    <div style="display:flex;flex-direction:column">
+      <sc-for list="{{ layout }}" as="l" hint-placeholder-count="10">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:10px 0;border-bottom:1px solid #F0EEE9;align-items:baseline">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font:700 14px/22px Tajawal">{{ l.label }}</span><span style="font:600 12px/1.4 ui-monospace,monospace;color:#625F82" dir="ltr">{{ l.t }}</span></div>
+          <span style="font:700 13px/1.4 ui-monospace,monospace" dir="ltr">{{ l.v }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">10</span><h2 style="margin:0;font:800 22px/32px Tajawal">الحركة</h2><span style="font:400 14px/24px Tajawal;color:#625F82">المصدر الوحيد لكل قيم الحركة. العمود الأخضر = القيمة مع Reduce Motion (iOS) أو Remove animations (Android).</span></div>
+  <div style="display:flex;flex-direction:column">
+    <sc-for list="{{ motion }}" as="m" hint-placeholder-count="20">
+      <div style="display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr);gap:12px;padding:10px 0;border-bottom:1px solid #F0EEE9;align-items:baseline">
+        <div style="display:flex;flex-direction:column;gap:2px"><span style="font:700 14px/22px Tajawal">{{ m.label }}</span><span style="font:600 12px/1.4 ui-monospace,monospace;color:#625F82" dir="ltr">{{ m.t }}</span></div>
+        <span style="font:600 12px/1.6 ui-monospace,monospace;color:#0E065A" dir="ltr">{{ m.v }}</span>
+        <span style="font:600 12px/1.6 ui-monospace,monospace;color:#1C7A55" dir="ltr">{{ m.r }}</span>
+        <span style="font:400 13px/20px Tajawal;color:#4A4670">{{ m.use }}</span>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section style="background:#0E065A;color:#FFFFFF;border-radius:24px;padding:28px 32px;display:flex;flex-direction:column;gap:10px">
+  <span style="font:800 18px/28px Tajawal">ملفات النظام</span>
+  <div style="display:flex;gap:10px;flex-wrap:wrap"><a href="Modonty Components.dc.html" style="height:44px;padding:0 16px;border-radius:999px;background:#FFFFFF;color:#0E065A;display:flex;align-items:center;font:700 14px/20px Tajawal;text-decoration:none">٢ · المكوّنات</a><a href="Modonty Screens A.dc.html" style="height:44px;padding:0 16px;border-radius:999px;background:#FFFFFF;color:#0E065A;display:flex;align-items:center;font:700 14px/20px Tajawal;text-decoration:none">٣أ · القراءة والطلّات</a><a href="Modonty Screens B.dc.html" style="height:44px;padding:0 16px;border-radius:999px;background:#FFFFFF;color:#0E065A;display:flex;align-items:center;font:700 14px/20px Tajawal;text-decoration:none">٣ب · الشركاء والحساب ومودو</a><a href="Modonty Screens C.dc.html" style="height:44px;padding:0 16px;border-radius:999px;background:#FFFFFF;color:#0E065A;display:flex;align-items:center;font:700 14px/20px Tajawal;text-decoration:none">٣ج · الوضع الداكن</a><a href="Modonty Screens D.dc.html" style="height:44px;padding:0 16px;border-radius:999px;background:#FFFFFF;color:#0E065A;display:flex;align-items:center;font:700 14px/20px Tajawal;text-decoration:none">٣د · الحالات</a><a href="Modonty Handoff.dc.html" style="height:44px;padding:0 16px;border-radius:999px;background:#00D8D8;color:#0E065A;display:flex;align-items:center;font:800 14px/20px Tajawal;text-decoration:none">التسليم للمطوّر</a></div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  lum(h){h=h.replace('#','');const c=[0,2,4].map(i=>parseInt(h.substr(i,2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*c[0]+.7152*c[1]+.0722*c[2];}
+  cr(a,b){const x=this.lum(a),y=this.lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
+  roles(list){
+    return list.map(([t,hex,mode,other,use])=>{
+      let sw,ink,glyph='',r=null;
+      if(mode==='text'){sw=other;ink=hex;glyph='أب١';r=this.cr(hex,other);}
+      else if(mode==='on'){sw=hex;ink=other;glyph='أب١';r=this.cr(hex,other);}
+      else {sw=hex;ink='transparent';}
+      const pass=r!==null&&r>=4.5;
+      const badge=r===null?(mode==='fill'?'fill only':'decor'):r.toFixed(2)+':1';
+      return {t,hex,use,sw,ink,glyph,badge,
+        badgeBg:r===null?'#ECEBE7':pass?'#E2F4EC':'#FDE6E4',badgeInk:r===null?'#4A4670':pass?'#1C7A55':'#B0221B',
+        badgeBgD:r===null?'#323238':pass?'#133D2C':'#4A1F1C',badgeInkD:r===null?'#B8B6CB':pass?'#5BD69F':'#FF8A80'};
+    });
+  }
+  renderVals(){
+    const spacing=[['space-0',0,'—'],['space-1',4,'بين الأيقونة ونصّها الصغير'],['space-2',8,'داخل الشرائح · بين سطر البيانات'],['space-3',12,'بين البطاقات في الصفوف الأفقية'],['space-4',16,'هامش الشاشة · حشوة البطاقة'],['space-5',20,'حشوة الـsheet'],['space-6',24,'بين العنوان ومحتوى القسم'],['space-8',32,'بين الأقسام'],['space-10',40,'فوق العنوان الكبير'],['space-12',48,'مساحة اللمس الدنيا'],['space-16',64,'هامش أسفل الشاشة فوق الكبسولة']]
+      .map(([name,v,use])=>({name,v,use,w:Math.max(v*4,2)+'px'}));
+    const radii=[['r-xs','6','6px','شارة · نقطة مدة القراءة'],['r-sm','10','10px','شعار مربّع صغير · صورة مصغّرة'],['r-md','14','14px','حقل نص · بطاقة صغيرة'],['r-ml','16','16px','أزرار مدة القراءة · Toast · أكورديون · بطاقات صغيرة'],['r-lg','20','20px','بطاقة مقال · بطاقة شريك · طلّة'],['r-xl','28','28px','حواف الـsheet العلوية · الهيرو'],['r-full','999','999px','أزرار · شرائح · الكبسولة'],['r-feature','28/8','28px 8px 28px 28px','«مميّز اليوم» فقط · الزاوية الحادّة أعلى اليمين (جهة البداية) حيث الشارة']]
+      .map(([name,v,css,use])=>({name,v,css,use}));
+    const type=[['display',34,44,900,'مدونتي','العنوان الكبير للتبويبات'],['headline',28,38,800,'كل اللي يهمك… في مكان واحد','هيدر مدونتي · عنوان المقال المفتوح'],['title-lg',22,32,800,'عندك كم دقيقة؟','عناوين الأقسام'],['title-md',18,28,700,'الاقتصاد الإبداعي في السعودية كيف تحول مهارتك إلى مشروع يحقق دخل؟','عنوان بطاقة المقال · اسم الشريك'],['title-sm',16,24,700,'مؤسسة فرسان التعافي','صفوف القوائم · عنوان الطلّة'],['reader',18,36,400,'تمر رحلة العلاج بخمس مراحل أساسية: التقييم والتشخيص، إزالة السموم تحت إشراف طبي، العلاج النفسي والسلوكي.','نص المقال (قابل للتكبير ١٦–٢٢)'],['body',16,28,400,'فرسان التعافي… طريقك إلى السلام والتعافي','وصف · فقرات قصيرة'],['body-sm',14,22,400,'الطب النفسي · علاج الادمان · التأهيل السلوكي','وصف ثانوي في البطاقات'],['label-lg',16,24,700,'أرسل طلب الحجز','الأزرار الرئيسية'],['label',14,20,700,'تابع · الكل · قريباً','أزرار صغيرة · شرائح · تبويبات'],['caption',12,18,500,'١١ د قراءة · قبل ١٢ يوماً','البيانات الوصفية · الأقل حجماً']]
+      .map(([name,size,lh,w,sample,use])=>({name,size,lh,w,sample,use,px:size+'px',lhpx:lh+'px'}));
+    const light=this.roles([
+      ['bg.page','#FAF9F6','fill',null,'خلفية التطبيق'],
+      ['bg.sunken','#F3F3F1','fill',null,'حقل البحث · أزرار الأيقونات · مناطق غائرة'],
+      ['surface.1','#FFFFFF','fill',null,'البطاقات · الـsheet · الكبسولة'],
+      ['surface.2','#F3F3F1','fill',null,'تعبئة نغمية · شرائح غير نشطة'],
+      ['surface.3','#ECEBE7','fill',null,'الضغط · هيكل التحميل'],
+      ['text.primary','#0E065A','text','#F3F3F1','النص الأساسي (كحلي البراند)'],
+      ['text.secondary','#4A4670','text','#F3F3F1','الأوصاف'],
+      ['text.muted','#625F82','text','#ECEBE7','البيانات الوصفية (أسوأ حالة: surface.3)'],
+      ['border.subtle','#E6E4DE','decor',null,'فواصل القوائم'],
+      ['border.strong','#CFCCC4','decor',null,'حدود البطاقات والحقول'],
+      ['primary','#3030FF','on','#FFFFFF','الإجراء الأساسي · on-primary أبيض'],
+      ['primary.text','#3030FF','text','#F3F3F1','روابط «الكل» · تبويب نشط'],
+      ['primary.container','#E8E8FF','on','#2323C8','زر نغمي · فقاعة خفيفة'],
+      ['accent','#00D8D8','on','#0E065A','تعبئة فقط · نصه كحلي · ممنوع كنص'],
+      ['accent.text','#007575','text','#F3F3F1','نص تركوازي في الفاتح'],
+      ['accent.container','#CCF5F5','on','#005A5A','شرائح ISO · نجاح الحجز'],
+      ['success','#1C7A55','text','#FFFFFF','نجاح · موثّق'],
+      ['success.container','#E2F4EC','on','#1C7A55','شارة الحالة'],
+      ['warning','#9A5800','text','#FFFFFF','تنبيه'],
+      ['warning.container','#FDF0D9','on','#8A4F00','«قيد المراجعة»'],
+      ['danger','#C2261F','text','#FFFFFF','خطأ · حذف الحساب'],
+      ['danger.container','#FDE6E4','on','#B0221B','رسالة خطأ'],
+      ['gold','#E0A100','decor',null,'حلقة وإطار «المميّزون»'],
+      ['gold.text','#7A5A00','text','#FFFFFF','كلمة «مميّز»'],
+      ['brand.immersive','#0E065A','on','#FFFFFF','هيدر مدونتي العميق'],
+    ]);
+    const dark=this.roles([
+      ['bg.page','#151519','fill',null,'خلفية التطبيق'],
+      ['bg.sunken','#1B1B20','fill',null,'حقل البحث'],
+      ['surface.1','#1F1F23','fill',null,'البطاقات · الـsheet'],
+      ['surface.2','#28282E','fill',null,'الكبسولة · تعبئة نغمية'],
+      ['surface.3','#323238','fill',null,'الضغط · هيكل التحميل'],
+      ['text.primary','#F2F1F7','text','#323238','النص الأساسي'],
+      ['text.secondary','#B8B6CB','text','#323238','الأوصاف'],
+      ['text.muted','#9C9AB0','text','#323238','البيانات الوصفية'],
+      ['border.subtle','#2E2E35','decor',null,'فواصل'],
+      ['border.strong','#45454E','decor',null,'حدود'],
+      ['primary','#5C5CFF','on','#FFFFFF','تعبئة الزر الأساسي (أفتح ليتميّز عن الخلفية) · on-primary أبيض'],
+      ['primary.vsPage','#5C5CFF','text','#151519','تمايز التعبئة عن bg.page (غير نصي، الحد ٣:١)'],
+      ['primary.text','#9C9CFF','text','#28282E','روابط · تبويب نشط'],
+      ['primary.container','#26265E','on','#C9C9FF','زر نغمي'],
+      ['accent','#00D8D8','on','#0E065A','تعبئة · نصه كحلي'],
+      ['accent.text','#00D8D8','text','#1F1F23','مسموح كنص في الداكن'],
+      ['accent.container','#0F3A3D','on','#7FEDED','شرائح ISO'],
+      ['success','#5BD69F','text','#1F1F23','نجاح'],
+      ['success.container','#133D2C','on','#5BD69F','شارة الحالة'],
+      ['warning','#FFBE4D','text','#1F1F23','تنبيه'],
+      ['warning.container','#3D2C0C','on','#FFBE4D','«قيد المراجعة»'],
+      ['danger','#FF8A80','text','#1F1F23','خطأ'],
+      ['danger.container','#4A1F1C','on','#FFB4AB','رسالة خطأ'],
+      ['gold','#E0A100','decor',null,'حلقة المميّزين'],
+      ['gold.text','#E9C46A','text','#1F1F23','كلمة «مميّز»'],
+      ['brand.immersive','#0E065A','on','#FFFFFF','هيدر مدونتي العميق'],
+    ]);
+    const f=(t,label,fill,on)=>({t,label,fill,on,ratio:this.cr(fill,on).toFixed(2)+':1'});
+    const functional=[f('read.go','على الماشي · ٨','#27B07D','#06291C'),f('read.coffee','فنجان قهوة · ٩٠','#F59F0A','#3A2300'),f('read.long','جلسة روقان · ١٥٤','#7C3BED','#FFFFFF'),f('whatsapp','راسلنا واتساب','#25D366','#06291C')];
+    const roleH=[['الأحمر danger',28.5],['الكهرماني warning',62.7],['الذهبي gold',80.4],['الأخضر success',161.8],['التركوازي accent',194.8],['الأزرق primary',269.4]];
+    const sec=[['ريادة الأعمال','#636109','#787618',108],['الكورة','#376E00','#478416',135],['التعليم','#166687','#0A7CA6',232],['الذكاء الاصطناعي','#7241A0','#8656B7',305],['الترفيه','#8B3682','#A24B98',332],['الصحة والجمال','#9B2E5D','#B34471',358]];
+    const dist=(a,b)=>{const d=Math.abs(a-b)%360;return d>180?360-d:d;};
+    const sectors=sec.map(([label,fill,dark,hue])=>{const all=roleH.concat(sec.filter(s=>s[3]!==hue).map(s=>['قطاع '+s[0],s[3]]));const n=all.reduce((m,r)=>dist(hue,r[1])<dist(hue,m[1])?r:m);return {label,fill,dark,hue,ratio:'L '+this.cr(fill,'#FFFFFF').toFixed(2),ratioD:'D '+this.cr(dark,'#FFFFFF').toFixed(2),near:n[0]+' · '+Math.round(dist(hue,n[1]))+'°'};});
+    const icons=['home','articles','reels','compass','search','sparkle','bell','bellPlus','bookmark','heart','comment','share','back','forward','chevStart','chevEnd','chevDown','chevUp','x','check','plus','play','pause','volume','mute','headphones','clock','history','pin','phone','verified','award','image','grid','sort','filter','calendar','user','users','sun','moon','copy','thumbUp','thumbDown','briefcase','walk','coffee','sofa','link','wheel','book','logout','trash','info','alert','building','globe','mail','shield','refresh','wifiOff','edit','textSize','more','send','whatsapp','instagram','facebook'];
+    const layout=[['هامش الشاشة الأفقي','layout.gutter','16'],['المسافة بين الأقسام','layout.section','32'],['فجوة شبكة البطاقات (عمودان)','layout.gridGap','12'],['فجوة الصفوف الأفقية (طلّات، محفوظة)','layout.rowGap','12'],['ارتفاع الكبسولة · قطر الجزيرة','nav.height · island','56 · Ø56 (عناصر ٤٨ + حشوة ٤)'],['بُعد الكبسولة عن الأسفل والجانبين','nav.inset','12 (+ safe area)'],['المسافة بين الكبسولة والجزيرة','nav.gap','8'],['حشوة أسفل المحتوى فوق الكبسولة','content.bottomInset','88 (+ safe area)'],['المشغّل المصغّر فوق الكبسولة','miniPlayer','56 · gap 8 → inset 152'],['عرض الكبسولة (٤ عناصر)','nav.width','hug · ≤ 272 على ٣٦٠'],['ارتفاع الشريط العلوي المطوي','appbar.collapsed','56'],['أقصى ارتفاع للـsheet','sheet.maxHeight','88%'],['أقصى عرض للمحتوى (تابلت/قابل للطي)','layout.maxContent','600 · centered'],['≥ 840dp','layout.wide','grid 2 cols · nav max 420']].map(([label,t,v])=>({label,t,v}));
+    const elev=[
+      {name:'elev-0',dp:0,use:'قوائم مسطّحة',light:'none',dark:'none',darkBg:'#1F1F23',darkEdge:'transparent'},
+      {name:'elev-1',dp:1,use:'البطاقات',light:'0 1px 2px rgba(14,6,90,.06), 0 1px 1px rgba(14,6,90,.04)',dark:'0 1px 2px rgba(0,0,0,.4)',darkBg:'#1F1F23',darkEdge:'transparent'},
+      {name:'elev-2',dp:6,use:'كبسولة التبويب · الجزيرة · الأزرار العائمة',light:'0 6px 16px rgba(14,6,90,.12), 0 2px 4px rgba(14,6,90,.08)',dark:'0 6px 16px rgba(0,0,0,.5)',darkBg:'#28282E',darkEdge:'rgba(255,255,255,.06)'},
+      {name:'elev-3',dp:12,use:'Sheet · Toast · المشغّل المصغّر',light:'0 12px 32px rgba(14,6,90,.16), 0 4px 8px rgba(14,6,90,.08)',dark:'0 12px 32px rgba(0,0,0,.6)',darkBg:'#323238',darkEdge:'rgba(255,255,255,.08)'},
+    ];
+    const T=(label,spec,hit,vis,r,bg)=>({label,spec,hitW:hit[0]+'px',hitH:hit[1]+'px',visW:vis[0]+'px',visH:vis[1]+'px',hitR:r[0],visR:r[1],bg});
+    const targets=[
+      T('زر أيقونة','visual 40 · hit 48',[48,48],[40,40],['50%','50%'],'#F3F3F1'),
+      T('شريحة','visual 36 · hit 48',[96,48],[88,36],['999px','999px'],'#E8E8FF'),
+      T('زر أساسي','52 height · full width','100,52'.split(',').map(Number),[100,52],['999px','999px'],'#3030FF'),
+      T('عنصر الكبسولة','56 height · 56 min-width',[56,56],[48,48],['999px','999px'],'#0E065A'),
+      T('صف قائمة','min 56 height',[120,56],[120,56],['0','12px'],'#FFFFFF'),
+      T('أزرار الطلّات','visual 44 · hit 52',[52,52],[44,44],['50%','50%'],'#4A4670'),
+    ];
+    const motion=[
+      ['نابض تبويب الكبسولة','motion.tab.spring','withSpring damping 16 · stiffness 220 · mass 1 (≈340ms)','instant switch + label fade 150ms','توسّع التبويب النشط'],
+      ['طيّ الكبسولة','motion.nav.collapse','withTiming 220ms · bezier(.2,0,0,1) · threshold 24dp','opacity 150ms (no width animation)',''],
+      ['إعادة النقر على التبويب','motion.tab.retap','scrollToOffset 0 · animated 300ms','scrollToOffset 0 · animated false',''],
+      ['فتح الـsheet','motion.sheet.open','withTiming 300ms · bezier(.05,.7,.1,1)','opacity 150ms · no slide',''],
+      ['إغلاق الـsheet','motion.sheet.close','withTiming 200ms · bezier(.3,0,.8,.15)','opacity 150ms',''],
+      ['طبقة التعتيم','motion.scrim','opacity 0→.48 (dark .56) · 200ms linear','same',''],
+      ['الضغط · دخول','motion.press.in','100ms · scale .97 (row 1 · tab icon .92 · active tab .96)','overlay only · scale 1',''],
+      ['الضغط · خروج','motion.press.out','withSpring damping 20 · stiffness 300','overlay fade 100ms',''],
+      ['طبقة الضغط','motion.press.overlay','ink text.primary (dark #FFFFFF): row 6% · card 8% · tab 10% · chip/button 12% · active tab 16%','same','Android ripple بنفس النسبة'],
+      ['تحوّل «اسمع المقال»','motion.listen.morph','layout 280ms · crossfade 150ms','crossfade 150ms · no layout tween',''],
+      ['الشريط المضغوط','motion.appbar','fade + translateY 8dp · 180ms · trigger 250dp','fade 150ms · no translate',''],
+      ['لمعة الهيكل','motion.skeleton','1400ms linear loop · start→end','static surface.3',''],
+      ['استبدال الهيكل','motion.skeleton.swap','fade 150ms','fade 150ms',''],
+      ['سحب للتحديث','motion.refresh','native RefreshControl (system)','system','tintColor / colors = primary فقط'],
+      ['إيقاف الطلّة','motion.reel.pause','glyph scale .8→1 · 150ms','glyph fade 150ms',''],
+      ['إعجاب بنقرتين','motion.reel.like','burst 900ms · ring · button pulse 1.2→1 · haptic','button fill + count fade 150ms · no burst','ح١٨'],
+      ['سحب شريط الطلّة','motion.reel.scrub','thumb 1:1 · release → seek','same',''],
+      ['Toast','motion.toast','translateY 16dp + fade 200ms · exit 150ms · 4s / error 8s','fade 150ms · same durations',''],
+      ['شريط عدم الاتصال','motion.offline','show after 2s · back-online 2s · collapse 220ms','fade 150ms',''],
+      ['مودو · الكتابة','motion.modo.stream','cursor blink 1000ms · dots 1200ms stagger 150','static cursor · static dots',''],
+      ['الكشف','motion.reduced.detect','Reanimated useReducedMotion() · AccessibilityInfo reduceMotionChanged','',''],
+    ].map(([label,t,v,r,use])=>({label,t,v,r,use}));
+    return {spacing,radii,type,light,dark,functional,sectors,elev,targets,icons,layout,motion};
+  }
+}
+</script>
+</body>
+</html>

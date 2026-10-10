@@ -4,9 +4,9 @@ import { TextInput } from 'react-native-paper';
 
 import { Icon } from '@/components/ui/Icon';
 import { useAppTheme } from '@/theme/ThemeProvider';
-import { radius, space, typography } from '@/theme/tokens';
+import { ds, space, typography } from '@/theme/tokens';
 
-/** حقل بحث بتأخير ٤٠٠ms قبل الطلب — لا طلب لكل حرف. */
+/** حقل بحث بتأخير ٤٠٠ms قبل الطلب — لا طلب لكل حرف. شكله: حبّة ٥٢ بحدّ خفيف (Screens A · 03). */
 export const SearchField = memo(function SearchField({
   placeholder,
   onChange,
@@ -37,8 +37,9 @@ export const SearchField = memo(function SearchField({
         accessibilityLabel={placeholder}
         left={<TextInput.Icon icon={() => <Icon name="search" tone="muted" />} />}
         right={text ? <TextInput.Icon icon={() => <Icon name="close" tone="muted" size={16} />} onPress={() => setText('')} accessibilityLabel="مسح البحث" /> : undefined}
-        outlineStyle={{ borderRadius: radius.field, borderColor: colors.inputBorder }}
-        style={[styles.input, { backgroundColor: colors.inputSurface }]}
+        outlineStyle={{ borderRadius: ds.radius.full, borderColor: colors.border }}
+        activeOutlineColor={colors.primary}
+        style={[styles.input, { backgroundColor: colors.surface }]}
         contentStyle={styles.content}
       />
     </View>
@@ -46,7 +47,7 @@ export const SearchField = memo(function SearchField({
 });
 
 const styles = StyleSheet.create({
-  wrap: { paddingHorizontal: space.screen, paddingVertical: space.xs },
-  input: { ...typography.body },
+  wrap: { paddingHorizontal: ds.layout.gutter, paddingVertical: space.xs },
+  input: { ...typography.body, height: 52 },
   content: { textAlign: 'right', writingDirection: 'rtl' },
 });

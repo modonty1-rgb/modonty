@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet } from 'react-native';
 
+import { useTabBottomInset } from '@/components/navigation/NavScroll';
 import { Header } from '@/components/ui/Header';
 import { NavGroup } from '@/components/ui/NavGroup';
 import { Screen } from '@/components/ui/Screen';
@@ -8,10 +9,11 @@ import { space } from '@/theme/tokens';
 
 /** S02 — استكشف: أبواب التصفّح كلّها، بنفس أقسام قائمة الويب. لا بيانات هنا — كل وجهة تطلب بياناتها عند فتحها. */
 export default function DiscoverScreen() {
+  const tabInset = useTabBottomInset();
   return (
     <Screen>
       <Header title="استكشف" />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: tabInset }]}>
         <NavGroup
           title="المحتوى"
           items={[

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap"><script src="./lucide-icon.js"></script><style>body{margin:0;background:#ECEBE7;font-family:Tajawal,sans-serif;color:#0E065A;-webkit-font-smoothing:antialiased}a{color:#3030FF}a:hover{color:#2323C8}*{box-sizing:border-box}button{font-family:Tajawal,sans-serif}</style></helmet>
+<div dir="rtl" style="max-width:1280px;margin:0 auto;padding:48px 32px 96px;display:flex;flex-direction:column;gap:28px">
+
+<header style="display:flex;flex-direction:column;gap:12px;background:#0E065A;color:#FFFFFF;border-radius:28px;padding:36px 40px">
+  <span style="font:500 14px/20px Tajawal;color:#B8B6E0">نظام تصميم مدونتي · الخطوة ٢ من ٣</span>
+  <h1 style="margin:0;font:900 34px/44px Tajawal">ورقة المكوّنات</h1>
+  <p style="margin:0;font:400 16px/28px Tajawal;color:#DCDAF2;max-width:820px;text-wrap:pretty">كل مكوّن بالوضعين جنباً إلى جنب، ومبني من قيم صفحة الأساسات فقط. الأيقونات من Lucide مؤقتاً (٢٤، سُمك ١٫٧٥) إلى أن تُستبدل بمجموعة مدونتي في الخطوة ٤. الكبسولة والـsheet والمقطّع والأكورديون تعمل بالنقر لعرض توكنز الحركة.</p>
+</header>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">M</span><h2 style="margin:0;font:800 22px/32px Tajawal">الحركة</h2><span style="font:400 14px/24px Tajawal;color:#625F82">قيم Reanimated للتطبيق ومقابلها في CSS لهذا العرض. مع «تقليل الحركة» يتحوّل كل شيء إلى تلاشٍ ١٥٠ms.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:24px;align-items:start">
+    <div style="display:flex;flex-direction:column">
+      <sc-for list="{{ motion }}" as="m" hint-placeholder-count="8">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:12px;padding:10px 0;border-bottom:1px solid #F0EEE9">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font:700 14px/22px Tajawal">{{ m.label }}</span><span style="font:600 12px/1.4 ui-monospace,monospace;color:#625F82" dir="ltr">{{ m.t }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font:700 12px/1.5 ui-monospace,monospace" dir="ltr">{{ m.rn }}</span><span style="font:500 12px/1.5 ui-monospace,monospace;color:#625F82" dir="ltr">{{ m.css }}</span></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="background:#FAF9F6;border:1px solid #E6E4DE;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span style="font:700 14px/20px Tajawal">اضغط تبويباً · بدّل اتجاه التمرير</span>
+          <button onClick="{{ toggleCollapse }}" style="height:44px;padding:0 16px;border-radius:999px;border:1px solid #CFCCC4;background:#FFFFFF;color:#0E065A;font:700 14px/20px Tajawal;cursor:pointer;display:flex;align-items:center;gap:6px"><l-icon name="arrow-up-down" size="20"></l-icon>{{ collapseLabel }}</button>
+        </div>
+        <div style="width:336px;max-width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 auto">
+          <div style="height:56px;padding:4px;border-radius:999px;background:#FFFFFF;box-shadow:0 6px 16px rgba(14,6,90,.12),0 2px 4px rgba(14,6,90,.08);display:flex;align-items:center">
+            <sc-for list="{{ tabsL }}" as="t" hint-placeholder-count="4">
+              <button onClick="{{ t.go }}" aria-label="{{ t.label }}" style="height:48px;min-width:{{ t.minW }};max-width:{{ t.maxW }};padding:{{ t.pad }};margin:{{ t.mar }};opacity:{{ t.op }};border:0;border-radius:999px;background:{{ t.bg }};color:{{ t.fg }};display:flex;align-items:center;justify-content:center;gap:6px;overflow:hidden;cursor:pointer;font:700 14px/20px Tajawal;transition:all 340ms cubic-bezier(.34,1.45,.64,1)">
+                <l-icon name="{{ t.icon }}" size="22"></l-icon>
+                <span style="white-space:nowrap;overflow:hidden;max-width:{{ t.lblMax }};opacity:{{ t.lblOp }};transition:all 340ms cubic-bezier(.34,1.45,.64,1)">{{ t.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="width:56px;height:56px;border-radius:50%;background:#FFFFFF;border:2px solid #00D8D8;box-shadow:0 6px 16px rgba(14,6,90,.12),0 2px 4px rgba(14,6,90,.08);display:flex;align-items:center;justify-content:center;flex:none"><img src="https://modonty-clients.b-cdn.net/general/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/img-5204raj05.png" alt="مدونتي" style="width:40px;height:40px;border-radius:50%;object-fit:contain;background:#FFFFFF"></div>
+        </div>
+      </div>
+      <div style="background:#FAF9F6;border:1px solid #E6E4DE;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <span style="font:700 14px/20px Tajawal">الضغط: تصغير ٠٫٩٧ وطبقة أغمق (اضغط مطوّلاً)</span>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#3030FF;color:#FFFFFF;font:700 16px/24px Tajawal;cursor:pointer;display:flex;align-items:center;gap:8px;transition:transform 100ms cubic-bezier(.2,0,0,1),background 100ms" style-active="transform:scale(.97);background:#2323C8"><l-icon name="clock" size="20"></l-icon>احجز الان</button>
+          <button style="height:52px;padding:0 24px;border-radius:999px;border:1px solid #CFCCC4;background:#FFFFFF;color:#0E065A;font:700 16px/24px Tajawal;cursor:pointer;transition:transform 100ms cubic-bezier(.2,0,0,1),background 100ms" style-active="transform:scale(.97);background:#ECEBE7">الصفحة</button>
+          <button onClick="{{ toggleSheet }}" style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#E8E8FF;color:#2323C8;font:700 16px/24px Tajawal;cursor:pointer;transition:transform 100ms cubic-bezier(.2,0,0,1)" style-active="transform:scale(.97)">افتح الـsheet (القسم ٠٦)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">01</span><h2 style="margin:0;font:800 22px/32px Tajawal">التنقّل · الكبسولة والجزيرة</h2><span style="font:400 14px/24px Tajawal;color:#625F82">كبسولة ٥٦ وعناصر ٤٨ وجزيرة Ø٥٦ منفصلة، على بُعد ١٢ من الحواف. الطلّات تستخدم النسخة الداكنة في الوضعين.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:20px">
+    <div style="background:#FAF9F6;border:1px solid #E6E4DE;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center">
+      <span style="align-self:flex-start;font:700 13px/20px Tajawal;color:#4A4670">فاتح · كاملة</span>
+      <div style="width:336px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div style="height:56px;padding:4px;border-radius:999px;background:#FFFFFF;box-shadow:0 6px 16px rgba(14,6,90,.12),0 2px 4px rgba(14,6,90,.08);display:flex;gap:2px">
+          <div style="height:48px;padding:0 14px 0 16px;border-radius:999px;background:#3030FF;color:#FFFFFF;display:flex;align-items:center;gap:6px;font:700 14px/20px Tajawal"><l-icon name="house" size="22"></l-icon>الرئيسية</div>
+          <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#4A4670"><l-icon name="newspaper" size="22"></l-icon></div>
+          <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#4A4670"><l-icon name="square-play" size="22"></l-icon></div>
+          <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#4A4670"><l-icon name="compass" size="22"></l-icon></div>
+        </div>
+        <div style="width:56px;height:56px;border-radius:50%;background:#FFFFFF;border:2px solid #00D8D8;box-shadow:0 6px 16px rgba(14,6,90,.12),0 2px 4px rgba(14,6,90,.08);display:flex;align-items:center;justify-content:center"><img src="https://modonty-clients.b-cdn.net/general/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/img-5204raj05.png" alt="مدونتي" style="width:40px;height:40px;border-radius:50%;object-fit:contain;background:#FFFFFF"></div>
+      </div>
+      <span style="align-self:flex-start;font:700 13px/20px Tajawal;color:#4A4670">فاتح · مطويّة عند التمرير لأسفل</span>
+      <div style="width:336px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div style="height:56px;padding:4px;border-radius:999px;background:#FFFFFF;box-shadow:0 6px 16px rgba(14,6,90,.12),0 2px 4px rgba(14,6,90,.08);display:flex">
+          <div style="height:48px;padding:0 14px 0 16px;border-radius:999px;background:#3030FF;color:#FFFFFF;display:flex;align-items:center;gap:6px;font:700 14px/20px Tajawal"><l-icon name="newspaper" size="22"></l-icon>المقالات</div>
+        </div>
+        <div style="width:56px;height:56px;border-radius:50%;background:#FFFFFF;border:2px solid #00D8D8;box-shadow:0 6px 16px rgba(14,6,90,.12),0 2px 4px rgba(14,6,90,.08);display:flex;align-items:center;justify-content:center"><img src="https://modonty-clients.b-cdn.net/general/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/img-5204raj05.png" alt="مدونتي" style="width:40px;height:40px;border-radius:50%;object-fit:contain;background:#FFFFFF"></div>
+      </div>
+    </div>
+    <div style="background:#151519;border:1px solid #2E2E35;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center">
+      <span style="align-self:flex-start;font:700 13px/20px Tajawal;color:#B8B6CB">داكن · كاملة</span>
+      <div style="width:336px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div style="height:56px;padding:4px;border-radius:999px;background:#28282E;border-top:1px solid rgba(255,255,255,.06);box-shadow:0 6px 16px rgba(0,0,0,.5);display:flex;gap:2px">
+          <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#B8B6CB"><l-icon name="house" size="22"></l-icon></div>
+          <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#B8B6CB"><l-icon name="newspaper" size="22"></l-icon></div>
+          <div style="height:48px;padding:0 14px 0 16px;border-radius:999px;background:#5C5CFF;color:#FFFFFF;display:flex;align-items:center;gap:6px;font:700 14px/20px Tajawal"><l-icon name="square-play" size="22"></l-icon>الطلّات</div>
+          <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#B8B6CB"><l-icon name="compass" size="22"></l-icon></div>
+        </div>
+        <div style="width:56px;height:56px;border-radius:50%;background:#28282E;border:2px solid #00D8D8;box-shadow:0 6px 16px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center"><img src="https://modonty-clients.b-cdn.net/general/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/img-5204raj05.png" alt="مدونتي" style="width:40px;height:40px;border-radius:50%;object-fit:contain;background:#FFFFFF"></div>
+      </div>
+      <span style="align-self:flex-start;font:700 13px/20px Tajawal;color:#B8B6CB">داكن · مطويّة</span>
+      <div style="width:336px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div style="height:56px;padding:4px;border-radius:999px;background:#28282E;border-top:1px solid rgba(255,255,255,.06);box-shadow:0 6px 16px rgba(0,0,0,.5);display:flex">
+          <div style="height:48px;padding:0 14px 0 16px;border-radius:999px;background:#5C5CFF;color:#FFFFFF;display:flex;align-items:center;gap:6px;font:700 14px/20px Tajawal"><l-icon name="square-play" size="22"></l-icon>الطلّات</div>
+        </div>
+        <div style="width:56px;height:56px;border-radius:50%;background:#28282E;border:2px solid #00D8D8;box-shadow:0 6px 16px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center"><img src="https://modonty-clients.b-cdn.net/general/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/img-5204raj05.png" alt="مدونتي" style="width:40px;height:40px;border-radius:50%;object-fit:contain;background:#FFFFFF"></div>
+      </div>
+    </div>
+  </div>
+  <p style="margin:0;font:400 13px/22px Tajawal;color:#4A4670;text-wrap:pretty">الشعار داخل الجزيرة تمثيل مؤقت (مربّع وحرف m ومعيّن تركوازي) إلى أن يصل ملف الشعار. الحلقة التركوازية زخرفية وتفصل الجزيرة بصرياً عن التبويبات.</p>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">02</span><h2 style="margin:0;font:800 22px/32px Tajawal">الأشرطة العلوية</h2><span style="font:400 14px/24px Tajawal;color:#625F82">العنوان الكبير ينطوي إلى شريط ٥٦ عند التمرير. الرجوع على اليمين ويشير لليمين.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:20px">
+    <div style="background:#FAF9F6;border:1px solid #E6E4DE;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center">
+      <div style="width:360px;background:#FAF9F6;outline:1px dashed #CFCCC4;padding:16px 16px 12px;display:flex;justify-content:space-between;align-items:flex-end">
+        <div style="display:flex;flex-direction:column"><span style="font:500 16px/24px Tajawal;color:#4A4670">صباح الخير</span><span style="font:900 34px/44px Tajawal;color:#0E065A">مدونتي</span></div>
+        <div style="display:flex;gap:6px;align-items:center;padding-bottom:4px">
+          <div style="width:48px;height:48px;border-radius:50%;background:#F3F3F1;color:#0E065A;display:flex;align-items:center;justify-content:center"><l-icon name="search" size="22"></l-icon></div>
+          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#3030FF 35%,#00D8D8 150%);color:#FFFFFF;display:flex;align-items:center;justify-content:center"><l-icon name="sparkles" size="22"></l-icon></div>
+          <div style="position:relative;width:48px;height:48px;border-radius:50%;background:#E8E8FF;color:#2323C8;display:flex;align-items:center;justify-content:center;font:800 18px/1 Tajawal">أ<span style="position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#C2261F;border:2px solid #FAF9F6"></span></div>
+        </div>
+      </div>
+      <div style="width:360px;height:56px;background:#FFFFFF;border-bottom:1px solid #E6E4DE;padding:0 4px;display:flex;align-items:center;gap:4px">
+        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#0E065A"><l-icon name="arrow-right" size="24"></l-icon></div>
+        <span style="flex:1;font:700 18px/28px Tajawal;color:#0E065A">الشركاء</span>
+        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#0E065A"><l-icon name="search" size="22"></l-icon></div>
+      </div>
+    </div>
+    <div style="background:#151519;border:1px solid #2E2E35;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center">
+      <div style="width:360px;background:#151519;outline:1px dashed #45454E;padding:16px 16px 12px;display:flex;justify-content:space-between;align-items:flex-end">
+        <div style="display:flex;flex-direction:column"><span style="font:500 16px/24px Tajawal;color:#B8B6CB">صباح الخير</span><span style="font:900 34px/44px Tajawal;color:#F2F1F7">مدونتي</span></div>
+        <div style="display:flex;gap:6px;align-items:center;padding-bottom:4px">
+          <div style="width:48px;height:48px;border-radius:50%;background:#28282E;color:#F2F1F7;display:flex;align-items:center;justify-content:center"><l-icon name="search" size="22"></l-icon></div>
+          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#5C5CFF 35%,#00D8D8 150%);color:#FFFFFF;display:flex;align-items:center;justify-content:center"><l-icon name="sparkles" size="22"></l-icon></div>
+          <div style="position:relative;width:48px;height:48px;border-radius:50%;background:#26265E;color:#C9C9FF;display:flex;align-items:center;justify-content:center;font:800 18px/1 Tajawal">أ<span style="position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#FF8A80;border:2px solid #151519"></span></div>
+        </div>
+      </div>
+      <div style="width:360px;height:56px;background:#1F1F23;border-bottom:1px solid #2E2E35;padding:0 4px;display:flex;align-items:center;gap:4px">
+        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#F2F1F7"><l-icon name="arrow-right" size="24"></l-icon></div>
+        <span style="flex:1;font:700 18px/28px Tajawal;color:#F2F1F7">الشركاء</span>
+        <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#F2F1F7"><l-icon name="search" size="22"></l-icon></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">03</span><h2 style="margin:0;font:800 22px/32px Tajawal">الأزرار</h2><span style="font:400 14px/24px Tajawal;color:#625F82">كبير ٥٢ · متوسط ٤٤ بمساحة لمس ٤٨ · أيقونة ٤٨. حواف كاملة دائماً.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:20px">
+    <div style="background:#FAF9F6;border:1px solid #E6E4DE;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#3030FF;color:#FFFFFF;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:8px"><l-icon name="clock" size="20"></l-icon>احجز الان</button>
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:1px solid #CFCCC4;background:#FFFFFF;color:#0E065A;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:6px">الصفحة<l-icon name="chevron-left" size="20"></l-icon></button>
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#E8E8FF;color:#2323C8;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:8px"><l-icon name="bell-plus" size="20"></l-icon>تابع مدونتي</button>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#25D366;color:#06291C;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:8px"><l-icon name="message-circle" size="20"></l-icon>راسلنا واتساب</button>
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#27B07D;color:#06291C;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:8px"><l-icon name="headphones" size="20"></l-icon>اسمع المقال<span style="font:500 14px/20px Tajawal">١١ د</span></button>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button style="height:44px;padding:0 18px;border-radius:999px;border:0;background:#3030FF;color:#FFFFFF;font:700 14px/20px Tajawal">تابع</button>
+        <button style="height:44px;padding:0 18px;border-radius:999px;border:1px solid #CFCCC4;background:#FFFFFF;color:#0E065A;font:700 14px/20px Tajawal;display:flex;align-items:center;gap:6px"><l-icon name="check" size="18"></l-icon>متابَع</button>
+        <button style="width:48px;height:48px;border-radius:50%;border:0;background:#F3F3F1;color:#0E065A;display:flex;align-items:center;justify-content:center"><l-icon name="share-2" size="22"></l-icon></button>
+        <button style="width:48px;height:48px;border-radius:50%;border:0;background:#FFFFFF;color:#0E065A;box-shadow:0 6px 16px rgba(14,6,90,.12),0 2px 4px rgba(14,6,90,.08);display:flex;align-items:center;justify-content:center"><l-icon name="arrow-right" size="22"></l-icon></button>
+        <button style="height:44px;padding:0 12px;border-radius:999px;border:0;background:transparent;color:#3030FF;font:700 14px/20px Tajawal;display:flex;align-items:center;gap:2px">الكل<l-icon name="chevron-left" size="18"></l-icon></button>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#ECEBE7;color:#625F82;font:700 16px/24px Tajawal">معطّل</button>
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:1px solid #C2261F;background:#FFFFFF;color:#C2261F;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:8px"><l-icon name="trash-2" size="20"></l-icon>حذف الحساب</button>
+      </div>
+    </div>
+    <div style="background:#151519;border:1px solid #2E2E35;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#5C5CFF;color:#FFFFFF;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:8px"><l-icon name="clock" size="20"></l-icon>احجز الان</button>
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:1px solid #45454E;background:#1F1F23;color:#F2F1F7;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:6px">الصفحة<l-icon name="chevron-left" size="20"></l-icon></button>
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#26265E;color:#C9C9FF;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:8px"><l-icon name="bell-plus" size="20"></l-icon>تابع مدونتي</button>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#25D366;color:#06291C;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:8px"><l-icon name="message-circle" size="20"></l-icon>راسلنا واتساب</button>
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#27B07D;color:#06291C;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:8px"><l-icon name="headphones" size="20"></l-icon>اسمع المقال<span style="font:500 14px/20px Tajawal">١١ د</span></button>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button style="height:44px;padding:0 18px;border-radius:999px;border:0;background:#5C5CFF;color:#FFFFFF;font:700 14px/20px Tajawal">تابع</button>
+        <button style="height:44px;padding:0 18px;border-radius:999px;border:1px solid #45454E;background:#1F1F23;color:#F2F1F7;font:700 14px/20px Tajawal;display:flex;align-items:center;gap:6px"><l-icon name="check" size="18"></l-icon>متابَع</button>
+        <button style="width:48px;height:48px;border-radius:50%;border:0;background:#28282E;color:#F2F1F7;display:flex;align-items:center;justify-content:center"><l-icon name="share-2" size="22"></l-icon></button>
+        <button style="width:48px;height:48px;border-radius:50%;border:0;background:#323238;color:#F2F1F7;border-top:1px solid rgba(255,255,255,.08);box-shadow:0 6px 16px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center"><l-icon name="arrow-right" size="22"></l-icon></button>
+        <button style="height:44px;padding:0 12px;border-radius:999px;border:0;background:transparent;color:#9C9CFF;font:700 14px/20px Tajawal;display:flex;align-items:center;gap:2px">الكل<l-icon name="chevron-left" size="18"></l-icon></button>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:0;background:#323238;color:#9C9AB0;font:700 16px/24px Tajawal">معطّل</button>
+        <button style="height:52px;padding:0 24px;border-radius:999px;border:1px solid #FF8A80;background:#1F1F23;color:#FF8A80;font:700 16px/24px Tajawal;display:flex;align-items:center;gap:8px"><l-icon name="trash-2" size="20"></l-icon>حذف الحساب</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">04</span><h2 style="margin:0;font:800 22px/32px Tajawal">الشرائح · التبويبات · المقطّع · مدة القراءة</h2></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:20px">
+    <div style="background:#FAF9F6;border:1px solid #E6E4DE;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="height:40px;padding:0 16px;border-radius:999px;white-space:nowrap;background:#0E065A;color:#FFFFFF;display:flex;align-items:center;gap:6px;font:700 14px/20px Tajawal">الكل<span style="font:500 13px/1 Tajawal;color:#DCDAF2">٤٦</span></span>
+        <span style="height:40px;padding:0 16px;border-radius:999px;white-space:nowrap;background:#FFFFFF;border:1px solid #CFCCC4;color:#0E065A;display:flex;align-items:center;gap:6px;font:700 14px/20px Tajawal">السياحة العلاجية<span style="font:500 13px/1 Tajawal;color:#625F82">٣٤</span></span>
+        <span style="height:40px;padding:0 6px 0 4px;border-radius:999px;background:#E8E8FF;color:#2323C8;display:flex;align-items:center;gap:6px;font:700 14px/20px Tajawal"><img src="https://modonty-clients.b-cdn.net/logo/%D9%85%D8%A4%D8%B3%D8%B3%D8%A9-%D9%81%D8%B1%D8%B3%D8%A7%D9%86-%D8%A7%D9%84%D8%AA%D8%B9%D8%A7%D9%81%D9%8A/img-92ylztmpv.webp" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;background:#FFFFFF"><span>مؤسسة فرسان التعافي</span><span style="width:32px;height:32px;display:flex;align-items:center;justify-content:center"><l-icon name="x" size="18"></l-icon></span></span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="height:32px;padding:0 10px;border-radius:999px;white-space:nowrap;background:#F3F3F1;color:#4A4670;display:flex;align-items:center;gap:4px;font:500 13px/20px Tajawal"><l-icon name="map-pin" size="16"></l-icon>الجيزة</span>
+        <span style="height:32px;padding:0 10px;border-radius:999px;white-space:nowrap;background:#F3F3F1;color:#4A4670;display:flex;align-items:center;gap:4px;font:500 13px/20px Tajawal"><l-icon name="briefcase" size="16"></l-icon>منذ ٢٠٢٤</span>
+        <span style="height:32px;padding:0 10px;border-radius:999px;white-space:nowrap;background:#CCF5F5;color:#005A5A;display:flex;align-items:center;gap:4px;font:700 13px/20px Tajawal"><l-icon name="award" size="16"></l-icon><span dir="ltr">ISO 9001</span></span>
+        <span style="height:28px;padding:0 10px;border-radius:6px;white-space:nowrap;background:#E8E8FF;color:#2323C8;display:flex;align-items:center;font:700 12px/18px Tajawal">قريباً</span>
+        <span style="height:28px;padding:0 10px;border-radius:6px;white-space:nowrap;background:#FDF0D9;color:#8A4F00;display:flex;align-items:center;font:700 12px/18px Tajawal">قيد المراجعة</span>
+        <span style="height:28px;padding:0 10px;border-radius:6px;white-space:nowrap;background:#FFFFFF;border:1px solid #E0A100;color:#7A5A00;display:flex;align-items:center;gap:4px;font:700 12px/18px Tajawal"><l-icon name="crown" size="14"></l-icon>مميّز</span>
+      </div>
+      <div style="display:flex;border-bottom:1px solid #E6E4DE;overflow:hidden">
+        <span style="height:48px;padding:0 14px;display:flex;align-items:center;font:700 16px/24px Tajawal;color:#0E065A;box-shadow:inset 0 -3px 0 #3030FF">لك</span>
+        <span style="height:48px;padding:0 14px;display:flex;align-items:center;font:500 16px/24px Tajawal;color:#625F82">الأحدث</span>
+        <span style="height:48px;padding:0 14px;display:flex;align-items:center;font:500 16px/24px Tajawal;color:#625F82;white-space:nowrap">الأكثر قراءة</span>
+        <span style="height:48px;padding:0 14px;display:flex;align-items:center;font:500 16px/24px Tajawal;color:#625F82">المتابَعون</span>
+      </div>
+      <div style="height:48px;padding:4px;border-radius:999px;background:#F3F3F1;display:grid;grid-template-columns:repeat(3,1fr);max-width:328px">
+        <sc-for list="{{ segL }}" as="s" hint-placeholder-count="3">
+          <button onClick="{{ s.go }}" style="border:0;border-radius:999px;background:{{ s.bg }};box-shadow:{{ s.sh }};color:{{ s.fg }};font:700 14px/20px Tajawal;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:background 200ms cubic-bezier(.2,0,0,1)"><l-icon name="{{ s.icon }}" size="18"></l-icon>{{ s.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:328px">
+        <div style="height:72px;border-radius:16px;background:#27B07D;color:#06291C;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between"><div style="display:flex;justify-content:space-between;align-items:center"><l-icon name="footprints" size="20"></l-icon><span style="font:800 15px/20px Tajawal">٨</span></div><span style="font:700 14px/20px Tajawal;white-space:nowrap">على الماشي</span></div>
+        <div style="height:72px;border-radius:16px;background:#F59F0A;color:#3A2300;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between"><div style="display:flex;justify-content:space-between;align-items:center"><l-icon name="coffee" size="20"></l-icon><span style="font:800 15px/20px Tajawal">٩٠</span></div><span style="font:700 14px/20px Tajawal;white-space:nowrap">فنجان قهوة</span></div>
+        <div style="height:72px;border-radius:16px;background:#7C3BED;color:#FFFFFF;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between"><div style="display:flex;justify-content:space-between;align-items:center"><l-icon name="sofa" size="20"></l-icon><span style="font:800 15px/20px Tajawal">١٥٤</span></div><span style="font:700 14px/20px Tajawal;white-space:nowrap">جلسة روقان</span></div>
+      </div>
+    </div>
+    <div style="background:#151519;border:1px solid #2E2E35;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="height:40px;padding:0 16px;border-radius:999px;white-space:nowrap;background:#F2F1F7;color:#151519;display:flex;align-items:center;gap:6px;font:700 14px/20px Tajawal">الكل<span style="font:500 13px/1 Tajawal;color:#4A4670">٤٦</span></span>
+        <span style="height:40px;padding:0 16px;border-radius:999px;white-space:nowrap;background:#1F1F23;border:1px solid #45454E;color:#F2F1F7;display:flex;align-items:center;gap:6px;font:700 14px/20px Tajawal">السياحة العلاجية<span style="font:500 13px/1 Tajawal;color:#9C9AB0">٣٤</span></span>
+        <span style="height:40px;padding:0 6px 0 4px;border-radius:999px;background:#26265E;color:#C9C9FF;display:flex;align-items:center;gap:6px;font:700 14px/20px Tajawal"><img src="https://modonty-clients.b-cdn.net/logo/%D9%85%D8%A4%D8%B3%D8%B3%D8%A9-%D9%81%D8%B1%D8%B3%D8%A7%D9%86-%D8%A7%D9%84%D8%AA%D8%B9%D8%A7%D9%81%D9%8A/img-92ylztmpv.webp" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;background:#FFFFFF"><span>مؤسسة فرسان التعافي</span><span style="width:32px;height:32px;display:flex;align-items:center;justify-content:center"><l-icon name="x" size="18"></l-icon></span></span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="height:32px;padding:0 10px;border-radius:999px;white-space:nowrap;background:#28282E;color:#B8B6CB;display:flex;align-items:center;gap:4px;font:500 13px/20px Tajawal"><l-icon name="map-pin" size="16"></l-icon>الجيزة</span>
+        <span style="height:32px;padding:0 10px;border-radius:999px;white-space:nowrap;background:#28282E;color:#B8B6CB;display:flex;align-items:center;gap:4px;font:500 13px/20px Tajawal"><l-icon name="briefcase" size="16"></l-icon>منذ ٢٠٢٤</span>
+        <span style="height:32px;padding:0 10px;border-radius:999px;white-space:nowrap;background:#0F3A3D;color:#7FEDED;display:flex;align-items:center;gap:4px;font:700 13px/20px Tajawal"><l-icon name="award" size="16"></l-icon><span dir="ltr">ISO 9001</span></span>
+        <span style="height:28px;padding:0 10px;border-radius:6px;white-space:nowrap;background:#26265E;color:#C9C9FF;display:flex;align-items:center;font:700 12px/18px Tajawal">قريباً</span>
+        <span style="height:28px;padding:0 10px;border-radius:6px;white-space:nowrap;background:#3D2C0C;color:#FFBE4D;display:flex;align-items:center;font:700 12px/18px Tajawal">قيد المراجعة</span>
+        <span style="height:28px;padding:0 10px;border-radius:6px;white-space:nowrap;background:#1F1F23;border:1px solid #E0A100;color:#E9C46A;display:flex;align-items:center;gap:4px;font:700 12px/18px Tajawal"><l-icon name="crown" size="14"></l-icon>مميّز</span>
+      </div>
+      <div style="display:flex;border-bottom:1px solid #2E2E35;overflow:hidden">
+        <span style="height:48px;padding:0 14px;display:flex;align-items:center;font:700 16px/24px Tajawal;color:#F2F1F7;box-shadow:inset 0 -3px 0 #9C9CFF">لك</span>
+        <span style="height:48px;padding:0 14px;display:flex;align-items:center;font:500 16px/24px Tajawal;color:#9C9AB0">الأحدث</span>
+        <span style="height:48px;padding:0 14px;display:flex;align-items:center;font:500 16px/24px Tajawal;color:#9C9AB0;white-space:nowrap">الأكثر قراءة</span>
+        <span style="height:48px;padding:0 14px;display:flex;align-items:center;font:500 16px/24px Tajawal;color:#9C9AB0">المتابَعون</span>
+      </div>
+      <div style="height:48px;padding:4px;border-radius:999px;background:#1B1B20;border:1px solid #2E2E35;display:grid;grid-template-columns:repeat(3,1fr);max-width:328px">
+        <sc-for list="{{ segD }}" as="s" hint-placeholder-count="3">
+          <button onClick="{{ s.go }}" style="border:0;border-radius:999px;background:{{ s.bg }};color:{{ s.fg }};font:700 14px/20px Tajawal;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:background 200ms cubic-bezier(.2,0,0,1)"><l-icon name="{{ s.icon }}" size="18"></l-icon>{{ s.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:328px">
+        <div style="height:72px;border-radius:16px;background:#27B07D;color:#06291C;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between"><div style="display:flex;justify-content:space-between;align-items:center"><l-icon name="footprints" size="20"></l-icon><span style="font:800 15px/20px Tajawal">٨</span></div><span style="font:700 14px/20px Tajawal;white-space:nowrap">على الماشي</span></div>
+        <div style="height:72px;border-radius:16px;background:#F59F0A;color:#3A2300;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between"><div style="display:flex;justify-content:space-between;align-items:center"><l-icon name="coffee" size="20"></l-icon><span style="font:800 15px/20px Tajawal">٩٠</span></div><span style="font:700 14px/20px Tajawal;white-space:nowrap">فنجان قهوة</span></div>
+        <div style="height:72px;border-radius:16px;background:#7C3BED;color:#FFFFFF;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between"><div style="display:flex;justify-content:space-between;align-items:center"><l-icon name="sofa" size="20"></l-icon><span style="font:800 15px/20px Tajawal">١٥٤</span></div><span style="font:700 14px/20px Tajawal;white-space:nowrap">جلسة روقان</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#F3F3F1;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font:800 14px/20px Tajawal">صيغ العدد (تُولَّد آلياً من الرقم)</span><span style="font:400 14px/24px Tajawal;color:#4A4670">شريك واحد · شريكان · ٣ شركاء · ٣٤ شريكاً — طلّة واحدة · طلّتان · ٤ طلّات · ٢٦ طلّة — مقال واحد · مقالان · ٨ مقالات · ٥١ مقالاً. الصفر لا يُعرض: تبقى الأيقونة وحدها.</span></div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">05</span><h2 style="margin:0;font:800 22px/32px Tajawal">البطاقات</h2><span style="font:400 14px/24px Tajawal;color:#625F82">مقال (صف وهيرو) · طلّة ٩:١٦ · شريك (عادي ومميّز) · مجال.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:20px">
+    <div style="background:#FAF9F6;border:1px solid #E6E4DE;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:24px;align-items:center">
+      <div style="width:360px;padding:16px;display:flex;gap:14px;border-bottom:1px solid #E6E4DE">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:6px"><img src="https://modonty-clients.b-cdn.net/general/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/img-5204raj05.png" alt="مدونتي" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:#FFFFFF;flex:none;border:1px solid #E6E4DE"><span style="font:700 13px/20px Tajawal;color:#3030FF">مدونتي</span></div>
+          <span style="font:700 16px/24px Tajawal;color:#0E065A;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;text-wrap:pretty">الاقتصاد الإبداعي في السعودية كيف تحول مهارتك إلى مشروع يحقق دخل؟</span>
+          <div style="display:flex;align-items:center;gap:8px;font:500 12px/18px Tajawal;color:#625F82"><span style="width:8px;height:8px;border-radius:50%;background:#7C3BED"></span>١١ د قراءة<span>·</span>قبل ١٢ يوماً<span style="flex:1"></span><span style="width:40px;height:40px;margin:-8px -8px -8px -4px;display:flex;align-items:center;justify-content:center;color:#0E065A"><l-icon name="bookmark" size="20"></l-icon></span></div>
+        </div>
+        <img src="https://modonty-clients.b-cdn.net/post/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/%D8%A7%D9%84%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF-%D8%A7%D9%84%D8%A7%D8%A8%D8%AF%D8%A7%D8%B9%D9%8A-%D9%81%D9%8A-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D8%A9-4108d955ea.webp" alt="" style="width:88px;height:88px;border-radius:14px;object-fit:cover;flex:none">
+      </div>
+      <div style="width:328px;display:flex;flex-direction:column;gap:12px">
+        <div style="background:#FFFFFF;border-radius:8px 28px 28px 28px;overflow:hidden;box-shadow:0 1px 2px rgba(14,6,90,.06),0 1px 1px rgba(14,6,90,.04)">
+          <div style="position:relative;height:184px"><img src="https://modonty-clients.b-cdn.net/post/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A-%D9%81%D9%8A-techne-summit-2026-f001e2b477.webp" alt="" style="width:100%;height:100%;object-fit:cover;display:block"><span style="position:absolute;top:0;right:0;height:32px;padding:0 12px;border-radius:0 0 0 14px;background:#00D8D8;color:#0E065A;display:flex;align-items:center;gap:4px;font:800 13px/20px Tajawal"><l-icon name="sparkles" size="16"></l-icon>مميّز اليوم</span></div>
+          <div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:6px"><img src="https://modonty-clients.b-cdn.net/general/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/img-5204raj05.png" alt="مدونتي" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:#FFFFFF;flex:none;border:1px solid #E6E4DE"><span style="font:700 13px/20px Tajawal;color:#3030FF">مدونتي</span></div>
+            <span style="font:800 18px/28px Tajawal;color:#0E065A;text-wrap:balance">مشاركة مدونتي في <span dir="ltr">Techne Summit 2026</span> وأبرز القطاعات المرتقبة في الإيفنت</span>
+            <div style="display:flex;align-items:center;gap:8px;font:500 12px/18px Tajawal;color:#625F82"><span style="width:8px;height:8px;border-radius:50%;background:#F59F0A"></span>٩ د قراءة<span>·</span>قبل ٨ أيام</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;justify-content:center"><span style="width:20px;height:6px;border-radius:999px;background:#3030FF"></span><span style="width:6px;height:6px;border-radius:50%;background:#CFCCC4"></span><span style="width:6px;height:6px;border-radius:50%;background:#CFCCC4"></span></div>
+      </div>
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;justify-content:center">
+        <div style="position:relative;width:122px;height:204px;border-radius:20px;overflow:hidden;background:repeating-linear-gradient(135deg,#1B1270 0 8px,#160E5E 8px 16px)">
+          <img src="https://vz-a26f5478-719.b-cdn.net/4a9842ac-68b9-4c2e-ae21-cb8ed9364c5d/thumbnail.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <span style="position:absolute;top:8px;right:8px;height:24px;padding:0 8px;border-radius:999px;background:rgba(14,6,90,.8);color:#FFFFFF;display:flex;align-items:center;gap:3px;font:700 12px/1 Tajawal"><l-icon name="play" size="12" fill="currentColor"></l-icon>١:٠٥</span>
+          <div style="position:absolute;inset:auto 0 0 0;padding:40px 10px 10px;background:linear-gradient(to top,rgba(14,6,90,.96) 55%,rgba(14,6,90,0));display:flex;flex-direction:column;gap:6px">
+            <span style="font:700 14px/20px Tajawal;color:#FFFFFF;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">تطبيق فرسان التعافي</span>
+            <div style="display:flex;align-items:center;gap:5px"><img src="https://modonty-clients.b-cdn.net/logo/%D9%85%D8%A4%D8%B3%D8%B3%D8%A9-%D9%81%D8%B1%D8%B3%D8%A7%D9%86-%D8%A7%D9%84%D8%AA%D8%B9%D8%A7%D9%81%D9%8A/img-92ylztmpv.webp" alt="" style="width:18px;height:18px;border-radius:50%;object-fit:cover;background:#FFFFFF"><span style="font:500 12px/16px Tajawal;color:#DCDAF2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">مؤسسة فرسان التعافي</span></div>
+          </div>
+        </div>
+        <div style="width:160px;background:#FFFFFF;border-radius:20px;border:1px solid #E6E4DE;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <img src="https://modonty-clients.b-cdn.net/logo/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/%D9%85%D8%AC%D8%A7%D9%84-%D8%A7%D9%84%D8%B1%D8%B9%D8%A7%D9%8A%D8%A9-%D8%A7%D9%84%D8%B5%D8%AD%D9%8A%D8%A9-8a08971985.webp" alt="" style="width:80px;height:80px;border-radius:50%;object-fit:contain">
+          <span style="font:800 16px/24px Tajawal;color:#0E065A;text-align:center">الرعاية الصحية</span>
+          <span style="font:500 13px/20px Tajawal;color:#625F82">شريكان</span>
+        </div>
+      </div>
+      <div style="width:360px;padding:0 16px;display:flex;flex-direction:column;gap:12px">
+        <div style="background:#FFFFFF;border-radius:20px;border:1.5px solid #E0A100;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <img src="https://modonty-clients.b-cdn.net/general/%D8%B4%D8%B1%D9%83%D8%A9-%D8%AC%D8%A8%D8%B1-%D8%B3%D9%8A%D9%88/img-3pih4munx.png" alt="" style="width:56px;height:56px;border-radius:14px;border:1px solid #E6E4DE;object-fit:cover;flex:none">
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+              <div style="display:flex;justify-content:space-between;gap:8px"><span style="font:700 13px/20px Tajawal;color:#007575">التجارة الإلكترونية</span><span style="height:24px;padding:0 8px;border-radius:6px;border:1px solid #E0A100;color:#7A5A00;display:flex;align-items:center;gap:3px;font:700 12px/1 Tajawal"><l-icon name="crown" size="13"></l-icon>مميّز</span></div>
+              <div style="display:flex;align-items:center;gap:4px"><span style="font:800 16px/24px Tajawal;color:#0E065A">شركة جبر سيو</span><span style="color:#007575;display:flex"><l-icon name="badge-check" size="18"></l-icon></span></div>
+            </div>
+          </div>
+          <span style="font:400 14px/22px Tajawal;color:#4A4670;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">جبر سيو تقدم للشركات في السعودية والخليج محتوى SEO احترافيًا يشمل الكتابة والتصميم</span>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+            <button style="height:48px;border-radius:999px;border:0;background:#25D366;color:#06291C;font:700 15px/20px Tajawal;display:flex;align-items:center;justify-content:center;gap:6px"><l-icon name="message-circle" size="20"></l-icon>راسلنا واتساب</button>
+            <button style="height:48px;padding:0 18px;border-radius:999px;border:1px solid #CFCCC4;background:#FFFFFF;color:#0E065A;font:700 15px/20px Tajawal;display:flex;align-items:center;gap:4px">الصفحة<l-icon name="chevron-left" size="18"></l-icon></button>
+          </div>
+        </div>
+        <div style="background:#FFFFFF;border-radius:20px;border:1px solid #E6E4DE;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <img src="https://modonty-clients.b-cdn.net/logo/%D9%85%D8%A4%D8%B3%D8%B3%D8%A9-%D9%81%D8%B1%D8%B3%D8%A7%D9%86-%D8%A7%D9%84%D8%AA%D8%B9%D8%A7%D9%81%D9%8A/img-92ylztmpv.webp" alt="" style="width:56px;height:56px;border-radius:14px;border:1px solid #E6E4DE;object-fit:cover;flex:none">
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+              <span style="font:700 13px/20px Tajawal;color:#007575">السياحة العلاجية</span>
+              <div style="display:flex;align-items:center;gap:4px"><span style="font:800 16px/24px Tajawal;color:#0E065A">مؤسسة فرسان التعافي</span><span style="color:#007575;display:flex"><l-icon name="badge-check" size="18"></l-icon></span></div>
+            </div>
+          </div>
+          <span style="font:400 14px/22px Tajawal;color:#4A4670">الطب النفسي · علاج الادمان · التأهيل السلوكي</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span style="height:28px;padding:0 8px;border-radius:999px;background:#F3F3F1;color:#4A4670;display:flex;align-items:center;gap:4px;font:500 12px/18px Tajawal"><l-icon name="map-pin" size="14"></l-icon>الجيزة</span>
+            <span style="height:28px;padding:0 8px;border-radius:999px;background:#F3F3F1;color:#4A4670;display:flex;align-items:center;gap:4px;font:500 12px/18px Tajawal"><l-icon name="briefcase" size="14"></l-icon>منذ ٢٠٢٤</span>
+            <span style="height:28px;padding:0 8px;border-radius:999px;background:#CCF5F5;color:#005A5A;display:flex;align-items:center;gap:4px;font:700 12px/18px Tajawal"><l-icon name="award" size="14"></l-icon><span dir="ltr">ISO 9001</span></span>
+            <span style="height:28px;padding:0 8px;border-radius:999px;background:#F3F3F1;color:#4A4670;display:flex;align-items:center;font:500 12px/18px Tajawal">٣ خدمات</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+            <button style="height:48px;border-radius:999px;border:0;background:#25D366;color:#06291C;font:700 15px/20px Tajawal;display:flex;align-items:center;justify-content:center;gap:6px"><l-icon name="message-circle" size="20"></l-icon>راسلنا واتساب</button>
+            <button style="height:48px;padding:0 18px;border-radius:999px;border:1px solid #CFCCC4;background:#FFFFFF;color:#0E065A;font:700 15px/20px Tajawal;display:flex;align-items:center;gap:4px">الصفحة<l-icon name="chevron-left" size="18"></l-icon></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#151519;border:1px solid #2E2E35;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:24px;align-items:center">
+      <div style="width:360px;padding:16px;display:flex;gap:14px;border-bottom:1px solid #2E2E35">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:6px"><img src="https://modonty-clients.b-cdn.net/general/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/img-5204raj05.png" alt="مدونتي" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:#FFFFFF;flex:none;border:1px solid #E6E4DE"><span style="font:700 13px/20px Tajawal;color:#9C9CFF">مدونتي</span></div>
+          <span style="font:700 16px/24px Tajawal;color:#F2F1F7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;text-wrap:pretty">الاقتصاد الإبداعي في السعودية كيف تحول مهارتك إلى مشروع يحقق دخل؟</span>
+          <div style="display:flex;align-items:center;gap:8px;font:500 12px/18px Tajawal;color:#9C9AB0"><span style="width:8px;height:8px;border-radius:50%;background:#7C3BED"></span>١١ د قراءة<span>·</span>قبل ١٢ يوماً<span style="flex:1"></span><span style="width:40px;height:40px;margin:-8px -8px -8px -4px;display:flex;align-items:center;justify-content:center;color:#F2F1F7"><l-icon name="bookmark" size="20"></l-icon></span></div>
+        </div>
+        <img src="https://modonty-clients.b-cdn.net/post/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/%D8%A7%D9%84%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF-%D8%A7%D9%84%D8%A7%D8%A8%D8%AF%D8%A7%D8%B9%D9%8A-%D9%81%D9%8A-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D8%A9-4108d955ea.webp" alt="" style="width:88px;height:88px;border-radius:14px;object-fit:cover;flex:none">
+      </div>
+      <div style="width:328px;display:flex;flex-direction:column;gap:12px">
+        <div style="background:#1F1F23;border-radius:8px 28px 28px 28px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.4)">
+          <div style="position:relative;height:184px"><img src="https://modonty-clients.b-cdn.net/post/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A-%D9%81%D9%8A-techne-summit-2026-f001e2b477.webp" alt="" style="width:100%;height:100%;object-fit:cover;display:block"><span style="position:absolute;top:0;right:0;height:32px;padding:0 12px;border-radius:0 0 0 14px;background:#00D8D8;color:#0E065A;display:flex;align-items:center;gap:4px;font:800 13px/20px Tajawal"><l-icon name="sparkles" size="16"></l-icon>مميّز اليوم</span></div>
+          <div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:6px"><img src="https://modonty-clients.b-cdn.net/general/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/img-5204raj05.png" alt="مدونتي" style="width:20px;height:20px;border-radius:50%;object-fit:contain;background:#FFFFFF;flex:none;border:1px solid #E6E4DE"><span style="font:700 13px/20px Tajawal;color:#9C9CFF">مدونتي</span></div>
+            <span style="font:800 18px/28px Tajawal;color:#F2F1F7;text-wrap:balance">مشاركة مدونتي في <span dir="ltr">Techne Summit 2026</span> وأبرز القطاعات المرتقبة في الإيفنت</span>
+            <div style="display:flex;align-items:center;gap:8px;font:500 12px/18px Tajawal;color:#9C9AB0"><span style="width:8px;height:8px;border-radius:50%;background:#F59F0A"></span>٩ د قراءة<span>·</span>قبل ٨ أيام</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;justify-content:center"><span style="width:20px;height:6px;border-radius:999px;background:#9C9CFF"></span><span style="width:6px;height:6px;border-radius:50%;background:#45454E"></span><span style="width:6px;height:6px;border-radius:50%;background:#45454E"></span></div>
+      </div>
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;justify-content:center">
+        <div style="position:relative;width:122px;height:204px;border-radius:20px;overflow:hidden;background:repeating-linear-gradient(135deg,#1B1270 0 8px,#160E5E 8px 16px)">
+          <img src="https://vz-a26f5478-719.b-cdn.net/4a9842ac-68b9-4c2e-ae21-cb8ed9364c5d/thumbnail.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <span style="position:absolute;top:8px;right:8px;height:24px;padding:0 8px;border-radius:999px;background:rgba(14,6,90,.8);color:#FFFFFF;display:flex;align-items:center;gap:3px;font:700 12px/1 Tajawal"><l-icon name="play" size="12" fill="currentColor"></l-icon>١:٠٥</span>
+          <div style="position:absolute;inset:auto 0 0 0;padding:40px 10px 10px;background:linear-gradient(to top,rgba(14,6,90,.96) 55%,rgba(14,6,90,0));display:flex;flex-direction:column;gap:6px">
+            <span style="font:700 14px/20px Tajawal;color:#FFFFFF">تطبيق فرسان التعافي</span>
+            <div style="display:flex;align-items:center;gap:5px"><img src="https://modonty-clients.b-cdn.net/logo/%D9%85%D8%A4%D8%B3%D8%B3%D8%A9-%D9%81%D8%B1%D8%B3%D8%A7%D9%86-%D8%A7%D9%84%D8%AA%D8%B9%D8%A7%D9%81%D9%8A/img-92ylztmpv.webp" alt="" style="width:18px;height:18px;border-radius:50%;object-fit:cover;background:#FFFFFF"><span style="font:500 12px/16px Tajawal;color:#DCDAF2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">مؤسسة فرسان التعافي</span></div>
+          </div>
+        </div>
+        <div style="width:160px;background:#1F1F23;border-radius:20px;border:1px solid #2E2E35;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <img src="https://modonty-clients.b-cdn.net/logo/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/%D9%85%D8%AC%D8%A7%D9%84-%D8%A7%D9%84%D8%B1%D8%B9%D8%A7%D9%8A%D8%A9-%D8%A7%D9%84%D8%B5%D8%AD%D9%8A%D8%A9-8a08971985.webp" alt="" style="width:80px;height:80px;border-radius:50%;object-fit:contain">
+          <span style="font:800 16px/24px Tajawal;color:#F2F1F7;text-align:center">الرعاية الصحية</span>
+          <span style="font:500 13px/20px Tajawal;color:#9C9AB0">شريكان</span>
+        </div>
+      </div>
+      <div style="width:360px;padding:0 16px;display:flex;flex-direction:column;gap:12px">
+        <div style="background:#1F1F23;border-radius:20px;border:1.5px solid #E0A100;padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <img src="https://modonty-clients.b-cdn.net/general/%D8%B4%D8%B1%D9%83%D8%A9-%D8%AC%D8%A8%D8%B1-%D8%B3%D9%8A%D9%88/img-3pih4munx.png" alt="" style="width:56px;height:56px;border-radius:14px;object-fit:cover;flex:none;background:#FFFFFF">
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+              <div style="display:flex;justify-content:space-between;gap:8px"><span style="font:700 13px/20px Tajawal;color:#00D8D8">التجارة الإلكترونية</span><span style="height:24px;padding:0 8px;border-radius:6px;border:1px solid #E0A100;color:#E9C46A;display:flex;align-items:center;gap:3px;font:700 12px/1 Tajawal"><l-icon name="crown" size="13"></l-icon>مميّز</span></div>
+              <div style="display:flex;align-items:center;gap:4px"><span style="font:800 16px/24px Tajawal;color:#F2F1F7">شركة جبر سيو</span><span style="color:#00D8D8;display:flex"><l-icon name="badge-check" size="18"></l-icon></span></div>
+            </div>
+          </div>
+          <span style="font:400 14px/22px Tajawal;color:#B8B6CB;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">جبر سيو تقدم للشركات في السعودية والخليج محتوى SEO احترافيًا يشمل الكتابة والتصميم</span>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+            <button style="height:48px;border-radius:999px;border:0;background:#25D366;color:#06291C;font:700 15px/20px Tajawal;display:flex;align-items:center;justify-content:center;gap:6px"><l-icon name="message-circle" size="20"></l-icon>راسلنا واتساب</button>
+            <button style="height:48px;padding:0 18px;border-radius:999px;border:1px solid #45454E;background:#1F1F23;color:#F2F1F7;font:700 15px/20px Tajawal;display:flex;align-items:center;gap:4px">الصفحة<l-icon name="chevron-left" size="18"></l-icon></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">06</span><h2 style="margin:0;font:800 22px/32px Tajawal">الـBottom sheet · مثال: شركاء الطلّات</h2><span style="font:400 14px/24px Tajawal;color:#625F82">ظهور ٣٠٠ms مع تباطؤ، إغلاق ٢٠٠ms مع تسارع، طبقة تعتيم ٤٨٪. الإغلاق بالسحب لأسفل أو بالنقر على التعتيم.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:20px;justify-items:center">
+    <div style="position:relative;width:360px;height:560px;border-radius:24px;overflow:hidden;background:repeating-linear-gradient(135deg,#1B1270 0 10px,#160E5E 10px 20px)">
+      <button onClick="{{ toggleSheet }}" style="position:absolute;top:16px;right:16px;height:44px;padding:0 16px;border-radius:999px;border:0;background:#FFFFFF;color:#0E065A;font:700 14px/20px Tajawal;display:flex;align-items:center;gap:6px;cursor:pointer"><l-icon name="building-2" size="18"></l-icon>الشركاء</button>
+      <div onClick="{{ toggleSheet }}" style="position:absolute;inset:0;background:#0E065A;opacity:{{ scrimOp }};pointer-events:{{ scrimPe }};transition:opacity 200ms linear"></div>
+      <div style="position:absolute;inset:auto 0 0 0;background:#FFFFFF;border-radius:28px 28px 0 0;box-shadow:0 -12px 32px rgba(14,6,90,.16);padding:8px 20px 24px;display:flex;flex-direction:column;gap:16px;transform:{{ sheetTf }};transition:{{ sheetTr }}">
+        <span style="align-self:center;width:32px;height:4px;border-radius:999px;background:#CFCCC4"></span>
+        <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;flex-direction:column"><span style="font:800 18px/28px Tajawal;color:#0E065A">شركاء الطلّات</span><span style="font:500 13px/20px Tajawal;color:#625F82">٢٦ طلّة من ٧ شركاء</span></div><button onClick="{{ toggleSheet }}" style="width:48px;height:48px;border-radius:50%;border:0;background:#F3F3F1;color:#0E065A;display:flex;align-items:center;justify-content:center;cursor:pointer"><l-icon name="x" size="20"></l-icon></button></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px 8px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:64px;height:64px;border-radius:50%;background:#E8E8FF;color:#2323C8;border:2px solid #3030FF;display:flex;align-items:center;justify-content:center"><l-icon name="layout-grid" size="24"></l-icon></span><span style="font:700 13px/18px Tajawal;color:#0E065A">الكل</span><span style="font:500 12px/16px Tajawal;color:#625F82">٢٦ طلّة</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><img src="https://modonty-clients.b-cdn.net/logo/%D9%85%D8%A4%D8%B3%D8%B3%D8%A9-%D9%81%D8%B1%D8%B3%D8%A7%D9%86-%D8%A7%D9%84%D8%AA%D8%B9%D8%A7%D9%81%D9%8A/img-92ylztmpv.webp" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:1px solid #E6E4DE"><span style="font:700 13px/18px Tajawal;color:#0E065A;text-align:center">مؤسسة فرسان التعافي</span><span style="font:500 12px/16px Tajawal;color:#625F82">طلّتان</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><img src="https://modonty-clients.b-cdn.net/logo/%D8%B9%D9%8A%D8%A7%D8%AF%D8%A7%D8%AA-%D8%AF%D9%83%D8%AA%D9%88%D8%B1-%D8%B7%D8%A7%D8%B1%D9%82-%D8%B9%D9%85%D8%B1-%D8%A7%D9%84%D9%85%D8%AA%D9%83%D8%A7%D9%85%D9%84%D8%A9/Untitled-1-b4893bcdf2.webp" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;background:#FFFFFF"><span style="font:700 13px/18px Tajawal;color:#0E065A;text-align:center">عيادات دكتور طارق عمر المتكاملة</span><span style="font:500 12px/16px Tajawal;color:#625F82">طلّة واحدة</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="position:relative;width:360px;height:560px;border-radius:24px;overflow:hidden;background:repeating-linear-gradient(135deg,#1B1270 0 10px,#160E5E 10px 20px)">
+      <div style="position:absolute;inset:0;background:#000000;opacity:.56"></div>
+      <div style="position:absolute;inset:auto 0 0 0;background:#28282E;border-top:1px solid rgba(255,255,255,.08);border-radius:28px 28px 0 0;padding:8px 20px 24px;display:flex;flex-direction:column;gap:16px">
+        <span style="align-self:center;width:32px;height:4px;border-radius:999px;background:#45454E"></span>
+        <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;flex-direction:column"><span style="font:800 18px/28px Tajawal;color:#F2F1F7">شركاء الطلّات</span><span style="font:500 13px/20px Tajawal;color:#B8B6CB">٢٦ طلّة من ٧ شركاء</span></div><span style="width:48px;height:48px;border-radius:50%;background:#323238;color:#F2F1F7;display:flex;align-items:center;justify-content:center"><l-icon name="x" size="20"></l-icon></span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px 8px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:64px;height:64px;border-radius:50%;background:#26265E;color:#C9C9FF;border:2px solid #9C9CFF;display:flex;align-items:center;justify-content:center"><l-icon name="layout-grid" size="24"></l-icon></span><span style="font:700 13px/18px Tajawal;color:#F2F1F7">الكل</span><span style="font:500 12px/16px Tajawal;color:#B8B6CB">٢٦ طلّة</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><img src="https://modonty-clients.b-cdn.net/logo/%D9%85%D8%A4%D8%B3%D8%B3%D8%A9-%D9%81%D8%B1%D8%B3%D8%A7%D9%86-%D8%A7%D9%84%D8%AA%D8%B9%D8%A7%D9%81%D9%8A/img-92ylztmpv.webp" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover"><span style="font:700 13px/18px Tajawal;color:#F2F1F7;text-align:center">مؤسسة فرسان التعافي</span><span style="font:500 12px/16px Tajawal;color:#B8B6CB">طلّتان</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><img src="https://modonty-clients.b-cdn.net/logo/%D8%B9%D9%8A%D8%A7%D8%AF%D8%A7%D8%AA-%D8%AF%D9%83%D8%AA%D9%88%D8%B1-%D8%B7%D8%A7%D8%B1%D9%82-%D8%B9%D9%85%D8%B1-%D8%A7%D9%84%D9%85%D8%AA%D9%83%D8%A7%D9%85%D9%84%D8%A9/Untitled-1-b4893bcdf2.webp" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;background:#FFFFFF"><span style="font:700 13px/18px Tajawal;color:#F2F1F7;text-align:center">عيادات دكتور طارق عمر المتكاملة</span><span style="font:500 12px/16px Tajawal;color:#B8B6CB">طلّة واحدة</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="margin:0;font:400 13px/22px Tajawal;color:#4A4670;text-wrap:pretty">مثال مختصر بثلاثة شركاء. الشاشة الكاملة في «Modonty Screens A» تعرض الشركاء السبعة بشعاراتهم وأعداد طلّاتهم.</p>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">07</span><h2 style="margin:0;font:800 22px/32px Tajawal">الحقول</h2><span style="font:400 14px/24px Tajawal;color:#625F82">ارتفاع ٥٦ وزوايا ١٤. الجوّال يقبل الأرقام العربية واللاتينية ويُحفظ بصيغة E.164.</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:20px">
+    <div style="background:#FAF9F6;border:1px solid #E6E4DE;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:22px;align-items:center">
+      <div style="width:328px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:700 16px/24px Tajawal;color:#0E065A">رقم جوّالك</span><span style="font:500 12px/18px Tajawal;color:#625F82">المطلوب الوحيد</span></div>
+        <div style="display:flex;gap:8px" dir="ltr">
+          <div style="width:96px;height:56px;border-radius:14px;border:1px solid #CFCCC4;background:#FFFFFF;display:flex;align-items:center;justify-content:center;gap:4px;color:#0E065A;font:700 16px/24px Tajawal">+966<l-icon name="chevron-down" size="18"></l-icon></div>
+          <div style="flex:1;height:56px;border-radius:14px;border:2px solid #3030FF;background:#FFFFFF;display:flex;align-items:center;padding:0 15px;font:500 17px/24px Tajawal;color:#625F82;letter-spacing:.5px">5X XXX XXXX<span style="width:2px;height:24px;background:#3030FF;margin-left:2px"></span></div>
+        </div>
+        <span style="display:flex;align-items:center;gap:6px;font:500 13px/20px Tajawal;color:#4A4670"><l-icon name="shield-check" size="16"></l-icon>يوصل للمزوّد فقط، بلا رسائل تسويقية</span>
+      </div>
+      <div style="width:328px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:8px" dir="ltr">
+          <div style="width:96px;height:56px;border-radius:14px;border:1px solid #CFCCC4;background:#FFFFFF;display:flex;align-items:center;justify-content:center;gap:4px;color:#0E065A;font:700 16px/24px Tajawal">+966<l-icon name="chevron-down" size="18"></l-icon></div>
+          <div style="flex:1;height:56px;border-radius:14px;border:2px solid #C2261F;background:#FFFFFF;display:flex;align-items:center;padding:0 15px;font:500 17px/24px Tajawal;color:#0E065A">50 123</div>
+        </div>
+        <span style="display:flex;align-items:center;gap:6px;font:500 13px/20px Tajawal;color:#C2261F"><l-icon name="circle-alert" size="16"></l-icon>الرقم ناقص: ٩ أرقام بعد ‎+966</span>
+      </div>
+      <div style="width:328px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:700 16px/24px Tajawal;color:#0E065A">اسمك</span><span style="font:500 12px/18px Tajawal;color:#625F82">اختياري</span></div>
+        <div style="height:56px;border-radius:14px;border:1px solid #CFCCC4;background:#FFFFFF;display:flex;align-items:center;padding:0 16px;font:500 16px/24px Tajawal;color:#0E065A">أحمد</div>
+      </div>
+    </div>
+    <div style="background:#151519;border:1px solid #2E2E35;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:22px;align-items:center">
+      <div style="width:328px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:700 16px/24px Tajawal;color:#F2F1F7">رقم جوّالك</span><span style="font:500 12px/18px Tajawal;color:#9C9AB0">المطلوب الوحيد</span></div>
+        <div style="display:flex;gap:8px" dir="ltr">
+          <div style="width:96px;height:56px;border-radius:14px;border:1px solid #45454E;background:#1F1F23;display:flex;align-items:center;justify-content:center;gap:4px;color:#F2F1F7;font:700 16px/24px Tajawal">+966<l-icon name="chevron-down" size="18"></l-icon></div>
+          <div style="flex:1;height:56px;border-radius:14px;border:2px solid #9C9CFF;background:#1F1F23;display:flex;align-items:center;padding:0 15px;font:500 17px/24px Tajawal;color:#9C9AB0;letter-spacing:.5px">5X XXX XXXX<span style="width:2px;height:24px;background:#9C9CFF;margin-left:2px"></span></div>
+        </div>
+        <span style="display:flex;align-items:center;gap:6px;font:500 13px/20px Tajawal;color:#B8B6CB"><l-icon name="shield-check" size="16"></l-icon>يوصل للمزوّد فقط، بلا رسائل تسويقية</span>
+      </div>
+      <div style="width:328px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:8px" dir="ltr">
+          <div style="width:96px;height:56px;border-radius:14px;border:1px solid #45454E;background:#1F1F23;display:flex;align-items:center;justify-content:center;gap:4px;color:#F2F1F7;font:700 16px/24px Tajawal">+966<l-icon name="chevron-down" size="18"></l-icon></div>
+          <div style="flex:1;height:56px;border-radius:14px;border:2px solid #FF8A80;background:#1F1F23;display:flex;align-items:center;padding:0 15px;font:500 17px/24px Tajawal;color:#F2F1F7">50 123</div>
+        </div>
+        <span style="display:flex;align-items:center;gap:6px;font:500 13px/20px Tajawal;color:#FF8A80"><l-icon name="circle-alert" size="16"></l-icon>الرقم ناقص: ٩ أرقام بعد ‎+966</span>
+      </div>
+      <div style="width:328px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:700 16px/24px Tajawal;color:#F2F1F7">اسمك</span><span style="font:500 12px/18px Tajawal;color:#9C9AB0">اختياري</span></div>
+        <div style="height:56px;border-radius:14px;border:1px solid #45454E;background:#1F1F23;display:flex;align-items:center;padding:0 16px;font:500 16px/24px Tajawal;color:#F2F1F7">أحمد</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#FFFFFF;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:900 13px/1 ui-monospace,monospace;color:#625F82" dir="ltr">08</span><h2 style="margin:0;font:800 22px/32px Tajawal">الأكورديون · الحالات · التنبيه · المشغّل المصغّر</h2></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:20px">
+    <div style="background:#FAF9F6;border:1px solid #E6E4DE;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:24px;align-items:center">
+      <div style="width:328px;background:#FFFFFF;border:1px solid #E6E4DE;border-radius:16px;overflow:hidden">
+        <button onClick="{{ toggleFaq }}" style="width:100%;min-height:56px;padding:12px 16px;border:0;background:transparent;display:flex;align-items:center;gap:12px;text-align:right;cursor:pointer;color:#0E065A"><span style="flex:1;font:700 16px/24px Tajawal">ما هي مراحل علاج الإدمان؟</span><span style="display:flex;transform:{{ faqRot }};transition:transform 200ms cubic-bezier(.2,0,0,1)"><l-icon name="chevron-down" size="20"></l-icon></span></button>
+        <sc-if value="{{ faqOpen }}" hint-placeholder-val="{{ true }}"><p style="margin:0;padding:0 16px 16px;font:400 15px/28px Tajawal;color:#4A4670;text-wrap:pretty">تمر رحلة العلاج بخمس مراحل أساسية: التقييم والتشخيص، إزالة السموم تحت إشراف طبي، العلاج النفسي والسلوكي، التأهيل الاجتماعي، ثم المتابعة بعد التعافي لمنع الانتكاسة.</p></sc-if>
+      </div>
+      <div style="width:328px;display:grid;grid-template-columns:1fr;gap:12px">
+        <div style="background:#FFFFFF;border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><span style="width:56px;height:56px;border-radius:16px;background:#F3F3F1;color:#4A4670;display:flex;align-items:center;justify-content:center"><l-icon name="bookmark" size="26"></l-icon></span><span style="font:800 16px/24px Tajawal;color:#0E065A">ما حفظت أي مقال بعد</span><span style="font:400 14px/22px Tajawal;color:#4A4670">اضغط على علامة الحفظ في أي مقال ليظهر هنا.</span><button style="margin-top:4px;height:44px;padding:0 18px;border-radius:999px;border:0;background:#E8E8FF;color:#2323C8;font:700 14px/20px Tajawal">تصفّح المقالات</button></div>
+        <div style="background:#FFFFFF;border-radius:16px;padding:16px;display:flex;gap:14px"><div style="flex:1;display:flex;flex-direction:column;gap:10px;padding-top:4px"><span style="width:72px;height:12px;border-radius:6px;background:#ECEBE7"></span><span style="height:14px;border-radius:6px;background:#ECEBE7"></span><span style="width:70%;height:14px;border-radius:6px;background:#ECEBE7"></span><span style="width:110px;height:10px;border-radius:6px;background:#ECEBE7"></span></div><span style="width:88px;height:88px;border-radius:14px;background:#ECEBE7;flex:none"></span></div>
+        <div style="background:#FFFFFF;border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><span style="width:56px;height:56px;border-radius:16px;background:#FDE6E4;color:#B0221B;display:flex;align-items:center;justify-content:center"><l-icon name="wifi-off" size="26"></l-icon></span><span style="font:800 16px/24px Tajawal;color:#0E065A">تعذّر التحميل</span><span style="font:400 14px/22px Tajawal;color:#4A4670">تأكد من اتصالك بالإنترنت وحاول مرة ثانية.</span><button style="margin-top:4px;height:44px;padding:0 18px;border-radius:999px;border:1px solid #CFCCC4;background:#FFFFFF;color:#0E065A;font:700 14px/20px Tajawal;display:flex;align-items:center;gap:6px"><l-icon name="refresh-cw" size="18"></l-icon>إعادة المحاولة</button></div>
+      </div>
+      <div style="width:336px;min-height:56px;border-radius:16px;background:#0E065A;box-shadow:0 12px 32px rgba(14,6,90,.16),0 4px 8px rgba(14,6,90,.08);display:flex;align-items:center;gap:10px;padding:0 8px 0 16px;color:#FFFFFF"><l-icon name="bookmark-check" size="20"></l-icon><span style="flex:1;font:500 14px/22px Tajawal">حُفظ المقال في المحفوظة</span><button style="height:48px;padding:0 12px;border:0;background:transparent;color:#00D8D8;font:700 14px/20px Tajawal">تراجع</button></div>
+      <div style="width:336px;height:56px;border-radius:16px;background:#FFFFFF;box-shadow:0 12px 32px rgba(14,6,90,.16),0 4px 8px rgba(14,6,90,.08);display:flex;align-items:center;gap:10px;padding:0 8px;position:relative;overflow:hidden">
+        <img src="https://modonty-clients.b-cdn.net/post/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/%D8%A7%D9%84%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF-%D8%A7%D9%84%D8%A7%D8%A8%D8%AF%D8%A7%D8%B9%D9%8A-%D9%81%D9%8A-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D8%A9-4108d955ea.webp" alt="" style="width:40px;height:40px;border-radius:10px;object-fit:cover">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:700 14px/20px Tajawal;color:#0E065A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">الاقتصاد الإبداعي في السعودية كيف تحول مهارتك إلى مشروع يحقق دخل؟</span><span style="font:500 12px/18px Tajawal;color:#625F82">يكمل من حيث وقفت</span></div>
+        <span style="width:40px;height:40px;border-radius:50%;background:#27B07D;color:#06291C;display:flex;align-items:center;justify-content:center;flex:none"><l-icon name="pause" size="20" fill="currentColor"></l-icon></span>
+        <span style="position:absolute;bottom:0;right:0;left:0;height:2px;background:#ECEBE7"><span style="position:absolute;right:0;top:0;bottom:0;width:38%;background:#27B07D"></span></span>
+      </div>
+    </div>
+    <div style="background:#151519;border:1px solid #2E2E35;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:24px;align-items:center">
+      <div style="width:328px;background:#1F1F23;border:1px solid #2E2E35;border-radius:16px;overflow:hidden">
+        <div style="min-height:56px;padding:12px 16px;display:flex;align-items:center;gap:12px;color:#F2F1F7"><span style="flex:1;font:700 16px/24px Tajawal">ما هي مراحل علاج الإدمان؟</span><span style="display:flex;transform:rotate(180deg)"><l-icon name="chevron-down" size="20"></l-icon></span></div>
+        <p style="margin:0;padding:0 16px 16px;font:400 15px/28px Tajawal;color:#B8B6CB;text-wrap:pretty">تمر رحلة العلاج بخمس مراحل أساسية: التقييم والتشخيص، إزالة السموم تحت إشراف طبي، العلاج النفسي والسلوكي، التأهيل الاجتماعي، ثم المتابعة بعد التعافي لمنع الانتكاسة.</p>
+      </div>
+      <div style="width:328px;display:grid;grid-template-columns:1fr;gap:12px">
+        <div style="background:#1F1F23;border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><span style="width:56px;height:56px;border-radius:16px;background:#28282E;color:#B8B6CB;display:flex;align-items:center;justify-content:center"><l-icon name="bookmark" size="26"></l-icon></span><span style="font:800 16px/24px Tajawal;color:#F2F1F7">ما حفظت أي مقال بعد</span><span style="font:400 14px/22px Tajawal;color:#B8B6CB">اضغط على علامة الحفظ في أي مقال ليظهر هنا.</span><button style="margin-top:4px;height:44px;padding:0 18px;border-radius:999px;border:0;background:#26265E;color:#C9C9FF;font:700 14px/20px Tajawal">تصفّح المقالات</button></div>
+        <div style="background:#1F1F23;border-radius:16px;padding:16px;display:flex;gap:14px"><div style="flex:1;display:flex;flex-direction:column;gap:10px;padding-top:4px"><span style="width:72px;height:12px;border-radius:6px;background:#323238"></span><span style="height:14px;border-radius:6px;background:#323238"></span><span style="width:70%;height:14px;border-radius:6px;background:#323238"></span><span style="width:110px;height:10px;border-radius:6px;background:#323238"></span></div><span style="width:88px;height:88px;border-radius:14px;background:#323238;flex:none"></span></div>
+        <div style="background:#1F1F23;border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><span style="width:56px;height:56px;border-radius:16px;background:#4A1F1C;color:#FFB4AB;display:flex;align-items:center;justify-content:center"><l-icon name="wifi-off" size="26"></l-icon></span><span style="font:800 16px/24px Tajawal;color:#F2F1F7">تعذّر التحميل</span><span style="font:400 14px/22px Tajawal;color:#B8B6CB">تأكد من اتصالك بالإنترنت وحاول مرة ثانية.</span><button style="margin-top:4px;height:44px;padding:0 18px;border-radius:999px;border:1px solid #45454E;background:#1F1F23;color:#F2F1F7;font:700 14px/20px Tajawal;display:flex;align-items:center;gap:6px"><l-icon name="refresh-cw" size="18"></l-icon>إعادة المحاولة</button></div>
+      </div>
+      <div style="width:336px;min-height:56px;border-radius:16px;background:#F2F1F7;display:flex;align-items:center;gap:10px;padding:0 8px 0 16px;color:#0E065A"><l-icon name="bookmark-check" size="20"></l-icon><span style="flex:1;font:500 14px/22px Tajawal">حُفظ المقال في المحفوظة</span><button style="height:48px;padding:0 12px;border:0;background:transparent;color:#3030FF;font:700 14px/20px Tajawal">تراجع</button></div>
+      <div style="width:336px;height:56px;border-radius:16px;background:#323238;border-top:1px solid rgba(255,255,255,.08);box-shadow:0 12px 32px rgba(0,0,0,.6);display:flex;align-items:center;gap:10px;padding:0 8px;position:relative;overflow:hidden">
+        <img src="https://modonty-clients.b-cdn.net/post/%D9%85%D8%AF%D9%88%D9%86%D8%AA%D9%8A/%D8%A7%D9%84%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF-%D8%A7%D9%84%D8%A7%D8%A8%D8%AF%D8%A7%D8%B9%D9%8A-%D9%81%D9%8A-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D8%A9-4108d955ea.webp" alt="" style="width:40px;height:40px;border-radius:10px;object-fit:cover">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:700 14px/20px Tajawal;color:#F2F1F7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">الاقتصاد الإبداعي في السعودية كيف تحول مهارتك إلى مشروع يحقق دخل؟</span><span style="font:500 12px/18px Tajawal;color:#B8B6CB">يكمل من حيث وقفت</span></div>
+        <span style="width:40px;height:40px;border-radius:50%;background:#27B07D;color:#06291C;display:flex;align-items:center;justify-content:center;flex:none"><l-icon name="pause" size="20" fill="currentColor"></l-icon></span>
+        <span style="position:absolute;bottom:0;right:0;left:0;height:2px;background:#45454E"><span style="position:absolute;right:0;top:0;bottom:0;width:38%;background:#27B07D"></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#0E065A;color:#FFFFFF;border-radius:24px;padding:28px 32px;display:flex;flex-direction:column;gap:10px">
+  <span style="font:800 18px/28px Tajawal">التالي</span>
+  <span style="font:400 15px/26px Tajawal;color:#DCDAF2;text-wrap:pretty">الشاشات في ملف «Modonty Screens»، مبنية من هذه المكوّنات كما هي.</span>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { tab: 0, collapsed: false, sheet: false, seg: 0, faq: true };
+  renderVals() {
+    const { tab, collapsed, sheet, seg, faq } = this.state;
+    const defs = [['house','الرئيسية'],['newspaper','المقالات'],['square-play','الطلّات'],['compass','اكتشف']];
+    const tabsL = defs.map(([icon,label],i)=>{
+      const a=i===tab, hide=collapsed&&!a;
+      return { icon,label,go:()=>this.setState({tab:i}),
+        bg:a?'#3030FF':'transparent', fg:a?'#FFFFFF':'#4A4670',
+        minW:hide?'0px':'48px', maxW:hide?'0px':(a?'140px':'48px'), pad:a?'0 14px 0 16px':'0',
+        mar:hide?'0':'0 1px', op:hide?0:1, lblMax:a?'90px':'0px', lblOp:a?1:0 };
+    });
+    const segDefs=[['sun','فاتح'],['moon','داكن'],['smartphone','تلقائي']];
+    const segL=segDefs.map(([icon,label],i)=>({icon,label,go:()=>this.setState({seg:i}),bg:i===seg?'#FFFFFF':'transparent',sh:i===seg?'0 1px 2px rgba(14,6,90,.06), 0 1px 1px rgba(14,6,90,.04)':'none',fg:i===seg?'#0E065A':'#4A4670'}));
+    const segD=segDefs.map(([icon,label],i)=>({icon,label,go:()=>this.setState({seg:i}),bg:i===seg?'#323238':'transparent',fg:i===seg?'#F2F1F7':'#B8B6CB'}));
+    const motion=[
+      ['نابض تبويب الكبسولة','motion.tab.spring','withSpring · damping 16 · stiffness 220 · mass 1','≈ 340ms cubic-bezier(.34,1.45,.64,1)'],
+      ['طيّ الكبسولة عند التمرير','motion.nav.collapse','withTiming 220ms · Easing.bezier(.2,0,0,1)','220ms cubic-bezier(.2,0,0,1) · threshold 24dp'],
+      ['فتح الـsheet','motion.sheet.open','withTiming 300ms · bezier(.05,.7,.1,1)','300ms cubic-bezier(.05,.7,.1,1)'],
+      ['إغلاق الـsheet','motion.sheet.close','withTiming 200ms · bezier(.3,0,.8,.15)','200ms cubic-bezier(.3,0,.8,.15)'],
+      ['طبقة التعتيم','motion.scrim','opacity 0 → .48 · 200ms linear','navy #0E065A · dark #000 .56'],
+      ['ضغط الأزرار والبطاقات','motion.press','scale .97 · in 100ms / out spring(20, 300) · android_ripple 12%','100ms cubic-bezier(.2,0,0,1)'],
+      ['تحوّل «اسمع المقال» إلى مشغّل','motion.listen.morph','Layout transition 280ms · bezier(.2,0,0,1)','280ms width + content crossfade 150ms'],
+      ['ظهور الشريط المطوي','motion.appbar','fade + translateY 8dp · 180ms','180ms cubic-bezier(.2,0,0,1)'],
+    ].map(([label,t,rn,css])=>({label,t,rn,css}));
+    return {
+      tabsL, segL, segD, motion,
+      collapseLabel: collapsed ? 'تمرير لأعلى' : 'تمرير لأسفل',
+      toggleCollapse: () => this.setState(s => ({ collapsed: !s.collapsed })),
+      toggleSheet: () => this.setState(s => ({ sheet: !s.sheet })),
+      scrimOp: sheet ? 0.48 : 0, scrimPe: sheet ? 'auto' : 'none',
+      sheetTf: sheet ? 'translateY(0)' : 'translateY(105%)',
+      sheetTr: sheet ? 'transform 300ms cubic-bezier(.05,.7,.1,1)' : 'transform 200ms cubic-bezier(.3,0,.8,.15)',
+      faqOpen: faq, faqRot: faq ? 'rotate(180deg)' : 'none',
+      toggleFaq: () => this.setState(s => ({ faq: !s.faq })),
+    };
+  }
+}
+</script>
+</body>
+</html>

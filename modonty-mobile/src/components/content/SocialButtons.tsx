@@ -1,21 +1,18 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText } from '@/components/ui/AppText';
-import { Button } from '@/components/ui/Button';
+import { GoogleG } from '@/components/brand/GoogleG';
+import { FormButton, OrDivider } from '@/components/form/Form';
 import { useAuth } from '@/providers/AuthProvider';
 import { useToast } from '@/providers/ToastProvider';
 import { toApiError } from '@/services/errors';
 import { appleAvailable, CANCELLED, signInWithApple, signInWithGoogle } from '@/services/social-auth';
 import type { SocialAuthData } from '@/services/api-types-account';
-import { useAppTheme } from '@/theme/ThemeProvider';
-import { space } from '@/theme/tokens';
 
 /** Google · Apple — Apple يظهر على iOS فقط، وهو إلزامي هناك ما دام Google معروضاً (App Store 4.8). */
 export function SocialButtons({ onDone }: { onDone: () => void }) {
   const { signIn } = useAuth();
   const toast = useToast();
-  const { colors } = useAppTheme();
   const [apple, setApple] = useState(false);
   const [busy, setBusy] = useState<'google' | 'apple' | null>(null);
 
@@ -42,23 +39,23 @@ export function SocialButtons({ onDone }: { onDone: () => void }) {
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.divider}>
-        <View style={[styles.line, { backgroundColor: colors.border }]} />
-        <AppText variant="secondary" tone="muted">
-          أو
-        </AppText>
-        <View style={[styles.line, { backgroundColor: colors.border }]} />
-      </View>
-      <Button label="المتابعة بحساب Google" kind="outlined" busy={busy === 'google'} busyLabel="جارٍ الدخول بـGoogle…" disabled={busy !== null} onPress={() => void run('google', signInWithGoogle)} />
+      <OrDivider />
+      <FormButton
+        kind="outline"
+        label="المتابعة بحساب Google"
+        leading={<GoogleG />}
+        busy={busy === 'google'}
+        busyLabel="جارٍ الدخول بـGoogle…"
+        disabled={busy !== null}
+        onPress={() => void run('google', signInWithGoogle)}
+      />
       {apple ? (
-        <Button label="المتابعة بحساب Apple" kind="outlined" busy={busy === 'apple'} busyLabel="جارٍ الدخول بـApple…" disabled={busy !== null} onPress={() => void run('apple', signInWithApple)} />
+        <FormButton kind="outline" label="المتابعة بحساب Apple" busy={busy === 'apple'} busyLabel="جارٍ الدخول بـApple…" disabled={busy !== null} onPress={() => void run('apple', signInWithApple)} />
       ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: space.sm },
-  divider: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
-  line: { flex: 1, height: StyleSheet.hairlineWidth },
+  wrap: { gap: 12 },
 });

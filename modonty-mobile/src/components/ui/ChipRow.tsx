@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
   chip: {
     // ٣٦ مثل فلاتر الموقع (h-9)؛ الهدف ٤٨ يكمله hitSlop.
     height: 36,
-    justifyContent: 'center',
     paddingHorizontal: space.sm,
     borderRadius: radius.pill,
     borderWidth: control.border,

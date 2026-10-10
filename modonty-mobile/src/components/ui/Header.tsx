@@ -1,11 +1,10 @@
 import { router, useSegments } from 'expo-router';
 import { memo, type ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAppTheme } from '@/theme/ThemeProvider';
-import { control, space } from '@/theme/tokens';
-import { AppText } from './AppText';
+import { ds, dsType } from '@/theme/tokens';
 import { IconButton } from './IconButton';
 
 type Props = {
@@ -17,7 +16,10 @@ type Props = {
   overlay?: boolean;
 };
 
-/** الهيدر: ٥٦dp محتوى + insets.top (UIUX §٥). */
+/**
+ * رأس الشاشات المدفوعة = «الشريط المطوي» في Components 02: ٥٦dp + insets.top · surface.1 · خطّ سفلي ·
+ * العنوان title-md 18/28 · الرجوع عند البداية (يمين) ويشير لليمين.
+ */
 export const Header = memo(function Header({ title, back, actions, overlay }: Props) {
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
@@ -28,7 +30,7 @@ export const Header = memo(function Header({ title, back, actions, overlay }: Pr
     <View
       style={[
         styles.bar,
-        { paddingTop: insets.top, backgroundColor: overlay ? 'transparent' : colors.page, borderBottomColor: colors.border },
+        { paddingTop: insets.top, backgroundColor: overlay ? 'transparent' : colors.surface, borderBottomColor: colors.border },
         overlay && styles.overlay,
       ]}
     >
@@ -43,9 +45,14 @@ export const Header = memo(function Header({ title, back, actions, overlay }: Pr
         ) : null}
         <View style={styles.title}>
           {title ? (
-            <AppText variant="pageTitle" numberOfLines={1} tone={overlay ? 'onReels' : 'text'} accessibilityRole="header">
+            <Text
+              style={[dsType.titleMd, { color: overlay ? colors.onReels : colors.text }]}
+              numberOfLines={1}
+              maxFontSizeMultiplier={1.2}
+              accessibilityRole="header"
+            >
               {title}
-            </AppText>
+            </Text>
           ) : null}
         </View>
         {actions ? <View style={styles.actions}>{actions}</View> : null}
@@ -58,12 +65,12 @@ const styles = StyleSheet.create({
   bar: { borderBottomWidth: StyleSheet.hairlineWidth },
   overlay: { position: 'absolute', top: 0, start: 0, end: 0, zIndex: 2, borderBottomWidth: 0 },
   row: {
-    height: control.header,
+    height: ds.layout.appbarCollapsed,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: space.xxs,
-    gap: space.xxs,
+    paddingHorizontal: ds.space.s1,
+    gap: ds.space.s1,
   },
-  title: { flex: 1, paddingHorizontal: space.sm },
+  title: { flex: 1, paddingHorizontal: ds.space.s3 },
   actions: { flexDirection: 'row', alignItems: 'center' },
 });

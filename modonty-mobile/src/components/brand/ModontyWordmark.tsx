@@ -13,7 +13,7 @@ export function ModontyWordmark({ width, height }: { width: number; height: numb
   const { scheme } = useAppTheme();
   if (scheme === 'dark') {
     return (
-      <Image
+      <Image cachePolicy="memory-disk"
         source={require('../../../assets/brand/modonty-wordmark-on-navy.png')}
         style={{ width, height }}
         contentFit="contain"

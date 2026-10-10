@@ -1,0 +1,1052 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>اتجاه ٤ — المزيج</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css?v=1791543415">
+<style>
+/* ===== اتجاه ٤: المزيج — هيكل ١ (عنوان كبير · بطل بعرض الشاشة · كبسولة عائمة) + لمسات ٢ (أوقات القراءة الملوّنة · حركة نابضة)
+   + قراءة ٣ (قصص · قائمة الجرائد · قارئ بلا إطار). بلا تمويه: الكبسولة لون شبه معتم فتبقى خفيفة على أندرويد. ===== */
+.M{--bg:#FAF9F6;--s1:#fff;--s2:#F0EEEA;--text:#0E065A;--muted:#5E5C66;--line:rgba(14,6,90,.09);
+  --primary:#3030FF;--onP:#fff;--pc:#E8E8FF;--accent:#007575;--ring1:#00D8D8;--ring2:#3030FF;
+  --bar:rgba(255,255,255,.94);--bar-shadow:0 12px 32px -10px rgba(14,6,90,.35),0 0 0 1px rgba(14,6,90,.06);
+  --listen:#27B07D;--onListen:#fff;--save:#F59F0A;--onSave:#0E065A;--share:#7C3BED;--onShare:#fff;
+  --spring:cubic-bezier(.34,1.56,.64,1);background:var(--bg);color:var(--text)}
+:root[data-theme="dark"] .M{--bg:#0F0F12;--s1:#18181D;--s2:#222229;--text:#EDEDF0;--muted:#A9AEB9;--line:rgba(255,255,255,.09);
+  --primary:#7B7BFF;--onP:#0E065A;--pc:#2A2A66;--accent:#00D8D8;
+  --bar:rgba(30,30,37,.95);--bar-shadow:0 12px 32px -10px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.07);
+  --listen:#2ED195;--onListen:#0E065A;--save:#F6AE31;--onSave:#0E065A;--share:#9B68F3;--onShare:#0E065A}
+.M .statusbar{color:var(--text)}
+.M button,.M .press{transition:transform .35s var(--spring),background .2s,color .2s}
+.M button:active,.M .press:active{transform:scale(.94)}
+
+/* الرأس: عنوان كبير يتحوّل لرأس صغير */
+.M .mini{position:absolute;top:0;inset-inline:0;height:82px;padding:36px 16px 0;z-index:20;display:flex;align-items:center;gap:8px;background:var(--bg);border-bottom:1px solid var(--line);opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s;pointer-events:none}
+.M .mini.on{opacity:1;transform:none;pointer-events:auto}
+.M .mini b{flex:1;text-align:center;font-size:17px;font-weight:800}
+.M .mini .sp{width:40px}
+.M .big{padding:44px 16px 4px;display:flex;align-items:flex-end;gap:8px}
+.M .big .ttl{flex:1}
+.M .big small{display:block;font-size:14px;color:var(--muted);font-weight:500}
+.M .big h2{font-size:34px;font-weight:900;letter-spacing:-.5px;line-height:1.15}
+.M .ib{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--s2);color:var(--text)}
+.M .ib.modo{background:linear-gradient(135deg,#3030FF,#00D8D8);color:#fff}
+
+/* القصص (من ٣) */
+.M .stories{display:flex;gap:12px;overflow-x:auto;padding:14px 16px 4px;scrollbar-width:none}
+.M .stories::-webkit-scrollbar,.M .rail::-webkit-scrollbar,.M .utabs::-webkit-scrollbar{display:none}
+.M .st{flex:0 0 68px;text-align:center;font-size:11.5px;line-height:1.4;color:var(--muted)}
+.M .st .ring{width:68px;height:68px;border-radius:50%;padding:2.5px;background:conic-gradient(var(--ring1),var(--ring2),var(--ring1));margin-bottom:5px}
+.M .st .ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--bg)}
+.M .st span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* البطل بعرض الشاشة (من ١) — أوّل بطاقة بزاوية تعبيرية (من ٢) */
+.M .rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 16px 4px;scrollbar-width:none}
+.M .hero{position:relative;flex:0 0 300px;height:380px;border-radius:30px;overflow:hidden;scroll-snap-align:center;background:#222;color:#fff}
+.M .hero:first-child{border-radius:36px 36px 36px 12px}
+.M .hero img{width:100%;height:100%;object-fit:cover}
+.M .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 25%,transparent 40%,rgba(8,5,40,.92))}
+.M .hero .tag{position:absolute;top:14px;right:14px;z-index:2;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;background:#00D8D8;color:#0E065A;font-weight:800;font-size:12.5px}
+.M .hero .in{position:absolute;inset-inline:16px;bottom:16px;z-index:2}
+.M .hero .who{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;opacity:.95}
+.M .hero .who img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.M .hero h4{font-size:20px;font-weight:800;line-height:1.45;margin-top:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.M .hero .meta{color:rgba(255,255,255,.88);margin-top:8px}
+.M .dots{display:flex;gap:6px;justify-content:center;padding-top:10px}
+.M .dots i{width:6px;height:6px;border-radius:9px;background:var(--line);transition:width .3s var(--spring)}
+.M .dots i.on{width:18px;background:var(--primary)}
+
+.M .meta{display:flex;gap:12px;align-items:center;font-size:12.5px;color:var(--muted)}
+.M .meta span{display:inline-flex;gap:4px;align-items:center}
+
+/* عندك كم دقيقة؟ (من ٢) */
+.M .time{margin:22px 16px 0;padding:14px;border-radius:26px;background:var(--s1);border:1px solid var(--line)}
+.M .time b{font-size:17px;font-weight:800}
+.M .time small.s{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.M .times{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.M .times button{height:86px;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:800;font-size:13.5px}
+.M .times button small{font-weight:500;font-size:11.5px;opacity:.92}
+.M .times .w{background:var(--listen);color:var(--onListen)}
+.M .times .c{background:var(--save);color:var(--onSave)}
+.M .times .r{background:var(--share);color:var(--onShare)}
+
+.M .sec{display:flex;align-items:baseline;justify-content:space-between;padding:24px 16px 10px}
+.M .sec h3{font-size:19px;font-weight:800}
+.M .sec a{font-size:13.5px;font-weight:700;color:var(--primary);display:inline-flex;align-items:center;gap:2px}
+
+/* تبويبات علوية + قائمة الجرائد (من ٣) */
+.M .utabs{position:sticky;top:82px;z-index:6;background:var(--bg);display:flex;gap:22px;padding:14px 16px 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none;margin-top:10px}
+.M .utabs button{flex:0 0 auto;position:relative;height:40px;font-size:15px;font-weight:700;color:var(--muted)}
+.M .utabs button.on{color:var(--text)}
+.M .utabs button.on::after{content:"";position:absolute;bottom:-1px;inset-inline:0;height:3px;border-radius:3px 3px 0 0;background:var(--primary)}
+.M .kick{font-size:12.5px;font-weight:800;color:var(--primary);display:flex;align-items:center;gap:6px}
+.M .kick img{width:18px;height:18px;border-radius:50%;background:#fff;object-fit:contain}
+.M .it{display:flex;gap:14px;padding:16px;border-bottom:1px solid var(--line)}
+.M .it .t{flex:1;min-width:0}
+.M .it h4{font-size:15.5px;font-weight:800;line-height:1.6;margin:4px 0 8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.M .it>img{width:96px;height:96px;border-radius:18px;object-fit:cover;flex:0 0 auto}
+.M .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.M .sv{margin-inline-start:auto;color:var(--text)}
+
+.M .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px}
+.M .chips button{display:flex;align-items:center;gap:8px;height:42px;padding:0 14px 0 6px;border-radius:999px;background:var(--s1);border:1px solid var(--line);font-size:14px;font-weight:700}
+.M .chips img{width:30px;height:30px;border-radius:50%;object-fit:cover}
+
+/* الكبسولة العائمة (من ١) + المؤشّر المتمدّد النابض (من ٢) */
+.M .bar{position:absolute;bottom:16px;inset-inline:14px;z-index:25;height:64px;border-radius:999px;background:var(--bar);box-shadow:var(--bar-shadow);display:flex;align-items:center;justify-content:space-between;padding:0 7px;transition:all .45s var(--spring)}
+.M .bar button{height:50px;min-width:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 11px;color:var(--muted);font-weight:800;font-size:13.5px;transition:all .45s var(--spring)}
+.M .bar button span{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .45s var(--spring)}
+.M .bar button.on{background:var(--primary);color:var(--onP);padding:0 16px}
+.M .bar button.on span{max-width:80px}
+.M .bar.min{inset-inline-end:calc(100% - 78px);padding:0 7px}
+.M .bar.min button:not(.on){display:none}
+.M .bar.min button.on{padding:0;width:50px}
+.M .bar.min button.on span{max-width:0}
+
+/* المقالات */
+.M .sfield{margin:10px 16px 0;height:50px;border-radius:999px;background:var(--s2);display:flex;align-items:center;gap:10px;padding:0 16px;color:var(--muted);font-size:15px}
+.M .rt{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 16px 0}
+.M .rt button{height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:13px;white-space:nowrap}
+.M .rt button small{font-weight:600;opacity:.9}
+
+/* صفحة المقال: صورة غامرة (١) + قارئ بلا إطار (٣) + أفعال كبسولة (١) بزرّ اسمع أخضر (٢) */
+#m-art .statusbar{color:#fff;transition:color .2s}
+#m-art.scrolled .statusbar{color:var(--text)}
+.M .ahero{position:relative;height:400px}
+.M .ahero img{width:100%;height:100%;object-fit:cover}
+.M .ahero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.4),transparent 30%)}
+.M .atop{position:absolute;top:42px;inset-inline:14px;z-index:22;display:flex;gap:8px;transition:opacity .2s}
+.M .atop .gap{flex:1}
+.M .atop .ib{background:rgba(255,255,255,.9);color:#0E065A;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.M .rhead{position:absolute;top:0;inset-inline:0;z-index:23;height:82px;padding:36px 10px 0;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px;opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s;pointer-events:none}
+#m-art.scrolled .rhead{opacity:1;transform:none;pointer-events:auto}
+#m-art.scrolled .atop{opacity:0;pointer-events:none}
+.M .rhead .ib{background:transparent}
+.M .rhead .left{font-size:12.5px;color:var(--muted);flex:1}
+.M .rprog{position:absolute;bottom:-1px;inset-inline:0;height:2.5px}
+.M .rprog i{display:block;height:100%;width:0;background:var(--accent)}
+.M .sheet{position:relative;margin-top:-32px;background:var(--bg);border-radius:30px 30px 0 0;padding:22px 20px 140px;z-index:3}
+.M .sheet h1{font-size:26px;font-weight:900;line-height:1.55;margin-top:8px}
+.M .by{display:flex;align-items:center;gap:10px;margin-top:16px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.M .by img{width:42px;height:42px;border-radius:50%;object-fit:contain;background:#fff;border:1px solid var(--line)}
+.M .by b{font-size:14.5px;display:flex;gap:4px;align-items:center}.M .by b svg{color:var(--primary)}
+.M .by small{display:block;font-size:12.5px;color:var(--muted)}
+.M .by .fol{margin-inline-start:auto;height:38px;padding:0 18px;border-radius:999px;background:var(--primary);color:var(--onP);font-weight:800;font-size:14px}
+.M .sheet p{font-size:var(--fs,18px);line-height:2.05;margin-top:18px}
+.M .sk{height:12px;border-radius:6px;background:var(--line);margin-top:16px}.M .sk.s{width:62%}
+.M .sk-cap{font-size:12px;color:var(--muted);margin-top:16px}
+.M .next{margin-top:30px;padding:14px;border-radius:22px;background:var(--s2);display:flex;gap:12px;align-items:center}
+.M .next img{width:68px;height:68px;border-radius:16px;object-fit:cover}
+.M .next small{font-size:12px;color:var(--accent);font-weight:800}
+.M .next b{display:block;font-size:14.5px;line-height:1.55;margin-top:2px}
+.M .acts{position:absolute;bottom:16px;inset-inline:16px;z-index:25;height:64px;border-radius:999px;background:var(--bar);box-shadow:var(--bar-shadow);display:flex;align-items:center;gap:2px;padding:0 7px;transition:transform .35s var(--spring)}
+.M .acts.hide{transform:translateY(130%)}
+.M .acts button.ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:var(--text)}
+.M .acts .listen{flex:1;height:50px;border-radius:999px;background:var(--listen);color:var(--onListen);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:15px;white-space:nowrap}
+.M .acts .listen small{font-weight:600;opacity:.9}
+.M .aa{position:absolute;top:86px;left:12px;z-index:30;width:244px;padding:14px;border-radius:20px;background:var(--s1);border:1px solid var(--line);box-shadow:0 18px 40px -12px rgba(0,0,0,.35);display:none}
+.M .aa.on{display:block}
+.M .aa .row{display:flex;align-items:center;gap:10px}
+.M .aa .row button{width:40px;height:40px;border-radius:12px;background:var(--s2);font-weight:900}
+.M .aa input{flex:1;accent-color:var(--primary)}
+.M .aa .bgs{display:flex;gap:8px;margin-top:12px}
+.M .aa .bgs button{flex:1;height:40px;border-radius:12px;font-size:13px;font-weight:800;border:1.5px solid var(--line)}
+.M .spacer{height:110px}
+
+/* صفحة الشريك — بعين اللي يدوّر على علاج: مَن أنت ← هل أثق بك ← الدليل ← كيف أتواصل */
+#m-partner .statusbar{color:#fff}
+#m-partner.scrolled .statusbar{color:var(--text)}
+.M .phero{position:relative;height:236px;background:#0E065A}
+.M .phero img{width:100%;height:100%;object-fit:cover}
+.M .phero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.45),transparent 35%,transparent 60%,rgba(0,0,0,.35))}
+.M .phero .gcount{position:absolute;bottom:44px;left:14px;z-index:2;height:30px;padding:0 12px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:12.5px;font-weight:800;display:flex;align-items:center;gap:5px}
+.M .ptop{position:absolute;top:42px;inset-inline:14px;z-index:22;display:flex;gap:8px;transition:opacity .2s}
+.M .ptop .gap{flex:1}
+.M .ptop .ib{background:rgba(255,255,255,.92);color:#0E065A;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+#m-partner.scrolled .ptop{opacity:0;pointer-events:none}
+#m-partner .mini .ib{background:transparent}
+.M .pbody{position:relative;margin-top:-28px;background:var(--bg);border-radius:28px 28px 0 0;padding:0 16px;z-index:3}
+.M .pid2{display:flex;gap:12px;align-items:flex-end}
+.M .pid2 .plogo{width:84px;height:84px;margin-top:-30px;border-radius:28px 28px 28px 10px;background:#fff;border:4px solid var(--bg);object-fit:contain;padding:6px;box-shadow:0 8px 20px -8px rgba(14,6,90,.35);flex:0 0 auto}
+.M .pid2 .kick{color:var(--accent);font-size:12.5px;padding-bottom:4px}
+.M .pname2{font-size:22px;font-weight:900;line-height:1.45;margin-top:10px}
+.M .pname2 svg{color:var(--primary);vertical-align:-3px;margin-inline-start:4px}
+.M .pslogan2{font-size:14.5px;color:var(--muted);margin-top:2px}
+.M .pfacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.M .pfacts span{height:30px;padding:0 11px;border-radius:999px;background:var(--s2);font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px}
+.M .pmain{display:flex;gap:8px;margin-top:14px}
+.M .pmain .book{flex:1;height:52px;border-radius:999px;background:var(--primary);color:var(--onP);font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.M .pmain .sq{width:52px;height:52px;border-radius:50%;display:grid;place-items:center}
+.M .pmain .wa{background:#25D366;color:#06301A}
+.M .pmain .call{background:var(--s2);color:var(--text)}
+.M .ptrust{margin-top:14px;padding:12px;border-radius:22px;background:var(--s1);border:1px solid var(--line)}
+.M .ptrust .creds{display:flex;flex-wrap:wrap;gap:6px}
+.M .ptrust .creds span{height:28px;padding:0 10px;border-radius:999px;background:#C6F2F1;color:#00403F;font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:4px}
+:root[data-theme="dark"] .M .ptrust .creds span{background:#00393A;color:#8AF3F2}
+.M .ptrust .nums{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.M .ptrust .nums div{padding:10px;border-radius:16px;background:var(--s2)}
+.M .ptrust .nums b{display:block;font-size:17px;font-weight:900;line-height:1.35}
+.M .ptrust .nums small{font-size:12px;color:var(--muted)}
+.M .ptrust .src{font-size:11px;color:var(--muted);margin-top:6px}
+.M .ptabs{position:sticky;top:82px;z-index:6;background:var(--bg);display:flex;gap:20px;padding:12px 16px 0;margin:14px -16px 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.M .ptabs::-webkit-scrollbar{display:none}
+.M .ptabs button{flex:0 0 auto;position:relative;height:40px;font-size:14.5px;font-weight:700;color:var(--muted)}
+.M .ptabs button small{font-weight:600;opacity:.8}
+.M .ptabs button.on{color:var(--text)}
+.M .ptabs button.on::after{content:"";position:absolute;bottom:-1px;inset-inline:0;height:3px;border-radius:3px 3px 0 0;background:var(--primary)}
+.M .psec{display:flex;align-items:baseline;justify-content:space-between;padding:22px 0 10px}
+.M .psec h3{font-size:18px;font-weight:900}
+.M .psec a{font-size:13.5px;font-weight:700;color:var(--primary);display:inline-flex;align-items:center;gap:2px}
+.M .pabout2{font-size:15px;line-height:1.95;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.M .rmore{margin-top:4px;font-weight:800;font-size:14px;color:var(--primary)}
+.M .svcs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.M .svcs div{border-radius:18px;background:var(--s1);border:1px solid var(--line);padding:12px 8px;text-align:center;font-size:13.5px;font-weight:800;line-height:1.5;display:flex;flex-direction:column;align-items:center;gap:6px}
+.M .svcs div span{width:36px;height:36px;border-radius:12px;background:var(--pc);color:var(--primary);display:grid;place-items:center}
+.M .preels{display:flex;gap:10px}
+.M .preels .hreel{flex:0 0 122px}
+.M .gal2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.M .gal2 div{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:16/9}
+.M .gal2 div:first-child{grid-column:span 2;border-radius:22px 22px 22px 8px}
+.M .gal2 img{width:100%;height:100%;object-fit:cover}
+.M .gal2 .more2{position:absolute;inset:0;background:rgba(14,6,90,.6);color:#fff;font-weight:900;font-size:18px;display:grid;place-items:center}
+.M .pposts .it{padding:14px 0}
+.M .faq{border-radius:22px;background:var(--s1);border:1px solid var(--line);overflow:hidden}
+.M .faq details{border-bottom:1px solid var(--line)}
+.M .faq details:last-child{border:0}
+.M .faq summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px;font-size:15px;font-weight:800;line-height:1.6}
+.M .faq summary::-webkit-details-marker{display:none}
+.M .faq summary svg{margin-inline-start:auto;flex:0 0 auto;color:var(--muted);transition:transform .3s var(--spring)}
+.M .faq details[open] summary svg{transform:rotate(180deg)}
+.M .faq p{padding:0 14px 14px;font-size:14.5px;line-height:1.95;color:var(--muted)}
+.M .allfaq{display:block;width:100%;margin-top:8px;height:46px;border-radius:999px;border:1.5px solid var(--line);font-weight:800;font-size:14px}
+.M .ploc{border-radius:22px;background:var(--s1);border:1px solid var(--line);overflow:hidden}
+.M .ploc .r{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);font-size:14px;font-weight:700}
+.M .ploc .r:last-child{border:0}
+.M .ploc .r span.ic{width:36px;height:36px;border-radius:12px;background:var(--pc);color:var(--primary);display:grid;place-items:center;flex:0 0 auto}
+.M .ploc .r small{display:block;font-weight:500;color:var(--muted);font-size:12.5px}
+.M .ploc .r .act{margin-inline-start:auto;height:34px;padding:0 12px;border-radius:999px;background:var(--s2);font-size:12.5px;font-weight:800;white-space:nowrap}
+.M .socials{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.M .socials span{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:700;display:inline-flex;align-items:center}
+.M .pcta{position:absolute;bottom:16px;inset-inline:16px;z-index:25;height:64px;border-radius:999px;background:var(--bar);box-shadow:var(--bar-shadow);display:flex;align-items:center;gap:6px;padding:0 7px;transform:translateY(140%);transition:transform .35s var(--spring)}
+.M .pcta.show{transform:none}
+.M .pcta .book{flex:1;height:50px;border-radius:999px;background:var(--primary);color:var(--onP);display:flex;align-items:center;justify-content:center;gap:6px;font-weight:900;font-size:15px}
+.M .pcta .sq{width:50px;height:50px;border-radius:50%;display:grid;place-items:center}
+.M .pcta .wa{background:#25D366;color:#06301A}
+.M .pcta .call{background:var(--s2);color:var(--text)}
+/* دليل الشركاء — بعين القارئ اللي يدوّر على مقدّم خدمة: ابحث · اختر مجالك · قارن بما يهمّك (التخصّص · المدينة · الخبرة · الاعتماد) · راسل مباشرة */
+.M .dsearch{margin:12px 16px 0;height:52px;border-radius:999px;background:var(--s1);border:1.5px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 18px;color:var(--muted);font-size:15px;box-shadow:0 6px 18px -12px rgba(14,6,90,.35)}
+.M .need{position:sticky;top:82px;z-index:6;background:var(--bg);display:flex;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none;border-bottom:1px solid var(--line)}
+.M .need::-webkit-scrollbar{display:none}
+.M .need button{flex:0 0 auto;height:40px;padding:0 16px;border-radius:999px;background:var(--s1);border:1px solid var(--line);font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px}
+.M .need button small{color:var(--muted);font-weight:600}
+.M .need button.on{background:var(--text);color:var(--bg);border-color:transparent}
+.M .need button.on small{color:inherit;opacity:.75}
+.M .fst{display:flex;gap:14px;overflow-x:auto;padding:4px 16px 4px;scrollbar-width:none}
+.M .fst::-webkit-scrollbar{display:none}
+.M .fst .st{flex:0 0 70px}
+.M .fst .ring{background:conic-gradient(#F59F0A,#FDE68A,#F59F0A)}
+.M .fst .ring img{background:#fff;object-fit:contain;padding:6px}
+.M .fst .st span{color:var(--text);font-weight:700}
+.M .sortln{display:flex;align-items:center;justify-content:space-between;padding:18px 16px 6px;font-size:13px;color:var(--muted)}
+.M .sortln b{color:var(--text);font-weight:800}
+.M .sortln button{display:inline-flex;align-items:center;gap:4px;height:34px;padding:0 12px;border-radius:999px;background:var(--s2);font-weight:800;color:var(--text);font-size:13px}
+.M .pc{margin:0 16px 12px;padding:14px;border-radius:24px;background:var(--s1);border:1px solid var(--line)}
+.M .pc.ft{border:1.5px solid #F59F0A;box-shadow:0 10px 24px -16px rgba(245,159,10,.6)}
+.M .pc .top{display:flex;gap:12px;align-items:flex-start}
+.M .pc .top>img{width:60px;height:60px;border-radius:20px 20px 20px 8px;background:#fff;border:1px solid var(--line);object-fit:contain;padding:5px;flex:0 0 auto}
+.M .pc .nm{flex:1;min-width:0}
+.M .pc .kick{color:var(--accent);font-size:12px;display:flex;justify-content:space-between}
+.M .pc .kick em{font-style:normal;color:#B26A00;display:inline-flex;align-items:center;gap:3px}
+:root[data-theme="dark"] .M .pc .kick em{color:#F6AE31}
+.M .pc h4{font-size:15.5px;font-weight:900;line-height:1.5;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.M .pc h4 svg{color:var(--primary);vertical-align:-3px;margin-inline-start:3px}
+.M .pc .desc{font-size:13.5px;line-height:1.8;color:var(--muted);margin-top:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.M .pc .facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.M .pc .facts span{height:28px;padding:0 10px;border-radius:999px;background:var(--s2);font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.M .pc .facts .cr{background:#C6F2F1;color:#00403F}
+:root[data-theme="dark"] .M .pc .facts .cr{background:#00393A;color:#8AF3F2}
+.M .pc .acts2{display:flex;gap:8px;margin-top:12px}
+.M .pc .acts2 .wa{flex:1;height:44px;border-radius:999px;background:#25D366;color:#06301A;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.M .pc .acts2 .pg{height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.M .join{margin:20px 16px 0;padding:18px;border-radius:28px 28px 28px 10px;background:linear-gradient(135deg,#0E065A,#3030FF);color:#fff}
+.M .join b{font-size:19px;font-weight:900;display:block}
+.M .join p{font-size:13.5px;line-height:1.8;opacity:.9;margin-top:4px}
+.M .join button{margin-top:12px;height:44px;padding:0 20px;border-radius:999px;background:#00D8D8;color:#0E065A;font-weight:900;font-size:14.5px}
+.M .more{display:block;margin:4px 16px 0;height:48px;width:calc(100% - 32px);border-radius:999px;border:1.5px solid var(--line);font-weight:800;font-size:14.5px}
+
+.theme-fab{position:fixed;top:14px;left:14px;z-index:99;height:38px;padding:0 14px;border-radius:999px;background:var(--pg-card);border:1px solid var(--pg-line);font-size:13px;font-weight:700}
+body{padding-top:20px}
+/* الطلّات: بطاقات طولية ٩:١٦ — الدائرة للهوية (شريك)، والبطاقة للمحتوى (طلّة) */
+.M .hreels{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px 4px;scrollbar-width:none}
+.M .hreels::-webkit-scrollbar{display:none}
+.M .hreel{position:relative;flex:0 0 122px;height:204px;border-radius:20px;overflow:hidden;scroll-snap-align:start;background:#1a1a1f;color:#fff}
+.M .hreel .th{width:100%;height:100%;object-fit:cover}
+.M .hreel::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 28%,transparent 45%,rgba(0,0,0,.85))}
+.M .hreel .dur{position:absolute;top:8px;right:8px;z-index:2;height:24px;padding:0 8px;border-radius:999px;background:rgba(0,0,0,.55);font-size:11.5px;font-weight:800;display:flex;align-items:center;gap:4px;direction:ltr}
+.M .hreel .in{position:absolute;inset-inline:9px;bottom:9px;z-index:2}
+.M .hreel .in b{font-size:12.5px;font-weight:800;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.M .hreel .by{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:11px;opacity:.9;white-space:nowrap;overflow:hidden}
+.M .hreel .by img{width:18px;height:18px;border-radius:50%;background:#fff;object-fit:cover;flex:0 0 auto}
+.M .hreel.all{background:var(--s2);color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:14px}
+.M .hreel.all::after{display:none}
+/* الاستماع داخل المقال: أيقونة على البطاقة · الزرّ يصير مشغّلاً · مشغّل صغير فوق الشريط */
+.M .it .thumb{position:relative;flex:0 0 auto}
+.M .it .thumb img{width:96px;height:96px;border-radius:18px;object-fit:cover;display:block}
+.M .it .aud{position:absolute;bottom:6px;left:6px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--listen);color:var(--onListen);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.M .acts .player{display:none;flex:1;align-items:center;gap:8px;min-width:0}
+.M .acts.playing .ic,.M .acts.playing .listen{display:none}
+.M .acts.playing .player{display:flex}
+.M .acts.playing .player .ic{display:grid}
+.M .pp{width:44px;height:44px;border-radius:50%;background:var(--listen);color:var(--onListen);display:grid;place-items:center;flex:0 0 auto}
+.M .pt{flex:1;min-width:0}
+.M .pt b{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.M .pt small{font-size:11.5px;color:var(--muted)}
+.M .pbar{height:4px;border-radius:4px;background:var(--line);margin-top:6px;overflow:hidden}
+.M .pbar i{display:block;height:100%;width:22%;background:var(--listen);border-radius:4px}
+.M .mplayer{position:absolute;bottom:90px;inset-inline:14px;z-index:24;height:60px;border-radius:20px;background:var(--bar);box-shadow:var(--bar-shadow);display:flex;align-items:center;gap:10px;padding:0 8px;overflow:hidden}
+.M .mplayer img{width:44px;height:44px;border-radius:12px;object-fit:cover}
+.M .mplayer .pp{width:40px;height:40px}
+.M .mplayer .pbar{position:absolute;bottom:0;inset-inline:0;height:3px;margin:0;border-radius:0}
+/* «مدونتي» جزيرة مستقلّة بجانب الكبسولة */
+.M .bar{inset-inline-end:82px;padding:0 5px}
+.M .bar button{min-width:44px;padding:0 8px;gap:5px;font-size:12.5px}
+.M .bar button.on{padding:0 12px}
+.M .bar button.on span{max-width:70px}
+.M .mdn{position:absolute;bottom:18px;inset-inline-end:14px;z-index:25;width:60px;height:60px;border-radius:50%;background:var(--bar);box-shadow:var(--bar-shadow);display:grid;place-items:center;padding:0}
+.M .mdn img{width:44px;height:44px;border-radius:50%;object-fit:contain;background:#fff;box-shadow:0 0 0 2px #00D8D8}
+.M .mdn.on img{box-shadow:0 0 0 3px #3030FF}
+.M .bar.min{inset-inline-end:calc(100% - 78px);padding:0 7px}
+/* اكتشف ← المجالات: أكبر مجال بطاقة قائدة، والباقي شبكة عمودين · رسوم مودو دائرية أصلاً فتُعرض كاملة بلا قصّ */
+.M .ilead{margin:14px 16px 0;padding:16px;border-radius:30px 30px 30px 10px;background:linear-gradient(160deg,#E8E8FF,#C6F2F1);color:#0E065A;display:flex;flex-direction:column;gap:10px}
+:root[data-theme="dark"] .M .ilead{background:linear-gradient(160deg,#23235A,#00393A);color:#F2F2F5}
+.M .ilead .row1{display:flex;gap:14px;align-items:center}
+.M .ilead .art{width:104px;height:104px;flex:0 0 auto}
+.M .ilead .art img{width:100%;height:100%;object-fit:contain}
+.M .ilead small.k{font-size:12px;font-weight:900;letter-spacing:.2px;color:#007575}
+:root[data-theme="dark"] .M .ilead small.k{color:#5FE0DE}
+.M .ilead h3{font-size:22px;font-weight:900;line-height:1.35}
+.M .ilead .cnt{font-size:14px;font-weight:800;margin-top:2px}
+.M .ilead p{font-size:13.5px;line-height:1.85;opacity:.85;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.M .ilead .ft{display:flex;align-items:center;justify-content:space-between}
+.M .logos{display:flex}
+.M .logos img{width:30px;height:30px;border-radius:50%;background:#fff;object-fit:contain;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.M .logos img+img{margin-inline-start:-8px}
+.M .ilead .go2{height:42px;padding:0 18px;border-radius:999px;background:#0E065A;color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;gap:4px}
+:root[data-theme="dark"] .M .ilead .go2{background:#fff;color:#0E065A}
+.M .igrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px}
+.M .itile{border-radius:24px;background:var(--s1);border:1px solid var(--line);padding:12px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.M .itile .art{width:84px;height:84px}
+.M .itile .art img{width:100%;height:100%;object-fit:contain}
+.M .itile b{font-size:14.5px;font-weight:900;line-height:1.4;margin-top:4px}
+.M .itile small{font-size:12.5px;color:var(--muted);font-weight:700}
+.M .itile .logos{margin-top:4px}
+.M .itile .logos img{width:24px;height:24px}
+.M .allp{margin:14px 16px 0;height:56px;border-radius:20px;background:var(--s2);display:flex;align-items:center;gap:10px;padding:0 16px;font-weight:800;font-size:15px}
+.M .allp span.c{margin-inline-start:auto;color:var(--muted);font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:2px}
+.M .big .back{margin-inline-end:4px}
+/* صفحة المستخدم: اللي يرجع له القارئ (المحفوظ · المتابَعون · الحجوزات · الإشعارات) فوق، والباقي مطويّ */
+.M .uhead{padding:44px 16px 0;display:flex;align-items:center;gap:12px}
+.M .uav{width:64px;height:64px;border-radius:24px 24px 24px 8px;background:linear-gradient(135deg,#3030FF,#00D8D8);color:#fff;display:grid;place-items:center;font-size:26px;font-weight:900;flex:0 0 auto}
+.M .uhead .t{flex:1;min-width:0}
+.M .uhead b{display:block;font-size:22px;font-weight:900;line-height:1.3}
+.M .uhead small{font-size:13px;color:var(--muted)}
+.M .uhead .ib{width:42px;height:42px}
+.M .qgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 16px 0}
+.M .q{border-radius:22px;padding:14px;display:flex;flex-direction:column;align-items:flex-start;text-align:start;gap:6px;min-height:112px;position:relative}
+.M .q .ic{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:rgba(255,255,255,.55)}
+.M .q b{font-size:24px;font-weight:900;line-height:1}
+.M .q small{font-size:13px;font-weight:800}
+.M .q .dot2{position:absolute;top:12px;left:12px;height:22px;min-width:22px;padding:0 7px;border-radius:999px;background:#B4241A;color:#fff;font-size:11.5px;font-weight:900;display:grid;place-items:center}
+.M .q1{background:#E8E8FF;color:#0E065A}.M .q2{background:#C6F2F1;color:#00403F}.M .q3{background:#FFE2BC;color:#5C2E00}.M .q4{background:var(--s2);color:var(--text)}
+:root[data-theme="dark"] .M .q1{background:#2A2A66;color:#E2E3FF}
+:root[data-theme="dark"] .M .q2{background:#00393A;color:#8AF3F2}
+:root[data-theme="dark"] .M .q3{background:#3F2B06;color:#FFCF85}
+:root[data-theme="dark"] .M .q .ic{background:rgba(255,255,255,.1)}
+.M .q3 .st2{display:block;font-size:12px;font-weight:700;opacity:.85;margin-top:2px}
+.M .saved{display:flex;gap:10px;overflow-x:auto;padding:0 16px 4px;scrollbar-width:none}
+.M .saved::-webkit-scrollbar{display:none}
+.M .sv2{flex:0 0 200px;border-radius:20px;overflow:hidden;background:var(--s1);border:1px solid var(--line)}
+.M .sv2 img{width:100%;aspect-ratio:16/10;object-fit:cover}
+.M .sv2 b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13.5px;font-weight:800;line-height:1.55;margin:8px 10px 10px}
+.M .folw{display:flex;gap:14px;overflow-x:auto;padding:0 16px 4px;scrollbar-width:none}
+.M .folw::-webkit-scrollbar{display:none}
+.M .folw .st{flex:0 0 66px}
+.M .folw .ring{width:66px;height:66px;background:var(--line)}
+.M .folw .ring img{background:#fff;object-fit:contain;padding:5px}
+.M .folw .st span{color:var(--text);font-weight:700}
+.M .folw .add .ring{background:transparent;border:1.5px dashed var(--line);display:grid;place-items:center;color:var(--primary)}
+.M .grp{margin:0 16px;border-radius:22px;background:var(--s1);border:1px solid var(--line);overflow:hidden}
+.M .grp .r{display:flex;align-items:center;gap:12px;min-height:54px;padding:0 14px;border-bottom:1px solid var(--line);font-size:15px;font-weight:700}
+.M .grp .r:last-child{border:0}
+.M .grp .r .ic{width:34px;height:34px;border-radius:11px;background:var(--s2);display:grid;place-items:center;flex:0 0 auto}
+.M .grp .r .end{margin-inline-start:auto;color:var(--muted);font-size:13px;font-weight:600;display:flex;align-items:center;gap:4px}
+.M .seg2{margin-inline-start:auto;display:flex;padding:3px;border-radius:999px;background:var(--s2)}
+.M .seg2 button{height:32px;padding:0 11px;border-radius:999px;font-size:12.5px;font-weight:800;color:var(--muted)}
+.M .seg2 button.on{background:var(--s1);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.M .grp .r.danger{color:#B4241A}
+:root[data-theme="dark"] .M .grp .r.danger{color:#FF7272}
+.M .grp .r.danger .ic{background:#FFE4E1;color:#B4241A}
+:root[data-theme="dark"] .M .grp .r.danger .ic{background:#3D1715;color:#FF7272}
+.M .uhd-av{position:relative;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#3030FF,#00D8D8);color:#fff;display:grid;place-items:center;font-weight:900;font-size:16px}
+/* إشعارات غير مقروءة: نقطة على صورة الحساب */
+.M .uhd-av::after{content:"";position:absolute;top:1px;right:1px;width:11px;height:11px;border-radius:50%;background:#B4241A;border:2px solid var(--bg)}
+/* صفحة «مدونتي» (الدائرة): هويّة غامرة ← تابع ← أدوات مدونتي ← عالم مدونتي ← من قلمنا ← صِر شريكاً */
+#m-brand .statusbar{color:#fff}
+#m-brand.scrolled .statusbar{color:var(--text)}
+.M .bhero{position:relative;padding:46px 18px 22px;background:radial-gradient(120% 80% at 50% 0%,#3030FF 0%,#0E065A 62%);color:#fff;border-radius:0 0 36px 36px;text-align:center;overflow:hidden}
+.M .bhero .art{width:100%;max-width:320px;margin:0 auto;aspect-ratio:2/1}
+.M .bhero .art img{width:100%;height:100%;object-fit:contain}
+.M .bhero h2{font-size:24px;font-weight:900;line-height:1.45;margin-top:6px;text-wrap:balance}
+.M .bhero h2 span{white-space:nowrap}
+.M .bhero h2 span{color:#00D8D8}
+.M .bhero p{font-size:14.5px;line-height:1.85;opacity:.88;margin:6px auto 0;max-width:290px}
+.M .bhero .cta{display:flex;gap:8px;justify-content:center;margin-top:16px}
+.M .bhero .fol{height:50px;padding:0 24px;border-radius:999px;background:#00D8D8;color:#0E065A;font-weight:900;font-size:15.5px;display:flex;align-items:center;gap:6px}
+.M .bhero .sh{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center}
+.M .bhero .nums{display:flex;justify-content:center;gap:18px;margin-top:14px;font-size:13px;opacity:.9}
+.M .bhero .nums b{font-weight:900;font-size:15px;margin-inline-end:3px}
+.M .tools{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:auto auto;gap:10px;padding:0 16px}
+.M .tool{border-radius:24px;padding:14px;display:flex;flex-direction:column;gap:6px;text-align:start;align-items:flex-start;min-height:100px}
+.M .tool .ic{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.22)}
+.M .tool b{font-size:16px;font-weight:900}
+.M .tool small{font-size:12.5px;opacity:.9;line-height:1.6}
+.M .tool.t1{grid-row:span 2;background:linear-gradient(160deg,#F59F0A,#F97316);color:#2A1400;border-radius:28px 28px 28px 10px;justify-content:flex-end}
+.M .tool.t1 .ic{width:56px;height:56px;border-radius:18px;margin-bottom:auto}
+.M .tool.t2{background:#3030FF;color:#fff}
+.M .tool.t3{background:#007575;color:#fff}
+.M .secs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px}
+.M .sct{border-radius:20px;background:var(--s1);border:1px solid var(--line);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:13px;font-weight:800;text-align:center}
+.M .sct .ic{width:44px;height:44px;border-radius:15px;display:grid;place-items:center}
+.M .bjoin{margin:22px 16px 0;padding:18px;border-radius:28px 28px 28px 10px;background:var(--s2);display:flex;gap:12px;align-items:center}
+.M .bjoin .t{flex:1}
+.M .bjoin b{font-size:16px;font-weight:900;display:block}
+.M .bjoin small{font-size:13px;color:var(--muted);line-height:1.7}
+.M .bjoin button{height:42px;padding:0 16px;border-radius:999px;background:var(--text);color:var(--bg);font-weight:900;font-size:13.5px;white-space:nowrap}
+.M .tool small.soon{height:24px;padding:0 10px;border-radius:999px;background:rgba(255,255,255,.22);font-weight:800;display:inline-flex;align-items:center}
+/* تاب «الطلّات»: شاشة كاملة تُسحب عمودياً (فيديو حقيقي) · الأفعال عمود على اليسار · الشريك وزرّه تحت · الشريط داكن */
+#m-reels{background:#000;color:#fff}
+#m-reels .statusbar{color:#fff}
+#m-reels .rfeed{position:absolute;inset:0;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none}
+#m-reels .rfeed::-webkit-scrollbar{display:none}
+#m-reels .rslide{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:#000}
+#m-reels video,#m-reels .rslide>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#m-reels .rslide::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.45),transparent 18%,transparent 52%,rgba(0,0,0,.85));pointer-events:none}
+#m-reels .rtop{position:absolute;top:40px;inset-inline:14px;z-index:20;display:flex;align-items:center;gap:8px;pointer-events:none}
+#m-reels .rtop>*{pointer-events:auto}
+#m-reels .rtop b{font-size:20px;font-weight:900;flex:1}
+#m-reels .rseg{display:flex;gap:16px;font-size:15px;font-weight:800}
+#m-reels .rseg button{color:rgba(255,255,255,.65);height:36px;position:relative}
+#m-reels .rseg button.on{color:#fff}
+#m-reels .rseg button.on::after{content:"";position:absolute;bottom:0;inset-inline:25%;height:3px;border-radius:3px;background:#fff}
+#m-reels .rib{width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.35);color:#fff;display:grid;place-items:center}
+#m-reels .racts{position:absolute;left:10px;bottom:172px;z-index:3;display:flex;flex-direction:column;gap:14px;align-items:center}
+#m-reels .racts button{display:flex;flex-direction:column;align-items:center;gap:3px;color:#fff;font-size:12px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+#m-reels .racts span.c{width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.3);display:grid;place-items:center}
+#m-reels .racts button.on span.c{color:#FF4D6D}
+#m-reels .rinfo{position:absolute;right:14px;left:74px;bottom:104px;z-index:3}
+#m-reels .rby{display:flex;align-items:center;gap:8px}
+#m-reels .rby img{width:36px;height:36px;border-radius:50%;background:#fff;object-fit:cover;border:2px solid #fff}
+#m-reels .rby b{font-size:14.5px;font-weight:900;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#m-reels .rby .fol{height:30px;padding:0 12px;border-radius:999px;border:1.5px solid #fff;font-size:12.5px;font-weight:900;color:#fff}
+#m-reels .rinfo h4{font-size:15.5px;font-weight:900;line-height:1.55;margin-top:8px}
+#m-reels .rinfo p{font-size:13px;line-height:1.75;opacity:.88;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#m-reels .rcta{margin-top:10px;height:40px;padding:0 16px;border-radius:999px;font-weight:900;font-size:13.5px;display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0E065A}
+#m-reels .rcta.wa{background:#25D366;color:#06301A}
+#m-reels .rprog{position:absolute;bottom:92px;inset-inline:14px;height:3px;border-radius:3px;background:rgba(255,255,255,.28);z-index:3;overflow:hidden}
+#m-reels .rprog i{display:block;height:100%;width:0;background:#fff}
+#m-reels .bar{--bar:rgba(24,24,30,.92);--bar-shadow:0 12px 32px -10px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08);--muted:#B9BFCA}
+#m-reels .mdn{--bar:rgba(24,24,30,.92);--bar-shadow:0 0 0 1px rgba(255,255,255,.08)}
+#m-reels .bar button.on{background:#fff;color:#0E065A}
+/* اختيار الشريك في الطلّات: لوحة سفلية بشعارات دائرية (الدائرة = هوية) بدل قائمة نصوص */
+#m-reels .rchip{display:flex;align-items:center;gap:6px;height:38px;padding:0 4px 0 10px;border-radius:999px;background:rgba(0,0,0,.45);flex:1;min-width:0}
+#m-reels .rchip[hidden],#m-reels [data-rtitle][hidden],#m-reels .rseg[hidden]{display:none}
+#m-reels .rchip img{width:28px;height:28px;border-radius:50%;background:#fff;object-fit:cover;flex:0 0 auto}
+#m-reels .rchip span{font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+#m-reels .rchip button{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+#m-reels .rscrim{position:absolute;inset:0;z-index:40;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s}
+#m-reels .rscrim.on{opacity:1;pointer-events:auto}
+#m-reels .rsheet{position:absolute;inset-inline:0;bottom:0;z-index:41;max-height:78%;overflow-y:auto;background:var(--bg);color:var(--text);border-radius:28px 28px 0 0;padding:8px 16px 28px;transform:translateY(105%);transition:transform .38s var(--spring)}
+#m-reels .rsheet.on{transform:none}
+#m-reels .grab{display:block;width:40px;height:5px;border-radius:5px;background:var(--line);margin:4px auto 12px}
+#m-reels .sh b{font-size:19px;font-weight:900}
+#m-reels .sh small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+#m-reels .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 8px;margin-top:16px}
+#m-reels .pp2{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center}
+#m-reels .pp2 .ring{width:72px;height:72px;border-radius:50%;padding:3px;background:var(--line);display:grid;place-items:center}
+#m-reels .pp2 .ring img{width:100%;height:100%;border-radius:50%;background:#fff;object-fit:cover;border:3px solid var(--bg)}
+#m-reels .pp2 .ring.all{background:var(--s2);color:var(--text)}
+#m-reels .pp2.on .ring{background:conic-gradient(#00D8D8,#3030FF,#00D8D8)}
+#m-reels .pp2 b{font-size:12.5px;font-weight:800;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#m-reels .pp2 small{font-size:11.5px;color:var(--muted);font-weight:700}
+/* الحجز: مع مَن تحجز ← جوالك بمفتاح الدولة ← موعد بالضغط لا بالكتابة ← تفاصيل اختيارية مطويّة ← زرّ ثابت تحت */
+.M .bkhead{padding:40px 10px 8px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line);background:var(--bg)}
+.M .bkhead b{flex:1;text-align:center;font-size:17px;font-weight:900}
+.M .bkbody{padding:14px 16px 150px}
+.M .who2{display:flex;gap:12px;align-items:center;padding:12px;border-radius:22px;background:var(--s1);border:1px solid var(--line)}
+.M .who2 img{width:54px;height:54px;border-radius:18px 18px 18px 6px;background:#fff;object-fit:contain;padding:4px;border:1px solid var(--line)}
+.M .who2 b{font-size:15.5px;font-weight:900;display:flex;align-items:center;gap:4px}
+.M .who2 b svg{color:var(--primary)}
+.M .who2 small{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.M .fl{font-size:14.5px;font-weight:900;margin:20px 0 8px;display:flex;justify-content:space-between;align-items:baseline}
+.M .fl small{font-size:12px;color:var(--muted);font-weight:600}
+.M .phonef{display:flex;gap:8px;direction:ltr}
+.M .cc{height:54px;padding:0 12px;border-radius:16px;background:var(--s1);border:1.5px solid var(--line);font-weight:900;font-size:15px;display:flex;align-items:center;gap:6px;direction:ltr}
+.M .cc svg{color:var(--muted)}
+.M .inp{flex:1;height:54px;border-radius:16px;background:var(--s1);border:1.5px solid var(--primary);display:flex;align-items:center;padding:0 14px;font-size:17px;font-weight:700;letter-spacing:.5px;color:var(--text);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 15%,transparent)}
+.M .inp .ph{color:var(--muted);font-weight:500}
+.M .inp.txt{border-color:var(--line);box-shadow:none;font-size:15.5px;letter-spacing:0}
+.M .hint2{font-size:12px;color:var(--muted);margin-top:6px;display:flex;gap:5px;align-items:center}
+.M .days{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.M .days::-webkit-scrollbar{display:none}
+.M .day{flex:0 0 64px;height:72px;border-radius:18px;background:var(--s1);border:1.5px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.M .day small{font-size:11.5px;color:var(--muted);font-weight:700}
+.M .day b{font-size:18px;font-weight:900}
+.M .day.on{background:var(--primary);border-color:var(--primary);color:var(--onP)}
+.M .day.on small{color:inherit;opacity:.85}
+.M .day.any{flex-basis:84px}
+.M .day.any b{font-size:13.5px}
+.M .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.M .slot{height:46px;border-radius:14px;background:var(--s1);border:1.5px solid var(--line);font-size:13.5px;font-weight:800}
+.M .slot.on{border-color:var(--primary);color:var(--primary);background:var(--pc)}
+.M .more3{margin-top:18px;width:100%;height:50px;border-radius:16px;border:1.5px dashed var(--line);display:flex;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:14px;color:var(--muted)}
+.M .trust2{margin-top:18px;padding:12px;border-radius:16px;background:var(--s2);font-size:12.5px;line-height:1.85;color:var(--muted);display:flex;gap:8px}
+.M .trust2 svg{flex:0 0 auto;color:var(--accent);margin-top:3px}
+.M .trust2 a{color:var(--primary);font-weight:800}
+.M .bksend{position:absolute;bottom:0;inset-inline:0;z-index:25;padding:12px 16px 24px;background:var(--bg);border-top:1px solid var(--line)}
+.M .bksend button{width:100%;height:56px;border-radius:999px;background:var(--primary);color:var(--onP);font-weight:900;font-size:16.5px;display:flex;align-items:center;justify-content:center;gap:8px}
+.M .bksend small{display:block;text-align:center;font-size:12px;color:var(--muted);margin-top:8px}
+.M .done{position:absolute;inset:0;padding:90px 22px 30px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;background:var(--bg)}
+.M .done .ok2{width:88px;height:88px;border-radius:30px 30px 30px 10px;background:#C6F2F1;color:#007575;display:grid;place-items:center}
+:root[data-theme="dark"] .M .done .ok2{background:#00393A;color:#5FE0DE}
+.M .done h2{font-size:24px;font-weight:900;margin-top:6px}
+.M .done p{font-size:15px;line-height:1.9;color:var(--muted);max-width:290px}
+.M .sum{width:100%;margin-top:8px;border-radius:20px;background:var(--s1);border:1px solid var(--line);text-align:start}
+.M .sum div{display:flex;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);font-size:14px}
+.M .sum div:last-child{border:0}
+.M .sum span{color:var(--muted)}
+.M .sum b{font-weight:800}
+.M .done .p1{width:100%;height:52px;border-radius:999px;background:var(--primary);color:var(--onP);font-weight:900;font-size:15.5px;margin-top:auto}
+.M .done .p2{width:100%;height:52px;border-radius:999px;background:#25D366;color:#06301A;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;gap:6px}
+/* مودو: يرحّب بوجهه · اختر مجالاً أو اكتب · الجواب بمصدره · الشريك المناسب بزرّه · «اسأل الشريك مباشرة» */
+.M .mhead{position:absolute;top:0;inset-inline:0;z-index:20;padding:38px 10px 8px;display:flex;align-items:center;gap:6px;background:var(--bg);border-bottom:1px solid var(--line)}
+.M .mhead .t{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;font-size:17px;font-weight:900}
+.M .mhead .t img{width:28px;height:28px;border-radius:10px;object-fit:cover}
+.M .mbody{position:absolute;top:88px;bottom:0;inset-inline:0;overflow-y:auto;padding:18px 16px 170px;scrollbar-width:none}
+.M .mbody::-webkit-scrollbar{display:none}
+.M .mwel{text-align:center;padding-top:12px}
+.M .mwel .av{margin:0 auto;width:84px;height:84px;border-radius:28px 28px 28px 10px;object-fit:cover;box-shadow:0 10px 24px -10px rgba(48,48,255,.5)}
+.M .mwel h2{font-size:24px;font-weight:900;margin-top:12px}
+.M .mwel p{font-size:14.5px;line-height:1.9;color:var(--muted);max-width:280px;margin:4px auto 0}
+.M .mind{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:20px}
+.M .mind button{height:56px;border-radius:18px;background:var(--s1);border:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 8px;font-size:13.5px;font-weight:800;text-align:start}
+.M .mind img{width:40px;height:40px;object-fit:contain;flex:0 0 auto}
+.M .mcomp{position:absolute;bottom:0;inset-inline:0;z-index:25;padding:10px 12px 22px;background:var(--bg);border-top:1px solid var(--line)}
+.M .mcomp .box{display:flex;align-items:center;gap:8px;height:54px;border-radius:999px;background:var(--s1);border:1.5px solid var(--line);padding:0 6px 0 16px;color:var(--muted);font-size:15px}
+.M .mcomp .box span{flex:1}
+.M .mcomp .snd{width:44px;height:44px;border-radius:50%;background:var(--primary);color:var(--onP);display:grid;place-items:center}
+.M .mcomp .snd svg{transform:scaleX(-1)}
+.M .mcomp .scope{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 6px 0 12px;border-radius:999px;background:var(--pc);color:var(--primary);font-size:12.5px;font-weight:800;margin-bottom:8px}
+.M .mcomp .scope i{font-style:normal;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(48,48,255,.12)}
+.M .mdisc{font-size:11.5px;color:var(--muted);text-align:center;line-height:1.7;margin-top:8px}
+.M .mdisc b{font-weight:800}
+.M .uq{margin-inline-start:auto;max-width:82%;width:fit-content;padding:11px 14px;border-radius:20px 20px 6px 20px;background:var(--primary);color:var(--onP);font-size:15px;line-height:1.8}
+.M .a2{display:flex;gap:8px;margin-top:14px;align-items:flex-start}
+.M .a2>img{width:32px;height:32px;border-radius:11px;object-fit:cover;flex:0 0 auto}
+.M .a2 .bd{flex:1;min-width:0}
+.M .a2 .tx{padding:12px 14px;border-radius:20px 20px 20px 6px;background:var(--s1);border:1px solid var(--line);font-size:15px;line-height:1.95}
+.M .a2 .src{display:inline-flex;align-items:center;gap:6px;margin-top:8px;height:30px;padding:0 12px;border-radius:999px;background:var(--s2);font-size:12px;font-weight:800;color:var(--muted)}
+.M .pcard{margin-top:10px;padding:12px;border-radius:20px;background:var(--s1);border:1.5px solid var(--primary)}
+.M .pcard .top2{display:flex;gap:10px;align-items:center}
+.M .pcard .top2 img{width:46px;height:46px;border-radius:16px 16px 16px 6px;background:#fff;object-fit:contain;padding:3px;border:1px solid var(--line)}
+.M .pcard small.k{font-size:11.5px;font-weight:900;color:var(--primary)}
+.M .pcard b{display:flex;align-items:center;gap:4px;font-size:14.5px;font-weight:900}
+.M .pcard b svg{color:var(--primary)}
+.M .pcard .why{font-size:13px;line-height:1.8;color:var(--muted);margin-top:8px}
+.M .pcard .two{display:flex;gap:8px;margin-top:10px}
+.M .pcard .two .bk{flex:1;height:42px;border-radius:999px;background:var(--primary);color:var(--onP);font-weight:900;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:5px}
+.M .pcard .two .pg{height:42px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);font-weight:800;font-size:13px}
+.M .askp{margin-top:10px;width:100%;height:44px;border-radius:999px;border:1.5px dashed var(--line);font-size:13.5px;font-weight:800;color:var(--text);display:flex;align-items:center;justify-content:center;gap:6px}
+.M .rate{display:flex;align-items:center;gap:4px;margin-top:6px;font-size:12.5px;color:var(--muted)}
+.M .rate span{margin-inline-end:4px}
+.M .rate button{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.M .rate button.on{background:var(--pc);color:var(--primary)}
+.M .rate .cp{margin-inline-start:auto}
+.M .rate.done span{color:var(--accent);font-weight:800}
+.mix{max-width:1180px;margin:0 auto 26px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mix div{background:var(--pg-card);border:1px solid var(--pg-line);border-radius:16px;padding:14px 16px;font-size:14px;line-height:1.85}
+.mix b{display:block;font-size:15px;margin-bottom:4px}
+@media (max-width:900px){.mix{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<button class="theme-fab" data-toggle-theme aria-label="فاتح / داكن">فاتح / داكن</button>
+<div class="phones">
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-home"></div></div><div class="phone-cap">الرئيسية</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-brand"></div></div><div class="phone-cap">مدونتي — الدائرة</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-list"></div></div><div class="phone-cap">تاب «المقالات»</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-reels"></div></div><div class="phone-cap">تاب «الطلّات» — اسحب للأعلى</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-art"></div></div><div class="phone-cap">صفحة المقال</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-ind"></div></div><div class="phone-cap">اكتشف — المجالات</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-dir"></div></div><div class="phone-cap">الشركاء — داخل المجال</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-partner"></div></div><div class="phone-cap">صفحة الشريك</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-book"></div></div><div class="phone-cap">الحجز — من «احجز الآن»</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-booked"></div></div><div class="phone-cap">بعد الإرسال — مثال</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-modo"></div></div><div class="phone-cap">مودو — الترحيب</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-modo2"></div></div><div class="phone-cap">مودو — مثال محادثة (الجواب من أسئلة فرسان التعافي)</div></div>
+  <div class="phone-wrap"><div class="phone"><div class="screen M" id="m-user"></div></div><div class="phone-cap">صفحة المستخدم — بيانات حساب تجريبية</div></div>
+</div>
+<script src="data.js?v=1791543415"></script>
+<script src="shared.js?v=1791543415"></script>
+<script>
+const D = window.MODONTY, C = D.readingTimeCounts;
+// ٤ تابات: الاستماع داخل المقال لا في الشريط
+window.TABS = [{ id: 'home', label: 'الرئيسية', icon: 'home' }].concat(TABS.filter(t => t.id !== 'listen' && t.id !== 'home'));
+// شعار مدونتي الحقيقي (عميل مدونتي في /api/mobile/v1/home)
+const MDN_LOGO = D.articles[0].clientLogo;
+const status = '<div class="statusbar"><span>٩:٤١</span><span>100%</span></div>';
+const bar = (active) => `<nav class="bar">${TABS.map(t=>`<button class="${t.id===active?'on':''}">${icon(t.icon,22)}<span>${t.label}</span></button>`).join('')}</nav><button class="mdn${active==='modonty'?' on':''}" aria-label="مدونتي"><img src="${MDN_LOGO}" alt=""></button>`;
+const tColor = (m) => m <= 5 ? 'var(--listen)' : m <= 10 ? 'var(--save)' : 'var(--share)';
+const kick = (a) => `<div class="kick">${a.clientLogo?`<img src="${a.clientLogo}" alt="">`:''}${esc(a.clientName)}</div>`;
+const item = (a) => `<article class="it press"><div class="t">${kick(a)}<h4>${esc(a.title)}</h4><div class="meta">${a.readingTimeMinutes?`<span><i class="dot" style="background:${tColor(a.readingTimeMinutes)}"></i>${mins(a.readingTimeMinutes)}</span>`:''}${a.publishedAt?`<span>${ago(a.publishedAt)}</span>`:''}<span class="sv">${icon('bookmark',18)}</span></div></div><div class="thumb"><img src="${a.image}" alt="">${a.hasAudio?`<span class="aud" aria-label="فيه صوت">${icon('listen',13)}</span>`:''}</div></article>`;
+const timeBtns = `<button class="w">${icon('walk',24)}على الماشي<small>${num(C.short)} مقالات</small></button><button class="c">${icon('coffee',24)}فنجان قهوة<small>${num(C.medium)} مقالاً</small></button><button class="r">${icon('sofa',24)}جلسة روقان<small>${num(C.long)} مقالاً</small></button>`;
+
+// ===== الرئيسية
+document.getElementById('m-home').innerHTML = status + `
+<div class="mini" data-mini><span class="sp"></span><b>مدونتي</b><button class="ib modo" aria-label="مودو">${icon('sparkles',19)}</button></div>
+<div class="scroll" data-scroll>
+  <div class="big"><div class="ttl"><small>صباح الخير</small><h2>مدونتي</h2></div>
+    <button class="ib" aria-label="بحث">${icon('search',20)}</button><button class="ib modo" aria-label="مودو">${icon('sparkles',20)}</button><button class="uhd-av" aria-label="حسابي">أ</button></div>
+  <div class="sec" style="padding-top:14px"><h3>الطلّات</h3><a>الكل ${icon('more',15)}</a></div>
+  <div class="hreels">${D.reels.map(r=>`<article class="hreel press"><img class="th" src="${r.imageUrl}" alt="">
+    <span class="dur">${icon('play',11)}${Math.floor(r.durationSec/60)}:${String(r.durationSec%60).padStart(2,'0')}</span>
+    <div class="in"><b>${esc(r.title)}</b><span class="by"><img src="${r.clientLogoUrl}" alt="">${esc(r.clientName)}</span></div></article>`).join('')}
+    <button class="hreel all press">${icon('reels',26)}<b>شاهد الكل</b></button></div>
+  <div class="rail" data-rail>${D.articles.slice(0,5).map((a,i)=>`
+    <article class="hero press"><img src="${a.image}" alt="">${i===0?`<span class="tag">${icon('flame',14)}مميّز اليوم</span>`:''}
+      <div class="in"><div class="who"><img src="${a.clientLogo}" alt="">${esc(a.clientName)}</div><h4>${esc(a.title)}</h4>
+      <div class="meta"><span>${icon('clock',14)}${mins(a.readingTimeMinutes)}</span><span>${ago(a.publishedAt)}</span></div></div></article>`).join('')}</div>
+  <div class="dots" data-dots>${'<i></i>'.repeat(5)}</div>
+  <div class="time"><b>عندك كم دقيقة؟</b><small class="s">نجيب لك مقالات على قدّ وقتك</small><div class="times">${timeBtns}</div></div>
+  <div class="utabs"><button class="on">لك</button><button>الأحدث</button><button>الأكثر قراءة</button><button>المتابَعون</button></div>
+  ${D.trending.concat(D.articles.slice(5,7)).map(item).join('')}
+  <div class="sec"><h3>اكتشف المجالات</h3><a>الكل ${icon('more',15)}</a></div>
+  <div class="chips">${D.industries.map(i=>`<button><img src="${i.socialImage}" alt="">${esc(i.name)}</button>`).join('')}</div>
+  <div class="sec"><h3>أحدث المقالات</h3></div>
+  ${D.articles.slice(7,10).map(item).join('')}
+  <div class="spacer"></div>
+</div>` + bar('home');
+
+// ===== المقالات
+document.getElementById('m-list').innerHTML = status + `
+<div class="mini" data-mini><span class="sp"></span><b>المقالات</b><button class="ib" aria-label="بحث">${icon('search',19)}</button></div>
+<div class="scroll" data-scroll>
+  <div class="big"><div class="ttl"><small>${num(C.short+C.medium+C.long)} مقالاً منشوراً</small><h2>المقالات</h2></div><button class="ib" aria-label="المحفوظة">${icon('bookmark',20)}</button></div>
+  <div class="sfield">${icon('search',19)} ابحث عن أي موضوع</div>
+  <div class="rt">
+    <button class="press" style="background:var(--listen);color:var(--onListen)">${icon('walk',18)}ماشي <small>${num(C.short)}</small></button>
+    <button class="press" style="background:var(--save);color:var(--onSave)">${icon('coffee',18)}قهوة <small>${num(C.medium)}</small></button>
+    <button class="press" style="background:var(--share);color:var(--onShare)">${icon('sofa',18)}روقان <small>${num(C.long)}</small></button></div>
+  <div class="utabs"><button class="on">الكل</button>${D.categories.map(c=>`<button>${esc(c.name.trim())}</button>`).join('')}</div>
+  ${D.articles.concat(D.trending).map(item).join('')}
+  <div class="spacer"></div>
+</div>
+<div class="mplayer"><img src="${D.articles[1].image}" alt=""><div class="pt"><b>${esc(D.articles[1].title)}</b><small>يكمل من حيث وقفت</small></div><button class="pp" aria-label="إيقاف مؤقّت">${icon('pause',16)}</button><div class="pbar"><i style="width:38%"></i></div></div>` + bar('articles');
+
+// ===== صفحة المقال
+const art = D.articles[1];
+document.getElementById('m-art').innerHTML = status + `
+<div class="rhead"><button class="ib" aria-label="رجوع">${icon('back',21)}</button><span class="left" data-left>متبقٍّ ${num(art.readingTimeMinutes)} دقيقة</span><button class="ib" data-aa style="font-weight:900;font-size:16px">Aa</button><button class="ib">${icon('share',20)}</button><div class="rprog"><i data-prog></i></div></div>
+<div class="atop"><button class="ib" aria-label="رجوع">${icon('back',21)}</button><span class="gap"></span><button class="ib" data-aa style="font-weight:900;font-size:16px">Aa</button><button class="ib">${icon('share',20)}</button></div>
+<div class="aa" data-aa-panel><div class="row"><button data-sz="-1">أ</button><input type="range" min="15" max="23" value="18" data-range><button data-sz="1" style="font-size:20px">أ</button></div>
+  <div class="bgs"><button data-bg="light" style="background:#FAF9F6;color:#0E065A">فاتح</button><button data-bg="paper" style="background:#F4ECD8;color:#3B2F1E">ورقي</button><button data-bg="dark" style="background:#0F0F12;color:#EDEDF0">داكن</button></div></div>
+<div class="scroll" data-scroll>
+  <div class="ahero"><img src="${art.image}" alt=""></div>
+  <div class="sheet" data-rd>
+    ${kick(art)}
+    <h1>${esc(art.title)}</h1>
+    <div class="meta" style="margin-top:8px"><span><i class="dot" style="background:${tColor(art.readingTimeMinutes)}"></i>${mins(art.readingTimeMinutes)}</span><span>${icon('eye',14)}${num(art.views)}</span><span>${ago(art.publishedAt)}</span></div>
+    <div class="by"><img src="${art.clientLogo}" alt=""><div><b>${esc(art.clientName)} ${icon('verified',15)}</b><small>شريك موثّق</small></div><button class="fol">تابع</button></div>
+    <p>${esc(art.excerpt)}</p>
+    
+    ${'<div class="sk"></div><div class="sk"></div><div class="sk s"></div>'.repeat(6)}
+    <div class="next press"><img src="${D.articles[2].image}" alt=""><div><small>المقال التالي</small><b>${esc(D.articles[2].title)}</b></div></div>
+  </div>
+</div>
+<div class="acts" data-acts><button class="ic" aria-label="إعجاب">${icon('heart',22)}</button><button class="ic" aria-label="حفظ">${icon('bookmark',22)}</button><button class="listen" data-listen>${icon('listen',19)} اسمع المقال <small>${num(art.readingTimeMinutes)} د</small></button>
+  <div class="player" data-player><button class="pp" data-pp aria-label="إيقاف مؤقّت">${icon('pause',16)}</button><div class="pt"><b>${esc(art.title)}</b><div class="pbar"><i></i></div></div><button class="ic" data-close aria-label="إغلاق">${icon('close',18)}</button></div></div>`;
+
+// ===== دليل الشركاء
+const PL = D.partners, inds = PL.industries.slice().sort((a, b) => b.count - a.count);
+const yrs = (n) => n === 1 ? 'سنة' : n === 2 ? 'سنتان' : n <= 10 ? `${num(n)} سنوات` : `${num(n)} سنة`;
+const firstLine = (s) => String(s || '').split('\n').map(x => x.trim()).filter(Boolean).join(' · ');
+const pc = (p) => {
+  // خدمة مكرّرة حرفياً في الوصف لا تُعاد كرقاقة
+  const svc = (p.services || []).filter(x => !String(p.description || '').includes(x.trim()));
+  const facts = [
+    p.city ? `<span>${icon('pin',13)}${esc(p.city)}</span>` : '',
+    p.years ? `<span>${icon('briefcase',13)}خبرة ${yrs(p.years)}</span>` : '',
+    p.credential ? `<span class="cr">${icon('award',13)}${esc(p.credential)}</span>` : '',
+    ...svc.slice(0, 2).map(s => `<span>${esc(s)}</span>`),
+    svc.length > 2 ? `<span>+${num(svc.length - 2)}</span>` : '',
+  ].join('');
+  return `<article class="pc press${p.isFeatured ? ' ft' : ''}"><div class="top"><img src="${p.logo}" alt=""><div class="nm">
+    <div class="kick"><span>${esc(p.industry || '')}</span>${p.isFeatured ? `<em>${icon('flame',12)}مميّز</em>` : ''}</div>
+    <h4>${esc(p.name)}${p.isVerified ? icon('verified',15) : ''}</h4></div></div>
+    <p class="desc">${esc(firstLine(p.description))}</p>
+    ${facts ? `<div class="facts">${facts}</div>` : ''}
+    <div class="acts2">${p.hasWhatsapp ? `<button class="wa">${icon('chat',17)}${esc(p.ctaLabel || 'راسلنا واتساب')}</button>` : ''}<button class="pg">الصفحة ${icon('more',15)}</button></div></article>`;
+};
+document.getElementById('m-dir').innerHTML = status + `
+<div class="mini" data-mini><button class="ib" aria-label="رجوع">${icon('back',19)}</button><b>الشركاء</b><button class="ib" aria-label="بحث">${icon('search',19)}</button></div>
+<div class="scroll" data-scroll>
+  <div class="big"><button class="ib back" aria-label="رجوع إلى المجالات">${icon('back',20)}</button><div class="ttl"><small>أطبّاء وعيادات وشركات موثّقة</small><h2>الشركاء</h2></div></div>
+  <div class="dsearch">${icon('search',19)} ابحث باسم أو تخصّص أو مدينة</div>
+  <div class="need" style="margin-top:6px"><button class="on">الكل <small>${num(PL.total)}</small></button>${inds.map(i=>`<button>${esc(i.name)} <small>${num(i.count)}</small></button>`).join('')}</div>
+  <div class="sec" style="padding-top:16px"><h3>المميّزون</h3><a>الكل ${icon('more',15)}</a></div>
+  <div class="fst">${PL.items.filter(p=>p.isFeatured).map(p=>`<div class="st press"><div class="ring"><img src="${p.logo}" alt=""></div><span>${esc(p.name)}</span></div>`).join('')}</div>
+  <div class="sortln"><span><b>${num(PL.total)}</b> شريكاً</span><button>الأنشط أوّلاً ${icon('down',14)}</button></div>
+  ${PL.items.slice(0,8).map(pc).join('')}
+  <button class="more">اعرض المزيد — ${num(PL.total - 8)} شريكاً</button>
+  <div class="join"><b>عندك نشاط؟ صِر شريكاً</b><p>اعرض شركتك أمام قرّاء مدونتي، وانشر مقالاتك وطلّاتك في صفحة باسمك.</p><button class="press">صِر شريكاً</button></div>
+  <div class="spacer"></div>
+</div>` + bar('discover');
+
+// ===== اكتشف ← المجالات
+const IL = D.industryList.slice().sort((a, b) => b.count - a.count), IT = IL.reduce((n, i) => n + i.count, 0);
+const partnersN = (n) => n === 1 ? 'شريك واحد' : n === 2 ? 'شريكان' : n <= 10 ? `${num(n)} شركاء` : `${num(n)} شريكاً`;
+const logos = (arr) => arr.length ? `<span class="logos">${arr.map(c => `<img src="${c.logo}" alt="${esc(c.name)}">`).join('')}</span>` : '';
+const lead = IL[0];
+document.getElementById('m-ind').innerHTML = status + `
+<div class="mini" data-mini><span class="sp"></span><b>اكتشف</b><button class="ib" aria-label="بحث">${icon('search',19)}</button></div>
+<div class="scroll" data-scroll>
+  <div class="big"><div class="ttl"><small>${partnersN(PL.total)} في ${num(IL.length)} مجالات</small><h2>اكتشف</h2></div></div>
+  <div class="dsearch">${icon('search',19)} ابحث عن مجال أو شريك</div>
+  <article class="ilead press"><div class="row1"><div class="art"><img src="${lead.image}" alt=""></div>
+    <div><small class="k">الأكثر شركاء</small><h3>${esc(lead.name)}</h3><div class="cnt">${partnersN(lead.count)}</div></div></div>
+    <p>${esc(lead.description)}</p>
+    <div class="ft">${logos(lead.previews)}<button class="go2">تصفّح ${icon('more',15)}</button></div></article>
+  <div class="sec"><h3>كل المجالات</h3></div>
+  <div class="igrid">${IL.slice(1).map(i => `<article class="itile press"><div class="art"><img src="${i.image}" alt=""></div><b>${esc(i.name)}</b><small>${partnersN(i.count)}</small>${logos(i.previews)}</article>`).join('')}</div>
+  <div class="allp press">${icon('building',20)}كل الشركاء<span class="c">${partnersN(PL.total)} ${icon('more',15)}</span></div>
+  <div class="spacer"></div>
+</div>` + bar('discover');
+
+// ===== صفحة الشريك
+const F = D.fursan;
+const SOC = { 'facebook.com': 'فيسبوك', 'instagram.com': 'إنستقرام', 'snapchat.com': 'سناب شات', 'tiktok.com': 'تيك توك', 'youtube.com': 'يوتيوب', 'x.com': 'إكس', 'twitter.com': 'إكس' };
+const socName = (u) => { try { const h = new URL(u).hostname.replace(/^www\./, ''); return SOC[h] || h; } catch (e) { return u; } };
+const intro = String(F.description || '').split('\n').map(x => x.trim()).filter(Boolean);
+document.getElementById('m-partner').innerHTML = status + `
+<div class="mini" data-mini><button class="ib" aria-label="رجوع">${icon('back',21)}</button><b>${esc(F.name)}</b><button class="ib" aria-label="تابع">${icon('bellPlus',20)}</button></div>
+<div class="ptop"><button class="ib" aria-label="رجوع">${icon('back',21)}</button><span class="gap"></span><button class="ib" aria-label="تابع">${icon('bellPlus',20)}</button><button class="ib" aria-label="مشاركة">${icon('share',20)}</button></div>
+<div class="scroll" data-scroll>
+  <div class="phero"><img src="${F.gallery[0].url}" alt="${esc(F.gallery[0].alt)}"><span class="gcount">${icon('grid',14)}${num(F.gallery.length)} صورة</span></div>
+  <div class="pbody">
+    <div class="pid2"><img class="plogo" src="${F.logo}" alt=""><div class="kick">${esc(F.industry)}</div></div>
+    <h1 class="pname2">${esc(F.name)}${F.isVerified ? icon('verified',20) : ''}</h1>
+    <div class="pslogan2">${esc(F.slogan)}</div>
+    <div class="pfacts">
+      ${F.city ? `<span>${icon('pin',14)}${esc(F.city)}</span>` : ''}
+      ${F.foundingYear ? `<span>${icon('briefcase',14)}منذ ${esc(F.foundingYear)}</span>` : ''}
+      ${(F.contact.hours || []).map(h => `<span>${icon('clock',14)}${esc(h.day)} ${esc(h.time)}</span>`).join('')}
+    </div>
+    <div class="pmain" data-pmain>
+      <button class="book press">${icon('clock',19)}${esc(F.booking.label)}</button>
+      ${F.hasWhatsapp ? `<button class="sq wa press" aria-label="واتساب">${icon('chat',21)}</button>` : ''}
+      <button class="sq call press" aria-label="اتصال">${icon('phone',20)}</button>
+    </div>
+    ${(F.credentials.length || F.stats.length) ? `<div class="ptrust">
+      ${F.credentials.length ? `<div class="creds">${F.credentials.map(c => `<span>${icon('award',13)}${esc(c)}</span>`).join('')}</div>` : ''}
+      ${F.stats.length ? `<div class="nums">${F.stats.map(x => `<div><b>${esc(x.value)}</b><small>${esc(x.label)}</small></div>`).join('')}</div><div class="src">أرقام تذكرها المؤسسة</div>` : ''}
+    </div>` : ''}
+    <div class="ptabs"><button class="on">نظرة عامة</button><button>الخدمات</button><button>الصور <small>${num(F.gallery.length)}</small></button><button>المقالات <small>${num(F.postsTotal)}</small></button><button>الأسئلة <small>${num(F.faqTotal)}</small></button></div>
+    <div class="psec"><h3>عن المؤسسة</h3></div>
+    <p class="pabout2">${esc(intro.slice(0, 2).join(' — '))}</p><button class="rmore">اقرأ المزيد</button>
+    ${F.services.length ? `<div class="psec"><h3>الخدمات</h3></div><div class="svcs">${F.services.map(s => `<div>${'<span>' + icon('verified',18) + '</span>'}${esc(s)}</div>`).join('')}</div>` : ''}
+    ${F.reels.length ? `<div class="psec"><h3>الطلّات</h3></div><div class="preels">${F.reels.map(r => `<article class="hreel press"><img class="th" src="${r.imageUrl}" alt=""><div class="in"><b>${esc(r.title)}</b></div></article>`).join('')}</div>` : ''}
+    <div class="psec"><h3>من داخل المؤسسة</h3><a>الكل ${icon('more',15)}</a></div>
+    <div class="gal2">${F.gallery.slice(0, 5).map((g, i) => `<div><img src="${g.url}" alt="${esc(g.alt)}">${i === 4 && F.gallery.length > 5 ? `<span class="more2">+${num(F.gallery.length - 5)}</span>` : ''}</div>`).join('')}</div>
+    <div class="psec"><h3>من مقالاتهم</h3><a>الكل ${icon('more',15)}</a></div>
+    <div class="pposts">${F.posts.map(x => `<article class="it press"><div class="t"><div class="kick">${esc(x.category || '')}</div><h4>${esc(x.title)}</h4><div class="meta"><span>${esc(x.date)}</span><span class="sv">${icon('bookmark',18)}</span></div></div><div class="thumb"><img src="${x.imageUrl}" alt=""></div></article>`).join('')}</div>
+    <div class="psec"><h3>أسئلة شائعة</h3></div>
+    <div class="faq">${F.faqs.map((f, i) => `<details${i === 0 ? ' open' : ''}><summary>${esc(f.question)}${icon('down',18)}</summary><p>${esc(f.answer)}</p></details>`).join('')}</div>
+    <button class="allfaq">كل الأسئلة (${num(F.faqTotal)})</button>
+    <div class="psec"><h3>الموقع والتواصل</h3></div>
+    <div class="ploc">
+      <div class="r"><span class="ic">${icon('pin',18)}</span><div>العنوان<small>${esc(F.contact.address)}</small></div><button class="act">الخريطة</button></div>
+      <div class="r"><span class="ic">${icon('phone',18)}</span><div>اتصال<small style="direction:ltr;text-align:right">${esc(F.phone)}</small></div><button class="act">اتصل</button></div>
+      <div class="r"><span class="ic">${icon('mail',18)}</span><div>البريد<small>${esc(F.email)}</small></div></div>
+    </div>
+    <div class="socials">${F.sameAs.map(u => `<span>${esc(socName(u))}</span>`).join('')}</div>
+    <div class="spacer"></div>
+  </div>
+</div>
+<div class="pcta" data-pcta><button class="book">${icon('clock',18)}${esc(F.booking.label)}</button>${F.hasWhatsapp ? `<button class="sq wa" aria-label="واتساب">${icon('chat',20)}</button>` : ''}<button class="sq call" aria-label="اتصال">${icon('phone',19)}</button></div>`;
+// شريط الحجز السفلي يظهر فقط بعد ما تختفي أزرار الأعلى — لا زرّين بنفس الشي في نفس الشاشة
+{ const scr = document.getElementById('m-partner'), sc = scr.querySelector('[data-scroll]'), main = scr.querySelector('[data-pmain]'), cta = scr.querySelector('[data-pcta]');
+  sc.addEventListener('scroll', () => { const r = main.getBoundingClientRect(), t = sc.getBoundingClientRect(); cta.classList.toggle('show', r.bottom < t.top + 90); }, { passive: true }); }
+
+// ===== صفحة المستخدم (بيانات حساب تجريبية — /me يحتاج دخولاً)
+const U = { name: 'أحمد', initial: 'أ', since: 'مارس ٢٠٢٦', saved: 12, following: 4, bookings: 1, bookingState: 'قيد المراجعة', unread: 3 };
+document.getElementById('m-user').innerHTML = status + `
+<div class="mini" data-mini><button class="ib" aria-label="رجوع">${icon('back',21)}</button><b>حسابي</b><button class="ib" aria-label="تعديل الملف">${icon('user',19)}</button></div>
+<div class="scroll" data-scroll>
+  <div class="uhead"><span class="uav">${U.initial}</span><div class="t"><b>${U.name}</b><small>عضو منذ ${U.since}</small></div><button class="ib" aria-label="تعديل الملف">${icon('user',20)}</button></div>
+  <div class="qgrid">
+    <button class="q q1 press"><span class="ic">${icon('bookmark',20)}</span><b>${num(U.saved)}</b><small>المحفوظة</small></button>
+    <button class="q q2 press"><span class="ic">${icon('building',20)}</span><b>${num(U.following)}</b><small>أتابعهم</small></button>
+    <button class="q q3 press"><span class="ic">${icon('clock',20)}</span><b>${num(U.bookings)}</b><small>حجوزاتي<span class="st2">${U.bookingState}</span></small></button>
+    <button class="q q4 press"><span class="ic">${icon('bell',20)}</span><b>${num(U.unread)}</b><small>إشعارات جديدة</small></button>
+  </div>
+  <div class="sec"><h3>محفوظة للقراءة</h3><a>الكل ${icon('more',15)}</a></div>
+  <div class="saved">${D.articles.slice(2,6).map(a=>`<article class="sv2 press"><img src="${a.image}" alt=""><b>${esc(a.title)}</b></article>`).join('')}</div>
+  <div class="sec"><h3>الشركاء اللي تتابعهم</h3></div>
+  <div class="folw">${PL.items.filter(p=>p.isFeatured).slice(0,4).map(p=>`<div class="st press"><div class="ring"><img src="${p.logo}" alt=""></div><span>${esc(p.name)}</span></div>`).join('')}<div class="st add press"><div class="ring">${icon('compass',22)}</div><span>اكتشف</span></div></div>
+  <div class="sec"><h3>نشاطي</h3></div>
+  <div class="grp">
+    <div class="r"><span class="ic">${icon('heart',18)}</span>ما أعجبني<span class="end">${icon('more',15)}</span></div>
+    <div class="r"><span class="ic">${icon('chat',18)}</span>تعليقاتي<span class="end">${icon('more',15)}</span></div>
+    <div class="r"><span class="ic">${icon('reels',18)}</span>طلّاتي<span class="end">${icon('more',15)}</span></div>
+    <div class="r"><span class="ic">${icon('sparkles',18)}</span>محادثاتي مع مودو<span class="end">${icon('more',15)}</span></div>
+  </div>
+  <div class="sec"><h3>الإعدادات</h3></div>
+  <div class="grp">
+    <div class="r"><span class="ic">${icon('moon',18)}</span>المظهر<div class="seg2" data-seg><button>فاتح</button><button>داكن</button><button class="on">تلقائي</button></div></div>
+    <div class="r"><span class="ic">${icon('textSize',18)}</span>حجم الخط<div class="seg2" data-seg><button>صغير</button><button class="on">عادي</button><button>كبير</button></div></div>
+    <div class="r"><span class="ic">${icon('bell',18)}</span>التنبيهات والرسائل<span class="end">${icon('more',15)}</span></div>
+    <div class="r"><span class="ic">${icon('user',18)}</span>الملف الشخصي وكلمة المرور<span class="end">${icon('more',15)}</span></div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="grp">
+    <div class="r"><span class="ic">${icon('globe',18)}</span>عن مدونتي والسياسات<span class="end">٧ صفحات ${icon('more',15)}</span></div>
+    <div class="r"><span class="ic">${icon('mail',18)}</span>تواصل معنا<span class="end">${icon('more',15)}</span></div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="grp">
+    <div class="r"><span class="ic">${icon('back',18)}</span>تسجيل الخروج</div>
+    <div class="r danger"><span class="ic">${icon('close',18)}</span>حذف الحساب</div>
+  </div>
+  <div class="spacer"></div>
+</div>` + bar('none');
+document.querySelectorAll('#m-user [data-seg]').forEach(n => n.addEventListener('click', e => { const t = e.target.closest('button'); if (!t) return; n.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === t)); }));
+
+// ===== صفحة «مدونتي» (الدائرة)
+const B = D.brand;
+const SECTORS = [
+  ['الكورة', 'ball', '#E8F7EE', '#0B6B3A'], ['الذكاء الاصطناعي', 'cpu', '#E8E8FF', '#3030FF'], ['ريادة الأعمال', 'rocket', '#FFF1DC', '#8A4B00'],
+  ['الترفيه', 'ticket', '#F3E8FF', '#6D28D9'], ['التعليم', 'cap', '#E0F2FE', '#075985'], ['الصحة والجمال', 'pulse', '#FFE4E6', '#BE123C'],
+];
+document.getElementById('m-brand').innerHTML = status + `
+<div class="mini" data-mini><span class="sp"></span><b>مدونتي</b><button class="ib" aria-label="مشاركة">${icon('share',19)}</button></div>
+<div class="scroll" data-scroll>
+  <div class="bhero">
+    <div class="art"><img src="${B.mobileHero}" alt="مدونتي"></div>
+    <h2>كل اللي يهمك… <span>في مكان واحد</span></h2>
+    <p>مدونتي تجمع لك المعرفة، الأدوات، الفرص والمحتوى الملهم في تجربة واحدة.</p>
+    <div class="cta"><button class="fol press">${icon('bellPlus',19)}تابع مدونتي</button><button class="sh press" aria-label="مشاركة">${icon('share',20)}</button></div>
+    <div class="nums"><span><b>${num(B.articlesTotal)}</b>مقالاً</span><span><b>${num(B.reels)}</b>طلّات</span></div>
+  </div>
+  <div class="sec"><h3>أدوات مدونتي</h3></div>
+  <div class="tools">
+    <button class="tool t1 press"><span class="ic">${icon('wheel',30)}</span><b>عجلة الحظ</b></button>
+    <button class="tool t2 press"><span class="ic">${icon('link',22)}</span><b>مودو لينك</b><small class="soon">قريباً</small></button>
+    <button class="tool t3 press"><span class="ic">${icon('book',22)}</span><b>القرآن الكريم</b></button>
+  </div>
+  <div class="sec"><h3>عالم مدونتي</h3></div>
+  <div class="secs">${SECTORS.map(([l, ic, bg, fg]) => `<button class="sct press"><span class="ic" style="background:${bg};color:${fg}">${icon(ic,22)}</span>${l}</button>`).join('')}</div>
+  <div class="sec"><h3>من قلمنا</h3><a>الكل ${num(B.articlesTotal)} ${icon('more',15)}</a></div>
+  ${B.articles.slice(0,4).map(x => `<article class="it press"><div class="t"><div class="kick">${esc(x.category || 'مدونتي')}</div><h4>${esc(x.title)}</h4><div class="meta"><span>${esc(x.date)}</span><span class="sv">${icon('bookmark',18)}</span></div></div><div class="thumb"><img src="${x.imageUrl}" alt=""></div></article>`).join('')}
+  <div class="bjoin"><div class="t"><b>عندك نشاط؟</b><small>اعرض شركتك أمام قرّاء مدونتي.</small></div><button class="press">صِر شريكاً</button></div>
+  <div class="spacer"></div>
+</div>` + bar('modonty');
+
+// ===== تاب «الطلّات» — فيديو حقيقي، الظاهر وحده يشتغل · «الشركاء» يفتح لوحة سفلية بشعاراتهم وتختار واحداً
+const RF = D.reelFeed, RP = D.reelPartners;
+const cnt = (n) => n > 0 ? num(n) : '';
+const reelsN = (n) => n === 1 ? 'طلّة واحدة' : n === 2 ? 'طلّتان' : n <= 10 ? `${num(n)} طلّات` : `${num(n)} طلّة`;
+const slide = (r, i) => `
+  <section class="rslide" data-i="${i}">
+    <video muted playsinline loop preload="${i < 2 ? 'auto' : 'none'}" poster="${r.poster}" src="${r.mp4}"></video>
+    <div class="racts">
+      <button aria-label="إعجاب"><span class="c">${icon('heart',24)}</span>${cnt(r.likes)}</button>
+      <button aria-label="تعليقات"><span class="c">${icon('chat',22)}</span>${cnt(r.comments)}</button>
+      <button aria-label="حفظ"><span class="c">${icon('bookmark',22)}</span>${cnt(r.favorites)}</button>
+      <button aria-label="مشاركة"><span class="c">${icon('share',22)}</span></button>
+    </div>
+    <div class="rinfo">
+      <div class="rby"><img src="${r.clientLogo}" alt=""><b>${esc(r.clientName)}</b><button class="fol">تابع</button></div>
+      <h4>${esc(r.title)}</h4>
+      ${r.description ? `<p>${esc(r.description)}</p>` : ''}
+      ${r.cta ? `<button class="rcta${r.cta.wa && r.cta.mode !== 'FORM' ? ' wa' : ''}">${icon(r.cta.mode === 'FORM' ? 'clock' : 'chat',16)}${esc(r.cta.label)}</button>` : `<button class="rcta">زر صفحة الشريك ${icon('more',14)}</button>`}
+    </div>
+    <div class="rprog"><i></i></div>
+  </section>`;
+document.getElementById('m-reels').innerHTML = status + `
+<div class="rtop">
+  <b data-rtitle>الطلّات</b>
+  <span class="rchip" data-rchip hidden><img alt=""><span></span><button aria-label="إلغاء التصفية">${icon('close',14)}</button></span>
+  <div class="rseg" data-rseg><button class="on">لك</button><button>المتابَعون</button></div>
+  <button class="rib" data-ropen aria-label="اختر شريكاً">${icon('building',18)}</button>
+  <button class="rib" data-mute aria-label="تشغيل الصوت">${icon('volOff',18)}</button>
+</div>
+<div class="rfeed" data-rfeed></div>
+<div class="rscrim" data-rscrim></div>
+<div class="rsheet" data-rsheet role="dialog" aria-label="طلّات من">
+  <span class="grab"></span>
+  <div class="sh"><b>طلّات من</b><small>${num(RP.length)} شركاء · ${reelsN(RF.length)}</small></div>
+  <div class="pgrid">
+    <button class="pp2 on" data-pick=""><span class="ring all">${icon('reels',24)}</span><b>الكل</b><small>${reelsN(RF.length)}</small></button>
+    ${RP.map(p => `<button class="pp2" data-pick="${esc(p.slug)}"><span class="ring"><img src="${p.logo}" alt=""></span><b>${esc(p.name)}</b><small>${reelsN(p.n)}</small></button>`).join('')}
+  </div>
+</div>` + bar('reels');
+{
+  const scr = document.getElementById('m-reels'), feed = scr.querySelector('[data-rfeed]');
+  const sheet = scr.querySelector('[data-rsheet]'), scrim = scr.querySelector('[data-rscrim]'), chip = scr.querySelector('[data-rchip]'), title = scr.querySelector('[data-rtitle]'), seg = scr.querySelector('[data-rseg]');
+  let muted = true, io;
+  const render = (list) => {
+    if (io) io.disconnect();
+    feed.innerHTML = list.map(slide).join('');
+    feed.scrollTop = 0;
+    io = new IntersectionObserver((es) => es.forEach((e) => {
+      const v = e.target.querySelector('video');
+      if (e.isIntersecting && e.intersectionRatio > .6) { v.preload = 'auto'; v.muted = muted; v.play().catch(() => {}); } else { v.pause(); }
+    }), { root: feed, threshold: [0, .6, 1] });
+    feed.querySelectorAll('.rslide').forEach((sl) => {
+      io.observe(sl);
+      const v = sl.querySelector('video'), b2 = sl.querySelector('.rprog i');
+      v.addEventListener('timeupdate', () => { if (v.duration) b2.style.width = (v.currentTime / v.duration * 100) + '%'; });
+      sl.querySelector('.racts button').addEventListener('click', (e) => e.currentTarget.classList.toggle('on'));
+    });
+  };
+  const open = (on) => { sheet.classList.toggle('on', on); scrim.classList.toggle('on', on); };
+  const pick = (slug) => {
+    const p = RP.find(x => x.slug === slug);
+    render(slug ? RF.filter(r => r.clientSlug === slug) : RF);
+    chip.hidden = !p; title.hidden = !!p; seg.hidden = !!p;
+    if (p) { chip.querySelector('img').src = p.logo; chip.querySelector('span').textContent = p.name; }
+    sheet.querySelectorAll('.pp2').forEach(b => b.classList.toggle('on', b.dataset.pick === (slug || '')));
+    open(false);
+  };
+  render(RF);
+  scr.querySelector('[data-ropen]').addEventListener('click', () => open(true));
+  scrim.addEventListener('click', () => open(false));
+  sheet.addEventListener('click', (e) => { const b = e.target.closest('[data-pick]'); if (b) pick(b.dataset.pick); });
+  chip.querySelector('button').addEventListener('click', () => pick(''));
+  scr.querySelector('[data-mute]').addEventListener('click', (e) => { muted = !muted; feed.querySelectorAll('video').forEach((v) => { v.muted = muted; }); e.currentTarget.innerHTML = icon(muted ? 'volOff' : 'volOn', 18); });
+  seg.addEventListener('click', (e) => { const t = e.target.closest('button'); if (!t) return; seg.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === t)); });
+}
+
+// ===== الحجز (النموذج + بعد الإرسال) — شريك حقيقي، والجوال/الموعد أمثلة إدخال
+const BK = D.fursan;
+const DAYS = (() => { const out = [], f = new Intl.DateTimeFormat('ar-SA', { weekday: 'short', timeZone: 'Asia/Riyadh', calendar: 'gregory' }); for (let i = 0; i < 7; i++) { const d = new Date(Date.now() + i * 864e5); out.push({ w: i === 0 ? 'اليوم' : i === 1 ? 'بكرة' : f.format(d), n: new Intl.DateTimeFormat('ar-SA', { day: 'numeric', timeZone: 'Asia/Riyadh', calendar: 'gregory' }).format(d) }); } return out; })();
+document.getElementById('m-book').innerHTML = status + `
+<div class="bkhead"><button class="ib" aria-label="رجوع">${icon('back',21)}</button><b>طلب حجز</b><span style="width:42px"></span></div>
+<div class="scroll" style="top:90px" data-bkscroll>
+  <div class="bkbody">
+    <div class="who2"><img src="${BK.logo}" alt=""><div><b>${esc(BK.name)}${BK.isVerified ? icon('verified',15) : ''}</b><small>${esc(BK.services.join(' · '))}</small></div></div>
+    <div class="fl">رقم جوّالك<small>المطلوب الوحيد</small></div>
+    <div class="phonef"><button class="cc">+966 ${icon('down',14)}</button><div class="inp">5<span class="ph">X XXX XXXX</span></div></div>
+    <div class="hint2">${icon('verified',13)}يوصل للمزوّد فقط — بلا رسائل تسويقية</div>
+    <div class="fl">متى يناسبك؟<small>اختياري، والمزوّد يؤكّده</small></div>
+    <div class="days" data-days><button class="day any on"><b>أي وقت</b></button>${DAYS.map(d => `<button class="day"><small>${d.w}</small><b>${d.n}</b></button>`).join('')}</div>
+    <div class="slots" data-slots><button class="slot">الصباح</button><button class="slot">الظهر</button><button class="slot">المساء</button></div>
+    <div class="fl">اسمك<small>اختياري</small></div>
+    <div class="inp txt">أحمد</div>
+    <button class="more3">${icon('chat',17)}أضف تفاصيل أو بريدك</button>
+    <div class="trust2">${icon('award',16)}<span>بإرسالك توافق على <a>الشروط</a> و<a>الخصوصية</a> — مدونتي منصّة تعريفية، لسنا مقدّم الخدمة.</span></div>
+  </div>
+</div>
+<div class="bksend"><button class="press" data-send>${icon('clock',19)}أرسل طلب الحجز</button><small>${esc(BK.name)} يتواصل معك لتأكيد الموعد</small></div>`;
+document.getElementById('m-booked').innerHTML = status + `
+<div class="done">
+  <span class="ok2">${icon('verified',44)}</span>
+  <h2>وصل طلبك</h2>
+  <p>${esc(BK.name)} يتواصل معك على جوّالك لتأكيد الموعد.</p>
+  <div class="sum"><div><span>مع</span><b>${esc(BK.name)}</b></div><div><span>الموعد المفضّل</span><b>بكرة · المساء</b></div><div><span>الحالة</span><b>قيد المراجعة</b></div></div>
+  <button class="p1 press">تابعه في «حجوزاتي»</button>
+  ${BK.hasWhatsapp ? `<button class="p2 press">${icon('chat',18)}أو راسلهم واتساب الحين</button>` : ''}
+</div>`;
+{ const b = document.getElementById('m-book');
+  ['[data-days]', '[data-slots]'].forEach(sel => b.querySelector(sel).addEventListener('click', e => { const t = e.target.closest('button'); if (!t) return; b.querySelectorAll(sel + ' button').forEach(x => x.classList.toggle('on', x === t)); })); }
+
+// ===== مودو (ترحيب + مثال محادثة) — الجواب من «أسئلة شائعة» لفرسان التعافي حرفياً
+const MODO = 'https://modonty-asset.b-cdn.net/brand/modonty-avatar.webp';
+const disc = `<div class="mdisc">مودو مساعد ذكاء اصطناعي — ممكن يخطئ، وكلامه <b>ليس استشارة مهنية</b>. راجِع الشريك المختصّ قبل أي قرار.</div>`;
+const head = `<div class="mhead"><button class="ib" aria-label="رجوع">${icon('back',21)}</button><span class="t"><img src="${MODO}" alt="">مودو</span><button class="ib" aria-label="محادثاتي">${icon('clock',20)}</button></div>`;
+document.getElementById('m-modo').innerHTML = status + head + `
+<div class="mbody">
+  <div class="mwel"><img class="av" src="${MODO}" alt="مودو"><h2>أهلاً ${U.name}</h2><p>اكتب سؤالك وأنا أعرف مجاله، أو اختر مجالاً من تحت.</p></div>
+  <div class="mind">${IL.map(i => `<button class="press"><img src="${i.image}" alt="">${esc(i.name)}</button>`).join('')}</div>
+</div>
+<div class="mcomp"><div class="box"><span>اكتب سؤالك لمودو</span><button class="snd" aria-label="أرسل">${icon('back',19)}</button></div>${disc}</div>`;
+const FQ = D.fursan.faqs[0];
+document.getElementById('m-modo2').innerHTML = status + head + `
+<div class="mbody">
+  <div class="uq">${esc(FQ.question)}</div>
+  <div class="a2"><img src="${MODO}" alt=""><div class="bd">
+    <div class="tx">${esc(FQ.answer)}</div>
+    <span class="src">${icon('book',14)}من أسئلة ${esc(D.fursan.name)}</span>
+    <div class="rate" data-rate><span>أفادك الجواب؟</span><button aria-label="مفيد">${icon('thumbUp',17)}</button><button aria-label="غير مفيد">${icon('thumbDown',17)}</button><button aria-label="نسخ" class="cp">${icon('copy',16)}</button></div>
+    <div class="pcard"><small class="k">الشريك المناسب لسؤالك</small>
+      <div class="top2"><img src="${D.fursan.logo}" alt=""><div><b>${esc(D.fursan.name)}${icon('verified',14)}</b><small style="font-size:12px;color:var(--muted)">${esc(D.fursan.services.join(' · '))}</small></div></div>
+      <div class="two"><button class="bk press">${icon('clock',16)}${esc(D.fursan.booking.label)}</button><button class="pg press">الصفحة</button></div></div>
+    <button class="askp press">${icon('chat',16)}اسأل ${esc(D.fursan.name)} مباشرة</button>
+  </div></div>
+</div>
+<div class="mcomp"><span class="scope">${esc(D.fursan.industry)}<i>${icon('close',12)}</i></span><div class="box"><span>اسأل في ${esc(D.fursan.industry)}…</span><button class="snd" aria-label="أرسل">${icon('back',19)}</button></div></div>`;
+
+{ const r = document.querySelector('#m-modo2 [data-rate]'); r.addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.classList.contains('cp') || r.classList.contains('done')) return; b.classList.add('on'); r.classList.add('done'); r.querySelector('span').textContent = b.getAttribute('aria-label') === 'مفيد' ? 'شكراً — يفيدنا.' : 'شكراً — نراجعها.'; }); }
+
+// ===== السلوك
+document.querySelectorAll('.M').forEach(scr => {
+  const sc = scr.querySelector('[data-scroll]'), mini = scr.querySelector('[data-mini]'), b = scr.querySelector('.bar'), acts = scr.querySelector('[data-acts]');
+  const prog = scr.querySelector('[data-prog]'), left = scr.querySelector('[data-left]');
+  if (!sc) { // الطلّات: لا تمرير عامّ، لكن الشريط يبدّل التاب
+    if (b) b.addEventListener('click', e => { const t = e.target.closest('button'); if (t) b.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === t)); });
+    return;
+  }
+  let last = 0;
+  sc.addEventListener('scroll', () => {
+    const y = sc.scrollTop, r = y / (sc.scrollHeight - sc.clientHeight);
+    if (mini) mini.classList.toggle('on', y > (scr.id === 'm-partner' ? 150 : scr.id === 'm-brand' ? 300 : 70));
+    if (scr.id === 'm-art') scr.classList.toggle('scrolled', y > 330);
+    if (scr.id === 'm-partner') scr.classList.toggle('scrolled', y > 150);
+    if (scr.id === 'm-brand') scr.classList.toggle('scrolled', y > 300);
+    const down = y > last + 4 && y > 140, up = y < last - 4;
+    if (b) { if (down) b.classList.add('min'); else if (up) b.classList.remove('min'); }
+    if (acts) { if (down) acts.classList.add('hide'); else if (up) acts.classList.remove('hide'); }
+    if (prog) prog.style.width = (r * 100) + '%';
+    if (left) { const m = Math.max(1, Math.round(art.readingTimeMinutes * (1 - r))); left.textContent = `متبقٍّ ${num(m)} ${m > 2 && m < 11 ? 'دقائق' : 'دقيقة'}`; }
+    last = y;
+  }, { passive: true });
+  // نقطة البطل النشطة تتبع البطاقة الظاهرة
+  const rail = scr.querySelector('[data-rail]'), dots = scr.querySelectorAll('[data-dots] i');
+  if (rail) { const upd = () => { const i = Math.min(dots.length - 1, Math.round(Math.abs(rail.scrollLeft) / 312)); dots.forEach((d, k) => d.classList.toggle('on', k === i)); }; rail.addEventListener('scroll', upd, { passive: true }); upd(); }
+  // الشريط: الضغط يبدّل التاب النشط (حركة نابضة) · ولو كان منكمشاً يفتحه
+  if (b) b.addEventListener('click', e => { const t = e.target.closest('button'); if (!t) return;
+    if (b.classList.contains('min')) { b.classList.remove('min'); return; }
+    b.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === t)); });
+  scr.querySelectorAll('.utabs,.need').forEach(n => n.addEventListener('click', e => { const t = e.target.closest('button'); if (!t) return;
+    n.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === t)); }));
+});
+const PL_ = document.getElementById('m-art');
+PL_.querySelector('[data-listen]').addEventListener('click', () => PL_.querySelector('[data-acts]').classList.add('playing'));
+PL_.querySelector('[data-close]').addEventListener('click', () => PL_.querySelector('[data-acts]').classList.remove('playing'));
+const A = document.getElementById('m-art'), panel = A.querySelector('[data-aa-panel]'), rd = A.querySelector('[data-rd]'), range = A.querySelector('[data-range]');
+A.querySelectorAll('[data-aa]').forEach(x => x.addEventListener('click', () => panel.classList.toggle('on')));
+const setFs = v => { range.value = v; rd.style.setProperty('--fs', v + 'px'); };
+range.addEventListener('input', () => setFs(range.value));
+A.querySelectorAll('[data-sz]').forEach(x => x.addEventListener('click', () => setFs(+range.value + +x.dataset.sz)));
+A.querySelectorAll('[data-bg]').forEach(x => x.addEventListener('click', () => {
+  const v = { light: ['#FAF9F6', '#0E065A'], paper: ['#F4ECD8', '#3B2F1E'], dark: ['#0F0F12', '#EDEDF0'] }[x.dataset.bg];
+  A.style.setProperty('--bg', v[0]); A.style.setProperty('--text', v[1]);
+}));
+themeToggle(false);
+// ?only=<id> يعرض جوالاً واحداً (لتصدير الصور)
+{ const only = new URLSearchParams(location.search).get('only'); if (only) { document.querySelectorAll('.phone-wrap').forEach(w => { if (!w.querySelector('#' + only)) w.remove(); }); document.querySelectorAll('.theme-fab,.phone-cap').forEach(e => e.remove()); document.body.style.padding = '8px'; } }
+</script>
+</body>
+</html>

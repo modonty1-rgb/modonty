@@ -15,7 +15,7 @@ export const ReelTile = memo(function ReelTile({ item, onOpen, width }: { item: 
   const { colors } = useAppTheme();
   return (
     <Tap label={item.title || item.publisher} role="link" onPress={() => onOpen(item.slug)} style={[styles.tile, { width, backgroundColor: colors.reelsBackground }]}>
-      {item.poster ? <Image source={item.poster} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} /> : null}
+      {item.poster ? <Image cachePolicy="memory-disk" source={item.poster} style={StyleSheet.absoluteFill} contentFit="cover" /> : null}
       <View style={[styles.shade, { backgroundColor: colors.reelsScrim }]}>
         {item.isVideo ? <Icon name="play" size={control.iconSmall} tone="onReels" monochrome /> : null}
         <AppText variant="secondary" tone="onReels" numberOfLines={2}>
