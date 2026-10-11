@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تقويم السوشيال — ثلاثة تصاميم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1c; --card: #111827; --card-2: #0f1626; --line: #1f2a3d; --line-soft: #172133;
+    --text: #e6e9ef; --muted: #8b97ab; --faint: #5b667a;
+    --primary: #3b82f6; --primary-soft: rgba(59,130,246,.14);
+    --s-ip: #9aa3b2; --s-rf: #f59e0b; --s-rt: #3b82f6; --s-pu: #22c55e; --late: #ef4444;
+    --amber-soft: rgba(245,158,11,.12);
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --bg: #f5f3ee; --card: #ffffff; --card-2: #fafaf8; --line: #e6e3dc; --line-soft: #efece6;
+    --text: #1c2230; --muted: #667085; --faint: #98a2b3;
+    --primary: #2563eb; --primary-soft: rgba(37,99,235,.10); --amber-soft: rgba(245,158,11,.14);
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 Tajawal, system-ui, sans-serif; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  .muted { color: var(--muted); } .faint { color: var(--faint); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ── لوحة الاختيار (خارج الموكب) ── */
+  .picker { max-width: 1280px; margin: 0 auto; padding: 20px 16px 12px; }
+  .picker h1 { margin: 0 0 4px; font-size: 20px; }
+  .picker p { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+  .opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .opt { text-align: start; border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 12px 14px; transition: border-color .15s; }
+  .opt[aria-pressed="true"] { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+  .opt b { display: block; font-size: 15px; margin-bottom: 2px; }
+  .opt span { color: var(--muted); font-size: 12.5px; }
+  .opt .rec { display: inline-block; margin-inline-start: 6px; padding: 0 6px; border-radius: 99px; background: var(--primary-soft); color: var(--primary); font-size: 11px; font-weight: 700; }
+  .metrics { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+  .metrics b { color: var(--text); }
+  .theme { float: inline-end; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-size: 12px; color: var(--muted); }
+
+  /* ── إطار الأدمن ── */
+  .frame { max-width: 1280px; margin: 0 auto 32px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: grid; grid-template-columns: 64px 1fr; height: 800px; background: var(--bg); position: relative; }
+  .rail { background: var(--card); border-inline-start: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 14px; }
+  .rail i { width: 18px; height: 18px; border-radius: 5px; background: var(--line); display: block; }
+  .rail i.on { background: var(--primary); }
+  .main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  .topbar { height: 56px; flex: none; border-bottom: 1px solid var(--line); background: var(--card); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; color: var(--faint); font-size: 13px; }
+  .topbar .ph { display: flex; gap: 18px; } .topbar .ph i { width: 70px; height: 10px; border-radius: 4px; background: var(--line); display: block; }
+
+  /* رأس الصفحة المشترك: سطر واحد */
+  .ph-row { flex: none; display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--card); }
+  .avatar { width: 30px; height: 30px; border-radius: 8px; background: #fff; color: #1d4ed8; display: grid; place-items: center; font-weight: 700; font-size: 12px; flex: none; }
+  .client b { display: block; font-size: 14px; line-height: 1.2; } .client small { color: var(--muted); font-size: 12px; }
+  .sep { width: 1px; height: 22px; background: var(--line); }
+  .month-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; font-weight: 700; position: relative; }
+  .month-btn::after { content: "▾"; color: var(--muted); font-size: 11px; }
+  .menu { position: absolute; top: calc(100% + 6px); inset-inline-start: 0; z-index: 20; width: 210px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 6px; box-shadow: 0 12px 30px rgba(0,0,0,.35); display: none; }
+  .menu.open { display: block; }
+  .menu a { display: flex; justify-content: space-between; padding: 7px 10px; border-radius: 6px; color: var(--text); text-decoration: none; font-weight: 500; }
+  .menu a:hover, .menu a.on { background: var(--primary-soft); }
+  .menu a.on { color: var(--primary); font-weight: 700; }
+  .menu a span { color: var(--muted); font-size: 12px; }
+  .spacer { flex: 1; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 500; white-space: nowrap; }
+  .btn:hover { background: var(--line-soft); }
+  .btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: 700; }
+  .btn.green { background: #16a34a; border-color: #16a34a; color: #fff; font-weight: 700; }
+  .btn.ghost { border-color: transparent; color: var(--muted); }
+  .btn.danger { color: var(--late); }
+  a { text-decoration: none; }
+  .link { color: var(--muted); font-size: 13px; } .link:hover { color: var(--text); }
+
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex: none; }
+  .d-IP { background: var(--s-ip); } .d-RF { background: var(--s-rf); } .d-RT { background: var(--s-rt); } .d-PU { background: var(--s-pu); }
+  .t-IP { color: var(--s-ip); } .t-RF { color: var(--s-rf); } .t-RT { color: var(--s-rt); } .t-PU { color: var(--s-pu); }
+  .x { display: inline-block; min-width: 22px; padding: 0 6px; border-radius: 99px; background: var(--line-soft); color: var(--muted); font-size: 11.5px; font-weight: 700; text-align: center; }
+
+  .scroll { flex: 1; min-height: 0; overflow-y: auto; }
+  .view { display: none; flex: 1; min-height: 0; flex-direction: column; }
+  .view.on { display: flex; }
+
+  /* ── ١: قائمة الأيام ── */
+  .tabs { flex: none; display: flex; align-items: center; gap: 22px; padding: 0 20px; border-bottom: 1px solid var(--line); background: var(--card); height: 44px; }
+  .tab { height: 44px; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); border-bottom: 2px solid transparent; font-weight: 500; }
+  .tab.on { color: var(--text); border-bottom-color: var(--primary); font-weight: 700; }
+  .tab .x { background: transparent; padding: 0; min-width: 0; }
+  .search { margin-inline-start: auto; display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; width: 230px; color: var(--faint); font-size: 13px; }
+  .attn { margin: 14px 20px 0; display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 10px; background: var(--amber-soft); color: var(--s-rf); font-size: 13.5px; font-weight: 500; }
+  .attn .btn { margin-inline-start: auto; border-color: currentColor; color: inherit; padding: 3px 10px; }
+  .days { padding: 6px 20px 24px; }
+  .day-h { display: flex; align-items: baseline; gap: 8px; padding: 16px 4px 6px; font-size: 13px; color: var(--muted); font-weight: 500; }
+  .day-h b { color: var(--text); font-size: 14px; }
+  .day-h .late { color: var(--late); font-size: 12px; }
+  .row { width: 100%; display: grid; grid-template-columns: minmax(0,1fr) auto 128px; align-items: center; gap: 16px; padding: 11px 14px; border: 1px solid var(--line-soft); background: var(--card); text-align: start; }
+  .row + .row { border-top: 0; }
+  .grp > .row:first-child { border-radius: 10px 10px 0 0; } .grp > .row:last-child { border-radius: 0 0 10px 10px; } .grp > .row:only-child { border-radius: 10px; }
+  .row:hover { background: var(--card-2); }
+  .row .idea { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .row .meta { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+  .row .st { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 500; }
+
+  /* ── ٢: لوحة المراحل ── */
+  .board { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; padding: 16px 20px; }
+  .col { min-height: 0; display: flex; flex-direction: column; background: var(--card-2); border: 1px solid var(--line-soft); border-radius: 12px; }
+  .col-h { flex: none; padding: 12px 14px 10px; border-bottom: 1px solid var(--line-soft); }
+  .col-h div { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+  .col-h div .x { margin-inline-start: auto; }
+  .col-h small { display: block; color: var(--faint); font-size: 12px; margin-top: 2px; }
+  .col-b { flex: 1; min-height: 0; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .card { text-align: start; width: 100%; background: var(--card); border: 1px solid var(--line-soft); border-radius: 10px; padding: 10px 12px; }
+  .card:hover { border-color: var(--line); }
+  .card .when { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
+  .card .when .late { color: var(--late); }
+  .card .idea { margin: 3px 0 4px; font-weight: 500; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card .meta { font-size: 12px; color: var(--faint); }
+  .card .next { margin-top: 8px; display: inline-flex; font-size: 12.5px; font-weight: 700; color: var(--primary); }
+  .empty-col { color: var(--faint); font-size: 12.5px; text-align: center; padding: 18px 6px; }
+
+  /* ── ٣: شبكة الشهر ── */
+  .legend { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .navm { display: inline-flex; align-items: center; gap: 4px; }
+  .navm button { width: 28px; height: 28px; border-radius: 7px; color: var(--muted); } .navm button:hover { background: var(--line-soft); color: var(--text); }
+  .navm b { min-width: 112px; text-align: center; }
+  .grid-wrap { flex: 1; min-height: 0; padding: 14px 20px 20px; display: flex; flex-direction: column; }
+  .wk { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); color: var(--faint); font-size: 12px; padding: 0 2px 6px; }
+  .cal { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); grid-auto-rows: minmax(0,1fr); border: 1px solid var(--line-soft); border-radius: 12px; overflow: hidden; background: var(--line-soft); gap: 1px; }
+  .cell { background: var(--card); padding: 6px 7px; min-height: 0; display: flex; flex-direction: column; gap: 3px; position: relative; overflow: hidden; }
+  .cell.out { background: var(--card-2); }
+  .cell .n { font-size: 12.5px; color: var(--muted); font-weight: 500; }
+  .cell.today .n { color: #fff; background: var(--primary); border-radius: 99px; width: 22px; height: 22px; display: grid; place-items: center; }
+  .cell .add { position: absolute; top: 5px; inset-inline-end: 6px; opacity: 0; font-size: 12px; color: var(--primary); font-weight: 700; }
+  .cell:hover .add { opacity: 1; }
+  .chip { display: flex; align-items: center; gap: 6px; width: 100%; text-align: start; font-size: 12.5px; padding: 2px 6px; border-radius: 6px; white-space: nowrap; overflow: hidden; }
+  .chip:hover { background: var(--line-soft); }
+  .chip .t { overflow: hidden; text-overflow: ellipsis; flex: 1; }
+  .chip.late .t { color: var(--late); }
+  .more { font-size: 12px; color: var(--muted); padding: 0 6px; text-align: start; }
+
+  /* ── اللوحة الجانبية المشتركة ── */
+  .scrim { position: absolute; inset: 0; background: rgba(0,0,0,.35); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 30; }
+  .drawer { position: absolute; top: 0; bottom: 0; inset-inline-end: 0; width: 440px; background: var(--card); border-inline-start: 1px solid var(--line); z-index: 31; transform: translateX(-100%); transition: transform .22s ease; display: flex; flex-direction: column; }
+  .open .scrim { opacity: 1; pointer-events: auto; } .open .drawer { transform: none; }
+  .dr-h { padding: 16px 20px 14px; border-bottom: 1px solid var(--line); }
+  .dr-h .top { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .dr-h .top button { margin-inline-start: auto; width: 28px; height: 28px; border-radius: 7px; font-size: 18px; color: var(--muted); }
+  .dr-h h3 { margin: 6px 0 12px; font-size: 17px; line-height: 1.45; }
+  .dr-h .acts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dr-b { flex: 1; overflow-y: auto; padding: 16px 20px; display: grid; gap: 18px; align-content: start; }
+  .dr-b h4 { margin: 0 0 6px; font-size: 12.5px; color: var(--muted); font-weight: 500; }
+  .dr-b p { margin: 0; line-height: 1.7; }
+  .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .thumbs i { aspect-ratio: 1; border-radius: 8px; background: linear-gradient(135deg, #1e3a8a, #6d28d9); display: block; opacity: .8; }
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .facts div small { display: block; color: var(--muted); font-size: 12px; } .facts div b { font-size: 14px; }
+  .dr-f { border-top: 1px solid var(--line); padding: 10px 20px; display: flex; gap: 16px; }
+  .dr-f .link:last-child { margin-inline-start: auto; color: var(--late); opacity: .8; }
+  .note { max-width: 1280px; margin: -20px auto 40px; padding: 0 16px; color: var(--faint); font-size: 12px; }
+</style>
+</head>
+<body>
+
+<section class="picker">
+  <button class="theme" id="theme" type="button">فاتح / داكن</button>
+  <h1>تقويم السوشيال — ثلاثة تصاميم</h1>
+  <p>بيانات سبتمبر 2026 الحقيقية لشركة جبر سيو (23 منشوراً). «اليوم» مفترض 10 سبتمبر للعرض. اضغط أي منشور لترى لوحة التفاصيل — نفسها في الثلاثة.</p>
+  <div class="opts" role="group" aria-label="التصاميم">
+    <button class="opt" data-v="list" aria-pressed="true"><b>١ · قائمة الأيام</b><span>الأيام تحتها منشوراتها، والمكرّر يُجمع في سطر. تبويبات حالة نصّية فقط.</span></button>
+    <button class="opt" data-v="board" aria-pressed="false"><b>٢ · لوحة المراحل <span class="rec">أنصح به</span></b><span>أربعة أعمدة بالمراحل؛ كل عضو يعرف عموده، والخطوة التالية مكتوبة على البطاقة.</span></button>
+    <button class="opt" data-v="grid" aria-pressed="false"><b>٣ · تقويم الشهر</b><span>شبكة سبعة أيام كالتقويم الورقي؛ الفراغات تُرى، و«+» على اليوم يضيف له منشوراً.</span></button>
+  </div>
+  <div class="metrics" id="metrics"></div>
+</section>
+
+<div class="frame" id="frame">
+  <aside class="rail" aria-hidden="true"><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i></aside>
+  <div class="main">
+    <div class="topbar" aria-hidden="true"><span>⌂ ‹ … ‹ سبتمبر 2026</span><span class="ph"><i></i><i></i><i></i><i></i></span></div>
+
+    <!-- رأس الصفحة: سطر واحد في الثلاثة -->
+    <div class="ph-row" id="phrow">
+      <span class="avatar">JBR</span>
+      <span class="client"><b>شركة جبر سيو</b><small>تقويم المحتوى</small></span>
+      <span class="sep"></span>
+      <span id="monthSlot"></span>
+      <span class="spacer"></span>
+      <span id="legendSlot"></span>
+      <a class="link" href="#">المعرض</a><a class="link" href="#">الأرشيف</a><a class="link" href="#">سير العمل</a>
+      <button class="btn primary" type="button">+ منشور جديد</button>
+    </div>
+
+    <!-- ١ -->
+    <section class="view on" id="v-list">
+      <div class="tabs" id="tabs"></div>
+      <div class="scroll" id="listScroll">
+        <div class="attn" id="attn"></div>
+        <div class="days" id="days"></div>
+      </div>
+    </section>
+
+    <!-- ٢ -->
+    <section class="view" id="v-board"><div class="board" id="board"></div></section>
+
+    <!-- ٣ -->
+    <section class="view" id="v-grid">
+      <div class="grid-wrap">
+        <div class="wk" id="wk"></div>
+        <div class="cal" id="cal"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="تفاصيل المنشور">
+    <div class="dr-h">
+      <div class="top"><span id="drWhen"></span><span id="drSt"></span><button type="button" id="drClose" aria-label="إغلاق">×</button></div>
+      <h3 id="drTitle"></h3>
+      <div class="acts" id="drActs"></div>
+    </div>
+    <div class="dr-b" id="drBody"></div>
+    <div class="dr-f"><a class="link" href="#">صفحة المنشور</a><a class="link" href="#">تعديل</a><a class="link" href="#">نسخ الرابط</a><a class="link" href="#">أرشفة</a></div>
+  </aside>
+</div>
+<p class="note">موكب للمقارنة فقط — لا يتصل بالقاعدة. الأرقام فوق تُقاس من الصفحة نفسها لحظة العرض.</p>
+
+<script>
+// [اليوم، الحالة، النوع، القنوات، الملفات، الفكرة، الخطاف، الدعوة] — من modonty_dev كما هي.
+const RAW = [[1,"RF","POST",["FACEBOOK"],1,"مش كل محتوى بيتكتب بيحقق نتيجة","مش كل محتوى بيتكتب بيحقق نتيجة","عايز تعرف كل التفاصيل والخطوات لكتابة محتوى احترافي؟ اقرأ المقال"],[5,"IP","",["FACEBOOK"],0,"ليه منافسك بيظهر في جوجل وإنت لأ؟","عميلك بيدور عليك دلوقتي… بس هل بيلاقيك؟","ابدأ تحسين ظهور موقعك على جوجل اليوم"],[5,"IP","",["INSTAGRAM"],0,"ليش منافسك يطلع في جوجل وإنت لأ؟","عميلك يدور عليك الحين بس هل يلقاك؟","خلّ موقعك هو اللي يظهر في الوقت اللي عميلك يحتاجك فيه"],[6,"IP","",[],0,"إذا ما طلعت في جوجل عميلك بيروح لمنافسك!","إذا ما طلعت في جوجل… عميلك بيروح لمنافسك!","خلّ عميلك يلقاك قبل منافسك."],[6,"IP","POST",["FACEBOOK"],0,"إذا ما ظهرت في جوجل عميلك راح لمنافسك","إذا ما ظهرت في جوجل عميلك راح لمنافسك","خليك في أوّل صفحات جوجل"],[7,"IP","",["FACEBOOK"],0,"موقعك موجود بس لما عميل يدور عليك في جوجل مش بيلاقيك؟","موقعك موجود بس لما عميل يدور عليك في جوجل مش بيلاقيك؟","لو عايز أراجعلك موقعك اكتبلي «راجع»"],[7,"IP","",["INSTAGRAM"],0,"موقعك موجود بس العميل إذا دوّر عليك في قوقل ما يلقاك؟","موقعك موجود بس العميل إذا دوّر عليك في قوقل ما يلقاك؟","اكتبي لي كلمة «راجع» وبأرسل لك ليست مجانية"],[7,"RT","",[],3,"تصميم صور لمقال","",""],[7,"RT","",[],3,"تصميم صور لمقال","",""],[7,"RT","",[],3,"تصميم صور لمقال","",""],[7,"RT","",[],3,"تصميم صور لمقال","",""],[7,"RT","",[],3,"تصميم صور لمقال","",""],[8,"RT","",[],3,"تصميم صور لمقال","",""],[8,"RT","",[],3,"تصميم صور لمقال","",""],[8,"RT","",[],3,"تصميم صور لمقال","",""],[8,"RT","",[],3,"تصميم صور لمقال","",""],[14,"RT","",[],3,"تصميم صور لمقال","",""],[14,"RT","",[],3,"تصميم صور لمقال","",""],[14,"RT","",[],3,"تصميم صور لمقال","",""],[21,"RT","",[],3,"تصميم صور للمقال","",""],[21,"RT","",[],3,"تصميم صور مقال","",""],[21,"RT","",[],3,"تصميم صور مقال","",""],[21,"RT","",[],3,"تصميم صور لمقال","",""]];
+const TODAY = 10, Y = 2026, M = 8;
+const ST = { IP: "قيد الإنتاج", RF: "جاهز للمراجعة", RT: "جاهز للنشر", PU: "تم النشر" };
+const OWNER = { IP: "المصمّم يرفع الإبداع", RF: "المراجع يوافق أو يرفض", RT: "الميديا باير ينشر", PU: "انتهى" };
+const NEXT = { IP: "ارفع الإبداع ←", RF: "راجِع ←", RT: "انشر ←", PU: "" };
+const FMT = { POST: "بوست", VIDEO: "فيديو", CAROUSEL: "كاروسيل", STORY: "ستوري", REEL: "ريل" };
+const CH = { FACEBOOK: "فيسبوك", INSTAGRAM: "انستقرام", X: "X", TIKTOK: "تيك توك" };
+const DAYS = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const MONTHS = [["يناير",14],["فبراير",1],["مارس",6],["أبريل",16],["مايو",8],["يونيو",1],["يوليو",16],["أغسطس",22],["سبتمبر",23],["أكتوبر",4]];
+const ar = (n) => String(n); // الأدمن يكتب 2026 و14 — لا أرقام هندية هنا كي لا تختلط
+const posts = RAW.map((r, i) => ({ id: i, d: r[0], s: r[1], f: r[2], ch: r[3], a: r[4], idea: r[5], hook: r[6], cta: r[7] }));
+const files = (n) => (n === 1 ? "ملف واحد" : n === 2 ? "ملفان" : `${n} ملفات`);
+const isLate = (p) => p.s !== "PU" && p.d < TODAY;
+const dow = (d) => new Date(Date.UTC(Y, M, d)).getUTCDay();
+const norm = (t) => t.replace(/\s+/g, " ").replace(/(ال|ل)?مقال$/, "مقال").trim();
+const meta = (p) => [p.f ? FMT[p.f] : null, p.ch.length ? p.ch.map((c) => CH[c]).join("، ") : null, p.a ? files(p.a) : "بلا إبداع"].filter(Boolean).join(" · ");
+
+// المكرّر في اليوم نفسه (الفكرة نفسها والحالة نفسها) سطرٌ واحد بعدّاد — ١٤ «تصميم صور لمقال» كانت ١٤ سطراً.
+function groups(list) {
+  const out = [];
+  for (const p of list) {
+    const g = out.find((x) => x.d === p.d && x.s === p.s && norm(x.idea) === norm(p.idea));
+    if (g) g.items.push(p); else out.push({ ...p, items: [p] });
+  }
+  return out;
+}
+const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const status = (s) => `<span class="st t-${s}"><span class="dot d-${s}"></span>${ST[s]}</span>`;
+
+// رأس: الشهر
+const monthSlot = document.getElementById("monthSlot");
+function monthPicker() {
+  return `<button class="month-btn" type="button" id="mb">سبتمبر ${ar(Y)}<div class="menu" id="mm">${MONTHS.map(([n, c]) => `<a href="#" class="${n === "سبتمبر" ? "on" : ""}">${n}<span>${ar(c)}</span></a>`).join("")}</div></button>`;
+}
+function monthArrows() { return `<span class="navm"><button type="button" aria-label="الشهر السابق">›</button><b>سبتمبر ${ar(Y)}</b><button type="button" aria-label="الشهر التالي">‹</button></span>`; }
+
+// ١ — قائمة الأيام
+let tab = "all";
+function renderList() {
+  const counts = { all: posts.length }; for (const s of Object.keys(ST)) counts[s] = posts.filter((p) => p.s === s).length;
+  document.getElementById("tabs").innerHTML = [["all", "الكل"], ...Object.entries(ST)].filter(([k]) => k === "all" || counts[k] > 0)
+    .map(([k, l]) => `<button class="tab ${tab === k ? "on" : ""}" data-tab="${k}">${l} <span class="x num">${ar(counts[k])}</span></button>`).join("")
+    + `<span class="search">⌕ ابحث في الفكرة أو النص</span>`;
+  const rf = posts.filter((p) => p.s === "RF").length, late = posts.filter(isLate).length;
+  document.getElementById("attn").innerHTML = `<span>●</span> ${ar(rf)} منشور ينتظر مراجعتك · ${ar(late)} فات موعدها ولم تُنشر <button class="btn" type="button" data-tab="RF">اعرضها</button>`;
+  const list = posts.filter((p) => tab === "all" || p.s === tab);
+  const byDay = {}; for (const g of groups(list)) (byDay[g.d] ||= []).push(g);
+  document.getElementById("days").innerHTML = Object.keys(byDay).map(Number).sort((a, b) => a - b).map((d) => {
+    const gs = byDay[d]; const n = gs.reduce((s, g) => s + g.items.length, 0);
+    return `<div class="day-h"><b>${DAYS[dow(d)]} ${ar(d)} سبتمبر</b><span>${ar(n)} ${n === 1 ? "منشور" : "منشورات"}</span></div>
+      <div class="grp">${gs.map((g) => `<button class="row" data-id="${g.id}"><span class="idea">${esc(g.idea)}${g.items.length > 1 ? ` <span class="x num">×${ar(g.items.length)}</span>` : ""}</span><span class="meta">${meta(g)}</span>${status(g.s)}</button>`).join("")}</div>`;
+  }).join("");
+}
+
+// ٢ — لوحة المراحل
+function renderBoard() {
+  const sizes = Object.keys(ST).map((s) => (posts.some((p) => p.s === s) ? "minmax(0,1fr)" : "200px"));
+  document.getElementById("board").style.gridTemplateColumns = sizes.join(" ");
+  document.getElementById("board").innerHTML = Object.keys(ST).map((s) => {
+    const gs = groups(posts.filter((p) => p.s === s)).sort((a, b) => a.d - b.d);
+    const n = posts.filter((p) => p.s === s).length;
+    return `<div class="col"><div class="col-h"><div><span class="dot d-${s}"></span>${ST[s]}<span class="x num">${ar(n)}</span></div><small>${OWNER[s]}</small></div>
+      <div class="col-b">${gs.length ? gs.map((g) => `<button class="card" data-id="${g.id}">
+        <div class="when"><span>${DAYS[dow(g.d)]} ${ar(g.d)} سبتمبر</span>${isLate(g) ? `<span class="late">فات بـ${ar(TODAY - g.d)} أيام</span>` : ""}</div>
+        <div class="idea">${esc(g.idea)}${g.items.length > 1 ? ` <span class="x num">×${ar(g.items.length)}</span>` : ""}</div>
+        <div class="meta">${meta(g)}</div>${NEXT[s] ? `<span class="next">${NEXT[s]}</span>` : ""}</button>`).join("") : `<div class="empty-col">لا شيء هنا</div>`}</div></div>`;
+  }).join("");
+}
+
+// ٣ — تقويم الشهر
+function renderGrid() {
+  document.getElementById("wk").innerHTML = DAYS.map((d) => `<span>${d}</span>`).join("");
+  const first = dow(1), total = 30, cells = [];
+  for (let i = 0; i < first; i++) cells.push(`<div class="cell out"></div>`);
+  for (let d = 1; d <= total; d++) {
+    const gs = groups(posts.filter((p) => p.d === d));
+    const shown = gs.slice(0, 3);
+    cells.push(`<div class="cell ${d === TODAY ? "today" : ""}"><span class="n num">${ar(d)}</span><span class="add">+ أضف</span>
+      ${shown.map((g) => `<button class="chip" data-id="${g.id}"><span class="dot d-${g.s}"></span><span class="t">${esc(g.idea)}</span>${g.items.length > 1 ? `<span class="x num">×${ar(g.items.length)}</span>` : ""}</button>`).join("")}
+      ${gs.length > 3 ? `<span class="more">+${ar(gs.length - 3)} أخرى</span>` : ""}</div>`);
+  }
+  while (cells.length % 7) cells.push(`<div class="cell out"></div>`);
+  document.getElementById("cal").innerHTML = cells.join("");
+}
+
+// اللوحة الجانبية
+const frame = document.getElementById("frame");
+function openDrawer(id) {
+  const p = posts[id]; const g = groups(posts).find((x) => x.items.some((i) => i.id === id)); const n = g ? g.items.length : 1;
+  document.getElementById("drWhen").textContent = `${DAYS[dow(p.d)]} ${ar(p.d)} سبتمبر${isLate(p) ? " · فات الموعد" : ""}`;
+  document.getElementById("drSt").innerHTML = status(p.s);
+  document.getElementById("drTitle").textContent = p.idea + (n > 1 ? ` (×${ar(n)})` : "");
+  const acts = { RF: `<button class="btn green">موافقة</button><button class="btn danger">رفض…</button>`, IP: `<button class="btn primary">افتح الإنتاج وارفع الإبداع</button>`, RT: `<button class="btn primary">افتح النشر</button><button class="btn">إرجاع للإنتاج</button>`, PU: `<button class="btn">روابط النشر</button>` };
+  document.getElementById("drActs").innerHTML = acts[p.s];
+  document.getElementById("drBody").innerHTML = `
+    ${p.a ? `<div><h4>الإبداع · ${files(p.a)}</h4><div class="thumbs">${"<i></i>".repeat(Math.min(p.a, 3))}</div></div>` : `<div><h4>الإبداع</h4><p class="muted">لم يُرفع بعد.</p></div>`}
+    <div><h4>الخطّاف</h4><p>${esc(p.hook || "—")}</p></div>
+    <div><h4>الدعوة</h4><p>${esc(p.cta || "—")}</p></div>
+    <div class="facts"><div><small>النوع</small><b>${p.f ? FMT[p.f] : "—"}</b></div><div><small>القنوات</small><b>${p.ch.length ? p.ch.map((c) => CH[c]).join("، ") : "—"}</b></div><div><small>موعد النشر</small><b>—</b></div></div>`;
+  frame.classList.add("open");
+}
+const close = () => frame.classList.remove("open");
+document.getElementById("scrim").onclick = close; document.getElementById("drClose").onclick = close;
+document.addEventListener("keydown", (e) => e.key === "Escape" && close());
+
+// التبديل والقياس
+let view = "list";
+function setView(v) {
+  view = v; close();
+  document.querySelectorAll(".opt").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === v)));
+  document.querySelectorAll(".view").forEach((s) => s.classList.toggle("on", s.id === `v-${v}`));
+  monthSlot.innerHTML = v === "grid" ? monthArrows() : monthPicker();
+  document.getElementById("legendSlot").innerHTML = v === "grid" ? `<span class="legend">${Object.entries(ST).map(([k, l]) => `<span><span class="dot d-${k}"></span>${l}</span>`).join("")}</span>` : "";
+  const mb = document.getElementById("mb"); if (mb) mb.onclick = (e) => { e.stopPropagation(); document.getElementById("mm").classList.toggle("open"); };
+  requestAnimationFrame(measure);
+}
+document.addEventListener("click", () => document.getElementById("mm")?.classList.remove("open"));
+function measure() {
+  const top = frame.querySelector(".main").getBoundingClientRect().top;
+  const first = { list: "#days .row", board: ".card", grid: ".chip" }[view];
+  const el = document.querySelector(first);
+  const y = el ? Math.round(el.getBoundingClientRect().top - top) : 0;
+  const shown = document.querySelectorAll({ list: "#days .row", board: ".card", grid: ".chip" }[view]).length;
+  const visible = [...document.querySelectorAll({ list: "#days .row", board: ".card", grid: ".chip" }[view])].filter((e) => e.getBoundingClientRect().bottom - top <= 800).length;
+  const clicks = { list: "2 (السطر ← موافقة)", board: "2 (البطاقة ← موافقة)", grid: "2 (الشريحة ← موافقة)" }[view];
+  document.getElementById("metrics").innerHTML =
+    `<span>أوّل منشور يبدأ على بعد <b class="num">${ar(y)}px</b> من أعلى الصفحة (الحالي <b>372px</b> — مقاس من لقطة الصفحة الآن)</span>` +
+    `<span>عناصر المنشورات المرسومة <b class="num">${ar(shown)}</b> لـ23 منشوراً (الحالي 23 سطراً)</span>` +
+    `<span>ظاهر بلا تمرير <b class="num">${ar(visible)}</b></span>` +
+    `<span>للموافقة: <b>${clicks}</b> (الحالي: 3 — «+» ثم موافقة ثم تأكيد؛ هنا الإبداع ظاهر في اللوحة فلا تأكيد ثانٍ)</span>`;
+}
+
+document.querySelectorAll(".opt").forEach((b) => (b.onclick = () => setView(b.dataset.v)));
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-tab]"); if (t) { tab = t.dataset.tab; renderList(); requestAnimationFrame(measure); return; }
+  const r = e.target.closest("[data-id]"); if (r) openDrawer(Number(r.dataset.id));
+});
+document.getElementById("theme").onclick = () => {
+  const root = document.documentElement; root.dataset.theme = root.dataset.theme === "light" ? "dark" : "light";
+};
+renderList(); renderBoard(); renderGrid(); setView("list");
+</script>
+</body>
+</html>

@@ -46,14 +46,6 @@ export const STATUS_DOT: Record<SocialPostStatus, string> = {
   PUBLISHED: "bg-green-500",
 };
 
-/** الحدّ الملوّن على يمين صفّ الجدول. */
-export const STATUS_ROW_BORDER: Record<SocialPostStatus, string> = {
-  IN_PRODUCTION: "border-r-zinc-200 dark:border-r-zinc-700",
-  READY_FOR_REVIEW: "border-r-amber-400",
-  READY_TO_PUBLISH: "border-r-blue-400",
-  PUBLISHED: "border-r-green-400",
-};
-
 // ── نوع المحتوى ───────────────────────────────────────────────────────────────
 
 export const FORMAT_ORDER: readonly SocialPostFormat[] = ["VIDEO", "CAROUSEL", "POST", "STORY", "REEL"] as const;

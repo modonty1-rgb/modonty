@@ -4,7 +4,6 @@ export { getCalendarClients, type CalendarClientRow } from "./get-calendar-clien
 export { getMonthPosts } from "./get-month-posts";
 export { getMonthPostDays } from "./get-month-post-days";
 export { getYearMonthCounts } from "./get-year-month-counts";
-export { getClientStatusTotals, type StatusTotals } from "./get-client-status-totals";
 export { getPostDetail } from "./get-post-detail";
 export { getPostAuditTrail, type PostAuditRow } from "./get-post-audit-trail";
 export { getClientGallery, type GalleryPost, type GalleryAsset } from "./get-client-gallery";
