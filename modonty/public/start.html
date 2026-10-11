@@ -1,0 +1,1052 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>شوف صفحتك على مدونتي — مدونتي</title>
+<meta name="description" content="اكتب اسم نشاطك وشوف صفحتك على مدونتي ونتيجتك في جوجل قدّام عينك — وكلّمنا على واتساب.">
+<meta name="theme-color" content="#0E065A">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="/favicon.ico">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<!--
+  صفحة هبوط حملة ميتا (خالد ١٢ أكتوبر ٢٠٢٦ — التيم اعتمد الموك أب #٤ «شوف صفحتك»).
+  ملف ثابت بلا React ولا سيرفر: يُخدَم من CDN فيرسيل عبر rewrite ‎/start → /start.html (next.config.ts)،
+  فلا يحمّل شيئاً من الموقع ولا يكلّف دالّة. بلا أسعار ولا رابط دفع — كل الأزرار واتساب.
+  شكل المعاينة من صفحة الشريك الحقيقية (platform-bar · cover-hero · hero-actions · client-hero-v2).
+  الحملة تفتح الصفحة على نشاط ومدينة جاهزين: ?a=clinic&c=جدة — والمفاتيح في ACTS أسفل الملف.
+  القياس: track() يكتب في dataLayer؛ البكسل وCAPI يُركَّبان عليه حين تصل المعرّفات.
+-->
+<style>
+:root{
+  --navy:#0E065A; --blue:#3030FF; --teal:#00D8D8; --paper:#F3F2EF; --card:#FFFFFF;
+  --ink:#0E065A; --ink-2:#5B5B5B; --line:#DBDBDB; --ok:#117937; --wa:#1FA855;
+  --shadow:0 24px 48px -28px rgb(14 6 90 / .35);
+  --radius:20px;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --spring:cubic-bezier(.2,.9,.25,1.15);
+  --pc:#0E7490; /* لون الشريك في المعاينة — يتغيّر بالنشاط */
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141320; --card:#1E1D2B; --ink:#F7F7FA; --ink-2:#A9ADC1;
+    --line:#2E2C40; --blue:#5C5CFF; --ok:#3DDC84; --shadow:0 24px 48px -28px rgb(0 0 0 / .7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141320; --card:#1E1D2B; --ink:#F7F7FA; --ink-2:#A9ADC1;
+  --line:#2E2C40; --blue:#5C5CFF; --ok:#3DDC84; --shadow:0 24px 48px -28px rgb(0 0 0 / .7);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:"Tajawal",system-ui,sans-serif;background:var(--paper);color:var(--ink);font-size:17px;line-height:1.75;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+img,svg{display:block}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--teal);outline-offset:3px;border-radius:8px}
+.wrap{width:100%;max-width:1200px;margin-inline:auto;padding-inline:16px}
+@media (min-width:768px){.wrap{padding-inline:32px}}
+bdi{unicode-bidi:isolate}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* شارات «مثال» / «معاينة» */
+.ph{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;line-height:1;padding:5px 9px;border-radius:999px;background:#FFF3C4;color:#6B4E00;border:1px dashed #C9A100;white-space:nowrap}
+.ph svg{width:13px;height:13px}
+
+/* الأزرار */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:56px;padding-inline:28px;border-radius:14px;border:0;cursor:pointer;
+  font-size:17px;font-weight:800;background:var(--blue);color:#fff;box-shadow:0 16px 32px -16px rgb(48 48 255 / .7);
+  transition:transform .18s var(--ease),box-shadow .18s,background .18s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 20px 36px -16px rgb(48 48 255 / .8)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn svg{width:20px;height:20px;flex:none}
+.btn--light{background:#fff;color:var(--navy);box-shadow:0 16px 32px -16px rgb(0 0 0 / .5)}
+.btn--ghost{background:transparent;color:var(--ink);box-shadow:none;border:1.5px solid var(--line)}
+.btn--ghost:hover{border-color:var(--ink);box-shadow:none}
+.btn--wa{background:var(--wa);box-shadow:0 16px 32px -16px rgb(31 168 85 / .7)}
+
+
+/* الهيدر */
+.top{position:sticky;top:0;z-index:40;background:rgb(14 6 90 / .9);-webkit-backdrop-filter:saturate(1.3) blur(10px);backdrop-filter:saturate(1.3) blur(10px);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:21px}
+.brand svg{width:32px;height:32px}
+.top .btn{height:40px;padding-inline:16px;font-size:15px;border-radius:11px;background:rgb(255 255 255 / .1);box-shadow:none;border:1px solid rgb(255 255 255 / .2)}
+.top .btn:hover{background:rgb(255 255 255 / .18)}
+
+/* ══════════ الهيرو: ورشة البناء ══════════ */
+.studio{
+  position:relative;color:#fff;overflow:hidden;
+  background:
+    radial-gradient(60% 50% at 0% 0%, rgb(48 48 255 / .45), transparent 70%),
+    radial-gradient(50% 60% at 100% 100%, rgb(0 216 216 / .18), transparent 70%),
+    linear-gradient(rgb(0 216 216 / .07) 1px, transparent 1px) 0 0/32px 32px,
+    linear-gradient(90deg, rgb(0 216 216 / .07) 1px, transparent 1px) 0 0/32px 32px,
+    var(--navy);
+  padding-block:28px 48px;
+}
+@media (min-width:1024px){.studio{padding-block:56px 80px}}
+.studio .wrap{display:grid;gap:32px;align-items:start;grid-template-columns:minmax(0,1fr)}
+.studio .wrap > *{min-width:0}
+@media (min-width:1024px){.studio .wrap{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:56px;align-items:center}}
+
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--teal);padding:6px 12px;border-radius:999px;background:rgb(0 216 216 / .1);border:1px solid rgb(0 216 216 / .3)}
+.kicker svg{width:16px;height:16px}
+.studio h1{font-size:clamp(32px,8.4vw,56px);line-height:1.22;font-weight:900;margin-block:16px 12px;text-wrap:balance}
+.studio h1 em{font-style:normal;color:var(--teal)}
+.studio .lede{font-size:clamp(16.5px,2vw,19px);color:#C8CBF5;max-width:40ch}
+
+/* بطاقة النموذج */
+.builder{margin-top:26px;border-radius:24px;padding:20px;background:rgb(255 255 255 / .06);border:1px solid rgb(255 255 255 / .12);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+@media (min-width:768px){.builder{padding:26px}}
+.field + .field{margin-top:18px}
+.flabel{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px;font-weight:800;margin-bottom:8px}
+.flabel small{font-weight:500;color:#A9ADE0;font-size:13px}
+.name-box{position:relative}
+.name-box input{
+  width:100%;height:60px;border-radius:16px;border:2px solid transparent;background:#fff;color:#14123A;
+  padding-inline:18px 52px;font-size:20px;font-weight:800;outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.name-box input::placeholder{color:#9A9CB8;font-weight:500}
+.name-box input:focus{border-color:var(--teal);box-shadow:0 0 0 6px rgb(0 216 216 / .18)}
+.name-box .count{position:absolute;inset-inline-end:16px;top:50%;transform:translateY(-50%);font-size:12px;color:#8C8FAE;font-weight:700}
+
+.acts{display:flex;flex-wrap:wrap;gap:8px;border:0}
+.act{position:relative}
+.act input{position:absolute;opacity:0;inset:0;pointer-events:none}
+.act span{
+  display:inline-flex;align-items:center;gap:7px;height:42px;padding-inline:13px;border-radius:12px;cursor:pointer;
+  font-size:15px;font-weight:700;background:rgb(255 255 255 / .07);border:1px solid rgb(255 255 255 / .16);color:#E6E7FF;
+  transition:background .18s,border-color .18s,transform .18s var(--spring),color .18s;
+}
+.act span svg{width:18px;height:18px;flex:none;opacity:.85}
+.act span:hover{background:rgb(255 255 255 / .13)}
+.act input:checked + span{background:#fff;color:var(--navy);border-color:#fff;transform:translateY(-1px)}
+.act input:checked + span svg{color:var(--blue);opacity:1}
+.act input:focus-visible + span{outline:3px solid var(--teal);outline-offset:2px}
+.other-box{margin-top:10px;display:none}
+.other-box.on{display:block}
+.other-box input,.city-box select{
+  width:100%;height:50px;border-radius:14px;border:2px solid transparent;background:#fff;color:#14123A;padding-inline:16px;font-size:17px;font-weight:700;outline:none
+}
+.other-box input:focus,.city-box select:focus{border-color:var(--teal)}
+.row2{display:grid;gap:12px;margin-top:20px;align-items:end}
+@media (min-width:560px){.row2{grid-template-columns:1fr auto}}
+.city-box{position:relative}
+.city-box select{-webkit-appearance:none;appearance:none;padding-inline-start:44px;cursor:pointer}
+.city-box svg{position:absolute;inset-inline-start:14px;bottom:15px;width:20px;height:20px;color:var(--blue);pointer-events:none}
+.go{height:50px;border-radius:14px;background:var(--teal);color:var(--navy);box-shadow:0 14px 28px -14px rgb(0 216 216 / .8)}
+.go:hover{box-shadow:0 18px 32px -14px rgb(0 216 216 / .9)}
+
+.buildlog{margin-top:18px;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;color:#A9ADE0;list-style:none}
+.buildlog li{display:inline-flex;align-items:center;gap:6px;transition:color .25s}
+.buildlog .dot{width:18px;height:18px;border-radius:50%;border:1.5px solid rgb(255 255 255 / .3);display:grid;place-items:center;transition:background .25s,border-color .25s,transform .3s var(--spring)}
+.buildlog .dot svg{width:11px;height:11px;color:var(--navy);opacity:0;transition:opacity .2s}
+.buildlog li.done{color:#fff}
+.buildlog li.done .dot{background:var(--teal);border-color:var(--teal);transform:scale(1.08)}
+.buildlog li.done .dot svg{opacity:1}
+.trust-line{margin-top:16px;display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:#C8CBF5}
+.trust-line span{display:inline-flex;align-items:center;gap:6px}
+.trust-line svg{width:16px;height:16px;color:var(--teal)}
+
+/* ── إطار المعاينة (مخطّط هندسي) ── */
+.stage{position:relative;padding:18px 8px 8px}
+@media (min-width:768px){.stage{padding:26px 22px 22px}}
+.stage .tick{position:absolute;width:22px;height:22px;border-color:var(--teal);border-style:solid;opacity:.7}
+.stage .t1{top:0;inset-inline-start:0;border-width:2px 0 0 2px}
+.stage .t2{top:0;inset-inline-end:0;border-width:2px 2px 0 0}
+.stage .t3{bottom:0;inset-inline-start:0;border-width:0 0 2px 2px}
+.stage .t4{bottom:0;inset-inline-end:0;border-width:0 2px 2px 0}
+[dir="rtl"] .stage .t1{border-width:2px 2px 0 0}
+[dir="rtl"] .stage .t2{border-width:2px 0 0 2px}
+[dir="rtl"] .stage .t3{border-width:0 2px 2px 0}
+[dir="rtl"] .stage .t4{border-width:0 0 2px 2px}
+.stage-top{position:absolute;top:-4px;inset-inline:40px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:#8F94D6;font-weight:700;transform:translateY(-50%)}
+.stage-top .ph{background:#FFF3C4}
+.stamp{
+  position:absolute;z-index:5;inset-inline-start:-6px;bottom:28%;
+  display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:14px;
+  background:var(--teal);color:var(--navy);font-weight:900;font-size:15px;line-height:1.3;
+  box-shadow:0 18px 36px -14px rgb(0 216 216 / .7);transform:rotate(-4deg) scale(.6);opacity:0;
+  transition:transform .5s var(--spring),opacity .3s;pointer-events:none;max-width:220px
+}
+.stamp svg{width:20px;height:20px;flex:none}
+.stamp small{display:block;font-weight:700;font-size:11.5px;opacity:.75}
+.stage.is-built .stamp{opacity:1;transform:rotate(-4deg) scale(1)}
+@media (max-width:640px){.stamp{bottom:auto;top:52px;inset-inline-start:auto;inset-inline-end:2px;font-size:13px;padding:8px 11px}}
+
+.browser{position:relative;border-radius:16px;background:#fff;color:#16151d;overflow:hidden;box-shadow:0 40px 80px -36px rgb(0 0 0 / .7),0 0 0 1px rgb(255 255 255 / .08)}
+.bbar{display:flex;align-items:center;gap:10px;height:40px;padding-inline:12px;background:#ECEBF2;position:relative}
+.bbar .dots{display:flex;gap:6px}
+.bbar .dots i{width:10px;height:10px;border-radius:50%;background:#C9C7D6}
+.bbar .url{flex:1;min-width:0;height:26px;border-radius:999px;background:#fff;display:flex;align-items:center;gap:6px;padding-inline:12px;font-size:12.5px;color:#4d5156;direction:ltr;overflow:hidden;white-space:nowrap}
+.bbar .url svg{width:12px;height:12px;flex:none;color:#117937}
+.bbar .url b{color:#16151d;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+.bbar .load{position:absolute;bottom:0;inset-inline-start:0;height:2px;width:0;background:var(--teal);transition:width .25s}
+
+/* معاينة صفحة الشريك — تحاكي الصفحة الحقيقية */
+.pv{position:relative;transition:filter .3s,opacity .3s}
+.stage.is-building .pv{filter:saturate(.3) blur(1.5px);opacity:.55}
+.scan{position:absolute;inset-inline:0;top:0;height:80px;pointer-events:none;opacity:0;z-index:3;
+  background:linear-gradient(to bottom,transparent,rgb(0 216 216 / .25) 70%,rgb(0 216 216 / .9) 98%,transparent)}
+.stage.is-building .scan{opacity:1;animation:scan 1.2s linear infinite}
+@keyframes scan{from{transform:translateY(-80px)}to{transform:translateY(560px)}}
+
+.pv-plat{display:flex;align-items:center;gap:8px;height:30px;padding-inline:12px;background:#0b0d1f;color:#c9ccdf;font-size:11px}
+.pv-plat .m{display:flex;align-items:center;gap:5px;font-weight:800;color:#fff}
+.pv-plat .m svg{width:16px;height:16px}
+.pv-plat .sep{width:1px;height:10px;background:rgb(255 255 255 / .2)}
+.pv-plat .vb{display:inline-flex;align-items:center;gap:4px}
+.pv-plat .vb svg{width:12px;height:12px;color:var(--teal)}
+.pv-plat .end{margin-inline-start:auto}
+.pv-head{display:flex;align-items:center;gap:10px;height:48px;padding-inline:14px;border-bottom:1px solid #EEEDF3;background:#fff}
+.pv-head .lg{width:28px;height:28px;border-radius:8px;background:var(--pc);color:#fff;display:grid;place-items:center;font-weight:900;font-size:15px;flex:none;transition:background .4s}
+.pv-head .nm{font-weight:900;font-size:14px;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pv-head nav{margin-inline-start:auto;display:flex;gap:14px;font-size:12px;color:#5f6070}
+.pv-head nav b{color:var(--pc);font-weight:800}
+@media (max-width:480px){.pv-head nav span{display:none}}
+
+.pv-cover{position:relative;height:118px;overflow:hidden;
+  background:
+    radial-gradient(420px 220px at 88% -10%,rgba(0,216,216,.45),transparent 60%),
+    repeating-linear-gradient(45deg,rgba(255,255,255,.04) 0 14px,transparent 14px 28px),
+    linear-gradient(135deg,#0E065A,#2422b8 55%,var(--pc));
+  transition:background .5s}
+@media (min-width:768px){.pv-cover{height:140px}}
+.pv-cover .wm{position:absolute;inset-inline-start:22px;top:50%;width:120px;height:120px;transform:translateY(-50%) rotate(-8deg);color:#fff;opacity:.16}
+.pv-band{padding:0 16px 14px;display:flex;flex-direction:column;gap:12px}
+@media (min-width:640px){.pv-band{flex-direction:row;align-items:flex-end;justify-content:space-between;padding:0 20px 16px}}
+.pv-who{display:flex;align-items:flex-end;gap:14px;min-width:0}
+.pv-ava{position:relative;z-index:2;width:68px;height:68px;margin-top:-30px;border-radius:18px;background:var(--pc);color:#fff;display:grid;place-items:center;font-weight:900;font-size:30px;flex:none;border:3px solid #fff;box-shadow:0 10px 20px -10px rgb(0 0 0 / .4);transition:background .4s}
+.pv-ava .vb{position:absolute;bottom:-6px;inset-inline-start:-6px;width:22px;height:22px;border-radius:50%;background:var(--teal);border:2px solid #fff;display:grid;place-items:center}
+.pv-ava .vb svg{width:12px;height:12px;color:#0E065A}
+.pv-txt{min-width:0;padding-bottom:2px}
+.pv-line{font-size:12.5px;color:#5f6070;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-line b{color:#16151d;font-weight:900}
+.pv-slogan{font-size:21px;font-weight:900;line-height:1.35;margin-top:2px;text-wrap:balance}
+@media (min-width:768px){.pv-slogan{font-size:24px}}
+.pv-acts{display:flex;gap:8px;flex-wrap:wrap;flex:none}
+.pv-acts span{display:inline-flex;align-items:center;gap:6px;height:36px;padding-inline:14px;border-radius:999px;font-size:13px;font-weight:800;white-space:nowrap}
+.pv-acts svg{width:15px;height:15px}
+.pv-acts .p{background:var(--pc);color:#fff;transition:background .4s}
+.pv-acts .s{border:1px solid #D9D8E2;color:#16151d}
+.pv-acts .s svg{color:var(--wa)}
+.pv-sec{padding:12px 16px 4px;border-top:1px solid #F0EFF4}
+@media (min-width:640px){.pv-sec{padding-inline:20px}}
+.pv-sec h4{font-size:12.5px;font-weight:800;color:#5f6070;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.pv-sec h4::before{content:"";width:16px;height:2px;border-radius:2px;background:var(--teal)}
+.pv-svcs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;list-style:none}
+.pv-svcs li{border-radius:10px;padding:9px 10px;font-size:12.5px;font-weight:800;line-height:1.4;background:color-mix(in srgb,var(--pc) 9%,#fff);color:color-mix(in srgb,var(--pc) 70%,#000);transition:background .4s}
+.pv-posts{list-style:none;display:grid;gap:8px;padding-bottom:14px}
+@media (min-width:640px){.pv-posts{grid-template-columns:1fr 1fr}}
+.pv-posts li{display:flex;gap:10px;align-items:center}
+.pv-posts .th{width:46px;height:46px;border-radius:10px;flex:none;background:linear-gradient(135deg,var(--pc),#0E065A);position:relative;overflow:hidden}
+.pv-posts .th::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.08) 0 6px,transparent 6px 12px)}
+.pv-posts p{font-size:12.5px;font-weight:700;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ghost{color:#9A9CB8!important;font-style:normal}
+.bump{animation:bump .35s var(--spring)}
+@keyframes bump{40%{transform:scale(1.035)}}
+
+/* ══════════ الشريط: نتيجة جوجل + أفكار المقالات ══════════ */
+section.block{padding-block:64px}
+@media (min-width:1024px){section.block{padding-block:96px}}
+.eyebrow{font-size:14px;font-weight:800;color:var(--blue);display:inline-flex;align-items:center;gap:8px;margin-bottom:10px}
+.eyebrow::before{content:"";width:22px;height:2px;border-radius:2px;background:var(--teal)}
+h2.title{font-size:clamp(27px,4.8vw,42px);line-height:1.3;font-weight:900;text-wrap:balance;max-width:22ch}
+h2.title .nm{color:var(--blue)}
+.sub{margin-top:12px;color:var(--ink-2);max-width:58ch}
+
+.twin{margin-top:36px;display:grid;gap:22px;grid-template-columns:minmax(0,1fr)}
+.twin > *,.serp,.r .site,.r .site > span{min-width:0}
+@media (min-width:1024px){.twin{grid-template-columns:1.05fr .95fr;gap:28px;align-items:start}}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.panel-h h3{font-size:19px;font-weight:900;display:flex;align-items:center;gap:8px}
+.panel-h h3 svg{width:22px;height:22px;color:var(--blue)}
+
+.serp{border-radius:22px;background:#fff;color:#202124;padding:18px;border:1px solid var(--line);box-shadow:var(--shadow)}
+@media (min-width:768px){.serp{padding:24px}}
+.sbar{display:flex;align-items:center;gap:10px;height:50px;border-radius:999px;border:1px solid #DFE1E5;padding-inline:16px;box-shadow:0 2px 6px rgb(32 33 36 / .1)}
+.sbar svg{width:19px;height:19px;color:#5f6368;flex:none}
+.sbar .q{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.sbar .caret{width:2px;height:22px;background:var(--blue);flex:none;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.sbar .gd{margin-inline-start:auto;display:flex;gap:3px;flex:none}
+.sbar .gd i{width:6px;height:6px;border-radius:50%}
+.stabs{display:flex;gap:18px;font-size:13px;color:#5f6368;padding:10px 6px 8px;border-bottom:1px solid #EBEBEB}
+.stabs b{color:#1a0dab;border-bottom:2px solid #1a0dab;padding-bottom:6px}
+.sres{list-style:none;margin-top:14px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.r .site > span:not(.fav){flex:1}
+.r{position:relative;transition:opacity .4s,transform .5s var(--spring)}
+.r .site{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#4d5156}
+.r .fav{width:26px;height:26px;border-radius:50%;background:#F1F3F4;display:grid;place-items:center;flex:none}
+.r .fav svg{width:16px;height:16px}
+.r .site b{display:block;color:#202124;font-weight:500;font-size:13.5px;line-height:1.3}
+.r .site .u{display:block;direction:ltr;text-align:right;font-size:12px;line-height:1.3;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r .t{display:block;margin-top:6px;font-size:18px;font-weight:500;color:#1a0dab;line-height:1.45}
+.r .s{font-size:14px;color:#4d5156;line-height:1.65;margin-top:2px}
+.r--me{padding:14px;margin-inline:-8px;border-radius:16px;background:linear-gradient(0deg,rgb(0 216 216 / .06),rgb(0 216 216 / .06)),#fff;box-shadow:0 0 0 2px var(--teal)}
+.r--me .me{position:absolute;top:-11px;inset-inline-end:14px;font-size:12px;font-weight:900;background:var(--navy);color:var(--teal);padding:3px 10px;border-radius:999px}
+.r--bar .b{height:10px;border-radius:9px;background:#EEF0F2}
+.r--bar .b + .b{margin-top:8px;width:70%}
+.serp.is-typing .r--me,.serp.is-typing .r--p{opacity:0;transform:translateY(8px)}
+.note{margin-top:12px;font-size:13.5px;color:var(--ink-2);display:flex;gap:8px;align-items:flex-start}
+.note svg{width:17px;height:17px;flex:none;margin-top:4px;color:var(--ink-2)}
+
+.ideas{list-style:none;display:grid;gap:12px;counter-reset:i}
+.idea{position:relative;border-radius:18px;background:var(--card);border:1px solid var(--line);padding:18px 18px 16px;overflow:hidden;transition:transform .25s var(--ease),box-shadow .25s,border-color .25s}
+.idea:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--pc) 45%,var(--line))}
+.idea::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:4px;background:linear-gradient(var(--pc),var(--teal));transition:background .4s}
+.idea .n{font-size:12.5px;font-weight:800;color:var(--ink-2);display:flex;align-items:center;gap:8px}
+.idea .n i{font-style:normal;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--navy);color:var(--teal);font-weight:900;font-size:13px}
+.idea h4{margin-top:8px;font-size:18px;font-weight:900;line-height:1.5;text-wrap:pretty}
+.idea .f{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}
+.idea .f span{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--paper);color:var(--ink-2)}
+.idea .f svg{width:14px;height:14px}
+.idea .f .wa svg{color:var(--wa)}
+.ideas.is-swap .idea{animation:rise .5s var(--spring) both}
+.ideas.is-swap .idea:nth-child(2){animation-delay:.08s}
+.ideas.is-swap .idea:nth-child(3){animation-delay:.16s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+
+/* ══════════ «اللي شفته = اللي تاخذه» ══════════ */
+.inc{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.inc::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(rgb(0 216 216 / .06) 1px,transparent 1px) 0 0/32px 32px,linear-gradient(90deg,rgb(0 216 216 / .06) 1px,transparent 1px) 0 0/32px 32px}
+.inc .wrap{position:relative}
+.inc .eyebrow{color:var(--teal)}
+.inc .sub{color:#C8CBF5}
+.inc-grid{margin-top:36px;display:grid;gap:12px;list-style:none}
+@media (min-width:700px){.inc-grid{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1024px){.inc-grid{grid-template-columns:repeat(3,1fr);gap:16px}}
+.inc-grid li{border-radius:18px;padding:20px;background:rgb(255 255 255 / .05);border:1px solid rgb(255 255 255 / .1);display:flex;gap:14px;align-items:flex-start}
+.inc-grid .ic{width:44px;height:44px;border-radius:13px;background:rgb(0 216 216 / .12);color:var(--teal);display:grid;place-items:center;flex:none}
+.inc-grid .ic svg{width:22px;height:22px}
+.inc-grid b{display:block;font-size:17px;font-weight:800;line-height:1.45}
+.inc-grid small{display:block;margin-top:4px;color:#A9ADE0;font-size:14px;line-height:1.6}
+.inc-grid .seen{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;font-weight:800;color:var(--teal)}
+.inc-grid .seen svg{width:14px;height:14px}
+
+
+/* ══════════ من معاينة إلى حقيقية ══════════ */
+.steps{margin-top:40px;display:grid;gap:14px;list-style:none}
+@media (min-width:900px){.steps{grid-template-columns:repeat(3,1fr);gap:22px}}
+.step{position:relative;padding:26px;border-radius:var(--radius);background:var(--card);border:1px solid var(--line)}
+.step .n{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--navy);color:var(--teal);font-weight:900;font-size:21px;margin-bottom:16px}
+.step h3{font-size:19px;font-weight:800;line-height:1.45}
+.step p{margin-top:6px;color:var(--ink-2);font-size:16px}
+@media (min-width:900px){.step:not(:last-child)::after{content:"";position:absolute;top:48px;inset-inline-end:-22px;width:22px;height:2px;background:repeating-linear-gradient(to left,var(--blue) 0 6px,transparent 6px 11px)}}
+.team{margin-top:18px;display:flex;align-items:center;gap:16px;border-radius:var(--radius);padding:20px 22px;background:var(--card);border:1px solid var(--line)}
+.team .av{width:54px;height:54px;border-radius:16px;background:var(--navy);color:var(--teal);display:grid;place-items:center;font-weight:900;font-size:22px;flex:none}
+.team p{color:var(--ink-2);font-size:15.5px}
+.team b{color:var(--ink);font-size:17px}
+
+/* ══════════ الأسئلة ══════════ */
+.faq{margin-top:32px;display:grid;gap:12px;max-width:820px}
+.faq details{border-radius:16px;background:var(--card);border:1px solid var(--line);transition:border-color .2s}
+.faq details[open]{border-color:var(--blue)}
+.faq summary{list-style:none;cursor:pointer;padding:19px 22px;font-weight:800;font-size:17.5px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq .pm{width:30px;height:30px;border-radius:9px;background:var(--paper);display:grid;place-items:center;flex:none;transition:transform .25s,background .25s}
+.faq .pm svg{width:16px;height:16px}
+.faq details[open] .pm{transform:rotate(45deg);background:var(--blue);color:#fff}
+.faq .a{padding:0 22px 20px;color:var(--ink-2);font-size:16.5px}
+.faq .a .ph{margin-inline-start:6px;vertical-align:middle}
+
+/* ══════════ «جاهز تخليها حقيقية؟» ══════════ */
+.final{padding-block:8px 96px}
+.final-card{position:relative;overflow:hidden;border-radius:32px;padding:40px 20px;color:#fff;display:grid;gap:30px;align-items:center;
+  background:radial-gradient(70% 90% at 0% 120%, rgb(0 216 216 / .45), transparent 60%),linear-gradient(160deg,var(--blue),var(--navy) 75%)}
+@media (min-width:900px){.final-card{grid-template-columns:1.1fr .9fr;padding:64px 56px;gap:48px}}
+.final-card h2{font-size:clamp(30px,5.4vw,50px);font-weight:900;line-height:1.25;text-wrap:balance}
+.final-card p{margin-top:12px;color:#D9DBFF;font-size:18px}
+.final-actions{margin-top:26px;display:flex;flex-wrap:wrap;gap:12px}
+.final-actions .btn--ghost{color:#fff;border-color:rgb(255 255 255 / .35)}
+.final-actions .btn--ghost:hover{border-color:#fff}
+@media (max-width:520px){.final-actions .btn{width:100%}}
+.final-sub{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:#C8CBF5}
+.final-sub span{display:inline-flex;align-items:center;gap:6px}
+.final-sub svg{width:16px;height:16px;color:var(--teal)}
+/* بطاقة «من معاينة إلى حقيقية» */
+.real{position:relative;justify-self:center;width:100%;max-width:380px}
+.real-card{border-radius:22px;background:#fff;color:#16151d;overflow:hidden;box-shadow:0 30px 60px -24px rgb(0 0 0 / .55);transform:rotate(-2deg);transition:transform .5s var(--spring)}
+.real:hover .real-card{transform:rotate(0)}
+.real-card .cv{height:86px;background:radial-gradient(260px 140px at 88% -10%,rgba(0,216,216,.45),transparent 60%),linear-gradient(135deg,#0E065A,#2422b8 55%,var(--pc))}
+.real-card .bd{padding:0 18px 18px;display:flex;gap:12px;align-items:flex-end}
+.real-card .av{width:58px;height:58px;margin-top:-26px;border-radius:16px;background:var(--pc);color:#fff;border:3px solid #fff;display:grid;place-items:center;font-weight:900;font-size:26px;flex:none}
+.real-card .nm{font-weight:900;font-size:18px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.real-card .mt{font-size:13px;color:#5f6070;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.real-card .bd > div{min-width:0}
+.real-tag{position:absolute;top:-14px;inset-inline-end:-6px;z-index:2;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;padding:6px 12px;border-radius:999px;background:#FFF3C4;color:#6B4E00;transform:rotate(5deg);border:1px dashed #C9A100}
+.real-tag s{opacity:.7}
+.real-tag b{color:var(--ok)}
+
+footer{border-top:1px solid var(--line);padding-block:28px calc(120px + env(safe-area-inset-bottom,0px));color:var(--ink-2);font-size:14px}
+@media (min-width:768px){footer{padding-bottom:28px}}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;align-items:center}
+
+.top .btn svg{width:18px;height:18px}
+.dock .btn{gap:6px}
+.dock .btn svg{width:18px;height:18px}
+/* سفاري قبل ١٦٫٢ (ومتصفّحات التطبيقات القديمة) بلا color-mix — ألوان ثابتة بدلها */
+@supports not (color: color-mix(in srgb, red, blue)){
+  .pv-svcs li{background:#EEF4F7;color:#163A47}
+  .idea:hover{border-color:var(--blue)}
+}
+
+/* زرّ الجوال الثابت */
+.dock{position:fixed;inset-inline:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;gap:10px;align-items:center;padding:10px;border-radius:18px;background:var(--navy);color:#fff;
+  box-shadow:0 20px 40px -12px rgb(14 6 90 / .6);transform:translateY(calc(100% + 40px));transition:transform .35s var(--spring)}
+.dock.is-on{transform:none}
+.dock .mono{width:40px;height:40px;border-radius:12px;background:var(--pc);display:grid;place-items:center;font-weight:900;font-size:19px;flex:none;transition:background .4s}
+.dock .txt{flex:1;min-width:0;font-size:12.5px;line-height:1.4;color:#C8CBF5}
+.dock .txt b{display:block;font-size:14.5px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dock .btn{height:46px;padding-inline:16px;font-size:15px;flex:none}
+@media (min-width:768px){.dock{display:none}}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M19 12H5m0 0 6-6m-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6L12 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.8 12.2 2.3 2.3 4.2-4.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.2A9.8 9.8 0 0 0 3.6 17l-1.3 4.8 4.9-1.3A9.8 9.8 0 1 0 12 2.2Zm0 17.8c-1.5 0-3-.4-4.2-1.2l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20Zm4.4-6c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.8 1c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3c-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.4-.2Z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><path d="M4 6.5h16V20H4zM4 10.5h16M8.5 3.5v4M15.5 3.5v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5.5 4h3.5l1.8 4.6-2.3 1.4a11 11 0 0 0 5.5 5.5l1.4-2.3 4.6 1.8v3.5a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 3.5 6.2 2 2 0 0 1 5.5 4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5M10 13h6M10 17h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-page" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 8.5h18M7 13h5M7 16.5h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9.3v5.4l4.5-2.7z" fill="currentColor"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="17.5" cy="5.5" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="6.5" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="18.5" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m8.7 10.8 6.6-4M8.7 13.2l6.6 4" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 9.5h7M8.5 12.5h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24"><path d="m4 20 11-11M14 4v3M19.5 6.5l-2 2M20 12h-3M12 3.5 13 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m15 9-2-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="m15.5 8.5-2 5-5 2 2-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <!-- أيقونات الأنشطة -->
+    <symbol id="a-clinic" viewBox="0 0 24 24"><path d="M7 3c-2.5 0-4 2-4 4.5 0 3 1.5 4.5 2 7 .5 2.5 1 6.5 2.5 6.5S9.5 17 12 17s3 4 4.5 4 2-4 2.5-6.5c.5-2.5 2-4 2-7C21 5 19.5 3 17 3c-2 0-3 1-5 1S9 3 7 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="a-food" viewBox="0 0 24 24"><path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 21V3c-2.5 1.5-4 4-4 8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="a-salon" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="17" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.5 8.5 20 18M8.5 15.5 20 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="a-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7M5 9.5V20h14V9.5M10 20v-6h4v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="a-car" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L4 16.8 7.2 20l5.3-5.3a4 4 0 0 0 5.2-5.4l-2.4 2.4-2.6-.6-.6-2.6 2.4-2.4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="a-clean" viewBox="0 0 24 24"><path d="M11 3l1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8L11 3ZM18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="a-law" viewBox="0 0 24 24"><path d="M12 4v16M7.5 20h9M5 7h14M5 7l-3 6a3 3 0 0 0 6 0L5 7Zm14 0-3 6a3 3 0 0 0 6 0l-3-6Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="a-store" viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="a-build" viewBox="0 0 24 24"><path d="M3 18.5h18M5 18.5v-3a7 7 0 0 1 14 0v3M10 8.8V5h4v3.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="a-other" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="18.5" cy="12" r="1.8" fill="currentColor"/></symbol>
+    <symbol id="arches" viewBox="20 36 56 40"><path fill="none" stroke="currentColor" stroke-width="5.4" d="M71.7 74.6V50.2a10.9 10.9 0 0 0-21.7 0v24.4M50 74.6V50.2a10.9 10.9 0 0 0-21.7 0v13.6"/></symbol>
+    <symbol id="logo" viewBox="14.67 20.9 70.65 70.65">
+        <path fill="#3030FF" d="M79.36,91.55H20.64c-3.26,0-5.91-2.64-5.91-5.91V26.81c0-3.26,2.64-5.91,5.91-5.91h58.71c3.26,0,5.91,2.64,5.91,5.91v58.83C85.26,88.9,82.62,91.55,79.36,91.55z"/>
+        <rect x="25.59" y="69.22" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -42.5775 41.0813)" fill="#F3F3F3" width="5.42" height="5.42"/>
+        <path fill="#F3F3F3" d="M74.41,50.23v24.42h-5.43V50.23c0-4.49-3.64-8.14-8.13-8.14c-4.5,0-8.14,3.65-8.14,8.14v24.42h-5.42V50.23c0-4.49-3.65-8.14-8.14-8.14c-4.5,0-8.14,3.65-8.14,8.14V63.8h-5.42V50.23c0-0.92,0.09-1.83,0.27-2.72c0.4-2,1.25-3.84,2.44-5.42c0.77-1.02,1.68-1.93,2.72-2.71c2.26-1.7,5.08-2.72,8.14-2.72c3.05,0,5.86,1.01,8.14,2.72c1.02,0.76,1.93,1.68,2.71,2.71c0.77-1.02,1.68-1.93,2.72-2.71c2.27-1.7,5.08-2.72,8.14-2.72c3.05,0,5.86,1.01,8.13,2.72c1.03,0.76,1.95,1.68,2.72,2.71c1.18,1.58,2.03,3.42,2.45,5.42C74.31,48.4,74.41,49.31,74.41,50.23z"/>
+      </symbol>
+  </defs>
+</svg>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="https://www.modonty.com" aria-label="مدونتي">
+      <svg aria-hidden="true"><use href="#logo"/></svg>
+      مدونتي
+    </a>
+    <a class="btn" href="https://wa.me/966543222242" data-wa data-cta="header" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>كلّمنا واتساب</a>
+  </div>
+</header>
+
+<main>
+<!-- ══════════ الهيرو: اكتب اسمك وشوف صفحتك ══════════ -->
+<section class="studio" aria-labelledby="h-hero">
+  <div class="wrap">
+    <div>
+      <span class="kicker"><svg aria-hidden="true"><use href="#i-eye"/></svg>شوفها قبل ما تقرّر</span>
+      <h1 id="h-hero">اكتب اسم نشاطك…<br>وشوف <em>صفحتك على مدونتي</em> الحين</h1>
+      <p class="lede">صفحة تعرّف بنشاطك، ونتيجة في جوجل باسمك، ومقالات تجاوب زبونك — نركّبها لك قدّام عينك في ثواني.</p>
+
+      <form class="builder" id="builder" novalidate>
+        <div class="field">
+          <label class="flabel" for="f-name">اسم نشاطك <small>مثل ما تبغاه يظهر للزبون</small></label>
+          <div class="name-box">
+            <input id="f-name" name="name" type="text" maxlength="40" autocomplete="organization" placeholder="مثال: عيادة بسمة الأسنان" enterkeyhint="done">
+            <span class="count" id="f-count" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <fieldset class="field" style="border:0">
+          <legend class="flabel">وش نشاطك؟</legend>
+          <div class="acts" id="acts" role="radiogroup" aria-label="نوع النشاط"></div>
+          <div class="other-box" id="other-box">
+            <label class="sr" for="f-other">اكتب نشاطك</label>
+            <input id="f-other" type="text" maxlength="28" placeholder="اكتب نشاطك — مثال: مركز تدريب">
+          </div>
+        </fieldset>
+
+        <div class="row2">
+          <div class="city-box">
+            <label class="flabel" for="f-city">المدينة</label>
+            <select id="f-city"></select>
+            <svg aria-hidden="true"><use href="#i-pin"/></svg>
+          </div>
+          <button class="btn go" type="submit" data-cta="build">
+            <svg aria-hidden="true"><use href="#i-wand"/></svg>
+            ابنِ معاينتي
+          </button>
+        </div>
+
+        <ol class="buildlog" id="buildlog" aria-hidden="true">
+          <li><span class="dot"><svg><use href="#i-check"/></svg></span>الغلاف واللون</li>
+          <li><span class="dot"><svg><use href="#i-check"/></svg></span>الاسم والشعار</li>
+          <li><span class="dot"><svg><use href="#i-check"/></svg></span>الخدمات</li>
+          <li><span class="dot"><svg><use href="#i-check"/></svg></span>نتيجتك في جوجل</li>
+          <li><span class="dot"><svg><use href="#i-check"/></svg></span>أفكار مقالاتك</li>
+        </ol>
+      </form>
+
+      <div class="trust-line">
+        <span><svg aria-hidden="true"><use href="#i-lock"/></svg>بدون تسجيل ولا إيميل</span>
+        <span><svg aria-hidden="true"><use href="#i-wa"/></svg>كلّمنا على واتساب بضغطة</span>
+      </div>
+    </div>
+
+    <!-- المعاينة: تحاكي صفحة الشريك الحقيقية على modonty.com/clients/<slug> -->
+    <div class="stage" id="preview" aria-labelledby="pv-cap">
+      <span class="tick t1" aria-hidden="true"></span><span class="tick t2" aria-hidden="true"></span>
+      <span class="tick t3" aria-hidden="true"></span><span class="tick t4" aria-hidden="true"></span>
+      <div class="stage-top"><span id="pv-cap">صفحتك على مدونتي</span><span class="ph">معاينة توضيحية</span></div>
+
+      <div class="stamp" aria-hidden="true">
+        <svg><use href="#i-check"/></svg>
+        <span>هذي صفحتك<small>تنتظر بس تفعيلك</small></span>
+      </div>
+
+      <div class="browser">
+        <div class="bbar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="url"><svg aria-hidden="true"><use href="#i-lock"/></svg><span>modonty.com/clients/</span><b id="pv-slug">اسم-نشاطك</b></span>
+          <span class="load" id="pv-load" aria-hidden="true"></span>
+        </div>
+        <div class="scan" aria-hidden="true"></div>
+
+        <div class="pv" id="pv">
+          <!-- شريط مدونتي الرفيع (platform-bar.tsx) -->
+          <div class="pv-plat" aria-hidden="true">
+            <span class="m"><svg><use href="#logo"/></svg>مدونتي</span>
+            <span class="sep"></span>
+            <span class="vb"><svg><use href="#i-shield"/></svg>شريك موثّق</span>
+            <span class="end">تصفّح الشركاء</span>
+          </div>
+          <!-- هيدر الشريك -->
+          <div class="pv-head">
+            <span class="lg" data-bind="mono" aria-hidden="true">ا</span>
+            <span class="nm" data-bind="name">اسم نشاطك</span>
+            <nav aria-hidden="true"><b>الرئيسية</b><span>خدماتنا</span><span>مقالاتنا</span><span>تواصل</span></nav>
+          </div>
+          <!-- الغلاف (cover-hero.tsx) -->
+          <div class="pv-cover" aria-hidden="true"><svg class="wm"><use id="pv-wm" href="#a-clinic"/></svg></div>
+          <div class="pv-band">
+            <div class="pv-who">
+              <span class="pv-ava" aria-hidden="true"><span data-bind="mono">ا</span><span class="vb"><svg><use href="#i-check"/></svg></span></span>
+              <div class="pv-txt">
+                <p class="pv-line"><b data-bind="name" id="pv-name">اسم نشاطك</b> · <span id="pv-meta"></span></p>
+                <p class="pv-slogan" id="pv-slogan"></p>
+              </div>
+            </div>
+            <div class="pv-acts" aria-hidden="true">
+              <span class="p" id="pv-cta"><svg><use id="pv-cta-ic" href="#i-cal"/></svg><span id="pv-cta-t">احجز موعد</span></span>
+              <span class="s" id="pv-cta2"><svg><use id="pv-cta2-ic" href="#i-wa"/></svg><span id="pv-cta2-t">واتساب</span></span>
+            </div>
+          </div>
+          <div class="pv-sec">
+            <h4>خدماتنا</h4>
+            <ul class="pv-svcs" id="pv-svcs"><li></li><li></li><li></li></ul>
+          </div>
+          <div class="pv-sec">
+            <h4>مقالاتنا</h4>
+            <ul class="pv-posts" id="pv-posts">
+              <li><span class="th" aria-hidden="true"></span><p></p></li>
+              <li><span class="th" aria-hidden="true"></span><p></p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="sr" aria-live="polite" id="live"></p>
+</section>
+
+<!-- ══════════ نتيجتك في جوجل + أفكار مقالاتك ══════════ -->
+<section class="block" id="google" aria-labelledby="h-google">
+  <div class="wrap">
+    <span class="eyebrow">ولما زبونك يسأل جوجل…</span>
+    <h2 class="title" id="h-google">هذا شكل <span class="nm" data-bind="name">اسم نشاطك</span> في نتايج البحث</h2>
+    <p class="sub">كل مقال نكتبه لك يجاوب على سؤال يكتبه زبونك في جوجل، وتحته زر واتساب يوصله لك مباشرة.</p>
+
+    <div class="twin">
+      <div>
+        <div class="panel-h">
+          <h3><svg aria-hidden="true"><use href="#i-search"/></svg>زبونك يبحث</h3>
+          <span class="ph">معاينة توضيحية</span>
+        </div>
+        <div class="serp is-typing" id="serp">
+          <div class="sbar">
+            <svg aria-hidden="true"><use href="#i-search"/></svg>
+            <span class="q" id="g-q"></span><span class="caret" aria-hidden="true"></span>
+            <span class="gd" aria-hidden="true"><i style="background:#4285F4"></i><i style="background:#EA4335"></i><i style="background:#FBBC05"></i><i style="background:#34A853"></i></span>
+          </div>
+          <div class="stabs" aria-hidden="true"><b>الكل</b><span>صور</span><span>خرائط</span><span>أخبار</span></div>
+          <ol class="sres">
+            <li class="r r--me" id="g-me">
+              <span class="me">هذا أنت</span>
+              <div class="site">
+                <span class="fav" aria-hidden="true"><svg><use href="#logo"/></svg></span>
+                <span><b>مدونتي</b><span class="u" id="g-u1">modonty.com › articles</span></span>
+              </div>
+              <span class="t" id="g-t1"></span>
+              <p class="s" id="g-s1"></p>
+            </li>
+            <li class="r r--bar" aria-hidden="true"><div class="b"></div><div class="b"></div></li>
+            <li class="r r--p" id="g-p">
+              <div class="site">
+                <span class="fav" aria-hidden="true"><svg><use href="#logo"/></svg></span>
+                <span><b>مدونتي</b><span class="u" id="g-u2">modonty.com › clients</span></span>
+              </div>
+              <span class="t" id="g-t2"></span>
+              <p class="s" id="g-s2"></p>
+            </li>
+            <li class="r r--bar" aria-hidden="true"><div class="b"></div><div class="b"></div></li>
+          </ol>
+        </div>
+        <p class="note"><svg aria-hidden="true"><use href="#i-info"/></svg>هذا شكل النتيجة فقط. ترتيبك في جوجل يقرّره جوجل، ومهمّتنا نكتب وننشر لك كل شهر محتوى يجاوب أسئلة زبونك.</p>
+      </div>
+
+      <div>
+        <div class="panel-h">
+          <h3><svg aria-hidden="true"><use href="#i-doc"/></svg>أول مقالاتك — أفكار</h3>
+          <span class="ph">مثال</span>
+        </div>
+        <ol class="ideas" id="ideas">
+          <li class="idea"><span class="n"><i>١</i>يجاوب على سؤال زبونك</span><h4></h4><div class="f"><span class="wa"><svg aria-hidden="true"><use href="#i-wa"/></svg><bdi data-bind="name">اسم نشاطك</bdi> على واتساب</span><span><svg aria-hidden="true"><use href="#i-chat"/></svg>سؤال مباشر</span></div></li>
+          <li class="idea"><span class="n"><i>٢</i>يجاوب على سؤال زبونك</span><h4></h4><div class="f"><span class="wa"><svg aria-hidden="true"><use href="#i-wa"/></svg><bdi data-bind="name">اسم نشاطك</bdi> على واتساب</span><span><svg aria-hidden="true"><use href="#i-chat"/></svg>سؤال مباشر</span></div></li>
+          <li class="idea"><span class="n"><i>٣</i>يجاوب على سؤال زبونك</span><h4></h4><div class="f"><span class="wa"><svg aria-hidden="true"><use href="#i-wa"/></svg><bdi data-bind="name">اسم نشاطك</bdi> على واتساب</span><span><svg aria-hidden="true"><use href="#i-chat"/></svg>سؤال مباشر</span></div></li>
+        </ol>
+        <p class="note"><svg aria-hidden="true"><use href="#i-info"/></svg>عناوين مقترحة تُولَّد هنا للتوضيح. مقالاتك الفعلية يكتبها فريق مدونتي بعد ما يتعرّف على نشاطك.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ اللي شفته = اللي تاخذه (من pay.modonty.com: «كل الباقات تشمل») ══════════ -->
+<section class="block inc" aria-labelledby="h-inc">
+  <div class="wrap">
+    <span class="eyebrow">اللي شفته فوق مو خيال</span>
+    <h2 class="title" id="h-inc">اللي تاخذه مع مدونتي</h2>
+    <p class="sub">المعاينة رسمت لك الشكل. واحنا نحوّله لصفحة حقيقية باسمك وشعارك وصورك.</p>
+    <ul class="inc-grid">
+      <li class="reveal"><span class="ic"><svg aria-hidden="true"><use href="#i-page"/></svg></span><span><b>صفحة عميل احترافية</b><small>بديل موقع إلكتروني — خدماتك ومقالاتك وطرق التواصل في مكان واحد.</small><span class="seen"><svg aria-hidden="true"><use href="#i-eye"/></svg>شفتها في المعاينة</span></span></li>
+      <li class="reveal"><span class="ic"><svg aria-hidden="true"><use href="#i-doc"/></svg></span><span><b>نشر على منصة مدونتي</b><small>مقالات جديدة كل شهر تجاوب أسئلة زبونك.</small><span class="seen"><svg aria-hidden="true"><use href="#i-eye"/></svg>شفت أفكارها</span></span></li>
+      <li class="reveal"><span class="ic"><svg aria-hidden="true"><use href="#i-wa"/></svg></span><span><b>زر واتساب + سؤال مباشر تحت المقال</b><small>الزبون يقرأ، ويكلّمك من نفس الصفحة.</small><span class="seen"><svg aria-hidden="true"><use href="#i-eye"/></svg>تحت كل فكرة مقال</span></span></li>
+      <li class="reveal"><span class="ic"><svg aria-hidden="true"><use href="#i-shield"/></svg></span><span><b>شارة «موثّق» + بيانات قانونية</b><small>علامة ثقة يشوفها الزبون أعلى صفحتك.</small><span class="seen"><svg aria-hidden="true"><use href="#i-eye"/></svg>أعلى المعاينة</span></span></li>
+      <li class="reveal"><span class="ic"><svg aria-hidden="true"><use href="#i-share"/></svg></span><span><b>المقال الرئيسي ينشر على حسابات مدونتي</b><small>جمهور مدونتي يشوف نشاطك كمان.</small></span></li>
+      <li class="reveal"><span class="ic"><svg aria-hidden="true"><use href="#i-play"/></svg></span><span><b>طلّات مدونتي كل شهر</b><small>صور أو فيديوهات لنشاطك كل شهر.</small></span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════ من معاينة إلى حقيقية ══════════ -->
+<section class="block" style="padding-top:0" aria-labelledby="h-how">
+  <div class="wrap">
+    <span class="eyebrow">كيف نبدأ</span>
+    <h2 class="title" id="h-how">من معاينة إلى صفحة حقيقية — ثلاث خطوات</h2>
+    <ol class="steps">
+      <li class="step reveal"><span class="n">١</span><h3>كلّمنا على واتساب</h3><p>ضغطة وحدة تفتح المحادثة برسالة جاهزة باسم نشاطك، ونرد عليك ونجاوب على أسئلتك.</p></li>
+      <li class="step reveal"><span class="n">٢</span><h3>نتعرّف على نشاطك</h3><p>ناخذ شعارك وصورك وتفاصيل نشاطك، ونقترح لك الأنسب.</p></li>
+      <li class="step reveal"><span class="n">٣</span><h3>ننشر لك كل شهر</h3><p>مقالات وطلّات على مدونتي، وصفحتك يوصل لها الزبون من كل مقال.</p></li>
+    </ol>
+    <!-- حقيقي: قسم «من يتابع اشتراكك» على pay.modonty.com -->
+    <div class="team reveal">
+      <span class="av" aria-hidden="true">ف</span>
+      <p><b>فاتن حسني</b> — مديرة الحسابات<br>يتواصل معك فريقنا ويتابع معك النشر شهراً بشهر.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ الأسئلة ══════════ -->
+<section class="block" style="padding-top:0" aria-labelledby="h-faq">
+  <div class="wrap">
+    <span class="eyebrow">أسئلة شائعة</span>
+    <h2 class="title" id="h-faq">نجاوبك باختصار</h2>
+    <div class="faq">
+      <details>
+        <summary>المعاينة هذي هي صفحتي الحقيقية؟<span class="pm"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></summary>
+        <p class="a">لا، هي معاينة توضيحية مبنية من اسمك ونشاطك ومدينتك عشان تشوف الشكل. صفحتك الحقيقية تنبني بعد الاشتراك ببياناتك وشعارك وصورك.</p>
+      </details>
+      <details>
+        <summary>تضمنون إني أطلع أول نتيجة في جوجل؟<span class="pm"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></summary>
+        <p class="a">الترتيب يقرّره جوجل، وما أحد يقدر يضمنه بصدق. اللي علينا: نكتب وننشر لك كل شهر مقالات تجاوب أسئلة زبونك، وكل مقال يوصله لصفحتك وواتسابك.</p>
+      </details>
+      <details>
+        <summary>ما عندي موقع إلكتروني، ينفع أشترك؟<span class="pm"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></summary>
+        <p class="a">نعم. كل الباقات تشمل صفحة عميل احترافية على مدونتي، وهي بديل موقع إلكتروني. ولو عندك موقع، فيه باقات تنشر مقالات على موقعك أنت كمان.</p>
+      </details>
+      <details>
+        <summary>كم السعر؟<span class="pm"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></summary>
+        <p class="a">عندنا أكثر من باقة حسب نشاطك واحتياجك. كلّمنا على واتساب ونرسل لك التفاصيل والأسعار.</p>
+      </details>
+      <details>
+        <summary>وش يعني «طلّات مدونتي»؟<span class="pm"><svg aria-hidden="true"><use href="#i-plus"/></svg></span></summary>
+        <p class="a">صور أو فيديوهات تنشر لنشاطك على مدونتي كل شهر، وعددها حسب الباقة.</p>
+      </details>
+                      </div>
+  </div>
+</section>
+
+<!-- ══════════ جاهز تخليها حقيقية؟ ══════════ -->
+<section class="final" aria-labelledby="h-final">
+  <div class="wrap">
+    <div class="final-card">
+      <div>
+        <h2 id="h-final">جاهز تخليها حقيقية؟</h2>
+        <p>صفحة <bdi data-bind="name">اسم نشاطك</bdi> شفتها. كلّمنا على واتساب، ونرد عليك بكل التفاصيل.</p>
+        <div class="final-actions">
+          <a class="btn btn--wa" id="fin-wa" href="https://wa.me/966543222242" data-wa data-cta="final" rel="noopener">
+            <svg aria-hidden="true"><use href="#i-wa"/></svg>
+            كلّمنا على واتساب
+          </a>
+        </div>
+        <div class="final-sub">
+          <span><svg aria-hidden="true"><use href="#i-lock"/></svg>بدون تسجيل ولا إيميل</span>
+          <span><svg aria-hidden="true"><use href="#i-chat"/></svg>الرسالة تطلع جاهزة باسم نشاطك</span>
+        </div>
+      </div>
+
+      <div class="real" aria-hidden="true">
+        <span class="real-tag"><s>معاينة</s><svg width="14" height="14"><use href="#i-arrow"/></svg><b>حقيقية</b></span>
+        <div class="real-card">
+          <div class="cv"></div>
+          <div class="bd">
+            <span class="av" data-bind="mono">ا</span>
+            <div>
+              <p class="nm" data-bind="name">اسم نشاطك</p>
+              <p class="mt" id="fin-meta"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© ٢٠٢٦ مدونتي — جميع الحقوق محفوظة.</span>
+    <span>واتساب: <a class="ltr" href="https://wa.me/966543222242" data-wa data-cta="footer" rel="noopener">+966 54 322 2242</a></span>
+  </div>
+</footer>
+
+<div class="dock" id="dock" aria-hidden="true">
+  <span class="mono" data-bind="mono">ا</span>
+  <div class="txt"><b data-bind="name">اسم نشاطك</b>صفحتك جاهزة — كلّمنا</div>
+  <a class="btn btn--wa" id="dock-cta" href="https://wa.me/966543222242" data-wa data-cta="dock" tabindex="-1" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>واتساب</a>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const wait = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+  const WA_NUMBER = '966543222242';
+
+  /* ── الأنشطة: كل نصوصها «معاينة توضيحية» تُولَّد للزائر — ليست بيانات عميل حقيقي ──
+     book=true: الزرّ الرئيسي «احجز…» · false: واتساب أولاً ثم «اتصل بنا» (hero-actions.tsx) */
+  const ACTS = {
+    clinic: { label: 'عيادة أسنان', icon: 'a-clinic', color: '#0E7490', industry: 'عيادة أسنان',
+      slogan: 'ابتسامتك بأيدٍ تطمّنك من أول زيارة', services: ['كشف واستشارة', 'تنظيف وتبييض', 'تقويم وزراعة'],
+      book: true, cta: 'احجز موعد', query: 'أفضل عيادة أسنان في {city}',
+      ideas: ['كم تكلّف زراعة الأسنان في {city}؟ وش اللي يحدّد السعر', 'تقويم شفاف أو تقليدي؟ الفرق قبل ما تقرّر', '٥ أسئلة اسألها قبل ما تحجز عند طبيب أسنان'],
+      snippet: 'دليل مختصر من {name} يجاوب على أكثر ما يسأل عنه المرضى في {city} قبل أول زيارة…' },
+    food: { label: 'مطعم ومقهى', icon: 'a-food', color: '#B45309', industry: 'مطعم',
+      slogan: 'طعم يرجّعك مرّة ثانية', services: ['جلسات عائلية', 'طلبات خارجية', 'مناسبات وحجوزات'],
+      book: true, cta: 'احجز طاولة', query: 'مطعم عائلي هادئ في {city}',
+      ideas: ['وين تتعشّى مع العائلة في {city}؟ دليل الجلسات الهادية', 'عندك عزيمة؟ كيف تطلب لعدد كبير بدون توتّر', 'أطباق يرشّحها الشيف هذا الموسم في {name}'],
+      snippet: 'من {name} في {city} — الجلسات العائلية، أوقات الزحمة، وأطباق ينصح بها الشيف…' },
+    salon: { label: 'صالون وتجميل', icon: 'a-salon', color: '#BE185D', industry: 'صالون تجميل',
+      slogan: 'إطلالتك تبدأ من هنا', services: ['عناية بالبشرة', 'تصفيف وصبغات', 'باقات العرايس'],
+      book: true, cta: 'احجز موعد', query: 'أفضل صالون نسائي في {city}',
+      ideas: ['كيف تختارين صالون عرايس في {city}؟ قائمة قبل الحجز', 'تنظيف البشرة: كل كم مرّة تحتاجينه فعلاً؟', 'صبغة بدون ما تتعب شعرك — نصائح من {name}'],
+      snippet: 'من {name} في {city} — كل اللي تحتاجين تعرفينه قبل ما تحجزين موعدك…' },
+    estate: { label: 'مكتب عقار', icon: 'a-home', color: '#4338CA', industry: 'تسويق عقاري',
+      slogan: 'بيتك الجاي نعرف وين هو', services: ['بيع وشراء', 'إيجار وإدارة أملاك', 'تقييم عقاري'],
+      book: true, cta: 'اطلب استشارة', query: 'أفضل أحياء {city} للسكن العائلي',
+      ideas: ['أفضل أحياء {city} للعائلات — مقارنة سريعة', 'تشتري ولا تستأجر في {city}؟ احسبها قبل ما تقرّر', 'نقل ملكية العقار خطوة بخطوة — وش الأوراق المطلوبة'],
+      snippet: 'من {name} — مقارنة بين أحياء {city}: الأسعار، المدارس، والقرب من الخدمات…' },
+    car: { label: 'صيانة سيارات', icon: 'a-car', color: '#B91C1C', industry: 'مركز صيانة سيارات',
+      slogan: 'سيارتك بأيدٍ تعرفها', services: ['فحص شامل', 'زيوت وفرامل', 'كهرباء ومكيّفات'],
+      book: false, cta: 'راسلنا واتساب', query: 'ورشة صيانة سيارات موثوقة في {city}',
+      ideas: ['صوت في الفرامل؟ متى لازم توقف وتفحص', 'كل كم كيلو تغيّر الزيت؟ الجواب يختلف حسب سيارتك', 'مكيّف السيارة ما يبرّد في صيف {city}؟ ٤ أسباب شائعة'],
+      snippet: 'من {name} في {city} — علامات تقولك إن سيارتك تحتاج فحص قبل ما تكبر المشكلة…' },
+    clean: { label: 'تنظيف ومكافحة', icon: 'a-clean', color: '#1D4ED8', industry: 'خدمات منزلية',
+      slogan: 'بيت نظيف بدون ما تشيل همّ', services: ['تنظيف شقق وفلل', 'تنظيف خزانات', 'مكافحة حشرات'],
+      book: false, cta: 'اطلب عرض سعر', query: 'شركة تنظيف خزانات في {city}',
+      ideas: ['متى لازم تنظّف خزان بيتك؟ علامات ما تتجاهلها', 'صراصير في المطبخ؟ ليش ترجع بعد الرش', 'تنظيف الفلّة قبل السكن — وش يشمل وكم ياخذ وقت'],
+      snippet: 'من {name} في {city} — كل كم شهر، وكيف تعرف إن الخزان يحتاج تنظيف…' },
+    law: { label: 'محاماة', icon: 'a-law', color: '#1E3A5F', industry: 'مكتب محاماة',
+      slogan: 'حقّك واضح من أول استشارة', services: ['قضايا تجارية', 'أحوال شخصية', 'صياغة عقود'],
+      book: true, cta: 'احجز استشارة', query: 'محامي تجاري في {city}',
+      ideas: ['العميل ما دفع؟ خطوات المطالبة المالية بالترتيب', 'عقد الشراكة: ٧ بنود لا توقّع بدونها', 'متى تحتاج محامي قبل ما تفتح شركتك؟'],
+      snippet: 'من {name} في {city} — شرح مبسّط للخطوات قبل ما تبدأ أي إجراء…' },
+    store: { label: 'متجر إلكتروني', icon: 'a-store', color: '#047857', industry: 'متجر إلكتروني',
+      slogan: 'يوصلك لين باب بيتك', services: ['منتجات مختارة', 'توصيل سريع', 'استبدال سهل'],
+      book: true, cta: 'تسوّق الآن', query: 'متجر إلكتروني موثوق في السعودية',
+      ideas: ['كيف تعرف إن المتجر الإلكتروني موثوق قبل ما تدفع؟', 'دليل المقاسات: اطلب صح من أول مرّة', 'هدايا تناسب كل ميزانية — اختيارات {name}'],
+      snippet: 'من {name} — قبل ما تطلب أونلاين: ٦ علامات تطمّنك إن المتجر موثوق…' },
+    build: { label: 'مقاولات وتشطيب', icon: 'a-build', color: '#A16207', industry: 'مقاولات وتشطيب',
+      slogan: 'نبني صح من أول مرّة', services: ['بناء عظم', 'تشطيب وترميم', 'تصميم داخلي'],
+      book: false, cta: 'اطلب عرض سعر', query: 'مقاول تشطيب في {city}',
+      ideas: ['كم تكلّف تشطيب فلّة في {city}؟ وش اللي يرفع السعر', 'عقد المقاول: بنود تحميك من التأخير', 'عزل الأسطح قبل الصيف — ليش ما تأجّله'],
+      snippet: 'من {name} في {city} — تفصيل تكلفة التشطيب بندًا بندًا قبل ما توقّع…' },
+    other: { label: 'نشاط ثاني', icon: 'a-other', color: '#3030FF', industry: '{other}',
+      slogan: '{other} تثق فيه في {city}', services: ['خدماتنا', 'أعمالنا', 'آراء العملاء'],
+      book: false, cta: 'راسلنا واتساب', query: 'أفضل {other} في {city}',
+      ideas: ['كيف تختار {other} في {city}؟ أسئلة قبل ما تقرّر', 'أخطاء شائعة يقع فيها العملاء — وكيف تتجنّبها', 'كم التكلفة فعلاً؟ دليل أسعار {other} بوضوح'],
+      snippet: 'من {name} في {city} — جواب واضح على أكثر ما يسأل عنه الزبون قبل ما يقرّر…' },
+  };
+  const CITIES = ['الرياض','جدة','مكة المكرمة','المدينة المنورة','الدمام','الخبر','الأحساء','الطائف','بريدة','أبها','خميس مشيط','تبوك','حائل','جازان','نجران','ينبع'];
+
+  /* ── الحالة (تُحفظ محلياً للزائر فقط؛ وتُقرأ من الرابط ?a=&c=&n= للحملات) ── */
+  const KEY = 'modonty-start';
+  let st = { name: '', act: 'clinic', city: 'الرياض', other: '' };
+  try { Object.assign(st, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+  try {
+    const p = new URLSearchParams(location.search);
+    if (ACTS[p.get('a')]) st.act = p.get('a');
+    if (CITIES.includes(p.get('c'))) st.city = p.get('c');
+    if (p.get('n')) st.name = p.get('n').slice(0, 40);
+  } catch (e) {}
+  if (!ACTS[st.act]) st.act = 'clinic';
+  if (!CITIES.includes(st.city)) st.city = 'الرياض';
+  st.name = typeof st.name === 'string' ? st.name.slice(0, 40) : '';
+  st.other = typeof st.other === 'string' ? st.other.slice(0, 28) : '';
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
+
+  /* ── أدوات ── */
+  const PH_NAME = 'اسم نشاطك';
+  const clean = s => String(s || '').replace(/\s+/g, ' ').trim();
+  const nameOf = () => clean(st.name) || PH_NAME;
+  const otherOf = () => clean(st.other) || 'نشاط';
+  const fill = tpl => tpl
+    .replaceAll('{name}', nameOf())
+    .replaceAll('{city}', st.city)
+    .replaceAll('{other}', otherOf());
+  const mono = n => {
+    const w = clean(n).split(' ').filter(Boolean);
+    if (!w.length) return 'م';
+    let first = w[0].length > 3 && w[0].startsWith('ال') ? w[0].slice(2) : w[0];
+    return first.charAt(0);
+  };
+  const slugOf = n => clean(n) ? clean(n).replace(/[^\p{L}\p{N}\s-]/gu, '').replace(/\s+/g, '-').toLowerCase() : 'اسم-نشاطك';
+  const ar = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
+  /* ── القياس: كل حدث يُكتب في dataLayer، ويصل البكسل لو رُكِّب (fbq).
+     event_id واحد للمتصفّح والسيرفر حين يُضاف Conversions API — ميتا تدمجهما حدثاً واحداً. ── */
+  const eventId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+  function track(event, params){
+    const id = eventId();
+    try { (window.dataLayer = window.dataLayer || []).push({ event, event_id: id, ...params }); } catch (e) {}
+    try { if (typeof window.fbq === 'function' && event === 'whatsapp_click') window.fbq('track', 'Contact', params, { eventID: id }); } catch (e) {}
+    return id;
+  }
+  // كود الحملة يدخل رسالة الواتساب — المبيعات تعرف العميل من أي إعلان جاء.
+  let campaign = '';
+  try { const p = new URLSearchParams(location.search); campaign = clean(p.get('utm_campaign') || p.get('utm_content') || '').slice(0, 60); } catch (e) {}
+
+  /* ── بناء الحقول ── */
+  const actsEl = $('#acts');
+  Object.entries(ACTS).forEach(([k, a]) => {
+    const lab = document.createElement('label');
+    lab.className = 'act';
+    lab.innerHTML = `<input type="radio" name="act" value="${k}"><span><svg aria-hidden="true"><use href="#${a.icon}"/></svg></span>`;
+    lab.querySelector('span').append(a.label);
+    actsEl.append(lab);
+  });
+  const citySel = $('#f-city');
+  CITIES.forEach(c => { const o = document.createElement('option'); o.value = o.textContent = c; citySel.append(o); });
+
+  const fName = $('#f-name'), fOther = $('#f-other'), fCount = $('#f-count');
+  fName.value = st.name; fOther.value = st.other; citySel.value = st.city;
+  $(`input[name="act"][value="${st.act}"]`).checked = true;
+
+  /* ── الرسم: كل الكتابة textContent (اسم الزائر لا يدخل HTML أبداً) ── */
+  function paintName(){
+    const n = nameOf(), ghost = !clean(st.name), m = mono(st.name);
+    $$('[data-bind="name"]').forEach(el => { el.textContent = n; el.classList.toggle('ghost', ghost && !!el.closest('.browser, .real-card')); });
+    $$('[data-bind="mono"]').forEach(el => { el.textContent = m; });
+    $('#pv-slug').textContent = slugOf(st.name);
+    fCount.textContent = st.name ? ar(st.name.length) + '/٤٠' : '';
+  }
+
+  function paintAll(){
+    const a = ACTS[st.act];
+    const industry = fill(a.industry);
+    document.documentElement.style.setProperty('--pc', a.color);
+    paintName();
+    $('#pv-wm').setAttribute('href', '#' + a.icon);
+    $('#pv-meta').textContent = `${industry} · ${st.city}`;
+    $('#pv-slogan').textContent = fill(a.slogan);
+    $$('#pv-svcs li').forEach((li, i) => { li.textContent = a.services[i]; });
+    $$('#pv-posts p').forEach((p, i) => { p.textContent = fill(a.ideas[i]); });
+
+    // الأزرار — نفس قاعدة hero-actions.tsx: زرّ الطلب ثم واتساب، أو واتساب ثم «اتصل بنا».
+    const booking = a.book;
+    $('#pv-cta-t').textContent = a.cta;
+    $('#pv-cta-ic').setAttribute('href', booking ? '#i-cal' : '#i-wa');
+    $('#pv-cta2-t').textContent = booking ? 'واتساب' : 'اتصل بنا';
+    $('#pv-cta2-ic').setAttribute('href', booking ? '#i-wa' : '#i-phone');
+
+    // جوجل
+    $('#g-t1').textContent = fill(a.ideas[0]);
+    $('#g-s1').textContent = fill(a.snippet);
+    $('#g-u1').textContent = 'modonty.com › articles › ' + slugOf(fill(a.ideas[0])).slice(0, 26) + '…';
+    $('#g-t2').textContent = `${nameOf()} — ${industry} في ${st.city} | مدونتي`;
+    $('#g-s2').textContent = `صفحة ${nameOf()} على مدونتي: الخدمات، المقالات، والتواصل المباشر عبر واتساب.`;
+    $('#g-u2').textContent = 'modonty.com › clients › ' + slugOf(st.name);
+
+    // الأفكار
+    $$('#ideas .idea h4').forEach((h, i) => { h.textContent = fill(a.ideas[i]); });
+
+    paintWa();
+    $('#fin-meta').textContent = `${industry} · ${st.city}`;
+  }
+
+  /* ── كل زرّ واتساب يحمل رسالة جاهزة بما كتبه الزائر ── */
+  function paintWa(){
+    const a = ACTS[st.act];
+    const lines = [
+      'مرحباً، شفت معاينة صفحتي على مدونتي.',
+      `النشاط: ${clean(st.name) || '[اسم النشاط]'} — ${fill(a.industry)} في ${st.city}`,
+      'أبغى أعرف التفاصيل.',
+    ];
+    if (campaign) lines.push(`(المصدر: ${campaign})`);
+    const href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines.join('\n'))}`;
+    $$('[data-wa]').forEach(el => { el.href = href; });
+  }
+
+  /* ── تسلسل البناء: شريط تحميل + علامات صح + كتابة سؤال جوجل ── */
+  const stage = $('#preview'), serp = $('#serp'), ideas = $('#ideas'), load = $('#pv-load'), live = $('#live');
+  const logItems = $$('#buildlog li');
+  let runId = 0;
+
+  let typeRun = 0;
+  async function typeQuery(){
+    const id = ++typeRun;
+    const q = fill(ACTS[st.act].query), el = $('#g-q');
+    serp.classList.add('is-typing');
+    if (reduce){ el.textContent = q; serp.classList.remove('is-typing'); return; }
+    el.textContent = '';
+    for (const ch of q){ if (id !== typeRun) return; el.textContent += ch; await wait(45); }
+    await wait(250);
+    if (id === typeRun) serp.classList.remove('is-typing');
+  }
+
+  async function build(){
+    const id = ++runId;
+    stage.classList.remove('is-built');
+    stage.classList.add('is-building');
+    logItems.forEach(li => li.classList.remove('done'));
+    load.style.width = '0';
+    for (let i = 0; i < logItems.length; i++){
+      await wait(230);
+      if (id !== runId) return;
+      if (i === 1) paintAll();
+      logItems[i].classList.add('done');
+      load.style.width = ((i + 1) / logItems.length * 100) + '%';
+    }
+    paintAll();
+    stage.classList.remove('is-building');
+    stage.classList.add('is-built');
+    ideas.classList.remove('is-swap'); void ideas.offsetWidth; ideas.classList.add('is-swap');
+    setTimeout(() => { load.style.width = '0'; }, 500);
+    live.textContent = `تم بناء معاينة صفحة ${nameOf()} — ${fill(ACTS[st.act].industry)} في ${st.city}.`;
+    typeQuery();
+  }
+
+  /* ── الأحداث ── */
+  let tName;
+  fName.addEventListener('input', () => {
+    st.name = fName.value.slice(0, 40);
+    paintName();
+    const h = $('.pv-txt'); h.classList.remove('bump'); void h.offsetWidth; h.classList.add('bump');
+    clearTimeout(tName);
+    tName = setTimeout(() => { paintAll(); save(); if (!serp.classList.contains('is-typing')) $('#g-q').textContent = fill(ACTS[st.act].query); }, 260);
+  });
+  actsEl.addEventListener('change', e => {
+    st.act = e.target.value;
+    $('#other-box').classList.toggle('on', st.act === 'other');
+    if (st.act === 'other') fOther.focus();
+    save(); build();
+  });
+  fOther.addEventListener('input', () => {
+    st.other = fOther.value.slice(0, 28);
+    clearTimeout(tName);
+    tName = setTimeout(() => { paintAll(); save(); $('#g-q').textContent = fill(ACTS[st.act].query); }, 260);
+  });
+  citySel.addEventListener('change', () => { st.city = citySel.value; save(); build(); });
+  $('#builder').addEventListener('submit', e => {
+    e.preventDefault();
+    save(); build();
+    if (matchMedia('(max-width:1023px)').matches) stage.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  });
+  // ضغطة الواتساب — الحدث المهم للحملة. الرابط يفتح التطبيق مباشرة (wa.me يعمل من متصفّح إنستقرام وفيسبوك).
+  document.addEventListener('click', e => {
+    const a = e.target.closest('[data-wa]'); if (!a) return;
+    track('whatsapp_click', { cta: a.dataset.cta || '', activity: st.act, city: st.city });
+  });
+
+  /* ── أول تحميل ── */
+  $('#other-box').classList.toggle('on', st.act === 'other');
+  paintAll();
+  $('#g-q').textContent = fill(ACTS[st.act].query);
+  serp.classList.remove('is-typing');
+  // جوجل يكتب السؤال لمّا يوصل له الزائر
+  new IntersectionObserver(([en], ob) => { if (en.isIntersecting){ typeQuery(); ob.disconnect(); } }, { threshold: .4 }).observe(serp);
+  build();
+  track('landing_view', { activity: st.act, city: st.city });
+
+  /* ── ظهور الأقسام ── */
+  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -10% 0px' });
+  $$('.reveal').forEach(el => io.observe(el));
+
+  /* ── زرّ الجوال الثابت: يظهر بعد النموذج، ويختفي عند النداء الأخير ── */
+  const dock = $('#dock');
+  let formGone = false, finalIn = false;
+  const sync = () => {
+    const on = formGone && !finalIn;
+    dock.classList.toggle('is-on', on);
+    dock.setAttribute('aria-hidden', on ? 'false' : 'true');
+    $('#dock-cta').tabIndex = on ? 0 : -1;
+  };
+  new IntersectionObserver(([en]) => { formGone = !en.isIntersecting && en.boundingClientRect.top < 0; sync(); }).observe($('#builder'));
+  new IntersectionObserver(([en]) => { finalIn = en.isIntersecting; sync(); }).observe($('#fin-wa'));
+})();
+</script>
+</body>
+</html>
