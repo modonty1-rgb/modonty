@@ -8,7 +8,8 @@ export type ConsoleUploadData = { url?: string; bytes?: number; blurDataURL?: st
 /**
  * Every console image upload — browser → Bunny through the shared pipeline (`shared/lib/direct-upload.ts`).
  * Same `{ ok, status, data }` shape as `uploadWithProgress`, so callers read `data.url` as before.
- * Without direct-upload env it falls back to `/api/upload-bunny` (4MB, through Vercel).
+ * Without direct-upload env it falls back to `/api/upload-bunny` (4MB, through Vercel). The env is set on
+ * Vercel production since 11 Oct 2026 (`BUNNY_UPLOAD_EDGE_URL` · `BUNNY_UPLOAD_SIGNING_SECRET`).
  */
 export async function uploadConsoleImage(
   file: File,
