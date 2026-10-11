@@ -22,6 +22,7 @@ import {
   removeReel,
   type ClientReel,
 } from "../actions/reels-actions";
+import { uploadConsoleImage } from "@/lib/bunny/upload-image";
 
 /**
  * Upload + manage the client's IMAGE reels.
@@ -74,8 +75,7 @@ export function ReelsManager({ initial }: { initial: ClientReel[] }) {
   return (
     <div className="space-y-5">
       <MediaUploadZone
-        endpoint="/api/upload-bunny"
-        fields={{ folder: "reels" }}
+        upload={(file, onProgress) => uploadConsoleImage(file, "reels", onProgress)}
         maxBytes={MAX_BYTES}
         transform={compressToWebP}
         labels={{
@@ -151,12 +151,8 @@ function VideoCoverPicker({ mediaId }: { mediaId: string }) {
   async function pick(file: File) {
     setBusy(true);
     try {
-      const body = new FormData();
-      body.append("file", await compressToWebP(file));
-      body.append("folder", "reels");
-      const res = await fetch("/api/upload-bunny", { method: "POST", body });
-      const data = (await res.json()) as { url?: string };
-      if (!res.ok || !data.url) throw new Error();
+      const { ok, data } = await uploadConsoleImage(await compressToWebP(file), "reels");
+      if (!ok || !data?.url) throw new Error();
 
       const saved = await setVideoCover(mediaId, data.url);
       if (!saved.success) {

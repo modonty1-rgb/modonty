@@ -15,6 +15,7 @@ import { requireSocialActor } from "../helpers/require-social-actor";
 import { revalidateSocialCalendar } from "../helpers/revalidate-social-calendar";
 import { TRANSITION_SELECT } from "../helpers/transition-select";
 import type { ActionResult } from "./action-result";
+import { calendarLabel } from "../helpers/calendar-label";
 
 /**
  * الميديا باير: «نشر» — يحفظ بيانات النشر ثم «تم النشر» ويختم `publishedAt` في كتابة واحدة
@@ -50,13 +51,13 @@ export async function publishSocialPost(input: PublishDetailsInput): Promise<Act
     await logAction("socialPost.publish", {
       entity: "SocialPost",
       entityId: post.id,
-      summary: `${post.client.name}: ${post.idea}`,
+      summary: `${calendarLabel(post.calendar)}: ${post.idea}`,
       metadata: { from: post.status, to },
     });
     revalidateSocialCalendar();
 
     after(() =>
-      notifySocialPostEvent({ event: "published", post, clientName: post.client.name, actorId: actor.staffId }),
+      notifySocialPostEvent({ event: "published", post, clientName: calendarLabel(post.calendar), actorId: actor.staffId }),
     );
     return { success: true };
   } catch (error) {

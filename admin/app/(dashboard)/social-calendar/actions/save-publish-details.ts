@@ -9,6 +9,7 @@ import { publishDetailsSchema, type PublishDetailsInput } from "../helpers/post-
 import { requireSocialActor } from "../helpers/require-social-actor";
 import { revalidateSocialCalendar } from "../helpers/revalidate-social-calendar";
 import type { ActionResult } from "./action-result";
+import { CALENDAR_LABEL_SELECT, calendarLabel } from "../helpers/calendar-label";
 
 /**
  * الميديا باير: «حفظ بدون نشر» — وبعد النشر «حفظ التعديلات» (`PublishForm.tsx:99-112, 357`).
@@ -24,7 +25,7 @@ export async function saveSocialPublishDetails(input: PublishDetailsInput): Prom
   try {
     const post = await db.socialPost.findUnique({
       where: { id: parsed.data.postId },
-      select: { id: true, status: true, channels: true, idea: true, client: { select: { name: true } } },
+      select: { id: true, status: true, channels: true, idea: true, calendar: { select: CALENDAR_LABEL_SELECT } },
     });
     if (!post) return { success: false, error: "المنشور غير موجود" };
     if (post.status !== "READY_TO_PUBLISH" && post.status !== "PUBLISHED") {
@@ -36,7 +37,7 @@ export async function saveSocialPublishDetails(input: PublishDetailsInput): Prom
     await logAction("socialPost.update", {
       entity: "SocialPost",
       entityId: post.id,
-      summary: `بيانات النشر — ${post.client.name}: ${post.idea}`,
+      summary: `بيانات النشر — ${calendarLabel(post.calendar)}: ${post.idea}`,
     });
     revalidateSocialCalendar();
     return { success: true };

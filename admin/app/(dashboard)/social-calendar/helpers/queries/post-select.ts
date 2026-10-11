@@ -6,7 +6,7 @@ import type { Prisma } from "@prisma/client";
  */
 export const SOCIAL_POST_SELECT = {
   id: true,
-  clientId: true,
+  calendarId: true,
   scheduledFor: true,
   status: true,
   statusUpdatedAt: true,

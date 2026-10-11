@@ -32,14 +32,14 @@ export async function requestSocialVideoUpload(
   try {
     const post = await db.socialPost.findUnique({
       where: { id: postId },
-      select: { id: true, status: true, client: { select: { slug: true } } },
+      select: { id: true, status: true, calendarId: true },
     });
     if (!post) return { success: false, error: "المنشور غير موجود" };
     if (ASSETS_LOCKED_STATUSES.includes(post.status)) {
       return { success: false, error: "الإبداع مقفل بعد الموافقة" };
     }
 
-    const title = `social/${post.client.slug}/${post.id}/${String(filename ?? "").slice(0, 120) || "video"}`;
+    const title = `social/${post.calendarId}/${post.id}/${String(filename ?? "").slice(0, 120) || "video"}`;
     const ticket = await createTusTicket(title);
     return { success: true, ticket };
   } catch (error) {

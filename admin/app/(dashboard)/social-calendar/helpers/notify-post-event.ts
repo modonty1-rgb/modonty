@@ -7,6 +7,7 @@ import { RealtimeEvent, staffChannel } from "@/lib/realtime/channels";
 import { publish } from "@/lib/realtime/publish";
 import { escapeTgHtml, sendContentTeamTelegram } from "@modonty/shared/lib/telegram/client";
 
+import { syncPostTask } from "./sync-post-task";
 import { MONTH_LABELS } from "./dates";
 import { CHANNEL_META, FORMAT_LABEL, FUNNEL_SHORT_LABEL } from "./social-labels";
 
@@ -36,7 +37,7 @@ export interface SocialPostNotifyInput {
   event: SocialPostNotifyEvent;
   post: {
     id: string;
-    clientId: string;
+    calendarId: string;
     idea: string;
     scheduledFor: Date;
     format: SocialPostFormat | null;
@@ -64,7 +65,7 @@ function buildTelegram(input: SocialPostNotifyInput): string {
   const { post, clientName, event } = input;
   const idea = escapeTgHtml(post.idea);
   const client = escapeTgHtml(clientName);
-  const link = `${ADMIN_ORIGIN}/social-calendar/${post.clientId}/posts/${post.id}`;
+  const link = `${ADMIN_ORIGIN}/social-calendar/${post.calendarId}/posts/${post.id}`;
   const footer = `\n\n<a href="${escapeTgHtml(link)}">افتح المنشور</a>`;
 
   if (event === "created") {
@@ -136,6 +137,9 @@ async function bellRecipients(input: SocialPostNotifyInput): Promise<string[]> {
 }
 
 export async function notifySocialPostEvent(input: SocialPostNotifyInput): Promise<void> {
+  // كل حدث منشور يمرّ هنا — فتاسك التصميم يتبعه من مكان واحد (`sync-post-task.ts`).
+  await syncPostTask(input);
+
   const sendTelegram = input.event === "created" ? input.telegram === true : true;
   if (sendTelegram) {
     try {
@@ -153,7 +157,6 @@ export async function notifySocialPostEvent(input: SocialPostNotifyInput): Promi
     await db.notification.createMany({
       data: recipients.map((staffId) => ({
         staffId,
-        clientId: input.post.clientId,
         type: "social_post",
         title: `${BELL_TITLE[input.event]} — ${input.clientName}`,
         body: body.slice(0, 500),

@@ -13,6 +13,7 @@ import { requireSocialActor } from "../helpers/require-social-actor";
 import { revalidateSocialCalendar } from "../helpers/revalidate-social-calendar";
 import { TRANSITION_SELECT } from "../helpers/transition-select";
 import type { ActionResult } from "./action-result";
+import { calendarLabel } from "../helpers/calendar-label";
 
 /**
  * كاتب المحتوى يمنح الموافقة → «جاهز للنشر» (القديم `CalendarTable.tsx:262-278`).
@@ -39,13 +40,13 @@ export async function approveSocialPost(postId: string): Promise<ActionResult> {
     await logAction("socialPost.transition", {
       entity: "SocialPost",
       entityId: post.id,
-      summary: `${post.client.name}: ${post.idea}`,
+      summary: `${calendarLabel(post.calendar)}: ${post.idea}`,
       metadata: { from: post.status, to },
     });
     revalidateSocialCalendar();
 
     after(() =>
-      notifySocialPostEvent({ event: "approved", post, clientName: post.client.name, actorId: actor.staffId }),
+      notifySocialPostEvent({ event: "approved", post, clientName: calendarLabel(post.calendar), actorId: actor.staffId }),
     );
     return { success: true };
   } catch (error) {

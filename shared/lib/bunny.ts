@@ -348,6 +348,15 @@ function assertWritable(operation: string, path: string): void {
   );
 }
 
+/**
+ * The path a write will actually land on (under `_dev/` outside production) — for browser uploads
+ * that go straight to Bunny with a signed ticket (`bunny-upload-ticket.ts`), so the ticket, the
+ * stored object and the database row all name the same place.
+ */
+export function bunnyWritePath(path: string): string {
+  return devPrefix(path);
+}
+
 export function getBunnyPublicUrl(zone: BunnyZone, path: string): string {
   const { cdn } = zoneConfig(zone);
   return `https://${cdn}/${normalizePath(path)}`;

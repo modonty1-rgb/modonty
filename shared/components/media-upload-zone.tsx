@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CheckCircle2, ImagePlus, Loader2, RotateCcw, UploadCloud, X } from "lucide-react";
 
 import { cx } from "../lib/cx";
-import { formatBytes, uploadWithProgress } from "../lib/upload-with-progress";
+import { formatBytes, uploadWithProgress, type UploadProgress, type UploadResponse } from "../lib/upload-with-progress";
 import { ProgressBar } from "./progress-bar";
 
 type Phase = "queued" | "preparing" | "uploading" | "saving" | "done" | "error";
@@ -67,7 +67,13 @@ const AR: MediaUploadZoneLabels = {
 const AUTO_DISMISS_MS = 2500;
 
 interface Props {
-  endpoint: string;
+  /** Server route that receives the file — used only when `upload` isn't given. */
+  endpoint?: string;
+  /**
+   * Custom uploader — e.g. the browser → Bunny pipeline (`shared/lib/direct-upload.ts`). Takes
+   * precedence over `endpoint`; must resolve to the same `{ ok, status, data }` shape.
+   */
+  upload?: (file: File, onProgress: (p: UploadProgress) => void) => Promise<UploadResponse>;
   /** Extra form fields, e.g. `{ folder: "reels" }`. */
   fields?: Record<string, string>;
   accept?: string;
@@ -98,6 +104,7 @@ interface Props {
  */
 export function MediaUploadZone({
   endpoint,
+  upload,
   fields,
   accept = "image/*",
   multiple = true,
@@ -150,12 +157,10 @@ export function MediaUploadZone({
         }
 
         patch(item.id, { phase: "uploading", percent: 0 });
-        const res = await uploadWithProgress({
-          endpoint,
-          file: toSend,
-          fields,
-          onProgress: (p) => patch(item.id, { percent: p.percent }),
-        });
+        const onProgress = (p: UploadProgress) => patch(item.id, { percent: p.percent });
+        const res = upload
+          ? await upload(toSend, onProgress)
+          : await uploadWithProgress({ endpoint: endpoint ?? "", file: toSend, fields, onProgress });
         if (!res.ok) {
           const msg = (res.data as { error?: string } | null)?.error;
           patch(item.id, { phase: "error", error: msg || t.failed });
@@ -178,7 +183,7 @@ export function MediaUploadZone({
         return false;
       }
     },
-    [endpoint, fields, maxBytes, onUploaded, patch, t.failed, t.notAnImage, t.tooLarge, transform]
+    [endpoint, upload, fields, maxBytes, onUploaded, patch, t.failed, t.notAnImage, t.tooLarge, transform]
   );
 
   const start = useCallback(

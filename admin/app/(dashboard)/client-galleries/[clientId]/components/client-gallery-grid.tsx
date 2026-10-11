@@ -28,7 +28,7 @@ import {
   addClientGalleryImage,
   deleteClientGalleryImage,
 } from "../../actions/gallery-mutations";
-import { uploadImageToBunny } from "@/lib/media/upload-image-to-bunny";
+import { uploadImage } from "@/lib/media/upload-image";
 import type { GalleryImageRow } from "../../helpers/load-galleries";
 
 interface Props {
@@ -37,8 +37,8 @@ interface Props {
   images: GalleryImageRow[];
 }
 
-// Bunny-primary (2026-07-29): uploads one gallery file through the shared Bunny server
-// action (type=GALLERY → gallery/{clientSlug}/ on the clients zone). Throws on failure.
+// Bunny-primary (2026-07-29): uploads one gallery file straight to Bunny (`lib/media/upload-image.ts`,
+// type=GALLERY → gallery/{clientSlug}/ on the clients zone). Throws on failure.
 async function uploadGalleryToBunny(file: File, clientId: string) {
   const formData = new FormData();
   formData.append("file", file);
@@ -47,7 +47,7 @@ async function uploadGalleryToBunny(file: File, clientId: string) {
   formData.append("scope", "CLIENT");
   formData.append("clientId", clientId);
 
-  const result = await uploadImageToBunny(formData);
+  const result = await uploadImage(formData);
   if (!result.success || !result.url) throw new Error(result.error || "فشل رفع الصورة إلى Bunny");
   return {
     url: result.url,

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { compressToWebP } from "@/lib/compress-image";
+import { uploadConsoleImage } from "@/lib/bunny/upload-image";
 
 /**
  * حقلُ صورةٍ يرفع من الجهاز — لا يطلب رابطاً.
@@ -38,7 +39,7 @@ export function ImageField({
   image: string;
   onChange: (url: string) => void;
   label: string;
-  /** المجلّد على بني — لا بدّ أن يكون ضمن القائمة البيضاء في `/api/upload-bunny`. */
+  /** المجلّد على بني — لا بدّ أن يكون ضمن القائمة البيضاء في `lib/bunny/upload-folders.ts`. */
   folder: "achievements" | "team" | "gallery" | "licenses" | "reels";
   shape?: ImageFieldShape;
   hint?: string;
@@ -63,12 +64,8 @@ export function ImageField({
     setUploading(true);
     try {
       const compressed = await compressToWebP(file);
-      const fd = new FormData();
-      fd.append("file", compressed);
-      fd.append("folder", folder);
-      const res = await fetch("/api/upload-bunny", { method: "POST", body: fd });
-      const json = await res.json().catch(() => null);
-      if (!res.ok || !json?.url) {
+      const { ok, data: json } = await uploadConsoleImage(compressed, folder);
+      if (!ok || !json?.url) {
         toast.error(json?.error || "فشل رفع الصورة");
         return;
       }

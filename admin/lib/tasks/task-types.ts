@@ -23,4 +23,6 @@ export interface BoardTask {
   assignedBy: { name: string | null; email: string | null } | null;
   /** The reviewer's note when they sent it back; cleared once it goes to REVIEW again. */
   reviewNote?: string | null;
+  /** تاسك تصميم منشور تقويم — حالته تتبع المنشور (`social-calendar/helpers/sync-post-task.ts`). */
+  socialPostId?: string | null;
 }

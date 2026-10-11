@@ -42,6 +42,7 @@ export const getBoardTasks = cache(async (assigneeId: string): Promise<Record<Ta
       dueDate: true,
       completedAt: true,
       reviewNote: true,
+      socialPostId: true,
       assigneeId: true,
       createdById: true,
       assignee: { select: { id: true, name: true, image: true } },

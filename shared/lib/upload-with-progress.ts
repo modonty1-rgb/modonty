@@ -75,6 +75,49 @@ export function uploadWithProgress<T = unknown>(options: UploadOptions): Promise
   });
 }
 
+/**
+ * PUT the raw file to a signed URL (Bunny direct upload — `bunny-upload-ticket.ts`) with real progress.
+ * Same XHR reasoning as `uploadWithProgress`; the body is the file itself, not a form.
+ */
+export function putWithProgress<T = unknown>(options: {
+  url: string;
+  file: File;
+  onProgress?: (p: UploadProgress) => void;
+  signal?: AbortSignal;
+}): Promise<UploadResponse<T>> {
+  const { url, file, onProgress, signal } = options;
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new DOMException("Aborted", "AbortError"));
+      return;
+    }
+    const xhr = new XMLHttpRequest();
+    xhr.upload.onprogress = (e) => {
+      onProgress?.({
+        percent: e.lengthComputable ? Math.round((e.loaded / e.total) * 100) : null,
+        loaded: e.loaded,
+        total: e.lengthComputable ? e.total : file.size,
+      });
+    };
+    xhr.onload = () => {
+      let data: T | null = null;
+      try {
+        data = JSON.parse(xhr.responseText) as T;
+      } catch {
+        data = null;
+      }
+      resolve({ ok: xhr.status >= 200 && xhr.status < 300, status: xhr.status, data });
+    };
+    xhr.onerror = () => reject(new Error("network"));
+    xhr.ontimeout = () => reject(new Error("timeout"));
+    xhr.onabort = () => reject(new DOMException("Aborted", "AbortError"));
+    signal?.addEventListener("abort", () => xhr.abort(), { once: true });
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+    xhr.send(file);
+  });
+}
+
 /** Human file size, Latin digits — reads the same in an Arabic and an English UI. */
 export function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;

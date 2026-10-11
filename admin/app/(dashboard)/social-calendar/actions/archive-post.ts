@@ -8,6 +8,7 @@ import { objectIdSchema } from "../helpers/post-schema";
 import { requireSocialActor } from "../helpers/require-social-actor";
 import { revalidateSocialCalendar } from "../helpers/revalidate-social-calendar";
 import type { ActionResult } from "./action-result";
+import { CALENDAR_LABEL_SELECT, calendarLabel } from "../helpers/calendar-label";
 
 /** أرشفة ناعمة: يختفي من الجدول ويُحفظ في الأرشيف، ويُسترجع في أي وقت (القديم `archiveEntry`). */
 export async function archiveSocialPost(postId: string): Promise<ActionResult> {
@@ -18,7 +19,7 @@ export async function archiveSocialPost(postId: string): Promise<ActionResult> {
   try {
     const post = await db.socialPost.findUnique({
       where: { id: postId },
-      select: { id: true, idea: true, client: { select: { name: true } } },
+      select: { id: true, idea: true, calendar: { select: CALENDAR_LABEL_SELECT } },
     });
     if (!post) return { success: false, error: "المنشور غير موجود" };
 
@@ -31,7 +32,7 @@ export async function archiveSocialPost(postId: string): Promise<ActionResult> {
     await logAction("socialPost.archive", {
       entity: "SocialPost",
       entityId: post.id,
-      summary: `${post.client.name}: ${post.idea}`,
+      summary: `${calendarLabel(post.calendar)}: ${post.idea}`,
     });
     revalidateSocialCalendar();
     return { success: true };

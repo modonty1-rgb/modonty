@@ -9,6 +9,9 @@ import { loadSharp } from "@/lib/utils/sharp-loader";
  * المخزن `modonty-backups` بلا Pull Zone (مقيس من Bunny API: `PullZones attached: []`) فلا رابط
  * عامّ للسند، ويُعرض من `/orders/[id]/receipt` بعد التحقّق من الجلسة. الاسم ثابتٌ لكلّ طلب،
  * فالاستبدال يكتب فوقه. ومجلّد `order-receipts/` لا يمسّه تقليم النسخ (يقلّم أسماء التواريخ وحدها).
+ *
+ * الاستثناء الوحيد من الرفع المباشر لبني (`shared/lib/direct-upload.ts`) — قرار خالد ١١ أكتوبر ٢٠٢٦:
+ * سكربت Edge لا يُعطى كلمة مخزن النسخ الاحتياطيّة، والسند صغيرٌ مصغَّرٌ في المتصفّح ونادر.
  */
 export async function storeOrderReceipt(
   orderId: string,

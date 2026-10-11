@@ -13,6 +13,7 @@ import { requireSocialActor } from "../helpers/require-social-actor";
 import { revalidateSocialCalendar } from "../helpers/revalidate-social-calendar";
 import { TRANSITION_SELECT } from "../helpers/transition-select";
 import type { ActionResult } from "./action-result";
+import { calendarLabel } from "../helpers/calendar-label";
 
 /**
  * المصمم: «جاهز للمراجعة» — يشترط أصلاً مرفوعاً واحداً على الأقل (`ProductionForm.tsx:208`)،
@@ -42,7 +43,7 @@ export async function markSocialPostReady(postId: string): Promise<ActionResult>
     await logAction("socialPost.transition", {
       entity: "SocialPost",
       entityId: post.id,
-      summary: `${post.client.name}: ${post.idea}`,
+      summary: `${calendarLabel(post.calendar)}: ${post.idea}`,
       metadata: { from: post.status, to },
     });
     revalidateSocialCalendar();
@@ -51,7 +52,7 @@ export async function markSocialPostReady(postId: string): Promise<ActionResult>
       notifySocialPostEvent({
         event: "readyForReview",
         post,
-        clientName: post.client.name,
+        clientName: calendarLabel(post.calendar),
         actorId: actor.staffId,
         assetCount: post._count.assets,
       }),

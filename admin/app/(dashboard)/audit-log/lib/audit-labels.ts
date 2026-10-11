@@ -55,6 +55,10 @@ export const ACTION_LABEL: Record<string, string> = {
   "socialPost.archive": "Archived social post",
   "socialPost.restore": "Restored social post",
   "socialPost.assetDelete": "Deleted social creative",
+  "socialCalendar.create": "Created social calendar",
+  "socialCalendar.update": "Edited social calendar",
+  "socialCalendar.archive": "Archived social calendar",
+  "socialCalendar.restore": "Restored social calendar",
 };
 
 export function friendlyAction(action: string): string {
@@ -109,6 +113,7 @@ export function entityCategory(entity: string): CategoryMeta {
     case "Staff":
       return { key: "staff", label: "Staff", bar: "bg-pink-500" };
     case "SocialPost":
+    case "SocialCalendar":
       return { key: "social", label: "Social Calendar", bar: "bg-rose-500" };
     default:
       // Settings · Database · Seo · ContactMessage

@@ -19,6 +19,7 @@ import {
   setImageInReels,
   type GalleryImage,
 } from "../actions/gallery-actions";
+import { uploadConsoleImage } from "@/lib/bunny/upload-image";
 
 /** Gallery row plus the state of its reel, if the client chose to have one. */
 type GalleryItem = GalleryImage & { inReels: boolean; reelStatus: string | null };
@@ -94,7 +95,7 @@ export function GalleryManager({ initial }: Props) {
     <div className="space-y-5">
       {/* Upload zone — shared component: real byte-level progress per file + retry. */}
       <MediaUploadZone
-        endpoint="/api/upload-bunny"
+        upload={(file, onProgress) => uploadConsoleImage(file, "gallery", onProgress)}
         maxBytes={MAX_BYTES}
         transform={compressToWebP}
         labels={{
@@ -113,7 +114,7 @@ export function GalleryManager({ initial }: Props) {
             width,
             height,
             fileSize: file.size,
-            // Built server-side in /api/upload-bunny from the same buffer it uploaded.
+            // Built server-side (`lib/bunny/direct-upload-actions.ts`) from the bytes on Bunny.
             blurDataURL: res?.blurDataURL ?? null,
             publishAsReel,
           });

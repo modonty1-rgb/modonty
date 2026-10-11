@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MEDIA_SPECS, getMediaSpec, requiresCrop } from "@/lib/media/media-specs";
-import { uploadImageToBunny } from "@/lib/media/upload-image-to-bunny";
+import { uploadImage } from "@/lib/media/upload-image";
 import { createMedia } from "@/lib/media/create-media";
 import { findAltClash } from "@/lib/media/find-alt-clash";
 import { altToFileBase } from "@modonty/shared/lib/seo/media/alt-to-filename";
@@ -157,7 +157,7 @@ export function UploadMediaDialog({ target, onOpenChange, link }: UploadMediaDia
       fd.append("type", target.role);
       fd.append("scope", "CLIENT");
       fd.append("clientId", target.clientId);
-      const up = await uploadImageToBunny(fd);
+      const up = await uploadImage(fd);
       if (!up.success || !up.url) throw new Error(up.error || "Upload to storage failed");
 
       const rec = await createMedia({

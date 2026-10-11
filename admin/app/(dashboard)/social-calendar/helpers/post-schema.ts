@@ -49,7 +49,7 @@ export const postBriefSchema = z.object({
 export type PostBriefInput = z.input<typeof postBriefSchema>;
 
 export const createPostSchema = postBriefSchema.extend({
-  clientId: objectIdSchema,
+  calendarId: objectIdSchema,
   /** checkbox «إرسال إشعار على Telegram» — مفعّل افتراضياً عند الإنشاء كالقديم. */
   notifyTelegram: z.boolean(),
 });

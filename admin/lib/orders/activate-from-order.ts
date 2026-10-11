@@ -9,6 +9,7 @@ import { slugify } from "@/lib/utils";
 import { logAction } from "@/lib/audit/log-action";
 import { recomputeSubscriptionEnd } from "@/lib/invoices/recompute-subscription-end";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { openContentCalendar } from "@/app/(dashboard)/social-calendar/helpers/open-content-calendar";
 
 /**
  * **تفعيلُ عميلٍ من طلبٍ مدفوع** — لا «إنشاء عميل».
@@ -221,6 +222,10 @@ export async function activateFromOrder(input: { orderId: string }): Promise<Act
    */
   await recomputeSubscriptionEnd(client.id);
 
+  // كرت الكاليندر يُفتح مع التفعيل (Social Calendar › المحتوى). فشله لا يُسقط التفعيل —
+  // ويُفتح لاحقاً بنفس الدالّة.
+  await openContentCalendar(client.id).catch((error) => console.error("[activate] content calendar not opened", error));
+
   await logAction("client.activate-from-order", {
     entity: "Client",
     entityId: client.id,
@@ -231,6 +236,7 @@ export async function activateFromOrder(input: { orderId: string }): Promise<Act
   revalidatePath("/orders");
   revalidatePath(`/orders/${order.id}`);
   revalidatePath("/clients");
+  revalidatePath("/social-calendar");
   revalidatePath("/");
   await revalidateModontyTag("clients");
 

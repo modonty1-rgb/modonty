@@ -7,6 +7,7 @@ import { objectIdSchema } from "../helpers/post-schema";
 import { requireSocialActor } from "../helpers/require-social-actor";
 import { revalidateSocialCalendar } from "../helpers/revalidate-social-calendar";
 import type { ActionResult } from "./action-result";
+import { CALENDAR_LABEL_SELECT, calendarLabel } from "../helpers/calendar-label";
 
 /** استرجاع من الأرشيف — يعود لنفس يومه وشهره، بنفس حالته (القديم `unarchiveEntry`). */
 export async function restoreSocialPost(postId: string): Promise<ActionResult> {
@@ -17,7 +18,7 @@ export async function restoreSocialPost(postId: string): Promise<ActionResult> {
   try {
     const post = await db.socialPost.findUnique({
       where: { id: postId },
-      select: { id: true, idea: true, archivedAt: true, client: { select: { name: true } } },
+      select: { id: true, idea: true, archivedAt: true, calendar: { select: CALENDAR_LABEL_SELECT } },
     });
     if (!post) return { success: false, error: "المنشور غير موجود" };
     if (!post.archivedAt) return { success: false, error: "المنشور ليس في الأرشيف" };
@@ -27,7 +28,7 @@ export async function restoreSocialPost(postId: string): Promise<ActionResult> {
     await logAction("socialPost.restore", {
       entity: "SocialPost",
       entityId: post.id,
-      summary: `${post.client.name}: ${post.idea}`,
+      summary: `${calendarLabel(post.calendar)}: ${post.idea}`,
     });
     revalidateSocialCalendar();
     return { success: true };

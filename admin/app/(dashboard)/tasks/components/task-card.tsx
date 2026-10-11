@@ -2,7 +2,8 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { CalendarClock, GripVertical, UserRound } from "lucide-react";
+import Link from "next/link";
+import { CalendarClock, ExternalLink, GripVertical, UserRound } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -94,6 +95,16 @@ export function TaskCard({
       )}
 
       <div className="flex flex-wrap items-center gap-1.5 ps-5 empty:hidden">
+        {task.socialPostId && (
+          <Link
+            href={`/social-calendar/go/${task.socialPostId}`}
+            title="حالة هذا التاسك تتبع المنشور — ارفع التصميم من صفحة الإنتاج"
+            className="inline-flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary hover:bg-primary/20"
+          >
+            <ExternalLink className="size-3" aria-hidden />
+            صفحة الإنتاج
+          </Link>
+        )}
         {loud && (
           <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-semibold", TASK_PRIORITY_META[task.priority].tone)}>
             {TASK_PRIORITY_META[task.priority].labelAr}

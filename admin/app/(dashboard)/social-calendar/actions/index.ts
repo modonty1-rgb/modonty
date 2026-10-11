@@ -11,4 +11,8 @@ export { removeSocialAsset } from "./remove-asset";
 export { updateSocialAssetLabel } from "./update-asset-label";
 export { requestSocialVideoUpload, type SocialVideoTicket } from "./request-video-upload";
 export { addSocialVideoAsset } from "./add-video-asset";
+export { registerSocialImageAsset, requestSocialImageUpload } from "./request-image-upload";
 export type { ActionResult, ActionResultWith } from "./action-result";
+export { createSocialCalendar } from "./create-calendar";
+export { updateSocialCalendar } from "./update-calendar";
+export { archiveSocialCalendar, restoreSocialCalendar } from "./archive-calendar";

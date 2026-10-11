@@ -61,6 +61,12 @@ const orNull = (v: string | undefined) => (v && v.trim() ? v.trim() : null);
  */
 const LIVE: Prisma.TaskWhereInput = TASK_NOT_ARCHIVED;
 
+/**
+ * تاسك تصميم منشور التقويم: حالته تتبع المنشور (`social-calendar/helpers/sync-post-task.ts`) —
+ * المصمم يرفع من صفحة الإنتاج، والمراجعة في التقويم. يُرتَّب داخل عموده ولا يُنقل منه.
+ */
+const LINKED_POST_ERROR = "حالة هذا التاسك تتبع المنشور في التقويم — افتح صفحة الإنتاج";
+
 /** Task cards are private to their assignee. Enforce this on the server too:
  * hiding a card in the browser must not make its action endpoints public. */
 // `auth` has middleware overloads as well as its server-session overload. Using
@@ -197,8 +203,9 @@ function pingReviewer(createdById: string | null, actorId: string): void {
 async function loadForReview(id: string, reviewerId: string) {
   const task = await db.task.findUnique({
     where: { id },
-    select: { id: true, title: true, status: true, assigneeId: true, createdById: true, archivedAt: true },
+    select: { id: true, title: true, status: true, assigneeId: true, createdById: true, archivedAt: true, socialPostId: true },
   });
+  if (task?.socialPostId) return { error: LINKED_POST_ERROR } as const;
   if (
     !task ||
     task.archivedAt ||
@@ -403,9 +410,10 @@ export async function updateTask(raw: unknown): Promise<Result> {
   try {
     const existing = await db.task.findUnique({
       where: { id: data.id },
-      select: { id: true, status: true, completedAt: true, assigneeId: true, createdById: true },
+      select: { id: true, status: true, completedAt: true, assigneeId: true, createdById: true, socialPostId: true },
     });
     if (!existing) return { success: false, error: "Task not found" };
+    if (existing.socialPostId && data.status !== existing.status) return { success: false, error: LINKED_POST_ERROR };
 
     // مَن أسند المهمّةَ لزميلٍ يعدّل نصَّها وأولويّتها من «Assign Task» (خالد ٣ أكتوبر ٢٠٢٦:
     // أسند ١٢ مهمّةً لطارق ولم يقدر يصحّح صياغتها). الحالةُ والمنفّذُ لا يُمسّان — العمودُ قرارُ المنفّذ،
@@ -487,10 +495,11 @@ export async function moveTask(raw: unknown): Promise<Result> {
   try {
     const task = await db.task.findUnique({
       where: { id },
-      select: { id: true, title: true, status: true, completedAt: true, assigneeId: true, createdById: true },
+      select: { id: true, title: true, status: true, completedAt: true, assigneeId: true, createdById: true, socialPostId: true },
     });
     if (!task) return { success: false, error: "Task not found" };
     if (task.assigneeId !== userId) return { success: false, error: "Task not found" };
+    if (task.socialPostId && status !== task.status) return { success: false, error: LINKED_POST_ERROR };
     if (skipsReview(task, status)) return { success: false, error: SKIP_REVIEW_ERROR };
 
     // Siblings EXCLUDING the moving card: if it is already in this column, its

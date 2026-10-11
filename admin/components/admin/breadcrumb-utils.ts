@@ -139,7 +139,14 @@ const socialCalendarLabels: Record<string, string> = {
 };
 const MONTHS_AR = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
 
-function socialCalendarLabel(segment: string): string | undefined {
+/** مباشرةً تحت `/social-calendar`: أقسام الكاليندرات وتأسيسها، لا صفحات منشور. */
+const socialCalendarRootLabels: Record<string, string> = {
+  social: 'السوشيال ميديا',
+  new: 'كاليندر جديد',
+};
+
+function socialCalendarLabel(segment: string, index: number): string | undefined {
+  if (index === 1 && socialCalendarRootLabels[segment]) return socialCalendarRootLabels[segment];
   const m = /^(\d{4})-(\d{2})$/.exec(segment);
   if (m && MONTHS_AR[Number(m[2]) - 1]) return `${MONTHS_AR[Number(m[2]) - 1]} ${m[1]}`;
   return socialCalendarLabels[segment];
@@ -246,7 +253,7 @@ export function generateBreadcrumbs(
     if (inSocialCalendar && !isObjectId(segment)) {
       // `posts` مجلّد بلا صفحة — يُتخطّى، فيأتي المنشور بعد العميل مباشرةً.
       if (segment === 'posts') continue;
-      items.push({ label: socialCalendarLabel(segment) ?? capitalize(segment), href: currentPath });
+      items.push({ label: socialCalendarLabel(segment, i) ?? capitalize(segment), href: currentPath });
     } else if (isObjectId(segment) && i > 0) {
       const entityType = segments[i - 1];
       const entityName = getEntityName?.(entityType, segment);

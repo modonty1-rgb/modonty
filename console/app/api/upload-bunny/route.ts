@@ -2,23 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { uploadToBunny } from "@modonty/shared/lib/bunny";
 import { auth } from "@/lib/auth";
+import { imageExtension, resolveUploadFolder } from "@/lib/bunny/upload-folders";
 import { generateBlurDataUrl } from "@/lib/media/generate-blur";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
 const MB = 1024 * 1024;
-// Client-side compression outputs WebP ≤2000px (~0.1–2MB) — 4MB is a generous ceiling
-// that also stays under Vercel's request-body limit.
+// Fallback only — uploads go browser → Bunny (`lib/bunny/upload-image.ts`). This route is used
+// when direct upload isn't configured, and stays under Vercel's 4.5MB request-body limit.
 const IMAGE_LIMIT = 4 * MB;
 
-// Whitelisted upload folders — the browser must NOT choose an arbitrary path.
-// `team` = صور أعضاء الفريق في «من نحن» (أُضيف ١٦ سبتمبر ٢٠٢٦ مع تحويل الحقل من رابط إلى رفع).
-const FOLDERS = ["gallery", "achievements", "licenses", "reels", "team"] as const;
-type Folder = (typeof FOLDERS)[number];
-
 /**
- * Server-side proxy upload to Bunny (reels zone) — the browser never sees the
+ * FALLBACK server-side proxy upload to Bunny (reels zone) — the browser never sees the
  * storage password. Files live in the reels zone by locked decision
  * (unified source). The optional `folder` field selects a whitelisted subfolder
  * (gallery | achievements | licenses); it defaults to gallery for backward compatibility.
@@ -33,10 +29,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const file = fd.get("file") as File | null;
     if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
 
-    const requested = String(fd.get("folder") ?? "gallery");
-    const folder: Folder = (FOLDERS as readonly string[]).includes(requested)
-      ? (requested as Folder)
-      : "gallery";
+    const folder = resolveUploadFolder(String(fd.get("folder") ?? "gallery"));
 
     if (!file.type.startsWith("image/")) {
       return NextResponse.json({ error: "الملف مش صورة" }, { status: 415 });
@@ -48,7 +41,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const ext = file.type === "image/webp" ? "webp" : file.type === "image/png" ? "png" : "jpg";
+    const ext = imageExtension(file.type);
     const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const remotePath = `clients/${clientId}/${folder}/${unique}.${ext}`;
 

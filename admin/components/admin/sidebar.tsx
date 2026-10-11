@@ -81,6 +81,7 @@ import { Trophy,
   Scale,
   ScrollText,
   Search,
+  Plus,
   Settings,
   Settings2,
   Share2,
@@ -99,7 +100,6 @@ import { Trophy,
   PenLine,
   Gauge,
   CalendarDays,
-  Sparkles,
 } from "lucide-react";
 import { LIVE_SECTORS, type LiveSectorSlug } from "@modonty/shared/lib/sectors/live-sectors";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
@@ -199,8 +199,11 @@ const rawMenuGroups: MenuGroup[] = [
     section: "Core work",
     defaultOpen: false,
     items: [
-      { icon: CalendarDays, label: "Clients", href: "/social-calendar", exact: true },
-      { icon: Sparkles, label: "Workflow", href: "/social-calendar/flow" },
+      // قسمان + التأسيس (خالد ١١ أكتوبر ٢٠٢٦): النوع يُختار عند تأسيس الكاليندر.
+      { icon: FileText, label: "Content", href: "/social-calendar", exact: true },
+      { icon: Share2, label: "Social Media", href: "/social-calendar/social" },
+      { icon: Plus, label: "New Calendar", href: "/social-calendar/new" },
+      // «سير العمل» مخفي من التقويم بقرار خالد (١١ أكتوبر ٢٠٢٦: «ما احتاجه») — الصفحة `social-calendar/flow` باقية.
     ],
   },
   {

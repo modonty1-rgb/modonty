@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { logAction } from "@/lib/audit/log-action";
 
 import { monthParamOfDate, parseDayInput } from "../helpers/dates";
+import { calendarLabel, CALENDAR_LABEL_SELECT } from "../helpers/calendar-label";
 import { firstZodError } from "../helpers/first-zod-error";
 import { notifySocialPostEvent } from "../helpers/notify-post-event";
 import { createPostSchema, type CreatePostInput } from "../helpers/post-schema";
@@ -31,13 +32,17 @@ export async function createSocialPost(
   if (!scheduledFor) return { success: false, error: "تاريخ غير صالح" };
 
   try {
-    const client = await db.client.findUnique({ where: { id: data.clientId }, select: { id: true, name: true } });
-    if (!client) return { success: false, error: "العميل غير موجود" };
+    const calendar = await db.socialCalendar.findUnique({
+      where: { id: data.calendarId },
+      select: { id: true, designerId: true, archivedAt: true, ...CALENDAR_LABEL_SELECT },
+    });
+    if (!calendar || calendar.archivedAt) return { success: false, error: "الكاليندر غير موجود" };
+    const name = calendarLabel(calendar);
 
     const now = new Date();
     const post = await db.socialPost.create({
       data: {
-        clientId: client.id,
+        calendarId: calendar.id,
         scheduledFor,
         status: "IN_PRODUCTION",
         statusUpdatedAt: now,
@@ -53,11 +58,13 @@ export async function createSocialPost(
         voiceTone: data.voiceTone,
         inspiration: data.inspiration,
         notes: data.notes,
+        // مصمم الكاليندر — يُختار مرّة على الكرت لا على كل منشور (خالد ١١ أكتوبر ٢٠٢٦).
+        creativeAssigneeId: calendar.designerId,
         createdById: actor.staffId,
       },
       select: {
         id: true,
-        clientId: true,
+        calendarId: true,
         idea: true,
         scheduledFor: true,
         format: true,
@@ -71,7 +78,7 @@ export async function createSocialPost(
     await logAction("socialPost.create", {
       entity: "SocialPost",
       entityId: post.id,
-      summary: `${client.name}: ${post.idea}`,
+      summary: `${name}: ${post.idea}`,
     });
     revalidateSocialCalendar();
 
@@ -79,7 +86,7 @@ export async function createSocialPost(
       notifySocialPostEvent({
         event: "created",
         post,
-        clientName: client.name,
+        clientName: name,
         actorId: actor.staffId,
         telegram: data.notifyTelegram,
       }),

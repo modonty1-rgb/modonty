@@ -88,14 +88,13 @@ const REGISTRY: Record<string, NotificationMeta> = {
   },
   /**
    * تقويم السوشيال — منشور تحرّك بين المراحل ويخصّك (جاهز لمراجعتك · جاهز للنشر · رُفض · نُشر).
-   * يفتح صفحة المنشور نفسها: `clientId` على الصفّ و`relatedId` هو المنشور.
+   * `relatedId` هو المنشور، و`/social-calendar/go` يجد كاليندره (كاليندر السوشيال بلا عميل).
    */
   social_post: {
     icon: CalendarDays,
     toneClasses: "bg-rose-100 text-rose-700 ring-rose-200",
     label: "تقويم السوشيال",
-    href: (n) =>
-      n.clientId && n.relatedId ? `/social-calendar/${n.clientId}/posts/${n.relatedId}` : "/social-calendar",
+    href: (n) => (n.relatedId ? `/social-calendar/go/${n.relatedId}?to=details` : "/social-calendar"),
   },
   faq_reply: {
     icon: HelpCircle,

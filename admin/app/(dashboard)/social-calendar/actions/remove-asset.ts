@@ -10,6 +10,7 @@ import { ASSETS_LOCKED_STATUSES, nextSocialStatus } from "../helpers/post-transi
 import { requireSocialActor } from "../helpers/require-social-actor";
 import { revalidateSocialCalendar } from "../helpers/revalidate-social-calendar";
 import type { ActionResult } from "./action-result";
+import { CALENDAR_LABEL_SELECT, calendarLabel } from "../helpers/calendar-label";
 
 /**
  * حذف أصل — من صفحة الإنتاج أو من المعرض (القديم `deleteAsset` `entries.ts:347-386`).
@@ -32,7 +33,7 @@ export async function removeSocialAsset(assetId: string): Promise<ActionResult> 
         path: true,
         bunnyVideoId: true,
         label: true,
-        post: { select: { id: true, status: true, idea: true, client: { select: { name: true } } } },
+        post: { select: { id: true, status: true, idea: true, calendar: { select: CALENDAR_LABEL_SELECT } } },
       },
     });
     if (!asset) return { success: false, error: "الملف غير موجود" };
@@ -70,7 +71,7 @@ export async function removeSocialAsset(assetId: string): Promise<ActionResult> 
     await logAction("socialPost.assetDelete", {
       entity: "SocialPost",
       entityId: post.id,
-      summary: `${post.client.name}: ${post.idea}${asset.label ? ` — ${asset.label}` : ""}`,
+      summary: `${calendarLabel(post.calendar)}: ${post.idea}${asset.label ? ` — ${asset.label}` : ""}`,
       metadata: statusChange,
     });
     revalidateSocialCalendar();

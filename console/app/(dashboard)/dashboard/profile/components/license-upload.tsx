@@ -7,6 +7,7 @@ import { Upload, X, Loader2, ImageIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { compressToWebP } from "@/lib/compress-image";
+import { uploadConsoleImage } from "@/lib/bunny/upload-image";
 
 interface LicenseUploadProps {
   value: string;
@@ -16,7 +17,7 @@ interface LicenseUploadProps {
 /**
  * YMYL license/credential image upload — Bunny only.
  *
- * Goes through OUR server route (`/api/upload-bunny`, folder `licenses`) so the
+ * Goes browser → Bunny with a ticket OUR server signs (`lib/bunny/upload-image.ts`, folder `licenses`) so the
  * storage password never reaches the browser and the client id comes from the
  * session, not from the form. Replaces the old unsigned direct-to-Cloudinary
  * upload (kept as a tripwire in `cloudinary-license-upload.tsx`).
@@ -46,14 +47,9 @@ export function LicenseUpload({ value, onChange }: LicenseUploadProps) {
     }
 
     try {
-      const fd = new FormData();
-      fd.append("file", compressed);
-      fd.append("folder", "licenses");
-
-      const res = await fetch("/api/upload-bunny", { method: "POST", body: fd });
-      const json = (await res.json()) as { url?: string; error?: string };
-      if (!res.ok || !json.url) {
-        toast.error(json.error || "فشل رفع الصورة، حاول مرة ثانية");
+      const { ok, data: json } = await uploadConsoleImage(compressed, "licenses");
+      if (!ok || !json?.url) {
+        toast.error(json?.error || "فشل رفع الصورة، حاول مرة ثانية");
         return;
       }
       onChange(json.url);

@@ -12,6 +12,7 @@ import { getLeadName } from '@/app/(dashboard)/sales-leads/helpers/get-lead';
 import { getCommercialPlanName } from '@/app/(dashboard)/commercial-plans/actions';
 import { getOrderNumber } from '@/app/(dashboard)/orders/actions';
 import { getPostCrumb } from '@/app/(dashboard)/social-calendar/helpers/queries/get-post-crumb';
+import { getCalendar } from '@/app/(dashboard)/social-calendar/helpers/queries/get-calendar';
 
 function normalizeEntityType(type: string): string {
   const pluralToSingular: Record<string, string> = {
@@ -29,8 +30,8 @@ function normalizeEntityType(type: string): string {
     'sales-leads': 'sales-lead',
     'commercial-plans': 'commercial-plan',
     orders: 'order',
-    // /social-calendar/[clientId]/posts/[postId] — العميل باسمه، والمنشور بتاريخه وفكرته.
-    'social-calendar': 'client',
+    // /social-calendar/[calendarId]/posts/[postId] — الكاليندر باسمه، والمنشور بتاريخه وفكرته.
+    'social-calendar': 'social-calendar',
     posts: 'social-post',
   };
   return pluralToSingular[type] || type;
@@ -83,6 +84,9 @@ export async function getEntityName(type: string, id: string): Promise<string | 
       }
       case 'social-post': {
         return await getPostCrumb(id);
+      }
+      case 'social-calendar': {
+        return (await getCalendar(id))?.name ?? null;
       }
       default:
         return null;

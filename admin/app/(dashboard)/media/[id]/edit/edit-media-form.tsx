@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Upload, X, Save } from "lucide-react";
 import { updateMedia } from "../../actions/media-actions";
-import { uploadImageToBunny } from "@/lib/media/upload-image-to-bunny";
+import { uploadImage } from "@/lib/media/upload-image";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { OptimizedImage, asMedia } from "@modonty/shared/components/optimized-image";
@@ -195,7 +195,7 @@ export function EditMediaForm({ media, clients, backHref = "/media" }: EditMedia
           uploadFormData.append("scope", resolvedScope);
           if (resolvedClientId) uploadFormData.append("clientId", resolvedClientId);
 
-          const uploadResult = await uploadImageToBunny(uploadFormData);
+          const uploadResult = await uploadImage(uploadFormData);
           if (!uploadResult.success || !uploadResult.url) {
             toast({ title: messages.error.upload_failed, description: uploadResult.error || "تعذّر رفع الملف إلى Bunny", variant: "destructive" });
             setIsSaving(false);

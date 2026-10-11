@@ -10,13 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { compressToWebP } from "@/lib/compress-image";
 import { addMyDocument, deleteMyDocument } from "../actions/document-actions";
+import { uploadConsoleImage } from "@/lib/bunny/upload-image";
 
 /**
  * **وثائقي — يرفعها صاحبُها.**
  *
  * خالد (١٩ سبتمبر ٢٠٢٦): «العميل يرفع من الكونسول من عنده».
  *
- * الرفعُ يمرّ بمسار الخادم `/api/upload-bunny` كما تفعل رخصةُ YMYL — فكلمةُ المخزن لا
+ * الرفعُ من المتصفّح لبني مباشرةً (`lib/bunny/upload-image.ts`) بتذكرةٍ يوقّعها الخادم — فكلمةُ المخزن لا
  * تصل المتصفّح، ومعرّفُ العميل من الجلسة لا من النموذج.
  *
  * ولا ختمَ فحصٍ ولا حالة (خالد: «ليه تعقيد… احنا ما بنفحص، احنا بنرفع الداتا اللي
@@ -104,12 +105,8 @@ function AddForm({ onDone }: { onDone: () => void }) {
     setUploading(true);
     try {
       const compressed = await compressToWebP(file);
-      const fd = new FormData();
-      fd.append("file", compressed);
-      fd.append("folder", "documents");
-      const res = await fetch("/api/upload-bunny", { method: "POST", body: fd });
-      const json = (await res.json()) as { url?: string; error?: string };
-      if (!res.ok || !json.url) return toast.error(json.error || "فشل الرفع");
+      const { ok, data: json } = await uploadConsoleImage(compressed, "documents");
+      if (!ok || !json?.url) return toast.error(json?.error || "فشل الرفع");
       setUrl(json.url);
       toast.success("رُفعت الصورة");
     } catch {

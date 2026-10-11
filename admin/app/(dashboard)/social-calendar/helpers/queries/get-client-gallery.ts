@@ -24,9 +24,9 @@ export interface GalleryPost {
  * معرض الإبداع — كل منشورات العميل التي فيها أصل واحد على الأقل.
  * كالقديم (`getEntriesWithAssets`): لا يستثني المؤرشف — المعرض أرشيف الإبداع كلّه.
  */
-export async function getClientGallery(clientId: string): Promise<GalleryPost[]> {
+export async function getClientGallery(calendarId: string): Promise<GalleryPost[]> {
   return db.socialPost.findMany({
-    where: { clientId, assets: { some: {} } },
+    where: { calendarId, assets: { some: {} } },
     orderBy: [{ scheduledFor: "asc" }, { createdAt: "asc" }],
     select: {
       id: true,

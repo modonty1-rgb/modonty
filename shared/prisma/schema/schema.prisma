@@ -399,6 +399,10 @@ model Task {
   /// وتُمسح حين ينقلها المنفّذُ إلى REVIEW من جديد أو يعتمدها المراجِع.
   reviewNote String?
 
+  /// منشور التقويم الذي يمثّله هذا التاسك (تصميمه). حالته تتبع المنشور ولا تُحرَّك من البورد
+  /// (`social-calendar/helpers/sync-post-task.ts`) — المراجعة في التقويم، فلا شغل مكرّر.
+  socialPostId String? @db.ObjectId
+
   // Archived, never deleted — Khalid, 2026-09-02: «مافي حذف، أرشفه بدل الحذف».
   //
   // A DATE on the task, not a fifth column: archiving is orthogonal to where the
@@ -417,6 +421,7 @@ model Task {
   @@index([assigneeId])
   @@index([createdById, status])
   @@index([dueDate])
+  @@index([socialPostId])
   @@map("tasks")
 }
 
@@ -948,8 +953,8 @@ model Client {
 
   // Relationships
   articles          Article[]
-  /// تقويم السوشيال (أدمن › Social Calendar) — منشورات العميل الاجتماعية. انظر `SocialPost`.
-  socialPosts       SocialPost[] @relation("ClientSocialPosts")
+  /// كاليندر المحتوى (أدمن › Social Calendar › Content) — يُفتح بالتفعيل، واحدٌ للعميل. انظر `SocialCalendar`.
+  socialCalendars   SocialCalendar[] @relation("ClientSocialCalendars")
   subscribers       Subscriber[]
   // الإحالات التي رفعها هذا العميل. الاتجاه واحد: العميل مُحيلٌ لا مُحالٌ إليه —
   // المُرشَّح ليس عميلاً بعد، وحين يصير عميلاً يُسجَّل معرّفه في `convertedClientId`.
@@ -5651,14 +5656,55 @@ enum SocialAssetKind {
   VIDEO
 }
 
-/// منشور واحد في تقويم السوشيال لعميل واحد. يحمل البريف (كاتب المحتوى) وبيانات النشر
+/// نوع الكاليندر — قسمه في Social Calendar.
+enum SocialCalendarKind {
+  CONTENT // المحتوى
+  SOCIAL // السوشيال ميديا
+}
+
+/// كاليندر — كرتٌ في Social Calendar (خالد ١١ أكتوبر ٢٠٢٦).
+///
+/// النوع يُختار عند التأسيس من «كاليندر جديد» — محتوى أو سوشيال، لعميل مدونتي أو لأيّ براند.
+/// تفعيل العميل يفتح له كاليندر محتوى مربوطاً به (`lib/orders/activate-from-order.ts`)، واحداً
+/// للعميل، والتجديد يكمل عليه.
+model SocialCalendar {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  kind SocialCalendarKind @default(CONTENT)
+
+  /// اسم الكاليندر. المربوط بعميل يُعرض باسم عميله ولا يُنسخ هنا.
+  name String?
+
+  clientId String? @db.ObjectId
+  client   Client? @relation("ClientSocialCalendars", fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  /// مصمم الكاليندر (Staff) — كل منشورٍ فيه يذهب تاسك تصميمه إليه (`sync-post-task.ts`).
+  designerId String? @db.ObjectId
+
+  /// «محتاج مراجعة» — سببٌ يظهر شارةً صفراء على الكرت حتى يُحفظ الكاليندر من إعداداته.
+  /// يكتبه الترحيل حين يتعارض نوعه القديم مع اسمه (خالد ١١ أكتوبر ٢٠٢٦).
+  reviewNote String?
+
+  archivedAt DateTime?
+
+  posts SocialPost[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([kind])
+  @@map("social_calendars")
+}
+
+/// منشور واحد في كاليندر واحد. يحمل البريف (كاتب المحتوى) وبيانات النشر
 /// (الميديا باير)؛ الأصول في جدولها.
 model SocialPost {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  /// العميل: إلزاميّ. القديم كان اختياريّاً لبقايا مسار /calendar بلا عميل.
-  clientId String @db.ObjectId
-  client   Client @relation("ClientSocialPosts", fields: [clientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  /// الكاليندر: إلزاميّ. العميل يُقرأ منه (`calendar.client`) — لا نسخة على المنشور.
+  calendarId String         @db.ObjectId
+  calendar   SocialCalendar @relation(fields: [calendarId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   /// يوم المنشور بسنة كاملة — منتصف ليل UTC لذلك اليوم. يحلّ محلّ month+day (بلا سنة) في القديم.
   scheduledFor DateTime
@@ -5703,6 +5749,8 @@ model SocialPost {
 
   // ── مَن (Staff)
   createdById        String? @db.ObjectId
+  /// مصمم المنشور — يُنسخ من مصمم الكاليندر عند الإنشاء، ويتبعه ما لم يُعتمد التصميم
+  /// (`update-calendar.ts`). ما اعتُمد يبقى باسم من صمّمه.
   creativeAssigneeId String? @db.ObjectId
   publishedById      String? @db.ObjectId
 
@@ -5717,10 +5765,10 @@ model SocialPost {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([clientId, scheduledFor])
-  @@index([clientId, status])
+  @@index([calendarId, scheduledFor])
+  @@index([calendarId, status])
   @@index([status, scheduledFor])
-  @@index([archivedAt, clientId])
+  @@index([archivedAt, calendarId])
   @@map("social_calendar_posts")
 }
 

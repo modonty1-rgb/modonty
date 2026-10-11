@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import { CALENDAR_LABEL_SELECT } from "./calendar-label";
 
 /**
  * ما يقرؤه كل أكشن انتقال حالة: الحالة الحالية (لآلة الحالات)، عدد الأصول (لشرط «جاهز
@@ -6,7 +7,7 @@ import type { Prisma } from "@prisma/client";
  */
 export const TRANSITION_SELECT = {
   id: true,
-  clientId: true,
+  calendarId: true,
   status: true,
   idea: true,
   scheduledFor: true,
@@ -16,7 +17,7 @@ export const TRANSITION_SELECT = {
   createdById: true,
   creativeAssigneeId: true,
   archivedAt: true,
-  client: { select: { name: true } },
+  calendar: { select: CALENDAR_LABEL_SELECT },
   _count: { select: { assets: true } },
 } satisfies Prisma.SocialPostSelect;
 

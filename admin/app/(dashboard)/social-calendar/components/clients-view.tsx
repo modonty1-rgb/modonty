@@ -9,7 +9,7 @@ import { DataTable, type Column } from "@/components/admin/data-table";
 import { cn } from "@/lib/utils";
 
 import { MONTH_LABELS, parseMonthParam } from "../helpers/dates";
-import type { CalendarClientRow } from "../helpers/queries";
+import type { CalendarRow } from "../helpers/queries";
 import { ClientAvatar } from "./client-avatar";
 
 type ViewMode = "cards" | "table";
@@ -17,9 +17,21 @@ type Filter = "all" | "active";
 const STORAGE_KEY = "social-calendar:clients-view";
 
 /** أين يفتح الكرت: الشهر الحالي إن كان فيه منشور، وإلّا آخر شهر نشط، وإلّا الشهر الحالي (القديم `resolveFirstMonth`). */
-function firstMonth(client: CalendarClientRow, currentMonth: string): string {
+function firstMonth(client: CalendarRow, currentMonth: string): string {
   if (client.activeMonths.includes(currentMonth)) return currentMonth;
   return client.activeMonths[client.activeMonths.length - 1] ?? currentMonth;
+}
+
+/** «محتاج مراجعة» — يبقى حتى يُحفظ الكاليندر من إعداداته (`update-calendar.ts`). */
+function ReviewBadge({ note }: { note: string }) {
+  return (
+    <span
+      title={note}
+      className="mb-2 inline-flex w-fit items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800 dark:bg-amber-400/15 dark:text-amber-300"
+    >
+      محتاج مراجعة
+    </span>
+  );
 }
 
 function monthLabel(param: string | undefined): string {
@@ -34,7 +46,7 @@ function monthLabel(param: string | undefined): string {
  * الفرق المفروض: لون العميل صار شعاره (مدونتي بلا `color`)، وفلتر «النوع» (وسائل تواصل/مقالات)
  * سقط مع حقل النوع (س١٢)؛ مكانه «الكل / لهم منشورات» بنفس الشكل — عملاء مدونتي كلّهم هنا.
  */
-export function ClientsView({ clients, currentMonth }: { clients: CalendarClientRow[]; currentMonth: string }) {
+export function ClientsView({ clients, currentMonth }: { clients: CalendarRow[]; currentMonth: string }) {
   const router = useRouter();
   const [view, setView] = useState<ViewMode>("cards");
   const [filter, setFilter] = useState<Filter>("all");
@@ -63,7 +75,7 @@ export function ClientsView({ clients, currentMonth }: { clients: CalendarClient
     [clients, filter],
   );
 
-  const columns: Column<CalendarClientRow>[] = [
+  const columns: Column<CalendarRow>[] = [
     {
       key: "name",
       header: "الاسم",
@@ -72,6 +84,7 @@ export function ClientsView({ clients, currentMonth }: { clients: CalendarClient
         <span className="flex items-center gap-2">
           <ClientAvatar name={c.name} logoUrl={c.logoUrl} className="h-6 w-6 rounded-md text-[11px]" />
           <span className="font-semibold text-foreground">{c.name}</span>
+          {c.reviewNote && <ReviewBadge note={c.reviewNote} />}
         </span>
       ),
     },
@@ -180,12 +193,13 @@ export function ClientsView({ clients, currentMonth }: { clients: CalendarClient
               href={`/social-calendar/${c.id}/${firstMonth(c, currentMonth)}`}
               className="group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
-              <div className="h-1 w-full bg-primary" />
+              <div className={cn("h-1 w-full", c.reviewNote ? "bg-amber-400" : "bg-primary")} />
               <div className="flex flex-1 flex-col p-3">
                 <div className="mb-2 flex items-start gap-1.5">
                   <h2 className="min-w-0 flex-1 break-words text-xs font-semibold leading-snug text-foreground">{c.name}</h2>
                   <ClientAvatar name={c.name} logoUrl={c.logoUrl} className="h-6 w-6 rounded-md text-[11px]" />
                 </div>
+                {c.reviewNote && <ReviewBadge note={c.reviewNote} />}
                 <div className="mt-auto flex items-center gap-3">
                   <div>
                     <p className="text-lg font-bold leading-none tabular-nums text-foreground">{c.totalPosts}</p>

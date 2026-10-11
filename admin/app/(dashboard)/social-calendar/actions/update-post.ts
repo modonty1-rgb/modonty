@@ -8,7 +8,9 @@ import { firstZodError } from "../helpers/first-zod-error";
 import { updatePostSchema, type UpdatePostInput } from "../helpers/post-schema";
 import { requireSocialActor } from "../helpers/require-social-actor";
 import { revalidateSocialCalendar } from "../helpers/revalidate-social-calendar";
+import { upsertPostTask } from "../helpers/sync-post-task";
 import type { ActionResultWith } from "./action-result";
+import { CALENDAR_LABEL_SELECT, calendarLabel } from "../helpers/calendar-label";
 
 /**
  * تعديل البريف + نقل التاريخ في حفظ واحد — كنموذج التعديل القديم الذي يكتب `month` الجديد مع
@@ -31,12 +33,23 @@ export async function updateSocialPost(
   try {
     const existing = await db.socialPost.findUnique({
       where: { id: data.postId },
-      select: { id: true, scheduledFor: true, client: { select: { name: true } } },
+      select: { id: true, scheduledFor: true, calendar: { select: CALENDAR_LABEL_SELECT } },
     });
     if (!existing) return { success: false, error: "المنشور غير موجود" };
 
-    await db.socialPost.update({
+    const updated = await db.socialPost.update({
       where: { id: existing.id },
+      select: {
+        id: true,
+        calendarId: true,
+        idea: true,
+        scheduledFor: true,
+        format: true,
+        funnelStages: true,
+        channels: true,
+        createdById: true,
+        creativeAssigneeId: true,
+      },
       data: {
         scheduledFor,
         idea: data.idea,
@@ -52,12 +65,16 @@ export async function updateSocialPost(
         notes: data.notes,
       },
     });
+    // تاسك التصميم يتبع المنشور: التاريخ والفكرة يتغيّران فيه (`sync-post-task.ts`).
+    await upsertPostTask(updated, calendarLabel(existing.calendar), actor.staffId).catch((error) =>
+      console.error("[social-calendar] post task upsert failed", error),
+    );
 
     const moved = existing.scheduledFor.getTime() !== scheduledFor.getTime();
     await logAction("socialPost.update", {
       entity: "SocialPost",
       entityId: existing.id,
-      summary: `${existing.client.name}: ${data.idea}`,
+      summary: `${calendarLabel(existing.calendar)}: ${data.idea}`,
       metadata: moved
         ? { movedFrom: existing.scheduledFor.toISOString().slice(0, 10), movedTo: scheduledFor.toISOString().slice(0, 10) }
         : null,

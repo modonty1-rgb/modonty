@@ -33,7 +33,7 @@ export interface AddGalleryInput {
   height?: number | null;
   fileSize?: number | null;
   altText?: string | null;
-  /** Blur placeholder built server-side in `/api/upload-bunny` — see `lib/media/generate-blur`. */
+  /** Blur placeholder built server-side in `lib/bunny/direct-upload-actions.ts` — see `lib/media/generate-blur`. */
   blurDataURL?: string | null;
   /**
    * Opt-in per image (Khalid 2026-08-04). Was "default ON for the whole upload" — the
@@ -66,7 +66,7 @@ async function buildReelSlug(): Promise<string> {
 }
 
 /**
- * Persist a client-page gallery image. The bytes go through `/api/upload-bunny`
+ * Persist a client-page gallery image. The bytes go browser → Bunny (`lib/bunny/upload-image.ts`)
  * (server-side proxy → Bunny reels zone); here we only store the resulting Media row
  * (type=GALLERY, scope=CLIENT) so it flows into the page + Organization.image[]
  * JSON-LD. Returns the created row so the grid can append it without a refetch.
@@ -79,7 +79,7 @@ export async function addGalleryImage(input: AddGalleryInput): Promise<AddResult
   if (!clientId) return { success: false, error: messages.error.unauthorized };
 
   const url = (input.url ?? "").trim();
-  // Only a file this partner uploaded (/api/upload-bunny → clients/<id>/…). Any url used to pass,
+  // Only a file this partner uploaded (`lib/bunny/upload-image.ts` → clients/<id>/…). Any url used to pass,
   // and the delete below would then erase another partner's file (security fix, 4 Oct 2026).
   if (!isOwnBunnyUrl(url, clientId)) return { success: false, error: messages.error.unauthorized };
 

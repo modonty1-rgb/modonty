@@ -15,6 +15,7 @@ import { NO_PERMISSION_ERROR, requireSocialActor } from "../helpers/require-soci
 import { revalidateSocialCalendar } from "../helpers/revalidate-social-calendar";
 import { TRANSITION_SELECT } from "../helpers/transition-select";
 import type { ActionResult } from "./action-result";
+import { calendarLabel } from "../helpers/calendar-label";
 
 /**
  * رفض الإبداع → يرجع «قيد الإنتاج» بملاحظة (القديم `rejectEntry` `entries.ts:325-344`).
@@ -60,7 +61,7 @@ export async function rejectSocialPost(input: { postId: string; note: string }):
     await logAction("socialPost.reject", {
       entity: "SocialPost",
       entityId: post.id,
-      summary: `${post.client.name}: ${post.idea}`,
+      summary: `${calendarLabel(post.calendar)}: ${post.idea}`,
       metadata: { from: post.status, to, note: note || null },
     });
     revalidateSocialCalendar();
@@ -69,7 +70,7 @@ export async function rejectSocialPost(input: { postId: string; note: string }):
       notifySocialPostEvent({
         event: "rejected",
         post,
-        clientName: post.client.name,
+        clientName: calendarLabel(post.calendar),
         actorId: actor.staffId,
         note,
       }),

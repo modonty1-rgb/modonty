@@ -27,7 +27,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { createUser, updateUser, deleteUser } from "../actions/users-actions";
 import { STAFF_ROLES, roleMeta } from "../lib/roles";
-import { uploadAvatar } from "../actions/upload-avatar";
+import { uploadDirect } from "@modonty/shared/lib/direct-upload";
+import { confirmAvatarUpload, requestAvatarUpload, uploadAvatar } from "../actions/upload-avatar";
 
 interface UserFormProps {
   initialData?: {
@@ -115,10 +116,20 @@ export function UserForm({ initialData, activity, userId }: UserFormProps) {
     setUploading(true);
     setError(null);
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("name", formData.name || "staff");
-      const res = await uploadAvatar(fd);
+      const name = formData.name || "staff";
+      // المسار الموحّد (`shared/lib/direct-upload.ts`): المتصفح يرفع لبني مباشرة، و`uploadAvatar` احتياط.
+      const up = await uploadDirect({
+        file,
+        request: () => requestAvatarUpload(name, file.name, file.type, file.size),
+        finalize: ({ path }) => confirmAvatarUpload(path ?? "", file.size),
+        fallback: () => {
+          const fd = new FormData();
+          fd.append("file", file);
+          fd.append("name", name);
+          return uploadAvatar(fd);
+        },
+      });
+      const res: { success: boolean; url?: string; error?: string } = up.ok ? up.data : { success: false, error: up.error };
       if (res.success && res.url) handleImageChange(res.url);
       else setError(res.error || "Upload failed.");
     } catch {

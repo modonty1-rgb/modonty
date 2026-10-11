@@ -52,16 +52,17 @@ export async function uploadImageBufferToBunny(
 
   const { url } = await uploadToBunny("clients", input.buffer, remotePath, input.contentType);
 
-  if (input.type === "POST") {
-    const crops = await generateAspectCrops(input.buffer);
-    await Promise.all(
-      crops.map((c) =>
-        uploadToBunny("clients", c.buffer, bunnyAspectUrl(remotePath, c.suffix), "image/webp")
-      )
-    );
-  }
+  if (input.type === "POST") await uploadAspectCrops(input.buffer, remotePath);
 
   return { bunnyUrl: url };
+}
+
+/** The 3 article crops beside the base image (`…__1x1.webp` etc.) — POST images only. */
+export async function uploadAspectCrops(buffer: Buffer, remotePath: string): Promise<void> {
+  const crops = await generateAspectCrops(buffer);
+  await Promise.all(
+    crops.map((c) => uploadToBunny("clients", c.buffer, bunnyAspectUrl(remotePath, c.suffix), "image/webp"))
+  );
 }
 
 /**

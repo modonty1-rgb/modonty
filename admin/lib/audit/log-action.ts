@@ -119,6 +119,10 @@ export type AuditAction =
   | "socialPost.archive"
   | "socialPost.restore"
   | "socialPost.assetDelete"
+  | "socialCalendar.create"
+  | "socialCalendar.update"
+  | "socialCalendar.archive"
+  | "socialCalendar.restore"
   // 🟡 Touches everything at once
   | "database.maintenance"
   | "seo.cascade"
@@ -144,7 +148,8 @@ export type AuditEntity =
   | "Settings"
   | "Database"
   | "Seo"
-  | "SocialPost";
+  | "SocialPost"
+  | "SocialCalendar";
 
 interface LogOptions {
   entity: AuditEntity;
