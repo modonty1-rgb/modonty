@@ -767,7 +767,7 @@ export function Sidebar({
           return (
             <div key={group.title} className={startsSection && index > 0 ? "mt-3" : ""}>
               {startsSection && (
-                <p className="px-3 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70">
+                <p className="px-3 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                   {group.section}
                 </p>
               )}

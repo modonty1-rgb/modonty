@@ -170,7 +170,7 @@ export function DataTable<T extends { id: string }>({
                 }}
                 // The card colour, not transparent: in light mode a see-through input took the
                 // beige page colour between white panels (Khalid, 28 Sep 2026: contrast).
-                className="bg-card ps-10"
+                className="border-muted-foreground/90 bg-card ps-10"
               />
             </div>
           )}
@@ -227,7 +227,7 @@ export function DataTable<T extends { id: string }>({
                           <ArrowDown className="size-3 shrink-0" aria-hidden />
                         )
                       ) : (
-                        <ArrowUpDown className="size-3 shrink-0 opacity-30 group-hover/sort:opacity-70" aria-hidden />
+                        <ArrowUpDown className="size-3 shrink-0 text-muted-foreground group-hover/sort:text-foreground" aria-hidden />
                       )
                     ) : null}
                   </div>

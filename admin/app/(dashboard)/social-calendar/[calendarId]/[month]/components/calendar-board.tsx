@@ -110,17 +110,38 @@ export function CalendarBoard({
     [posts],
   );
 
-  const KPIS: Record<KpiKey, { label: string; tone: string; test: (r: Row) => boolean }> = {
+  // كل بطاقة بلونها — خلفية خفيفة وخطّ جانبيّ — لا أربع بطاقات متطابقة (خالد ١٢ أكتوبر ٢٠٢٦: التمييز بالألوان).
+  const KPIS: Record<KpiKey, { label: string; tone: string; card: string; ring: string; test: (r: Row) => boolean }> = {
     // فات موعدها = لم يُنشر وموعده قبل اليوم — المنشور لا يُعدّ متأخّراً.
-    late: { label: "فات موعدها", tone: "text-red-500", test: (r) => r.status !== "PUBLISHED" && r.dayIndex < todayIndex },
-    noCreative: { label: "بلا إبداع", tone: "text-amber-500", test: (r) => r.assets.length === 0 && r.status !== "PUBLISHED" },
+    late: {
+      label: "فات موعدها",
+      tone: "text-red-700 dark:text-red-400",
+      card: "border-s-red-500 bg-red-500/[0.06] dark:bg-red-500/[0.08]",
+      ring: "ring-red-500/60",
+      test: (r) => r.status !== "PUBLISHED" && r.dayIndex < todayIndex,
+    },
+    noCreative: {
+      label: "بلا إبداع",
+      tone: "text-amber-700 dark:text-amber-400",
+      card: "border-s-amber-500 bg-amber-500/[0.07] dark:bg-amber-500/[0.08]",
+      ring: "ring-amber-500/60",
+      test: (r) => r.assets.length === 0 && r.status !== "PUBLISHED",
+    },
     week: {
       label: "خلال ٧ أيام",
-      tone: "text-primary",
+      tone: "text-blue-700 dark:text-blue-400",
+      card: "border-s-blue-500 bg-blue-500/[0.06] dark:bg-blue-500/[0.08]",
+      ring: "ring-blue-500/60",
       test: (r) => r.status !== "PUBLISHED" && r.dayIndex >= todayIndex && r.dayIndex < todayIndex + 7 * DAY_MS,
     },
     // «تحتاج مراجعة» خرجت: كانت نسخة من تبويب «جاهز للمراجعة» تحتها مباشرة.
-    published: { label: "تم النشر", tone: "text-green-500", test: (r) => r.status === "PUBLISHED" },
+    published: {
+      label: "تم النشر",
+      tone: "text-green-700 dark:text-green-400",
+      card: "border-s-green-500 bg-green-500/[0.06] dark:bg-green-500/[0.08]",
+      ring: "ring-green-500/60",
+      test: (r) => r.status === "PUBLISHED",
+    },
   };
   const kpiParam = params.get("kpi");
   const kpi = kpiParam && kpiParam in KPIS ? (kpiParam as KpiKey) : null;
@@ -162,36 +183,47 @@ export function CalendarBoard({
 
   return (
     <div className={cn("space-y-3", refreshing && "opacity-60 transition-opacity")}>
-      <section aria-label="ملخّص الشهر" className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
-        {(Object.keys(KPIS) as KpiKey[]).map((key) => {
-          const k = KPIS[key];
-          const n = rows.filter(k.test).length;
-          const active = kpi === key;
-          return (
-            <button
-              key={key}
-              type="button"
-              aria-pressed={active}
-              disabled={n === 0 && !active}
-              onClick={() => setParam("kpi", key)}
-              className={cn(
-                "flex min-h-[72px] flex-col items-start justify-between rounded-lg border bg-card px-3.5 py-3 text-start transition-colors",
-                "hover:border-primary/60 hover:bg-primary/5 disabled:cursor-default disabled:opacity-50 disabled:hover:border-border disabled:hover:bg-card",
-                active && "border-primary bg-primary/10",
-              )}
-            >
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <span className={cn("size-1.5 rounded-full bg-current", k.tone)} aria-hidden />
-                {k.label}
-              </span>
-              <span className={cn("text-2xl font-bold leading-none tabular-nums", n > 0 ? k.tone : "text-muted-foreground")}>{n}</span>
-            </button>
-          );
-        })}
-      </section>
-
-      <section aria-label="المرشّحات" className="space-y-2 rounded-lg border bg-card px-3 py-2">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+      {/* لوحة واحدة مدمجة (خالد ١٢ أكتوبر ٢٠٢٦: «كروت كبيرة ما فيها غير اسم ورقم… استفد من المساحات»):
+          السطر الأوّل البحث ومعه المؤشّرات شاراتٍ ملوّنة صغيرة، والثاني الحالات والمرشّحات. */}
+      <section aria-label="الملخّص والمرشّحات" className="space-y-2 rounded-lg border bg-card px-3 py-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <label className="flex h-8 min-w-[220px] flex-1 items-center gap-2 rounded-md border bg-background px-2.5 focus-within:ring-2 focus-within:ring-ring">
+            <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="ابحث في الفكرة أو النص…"
+              className="h-full min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            />
+          </label>
+          <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="ملخّص الشهر">
+            {(Object.keys(KPIS) as KpiKey[]).map((key) => {
+              const k = KPIS[key];
+              const n = rows.filter(k.test).length;
+              const active = kpi === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  aria-pressed={active}
+                  disabled={n === 0 && !active}
+                  onClick={() => setParam("kpi", key)}
+                  className={cn(
+                    "inline-flex h-8 items-center gap-2 rounded-md border border-s-[3px] px-2.5 text-xs font-medium text-foreground/80 transition-all",
+                    k.card,
+                    "hover:shadow-sm disabled:cursor-default disabled:opacity-45 disabled:hover:shadow-none",
+                    active && cn("shadow-sm ring-2", k.ring),
+                  )}
+                >
+                  {k.label}
+                  <span className={cn("text-sm font-bold tabular-nums", n > 0 ? k.tone : "text-muted-foreground")}>{n}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t pt-2">
           <div className="flex flex-wrap items-center gap-1" role="group" aria-label="الحالة">
             <CountTab label="الكل" count={byKpi.length} active={!status} onClick={() => setParam("status", null)} />
             {STATUS_ORDER.map((s) => {
@@ -213,18 +245,21 @@ export function CalendarBoard({
               );
             })}
           </div>
-          <button
-            type="button"
-            aria-expanded={moreFilters}
-            onClick={() => setMoreFilters((v) => !v)}
-            className={cn(
-              "inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors",
-              moreFilters || format || channel ? "border-primary/50 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground",
-            )}
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            {moreFilters ? "إخفاء المرشّحات الإضافية" : "تصفية حسب النوع والقناة"}
-          </button>
+          <span className="flex items-center gap-2">
+            {filtered && <span className="text-xs tabular-nums text-muted-foreground">{postsLabel(visible.length)} من {rows.length}</span>}
+            <button
+              type="button"
+              aria-expanded={moreFilters}
+              onClick={() => setMoreFilters((v) => !v)}
+              className={cn(
+                "inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors",
+                moreFilters || format || channel ? "border-primary/50 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              {moreFilters ? "إخفاء المرشّحات الإضافية" : "تصفية حسب النوع والقناة"}
+            </button>
+          </span>
         </div>
         {moreFilters && (
           <div className="space-y-2 border-t pt-2">
@@ -248,24 +283,6 @@ export function CalendarBoard({
           </div>
         )}
       </section>
-
-      <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
-        <span>
-          <strong className="font-semibold text-foreground">منشورات {monthLabel}</strong> · مرتّبة حسب الموعد
-        </span>
-        {filtered && <span className="tabular-nums">{postsLabel(visible.length)} من {rows.length}</span>}
-      </div>
-
-      <label className="flex h-9 items-center gap-2 rounded-lg border bg-card px-3 focus-within:ring-2 focus-within:ring-ring">
-        <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="ابحث في الفكرة أو النص…"
-          className="h-full min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-        />
-      </label>
 
       <DaysTable
         rows={visible}

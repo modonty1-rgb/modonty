@@ -11,7 +11,7 @@ import { CHANNEL_ICON, ChannelIcon } from "../../../components/channel-icon";
 import { dayName } from "../../../helpers/dates";
 import { postHref } from "../../../helpers/post-href";
 import type { SocialPostRow } from "../../../helpers/queries";
-import { CHANNEL_META, CHANNEL_ORDER, FORMAT_LABEL, STATUS_DOT, STATUS_LABEL } from "../../../helpers/social-labels";
+import { CHANNEL_META, CHANNEL_ORDER, FORMAT_LABEL, STATUS_BADGE, STATUS_DOT, STATUS_LABEL } from "../../../helpers/social-labels";
 import type { CalendarPermissions } from "./calendar-board";
 import { CreativeCell } from "./creative-cell";
 import { PostActions } from "./post-actions";
@@ -19,12 +19,21 @@ import { PostDetails } from "./post-details";
 
 export type DayRow = SocialPostRow & { dayIndex: number };
 
-const STATUS_TEXT: Record<SocialPostRow["status"], string> = {
-  IN_PRODUCTION: "text-muted-foreground",
-  READY_FOR_REVIEW: "text-amber-600 dark:text-amber-400",
-  READY_TO_PUBLISH: "text-blue-600 dark:text-blue-400",
-  PUBLISHED: "text-green-600 dark:text-green-400",
-};
+/**
+ * الألوان تفصل ثلاث طبقات كانت تتشابه (خالد ١٢ أكتوبر ٢٠٢٦: «تشويش بصري… تمييز بالألوان»):
+ *   صفّ اليوم   شريط أغمق + خطّ جانبيّ بلون أخطر ما فيه + تاريخ في مربّع (اليوم ممتلئ)
+ *   صفّ المنشور أفتح تحت يومه + خيط بلون حالته + الحالة شارة ملوّنة
+ *   التنبيه     شارة ملوّنة لا نصّ
+ */
+const PILL = "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold";
+const TONE = {
+  red: { pill: "bg-red-500/10 text-red-700 dark:bg-red-500/15 dark:text-red-300", bar: "border-s-red-500" },
+  amber: { pill: "bg-amber-500/15 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300", bar: "border-s-amber-500" },
+  blue: { pill: "bg-blue-500/10 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300", bar: "border-s-blue-500" },
+  green: { pill: "bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300", bar: "border-s-green-500" },
+  muted: { pill: "bg-muted text-muted-foreground", bar: "border-s-zinc-300 dark:border-s-zinc-600" },
+} as const;
+type Tone = keyof typeof TONE;
 
 /** منشور واحد · منشوران · ٣–١٠ منشورات · ١١+ منشوراً. */
 export function postsLabel(n: number): string {
@@ -34,30 +43,40 @@ export function postsLabel(n: number): string {
   return `${n} منشوراً`;
 }
 
-const AMBER = "text-amber-600 dark:text-amber-400";
-const RED = "text-red-600 dark:text-red-400";
-
 /**
  * أهمّ تنبيهين في اليوم بهذا الترتيب — كان تنبيهاً واحداً فيُخفي ما بعده
  * (يوم «٢ بلا إبداع» كان يخفي أنّ موعده فات). بلا مشكلة: حالة اليوم.
  */
-function dayAlerts(posts: DayRow[], todayIndex: number): { text: string; tone: string }[] {
+function dayAlerts(posts: DayRow[], todayIndex: number): { text: string; tone: Tone }[] {
   const count = (test: (p: DayRow) => boolean) => posts.filter(test).length;
   const found = [
-    { n: count((p) => p.status !== "PUBLISHED" && p.dayIndex < todayIndex), text: "فات موعدها", tone: RED },
-    { n: count((p) => p.status === "READY_FOR_REVIEW"), text: "تنتظر المراجعة", tone: AMBER },
-    { n: count((p) => p.assets.length === 0 && p.status !== "PUBLISHED"), text: "بلا إبداع", tone: AMBER },
+    { n: count((p) => p.status !== "PUBLISHED" && p.dayIndex < todayIndex), text: "فات موعدها", tone: "red" as Tone },
+    { n: count((p) => p.status === "READY_FOR_REVIEW"), text: "تنتظر المراجعة", tone: "amber" as Tone },
+    { n: count((p) => p.assets.length === 0 && p.status !== "PUBLISHED"), text: "بلا إبداع", tone: "amber" as Tone },
   ]
     .filter((a) => a.n > 0)
     .slice(0, 2)
     .map((a) => ({ text: `${a.n} ${a.text}`, tone: a.tone }));
   if (found.length) return found;
-  if (posts.every((p) => p.status === "PUBLISHED")) return [{ text: "تم النشر", tone: "text-green-600 dark:text-green-400" }];
+  if (posts.every((p) => p.status === "PUBLISHED")) return [{ text: "تم النشر", tone: "green" }];
   if (posts.every((p) => p.status === "READY_TO_PUBLISH" || p.status === "PUBLISHED")) {
-    return [{ text: "جاهز للنشر", tone: "text-blue-600 dark:text-blue-400" }];
+    return [{ text: "جاهز للنشر", tone: "blue" }];
   }
-  return [{ text: "قيد الإنتاج", tone: "text-muted-foreground" }];
+  return [{ text: "قيد الإنتاج", tone: "muted" }];
 }
+
+/** خطّ اليوم الجانبيّ بلون أخطر ما فيه — أوّل تنبيه هو الأخطر بالترتيب. */
+function dayBar(alerts: { tone: Tone }[]): string {
+  return TONE[alerts[0]?.tone ?? "muted"].bar;
+}
+
+/** خيط المنشور بلون حالته. */
+const STATUS_THREAD: Record<SocialPostRow["status"], string> = {
+  IN_PRODUCTION: "bg-zinc-300 dark:bg-zinc-600",
+  READY_FOR_REVIEW: "bg-amber-400",
+  READY_TO_PUBLISH: "bg-blue-500",
+  PUBLISHED: "bg-green-500",
+};
 
 /** أيقونة القناة في صفّ اليوم — واضحة دائماً، واسمها عند المرور (أيقونات بلا أسماء، خالد ١١ أكتوبر). */
 function ChannelBadge({ channel }: { channel: SocialChannel }) {
@@ -169,10 +188,13 @@ export function DaysTable({
             return (
               <Fragment key={d}>
                 <tr
-                  className={cn("cursor-pointer border-b transition-colors hover:bg-muted/40", open && "bg-muted/30")}
+                  className={cn(
+                    "cursor-pointer border-b transition-colors",
+                    isToday ? "bg-primary/[0.07] hover:bg-primary/10" : "bg-muted/60 hover:bg-muted dark:bg-muted/35 dark:hover:bg-muted/55",
+                  )}
                   onClick={() => toggleDay(d)}
                 >
-                  <td className="px-3 py-2.5">
+                  <td className={cn("border-s-4 px-3 py-2.5", dayBar(alerts))}>
                     <button
                       type="button"
                       aria-expanded={open}
@@ -183,9 +205,16 @@ export function DaysTable({
                     </button>
                   </td>
                   <td className="px-3 py-2.5">
-                    <span className={cn("inline-flex items-baseline gap-2 tabular-nums", isToday && "text-primary")}>
-                      <span className="w-5 text-end text-sm font-bold">{d}</span>
-                      <span className={cn("text-xs", isToday ? "font-semibold" : "text-muted-foreground")}>
+                    <span className="inline-flex items-center gap-2.5 tabular-nums">
+                      <span
+                        className={cn(
+                          "flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold",
+                          isToday ? "bg-primary text-primary-foreground shadow-sm" : "border border-border bg-card text-foreground",
+                        )}
+                      >
+                        {d}
+                      </span>
+                      <span className={cn("text-xs", isToday ? "font-bold text-primary" : "font-medium text-muted-foreground")}>
                         {isToday ? "اليوم" : dayName(year, month, d)}
                       </span>
                     </span>
@@ -196,15 +225,15 @@ export function DaysTable({
                         <ChannelBadge key={ch} channel={ch} />
                       ))}
                       {noChannel && (
-                        <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] text-amber-600 dark:text-amber-400">بلا قناة</span>
+                        <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] text-amber-800 dark:text-amber-300">بلا قناة</span>
                       )}
                     </span>
                   </td>
-                  <td className="px-3 py-2.5 text-muted-foreground">{postsLabel(posts.length)}</td>
-                  <td className="px-3 py-2.5 text-xs font-medium">
-                    <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <td className="px-3 py-2.5 font-medium text-foreground/80">{postsLabel(posts.length)}</td>
+                  <td className="px-3 py-2.5">
+                    <span className="flex flex-wrap items-center gap-1.5">
                       {alerts.map((a) => (
-                        <span key={a.text} className={a.tone}>
+                        <span key={a.text} className={cn(PILL, TONE[a.tone].pill)}>
                           {a.text}
                         </span>
                       ))}
@@ -218,15 +247,17 @@ export function DaysTable({
                     const detailsOpen = openPost === p.id;
                     return (
                       <Fragment key={p.id}>
-                        <tr className="border-b bg-background/60">
-                          <td />
+                        <tr className="border-b bg-card transition-colors hover:bg-muted/25">
+                          <td className="relative" aria-hidden>
+                            <span className={cn("absolute inset-y-1.5 start-[22px] w-[3px] rounded-full", STATUS_THREAD[p.status])} />
+                          </td>
                           <td className="px-3 py-2" colSpan={2}>
                             <span className="flex min-w-0 items-center gap-2">
                               <span className="flex shrink-0 items-center gap-1">
                                 {p.channels.length ? (
                                   p.channels.map((ch) => <ChannelIcon key={ch} channel={ch} href={links[ch]} />)
                                 ) : (
-                                  <span className="rounded-full bg-amber-500/15 px-1.5 text-[10px] text-amber-600 dark:text-amber-400">بلا قناة</span>
+                                  <span className="rounded-full bg-amber-500/15 px-1.5 text-[10px] text-amber-800 dark:text-amber-300">بلا قناة</span>
                                 )}
                               </span>
                               <Link
@@ -239,10 +270,12 @@ export function DaysTable({
                             </span>
                           </td>
                           <td className="px-3 py-2">
-                            <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap text-xs font-medium", STATUS_TEXT[p.status])}>
-                              <span className={cn("size-1.5 rounded-full", STATUS_DOT[p.status])} aria-hidden />
-                              {STATUS_LABEL[p.status]}
-                              {p.format && <span className="text-muted-foreground">· {FORMAT_LABEL[p.format]}</span>}
+                            <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-xs">
+                              <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-semibold", STATUS_BADGE[p.status])}>
+                                <span className={cn("size-1.5 rounded-full", STATUS_DOT[p.status])} aria-hidden />
+                                {STATUS_LABEL[p.status]}
+                              </span>
+                              {p.format && <span className="text-muted-foreground">{FORMAT_LABEL[p.format]}</span>}
                             </span>
                           </td>
                           <td className="px-3 py-2">
@@ -264,7 +297,7 @@ export function DaysTable({
                           </td>
                         </tr>
                         {detailsOpen && (
-                          <tr className="border-b">
+                          <tr className="border-b bg-muted/20">
                             <td colSpan={5} className="p-3">
                               <PostDetails
                                 post={p}

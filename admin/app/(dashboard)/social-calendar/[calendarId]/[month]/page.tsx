@@ -10,7 +10,7 @@ import { calendarHomeHref } from "../../helpers/post-href";
 import { CalendarSettingsDialog } from "../../components/calendar-settings-dialog";
 import { requireSocialActor } from "../../helpers/require-social-actor";
 import { CalendarBoard } from "./components/calendar-board";
-import { MonthSelect } from "./components/month-select";
+import { MonthToggle } from "./components/month-toggle";
 import { NavIconLinks } from "./components/nav-icon-links";
 
 type Props = { params: Promise<{ calendarId: string; month: string }> };
@@ -55,7 +55,6 @@ export default async function ClientCalendarPage({ params }: Props) {
         calendar={calendar}
         subtitle={calendar.kind === "SOCIAL" ? "تقويم السوشيال ميديا" : "تقويم المحتوى"}
         backHref={calendarHomeHref(calendar)}
-        titleExtra={<MonthSelect calendarId={calendar.id} year={cm.year} activeMonth={cm.month} counts={yearCounts} />}
       >
         {canEdit && (
           <CalendarSettingsDialog
@@ -81,7 +80,8 @@ export default async function ClientCalendarPage({ params }: Props) {
         )}
       </ClientPageHeader>
 
-      <main className="min-h-0 flex-1 overflow-y-auto p-4">
+      <main className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
+        <MonthToggle calendarId={calendar.id} year={cm.year} activeMonth={cm.month} counts={yearCounts} />
         <CalendarBoard
           key={monthParam}
           posts={posts}

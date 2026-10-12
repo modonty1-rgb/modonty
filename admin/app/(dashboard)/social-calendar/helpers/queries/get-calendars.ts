@@ -12,6 +12,8 @@ export interface CalendarRow {
   logoUrl: string | null;
   /** «محتاج مراجعة» — شارة صفراء على الكرت. */
   reviewNote: string | null;
+  /** كاتب المحتوى المسؤول عن العميل (`Client.editor`) — null لكاليندر بلا عميل أو بلا كاتب. */
+  writer: string | null;
   totalPosts: number;
   /** الشهور التي فيها منشور حيّ، تصاعدياً بصيغة `yyyy-mm`. */
   activeMonths: string[];
@@ -46,7 +48,13 @@ export async function getCalendars(kind: CalendarKind): Promise<CalendarRow[]> {
         id: true,
         name: true,
         reviewNote: true,
-        client: { select: { name: true, logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } } } },
+        client: {
+          select: {
+            name: true,
+            logoMedia: { select: { url: true, bunnyUrl: true, blurDataURL: true } },
+            editor: { select: { name: true, email: true } },
+          },
+        },
       },
       // الأقدم أوّلاً، كترتيب القديم (`getClients` — `clients.ts:26-29`).
       orderBy: { createdAt: "asc" },
@@ -82,6 +90,7 @@ export async function getCalendars(kind: CalendarKind): Promise<CalendarRow[]> {
       name: calendarLabel(c),
       logoUrl: c.client ? mediaSrc(c.client.logoMedia) : null,
       reviewNote: c.reviewNote ?? null,
+      writer: c.client?.editor ? c.client.editor.name?.trim() || c.client.editor.email : null,
       totalPosts: agg?.total ?? 0,
       activeMonths: (agg?.months ?? []).sort(),
     };

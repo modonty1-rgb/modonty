@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calendar, Plus } from "lucide-react";
+import { Calendar } from "lucide-react";
 
 import { formatMonthParam, riyadhToday } from "../helpers/dates";
 import { canSocial } from "../helpers/post-permissions";
@@ -15,13 +15,12 @@ const COPY: Record<CalendarKind, { title: string; subtitle: string; unit: string
 
 /**
  * لوحة قسمٍ من Social Calendar — كروت/جدول، وكل كرت يفتح كاليندره (خالد ١١ أكتوبر ٢٠٢٦).
- * القسم من نوع الكاليندر، و«كاليندر جديد» يفتح صفحة التأسيس على نوع هذا القسم.
+ * القسم من نوع الكاليندر. التأسيس من «New Calendar» في القائمة الجانبية.
  */
 export async function CalendarsHome({ kind }: { kind: CalendarKind }) {
   const actor = await requireSocialActor("view");
   if ("error" in actor) return <p className="p-6 text-sm text-destructive">{actor.error}</p>;
 
-  const canCreate = canSocial(actor.role, "editBrief");
   const [calendars, archived] = await Promise.all([getCalendars(kind), getArchivedCalendars(kind)]);
   const today = riyadhToday();
   const currentMonth = formatMonthParam(today.year, today.month);
@@ -29,28 +28,18 @@ export async function CalendarsHome({ kind }: { kind: CalendarKind }) {
 
   return (
     <div className="mx-auto max-w-7xl space-y-4">
-      <header className="rounded-xl border border-border bg-card px-6 py-5 shadow-sm">
+      {/* التأسيس من «New Calendar» في القائمة الجانبية وحدها (خالد ١٢ أكتوبر ٢٠٢٦) — والرأس أصغر ليأخذ الجدول المساحة. */}
+      <header className="rounded-xl border border-border bg-card px-5 py-3 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">{copy.title}</h1>
+            <h1 className="text-xl font-bold tracking-tight text-foreground">{copy.title}</h1>
             <p className="mt-0.5 text-sm text-muted-foreground">{copy.subtitle}</p>
           </div>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <Calendar className="h-4 w-4" />
-              <span className="tabular-nums">
-                {calendars.length} {copy.unit}
-              </span>
-            </div>
-            {canCreate && (
-              <Link
-                href={`/social-calendar/new?kind=${kind}`}
-                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                كاليندر جديد
-              </Link>
-            )}
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Calendar className="h-4 w-4" />
+            <span className="tabular-nums">
+              {calendars.length} {copy.unit}
+            </span>
           </div>
         </div>
       </header>
@@ -65,18 +54,18 @@ export async function CalendarsHome({ kind }: { kind: CalendarKind }) {
                 <Link href="/clients" className="text-primary underline">
                   Clients
                 </Link>{" "}
-                أو أسّس كاليندراً من «كاليندر جديد».
+                أو أسّس كاليندراً من «New Calendar» في القائمة الجانبية.
               </p>
             </>
           ) : (
             <>
               <p className="text-lg font-semibold text-foreground">لا كاليندرات بعد</p>
-              <p className="text-sm text-muted-foreground">أسّس أوّل كاليندر من «كاليندر جديد».</p>
+              <p className="text-sm text-muted-foreground">أسّس أوّل كاليندر من «New Calendar» في القائمة الجانبية.</p>
             </>
           )}
         </div>
       ) : (
-        <ClientsView clients={calendars} currentMonth={currentMonth} />
+        <ClientsView clients={calendars} currentMonth={currentMonth} canArchive={canSocial(actor.role, "archive")} />
       )}
 
       <ArchivedCalendars calendars={archived} canRestore={canSocial(actor.role, "archive")} />

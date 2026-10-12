@@ -22,7 +22,7 @@ export function CreativeCell({ post }: { post: SocialPostRow }) {
     return (
       <div className="flex items-center justify-center">
         <span
-          className="text-muted-foreground/25"
+          className="text-muted-foreground"
           title={post.status === "IN_PRODUCTION" ? "الإبداع قيد الإنتاج" : "لا يوجد إبداع"}
         >
           <Lock className="h-3.5 w-3.5" />
@@ -42,7 +42,7 @@ export function CreativeCell({ post }: { post: SocialPostRow }) {
             setActiveIdx(0);
             setOpen(true);
           }}
-          className="inline-flex items-center gap-1 text-primary/60 transition-colors hover:text-primary"
+          className="inline-flex items-center gap-1 text-primary transition-colors hover:text-primary/80"
           title="معاينة الإبداع"
         >
           {assets[0].kind === "VIDEO" ? <Film className="h-4 w-4" /> : <ImageIcon className="h-4 w-4" />}
