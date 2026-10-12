@@ -1,0 +1,678 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex, nofollow"><meta name="description" content="اكتب نشاطك وشوف كيف يلقاك عميلك أول نتيجة في جوجل — وكلّمنا على واتساب."><meta name="theme-color" content="#070F2B"><link rel="icon" href="/favicon.ico"><meta property="og:title" content="مدونتي — خلّك أول نتيجة في Google"><meta property="og:description" content="619 ألف ظهور حقيقي في جوجل خلال 3 أشهر. كلّمنا على واتساب ونبني لك نفس الحضور."><meta property="og:type" content="website"><meta property="og:locale" content="ar_SA"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>مدونتي — خلّك أول نتيجة في Google</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Cairo:wght@800;900&display=swap">
+<style>
+/* Layout: RTL one-page funnel. Signature = the page personalises itself: the visitor picks a sector,
+   headline + live Google mock rewrite for them; a before/after drag slider shows rank 4th page → #1.
+   Committed single look: deep navy ground, electric-blue action, turquoise signal, off-white proof sections. */
+:root{
+  --navy:#070F2B; --navy-2:#0D1A40; --navy-3:#152657;
+  --blue:#2F6BFF; --blue-deep:#1B4FE0;
+  --turq:#2EE6D6; --turq-ink:#0A7F76;
+  --off:#F4F7FB; --off-2:#E3E9F4;
+  --ink:#0E1A3A; --ink-2:#4B5A7C;
+  --fg:#F4F7FB; --fg-2:#AEBBDA; --line:rgba(174,187,218,.16);
+  --font-ar:"IBM Plex Sans Arabic","Tajawal",system-ui,sans-serif;
+  --font-display:"Cairo","IBM Plex Sans Arabic",sans-serif;
+  --font-la:"IBM Plex Sans","Segoe UI",Roboto,sans-serif;
+  --gutter:clamp(16px,4vw,48px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--navy);color:var(--fg);font-family:var(--font-ar);font-size:17px;line-height:1.75;direction:rtl;text-align:start;letter-spacing:0;overflow-x:hidden}
+h1,h2,h3,h4,p{margin:0}
+h1,h2,h3{line-height:1.3;text-wrap:balance;font-weight:700}
+a{color:inherit}
+img{max-width:100%}
+button{font:inherit}
+.num,[dir="ltr"]{font-family:var(--font-la);direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:var(--gutter)}
+section{padding-block:clamp(56px,9vw,112px);position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--turq);margin-bottom:16px}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--turq);border-radius:2px}
+.light .eyebrow{color:var(--turq-ink)}.light .eyebrow::before{background:var(--turq-ink)}
+h2{font-size:clamp(30px,4.4vw,48px);font-family:var(--font-display);font-weight:800;line-height:1.25}
+.lead{color:var(--fg-2);max-width:62ch;font-size:clamp(17px,1.4vw,19px)}
+.light{background:var(--off);color:var(--ink)}
+.light .lead{color:var(--ink-2)}
+:focus-visible{outline:3px solid var(--turq);outline-offset:3px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 28px;border-radius:999px;font:600 16px/1 var(--font-ar);text-decoration:none;border:0;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;position:relative;overflow:hidden}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 12px 34px -10px rgba(47,107,255,.9)}
+.btn-primary::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(120%);transition:transform .6s}
+.btn-primary:hover::after{transform:translateX(-120%)}
+.btn-primary:hover{background:var(--blue-deep);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--turq);color:var(--turq)}
+.btn svg{width:18px;height:18px}
+
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(7,15,43,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{display:flex;align-items:center;gap:10px;font:700 20px var(--font-la);text-decoration:none}
+.logo svg.mark{width:30px;height:30px;flex:none}
+.logo small{font-family:var(--font-ar);font-weight:500;font-size:14px;color:var(--fg-2)}
+nav .btn{padding:10px 20px;font-size:15px}
+
+/* ===== HERO ===== */
+.hero{position:relative;overflow:hidden;padding-block:clamp(40px,6vw,88px) clamp(48px,7vw,96px);min-height:0}
+#bg{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.hero::before{content:"";position:absolute;inset:auto -10% -45% auto;width:70vw;height:70vw;max-width:900px;max-height:900px;background:radial-gradient(closest-side,rgba(47,107,255,.38),transparent 70%);pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,72px);align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;align-items:center}
+.chips .lbl{font-size:14px;color:var(--fg-2);margin-inline-end:4px}
+.chip{border:1.5px solid var(--line);background:rgba(255,255,255,.03);color:var(--fg);padding:8px 16px;border-radius:999px;cursor:pointer;font-size:15px;font-weight:500;transition:all .2s}
+.chip:hover{border-color:var(--turq)}
+.chip[aria-pressed="true"]{background:var(--turq);color:var(--navy);border-color:var(--turq);font-weight:700;box-shadow:0 8px 24px -8px rgba(46,230,214,.8)}
+.hero h1{font-family:var(--font-display);font-weight:900;font-size:clamp(34px,4.6vw,60px);line-height:1.18}
+.hero h1 .ol{color:transparent;-webkit-text-stroke:1.5px var(--fg-2);display:block;font-size:.62em;font-weight:800;margin-bottom:6px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--turq),#7FD7FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1 .g{font-family:var(--font-la);font-weight:700;color:#fff;display:inline-block}
+.live{margin-top:22px;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:12px 16px;max-width:560px}
+.live .dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--turq);box-shadow:0 0 0 0 rgba(46,230,214,.6);animation:pulse 1.6s infinite}
+.live p{font-size:15px;color:var(--fg-2);line-height:1.6}
+.live p b{color:#fff;font-weight:600}
+.live p .num{color:var(--turq);font-weight:700}
+@keyframes pulse{70%{box-shadow:0 0 0 12px rgba(46,230,214,0)}100%{box-shadow:0 0 0 0 rgba(46,230,214,0)}}
+.hero .lead{margin-top:18px}
+.hero .cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.hero .trust{display:flex;flex-wrap:wrap;gap:18px;margin-top:26px;color:var(--fg-2);font-size:14px}
+.hero .trust span{display:inline-flex;align-items:center;gap:7px}
+.hero .trust svg{width:16px;height:16px;color:var(--turq)}
+.rank-note{margin-top:16px;font-size:12.5px;color:var(--fg-2);opacity:.85}
+
+/* CTA واتساب متوسط — يُستخدم بين الأقسام بدل الفورم */
+@keyframes pop-ring{0%{box-shadow:0 0 0 0 rgba(31,168,85,.55)}100%{box-shadow:0 0 0 14px rgba(31,168,85,0)}}
+.pop-cta{display:flex;align-items:center;gap:16px;border-radius:20px;padding:18px 20px;
+  background:linear-gradient(135deg,var(--navy-2),var(--navy-3));border:1px solid rgba(46,230,214,.35);
+  box-shadow:0 18px 36px -20px rgba(7,15,43,.6);text-decoration:none;color:#fff;transition:transform .15s}
+.pop-cta:hover{transform:translateY(-2px)}
+.pop-cta .ic{position:relative;width:48px;height:48px;border-radius:50%;background:#1FA855;display:grid;place-items:center;flex:none;animation:pop-ring 2.2s ease-out infinite}
+.pop-cta .ic svg{width:24px;height:24px;color:#fff}
+.pop-cta .tx{flex:1;min-width:0}
+.pop-cta .tx b{display:block;font-size:16.5px;font-weight:800;color:#fff}
+.pop-cta .tx small{display:block;margin-top:3px;font-size:13.5px;color:var(--fg-2)}
+.pop-cta .ar{width:34px;height:34px;border-radius:50%;background:rgba(46,230,214,.18);color:var(--turq);display:grid;place-items:center;flex:none}
+.pop-cta .ar svg{width:17px;height:17px;transform:scaleX(-1)}
+.light .pop-cta{background:linear-gradient(135deg,var(--navy),var(--navy-2))}
+@media (max-width:480px){.pop-cta{padding:15px 16px;gap:12px}.pop-cta .tx b{font-size:15px}.pop-cta .tx small{font-size:12.5px}}
+
+/* Google mock */
+.serp-wrap{position:relative;perspective:1200px}
+.serp{direction:ltr;text-align:left;font-family:var(--font-la);background:#fff;color:#202124;border-radius:22px;box-shadow:0 50px 100px -30px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.08);padding:22px;transform:rotateY(-8deg) rotateX(3deg);transition:transform .6s;position:relative}
+.serp-wrap:hover .serp{transform:rotateY(0) rotateX(0)}
+.serp .bar{display:flex;align-items:center;gap:12px;border:1px solid #dfe1e5;border-radius:999px;padding:11px 16px;box-shadow:0 1px 6px rgba(32,33,36,.18)}
+.serp .bar .q{flex:1;font-family:var(--font-ar);direction:rtl;text-align:right;font-size:16px;min-height:24px;line-height:24px}
+.serp .bar .q::after{content:"";display:inline-block;width:2px;height:18px;background:#4285F4;vertical-align:-3px;margin-inline-start:2px;animation:blink 1s steps(2) infinite}
+.serp .g{font-weight:700;font-size:18px;background:linear-gradient(90deg,#4285F4,#EA4335,#FBBC05,#34A853);-webkit-background-clip:text;background-clip:text;color:transparent}
+.serp .meta{font-size:12px;color:#70757a;margin:14px 0 10px 4px}
+.res{padding:12px;border-radius:12px;direction:rtl;text-align:right;font-family:var(--font-ar);transition:all .4s}
+.res .site{display:flex;align-items:center;gap:8px;font-family:var(--font-la);direction:ltr;justify-content:flex-end;font-size:12px;color:#4d5156}
+.res .site b{width:22px;height:22px;border-radius:50%;background:#eef1f6;display:grid;place-items:center;font-size:11px;color:#1a0dab;overflow:hidden}
+.res .site b svg{width:16px;height:16px}
+.res h4{margin:3px 0 2px;font-size:17px;font-weight:600;color:#1a0dab;line-height:1.4}
+.res p{font-size:13px;color:#4d5156;line-height:1.6}
+.res.win{background:linear-gradient(90deg,rgba(46,230,214,.18),rgba(47,107,255,.10));box-shadow:inset 0 0 0 1.5px rgba(47,107,255,.5)}
+.res.win .site b{background:linear-gradient(135deg,var(--blue),var(--turq));color:#fff}
+.res.win h4{color:#1546c7}
+.res.swap{opacity:0;transform:translateY(8px)}
+.tag{position:absolute;top:-16px;right:-14px;background:var(--turq);color:var(--navy);font:700 13px/1 var(--font-ar);padding:10px 14px;border-radius:999px;box-shadow:0 10px 24px -8px rgba(46,230,214,.9);transform:rotate(3deg);z-index:2}
+.rank{position:absolute;bottom:-18px;left:-14px;background:var(--navy);color:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:13px;font-family:var(--font-ar);box-shadow:0 20px 40px -16px rgba(0,0,0,.8);z-index:2}
+.rank b{font:700 22px var(--font-la);color:var(--turq)}
+@keyframes blink{to{opacity:0}}
+
+/* ticker */
+.ticker{border-block:1px solid var(--line);background:var(--navy-2);overflow:hidden;padding-block:14px;position:relative}
+.ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;width:120px;z-index:1;pointer-events:none}
+.ticker::before{right:0;background:linear-gradient(270deg,var(--navy-2),transparent)}
+.ticker::after{left:0;background:linear-gradient(90deg,var(--navy-2),transparent)}
+.ticker .lane{display:flex;gap:40px;width:max-content;animation:scroll 40s linear infinite;will-change:transform}
+.ticker:hover .lane{animation-play-state:paused}
+.ticker .item{display:inline-flex;align-items:center;gap:10px;font-size:15px;color:var(--fg-2);white-space:nowrap}
+.ticker .item::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--turq)}
+.ticker .item b{color:#fff;font-weight:500}
+.ticker .item .num{color:var(--turq);font-weight:600;font-size:13px}
+@keyframes scroll{to{transform:translateX(50%)}}
+
+/* proof */
+.proof{padding-block:0}
+.proof .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:38px 20px;border-inline-start:1px solid var(--line)}
+.stat:first-child{border-inline-start:0}
+.stat .v{font:700 clamp(36px,4.4vw,56px)/1.1 var(--font-la);color:#fff;display:block;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.stat .v s{text-decoration:none;color:var(--turq)}
+.stat .l{color:var(--fg-2);font-size:15px;margin-top:8px;display:block}
+
+/* value */
+.value .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(32px,5vw,72px);align-items:start}
+.value h2 mark{background:none;color:var(--blue)}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.feat{background:#fff;border:1px solid var(--off-2);border-radius:18px;padding:22px;transition:transform .2s,box-shadow .2s}
+.feat:hover{transform:translateY(-4px);box-shadow:0 20px 40px -24px rgba(14,26,58,.4)}
+.feat i{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:rgba(47,107,255,.1);color:var(--blue);margin-bottom:14px}
+.feat i svg{width:22px;height:22px}
+.feat h3{font-size:18px;margin-bottom:6px}
+.feat p{color:var(--ink-2);font-size:15px;line-height:1.7}
+
+/* before / after slider */
+.ba{margin-top:44px;position:relative;border-radius:24px;overflow:hidden;background:#fff;border:1px solid var(--off-2);box-shadow:0 40px 80px -40px rgba(14,26,58,.5);user-select:none}
+.ba .pane{padding:26px;direction:ltr;font-family:var(--font-la);color:#202124}
+.ba .pane .r{padding:10px 12px;border-radius:10px;direction:rtl;text-align:right;font-family:var(--font-ar);margin-bottom:6px}
+.ba .pane .r small{font-family:var(--font-la);direction:ltr;display:block;font-size:12px;color:#4d5156;text-align:right}
+.ba .pane .r b{display:block;font-size:16px;font-weight:600;color:#1a0dab;line-height:1.4}
+.ba .pane .r.you{background:linear-gradient(90deg,rgba(46,230,214,.2),rgba(47,107,255,.1));box-shadow:inset 0 0 0 1.5px rgba(47,107,255,.5)}
+.ba .pane .r.you b{color:#1546c7}
+.ba .pane .r.ghost{opacity:.45}
+.ba .pane .r.lost{background:#FFF2F0;box-shadow:inset 0 0 0 1.5px rgba(224,73,62,.4)}
+.ba .pane .r.lost b{color:#B3261E}
+.ba .pane .pg{font-size:12px;color:#70757a;margin-top:8px;text-align:center}
+.ba .after{position:absolute;inset:0;background:#fff;clip-path:inset(0 calc(100% - var(--cut,50%)) 0 0)}
+.ba .after .r,.ba .after .r small{text-align:left}
+.ba .after .pg{text-align:left}
+.ba .before .pg{text-align:right}
+.ba .label{position:absolute;top:16px;font:700 13px var(--font-ar);padding:8px 14px;border-radius:999px;z-index:3;direction:rtl}
+.ba .label.b{right:16px;background:#FFE1DD;color:#B3261E}
+.ba .label.a{left:16px;background:var(--turq);color:var(--navy)}
+.ba .handle{position:absolute;top:0;bottom:0;left:var(--cut,50%);width:2px;background:var(--blue);z-index:4;pointer-events:none}
+.ba .handle::after{content:"⟷";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:20px;box-shadow:0 10px 30px -8px rgba(47,107,255,.9)}
+.ba input[type="range"]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:5;margin:0}
+.ba-hint{text-align:center;color:var(--ink-2);font-size:14px;margin-top:14px}
+
+/* packages */
+.packs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.pack{position:relative;border-radius:24px;padding:2px;background:var(--line);display:flex;transition:transform .25s}
+.pack:hover{transform:translateY(-6px)}
+.pack.hot{background:linear-gradient(160deg,var(--turq),var(--blue) 60%,transparent);box-shadow:0 40px 80px -36px rgba(47,107,255,.9)}
+.pack .in{background:var(--navy-2);border-radius:22px;padding:30px 26px;display:flex;flex-direction:column;gap:14px;flex:1}
+.pack.hot .in{background:linear-gradient(160deg,var(--navy-3),var(--navy-2))}
+.pack .lvl{display:flex;gap:4px}
+.pack .lvl i{width:22px;height:6px;border-radius:3px;background:var(--line)}
+.pack .lvl i.on{background:var(--turq)}
+.pack .k{font-size:14px;color:var(--turq);font-weight:600}
+.pack h3{font-size:26px;font-family:var(--font-display);font-weight:800}
+.pack p{color:var(--fg-2);flex:1}
+.pack ul{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:15px}
+.pack li{display:flex;gap:10px;align-items:flex-start}
+.pack li::before{content:"";flex:none;width:18px;height:18px;margin-top:5px;border-radius:50%;background:rgba(46,230,214,.15) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232EE6D6' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E") center/11px no-repeat}
+.pack .btn{margin-top:8px}
+.pack .badge{position:absolute;top:-14px;inset-inline-start:24px;background:var(--turq);color:var(--navy);font-size:13px;font-weight:700;padding:6px 14px;border-radius:999px;z-index:1}
+.packs-note{margin-top:22px;color:var(--fg-2);font-size:15px;text-align:center}
+
+/* results */
+.case{display:grid;grid-template-columns:1fr 1.2fr;gap:28px;margin-top:40px;align-items:stretch}
+.case .kpis{display:grid;gap:14px}
+.kpi{background:#fff;border:1px solid var(--off-2);border-radius:18px;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.kpi span{color:var(--ink-2);font-size:15px}
+.kpi b{font:700 34px/1 var(--font-la);direction:ltr;unicode-bidi:isolate}
+.kpi.after{border-color:rgba(47,107,255,.4);background:linear-gradient(135deg,#fff,#EEF4FF)}
+.kpi.after b{color:var(--blue)}
+.kpi.delta{background:var(--navy);color:#fff;border:0}
+.kpi.delta span{color:var(--fg-2)}
+.kpi.delta b{color:var(--turq)}
+.chart{background:#fff;border:1px solid var(--off-2);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.chart .hd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.chart .hd strong{font-size:16px}
+.chart .hd span{font-size:13px;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px}
+.chart #chart{width:100%;height:auto;direction:ltr;display:block}
+.chart .foot{font-size:13px;color:var(--ink-2)}
+
+/* testimonials */
+.tests{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.t{background:var(--navy-2);border:1px solid var(--line);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:16px;position:relative}
+.t::before{content:"“";position:absolute;top:-10px;inset-inline-end:22px;font:900 90px/1 var(--font-la);color:var(--blue);opacity:.5}
+.t .stars{color:#FFC53D;font-size:18px;letter-spacing:2px;direction:ltr;display:inline-block}
+.t q{font-size:17px;line-height:1.8;quotes:"«" "»"}
+.t .who{display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:16px;border-top:1px solid var(--line)}
+.t .who i{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(47,107,255,.5),rgba(46,230,214,.5));display:grid;place-items:center;font:700 13px var(--font-la);color:#fff}
+.t .who b{display:block;font-size:15px}.t .who small{color:var(--fg-2);font-size:13px}
+
+/* form */
+.lead-sec{overflow:hidden}
+.lead-sec::before{content:"";position:absolute;inset:auto auto -40% -20%;width:60vw;height:60vw;max-width:800px;max-height:800px;background:radial-gradient(closest-side,rgba(46,230,214,.18),transparent 70%);pointer-events:none}
+.lead-sec .wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,72px);align-items:center;position:relative}
+.lead-sec h2{font-size:clamp(34px,5vw,58px)}
+.steps{display:grid;gap:14px;margin-top:30px}
+.steps div{display:flex;gap:14px;align-items:center;font-size:17px}
+.steps div i{flex:none;width:34px;height:34px;border-radius:10px;background:rgba(46,230,214,.15);color:var(--turq);display:grid;place-items:center}
+.steps svg{width:18px;height:18px}
+.card{background:#fff;color:var(--ink);border-radius:26px;padding:clamp(24px,3vw,38px);box-shadow:0 50px 100px -40px rgba(0,0,0,.9)}
+.card h3{font-size:22px;margin-bottom:6px}
+.card .sub{color:var(--ink-2);font-size:15px;margin-bottom:22px}
+.field{display:grid;gap:7px;margin-bottom:16px}
+.field label{font-size:15px;font-weight:600}
+.field input{width:100%;font:16px var(--font-ar);padding:14px 16px;border:1.5px solid var(--off-2);border-radius:14px;background:var(--off);color:var(--ink);transition:border .15s}
+.field input[type="tel"]{font-family:var(--font-la);direction:ltr;text-align:left}
+.field input:focus{border-color:var(--blue);background:#fff}
+.field input::placeholder{color:#8E9AB8}
+.card .btn{width:100%;padding-block:17px;font-size:17px}
+.card .fine{font-size:13px;color:var(--ink-2);margin-top:14px;text-align:center}
+.done{text-align:center;padding:30px 10px}
+.done i{width:72px;height:72px;border-radius:50%;background:rgba(46,230,214,.18);color:var(--turq-ink);display:grid;place-items:center;margin:0 auto 18px}
+.done svg{width:34px;height:34px}
+.done h3{font-size:24px}.done p{color:var(--ink-2);margin-top:8px}
+
+footer{border-top:1px solid var(--line);padding-block:28px;color:var(--fg-2);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center}
+
+.sticky-cta{position:fixed;bottom:0;inset-inline:0;z-index:30;padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom,0px));background:rgba(7,15,43,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:none}
+.sticky-cta .btn{width:100%}
+
+/* reveal */
+.rv{transform:translateY(18px);opacity:.001;transition:transform .7s cubic-bezier(.2,.7,.2,1),opacity .7s}
+.rv.in{transform:none;opacity:1}
+
+@media (max-width:900px){
+  .hero .wrap,.value .grid,.case,.lead-sec .wrap{grid-template-columns:1fr}
+  .packs,.tests{grid-template-columns:1fr}
+  .proof .wrap{grid-template-columns:1fr 1fr}
+  .stat:nth-child(3){border-inline-start:0}
+  .stat:nth-child(n+3){border-top:1px solid var(--line)}
+  .serp{transform:none;margin-top:12px}
+  .tag{right:8px}.rank{left:8px}
+  .sticky-cta{display:block}
+  body{padding-bottom:80px}
+  nav .btn{display:none}
+  .hero h1 .ol{-webkit-text-stroke-width:1.5px}
+}
+@media (max-width:520px){
+  .feats{grid-template-columns:1fr}
+  .proof .wrap{grid-template-columns:1fr}
+  .stat{border-inline-start:0;border-top:1px solid var(--line)}
+  .stat:first-child{border-top:0}
+  .ba .pane{padding:18px 14px}
+  .ba .pane .r b{font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo" viewBox="14.67 20.9 70.65 70.65">
+      <path fill="#3030FF" d="M79.36,91.55H20.64c-3.26,0-5.91-2.64-5.91-5.91V26.81c0-3.26,2.64-5.91,5.91-5.91h58.71c3.26,0,5.91,2.64,5.91,5.91v58.83C85.26,88.9,82.62,91.55,79.36,91.55z"/>
+      <rect x="25.59" y="69.22" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -42.5775 41.0813)" fill="#F3F3F3" width="5.42" height="5.42"/>
+      <path fill="#F3F3F3" d="M74.41,50.23v24.42h-5.43V50.23c0-4.49-3.64-8.14-8.13-8.14c-4.5,0-8.14,3.65-8.14,8.14v24.42h-5.42V50.23c0-4.49-3.65-8.14-8.14-8.14c-4.5,0-8.14,3.65-8.14,8.14V63.8h-5.42V50.23c0-0.92,0.09-1.83,0.27-2.72c0.4-2,1.25-3.84,2.44-5.42c0.77-1.02,1.68-1.93,2.72-2.71c2.26-1.7,5.08-2.72,8.14-2.72c3.05,0,5.86,1.01,8.14,2.72c1.02,0.76,1.93,1.68,2.71,2.71c0.77-1.02,1.68-1.93,2.72-2.71c2.27-1.7,5.08-2.72,8.14-2.72c3.05,0,5.86,1.01,8.13,2.72c1.03,0.76,1.95,1.68,2.72,2.71c1.18,1.58,2.03,3.42,2.45,5.42C74.31,48.4,74.41,49.31,74.41,50.23z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="مدونتي"><svg class="mark" aria-hidden="true"><use href="#logo"/></svg>MODONTY <small>مدونتي</small></a>
+    <a class="btn btn-primary" href="https://wa.me/966543222242" data-wa data-cta="nav" rel="noopener">ابدأ الآن</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div>
+      <div class="chips" role="group" aria-label="اختر نشاطك">
+        <span class="lbl">نشاطي:</span>
+        <button class="chip" data-s="clinic" aria-pressed="true">عيادة</button>
+        <button class="chip" data-s="store" aria-pressed="false">متجر إلكتروني</button>
+        <button class="chip" data-s="realty" aria-pressed="false">عقارات</button>
+        <button class="chip" data-s="rest" aria-pressed="false">مطعم</button>
+        <button class="chip" data-s="law" aria-pressed="false">مكتب محاماة</button>
+      </div>
+      <h1><span class="ol">عميلك يبحث الآن..</span><em>خلّه يلقاك</em> أول نتيجة في <span class="g">Google</span></h1>
+      <div class="live"><span class="dot"></span><p>«<b id="lq">عيادة أسنان في الرياض</b>» تُبحث نحو <span class="num" id="lv">14,800</span> مرة شهريًا. اللي يطلع أول ياخذ العميل.</p></div>
+      <p class="lead" id="lp">محتوى عربي مهيأ لمحركات البحث يجاوب على أسئلة مرضاك قبل ما يسألون، ويوصلهم لعيادتك بدل منافسك.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://wa.me/966543222242" data-wa data-cta="hero" rel="noopener">أبي أطلع أول
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+        <a class="btn btn-ghost" href="#ba">شوف الفرق بيدك</a>
+      </div>
+      <p class="rank-note">* الترتيب في جوجل يقرّره جوجل، ومهمّتنا نكتب وننشر محتوى يجاوب أسئلة عميلك كل شهر.</p>
+      <div class="trust">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>بدون عقود طويلة</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>تقارير شهرية بالأرقام</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>نرد خلال 24 ساعة</span>
+      </div>
+    </div>
+
+    <div class="serp-wrap">
+      <div class="serp" aria-label="محاكاة لنتيجة بحث Google">
+        <span class="tag">كذا يشوفك عميلك</span>
+        <div class="bar">
+          <span class="g">G</span>
+          <span class="q" id="q" aria-live="polite"></span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        </div>
+        <div class="meta" id="meta">About 1,240,000 results (0.42 seconds)</div>
+        <div class="res win" id="r1">
+          <div class="site"><span id="s1">clinic-name.com</span><b><svg aria-hidden="true"><use href="#logo"/></svg></b></div>
+          <h4 id="t1">أفضل عيادة أسنان في الرياض: دليلك الكامل للاختيار</h4>
+          <p id="d1">محتوى مكتوب بالعربي ومهيأ لمحركات البحث، يجاوب على سؤال العميل قبل ما يسأله، ويوجّهه لنشاطك مباشرة.</p>
+        </div>
+        <div class="res">
+          <div class="site"><span>competitor.com</span><b>C</b></div>
+          <h4>منافس</h4>
+          <p>صفحة عامة بدون محتوى عربي محدّث، تظهر بعدك.</p>
+        </div>
+        <div class="res">
+          <div class="site"><span>directory.com</span><b>D</b></div>
+          <h4>دليل عام</h4>
+          <p>قائمة أنشطة بدون أي معلومة تفيد العميل.</p>
+        </div>
+        <div class="rank"><b>#1</b><span>نتيجة العميل<br>بمحتوى مدونتي</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="ticker" aria-label="عمليات بحث تجري الآن">
+  <div class="lane" id="lane"></div>
+</div>
+
+<section class="proof" aria-label="أرقام مدونتي">
+  <div class="wrap">
+    <div class="stat"><span class="v"><span data-count="619" data-suffix="K">619K</span></span><span class="l">ظهور حقيقي في Google — آخر 3 أشهر</span></div>
+    <div class="stat"><span class="v"><span data-count="80">80</span></span><span class="l">مقالًا نُشر الشهر الماضي بس</span></div>
+    <div class="stat"><span class="v"><span data-count="237">237</span></span><span class="l">مقالًا منشورًا</span></div>
+    <div class="stat"><span class="v"><span data-count="48">48</span></span><span class="l">شريكًا نشطًا على مدونتي</span></div>
+  </div>
+</section>
+
+<section class="value light" id="value">
+  <div class="wrap">
+    <div class="grid">
+      <div class="rv">
+        <span class="eyebrow">المشكلة والحل</span>
+        <h2>عندك خدمة ممتازة.. بس <mark>هل عميلك يقدر يلقاك؟</mark></h2>
+        <p class="lead" style="margin-top:18px">لو محتواك ما يطلع وقت البحث، العميل يروح للمنافس قبل ما يعرف إنك موجود. مدونتي تبني لك حضورًا رقميًا بمحتوى عربي احترافي ومتوافق مع قواعد تحسين محركات البحث.</p>
+        <p class="lead" style="margin-top:14px;font-weight:600;color:var(--ink)">مو مجرد مقالات.. نبني لك حضورًا يشتغل لصالحك وأنت نايم.</p>
+      </div>
+      <div class="feats rv">
+        <div class="feat"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></i><h3>محتوى بحثي</h3><p>موضوعات يبحث عنها جمهورك فعلًا، مو اللي نتوقع إنه يبحث عنه.</p></div>
+        <div class="feat"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 15l4-5 3 3 5-7"/></svg></i><h3>تهيئة SEO</h3><p>بنية وعناوين منظّمة تزيد فرص الظهور في النتائج الأولى.</p></div>
+        <div class="feat"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/></svg></i><h3>محتوى عربي احترافي</h3><p>صياغة تعكس خبرة نشاطك وتكلّم عميلك بلغته.</p></div>
+        <div class="feat"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15l3-3 3 2 4-5"/></svg></i><h3>متابعة النتائج</h3><p>تقارير شهرية تشوف فيها الظهور والزيارات تزيد بالأرقام.</p></div>
+      </div>
+    </div>
+
+    <div id="ba" class="ba rv" style="--cut:50%">
+      <span class="label b">بدون محتوى: أنت في الصفحة 4</span>
+      <span class="label a">مع مدونتي: أنت #1</span>
+      <div class="pane before">
+        <div class="r"><small>competitor-a.com</small><b>منافس أ: أفضل عيادة أسنان في الرياض</b></div>
+        <div class="r"><small>competitor-b.com</small><b>منافس ب: عروض تنظيف الأسنان</b></div>
+        <div class="r ghost"><small>directory.com</small><b>دليل الأطباء: قائمة عيادات</b></div>
+        <div class="r ghost"><small>forum.com</small><b>منتدى: تجارب الناس مع العيادات</b></div>
+        <div class="r lost"><small>your-clinic.com</small><b>أنت: صفحة بلا محتوى.. الصفحة 4</b></div>
+        <div class="pg">1 · 2 · 3 · <b style="display:inline;font-size:12px;color:#B3261E">4</b> · 5</div>
+      </div>
+      <div class="after">
+        <div class="pane">
+          <div class="r you"><small>your-clinic.com</small><b>أنت: أفضل عيادة أسنان في الرياض، دليل الاختيار</b></div>
+          <div class="r you" style="opacity:.75"><small>your-clinic.com</small><b>أنت: كم تكلفة تقويم الأسنان؟ شرح واضح</b></div>
+          <div class="r"><small>competitor-a.com</small><b>منافس أ: أفضل عيادة أسنان في الرياض</b></div>
+          <div class="r ghost"><small>competitor-b.com</small><b>منافس ب: عروض تنظيف الأسنان</b></div>
+          <div class="r ghost"><small>directory.com</small><b>دليل الأطباء: قائمة عيادات</b></div>
+          <div class="pg"><b style="display:inline;font-size:12px;color:#1546c7">1</b> · 2 · 3 · 4 · 5</div>
+        </div>
+      </div>
+      <div class="handle"></div>
+      <input type="range" id="cut" min="0" max="100" value="50" aria-label="اسحب للمقارنة بين قبل وبعد">
+    </div>
+    <p class="ba-hint">اسحب المقبض يمين ويسار لتشوف الفرق. النتائج هنا نموذج توضيحي.</p>
+    <a class="pop-cta rv" style="margin-top:28px" href="https://wa.me/966543222242" data-wa data-cta="mid-value" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2A9.8 9.8 0 0 0 3.6 17l-1.3 4.8 4.9-1.3A9.8 9.8 0 1 0 12 2.2Zm0 17.8c-1.5 0-3-.4-4.2-1.2l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20Zm4.4-6c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.8 1c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3c-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.4-.2Z"/></svg></span>
+      <span class="tx"><b>عجبك الفرق؟ خلّك انت الأول</b><small>كلّمنا على واتساب، رد سريع بلا تسجيل</small></span>
+      <span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg></span>
+    </a>
+  </div>
+</section>
+
+<section id="packages">
+  <div class="wrap">
+    <span class="eyebrow">الباقات</span>
+    <h2>اختر مستوى الحضور اللي يناسب نشاطك</h2>
+    <p class="lead" style="margin-top:14px">ثلاث مستويات، كلها تبدأ بفهم نشاطك أولًا. فريقنا يرشّح لك الأنسب بعد ما نتواصل.</p>
+    <div class="packs">
+      <div class="pack rv"><div class="in">
+        <span class="lvl"><i class="on"></i><i></i><i></i></span>
+        <span class="k">ابدأ حضورك</span>
+        <h3>باقة الريادة</h3>
+        <p>تأسيس محتوى عربي مهيأ لمحركات البحث مع متابعة شهرية.</p>
+        <ul><li>تأسيس المحتوى</li><li>تهيئة SEO أساسية</li><li>متابعة النتائج</li></ul>
+        <a class="btn btn-ghost" href="https://wa.me/966543222242" data-wa data-wa-msg="أبغى أعرف تفاصيل باقة الريادة." data-cta="pack-ryada" rel="noopener">اعرف التفاصيل</a>
+      </div></div>
+      <div class="pack hot rv"><span class="badge">الأكثر طلبًا</span><div class="in">
+        <span class="lvl"><i class="on"></i><i class="on"></i><i></i></span>
+        <span class="k">وسّع ظهورك</span>
+        <h3>باقة الزخم</h3>
+        <p>حجم محتوى أكبر واستراتيجية أوسع لتغطية كلمات بحث أكثر.</p>
+        <ul><li>كل ما في الريادة</li><li>حجم محتوى أكبر</li><li>استراتيجية كلمات أوسع</li></ul>
+        <a class="btn btn-primary" href="https://wa.me/966543222242" data-wa data-wa-msg="أبغى أعرف تفاصيل باقة الزخم." data-cta="pack-zakham" rel="noopener">اعرف التفاصيل</a>
+      </div></div>
+      <div class="pack rv"><div class="in">
+        <span class="lvl"><i class="on"></i><i class="on"></i><i class="on"></i></span>
+        <span class="k">حوّل المحتوى لقناة نمو</span>
+        <h3>باقة الانطلاقة</h3>
+        <p>خطة موسّعة واستهداف أكبر مع تقارير تفصيلية.</p>
+        <ul><li>كل ما في الزخم</li><li>استهداف أكبر</li><li>تقارير تفصيلية</li></ul>
+        <a class="btn btn-ghost" href="https://wa.me/966543222242" data-wa data-wa-msg="أبغى أعرف تفاصيل باقة الانطلاقة." data-cta="pack-intilaqa" rel="noopener">اعرف التفاصيل</a>
+      </div></div>
+    </div>
+    <p class="packs-note">الأسعار تُحدَّد بعد معرفة احتياج نشاطك. كلّمنا على واتساب ونرشّح لك المستوى الأنسب.</p>
+  </div>
+</section>
+
+<section class="light" id="results">
+  <div class="wrap">
+    <span class="eyebrow">مو كلام تسويقي.. أرقام</span>
+    <h2><span class="num" style="color:var(--blue)">619</span> ألف ظهور في جوجل.. خلال 3 أشهر بس</h2>
+    <p class="lead" style="margin-top:14px">صفحتك بتكون على نفس المنصّة اللي عليها هالأرقام. نقلناها مباشرة من حساب مدونتي الحقيقي على Google Search Console — بلا فبركة ولا تجميل.</p>
+    <div class="case rv">
+      <div class="kpis">
+        <div class="kpi"><span>إجمالي الظهور — آخر 3 أشهر</span><b>619K</b></div>
+        <div class="kpi after"><span>نقرة حقيقية وصّلت لصفحتنا</span><b>4,685</b></div>
+        <div class="kpi delta"><span>نمو الظهور الأسبوعي خلال 11 أسبوع</span><b>+20 ضعف</b></div>
+      </div>
+      <div class="chart">
+        <div class="hd"><strong>الظهور الأسبوعي في Google</strong><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg>Google Search Console</span></div>
+        <svg id="chart" viewBox="0 0 520 220" role="img" aria-label="رسم بياني لنمو الظهور من 3.8 ألف إلى 94.4 ألف خلال 11 أسبوع"></svg>
+        <p class="foot">المحور الأفقي: آخر 11 أسبوع كامل (آخر 90 يوم). المحور الرأسي: مرات الظهور بالآلاف. بيانات حقيقية لـmodonty.com.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lead-sec" id="lead">
+  <div class="wrap">
+    <div class="rv">
+      <span class="eyebrow">خطوتك الجاية</span>
+      <h2>عملاؤك يبحثون الآن.. خلّهم يلقونك</h2>
+      <p class="lead" style="margin-top:16px">كلّمنا على واتساب، ونرد عليك خلال دقائق بالتفاصيل والباقة الأنسب لنشاطك.</p>
+      <div class="steps">
+        <div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></i>نحدد احتياج نشاطك</div>
+        <div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></i>نرشّح مستوى الخدمة الأنسب</div>
+        <div><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></i>نبدأ بخطة واضحة للنمو</div>
+      </div>
+    </div>
+    <div class="card rv" style="display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:18px">
+      <a class="btn btn-primary" style="height:64px;font-size:18px;gap:12px" href="https://wa.me/966543222242" data-wa data-cta="lead-final" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 2.2A9.8 9.8 0 0 0 3.6 17l-1.3 4.8 4.9-1.3A9.8 9.8 0 1 0 12 2.2Zm0 17.8c-1.5 0-3-.4-4.2-1.2l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20Zm4.4-6c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.8 1c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3c-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.4-.2Z"/></svg>
+        كلّمنا على واتساب الآن
+      </a>
+      <p class="fine" style="text-align:center">بدون تسجيل ولا إيميل — رد مباشر من فريق مدونتي.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="logo" style="font-size:16px"><svg class="mark" style="width:22px;height:22px" aria-hidden="true"><use href="#logo"/></svg>MODONTY</span>
+    <span>مدونتي · محتوى عربي يظهر في Google · <span dir="ltr">modonty.com</span></span>
+  </div>
+</footer>
+
+<div class="sticky-cta"><a class="btn btn-primary" href="https://wa.me/966543222242" data-wa data-cta="sticky" rel="noopener">كلّمنا على واتساب</a></div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- sector data (volumes are illustrative) ---------- */
+  var S = {
+    clinic:{q:'عيادة أسنان في الرياض', v:'14,800', site:'clinic-name.com', t:'أفضل عيادة أسنان في الرياض: دليلك الكامل للاختيار', n:'1,240,000',
+            p:'محتوى عربي مهيأ لمحركات البحث يجاوب على أسئلة مرضاك قبل ما يسألون، ويوصلهم لعيادتك بدل منافسك.', biz:'عيادة'},
+    store:{q:'أفضل عطور رجالية أصلية', v:'22,000', site:'perfume-store.com', t:'كيف تفرق العطر الأصلي من التقليد؟ دليل من خبراء', n:'862,000',
+            p:'مقالات تجيب عميلك وهو يقارن ويبحث، وتوصله لمتجرك قبل ما يفتح المتاجر الكبيرة.', biz:'متجر إلكتروني'},
+    realty:{q:'شقق للبيع في جدة', v:'40,500', site:'realestate-co.com', t:'شراء شقة في جدة: 7 أمور تتأكد منها قبل العقد', n:'2,030,000',
+            p:'محتوى يرافق المشتري من أول سؤال لين يحجز معاينة، ويخلّي مكتبك هو المرجع.', biz:'عقارات'},
+    rest:{q:'أفضل مطعم عائلي في الدمام', v:'9,900', site:'restaurant.com', t:'أفضل 5 مطاعم عائلية في الدمام لعشاء الخميس', n:'640,000',
+            p:'محتوى يطلع لما يبحث الزبون عن وين يتعشى الليلة، ويحطك في قائمته الأولى.', biz:'مطعم'},
+    law:{q:'محامي قضايا تجارية', v:'6,600', site:'law-firm.com', t:'متى تحتاج محامي تجاري؟ وكيف تختار الأنسب', n:'418,000',
+            p:'مقالات تشرح للعميل حقه بلغة واضحة، وتخلّيه يثق فيك قبل أول مكالمة.', biz:'مكتب محاماة'}
+  };
+  var qEl=document.getElementById('q'), s1=document.getElementById('s1'), t1=document.getElementById('t1'), meta=document.getElementById('meta'), r1=document.getElementById('r1');
+  var lq=document.getElementById('lq'), lv=document.getElementById('lv'), lp=document.getElementById('lp');
+  var typing=null, curKey='clinic';
+  function type(str){
+    if(typing) clearTimeout(typing);
+    var k=0; qEl.textContent='';
+    if(reduce){ qEl.textContent=str; return; }
+    (function step(){ qEl.textContent=str.slice(0,++k); if(k<str.length) typing=setTimeout(step,55); })();
+  }
+  function apply(key){
+    curKey=key;
+    var d=S[key];
+    lq.textContent=d.q; lv.textContent=d.v; lp.textContent=d.p;
+    type(d.q);
+    r1.classList.add('swap');
+    setTimeout(function(){ s1.textContent=d.site; t1.textContent=d.t; meta.textContent='About '+d.n+' results (0.4 seconds)'; r1.classList.remove('swap'); }, reduce?0:400);
+    if (typeof paintWa === 'function') paintWa();
+  }
+  document.querySelectorAll('.chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      document.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed','false')});
+      c.setAttribute('aria-pressed','true'); apply(c.dataset.s);
+    });
+  });
+  apply('clinic');
+
+  /* ---------- ticker ---------- */
+  var items=[['عيادة أسنان في الرياض','14.8K'],['شقق للبيع في جدة','40.5K'],['أفضل عطور رجالية','22K'],['محامي قضايا تجارية','6.6K'],['مطعم عائلي في الدمام','9.9K'],['تقويم أسنان شفاف','12K'],['شركة تنظيف منازل','18K'],['دورة تصميم جرافيك','8.1K'],['تأجير سيارات الرياض','27K'],['ديكور مجالس','5.4K']];
+  var lane=document.getElementById('lane'), html='';
+  items.concat(items).forEach(function(it){ html+='<span class="item">يبحث الآن: <b>'+it[0]+'</b><span class="num">'+it[1]+'/شهر</span></span>'; });
+  lane.innerHTML=html;
+
+  /* ---------- floating searches canvas ---------- */
+  var cv=document.getElementById('bg'), ctx=cv.getContext('2d'), parts=[], W=0,H=0;
+  var words=items.map(function(i){return i[0]}).concat(['كم سعر','قريب مني','أفضل','مراجعات','عروض']);
+  function resize(){ var r=cv.parentNode.getBoundingClientRect(); W=cv.width=r.width*devicePixelRatio; H=cv.height=r.height*devicePixelRatio; }
+  function seed(){ parts=[]; for(var i=0;i<22;i++) parts.push({x:Math.random(),y:Math.random(),s:.4+Math.random()*.8,w:words[i%words.length],o:.12+Math.random()*.2}); }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='rgba(174,187,218,.08)';
+    for(var gx=0;gx<W;gx+=48*devicePixelRatio) for(var gy=0;gy<H;gy+=48*devicePixelRatio){ ctx.fillRect(gx,gy,2,2); }
+    ctx.font=(13*devicePixelRatio)+'px "IBM Plex Sans Arabic", sans-serif'; ctx.textAlign='right';
+    parts.forEach(function(p){
+      p.y-=0.0004*p.s; if(p.y<-0.05){p.y=1.05;p.x=Math.random();}
+      ctx.fillStyle='rgba(46,230,214,'+p.o+')';
+      ctx.fillText('🔍 '+p.w, p.x*W, p.y*H);
+    });
+    if(!reduce && running) requestAnimationFrame(draw);
+  }
+  var running=true;
+  resize(); seed(); draw(); window.addEventListener('resize',function(){resize();});
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ var vis=es[0].isIntersecting; if(vis && !running){ running=true; draw(); } else if(!vis){ running=false; } }).observe(cv);
+  }
+
+  /* ---------- counters ---------- */
+  var counted=false;
+  function runCounters(){
+    if(counted) return; counted=true;
+    document.querySelectorAll('[data-count]').forEach(function(el){
+      var target=+el.dataset.count, suf=el.dataset.suffix||'', start=performance.now(), dur=1400;
+      (function tick(now){ var p=Math.min(1,(now-start)/dur); p=1-Math.pow(1-p,3); el.textContent=Math.round(target*p)+suf; if(p<1) requestAnimationFrame(tick); })(start);
+    });
+  }
+  if(!reduce && 'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){ if(es.some(function(e){return e.isIntersecting})){ runCounters(); io.disconnect(); } },{threshold:.4});
+    io.observe(document.querySelector('.proof'));
+  }
+
+  /* ---------- reveal ---------- */
+  var rv=document.querySelectorAll('.rv');
+  if(!reduce && 'IntersectionObserver' in window){
+    var io3=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io3.unobserve(e.target);} }); },{threshold:.15});
+    rv.forEach(function(el){ io3.observe(el); });
+  } else rv.forEach(function(el){ el.classList.add('in'); });
+
+  /* ---------- before/after ---------- */
+  var ba=document.getElementById('ba'), cut=document.getElementById('cut');
+  cut.addEventListener('input',function(){ ba.style.setProperty('--cut', cut.value+'%'); });
+  if(!reduce){ var t=0, nudge=setInterval(function(){ t+=1; var v=50+Math.sin(t/8)*12; cut.value=v; ba.style.setProperty('--cut',v+'%'); if(t>50) clearInterval(nudge); },40);
+    cut.addEventListener('pointerdown',function(){clearInterval(nudge)}); }
+
+  /* ---------- chart: real GSC weekly impressions, modonty.com, last 90 days (pulled 13 Oct 2026) ---------- */
+  var data=[3.8,4.8,6.6,8.9,10.6,36.7,73.3,102.0,183.1,82.7,94.4];
+  var svg=document.getElementById('chart'), CW=520,CH=220, padL=44,padR=16,padT=18,padB=30, max=200;
+  var x=function(j){return padL+j*(CW-padL-padR)/(data.length-1)};
+  var y=function(v){return padT+(CH-padT-padB)*(1-v/max)};
+  var out='';
+  [0,50,100,150,200].forEach(function(v){
+    out+='<line x1="'+padL+'" x2="'+(CW-padR)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="#E6ECF5"/>';
+    out+='<text x="'+(padL-8)+'" y="'+(y(v)+4)+'" font-size="11" text-anchor="end" fill="#4B5A7C" font-family="IBM Plex Sans,sans-serif">'+v+'K</text>';
+  });
+  var pts=data.map(function(v,j){return x(j)+','+y(v)}).join(' ');
+  var area='M'+x(0)+','+y(0)+' L'+pts.replace(/ /g,' L')+' L'+x(data.length-1)+','+y(0)+' Z';
+  out+='<defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2F6BFF" stop-opacity=".35"/><stop offset="1" stop-color="#2F6BFF" stop-opacity="0"/></linearGradient></defs>';
+  out+='<path d="'+area+'" fill="url(#g)"/>';
+  out+='<polyline id="line" points="'+pts+'" fill="none" stroke="#2F6BFF" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';
+  data.forEach(function(v,j){ out+='<text x="'+x(j)+'" y="'+(CH-10)+'" font-size="11" text-anchor="middle" fill="#4B5A7C" font-family="IBM Plex Sans,sans-serif">'+(j+1)+'</text>'; });
+  var lj=data.length-1;
+  out+='<circle cx="'+x(0)+'" cy="'+y(data[0])+'" r="5" fill="#fff" stroke="#4B5A7C" stroke-width="2"/>';
+  out+='<circle cx="'+x(lj)+'" cy="'+y(data[lj])+'" r="6" fill="#2EE6D6" stroke="#0A1633" stroke-width="2.5"/>';
+  out+='<text x="'+(x(lj)-10)+'" y="'+(y(data[lj])-12)+'" font-size="13" font-weight="700" text-anchor="end" fill="#1B4FE0" font-family="IBM Plex Sans,sans-serif">'+data[lj]+'K</text>';
+  out+='<text x="'+(x(0)+10)+'" y="'+(y(data[0])-12)+'" font-size="12" text-anchor="start" fill="#4B5A7C" font-family="IBM Plex Sans,sans-serif">'+data[0]+'K</text>';
+  svg.innerHTML=out;
+  if(!reduce){
+    var line=document.getElementById('line'), len=line.getTotalLength();
+    line.style.strokeDasharray=len; line.style.strokeDashoffset=len; line.style.transition='stroke-dashoffset 1.8s ease-out';
+    var io2=new IntersectionObserver(function(es){ if(es[0].isIntersecting){ line.style.strokeDashoffset=0; io2.disconnect(); } },{threshold:.3});
+    io2.observe(svg);
+  }
+
+  /* ---------- القياس: كل حدث يُكتب في dataLayer، ويصل البكسل لو رُكِّب (fbq) —
+     event_id واحد للمتصفّح والسيرفر حين يُضاف Conversions API (بانتظار Pixel ID من خالد). ---------- */
+  var eventId = function(){ return (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)); };
+  function track(event, params){
+    var id = eventId();
+    try { (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: event, event_id: id }, params)); } catch (e) {}
+    try { if (typeof window.fbq === 'function' && event === 'whatsapp_click') window.fbq('track', 'Contact', params, { eventID: id }); } catch (e) {}
+    return id;
+  }
+  // كود الحملة يدخل رسالة الواتساب — المبيعات تعرف العميل من أي إعلان جاء.
+  var campaign = '';
+  try { var p = new URLSearchParams(location.search); campaign = (p.get('utm_campaign') || p.get('utm_content') || '').trim().slice(0, 60); } catch (e) {}
+
+  /* ---------- واتساب: كل زر [data-wa] يحمل رسالة جاهزة باسم النشاط المختار ---------- */
+  var WA_NUMBER = '966543222242';
+  function waHref(extra){
+    var d = S[curKey] || S.clinic;
+    var lines = ['مرحباً، شفت صفحة مدونتي.', 'نشاطي: ' + d.biz, extra || 'أبغى أعرف التفاصيل.'];
+    if (campaign) lines.push('(المصدر: ' + campaign + ')');
+    return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(lines.join('\n'));
+  }
+  function paintWa(){
+    document.querySelectorAll('[data-wa]').forEach(function(el){ el.href = waHref(el.dataset.waMsg); });
+  }
+  paintWa();
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('[data-wa]'); if(!a) return;
+    track('whatsapp_click', { cta: a.dataset.cta || '', activity: (S[curKey]||S.clinic).biz });
+  });
+  track('landing_view', { activity: (S[curKey]||S.clinic).biz });
+})();
+</script>
+
+</body></html>

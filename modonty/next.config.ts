@@ -100,11 +100,17 @@ const nextConfig: NextConfig = {
   // Meta-campaign landing (Khalid, 12 Oct 2026): a static file served from the CDN — no React, no
   // function per visit, nothing from the site loads on it. The clean URL is the one the ads use.
   // Every campaign landing page lives under public/landing-pages/ — one folder, clean ad URLs.
-  rewrites: async () => [{ source: "/start", destination: "/landing-pages/start.html" }],
+  // /start2 (13 Oct 2026): second concept under review — not live in any campaign yet.
+  rewrites: async () => [
+    { source: "/start", destination: "/landing-pages/start.html" },
+    { source: "/start2", destination: "/landing-pages/start2.html" },
+  ],
   headers: async () => [
     // Ad traffic only — kept out of Google.
     { source: "/start", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    { source: "/start2", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
     { source: "/landing-pages/start.html", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    { source: "/landing-pages/start2.html", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
     {
       source: "/(.*)",
       headers: [
