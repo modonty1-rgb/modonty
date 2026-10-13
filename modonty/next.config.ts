@@ -96,21 +96,27 @@ const nextConfig: NextConfig = {
     { source: "/whats-new", destination: "/news", permanent: true },
     // «المال والأعمال» became «ريادة الأعمال» (28 Sep 2026) — its «قريباً» address was already shared.
     { source: "/modonty/markets", destination: "/modonty/entrepreneurship", permanent: true },
+    // Legacy campaign URLs. Keep them live as redirects so any already-shared link still lands
+    // on its named campaign page while new ad sets use the descriptive URLs below.
+    { source: "/start", destination: "/business-presence", permanent: true },
+    { source: "/start2", destination: "/search-visibility", permanent: true },
+    { source: "/start3", destination: "/search-growth", permanent: true },
   ],
-  // Meta-campaign landing (Khalid, 12 Oct 2026): a static file served from the CDN — no React, no
-  // function per visit, nothing from the site loads on it. The clean URL is the one the ads use.
-  // Every campaign landing page lives under public/landing-pages/ — one folder, clean ad URLs.
-  // /start2 (13 Oct 2026): second concept under review — not live in any campaign yet.
+  // Campaign landings are static files served from the CDN — no React, no function per visit.
+  // Their public URLs describe the campaign angle; the files stay in one folder for maintenance.
   rewrites: async () => [
-    { source: "/start", destination: "/landing-pages/start.html" },
-    { source: "/start2", destination: "/landing-pages/start2.html" },
+    { source: "/business-presence", destination: "/landing-pages/start.html" },
+    { source: "/search-visibility", destination: "/landing-pages/start2.html" },
+    { source: "/search-growth", destination: "/landing-pages/start3.html" },
   ],
   headers: async () => [
     // Ad traffic only — kept out of Google.
-    { source: "/start", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
-    { source: "/start2", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    { source: "/business-presence", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    { source: "/search-visibility", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    { source: "/search-growth", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
     { source: "/landing-pages/start.html", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
     { source: "/landing-pages/start2.html", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    { source: "/landing-pages/start3.html", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
     {
       source: "/(.*)",
       headers: [

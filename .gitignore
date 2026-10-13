@@ -120,3 +120,6 @@ skills-lock.json
 **/skills-lock.json
 payment/.claude/
 .env*
+
+# بيانات دخول البنية التحتية (VPS/SSH/حسابات) — محلي فقط، أبداً إلى git.
+documents/context/credentials/

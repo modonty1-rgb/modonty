@@ -1,6 +1,13 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NQR2D23C');</script>
+<!-- End Google Tag Manager -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>شوف صفحتك على مدونتي — مدونتي</title>
@@ -14,7 +21,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <!--
   صفحة هبوط حملة ميتا (خالد ١٢ أكتوبر ٢٠٢٦ — التيم اعتمد الموك أب #٤ «شوف صفحتك»).
-  ملف ثابت بلا React ولا سيرفر: يُخدَم من CDN فيرسيل عبر rewrite ‎/start → /start.html (next.config.ts)،
+  ملف ثابت بلا React ولا سيرفر: يُخدَم من CDN فيرسيل عبر rewrite ‎/business-presence → /start.html (next.config.ts)،
   فلا يحمّل شيئاً من الموقع ولا يكلّف دالّة. بلا أسعار ولا رابط دفع — كل الأزرار واتساب.
   شكل المعاينة من صفحة الشريك الحقيقية (platform-bar · cover-hero · hero-actions · client-hero-v2).
   الحملة تفتح الصفحة على نشاط ومدينة جاهزين: ?a=clinic&c=جدة — والمفاتيح في ACTS أسفل الملف.
@@ -74,8 +81,8 @@ bdi{unicode-bidi:isolate}
 /* الهيدر */
 .top{position:sticky;top:0;z-index:40;background:rgb(14 6 90 / .9);-webkit-backdrop-filter:saturate(1.3) blur(10px);backdrop-filter:saturate(1.3) blur(10px);color:#fff;padding-top:env(safe-area-inset-top,0px)}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:21px}
-.brand svg{width:32px;height:32px}
+.brand{display:inline-flex;align-items:center;min-height:40px}
+.brand-logo{display:block;width:132px;height:32px;object-fit:contain}
 .top .btn{height:40px;padding-inline:16px;font-size:15px;border-radius:11px;background:rgb(255 255 255 / .1);box-shadow:none;border:1px solid rgb(255 255 255 / .2)}
 .top .btn:hover{background:rgb(255 255 255 / .18)}
 
@@ -433,6 +440,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-bet
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NQR2D23C"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
@@ -479,8 +490,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-bet
 <header class="top" id="top">
   <div class="wrap">
     <a class="brand" href="https://www.modonty.com" aria-label="مدونتي">
-      <svg aria-hidden="true"><use href="#logo"/></svg>
-      مدونتي
+      <img class="brand-logo" src="https://modonty-asset.b-cdn.net/migrated/590modontyLogo_ftf4yfpng-4733.png" alt="مدونتي" width="132" height="32">
     </a>
     <a class="btn" href="https://wa.me/966543222242" data-wa data-cta="header" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>كلّمنا واتساب</a>
   </div>

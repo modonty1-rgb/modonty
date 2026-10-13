@@ -1125,6 +1125,56 @@ model BookingRequest {
   @@map("booking_requests")
 }
 
+/// Campaign configuration is isolated from partner bookings: one campaign has many
+/// submissions, and its stable key is what landing pages and reporting use.
+model Campaign {
+  id          String               @id @default(auto()) @map("_id") @db.ObjectId
+  key         String               @unique
+  name        String
+  landingPath String
+  status      String               @default("ACTIVE") // ACTIVE | PAUSED | ARCHIVED
+  submissions CampaignSubmission[]
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@index([status])
+  @@map("campaigns")
+}
+
+/// A sales lead submitted from a campaign landing page. It never shares the
+/// BookingRequest collection because this funnel belongs to Modonty campaigns,
+/// not to an individual partner's booking flow.
+model CampaignSubmission {
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  campaignId         String    @db.ObjectId
+  campaign           Campaign  @relation(fields: [campaignId], references: [id])
+  formKey            String
+  idempotencyKey     String    @unique
+  businessName       String
+  email              String
+  phone              String
+  sector             String
+  landingPath        String
+  utmSource          String?
+  utmMedium          String?
+  utmCampaign        String?
+  utmContent         String?
+  utmTerm            String?
+  referrer           String?
+  ipAddress          String?
+  userAgent          String?
+  status             String    @default("NEW") // NEW | CONTACTED | QUALIFIED | CLOSED | ARCHIVED
+  whatsappHandoffAt  DateTime? // the browser was cleared to open the sales WhatsApp handoff
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([campaignId, createdAt])
+  @@index([campaignId, formKey, createdAt])
+  @@index([status, createdAt])
+  @@index([phone, createdAt])
+  @@map("campaign_submissions")
+}
+
 /// One spin of a public lucky-wheel campaign — one row per SPIN. The server picks
 /// the prize and writes this row BEFORE the wheel animates, so the browser only plays back a
 /// result it cannot choose. The campaign identifier keeps the collection reusable: Techne is
