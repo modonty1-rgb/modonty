@@ -60,7 +60,7 @@
     const base='https://wa.me/966543222242?text=';
     let selectedSector='عيادة';
     function track(name,params={}){window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:name,...params});}
-    function paintWhatsApp(){document.querySelectorAll('[data-whatsapp]').forEach(link=>{const message=link.dataset.waMsg||'أبغى أعرف التفاصيل.';link.href=base+encodeURIComponent('مرحباً، شفت صفحة مدونتي. نشاطي: '+selectedSector+'. '+message);});}
+    function paintWhatsApp(){document.querySelectorAll('[data-whatsapp]').forEach(link=>{const message=link.dataset.waMsg||'أبغى أعرف التفاصيل.';link.href=base+encodeURIComponent('مرحباً، شفت صفحة مدونتي. نشاطي: '+selectedSector+'. '+message);link.target='_blank';link.rel='noopener';});}
     document.querySelectorAll('.sector').forEach(button=>button.addEventListener('click',()=>{const data=sectors[button.dataset.sector];selectedSector=button.textContent.trim();document.querySelectorAll('.sector').forEach(item=>item.setAttribute('aria-pressed','false'));button.setAttribute('aria-pressed','true');document.getElementById('sector-question').textContent=data.q;document.getElementById('sector-copy').textContent=data.c;document.getElementById('query').textContent=data.q;document.getElementById('result-title').textContent=data.t;paintWhatsApp();track('landing_sector_select',{sector:selectedSector});}));
     paintWhatsApp();document.querySelectorAll('[data-whatsapp]').forEach(link=>link.addEventListener('click',()=>track('whatsapp_click',{cta:link.dataset.cta||'',sector:selectedSector})));track('landing_view');
   </script>
