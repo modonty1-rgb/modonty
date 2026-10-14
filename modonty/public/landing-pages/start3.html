@@ -57,7 +57,7 @@
   <div class="sticky"><a class="btn btn-primary" data-whatsapp data-cta="sticky" data-wa-msg="أبغى تقييمًا سريعًا لفرص ظهور نشاطي." href="#start">قيّم فرصك على واتساب <span aria-hidden="true">↗</span></a></div>
   <script>
     const sectors={clinic:{q:'كيف أختار العيادة المناسبة لحالتي؟',c:'نحوّله إلى محتوى مفيد يعرّف بخبرتك ويقود لخطوة تواصل واضحة.',t:'دليل اختيار العيادة المناسبة: أسئلة تساعدك قبل الحجز'},store:{q:'كيف أختار المنتج المناسب لاحتياجي؟',c:'نربط أسئلة العميل قبل الشراء بصفحات تساعده يقرر بثقة.',t:'كيف تختار المنتج المناسب؟ دليل واضح قبل الشراء'},realty:{q:'ما الذي أراجع قبل شراء العقار؟',c:'نبني محتوى يشرح القرار الكبير بلغة عملية، ويُظهر خبرتك في السوق.',t:'قبل شراء عقار: نقاط مهمة تساعدك على اتخاذ القرار'},food:{q:'أفضل مطعم يناسب المناسبة؟',c:'نحوّل بحث العميل عن التجربة المناسبة إلى صفحة تجيب بوضوح عن الخيارات.',t:'كيف تختار المطعم المناسب لمناسبتك؟'},law:{q:'متى أحتاج استشارة قانونية؟',c:'محتوى مبني على أسئلة العميل، بوضوح ومسؤولية، دون وعود أو تبسيط مخل.',t:'متى تحتاج استشارة قانونية؟ دليل أولي لفهم الخطوة التالية'}};
-    const base='https://wa.me/966541018020?text=';
+    const base='https://wa.me/966543222242?text=';
     let selectedSector='عيادة';
     function track(name,params={}){window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:name,...params});}
     function paintWhatsApp(){document.querySelectorAll('[data-whatsapp]').forEach(link=>{const message=link.dataset.waMsg||'أبغى أعرف التفاصيل.';link.href=base+encodeURIComponent('مرحباً، شفت صفحة مدونتي. نشاطي: '+selectedSector+'. '+message);});}

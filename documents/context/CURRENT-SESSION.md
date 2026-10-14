@@ -6,3 +6,4 @@
 |---|---|---|---|
 | console-mobile | ٥ أكتوبر ٢٠٢٦ | نسخة الرفع جاهزة (٥ كوميتات) — الدفع بعد ٧ مساءً بأمر «ادفع» | sessions/console-mobile.md |
 | payment | ٥ أكتوبر ٢٠٢٦ | N-Genius حي + تمارا ساندبوكس جاهزان محلياً — ننتظر اعتمادهم، والنشر بعد ٧ مساءً بأمر | sessions/payment.md |
+| meta-landing-page | ١٣ أكتوبر ٢٠٢٦ | GTM متحقَّق حيّاً على business-presence/search-visibility — الباقي شغل الميديا باير | sessions/meta-landing-page.md |
