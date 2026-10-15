@@ -93,19 +93,21 @@ export async function getClientsGuide(): Promise<{ rows: ClientGuideRow[]; plans
 
 
   const withOrder = clients.filter((c) => !!orderOf(c));
-  // One read per client gives both the «Published» count and the first of those articles —
-  // the same set, so the date and the number can never describe different articles.
-  const delivered = await Promise.all(
-    withOrder.map((c) =>
-      db.article.aggregate({
-        where: deliveredArticlesWhere(c.id, orderOf(c)!.serviceStartedAt),
+  // One groupBy for every client, not one `aggregate` per client (N+1 found 15 Oct
+  // 2026 — measured 46 round-trips on modonty_dev, one per client with an order).
+  // `aggregate` cannot be batched by Prisma the way `findUnique` is, but each client's
+  // own `deliveredArticlesWhere` branch is self-contained (its own clientId + its own
+  // cutoff date), so one `OR` of all of them groups correctly in a single query.
+  const deliveredGroups = withOrder.length
+    ? await db.article.groupBy({
+        by: ["clientId"],
+        where: { OR: withOrder.map((c) => deliveredArticlesWhere(c.id, orderOf(c)!.serviceStartedAt)) },
         _count: { _all: true },
         _min: { datePublished: true },
-      }),
-    ),
-  );
-  const deliveredById = new Map(withOrder.map((c, i) => [c.id, delivered[i]._count._all]));
-  const firstPublishedById = new Map(withOrder.map((c, i) => [c.id, delivered[i]._min.datePublished]));
+      })
+    : [];
+  const deliveredById = new Map(deliveredGroups.map((g) => [g.clientId, g._count._all]));
+  const firstPublishedById = new Map(deliveredGroups.map((g) => [g.clientId, g._min.datePublished]));
 
   // عدٌّ واحدٌ مجمَّع لكل العملاء ولكل مرحلة — الحالةُ الآن لا تتقيّد ببداية الخدمة.
   const stages = await db.article.groupBy({

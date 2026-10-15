@@ -50,17 +50,6 @@ export interface CampaignPerformance {
   cost: number | null;
 }
 
-export interface ArticlePerformance {
-  articleId: string;
-  title: string;
-  slug: string;
-  views: number;
-  avgTimeOnPage: number;
-  avgScrollDepth: number;
-  conversions: number;
-  category: string | null;
-}
-
 export async function getTrafficSources(
   clientId: string,
   days: 7 | 30 | 90 = 30
@@ -315,69 +304,3 @@ export async function getCampaignPerformance(
   }));
 }
 
-export async function getArticlePerformance(
-  clientId: string,
-  days: 7 | 30 | 90 = 30,
-  limit: number = 10
-): Promise<ArticlePerformance[]> {
-  const since = new Date();
-  since.setDate(since.getDate() - days);
-
-  const articles = await db.article.findMany({
-    where: {
-      clientId,
-      status: "PUBLISHED",
-    },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      category: { select: { name: true } },
-    },
-    take: 50,
-  });
-
-  const articlesWithMetrics = await Promise.all(
-    articles.map(async (article) => {
-      const [views, analytics, conversions] = await Promise.all([
-        db.articleView.count({
-          where: {
-            articleId: article.id,
-            createdAt: { gte: since },
-          },
-        }),
-        db.analytics.aggregate({
-          where: {
-            articleId: article.id,
-            timestamp: { gte: since },
-          },
-          _avg: {
-            timeOnPage: true,
-            scrollDepth: true,
-          },
-        }),
-        db.conversion.count({
-          where: {
-            articleId: article.id,
-            createdAt: { gte: since },
-          },
-        }),
-      ]);
-
-      return {
-        articleId: article.id,
-        title: article.title,
-        slug: article.slug,
-        views,
-        avgTimeOnPage: analytics._avg.timeOnPage ?? 0,
-        avgScrollDepth: analytics._avg.scrollDepth ?? 0,
-        conversions,
-        category: article.category?.name ?? null,
-      };
-    })
-  );
-
-  return articlesWithMetrics
-    .sort((a, b) => b.views - a.views)
-    .slice(0, limit);
-}

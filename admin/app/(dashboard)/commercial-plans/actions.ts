@@ -407,14 +407,24 @@ export async function setCommercialFeaturePlanAssignments(featureId: string, for
   const assignedPlanIds = new Set(currentAssignments.map((assignment) => assignment.planId));
   const removedAssignments = currentAssignments.filter((assignment) => !selectedPlanIds.has(assignment.planId));
 
+  // One `groupBy` for every newly-assigned plan's display order, not a `count` + `create`
+  // pair per plan (N+1 found 15 Oct 2026) — the plan count here is small, but the pattern
+  // is the same one found at scale elsewhere.
+  const newPlanIds = [...selectedPlanIds].filter((planId) => !assignedPlanIds.has(planId));
   await db.$transaction(async (transaction) => {
     if (removedAssignments.length > 0) {
       await transaction.commercialPlanFeature.deleteMany({ where: { id: { in: removedAssignments.map((assignment) => assignment.id) } } });
     }
-    for (const planId of selectedPlanIds) {
-      if (assignedPlanIds.has(planId)) continue;
-      const displayOrder = await transaction.commercialPlanFeature.count({ where: { planId } });
-      await transaction.commercialPlanFeature.create({ data: { planId, featureId, displayOrder } });
+    if (newPlanIds.length > 0) {
+      const counts = await transaction.commercialPlanFeature.groupBy({
+        by: ["planId"],
+        where: { planId: { in: newPlanIds } },
+        _count: { _all: true },
+      });
+      const countByPlan = new Map(counts.map((c) => [c.planId, c._count._all]));
+      await transaction.commercialPlanFeature.createMany({
+        data: newPlanIds.map((planId) => ({ planId, featureId, displayOrder: countByPlan.get(planId) ?? 0 })),
+      });
     }
   });
 

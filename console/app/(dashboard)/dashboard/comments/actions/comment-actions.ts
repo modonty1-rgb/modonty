@@ -4,9 +4,12 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { CommentStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
+import { db } from "@/lib/db";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 import type { CommentKind } from "../helpers/comment-queries";
 import { setCommentStatusForClient } from "../helpers/set-comment-status";
+import { notifyCommentApproved } from "../helpers/notify-comment-approved";
 
 /**
  * Moderation for both comment tables (ق10, 2026-08-05).
@@ -68,6 +71,31 @@ export interface BulkRef {
   id: string;
 }
 
+/** Sum `delta` per parent id, in memory — so a batch touching the same article/reel
+ *  twice moves its counter ONCE, not twice racing each other. */
+function sumDeltas(rows: { status: CommentStatus; parentId: string }[], next: CommentStatus) {
+  const isApproved = next === CommentStatus.APPROVED;
+  const deltas = new Map<string, number>();
+  for (const r of rows) {
+    const wasApproved = r.status === CommentStatus.APPROVED;
+    if (wasApproved !== isApproved) {
+      deltas.set(r.parentId, (deltas.get(r.parentId) ?? 0) + (isApproved ? 1 : -1));
+    }
+  }
+  return deltas;
+}
+
+async function bumpCounters(kind: CommentKind, deltas: Map<string, number>) {
+  await Promise.all(
+    Array.from(deltas.entries()).map(([id, delta]) => {
+      const data = { commentsCount: delta > 0 ? { increment: delta } : { decrement: -delta } };
+      return kind === "article"
+        ? db.article.update({ where: { id }, data, select: { id: true } })
+        : db.media.update({ where: { id }, data, select: { id: true } });
+    })
+  );
+}
+
 async function bulkSetStatus(
   refs: BulkRef[],
   next: CommentStatus
@@ -77,14 +105,60 @@ async function bulkSetStatus(
   if (refs.length === 0) return { success: true, count: 0 };
 
   try {
-    // One row at a time on purpose: the counter has to move per parent, and `updateMany`
-    // cannot tell which comments actually crossed the APPROVED line.
-    const outcomes = await Promise.all(
-      refs.map((ref) => setStatus(ref.kind, ref.id, next))
-    );
-    const count = outcomes.filter((o) => o.success).length;
+    // Batched, not one round-trip per comment (N+1 found 15 Oct 2026 — the per-ref
+    // `setStatus` loop was also a real-lost-update risk: two comments on the SAME
+    // article in one batch raced two separate `increment`s instead of summing first).
+    const articleIds = refs.filter((r) => r.kind === "article").map((r) => r.id);
+    const reelIds = refs.filter((r) => r.kind === "reel").map((r) => r.id);
 
+    const [articleRows, reelRows] = await Promise.all([
+      articleIds.length
+        ? db.comment.findMany({
+            where: { id: { in: articleIds }, article: { clientId } },
+            select: { id: true, status: true, articleId: true },
+          })
+        : [],
+      reelIds.length
+        ? db.mediaComment.findMany({
+            where: { id: { in: reelIds }, media: { clientId, inReels: true } },
+            select: { id: true, status: true, mediaId: true },
+          })
+        : [],
+    ]);
+
+    const articleDeltas = sumDeltas(
+      articleRows.map((r) => ({ status: r.status, parentId: r.articleId })),
+      next
+    );
+    const reelDeltas = sumDeltas(
+      reelRows.map((r) => ({ status: r.status, parentId: r.mediaId })),
+      next
+    );
+    const newlyApprovedArticleIds = articleRows
+      .filter((r) => r.status !== CommentStatus.APPROVED && next === CommentStatus.APPROVED)
+      .map((r) => r.id);
+    const newlyApprovedReelIds = reelRows
+      .filter((r) => r.status !== CommentStatus.APPROVED && next === CommentStatus.APPROVED)
+      .map((r) => r.id);
+
+    await Promise.all([
+      articleRows.length
+        ? db.comment.updateMany({ where: { id: { in: articleRows.map((r) => r.id) } }, data: { status: next } })
+        : null,
+      reelRows.length
+        ? db.mediaComment.updateMany({ where: { id: { in: reelRows.map((r) => r.id) } }, data: { status: next } })
+        : null,
+    ]);
+
+    await Promise.all([bumpCounters("article", articleDeltas), bumpCounters("reel", reelDeltas)]);
+
+    if (reelDeltas.size > 0) await revalidateModontyTag("reels").catch(() => {});
+    for (const id of newlyApprovedArticleIds) await notifyCommentApproved("article", id);
+    for (const id of newlyApprovedReelIds) await notifyCommentApproved("reel", id);
+
+    const count = articleRows.length + reelRows.length;
     revalidatePath("/dashboard/comments");
+    if (reelRows.length) revalidatePath("/dashboard/reels");
     return { success: true, count };
   } catch {
     return { success: false, error: messages.error.serverError };

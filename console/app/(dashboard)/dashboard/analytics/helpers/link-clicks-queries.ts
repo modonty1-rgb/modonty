@@ -29,8 +29,15 @@ export async function getTopClickedLinks(
     },
   });
 
-  const linksWithUniqueUsers = await Promise.all(
-    linkClicks.map(async (link) => {
+  // Cap to `limit` BEFORE the per-link query (N+1 found 15 Oct 2026): sorting and
+  // slicing used to happen AFTER, so the loop ran once per distinct link in the whole
+  // period — unbounded. The unique-users count still needs one query per link (it's a
+  // per-link `distinct`), but now there are at most `limit` of them, not however many
+  // links existed.
+  const topLinks = [...linkClicks].sort((a, b) => b._count.id - a._count.id).slice(0, limit);
+
+  return Promise.all(
+    topLinks.map(async (link) => {
       const uniqueUsers = await db.articleLinkClick.findMany({
         where: {
           article: { clientId },
@@ -51,10 +58,6 @@ export async function getTopClickedLinks(
       };
     })
   );
-
-  return linksWithUniqueUsers
-    .sort((a, b) => b.clicks - a.clicks)
-    .slice(0, limit);
 }
 
 export async function getLinkClickStats(clientId: string, days: 7 | 30 | 90 = 30) {

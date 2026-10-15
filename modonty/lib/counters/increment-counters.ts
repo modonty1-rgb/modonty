@@ -27,3 +27,23 @@ export async function incrementCounters(
     updates: [{ q: { _id: { $oid: id } }, u: { $inc: changes } }],
   });
 }
+
+/**
+ * Same atomic `$inc`-per-document guarantee as `incrementCounters`, but for many
+ * documents at once — one `$runCommandRaw` call carrying every document's update,
+ * not one call per document (N+1 found 15 Oct 2026, e.g. account deletion moving
+ * counters on every article/reel the reader ever reacted to).
+ */
+export async function incrementCountersBatch(
+  collection: CounterCollection,
+  deltas: Map<string, Record<string, number>>,
+): Promise<void> {
+  const updates = [...deltas.entries()]
+    .map(([id, inc]) => {
+      const changes = Object.fromEntries(Object.entries(inc).filter(([, n]) => n !== 0));
+      return Object.keys(changes).length ? { q: { _id: { $oid: id } }, u: { $inc: changes } } : null;
+    })
+    .filter((u): u is { q: { _id: { $oid: string } }; u: { $inc: Record<string, number> } } => u !== null);
+  if (updates.length === 0) return;
+  await db.$runCommandRaw({ update: collection, updates });
+}

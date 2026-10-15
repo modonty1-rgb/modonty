@@ -107,32 +107,37 @@ export async function backfillSalesLeadStages(): Promise<SalesLeadBackfillResult
     take: 2000,
   });
 
-  let notesMigrated = 0;
-  for (const lead of withNotes) {
-    const body = lead.notes?.trim();
-    if (!body) continue;
+  // شرط عدم التكرار بقراءة واحدة لكل الصفوف، لا أمر `count` لكل عميل محتمل (N+1 found
+  // 15 Oct 2026) — نفس القاعدة: من له صفّ متابعة منقول مسبقاً يُتخطّى.
+  const alreadyMigrated = withNotes.length
+    ? new Set(
+        (
+          await db.salesLeadFollowUp.findMany({
+            where: { leadId: { in: withNotes.map((l) => l.id) } },
+            select: { leadId: true },
+            distinct: ["leadId"],
+          })
+        ).map((f) => f.leadId)
+      )
+    : new Set<string>();
 
-    // شرط عدم التكرار: العميل الذي له صفّ متابعة منقول مسبقاً يُتخطّى، فتشغيلها مرّتين
-    // لا ينشئ نسختين من نفس الكلام.
-    const already = await db.salesLeadFollowUp.count({ where: { leadId: lead.id } });
-    if (already > 0) continue;
+  const toCreate = withNotes
+    .filter((lead) => !alreadyMigrated.has(lead.id) && lead.notes?.trim())
+    .map((lead) => ({
+      leadId: lead.id,
+      channel: "NOTE" as const,
+      // تاريخ إنشاء الصفّ لا اليوم: الكلام قيل وقتها، وتأريخه اليوم يكذب على السجلّ.
+      happenedAt: lead.createdAt,
+      body: lead.notes!.trim(),
+      nextActionAt: null,
+      nextActionNote: null,
+      doneAt: lead.createdAt,
+      stageAfter: null,
+      createdById: lead.createdById,
+    }));
 
-    await db.salesLeadFollowUp.create({
-      data: {
-        leadId: lead.id,
-        channel: "NOTE",
-        // تاريخ إنشاء الصفّ لا اليوم: الكلام قيل وقتها، وتأريخه اليوم يكذب على السجلّ.
-        happenedAt: lead.createdAt,
-        body,
-        nextActionAt: null,
-        nextActionNote: null,
-        doneAt: lead.createdAt,
-        stageAfter: null,
-        createdById: lead.createdById,
-      },
-    });
-    notesMigrated++;
-  }
+  if (toCreate.length) await db.salesLeadFollowUp.createMany({ data: toCreate });
+  const notesMigrated = toCreate.length;
 
   const after = (await db.$runCommandRaw({
     count: COLLECTION,

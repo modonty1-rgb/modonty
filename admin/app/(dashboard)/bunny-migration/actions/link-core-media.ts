@@ -169,10 +169,14 @@ export async function linkCoreMedia(mode: "preview" | "apply"): Promise<LinkCore
     });
     const orphanItems: PlanItem[] = [];
     for (const o of orphans) {
-      if (apply) await db.media.update({ where: { id: o.id }, data: { clientId: coreId } });
       const item: PlanItem = { action: "claim-orphan", label: o.filename, url: o.bunnyUrl ?? o.url };
       orphanItems.push(item);
       track(item);
+    }
+    // Same `data` for every row in the group — one `updateMany`, not one `update` per
+    // row (N+1 found 15 Oct 2026).
+    if (apply && orphans.length) {
+      await db.media.updateMany({ where: { id: { in: orphans.map((o) => o.id) } }, data: { clientId: coreId } });
     }
 
     // ② Legacy PLATFORM-scope rows → real core ownership.
@@ -182,10 +186,15 @@ export async function linkCoreMedia(mode: "preview" | "apply"): Promise<LinkCore
     });
     const platformItems: PlanItem[] = [];
     for (const r of platformRows) {
-      if (apply) await db.media.update({ where: { id: r.id }, data: { clientId: coreId, scope: "CLIENT" } });
       const item: PlanItem = { action: "claim-platform", label: r.filename, url: r.bunnyUrl ?? r.url };
       platformItems.push(item);
       track(item);
+    }
+    if (apply && platformRows.length) {
+      await db.media.updateMany({
+        where: { id: { in: platformRows.map((r) => r.id) } },
+        data: { clientId: coreId, scope: "CLIENT" },
+      });
     }
 
     // ③ Entity links — filled socialImage strings get a core-owned row + the relation.

@@ -48,6 +48,10 @@ export async function getClientMedia(
   clientId: string,
   type?: MediaType
 ): Promise<MediaWithStats[]> {
+  // One query, not one-per-row (N+1 found 15 Oct 2026): the three usage refs come from
+  // the same reverse relations `getMediaUsageDetails` queried separately per media item —
+  // measured 667 commands / 6.9s for a 222-file client on modonty_dev, vs 4 / 1.1s with
+  // `include` below. Same relation names Prisma already declares on Media.
   const media = await db.media.findMany({
     where: {
       clientId,
@@ -56,20 +60,22 @@ export async function getClientMedia(
     orderBy: {
       createdAt: "desc",
     },
+    include: {
+      featuredArticles: { select: { title: true } },
+      logoClients: { select: { name: true } },
+      heroImageClients: { select: { name: true } },
+    },
   });
 
-  const mediaWithStats = await Promise.all(
-    media.map(async (m) => {
-      const usageRefs = await getMediaUsageDetails(m.id);
-      return {
-        ...m,
-        usageCount: usageRefs.length,
-        usageRefs,
-      };
-    })
-  );
-
-  return mediaWithStats;
+  return media.map((m) => {
+    const usageRefs: MediaUsageRef[] = [
+      ...m.featuredArticles.map((a) => ({ type: "article" as const, label: a.title })),
+      ...m.logoClients.map((c) => ({ type: "logo" as const, label: `شعار ${c.name}` })),
+      ...m.heroImageClients.map((c) => ({ type: "heroImage" as const, label: `صورة الغلاف لـ ${c.name}` })),
+    ];
+    const { featuredArticles, logoClients, heroImageClients, ...rest } = m;
+    return { ...rest, usageCount: usageRefs.length, usageRefs };
+  });
 }
 
 export async function getMediaUsageCount(mediaId: string): Promise<number> {

@@ -243,8 +243,13 @@ export async function refreshLeadScoring(
   });
 
   const staleIds: string[] = [];
+  // Same key shape as `currentKeys` — reused below so `upsertOne` never has to ask the
+  // DB "does this lead already exist?" (N+1 found 15 Oct 2026): `existing` already
+  // answers that, in memory, for every lead this client has.
+  const existingKeys = new Set<string>();
   for (const l of existing) {
     const k = l.userId ? `u:${l.userId}` : l.sessionId ? `s:${l.sessionId}` : null;
+    if (k) existingKeys.add(k);
     if (!k || !currentKeys.has(k)) staleIds.push(l.id);
   }
 
@@ -272,10 +277,7 @@ export async function refreshLeadScoring(
     };
 
     if (p.userId) {
-      const existed = await db.leadScoring.findUnique({
-        where: { userId_clientId: { userId: p.userId, clientId: p.clientId } },
-        select: { id: true },
-      });
+      const existed = existingKeys.has(`u:${p.userId}`);
       await db.leadScoring.upsert({
         where: { userId_clientId: { userId: p.userId, clientId: p.clientId } },
         create: { userId: p.userId, clientId: p.clientId, sessionId: null, ...data },
@@ -284,10 +286,7 @@ export async function refreshLeadScoring(
       return existed ? "updated" : "created";
     }
     if (p.sessionId) {
-      const existed = await db.leadScoring.findUnique({
-        where: { sessionId_clientId: { sessionId: p.sessionId, clientId: p.clientId } },
-        select: { id: true },
-      });
+      const existed = existingKeys.has(`s:${p.sessionId}`);
       await db.leadScoring.upsert({
         where: { sessionId_clientId: { sessionId: p.sessionId, clientId: p.clientId } },
         create: { sessionId: p.sessionId, clientId: p.clientId, userId: null, ...data },

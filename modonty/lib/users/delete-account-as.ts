@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-import { incrementCounters } from "@/lib/counters/increment-counters";
+import { incrementCountersBatch } from "@/lib/counters/increment-counters";
 
 /** How many rows per document — for moving the cached counters by exactly what was removed. */
 function countBy<T>(rows: T[], key: (row: T) => string): Map<string, number> {
@@ -10,8 +10,19 @@ function countBy<T>(rows: T[], key: (row: T) => string): Map<string, number> {
   return counts;
 }
 
-async function decrement(collection: "articles" | "media", field: string, counts: Map<string, number>) {
-  await Promise.all([...counts].map(([id, n]) => incrementCounters(collection, id, { [field]: -n })));
+/** Merges several `field → counts-by-id` maps into one `id → {field: delta}` map, so
+ *  every counter move on the SAME document (e.g. an article both liked and favorited
+ *  by this reader) lands in a single `$inc`, not two separate commands. */
+function mergeDeltas(fields: [field: string, counts: Map<string, number>][]): Map<string, Record<string, number>> {
+  const merged = new Map<string, Record<string, number>>();
+  for (const [field, counts] of fields) {
+    for (const [id, n] of counts) {
+      const row = merged.get(id) ?? {};
+      row[field] = -n;
+      merged.set(id, row);
+    }
+  }
+  return merged;
 }
 
 /**
@@ -69,12 +80,21 @@ export async function deleteAccountAs(userId: string): Promise<{ deleted: boolea
     db.articleFavorite.deleteMany({ where: { id: { in: favorites.map((r) => r.id) } } }),
     db.mediaReaction.deleteMany({ where: { id: { in: reelReactions.map((r) => r.id) } } }),
   ]);
+  // One `$runCommandRaw` per collection for every affected document, not one per
+  // (document, field) pair (N+1 found 15 Oct 2026) — a reader who reacted to 50
+  // articles used to fire up to 150 separate commands here.
+  const articleDeltas = mergeDeltas([
+    ["likesCount", countBy(likes, (r) => r.articleId)],
+    ["dislikesCount", countBy(dislikes, (r) => r.articleId)],
+    ["favoritesCount", countBy(favorites, (r) => r.articleId)],
+  ]);
+  const mediaDeltas = mergeDeltas([
+    ["likesCount", countBy(reelReactions.filter((r) => r.kind === "LIKE"), (r) => r.mediaId)],
+    ["favoritesCount", countBy(reelReactions.filter((r) => r.kind === "FAVORITE"), (r) => r.mediaId)],
+  ]);
   await Promise.all([
-    decrement("articles", "likesCount", countBy(likes, (r) => r.articleId)),
-    decrement("articles", "dislikesCount", countBy(dislikes, (r) => r.articleId)),
-    decrement("articles", "favoritesCount", countBy(favorites, (r) => r.articleId)),
-    decrement("media", "likesCount", countBy(reelReactions.filter((r) => r.kind === "LIKE"), (r) => r.mediaId)),
-    decrement("media", "favoritesCount", countBy(reelReactions.filter((r) => r.kind === "FAVORITE"), (r) => r.mediaId)),
+    incrementCountersBatch("articles", articleDeltas),
+    incrementCountersBatch("media", mediaDeltas),
   ]);
 
   // 3. The reader's other own rows.

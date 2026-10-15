@@ -32,21 +32,29 @@ export async function recalculateArticleCounts(): Promise<{
     const commentsMap = toMap(commentGroups);
     const viewsMap = toMap(viewGroups);
 
-    await Promise.all(
-      articles.map((article) =>
-        db.article.update({
-          where: { id: article.id },
-          data: {
-            likesCount: likesMap[article.id] ?? 0,
-            dislikesCount: dislikesMap[article.id] ?? 0,
-            favoritesCount: favoritesMap[article.id] ?? 0,
-            commentsCount: commentsMap[article.id] ?? 0,
-            viewsCount: viewsMap[article.id] ?? 0,
+    // One Mongo command for every article, not one `update` call each racing for a pool
+    // connection (N+1 found 15 Oct 2026 — 348 concurrent writes on modonty_dev; Atlas
+    // connection exhaustion from exactly this shape is a documented past incident).
+    // Same `$runCommandRaw` batched-update pattern already used in
+    // database/actions/prune-dead-meta-tags.ts.
+    if (articles.length) {
+      await db.$runCommandRaw({
+        update: "articles",
+        ordered: false,
+        updates: articles.map((article) => ({
+          q: { _id: { $oid: article.id } },
+          u: {
+            $set: {
+              likesCount: likesMap[article.id] ?? 0,
+              dislikesCount: dislikesMap[article.id] ?? 0,
+              favoritesCount: favoritesMap[article.id] ?? 0,
+              commentsCount: commentsMap[article.id] ?? 0,
+              viewsCount: viewsMap[article.id] ?? 0,
+            },
           },
-          select: { id: true },
-        })
-      )
-    );
+        })),
+      });
+    }
 
     return { success: true, articlesUpdated: articles.length };
   } catch (error) {
