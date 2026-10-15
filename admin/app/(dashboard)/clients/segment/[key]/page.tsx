@@ -11,6 +11,8 @@ import { getClientSubscriptions } from "@/lib/subscription/get-client-subscripti
 import { SegmentPageHeader } from "@/components/shared/segment-page-header";
 import { SegmentTable, type SegmentClient } from "./components/segment-table";
 import { MoneySegmentTable, type MoneySegmentClient } from "./components/money-segment-table";
+import { ContactChannelsTable, type ContactChannelsClient } from "./components/contact-channels-table";
+import { ProfileImagesTable, type ProfileImagesClient } from "./components/profile-images-table";
 
 // One dynamic page behind every clickable number on the dashboard's Clients section
 // (Khalid 2026-07-13). The card gives the count; this gives the names. The `where`
@@ -20,6 +22,53 @@ export default async function ClientSegmentPage({ params }: { params: Promise<{ 
   const { key } = await params;
   const segment = await getSegment(key);
   if (!segment) notFound();
+
+  // "unreachable" IS the contact-channels view — one table answers "how do visitors
+  // reach this client", not two (the dashboard card below links here). Its own lean
+  // query: no SEO scoring, no subscription join, just the fields each channel reads
+  // (see contact-channels-table.tsx for the per-channel rule).
+  if (key === "unreachable") {
+    const rows = await db.client.findMany({
+      // where:{} — every client, not just the narrow ctaMode-only set: a client can be
+      // "not unreachable" by ctaMode and still be worth auditing on the other channels.
+      where: {},
+      select: { id: true, name: true, isYmyl: true, phone: true, email: true, url: true, sameAs: true, ctaMode: true, ctaLabel: true, ctaUrl: true },
+      orderBy: { name: "asc" },
+      take: 500,
+    });
+    const clients: ContactChannelsClient[] = rows.map((c) => ({ ...c, sameAs: c.sameAs ?? [] }));
+    return (
+      <div dir="rtl" className="mx-auto max-w-[1200px] space-y-6">
+        <SegmentPageHeader title={segment.title} description={segment.description} count={`${clients.length} عميل`} />
+        <Card>
+          <CardContent className="pt-4">
+            <ContactChannelsTable clients={clients} />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // "no-image" IS the profile-images view, same move as "unreachable" above.
+  if (key === "no-image") {
+    const rows = await db.client.findMany({
+      where: {},
+      select: { id: true, name: true, isYmyl: true, logoMediaId: true, heroImageMediaId: true, nextjsMetadata: true },
+      orderBy: { name: "asc" },
+      take: 500,
+    });
+    const clients: ProfileImagesClient[] = rows;
+    return (
+      <div dir="rtl" className="mx-auto max-w-[1200px] space-y-6">
+        <SegmentPageHeader title={segment.title} description={segment.description} count={`${clients.length} عميل`} />
+        <Card>
+          <CardContent className="pt-4">
+            <ProfileImagesTable clients={clients} />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // `include`, not `select`: the shared scorer's adapter (clientToSeoInput) reads ~30
   // raw columns, and it cannot tell "not selected" from "empty" — leave one out and

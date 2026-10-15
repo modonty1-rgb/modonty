@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { ClientCtaMode, ArticleStatus, InvoicePaymentStatus } from "@prisma/client";
 import { clientIdsWhere, getClientSubscriptionsShared, type ClientSubscription } from "@/lib/subscription/get-client-subscriptions";
 
-import { getClientIdsMissingCtaMode, getClientImageGaps, getClientDataGaps, NOT_INTERNAL } from "../clients/segment/segments";
+import { getClientIdsMissingCtaMode, getClientImageGaps, getClientDataGaps, getClientContactGaps, NOT_INTERNAL } from "../clients/segment/segments";
 
 /**
  * Clients, by the states an admin actually acts on (Khalid 2026-07-13).
@@ -96,6 +96,20 @@ export interface ClientStatusCounts {
     noSocial: number;
     noDescription: number;
   };
+  /**
+   * Every contact door, counted the SAME way the "unreachable" table's KPI tiles count
+   * them (`getClientContactGaps` — one rule, `contact-channel-rules.ts`). This is what
+   * the dashboard's reach card actually shows now, not the ctaMode-only `contact` above.
+   */
+  contactGaps: {
+    noPhone: number;
+    noEmail: number;
+    noWebsite: number;
+    noSocial: number;
+    noButton: number;
+    /** Union of the five — a client counted once no matter how many channels it's missing. */
+    anyGap: number;
+  };
 }
 
 export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
@@ -134,6 +148,7 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
     hasArticles,
     imageGaps,
     dataGaps,
+    contactGaps,
   ] = await Promise.all([
       db.client.count(),
       // Clients carrying at least one unpaid invoice. This used to count
@@ -176,6 +191,8 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
       // Record gaps — same JS-side decision as the images, for the same reason: an
       // absent field is invisible to every Prisma filter.
       getClientDataGaps(),
+      // Every contact door, one rule — see contact-channel-rules.ts.
+      getClientContactGaps(),
     ]);
 
   return {
@@ -203,6 +220,20 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
       noAddress: dataGaps["no-address"].length,
       noSocial: dataGaps["no-social"].length,
       noDescription: dataGaps["no-description"].length,
+    },
+    contactGaps: {
+      noPhone: contactGaps["no-phone"].length,
+      noEmail: contactGaps["no-email"].length,
+      noWebsite: contactGaps["no-website"].length,
+      noSocial: contactGaps["no-social"].length,
+      noButton: contactGaps["no-button"].length,
+      anyGap: new Set([
+        ...contactGaps["no-phone"],
+        ...contactGaps["no-email"],
+        ...contactGaps["no-website"],
+        ...contactGaps["no-social"],
+        ...contactGaps["no-button"],
+      ]).size,
     },
   };
 }

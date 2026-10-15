@@ -50,7 +50,7 @@ type SortKey = "name" | "articleCount" | "seoScore" | "subscriptionStartDate" | 
 const CTA_LABEL: Record<string, string> = {
   FORM: "نموذج حجز",
   LINK: "رابط خارجي",
-  NONE: "بلا زر",
+  NONE: "بلا إجراء محدد",
 };
 
 const BAD = new Set(["EXPIRED", "OVERDUE", "CANCELLED"]);
@@ -156,7 +156,7 @@ export function SegmentTable({
               <SortHead label="العميل" k="name" />
               <TableHead className="h-9 py-0 text-xs">الجوال</TableHead>
               <TableHead className="h-9 py-0 text-xs">البريد</TableHead>
-              <TableHead className="h-9 py-0 text-xs">زر التواصل</TableHead>
+              <TableHead className="h-9 py-0 text-xs">إجراء البروفايل</TableHead>
               <TableHead className="h-9 py-0 text-xs">صور ناقصة</TableHead>
               <SortHead label="السيو" k="seoScore" end />
               <SortHead label="المقالات" k="articleCount" end />

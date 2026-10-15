@@ -155,15 +155,17 @@ const getToday = cache(async () => {
       go: "افحص",
     });
   }
-  const unreachable = clients.contact.none + clients.contact.unset;
-  if (unreachable > 0) {
-    const pct = clients.total > 0 ? Math.round((unreachable / clients.total) * 100) : 0;
+  // Same 4 numbers as the "unreachable" table's KPI tiles — one rule
+  // (getClientContactGaps/contactChannelFlags), so the card and the table can never
+  // disagree the way the old ctaMode-only count did (Khalid, 15 Oct 2026).
+  const cg = clients.contactGaps;
+  if (cg.anyGap > 0) {
     hotRows.push({
       tier: "hot",
-      num: `${n(unreachable)}/${n(clients.total)}`,
+      num: `${n(cg.anyGap)}/${n(clients.total)}`,
       unit: "عميل",
-      title: "عملاء ما يوصلهم الزائر — بلا زر تواصل يعمل",
-      ctx: `${n(clients.contact.unset)} الزر ما انضبط · ${n(clients.contact.none)} بلا زر — ${pct}٪ من العملاء ما يقدروا يحوّلوا`,
+      title: "عملاء فيهم نقص بقناة تواصل واحدة على الأقل",
+      ctx: `${n(cg.noPhone)} بلا جوال/واتساب · ${n(cg.noEmail)} بلا بريد · ${n(cg.noWebsite)} بلا موقع · ${n(cg.noButton)} بلا إجراء بروفايل`,
       href: "/clients/segment/unreachable",
       go: "أصلح",
     });

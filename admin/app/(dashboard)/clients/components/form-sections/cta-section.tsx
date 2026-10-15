@@ -152,7 +152,7 @@ export function CtaSection({ form, ctaPresets }: CtaSectionProps) {
           onValueChange={applyPreset}
           hint={isYmyl ? "Suggested for YMYL clients: a booking form" : undefined}
         >
-          <SelectItem value={NONE}>بلا زر — مقالاته تعرض «صفحة {clientName}»</SelectItem>
+          <SelectItem value={NONE}>بلا إجراء محدد — مقالاته تعرض «صفحة {clientName}»</SelectItem>
           {ctaPresets.map((p) => (
             <SelectItem key={p.id} value={p.id}>
               {p.labelAr} — {p.mode === "FORM" ? "booking form" : "external link"}

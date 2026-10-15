@@ -5,6 +5,7 @@ import { ClientCtaMode,
 import { db } from "@/lib/db";
 import { clientIdsWhere, getClientSubscriptions, type ClientSubscription } from "@/lib/subscription/get-client-subscriptions";
 import { hasStoredOgImage } from "@modonty/shared/lib/seo/client/meta-score";
+import { contactChannelFlags } from "./contact-channel-rules";
 
 /**
  * Every clickable number on the dashboard's Clients section maps to a segment key
@@ -86,7 +87,7 @@ const SEO_ACTION: SegmentAction = { label: "أصلح السيو", path: "seo" };
 // The contact button and the logo/hero/share images are all set on the client edit
 // workspace, so these gaps send the admin straight there with a label that says what
 // to fix — not the blind «Edit» that started this (Khalid 2026-07-24).
-const CTA_ACTION: SegmentAction = { label: "أصلح الزر", path: "edit" };
+const CTA_ACTION: SegmentAction = { label: "حدّد إجراء البروفايل", path: "edit" };
 const IMAGE_ACTION: SegmentAction = { label: "أضف صورة", path: "edit" };
 
 
@@ -290,6 +291,42 @@ export async function getClientImageGaps(): Promise<Record<ImageGapKey, string[]
   return gaps;
 }
 
+/** The five doors the contact-channels table counts — same rule, one definition. */
+export type ContactGapKey = "no-phone" | "no-email" | "no-website" | "no-social" | "no-button";
+
+/**
+ * Which clients are missing which contact channel — the SOT behind the dashboard's
+ * reach card AND the "unreachable"/contact-channels table's KPI tiles (Khalid, 15 Oct
+ * 2026: «المفروض تكون في الكي بي آي واضحة ونفسها تظهر في الداشبورد»). Same per-channel
+ * rule as the table (`contactChannelFlags`), read once here so the two numbers can
+ * never drift apart the way the ctaMode-only count did.
+ */
+export async function getClientContactGaps(): Promise<Record<ContactGapKey, string[]>> {
+  const rows = await db.client.findMany({
+    select: { id: true, phone: true, email: true, url: true, sameAs: true, ctaMode: true, ctaUrl: true },
+    take: 500,
+  });
+
+  const gaps: Record<ContactGapKey, string[]> = {
+    "no-phone": [],
+    "no-email": [],
+    "no-website": [],
+    "no-social": [],
+    "no-button": [],
+  };
+
+  for (const r of rows) {
+    const f = contactChannelFlags({ ...r, sameAs: r.sameAs ?? [] });
+    if (!f.hasPhone) gaps["no-phone"].push(r.id);
+    if (!f.hasEmail) gaps["no-email"].push(r.id);
+    if (!f.hasWebsite) gaps["no-website"].push(r.id);
+    if (!f.hasSocial) gaps["no-social"].push(r.id);
+    if (!f.hasButton) gaps["no-button"].push(r.id);
+  }
+
+  return gaps;
+}
+
 export async function getSegment(key: string): Promise<Segment | null> {
   const segments: Record<SegmentKey, Segment> = {
     overdue: {
@@ -336,14 +373,14 @@ export async function getSegment(key: string): Promise<Segment | null> {
       where: { ctaMode: ClientCtaMode.LINK },
     },
     none: {
-      title: "بلا زر أصلاً",
-      description: "الزائر ما عنده طريق يوصلهم.",
+      title: "إجراء البروفايل — بلا إجراء محدد",
+      description: "الأدمن ما اختار حجز أو رابط لصفحته. لا يعني بلا تواصل — عنده جوال، زر الواتساب في الهيدر/الفوتر شغّال رغم هذا.",
       where: { ctaMode: ClientCtaMode.NONE },
       action: CTA_ACTION,
     },
     unset: {
-      title: "الزر ما انضبط",
-      description: "سجلّهم ما فيه حقل ctaMode — أقدم من الحقل، ودفع السكيما لا يعبّئ القديم. على الموقع يتصرفون كأنهم بلا زر.",
+      title: "إجراء البروفايل — الحقل ناقص",
+      description: "سجلّهم ما فيه حقل ctaMode — أقدم من الحقل، ودفع السكيما لا يعبّئ القديم. على الموقع يتصرفون كأنهم بلا إجراء محدد.",
       // Resolved below via raw MongoDB: no Prisma filter can match an absent field.
       where: {},
       action: CTA_ACTION,
@@ -413,9 +450,11 @@ export async function getSegment(key: string): Promise<Segment | null> {
       where: {},
       action: IMAGE_ACTION,
     },
+    // Every client, every known profile image — not just the intersection (Khalid, 15
+    // Oct 2026: same "one table, not four" move as contact-channels/unreachable).
     "no-image": {
-      title: "بلا أي صورة",
-      description: "لا شعار ولا غلاف ولا صورة مشاركة. صفحتهم نص على أبيض وروابطهم بلا معاينة. ابدأ هنا.",
+      title: "اكتمال البروفايل البصري",
+      description: "كل عميل، وكل صورة في بروفايله: شعار · غلاف · صورة مشاركة. الناقص هنا ناقص فعلاً.",
       where: {},
       action: IMAGE_ACTION,
     },
@@ -460,11 +499,14 @@ export async function getSegment(key: string): Promise<Segment | null> {
       where: {},
       scoreFilter: "perfect",
     },
-    // The Today strip's business number: NONE plus the missing-field ones — every
-    // client a visitor has no way to reach. Resolved to an id list below.
+    // The Today strip's business number, AND the single table for "how do visitors
+    // reach this client" — every channel, every client, not just ctaMode (found 15 Oct
+    // 2026: a client with a phone still gets a working WhatsApp door in the header/
+    // footer regardless of ctaMode, so a ctaMode-only view overstated the problem).
+    // `where` stays {} — the page reads every client and the table itself filters.
     unreachable: {
-      title: "عملاء ما يوصلهم الزائر",
-      description: "بلا زر تواصل يعمل: ctaMode هو NONE، أو الحقل غائب تماماً. الزائر اللي يبغاهم ما عنده طريق — هنا يتسرّب التحويل.",
+      title: "قنوات التواصل",
+      description: "كل عميل، وكل باب تواصل فيه: جوال (يشغّل واتساب تلقائياً بلا علاقة بإجراء البروفايل) · بريد · موقع · سوشال · إجراء البروفايل. الناقص هنا ناقص فعلاً — لا عمود واحد يلخّص القصة.",
       where: {},
       action: CTA_ACTION,
     },
@@ -528,10 +570,12 @@ export async function getSegment(key: string): Promise<Segment | null> {
     };
   }
 
-  if (key === "no-logo" || key === "no-hero" || key === "no-og" || key === "no-image") {
+  if (key === "no-logo" || key === "no-hero" || key === "no-og") {
     const gaps = await getClientImageGaps();
     return { ...segment, where: { id: { in: gaps[key] } } };
   }
+  // "no-image" is the full per-channel table (every client) — see "unreachable" above
+  // for the same pattern. `where` stays {}; the page builds the columns itself.
 
   if (
     key === "no-end-date" ||
@@ -542,15 +586,9 @@ export async function getSegment(key: string): Promise<Segment | null> {
     const gaps = await getClientDataGaps();
     return { ...segment, where: { id: { in: gaps[key] } } };
   }
-
-  if (key === "unreachable") {
-    const [missing, noneRows] = await Promise.all([
-      getClientIdsMissingCtaMode(),
-      db.client.findMany({ where: { ctaMode: ClientCtaMode.NONE }, select: { id: true }, take: 500 }),
-    ]);
-    const ids = [...new Set([...missing, ...noneRows.map((c) => c.id)])];
-    return { ...segment, where: { id: { in: ids } } };
-  }
+  // "unreachable" needs no id-list resolution any more: its `where` is {} (every
+  // client — see the segment definition above), and the page itself builds the
+  // per-channel columns instead of pre-filtering rows.
 
   return segment;
 }

@@ -152,12 +152,14 @@ const EXPIRING_THIS_WEEK = "تنتهي هذا الأسبوع";
 
 export async function ClientsPipeline() {
   const [
-    { total, needsYou, portfolio, contact, content, images, data, statusUnaccounted },
+    { total, needsYou, portfolio, contact, contactGaps, content, images, data, statusUnaccounted },
     seoQuality,
     salesReps,
   ] = await Promise.all([clientStatusCounts(), clientSeoQuality(), getSalesRepBreakdown()]);
 
-  const unreachable = contact.none + contact.unset;
+  // Same number as the "unreachable" table's headline (getClientContactGaps — one rule),
+  // not the ctaMode-only count the budget bar below still uses for its own partition.
+  const unreachable = contactGaps.anyGap;
   // An ACTIVE client with no end date cannot match the expiring-soon date filter — so a
   // "0 expiring this week" next to a non-zero count here means "blind", not "safe".
   const renewalBlind = data.noEndDate;
@@ -173,10 +175,10 @@ export async function ClientsPipeline() {
 
   // CTA modes partition every client, so these ARE a budget: form + link + none + unset = total.
   const reach: Item[] = [
-    { value: contact.unset, label: "الزر ما انضبط", note: "الحقل ناقص في سجلّه — يتصرف كأنه بلا زر", href: "/clients/segment/unset", tier: "hot", icon: AlertTriangle },
-    { value: contact.none, label: "بلا زر أصلاً", note: "يدفع، والزائر ما عنده طريق للتواصل", href: "/clients/segment/none", tier: "hot", icon: UserX },
-    { value: contact.form, label: "نموذج حجز", note: "الليد يوصل قاعدتنا", href: "/clients/segment/form", tier: "ok", icon: Calendar },
-    { value: contact.link, label: "رابط خارجي", note: "موقعهم أو واتساب — نشوف النقرة وما نشوف الليد", href: "/clients/segment/link", tier: "plain", icon: MousePointerClick },
+    { value: contact.unset, label: "إجراء البروفايل — الحقل ناقص", note: "سجلّه أقدم من الحقل — يتصرف كأنه بلا إجراء محدد", href: "/clients/segment/unset", tier: "hot", icon: AlertTriangle },
+    { value: contact.none, label: "إجراء البروفايل — بلا إجراء محدد", note: "الأدمن ما اختار حجز أو رابط — يدفع، وصفحته بلا إجراء مقصود", href: "/clients/segment/none", tier: "hot", icon: UserX },
+    { value: contact.form, label: "إجراء البروفايل — نموذج حجز", note: "الليد يوصل قاعدتنا", href: "/clients/segment/form", tier: "ok", icon: Calendar },
+    { value: contact.link, label: "إجراء البروفايل — رابط خارجي", note: "موقعهم أو واتساب مخصّص — نشوف النقرة وما نشوف الليد", href: "/clients/segment/link", tier: "plain", icon: MousePointerClick },
   ];
 
   const contentItems: Item[] = [
@@ -215,7 +217,7 @@ export async function ClientsPipeline() {
             >
               {unreachable}
             </span>
-            ما يوصلهم الزائر
+            بلا إجراء تسويقي محدد
             <span className="text-muted-foreground/40">·</span>
             من {total.toLocaleString("en-US")}
             <span className="text-primary">←</span>
@@ -326,8 +328,8 @@ export async function ClientsPipeline() {
       </div>
 
       {/* Reach — the one true partition, so the honest budget bar (mirror of "In production"). */}
-      <GroupLabel icon={MousePointerClick} hint={`— ${unreachable} ما يوصلهم الزائر`}>
-        كيف يوصلهم الزائر
+      <GroupLabel icon={MousePointerClick} hint={`— ${unreachable} بلا إجراء تسويقي محدد`}>
+        إجراء البروفايل
       </GroupLabel>
       <div className="mb-3 overflow-hidden rounded-xl border bg-card shadow-sm">
         <BudgetRow
