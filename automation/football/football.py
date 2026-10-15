@@ -381,12 +381,14 @@ def main() -> int:
             st["others"], st["others_at"] = s365_others(st["club_ids"]), t
         except Exception as e:
             errors.append(f"others: {e}")
-    if st.get("spl") and stale(st, "scorers", 6 * 3600):
+    # بعد فشلٍ لا يُعاد قبل نصف ساعة — ٢١ صفحة كل دقيقة على موقعٍ يردّ 503 إثقالٌ عليه (مقيس ١٥ أكتوبر ٢٠٢٦)
+    if st.get("spl") and stale(st, "scorers", 6 * 3600) and stale(st, "scorers_failed", 30 * MIN):
         try:
             spl_list, s365_list = spl_scorers(st["spl"]["seasonId"]), s365_scorers()
             st["scorers"] = {"list": spl_list, "verified": verify_scorers(spl_list, s365_list)}
             st["scorers_at"] = t
         except Exception as e:
+            st["scorers_failed_at"] = t
             errors.append(f"scorers: {e}")
 
     if not st.get("spl"):
