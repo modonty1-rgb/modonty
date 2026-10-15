@@ -45,7 +45,7 @@ async function loadDay(date: string): Promise<Match[]> {
   return (json.response ?? [])
     .filter((f) => f.league.id === SAUDI_PRO_LEAGUE)
     .map((f) => ({
-      id: f.fixture.id,
+      id: String(f.fixture.id),
       kickoff: f.fixture.date,
       state: stateOf(f.fixture.status.short),
       minute: f.fixture.status.elapsed,

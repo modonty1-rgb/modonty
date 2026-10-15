@@ -18,6 +18,7 @@ export function matchStatusLabel(match: Match, dayLabel?: string): string {
   }
   if (match.state === "finished") return t.finished;
   if (match.state === "off") return t.postponed;
+  if (match.state === "unconfirmed") return t.unconfirmed;
   const time = formatRiyadhTime(match.kickoff);
   return dayLabel ? `${dayLabel} ${time}` : time;
 }

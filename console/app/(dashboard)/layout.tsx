@@ -22,6 +22,8 @@ import { ImpersonationBanner } from "./components/impersonation-banner";
 import { AndroidAppBanner } from "./components/android-app-banner";
 import { ApprovalDeadlineBanner } from "./components/approval-deadline-banner";
 import { AccountNotice } from "./dashboard/components/account-notice";
+import { NpsSurvey } from "./components/nps-survey";
+import { getNpsDue } from "@/lib/nps/get-nps-due";
 import {
   getPendingArticlesCount,
   canSeeSiteArticles,
@@ -59,6 +61,9 @@ export default async function DashboardLayout({
 
   const clientId = (session as { clientId?: string }).clientId!;
   const impersonated = (session as { impersonated?: boolean }).impersonated ?? false;
+
+  // استبيان الرضا — يُحسب هنا مع الباقي فلا يضيف رحلةً للقاعدة بعد الرسم
+  const npsDuePromise = getNpsDue(clientId, impersonated).catch(() => false);
 
   const [client, sub, outstanding, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientCanSeeSiteArticles, oldestPendingArticleAt] =
     await Promise.all([
@@ -145,9 +150,12 @@ export default async function DashboardLayout({
     siteArticlesEnabled: clientCanSeeSiteArticles,
   };
 
+  const npsDue = await npsDuePromise;
+
   return (
     <>
       {impersonated && <ImpersonationBanner clientName={clientName} />}
+      {npsDue && <NpsSurvey />}
       <DashboardLayoutClient
       accountNotice={
         <div className="flex flex-col gap-3 empty:hidden">

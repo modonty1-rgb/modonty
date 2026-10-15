@@ -287,10 +287,8 @@ export async function POST(
       }).catch(() => null);
 
     if (!wantStream) {
-      const { askCohere } = await import("@/app/(site)/modo-chat/data/ask-cohere");
-      const response = await askCohere(chatMessages, docs.length > 0 ? docs : undefined);
-      const msg = response as { text?: string; message?: { content?: Array<{ text?: string }> } };
-      const text = msg.text ?? msg.message?.content?.[0]?.text ?? "";
+      const { askModoModel } = await import("@/app/(site)/modo-chat/data/ask-modo-model");
+      const text = await askModoModel(chatMessages, docs.length > 0 ? docs : undefined);
       save(text, "stream");
       // conversationId was missing here, so a non-streaming client could never group its turns.
       return NextResponse.json({

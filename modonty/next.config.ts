@@ -158,6 +158,13 @@ const nextConfig: NextConfig = {
         hostname: "media.api-sports.io",
         pathname: "/football/teams/**",
       },
+      // شعارات الأندية من الموقع الرسمي لدوري روشن (١٥ أكتوبر ٢٠٢٦ — بدل API-Football). مسار الشعارات
+      // وحده، ومُحسِّن الصور يحفظها عندنا فلا يُطلب موقعهم مع كل زائر.
+      {
+        protocol: "https",
+        hostname: "media-sdp.spl.com.sa",
+        pathname: "/clubLogos/**",
+      },
       // illustrated avatars (team carousel privacy fallback)
       {
         protocol: "https",

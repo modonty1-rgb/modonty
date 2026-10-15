@@ -9,7 +9,8 @@ import { TeamMark } from "../team-mark/TeamMark";
 
 const t = messages.modonty.football;
 
-function MatchRow({ match, crests }: { match: Match; crests: Record<string, string> }) {
+/** صفّ مباراة — يستعمله أيضاً `OthersCard` (البطولات الأخرى) مع تاريخها تحت الحالة. */
+export function MatchRow({ match, crests, dateLabel }: { match: Match; crests: Record<string, string>; dateLabel?: string }) {
   const showScore = match.state === "live" || match.state === "finished";
   const goals = (n: number | null) => (n ?? 0).toLocaleString(SITE_LOCALE);
   return (
@@ -27,6 +28,7 @@ function MatchRow({ match, crests }: { match: Match; crests: Record<string, stri
         <span className={cn("block text-xs text-muted-foreground", !showScore && "text-sm font-bold text-foreground")}>
           {matchStatusLabel(match)}
         </span>
+        {dateLabel && <span className="block text-xs text-muted-foreground">{dateLabel}</span>}
       </span>
       <span className="flex min-w-0 items-center justify-end gap-2 font-medium">
         <span className="truncate">{match.away.name}</span>
@@ -37,10 +39,9 @@ function MatchRow({ match, crests }: { match: Match; crests: Record<string, stri
 }
 
 /**
- * Yesterday · today · tomorrow — all the free plan lets us ask for (API-Football answers
- * «try from 2026-09-26 to 2026-09-28» for any other date). Empty days are skipped; with all
- * three empty the card says so in one line — but only when all three were read: a day that could
- * not be (after midnight tomorrow is out of the API's window) is not a day without matches.
+ * Yesterday · today · tomorrow of the league. Empty days are skipped; with all three empty the
+ * card says so in one line — but only when all three were read: a day that could not be is not a
+ * day without matches.
  */
 export function FixturesCard({
   days,

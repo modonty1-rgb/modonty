@@ -15,8 +15,10 @@ import { Suspense } from "react";
 import { AlertsCard, AlertsCardSkeleton } from "./components/alerts-card/AlertsCard";
 import { FixturesCard } from "./components/fixtures-card/FixturesCard";
 import { MatchHero } from "./components/match-hero/MatchHero";
+import { OthersCard } from "./components/others-card/OthersCard";
 import { PromoHero } from "./components/promo-hero/PromoHero";
 import { SeasonFacts } from "./components/season-facts/SeasonFacts";
+import { ScorersCard } from "./components/scorers-card/ScorersCard";
 import { StandingsCard } from "./components/standings-card/StandingsCard";
 import { getFootballPage } from "./data/get-football-page";
 import { SectorArticles } from "../components/sector-articles/SectorArticles";
@@ -44,8 +46,9 @@ export async function generateMetadata(): Promise<Metadata> {
  * `/modonty/football` — the first live sector page (27 Sep 2026). A folder of its own, so Next
  * matches it before `[sector]`, which keeps serving «قريباً» for the five sectors still unbuilt.
  *
- * Free sources only until the page proves itself (Khalid): matches from API-Football's free
- * plan, standings and scorers from Wikipedia. Mockup: `../documentation/FOOTBALL-MOCKUP.html`.
+ * Free sources only (Khalid). Since 15 Oct 2026 the radar server (`automation/football/`) pulls the
+ * official league site and 365Scores, cross-checks them and sends the page ready; this page only
+ * reads that one row. Mockup: `../documentation/FOOTBALL-MOCKUP.html`.
  */
 export default async function FootballPage() {
   const [page, articles, { siteName }, seoRow] = await Promise.all([
@@ -137,25 +140,24 @@ export default async function FootballPage() {
           {/* Our articles within the first two screens, right after the first live card (NN/g 2018). */}
           <SectorArticles articles={articles} />
           <StandingsCard rows={page.table?.rows ?? null} crests={page.crests} />
+          <OthersCard groups={page.others} crests={page.crests} />
         </>
       }
       rail={
         <aside className="w-full shrink-0 space-y-4 lg:w-[300px]">
-          {/* Scorers hidden (Khalid 27 Sep 2026: «لازم مية في المية»): Wikipedia had Lacazette on 3
-              goals while Thmanyah and ESPN both said 5. ScorersCard stays in the folder; it returns
-              with a source that is right — API-Football's paid plan. */}
+          {/* الهدّافون يعودون فقط إن طابق الموقعُ الرسمي 365Scores في أوّل خمسة (خالد ٢٧ سبتمبر ٢٠٢٦: «لازم
+              مية في المية» — ويكيبيديا أعطت لاكازيت ٣ والصحيح ٥). السيرفر يرسل القائمة فارغةً إن لم تتطابق. */}
+          {page.table?.scorers.length ? <ScorersCard scorers={page.table.scorers} crests={page.crests} /> : null}
           <SeasonFacts rows={page.table?.rows ?? null} crests={page.crests} />
           <p className="px-1 text-xs leading-relaxed text-muted-foreground">
-            {t.wikiSource}{" "}
-            {/* One unbreakable LTR token: inside Arabic text «CC BY-SA» wrapped as «CC BY-» / «SA» on a 360px phone. */}
-            <bdi dir="ltr" className="whitespace-nowrap">CC BY-SA</bdi> ·{" "}
+            {t.officialSource} ·{" "}
             <a
-              href="https://en.wikipedia.org/wiki/Saudi_Pro_League"
+              href="https://www.spl.com.sa/ar"
               target="_blank"
               rel="noopener noreferrer"
               className="text-link underline-offset-2 hover:underline"
             >
-              Wikipedia
+              spl.com.sa
             </a>
           </p>
         </aside>

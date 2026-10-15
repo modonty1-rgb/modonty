@@ -8,6 +8,7 @@ import { getAwaitingActivationTotals } from "@/lib/orders/awaiting-activation";
 import { getRenewalsDue } from "@/lib/orders/renewals-due";
 import { getDashboardAlerts } from "@/app/(dashboard)/actions/dashboard-actions";
 import { getErrorsToFix } from "@/app/(dashboard)/actions/errors-to-fix";
+import { getRecentDetractors } from "@/lib/nps/get-recent-detractors";
 import { currencyLabel } from "@modonty/shared/lib/commercial/format-money";
 import { cn } from "@/lib/utils";
 
@@ -53,7 +54,7 @@ function money(minor: number, currency: string) {
 
 /** One computation per request, read by the header pills and by the list. */
 const getToday = cache(async () => {
-  const [va, clients, articles, awaiting, renewals, alerts, errors] = await Promise.all([
+  const [va, clients, articles, awaiting, renewals, alerts, errors, detractors] = await Promise.all([
     visitorActionsSummary(),
     clientStatusCounts(),
     articleStatusCounts(),
@@ -61,6 +62,7 @@ const getToday = cache(async () => {
     getRenewalsDue(),
     getDashboardAlerts(),
     getErrorsToFix(),
+    getRecentDetractors().catch(() => 0),
   ]);
 
   // ── فلوس ────────────────────────────────────────────────────────────────
@@ -129,6 +131,18 @@ const getToday = cache(async () => {
 
   // ── عاجل ────────────────────────────────────────────────────────────────
   const hotRows: Row[] = [];
+  // عميلٌ قيّمنا ٠–٦ في استبيان الكونسول خلال ٣٠ يوماً — يُتّصل به قبل أن يلغي (CONSOLE-NPS).
+  if (detractors > 0) {
+    hotRows.push({
+      tier: "hot",
+      num: n(detractors),
+      unit: "عميل",
+      title: detractors === 1 ? "عميل غير راضٍ عن مدونتي" : `${n(detractors)} عملاء غير راضين عن مدونتي`,
+      ctx: "قيّمونا من ٠ إلى ٦ في استبيان الكونسول خلال آخر ٣٠ يوماً — اتّصل قبل أن يلغي",
+      href: "/nps?group=detractor",
+      go: "اتّصل",
+    });
+  }
   if (va.needsAction.messages > 0) {
     hotRows.push({
       tier: "hot",

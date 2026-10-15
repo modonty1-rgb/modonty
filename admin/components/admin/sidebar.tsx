@@ -101,6 +101,7 @@ import { Trophy,
   Gauge,
   CalendarDays,
   Lightbulb,
+  SmilePlus,
 } from "lucide-react";
 import { LIVE_SECTORS, type LiveSectorSlug } from "@modonty/shared/lib/sectors/live-sectors";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
@@ -190,6 +191,8 @@ const rawMenuGroups: MenuGroup[] = [
       // تحت «Clients» لا تحت قسم مستقلّ: الإحالة يرفعها عميلٌ قائم عن مُرشَّح، فمصدرها
       // وصاحب مكافأتها كلاهما عميل — والفريق يفتحها وهو يفكّر في العملاء لا في التسويق.
       { icon: Handshake, label: "Referrals", href: "/referrals" },
+      // رضا العملاء (NPS) من استبيان الكونسول — خالد ١٥ أكتوبر ٢٠٢٦، على نمط تمارا.
+      { icon: SmilePlus, label: "Client Satisfaction", href: "/nps" },
     ],
   },
   // تقويم السوشيال (PRD content-calendar-admin §٤، س١٤): مجموعة مستقلّة لا بند تحت Clients —

@@ -7,6 +7,7 @@ import { networkCopy } from '@/src/services/account-api';
 import { arabicDigits } from '@/src/services/engagement-api';
 import { MobileDashboard } from '@/src/services/mobile-api';
 import { PerformanceCard } from '@/src/components/home/PerformanceCard';
+import { NpsSurvey } from '@/src/components/home/NpsSurvey';
 import { control, fonts, nabd, radii, skeleton, spacing, typography } from '@/src/theme/tokens';
 import { useAppTheme } from '@/src/theme/ThemeProvider';
 
@@ -163,6 +164,8 @@ export function HomeRoute({ clientName, unreadCount = 0, onOpenNotifications, ac
     </EnterView> : null}
 
     {accessToken ? <EnterView index={4}><PerformanceCard accessToken={accessToken} /></EnterView> : null}
+    {/* استبيان الرضا — نافذة تظهر وحدها إن حان (الخادم يقرّر)، كما في الكونسول على الويب */}
+    {accessToken ? <NpsSurvey accessToken={accessToken} /> : null}
   </ScrollView>;
 }
 

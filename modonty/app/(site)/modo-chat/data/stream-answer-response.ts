@@ -2,7 +2,7 @@ import "server-only";
 
 import { NextResponse } from "next/server";
 
-import { streamCohereAnswer } from "./stream-cohere-answer";
+import { streamModoAnswer } from "./stream-modo-answer";
 
 import type { ChatMessage, DocumentForChat } from "./cohere-client";
 
@@ -63,7 +63,7 @@ export function streamAnswerResponse({
       }, 10_000);
 
       try {
-        for await (const chunk of streamCohereAnswer(chatMessages, docs?.length ? docs : undefined)) {
+        for await (const chunk of streamModoAnswer(chatMessages, docs?.length ? docs : undefined)) {
           if (cancelled) break;
           if (!fullText) clearInterval(ping);
           fullText += chunk;

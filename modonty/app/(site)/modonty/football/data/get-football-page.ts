@@ -1,11 +1,7 @@
 import { cacheLife } from "next/cache";
 
-import { matchClubName } from "../helpers/match-club-name";
-import { riyadhDate } from "../helpers/riyadh-date";
+import { db } from "@/lib/db";
 import type { LeagueTable, Match } from "../helpers/types";
-import { getClubCrests } from "./get-club-crests";
-import { getDayFixtures } from "./get-day-fixtures";
-import { getLeagueTable } from "./get-league-table";
 
 export interface MatchDay {
   date: string;
@@ -21,9 +17,23 @@ export interface FootballPage {
   table: LeagueTable | null;
   /** Arabic club name → crest URL. A club missing here keeps its letter mark. */
   crests: Record<string, string>;
-  /** Oldest copy on the page — what «آخر تحديث» honestly means. */
+  /** Oldest source on the page — what «آخر تحديث» honestly means. */
   updatedAt: string | null;
+  /** آسيا · الخليج · الكأس · السوبر · المنتخب — بطولةً بطولة، من 365Scores وحده. */
+  others: { competition: string; matches: Match[] }[];
 }
+
+/** ما يرسله سيرفر الرادار (`automation/football/football.py`) ويكتبه الأدمن في `feed_snapshots`. */
+interface FootballFeed {
+  days: FootballPage["days"];
+  table: LeagueTable;
+  crests: Record<string, string>;
+  others?: FootballPage["others"];
+  updatedAt: string;
+}
+
+/** نفس المفتاح في الأدمن (`app/api/football/ingest/route.ts`). */
+const FOOTBALL_PAGE_KEY = "football:page:v1";
 
 function pickLead(today: Match[], tomorrow: Match[]): Match | null {
   return (
@@ -35,55 +45,40 @@ function pickLead(today: Match[], tomorrow: Match[]): Match | null {
   );
 }
 
+const emptyDay = (date: string): MatchDay => ({ date, matches: [], known: false });
+
 /**
- * Everything the football page shows, assembled once per five minutes.
- *
- * The five minutes bound how often the page re-reads `feed_snapshots`; the snapshots bound
- * how often the sources are called. Two layers on purpose — this one is per instance and
- * cheap, the other is site-wide and guards API-Football's 100-a-day quota.
+ * صفحة الكورة كما أرسلها سيرفر الرادار — صفٌّ واحد من القاعدة، ولا اتّصال بأي مصدر خارجي من مدونتي
+ * (خالد ١٥ أكتوبر ٢٠٢٦). السيرفر يسحب من الموقع الرسمي لدوري روشن ومن 365Scores كل دقيقة وقت المباريات
+ * ويطابقهما؛ والصفحة تعيد قراءة الصفّ كل دقيقة.
  */
 export async function getFootballPage(): Promise<FootballPage> {
   "use cache";
-  cacheLife({ stale: 60, revalidate: 300, expire: 3600 });
+  cacheLife({ stale: 30, revalidate: 60, expire: 3600 });
 
-  const now = new Date();
-  const [yesterday, today, tomorrow] = [riyadhDate(now, -1), riyadhDate(now), riyadhDate(now, 1)];
-
-  const [table, past, present, next, crestsByApiName] = await Promise.all([
-    getLeagueTable(now),
-    getDayFixtures(yesterday, today, now),
-    getDayFixtures(today, today, now),
-    getDayFixtures(tomorrow, today, now),
-    getClubCrests(),
-  ]);
-
-  const names = table.data?.clubNames ?? {};
-  const inArabic = (matches: Match[] | null): Match[] =>
-    (matches ?? []).map((m) => ({
-      ...m,
-      home: { ...m.home, name: matchClubName(m.home.name, names) ?? m.home.name },
-      away: { ...m.away, name: matchClubName(m.away.name, names) ?? m.away.name },
-    }));
-
-  const days = {
-    yesterday: { date: yesterday, matches: inArabic(past.data), known: past.data !== null },
-    today: { date: today, matches: inArabic(present.data), known: present.data !== null },
-    tomorrow: { date: tomorrow, matches: inArabic(next.data), known: next.data !== null },
-  };
-
-  const crests: Record<string, string> = {};
-  for (const [english, arabic] of Object.entries(names)) {
-    const url = matchClubName(english, crestsByApiName.data ?? {});
-    if (url) crests[arabic] = url;
+  const row = await db.feedSnapshot.findUnique({
+    where: { key: FOOTBALL_PAGE_KEY },
+    select: { payload: true },
+  });
+  const feed = (row?.payload ?? null) as FootballFeed | null;
+  if (!feed) {
+    const today = new Date().toISOString().slice(0, 10);
+    return {
+      lead: null,
+      days: { yesterday: emptyDay(today), today: emptyDay(today), tomorrow: emptyDay(today) },
+      table: null,
+      crests: {},
+      updatedAt: null,
+      others: [],
+    };
   }
 
-  const stamps = [table, past, present, next].map((s) => s.fetchedAt?.getTime()).filter((t): t is number => !!t);
-
   return {
-    lead: pickLead(days.today.matches, days.tomorrow.matches),
-    days,
-    table: table.data,
-    crests,
-    updatedAt: stamps.length ? new Date(Math.min(...stamps)).toISOString() : null,
+    lead: pickLead(feed.days.today.matches, feed.days.tomorrow.matches),
+    days: feed.days,
+    table: feed.table,
+    crests: feed.crests,
+    updatedAt: feed.updatedAt,
+    others: feed.others ?? [],
   };
 }

@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ترتيب الأدمن والصلاحيات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f7fb;--surface:#fff;--surface-2:#f0f2f8;--ink:#141a33;--muted:#5c6485;--line:#dfe3ef;
+  --brand:#2b2fd9;--brand-ink:#fff;--brand-soft:#e8e9ff;--teal:#0a8f8f;--teal-soft:#dff5f5;
+  --red:#c62828;--red-soft:#fdeaea;--amber:#9a6200;--amber-soft:#fff3d9;--green:#1d7a3e;--green-soft:#e2f5e8;
+  --side:#0e1340;--side-ink:#e6e8ff;--side-muted:#9aa0d1;--side-active:#2b2fd9;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b0e1f;--surface:#141936;--surface-2:#1b2145;--ink:#eef0ff;--muted:#a3a9cf;--line:#2a3160;
+  --brand:#7b7fff;--brand-ink:#0b0e1f;--brand-soft:#23285c;--teal:#4fd6d6;--teal-soft:#123a3c;
+  --red:#ff8a80;--red-soft:#3a1717;--amber:#ffcc66;--amber-soft:#3a2c10;--green:#7ddc9a;--green-soft:#12301c;
+  --side:#070a1c;--side-ink:#e6e8ff;--side-muted:#8a90c4;--side-active:#4a4eff;
+}}
+:root[data-theme="dark"]{
+  --bg:#0b0e1f;--surface:#141936;--surface-2:#1b2145;--ink:#eef0ff;--muted:#a3a9cf;--line:#2a3160;
+  --brand:#7b7fff;--brand-ink:#0b0e1f;--brand-soft:#23285c;--teal:#4fd6d6;--teal-soft:#123a3c;
+  --red:#ff8a80;--red-soft:#3a1717;--amber:#ffcc66;--amber-soft:#3a2c10;--green:#7ddc9a;--green-soft:#12301c;
+  --side:#070a1c;--side-ink:#e6e8ff;--side-muted:#8a90c4;--side-active:#4a4eff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tajawal,system-ui,sans-serif;font-size:15px;line-height:1.7}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:28px;margin:0 0 4px;font-weight:800}
+h2{font-size:21px;margin:40px 0 12px;font-weight:800}
+h3{font-size:16px;margin:0 0 8px;font-weight:700}
+p{margin:0 0 10px}
+.lead{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.grid{display:grid;gap:14px}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:860px){.g3,.g2{grid-template-columns:1fr}}
+.stat{font-size:30px;font-weight:800;line-height:1.1}
+.stat small{font-size:13px;color:var(--muted);font-weight:500;display:block;margin-top:4px}
+.bad{color:var(--red)}.good{color:var(--green)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;background:var(--surface-2);padding:1px 6px;border-radius:6px;direction:ltr;unicode-bidi:isolate}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{color:var(--muted);font-weight:700;font-size:13px;background:var(--surface-2)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.dot{display:inline-block;width:20px;height:20px;border-radius:6px;text-align:center;line-height:20px;font-size:12px;font-weight:800}
+.y{background:var(--green-soft);color:var(--green)}.n{background:var(--surface-2);color:var(--muted)}.p{background:var(--amber-soft);color:var(--amber)}
+.phases{counter-reset:ph;display:grid;gap:10px}
+.phase{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start}
+.phase b.n{counter-increment:ph;width:44px;height:44px;border-radius:12px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:18px}
+.phase b.n::before{content:counter(ph)}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);margin-inline-start:6px}
+.decide li{margin-bottom:6px}
+.note{font-size:13px;color:var(--muted)}
+
+/* ── mockup ── */
+.roles{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
+.roles button{font:inherit;font-size:14px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:40px}
+.roles button[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.roles button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.frame{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--bg);box-shadow:0 10px 30px rgba(10,14,40,.08)}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--line)}
+.logo{font-weight:800;color:var(--brand);font-size:18px;white-space:nowrap}
+.search{flex:1;min-width:0;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 12px;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-btn{position:relative;padding:7px 10px;border-radius:10px;background:var(--surface-2);font-size:13px;white-space:nowrap}
+.tb-btn .b{position:absolute;top:-6px;left:-6px;background:var(--red);color:#fff;border-radius:999px;font-size:11px;padding:0 6px;line-height:18px}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:560px}
+@media(max-width:860px){.app{grid-template-columns:1fr}.side{max-height:300px;overflow:auto}}
+.side{background:var(--side);color:var(--side-ink);padding:12px 10px}
+.area{margin-bottom:10px}
+.area-h{font-size:12px;color:var(--side-muted);font-weight:700;padding:4px 8px;display:flex;justify-content:space-between}
+.item{display:block;padding:6px 10px;border-radius:8px;font-size:13.5px;color:var(--side-ink)}
+.item.on{background:var(--side-active);color:#fff}
+.item small{color:var(--side-muted);font-size:11px}
+.main{padding:16px;min-width:0}
+.main h3{font-size:18px}
+.dash{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:10px}
+.dc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.dc .k{font-size:12px;color:var(--muted)}
+.dc .v{font-size:24px;font-weight:800;line-height:1.2}
+.dc.urgent{border-color:var(--red);background:var(--red-soft)}
+.dc.urgent .v{color:var(--red)}
+.dc .ar{font-size:11px;color:var(--muted);margin-top:4px}
+.counts{font-size:13px;color:var(--muted);margin-top:6px}
+.fake{display:inline-block;font-size:12px;background:var(--amber-soft);color:var(--amber);border-radius:999px;padding:2px 10px;font-weight:700}
+.before{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:860px){.before{grid-template-columns:1fr}}
+.list{font-size:13px;columns:2;column-gap:18px}
+.list li{break-inside:avoid}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>ترتيب الأدمن والصلاحيات</h1>
+<p class="lead">كل موظف يشوف أماكن شغله فقط — في القائمة الجانبية، والشريط العلوي، والداشبورد — ويُمنع من غيرها حتى لو كتب الرابط. خطة ١٥ أكتوبر ٢٠٢٦ · كرت <code>ADMIN-NAV-AUTH</code> على اللوحة.</p>
+
+<h2>الوضع اليوم</h2>
+<div class="grid g3">
+  <div class="card"><div class="stat bad">الكل يفتح الكل<small>«every role has the same access» — <code>admin/lib/admin-guard.ts</code></small></div></div>
+  <div class="card"><div class="stat">٨٨ <small>بنداً في القائمة الجانبية (١٢ مجموعة) بلا أي فلترة — و٢٠ أخرى في ٤ قوائم علوية</small></div></div>
+  <div class="card"><div class="stat">٦ أدوار <small>معرّفة (ADMIN · EDITOR · CREATIVE · SOCIAL · QC · SALES) ولا تُستعمل إلا في ١٢ موضعاً</small></div></div>
+</div>
+<div class="grid g2" style="margin-top:14px">
+  <div class="card">
+    <h3>اللخبطة في القوائم</h3>
+    <ul>
+      <li>«المقالات» وحدها <b>٢٥ بنداً</b> — ستة منها حالات سير عمل (Writing → Draft …) لا صفحات.</li>
+      <li>«الموقع › مدونتي» <b>٢٥ صفحة محتوى</b> كل واحدة بند.</li>
+      <li>العملاء في القائمة الجانبية، والمبيعات والحملات في الشريط العلوي — نفس الرحلة في مكانين.</li>
+      <li>٥ صفحات بلا رابط يصلها (كرت <code>ADMIN-DEAD-CODE</code>).</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>اللخبطة في الداشبورد</h3>
+    <ul>
+      <li>صفحة واحدة للكل: عاجل · سيو المنصّة · Google Search · فلوس · هذا الأسبوع · يحتاج انتباه · الأرقام · ملخّص السيو.</li>
+      <li>المحرّرة ترى الفلوس والمبيعات، والبائع يرى سيو المقالات.</li>
+      <li>الحارس (<code>proxy.ts</code>) يفحص «موظف نشط؟» فقط — لا المجال.</li>
+    </ul>
+  </div>
+</div>
+
+<h2>المقترح في سطر</h2>
+<div class="card">
+  <p><b>سجلّ واحد</b> فيه كل صفحة: رابطها · اسمها · <b>مجالها</b>. منه تقرأ القائمة الجانبية والشريط العلوي والداشبورد والحارس — فالإخفاء والمنع من مصدر واحد ولا يختلفان.</p>
+  <p><b>الصلاحية على الشخص:</b> الدور يعطي مجالات افتراضية، وشاشة الموظف تضيف أو تحذف مجالاً لشخص بعينه (مثل خانة «التقرير اليومي» اليوم).</p>
+  <p class="note">الكونسول (العملاء) معزول أصلاً: كل عميل يرى بياناته فقط. «أكثر من مستخدم للعميل الواحد بصلاحيات» مشروع منفصل لو احتجناه.</p>
+</div>
+
+<h2>المجالات ومن يراها</h2>
+<div class="tbl">
+<table>
+  <thead><tr><th>المجال</th><th>فيه</th><th>أدمن</th><th>محرّر</th><th>مراجعة QC</th><th>سوشيال</th><th>كرييتف</th><th>مبيعات</th></tr></thead>
+  <tbody id="matrix"></tbody>
+</table>
+</div>
+<p class="note"><span class="dot y">✓</span> يرى المجال · <span class="dot p">جزء</span> جزء منه (المبيعات: عملاؤه فقط · الفريق: «مهامي» فقط) · <span class="dot n">–</span> لا يرى</p>
+
+<h2>الموكب — اختر موظفاً</h2>
+<p><span class="fake">أرقام توضيحية — ليست بيانات حقيقية</span></p>
+<div class="roles" role="group" aria-label="الدور" id="roles"></div>
+<div class="frame">
+  <div class="topbar">
+    <span class="logo">Modonty</span>
+    <span class="search">ابحث في كل ما تملك صلاحيته…</span>
+    <span class="tb-btn">مهامي <span class="b" id="tb-tasks">٣</span></span>
+    <span class="tb-btn">التنبيهات <span class="b" id="tb-notif">٢</span></span>
+    <span class="tb-btn">الدليل</span>
+    <span class="tb-btn" id="tb-user">الحساب</span>
+  </div>
+  <div class="app">
+    <nav class="side" id="side" aria-label="القائمة الجانبية"></nav>
+    <main class="main">
+      <h3 id="dash-title">اليوم</h3>
+      <div class="counts" id="counts"></div>
+      <div class="dash" id="dash"></div>
+    </main>
+  </div>
+</div>
+<p class="note" style="margin-top:10px">الشريط العلوي صار عامّاً فقط (بحث · مهامي · التنبيهات · الدليل · الحساب) — المبيعات والحملات نزلت للقائمة الجانبية في مجالاتها.</p>
+
+<h2>قبل وبعد</h2>
+<div class="before">
+  <div class="card">
+    <h3>اليوم — «المقالات» وحدها ٢٥</h3>
+    <ul class="list">
+      <li>All Articles</li><li>New Article</li><li>Idea Bank</li><li>Media</li><li>Homepage Picks</li><li>Client Quotas</li><li>Article Conversions</li><li>Client-Site Articles</li><li>Content Briefs</li><li>Writing → Draft</li><li>Draft → Approval</li><li>Approval → Revision</li><li>Revision → Draft</li><li>Approved → Scheduled</li><li>Scheduled → Published</li><li>Article Health</li><li>Status Maintenance</li><li>Technical Review</li><li>Article Sources</li><li>SEO Client</li><li>SEO Images</li><li>Categories</li><li>Tags</li><li>Industries</li><li>Intake Questions</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>بعد — «المحتوى» ٨ بنود</h3>
+    <ul>
+      <li>المقالات <span class="tag">سير العمل الستّ تبويبات داخلها</span></li>
+      <li>مقال جديد</li>
+      <li>بنك الأفكار</li>
+      <li>البريفات</li>
+      <li>صحة المقالات <span class="tag">+ المراجعة التقنية والصيانة تبويبات</span></li>
+      <li>المصادر</li>
+      <li>التصنيفات والوسوم والصناعات <span class="tag">صفحة واحدة بتبويبات</span></li>
+      <li>أسئلة الاستلام</li>
+    </ul>
+    <p class="note">حصص العملاء · سيو العملاء · مقالات مواقع العملاء → انتقلت لـ«العملاء». اختيارات الرئيسية → «الموقع». الميديا → «السوشيال والإبداع».</p>
+  </div>
+</div>
+
+<h2>خطة العمل</h2>
+<div class="phases">
+  <div class="phase"><b class="n"></b><div class="card"><h3>سجلّ التنقّل ومفاتيح المجالات <span class="tag">بلا تغيير في السلوك</span></h3><p>ملف واحد لكل البنود ومجالاتها، وكل الأدوار تأخذ «الكل» مؤقّتاً — فلا يتغيّر شيء على أحد.</p></div></div>
+  <div class="phase"><b class="n"></b><div class="card"><h3>القوائم والداشبورد تقرأ السجلّ</h3><p>القائمة الجانبية والشريط العلوي يُبنيان من السجلّ ويُفلتران بمجالات الشخص · ضغط «المقالات» و«صفحات الموقع» · كل كرت وصفّ «عاجل» في الداشبورد يحمل مجاله.</p></div></div>
+  <div class="phase"><b class="n"></b><div class="card"><h3>المنع الحقيقي</h3><p><code>proxy.ts</code> يمنع رابط مجالٍ ليس للشخص (حتى لو كتبه بيده) · <code>requirePermission(area)</code> في كل إجراء يحفظ أو يحذف · صفحة «ما عندك صلاحية لهذا المكان».</p></div></div>
+  <div class="phase"><b class="n"></b><div class="card"><h3>شاشة الموظف</h3><p>الدور + مجالات إضافية أو محذوفة لشخص بعينه (حقل <code>permissions</code> على الموظف) · سجلّ تدقيق لكل تغيير صلاحية.</p></div></div>
+  <div class="phase"><b class="n"></b><div class="card"><h3>تست لكل دور</h3><p>حساب تجريبي لكل دور: يفتح مجالاته · يُمنع من غيرها برابط مباشر · إجراء محفوظ يُرفض من دور غير مخوّل.</p></div></div>
+</div>
+
+<h2>قرارات لك</h2>
+<div class="card decide">
+  <ol>
+    <li>تعتمد المجالات الإحدى عشرة ومن يرى كل واحد (الجدول فوق)؟</li>
+    <li>المحرّر يرى «العملاء» قراءةً أم لا؟ (الجدول يقترح: لا)</li>
+    <li>الصفحات الخمس بلا رابط: <code>/campaigns/reports</code> · <code>/categories/tree</code> · <code>/sales-leads/follow-ups</code> · <code>/seo-health</code> · <code>/settings/social</code> — أيّها يُربط وأيّها يُحذف؟</li>
+  </ol>
+</div>
+
+</div>
+
+<script>
+const ROLES = [
+  { key: "ADMIN", label: "أدمن", name: "خالد" },
+  { key: "EDITOR", label: "محرّر", name: "محرّرة المحتوى" },
+  { key: "QC", label: "مراجعة QC", name: "مراجع الجودة" },
+  { key: "SOCIAL", label: "سوشيال", name: "مسؤولة السوشيال" },
+  { key: "CREATIVE", label: "كرييتف", name: "المصمّم" },
+  { key: "SALES", label: "مبيعات", name: "مندوب المبيعات" },
+];
+
+// المجالات: البنود · من يرى (full / part / none) · كروت الداشبورد (أرقام توضيحية)
+const AREAS = [
+  { key: "home", label: "اليوم", items: ["اللوحة"], who: { ADMIN: "y", EDITOR: "y", QC: "y", SOCIAL: "y", CREATIVE: "y", SALES: "y" },
+    cards: [] },
+  { key: "content", label: "المحتوى", items: ["المقالات", "مقال جديد", "بنك الأفكار", "البريفات", "صحة المقالات", "المصادر", "التصنيفات والوسوم والصناعات", "أسئلة الاستلام"],
+    who: { ADMIN: "y", EDITOR: "y", QC: "y" },
+    cards: [{ k: "مقالات تنتظر المراجعة", v: "٧" }, { k: "تنتظر موافقة العميل", v: "٤" }, { k: "مقالات صحّتها ضعيفة", v: "١٢" }] },
+  { key: "social", label: "السوشيال والإبداع", items: ["تقويم السوشيال", "الريلز", "مكتبة الميديا", "معارض العملاء"],
+    who: { ADMIN: "y", SOCIAL: "y", CREATIVE: "y" },
+    cards: [{ k: "منشورات هذا الأسبوع", v: "١٨" }, { k: "ريلز بانتظار المراجعة", v: "٥" }, { k: "تصاميم مطلوبة اليوم", v: "٣" }] },
+  { key: "clients", label: "العملاء", items: ["كل العملاء", "حصص العملاء", "رضا العملاء", "الإحالات", "سيو العملاء", "مقالات مواقع العملاء", "إيقاف عميل"],
+    who: { ADMIN: "y", SALES: "p" }, partNote: { SALES: "عملاؤه فقط" },
+    cards: [{ k: "عملاء غير راضين (٣٠ يوماً)", v: "١", urgent: true }, { k: "حصص قاربت تنتهي", v: "٦" }] },
+  { key: "sales", label: "المبيعات", items: ["طلبات التواصل", "العملاء المحتملون", "المتابعات", "الطلبات", "التجديدات", "تفعيل عميل", "العمولات", "فشل الدفع", "تقرير المبيعات"],
+    who: { ADMIN: "y", SALES: "y" },
+    cards: [{ k: "طلبات تواصل جديدة", v: "٤", urgent: true }, { k: "تجديدات هذا الشهر", v: "٩" }, { k: "فشل دفع", v: "٢" }] },
+  { key: "finance", label: "المالية", items: ["الباقات والأسعار", "مكتبة المزايا", "كشف العمولات", "معاينة الدفع"],
+    who: { ADMIN: "y" },
+    cards: [{ k: "مستحقّات غير مدفوعة", v: "٣ فواتير" }] },
+  { key: "marketing", label: "التسويق", items: ["الحملات", "حملة جديدة", "عملاء الحملات", "تقارير الحملات"],
+    who: { ADMIN: "y" },
+    cards: [{ k: "حملات جارية", v: "٢" }] },
+  { key: "site", label: "الموقع", items: ["صفحات مدونتي", "اختيارات الرئيسية", "بانر الرئيسية", "مودو", "أسئلة الشات بوت", "الأعضاء والمشتركون"],
+    who: { ADMIN: "y", EDITOR: "y" },
+    cards: [{ k: "أسئلة مودو بلا جواب", v: "٨" }] },
+  { key: "analytics", label: "التحليلات والسيو", items: ["Search Console", "Bing", "مؤشّرات المحتوى", "مؤشّرات السرعة", "صيانة السيو"],
+    who: { ADMIN: "y", QC: "y" },
+    cards: [{ k: "سيو المنصّة", v: "٨٦٪" }, { k: "ظهور قوقل (٢٨ يوماً)", v: "٢١٠ ألف" }] },
+  { key: "team", label: "الفريق", items: ["مهامي", "الموظفون", "توزيع المهام", "مراجعات المهام", "التقرير اليومي", "سجلّ التدقيق"],
+    who: { ADMIN: "y", EDITOR: "p", QC: "p", SOCIAL: "p", CREATIVE: "p", SALES: "p" }, partNote: { _: "«مهامي» فقط" }, partItems: ["مهامي"],
+    cards: [{ k: "مهامي المفتوحة", v: "٣" }] },
+  { key: "system", label: "النظام", items: ["القوائم المنسدلة", "تصدير البيانات", "القاعدة", "Bunny", "الترحيلات", "قوالب البريد", "سجلّ الأخطاء"],
+    who: { ADMIN: "y" },
+    cards: [{ k: "أخطاء اليوم", v: "٠" }] },
+];
+
+const ARABIC = (n) => n.toLocaleString("ar-EG");
+const mark = (w) => w === "y" ? '<span class="dot y">✓</span>' : w === "p" ? '<span class="dot p">جزء</span>' : '<span class="dot n">–</span>';
+
+document.getElementById("matrix").innerHTML = AREAS.map((a) =>
+  `<tr><td><b>${a.label}</b></td><td>${a.items.join(" · ")}</td>${ROLES.map((r) => `<td>${mark(a.who[r.key])}</td>`).join("")}</tr>`).join("");
+
+const rolesEl = document.getElementById("roles");
+ROLES.forEach((r, i) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = r.label;
+  b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+  b.onclick = () => { [...rolesEl.children].forEach((x) => x.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true"); render(r); };
+  rolesEl.appendChild(b);
+});
+
+function render(role) {
+  const visible = AREAS.filter((a) => a.who[role.key]);
+  let itemCount = 0;
+  document.getElementById("side").innerHTML = visible.map((a, ai) => {
+    const part = a.who[role.key] === "p";
+    const items = part && a.partItems ? a.partItems : a.items;
+    itemCount += items.length;
+    const note = part ? (a.partNote?.[role.key] || a.partNote?._ || "") : "";
+    return `<div class="area"><div class="area-h"><span>${a.label}</span>${note ? `<small>${note}</small>` : ""}</div>${
+      items.map((it, ii) => `<span class="item${ai === 0 && ii === 0 ? " on" : ""}">${it}</span>`).join("")}</div>`;
+  }).join("");
+
+  const cards = visible.flatMap((a) => (a.who[role.key] === "p" && a.key === "team") ? a.cards : a.cards.map((c) => ({ ...c, area: a.label })));
+  document.getElementById("dash").innerHTML = cards.length
+    ? cards.map((c) => `<div class="dc${c.urgent ? " urgent" : ""}"><div class="k">${c.k}</div><div class="v">${c.v}</div>${c.area ? `<div class="ar">${c.area}</div>` : ""}</div>`).join("")
+    : "";
+  document.getElementById("dash-title").textContent = `اليوم — ${role.name}`;
+  document.getElementById("tb-user").textContent = role.name;
+  // تمييز العدد: ٣–١٠ جمع («٦ بنود») · ١١ فأكثر مفرد منصوب («١٦ بنداً»)
+  const count = (n, few, many) => `${ARABIC(n)} ${n >= 3 && n <= 10 ? few : many}`;
+  document.getElementById("counts").textContent =
+    `يرى ${count(visible.length, "مجالات", "مجالاً")} · ${count(itemCount, "بنود", "بنداً")} في القائمة · ${count(cards.length, "كروت", "كرتاً")} في الداشبورد — بدل ٨٨ بنداً وداشبورد واحد للكل اليوم`;
+}
+render(ROLES[0]);
+</script>
+</body>
+</html>

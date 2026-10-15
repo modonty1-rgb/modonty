@@ -126,3 +126,7 @@ documents/context/credentials/
 
 # سجلّ تشغيل رادار المحتوى المحلي — يعيش على السيرفر لا في المستودع
 automation/content-radar/radar.sqlite
+# حالة سحب الكورة المحلية — تعيش على السيرفر
+automation/football/state.json
+automation/football/state.json.tmp
+__pycache__/

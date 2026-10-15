@@ -1,15 +1,19 @@
 /** What the football page shows — already filtered to one league and already in Arabic. */
 
-export type MatchState = "upcoming" | "live" | "finished" | "off";
+/**
+ * `unconfirmed`: انتهت والمصدران (الموقع الرسمي · 365Scores) لم يتّفقا على النتيجة بعد — تُعرض بلا أرقام
+ * (خالد ١٥ أكتوبر ٢٠٢٦: «أي نتيجة نقارنها قبل ما ننشرها»).
+ */
+export type MatchState = "upcoming" | "live" | "finished" | "off" | "unconfirmed";
 
 export interface Match {
-  id: number;
+  id: string;
   /** ISO kickoff time, UTC. */
   kickoff: string;
   state: MatchState;
   /** Minute on the clock while live; null otherwise. */
   minute: number | null;
-  /** API-Football's short status (NS · 1H · HT · FT · PST …) — kept for the label. */
+  /** Short status from the radar feed (NS · LIVE · HT · FT · PST · UNC) — kept for the label. */
   status: string;
   round: string | null;
   venue: string | null;
@@ -18,7 +22,7 @@ export interface Match {
 }
 
 export interface MatchSide {
-  /** API-Football's English name; the page swaps in the Arabic one from the league table. */
+  /** The club's short Arabic name from the official league site. */
   name: string;
   goals: number | null;
 }
@@ -48,6 +52,6 @@ export interface Scorer {
 export interface LeagueTable {
   rows: TableRow[];
   scorers: Scorer[];
-  /** Wikipedia's English club name → short Arabic name, used to translate API-Football's clubs. */
+  /** Unused since the official source names clubs in Arabic (15 Oct 2026); kept empty for the shape. */
   clubNames: Record<string, string>;
 }

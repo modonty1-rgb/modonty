@@ -5982,3 +5982,23 @@ enum IdeaBankRequestStatus {
   DONE
   FAILED
 }
+
+/// استبيان رضا العميل (NPS) في الكونسول — «من ٠ إلى ١٠، ما احتمال أن توصي بمدونتي؟» على نمط نافذة
+/// تمارا (خالد ١٥ أكتوبر ٢٠٢٦). صفٌّ لكل إجابة، وصفٌّ لكل تأجيل بـ× (score فارغ · dismissed) — فيُعرف
+/// متى يعود السؤال: بعد ٩٠ يوماً من آخر إجابة، أو ١٤ يوماً من آخر تأجيل.
+/// NPS = نسبة المروّجين (٩–١٠) ناقص نسبة المنتقدين (٠–٦).
+model ClientNpsResponse {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  clientId  String   @db.ObjectId
+  /// ٠–١٠، فارغ في صفّ التأجيل.
+  score     Int?
+  /// «وش السبب؟» — اختياري.
+  comment   String?
+  /// أغلق النافذة بـ× بلا إجابة — تأجيلٌ لا رفض.
+  dismissed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([clientId, createdAt])
+  @@index([createdAt])
+  @@map("client_nps_responses")
+}
