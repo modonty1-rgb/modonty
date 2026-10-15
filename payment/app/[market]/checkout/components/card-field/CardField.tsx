@@ -68,11 +68,25 @@ const SDK_SRC = process.env.NEXT_PUBLIC_NGENIUS_SDK_URL
 const MOUNT_ID = "ngenius-card-mount";
 const THREE_DS_MOUNT_ID = "ngenius-3ds-mount";
 
+/**
+ * نافذة المصادقة الذاتية للـSDK خمس دقائق من `mountCardInput`، وبعدها يفشل
+ * `generateSessionId` بـ401 (توثيق N-Genius: «only valid for five minutes» — ويطلبون من
+ * التاجر آليةً للتجديد). قيس حيّاً ١٥ أكتوبر ٢٠٢٦: دفعٌ بعد ٨ دقائق من فتح الصفحة رُدّ
+ * بـ401 ورأى المشتري «تعذّر بدء الدفع». الهامشان دون الثلاثمئة ثانية مقصودان: التجديد
+ * الصامت قبل الانتهاء بنصف دقيقة، والحكم بالانتهاء قبل الضغط بخمس عشرة ثانية.
+ */
+const SILENT_REFRESH_AFTER_MS = 270_000;
+const SESSION_USABLE_FOR_MS = 285_000;
+
 export type NGeniusHandle = {
   generateSessionId(): Promise<string>;
   handlePaymentResponse(response: unknown): Promise<{ status: string; success: boolean; is3DsFailure: boolean }>;
   isReady(): boolean;
   isCardValid(): boolean;
+  /** Still inside the SDK's five-minute window — a session request will not get 401. */
+  isSessionFresh(): boolean;
+  /** Re-mount the card frame for a fresh window. Clears what was typed in the card fields. */
+  refresh(): void;
 };
 
 type Props = {
@@ -96,13 +110,34 @@ export const CardField = forwardRef<NGeniusHandle, Props>(function CardField(
   // حارسٌ من التأثير المزدوج في وضع React الصارم (تطوير): يعمل التأثير ← ينظّف ← يعيد
   // العمل فوراً، فيكدّس الـSDK إطاراً ثانياً فوق الأول بلا هذا الحارس.
   const mountedRef = useRef(false);
+  // متى بدأت نافذة الخمس دقائق، وهل لمس المشتري حقول البطاقة فيها — لا نمسح ما كتبه بتجديدٍ صامت.
+  const mountedAtRef = useRef<number | null>(null);
+  const touchedRef = useRef(false);
+  // تغييره يعيد تشغيل تأثير التركيب: التنظيف يفكّ الإطار، والتشغيل يركّبه بنافذةٍ جديدة.
+  const [mountKey, setMountKey] = useState(0);
 
   useEffect(() => { readyRef.current = ready; }, [ready]);
   useEffect(() => { cardValidRef.current = cardValid; }, [cardValid]);
 
+  // تجديدٌ صامت ما دام المشتري لم يبدأ كتابة البطاقة.
+  useEffect(() => {
+    const id = setInterval(() => {
+      const at = mountedAtRef.current;
+      if (at !== null && !touchedRef.current && Date.now() - at > SILENT_REFRESH_AFTER_MS) {
+        setMountKey((k) => k + 1);
+      }
+    }, 15_000);
+    return () => clearInterval(id);
+  }, []);
+
   useImperativeHandle(ref, () => ({
     isReady: () => readyRef.current,
     isCardValid: () => cardValidRef.current,
+    isSessionFresh: () => {
+      const at = mountedAtRef.current;
+      return at !== null && Date.now() - at < SESSION_USABLE_FOR_MS;
+    },
+    refresh: () => setMountKey((k) => k + 1),
     async generateSessionId() {
       if (!window.NI) throw new Error("N-Genius SDK not loaded");
       const { session_id } = await window.NI.generateSessionId();
@@ -147,6 +182,10 @@ export const CardField = forwardRef<NGeniusHandle, Props>(function CardField(
       const container = document.getElementById(MOUNT_ID);
       if (container) container.innerHTML = "";
       mountedRef.current = true;
+      mountedAtRef.current = null;
+      touchedRef.current = false;
+      setReady(false);
+      setCardValid(false);
       try {
         // `firstName` لا يُمرَّر عمداً: تمريره يجعل الـSDK يملأ خانة اسم حامل البطاقة
         // ويقفلها — صحيحٌ حين يكون المشترك هو حامل البطاقة، وخاطئٌ في الحالة الشائعة:
@@ -175,6 +214,7 @@ export const CardField = forwardRef<NGeniusHandle, Props>(function CardField(
           },
           showInputsLabel: true,
           onSuccess: () => {
+            mountedAtRef.current = Date.now();
             setReady(true);
             // الـSDK يثبّت ارتفاع الإطار عند ١٥٠px مهما كان حجم الحاضن — ومستنده الداخلي
             // أطول، فيسقط صفّ اسم حامل البطاقة تحت الحافة ويصير غير مرئيّ. العنصر الخارجي
@@ -189,6 +229,8 @@ export const CardField = forwardRef<NGeniusHandle, Props>(function CardField(
             setReady(false);
           },
           onChangeValidStatus: (v) => {
+            // «لمس» = خانةٌ واحدة صحيحة على الأقل، لا مجرّد حدث — كي لا يُحسب حدثُ التحميل كتابةً.
+            if (v.isPanValid || v.isExpiryValid || v.isCVVValid || v.isNameValid) touchedRef.current = true;
             setCardValid(v.isCVVValid && v.isExpiryValid && v.isNameValid && v.isPanValid);
           },
         });
@@ -216,7 +258,7 @@ export const CardField = forwardRef<NGeniusHandle, Props>(function CardField(
       if (container) container.innerHTML = "";
       mountedRef.current = false;
     };
-  }, [apiKey, outletRef, language]);
+  }, [apiKey, outletRef, language, mountKey]);
 
   return (
     /**

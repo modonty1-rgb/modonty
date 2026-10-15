@@ -111,6 +111,19 @@ export async function POST(req: Request) {
   // `order_reference_id` هو `CheckoutOrder.id` الذي أرسلناه عند فتح الجلسة.
   const orderId = order.order_reference_id || body.order_reference_id;
 
+  // حساب تمارا الحيّ مشترك: فيه ويبهوك آخر إلى jbrseo.com (مقيس في بوابة الشركاء ١٥ أكتوبر
+  // ٢٠٢٦)، فيصلنا كل حدثٍ على الحساب لا أحداث طلباتنا وحدها. وما بعد هذا السطر يفوّض ويقبض —
+  // فطلبٌ ليس في قاعدتنا لا نلمسه: يُسجَّل الحدث ويُجاب 200 كي لا تعيده تمارا.
+  const ours = orderId
+    ? await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { id: true } }).catch(() => null)
+    : null;
+  if (!ours) {
+    await db.paymentWebhookEvent
+      .update({ where: { providerEventId: eventId }, data: { processedAt: new Date(), error: "not-our-order" } })
+      .catch(() => {});
+    return NextResponse.json({ ok: true, ignored: "not-our-order" });
+  }
+
   /**
    * نسوق الطلب إلى «مقبوض» أيّاً كان ما فُعِّل في الحساب.
    *

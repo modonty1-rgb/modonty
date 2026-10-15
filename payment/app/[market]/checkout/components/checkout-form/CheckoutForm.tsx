@@ -149,6 +149,18 @@ export function CheckoutForm({
       return;
     }
 
+    // نافذة الـSDK خمس دقائق من تركيب البطاقة (انظر `CardField`). بعدها يُرَدّ طلب الجلسة
+    // بـ401، فلا نرسله: نجدّد الإطار ونطلب إعادة البطاقة وحدها — بقيّة النموذج يبقى كما هو.
+    if (!ngeniusRef.current!.isSessionFresh()) {
+      logCheckoutFailure({ ...logCtx, stage: "session", outcome: "error", reasonCode: "session_window_expired" });
+      ngeniusRef.current!.refresh();
+      setErrors((prev) => ({
+        ...prev,
+        card: "لحمايتك تتجدّد خانات البطاقة كل ٥ دقائق — أعد إدخال بيانات البطاقة ثم اضغط «ادفع الآن».",
+      }));
+      return;
+    }
+
     setSubmitting(true);
     try {
       // ١ · جلسةٌ من الـSDK مباشرةً مع المزوّد. بمهلة ٨ ثوانٍ: بعض البطاقات الأجنبية
