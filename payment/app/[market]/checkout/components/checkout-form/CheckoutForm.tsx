@@ -229,17 +229,22 @@ export function CheckoutForm({
         return;
       }
 
-      // ٣ · الـSDK يتولّى الردّ (ويفتح التحقّق الثنائي عند الحاجة). بمهلةٍ سخيّة: لو علّق
-      //     بلا حلّ، نسقط إلى `processing` حيث **السيرفر** يسأل المزوّد عن الحقيقة.
-      //     خمس دقائق أبعد من أي إدخال OTP حقيقي (رمز البنك ينتهي قبلها).
+      // ٣ · الـSDK يتولّى الردّ (ويفتح التحقّق الثنائي عند الحاجة).
+      //
+      //     المهلة شبكة أمانٍ لـSDK علّق فقط — لا موعدٌ نقطع فيه على المشتري. كانت خمس دقائق،
+      //     فقيس حيّاً (١٥ أكتوبر ٢٠٢٦، ORD-2026-00062): رمز البنك لم يصل خلالها، فأغلقنا
+      //     نافذة البنك بأنفسنا والمشتري ما زال ينتظر الرمز، ثم عرضنا «نُجهّز حسابك» كأن الدفع
+      //     نجح. نافذة البنك فيها «Cancel» و«Resend code» — فنتركها لصاحبها عشر دقائق.
       let result: Awaited<ReturnType<NGeniusHandle["handlePaymentResponse"]>>;
       try {
-        result = await withTimeout(ngeniusRef.current!.handlePaymentResponse(paymentResponse), 300_000);
+        result = await withTimeout(ngeniusRef.current!.handlePaymentResponse(paymentResponse), 600_000);
       } catch (hErr) {
         const timedOut = hErr instanceof Error && hErr.message === "__timeout__";
-        const desc = timedOut ? { code: "3ds_timeout", message: "5min timeout — SDK never resolved" } : describeError(hErr);
+        const desc = timedOut ? { code: "3ds_timeout", message: "10min timeout — SDK never resolved" } : describeError(hErr);
         logCheckoutFailure({ ...logCtx, stage: "three_ds", outcome: timedOut ? "timeout" : "error", reasonCode: desc.code, message: desc.message });
-        // لا نخمّن النتيجة — السيرفر هو المصدر.
+        // لا نخمّن النتيجة ولا نقول «لم يُخصم» من المتصفّح: رمزٌ أُدخل في آخر ثانية قد يُقبَل
+        // عند البنك بعد سؤالنا، فنكون أخبرنا مشترياً مدفوعاً أن يدفع ثانية. شاشة الانتظار
+        // تسأل N-Genius حتى تُحسم، وتقول «لا داعي لإعادة الدفع» — أسلم قولٍ على مال.
         router.replace(`/${market.toLowerCase()}/checkout/processing?order=${encodeURIComponent(orderId)}`);
         return;
       }

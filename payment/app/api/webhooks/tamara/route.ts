@@ -114,9 +114,20 @@ export async function POST(req: Request) {
   // حساب تمارا الحيّ مشترك: فيه ويبهوك آخر إلى jbrseo.com (مقيس في بوابة الشركاء ١٥ أكتوبر
   // ٢٠٢٦)، فيصلنا كل حدثٍ على الحساب لا أحداث طلباتنا وحدها. وما بعد هذا السطر يفوّض ويقبض —
   // فطلبٌ ليس في قاعدتنا لا نلمسه: يُسجَّل الحدث ويُجاب 200 كي لا تعيده تمارا.
-  const ours = orderId
-    ? await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { id: true } }).catch(() => null)
-    : null;
+  //
+  // «ليس لنا» يُحكم به فقط حين يكون الغياب **مؤكَّداً**: مرجعٌ ليس بصيغة معرّفنا (ObjectId)،
+  // أو بحثٌ نجح ولم يجد. أمّا خطأ القاعدة فليس جواباً — لو عُومل «ليس لنا» لأُجيبت تمارا
+  // بـ200 فلا تعيد، ويبقى طلبُ مشترٍ وافقت عليه تمارا بلا تفويضٍ ولا قبض. فيُجاب 500 وتُعاد.
+  let ours: { id: string } | null = null;
+  if (orderId && /^[a-f0-9]{24}$/i.test(orderId)) {
+    try {
+      ours = await db.checkoutOrder.findUnique({ where: { id: orderId }, select: { id: true } });
+    } catch (err) {
+      console.error("[webhook/tamara] own-order lookup failed", err);
+      await db.paymentWebhookEvent.delete({ where: { providerEventId: eventId } }).catch(() => {});
+      return new NextResponse("lookup-failed", { status: 500 });
+    }
+  }
   if (!ours) {
     await db.paymentWebhookEvent
       .update({ where: { providerEventId: eventId }, data: { processedAt: new Date(), error: "not-our-order" } })
