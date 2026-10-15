@@ -6,6 +6,11 @@ import "server-only";
  * مفاتيح تمارا في تطبيق الدفع وحده، فالأدمن لا يكلّم تمارا مباشرةً: يمرّ عبر
  * `payment/app/api/internal/tamara-refund` بسرّ داخلي مشترك (`PAYMENT_INTERNAL_SECRET`).
  * `PAY_INTERNAL_URL` محلياً = http://localhost:3003، وفي الإنتاج = https://pay.modonty.com.
+ *
+ * الإنتاج (١٥ أكتوبر ٢٠٢٦): السرّ مضبوطٌ على Vercel Production لمشروعَي `modonty-admin` و
+ * `modonty-payment` بقيمةٍ واحدة غير قيمة التطوير (بصمة sha256 تبدأ `8440d139f6`)، و
+ * `PAY_INTERNAL_URL` غير مضبوط عمداً فيأخذ الافتراضي أدناه. تغيير السرّ يحتاج نشر المشروعين
+ * معاً، وإلا رفض تطبيق الدفع الاسترداد بـ401.
  */
 export async function refundTamaraOrder(
   orderId: string,
