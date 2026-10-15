@@ -123,3 +123,6 @@ payment/.claude/
 
 # بيانات دخول البنية التحتية (VPS/SSH/حسابات) — محلي فقط، أبداً إلى git.
 documents/context/credentials/
+
+# سجلّ تشغيل رادار المحتوى المحلي — يعيش على السيرفر لا في المستودع
+automation/content-radar/radar.sqlite

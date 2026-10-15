@@ -5,5 +5,5 @@
 | الموضوع | آخر تحديث | وقفنا عند | الملف |
 |---|---|---|---|
 | console-mobile | ٥ أكتوبر ٢٠٢٦ | نسخة الرفع جاهزة (٥ كوميتات) — الدفع بعد ٧ مساءً بأمر «ادفع» | sessions/console-mobile.md |
-| payment | ٥ أكتوبر ٢٠٢٦ | N-Genius حي + تمارا ساندبوكس جاهزان محلياً — ننتظر اعتمادهم، والنشر بعد ٧ مساءً بأمر | sessions/payment.md |
-| meta-landing-page | ١٣ أكتوبر ٢٠٢٦ | GTM متحقَّق حيّاً على business-presence/search-visibility — الباقي شغل الميديا باير | sessions/meta-landing-page.md |
+| payment | ١٥ أكتوبر ٢٠٢٦ | N-Genius + تمارا الحيّان مركّبان ومنشوران — **معلّق للمساء**: عملية حقيقية لكل بوّابة (رمز OTP لم يصل بطاقة المدير المالي) | sessions/payment.md |
+| meta-landing-page | ١٤ أكتوبر ٢٠٢٦ | GTM + رقم واتساب موحَّد + أزرار تفتح تبويب جديد، كلها متحقَّقة حيّاً — الباقي شغل الميديا باير | sessions/meta-landing-page.md |

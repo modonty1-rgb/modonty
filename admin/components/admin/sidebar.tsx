@@ -100,6 +100,7 @@ import { Trophy,
   PenLine,
   Gauge,
   CalendarDays,
+  Lightbulb,
 } from "lucide-react";
 import { LIVE_SECTORS, type LiveSectorSlug } from "@modonty/shared/lib/sectors/live-sectors";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
@@ -214,6 +215,9 @@ const rawMenuGroups: MenuGroup[] = [
     items: [
       { icon: FileText, label: "All Articles", href: "/articles", exact: true },
       { icon: FilePlus, label: "New Article", href: "/articles/new" },
+      // بنك الأفكار (خالد ١٥ أكتوبر ٢٠٢٦: «صفحة جدّاً مهمّة»): فرص محتوى يرصدها رادار المحتوى
+      // الأحد والأربعاء — يجلس قرب «New Article» لأن الفكرة المعتمدة منه هي ما يُكتب بعده.
+      { icon: Lightbulb, label: "Idea Bank", href: "/idea-bank" },
       // Articles › Media (Khalid, 26 Sep 2026): featured images and article galleries, same page as Clients › Media.
       { icon: Images, label: "Media", href: "/articles/media" },
       // Which articles lead the modonty homepage — most partners are doctors, so an unpicked

@@ -5854,3 +5854,131 @@ model SocialPostAsset {
   @@index([postId, order])
   @@map("social_calendar_post_assets")
 }
+
+// ============================================
+// بنك الأفكار — رادار المحتوى (خالد ١٥ أكتوبر ٢٠٢٦)
+// ============================================
+
+/// فرصة محتوى رصدها رادار المحتوى على سيرفر Contabo (`automation/content-radar/`) من قوقل
+/// ترندز وأخبار قوقل ويوتيوب (وX لاحقاً)، وقيّمها Claude. تصل عبر `POST /api/idea-bank/ingest`
+/// في الأدمن بسرٍّ مشترك — السيرفر لا يحمل رابط القاعدة (الخطة §19: «AI لا يحصل على DB credentials»).
+/// الاعتماد بشري في صفحة «بنك الأفكار»؛ لا نشر تلقائي.
+model IdeaBankItem {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  /// مفتاح الموضوع المطبَّع (sha1 مختصر) — نفس الموضوع من مصادر عدّة = صفّ واحد.
+  key String @unique
+
+  topic          String
+  sourceTitle    String?
+  sourceUrl      String?
+  /// google_trends · google_news · youtube · x
+  sourcePlatform String
+  /// SA · AE · KW · QA · BH · OM
+  market         String
+  engagement     String?
+  crossSourceCount Int @default(1)
+
+  sector           String?
+  /// المجال الذي رُصدت تحته — من القاعدة لا من الكود، فمجالٌ يُضاف في الأدمن يُرصد تلقائياً:
+  /// sector (slug صفحة قطاع) · category (Category.id) · industry (Industry.id) · general (ترندات عامة).
+  fieldType        String?
+  fieldKey         String?
+  fieldName        String?
+  /// الأيام (YYYY-MM-DD) التي ظهر فيها الموضوع — «مستمرّ» = ظهر ٥ أيام فأكثر خلال ١٠ (خالد ١٥ أكتوبر
+  /// ٢٠٢٦: «ابغى المواضيع اللي تكون عاملة فايرل لمدة اسبوع 10 ايام»).
+  seenDays         String[] @default([])
+  daysSeen         Int      @default(1)
+  /// evergreen (يُبحث عنه شهوراً) · trend (موجة) — حكم النموذج، والقرار للفريق.
+  intent           String?
+  /// 0–100: صلته بالقارئ في السعودية.
+  saudiRelevance   Int     @default(0)
+  /// 0–100: قيمة مقالٍ أصليّ عنه الآن.
+  opportunityScore Int     @default(0)
+  whyItMatters     String?
+  suggestedAngle   String?
+
+  status       IdeaBankStatus @default(NEW)
+  reviewNote   String?
+  reviewedById String?        @db.ObjectId
+  reviewedAt   DateTime?
+  /// المقال الذي كُتب من الفكرة (حالة USED) — به يُقاس هل نفعت: ظهوره في قوقل بعد ٣٠ يوماً.
+  articleId    String?        @db.ObjectId
+  /// متى نُشر المقال (datePublished، وإلا وقت الربط) — بدء عدّاد الثلاثين يوماً.
+  writtenAt    DateTime?
+
+  firstSeenAt DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status, opportunityScore])
+  @@index([status, daysSeen])
+  @@index([fieldType, fieldKey, status])
+  @@index([firstSeenAt])
+  @@map("idea_bank_items")
+}
+
+enum IdeaBankStatus {
+  NEW
+  WATCH
+  APPROVED
+  REJECTED
+  USED
+}
+
+/// طلب «ابحث الآن» لمجالٍ واحد من صفحة بنك الأفكار. الرادار على Contabo يسأل عن المعلّق كل ٥ دقائق
+/// (`GET /api/idea-bank/requests`) ويشغّله — السيرفر هو من يسأل، فلا يُفتح له منفذ وارد.
+model IdeaBankRequest {
+  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  fieldType     String
+  fieldKey      String
+  fieldName     String
+  status        IdeaBankRequestStatus @default(PENDING)
+  requestedById String?              @db.ObjectId
+  created       Int?
+  error         String?
+  createdAt     DateTime             @default(now())
+  startedAt     DateTime?
+  doneAt        DateTime?
+
+  @@index([status, createdAt])
+  @@map("idea_bank_requests")
+}
+
+/// آخر رصدٍ لكل مجال — ليفرّق «بنك الأفكار» بين «لم يُرصد بعد» و«رُصد ولا جديد». الصفر وحده كان يقول
+/// الاثنين معاً، فبدا مجالٌ لم يصله الدور بعد كأنه بلا أي شيء (خالد ١٥ أكتوبر ٢٠٢٦: «في حاجة غلط»).
+model IdeaBankFieldScan {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  fieldType  String
+  fieldKey   String
+  fieldName  String
+  lastScanAt DateTime
+  /// عدد الأفكار التي خرجت من آخر رصد (قد يكون صفراً بحق).
+  lastIdeas  Int       @default(0)
+  /// سبب فشل آخر رصد بعد استنفاد إعادة المحاولة — null حين نجح.
+  lastError  String?
+
+  @@unique([fieldType, fieldKey])
+  @@map("idea_bank_field_scans")
+}
+
+/// منافسو مدونتي — يرصد الرادار جديدهم في الأسبوع (أخبار قوقل `site:`) ويخرج منه مواضيع لم نكتبها.
+/// القائمة يعدّلها الفريق من صفحة بنك الأفكار (خالد ١٥ أكتوبر ٢٠٢٦: «منافسين برضو مهمة»).
+model IdeaCompetitor {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  /// النطاق بلا بروتوكول ولا www — `arageek.com`.
+  domain    String   @unique
+  name      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("idea_competitors")
+}
+
+enum IdeaBankRequestStatus {
+  PENDING
+  RUNNING
+  DONE
+  FAILED
+}

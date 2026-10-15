@@ -1,58 +1,37 @@
-# الدفع — N-Genius الحي + تمارا
+# الدفع — N-Genius الحي + تمارا الحي
 
-**٥ أكتوبر ٢٠٢٦** · حزمة `payment/` (pay.modonty.com) + زرّ الاسترداد في `admin/`.
+**١٥ أكتوبر ٢٠٢٦** · حزمة `payment/` (pay.modonty.com) + الأدمن.
 
-## وقفنا عند
+## وقفنا عند (معلّق — المساء)
 
-الكود جاهز محلياً وغير مرفوع. ننتظر: اعتماد ويبهوك N-Genius الحي · اعتماد تمارا للاختبار ومفاتيح الإنتاج.
-خالد يرسل إيميلين (N-Genius لاعتماد الويبهوك · تمارا للمفاتيح وتحويل الحساب إلى khalid@modonty.com).
+كل شيء مركّب ومنشور؛ **الباقي عملية حقيقية واحدة لكل بوّابة**. بطاقة المدير المالي لم يصلها رمز OTP من البنك الأهلي (مرّتان)، والبطاقة الثانية تحتاج تجديداً — خالد: نجرّب المساء.
 
-**الخطوة الجاية الواحدة:** بعد ٧ مساءً وبأمر خالد بالنشر ← رفع تعديلات payment + admin، ثم البنود الثلاثة تحت «بعد النشر».
+**الخطوة الجاية الواحدة:** صفحة دفع جديدة `pay.modonty.com/sa/checkout?plan=plan-4e07fc71&months=6` ← بطاقة وCVV غلط ← OTP ← نقرأ ويبهوك N-Genius وحالة الطلب في `admin.modonty.com/orders/<id>`. ثم تمارا `/sa/checkout/tamara?...` بأقلّ باقة ← استرداد من الأدمن.
 
-## بعد النشر (بالترتيب)
+## الحالة المقيسة
 
-1. منطقة دوال مشروع Vercel `modonty-payment` ← `fra1` (الآن `functionDefaultRegions: ["iad1"]`). السبب: قاعدة الإنتاج `tgixa8h` على IP في فرانكفورت (مؤشّر من geo-IP لا من Atlas) + قياس البنك. `preferredRegion` في الكود بلا أثر (Next 16.3.4 docs: deprecated).
-2. `PAYMENT_INTERNAL_SECRET` على Vercel للمشروعين (payment + admin)، و`PAY_INTERNAL_URL=https://pay.modonty.com` للأدمن. القيمة في `payment/.env.local` و`admin/.env.local`.
-3. إعادة نشر modonty-payment ← قيم N-Genius الحية تعمل (موضوعة على Production، لا أثر قبل النشر). ثم فحص: صفحة الدفع تحمّل SDK الحي، ويبهوك يردّ 400 بلا رقم طلب.
-4. بعد مفاتيح تمارا الإنتاج: قيمها على Vercel Production + تسجيل ويبهوك إنتاج عبر `POST /webhooks` (الأحداث السبعة).
-5. أول عملية حقيقية بأقلّ مبلغ ثم استرداد.
+| البند | الدليل |
+|---|---|
+| ويبهوك N-Genius الحي | بلا سرّ `401` · بالسرّ الحي `400 missing-order-reference` (السرّ على Vercel = السرّ المحلي) |
+| تمارا الحي — المفتاح | `GET /checkout/payment-types` ← `200 PAY_BY_INSTALMENTS 1–100,000 · 2/3/4` |
+| تمارا — Vercel Production (modonty-payment) | `TAMARA_API_TOKEN` · `TAMARA_NOTIFICATION_TOKEN` · `TAMARA_API_URL` · `NEXT_PUBLIC_TAMARA_PUBLIC_KEY` ← `201` لكلٍّ |
+| تمارا — ويبهوك الإنتاج | `ca6533dc-a3ff-4d0b-919c-5d7bf9d03bea` ← `pay.modonty.com/api/webhooks/tamara` · ٧ أحداث · توقيع الإشعار مقيس: بلا توكن `401`، موقَّع `400` |
+| jbrseo | ويبهوكه `24855106-…` حُذف من تمارا (`404` بعده) · مفاتيح تمارا حُذفت من مشروع Vercel `jbrseo`. **النسخة الحيّة من jbrseo.com مبنية ١٣ أغسطس وما زالت تحمل المفاتيح** — خالد: نعود لجبر SEO لاحقاً، لا إعادة بناء الآن |
+| `PAYMENT_INTERNAL_SECRET` | سرّ إنتاج جديد على modonty-payment + modonty-admin (بصمة `8440d139f6`) · الأدمن مبنيّ بعده (`ad3731f` READY) |
+| القيم المحلية | `payment/.env.live.local` الأسطر ١٢–١٥ (git-ignored) |
 
-## المنجز اليوم
+## المرفوع اليوم
 
-**N-Genius الحي (MID 901000900387):**
-- مفتاحان في البوابة الحية (لا يُعدَّلان ولا يُحذفان): `modonty-pay-server` (Merchant) · `modonty-pay-hosted-session`.
-- Outlet: `7f8ef809-2b02-456b-a3fa-b10b6bf553d5`.
-- ويبهوك `modonty-pay-live` ← `https://pay.modonty.com/api/webhooks/n-genius` · ترويسة `x-ngenius-webhook-secret` — ينتظر اعتمادهم.
-- القيم الحية في `payment/.env.live.local` (git-ignored). `.env.local` يبقى ساندبوكس.
-- Vercel Production لمشروع modonty-payment: ٧ قيم محدَّثة + `NEXT_PUBLIC_NGENIUS_SDK_URL` أُنشئ (كان غائباً). Preview بقي ساندبوكس.
-- قياس المناطق (مشروع مؤقت حُذف): ساندبوكس GET order يعلّق من iad1 فقط؛ fra1/bom1 تعمل؛ الحي يردّ من iad1 (على طلب غير موجود).
+- `2b8e26a8` — حقل بطاقة N-Genius يتجدّد قبل نافذة الخمس دقائق (مقيس حيّاً: تجديد صامت `200`، وعند «ادفع» بعد الانتهاء رسالة بلا أي طلب للبنك) · ويبهوك تمارا لا يفوّض ولا يقبض طلباً ليس لنا.
+- `ad3731fd` — توثيق سرّ الاسترداد + نشر الأدمن.
+- `480cf85e` — نافذة رمز البنك ١٠ دقائق بدل ٥ (عند انتهائها: شاشة الانتظار التي تسأل N-Genius ولا تقول «لم يُخصم») · حارس تمارا: خطأ القاعدة ⇒ `500` فتعيد تمارا.
 
-**تمارا (ساندبوكس، merchant `ef2eab45-…`):**
-- المفاتيح في `payment/.env.local`. ويبهوك ساندبوكس `f648989a-4efd-4721-b83c-a5b0d3c66b37` يشير مؤقتاً إلى ngrok.
-- قائمة إطلاقهم مقيسة على modonty_dev: ORD-61/62 مُسترَد · ORD-63 مرفوض · ORD-64 ألغاه العميل (expired) · ORD-65 مدفوع `fully_captured` 2394. كلها `[QA TEST]`.
-- الإلغاء عبر API غير مطلوب (نقبض فور التفويض — «not applicable if Auto-capture»).
+## طلبات اختبار على الإنتاج (كلها «لم يدفع بعد»، بطاقة STARTED، إشعارات 0)
 
-## الملفات المعدَّلة (غير مرفوعة)
+`ORD-2026-00061` · `ORD-2026-00062` · والثالث المفتوح ١٣:٢٠ — باسم «تست من خالد» و`modonty1+ngenius-live-test@gmail.com`.
 
-- `payment/app/api/webhooks/tamara/route.ts` — إصلاح: إشعار رابط الطلب يحمل `order_status` لا `event_type` (كان كل حدث لاحق يُسقَط مكرَّراً) · `settledAt` لا يُمحى عند الاسترداد.
-- `payment/lib/tamara/orders.ts` — `refundOrder` (simplified-refund).
-- `payment/app/api/internal/tamara-refund/route.ts` — جديد، بسرّ داخلي، المبلغ من `captured_amount` عند تمارا.
-- `payment/app/[market]/checkout/tamara/page.tsx` + `components/tamara-widget/TamaraWidget.tsx` — ويدجت تمارا الرسمي.
-- `payment/lib/checkout/resolve-checkout-reason.ts` — حذف جملة مكرّرة في رسالة الإلغاء.
-- `admin/lib/payments/refund-tamara-order.ts` — جديد (النقل إلى `lib/orders/` رُفض بالصلاحيات).
-- `admin/app/(dashboard)/orders/actions/refund-order.ts` · `components/refund-order-button.tsx` · `[id]/page.tsx` — طلب تمارا يُردّ عبر تمارا أوّلاً، ونصّ الحوار يقولها.
-- `documents/tasks/task-data.json` — بطاقات PAY-D1 · PAY-POLL · PAY-TAMARA.
+## مفتوح (ليس عاجلاً)
 
-## قرارات وموانع
-
-- لا نشر قبل ٧ مساءً وبلا أمر صريح (آخر يوم Techne).
-- قيم مالية من عندي لا تُكتب في إيميلات الشركات (خالد رفض بند min/max).
-- الويبهوك نسجّله نحن لتمارا عبر API — لا يُطلب منهم.
-- ملفات مؤقتة لم تُحذف (الصلاحية رُفضت): `scratch/ngenius-probe/` · `.playwright-mcp/probe-*`.
-
-## Git والحالة
-
-- فرع `main` · آخر كوميت `3aa3211` · التعديلات أعلاه غير مودَعة (ومعها شغل جلسات أخرى — لا إيداع جماعي).
-- tsc: payment EXIT 0 · admin خطآن في `articles-board.tsx` فقط (شغل جلسة أخرى).
-- شغّال الآن: payment dev على 3003 (`PAY_PUBLIC_URL` = ngrok) · ngrok `florist-distinct-educator.ngrok-free.dev`.
-- الإنتاج: لم يُنشر شيء من هذه الجلسة.
+- منطقة دوال modonty-payment ما زالت `iad1` (الخطّة القديمة `fra1`) — يعمل الآن، لا تغيير بلا قياس.
+- سجلّ «محاولات لم تنجح» في الأدمن لا يربط محاولات المتصفّح بالطلب (`log-failure` بلا orderId).
+- شاشة الانتظار تقول «تم إرسال طلب الدفع للبنك… ٥-١٥ ثانية» حتى حين لم يُدخَل الرمز.
