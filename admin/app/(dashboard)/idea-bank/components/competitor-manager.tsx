@@ -18,6 +18,7 @@ export function CompetitorManager({ competitors }: { competitors: CompetitorRow[
   const [domain, setDomain] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(competitors.length === 0);
   const [pending, start] = useTransition();
   const router = useRouter();
 
@@ -31,7 +32,8 @@ export function CompetitorManager({ competitors }: { competitors: CompetitorRow[
     });
 
   return (
-    <details className="rounded-lg border bg-muted/30 p-3" open={competitors.length === 0}>
+    // مفتوحة أوّل مرّة إن كانت فارغة، ثم يتحكّم بها الفريق — `open` المربوط بالعدد كان يطويها بعد أوّل إضافة
+    <details className="rounded-lg border bg-muted/30 p-3" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
       <summary className="cursor-pointer text-sm font-semibold">
         قائمة المنافسين <span className="tabular-nums text-muted-foreground">({competitors.filter((c) => c.active).length} مفعَّل)</span>
       </summary>
