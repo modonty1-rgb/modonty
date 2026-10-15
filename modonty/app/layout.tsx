@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Tajawal, Montserrat } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/app/layout/components/theme-provider";
 import { GTMContainer } from "@/app/layout/components/gtm/GTMContainer";
 import { WebVitals } from "@/app/layout/components/gtm/WebVitals";
@@ -141,6 +142,7 @@ export default async function RootLayout({
               (توثيق Next 16: Route Groups › Caveats). */}
           {children}
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
