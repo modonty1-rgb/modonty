@@ -341,20 +341,50 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         });
       }
 
-      await tx.articleFAQ.deleteMany({ where: { articleId: article.id } });
-      // Filter out incomplete FAQs (missing question OR answer) — prevents partial entries in DB
-      const validFaqs = (data.faqs ?? []).filter(
-        (f: FAQItem) => f.question?.trim() && f.answer?.trim()
+      // FAQs are synced by id, never deleted and re-created. Re-creating reset every
+      // FAQ to the schema default (PENDING) and dropped its source/submitter, so each
+      // article save sent already-approved FAQs back to the client for approval, and
+      // deleted unanswered reader questions outright (they failed the "has answer"
+      // filter). Now: untouched → left alone · text edited → back to PENDING for the
+      // client · removed in the form → deleted · new → created (needs both fields).
+      const existingFaqs = await tx.articleFAQ.findMany({
+        where: { articleId: article.id },
+        select: { id: true, question: true, answer: true, position: true },
+      });
+      const existingById = new Map(existingFaqs.map((f) => [f.id, f]));
+      const incomingFaqs: FAQItem[] = data.faqs ?? [];
+      const keptIds = new Set(
+        incomingFaqs.flatMap((f) => (f.id && existingById.has(f.id) ? [f.id] : []))
       );
-      if (validFaqs.length > 0) {
-        await tx.articleFAQ.createMany({
-          data: validFaqs.map((faq: FAQItem, index: number) => ({
-            articleId: article.id,
-            question: faq.question,
-            answer: faq.answer,
-            position: faq.position ?? index,
-          })),
-        });
+
+      const removedIds = existingFaqs.filter((f) => !keptIds.has(f.id)).map((f) => f.id);
+      if (removedIds.length > 0) {
+        await tx.articleFAQ.deleteMany({ where: { id: { in: removedIds } } });
+      }
+
+      const newFaqs: Prisma.ArticleFAQCreateManyInput[] = [];
+      for (const [index, faq] of incomingFaqs.entries()) {
+        const position = faq.position ?? index;
+        const saved = faq.id ? existingById.get(faq.id) : undefined;
+        if (!saved) {
+          if (faq.question?.trim() && faq.answer?.trim()) {
+            newFaqs.push({ articleId: article.id, question: faq.question, answer: faq.answer, position });
+          }
+          continue;
+        }
+        const textChanged =
+          faq.question !== saved.question || (faq.answer ?? "") !== (saved.answer ?? "");
+        if (textChanged) {
+          await tx.articleFAQ.update({
+            where: { id: saved.id },
+            data: { question: faq.question, answer: faq.answer || null, position, status: "PENDING" },
+          });
+        } else if (position !== saved.position) {
+          await tx.articleFAQ.update({ where: { id: saved.id }, data: { position } });
+        }
+      }
+      if (newFaqs.length > 0) {
+        await tx.articleFAQ.createMany({ data: newFaqs });
       }
 
       await tx.articleMedia.deleteMany({ where: { articleId: article.id } });

@@ -1,6 +1,10 @@
 import { ArticleStatus, SubscriptionStatus, UserRole, ClientCtaMode } from "@prisma/client";
 
 export interface FAQItem {
+  /** Row id of a saved FAQ. Absent on a new one. The save matches on it so an
+   *  untouched FAQ keeps its status, source and submitter instead of being
+   *  re-created as PENDING on every article save. */
+  id?: string;
   question: string;
   answer: string;
   position?: number;

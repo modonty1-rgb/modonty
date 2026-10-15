@@ -155,7 +155,8 @@ export function transformArticleToFormData(
     tags: article.tags?.map((t: { tag: { id: string } }) => t.tag.id) || [],
     faqs:
       article.faqs?.map(
-        (faq: { question: string; answer: string | null; position: number }): FAQItem => ({
+        (faq: { id: string; question: string; answer: string | null; position: number }): FAQItem => ({
+          id: faq.id,
           question: faq.question,
           answer: faq.answer ?? "",
           position: faq.position,

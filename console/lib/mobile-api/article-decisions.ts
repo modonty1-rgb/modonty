@@ -1,4 +1,4 @@
-import { ArticleStatus } from "@prisma/client";
+import { ArticleFAQStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 
 const context = {
@@ -21,12 +21,27 @@ export async function approveAwaitingArticle(articleId: string, clientId: string
   if (!article) return { ok: false, reason: "NOT_FOUND" };
 
   const now = new Date();
-  await db.article.update({
-    where: { id: articleId },
-    // APPROVED, not SCHEDULED (27 Sep 2026): the client's yes is not a date. The team
-    // schedules it from the admin; the cron only publishes an article that has a date.
-    data: { status: ArticleStatus.APPROVED, ogArticleModifiedTime: now, lastReviewed: now },
-  });
+  await db.$transaction([
+    db.article.update({
+      where: { id: articleId },
+      // APPROVED, not SCHEDULED (27 Sep 2026): the client's yes is not a date. The team
+      // schedules it from the admin; the cron only publishes an article that has a date.
+      data: { status: ArticleStatus.APPROVED, ogArticleModifiedTime: now, lastReviewed: now },
+    }),
+    // Approving the article approves the FAQs the Modonty team wrote for it (Khalid,
+    // 15 Oct 2026) — one yes, not one per question. Reader/chatbot questions are left
+    // out: they wait for the client's own answer. Old rows predate `source`, and a
+    // missing field matches neither "manual" nor `null` on Mongo — hence `isSet: false`.
+    db.articleFAQ.updateMany({
+      where: {
+        articleId,
+        status: ArticleFAQStatus.PENDING,
+        OR: [{ source: "manual" }, { source: null }, { source: { isSet: false } }],
+        AND: [{ answer: { not: null } }, { answer: { not: "" } }],
+      },
+      data: { status: ArticleFAQStatus.PUBLISHED },
+    }),
+  ]);
   return { ok: true, articleId, articleTitle: article.title, clientName: article.client.name, editorName: editorName(article.client.editor) };
 }
 
