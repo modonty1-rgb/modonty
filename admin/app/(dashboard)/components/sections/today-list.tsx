@@ -1,7 +1,7 @@
 import { cache } from "react";
 import Link from "next/link";
 import { ArticleStatus } from "@prisma/client";
-import { CheckCircle2, ListChecks } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ListChecks } from "lucide-react";
 
 import { visitorActionsSummary, clientStatusCounts, articleStatusCounts } from "@/lib/dashboard/cached";
 import { getAwaitingActivationTotals } from "@/lib/orders/awaiting-activation";
@@ -170,6 +170,22 @@ const getToday = cache(async () => {
       go: "أصلح",
     });
   }
+  // Profile images affect SEO (share image = 25 of the META score, logo = the
+  // knowledge-panel field) — urgent, not a tab buried under "العملاء" (Khalid, 15 Oct
+  // 2026: «أي حاجه عاجل تأثر في الـSEO لازم تكون في العاجل»). Same union the
+  // "اكتمال البروفايل البصري" table counts.
+  const ig = clients.images;
+  if (ig.anyGap > 0) {
+    hotRows.push({
+      tier: "hot",
+      num: `${n(ig.anyGap)}/${n(clients.total)}`,
+      unit: "عميل",
+      title: "عملاء فيهم نقص بصورة بروفايل — يأثر على السيو",
+      ctx: `${n(ig.noLogo)} بلا شعار · ${n(ig.noHero)} بلا غلاف — الغلاف هو نفسه صورة المشاركة (25 نقطة سيو)`,
+      href: "/clients/segment/no-image",
+      go: "أصلح",
+    });
+  }
   // واتساب: الإنذار الأحمر فقط لما يُفقد كلّ شي (نقرات وصفر محفوظ) — الفرق الجزئي طبيعي.
   const wa = va.whatsapp;
   const waBroken = wa.clicks > 0 && wa.db === 0;
@@ -292,14 +308,15 @@ const getToday = cache(async () => {
     { label: "أسئلة زوار", v: va.questions.unanswered },
   ].filter((c) => c.v === 0);
 
+  // «عاجل» has its own card now (Khalid, 15 Oct 2026: «لازم يكون في كرت لوحه وبلون انه
+  // مهم») — pulled out of the shared grey-header list below, not duplicated in it.
   const groups = [
     { key: "money", label: "فلوس", rows: moneyRows },
-    { key: "hot", label: "عاجل", rows: hotRows },
     { key: "warm", label: "هذا الأسبوع", rows: warmRows },
     { key: "note", label: "يحتاج انتباه", rows: noteRows },
   ].filter((g) => g.rows.length > 0);
 
-  return { groups, hot, warm, moneyFine, clear, moneyCount: moneyRows.length };
+  return { groups, hotRows, hot, warm, moneyFine, clear, moneyCount: moneyRows.length };
 });
 
 /** Title, date and the pulse pills — above the platform SEO card. */
@@ -323,8 +340,70 @@ export async function TodayHeader() {
   );
 }
 
+/** One row — shared by the urgent card and the general «يحتاجك اليوم» list below it. */
+function RowList({ rows }: { rows: Row[] }) {
+  return (
+    <ul>
+      {rows.map((r) => (
+        <li key={r.title} className="border-b last:border-b-0">
+          <Link
+            href={r.href}
+            className="grid grid-cols-[4px_4.5rem_1fr_auto] items-center gap-3 py-2.5 pe-4 ps-3 transition-colors hover:bg-muted/40"
+          >
+            <span className={cn("self-stretch rounded-full", RAIL[r.tier])} aria-hidden />
+            <span className="text-center text-xl font-extrabold leading-none tabular-nums">
+              {r.num}
+              <span className="mt-1 block text-xs font-medium text-muted-foreground">{r.unit}</span>
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-bold leading-snug">{r.title}</span>
+              <span className="mt-0.5 block text-xs text-muted-foreground">{r.ctx}</span>
+            </span>
+            <span
+              className={cn(
+                "rounded-lg border px-3 py-1.5 text-xs font-bold whitespace-nowrap",
+                r.tier === "money" ? "border-primary bg-primary text-primary-foreground" : "text-primary",
+              )}
+            >
+              {r.go}
+            </span>
+          </Link>
+          {r.extra && (
+            <Link href={r.extra.href} className="-mt-1 block pb-2.5 ps-[6.75rem] text-xs font-semibold text-primary hover:underline">
+              {r.extra.label} ←
+            </Link>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * «عاجل» alone, in its own red-bordered card — not a grey-header group buried inside
+ * the general list (Khalid, 15 Oct 2026: «لازم يكون في كرت لوحه وبلون انه مهم، لازم
+ * تعالج»). Renders nothing when there is nothing urgent.
+ */
+export async function UrgentCard() {
+  const { hotRows } = await getToday();
+  if (hotRows.length === 0) return null;
+
+  return (
+    <section
+      className="overflow-hidden rounded-xl border-2 border-red-500/60 bg-red-500/[0.04] shadow-sm dark:border-red-500/50 dark:bg-red-500/[0.06]"
+      aria-label="عاجل"
+    >
+      <div className="flex items-center gap-2 border-b border-red-500/30 bg-red-500/10 px-4 py-3 dark:bg-red-500/15">
+        <AlertTriangle className="size-4 text-red-600 dark:text-red-400" aria-hidden />
+        <h2 className="text-[15px] font-extrabold text-red-700 dark:text-red-400">عاجل — لازم تعالج</h2>
+      </div>
+      <RowList rows={hotRows} />
+    </section>
+  );
+}
+
 export async function TodayList() {
-  const { groups, hot, warm, moneyCount } = await getToday();
+  const { groups, warm, moneyCount } = await getToday();
 
   return (
       <section className="overflow-hidden rounded-xl border bg-card shadow-sm" aria-label="يحتاجك اليوم">
@@ -335,47 +414,15 @@ export async function TodayList() {
           </h2>
           <span className="text-xs text-muted-foreground">مرتّبة بالتكلفة — البند يختفي لما يصير صفر</span>
         </div>
-        {hot + warm + moneyCount === 0 && (
+        {warm + moneyCount === 0 && (
           <p className="flex items-center gap-2 border-b px-4 py-3 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 className="size-4" aria-hidden /> ما في شي يكلّفك اليوم.
+            <CheckCircle2 className="size-4" aria-hidden /> ما في شي ثاني يكلّفك اليوم.
           </p>
         )}
         {groups.map((g) => (
           <div key={g.key}>
             <p className="border-b bg-muted/40 px-4 py-1.5 text-xs font-bold text-muted-foreground">{g.label}</p>
-            <ul>
-              {g.rows.map((r) => (
-                <li key={r.title} className="border-b last:border-b-0">
-                  <Link
-                    href={r.href}
-                    className="grid grid-cols-[4px_4.5rem_1fr_auto] items-center gap-3 py-2.5 pe-4 ps-3 transition-colors hover:bg-muted/40"
-                  >
-                    <span className={cn("self-stretch rounded-full", RAIL[r.tier])} aria-hidden />
-                    <span className="text-center text-xl font-extrabold leading-none tabular-nums">
-                      {r.num}
-                      <span className="mt-1 block text-xs font-medium text-muted-foreground">{r.unit}</span>
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-sm font-bold leading-snug">{r.title}</span>
-                      <span className="mt-0.5 block text-xs text-muted-foreground">{r.ctx}</span>
-                    </span>
-                    <span
-                      className={cn(
-                        "rounded-lg border px-3 py-1.5 text-xs font-bold whitespace-nowrap",
-                        r.tier === "money" ? "border-primary bg-primary text-primary-foreground" : "text-primary",
-                      )}
-                    >
-                      {r.go}
-                    </span>
-                  </Link>
-                  {r.extra && (
-                    <Link href={r.extra.href} className="-mt-1 block pb-2.5 ps-[6.75rem] text-xs font-semibold text-primary hover:underline">
-                      {r.extra.label} ←
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <RowList rows={g.rows} />
           </div>
         ))}
       </section>

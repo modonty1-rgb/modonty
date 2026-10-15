@@ -83,6 +83,10 @@ export interface ClientStatusCounts {
     noHero: number;
     noOg: number;
     noImage: number;
+    /** Union of noLogo ∪ noHero — same 2-channel model as the "اكتمال البروفايل
+     *  البصري" table (share image is derived from hero, see image-channel-rules.ts),
+     *  so this number and that table's "فيهم مشكلة" count never disagree. */
+    anyGap: number;
   };
   /**
    * Holes in the record itself. `noEndDate` is the one that lies loudest: an ACTIVE
@@ -214,6 +218,7 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
       noHero: imageGaps["no-hero"].length,
       noOg: imageGaps["no-og"].length,
       noImage: imageGaps["no-image"].length,
+      anyGap: new Set([...imageGaps["no-logo"], ...imageGaps["no-hero"]]).size,
     },
     data: {
       noEndDate: dataGaps["no-end-date"].length,

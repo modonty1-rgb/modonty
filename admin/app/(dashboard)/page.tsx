@@ -6,7 +6,7 @@ import { getErrorsToFix } from "./actions/errors-to-fix";
 import { DashboardTabs } from "./components/dashboard-tabs";
 import { PlatformSeoOverall } from "./components/sections/platform-seo-overall";
 import { GoogleSearchCard } from "./components/sections/google-search-card";
-import { TodayHeader, TodayList } from "./components/sections/today-list";
+import { TodayHeader, TodayList, UrgentCard } from "./components/sections/today-list";
 import { NumbersCard } from "./components/sections/numbers-card";
 import { SeoSummaryCard } from "./components/sections/seo-summary-card";
 import { ArticlesPipeline } from "./components/sections/articles-pipeline";
@@ -51,6 +51,12 @@ export default async function DashboardPage() {
     <div dir="rtl" className="mx-auto max-w-[1280px] space-y-4">
       <Suspense fallback={<Skeleton className="h-14 w-full" />}>
         <TodayHeader />
+      </Suspense>
+
+      {/* عاجل — كرتها الخاصّ، أول شي تحت العنوان (Khalid, 15 Oct 2026). Suspense بلا
+          fallback مرئي: لو ما فيه عاجل الكرت نفسه يرجع null، فلا نريد هيكلاً فاضياً يومض. */}
+      <Suspense fallback={null}>
+        <UrgentCard />
       </Suspense>
 
       {/* The one platform number — Modonty's overall SEO, on top as before. */}
