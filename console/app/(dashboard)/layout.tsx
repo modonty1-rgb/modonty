@@ -20,6 +20,7 @@ import {
 import { DashboardLayoutClient } from "./components/dashboard-layout-client";
 import { ImpersonationBanner } from "./components/impersonation-banner";
 import { AndroidAppBanner } from "./components/android-app-banner";
+import { ApprovalDeadlineBanner } from "./components/approval-deadline-banner";
 import { AccountNotice } from "./dashboard/components/account-notice";
 import {
   getPendingArticlesCount,
@@ -31,6 +32,7 @@ import { getSubscribersCount } from "./dashboard/subscribers/helpers/subscriber-
 import { getLeadsCount } from "./dashboard/leads/helpers/lead-queries";
 import { getNewBookingsCount } from "./dashboard/bookings/helpers/booking-queries";
 import { getNewSupportMessagesCount } from "./dashboard/support/helpers/support-queries-enhanced";
+import { getOldestPendingArticleAt } from "./dashboard/articles/helpers/get-oldest-pending-article-at";
 import { getFaqStats } from "./dashboard/faqs/helpers/faq-queries";
 import { getPendingPageFaqCount } from "./dashboard/page-faq/helpers/page-faq-queries";
 import { getPendingClientCommentsCount } from "./dashboard/client-comments/helpers/client-comment-queries";
@@ -58,7 +60,7 @@ export default async function DashboardLayout({
   const clientId = (session as { clientId?: string }).clientId!;
   const impersonated = (session as { impersonated?: boolean }).impersonated ?? false;
 
-  const [client, sub, outstanding, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientCanSeeSiteArticles] =
+  const [client, sub, outstanding, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientCanSeeSiteArticles, oldestPendingArticleAt] =
     await Promise.all([
       db.client.findUnique({
         where: { id: clientId },
@@ -95,6 +97,7 @@ export default async function DashboardLayout({
       getPendingClientReviewsCount(clientId),
       getMediaSectionCounts(clientId),
       canSeeSiteArticles(clientId),
+      getOldestPendingArticleAt(clientId),
     ]);
   const pendingFaqsCount = faqStats.pending;
   const clientLogoUrl = mediaSrc(client?.logoMedia);
@@ -148,6 +151,7 @@ export default async function DashboardLayout({
       <DashboardLayoutClient
       accountNotice={
         <div className="flex flex-col gap-3 empty:hidden">
+          <ApprovalDeadlineBanner pendingCount={pendingArticlesCount} oldestPendingAt={oldestPendingArticleAt} />
           {/* يظهر فقط حين يُضبط رابط الـAPK على الخادم — إزالة المتغيّر تُخفيه بلا رفع كود. */}
           {process.env.ANDROID_APK_URL && <AndroidAppBanner />}
           <AccountNotice
