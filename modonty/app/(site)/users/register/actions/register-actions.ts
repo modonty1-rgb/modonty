@@ -86,7 +86,7 @@ export async function registerUser(data: unknown) {
     // `<b>مدفوع</b>` would otherwise forge formatting in the admin's alert, and
     // a stray `<` breaks the whole message so the notification never arrives.
     const now = new Date().toLocaleString(SITE_LOCALE, { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
-    sendAdminTelegram(`👤 <b>مستخدم جديد — مدونتي</b>\n📧 ${escapeTgHtml(user.email ?? "—")}\n🙋 ${escapeTgHtml(user.name || "—")}\n📅 ${now}`).catch(() => null);
+    sendAdminTelegram(`👤 <b>مستخدم جديد — مدونتي</b>\n📧 ${escapeTgHtml(user.email ?? "—")}\n🙋 ${escapeTgHtml(user.name || "—")}\n📅 ${now}`, "activity").catch(() => null);
 
     if (user.email) {
       welcomeEmail({ userName: user.name ?? user.email })

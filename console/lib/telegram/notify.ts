@@ -145,7 +145,11 @@ export async function notifyTelegram(
       await sendTelegramMessage(client.telegramChatId, text);
     }
     if (adminWants) {
-      await sendAdminTelegram(`👤 <b>${escapeTgHtml(client.name)}</b>\n${text}`);
+      // The high-signal set is a visitor reaching out — the leads group, never the activity feed.
+      await sendAdminTelegram(
+        `👤 <b>${escapeTgHtml(client.name)}</b>\n${text}`,
+        ADMIN_MIRROR_EVENTS.has(eventKey) ? "leads" : "activity"
+      );
     }
   } catch {
     // Never let Telegram failures break business flows.

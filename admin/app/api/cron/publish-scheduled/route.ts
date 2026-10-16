@@ -82,7 +82,7 @@ export async function GET(request: Request) {
       ...published.map((t) => `✅ ${escapeTgHtml(t)}`),
       ...failed.map((f) => `⛔ ${escapeTgHtml(f.title)}\n   ${escapeTgHtml(f.error)}`),
     ];
-    sendAdminTelegram(lines.join("\n")).catch(() => null);
+    sendAdminTelegram(lines.join("\n"), failed.length ? "errors" : "activity").catch(() => null);
   }
 
   return Response.json({

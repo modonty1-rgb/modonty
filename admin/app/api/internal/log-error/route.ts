@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       (body.device ? `\n📱 ${escapeTgHtml(String(body.device))}${body.botName ? ` (${escapeTgHtml(String(body.botName))})` : ""}` : "") +
       (geo ? ` · 🌍 ${escapeTgHtml(geo)}` : "") +
       (body.digest ? `\ndigest: <code>${escapeTgHtml(String(body.digest))}</code>` : "");
-    await sendAdminTelegram(tg);
+    await sendAdminTelegram(tg, "errors");
   }
 
   return NextResponse.json({ ok: true });

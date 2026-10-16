@@ -118,6 +118,8 @@ export async function recordCtaClick(input: {
           },
           ipAddress: ip,
           headers: input.headers,
+          // واتساب أو اتصال = زائرٌ يتواصل مع العميل ← مجموعة العملاء المهمّين لا سيل النشاط.
+          lead: /^(tel:|https?:\/\/(wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com)\/)/i.test(targetUrl ?? ""),
         }).catch((e: unknown) => console.error("[recordCtaClick] telegram", e));
       }
     }

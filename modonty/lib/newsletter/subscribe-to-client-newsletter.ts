@@ -67,7 +67,7 @@ export async function subscribeToClientNewsletter(input: {
 
   // Notify Telegram group (admin) — non-blocking
   const now = new Date().toLocaleString(SITE_LOCALE, { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
-  sendAdminTelegram(`🔔 <b>مشترك جديد</b>\n📧 ${email}\n🏢 ${client?.name || clientId}\n📅 ${now}`).catch((e: unknown) =>
+  sendAdminTelegram(`🔔 <b>مشترك جديد</b>\n📧 ${email}\n🏢 ${client?.name || clientId}\n📅 ${now}`, "activity").catch((e: unknown) =>
     console.error("[subscribeToClientNewsletter] admin telegram", e),
   );
 

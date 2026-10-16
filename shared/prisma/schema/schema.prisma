@@ -335,6 +335,12 @@ model Staff {
   /// Absent on the rows that predate the field, which reads as false — the safe direction.
   canViewReports Boolean? @default(false)
 
+  /// حسابُ الموظّف في تليجرام (رقمُه، لا @يوزره الذي يتغيّر) — بوت المهامّ `@modonty_tasks_bot`
+  /// يذكره به في مجموعة «مدونتي — المهام» فيصله تنبيه (خالد ١٦ أكتوبر ٢٠٢٦: «هم كلّهم في
+  /// التليجرام… ما يستاهل نبني سيستم»). يُطابَق مرّةً من قائمة أعضاء المجموعة، بلا زرّ ربط.
+  /// غيابُه = الإشعار يُكتب باسمه نصّاً بلا تنبيه.
+  telegramUserId String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

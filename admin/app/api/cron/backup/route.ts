@@ -3,6 +3,7 @@ import dns from "node:dns";
 import dnsPromises from "node:dns/promises";
 import { MongoClient } from "mongodb";
 import { NextRequest } from "next/server";
+import { adminTelegramChatId } from "@modonty/shared/lib/telegram/client";
 
 import { db } from "@/lib/db";
 import { runBillingAlert } from "@/lib/atlas/billing-alert";
@@ -50,7 +51,8 @@ function secretMatches(provided: string, expected: string): boolean {
 
 async function notifyTelegram(text: string): Promise<void> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
+  // مجموعة «مدونتي — النسخ الاحتياطي» (خالد ١٦ أكتوبر ٢٠٢٦)، والخاص إن لم تُضبط.
+  const chatId = adminTelegramChatId("backup");
   if (!token || !chatId) return;
 
   try {

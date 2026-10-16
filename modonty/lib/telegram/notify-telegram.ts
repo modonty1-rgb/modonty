@@ -38,9 +38,34 @@ export interface TelegramEventPayload {
   geo?: GeoInfo | null;
   /** Request headers — if provided, geo is auto-extracted (free, instant). */
   headers?: Headers | null;
+  /** A visitor reaching out (WhatsApp / call CTA) — routes the admin copy to the leads group. */
+  lead?: boolean;
 }
 
+/** Events that are always a visitor reaching out to the client — the leads group, never the activity feed. */
+const LEAD_EVENTS: ReadonlySet<TelegramEventKey> = new Set([
+  "bookingRequest",
+  "supportMessage",
+  "askClientQuestion",
+  "campaignInterest",
+  "conversion",
+  "leadHigh",
+]);
+
 const eventByKey = new Map(TELEGRAM_EVENTS.map((e) => [e.key, e]));
+
+/**
+ * A WhatsApp link carries its pre-filled message percent-encoded (`?text=%D8%A7…`) — unreadable
+ * in Telegram (Khalid, 16 Oct 2026: «الرابط بيجي ملخبط»). Decoded for display only.
+ */
+function readable(value: string): string {
+  if (!value.includes("%")) return value;
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
 
 function formatMessage(
   eventKey: TelegramEventKey,
@@ -63,7 +88,7 @@ function formatMessage(
   if (payload.meta) {
     const metaLines = Object.entries(payload.meta)
       .filter(([, v]) => v !== undefined && v !== null && v !== "")
-      .map(([k, v]) => `<b>${escapeTgHtml(k)}:</b> ${escapeTgHtml(String(v))}`);
+      .map(([k, v]) => `<b>${escapeTgHtml(k)}:</b> ${escapeTgHtml(readable(String(v)))}`);
     if (metaLines.length) {
       lines.push("");
       lines.push(...metaLines);
@@ -142,7 +167,10 @@ export async function notifyTelegram(
       await sendTelegramMessage(client.telegramChatId, text);
     }
     if (adminWants) {
-      await sendAdminTelegram(`👤 <b>${escapeTgHtml(client.name)}</b>\n${text}`);
+      await sendAdminTelegram(
+        `👤 <b>${escapeTgHtml(client.name)}</b>\n${text}`,
+        payload.lead || LEAD_EVENTS.has(eventKey) ? "leads" : "activity"
+      );
     }
   } catch {
     // Never let Telegram failures break business flows.

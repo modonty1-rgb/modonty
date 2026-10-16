@@ -15,6 +15,7 @@ import { publish } from "@/lib/realtime/publish";
 
 import { TASK_NOT_ARCHIVED } from "./not-archived";
 import { createTaskSchema, moveTaskSchema, updateTaskSchema } from "./task-schema";
+import { queueTaskTelegram } from "./telegram";
 
 // Every action follows the same order: session → Zod → try/catch → revalidate.
 // Errors are RETURNED, never thrown: a thrown error inside a server action lands
@@ -113,6 +114,12 @@ function positionAt(siblings: { position: number }[], toIndex: number): number {
  * الصفُّ يقبل الاثنين (`schema.prisma:3636-3639`)، و`userId` لقرّاء مدونتي. والموظّفون
  * في `Staff` منذ فُصل الجدولان، فهذا هو الحقلُ الذي يقرؤه جرسُ الأدمن.
  */
+/** The name a person goes by in a message — the same fallback chain the bell has always used. */
+async function staffName(id: string): Promise<string> {
+  const s = await db.staff.findUnique({ where: { id }, select: { name: true, email: true } });
+  return s?.name?.trim() || s?.email?.trim() || "زميل";
+}
+
 async function notifyAssignee(p: {
   taskId: string;
   title: string;
@@ -121,8 +128,7 @@ async function notifyAssignee(p: {
 }): Promise<void> {
   if (p.assigneeId === p.actorId) return;
   try {
-    const actor = await db.staff.findUnique({ where: { id: p.actorId }, select: { name: true, email: true } });
-    const from = actor?.name?.trim() || actor?.email?.trim() || "زميل";
+    const from = await staffName(p.actorId);
     await db.notification.create({
       data: {
         staffId: p.assigneeId,
@@ -133,6 +139,7 @@ async function notifyAssignee(p: {
       },
     });
     publish(staffChannel(p.assigneeId), RealtimeEvent.NOTIFICATION_NEW);
+    queueTaskTelegram({ to: p.assigneeId, title: `مهمّة جديدة من ${from}`, body: p.title });
   } catch (error) {
     console.error("[tasks] notifyAssignee failed", error);
   }
@@ -165,8 +172,7 @@ async function notifyReviewer(p: {
 }): Promise<void> {
   if (!p.createdById || p.createdById === p.actorId) return;
   try {
-    const actor = await db.staff.findUnique({ where: { id: p.actorId }, select: { name: true, email: true } });
-    const from = actor?.name?.trim() || actor?.email?.trim() || "زميل";
+    const from = await staffName(p.actorId);
     await db.notification.create({
       data: {
         staffId: p.createdById,
@@ -177,6 +183,12 @@ async function notifyReviewer(p: {
       },
     });
     publish(staffChannel(p.createdById), RealtimeEvent.NOTIFICATION_NEW);
+    queueTaskTelegram({
+      to: p.createdById,
+      title: `مهمّة تنتظر مراجعتك من ${from}`,
+      body: p.title,
+      path: "/tasks/reviews",
+    });
     // عدّادُ «Reviews» عند المراجِع يُحسب من مونغو — نبضةٌ تُعيده بلا أن يلمس شيئاً.
     publish(staffChannel(p.createdById), RealtimeEvent.TASKS_CHANGED);
   } catch (error) {
@@ -219,14 +231,21 @@ async function loadForReview(id: string, reviewerId: string) {
   return { task: { ...task, assigneeId: task.assigneeId } } as const;
 }
 
-async function notifyDecision(p: { to: string; actorId: string; taskId: string; type: string; title: (from: string) => string; body: string }) {
+async function notifyDecision(p: {
+  to: string;
+  actorId: string;
+  taskId: string;
+  type: string;
+  title: (from: string) => string;
+  body: string;
+}) {
   try {
-    const actor = await db.staff.findUnique({ where: { id: p.actorId }, select: { name: true, email: true } });
-    const from = actor?.name?.trim() || actor?.email?.trim() || "زميل";
+    const from = await staffName(p.actorId);
     await db.notification.create({
       data: { staffId: p.to, type: p.type, title: p.title(from), body: p.body, relatedId: p.taskId },
     });
     publish(staffChannel(p.to), RealtimeEvent.NOTIFICATION_NEW);
+    queueTaskTelegram({ to: p.to, title: p.title(from), body: p.body });
   } catch (error) {
     console.error("[tasks] notifyDecision failed", error);
   }

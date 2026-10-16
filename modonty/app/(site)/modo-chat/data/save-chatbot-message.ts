@@ -1,4 +1,7 @@
+import { after } from "next/server";
+
 import { db } from "@/lib/db";
+import { notifyModoQuestion } from "./notify-modo-question";
 
 export type WebSource = { title: string; link: string };
 export type RedirectArticle = { id: string; title: string; slug: string; excerpt: string | null };
@@ -54,6 +57,14 @@ export async function saveChatbotMessage(params: SaveParams): Promise<string | n
         redirectArticles: params.redirectArticles?.length ? params.redirectArticles : undefined,
       },
     });
+    // Every turn of every scope passes here, so the Telegram copy of the question is sent from here.
+    // `after` keeps the send alive past the response on Vercel (most callers do not await this
+    // function); it throws outside a request scope, where a plain background send is the fallback.
+    try {
+      after(() => notifyModoQuestion(params));
+    } catch {
+      void notifyModoQuestion(params);
+    }
     return row.id;
   } catch (err) {
     // Always logged: a silent write failure means the conversation log — and every metric

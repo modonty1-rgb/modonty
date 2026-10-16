@@ -62,15 +62,46 @@ export async function sendTelegramMessage(
 }
 
 /**
- * Mirror a message to the admin-global alerts chat
- * (`TELEGRAM_ADMIN_CHAT_ID` via the admin bot `TELEGRAM_BOT_TOKEN`).
- * Lets the admin watch high-signal client events in one place, independent of
- * whether the client connected their own Telegram. No-ops if not configured.
+ * Which chat an admin-bot message lands in (Khalid, 16 Oct 2026: «أبغى أفصلهم عشان ما أتوه»).
+ * Measured before the split: 52 of the last 53 messages in his private chat were visitor
+ * activity, burying the errors and the backup report. Same bot, one group per kind.
+ *
+ * - `private`  — Khalid's own chat: payments and anything not listed below.
+ * - `leads`    — a visitor reaching out to a client: booking, WhatsApp, call, direct question,
+ *                conversion («الحاجات المهمّة من العملاء»). Never mixed into `activity`.
+ * - `activity` — visitor and client activity (views, comments, sign-ups, scheduled publishing).
+ * - `errors`   — application errors and failed jobs.
+ * - `backup`   — the nightly backup and the billing check that rides on it.
+ *
+ * A kind whose group is not configured falls back to the private chat, so nothing is lost
+ * between shipping the code and setting the env.
  */
-export async function sendAdminTelegram(text: string): Promise<SendMessageResult> {
+export type AdminTelegramChannel = "private" | "leads" | "activity" | "errors" | "backup";
+
+const ADMIN_CHANNEL_ENV: Record<AdminTelegramChannel, string> = {
+  private: "TELEGRAM_ADMIN_CHAT_ID",
+  leads: "TELEGRAM_LEADS_CHAT_ID",
+  activity: "TELEGRAM_ACTIVITY_CHAT_ID",
+  errors: "TELEGRAM_ERRORS_CHAT_ID",
+  backup: "TELEGRAM_BACKUP_CHAT_ID",
+};
+
+export function adminTelegramChatId(channel: AdminTelegramChannel = "private"): string | null {
+  return process.env[ADMIN_CHANNEL_ENV[channel]] || process.env.TELEGRAM_ADMIN_CHAT_ID || null;
+}
+
+/**
+ * Send through the admin bot (`TELEGRAM_BOT_TOKEN`) to the chat for `channel`.
+ * Lets the admin watch client events independent of whether the client connected
+ * their own Telegram. No-ops if not configured.
+ */
+export async function sendAdminTelegram(
+  text: string,
+  channel: AdminTelegramChannel = "private"
+): Promise<SendMessageResult> {
   if (process.env.NODE_ENV !== "production") return { success: false, error: "Telegram disabled outside production" };
   const token = process.env.TELEGRAM_BOT_TOKEN ?? null;
-  const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID ?? null;
+  const chatId = adminTelegramChatId(channel);
   if (!token || !chatId) {
     return { success: false, error: "Admin Telegram not configured" };
   }
