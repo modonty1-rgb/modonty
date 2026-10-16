@@ -69,8 +69,12 @@ def watch(c):
 
 def run(cmd, cwd, timeout):
     t0 = time.time()
+    # The work copy drops "*.md" (see work()), which also drops skill/long.md — the script rules.
+    # Point the steps at the engine's own skill folder so the rules come from the repo, never from a
+    # ~/.claude folder that exists only on a developer laptop (failed on Contabo, 17 Oct 2026).
     r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout,
-                       env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+                       env={**os.environ, "PYTHONIOENCODING": "utf-8",
+                            "MODONTY_SKILL_DIR": os.environ.get("MODONTY_SKILL_DIR") or os.path.join(HERE, "skill")})
     return r.returncode, round(time.time() - t0, 1), (r.stdout + r.stderr)[-1500:]
 
 
