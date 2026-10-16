@@ -33,11 +33,15 @@ const bodySchema = z.object({
  * قبلها: ١٢٦ من ٢٧٨ مقالاً منشوراً فقط مفهرسة، ولا شيء كان يعيد فهرسة مقالٍ عُدّل نصّه.
  *
  * «مستحقّ الفهرسة» = منشورٌ لشريكٍ نشط، ونصُّه بلا أجزاء أو تغيّرت بصمته (`contentHash`) عمّا
- * بُنيت منه أجزاؤه. السرّ هو `REVALIDATE_SECRET` الذي يرسله الأدمن أصلاً لمدونتي عند كلّ نشر.
+ * بُنيت منه أجزاؤه.
+ *
+ * السرّ `INTERNAL_LOG_SECRET`: قيمةٌ واحدة مشتركة بين الأدمن ومدونتي على فيرسيل بلا تجاوزٍ على
+ * مستوى المشروع. لا `REVALIDATE_SECRET`: للأدمن على الإنتاج قيمةٌ خاصّة به (١٥ سبتمبر) تختلف عن
+ * قيمة مدونتي — أوّل نداءٍ من الصيانة ردّ 401 (قيس ١٧ أكتوبر ٢٠٢٦).
  */
 export async function POST(request: NextRequest) {
-  const expected = process.env.REVALIDATE_SECRET;
-  if (!expected) return NextResponse.json({ error: "REVALIDATE_SECRET is not configured" }, { status: 500 });
+  const expected = process.env.INTERNAL_LOG_SECRET;
+  if (!expected) return NextResponse.json({ error: "INTERNAL_LOG_SECRET is not configured" }, { status: 500 });
 
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success || parsed.data.secret !== expected) {

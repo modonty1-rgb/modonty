@@ -8,11 +8,12 @@ export type ModoReindexResult =
 
 /**
  * Asks the site to (re)index articles for Modo — `modonty/app/(site)/modo-chat/api/reindex`.
- * The embeddings live with Modo on the site, so the admin only says WHEN; the same
- * `REVALIDATE_SECRET` it already sends on every publish proves who is asking.
+ * The embeddings live with Modo on the site, so the admin only says WHEN. `INTERNAL_LOG_SECRET`
+ * proves who is asking: one shared value on both apps. Not `REVALIDATE_SECRET` — the admin's
+ * production project overrides it with its own value, and the site answered 401 (17 Oct 2026).
  */
 export async function callModoReindex(body: { articleId?: string; dryRun?: boolean; limit?: number }): Promise<ModoReindexResult> {
-  const secret = process.env.REVALIDATE_SECRET;
+  const secret = process.env.INTERNAL_LOG_SECRET;
   const base = await getModontyBaseUrl();
   if (!secret || !base) return { ok: false, error: "رابط مدونتي أو السرّ غير مضبوط" };
   try {
