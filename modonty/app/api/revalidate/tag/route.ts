@@ -28,6 +28,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // One value across admin · modonty · console · payment (17 Oct 2026): the admin's production
+    // project once overrode it with its own value, and every admin→modonty refresh got 401 silently.
     const revalidationSecret = process.env.REVALIDATE_SECRET;
     if (!revalidationSecret) {
       return NextResponse.json(

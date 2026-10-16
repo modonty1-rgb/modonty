@@ -46,6 +46,7 @@ export async function revalidateModontyTag(
   options?: { immediate?: boolean },
 ): Promise<boolean> {
   try {
+    // One shared value with admin · modonty · payment — no project-level override (17 Oct 2026).
     const secret = process.env.REVALIDATE_SECRET;
     if (!secret) {
       if (process.env.NODE_ENV === "development") {

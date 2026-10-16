@@ -24,6 +24,12 @@ import { revalidateTag } from "next/cache";
  */
 const ALLOWED_TAGS = ["commercial-catalog", "settings", "staff"] as const;
 
+/**
+ * `REVALIDATE_SECRET` قيمةٌ واحدة في الأدمن ومدونتي والكونسول وهنا (١٧ أكتوبر ٢٠٢٦). كان للأدمن
+ * على الإنتاج تجاوزٌ على مستوى المشروع (١٥ سبتمبر) يطابق هذه الحزمة ويخالف مدونتي، فكلُّ إبطالٍ
+ * من الأدمن لمدونتي رجع 401 بصمت. لا تُضف قيمةً على مستوى مشروعٍ واحد دون الثلاثة الآخرين.
+ */
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));

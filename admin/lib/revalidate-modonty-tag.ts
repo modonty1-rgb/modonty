@@ -66,6 +66,9 @@ export async function revalidateModontyTag(
         : [await getModontyBaseUrl(baseUrl)];
     const urls = targets.filter((u): u is string => Boolean(u));
     if (urls.length === 0) return;
+    // ONE value on Vercel for admin · modonty · console · payment, never a project-level override
+    // here: from 15 Sep to 17 Oct 2026 the admin's own production value made every refresh below
+    // answer 401 on modonty, logged only as «Failed to revalidate».
     const secret = process.env.REVALIDATE_SECRET;
 
     if (!secret) {
