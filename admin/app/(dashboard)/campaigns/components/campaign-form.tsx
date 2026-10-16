@@ -183,7 +183,8 @@ export function CampaignForm({ campaignId, initial }: Props) {
         </Button>
         <h1 className="text-lg font-semibold tracking-[-0.01em]">
           {isEdit ? "تعديل البريف" : "بريف حملة جديدة"}
-          {code ? <span dir="ltr" className="ms-2 font-mono text-sm text-muted-foreground">{code}</span> : null}
+          {/* `mx-2`, not `ms-2`: inside an RTL title an LTR span's «start» is its far side — the code sat glued to the title. */}
+          {code ? <span dir="ltr" className="mx-2 font-mono text-sm text-muted-foreground">{code}</span> : null}
         </h1>
         {/* All campaigns run for Modonty (Khalid, 29 Sep 2026) — said once here, not asked in a field. */}
         <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">على مدونتي</span>

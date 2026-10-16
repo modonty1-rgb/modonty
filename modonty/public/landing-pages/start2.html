@@ -736,6 +736,17 @@
             b.textContent = "جارٍ تجهيز واتساب…";
             s.textContent = "";
             const saved = persist(0);
+            // Fires only once the request is really stored — GTM's Lead should hang on this,
+            // not on the button click (a click also counts blocked or failed tries). No personal data.
+            saved
+              .then(() => {
+                (window.dataLayer = window.dataLayer || []).push({
+                  event: "campaign_lead_saved",
+                  formKey: payload.formKey,
+                  utmCampaign: payload.utmCampaign || "",
+                });
+              })
+              .catch(() => {});
             const result = await Promise.race([
               saved.then(() => "saved").catch(() => "failed"),
               pause(1500).then(() => "timeout"),

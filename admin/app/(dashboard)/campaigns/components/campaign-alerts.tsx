@@ -20,8 +20,15 @@ export function CampaignAlerts({ alerts, metaErrors }: { alerts: CampaignAlert[]
     <details aria-label="تنبيهات" className="group rounded-lg border border-rose-500/40 bg-rose-500/5 px-3 py-2">
       <summary className="flex cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-rose-800 marker:hidden dark:text-rose-300 [&::-webkit-details-marker]:hidden">
         <AlertTriangle className="size-4" aria-hidden />
-        {alerts.length > 0 ? `${ar.format(alerts.length)} تنبيه` : "ميتا غير متاحة"}
-        <span className="text-xs font-normal text-rose-800/70 dark:text-rose-300/70">— اضغط للعرض</span>
+        {/* The page passes only what has no row in the table — say what it is, not «٥ تنبيه» (16 Oct 2026). */}
+        {alerts.length > 0
+          ? alerts.every((a) => a.kind === "unapproved")
+            ? `${ar.format(alerts.length)} حملة شغّالة في ميتا وما لها بريف عندنا`
+            : `${ar.format(alerts.length)} تنبيه`
+          : "ميتا غير متاحة"}
+        <span className="text-xs font-normal text-rose-800/70 dark:text-rose-300/70">
+          {alerts.length > 0 ? `— صرفت ${money(alerts.reduce((s, a) => s + ("campaign" in a ? a.campaign.spend : 0), 0), alerts[0].currency)} بلا موافقة · اضغط للأسماء` : "— اضغط للعرض"}
+        </span>
         <ChevronDown className="ms-auto size-4 transition-transform group-open:rotate-180" aria-hidden />
       </summary>
       <ul className="mt-2 space-y-1 border-t border-rose-500/20 pt-2 text-xs">

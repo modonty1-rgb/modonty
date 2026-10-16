@@ -1053,8 +1053,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // ضغطة الواتساب — الحدث المهم للحملة. الرابط يفتح التطبيق مباشرة (wa.me يعمل من متصفّح إنستقرام وفيسبوك).
   document.addEventListener('click', e => {
     const a = e.target.closest('[data-wa]'); if (!a) return;
-    track('whatsapp_click', { cta: a.dataset.cta || '', activity: st.act, city: st.city });
+    const id = track('whatsapp_click', { cta: a.dataset.cta || '', activity: st.act, city: st.city });
+    saveClick(a.dataset.cta || '', id);
   });
+  // الضغطة تنحفظ عندنا أيضاً، لا عند ميتا وحدها (خالد ١٦ أكتوبر ٢٠٢٦) — بنفس event_id، وبـsendBeacon
+  // فلا تؤخّر فتح واتساب ولا تضيع لو غادر الزائر الصفحة. بلا اسم ولا رقم: الزائر ما كتبهما.
+  function saveClick(cta, id){
+    try {
+      const p = new URLSearchParams(location.search);
+      const v = k => (p.get(k) || '').slice(0, 200) || undefined;
+      const body = JSON.stringify({
+        landingPath: location.pathname, cta: cta || 'unknown', eventId: id,
+        utmSource: v('utm_source'), utmMedium: v('utm_medium'), utmCampaign: v('utm_campaign'),
+        utmContent: v('utm_content'), utmTerm: v('utm_term'), referrer: document.referrer.slice(0, 200) || undefined,
+      });
+      const sent = navigator.sendBeacon && navigator.sendBeacon('/api/landing-clicks', new Blob([body], { type: 'application/json' }));
+      if (!sent) fetch('/api/landing-clicks', { method: 'POST', headers: { 'content-type': 'application/json' }, body, keepalive: true }).catch(() => {});
+    } catch (e) {}
+  }
 
   /* ── أول تحميل ── */
   $('#other-box').classList.toggle('on', st.act === 'other');

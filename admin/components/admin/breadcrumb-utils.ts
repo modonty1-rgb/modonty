@@ -28,7 +28,6 @@ const NON_NAVIGABLE_PATHS = new Set([
   "/media/segment",                  // page is /media/segment/[key]
   "/reference",                      // page is /reference/segment/[key]
   "/reference/segment",
-  "/campaigns",                      // page is /campaigns/leads
   "/modonty",                        // pages are /modonty/faq + /modonty/pages/[slug]
   "/modonty/pages",                  // page is /modonty/pages/[slug]
 ]);
@@ -115,6 +114,8 @@ const scopedLabels: Record<string, Record<string, string>> = {
   'sales-leads': { new: 'عميل جديد', edit: 'تعديل', 'follow-ups': 'المتابعة' },
   // /clients/[id]/edit — the client pages are Arabic; «edit» elsewhere stays English.
   clients: { edit: 'تعديل' },
+  // /campaigns/[id]/edit — the brief screens are Arabic end to end.
+  campaigns: { edit: 'تعديل البريف', new: 'بريف جديد' },
   // Dashboard drill-downs (/clients|/articles|/media|/reference/segment/[key]) — Arabic like the pages.
   segment: { 'overdue': 'فواتير غير مدفوعة', 'expired': 'الاشتراك انتهى', 'expiring-soon': 'تنتهي هذا الأسبوع', 'expiring-month': 'تنتهي هذا الشهر', 'pending': 'بانتظار التفعيل', 'form': 'نموذج حجز', 'link': 'رابط خارجي', 'none': 'بلا زر', 'unset': 'الزر ما انضبط', 'active': 'نشط', 'ymyl': 'YMYL', 'standard': 'عادي', 'cancelled': 'ملغي', 'no-articles': 'بلا مقالات', 'has-published': 'نشر مقالات', 'awaiting-approval': 'بانتظار الموافقة', 'content-in-progress': 'المحتوى قيد التنفيذ', 'no-logo': 'بلا شعار', 'no-hero': 'بلا غلاف', 'no-og': 'بلا صورة مشاركة', 'no-image': 'بلا أي صورة', 'no-end-date': 'تاريخ التجديد ناقص', 'no-address': 'بلا عنوان', 'no-social': 'بلا سوشال', 'no-description': 'بلا وصف', 'seo-imperfect': 'فيها نقص سيو', 'seo-perfect': 'سيو كامل', 'unreachable': 'ما يوصلهم الزائر', 'published': 'منشور', 'published-on-client-site': 'على موقع العميل', 'approved': 'معتمد بلا تاريخ', 'scheduled': 'مجدول', 'writing': 'يُكتب', 'draft': 'مسودات', 'needs-revision': 'تحتاج تعديل', 'archived': 'مؤرشف', 'ymyl-uncited': 'YMYL بلا مصادر', 'unused': 'غير مستخدمة', 'no-alt': 'بلا نص بديل', 'failing-seo': 'تفشل في السيو', 'no-dimensions': 'بلا أبعاد', 'categories': 'الفئات', 'tags': 'الوسوم', 'industries': 'الصناعات', 'authors': 'الكتّاب' },
   reports: { modonty: 'مدونتي', jbrseo: 'جبر سيو' },
@@ -259,7 +260,9 @@ export function generateBreadcrumbs(
       const entityName = getEntityName?.(entityType, segment);
 
       items.push({
-        label: entityName || (inSocialCalendar ? '…' : `${capitalize(entityType)} ${segment.slice(0, 8)}...`),
+        label:
+          entityName ||
+          (inSocialCalendar ? '…' : entityType === 'campaigns' ? 'تحليل الحملة' : `${capitalize(entityType)} ${segment.slice(0, 8)}...`),
         href: currentPath,
       });
     } else if (segment === 'edit' && i > 1 && isObjectId(segments[i - 1])) {

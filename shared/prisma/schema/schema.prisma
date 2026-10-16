@@ -1175,6 +1175,33 @@ model CampaignSubmission {
   @@map("campaign_submissions")
 }
 
+/// ضغطة واتساب على صفحة هبوط **بلا نموذج** (`/business-presence`) — خالد ١٦ أكتوبر ٢٠٢٦.
+///
+/// الصفحة تودّي الزائر لواتساب مباشرة، فكانت ميتا وحدها تعرف بالضغطة (حدث Lead) وإحنا لا:
+/// إعلان «Land 1» صرف وجاب «عميلاً» حسب ميتا بلا أي سطر عندنا. هنا ينحفظ مَن ضغط، من أي إعلان
+/// (`utmContent`)، وأي زرّ — بلا اسم ولا رقم، لأن الزائر ما كتبهما. يقرؤه تحليل الحملة في الأدمن.
+model LandingClick {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  landingPath String
+  /// أي زرّ: header · final · dock · footer … — `data-cta` في الصفحة.
+  cta         String
+  /// نفس `event_id` المرسل لميتا — إعادة الإرسال لا تكرّر السطر.
+  eventId     String  @unique
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
+  utmTerm     String?
+  referrer    String?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  @@index([utmCampaign, createdAt])
+  @@index([landingPath, createdAt])
+  @@map("landing_clicks")
+}
+
 /// One spin of a public lucky-wheel campaign — one row per SPIN. The server picks
 /// the prize and writes this row BEFORE the wheel animates, so the browser only plays back a
 /// result it cannot choose. The campaign identifier keeps the collection reusable: Techne is

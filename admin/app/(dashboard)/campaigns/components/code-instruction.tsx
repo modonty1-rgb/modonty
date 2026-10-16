@@ -9,13 +9,18 @@ import { useToast } from "@/hooks/use-toast";
  * وهو ياخد كوبي وبيست»). الاسم يحمل الكود، وبه تُجمع حملات المنصّة تحت البريف؛ بدونه لا يُحسب
  * صرفها هنا وتظهر للأدمن «شغّالة بلا موافقة».
  */
-export function CodeInstruction({ name }: { name: string }) {
+export function CodeInstruction({ name, missingInMeta = false }: { name: string; missingInMeta?: boolean }) {
   const { toast } = useToast();
 
   return (
     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md border border-amber-500/60 bg-amber-500/10 px-3 py-2 text-xs text-amber-900 dark:text-amber-200">
       <AlertTriangle className="size-4 shrink-0" aria-hidden />
-      <span>سمِّ الحملة في المنصّة بهذا الاسم حرفياً — به يُحسب صرفها هنا:</span>
+      {/* «Not found» only where we checked Meta and it is missing — the brief form shows the same name as a standing rule. */}
+      <span>
+        {missingInMeta
+          ? "لسه ما لقينا هذي الحملة في ميتا. سمّها هناك بهذا الاسم بالضبط، وتنربط هنا لحالها:"
+          : "اسم الحملة في ميتا لازم يكون هذا بالضبط — به تنربط أرقامها هنا:"}
+      </span>
       <span dir="ltr" className="rounded bg-background px-2 py-0.5 font-mono text-[12px] font-semibold text-foreground">{name}</span>
       <button
         type="button"
