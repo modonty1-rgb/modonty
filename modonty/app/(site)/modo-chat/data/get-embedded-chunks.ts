@@ -133,6 +133,20 @@ async function buildAndStore(
 }
 
 /**
+ * Re-chunks and re-embeds these articles now, replacing whatever chunks they had — for the
+ * nightly reindex (`api/reindex`), where an article is new or its text changed since it was
+ * embedded. Returns how many chunks were written.
+ */
+export async function reindexArticles(articles: ArticleRef[]): Promise<number> {
+  if (articles.length === 0) return 0;
+  const rows = await buildAndStore(
+    articles.map((a) => a.id),
+    new Map(articles.map((a) => [a.id, a.title]))
+  );
+  return rows.length;
+}
+
+/**
  * Drops an article's cached chunks so the next question rebuilds them.
  * Call this when an article's body changes.
  */

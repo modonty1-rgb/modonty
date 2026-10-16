@@ -2,12 +2,11 @@ import "server-only";
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { ArticleStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import type { ChatTurnContext } from "@/app/(site)/modo-chat/data/guard-chat-request";
-import { getEmbeddedChunks } from "@/app/(site)/modo-chat/data/get-embedded-chunks";
 import { getEmbeddedFaqs } from "@/app/(site)/modo-chat/data/get-embedded-faqs";
+import { searchAllArticles } from "@/app/(site)/modo-chat/data/search-all-articles";
 import { getIndustryScope } from "@/app/(site)/modo-chat/data/get-industry-scope";
 import { retrieveFromEmbedded } from "@/app/(site)/modo-chat/data/retrieve-from-embedded";
 import { rankPartners } from "@/app/(site)/modo-chat/data/rank-partners";
@@ -38,8 +37,6 @@ const SUGGEST_MIN_SCORE = 0.15;
  * the whole thread made a long session cost quadratically for context the answer rarely needs.
  */
 const CONTEXT_TURNS = 6;
-
-const MAX_SCOPE_ARTICLES = 30;
 
 /**
  * One Modo turn inside an industry (or legacy category) scope, AFTER `guardChatRequest` passed —
@@ -96,28 +93,6 @@ export async function answerChatTurn(ctx: ChatTurnContext): Promise<NextResponse
     ? { scopeType: "industry" as const, industrySlug: industry.slug, industryId: industry.id }
     : { scopeType: "category" as const, categorySlug, categoryId: category!.id };
 
-  const scopeArticles = industry
-    ? industry.articles
-    : await db.article.findMany({
-        where: {
-          categoryId: category!.id,
-          status: ArticleStatus.PUBLISHED,
-          OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          excerpt: true,
-          // `content` is deliberately NOT selected: chunk embeddings are cached, and shipping
-          // 30 full article bodies into every request was hundreds of kilobytes the answer
-          // never read. Bodies load lazily, only for articles whose cache is cold.
-          client: { select: { name: true, slug: true, ctaMode: true } },
-        },
-        orderBy: [{ datePublished: "desc" }, { createdAt: "desc" }],
-        take: MAX_SCOPE_ARTICLES,
-      });
-
   /**
    * The out-of-scope decision is derived from retrieval — it is NOT a gate in front of it.
    * The old gate refused anything under 0.52 on a 600-character proxy of the corpus, stricter
@@ -127,24 +102,50 @@ export async function answerChatTurn(ctx: ChatTurnContext): Promise<NextResponse
   const isIdentityQuestion = isGreetingOrShortPleasantry(lastUserMessage);
 
   const tChunks = Date.now();
-  // Partner answers are retrieved alongside article text: a doctor answering one visitor
-  // in their own words is the strongest material we have, and it used to serve that visitor only.
-  const chunks = isIdentityQuestion
-    ? []
-    : (await Promise.all([
-        getEmbeddedChunks(scopeArticles),
+  /**
+   * Articles come from the WHOLE library, not the chosen industry (Khalid, 16 Oct 2026: «مش شرط
+   * تكون في الصناعات… المعلومة تكون موجودة في أكثر من ارتكل»). The industry still decides the
+   * partner fallback and its own FAQ answers — a doctor answering one visitor in their own words
+   * is the strongest material we have.
+   */
+  const [firstCorpus, faqChunks] = isIdentityQuestion
+    ? [null, []]
+    : await Promise.all([
+        searchAllArticles(lastUserMessage),
         industry ? getEmbeddedFaqs(industry.id) : Promise.resolve([]),
-      ])).flat();
+      ]);
+  let corpus = firstCorpus;
   const tRetrieve = Date.now();
-  const { docs: dbDocs, topRerankScore, bestArticleId, bestArticleScore } = isIdentityQuestion
-    ? { docs: [], topRerankScore: 0, bestArticleId: null, bestArticleScore: 0 }
-    : await retrieveFromEmbedded(lastUserMessage, chunks);
+  let retrieval = isIdentityQuestion
+    ? { docs: [], topRerankScore: 0, bestArticleId: null as string | null, bestArticleScore: 0 }
+    : await retrieveFromEmbedded(lastUserMessage, [...(corpus?.chunks ?? []), ...faqChunks], corpus?.queryEmbedding);
+
+  /**
+   * A follow-up carries no topic of its own — «وكم مرة لازم أسويه؟» after a CBC answer found
+   * nothing (measured live 16 Oct 2026), because the search read that one line alone. When the
+   * question finds nothing, it is searched again together with the visitor's previous question.
+   * Only on a miss: a visitor who changed subject still gets the new subject on its own.
+   */
+  const previousQuestion = messages.filter((m) => m.role === "user").at(-2)?.content?.trim();
+  if (!isIdentityQuestion && retrieval.docs.length === 0 && previousQuestion) {
+    const withContext = `${previousQuestion}\n${lastUserMessage}`;
+    const retryCorpus = await searchAllArticles(withContext);
+    const retry = await retrieveFromEmbedded(withContext, [...retryCorpus.chunks, ...faqChunks], retryCorpus.queryEmbedding);
+    if (retry.docs.length > 0) {
+      corpus = retryCorpus;
+      retrieval = retry;
+    }
+  }
+
+  const corpusArticles = corpus?.articles ?? [];
+  const chunks = [...(corpus?.chunks ?? []), ...faqChunks];
+  const { docs: dbDocs, topRerankScore, bestArticleId, bestArticleScore } = retrieval;
 
   if (process.env.NODE_ENV === "development") {
     console.debug("[chatbot-scope]", {
       scope: industry ? `industry:${industry.slug}` : `category:${categorySlug}`,
       scopeName,
-      articles: scopeArticles.length,
+      articles: corpusArticles.length,
       partners: scopePartners.length,
       chunksMs: tRetrieve - tChunks,
       retrieveMs: Date.now() - tRetrieve,
@@ -161,13 +162,12 @@ export async function answerChatTurn(ctx: ChatTurnContext): Promise<NextResponse
    * nothing to act on: measured live, Modo recommended a doctor with no link and no way to book.
    */
   const sourceArticles: { id: string; title: string; slug: string; excerpt: string | null; client: { name: string; slug: string } }[] = [];
-  const partnerBySlug = new Map(scopePartners.map((p) => [p.slug, p]));
   const partners: {
     name: string; slug: string; canBook: boolean; whyRecommended: string;
     logo: string | null; city: string | null; credential: string | null; isVerified: boolean;
   }[] = [];
   if (dbDocs.length > 0) {
-    const articleByTitle = new Map(scopeArticles.map((a) => [a.title, a]));
+    const articleByTitle = new Map(corpusArticles.map((a) => [a.title, a]));
     const seenArticle = new Set<string>();
     const seenPartner = new Set<string>();
     for (const doc of dbDocs) {
@@ -184,7 +184,8 @@ export async function answerChatTurn(ctx: ChatTurnContext): Promise<NextResponse
       });
       if (!seenPartner.has(article.client.slug)) {
         seenPartner.add(article.client.slug);
-        const full = partnerBySlug.get(article.client.slug);
+        // The card comes with the article — the partner may sit in another industry than the
+        // one the visitor picked, now that the whole library is searched.
         partners.push({
           name: article.client.name,
           slug: article.client.slug,
@@ -192,10 +193,10 @@ export async function answerChatTurn(ctx: ChatTurnContext): Promise<NextResponse
           // The article is the evidence for the recommendation — Khalid's rule: partner first,
           // article as proof underneath it.
           whyRecommended: article.title,
-          logo: full?.logo ?? null,
-          city: full?.city ?? null,
-          credential: full?.credential ?? null,
-          isVerified: full?.isVerified ?? false,
+          logo: article.client.logo,
+          city: article.client.city,
+          credential: article.client.credential,
+          isVerified: article.client.isVerified,
         });
       }
     }
@@ -290,7 +291,7 @@ export async function answerChatTurn(ctx: ChatTurnContext): Promise<NextResponse
 
     const message = handoff.length > 0
       ? `السعر والموعد يحدّدهما الشريك نفسه، وما أبغى أخمّن عليك. تقدر توصّل سؤالك له من تحت.`
-      : `ما عندي جواب موثّق لسؤالك في محتوى ${scopeName}، وما أبغى أخمّن عليك. سجّلت سؤالك عندنا.`;
+      : `ما عندي جواب موثّق لسؤالك في محتوى مدونتي، وما أبغى أخمّن عليك. سجّلت سؤالك عندنا.`;
 
     saveChatbotMessage({
       userId,

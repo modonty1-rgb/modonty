@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { SubscriptionStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { embedTexts } from "@/app/(site)/modo-chat/data/embed-texts";
+import { getAnswerableIndustries } from "@/app/(site)/modo-chat/data/get-answerable-industries";
+import { searchAllArticles } from "@/app/(site)/modo-chat/data/search-all-articles";
 import { checkRateLimit } from "@/app/(site)/modo-chat/data/check-rate-limit";
 
 const bodySchema = z.object({
@@ -29,8 +28,8 @@ function cosineSimilarity(a: number[], b: number[]): number {
  *
  * It used to guess a category, which quietly undid the whole scope: typing «أبغى دكتور أسنان»
  * landed in a content category holding one partner, while the twenty-one clinics sat in an
- * industry the answer never saw. Only industries with an active partner are offered — an
- * industry with none is a dead end no matter how well the words match.
+ * industry the answer never saw. Only industries Modo can answer from are offered — an active
+ * partner with a published article — anything else is a dead end however well the words match.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -61,49 +60,34 @@ export async function POST(request: NextRequest) {
 
     const { message } = parsed.data;
 
-    const industries = await db.industry.findMany({
-      where: { clients: { some: { subscriptionStatus: SubscriptionStatus.ACTIVE } } },
-      select: { name: true, slug: true, description: true },
-      take: 20,
-    });
+    /**
+     * The industry of the ARTICLE closest to the question — not the industry whose description
+     * reads closest. Measured 16 Oct 2026: «ما هو تحليل CBC في الدم؟» matched the description of
+     * «التأهيل المهني» (0.38) while the CBC article lives under «السياحة العلاجية». The library
+     * knows where an answer lives; a one-line description does not. Only industries Modo can
+     * answer from are eligible — the same list the picker offers.
+     */
+    const [industries, corpus] = await Promise.all([getAnswerableIndustries(), searchAllArticles(message)]);
+    const industryById = new Map(industries.map((i) => [i.id, i]));
+    const industryOfArticle = new Map(corpus.articles.map((a) => [a.id, a.client.industryId]));
 
-    if (industries.length === 0) {
+    if (!corpus.queryEmbedding) {
       return NextResponse.json({ success: true, suggestion: null });
     }
 
-    const industryTexts = industries.map(
-      (i) => `${i.name}${i.description ? `. ${i.description}` : ""}`
-    );
-
-    const [queryEmbs, industryEmbs] = await Promise.all([
-      embedTexts([message], "search_query"),
-      embedTexts(industryTexts, "search_document"),
-    ]);
-
-    if (!queryEmbs?.[0] || !industryEmbs?.length) {
-      return NextResponse.json({ success: true, suggestion: null });
+    // Chunks arrive closest-first from the vector index; the first one in an answerable industry wins.
+    for (const chunk of corpus.chunks) {
+      const industry = industryById.get(industryOfArticle.get(chunk.articleId) ?? "");
+      if (!industry) continue;
+      const score = cosineSimilarity(corpus.queryEmbedding, chunk.embedding);
+      if (score < SUGGESTION_THRESHOLD) break;
+      return NextResponse.json({
+        success: true,
+        suggestion: { slug: industry.slug, name: industry.name, confidence: score },
+      });
     }
 
-    const queryEmb = queryEmbs[0];
-    const scores = industryEmbs.map((emb, i) => ({
-      industry: industries[i]!,
-      score: cosineSimilarity(queryEmb, emb),
-    }));
-    scores.sort((a, b) => b.score - a.score);
-    const top = scores[0];
-
-    if (!top || top.score < SUGGESTION_THRESHOLD) {
-      return NextResponse.json({ success: true, suggestion: null });
-    }
-
-    return NextResponse.json({
-      success: true,
-      suggestion: {
-        slug: top.industry.slug,
-        name: top.industry.name,
-        confidence: top.score,
-      },
-    });
+    return NextResponse.json({ success: true, suggestion: null });
   } catch (error) {
     console.error("Suggest industry error:", error);
     return NextResponse.json({ success: true, suggestion: null });

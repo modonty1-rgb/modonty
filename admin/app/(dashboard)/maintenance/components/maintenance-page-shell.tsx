@@ -12,6 +12,7 @@ import type { LegalFormSanitizerStats } from "@/app/(dashboard)/database/actions
 import type { CanonicalSanitizerStats } from "@/app/(dashboard)/database/actions/canonical-sanitizer";
 import type { SiteUrlDriftStatus } from "@/lib/seo/site-url";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
+import { ModoIndexCard } from "./modo-index-card";
 
 interface Props {
   orphans: OrphanStats;
@@ -24,6 +25,7 @@ interface Props {
   legalFormSanitizer: LegalFormSanitizerStats;
   canonicalSanitizer: CanonicalSanitizerStats;
   siteUrlDrift: SiteUrlDriftStatus;
+  modoIndex: { published: number; due: number; error?: string };
 }
 
 function computeToolStatuses(props: Props) {
@@ -77,6 +79,8 @@ export function MaintenancePageShell(props: Props) {
 
       {/* Site URL Drift Detection — manual-fix banner (env mismatch requires Vercel redeploy) */}
       <SiteUrlDriftCard status={props.siteUrlDrift} />
+
+      <ModoIndexCard {...props.modoIndex} />
 
       <DbToolsSection
         orphans={props.orphans}

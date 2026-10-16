@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { isTaskLate } from "@/lib/tasks/is-task-late";
+import { workDayWindow } from "@/lib/tasks/work-day-window";
 
 /**
  * **تقريرُ الأسبوع لكلّ شخص** (خالد ٢٣ سبتمبر ٢٠٢٦: «تتقسم لتقرير أسبوعي — تقرير بمعنى الكلمة»).
@@ -61,6 +62,10 @@ const endOfDay = (d: Date) => new Date(d).setHours(23, 59, 59, 999);
 export async function getWeeklyReport(weekStart: Date, now: Date = new Date()): Promise<PersonWeek[]> {
   const weekEnd = addDays(weekStart, 7);
   const prevStart = addDays(weekStart, -7);
+  // «أُسند له» بأيّام العمل: من ٥ عصر الخميس السابق إلى ٥ عصر خميس هذا الأسبوع — فما كُتب مساء
+  // الخميس للأحد يُحسب على أسبوعه، لا على الأسبوع الذي انتهى (`lib/tasks/work-day-window.ts`).
+  const assignedFrom = workDayWindow(weekStart).from;
+  const assignedTo = workDayWindow(addDays(weekStart, 4)).to;
 
   const rows = await db.task.findMany({
     where: {
@@ -69,7 +74,7 @@ export async function getWeeklyReport(weekStart: Date, now: Date = new Date()): 
         { OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }] },
         {
           OR: [
-            { createdAt: { gte: weekStart, lt: weekEnd } },
+            { createdAt: { gte: assignedFrom, lt: assignedTo } },
             { completedAt: { gte: prevStart, lt: weekEnd } },
             // المتأخّرُ الآن: عند منفّذه (لم تبدأ/قيد التنفيذ) وموعدُه قبل اليوم — المراجعةُ ليست تأخيراً.
             { status: { in: ["TODO", "IN_PROGRESS"] }, dueDate: { lt: now } },
@@ -109,7 +114,7 @@ export async function getWeeklyReport(weekStart: Date, now: Date = new Date()): 
 
   for (const t of rows) {
     const p = bucket(t.assignee);
-    const assignedNow = t.createdAt >= weekStart && t.createdAt < weekEnd;
+    const assignedNow = t.createdAt >= assignedFrom && t.createdAt < assignedTo;
     const completedNow = !!t.completedAt && t.completedAt >= weekStart && t.completedAt < weekEnd;
     const late = isTaskLate(t, now.getTime());
     let onTime: boolean | null = null;

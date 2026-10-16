@@ -1,4 +1,4 @@
-async function getModontyBaseUrl(baseUrl?: string | null): Promise<string | null> {
+export async function getModontyBaseUrl(baseUrl?: string | null): Promise<string | null> {
   // Dev: settings.siteUrl points to PRODUCTION (needed for correct canonical/JSON-LD
   // URLs even locally), so revalidation would hit prod. Locally, bust the local modonty
   // instead so admin edits actually reflect on localhost. Prod is unaffected.

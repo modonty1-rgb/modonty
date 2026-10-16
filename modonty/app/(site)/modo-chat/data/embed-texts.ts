@@ -28,6 +28,12 @@ export async function embedTexts(
   const results = await Promise.all(
     batches.map(async (batch) => {
       const response = await cohere.embed({ model: EMBED_MODEL, inputType, texts: batch });
+      // Indexing is the only embed that grows with the library — its billed tokens are logged so
+      // the cost is read from the vendor's own count, not estimated (Khalid, 16 Oct 2026: «هل في تكاليف؟»).
+      if (inputType === "search_document") {
+        const billed = (response.meta as { billedUnits?: { inputTokens?: number } } | undefined)?.billedUnits?.inputTokens;
+        console.info("[embed] indexed", batch.length, "texts · billed input tokens:", billed ?? "n/a");
+      }
       const emb = response.embeddings as { float?: number[][] };
       return (emb.float ?? []) as number[][];
     })

@@ -8,6 +8,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { canSeeReports } from "@/lib/can-see-reports";
 import { isTaskLate } from "@/lib/tasks/is-task-late";
+import { riyadhToday } from "@/lib/tasks/work-day-window";
 import { redirect } from "next/navigation";
 
 const N = new Intl.NumberFormat("ar-EG");
@@ -21,9 +22,10 @@ const dayFmt = new Intl.DateTimeFormat("ar-EG", {
  *  midnight, which lands on the previous day for anyone east of Greenwich. */
 function parseDay(raw: string | undefined): Date {
   const m = raw?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!m) return new Date();
+  // «اليوم» بتوقيت الرياض: الخادم على UTC، فيبقى على الأمس حتّى ٣ الفجر عندنا.
+  if (!m) return riyadhToday();
   const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-  return Number.isNaN(d.getTime()) ? new Date() : d;
+  return Number.isNaN(d.getTime()) ? riyadhToday() : d;
 }
 
 
@@ -66,7 +68,7 @@ export default async function ReportPage({
   const rangeStart = from ? parseDay(from) : undefined;
   const rangeEnd = to ? parseDay(to) : undefined;
   if (rangeEnd) rangeEnd.setDate(rangeEnd.getDate() + 1);
-  const weekStart = weekStartOf(week ? parseDay(week) : new Date());
+  const weekStart = weekStartOf(week ? parseDay(week) : riyadhToday());
   const weekEnd = addDays(weekStart, 7);
   const isWeek = view === "week";
   const [lanes, weekPeople] = await Promise.all([
@@ -80,7 +82,7 @@ export default async function ReportPage({
     isWeek ? getWeeklyReport(weekStart) : Promise.resolve([]),
   ]);
   const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  const thisWeek = weekStartOf(new Date());
+  const thisWeek = weekStartOf(riyadhToday());
   const weekLabel = `${dayFmt.format(weekStart)} — ${dayFmt.format(addDays(weekStart, 6))}`;
 
   const laneKey = (l: (typeof lanes)[number]) => l.staffId ?? "unassigned";

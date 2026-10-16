@@ -66,7 +66,9 @@ export interface RetrievalResult {
  */
 export async function retrieveFromEmbedded(
   query: string,
-  chunks: EmbeddedChunk[]
+  chunks: EmbeddedChunk[],
+  /** Already computed by the corpus search (`search-all-articles.ts`) — not paid for twice. */
+  queryEmbedding?: number[] | null
 ): Promise<RetrievalResult> {
   const empty: RetrievalResult = {
     docs: [],
@@ -78,7 +80,7 @@ export async function retrieveFromEmbedded(
   };
   if (chunks.length === 0) return empty;
 
-  const [queryEmb] = await embedTexts([query], "search_query");
+  const queryEmb = queryEmbedding ?? (await embedTexts([query], "search_query"))[0];
   if (!queryEmb) return empty;
 
   const scored = chunks

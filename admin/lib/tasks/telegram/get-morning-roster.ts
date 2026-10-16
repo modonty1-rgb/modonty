@@ -1,9 +1,7 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-
-/** Saudi time has no daylight saving — the offset is a constant, not a lookup. */
-const RIYADH_OFFSET_MS = 3 * 3_600_000;
+import { riyadhToday, workDayWindow } from "@/lib/tasks/work-day-window";
 
 /** Someone who wrote nothing in two weeks is not on the morning routine (left, on leave, sales-only). */
 const ACTIVE_WINDOW_DAYS = 14;
@@ -16,15 +14,9 @@ export type RosterRow = {
   name: string;
   email: string | null;
   telegramUserId: string | null;
-  /** Tasks this person wrote for themselves since midnight Riyadh. */
+  /** Tasks this person wrote for themselves for today's work day (from 17:00 of the last one). */
   written: number;
 };
-
-/** Midnight today in Riyadh, as an instant. */
-export function riyadhDayStart(now: Date): Date {
-  const local = new Date(now.getTime() + RIYADH_OFFSET_MS);
-  return new Date(Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate()) - RIYADH_OFFSET_MS);
-}
 
 /**
  * **مَن كتب مهامَّ يومه ومَن لم يكتب** — مصدرُ تذكير ٨:٠٠ وتقرير ٨:٣٠ (خالد ١٦ أكتوبر ٢٠٢٦:
@@ -36,11 +28,11 @@ export function riyadhDayStart(now: Date): Date {
  * وحسابات الاختبار بلا قائمةٍ تُصان باليد.
  *
  * ── وما يُعدّ «كتب» ──
- * مهمّةٌ كتبها لنفسه اليوم — كما تقرأ صفحة Daily Tasks اليوم (`createdAt`). وتاسكاتُ التقويم
- * (`socialPostId`) تُنشأ آلياً فلا تُحسب كتابة.
+ * مهمّةٌ كتبها لنفسه ليوم العمل هذا — ومنها ما كتبه مساء أمس بعد ٥ العصر، تماماً كما تقرأ صفحة
+ * Daily Tasks (`lib/tasks/work-day-window.ts`). وتاسكاتُ التقويم (`socialPostId`) آليّة فلا تُحسب.
  */
 export async function getMorningRoster(now: Date = new Date()): Promise<RosterRow[]> {
-  const dayStart = riyadhDayStart(now);
+  const dayStart = workDayWindow(riyadhToday(now)).from;
   const since = new Date(now.getTime() - ACTIVE_WINDOW_DAYS * 86_400_000);
 
   const [staff, tasks] = await Promise.all([

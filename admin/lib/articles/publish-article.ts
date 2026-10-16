@@ -1,10 +1,12 @@
 import "server-only";
 
 import { revalidatePath, revalidateTag } from "next/cache";
+import { after } from "next/server";
 import { ArticleStatus } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { logAction, SYSTEM_ACTOR } from "@/lib/audit/log-action";
+import { reindexModoArticle } from "@/lib/modo/reindex-modo-article";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { submitToIndexNow } from "@/lib/indexnow";
 import { assertArticlePublishable } from "@/lib/seo/assert-article-publishable";
@@ -115,6 +117,12 @@ export async function publishArticle(
   revalidateTag("article-status-counts", "max");
   if (toStatus === ArticleStatus.PUBLISHED) {
     await revalidateModontyTag("articles");
+    // مودو يقرأ المقال من لحظة نشره — بعد الردّ، فلا ينتظر الناشرُ التضمين.
+    try {
+      after(() => reindexModoArticle(articleId));
+    } catch {
+      void reindexModoArticle(articleId);
+    }
   }
 
   return { ok: true, to: toStatus };

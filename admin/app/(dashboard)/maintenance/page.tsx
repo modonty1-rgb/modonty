@@ -8,6 +8,7 @@ import { getDuplicateSlugs } from "@/app/(dashboard)/database/actions/duplicate-
 import { getLegalFormSanitizerStats } from "@/app/(dashboard)/database/actions/legalform-sanitizer";
 import { getCanonicalSanitizerStats } from "@/app/(dashboard)/database/actions/canonical-sanitizer";
 import { getSiteUrlDriftStatus } from "@/lib/seo/site-url";
+import { callModoReindex } from "@/lib/modo/call-modo-reindex";
 import { MaintenancePageShell } from "./components/maintenance-page-shell";
 
 export default async function MaintenancePage() {
@@ -22,6 +23,7 @@ export default async function MaintenancePage() {
     legalFormSanitizer,
     canonicalSanitizer,
     siteUrlDrift,
+    modoIndex,
   ] = await Promise.all([
     getOrphanStats(),
     getIndexHealth(),
@@ -33,6 +35,7 @@ export default async function MaintenancePage() {
     getLegalFormSanitizerStats(),
     getCanonicalSanitizerStats(),
     getSiteUrlDriftStatus(),
+    callModoReindex({ dryRun: true }),
   ]);
 
   return (
@@ -47,6 +50,11 @@ export default async function MaintenancePage() {
       legalFormSanitizer={legalFormSanitizer}
       canonicalSanitizer={canonicalSanitizer}
       siteUrlDrift={siteUrlDrift}
+      modoIndex={
+        modoIndex.ok
+          ? { published: modoIndex.published, due: modoIndex.due ?? 0 }
+          : { published: 0, due: 0, error: modoIndex.error }
+      }
     />
   );
 }

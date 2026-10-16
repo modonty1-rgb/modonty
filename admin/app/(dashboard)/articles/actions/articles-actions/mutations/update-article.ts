@@ -3,7 +3,9 @@
 import { absoluteUrl } from "@modonty/shared/lib/seo/absolute-url";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { ArticleStatus, Prisma } from "@prisma/client";
+import { reindexModoArticle } from "@/lib/modo/reindex-modo-article";
 import {
   calculateWordCountImproved,
   calculateReadingTime,
@@ -468,6 +470,14 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     // previous build until the blob is rebuilt.
     if (seoFailures.length === 0) {
       await revalidateModontyTag("articles");
+    }
+    // نصٌّ منشورٌ تغيّر ← مودو يعيد قراءته؛ الموقعُ يقارن بصمة النصّ فلا يُضمَّن ما لم يتغيّر.
+    if (article.status === ArticleStatus.PUBLISHED) {
+      try {
+        after(() => reindexModoArticle(article.id));
+      } catch {
+        void reindexModoArticle(article.id);
+      }
     }
 
     // Re-fetch userVersion + updatedAt after SEO generation

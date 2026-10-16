@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { isTaskLate } from "@/lib/tasks/is-task-late";
+import { workDayWindow } from "@/lib/tasks/work-day-window";
 
 import type { TaskStatusKey } from "@/lib/tasks/task-config";
 
@@ -27,15 +28,6 @@ export interface StaffDay {
   counts: Record<TaskStatusKey, number> & { late: number };
 }
 
-/** Local midnight → next local midnight. `toISOString()` would shift the day. */
-export function dayBounds(day: Date) {
-  const from = new Date(day);
-  from.setHours(0, 0, 0, 0);
-  const to = new Date(from);
-  to.setDate(to.getDate() + 1);
-  return { from, to };
-}
-
 /**
  * What each member of staff put on their plate for one day, grouped by person.
  *
@@ -43,12 +35,12 @@ export function dayBounds(day: Date) {
  * screen answers is "who is holding what right now", which a four-column board
  * cannot show — it mixes everyone's work into the same four piles.
  *
- * The day is `createdAt`, because the routine is that each person writes their
- * tasks in the morning. A task carried over from yesterday is re-entered, so it
- * appears on the day it was written down rather than the day it began.
+ * The day is the WORK day of `createdAt`: each person writes their tasks in the
+ * morning — or the evening before, which belongs to the next working day, not the
+ * night it was typed (`lib/tasks/work-day-window.ts`).
  */
 export async function getTasksByDay(day: Date): Promise<StaffDay[]> {
-  const { from, to } = dayBounds(day);
+  const { from, to } = workDayWindow(day);
   return getTasksByRange(from, to);
 }
 
