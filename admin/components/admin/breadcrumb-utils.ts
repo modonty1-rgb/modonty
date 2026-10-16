@@ -64,6 +64,7 @@ const routeLabels: Record<string, string> = {
   // الحملات الإعلانية شاشة عربية بالكامل (تقارير Meta ولوحة الحملات) — نفس منطق
   // sales-leads تحت: الكسرة الإنجليزية الوحيدة فوق شاشة عربية بالكامل.
   campaigns: 'الحملات الإعلانية',
+  videos: 'الفيديوهات',
   reports: 'التقارير',
   // شاشات «إدارة الدفع» عربية بالكامل — والبريدكرَمب كان يسقط على التحويل الآلي فيكتب
   // «Pay-preview» فوق صفحة كل كلمة فيها عربية (خالد ١٣ سبتمبر ٢٠٢٦: «خلّيها عربية»).
@@ -262,7 +263,13 @@ export function generateBreadcrumbs(
       items.push({
         label:
           entityName ||
-          (inSocialCalendar ? '…' : entityType === 'campaigns' ? 'تحليل الحملة' : `${capitalize(entityType)} ${segment.slice(0, 8)}...`),
+          (inSocialCalendar
+            ? '…'
+            : entityType === 'campaigns'
+              ? 'تحليل الحملة'
+              : entityType === 'videos'
+                ? 'فيديو مقالة'
+                : `${capitalize(entityType)} ${segment.slice(0, 8)}...`),
         href: currentPath,
       });
     } else if (segment === 'edit' && i > 1 && isObjectId(segments[i - 1])) {

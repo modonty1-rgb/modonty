@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face{font-family:T;src:url(fonts/Tajawal-Medium.ttf);font-weight:500}
+@font-face{font-family:T;src:url(fonts/Tajawal-Bold.ttf);font-weight:700}
+@font-face{font-family:T;src:url(fonts/Tajawal-ExtraBold.ttf);font-weight:800}
+@font-face{font-family:T;src:url(fonts/Tajawal-Black.ttf);font-weight:900}
+@font-face{font-family:M;src:url(fonts/Montserrat.ttf)}
+:root{--navy:#0E065A;--blue:#3030FF;--teal:#00D8D8}
+*{box-sizing:border-box;margin:0}
+html,body{background:transparent;overflow:hidden}
+body{font-family:T;color:#fff;position:relative}
+.abs{position:absolute}
+.logo{width:var(--logo);height:var(--logo)}
+.tag{background:var(--teal);color:var(--navy);font-weight:800;border-radius:999px;white-space:nowrap;line-height:1.25}
+.key{font-weight:800;line-height:1.3;text-wrap:balance}
+.key::after{content:"";display:block;width:22%;height:.12em;background:var(--teal);border-radius:9px;margin-top:.28em}
+.box{background:var(--blue);font-weight:800;line-height:1.3;border-radius:.35em;text-wrap:balance}
+.counter{background:var(--blue);border-radius:.25em;display:grid;place-items:center;font-weight:900;line-height:1}
+.credit{display:flex;align-items:center;gap:.4em;font-weight:500;opacity:.88;white-space:nowrap}
+.credit svg{width:1.3em;height:1.3em}
+.full{inset:0}
+.navy{background:var(--navy)}
+.navy-a{background:rgba(14,6,90,.88)}
+.lat{font-family:M;font-weight:700;direction:ltr}
+.btn{border:.08em solid #fff;border-radius:.3em;font-weight:800;text-align:center;padding:.25em 0}
+.btn.yes{background:var(--blue);border-color:var(--blue)}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="icon" viewBox="21 14 58 58">
+    <path fill="#fff" d="M27.183,70.026c-2.338,0-4.24-1.902-4.24-4.24v-45.73c0-2.338,1.902-4.24,4.24-4.24h45.635c2.338,0,4.24,1.902,4.24,4.24v45.73c0,2.338-1.902,4.24-4.24,4.24H27.183z"/>
+    <rect x="31.025" y="53.025" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -29.2803 39.5775)" fill="#00D8D8" width="4.216" height="4.216"/>
+    <path fill="#3030FF" d="M68.976,38.265v18.978h-4.222V38.265c0-3.49-2.828-6.326-6.318-6.326c-3.498,0-6.326,2.836-6.326,6.326v18.978h-4.215V38.265c0-3.49-2.836-6.326-6.326-6.326c-3.498,0-6.326,2.836-6.326,6.326v10.541h-4.215V38.265c0-0.717,0.07-1.426,0.21-2.111c0.312-1.558,0.974-2.984,1.893-4.215c0.6-0.795,1.309-1.504,2.111-2.103c1.76-1.324,3.95-2.111,6.326-2.111c2.368,0,4.558,0.787,6.326,2.111c0.795,0.592,1.504,1.309,2.104,2.103c0.6-0.795,1.309-1.504,2.111-2.103c1.761-1.324,3.95-2.111,6.326-2.111c2.368,0,4.557,0.787,6.318,2.111c0.802,0.592,1.519,1.309,2.111,2.103c0.919,1.231,1.582,2.657,1.901,4.215C68.898,36.839,68.976,37.548,68.976,38.265z"/>
+  </symbol>
+  <symbol id="shield" viewBox="0 0 100 100">
+    <path fill="#0B0A5C" stroke="#00D8D8" stroke-width="5" d="M50 5 86 19v29c0 23-13 39-36 48C27 87 14 71 14 48V19L50 5Z"/>
+    <g transform="translate(0 -6)"><path fill="#F3F3F3" d="M74.41 50.23v24.42h-5.43V50.23c0-4.49-3.64-8.14-8.13-8.14-4.5 0-8.14 3.65-8.14 8.14v24.42h-5.42V50.23c0-4.49-3.65-8.14-8.14-8.14-4.5 0-8.14 3.65-8.14 8.14V63.8h-5.42V50.23c0-.92.09-1.83.27-2.72.4-2 1.25-3.84 2.44-5.42.77-1.02 1.68-1.93 2.72-2.71 2.26-1.7 5.08-2.72 8.14-2.72 3.05 0 5.86 1.01 8.14 2.72 1.02.76 1.93 1.68 2.71 2.71.77-1.02 1.68-1.93 2.72-2.71 2.27-1.7 5.08-2.72 8.14-2.72 3.05 0 5.86 1.01 8.13 2.72 1.03.76 1.95 1.68 2.72 2.71 1.18 1.58 2.03 3.42 2.45 5.42.18.89.28 1.8.28 2.72Z"/></g>
+  </symbol>
+</svg>
+<div id="root"></div>
+<script>
+const P = JSON.parse(decodeURIComponent(location.hash.slice(1)));
+const L = P.mode === "long", T = P.mode === "thumb";
+const W = L ? 1920 : T ? 1280 : 1080, H = L ? 1080 : T ? 720 : 1920;
+document.body.style.width = W + "px"; document.body.style.height = H + "px";
+const root = document.getElementById("root");
+const el = (cls, html, css) => { const d = document.createElement("div"); d.className = "abs " + cls; d.innerHTML = html || ""; Object.assign(d.style, css || {}); root.appendChild(d); return d; };
+const icon = (sz, css) => el("", `<svg class="logo" style="--logo:${sz}px"><use href="#icon"/></svg>`, css);
+const credit = (sz, css) => el("credit", `<svg><use href="#shield"/></svg>${P.client}`, Object.assign({fontSize: sz + "px"}, css));
+const k = P.kind;
+const lockup = (sz, css) => el("", `<div style="display:flex;align-items:center;gap:${sz*0.2}px;flex-direction:row">
+  <svg class="logo" style="--logo:${sz}px"><use href="#icon"/></svg>
+  <div style="width:${Math.max(2, sz*0.03)}px;height:${sz*0.7}px;background:rgba(255,255,255,.45);border-radius:2px"></div>
+  <img src="assets/client-logo.png" style="width:${sz}px;height:${sz}px;border-radius:${sz*0.16}px;display:block"></div>`, css);
+
+if (T) {
+  el("full", "", {background: "linear-gradient(90deg, rgba(14,6,90,0) 38%, rgba(14,6,90,.92) 52%, #0E065A 60%)"});
+  el("center", `<div class="key" style="font-size:118px;font-weight:900;line-height:1.15">${P.words}</div>`, {right: "48px", top: "0", bottom: "0", width: "560px"});
+  lockup(92, {right: "40px", top: "36px"});
+} else if (L) {
+  const opaque = ["chapter", "quiz", "number", "end"].includes(k);
+  if (k === "chapter") {
+    el("full navy", "");
+    const ar = String(P.n).padStart(2, "0").replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+    el("center", `<div style="font-weight:900;font-size:72px;color:var(--teal);line-height:1">${ar}</div>
+      <div style="font-weight:900;font-size:128px;line-height:1.2;margin-top:10px">${P.series}</div>
+      <div style="font-weight:700;font-size:52px;color:#D9D6FF;margin-top:8px">${P.title}</div>
+      <div style="width:120px;height:8px;background:var(--teal);border-radius:9px;margin-top:34px"></div>`, {inset: "0"});
+  } else if (k === "quiz") {
+    el("full navy", "");
+    el("center", `<div class="tag" style="font-size:40px;padding:6px 26px;margin-bottom:46px">صح ولا خطأ؟</div>
+      <div style="font-weight:800;font-size:92px;line-height:1.3;max-width:1400px">${P.claim}</div>
+      <div style="display:flex;gap:40px;margin-top:70px;font-size:64px;width:720px">
+        <div class="btn yes" style="flex:1">صح</div><div class="btn" style="flex:1">خطأ</div></div>`, {inset: "0"});
+  } else if (k === "number") {
+    el("full navy", "");
+    el("center", `<div class="tag" style="font-size:40px;padding:6px 26px;margin-bottom:24px">رقم يصدمك</div>
+      <div style="font-weight:900;font-size:300px;line-height:1.05">${P.number}</div>
+      <div style="font-weight:800;font-size:64px;color:var(--teal);margin-top:6px">${P.sub}</div>`, {inset: "0"});
+  } else if (k === "end") {
+    el("full navy-a", "");
+    el("center", `<div style="display:flex;align-items:center;gap:34px"><svg class="logo" style="--logo:180px"><use href="#icon"/></svg><div style="font-weight:900;font-size:64px;color:var(--teal)">×</div><img src="assets/client-logo.png" style="width:180px;height:180px;border-radius:28px"></div>
+      <div style="font-weight:900;font-size:120px;line-height:1.2;margin-top:24px">مدونتي<span style="color:var(--teal)">.</span></div>
+      <div style="font-weight:700;font-size:50px;color:#E3E1FF;margin-top:6px">التفاصيل كاملة في المقالة</div>
+      <div class="tag lat" style="font-size:40px;padding:10px 30px;margin-top:28px">modonty.com</div>
+      <div class="credit" style="font-size:32px;margin-top:34px"><svg><use href="#shield"/></svg>${P.client}</div>`,
+      {right: "0", top: "0", bottom: "0", width: "50%"});
+  } else {
+    // image beats: card is composed by ffmpeg on the left; text panel on the right
+    el("", `<div class="tag" style="font-size:38px;padding:6px 24px;display:inline-block">${P.tag || ""}</div>`, {right: "112px", top: "250px", display: P.tag ? "block" : "none"});
+    if (k === "hook") {
+      el("box", P.key, {right: "112px", top: "330px", width: "620px", fontSize: "82px", padding: "22px 34px"});
+    } else if (k === "reveal") {
+      el("box", P.answer, {right: "112px", top: "340px", fontSize: "96px", padding: "10px 46px"});
+      el("key", P.key, {right: "112px", top: "510px", width: "620px", fontSize: "66px"});
+    } else if (k === "list") {
+      el("counter", P.count, {right: "112px", top: "340px", width: "130px", height: "130px", fontSize: "92px"});
+      el("key", P.key, {right: "112px", top: "500px", width: "620px", fontSize: "70px"});
+    } else {
+      el("key", P.key, {right: "112px", top: "350px", width: "620px", fontSize: "70px"});
+    }
+    if (P.credit) credit(34, {right: "112px", top: "800px"});
+  }
+  if (k !== "end") lockup(84, {right: "56px", top: "44px"});
+} else {
+  // short, 1080x1920
+  if (k === "number") {
+    el("full navy", "");
+    el("center", `<div class="tag" style="font-size:44px;padding:6px 28px;margin-bottom:30px">رقم يصدمك</div>
+      <div style="font-weight:900;font-size:230px;line-height:1.05">${P.number}</div>
+      <div style="font-weight:800;font-size:62px;color:var(--teal);margin-top:10px">${P.sub}</div>`, {inset: "0", paddingBottom: "200px"});
+  } else if (k === "end") {
+    el("full navy-a", "");
+    el("center", `<div style="display:flex;align-items:center;gap:40px"><svg class="logo" style="--logo:230px"><use href="#icon"/></svg><div style="font-weight:900;font-size:80px;color:var(--teal)">×</div><img src="assets/client-logo.png" style="width:230px;height:230px;border-radius:36px"></div>
+      <div style="font-weight:900;font-size:140px;line-height:1.2;margin-top:30px">مدونتي<span style="color:var(--teal)">.</span></div>
+      <div style="font-weight:700;font-size:56px;color:#E3E1FF;margin-top:8px">التفاصيل كاملة في المقالة</div>
+      <div class="tag lat" style="font-size:44px;padding:12px 34px;margin-top:30px">modonty.com</div>
+      <div class="credit" style="font-size:36px;margin-top:40px"><svg><use href="#shield"/></svg>${P.client}</div>`, {inset: "0", paddingBottom: "160px"});
+  } else {
+    if (k === "hook") {
+      el("box", P.key, {left: "70px", right: "70px", top: "250px", fontSize: "74px", padding: "20px 30px", textAlign: "center"});
+    } else {
+      el("", `<div class="tag" style="font-size:44px;padding:6px 28px;display:inline-block">${P.tag || ""}</div>`, {left: "0", right: "0", top: "280px", textAlign: "center"});
+    }
+    if (k === "list") el("counter", P.count, {left: "56px", top: "48px", width: "120px", height: "120px", fontSize: "84px"});
+    if (k === "cta") el("box", P.key + " ↓", {left: "180px", right: "180px", top: "1240px", fontSize: "64px", padding: "16px 30px", textAlign: "center"});
+    else credit(38, {left: "0", right: "0", top: "1250px", justifyContent: "center"});
+  }
+  if (k !== "end") lockup(104, {right: "48px", top: "56px"});
+}
+document.title = "ready";
+</script>
+</body>
+</html>

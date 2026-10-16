@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصنع فيديو مدونتي</title>
+<meta name="description" content="خطة قناة يوتيوب مدونتي: من كل مقالة فيديو، على سيرفر كونتابو، بالمهارات الـ١١">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F4F7FB; --surface:#FFFFFF; --surface-2:#EAF0F8; --line:#D5DEEC;
+  --ink:#0E1A3A; --ink-2:#44527A; --ink-3:#5E6B8C;
+  --brand:#1B4FE0; --brand-soft:#E3EBFF; --brand-ink:#1840B8;
+  --ok:#0A7A55; --ok-soft:#DDF5EB;
+  --warn:#8A5A00; --warn-soft:#FFF1D6;
+  --bad:#B42318; --bad-soft:#FDE4E1;
+  --hero:#070F2B; --hero-2:#152657; --hero-fg:#F4F7FB; --hero-fg-2:#B9C5E2; --turq:#2EE6D6;
+  --font:"IBM Plex Sans Arabic",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A1024; --surface:#111A36; --surface-2:#18234A; --line:#26335E;
+  --ink:#EEF2FB; --ink-2:#B6C1DE; --ink-3:#97A3C4;
+  --brand:#7FA2FF; --brand-soft:#1B2A5C; --brand-ink:#A9C0FF;
+  --ok:#5BD6A6; --ok-soft:#0F3328; --warn:#F2C26B; --warn-soft:#3A2C0C; --bad:#FF9A8F; --bad-soft:#3D1712;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0A1024; --surface:#111A36; --surface-2:#18234A; --line:#26335E;
+  --ink:#EEF2FB; --ink-2:#B6C1DE; --ink-3:#97A3C4;
+  --brand:#7FA2FF; --brand-soft:#1B2A5C; --brand-ink:#A9C0FF;
+  --ok:#5BD6A6; --ok-soft:#0F3328; --warn:#F2C26B; --warn-soft:#3A2C0C; --bad:#FF9A8F; --bad-soft:#3D1712;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16.5px/1.85 var(--font);overflow-x:hidden}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{line-height:1.35;text-wrap:balance}
+a{color:var(--brand-ink)}
+code,.mono{font-family:var(--mono);font-size:.88em;direction:ltr;unicode-bidi:isolate}
+.wrap{max-width:1080px;margin-inline:auto;padding-inline:16px}
+@media (min-width:720px){.wrap{padding-inline:32px}}
+
+/* hero */
+.hero{background:radial-gradient(1200px 400px at 85% -10%,var(--hero-2),transparent 70%),var(--hero);color:var(--hero-fg);padding-block:56px 48px}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;color:var(--turq);font-weight:600;font-size:14px;margin-bottom:14px}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--turq);border-radius:2px}
+.hero h1{font-size:clamp(28px,5vw,46px);font-weight:700}
+.hero .sub{color:var(--hero-fg-2);margin-top:12px;max-width:64ch;font-size:clamp(16px,1.6vw,18.5px)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:32px}
+.stat{border:1px solid rgba(185,197,226,.18);border-radius:14px;padding:14px 16px;background:rgba(255,255,255,.03)}
+.stat b{display:block;font-size:26px;font-weight:700;color:#fff}
+.stat span{color:var(--hero-fg-2);font-size:14px}
+
+/* toc */
+.toc{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.toc .wrap{display:flex;gap:6px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+.toc a{white-space:nowrap;text-decoration:none;color:var(--ink-2);font-size:14px;font-weight:500;padding:6px 12px;border-radius:999px}
+.toc a:hover{background:var(--surface-2);color:var(--ink)}
+
+section{padding-block:44px;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+h2{font-size:clamp(22px,3vw,30px);font-weight:700;margin-bottom:6px}
+.lead{color:var(--ink-2);max-width:70ch;margin-bottom:22px}
+
+/* verdict */
+.verdict{background:var(--surface);border:1px solid var(--line);border-inline-start:5px solid var(--brand);border-radius:16px;padding:22px 24px}
+.verdict ol{margin:0;padding-inline-start:22px;display:grid;gap:10px}
+.verdict li::marker{color:var(--brand);font-weight:700}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+th,td{padding:12px 14px;text-align:start;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--surface-2);font-weight:600;color:var(--ink);font-size:14px}
+tr:last-child td{border-bottom:0}
+td.k{font-weight:600;white-space:nowrap}
+.muted{color:var(--ink-3);font-size:14px}
+
+.tag{display:inline-block;font-size:13px;font-weight:600;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.t-ok{background:var(--ok-soft);color:var(--ok)}
+.t-warn{background:var(--warn-soft);color:var(--warn)}
+.t-bad{background:var(--bad-soft);color:var(--bad)}
+.t-brand{background:var(--brand-soft);color:var(--brand-ink)}
+
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card h3{font-size:17.5px;font-weight:700;margin-bottom:6px}
+.card p{color:var(--ink-2);font-size:15.5px}
+
+/* pipeline */
+.pipe{display:grid;gap:10px;counter-reset:s}
+.step{display:grid;grid-template-columns:44px 1fr;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;position:relative}
+.step::before{counter-increment:s;content:counter(s,arabic-indic);display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--brand);color:#fff;font-weight:700;font-size:19px}
+:root[data-theme="dark"] .step::before{color:#0A1024}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .step::before{color:#0A1024}}
+.step h3{font-size:17px;font-weight:700;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.step p{color:var(--ink-2);font-size:15.5px;margin-top:2px}
+.step .who{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.step.human{border-color:var(--warn);background:linear-gradient(0deg,var(--warn-soft),var(--warn-soft)) padding-box}
+
+pre{background:var(--hero);color:#DCE4F7;border-radius:14px;padding:18px 20px;overflow-x:auto;direction:ltr;text-align:left;font:13.5px/1.7 var(--mono);margin:0}
+pre .c{color:#7F8CB0}
+
+.decide{display:grid;gap:14px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.q h3{font-size:17.5px;font-weight:700}
+.q .opts{display:grid;gap:8px;margin-top:10px}
+.opt{border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:15.5px;color:var(--ink-2)}
+.opt.rec{border-color:var(--ok);background:var(--ok-soft);color:var(--ink)}
+.opt b{color:var(--ink)}
+
+.note{border-radius:12px;padding:14px 16px;background:var(--warn-soft);color:var(--ink);font-size:15.5px;margin-top:16px}
+.src{columns:2 280px;font-size:14.5px;padding-inline-start:20px}
+.src li{margin-bottom:6px;break-inside:avoid}
+footer{padding-block:28px;color:var(--ink-3);font-size:14px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">خطة عمل · ١٦ أكتوبر ٢٠٢٦</div>
+    <h1>مصنع فيديو مدونتي: من كل مقالة فيديو</h1>
+    <p class="sub">سيرفر كونتابو يحوّل مقالات مدونتي إلى فيديوهات قصيرة وطويلة بمهارات يوتيوب الـ١١، ويرفعها خاصة، وما يُنشر شيء إلا بضغطة من الفريق.</p>
+    <div class="stats">
+      <div class="stat"><b>٢</b><span>مشترك في القناة اليوم</span></div>
+      <div class="stat"><b>٤</b><span>فيديوهات منشورة</span></div>
+      <div class="stat"><b>٥٠</b><span>مقالة جاهزة كمادة خام</span></div>
+      <div class="stat"><b>٠٫٠٩</b><span>حمل السيرفر (٤ معالجات)</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="المحتويات">
+  <div class="wrap">
+    <a href="#verdict">الخلاصة</a><a href="#now">الوضع اليوم</a><a href="#why">ليش ينجح</a><a href="#pipe">خط الإنتاج</a><a href="#skills">المهارات</a><a href="#rhythm">الإيقاع</a><a href="#rules">حماية القناة</a><a href="#phases">المراحل</a><a href="#server">السيرفر</a><a href="#cost">التكلفة</a><a href="#kpi">القياس</a><a href="#decide">قراراتك</a>
+  </div>
+</nav>
+
+<main>
+<section id="verdict"><div class="wrap">
+  <h2>الخلاصة</h2>
+  <p class="lead">القناة ما تحتاج أفكار، تحتاج <b>تحويل منتظم</b> للمحتوى اللي عندنا أصلًا. المقالات جاهزة، والسيرفر فاضي، والمهارات تكتب وتفحص. الناقص هو الخط اللي يربطهم.</p>
+  <div class="verdict"><ol>
+    <li><b>كل مقالة تنشر في مدونتي تصير «شورت»</b> على السيرفر تلقائيًا: سكربت، وصوت عربي، ومونتاج، وعنوان، ووصف، ويُرفع للقناة <b>خاصًا</b>.</li>
+    <li><b>الفريق يعتمد من تليجرام</b> بضغطة «انشر» أو «عدّل». ما في نشر آلي أبدًا، وهذا اللي يحمي القناة من سياسة يوتيوب ضد المحتوى المكرر.</li>
+    <li><b>فيديو طويل واحد كل أسبوع</b> يجمع ٣ مقالات في موضوع واحد، مثل «صحة العين» من مقالتي المياه البيضاء وعدسات توريك.</li>
+    <li><b>البداية من المخزون</b>: الـ٥٠ مقالة الحالية تكفي ١٠ أسابيع بمعدل ٥ شورتس في الأسبوع، قبل ما ننتظر مقالة جديدة.</li>
+    <li><b>التكلفة الإضافية الثابتة تقريبًا صفر</b>: السيرفر موجود، والرفع مجاني، والصوت ضمن الحصة المجانية. يبقى استهلاك Claude، ونقيسه من أول فيديو.</li>
+  </ol></div>
+</div></section>
+
+<section id="now"><div class="wrap">
+  <h2>الوضع اليوم</h2>
+  <p class="lead">مقيس اليوم، لا مفترض.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>البند</th><th>القيمة</th><th>المصدر</th></tr></thead>
+    <tbody>
+      <tr><td class="k">القناة <code>@modonty</code></td><td>٢ مشترك · ٤ فيديوهات</td><td class="muted">صفحة القناة العامة</td></tr>
+      <tr><td class="k">المادة الخام</td><td>٥٠ مقالة في الخلاصة، أغلبها لعيادات وأطباء (عيون، نساء وولادة، أسنان، استشارات نفسية، تحاليل)، وفيها كرة وتسويق بالمحتوى</td><td class="muted"><code>modonty.com/feed.xml</code></td></tr>
+      <tr><td class="k">السيرفر</td><td>Ubuntu 24.04 · ٤ معالجات · ٧٫٨ جيجا رام (٧ متاحة) · ٦١ جيجا فاضية من ٧٢ · الحمل ٠٫٠٩</td><td class="muted">فحص SSH للقراءة فقط</td></tr>
+      <tr><td class="k">موجود على السيرفر</td><td>ffmpeg 6.1 · Python 3.12 · Docker (WAHA) · cron للرادار والكورة والنشر على واتساب وتليجرام</td><td class="muted">نفس الفحص</td></tr>
+      <tr><td class="k">ناقص على السيرفر</td><td>Node وClaude Code · خط عربي (الموجود DejaVu فقط) · مكتبة يوتيوب · <code>yt-dlp</code></td><td class="muted">نفس الفحص</td></tr>
+      <tr><td class="k">المهارات الـ١١</td><td>مثبتة على جهازك وتشتغل. <b>أدوات التقييم مكتوبة للإنجليزي</b>: افتتاحية عربية قوية أخذت ١٠ من ١٠٠، وعنوان عربي سليم جاه تحذير خاطئ</td><td class="muted">تجربة فعلية اليوم</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="why"><div class="wrap">
+  <h2>ليش هذا ينجح لمدونتي بالذات</h2>
+  <p class="lead">أغلب القنوات تبدأ من الصفر وتدوّر على مواضيع. مدونتي عندها المواضيع والبحث جاهزين.</p>
+  <div class="cards">
+    <div class="card"><h3>المادة مبنية على أسئلة حقيقية</h3><p>عناوين المقالات أصلًا أسئلة يبحث عنها الناس، مثل «ما هو تحليل CBC» و«سبب عدم ظهور الموقع في قوقل». الشورت يجاوب السؤال، والمقالة تكمّل.</p></div>
+    <div class="card"><h3>ميزة بيع للعميل</h3><p>الطبيب أو العيادة يحصل فيديو عن مقالته في قناة مدونتي، ورابط مقالته في الوصف. هذي قيمة تنضاف للباقة بدون تكلفة إضافية.</p></div>
+    <div class="card"><h3>حجم ثابت ومضبوط</h3><p>شورت لكل مقالة بدل فيديو كل شهر، وكل واحد يمر على عين إنسان. الاستمرار يفرق أكثر من الكثرة.</p></div>
+  </div>
+</div></section>
+
+<section id="pipe"><div class="wrap">
+  <h2>خط الإنتاج على السيرفر</h2>
+  <p class="lead">ثماني خطوات. السبع الأولى آلية، والقرار الأخير بيد إنسان. خطوة الربط بالموقع تجي في المرحلة الرابعة.</p>
+  <div class="pipe">
+    <div class="step"><div><h3>الرصد <span class="tag t-brand">كل ساعة</span></h3><p>يقرأ <code>feed.xml</code>. أي مقالة جديدة تدخل الطابور في قاعدة SQLite، ونفس الطابور يسحب من المخزون القديم لو ما فيه جديد.</p></div></div>
+    <div class="step"><div><h3>الكتابة <span class="tag t-brand">Claude على السيرفر</span></h3><p>Claude Code يشتغل بدون شاشة بأمر <code>claude -p</code> ويستدعي <code>/yt-shorts</code> و<code>/yt-package</code> و<code>/yt-seo</code> على نص المقالة. الناتج: افتتاحية، وسكربت من ٤٠ إلى ٥٥ ثانية، وعنوان، ونص الصورة المصغّرة، ووصف فيه رابط المقالة. <b>الشرط: ولا معلومة من خارج المقالة.</b></p></div></div>
+    <div class="step"><div><h3>الفحص الآلي</h3><p>نسخة عربية من <code>hookscore</code>: إذا جات الافتتاحية تحت ٦٠ يعيد كتابتها مرة وحدة. و<code>title.py</code> يفحص الطول والتكرار بين العنوان والصورة.</p></div></div>
+    <div class="step"><div><h3>الصوت</h3><p>Azure Speech بصوت سعودي، رجالي (<code>ar-SA-HamedNeural</code>) أو نسائي (<code>ar-SA-ZariyahNeural</code>)، مع توقيت كل كلمة، ومنه نطلع ملف الترجمة SRT.</p></div></div>
+    <div class="step"><div><h3>المونتاج <span class="tag t-brand">ffmpeg</span></h3><p>فيديو عمودي ١٠٨٠×١٩٢٠ من صور المقالة نفسها بحركة بطيئة، مع نص عربي على الشاشة بخط IBM Plex Sans Arabic، وشعار مدونتي، وشاشة أخيرة. وقبل المونتاج يمر الصوت على <code>deadair.py</code> عشان يقص الفراغات.</p></div></div>
+    <div class="step"><div><h3>الرفع خاصًا</h3><p>YouTube Data API برفع خاص (<code>private</code>)، مع الصورة المصغّرة وملف الترجمة، ورابط المقالة في الوصف ومعه وسم التتبع <code>utm_source=youtube</code>.</p></div></div>
+    <div class="step human"><div><h3>الاعتماد <span class="tag t-warn">إنسان</span></h3><p>توصل رسالة لمجموعة الفريق على تليجرام فيها رابط المعاينة وزرّان: «انشر» يحوّل الفيديو إلى عام، و«عدّل» يكتب الملاحظة ويرجّعه للخطوة الثانية.</p></div></div>
+    <div class="step"><div><h3>الرجوع للموقع <span class="tag t-ok">المرحلة ٤</span></h3><p>رقم الفيديو يرجع لمقالته عن طريق الأدمن، فيظهر الفيديو داخل المقالة. هذي الخطوة تحتاج تعديل في الأدمن والموقع.</p></div></div>
+  </div>
+</div></section>
+
+<section id="skills"><div class="wrap">
+  <h2>وين تشتغل كل مهارة</h2>
+  <p class="lead">المهارات اللي ملفها تعليمات بس تكتب بالعربي على طول. المهارات اللي معها أداة Python تحتاج تعريب للأداة.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>المهارة</th><th>دورها عندنا</th><th>متى</th><th>جاهزيتها للعربي</th></tr></thead>
+    <tbody>
+      <tr><td class="k"><code>yt-shorts</code></td><td>تكتب سطر افتتاحية جديد لكل شورت، ونص أول ثانيتين على الشاشة</td><td>آلي · الخطوة ٢</td><td><span class="tag t-ok">تشتغل</span></td></tr>
+      <tr><td class="k"><code>yt-package</code></td><td>العنوان ونص الصورة المصغّرة كوحدة وحدة</td><td>آلي · الخطوة ٢</td><td><span class="tag t-warn">جزئي</span> <span class="muted">الطول والأرقام والتكرار تشتغل. الكلمات المبهمة وتحذير «أول ٣ كلمات حشو» مكتوبة للإنجليزي</span></td></tr>
+      <tr><td class="k"><code>yt-seo</code></td><td>الوصف و٣ عبارات بحث لازم يكسبها الفيديو</td><td>آلي · الخطوة ٢</td><td><span class="tag t-ok">تشتغل</span></td></tr>
+      <tr><td class="k"><code>yt-script</code></td><td>سكربت الفيديو الطويل الأسبوعي وخمس افتتاحيات مقيّمة</td><td>أسبوعي · الأحد</td><td><span class="tag t-bad">تحتاج تعريب</span> <span class="muted">أداة <code>hookscore</code> أعطت افتتاحية عربية قوية ١٠ من ١٠٠</span></td></tr>
+      <tr><td class="k"><code>yt-chapters</code></td><td>فصول الفيديو الطويل</td><td>آلي</td><td><span class="tag t-warn">جزئي</span> <span class="muted">من قراءة الكود: حدود الفصول تُستنتج من فترات السكوت وتشتغل، بس أسماؤها بتطلع «Section»</span></td></tr>
+      <tr><td class="k"><code>yt-edit</code></td><td>قص الفراغات من التسجيلات البشرية، مثل مقاطع الأطباء</td><td>عند الحاجة</td><td><span class="tag t-warn">جزئي</span> <span class="muted">يكتشف الفراغات، لكنه ما يعرف «اممم» و«يعني» و«طيب»</span></td></tr>
+      <tr><td class="k"><code>yt-comment</code></td><td>ردود على التعليقات بصوت مدونتي، ويقترح التعليق اللي يتثبّت</td><td>يومي · ١٠ دقائق</td><td><span class="tag t-ok">تشتغل</span></td></tr>
+      <tr><td class="k"><code>yt-retention</code></td><td>يقرأ ملف الاحتفاظ من الاستوديو: وين يطلع الناس من الفيديو</td><td>أسبوعي · الأحد</td><td><span class="tag t-ok">تشتغل</span> <span class="muted">أرقام فقط</span></td></tr>
+      <tr><td class="k"><code>yt-plan</code></td><td>خطة الأسبوع على قدر الساعات المتاحة فعلًا</td><td>أسبوعي · الأحد</td><td><span class="tag t-ok">تشتغل</span></td></tr>
+      <tr><td class="k"><code>yt-viral</code></td><td>يرصد أنجح الفيديوهات العربية في مجال الصحة، مقارنة بمتوسط قناتها</td><td>شهري</td><td><span class="tag t-warn">جزئي</span> <span class="muted">حساب المضاعِف يشتغل، وتصنيف الصيغة إنجليزي. تحتاج <code>yt-dlp</code></span></td></tr>
+      <tr><td class="k"><code>yt-audit</code></td><td>تدقيق القناة كاملة، وينتهي بإصلاح واحد بس</td><td>بعد ٣٠ فيديو</td><td><span class="tag t-ok">تشتغل</span></td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="rhythm"><div class="wrap">
+  <h2>الإيقاع الأسبوعي</h2>
+  <p class="lead">أول أسبوعين نبدأ بـ٣ شورتس وفيديو طويل. بعدها نرفع إلى ٥ شورتس إذا الاعتماد يمشي بدون تأخير. مهارة <code>yt-plan</code> نفسها تقول إن الاستمرار أهم من الكثرة.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>الوقت</th><th>الشغل</th><th>المهارة</th><th>من يسويه</th></tr></thead>
+    <tbody>
+      <tr><td class="k">يوميًا، الأحد إلى الخميس</td><td>شورت واحد من مقالة جديدة أو من المخزون</td><td><code>yt-shorts</code> · <code>yt-package</code> · <code>yt-seo</code></td><td>السيرفر، والفريق يعتمد</td></tr>
+      <tr><td class="k">الثلاثاء</td><td>فيديو طويل من ٥ إلى ٨ دقائق يجمع ٣ مقالات في موضوع، مثل «تأخر نمو الطفل» من مقالتين موجودتين</td><td><code>yt-script</code> · <code>yt-chapters</code></td><td>السيرفر يكتب، والإنسان يعتمد السكربت قبل المونتاج</td></tr>
+      <tr><td class="k">الأحد</td><td>قراءة أرقام الأسبوع الماضي وخطة الأسبوع الجاي</td><td><code>yt-retention</code> · <code>yt-plan</code></td><td>Claude على جهازك</td></tr>
+      <tr><td class="k">يوميًا</td><td>الرد على التعليقات</td><td><code>yt-comment</code></td><td>الفريق، ١٠ دقائق</td></tr>
+      <tr><td class="k">شهريًا</td><td>رصد المنافسين والصيغ الناجحة</td><td><code>yt-viral</code></td><td>السيرفر</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="rules"><div class="wrap">
+  <h2>قواعد تحمي القناة</h2>
+  <p class="lead">في ١٥ يوليو ٢٠٢٥ صار اسم السياسة عند يوتيوب «المحتوى غير الأصيل»، وهي تمنع المحتوى المكرر المنتج بالجملة بقوالب الذكاء الاصطناعي. وسياسة السبام تضرب مثال بقنوات تستخدم نفس الموسيقى وصورًا مولّدة وسكربتًا يقرؤه صوت آلي. القواعد هذي تبعدنا عن هالوصف.</p>
+  <div class="cards">
+    <div class="card"><h3>لا نشر آلي</h3><p>كل فيديو يمر على إنسان قبل ما يصير عام. الرفع دائمًا خاص.</p></div>
+    <div class="card"><h3>مادة خاصة بكل فيديو</h3><p>المعلومة من المقالة نفسها، والصور صورها، وما نستخدم صورًا عامة مولّدة.</p></div>
+    <div class="card"><h3>تنويع حقيقي</h3><p>٣ قوالب بصرية بالتناوب، وصوتين، وصيغة افتتاحية مختلفة كل مرة من ٢١ صيغة.</p></div>
+    <div class="card"><h3>المحتوى الطبي</h3><p>ولا معلومة من خارج المقالة اللي اعتمدها الطبيب، واسمه ورابط مقالته في الوصف.</p></div>
+    <div class="card"><h3>الإفصاح</h3><p>نفعّل خيار «محتوى معدّل أو اصطناعي» مع الصوت الآلي احتياطًا، لأن صفحة يوتيوب ما تحسم حالة صوت آلي عام ما يقلّد شخص حقيقي.</p></div>
+    <div class="card"><h3>صوت الطبيب أقوى</h3><p>نطلب من كل عميل مقطع ٦٠ ثانية بالجوال يجاوب فيه سؤال مقالته. هذا أصدق من أي صوت آلي، ومهارة <code>yt-edit</code> تنظّفه.</p></div>
+  </div>
+</div></section>
+
+<section id="phases"><div class="wrap">
+  <h2>المراحل</h2>
+  <p class="lead">كل مرحلة لها شرط إقفال يتقاس، وما ننتقل للي بعدها قبل ما يتحقق.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>المرحلة</th><th>المدة</th><th>الشغل</th><th>شرط الإقفال</th></tr></thead>
+    <tbody>
+      <tr><td class="k">٠ · التجهيز</td><td>٢–٣ أيام</td><td>مشروع Google Cloud وصلاحية OAuth لحساب القناة · مفتاح Azure Speech المجاني · تثبيت Node وClaude Code على السيرفر · خط IBM Plex Sans Arabic · شورت واحد من البداية للنهاية يدويًا</td><td>شورت خاص على القناة، وزمن المونتاج وتكلفة Claude مقيسين</td></tr>
+      <tr><td class="k">١ · التعريب</td><td>٣–٤ أيام</td><td>نسخة عربية من <code>hookscore</code> (مخاطبة القارئ، والأرقام العربية والهندية، وكلمات الحشو) · قوائم عربية لأدوات <code>title</code> و<code>deadair</code> و<code>chapters</code></td><td>الأداة ترتّب ٢٠ افتتاحية عربية قريب من ترتيب الفريق</td></tr>
+      <tr><td class="k">٢ · المصنع</td><td>أسبوع</td><td>مجلد <code>/opt/yt-factory</code> · مهام cron · أزرار الاعتماد في تليجرام · تسجيل التكلفة لكل فيديو</td><td>٧ مسودات ورا بعض، وما احتاجت أي تدخل غير زر الاعتماد</td></tr>
+      <tr><td class="k">٣ · التشغيل</td><td>٦ أسابيع</td><td>٣ شورتس وفيديو طويل أسبوعيًا، وبعدها ٥ شورتس · مراجعة كل أحد</td><td>٣٠ فيديو منشور، ومهارة <code>yt-audit</code> تحدد إصلاحًا واحدًا</td></tr>
+      <tr><td class="k">٤ · الربط والتوسع</td><td>بعد المرحلة ٣</td><td>الفيديو داخل مقالته في الموقع · برنامج مقاطع الأطباء · الفيديو كميزة في الباقات</td><td>يُحدد بعد أرقام المرحلة ٣</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="server"><div class="wrap">
+  <h2>هيكل السيرفر</h2>
+  <p class="lead">بجنب الرادار والكورة وبنفس أسلوبهم: Python و SQLite و cron مع قفل <code>flock</code>. المونتاج يشتغل بأولوية منخفضة (<code>nice</code>) وفيديو واحد في كل مرة، عشان ما يزاحم تحديثات الكورة اللي تشتغل كل دقيقة.</p>
+<pre><span class="c"># /opt/yt-factory</span>
+.env                <span class="c"># 600 · GOOGLE_CLIENT_ID/SECRET/REFRESH_TOKEN · AZURE_SPEECH_KEY/REGION</span>
+                    <span class="c">#       ANTHROPIC_API_KEY · TELEGRAM_BOT_TOKEN/CHAT_ID</span>
+factory.py          <span class="c"># watch · queue · write (claude -p) · upload · approvals</span>
+render.py           <span class="c"># ffmpeg: 1080x1920 shorts · 1920x1080 long · burned Arabic captions</span>
+voice.py            <span class="c"># Azure TTS + word timings -> captions.srt</span>
+templates/          <span class="c"># 3 visual templates · logo · end screen · fonts</span>
+.claude/skills/     <span class="c"># the 11 yt-* skills + Arabic tools (hookscore_ar.py ...)</span>
+factory.sqlite      <span class="c"># videos(slug, status, yt_id, tokens_in, tokens_out, render_sec, notes)</span>
+
+<span class="c"># crontab</span>
+0 * * * *    cd /opt/yt-factory && flock -n /tmp/ytf-watch.lock venv/bin/python factory.py --watch
+*/10 * * * * cd /opt/yt-factory && flock -n /tmp/ytf-work.lock  nice -n 10 venv/bin/python factory.py --work
+* * * * *    cd /opt/yt-factory && flock -n /tmp/ytf-appr.lock  venv/bin/python factory.py --approvals</pre>
+</div></section>
+
+<section id="cost"><div class="wrap">
+  <h2>التكلفة</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>البند</th><th>الشهري</th><th>الأساس</th></tr></thead>
+    <tbody>
+      <tr><td class="k">السيرفر</td><td>ولا ريال إضافي</td><td>نفس السيرفر الحالي، والحمل اليوم ٠٫٠٩</td></tr>
+      <tr><td class="k">الرفع على يوتيوب</td><td>مجاني</td><td>١٠٠ رفعة في اليوم بحصة مستقلة عن باقي الواجهة من ١ يونيو ٢٠٢٦</td></tr>
+      <tr><td class="k">الصوت</td><td>مجاني غالبًا</td><td>الباقة المجانية في Azure: نصف مليون حرف شهريًا. الشورت تقريبًا ٧٠٠–٩٠٠ حرف (تقدير)، يعني نبقى داخل المجاني بفارق كبير. سعر الباقة المدفوعة ما ظهر في صفحة الأسعار، فنقرأه وقت التفعيل</td></tr>
+      <tr><td class="k">Claude</td><td>يُقاس</td><td>نقيسه في المرحلة ٠ ونسجله لكل فيديو، مثل جدول <code>runs_v2</code> في الرادار</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">ملاحظة على الرفع: صفحتان رسميتان في توثيق يوتيوب تتناقضان. صفحة <code>videos.insert</code> (محدّثة ١٥ أكتوبر ٢٠٢٦) تقول إن الرفع من مشروع غير مُدقَّق ما ينحصر في الوضع الخاص، وصفحة <code>videos</code> تقول العكس. الخطة ما تتأثر لأننا نرفع خاص في كل الأحوال، والنشر يتم بعد الاعتماد.</p>
+</div></section>
+
+<section id="kpi"><div class="wrap">
+  <h2>وش نقيس</h2>
+  <p class="lead">ما نحط وعود بعدد مشتركين. نقيس الأرقام اللي تقول لنا وش نصلح، وكل أحد نراجعها.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>المقياس</th><th>وين</th><th>وش يقول لنا</th></tr></thead>
+    <tbody>
+      <tr><td class="k">شاهدوا مقابل تجاوزوا</td><td>الاستوديو · الشورتس</td><td>هل الافتتاحية تمسك المشاهد، وهو أول شي نصلحه</td></tr>
+      <tr><td class="k">التسرّب في أول ٣٠ ثانية</td><td><code>yt-retention</code> · الطويل</td><td>تحت ٢٥٪ صحي حسب المهارة، وفوقه نعيد كتابة البداية</td></tr>
+      <tr><td class="k">نسبة النقر على الصورة المصغّرة</td><td>الاستوديو · الطويل</td><td>هل العنوان والصورة شغّالين كوحدة وحدة</td></tr>
+      <tr><td class="k">مشتركين لكل ألف مشاهدة</td><td>الاستوديو</td><td>أي نوع محتوى يبني قناة، مو بس مشاهدات</td></tr>
+      <tr><td class="k">زيارات مدونتي من يوتيوب</td><td>GA4 · <code>utm_source=youtube</code></td><td>هل الفيديو يرجّع للمقالة، وهذي قيمة نقدر نوريها للعميل</td></tr>
+      <tr><td class="k">تكلفة ووقت كل فيديو</td><td><code>factory.sqlite</code></td><td>هل نقدر نكبّر الحجم بنفس التكلفة</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="decide"><div class="wrap">
+  <h2>ثلاث قرارات تحتاجك قبل المرحلة ٠</h2>
+  <div class="decide">
+    <div class="q"><h3>١ · القناة لمين؟</h3><div class="opts">
+      <div class="opt rec"><b>للقارئ (أنصح فيه):</b> أسئلة الصحة والحياة اليومية من مقالات العملاء. هذا هو المخزون الموجود، ويخدم العميل مباشرة.</div>
+      <div class="opt"><b>لصاحب العمل:</b> سيو وتسويق بالمحتوى. أنسب لقناة جبر سيو، والخلط في قناة وحدة يشتت الجمهور.</div>
+    </div></div>
+    <div class="q"><h3>٢ · صوت مين؟</h3><div class="opts">
+      <div class="opt rec"><b>صوت Azure السعودي في البداية (أنصح فيه)</b>، ومقاطع الأطباء تنضاف لما تتوفر.</div>
+      <div class="opt"><b>صوت واحد من الفريق</b> يسجّل كل يوم. أصدق، بس يربط الإنتاج بوقت شخص.</div>
+    </div></div>
+    <div class="q"><h3>٣ · مين يضغط «انشر»؟</h3><div class="opts">
+      <div class="opt rec"><b>مجموعة الفريق في تليجرام (أنصح فيه)</b>، وأي عضو يقدر يعتمد.</div>
+      <div class="opt"><b>شخص واحد بالاسم</b>، أضبط بس يصير اختناق لو غاب.</div>
+    </div></div>
+  </div>
+</div></section>
+
+<section id="sources"><div class="wrap">
+  <h2>المصادر</h2>
+  <ul class="src">
+    <li><a href="https://developers.google.com/youtube/v3/docs/videos/insert">YouTube Data API · videos.insert</a></li>
+    <li><a href="https://developers.google.com/youtube/data/revision_history">YouTube Data API · Revision history</a></li>
+    <li><a href="https://support.google.com/youtube/answer/1311392">YouTube channel monetization policies</a></li>
+    <li><a href="https://support.google.com/youtube/answer/2801973">YouTube Spam policy</a></li>
+    <li><a href="https://support.google.com/youtube/answer/14328491">Disclosing altered or synthetic content</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support?tabs=tts">Azure Speech · language and voice support</a></li>
+    <li><a href="https://azure.microsoft.com/en-us/pricing/details/speech/">Azure Speech · pricing</a></li>
+    <li><a href="https://code.claude.com/docs/en/headless">Claude Code · Run programmatically</a></li>
+    <li><a href="https://github.com/Jakeschincariol/youtube-agent-skill">youtube-agent-skill</a></li>
+  </ul>
+</div></section>
+</main>
+
+<footer><div class="wrap">مدونتي · خطة قناة يوتيوب · ما تنفّذ أي خطوة منها قبل اعتماد القرارات الثلاث.</div></footer>
+</body>
+</html>

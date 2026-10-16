@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصنع فيديو مدونتي</title>
+<meta name="description" content="وثيقة المنتج: كل الاتفاقيات والخطوات لتحويل مقالات مدونتي إلى فيديوهات يوتيوب وشورتس بشكل آلي">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --navy:#0E065A; --blue:#3030FF; --teal:#00D8D8;
+  --bg:#F3F2EF; --surface:#FFFFFF; --surface-2:#EDEEF6; --line:#D9DAE8;
+  --ink:#0E065A; --ink-2:#3D3A6E; --ink-3:#5C5A85;
+  --ok:#0A7A55; --ok-soft:#DDF5EB; --warn:#8A5A00; --warn-soft:#FFF1D6; --bad:#B42318; --bad-soft:#FDE4E1;
+  --font:"Tajawal",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B0A1F; --surface:#141332; --surface-2:#1C1B44; --line:#2C2A63;
+  --ink:#F3F2FF; --ink-2:#C4C2EA; --ink-3:#A3A1CF;
+  --ok:#5BD6A6; --ok-soft:#0F3328; --warn:#F2C26B; --warn-soft:#3A2C0C; --bad:#FF9A8F; --bad-soft:#3D1712;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0B0A1F; --surface:#141332; --surface-2:#1C1B44; --line:#2C2A63;
+  --ink:#F3F2FF; --ink-2:#C4C2EA; --ink-3:#A3A1CF;
+  --ok:#5BD6A6; --ok-soft:#0F3328; --warn:#F2C26B; --warn-soft:#3A2C0C; --bad:#FF9A8F; --bad-soft:#3D1712;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 16.5px/1.8 var(--font);overflow-x:hidden}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{line-height:1.3;text-wrap:balance}
+a{color:inherit}
+code{font-family:var(--mono);font-size:.84em;direction:ltr;unicode-bidi:isolate;background:var(--surface-2);padding:1px 6px;border-radius:6px;overflow-wrap:anywhere}
+.wrap{max-width:1120px;margin-inline:auto;padding-inline:16px}
+@media(min-width:720px){.wrap{padding-inline:32px}}
+header{background:var(--navy);color:#fff;padding-block:44px 36px;position:relative}
+header::after{content:"";position:absolute;inset-inline-start:0;bottom:0;height:6px;width:34%;background:var(--teal)}
+.eyebrow{color:var(--teal);font-weight:700;font-size:15px;margin-bottom:8px}
+header h1{font-size:clamp(30px,5vw,50px);font-weight:900}
+header p{color:#C9C6F2;margin-top:10px;max-width:70ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.meta span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:3px 12px;font-size:14px}
+nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:9px;scrollbar-width:none}
+nav a{white-space:nowrap;text-decoration:none;color:var(--ink-2);font-size:14px;font-weight:700;padding:5px 11px;border-radius:99px}
+nav a:hover{background:var(--surface-2);color:var(--ink)}
+section{padding-block:40px;border-bottom:1px solid var(--line)}
+h2{font-size:clamp(22px,3vw,30px);font-weight:900;margin-bottom:6px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 .n{color:var(--blue);font-size:.8em}
+:root[data-theme="dark"] h2 .n{color:var(--teal)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) h2 .n{color:var(--teal)}}
+h3{font-size:19px;font-weight:800;margin:22px 0 10px}
+.lead{color:var(--ink-2);max-width:72ch;margin-bottom:18px}
+.rule{background:var(--surface);border:1px solid var(--line);border-inline-start:6px solid var(--blue);border-radius:14px;padding:18px 22px;font-size:18px;font-weight:700}
+.rule small{display:block;color:var(--ink-2);font-weight:500;font-size:15px;margin-top:6px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+th,td{padding:10px 13px;text-align:start;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--surface-2);font-weight:800;font-size:14px;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.k{font-weight:800;white-space:nowrap}
+.tag{display:inline-block;font-size:12.5px;font-weight:800;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.ok{background:var(--ok-soft);color:var(--ok)}
+.warn{background:var(--warn-soft);color:var(--warn)}
+.bad{background:var(--bad-soft);color:var(--bad)}
+.hum{background:var(--surface-2);color:var(--ink-2)}
+.flow{display:grid;gap:8px;counter-reset:f}
+.f{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.f::before{counter-increment:f;content:counter(f,arabic-indic);width:40px;height:40px;border-radius:10px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900}
+.f.h{border-color:var(--warn);background:linear-gradient(0deg,var(--warn-soft),var(--warn-soft))}
+.f b{display:block}
+.f span{color:var(--ink-2);font-size:14.5px}
+@media(max-width:560px){.f{grid-template-columns:40px 1fr}.f .tag{grid-column:2}}
+pre{background:var(--navy);color:#DCE4F7;border-radius:12px;padding:16px 18px;overflow-x:auto;direction:ltr;text-align:left;font:13px/1.65 var(--mono);margin:0}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.box b{display:block;font-weight:800;margin-bottom:4px}
+.box p{color:var(--ink-2);font-size:15px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;font-size:14px;color:var(--ink-2);align-items:center}
+footer{padding-block:24px;color:var(--ink-3);font-size:14px}
+ul.src{padding-inline-start:20px;font-size:14.5px;columns:2 320px}
+ul.src li{margin-bottom:5px;break-inside:avoid}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">وثيقة المنتج · PRD · النسخة ١٫٠</div>
+  <h1>مصنع فيديو مدونتي</h1>
+  <p>كل ما اتفقنا عليه في جلسة ١٦ أكتوبر ٢٠٢٦، مكتوب كقرارات ومتطلبات وحالة كل خطوة، عشان ما تضيع ولا نقطة.</p>
+  <div class="meta"><span>المالك: خالد</span><span>القناة: <code style="background:none;color:#fff">@modonty</code></span><span>المهارة: <code style="background:none;color:#fff">modonty-video</code></span><span>آخر تحديث: ١٦ أكتوبر ٢٠٢٦</span></div>
+</div></header>
+
+<nav aria-label="المحتويات"><div class="wrap">
+  <a href="#goal">الهدف</a><a href="#decisions">القرارات</a><a href="#flow">الفلو</a><a href="#tech">الفلو التقني</a><a href="#modules">الوحدات</a><a href="#admin">الأدمن</a><a href="#brand">الهوية</a><a href="#voice">الصوت</a><a href="#content">المحتوى</a><a href="#rhythm">الإيقاع</a><a href="#cost">التكلفة</a><a href="#open">المفتوح</a><a href="#phases">المراحل</a><a href="#experiment">التجربة</a><a href="#evidence">الأدلة</a>
+</div></nav>
+
+<main>
+<section id="goal"><div class="wrap">
+  <h2><span class="n">١</span>الهدف والقاعدة الحاكمة</h2>
+  <div class="rule">تجهيز الفيديو آلي بالكامل: بدون موظف فيديو، وبدون ما يحتاج خالد يفكر فيه. دور الإنسان: يشوف الفيديو ويعتمده، وينشر يدويًا في تيك توك وإنستغرام.
+    <small>القناة اليوم فيها مشتركان و٤ فيديوهات (صفحة القناة العامة، ١٦ أكتوبر ٢٠٢٦). مادة الإنتاج: ٥٠ مقالة في <code>modonty.com/feed.xml</code>، أغلبها لعيادات وأطباء.</small></div>
+</div></section>
+
+<section id="decisions"><div class="wrap">
+  <h2><span class="n">٢</span>سجل القرارات المعتمدة</h2>
+  <p class="lead">كل قرار هنا اعتمده خالد في الجلسة. أي تغيير لاحق يُكتب كسطر جديد، وما نعدّل على السطر القديم.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>القرار</th><th>التفصيل</th></tr></thead>
+    <tbody>
+      <tr><td>D1</td><td class="k">مقالة ← ٤ فيديوهات</td><td>كل مقالة تطلّع فيديو عادي من ٢ إلى ٦ دقائق (١٩٢٠×١٠٨٠)، و٣ شورتس مقصوصة منه (١٠٨٠×١٩٢٠). فصول الفيديو العادي هي نفسها السلاسل الخمس</td></tr>
+      <tr><td>D2</td><td class="k">الهوية</td><td>كحلي <code>#0E065A</code> هو المسيطر، وأزرق <code>#3030FF</code> للتأكيد، وسماوي <code>#00D8D8</code> لمسة وحدة بس. الخط Tajawal. ما فيه لون رابع</td></tr>
+      <tr><td>D3</td><td class="k">الشعاران</td><td>شعار مدونتي، وبعده فاصل، وبعده شعار العميل، في كل لقطة. وفي شاشة النهاية الشعاران كبار وبينهم علامة ×</td></tr>
+      <tr><td>D4</td><td class="k">السلاسل الخمس</td><td>«٣ علامات»، «صح ولا خطأ؟»، «رقم يصدمك»، «سوّها كذا»، «اسأل الدكتور». الإطار ثابت والمحتوى يتغيّر</td></tr>
+      <tr><td>D5</td><td class="k">الصوت</td><td>صوت مصمَّم في Gemini: <code>voice_kq9fd6jmhzqc</code>، نجدي سعودي. اعتمده خالد بأذنه. انرفضت أصوات Azure وElevenLabs وMiniMax وأصوات Gemini الفصحى</td></tr>
+      <tr><td>D6</td><td class="k">الاعتماد في الأدمن</td><td>المسودات توصل لقاعدة بيانات مدونتي. المسؤول يشوف وينسخ ويعتمد <b>لكل منصة لحالها</b> من صفحة في الأدمن. الاعتماد ما يصير من تليجرام</td></tr>
+      <tr><td>D7</td><td class="k">تليجرام للتنبيه فقط</td><td>رسالة وحدة: «فيه فيديو جاهز للمراجعة» مع رابط صفحته في الأدمن</td></tr>
+      <tr><td>D8</td><td class="k">التوزيع</td><td>بعد الاعتماد ينشر آليًا على يوتيوب وريلز مدونتي (Bunny). تيك توك وإنستغرام <b>يدوي</b>: تنزيل الملف ونسخ النص الجاهز</td></tr>
+      <tr><td>D9</td><td class="k">كل وحدة مستقلة</td><td>كل خطوة لها مدخل ومخرج وحالة، وتشتغل لحالها وتتعاد لحالها، وتنبدل بدون ما تمس الباقي</td></tr>
+      <tr><td>D10</td><td class="k">ما فيه نشر بدون إنسان</td><td>الرفع على يوتيوب يصير <b>خاص</b> دائمًا، والنشر يكون بعد الاعتماد. هذا يحمينا من سياسة يوتيوب ضد المحتوى غير الأصيل</td></tr>
+      <tr><td>D11</td><td class="k">السكربت آلي ومعه فحص مصادر</td><td>Claude يكتب السكربت، وكل معلومة تشير للجملة اللي جات منها في المقالة. اللي ما له مصدر ينرفض آليًا</td></tr>
+      <tr><td>D12</td><td class="k">قلة الصور</td><td>نعوّضها برسومات متحركة من نص المقالة (أرقام، قوائم، اختبار). ما نستخدم صور مولّدة عامة</td></tr>
+      <tr><td>D13</td><td class="k">التكلفة</td><td>Bunny حساب شركات، وكونتابو موجود، ويوتيوب مجاني، وClaude من اشتراك Max عن طريق <code>claude setup-token</code>، ومفتاح Gemini موجود</td></tr>
+      <tr><td>D15</td><td class="k">عقد الأدمن مع سند</td><td>١٦ أكتوبر، جلسة سند (<code>modonty-0b</code>). حالات السجل في الأدمن ثلاث: <code>ready_for_review · needs_attention · done</code>. المقالة تتعرّف بالرابط، والأدمن يحوّله لمعرّفاتها. سجل واحد لكل مقالة ومعه رقم <code>revision</code>. الاعتماد يكون لكل <b>ملف × منصة</b>. الريل يسويه الأدمن لحظة الاعتماد كصف Media. السر يرسل في الهيدر <code>x-radar-secret</code>. التفاصيل بنصّها في <code>MODONTY/documents/video-factory/03-contract</code></td></tr>
+      <tr><td>D16</td><td class="k">الموسيقى</td><td>٥ مقطوعات من مكتبة يوتيوب الصوتية، ما تحتاج ذكر المصدر، وتتناوب بين الفيديوهات: Taking Flight · Turn In The Sun · Way Back Home · Pulsar · Laniakea. مكانها <code>engine/music/</code></td></tr>
+      <tr><td>D17</td><td class="k">مفتاح يوتيوب</td><td>عميل OAuth من نوع Desktop باسم <code>modonty-video-factory</code> في مشروع modonty. التطبيق أصلًا على «In production». الملفات في <code>~/.modonty-video/</code>. الربط مرة وحدة بسكربت <code>youtube_auth.py</code></td></tr>
+      <tr><td>D18</td><td class="k">حدود Gemini</td><td>Tier 1: موديل الصوت ١٠ طلبات في الدقيقة و١٠٠ في اليوم. الحل: كل ٦ جمل تقريبًا في طلب واحد، وبعدها تتقطع على السكتات، ومسافة ٦٫٥ ثانية بين الطلبات. وفي AI Studio بانر يطلب تحويل الفوترة للدفع المسبق، وهذا قرار خالد</td></tr>
+      <tr><td>D19</td><td class="k">مكان الأصل</td><td>قرار خالد في ١٦ أكتوبر. الأصل للكود والقواعد صار <code>MODONTY/automation/video-factory/</code> (بنفس شكل content-radar وfootball)، والمهارة نسخة عمل منه. والوثائق انتسخت في <code>MODONTY/documents/video-factory/k6/</code>. ما فيه commit إلا بأمر خالد</td></tr>
+      <tr><td>D20</td><td class="k">ملفات التست على Bunny</td><td>قرار خالد في ١٦ أكتوبر. التست يرفع ملفات حقيقية على <code>modonty-reels-media</code> داخل مجلد منفصل <code>video-factory-dev/</code>، وينحذف بعد التست بأمره</td></tr>
+      <tr><td>D21</td><td class="k">Claude API بدل Max</td><td>قرار خالد في ١٦ أكتوبر، وصل عن طريق سند. السكربت (M2) يشتغل على Claude API بمفتاح API، وانشال <code>claude setup-token</code> و<code>CLAUDE_CODE_OAUTH_TOKEN</code> من المتطلبات، لأن اشتراك خالد ما يستغني عنه لشغله الثاني. هذا يلغي البند D13 في جزء Claude، وصار فيه تكلفة لكل فيديو. أول مقالة كانت تكلّف ما يعادل ٠٫٦٨ دولار حسب أسعار الـAPI</td></tr>
+      <tr><td>D22</td><td class="k">ويندوز ولينكس</td><td>الكود يشتغل على جهاز خالد وعلى كونتابو بدون تعديل، ومسارات Chrome وClaude وملفات البيئة ما تكون مكتوبة ثابتة في الكود. سند يعدّل الملفات الحين (M2 والرسومات والصوت والإرسال)</td></tr>
+      <tr><td>D23</td><td class="k">مفتاح Claude مستقل</td><td>قرار خالد في ١٦ أكتوبر، وصل عن طريق سند. مفتاح Claude API جديد للمصنع لحاله، غير مفتاح الرادار، عشان تكلفة المصنع تنقاس لحالها. خالد يسويه من لوحة Anthropic، وينحط في <code>/opt/video-factory/.env</code> باسم <code>ANTHROPIC_API_KEY</code></td></tr>
+      <tr><td>D14</td><td class="k">التجربة قبل البناء</td><td>السكربت الآلي يتجرّب على ٣ مقالات بدون أي تعديل يدوي، قبل أي بناء على السيرفر</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="flow"><div class="wrap">
+  <h2><span class="n">٣</span>الفلو من النشر إلى المنصات</h2>
+  <div class="flow">
+    <div class="f"><div><b>المقالة تنتشر في مدونتي</b><span>السيرفر يرصد <code>feed.xml</code> أو يجيه إشعار من الأدمن</span></div><span class="tag hum">آلي</span></div>
+    <div class="f"><div><b>الجلب</b><span>النص، وصور المقالة نفسها، وشعار العميل</span></div><span class="tag hum">آلي</span></div>
+    <div class="f"><div><b>السكربت</b><span>Claude بقواعد المهارة: لهجة سعودية، فصول بشكل السلاسل، مصدر لكل معلومة</span></div><span class="tag hum">آلي</span></div>
+    <div class="f"><div><b>فحص السكربت</b><span>مصدر كل معلومة موجود في المقالة، وأرقام الصور صحيحة، والقصّات بالمدة المطلوبة</span></div><span class="tag hum">آلي</span></div>
+    <div class="f"><div><b>الصوت</b><span>Gemini بالصوت المعتمد، وكل جملة تنحفظ</span></div><span class="tag hum">آلي</span></div>
+    <div class="f"><div><b>فحص الصوت</b><span>Gemini يكتب الصوت نص ويقارنه بالسكربت</span></div><span class="tag hum">آلي</span></div>
+    <div class="f"><div><b>الصنع</b><span>فيديو عادي، و٣ شورتس، وصورة مصغّرة، وملف ترجمة SRT</span></div><span class="tag hum">آلي</span></div>
+    <div class="f"><div><b>فحص الفيديو</b><span>المدة، ومستوى الصوت، وترتيب الترجمة، والشعاران، والنص داخل الإطار</span></div><span class="tag hum">آلي</span></div>
+    <div class="f"><div><b>التغليف</b><span>عنوان يوتيوب ووصفه وفصوله، ونص تيك توك ووسومه، ونص إنستغرام</span></div><span class="tag hum">آلي</span></div>
+    <div class="f"><div><b>مسودة في الأدمن، وتنبيه تليجرام</b><span>الحالة «جاهز للمراجعة»</span></div><span class="tag hum">آلي</span></div>
+    <div class="f h"><div><b>الاعتماد لكل منصة</b><span>المسؤول يشوف ويعدّل لو حب، ويعتمد</span></div><span class="tag warn">إنسان · ٣–٥ دقائق (تقدير)</span></div>
+    <div class="f"><div><b>يوتيوب وريلز مدونتي</b><span>نشر آلي، وربط الشورت بالفيديو العادي</span></div><span class="tag hum">آلي</span></div>
+    <div class="f h"><div><b>تيك توك وإنستغرام</b><span>تنزيل الملف ونسخ النص من الأدمن</span></div><span class="tag warn">إنسان · دقيقة لكل منصة (تقدير)</span></div>
+  </div>
+  <p class="lead" style="margin-top:14px">أي خطوة تفشل تتعاد مرة. إذا فشلت مرة ثانية، الحالة تصير «يحتاج تدخل» ويوصل تنبيه تليجرام. <b>ما فيه فشل صامت.</b></p>
+</div></section>
+
+<section id="tech"><div class="wrap">
+  <h2><span class="n">٣ب</span>الفلو التقني خطوة خطوة</h2>
+  <p class="lead">كل خطوة هنا وحدة مستقلة: تقرأ من مجلد المقالة وتكتب فيه، وتسجّل حالتها، وتنعاد لحالها. <span class="tag ok">موجود</span> يعني مبني ومجرّب، و<span class="tag warn">مقترح</span> يعني ما انبنى بعد.</p>
+
+  <h3>الصورة الكاملة</h3>
+  <pre>modonty.com (article published)
+   │  feed.xml  /  later: admin webhook
+   ▼
+[VPS 84.46.245.226  /opt/video-factory]
+   cron watch ──► queue (factory.sqlite: jobs)
+   cron work  ──► per job, in work/&lt;slug&gt;/ :
+        M1 fetch_article.py ─► article.txt · article.json · img/N.webp · assets/client-logo.png
+        M2 write_script.py  ─► claude -p (Max, CLAUDE_CODE_OAUTH_TOKEN) ─► script.json (+ sources)
+        M3 validate         ─► every claim's source found in article.txt, else retry once, else needs_attention
+        M4 voice            ─► Gemini /v1beta/interactions, voice_kq9fd6jmhzqc ─► build/voice-gemini/*.wav (+ .json timings)
+        M5 voice check      ─► Gemini transcription vs script text ─► match ratio
+        M6 make.py          ─► Chrome headless overlays + ffmpeg ─► out/long.mp4 · out/short-*.mp4 · thumbnail.png · captions.srt
+        M7 qa               ─► durations · loudness · caption order · logos · safe area ─► qa.json
+        M8 package          ─► copy.json (YouTube title/description/chapters · TikTok · Instagram)
+   M9  POST admin.modonty.com/api/videos/ingest   (secret = RADAR_INGEST_SECRET pattern)
+   M10 Telegram: "فيديو جاهز للمراجعة" + admin link
+   ▼
+[admin.modonty.com /videos]  human approves per platform
+   ▼
+   M12 YouTube Data API videos.insert (private) → videos.update public · thumbnails.set · captions.insert
+   M13 Bunny upload → bunnyVideoId → Modonty reels
+   TikTok / Instagram → download file + copy caption (manual) → "posted manually"
+   M14 video embedded in its article (VideoObject)</pre>
+
+  <h3>تفصيل كل خطوة</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>الخطوة</th><th>المشغّل</th><th>التقنية / نقطة الاتصال</th><th>يقرأ</th><th>يكتب</th><th>عند الفشل</th><th>الحالة</th></tr></thead>
+    <tbody>
+      <tr><td class="k">رصد المقالات</td><td>cron كل ساعة</td><td>قراءة <code>https://www.modonty.com/feed.xml</code>، أي رابط جديد يدخل الطابور</td><td>الخلاصة</td><td><code>factory.sqlite → jobs(slug, url, status)</code></td><td>يعيد المحاولة في الساعة الجاية</td><td><span class="tag warn">مقترح</span></td></tr>
+      <tr><td class="k">M1 الجلب</td><td>cron العمل كل ١٠ دقائق، مهمة وحدة في كل مرة (<code>flock</code>)</td><td><code>python fetch_article.py &lt;url&gt;</code>: الصفحة، وJSON-LD للشعار، وصور مجلد العميل على CDN قبل «اقرأ أيضاً»</td><td>صفحة المقالة</td><td><code>article.txt · article.json · img/ · assets/client-logo.png</code></td><td>محاولة ثانية، وبعدها «يحتاج تدخل»</td><td><span class="tag ok">موجود</span></td></tr>
+      <tr><td class="k">M2 السكربت</td><td>بعد M1</td><td><code>claude -p</code> باشتراك Max (<code>CLAUDE_CODE_OAUTH_TOKEN</code> من <code>claude setup-token</code>)، والتعليمات من ملفات المهارة. المخرج JSON بس</td><td><code>article.txt · article.json</code> وملفات المهارة</td><td><code>script.json</code> ولكل جملة <code>source</code></td><td>يعيد ومعه سبب الرفض، مرة وحدة</td><td><span class="tag warn">مقترح · التجربة الجاية</span></td></tr>
+      <tr><td class="k">M3 فحص السكربت</td><td>بعد M2</td><td>بايثون: كل <code>source</code> لازم يكون موجود في <code>article.txt</code> بعد توحيد الحروف · أرقام الصور موجودة · القصّات تشير لفصول موجودة · الشورت بين ٢٥ و٤٠ ثانية بالتقدير</td><td><code>script.json · article.txt</code></td><td><code>script.check.json</code></td><td>يرجع لـM2 ومعه الأخطاء</td><td><span class="tag warn">مقترح</span></td></tr>
+      <tr><td class="k">M4 الصوت</td><td>داخل <code>make.py</code></td><td><code>POST https://generativelanguage.googleapis.com/v1beta/interactions</code> · النموذج <code>gemini-3.8-flash-tts</code> · <code>speech_config:[{voice:"voice_kq9fd6jmhzqc"}]</code> · WAV بتردد 24kHz</td><td>نص كل جملة</td><td><code>build/voice-gemini/&lt;md5&gt;.wav</code> ومعه <code>.json</code> للتوقيت</td><td>٨ محاولات بانتظار متدرّج للـ429 وانتهاء المهلة، والجمل المحفوظة ما تنعاد</td><td><span class="tag ok">موجود</span></td></tr>
+      <tr><td class="k">توقيت الترجمة</td><td>داخل M4</td><td>ffmpeg <code>silencedetect=noise=-38dB:d=0.16</code>، والعبارات تنضبط على مقاطع الكلام، والكلمات تتوزع حسب طولها</td><td>الصوت</td><td>توقيت الكلمات</td><td>لو العدد ما تطابق، توزيع حسب الطول</td><td><span class="tag ok">موجود</span></td></tr>
+      <tr><td class="k">M5 فحص الصوت</td><td>بعد M4</td><td>Gemini <code>generateContent</code> مع الصوت، يكتبه نص ويقارنه بالسكربت</td><td>الصوت والسكربت</td><td><code>voice.check.json</code></td><td>الجملة الناقصة تنعاد</td><td><span class="tag warn">مجرّب يدويًا</span></td></tr>
+      <tr><td class="k">M6 الصنع</td><td>بعد M5</td><td>كروم بدون شاشة يحوّل <code>overlay.html</code> إلى PNG شفاف · ffmpeg: خلفية مموّهة، وبطاقة بزوايا دائرية وتقريب بطيء، والرسومات، و<code>xfade</code>، وترجمة <code>ass</code> بالخط Tajawal، وشريط تقدّم، و<code>loudnorm</code> على ‎-14 LUFS، والتوقيع الصوتي · ترميز <code>libx264</code> وصوت <code>aac</code></td><td><code>script.json</code> والصوت و<code>img/</code> و<code>assets/</code></td><td><code>out/modonty-video.mp4 · out/short-*.mp4 · out/thumbnail.png · build/long_captions.srt</code></td><td>المشاهد تنصنع لحالها، والمشهد الفاشل ينعاد</td><td><span class="tag ok">موجود</span> ١٩ دقيقة على جهاز خالد</td></tr>
+      <tr><td class="k">M7 فحص الفيديو</td><td>بعد M6</td><td>ffprobe للمدد · <code>volumedetect</code> · لقطة من كل مشهد ونتحقق إن الرسومات والترجمة داخل المنطقة الآمنة</td><td><code>out/</code></td><td><code>qa.json</code></td><td>البند الإلزامي إذا فشل يوقف الرفع</td><td><span class="tag warn">مقترح</span></td></tr>
+      <tr><td class="k">M8 التغليف</td><td>مع M2</td><td>عنوان فيه اسم السلسلة، ووصف أول سطرين منه يجاوبون السؤال، وفصول تبدأ بـ00:00، ورابط المقالة مع <code>utm_source=youtube</code>، ونصوص تيك توك وإنستغرام</td><td><code>script.json</code></td><td><code>copy.json</code></td><td>—</td><td><span class="tag warn">مقترح</span></td></tr>
+      <tr><td class="k">M9 الاستقبال في الأدمن</td><td>بعد M7</td><td><code>POST https://admin.modonty.com/api/videos/ingest</code> بسر مشترك مثل <code>/api/idea-bank/*</code> · الملفات ترتفع على Bunny ونرسل روابطها</td><td><code>out/ · copy.json · qa.json</code></td><td>سجل <code>VideoJob</code> بحالة <code>ready_for_review</code></td><td>يعيد المحاولة، والملفات تظل على السيرفر</td><td><span class="tag warn">مقترح · يحتاج اعتماد السكيما</span></td></tr>
+      <tr><td class="k">M10 التنبيه</td><td>بعد M9</td><td>Telegram Bot API <code>sendMessage</code> بنفس بوت السيرفر</td><td>السجل</td><td>رسالة فيها رابط <code>admin.modonty.com/videos/&lt;id&gt;</code></td><td>تسجيل الخطأ بس</td><td><span class="tag warn">مقترح</span></td></tr>
+      <tr><td class="k">M11 الاعتماد</td><td>إنسان</td><td>صفحة <code>/videos</code>: معاينة، وتعديل النصوص، وزر لكل منصة، وتنزيل، ونسخ</td><td>السجل</td><td>حالة كل منصة</td><td>الرفض يرجّعها لـM2 ومعها الملاحظة</td><td><span class="tag warn">مقترح</span></td></tr>
+      <tr><td class="k">M12 يوتيوب</td><td>الاعتماد</td><td>YouTube Data API: <code>videos.insert</code> بوضع <code>private</code> (حصة الرفع ١٠٠ في اليوم) ← <code>videos.update</code> إلى <code>public</code> · <code>thumbnails.set</code> · <code>captions.insert</code> لملف SRT · الفيديو المرتبط للشورت يتحدد يدويًا من الاستوديو</td><td>الملفات و<code>copy.json</code></td><td><code>platforms.youtube.videoId</code></td><td>يعيد المحاولة، والحالة تبقى «معتمد»</td><td><span class="tag warn">مقترح · يحتاج OAuth</span></td></tr>
+      <tr><td class="k">M13 ريلز مدونتي</td><td>الاعتماد</td><td>الرفع على Bunny Stream (نفس مسار الرفع المباشر الشغّال في الإنتاج) ← <code>bunnyVideoId</code> في سجل الريل</td><td>ملف الشورت</td><td>سجل ريل</td><td>يعيد المحاولة</td><td><span class="tag warn">مقترح</span></td></tr>
+      <tr><td class="k">تيك توك وإنستغرام</td><td>إنسان</td><td>تنزيل الملف ونسخ النص من صفحة الأدمن، وبعدها زر «تم النشر يدويًا»</td><td>السجل</td><td><code>postedManuallyAt</code></td><td>—</td><td><span class="tag warn">مقترح</span></td></tr>
+      <tr><td class="k">M14 داخل المقالة</td><td>بعد نشر يوتيوب</td><td>تضمين الفيديو في صفحة المقالة مع بيانات VideoObject</td><td><code>videoId</code></td><td>المقالة</td><td>—</td><td><span class="tag warn">مقترح · المرحلة ٣</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>السيرفر: الملفات والمتغيرات والجدولة (مقترح)</h3>
+  <pre>/opt/video-factory/
+  engine/                 ← copy of ~/.claude/skills/modonty-video/engine
+  skill/                  ← SKILL.md long.md formats.md checklist.md brand.json (read by write_script)
+  factory.py              ← watch · queue · run M1..M10 · status · retries
+  factory.sqlite          ← jobs(slug, url, status, step, attempts, error, usage_json, created_at)
+  work/&lt;slug&gt;/            ← one folder per article (inputs, build/, out/)
+  .env  (chmod 600)       ← GEMINI_API_KEY · CLAUDE_CODE_OAUTH_TOKEN · RADAR_INGEST_SECRET · RADAR_ADMIN_URL
+                             TELEGRAM_BOT_TOKEN · TELEGRAM_CHAT_ID · YT_CLIENT_ID · YT_CLIENT_SECRET · YT_REFRESH_TOKEN
+                             BUNNY_* (same as production upload)
+
+needs on the VPS: node + claude code · google-chrome (headless) · ffmpeg 6.1 (present) · python 3.12 (present)
+                  pillow · Tajawal fonts (in engine/fonts)
+
+crontab
+0 * * * *     cd /opt/video-factory && flock -n /tmp/vf-watch.lock venv/bin/python factory.py --watch
+*/10 * * * *  cd /opt/video-factory && flock -n /tmp/vf-work.lock  nice -n 10 venv/bin/python factory.py --work
+* * * * *     cd /opt/video-factory && flock -n /tmp/vf-publish.lock venv/bin/python factory.py --publish</pre>
+
+  <h3>عقد البيانات: <code>script.json</code></h3>
+  <pre>{
+  "article_url", "client", "client_short", "title", "thumb_words",
+  "long": [ { "n", "series", "title",
+              "beats": [ { "kind": "hook|img|reveal|list|chapter|quiz|number|cta|end",
+                           "text": "spoken line (Saudi dialect)",
+                           "key":  "on-screen line", "img": 1, "tag", "count", "claim", "answer", "number", "sub",
+                           "source": "exact sentence from article.txt (required for every factual beat)" } ] } ],
+  "shorts": [ { "name", "series", "hook": {beat}, "chapter": n, "beats": [i, j, k], "cta": {beat} } ]
+}</pre>
+</div></section>
+
+<section id="modules"><div class="wrap">
+  <h2><span class="n">٤</span>الوحدات المستقلة وحالتها اليوم</h2>
+  <div class="legend"><span class="tag ok">اشتغل</span> انجرب ونتيجته موجودة <span class="tag warn">مبني جزئيًا</span> <span class="tag bad">ما انبنى</span></div>
+  <div class="tbl"><table>
+    <thead><tr><th>الوحدة</th><th>المدخل</th><th>المخرج</th><th>الملف</th><th>الحالة</th></tr></thead>
+    <tbody>
+      <tr><td class="k">M1 الجلب</td><td>رابط المقالة</td><td><code>article.txt</code> · <code>img/N.webp</code> · <code>assets/client-logo.png</code> · <code>article.json</code></td><td><code>engine/fetch_article.py</code></td><td><span class="tag ok">اشتغل</span> على مقالتين وعميلين</td></tr>
+      <tr><td class="k">M2 السكربت</td><td>مخرجات M1</td><td><code>script.json</code> ولكل معلومة مصدرها</td><td><code>engine/write_script.py</code></td><td><span class="tag bad">ما انبنى</span> العينة كتبتها أنا يدويًا</td></tr>
+      <tr><td class="k">M3 فحص السكربت</td><td><code>script.json</code> و<code>article.txt</code></td><td>مقبول أو مرفوض مع السبب</td><td>ضمن M2</td><td><span class="tag bad">ما انبنى</span></td></tr>
+      <tr><td class="k">M4 الصوت</td><td>نص كل جملة</td><td>ملف <code>wav</code> وتوقيت الكلمات</td><td><code>engine/make.py</code> و<code>gemini_voice.py</code></td><td><span class="tag ok">اشتغل</span> ٣٢ جملة</td></tr>
+      <tr><td class="k">M5 فحص الصوت</td><td>الصوت والسكربت</td><td>نسبة التطابق</td><td>—</td><td><span class="tag warn">مجرب يدويًا</span> على ٨ عينات</td></tr>
+      <tr><td class="k">M6 الصنع</td><td><code>script.json</code> والصوت والصور</td><td><code>out/*.mp4</code> · <code>thumbnail.png</code> · <code>captions.srt</code></td><td><code>engine/make.py</code> · <code>overlay.html</code></td><td><span class="tag ok">اشتغل</span> على جهاز خالد · <span class="tag bad">ما انجرب على السيرفر</span></td></tr>
+      <tr><td class="k">M7 فحص الفيديو</td><td><code>out/</code></td><td>تقرير بالبنود الـ٢٣</td><td><code>checklist.md</code></td><td><span class="tag warn">بالعين فقط</span></td></tr>
+      <tr><td class="k">M8 التغليف</td><td>السكربت</td><td>نصوص كل منصة</td><td>—</td><td><span class="tag bad">ما انبنى</span></td></tr>
+      <tr><td class="k">M9 الاستقبال في الأدمن</td><td>الملفات والنصوص</td><td>سجل مسودة في القاعدة</td><td>نقطة استقبال بنفس نمط <code>/api/idea-bank/*</code></td><td><span class="tag bad">ما انبنى</span></td></tr>
+      <tr><td class="k">M10 تنبيه تليجرام</td><td>سجل جديد</td><td>رسالة فيها رابط</td><td>بوت السيرفر الموجود</td><td><span class="tag bad">ما انبنى</span></td></tr>
+      <tr><td class="k">M11 صفحة الاعتماد</td><td>السجل</td><td>اعتماد لكل منصة</td><td>الأدمن</td><td><span class="tag bad">ما انبنى</span></td></tr>
+      <tr><td class="k">M12 النشر على يوتيوب</td><td>الاعتماد</td><td>رقم الفيديو، رفع خاص ثم عام</td><td>YouTube Data API</td><td><span class="tag bad">ما انبنى</span> ويحتاج صلاحية OAuth</td></tr>
+      <tr><td class="k">M13 ريلز مدونتي</td><td>الاعتماد</td><td><code>bunnyVideoId</code></td><td>الرفع على Bunny، شغّال في الإنتاج</td><td><span class="tag bad">ما انبنى</span> للفيديو</td></tr>
+      <tr><td class="k">M14 الفيديو داخل المقالة</td><td>رقم يوتيوب</td><td>تضمين مع VideoObject</td><td>مدونتي</td><td><span class="tag bad">ما انبنى</span></td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="admin"><div class="wrap">
+  <h2><span class="n">٥</span>صفحة «الفيديوهات» في الأدمن (مقترح)</h2>
+  <p class="lead">مقترح للمراجعة، ما انبنى. تعديل السكيما وأي رفع للإنتاج ما يصير إلا بقرار من خالد.</p>
+  <h3>الحالات</h3>
+  <pre>queued → scripting → voicing → rendering → qa
+   → ready_for_review   (Telegram alert)
+   → per platform:  youtube | modonty_reels | tiktok (manual) | instagram (manual)
+        pending → approved → published   |   rejected (with note → back to scripting)
+   any step failing twice → needs_attention (Telegram alert)</pre>
+  <h3>السجل المقترح لكل مقالة</h3>
+  <pre>VideoJob {
+  articleId, clientId, status, createdAt, updatedAt,
+  assets: { long: {url, seconds}, shorts: [{series, url, seconds}], thumbnail, srt },
+  copy:   { youtube: {title, description, chapters}, tiktok: {caption, hashtags}, instagram: {caption} },
+  platforms: {
+    youtube:       { status, approvedBy, approvedAt, videoId, shortIds[] },
+    modonty_reels: { status, approvedBy, bunnyVideoId },
+    tiktok:        { status, approvedBy, postedManuallyAt },
+    instagram:     { status, approvedBy, postedManuallyAt }
+  },
+  usage: { claude: {inputTokens, outputTokens, seconds}, gemini: {ttsSeconds, retries429}, renderSeconds },
+  errors: [ {step, message, at} ]
+}</pre>
+  <h3>اللي يقدر يسويه المسؤول في الصفحة</h3>
+  <div class="cols">
+    <div class="box"><b>معاينة</b><p>تشغيل الفيديو العادي وكل شورت مباشرة</p></div>
+    <div class="box"><b>تعديل</b><p>العنوان والوصف والنصوص قبل الاعتماد</p></div>
+    <div class="box"><b>اعتماد لكل منصة</b><p>زر لكل منصة. يوتيوب والريلز تنشر لحالها</p></div>
+    <div class="box"><b>تنزيل ونسخ</b><p>تنزيل الملف ونسخ نص تيك توك أو إنستغرام بضغطة، وبعدها «تم النشر يدويًا»</p></div>
+    <div class="box"><b>رفض مع ملاحظة</b><p>السكربت يرجع ينكتب ومعه الملاحظة</p></div>
+  </div>
+</div></section>
+
+<section id="brand"><div class="wrap">
+  <h2><span class="n">٦</span>الهوية والقالب المعتمد</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>العنصر</th><th>المواصفة</th></tr></thead>
+    <tbody>
+      <tr><td class="k">الإطار العادي</td><td>صورة المقالة مموّهة في الخلفية، وبطاقة الصورة على اليسار، ولوحة النص على اليمين (اسم الفصل والسطر الأساسي)، وشريط تقدّم سماوي فوق، وترجمة من ٤ إلى ٦ كلمات تحت</td></tr>
+      <tr><td class="k">إطار الشورت</td><td>الشعاران فوق يمين، واسم السلسلة، وبطاقة الصورة في النص، وسطر المصدر مع الدرع، وترجمة من ٢ إلى ٣ كلمات بحجم ٨٠</td></tr>
+      <tr><td class="k">أنواع اللقطات</td><td>خطاف · صورة · كشف · قائمة · بطاقة فصل · اختبار · رقم · دعوة · نهاية</td></tr>
+      <tr><td class="k">الانتقالات</td><td>مسحة من اليمين لليسار بين الفصول، وتلاشي خفيف داخل الفصل</td></tr>
+      <tr><td class="k">النهاية</td><td>الشعاران وبينهم ×، و«التفاصيل كاملة في المقالة»، و<code>modonty.com</code>، واسم العميل، وتوقيع صوتي ١٫٢ ثانية. في الفيديو العادي ٨ ثوانٍ على الأقل، ونصفها الأيسر فاضي لعناصر نهاية يوتيوب</td></tr>
+      <tr><td class="k">الصورة المصغّرة</td><td>نصف كحلي فيه ٣ كلمات بحد أقصى بخط Tajawal 900، ونصف لصورة المقالة، والشعاران في الزاوية</td></tr>
+      <tr><td class="k">قاعدة تقنية</td><td>ممنوع تغيير اللون في نص سطر عربي داخل الترجمة، لأن مكتبة libass تلخبط ترتيب الكلمات. التأكيد يكون في سطر لحاله أو بصندوق</td></tr>
+      <tr><td class="k">المصدر</td><td><code>~/.claude/skills/modonty-video/brand.json</code> و<code>engine/overlay.html</code></td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="voice"><div class="wrap">
+  <h2><span class="n">٧</span>الصوت</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>البند</th><th>القيمة</th></tr></thead>
+    <tbody>
+      <tr><td class="k">المحرك</td><td>Gemini TTS · <code>gemini-3.8-flash-tts</code> · <code>POST /v1beta/interactions</code></td></tr>
+      <tr><td class="k">الصوت</td><td><code>voice_kq9fd6jmhzqc</code>: «Modonty Saudi Narrator»، رجل نجدي عمره حوالي ٣٠، دافي وواثق</td></tr>
+      <tr><td class="k">الصلاحية</td><td>سنة من آخر استخدام. لو انتهى يتعاد تصميمه بأمر <code>python gemini_voice.py recreate</code></td></tr>
+      <tr><td class="k">كتابة السكربت للصوت</td><td>لهجة سعودية بيضاء، وتشكيل على الكلمات اللي ممكن تنقرأ غلط، وشدّة على الحروف المضعّفة، وبدون اختصارات صعبة</td></tr>
+      <tr><td class="k">الترجمة</td><td>Gemini ما يرجّع توقيت للكلمات، فالترجمة تنضبط على فترات السكوت في الصوت</td></tr>
+      <tr><td class="k">الحدود</td><td>طلع لنا خطأ 429 وانتهاء مهلة أكثر من مرة. المحرك يعيد المحاولة بانتظار متدرّج (٨ محاولات) ويحفظ كل جملة</td></tr>
+      <tr><td class="k">المفتاح</td><td><code>GEMINI_API_KEY</code> من متغيرات البيئة، وإلا من <code>MODONTY/console/.env.local</code>. ما ينطبع أبدًا</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="content"><div class="wrap">
+  <h2><span class="n">٨</span>قواعد المحتوى والسياسات</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>القاعدة</th><th>السبب</th></tr></thead>
+    <tbody>
+      <tr><td class="k">كل معلومة من المقالة المعتمدة فقط</td><td>أغلب المحتوى طبي، والمقالة معتمدة من الطبيب</td></tr>
+      <tr><td class="k">صور المقالة نفسها، بدون صور مولّدة عامة</td><td>سياسة يوتيوب ضد المحتوى غير الأصيل (١٥ يوليو ٢٠٢٥)، وسياسة السبام اللي تضرب مثال بالصور المولدة مع سكربت يقرؤه صوت آلي</td></tr>
+      <tr><td class="k">تفعيل خيار «محتوى معدّل أو اصطناعي»</td><td>الصوت آلي، وصفحة يوتيوب ما تحسم حالة الصوت الآلي العام</td></tr>
+      <tr><td class="k">الخطاف خلال ثانية ونص، والشورت بين ٢٥ و٤٠ ثانية</td><td>يوتيوب يرتّب الشورتس حسب نسبة اللي يشاهدون بدل ما يتجاوزون، ومدة المشاهدة ونسبتها</td></tr>
+      <tr><td class="k">كل شورت يودّي للفيديو العادي</td><td>يوتيوب ينصح بـ«الفيديو المرتبط» مع دعوة في آخر ٥ ثوانٍ</td></tr>
+      <tr><td class="k">الفحص بـ٢٣ بند قبل أي رفع</td><td><code>checklist.md</code></td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="rhythm"><div class="wrap">
+  <h2><span class="n">٩</span>الإيقاع والقياس</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>البند</th><th>القيمة</th></tr></thead>
+    <tbody>
+      <tr><td class="k">الإنتاج</td><td>٣ فيديوهات عادية في الأسبوع (الأحد والثلاثاء والخميس)، وشورت كل يوم مقصوص منها، وينزل بعد الفيديو الأصلي</td></tr>
+      <tr><td class="k">المخزون</td><td>٥٠ مقالة، تكفي أكثر من ٤ شهور</td></tr>
+      <tr><td class="k">المراجعة</td><td>كل أحد بمهارتي <code>yt-retention</code> و<code>yt-plan</code></td></tr>
+      <tr><td class="k">المقاييس</td><td>المشاهدة مقابل التجاوز · نسبة المشاهدة · المشتركين لكل ١٠٠٠ مشاهدة · زيارات من يوتيوب في GA4 بوسم <code>utm_source=youtube</code> · تكلفة ووقت كل فيديو</td></tr>
+      <tr><td class="k">قاعدة القرار</td><td>بعد ٦ أسابيع: النوع اللي يجيب مشتركين أكثر ياخذ حصة أكبر، والسلسلة اللي تجيب ضعف متوسط القناة مرتين ورا بعض تاخذ قصّات أكثر</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="cost"><div class="wrap">
+  <h2><span class="n">١٠</span>التكلفة والقدرة</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>البند</th><th>النوع</th><th>الحالة</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Bunny</td><td>ثابت (حساب شركات)</td><td><span class="tag ok">قرار خالد</span></td></tr>
+      <tr><td class="k">كونتابو</td><td>ثابت (موجود)</td><td><span class="tag ok">مقيس</span> ٤ معالجات و٧٫٨ جيجا رام، الحمل ٠٫٠٩</td></tr>
+      <tr><td class="k">يوتيوب</td><td>مجاني · ١٠٠ رفعة في اليوم</td><td><span class="tag ok">التوثيق الرسمي</span></td></tr>
+      <tr><td class="k">Claude</td><td>اشتراك Max عن طريق <code>claude setup-token</code></td><td><span class="tag warn">كم سكربت يتحمّل في اليوم؟ يُقاس في التجربة</span></td></tr>
+      <tr><td class="k">Gemini</td><td>مفتاح موجود</td><td><span class="tag warn">نوع الاشتراك غير معروف، والـ429 مؤشر إن حده منخفض</span></td></tr>
+      <tr><td class="k">المقياس اللي يهم</td><td colspan="2"><b>كم فيديو نقدر نطلّع في اليوم</b>، مو كم يكلّف الفيديو الواحد</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="open"><div class="wrap">
+  <h2><span class="n">١١</span>نقاط مفتوحة</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>السؤال</th><th>المسؤول</th><th>كيف ينحسم</th></tr></thead>
+    <tbody>
+      <tr><td>Q1</td><td>جودة السكربت الآلي بدون أي تعديل</td><td>Claude</td><td>التجربة على ٣ مقالات</td></tr>
+      <tr><td>Q2</td><td>كم سكربت يتحمّله اشتراك Max في اليوم</td><td>Claude</td><td>قياس الاستهلاك في التجربة</td></tr>
+      <tr><td>Q3</td><td>نوع اشتراك Gemini وحدوده</td><td>خالد</td><td>من لوحة Google AI Studio</td></tr>
+      <tr><td>Q4</td><td>وقت الصنع على السيرفر</td><td>Claude</td><td>المرحلة ٠</td></tr>
+      <tr><td>Q5</td><td>صلاحية OAuth لقناة يوتيوب</td><td>خالد</td><td>دخول حساب القناة</td></tr>
+      <tr><td>Q6</td><td>شكل السكيما لصفحة الفيديوهات</td><td>خالد</td><td>اعتماد المقترح في القسم ٥</td></tr>
+      <tr><td>Q7</td><td>موسيقى الخلفية: مصدرها وترخيصها</td><td>خالد</td><td>مكتبة يوتيوب الصوتية أو بدون موسيقى</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="phases"><div class="wrap">
+  <h2><span class="n">١٢</span>المراحل وشروط الإقفال</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>المرحلة</th><th>الشغل</th><th>شرط الإقفال</th><th>الحالة</th></tr></thead>
+    <tbody>
+      <tr><td class="k">أ · الهوية والعينة</td><td>المهارة، والقالب، والصوت، والعينة</td><td>اعتماد خالد</td><td><span class="tag ok">مقفلة · ١٦ أكتوبر</span></td></tr>
+      <tr><td class="k">ب · تجربة السكربت الآلي</td><td>M2 وM3 على ٣ مقالات بدون تعديل</td><td>خالد يشوف الفيديوهات ويقبلها، ومعها أرقام الاستهلاك</td><td><span class="tag warn">الجاية</span></td></tr>
+      <tr><td class="k">٠ · السيرفر</td><td>Node وClaude Code وكروم والخطوط على كونتابو، والمفاتيح، وصلاحية يوتيوب</td><td>فيديو كامل من رابط مقالة على السيرفر، ووقته مقيس</td><td><span class="tag bad">ما بدأت</span></td></tr>
+      <tr><td class="k">١ · الأتمتة والأدمن</td><td>M7 إلى M13</td><td>٧ مقالات متتالية توصل الأدمن بدون تدخل، وتنبيه لكل وحدة</td><td><span class="tag bad">ما بدأت</span></td></tr>
+      <tr><td class="k">٢ · التشغيل</td><td>٦ أسابيع نشر</td><td>٣٠ فيديو، وقرار التوزيع حسب الأرقام</td><td><span class="tag bad">ما بدأت</span></td></tr>
+      <tr><td class="k">٣ · الربط</td><td>M14، ومقاطع الأطباء، والفيديو كميزة في الباقات</td><td>يُحدد بعد المرحلة ٢</td><td><span class="tag bad">ما بدأت</span></td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="experiment"><div class="wrap">
+  <h2><span class="n">١٣</span>تجربة السكربت الآلي (المرحلة ب)</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>البند</th><th>القيمة</th></tr></thead>
+    <tbody>
+      <tr><td class="k">المقالات</td><td>٣ مقالات طبية مختلفة العملاء، منها مقالة فيها صورة وحدة</td></tr>
+      <tr><td class="k">القاعدة</td><td>ما ألمس السكربت ولا الفيديو يدويًا أبدًا. اللي يطلع هو اللي ينعرض</td></tr>
+      <tr><td class="k">يُقاس</td><td>وقت كل خطوة · توكنات Claude · ثواني الصوت وأخطاء 429 · نتيجة فحص المصادر · مدة الفيديوهات</td></tr>
+      <tr><td class="k">النجاح</td><td>خالد يقبل الفيديوهات الثلاثة بدون تعديل جوهري، وما فيه معلومة بدون مصدر</td></tr>
+      <tr><td class="k">النتيجة</td><td id="exp-result"><b>١٦ أكتوبر ٢٠٢٦، ٣ مقالات بدون أي تعديل يدوي على السكربت أو الفيديو.</b><br>
+- <b>فحص المصادر:</b> السكربتات الثلاثة نجحت من أول محاولة.<br>
+- <b>Claude (claude-opus-5-5):</b> من ١٢٦ إلى ٢٠٤ ثانية، ومن ١٤ إلى ١٩ ألف توكن مخرجات. التكلفة لو بأسعار الـAPI من ٠٫٦١ إلى ٠٫٧٤ دولار للمقالة (الحين صار API فعلي، القرار D21).<br>
+- <b>Gemini:</b> حوالي ١٠ طلبات صوت لكل مقالة بعد التجميع، وصفر أخطاء 429. يعني الحد اليومي (١٠٠ طلب) يكفي حوالي ١٠ مقالات في اليوم.<br>
+- <b>تطابق الصوت مع السكربت:</b> ٠٫٧٧ و٠٫٩٤ و٠٫٩٥.<br>
+- <b>المدد:</b> الفيديو العادي ١٦١ و١٩١ و٢١١ ثانية، و٩ شورتس كلها بين ٢٣ و٣٦ ثانية.<br>
+- <b>الصنع على جهاز خالد:</b> من ١٢ إلى ٢٧ دقيقة للمقالة، والوقت يطول لما تشتغل أكثر من مقالة بنفس الوقت.<br>
+- <b>النشر:</b> أول فيديو انتشر عام: <code>youtu.be/WOpMBP_JL98</code>.<br>
+- <b>ضعف معروف:</b> المقالة اللي فيها صورة وحدة تتكرر صورتها، وتحتاج حل. والفيديو العادي أقصر من الهدف (٤ إلى ٦ دقائق).<br>
+- <b>بانتظار:</b> رأي خالد في الفيديوهات نفسها.</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="evidence"><div class="wrap">
+  <h2><span class="n">١٤</span>الأدلة والمواقع</h2>
+  <pre>skill   ~/.claude/skills/modonty-video/   SKILL.md  long.md  formats.md  checklist.md  growth.md  brand.json  engine/
+engine  example-script.json  fetch_article.py  fonts/  gemini_voice.py  make.py  overlay.html  overlays.py
+voice   make.py:13  VOICE_ID = "voice_kq9fd6jmhzqc"
+sample  k6/sample-v2/out/  modonty-video.mp4 158.3s · short-number.mp4 25.2s · short-steps.mp4 25.2s · thumbnail.png
+server  84.46.245.226  /opt → containerd  content-radar  football   (no node / chrome yet)
+plans   k6/modonty-youtube-plan.html · k6/modonty-video-style.html · k6/modonty-video-prd.html (this file)</pre>
+  <h3>المصادر الرسمية</h3>
+  <ul class="src">
+    <li><a href="https://developers.google.com/youtube/v3/docs/videos/insert">YouTube Data API · videos.insert</a></li>
+    <li><a href="https://support.google.com/youtube/answer/11914225">YouTube · Shorts discovery</a></li>
+    <li><a href="https://support.google.com/youtube/answer/1311392">YouTube · Monetization policies</a></li>
+    <li><a href="https://support.google.com/youtube/answer/14328491">YouTube · Altered or synthetic content</a></li>
+    <li><a href="https://blog.youtube/creator-and-artist-stories/youtube-related-videos-traffic-guide/">YouTube Blog · Shorts to long-form</a></li>
+    <li><a href="https://ai.google.dev/gemini-api/docs/speech-generation">Gemini · Speech generation</a></li>
+    <li><a href="https://ai.google.dev/api/voices">Gemini · Voices API</a></li>
+    <li><a href="https://code.claude.com/docs/en/authentication">Claude Code · Authentication (setup-token)</a></li>
+    <li><a href="https://code.claude.com/docs/en/headless">Claude Code · Run programmatically</a></li>
+  </ul>
+</div></section>
+</main>
+<footer><div class="wrap">أي قرار جديد يُضاف للقسم ٢ بسطر جديد ورقم جديد، والحالات في القسمين ٤ و١٢ تتحدّث بعد كل خطوة.</div></footer>
+</body>
+</html>

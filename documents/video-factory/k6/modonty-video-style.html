@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>هوية فيديو مدونتي</title>
+<meta name="description" content="الإطار الثابت لفيديوهات مدونتي: الألوان والخط والبنية والسلاسل الخمس والعناصر الإلزامية وخطة المشتركين">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Montserrat:wght@600;700&display=swap">
+<style>
+:root{
+  --navy:#0E065A; --blue:#3030FF; --teal:#00D8D8; --white:#FFFFFF; --light:#F7F8FC;
+  --bg:#F3F2EF; --surface:#FFFFFF; --surface-2:#EDEEF6; --line:#D9DAE8;
+  --ink:#0E065A; --ink-2:#3D3A6E; --ink-3:#5C5A85;
+  --ok:#0A7A55; --ok-soft:#DDF5EB; --warn:#8A5A00; --warn-soft:#FFF1D6;
+  --font:"Tajawal",system-ui,sans-serif; --latin:"Montserrat",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B0A1F; --surface:#141332; --surface-2:#1C1B44; --line:#2C2A63;
+  --ink:#F3F2FF; --ink-2:#C4C2EA; --ink-3:#A3A1CF; --ok:#5BD6A6; --ok-soft:#0F3328; --warn:#F2C26B; --warn-soft:#3A2C0C;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0B0A1F; --surface:#141332; --surface-2:#1C1B44; --line:#2C2A63;
+  --ink:#F3F2FF; --ink-2:#C4C2EA; --ink-3:#A3A1CF; --ok:#5BD6A6; --ok-soft:#0F3328; --warn:#F2C26B; --warn-soft:#3A2C0C;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 17px/1.8 var(--font);overflow-x:hidden}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{line-height:1.3;text-wrap:balance}
+code,.lt{font-family:var(--latin);direction:ltr;unicode-bidi:isolate;font-size:.86em}
+a{color:inherit}
+.wrap{max-width:1120px;margin-inline:auto;padding-inline:16px}
+@media(min-width:720px){.wrap{padding-inline:32px}}
+section{padding-block:48px;border-bottom:1px solid var(--line)}
+h2{font-size:clamp(24px,3.2vw,34px);font-weight:800;margin-bottom:6px}
+.lead{color:var(--ink-2);max-width:68ch;margin-bottom:24px}
+.muted{color:var(--ink-3);font-size:15px}
+
+/* hero */
+.hero{background:var(--navy);color:#fff;padding-block:56px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset-inline-start:0;bottom:0;height:6px;width:38%;background:var(--teal)}
+.hero .wrap{display:grid;gap:32px;align-items:center}
+@media(min-width:880px){.hero .wrap{grid-template-columns:1.3fr .7fr}}
+.eyebrow{color:var(--teal);font-weight:700;font-size:15px;margin-bottom:10px}
+.hero h1{font-size:clamp(32px,5.4vw,58px);font-weight:900}
+.hero .sub{color:#C9C6F2;font-size:clamp(17px,1.7vw,20px);margin-top:12px;max-width:52ch}
+.rule{margin-top:22px;display:inline-flex;gap:10px;align-items:center;background:var(--blue);padding:10px 18px;border-radius:12px;font-weight:800;font-size:19px}
+.hero-phones{display:flex;gap:14px;justify-content:center}
+.hero .wrap>*{min-width:0}
+.hero-phones .phone.sm{width:min(180px,calc((100vw - 46px)/2))}
+
+/* phone mockup — everything inside scales with the phone width */
+.phone{container-type:inline-size;width:200px;aspect-ratio:9/16;border-radius:22px;overflow:hidden;position:relative;background:var(--navy);box-shadow:0 18px 40px rgba(14,6,90,.28);flex:none;color:#fff;isolation:isolate}
+.phone.sm{width:180px}
+.phone .bgimg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(10px) brightness(.55) saturate(.8);transform:scale(1.15);z-index:-1}
+.phone .bgnavy{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,6,90,.35),rgba(14,6,90,.75));z-index:-1}
+.phone .bar{position:absolute;top:0;right:0;height:.75cqw;background:var(--teal)}
+.phone .logo{position:absolute;top:4.5cqw;right:4.5cqw;width:10cqw;height:10cqw}
+.phone .tag{position:absolute;top:15.5cqw;left:50%;transform:translateX(-50%);background:var(--teal);color:var(--navy);font-weight:800;font-size:4cqw;padding:.6cqw 3cqw;border-radius:99px;white-space:nowrap}
+.phone .card{position:absolute;left:50%;top:42.7%;transform:translate(-50%,-50%);width:92.6cqw;aspect-ratio:16/9;border-radius:3.4cqw;background-size:cover;background-position:center}
+.phone .card.sq{width:79.6cqw;aspect-ratio:1}
+.phone .credit{position:absolute;top:65.6%;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1.5cqw;font-size:3.3cqw;font-weight:500;opacity:.85;white-space:nowrap}
+.phone .credit svg{width:4.5cqw;height:4.5cqw}
+.phone .cap{position:absolute;top:73%;left:13cqw;right:13cqw;text-align:center;font-weight:800;font-size:7.4cqw;line-height:1.25;text-shadow:0 0 .6cqw var(--navy),0 0 .6cqw var(--navy),0 .4cqw 1cqw rgba(0,0,0,.5)}
+.phone .hook{position:absolute;top:15.5cqw;left:6cqw;right:6cqw;text-align:center;background:var(--blue);font-weight:800;font-size:6.4cqw;line-height:1.35;padding:1.6cqw 3cqw;border-radius:2.4cqw}
+.phone .big{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;font-size:46cqw;line-height:.9;color:#fff}
+.phone .big small{display:block;font-size:6.4cqw;line-height:1.3;font-weight:800;text-align:center;color:var(--teal);margin-top:1cqw}
+.phone .counter{position:absolute;top:4.5cqw;left:4.5cqw;width:11cqw;height:11cqw;border-radius:3cqw;background:var(--blue);display:grid;place-items:center;font-weight:900;font-size:7cqw}
+.phone .claim{position:absolute;top:30%;left:7cqw;right:7cqw;text-align:center;font-weight:800;font-size:8cqw;line-height:1.35}
+.phone .btns{position:absolute;top:56%;left:12cqw;right:12cqw;display:flex;gap:4cqw}
+.phone .btns span{flex:1;text-align:center;font-weight:800;font-size:6.2cqw;padding:2.4cqw 0;border-radius:3cqw;border:.5cqw solid #fff}
+.phone .btns span.yes{background:var(--blue);border-color:var(--blue)}
+.phone .bubble{position:absolute;top:24%;right:7cqw;left:12cqw;background:#fff;color:var(--navy);font-weight:700;font-size:5.4cqw;line-height:1.45;padding:3cqw 4cqw;border-radius:4cqw 4cqw .8cqw 4cqw}
+.phone .doc{position:absolute;bottom:20%;left:7cqw;right:7cqw;height:38%;border-radius:3.4cqw;background:linear-gradient(160deg,#2a2580,#0E065A);display:grid;place-items:center;font-size:4cqw;color:#C9C6F2;border:.4cqw dashed rgba(255,255,255,.35)}
+.phone .endlogo{position:absolute;top:30%;left:50%;transform:translateX(-50%);width:30cqw;height:30cqw}
+.phone .endword{position:absolute;top:52%;left:0;right:0;text-align:center;font-weight:900;font-size:12cqw}
+.phone .endword i{color:var(--teal);font-style:normal}
+.phone .endline{position:absolute;top:66%;left:0;right:0;text-align:center;font-weight:700;font-size:5cqw;color:#E3E1FF}
+.phone .endurl{position:absolute;top:73.5%;left:50%;transform:translateX(-50%);background:var(--teal);color:var(--navy);font:700 4.4cqw/1 var(--latin);padding:1.6cqw 3.4cqw;border-radius:99px;direction:ltr}
+.phone .safe{position:absolute;top:9.4%;bottom:22.9%;left:13cqw;right:13cqw;border:.5cqw dashed rgba(0,216,216,.9);border-radius:1cqw;pointer-events:none}
+
+/* anatomy */
+.anat{display:grid;gap:28px;align-items:start}
+@media(min-width:820px){.anat{grid-template-columns:auto 1fr}}
+.anat .phone{width:300px;margin-inline:auto}
+.parts{display:grid;gap:10px;counter-reset:p}
+.part{display:grid;grid-template-columns:34px 1fr;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.part::before{counter-increment:p;content:counter(p,arabic-indic);width:34px;height:34px;border-radius:10px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800}
+.part b{display:block}
+.part span{color:var(--ink-2);font-size:15.5px}
+
+/* assets */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.box h3{font-size:18px;font-weight:800;margin-bottom:8px}
+.box p{color:var(--ink-2);font-size:15.5px}
+.sw{display:flex;gap:8px;margin-bottom:10px}
+.sw div{flex:1;height:56px;border-radius:10px;display:flex;align-items:flex-end;padding:6px 8px;font:600 12px/1 var(--latin);direction:ltr;border:1px solid var(--line)}
+.spec{font-weight:900;font-size:40px;line-height:1.2}
+.spec2{font-weight:800;font-size:22px;color:var(--ink-2)}
+
+/* timeline */
+.tl{display:flex;border-radius:14px;overflow:hidden;border:1px solid var(--line);min-height:96px}
+.tl div{padding:12px 12px;font-size:14.5px;line-height:1.5;color:#fff;min-width:0}
+.tl b{display:block;font-size:16px}
+.tl small{opacity:.85;font-family:var(--latin);direction:ltr;display:block}
+.tl .t1{background:var(--blue);flex:1.5}.tl .t2{background:#4747FF;flex:2.5}.tl .t3{background:var(--navy);flex:7}.tl .t4{background:#1E1688;flex:4.5}.tl .t5{background:var(--teal);color:var(--navy);flex:1.5}
+@media(max-width:640px){.tl{flex-direction:column}.tl div{flex:none!important}}
+
+/* series */
+.series{display:grid;gap:18px}
+.s{display:grid;gap:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+@media(min-width:760px){.s{grid-template-columns:auto 1fr;align-items:start}}
+.s .phone{margin-inline:auto}
+.s h3{font-size:22px;font-weight:900;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill{font-size:13px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--surface-2);color:var(--ink-2)}
+.s .when{color:var(--ink-2);margin:4px 0 12px}
+.beats{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.beats li{display:grid;grid-template-columns:92px 1fr;gap:10px;font-size:15.5px;padding:8px 12px;border-radius:10px;background:var(--surface-2)}
+.beats li b{font-weight:800}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:15.5px}
+th,td{padding:11px 14px;text-align:start;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--surface-2);font-weight:800;font-size:14.5px}
+tr:last-child td{border-bottom:0}
+.must{display:inline-block;font-size:12.5px;font-weight:800;padding:2px 9px;border-radius:99px;background:var(--warn-soft);color:var(--warn)}
+.should{display:inline-block;font-size:12.5px;font-weight:800;padding:2px 9px;border-radius:99px;background:var(--surface-2);color:var(--ink-2)}
+
+.week{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.day b{display:block;font-size:14px;color:var(--ink-3)}
+.day span{font-weight:800;font-size:17px}
+.day.long{background:var(--navy);color:#fff;border-color:var(--navy)}
+.day.long b{color:var(--teal)}
+
+.facts{display:grid;gap:12px}
+.fact{background:var(--surface);border:1px solid var(--line);border-inline-start:5px solid var(--blue);border-radius:12px;padding:14px 18px}
+.fact b{display:block;font-size:17.5px;font-weight:800}
+.fact span{color:var(--ink-2);font-size:15.5px}
+.fact em{font-style:normal;font-size:13px;font-weight:700;color:var(--ink-3)}
+
+.next{background:var(--navy);color:#fff;border-radius:18px;padding:24px 26px}
+.next h2{color:#fff}
+.next p{color:#C9C6F2}
+.next ol{margin:14px 0 0;padding-inline-start:22px;display:grid;gap:8px}
+.src{columns:2 300px;font-size:14.5px;padding-inline-start:20px}
+.src li{margin-bottom:6px;break-inside:avoid}
+footer{padding-block:26px;color:var(--ink-3);font-size:14px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="icon" viewBox="15 12 70 62">
+    <path fill="#fff" d="M27.183,70.026c-2.338,0-4.24-1.902-4.24-4.24v-45.73c0-2.338,1.902-4.24,4.24-4.24h45.635c2.338,0,4.24,1.902,4.24,4.24v45.73c0,2.338-1.902,4.24-4.24,4.24H27.183z"/>
+    <rect x="31.025" y="53.025" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -29.2803 39.5775)" fill="#00D8D8" width="4.216" height="4.216"/>
+    <path fill="#3030FF" d="M68.976,38.265v18.978h-4.222V38.265c0-3.49-2.828-6.326-6.318-6.326c-3.498,0-6.326,2.836-6.326,6.326v18.978h-4.215V38.265c0-3.49-2.836-6.326-6.326-6.326c-3.498,0-6.326,2.836-6.326,6.326v10.541h-4.215V38.265c0-0.717,0.07-1.426,0.21-2.111c0.312-1.558,0.974-2.984,1.893-4.215c0.6-0.795,1.309-1.504,2.111-2.103c1.76-1.324,3.95-2.111,6.326-2.111c2.368,0,4.558,0.787,6.326,2.111c0.795,0.592,1.504,1.309,2.104,2.103c0.6-0.795,1.309-1.504,2.111-2.103c1.761-1.324,3.95-2.111,6.326-2.111c2.368,0,4.557,0.787,6.318,2.111c0.802,0.592,1.519,1.309,2.111,2.103c0.919,1.231,1.582,2.657,1.901,4.215C68.898,36.839,68.976,37.548,68.976,38.265z"/>
+  </symbol>
+  <symbol id="shield" viewBox="0 0 100 100">
+    <path fill="#0B0A5C" stroke="#00D8D8" stroke-width="5" d="M50 5 86 19v29c0 23-13 39-36 48C27 87 14 71 14 48V19L50 5Z"/>
+    <g transform="translate(0 -6)"><path fill="#F3F3F3" d="M74.41 50.23v24.42h-5.43V50.23c0-4.49-3.640-8.14-8.13-8.14-4.5 0-8.14 3.65-8.14 8.14v24.42h-5.42V50.23c0-4.49-3.65-8.14-8.14-8.14-4.5 0-8.14 3.65-8.14 8.14V63.8h-5.42V50.23c0-.92.09-1.83.27-2.72.4-2 1.25-3.84 2.44-5.42.77-1.020 1.68-1.93 2.72-2.71 2.26-1.7 5.08-2.72 8.14-2.72 3.05 0 5.86 1.01 8.14 2.72 1.02.76 1.93 1.68 2.71 2.71.77-1.02 1.68-1.93 2.72-2.71 2.27-1.7 5.08-2.72 8.14-2.72 3.05 0 5.86 1.010 8.13 2.72 1.03.76 1.95 1.68 2.72 2.71 1.18 1.58 2.03 3.42 2.45 5.42.18.89.28 1.8.28 2.72Z"/></g>
+  </symbol>
+</svg>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">مهارة <span class="lt">modonty-video</span> · ١٦ أكتوبر ٢٠٢٦</div>
+      <h1>هوية فيديو مدونتي</h1>
+      <p class="sub">إطار ثابت يعرّف المشاهد إن الفيديو من مدونتي من أول ثانية، وخمس سلاسل تتبدّل جواه عشان ما يمل. كل مقالة تقدر تطلّع فيديو جديد كل يوم بنفس الجودة.</p>
+      <div class="rule">نفس الإطار، والعرض يتغيّر</div>
+    </div>
+    <div class="hero-phones">
+      <div class="phone sm" aria-label="مثال: لقطة من سلسلة ٣ علامات">
+        <div class="bgimg" style="background-image:url('sample-short/img/3.webp')"></div><div class="bgnavy"></div>
+        <div class="bar" style="width:42%"></div>
+        <svg class="logo"><use href="#icon"/></svg>
+        <div class="counter">٢</div>
+        <div class="tag">٣ علامات</div>
+        <div class="card sq" style="background-image:url('sample-short/img/3.webp')"></div>
+        <div class="credit"><svg><use href="#shield"/></svg>فريق الإغاثة العربي</div>
+        <div class="cap">تفتح التطبيق تلقائيًا</div>
+      </div>
+      <div class="phone sm" aria-label="مثال: شاشة النهاية">
+        <div class="bgimg" style="background-image:url('sample-short/img/1.webp')"></div><div class="bgnavy" style="background:rgba(14,6,90,.82)"></div>
+        <div class="bar" style="width:100%"></div>
+        <svg class="endlogo"><use href="#icon"/></svg>
+        <div class="endword">مدونتي<i>.</i></div>
+        <div class="endline">التفاصيل كاملة في مدونتي</div>
+        <div class="endurl">modonty.com</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="anatomy"><div class="wrap">
+  <h2>تشريح الإطار</h2>
+  <p class="lead">هذي الأماكن ثابتة في كل فيديو، بنفس المقاس والمكان. الخط المتقطّع هو المنطقة الآمنة اللي ما تغطّيها أزرار يوتيوب.</p>
+  <div class="anat">
+    <div class="phone" aria-label="تشريح الإطار">
+      <div class="bgimg" style="background-image:url('sample-short/img/1.webp')"></div><div class="bgnavy"></div>
+      <div class="bar" style="width:60%"></div>
+      <svg class="logo"><use href="#icon"/></svg>
+      <div class="tag">الضرر</div>
+      <div class="card" style="background-image:url('sample-short/img/1.webp')"></div>
+      <div class="credit"><svg><use href="#shield"/></svg>مركز فريق الإغاثة العربي</div>
+      <div class="cap">بضعف الانتباه والذاكرة</div>
+      <div class="safe"></div>
+    </div>
+    <div class="parts">
+      <div class="part"><div><b>خط التقدّم</b><span>سماوي رفيع في أعلى الشاشة، يمشي من اليمين لليسار. هذي اللمسة السماوية الوحيدة.</span></div></div>
+      <div class="part"><div><b>أيقونة مدونتي</b><span>أعلى اليمين طول الفيديو. وفي شاشة النهاية تظهر كبيرة.</span></div></div>
+      <div class="part"><div><b>اسم السلسلة</b><span>شارة سماوية تحت الأيقونة، عشان المشاهد يعرف وش البرنامج: «٣ علامات»، «صح ولا خطأ؟»…</span></div></div>
+      <div class="part"><div><b>بطاقة الصورة</b><span>صورة المقالة نفسها بزوايا دائرية، وتقرّب ببطء من ٦ إلى ٨٪. وراها نفس الصورة مموّهة ومعتّمة.</span></div></div>
+      <div class="part"><div><b>سطر المصدر</b><span>درع توثيق مدونتي واسم العيادة أو الطبيب. هذا يعطي الثقة، ويخدم العميل.</span></div></div>
+      <div class="part"><div><b>الترجمة</b><span>كلمتين أو ثلاث في السطر، بخط Tajawal العريض، أبيض بحدّ كحلي. تنقطع عند الفاصلة والنقطة.</span></div></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="assets"><div class="wrap">
+  <h2>العناصر الثابتة</h2>
+  <p class="lead">هذي ما تتغيّر أبدًا، لأن الثبات عليها هو اللي يخلّي المشاهد يتعرّف على العلامة. الألوان مأخوذة من ملف الشعار والموقع نفسه.</p>
+  <div class="grid">
+    <div class="box"><h3>الألوان</h3>
+      <div class="sw"><div style="background:#0E065A;color:#fff">#0E065A</div><div style="background:#3030FF;color:#fff">#3030FF</div><div style="background:#00D8D8;color:#0E065A">#00D8D8</div></div>
+      <p>الكحلي هو المسيطر، والأزرق لصناديق التأكيد، والسماوي لمسة رفيعة وحدة بس. ما ندخل لون رابع.</p></div>
+    <div class="box"><h3>الخط</h3>
+      <div class="spec">Tajawal</div><div class="spec2">قلت مقطع واحد بس؟</div>
+      <p>نفس خط الموقع. العناوين بوزن ٨٠٠، والأرقام بوزن ٩٠٠. واللاتيني بخط Montserrat.</p></div>
+    <div class="box"><h3>الصوت</h3>
+      <p><b>الراوي:</b> صوت سعودي واحد ثابت للعلامة. وإذا وصل مقطع من الطبيب، صوته هو.<br><b>توقيع صوتي:</b> نغمة مدونتي ١٫٢ ثانية في نهاية كل فيديو، وما تتغيّر أبدًا.<br><b>الموسيقى:</b> تتغيّر كل فيديو، من مكتبة يوتيوب الصوتية.</p></div>
+    <div class="box"><h3>الحركة</h3>
+      <p>انتقال واحد بس بين المقاطع: مسحة زرقاء من اليمين لليسار، ومعها الأيقونة. الأرقام والترجمة تكبر بخفة عند ظهورها. ممنوع الاهتزاز والتشويش والدوران.</p></div>
+  </div>
+</div></section>
+
+<section id="timeline"><div class="wrap">
+  <h2>بنية كل شورت</h2>
+  <p class="lead">من ٢٥ إلى ٤٠ ثانية. يوتيوب يرتّب الشورتس حسب نسبة اللي اختاروا يشاهدون بدل ما يتجاوزون، وحسب نسبة المشاهدة. فالشورت اللي ينكمل يكسب على الطويل اللي يتركونه في نصه.</p>
+  <div class="tl">
+    <div class="t1"><b>الخطاف</b><small>0 – 1.5s</small>صوت ونص بكلمات مختلفة، والصورة تتحرك من أول لحظة</div>
+    <div class="t2"><b>الوعد</b><small>1.5 – 4s</small>وش بيجي وكم عدده</div>
+    <div class="t3"><b>الجسم</b><small>4s – T−6</small>من ٢ إلى ٤ نقاط، كل وحدة من ٥ إلى ٨ ثوانٍ، والصورة تتغيّر كل ٣ ثوانٍ على الأكثر</div>
+    <div class="t4"><b>الدعوة</b><small>T−6 – T−1.5</small>طلب واحد بس</div>
+    <div class="t5"><b>النهاية</b><small>1.5s</small>شاشة النهاية والتوقيع الصوتي</div>
+  </div>
+  <p class="muted" style="margin-top:12px">ممنوع نبدأ بالشعار أو التحية أو اسم القناة. وآخر جملة تربط بأول جملة، عشان المشاهد يعيد الفيديو.</p>
+</div></section>
+
+<section id="series"><div class="wrap">
+  <h2>السلاسل الخمس</h2>
+  <p class="lead">كل سلسلة لها افتتاحية خاصة تميّزها، ونختارها حسب محتوى المقالة. القاعدة: ما تتكرر نفس السلسلة يومين ورا بعض، وما يطلع شورتين من نفس المقالة في نفس الأسبوع.</p>
+  <div class="series">
+
+    <div class="s">
+      <div class="phone sm" aria-label="افتتاحية سلسلة ٣ علامات">
+        <div class="bgimg" style="background-image:url('sample-short/img/4.webp')"></div><div class="bgnavy" style="background:rgba(14,6,90,.8)"></div>
+        <div class="bar" style="width:4%"></div>
+        <svg class="logo"><use href="#icon"/></svg>
+        <div class="big">٣<small>علامات</small></div>
+      </div>
+      <div>
+        <h3>«٣ علامات» <span class="pill">القائمة</span></h3>
+        <p class="when">لما تذكر المقالة علامات أو أعراض أو أسباب. تبدأ برقم ٣ يملأ الشاشة، وبعدين يصغر ويتحوّل لعدّاد في الزاوية.</p>
+        <ul class="beats">
+          <li><b>الخطاف</b>الموقف اللي يعيشه المشاهد، مو اسم الموضوع: «تفتح الجوال تشوف مقطع… وتطلع بعد ساعة؟»</li>
+          <li><b>الوعد</b>«ثلاث علامات، والثالثة أغلب الناس ما ينتبهون لها»</li>
+          <li><b>١، ٢، ٣</b>علامة وحدة في كل نقطة، والعدّاد ينزل، وآخرها أقلها وضوحًا</li>
+          <li><b>الدعوة</b>«لو فيك ثنتين منها، شوف الفيديو الكامل»، ويودّي للفيديو الطويل</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="s">
+      <div class="phone sm" aria-label="افتتاحية سلسلة صح ولا خطأ">
+        <div class="bgimg" style="background-image:url('sample-short/img/2.webp')"></div><div class="bgnavy" style="background:rgba(14,6,90,.78)"></div>
+        <div class="bar" style="width:4%"></div>
+        <svg class="logo"><use href="#icon"/></svg>
+        <div class="tag">صح ولا خطأ؟</div>
+        <div class="claim">«مقطع واحد قبل النوم ما يضر»</div>
+        <div class="btns"><span class="yes">صح</span><span>خطأ</span></div>
+      </div>
+      <div>
+        <h3>«صح ولا خطأ؟» <span class="pill">الخرافة</span></h3>
+        <p class="when">لما تصحّح المقالة معلومة منتشرة. تبدأ بالادّعاء وتحته زرّين، ووقفة ثانية عشان المشاهد يخمّن.</p>
+        <ul class="beats">
+          <li><b>الخطاف</b>المعلومة الغلط زي ما يقولها الناس</li>
+          <li><b>الوعد</b>«أغلب الناس يجاوبون غلط»</li>
+          <li><b>الكشف</b>الجواب في صندوق أزرق، وبعده السبب في سطر من المقالة</li>
+          <li><b>الدعوة</b>«اكتب في التعليقات: كنت تعرفها؟»، ونضيف ملصق اختبار من الاستوديو</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="s">
+      <div class="phone sm" aria-label="افتتاحية سلسلة رقم يصدمك">
+        <div class="bgimg" style="background-image:url('sample-short/img/1.webp')"></div><div class="bgnavy" style="background:rgba(14,6,90,.82)"></div>
+        <div class="bar" style="width:4%"></div>
+        <svg class="logo"><use href="#icon"/></svg>
+        <div class="tag">رقم يصدمك</div>
+        <div class="big" style="font-size:24cqw">١٠٠ ألف<small>شخص في دراسة وحدة</small></div>
+      </div>
+      <div>
+        <h3>«رقم يصدمك» <span class="pill">الرقم</span></h3>
+        <p class="when">لما يكون في المقالة رقم لافت ومصدره معروف. يبدأ الرقم يعدّ بسرعة ويملأ الشاشة.</p>
+        <ul class="beats">
+          <li><b>الخطاف</b>الرقم بدون سياق: «١٠٠ ألف شخص»</li>
+          <li><b>الوعد</b>«وش طلع معهم يخصّك أنت»</li>
+          <li><b>السياق</b>وش يقيس الرقم، ونذكر المصدر بالصوت</li>
+          <li><b>الدعوة</b>«المصدر والتفاصيل في المقالة»</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="s">
+      <div class="phone sm" aria-label="لقطة من سلسلة سوّها كذا">
+        <div class="bgimg" style="background-image:url('sample-short/img/3.webp')"></div><div class="bgnavy"></div>
+        <div class="bar" style="width:55%"></div>
+        <svg class="logo"><use href="#icon"/></svg>
+        <div class="counter" style="font-size:5cqw">خطوة<br>١</div>
+        <div class="tag">سوّها كذا</div>
+        <div class="card sq" style="background-image:url('sample-short/img/3.webp')"></div>
+        <div class="cap">وقّف الإشعارات</div>
+      </div>
+      <div>
+        <h3>«سوّها كذا» <span class="pill">الخطوات</span></h3>
+        <p class="when">لما تعطي المقالة خطوات عملية. تبدأ بلقطة سريعة للمشكلة، وبعدها قطع مباشر لأول خطوة.</p>
+        <ul class="beats">
+          <li><b>الخطاف</b>النتيجة أول: «من الليلة تنام أبكر بخطوة وحدة»</li>
+          <li><b>الخطوات</b>من ٢ إلى ٣ خطوات، كل وحدة تبدأ بفعل: «وقّف… حدّد… أبعد…»</li>
+          <li><b>الدليل</b>ليش تنفع، في سطر واحد من المقالة</li>
+          <li><b>الدعوة</b>«احفظ المقطع وجرّبها الليلة»</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="s">
+      <div class="phone sm" aria-label="افتتاحية سلسلة اسأل الدكتور">
+        <div class="bgimg" style="background-image:url('sample-short/img/2.webp')"></div><div class="bgnavy" style="background:rgba(14,6,90,.8)"></div>
+        <div class="bar" style="width:4%"></div>
+        <svg class="logo"><use href="#icon"/></svg>
+        <div class="tag">اسأل الدكتور</div>
+        <div class="bubble">كم ساعة الريلز تعتبر كثير؟</div>
+        <div class="doc">مقطع الطبيب من الجوال</div>
+      </div>
+      <div>
+        <h3>«اسأل الدكتور» <span class="pill">الطبيب</span></h3>
+        <p class="when">لما يرسل العميل مقطع من الجوال للطبيب وهو يجاوب سؤال مقالته. هذي أصدق سلسلة وأقواها للعلاقة مع العميل. يبدأ السؤال في فقاعة محادثة، وبعدها يظهر الطبيب.</p>
+        <ul class="beats">
+          <li><b>الخطاف</b>سؤال المريض بنفس كلماته زي ما يكتبه الناس</li>
+          <li><b>الجواب</b>الطبيب نفسه، ونقص منه الفراغات بمهارة <code>yt-edit</code></li>
+          <li><b>التعريف</b>اسم الطبيب وتخصصه وعيادته مع الدرع، لمدة ٣ ثوانٍ</li>
+          <li><b>الدعوة</b>«احجز من رابط المقالة»</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div></section>
+
+<section id="week"><div class="wrap">
+  <h2>أسبوع مدونتي</h2>
+  <p class="lead">كل يوم شورت، وكل ثلاثاء فيديو طويل، وكل شورت في الأسبوع يودّي للفيديو الطويل. السلسلة اللي تجيب ضعف متوسط القناة مرتين ورا بعض تاخذ أيام أكثر في الأسبوع اللي بعده.</p>
+  <div class="week">
+    <div class="day"><b>الأحد</b><span>٣ علامات</span></div>
+    <div class="day"><b>الاثنين</b><span>صح ولا خطأ؟</span></div>
+    <div class="day long"><b>الثلاثاء</b><span>الفيديو الطويل</span></div>
+    <div class="day"><b>الأربعاء</b><span>رقم يصدمك</span></div>
+    <div class="day"><b>الخميس</b><span>سوّها كذا</span></div>
+    <div class="day"><b>متى ما وصل مقطع</b><span>اسأل الدكتور</span></div>
+  </div>
+</div></section>
+
+<section id="gate"><div class="wrap">
+  <h2>العناصر الإلزامية</h2>
+  <p class="lead">١٨ بندًا تتفحص قبل الرفع. إذا فشل أي بند «إلزامي»، ما يترفع الفيديو.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>المستوى</th><th>البند</th></tr></thead>
+    <tbody>
+      <tr><td>١</td><td><span class="must">إلزامي</span></td><td>كل معلومة لها جملة في المقالة المعتمدة، وما نضيف معلومة صحية من برّا</td></tr>
+      <tr><td>٢</td><td><span class="must">إلزامي</span></td><td>الخطاف خلال ثانية ونص، بالصوت وعلى الشاشة بكلمات مختلفة</td></tr>
+      <tr><td>٣</td><td><span class="must">إلزامي</span></td><td>الوعد يقول وش بيجي وكم عدده</td></tr>
+      <tr><td>٤</td><td><span class="must">إلزامي</span></td><td>دعوة وحدة بس، في آخر ٦ ثوانٍ</td></tr>
+      <tr><td>٥</td><td><span class="should">مستحسن</span></td><td>آخر جملة تربط بأول جملة</td></tr>
+      <tr><td>٦</td><td><span class="should">مستحسن</span></td><td>المدة من ٢٥ إلى ٤٠ ثانية</td></tr>
+      <tr><td>٧</td><td><span class="must">إلزامي</span></td><td>الكحلي هو المسيطر والأزرق للتأكيد والسماوي لمسة وحدة، وبدون لون رابع</td></tr>
+      <tr><td>٨</td><td><span class="must">إلزامي</span></td><td>خط Tajawal في كل النصوص، والترجمة كلمتين أو ثلاث في السطر</td></tr>
+      <tr><td>٩</td><td><span class="must">إلزامي</span></td><td>ترتيب كلمات الترجمة صحيح، ونتأكد منه من لقطة فعلية</td></tr>
+      <tr><td>١٠</td><td><span class="must">إلزامي</span></td><td>الأيقونة أعلى اليمين، واسم السلسلة ظاهر</td></tr>
+      <tr><td>١١</td><td><span class="must">إلزامي</span></td><td>صور المقالة نفسها، وما نستخدم صورًا عامة مولّدة بالذكاء الاصطناعي</td></tr>
+      <tr><td>١٢</td><td><span class="must">إلزامي</span></td><td>اسم العيادة أو الطبيب مع درع التوثيق</td></tr>
+      <tr><td>١٣</td><td><span class="must">إلزامي</span></td><td>شاشة النهاية الموحّدة والتوقيع الصوتي</td></tr>
+      <tr><td>١٤</td><td><span class="should">مستحسن</span></td><td>الصورة تتغيّر كل ٣ ثوانٍ على الأكثر</td></tr>
+      <tr><td>١٥</td><td><span class="should">مستحسن</span></td><td>كل النص داخل المنطقة الآمنة</td></tr>
+      <tr><td>١٦</td><td><span class="must">إلزامي</span></td><td>الرفع خاص، وإنسان هو اللي ينشر</td></tr>
+      <tr><td>١٧</td><td><span class="must">إلزامي</span></td><td>نفعّل خيار «محتوى اصطناعي» إذا الصوت آلي</td></tr>
+      <tr><td>١٨</td><td><span class="must">إلزامي</span></td><td>اسم السلسلة في العنوان، وأول سطرين في الوصف يجاوبون السؤال، ورابط المقالة فيه وسم تتبع</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="growth"><div class="wrap">
+  <h2>كيف نكسب المشتركين والانتشار</h2>
+  <p class="lead">الانتشار ما هو حيلة. هو شورت يكسب اختبار «يشاهد ولا يتجاوز» قدّام كل شي ثاني ينعرض لنفس المشاهد، فيوتيوب يكمّل يعرضه لناس أكثر.</p>
+  <div class="facts">
+    <div class="fact"><b>يوتيوب يرتّب الشورتس حسب الأداء</b><span>نسبة اللي اختاروا يشاهدون، ومتوسط مدة المشاهدة ونسبتها، وبعدها الإعجابات واستبيانات المشاهدين. ويقول إن ما فيه حد أدنى لعدد مرات النشر.</span> <em>مصدر رسمي من يوتيوب</em></div>
+    <div class="fact"><b>المشتركين يجون من الفيديو الطويل أكثر</b><span>دراسة على ٥٤٠٠ شورت من ٣٣ قناة لقت إن الفيديو الطويل يجيب مشتركين أكثر لكل ١٠ آلاف مشاهدة. عشان كذا الشورت للانتشار، والفيديو الطويل للمشتركين.</span> <em>مصدر خارجي، قريناه من ملخصات</em></div>
+    <div class="fact"><b>كل شورت يودّي للفيديو الطويل</b><span>نحط الفيديو الطويل كـ«فيديو مرتبط» في كل شورت، ونضيف دعوة بالصوت أو بالصورة في آخر ٥ ثوانٍ، والفيديو الطويل يوفي بالوعد في أول ٥ إلى ١٠ ثوانٍ.</span> <em>مصدر رسمي من يوتيوب</em></div>
+    <div class="fact"><b>الناس تبي المزيد من الشي اللي حبّته</b><span>شكل يجيب ضعف متوسط القناة يستاهل نكمّل فيه، وإذا جابه مرتين ورا بعض فهو شكل ناجح. عشان كذا السلاسل ثابتة، والمحتوى اللي جواها يتغيّر.</span> <em>مصدر خارجي</em></div>
+  </div>
+  <h3 style="font-size:20px;font-weight:800;margin:28px 0 12px">بعد كل نشر</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>الإجراء</th><th>ليش</th></tr></thead>
+    <tbody>
+      <tr><td>نحط فيديو الأسبوع الطويل كـ«فيديو مرتبط»</td><td>هذا الطريق الموثّق من يوتيوب من الشورتس للفيديو الطويل</td></tr>
+      <tr><td>نثبّت تعليق فيه سؤال</td><td>التعليقات تفاعل، وتعطينا أفكار فيديوهات جاية</td></tr>
+      <tr><td>نرد على أفضل تعليق بشورت</td><td>صاحب التعليق يوصله إشعار، والرد يظهر في التعليقات</td></tr>
+      <tr><td>ملصق اختبار أو تصويت على «صح ولا خطأ؟»</td><td>تفاعل سريع وما يكلّف المشاهد شي</td></tr>
+      <tr><td>نرسل ملف الفيديو للعميل عشان ينشره في حساباته</td><td>كل عيادة عندها جمهورها، وشعار مدونتي يوصل معه</td></tr>
+      <tr><td>ننشره في قناتي مدونتي في واتساب وتليجرام</td><td>السيرفر أصلًا ينشر فيهم كل يوم</td></tr>
+      <tr><td>نحط الفيديو داخل مقالته (المرحلة ٤)</td><td>صفحة المقالة تودّي الزوار للقناة</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="next"><div class="wrap">
+  <div class="next">
+    <h2>الخطوة الجاية بعد اعتمادك</h2>
+    <p>المهارة الحين مكتوبة كمواصفات. لما تعتمد الشكل، أحوّلها لقالب تنفيذ:</p>
+    <ol>
+      <li>أعدّل أداة المونتاج على الهوية: خط Tajawal والألوان الأصلية والأيقونة والدرع وشاشة النهاية والتوقيع الصوتي.</li>
+      <li>أطلّع شورت عينة لكل سلسلة من الخمس، من مقالات مختلفة.</li>
+      <li>تختار وتعدّل، وبعدها نثبّت القالب وننقله للسيرفر.</li>
+    </ol>
+  </div>
+</div></section>
+
+<section id="sources"><div class="wrap">
+  <h2>المصادر</h2>
+  <ul class="src">
+    <li><a href="https://support.google.com/youtube/answer/11914225">YouTube Help · Shorts search &amp; discovery</a></li>
+    <li><a href="https://support.google.com/youtube/answer/12942217">YouTube Help · Shorts content analytics</a></li>
+    <li><a href="https://blog.youtube/creator-and-artist-stories/youtube-related-videos-traffic-guide/">YouTube Blog · Shorts to long-form growth</a></li>
+    <li><a href="https://blog.youtube/creator-and-artist-stories/grow-youtube-channel-interactive-shorts/">YouTube Blog · Community with Shorts</a></li>
+    <li><a href="https://blog.youtube/creator-and-artist-stories/your-guide-to-getting-started-with-youtube-shorts/">YouTube Blog · Getting started with Shorts</a></li>
+    <li><a href="https://support.google.com/youtube/answer/15424877">YouTube Help · Three-minute Shorts</a></li>
+    <li><a href="https://support.google.com/youtube/answer/1311392">YouTube Help · Monetization policies</a></li>
+    <li><a href="https://news.thepublishpress.com/p/are-shorts-worth-it">Publish Press · Galloway/Gileta Shorts study (secondary)</a></li>
+    <li><a href="https://youmind.com/landing/x-viral-articles/youtube-niche-domination-playbook">Galloway · format playbook (repost)</a></li>
+    <li><a href="https://umbrex.com/resources/frameworks/marketing-frameworks/distinctive-brand-assets-framework-ehrenberg-bass/">Distinctive brand assets framework</a></li>
+  </ul>
+</div></section>
+</main>
+<footer><div class="wrap">مصدر الحقيقة هي مهارة <span class="lt">~/.claude/skills/modonty-video</span>، وهذي الصفحة عرض لها.</div></footer>
+</body>
+</html>

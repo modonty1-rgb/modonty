@@ -40,6 +40,7 @@ import { Trophy,
   ChevronRight,
   CircleHelp,
   Clapperboard,
+  Film,
   ClipboardList,
   Cloud,
   ArrowRightLeft,
@@ -319,6 +320,9 @@ const rawMenuGroups: MenuGroup[] = [
       { icon: CheckCircle2, label: "Published", href: "/reels/published" },
       { icon: FileX, label: "Rejected", href: "/reels/rejected" },
       { icon: Archive, label: "Archived", href: "/reels/archived" },
+      // The video factory's drafts (16 Oct 2026, documents/video-factory/) — one article → a regular
+      // video + 3 Shorts, approved per file × platform. Next to reels because its Shorts become reels.
+      { icon: Film, label: "Video factory", href: "/videos" },
     ],
   },
   // Management — who does the work, and what work there is. Khalid, 2026-09-02:

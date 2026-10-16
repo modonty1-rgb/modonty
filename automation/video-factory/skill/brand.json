@@ -1,0 +1,100 @@
+{
+  "source": "Colours from MODONTY/creative/brand/brand-colors.md and modonty/app/globals.css; font from modonty/app/layout.tsx (Tajawal). Read 16 Oct 2026.",
+  "canvas": { "short": [1080, 1920], "long": [1920, 1080], "fps": 30 },
+  "colors": {
+    "navy": "#0E065A",
+    "blue": "#3030FF",
+    "teal": "#00D8D8",
+    "white": "#FFFFFF",
+    "light": "#F7F8FC",
+    "rule": "Navy dominates, blue for emphasis boxes, teal one thin touch only. Three colours maximum. Gold is not part of the identity.",
+    "contrast": { "white_on_navy": "~17:1", "white_on_blue": "~7:1", "navy_on_teal": "~10:1" }
+  },
+  "fonts": {
+    "arabic": "Tajawal",
+    "latin": "Montserrat",
+    "weights": { "hook": 800, "caption": 800, "body": 700, "number": 900, "small": 500 },
+    "files": "Google Fonts: ofl/tajawal (Tajawal-Bold/ExtraBold/Black.ttf), ofl/montserrat"
+  },
+  "type_scale_short": {
+    "hook": 104,
+    "number": 230,
+    "caption": 80,
+    "beat_title": 64,
+    "series_tag": 42,
+    "credit": 36
+  },
+  "captions": {
+    "words_per_line": "2-3",
+    "break_on": "، . : ؟ … ! and any pause over 0.22 s",
+    "style": "Tajawal 800, white, navy stroke 6px, soft shadow",
+    "centre_y": 1400,
+    "no_inline_colour": "Never a colour override mid-line in Arabic (libass scrambles run order). Emphasis = own line or a blue box behind the whole line."
+  },
+  "safe_area_short": {
+    "note": "Conservative, not an official YouTube number: YouTube documents a right-side button panel and truncated description text, but publishes no pixel safe zone.",
+    "top_reserved": 180,
+    "bottom_reserved": 440,
+    "side_margin": 140,
+    "keep_text_between_y": [180, 1480]
+  },
+  "layout_short": {
+    "logo": { "asset": "MODONTY/creative/brand/modonty-icon.svg", "pos": "top-right", "size": 104, "margin": 48,
+              "lockup": "Co-brand on every frame: Modonty icon (right, reads first) | thin white divider | client logo as a rounded tile (left). Client logo from the article's JSON-LD logo.contentUrl. End card: both logos large with a teal × between." },
+    "series_tag": { "pos": "under logo, centred", "y": 300, "style": "teal pill, navy text" },
+    "image_card": { "width_landscape": 1000, "width_square": 860, "centre_y": 820, "radius": 36, "motion": "slow push-in 6-8% over the beat" },
+    "background": "same image, cover, blur 30, brightness -30%",
+    "credit": { "y": 1260, "style": "trust shield + client/doctor name, white 36, 70% opacity" },
+    "progress": { "pos": "top edge", "height": 8, "color": "teal", "direction": "right-to-left" }
+  },
+  "layout_long": {
+    "canvas": [1920, 1080],
+    "image_card": { "x": [96, 1136], "centre_y": 560, "width": 1040, "radius": 32, "motion": "slow push-in 5% over the beat" },
+    "text_panel": { "x": [1220, 1824], "align": "right", "tag_y": 250, "key_line": "Tajawal 800, 64px, max 3 lines" },
+    "chapter_card": { "duration_s": [2, 3], "content": "teal chapter number, series name Tajawal 900 120px, chapter title 54px" },
+    "captions": { "centre_y": 985, "size": 50, "words_per_line": "4-6" },
+    "credit": { "pos": "bottom-right above captions", "y": 900 },
+    "end_screen": { "min_s": 8, "keep_clear": "left half for YouTube end-screen elements (5-20 s in Studio)" },
+    "thumbnail": { "size": [1280, 720], "layout": "navy right half with max 3 words Tajawal 900, article image left half, logo corner" }
+  },
+  "motion": {
+    "beat_transition": "blue wipe right-to-left, 6 frames, Modonty icon passes on the wipe edge",
+    "number_pop": "scale 85% -> 100% in 120 ms",
+    "caption_in": "scale 92% -> 100% in 120 ms",
+    "visual_change_max_gap_s": 3,
+    "no": ["spinning 3D", "glitch", "shake", "more than one transition style"]
+  },
+  "timing_short": {
+    "target_total_s": [25, 40],
+    "hook": [0, 1.5],
+    "promise": [1.5, 4],
+    "beat_s": [5, 8],
+    "beats": [2, 4],
+    "call_starts_before_end_s": 6,
+    "end_card_s": 1.5
+  },
+  "audio": {
+    "voice": {
+      "approved": "16 Oct 2026, by ear",
+      "engine": "Gemini TTS, model gemini-3.8-flash-tts, POST /v1beta/interactions",
+      "voice_id": "voice_kq9fd6jmhzqc",
+      "name": "Modonty Saudi Narrator — designed voice, Najdi Saudi, ~30, warm and energetic YouTube host",
+      "style": "none (the designed voice carries the dialect; a style annotation added nothing)",
+      "expiry": "Stored voice, 1-year TTL from last use (first expiry shown 2027-10-16). If it is ever gone, recreate from the prompt in engine/gemini_voice.py history: POST /v1beta/voices {store:true, voice:{type:'prompted', prompted:{input:<description>}}}",
+      "key": "GEMINI_API_KEY from env, else MODONTY/console/.env.local. Never print it.",
+      "rate_limits": "429 and read timeouts happen on long runs; engine retries with backoff (15 s steps, 8 tries) and caches every beat by text hash.",
+      "rejected": "Azure ar-SA Hamed/Zariyah ('very bad'), ElevenLabs and MiniMax presets via Higgsfield (not convincing), Gemini prebuilt ar-001 voices (MSA).",
+      "doctor": "The doctor's own voice when a clip exists."
+    },
+    "script_for_voice": "Write white Saudi dialect the way it is said, then add tashkeel only where a TTS would misread: وِش · بَشوف · بِنعرف · مُخّك · هَمّ · shadda on every doubled letter (تقلّب، تسوّي). Avoid contractions TTS stumbles on (هالمقاطع → هذي المقاطع). Short sentences, commas for breath.",
+    "music": "Changes every video, from the YouTube Audio Library, ducked to -22 LUFS under voice. Never the same track across the series.",
+    "sonic_logo": "Same 1.2 s Modonty sting on every end card — the one audio element that never changes.",
+    "loudness": "I -14 LUFS, true peak -1.5 dB"
+  },
+  "end_card": {
+    "duration_s": 1.5,
+    "content": ["Modonty icon large", "مدونتي wordmark", "line: التفاصيل كاملة في مدونتي", "modonty.com", "client credit small"],
+    "background": "navy over the blurred article image"
+  },
+  "disclosure": "Tick YouTube 'altered or synthetic content' when the voice is synthetic."
+}

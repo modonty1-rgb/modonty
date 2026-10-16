@@ -125,6 +125,46 @@ export async function createTusTicket(title: string): Promise<TusTicket> {
   return { endpoint: TUS_ENDPOINT, libraryId, videoId: created.guid, signature, expire };
 }
 
+/**
+ * Create a video object and fill it from a file already on our CDN — the video factory's Shorts
+ * (admin, 16 Oct 2026). Server-side, unlike client uploads: a Short is ~3–10MB and lives on our own
+ * Bunny Storage, so there is no browser in the loop.
+ *
+ * Two documented calls, the second chosen over `POST …/videos/fetch` because that endpoint's
+ * documented response carries no video guid, and the guid is the only handle on the file:
+ *   1. POST /library/{id}/videos            → guid   (https://bunny.net/docs/reference/video_createvideo)
+ *   2. PUT  /library/{id}/videos/{guid}      raw application/octet-stream body
+ *                                             (https://bunny.net/docs/reference/video_uploadvideo)
+ * A failed upload deletes the empty video object so the library is not left with an orphan.
+ */
+export async function createStreamVideoFromUrl(title: string, sourceUrl: string): Promise<string> {
+  const { libraryId, apiKey } = streamConfig();
+  const created = await fetch(`${API_BASE}/library/${libraryId}/videos`, {
+    method: "POST",
+    headers: { AccessKey: apiKey, "content-type": "application/json", accept: "application/json" },
+    body: JSON.stringify({ title: title.slice(0, 200) || "video-factory short" }),
+  });
+  if (!created.ok) throw new Error(`Bunny Stream refused to create the video (HTTP ${created.status})`);
+  const { guid } = (await created.json()) as { guid?: string };
+  if (!guid) throw new Error("Bunny Stream returned no video id");
+
+  try {
+    const source = await fetch(sourceUrl, { cache: "no-store" });
+    if (!source.ok) throw new Error(`source file ${source.status}`);
+    const bytes = await source.arrayBuffer();
+    const put = await fetch(`${API_BASE}/library/${libraryId}/videos/${guid}`, {
+      method: "PUT",
+      headers: { AccessKey: apiKey, "content-type": "application/octet-stream", accept: "application/json" },
+      body: bytes,
+    });
+    if (!put.ok) throw new Error(`Bunny Stream upload failed (HTTP ${put.status})`);
+    return guid;
+  } catch (e) {
+    await deleteStreamVideo(guid).catch(() => false);
+    throw e;
+  }
+}
+
 /** Remove a video from the library — used when its row is deleted. */
 export async function deleteStreamVideo(videoId: string): Promise<boolean> {
   const { libraryId, apiKey } = streamConfig();

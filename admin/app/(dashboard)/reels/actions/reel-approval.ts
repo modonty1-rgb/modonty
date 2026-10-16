@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
+import { markReelItemPublished } from "@/lib/videos";
 
 // The Modonty decision on a client's reel (أ٥). Approve goes straight to PUBLISHED —
 // the promise on the console side is «بعد اعتماد مُدَوَّنَتِي يظهر», and an APPROVED
@@ -154,6 +155,8 @@ export async function approveReel(mediaId: string): Promise<Result> {
     await revalidateModontyTag("reels").catch(() => {});
     // العميل يُبلَّغ: صفّ في صندوق التطبيق + دفعة لجواله (مثل «نُشر مقالك»).
     fireClientEvent(reel.clientId, { kind: "reel_published", mediaId: reel.id, reelTitle: reel.title.trim() });
+    // ريل جاء من مصنع الفيديو ← بنده في /videos يصير «منشور» (لا شيء لغيره).
+    await markReelItemPublished(reel.id, null).catch(() => {});
     // `"layout"` لا الافتراضيّ: الاعتماد ينقل الصفّ من `/reels/pending` إلى
     // `/reels/published`، فالشاشتان تتغيّران معاً — والافتراضيّ يُبطل `/reels` وحدها،
     // وهي اليوم تحويل لا شاشة. الرسمي: «Invalidates the layout … and all pages beneath».

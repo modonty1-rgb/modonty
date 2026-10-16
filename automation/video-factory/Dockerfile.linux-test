@@ -1,0 +1,10 @@
+# Throw-away Linux test image for the video factory (phase 0 check, decision D22).
+# Built and run on the VPS only for the test, then removed. No secrets in the image:
+# keys come at run time via --env-file (chmod 600, deleted after).
+FROM python:3.12-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg chromium fonts-dejavu-core ca-certificates \
+ && rm -rf /var/lib/apt/lists/* && pip install --no-cache-dir pillow
+ENV CHROME_BIN=/usr/bin/chromium PYTHONIOENCODING=utf-8
+WORKDIR /work
+COPY . /engine
+CMD ["bash"]
