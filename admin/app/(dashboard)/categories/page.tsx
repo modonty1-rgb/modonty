@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 export default async function CategoriesPage() {
-  const categories = await getCategories();
+  const categories = await getCategories({ includeArchived: true });
   const missingSeo = categories.filter((c) => !c.jsonLdLastGenerated).length;
 
   return (

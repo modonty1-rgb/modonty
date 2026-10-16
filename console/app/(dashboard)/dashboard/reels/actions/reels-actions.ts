@@ -6,6 +6,7 @@ import { after } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { messages } from "@/lib/messages";
+import { LIVE_REEL_LOCK_MESSAGE } from "@/lib/media/live-reel-lock";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 import { notifyReelPending } from "./notify-reel-pending";
@@ -246,9 +247,10 @@ export async function removeReel(mediaId: string): Promise<Result> {
     if (owned.inGallery) {
       return { success: false, error: "هذا الريل من معرض الصور — شيل العلامة من الصورة نفسها" };
     }
+    if (owned.reelStatus === "PUBLISHED") return { success: false, error: LIVE_REEL_LOCK_MESSAGE };
 
     const seenByVisitors =
-      owned.reelStatus === "APPROVED" || owned.reelStatus === "PUBLISHED";
+      owned.reelStatus === "APPROVED"; // المنشور رجع قبل هذا (LIVE_REEL_LOCK_MESSAGE)
     const hasEngagement = owned.commentsCount > 0 || owned.likesCount > 0;
     if (seenByVisitors || hasEngagement) {
       await db.media.update({

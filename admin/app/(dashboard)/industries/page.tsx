@@ -17,6 +17,7 @@ export default async function IndustriesPage({
 }) {
   const params = await searchParams;
   const filters: IndustryFilters = {
+    includeArchived: true,
     hasClients: params.hasClients === "yes" ? true : params.hasClients === "no" ? false : undefined,
     createdFrom: params.createdFrom ? new Date(params.createdFrom) : undefined,
     createdTo: params.createdTo ? new Date(params.createdTo) : undefined,

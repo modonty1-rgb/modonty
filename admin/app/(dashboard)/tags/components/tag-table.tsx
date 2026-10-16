@@ -14,6 +14,8 @@ import { TagRowActions } from "./tag-row-actions";
 const isTestSlug = (slug: string) => slug.toLowerCase().split("-").includes("test");
 
 interface Tag {
+  /** مؤرشف = مخفيّ من الموقع (رابطه 410)؛ يُرجَع من صفحته، ويُحذف من System ← Deletion. */
+  archivedAt?: Date | string | null;
   id: string;
   name: string;
   slug: string;
@@ -29,7 +31,8 @@ export function TagTable({ tags }: { tags: Tag[] }) {
   const router = useRouter();
 
   // Lightweight list every row's merge dialog uses as its target candidates.
-  const candidates = tags.map((t) => ({ id: t.id, name: t.name, slug: t.slug, count: t._count.articles }));
+  // المؤرشف ما يكون هدف دمج: الدمج فيه ينقل المقالات لوسم مخفيّ من الموقع.
+  const candidates = tags.filter((t) => !t.archivedAt).map((t) => ({ id: t.id, name: t.name, slug: t.slug, count: t._count.articles }));
 
   const columns: Column<Tag>[] = [
     {
@@ -39,6 +42,9 @@ export function TagTable({ tags }: { tags: Tag[] }) {
       render: (t) => (
         <span className="flex items-center gap-1.5">
           <span className="text-sm font-medium">{t.name}</span>
+          {t.archivedAt ? (
+            <span className="rounded-full bg-slate-500/15 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">مؤرشف</span>
+          ) : null}
           {isTestSlug(t.slug) && (
             <span title={`Slug «${t.slug}» — likely a dev artifact, review`} className="inline-flex">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-500" aria-label="Test slug" />

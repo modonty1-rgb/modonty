@@ -4,6 +4,7 @@ import { getCoreClientId } from "@/lib/settings/get-core-client-id";
 import { SubscriptionStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import type { IndustryListItem, IndustryQueryOptions } from "@/lib/types";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 export async function getIndustriesWithCounts() {
   // Modonty is the platform, not a partner inside its own industry tile — same exclusion the
@@ -14,7 +15,7 @@ export async function getIndustriesWithCounts() {
     ...(coreClientId ? { id: { not: coreClientId } } : {}),
   };
 
-  const industries = await db.industry.findMany({
+  const industries = await db.industry.findMany({ where: NOT_ARCHIVED,
     select: {
       id: true,
       name: true,

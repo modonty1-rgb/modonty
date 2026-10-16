@@ -275,7 +275,8 @@ export function SyncLocalDialog({ open, onOpenChange }: { open: boolean; onOpenC
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl">
+      {/* لا يتجاوز الشاشة (خالد ١٦ أكتوبر ٢٠٢٦): مع امتلاء القائمة كبر الحوار إلى 579px على شاشة 533px — الآن يمرّر من الداخل */}
+      <DialogContent className="max-h-[90dvh] max-w-2xl overflow-y-auto">
         {phase === "idle" || phase === "confirm" ? (
           <>
             <DialogHeader>
@@ -456,7 +457,8 @@ export function SyncLocalDialog({ open, onOpenChange }: { open: boolean; onOpenC
                       جارٍ تحضير قائمة الجداول...
                     </div>
                   ) : (
-                    progress.collections.map((c) => (
+                    // الفاشل أوّلاً — كان جدولٌ واحد فاشل مدفوناً بين ١٤١ («النسخة فيها خلل» بلا مكان)
+                    [...progress.collections].sort((x, y) => Number(y.status === "failed") - Number(x.status === "failed")).map((c) => (
                       <div
                         key={c.name}
                         className="flex items-center justify-between py-1 text-xs"

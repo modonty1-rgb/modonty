@@ -22,17 +22,16 @@ import { writeFile, readFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { createCategory } from "@/app/(dashboard)/categories/actions/categories-actions/create-category";
 import { updateCategory } from "@/app/(dashboard)/categories/actions/categories-actions/update-category";
-import { deleteCategory } from "@/app/(dashboard)/categories/actions/categories-actions/delete-category";
 import { createTag } from "@/app/(dashboard)/tags/actions/tags-actions";
-import { updateTag, deleteTag } from "@/app/(dashboard)/tags/actions/tags-actions";
+import { updateTag } from "@/app/(dashboard)/tags/actions/tags-actions";
 import { createIndustry } from "@/app/(dashboard)/industries/actions/industries-actions/create-industry";
 import { updateIndustry } from "@/app/(dashboard)/industries/actions/industries-actions/update-industry";
-import { deleteIndustry } from "@/app/(dashboard)/industries/actions/industries-actions/delete-industry";
 import { createClient } from "@/app/(dashboard)/clients/actions/clients-actions/create-client";
-import { deleteClient } from "@/app/(dashboard)/clients/actions/clients-actions/delete-client";
 import { createArticle } from "@/app/(dashboard)/articles/actions/articles-actions/mutations/create-article";
 import { updateArticle } from "@/app/(dashboard)/articles/actions/articles-actions/mutations/update-article";
-import { deleteArticle } from "@/app/(dashboard)/articles/actions/articles-actions/mutations/delete-article";
+import { archiveArticle } from "@/app/(dashboard)/articles/actions/articles-actions/mutations/archive-article";
+import { deleteArticle, deleteCategory, deleteClient, deleteIndustry, deleteTag } from "@/lib/deletion";
+import { setTaxonomyArchived } from "@/lib/taxonomy-archive/set-taxonomy-archived";
 import { getModontyAuthor } from "@/app/(dashboard)/authors/actions/authors-actions/get-modonty-author";
 import { createFAQ, updateFAQ, deleteFAQ } from "@/app/(dashboard)/modonty/faq/actions/faq-actions";
 import { db } from "@/lib/db";
@@ -191,9 +190,12 @@ async function seedCategories(): Promise<SectionResult> {
     R.push(ok(!delParent.success, "deleteCategory(parent with child) → should fail", "constraint", delParent.success ? "Should have failed" : undefined));
 
     // ── DELETE: child first, then parent ──
+    // الحذف للمؤرشف فقط (خالد ١٦ أكتوبر ٢٠٢٦) — الأرشفة أولاً كما يفعل الفريق.
+    await setTaxonomyArchived("category", child.category.id, true);
     const d1 = await deleteCategory(child.category.id);
     R.push(ok(d1.success, "deleteCategory(child)", "delete", d1.error));
 
+    await setTaxonomyArchived("category", parent.category.id, true);
     const d2 = await deleteCategory(parent.category.id);
     R.push(ok(d2.success, "deleteCategory(parent after child removed)", "delete", d2.error));
 
@@ -269,6 +271,7 @@ async function seedTags(): Promise<SectionResult> {
 
   // ── DELETE ──
   if (t1.success && t1.tag) {
+    await setTaxonomyArchived("tag", t1.tag.id, true);
     const d1 = await deleteTag(t1.tag.id);
     R.push(ok(d1.success, "deleteTag('test-tag-1')", "delete", d1.error));
     const gone = await db.tag.findUnique({ where: { id: t1.tag.id } });
@@ -350,6 +353,7 @@ async function seedIndustries(): Promise<SectionResult> {
     await db.client.delete({ where: { id: tempClient.id } });
 
     // ── DELETE ──
+    await setTaxonomyArchived("industry", i1.industry.id, true);
     const d1 = await deleteIndustry(i1.industry.id);
     R.push(ok(d1.success, "deleteIndustry(after client removed)", "delete", d1.error));
     const gone = await db.industry.findUnique({ where: { id: i1.industry.id } });
@@ -557,6 +561,8 @@ async function seedArticles(): Promise<SectionResult> {
     R.push(ok((dbArt?.faqs?.length || 0) >= 1, "verify FAQ created with article", "integrity", `got: ${dbArt?.faqs?.length}`));
 
     // ── DELETE ──
+    // الحذف للمؤرشف فقط (خالد ١٦ أكتوبر ٢٠٢٦) — الأرشفة أولاً كما يفعل الكاتب.
+    await archiveArticle(a1.article.id);
     const d1 = await deleteArticle(a1.article.id);
     R.push(ok(d1.success, "deleteArticle('test-full-article')", "delete", d1.error));
 
@@ -805,6 +811,7 @@ async function seedArticles(): Promise<SectionResult> {
       await db.articleLinkClick.deleteMany({ where: { articleId: existing.id } });
       await db.analytics.deleteMany({ where: { articleId: existing.id } });
       await db.campaignTracking.deleteMany({ where: { articleId: existing.id } });
+      await archiveArticle(existing.id);
       await deleteArticle(existing.id);
     }
     const { faqs: articleFaqs, ...articleData } = a;

@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { messages } from "@/lib/messages";
+import { LIVE_REEL_LOCK_MESSAGE } from "@/lib/media/live-reel-lock";
 import { deleteBunnyUrl } from "@modonty/shared/lib/bunny";
 import { isOwnBunnyUrl } from "@/lib/bunny/is-own-bunny-url";
 import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo";
@@ -272,11 +273,12 @@ export async function setImageInReels(
         });
       }
     } else {
+      if (media.reelStatus === "PUBLISHED") return { success: false, error: LIVE_REEL_LOCK_MESSAGE };
       // Turning it off is not a delete. A reel visitors have already seen carries their
       // comments and likes, so it is archived — it leaves the feed, the engagement lives,
       // and re-ticking brings it back. Nothing is destroyed either way: the row IS the image.
       const seenByVisitors =
-        media.reelStatus === "APPROVED" || media.reelStatus === "PUBLISHED";
+        media.reelStatus === "APPROVED"; // المنشور رجع قبل هذا (LIVE_REEL_LOCK_MESSAGE)
       await db.media.update({
         where: { id: mediaId },
         data: {

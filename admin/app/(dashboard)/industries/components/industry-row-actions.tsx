@@ -2,35 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { messages } from "@/lib/messages";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Edit, Trash2, Eye, GitMerge } from "lucide-react";
-import { deleteIndustry } from "../actions/industries-actions";
-import { useToast } from "@/hooks/use-toast";
+import { Edit, Eye, GitMerge } from "lucide-react";
 import { useState } from "react";
 
 import { IndustryMergeDialog, type IndustryLite } from "./industry-merge-dialog";
 
+/** الحذف انتقل إلى System ← Deletion للأدمن وحده (خالد ١٦ أكتوبر ٢٠٢٦). هنا العرض والتعديل والدمج. */
 export function IndustryRowActions({ industry, candidates }: { industry: IndustryLite; candidates: IndustryLite[] }) {
   const industryId = industry.id;
-  // An industry with linked clients can't be deleted — merge it into another first.
-  const hasClients = industry.count > 0;
   const router = useRouter();
-  const { toast } = useToast();
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [mergeOpen, setMergeOpen] = useState(false);
-
-  const handleDelete = async () => {
-    setDeleteDialogOpen(false);
-    setIsDeleting(true);
-    try {
-      const result = await deleteIndustry(industryId);
-      if (result.success) { toast({ title: messages.success.deleted, description: messages.descriptions.industry_deleted, variant: "success" }); router.refresh(); }
-      else { toast({ title: messages.error.delete_failed, description: result.error || messages.descriptions.industry_delete_failed, variant: "destructive" }); }
-    } catch { toast({ title: messages.error.delete_failed, description: messages.descriptions.industry_delete_failed, variant: "destructive" }); }
-    finally { setIsDeleting(false); }
-  };
 
   return (
     <>
@@ -47,17 +28,6 @@ export function IndustryRowActions({ industry, candidates }: { industry: Industr
         >
           <GitMerge className="h-4 w-4" />
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-destructive hover:text-destructive disabled:opacity-40"
-          onClick={() => setDeleteDialogOpen(true)}
-          disabled={isDeleting || hasClients}
-          aria-label="Delete"
-          title={hasClients ? "Merge into another industry first — still has clients" : "Delete"}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
       </div>
       <IndustryMergeDialog
         source={industry}
@@ -66,18 +36,6 @@ export function IndustryRowActions({ industry, candidates }: { industry: Industr
         onOpenChange={setMergeOpen}
         onMerged={() => router.refresh()}
       />
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone. This will permanently delete this industry.</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{isDeleting ? "Deleting…" : "Delete"}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 }

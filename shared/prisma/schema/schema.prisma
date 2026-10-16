@@ -109,8 +109,8 @@ enum MediaType {
 }
 
 enum MediaScope {
-  CLIENT   // Belongs to a specific client
-  GENERAL  // No client — visible in all pickers
+  CLIENT // Belongs to a specific client
+  GENERAL // No client — visible in all pickers
   PLATFORM // Modonty platform assets (categories, logos, OG images)
 }
 
@@ -210,12 +210,12 @@ model User {
   image         String? // NextAuth standard field (profile image URL)
 
   // Custom fields
-  bio                   String?   // Short user bio (max 500 chars)
-  password              String?   // Hashed password (optional for OAuth users)
-  passwordResetToken    String?   // SHA-256 hash of token
-  passwordResetExpires  DateTime? // typically 1h from request
-  role                  UserRole @default(EDITOR)
-  avatar   String? // Keep for compatibility, prefer using 'image'
+  bio                  String? // Short user bio (max 500 chars)
+  password             String? // Hashed password (optional for OAuth users)
+  passwordResetToken   String? // SHA-256 hash of token
+  passwordResetExpires DateTime? // typically 1h from request
+  role                 UserRole  @default(EDITOR)
+  avatar               String? // Keep for compatibility, prefer using 'image'
 
   // Email notification preferences (USR-R3)
   notificationPreferences Json? // { commentReply: true, faqReply: true, newsletter: true }
@@ -257,15 +257,15 @@ model User {
   campaignTracking      CampaignTracking[]
   leadScoring           LeadScoring[]
   engagementDuration    EngagementDuration[]
-  faqFeedbacks         FAQFeedback[]
-  chatbotMessages      ChatbotMessage[]
-  contactMessages      ContactMessage[]
-  notifications        Notification[]
-  ownedClients         Client[]         @relation("ClientOwner")
-  bookingRequests      BookingRequest[]
-  mediaComments        MediaComment[]
-  mediaReactions       MediaReaction[]
-  commentReactions     CommentReaction[]
+  faqFeedbacks          FAQFeedback[]
+  chatbotMessages       ChatbotMessage[]
+  contactMessages       ContactMessage[]
+  notifications         Notification[]
+  ownedClients          Client[]               @relation("ClientOwner")
+  bookingRequests       BookingRequest[]
+  mediaComments         MediaComment[]
+  mediaReactions        MediaReaction[]
+  commentReactions      CommentReaction[]
 
   @@index([role])
   @@map("users")
@@ -338,16 +338,16 @@ model Staff {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  notifications Notification[] @relation("StaffNotifications")
-  salesClients  Client[]       @relation("StaffSalesClients")
-  salesLeads    SalesLead[]    @relation("StaffSalesLeads")
-  editorClients Client[]       @relation("StaffEditorClients")
+  notifications     Notification[]          @relation("StaffNotifications")
+  salesClients      Client[]                @relation("StaffSalesClients")
+  salesLeads        SalesLead[]             @relation("StaffSalesLeads")
+  editorClients     Client[]                @relation("StaffEditorClients")
   // Sales commissions (Khalid, 30 Sep 2026) — a rep's rate history and what was paid out to him.
   commissionRates   SalesCommissionRate[]   @relation("StaffCommissionRates")
   salesTargets      SalesTarget[]           @relation("StaffSalesTargets")
   commissionPayouts SalesCommissionPayout[] @relation("StaffCommissionPayouts")
-  assignedTasks Task[]         @relation("TaskAssignee")
-  createdTasks  Task[]         @relation("TaskCreatedBy")
+  assignedTasks     Task[]                  @relation("TaskAssignee")
+  createdTasks      Task[]                  @relation("TaskCreatedBy")
 
   /// Leads this person is RESPONSIBLE for, as opposed to `salesLeads` — the ones they
   /// happened to type in. The two diverge the first time a lead is handed over, and the
@@ -569,10 +569,10 @@ model Client {
   url       String? // Organization website
 
   // Media (optional for backward compatibility, required in form UI)
-  logoMediaId      String? @db.ObjectId
-  logoMedia        Media?  @relation("ClientLogoMedia", fields: [logoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  heroImageMediaId String? @db.ObjectId
-  heroImageMedia   Media?  @relation("ClientHeroImageMedia", fields: [heroImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  logoMediaId            String? @db.ObjectId
+  logoMedia              Media?  @relation("ClientLogoMedia", fields: [logoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  heroImageMediaId       String? @db.ObjectId
+  heroImageMedia         Media?  @relation("ClientHeroImageMedia", fields: [heroImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   /// صورة الجوّال — تظهر أعلى صفحة العميل على الجوّال بدل الغلاف العريض (٦:١) الذي صُمّم
   /// للديسكتوب. اختياريّة: بغيابها تُعرض صورة الغلاف. تُختار من مكتبة الوسائط في الأدمن
   /// (خالد، ٢٦ سبتمبر ٢٠٢٦: «الصور نرفعها في الميديا لايبراري… صورة للديسكتوب وصورة للموبايل»).
@@ -601,18 +601,18 @@ model Client {
   description    String? // Schema.org Organization description (separate from seoDescription)
 
   // Business Information
-  businessBrief     String? // Business description for content writers
-  industryId        String?   @db.ObjectId // Industry/category
-  industry          Industry? @relation(fields: [industryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  businessBrief String? // Business description for content writers
+  industryId    String?   @db.ObjectId // Industry/category
+  industry      Industry? @relation(fields: [industryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Sales — the rep (Staff with role SALES) who brought & manages this client.
-  salesRepId        String?   @db.ObjectId
-  salesRep          Staff?    @relation("StaffSalesClients", fields: [salesRepId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  salesRepId String? @db.ObjectId
+  salesRep   Staff?  @relation("StaffSalesClients", fields: [salesRepId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Editor — the content writer (Staff with role EDITOR) responsible for this
   // client's articles. Informational only: the schema.org author stays Modonty.
-  editorId          String?   @db.ObjectId
-  editor            Staff?    @relation("StaffEditorClients", fields: [editorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  editorId String? @db.ObjectId
+  editor   Staff?  @relation("StaffEditorClients", fields: [editorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   targetAudience    String? // Target audience description
   contentPriorities String[] // Key topics/priorities
@@ -633,29 +633,29 @@ model Client {
   legalForm                    String? // Entity type: LLC, JSC, Sole Proprietorship, Partnership, etc.
 
   // Address Enhancement (National Address Format)
-  addressRegion                String? // Province/region (Saudi has 13 regions)
-  addressNeighborhood          String? // Neighborhood/district (National Address)
-  addressBuildingNumber        String? // Building number (National Address)
-  addressAdditionalNumber      String? // Additional number (National Address)
-  addressLatitude              Float?  // Geographic latitude for GeoCoordinates
-  addressLongitude             Float?  // Geographic longitude for GeoCoordinates
+  addressRegion           String? // Province/region (Saudi has 13 regions)
+  addressNeighborhood     String? // Neighborhood/district (National Address)
+  addressBuildingNumber   String? // Building number (National Address)
+  addressAdditionalNumber String? // Additional number (National Address)
+  addressLatitude         Float? // Geographic latitude for GeoCoordinates
+  addressLongitude        Float? // Geographic longitude for GeoCoordinates
 
   // Classification & Business Info
-  businessActivityCode         String? // Local business activity classification code
-  isicV4                       String? // International Standard Industrial Classification (V4)
-  numberOfEmployees            String? // Employee count (QuantitativeValue as string)
+  businessActivityCode String? // Local business activity classification code
+  isicV4               String? // International Standard Industrial Classification (V4)
+  numberOfEmployees    String? // Employee count (QuantitativeValue as string)
   // (Deprecated 2026-05-24: licenseNumber + licenseAuthority moved to Client.ymylData JSON, owned by YMYL system)
 
   // Additional Properties
-  alternateName                String? // Alternative names (Arabic name, trade name, etc.)
-  slogan                       String? // Company slogan/motto
-  newsletterCtaText            String? // Custom newsletter CTA text on article page (MB1)
-  keywords                     String[] // Keywords for classification
-  knowsLanguage                String[] // Languages: ["Arabic", "English"]
-  organizationType             String? // Subtype: Organization, Corporation, LocalBusiness, NonProfit, etc.
+  alternateName     String? // Alternative names (Arabic name, trade name, etc.)
+  slogan            String? // Company slogan/motto
+  newsletterCtaText String? // Custom newsletter CTA text on article page (MB1)
+  keywords          String[] // Keywords for classification
+  knowsLanguage     String[] // Languages: ["Arabic", "English"]
+  organizationType  String? // Subtype: Organization, Corporation, LocalBusiness, NonProfit, etc.
 
   // Organization Relationships
-  parentOrganizationId         String? @db.ObjectId // Parent company reference
+  parentOrganizationId String? @db.ObjectId // Parent company reference
 
   // Twitter Cards
   // (Twitter cache fields moved to nextjsMetadata)
@@ -742,7 +742,7 @@ model Client {
   ///
   /// **بلا `@relation` عن قصد** (MONEY-FLOW القسم ٨، الاحتمال ٦ المعتمد): الجدولان منفصلان،
   /// والعميل يُؤرشَف لا يُحذَف — فلا حاجة لقيدٍ يجعلهما متعلّقين ببعضهما.
-  activeOrderId         String?            @db.ObjectId
+  activeOrderId String? @db.ObjectId
 
   // ── الأرشفة: العميل المنتهي يختفي من القوائم، وماله في مكانه، ويرجع متى شئنا ──────────
   // نفس منطق `Invoice.archivedAt` القائم: المستند الماليّ لا يُحذف مع من صدر له، والسنة
@@ -753,9 +753,9 @@ model Client {
   // ويسبق الأرشفةَ فحصٌ يقول ما على العميل: كم له طلب؟ كم فاتورة؟ فيه غير مسدّدة؟
   // والظهور على مدونتي يتبع هذا الحقل لا حالةَ الاشتراك — فصفحة الشريك تبقى بعد الانتهاء
   // (مقالاته على نطاقنا، وإخفاؤها يكسر روابط ويضيّع ترتيباً بُني في شهور).
-  archivedAt            DateTime?
-  archivedReason        String?
-  archivedByUserId      String?            @db.ObjectId
+  archivedAt       DateTime?
+  archivedReason   String?
+  archivedByUserId String?   @db.ObjectId
   /// **حقلٌ متقاعد — مصدرُ ترحيلٍ لا غير (١٧ سبتمبر ٢٠٢٦).**
   ///
   /// لا يقرؤه ولا يكتبه سطرٌ واحد في التطبيقات الأربعة. الموضعُ الوحيد الذي يلمسه
@@ -765,18 +765,18 @@ model Client {
   /// كان دفعةَ التأسيس: رقمٌ بلا عملة (تُشتقّ من نصّ البلد) ولا تاريخِ دفع (يُؤخذ
   /// يومُ إنشاء الصفّ). وصارت على `CheckoutOrder.totalMinor` بعملتها ويومِ دفعها.
   /// وقيس التطابقُ قبل التبديل: مجموعُ الأرصدة ١٠٤٬٣٣٥ = مجموعُ الطلبات ١٠٤٬٣٣٥.
-  openingBalance        Float?
+  openingBalance   Float?
   // Platform's own / demo accounts (مدونتي, جبر, بسيطة…). Free by nature — excluded from
   // every billing, renewal and money counter so they never appear as "expired" or
   // "unpaid". Admin-controlled via a checkbox on the client edit form. OPTIONAL on
   // purpose: legacy docs predate the field, so `isSet` (Mongo) must stay available to
   // tell "not internal" (absent/false) from the handful marked true.
-  isInternal            Boolean?           @default(false)
+  isInternal       Boolean?  @default(false)
 
   // Presentation — featured "premium" partner spotlight. Manual admin toggle
   // (suggested for active annual subscribers). Drives the «شركاء مميّزون» section,
   // the badge, the hero slider, and priority ordering on the public site.
-  isFeatured            Boolean            @default(false)
+  isFeatured Boolean @default(false)
 
   /// **موثَّق** — شارة التوثيق على مدونتي. خانةٌ يضعها الأدمن بيده، لا تُستنتج.
   ///
@@ -797,7 +797,7 @@ model Client {
   /// `commercialRegistrationNumber || legalName || verificationImageUrl`، والقوائم والبحث
   /// يقرآن `subscriptionTier === PRO || PREMIUM`. فعميلٌ بسجلٍّ تجاريّ وباقةٍ رخيصة كان
   /// يظهر موثَّقاً في صفحته وغيرَ موثَّق في القائمة. والآن مصدرٌ واحد يقرأه الثلاثة.
-  isVerified            Boolean            @default(true)
+  isVerified Boolean @default(true)
 
   /// Does the client see the «مجدولة» tab in their console articles page — the queue of
   /// articles our team has scheduled but not published yet?
@@ -811,7 +811,7 @@ model Client {
   /// matters: existing documents predate the field, so the key is simply ABSENT in Mongo,
   /// and an absent key matches neither `true` nor `false` in a query. Reading it back
   /// returns the default, which is exactly what those clients should get.
-  showSchedule          Boolean            @default(true)
+  showSchedule Boolean @default(true)
 
   // ============================================
   // Publishing to the client's own website
@@ -854,33 +854,33 @@ model Client {
   jsonLdStructuredData   String?   @db.String // Cached @graph JSON string (source of truth)
   jsonLdLastGenerated    DateTime? // When JSON-LD was last generated
   jsonLdValidationReport Json? // {adobe: {valid, errors, warnings}, custom: {...}, richResults: {...}}
-  
+
   // Complete Meta Tags Object
-  nextjsMetadata              Json?     // Cached Next.js Metadata object (title, description, openGraph, twitter, robots)
+  nextjsMetadata              Json? // Cached Next.js Metadata object (title, description, openGraph, twitter, robots)
   nextjsMetadataLastGenerated DateTime? // When metadata was last generated
 
   // Client Notification Preferences
   notificationPreferences Json? // { articlePublished, articleApproved, commentsNew, supportReplies }
 
   // ============ Telegram Integration ============
-  telegramChatId           String?   // chat_id بعد ما يتم الربط
-  telegramPairingCode      String?   // كود 6 أرقام للربط
+  telegramChatId           String? // chat_id بعد ما يتم الربط
+  telegramPairingCode      String? // كود 6 أرقام للربط
   telegramPairingExpiresAt DateTime? // الكود ينتهي بعد 10 دقائق
   telegramConnectedAt      DateTime? // وقت اكتمال الربط
-  telegramEventPreferences Json?     // { commentNew: true, articleView: false, ... } — 26 event toggle
+  telegramEventPreferences Json? // { commentNew: true, articleView: false, ... } — 26 event toggle
 
   // ============ Primary CTA («احجز الآن») — admin-controlled ============
-  ctaMode  ClientCtaMode @default(NONE) // NONE | FORM | LINK
-  ctaLabel String?                      // the text actually rendered — the client's own wording, or the picked button's
-  ctaUrl   String?                      // mode=LINK only (https / wa.me / tel:)
+  ctaMode     ClientCtaMode   @default(NONE) // NONE | FORM | LINK
+  ctaLabel    String? // the text actually rendered — the client's own wording, or the picked button's
+  ctaUrl      String? // mode=LINK only (https / wa.me / tel:)
   // Which button from Settings → Dropdown Lists this client is on. Kept so the picker still
   // shows the chosen button after the admin rewords it for this client: the WORDING lives in
   // ctaLabel, the IDENTITY lives here. Deliberately not a relation — deleting a button must
   // never touch a client, whose resolved mode/label/url keep working untouched.
-  ctaPresetId String? @db.ObjectId
+  ctaPresetId String?         @db.ObjectId
   // «يظهر في» — the listing pages this client appears on (ClientListing). Empty = none.
   // BOOKING is only valid with ctaMode FORM (the booking form is what those pages open).
-  listedOn ClientListing[]
+  listedOn    ClientListing[]
 
   // Content-responsibility acknowledgement (acceptance proof; editable text lives on Settings)
   disclaimerAcceptedAt       DateTime?
@@ -889,18 +889,18 @@ model Client {
 
   // Unified Intake — single JSON home for all content/SEO strategy answers
   // Replaces the scattered fields below + the SeoIntake model (Phase 2 will remove them).
-  intake          Json?      // { voice, audience, goals, policy, technical, business, story, customers, strategy, competition, ymylReviewer, version }
+  intake          Json? // { voice, audience, goals, policy, technical, business, story, customers, strategy, competition, ymylReviewer, version }
   intakeUpdatedAt DateTime?
-  intakeUpdatedBy String?    // userId who last edited the intake
+  intakeUpdatedBy String? // userId who last edited the intake
 
   // SEO Intake & Strategy (static/config - dynamic data in related tables)
-  technicalProfile           Json?   // { platform?, stagingUrl?, hreflang?, cacheType? }
-  seoGoals                   Json?   // { primaryGoal?, kpis?, successMetrics?, timeline? }
-  seoMetrics                 Json?   // { domainAuthority?, backlinkCount?, lastUpdated? }
+  technicalProfile           Json? // { platform?, stagingUrl?, hreflang?, cacheType? }
+  seoGoals                   Json? // { primaryGoal?, kpis?, successMetrics?, timeline? }
+  seoMetrics                 Json? // { domainAuthority?, backlinkCount?, lastUpdated? }
   linkBuildingPolicy         String?
-  brandGuidelines            Json?   // { tone?, voice?, colors?, dosAndDonts? }
+  brandGuidelines            Json? // { tone?, voice?, colors?, dosAndDonts? }
   contentTone                String?
-  complianceConstraints      Json?   // { industry?, restrictedClaims?, needsReview? }
+  complianceConstraints      Json? // { industry?, restrictedClaims?, needsReview? }
   googleBusinessProfileUrl   String?
   forbiddenKeywords          String[]
   forbiddenClaims            String[]
@@ -910,9 +910,9 @@ model Client {
   // When isYmyl=true, ymylCategory determines which JSON shape applies to ymylData
   // (see admin/lib/seo/ymyl-config.ts). Drives form rendering, publish gates, and
   // JSON-LD output (MedicalClinic / LegalService / FinancialService).
-  isYmyl        Boolean @default(false)
-  ymylCategory  String? // "medical" | "legal" | "financial"
-  ymylData      Json?   // shape varies per ymylCategory — see ymyl-config.ts
+  isYmyl       Boolean @default(false)
+  ymylCategory String? // "medical" | "legal" | "financial"
+  ymylData     Json? // shape varies per ymylCategory — see ymyl-config.ts
 
   // The partner's site look (header/footer/colour/blocks) lives on its own row — ClientSite.
   site ClientSite?
@@ -931,10 +931,10 @@ model Client {
   // description, cover and duration that a valid VideoObject needs — which is why the
   // schema.org output for this video has been switched off until now.
   introVideoUrl        String? // legacy external link — read-only, cleared on upload
-  introVideoMediaId    String? @db.ObjectId
+  introVideoMediaId    String?             @db.ObjectId
   // NoAction on both, exactly like logoMedia/heroImageMedia above: Client→Media→Client is
   // a referential cycle, and Prisma refuses any other action on it.
-  introVideoMedia      Media?  @relation("ClientIntroVideoMedia", fields: [introVideoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  introVideoMedia      Media?              @relation("ClientIntroVideoMedia", fields: [introVideoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   /// صورةُ توثيقٍ واحدة — **مهجورةٌ لصالح `documents`** (خالد ١٩ سبتمبر ٢٠٢٦).
   ///
   /// كانت حقلاً مفرداً: رفعُ وثيقةٍ ثانيةٍ يمحو الأولى بلا أثر. والوثائقُ في الواقع
@@ -947,40 +947,40 @@ model Client {
   /// وثائقُ العميل كلُّها في مكانٍ واحد — يرفعها هو من الكونسول ونرفعها نحن من الأدمن.
   documents            ClientDocument[]
   services             ClientServiceItem[] // OfferCatalog
-  teamMembers          ClientTeamMember[]  // employee: Person[]
+  teamMembers          ClientTeamMember[] // employee: Person[]
   achievements         ClientAchievement[] // stats counters
-  credentials          ClientCredential[]  // hasCredential
+  credentials          ClientCredential[] // hasCredential
 
   // Relationships
-  articles          Article[]
+  articles           Article[]
   /// كاليندر المحتوى (أدمن › Social Calendar › Content) — يُفتح بالتفعيل، واحدٌ للعميل. انظر `SocialCalendar`.
-  socialCalendars   SocialCalendar[] @relation("ClientSocialCalendars")
-  subscribers       Subscriber[]
+  socialCalendars    SocialCalendar[] @relation("ClientSocialCalendars")
+  subscribers        Subscriber[]
   // الإحالات التي رفعها هذا العميل. الاتجاه واحد: العميل مُحيلٌ لا مُحالٌ إليه —
   // المُرشَّح ليس عميلاً بعد، وحين يصير عميلاً يُسجَّل معرّفه في `convertedClientId`.
-  referralLeads     ReferralLead[] @relation("ClientReferralLeads")
-  media             Media[]      @relation("ClientMedia")
-  parentOrganization Client?     @relation("ClientParent", fields: [parentOrganizationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subOrganizations  Client[]     @relation("ClientParent")
+  referralLeads      ReferralLead[]   @relation("ClientReferralLeads")
+  media              Media[]          @relation("ClientMedia")
+  parentOrganization Client?          @relation("ClientParent", fields: [parentOrganizationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subOrganizations   Client[]         @relation("ClientParent")
 
   // Interaction relations
-  comments        ClientComment[]
-  clientFaqs      ClientFAQ[]
-  reviews         ClientReview[]
-  likes           ClientLike[]
-  dislikes        ClientDislike[]
-  favorites       ClientFavorite[]
-  views           ClientView[]
-  shares          Share[]
-  conversions       Conversion[]
-  ctaClicks         CTAClick[]
-  leadScoring       LeadScoring[]
-  campaignTracking  CampaignTracking[]
+  comments           ClientComment[]
+  clientFaqs         ClientFAQ[]
+  reviews            ClientReview[]
+  likes              ClientLike[]
+  dislikes           ClientDislike[]
+  favorites          ClientFavorite[]
+  views              ClientView[]
+  shares             Share[]
+  conversions        Conversion[]
+  ctaClicks          CTAClick[]
+  leadScoring        LeadScoring[]
+  campaignTracking   CampaignTracking[]
   engagementDuration EngagementDuration[]
-  contactMessages  ContactMessage[]
-  notifications    Notification[]
-  mobileDevices    MobileDevice[]
-  bookingRequests  BookingRequest[]
+  contactMessages    ContactMessage[]
+  notifications      Notification[]
+  mobileDevices      MobileDevice[]
+  bookingRequests    BookingRequest[]
 
   // SEO Intake relations
   seoIntakes     SeoIntake[]
@@ -1071,7 +1071,7 @@ model ClientSite {
   ///
   /// ⚠️ The index must be created on production too, or the same P2002 hits the second partner
   /// there. `prisma db push` does NOT create it — it is not in this schema.
-  subdomain String?
+  subdomain      String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1083,39 +1083,39 @@ model ClientSite {
 /// FORM (phone callback, login required → name/email snapshotted from session) or WhatsApp
 /// (tracked click, anonymous). `source` = the surface it came from (article_dock/card/client_page/list).
 model BookingRequest {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  clientId    String   @db.ObjectId
-  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  articleId   String?  @db.ObjectId // null when booked from client page / listing (not an article)
-  article     Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
-  userId      String?  @db.ObjectId // SetNull on account deletion — snapshot below preserves the lead
-  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  source      String // article_dock | article_card | client_page | client_list
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  clientId             String    @db.ObjectId
+  client               Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  articleId            String?   @db.ObjectId // null when booked from client page / listing (not an article)
+  article              Article?  @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  userId               String?   @db.ObjectId // SetNull on account deletion — snapshot below preserves the lead
+  user                 User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  source               String // article_dock | article_card | client_page | client_list
   // Lead channel: "form" = «اترك رقمك» callback (has phone) · "whatsapp" = tracked WhatsApp
   // click (anonymous — no phone; the conversation happens on WhatsApp itself).
-  channel     String   @default("form")
-  name        String? // snapshot from session (null for whatsapp leads)
-  email       String? // snapshot from session (null for whatsapp leads)
-  phone       String? // collected by the form (null for whatsapp leads)
-  preferredAt DateTime? // free-text preferred time now lives in `message`; kept for legacy
-  confirmedAt DateTime? // appointment time the provider CONFIRMS from the console
-  message     String?
-  status      String   @default("new") // new | contacted | done | archived
+  channel              String    @default("form")
+  name                 String? // snapshot from session (null for whatsapp leads)
+  email                String? // snapshot from session (null for whatsapp leads)
+  phone                String? // collected by the form (null for whatsapp leads)
+  preferredAt          DateTime? // free-text preferred time now lives in `message`; kept for legacy
+  confirmedAt          DateTime? // appointment time the provider CONFIRMS from the console
+  message              String?
+  status               String    @default("new") // new | contacted | done | archived
   // Visitor identity (from getVisitorContext) — powers whatsapp-lead dedup:
   // one whatsapp lead per (visitorId × clientId × sessionId). Also useful analytics.
-  visitorId   String?
-  sessionId   String?
+  visitorId            String?
+  sessionId            String?
   // Geo snapshot from Vercel headers (x-vercel-ip-*) — shown on the whatsapp lead row.
-  country     String?
-  city        String?
-  ipAddress   String?
-  userAgent   String?
+  country              String?
+  city                 String?
+  ipAddress            String?
+  userAgent            String?
   // YMYL liability acknowledgment — true when the visitor ticked the disclaimer
   // (required for isYmyl clients; false otherwise). Recorded as proof of consent.
   disclaimerAccepted   Boolean   @default(false)
   disclaimerAcceptedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   @@index([clientId, createdAt])
   @@index([clientId, channel]) // console filter: form vs whatsapp
@@ -1145,28 +1145,28 @@ model Campaign {
 /// BookingRequest collection because this funnel belongs to Modonty campaigns,
 /// not to an individual partner's booking flow.
 model CampaignSubmission {
-  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
-  campaignId         String    @db.ObjectId
-  campaign           Campaign  @relation(fields: [campaignId], references: [id])
-  formKey            String
-  idempotencyKey     String    @unique
-  businessName       String
-  email              String
-  phone              String
-  sector             String
-  landingPath        String
-  utmSource          String?
-  utmMedium          String?
-  utmCampaign        String?
-  utmContent         String?
-  utmTerm            String?
-  referrer           String?
-  ipAddress          String?
-  userAgent          String?
-  status             String    @default("NEW") // NEW | CONTACTED | QUALIFIED | CLOSED | ARCHIVED
-  whatsappHandoffAt  DateTime? // the browser was cleared to open the sales WhatsApp handoff
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  campaignId        String    @db.ObjectId
+  campaign          Campaign  @relation(fields: [campaignId], references: [id])
+  formKey           String
+  idempotencyKey    String    @unique
+  businessName      String
+  email             String
+  phone             String
+  sector            String
+  landingPath       String
+  utmSource         String?
+  utmMedium         String?
+  utmCampaign       String?
+  utmContent        String?
+  utmTerm           String?
+  referrer          String?
+  ipAddress         String?
+  userAgent         String?
+  status            String    @default("NEW") // NEW | CONTACTED | QUALIFIED | CLOSED | ARCHIVED
+  whatsappHandoffAt DateTime? // the browser was cleared to open the sales WhatsApp handoff
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   @@index([campaignId, createdAt])
   @@index([campaignId, formKey, createdAt])
@@ -1206,9 +1206,9 @@ model SeoIntake {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   clientId    String   @db.ObjectId
   client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  answers     Json     // Full questionnaire answers by section
+  answers     Json // Full questionnaire answers by section
   collectedAt DateTime @default(now())
-  collectedBy String?  // User/system who collected
+  collectedBy String? // User/system who collected
 
   @@index([clientId])
   @@map("seo_intakes")
@@ -1221,7 +1221,7 @@ model ClientCompetitor {
   name     String
   url      String?
   notes    String?
-  order    Int     @default(0)  // Display/priority order
+  order    Int     @default(0) // Display/priority order
 
   @@index([clientId])
   @@map("client_competitors")
@@ -1245,13 +1245,13 @@ model ClientKeyword {
 // ============================================
 
 enum CampaignReach {
-  OWN      // own newsletter subscribers
+  OWN // own newsletter subscribers
   INDUSTRY // subscribers from same industry across modonty
-  FULL     // entire modonty subscriber base
+  FULL // entire modonty subscriber base
 }
 
 enum CampaignInterestStatus {
-  NEW       // just submitted, awaiting team contact
+  NEW // just submitted, awaiting team contact
   CONTACTED // team reached out
   CONVERTED // client booked/paid for a campaign
   CANCELLED // client declined or unresponsive
@@ -1263,12 +1263,12 @@ model CampaignInterest {
   client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   reach  CampaignReach
-  source String?       // which CTA was clicked: "hero" | "tier-own" | "tier-industry" | "tier-full" | "final-cta"
+  source String? // which CTA was clicked: "hero" | "tier-own" | "tier-industry" | "tier-full" | "final-cta"
 
   status CampaignInterestStatus @default(NEW)
 
   assignedTo   String?   @db.ObjectId // User handling this lead
-  notes        String?                 // admin notes (history of reach changes appended automatically)
+  notes        String? // admin notes (history of reach changes appended automatically)
   contactedAt  DateTime?
   convertedAt  DateTime?
   cancelledAt  DateTime?
@@ -1286,7 +1286,6 @@ model CampaignInterest {
 // SUBSCRIPTION TIER CONFIG
 // ============================================
 
-
 // ============================================
 // COMMERCIAL CATALOG — public plans and market-specific prices
 // ============================================
@@ -1302,50 +1301,50 @@ enum CommercialPlanTheme {
 }
 
 model CommercialPlan {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  slug        String   @unique
-    name        String
-    articlesPerMonth Int?
-    highlights  String[]
-  badge       String?
+  id               String                  @id @default(auto()) @map("_id") @db.ObjectId
+  slug             String                  @unique
+  name             String
+  articlesPerMonth Int?
+  highlights       String[]
+  badge            String?
   /// سطر خاطف واحد يظهر قرب السعر — «٦ شهور مجاناً مع السنة» (PAY-G11).
   /// واحد لا قائمة: جملتان خاطفتان ليستا أقوى، بل لا خاطفة.
-  hook        String?
+  hook             String?
   /// نصّ زرّ هذه الباقة. فارغاً يسقط على النصّ الافتراضي في المكوّن — فباقة جديدة
   /// تُرسم صحيحة بلا تعبئة، ولا يبقى النصّ حبيس الكود لمن أراد تغييره.
-  ctaText     String?
+  ctaText          String?
   /// شارة ثانية تميّز بطاقةً واحدة عن أخواتها («الأكثر اختياراً»). وجودها يرفع البطاقة
   /// بصرياً أيضاً — فهي وسمٌ وتمييزٌ معاً، كما عند جبر سيو (`featured = !!featuredBadge`).
-  featuredBadge String?
+  featuredBadge    String?
   /// سقط `tier` (١٧ سبتمبر ٢٠٢٦). كان يربط الباقة بفئةٍ من الإنم، وهو ما حبس
   /// الكتالوج في **أربع باقاتٍ للأبد**: الإنم أربعُ قيم، وحارسُ النشر كان يمنع
   /// باقتين منشورتين على القيمة الواحدة. وُلد لأنّ `slug` كان هاشاً لا يصلح
   /// مفتاحاً مقروءاً؛ فلمّا صار السلَق ذا معنى (`intilaqa` · `zakham` · `riyada`)
   /// وهو `@unique`، سقط الوسيطُ وسقط معه السقف.
-  theme       CommercialPlanTheme @default(NEUTRAL)
-  isPublished Boolean  @default(false)
-  displayOrder Int    @default(0)
-  prices      CommercialPlanPrice[]
-  features    CommercialPlanFeature[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  theme            CommercialPlanTheme     @default(NEUTRAL)
+  isPublished      Boolean                 @default(false)
+  displayOrder     Int                     @default(0)
+  prices           CommercialPlanPrice[]
+  features         CommercialPlanFeature[]
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
 
   @@index([isPublished, displayOrder])
   @@map("commercial_plans")
 }
 
 model CommercialFeature {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String?
+  id            String                  @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String?
   /// الوحدة تُطبع بعد الكمّية («١٢ مقال/شهر»). قائمة مغلقة في الأدمن لا كتابةً حرّة
   /// (خالد ١٤ سبتمبر ٢٠٢٦) — الكتابة اليدوية أنتجت «مقال/شهر» و«مقال / شهر» و«مقالات»
   /// لنفس المعنى، وحساب الإجمالي يميّز الوحدات الشهرية بـ«/شهر» فاختلاف مسافةٍ يُسقط الرقم.
-  unitLabel   String?
-  isActive    Boolean  @default(true)
+  unitLabel     String?
+  isActive      Boolean                 @default(true)
   /// سطرٌ يستحقّ أن يُرى قبل غيره — يُطبع عريضاً على بطاقة الباقة (خالد ١٤ سبتمبر ٢٠٢٦).
   /// قرارُ تسويقٍ لا تصنيفُ محتوى، فمكانه المكتبة حيث تُعرَّف الميزة مرّة.
-  isHighlighted Boolean @default(false)
+  isHighlighted Boolean                 @default(false)
   /// هل تنزل هذه الميزة في الفاتورة؟ (خالد ١٣ سبتمبر ٢٠٢٦: «نعمل شيك اللي يطلع في الفاتورة»)
   ///
   /// البطاقة تعرض كل مزايا الباقة — هذا تسويق. والفاتورة مستند **التزام**: كل سطر فيها
@@ -1356,27 +1355,27 @@ model CommercialFeature {
   /// افتراضها `false`: ميزةٌ جديدة لا تدخل مستنداً قانونياً حتى يقرّر إنسانٌ أنها تُثبَت.
   /// وموضعها المكتبة لا الإسناد: الميزة تُعرَّف مرّة وتُستعمل في كل الباقات، فلا يتناقض
   /// حكمُها بين باقةٍ وأخرى.
-  billable    Boolean  @default(false)
-  displayOrder Int     @default(0)
-  assignments CommercialPlanFeature[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  billable      Boolean                 @default(false)
+  displayOrder  Int                     @default(0)
+  assignments   CommercialPlanFeature[]
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
 
   @@index([isActive, displayOrder])
   @@map("commercial_features")
 }
 
 model CommercialPlanFeature {
-  id        String            @id @default(auto()) @map("_id") @db.ObjectId
-  planId    String            @db.ObjectId
-  plan      CommercialPlan    @relation(fields: [planId], references: [id], onDelete: Cascade)
-  featureId String            @db.ObjectId
-  feature   CommercialFeature @relation(fields: [featureId], references: [id], onDelete: Restrict)
-  quantity  Int?
-  note      String?
-  displayOrder Int            @default(0)
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  id           String            @id @default(auto()) @map("_id") @db.ObjectId
+  planId       String            @db.ObjectId
+  plan         CommercialPlan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  featureId    String            @db.ObjectId
+  feature      CommercialFeature @relation(fields: [featureId], references: [id], onDelete: Restrict)
+  quantity     Int?
+  note         String?
+  displayOrder Int               @default(0)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
 
   @@unique([planId, featureId])
   @@index([planId, displayOrder])
@@ -1387,8 +1386,8 @@ model CommercialPlanPrice {
   id          String         @id @default(auto()) @map("_id") @db.ObjectId
   planId      String         @db.ObjectId
   plan        CommercialPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
-  market      String         // SA | EG; market is selected by the request proxy
-  currency    String         // SAR | EGP
+  market      String // SA | EG; market is selected by the request proxy
+  currency    String // SAR | EGP
   // Major unit base price. Checkout will snapshot and convert the final amount
   // to a provider-specific minor unit; never use a Float for money.
   monthlyBase Int
@@ -1403,15 +1402,12 @@ model CommercialPlanPrice {
 
 /**
  * كلام صفحة البيع حول البطاقات — صفّ واحد لكل سوق (PAY-G13).
- *
  * لماذا: البطاقات صارت من القاعدة، لكن كل ما حولها (عنوان القسم، شريط إعلان عرض، عناصر
  * الثقة) لا مكان له — ولو تُرك لكُتب في الكود، وهو ما تمنعه بطاقة PAY-DYNAMIC: نصف بطاقة
  * جبر سيو مكتوب في الكود، فتغيير كلمة فيه نشرة كاملة.
- *
  * حقول مسمّاة لا Json: نظير جبر سيو (`PriceSectionMeta`) يخزّن `trustItems` و`uiStrings`
  * ككتل Json — وهو نفس نمط `LandingSection { data: Json }` الذي هجره هو نفسه حين قسّم
  * الأسعار إلى صفوف. كتلة Json تقبل أي شكل، فلا يحرسها مخطّط ولا يكشف كسرَها إلا الزائر.
- *
  * `uiStrings` لم يُنقل عمداً: كلمات البطاقة الثابتة («/ شهر» · «شهر خدمة») قليلة ويحكمها
  * تصريفٌ عربي في الكود (`formatMonths`) — جعلها نصّاً في القاعدة يفتح باب كسر اللغة بلا
  * حارس. تُفتح بندٌ مستقلّ إن طُلبت.
@@ -1456,27 +1452,29 @@ model PaySectionContent {
   teamHeadline    String?
   teamSubheadline String?
 
-  updatedAt    DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
   @@map("pay_section_content")
 }
 
-/** Single duration policy shared by every plan — see PAY-Q3 (one policy, not one row per plan). */
+/**
+ * Single duration policy shared by every plan — see PAY-Q3 (one policy, not one row per plan).
+ */
 model CommercialTermPolicy {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  paidMonths        Int      @unique
-  bonusServiceMonths Int     @default(0)
-  displayOrder      Int      @default(0)
-  isActive          Boolean  @default(true)
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  paidMonths         Int      @unique
+  bonusServiceMonths Int      @default(0)
+  displayOrder       Int      @default(0)
+  isActive           Boolean  @default(true)
   /// The duration /pay opens on, marked «الأنسب» (PAY-G8). At most ONE row may hold it —
   /// enforced in `setRecommendedCommercialTerm`, which clears the others in the same
   /// transaction. Two recommendations are not a stronger hint, they are none at all.
   ///
   /// jbrseo hard-codes this (`RECOMMENDED_DURATION = 6` in lib/pricing-durations.ts), so
   /// moving the recommendation is a deploy there. Here it is a row.
-  isRecommended     Boolean  @default(false)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  isRecommended      Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@index([isActive, displayOrder])
   @@map("commercial_term_policies")
@@ -1492,7 +1490,7 @@ model CommercialTermPolicy {
 // Money is in MINOR units (halala / piastre) as Int — never Float.
 
 enum CheckoutOrderStatus {
-  AWAITING_PAYMENT  // Saudi — gateway session opened, waiting for the provider
+  AWAITING_PAYMENT // Saudi — gateway session opened, waiting for the provider
   AWAITING_TRANSFER // Egypt — buyer transfers by hand, staff confirms (PAY-Q12)
   PAID
   FAILED
@@ -1544,10 +1542,10 @@ model CheckoutOrder {
   /// الطلب»). فالوسمُ ينزل إلى الطلب، ويصير البابُ واحداً: طلبٌ ← طابورٌ ← تفعيل.
   ///
   /// ويُقرأ في تقارير الإيراد كما يُقرأ على الكرت: حسابُنا لا يُعدّ بيعاً.
-  isInternal   Boolean?          @default(false)
+  isInternal Boolean? @default(false)
 
   // ── Plan snapshot — deliberately NO relation: deleting the plan must not cascade here
-  planId           String?           @db.ObjectId
+  planId           String? @db.ObjectId
   planSlug         String
   planName         String
   /// سقط `planTier` (١٧ سبتمبر ٢٠٢٦): كان يُكتب في سبعة مواضع ويُقرأ في **صفر**.
@@ -1564,7 +1562,7 @@ model CheckoutOrder {
   ///
   /// نصوصٌ جاهزة لا معرّفات: حذفُ ميزةٍ من الكتالوج بعد سنة يجب ألّا يُفرغ سطراً في
   /// فاتورةٍ صادرة.
-  planCommitments  String[]
+  planCommitments String[]
 
   // ── Price snapshot (minor units) ────────────────────────────────────────────────
   monthlyBaseMinor   Int
@@ -1610,30 +1608,29 @@ model CheckoutOrder {
 
   // ── Manual confirmation (Egypt) — who said the money arrived, when, by which reference
   /**
+   * /**
    * ملاحظة داخليّة على الطلب — يكتبها الموظّف، ولا تُعرض للعميل ولا تُطبع على
    * الفاتورة (خالد ١٥ سبتمبر ٢٠٢٦: «لو في أي ملاحظات على الطلب هذا»).
-   *
    * موضعها على الطلب لا على العميل: الملاحظة تخصّ صفقةً بعينها («حوّل نصفه
    * والباقي بعد أسبوع»)، والعميل قد يكون له عشر صفقات.
    */
   /**
+   * /**
    * من باع هذا الاشتراك — يُملأ في الطلب اليدويّ وينتقل إلى العميل عند التفعيل.
-   *
    * موضعه على الطلب لا على العميل وحده: العمولة تخصّ صفقةً بعينها، وقد يجدّد
    * للعميل مندوبٌ غير الذي باعه أوّل مرّة. وفارغٌ لطلبات صفحة الدفع — الزائر يشتري بلا مندوب.
-   *
    * خالد ١٥ سبتمبر ٢٠٢٦ — والمقيس على الإنتاج: ٢٠ عميلاً من ٤١ بلا مندوب.
    */
-  salesRepId        String? @db.ObjectId
-  notes             String?
-  transferReference String?
-  transferDate      DateTime?
+  salesRepId          String?   @db.ObjectId
+  notes               String?
+  transferReference   String?
+  transferDate        DateTime?
   /// صورة سند الإيصال — مسارها في مخزن Bunny الخاصّ (`modonty-backups`، بلا Pull Zone فلا رابط عامّ)،
   /// تُرفع مع «حفظ التعديل» وتُعرض من الأدمن وحده عبر `/orders/[id]/receipt`. اختياريّة، للمدفوع (خالد ٢٨ سبتمبر ٢٠٢٦).
   /// مَن رفعها ومتى: في سطر `order.update` («سند الإيصال: رُفع/استُبدل»).
   transferReceiptPath String?
-  confirmedByUserId String?   @db.ObjectId
-  confirmedAt       DateTime?
+  confirmedByUserId   String?   @db.ObjectId
+  confirmedAt         DateTime?
 
   // ── What came after (PAY-Q6): the client account and the invoice issued from this order
   clientId  String? @db.ObjectId
@@ -1702,13 +1699,13 @@ model PaymentWebhookEvent {
 /// failures screen into a pile of near-duplicate strings nobody can count.
 /// `validate` · `session` · `3ds` happen in the BROWSER before any order exists.
 enum PaymentAttemptStage {
-  validate      // تحقّق مدخلات المشتري في المتصفّح
-  session       // توليد جلسة الدفع عند المزوّد
-  create_order  // إنشاء الطلب عندنا
-  auth          // تفويض البطاقة
-  three_ds      // التحقّق الثنائي
-  poll          // الاستعلام الاحتياطي عن الحالة
-  webhook       // ما وصل من المزوّد
+  validate // تحقّق مدخلات المشتري في المتصفّح
+  session // توليد جلسة الدفع عند المزوّد
+  create_order // إنشاء الطلب عندنا
+  auth // تفويض البطاقة
+  three_ds // التحقّق الثنائي
+  poll // الاستعلام الاحتياطي عن الحالة
+  webhook // ما وصل من المزوّد
 }
 
 enum PaymentAttemptOutcome {
@@ -1731,35 +1728,35 @@ enum PaymentAttemptOutcome {
 /// identify a cardholder. No PAN, no CVV, no holder name, ever. The test for anything
 /// added here: could this row appear in a leak without harming the person it describes?
 model PaymentAttempt {
-  id       String         @id @default(auto()) @map("_id") @db.ObjectId
+  id         String          @id @default(auto()) @map("_id") @db.ObjectId
   /// Null for a failure that happened before an order was created — the case that used
   /// to vanish. Do not make this required again.
-  orderId  String?        @db.ObjectId
-  order    CheckoutOrder? @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  provider PaymentProvider
+  orderId    String?         @db.ObjectId
+  order      CheckoutOrder?  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider   PaymentProvider
   reasonCode String?
   message    String?
-  createdAt  DateTime @default(now())
+  createdAt  DateTime        @default(now())
 
   // ─── PAY-G14 ───
-  stage      PaymentAttemptStage?
-  outcome    PaymentAttemptOutcome?
+  stage       PaymentAttemptStage?
+  outcome     PaymentAttemptOutcome?
   /// The provider's own payment state, verbatim (e.g. DECLINED / FAILED) — kept raw
   /// because its vocabulary is theirs and mapping it here would lose detail.
-  state      String?
+  state       String?
   /// What was being bought, snapshotted as plain values: the plan may be renamed or
   /// retired later, and a failure log that follows a live row stops describing the past.
-  planSlug   String?
-  paidMonths Int?
-  market     String?
+  planSlug    String?
+  paidMonths  Int?
+  market      String?
   /// visa | mastercard | mada — how the card is routed, which is often the failure itself.
-  cardScheme String?
+  cardScheme  String?
   /// First SIX digits only. See PRIVACY above.
-  cardBin    String?
+  cardBin     String?
   /// Set only when the buyer had already typed it; a failure with no email is still logged.
-  email      String?
-  ip         String?
-  userAgent  String?
+  email       String?
+  ip          String?
+  userAgent   String?
   /// The provider's reference for this attempt, when one was issued before it failed.
   providerRef String?
 
@@ -1792,14 +1789,14 @@ model PaymentAttempt {
 // relation — query by clientId directly (same pattern as conversion tracking).
 model EmailEvent {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  emailId   String                         // Resend data.email_id
-  type      String                         // delivered | opened | clicked | bounced | sent | complained | delivery_delayed
-  recipient String?                        // data.to[0]
+  emailId   String // Resend data.email_id
+  type      String // delivered | opened | clicked | bounced | sent | complained | delivery_delayed
+  recipient String? // data.to[0]
   subject   String?
-  emailType String?                        // our tag: e.g. "client-welcome"
-  clientId  String?   @db.ObjectId         // our tag: which client this email was about
-  eventAt   DateTime?                      // Resend data.created_at (when the event happened)
-  createdAt DateTime  @default(now())       // when we received the webhook
+  emailType String? // our tag: e.g. "client-welcome"
+  clientId  String?   @db.ObjectId // our tag: which client this email was about
+  eventAt   DateTime? // Resend data.created_at (when the event happened)
+  createdAt DateTime  @default(now()) // when we received the webhook
 
   @@index([emailId])
   @@index([clientId])
@@ -1822,16 +1819,16 @@ model Author {
   lastName  String? // Schema.org familyName
 
   // Schema.org Person - E-E-A-T fields
-  jobTitle String? // WorksFor job title
-  worksFor String? @db.ObjectId // Organization/Client reference
-  bio      String?
-  image    String? // Profile image
-  imageAlt String? // Alt text for profile image (accessibility + SEO)
+  jobTitle     String? // WorksFor job title
+  worksFor     String? @db.ObjectId // Organization/Client reference
+  bio          String?
+  image        String? // Profile image
+  imageAlt     String? // Alt text for profile image (accessibility + SEO)
   // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
   imageMediaId String? @db.ObjectId
   imageMedia   Media?  @relation("AuthorImageMedia", fields: [imageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  url      String? // Author page URL
-  email    String? // Schema.org email - Contact email (optional, privacy-sensitive)
+  url          String? // Author page URL
+  email        String? // Schema.org email - Contact email (optional, privacy-sensitive)
 
   // Social profiles for verification (sameAs)
   linkedIn String?
@@ -1845,21 +1842,21 @@ model Author {
   expertiseAreas     String[] // Topics of specialization (knowsAbout)
   experienceYears    Int?
   verificationStatus Boolean  @default(false)
-  memberOf          String[] // Schema.org memberOf - Professional organizations (E-E-A-T authoritativeness)
+  memberOf           String[] // Schema.org memberOf - Professional organizations (E-E-A-T authoritativeness)
 
   // Education (optional structured data)
   education Json? // Array of education objects
 
   // SEO
-  seoTitle       String?
-  seoDescription String?
-  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
-  socialImageAlt String? // Alt text
+  seoTitle           String?
+  seoDescription     String?
+  socialImage        String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt     String? // Alt text
   // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
   socialImageMediaId String? @db.ObjectId
   socialImageMedia   Media?  @relation("AuthorSocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
-  canonicalUrl   String?
+  canonicalUrl       String?
 
   // === SEO Cache - Standard Pattern ===
   nextjsMetadata              Json?
@@ -1883,22 +1880,26 @@ model Author {
 // ============================================
 
 model Category {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  slug        String  @unique
+  slug        String    @unique
+  /// مؤرشف = مخفيّ من الموقع (رابطه 410 · خارج القوائم والسايت ماب واختيارات الأدمن) ويرجع بـ«رجّع».
+  /// الأرشفة قرار الفريق، والحذف النهائي للمؤرشف من System ← Deletion للأدمن (خالد ١٦ أكتوبر ٢٠٢٦).
+  /// ما يتأرشف شيء عليه مقالات أو عملاء أو تحته فرعيات — نفس موانع الحذف (lib/deletion).
+  archivedAt  DateTime?
   description String?
-  parentId    String? @db.ObjectId // Hierarchical categories
+  parentId    String?   @db.ObjectId // Hierarchical categories
 
   // SEO
-  seoTitle       String?
-  seoDescription String?
-  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
-  socialImageAlt String? // Alt text
+  seoTitle           String?
+  seoDescription     String?
+  socialImage        String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt     String? // Alt text
   // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
   socialImageMediaId String? @db.ObjectId
   socialImageMedia   Media?  @relation("CategorySocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
-  canonicalUrl   String?
+  canonicalUrl       String?
 
   // === SEO Cache - Standard Pattern ===
   nextjsMetadata              Json?
@@ -1920,21 +1921,25 @@ model Category {
 }
 
 model Tag {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  slug        String  @unique
+  slug        String    @unique
+  /// مؤرشف = مخفيّ من الموقع (رابطه 410 · خارج القوائم والسايت ماب واختيارات الأدمن) ويرجع بـ«رجّع».
+  /// الأرشفة قرار الفريق، والحذف النهائي للمؤرشف من System ← Deletion للأدمن (خالد ١٦ أكتوبر ٢٠٢٦).
+  /// ما يتأرشف شيء عليه مقالات أو عملاء أو تحته فرعيات — نفس موانع الحذف (lib/deletion).
+  archivedAt  DateTime?
   description String?
 
   // SEO
-  seoTitle       String?
-  seoDescription String?
-  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
-  socialImageAlt String? // Alt text
+  seoTitle           String?
+  seoDescription     String?
+  socialImage        String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt     String? // Alt text
   // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
   socialImageMediaId String? @db.ObjectId
   socialImageMedia   Media?  @relation("TagSocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
-  canonicalUrl   String?
+  canonicalUrl       String?
 
   // === SEO Cache - Standard Pattern ===
   nextjsMetadata              Json?
@@ -1953,21 +1958,25 @@ model Tag {
 }
 
 model Industry {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  slug        String  @unique
+  slug        String    @unique
+  /// مؤرشف = مخفيّ من الموقع (رابطه 410 · خارج القوائم والسايت ماب واختيارات الأدمن) ويرجع بـ«رجّع».
+  /// الأرشفة قرار الفريق، والحذف النهائي للمؤرشف من System ← Deletion للأدمن (خالد ١٦ أكتوبر ٢٠٢٦).
+  /// ما يتأرشف شيء عليه مقالات أو عملاء أو تحته فرعيات — نفس موانع الحذف (lib/deletion).
+  archivedAt  DateTime?
   description String?
 
   // SEO
-  seoTitle       String?
-  seoDescription String?
-  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
-  socialImageAlt String? // Alt text
+  seoTitle           String?
+  seoDescription     String?
+  socialImage        String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt     String? // Alt text
   // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
   socialImageMediaId String? @db.ObjectId
   socialImageMedia   Media?  @relation("IndustrySocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
-  canonicalUrl   String?
+  canonicalUrl       String?
 
   // === SEO Cache - Standard Pattern ===
   nextjsMetadata              Json?
@@ -2000,11 +2009,11 @@ model ArticleChunk {
   article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   /// Position within the article, so chunks can be replayed in reading order.
-  chunkIndex Int
+  chunkIndex  Int
   /// The chunk text exactly as it was embedded — the reranker and the model read this, not the article.
-  text       String
+  text        String
   /// embed-multilingual-v3.0 returns 1024 floats.
-  embedding  Float[]
+  embedding   Float[]
   /// Hash of the source text this chunk was derived from.
   contentHash String
   /// "article" = a slice of the article body · "faq" = a partner's published answer.
@@ -2034,7 +2043,7 @@ model IndustryFAQ {
 
   question String // Schema.org Question
   answer   String? // Empty until reviewed and answered
-  position Int     @default(0)
+  position Int              @default(0)
   status   ArticleFAQStatus @default(PENDING) // reuse the existing enum
 
   /// How many visitors asked essentially this — the demand signal that ranks the content backlog.
@@ -2077,11 +2086,11 @@ model Article {
   userVersion Int @default(0)
 
   // Basic content
-  title         String // Schema.org Article headline
-  slug          String
-  excerpt       String?
-  content String // Article body (markdown/HTML)
-  audioUrl      String? // Audio version URL (A7)
+  title                String // Schema.org Article headline
+  slug                 String
+  excerpt              String?
+  content              String // Article body (markdown/HTML)
+  audioUrl             String? // Audio version URL (A7)
   // Length of that recording, in whole seconds. Stored rather than read from the file: the
   // listen tab and the /audio shelf both show the duration before anything plays, and without
   // this every article view would range-read the audio just to learn a number — measured on a
@@ -2239,7 +2248,7 @@ model Article {
   // ============================================
   // Next.js Metadata Cache
   // ============================================
-  nextjsMetadata Json? // Cached Next.js Metadata object
+  nextjsMetadata              Json? // Cached Next.js Metadata object
   nextjsMetadataLastGenerated DateTime? // When metadata was last generated
 
   // Denormalized interaction counts (updated atomically with each interaction)
@@ -2264,21 +2273,21 @@ model Article {
   gallery     ArticleMedia[] // Image gallery for article
   // Reels that PROMOTE this article — a third, distinct meaning next to
   // `featuredImage` (the article's cover) and `gallery` (images inside it).
-  reelMedia   Media[]        @relation("MediaReelArticle")
+  reelMedia   Media[]          @relation("MediaReelArticle")
 
   // Interaction relations
-  comments    Comment[]
-  likes       ArticleLike[]
-  dislikes    ArticleDislike[]
-  favorites   ArticleFavorite[]
-  views       ArticleView[]
-  shares      Share[]
-  conversions Conversion[]
-  ctaClicks         CTAClick[]
-  linkClicks        ArticleLinkClick[]
-  campaignTracking  CampaignTracking[]
+  comments           Comment[]
+  likes              ArticleLike[]
+  dislikes           ArticleDislike[]
+  favorites          ArticleFavorite[]
+  views              ArticleView[]
+  shares             Share[]
+  conversions        Conversion[]
+  ctaClicks          CTAClick[]
+  linkClicks         ArticleLinkClick[]
+  campaignTracking   CampaignTracking[]
   engagementDuration EngagementDuration[]
-  bookingRequests   BookingRequest[]
+  bookingRequests    BookingRequest[]
 
   @@unique([clientId, slug]) // Slug unique per client
   @@index([clientId, status, datePublished])
@@ -2394,9 +2403,9 @@ model Media {
   /// تاريخٌ لا Boolean: «متى» تجيب أيضاً على «هل»، وتُظهر المسوّدات التي شاخت بلا مراجعة.
   /// وغيابه في مونجو يعني «كتبها إنسان» — وهو الصحيح لكل صفٍّ سبق هذا الحقل.
   seoDraftedByAiAt DateTime?
-  license     String? // License type (CC0, CC-BY, CC-BY-SA, CC-BY-NC, Commercial, All Rights Reserved, Public Domain)
-  creator     String? // Creator/Author name
-  dateCreated DateTime? // Date when the image was created (from EXIF or manual)
+  license          String? // License type (CC0, CC-BY, CC-BY-SA, CC-BY-NC, Commercial, All Rights Reserved, Public Domain)
+  creator          String? // Creator/Author name
+  dateCreated      DateTime? // Date when the image was created (from EXIF or manual)
 
   // Schema.org Enhancement
   geoLatitude     Float? // Geographic latitude
@@ -2435,20 +2444,20 @@ model Media {
   type MediaType @default(GENERAL)
 
   // Primary client media roles (centralized; many clients can share same media)
-  logoClients      Client[] @relation("ClientLogoMedia")
-  heroImageClients Client[] @relation("ClientHeroImageMedia")
-  mobileHeroImageClients Client[] @relation("ClientMobileHeroImageMedia")
-  introVideoClients Client[] @relation("ClientIntroVideoMedia")
+  logoClients            Client[]     @relation("ClientLogoMedia")
+  heroImageClients       Client[]     @relation("ClientHeroImageMedia")
+  mobileHeroImageClients Client[]     @relation("ClientMobileHeroImageMedia")
+  introVideoClients      Client[]     @relation("ClientIntroVideoMedia")
   // Modonty Core (T2): back-relations for the six platform entities
-  authorImages        Author[]   @relation("AuthorImageMedia")
-  authorSocialImages  Author[]   @relation("AuthorSocialImageMedia")
-  categorySocialImages Category[] @relation("CategorySocialImageMedia")
-  tagSocialImages     Tag[]      @relation("TagSocialImageMedia")
-  industrySocialImages Industry[] @relation("IndustrySocialImageMedia")
-  modontyHeroImages   Modonty[]  @relation("ModontyHeroImageMedia")
+  authorImages           Author[]     @relation("AuthorImageMedia")
+  authorSocialImages     Author[]     @relation("AuthorSocialImageMedia")
+  categorySocialImages   Category[]   @relation("CategorySocialImageMedia")
+  tagSocialImages        Tag[]        @relation("TagSocialImageMedia")
+  industrySocialImages   Industry[]   @relation("IndustrySocialImageMedia")
+  modontyHeroImages      Modonty[]    @relation("ModontyHeroImageMedia")
   sectorHeroImages       SectorPage[] @relation("SectorHeroMedia")
   sectorHeroMobileImages SectorPage[] @relation("SectorHeroMobileMedia")
-  modontySocialImages Modonty[]  @relation("ModontySocialImageMedia")
+  modontySocialImages    Modonty[]    @relation("ModontySocialImageMedia")
 
   // ── Reels (merged 2026-08-05 — the `Reel` table is gone) ─────────────────
   //
@@ -2497,7 +2506,7 @@ model Media {
   favoritesCount Int @default(0)
 
   // Relationships
-  featuredArticles Article[]      @relation("ArticleFeaturedImage")
+  featuredArticles Article[]       @relation("ArticleFeaturedImage")
   articleGallery   ArticleMedia[] // Gallery appearances in articles
   comments         MediaComment[]
   reactions        MediaReaction[]
@@ -2692,15 +2701,15 @@ model Comment {
   content String // Comment text
 
   // Relationships
-  articleId String @db.ObjectId
+  articleId String  @db.ObjectId
   article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   authorId String? @db.ObjectId // Optional - allow anonymous comments
   author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
   // Reply support (nested comments)
-  parentId String? @db.ObjectId // If null, it's a top-level comment
-  parent   Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId String?   @db.ObjectId // If null, it's a top-level comment
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replies  Comment[] @relation("CommentReplies")
 
   // Status & Moderation
@@ -2927,8 +2936,8 @@ model ClientComment {
   author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
   // Reply support (nested comments)
-  parentId String? @db.ObjectId // If null, it's a top-level comment
-  parent   ClientComment? @relation("ClientCommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId String?         @db.ObjectId // If null, it's a top-level comment
+  parent   ClientComment?  @relation("ClientCommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replies  ClientComment[] @relation("ClientCommentReplies")
 
   // Status & Moderation
@@ -2971,7 +2980,7 @@ model ClientReview {
   reviewerId String @map("authorId") @db.ObjectId
   reviewer   User   @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
 
-  rating  Int    // 1–5 (required)
+  rating  Int // 1–5 (required)
   comment String // review text
 
   status CommentStatus @default(PENDING) // PENDING until moderated → APPROVED feeds the page
@@ -3048,7 +3057,7 @@ model ClientCommentLike {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   // Relationships
-  commentId String       @db.ObjectId
+  commentId String        @db.ObjectId
   comment   ClientComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   userId String? @db.ObjectId
@@ -3069,7 +3078,7 @@ model ClientCommentDislike {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   // Relationships
-  commentId String       @db.ObjectId
+  commentId String        @db.ObjectId
   comment   ClientComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   userId String? @db.ObjectId
@@ -3136,7 +3145,7 @@ model Conversion {
   // Conversion details
   type     ConversionType // What type of conversion
   value    Float? // Monetary value (for purchases)
-  currency String? @default("USD")
+  currency String?        @default("USD")
 
   // Campaign tracking
   campaignId  String? // Campaign identifier
@@ -3147,9 +3156,9 @@ model Conversion {
   utmContent  String? // UTM content
 
   // Attribution
-  sessionId   String? // Session ID for anonymous conversions
-  firstTouch  Boolean @default(false) // First touch attribution
-  lastTouch   Boolean @default(true) // Last touch attribution
+  sessionId  String? // Session ID for anonymous conversions
+  firstTouch Boolean @default(false) // First touch attribution
+  lastTouch  Boolean @default(true) // Last touch attribution
 
   // Metadata
   ipAddress String?
@@ -3182,14 +3191,14 @@ model CTAClick {
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   // CTA details — from the clicked element or tracking payload
-  type     CTAType // Enum: e.g. READ_MORE, SUBSCRIBE, CONTACT; set by frontend when sending click
-  label    String? // Visible text of button/link (e.g. "اقرأ المزيد"); from element or payload
+  type      CTAType // Enum: e.g. READ_MORE, SUBSCRIBE, CONTACT; set by frontend when sending click
+  label     String? // Visible text of button/link (e.g. "اقرأ المزيد"); from element or payload
   targetUrl String? // href or destination URL; from element.getAttribute("href") or payload
 
   // Engagement context — calculated on client at click time
   sessionId   String? // Same cookie as view tracking (modonty_view_sid); from API via cookies()
-  timeOnPage  Float?  // Seconds from page load to click: (Date.now() - pageLoadedAt) / 1000
-  scrollDepth Float?  // Scroll % when clicked: (window.scrollY / (docHeight - viewportHeight)) * 100
+  timeOnPage  Float? // Seconds from page load to click: (Date.now() - pageLoadedAt) / 1000
+  scrollDepth Float? // Scroll % when clicked: (window.scrollY / (docHeight - viewportHeight)) * 100
 
   // Campaign tracking — from URL query params at click time (optional)
   campaignId  String? // From ?campaign_id= or payload
@@ -3285,13 +3294,13 @@ model LeadScoring {
   conversionScore  Int @default(0) // Based on conversions
 
   // Behavior tracking
-  pagesViewed    Int    @default(0)
-  totalTimeSpent Float  @default(0) // Total seconds
-  interactions   Int    @default(0) // Total interactions (likes, comments, shares)
-  conversions    Int    @default(0)
+  pagesViewed    Int   @default(0)
+  totalTimeSpent Float @default(0) // Total seconds
+  interactions   Int   @default(0) // Total interactions (likes, comments, shares)
+  conversions    Int   @default(0)
 
   // Qualification
-  isQualified        Boolean  @default(false) // Meets qualification threshold
+  isQualified        Boolean @default(false) // Meets qualification threshold
   qualificationLevel String? // HOT, WARM, COLD
 
   // Last activity
@@ -3300,12 +3309,12 @@ model LeadScoring {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([userId, clientId])
+  @@unique([sessionId, clientId])
   @@index([userId])
   @@index([clientId, engagementScore])
   @@index([isQualified, engagementScore])
   @@index([sessionId])
-  @@unique([userId, clientId])
-  @@unique([sessionId, clientId])
   @@map("lead_scoring")
 }
 
@@ -3323,10 +3332,10 @@ model EngagementDuration {
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   // Engagement metrics
-  sessionId     String?
-  timeOnPage    Float // Total seconds on page
-  activeTime    Float? // Active engagement time (user actively scrolling/interacting)
-  scrollDepth   Float // Percentage scrolled (0-100)
+  sessionId      String?
+  timeOnPage     Float // Total seconds on page
+  activeTime     Float? // Active engagement time (user actively scrolling/interacting)
+  scrollDepth    Float // Percentage scrolled (0-100)
   maxScrollDepth Float // Maximum scroll depth reached
 
   // Reading behavior
@@ -3370,7 +3379,7 @@ model ArticleLinkClick {
   linkUrl    String // The URL that was clicked
   linkText   String? // Anchor text of the link
   linkType   LinkType // INTERNAL, EXTERNAL, AFFILIATE, CITATION, SOCIAL
-  isExternal Boolean @default(true) // Whether link goes to external domain
+  isExternal Boolean  @default(true) // Whether link goes to external domain
 
   // Context
   linkPosition   Int? // Position of link in article (0-indexed)
@@ -3417,8 +3426,8 @@ model Settings {
   singletonKey String @unique @default("global")
 
   // Cascade progress tracking (T1.8 — UI feedback for Save & Publish)
-  cascadeStatus      String?   // "running" | "done" | "error" | null = idle
-  cascadeProgress    Json?     // { total, completed, phase: "articles"|"clients"|"categories"|"tags"|"industries"|"listings" }
+  cascadeStatus      String? // "running" | "done" | "error" | null = idle
+  cascadeProgress    Json? // { total, completed, phase: "articles"|"clients"|"categories"|"tags"|"industries"|"listings" }
   cascadeStartedAt   DateTime?
   cascadeCompletedAt DateTime?
   cascadeError       String?
@@ -3450,16 +3459,16 @@ model Settings {
   ogDescriptionRestrict Boolean @default(false)
 
   // Social Media Links (Platform-wide)
-  facebookUrl  String?
-  twitterUrl   String?
-  linkedInUrl  String?
-  instagramUrl String?
-  youtubeUrl   String?
-  tiktokUrl    String?
-  pinterestUrl String?
-  snapchatUrl  String?
-  whatsappChannelUrl String? // Modonty WhatsApp Channel link
-  telegramChannelUrl String? // Modonty Telegram Channel link
+  facebookUrl              String?
+  twitterUrl               String?
+  linkedInUrl              String?
+  instagramUrl             String?
+  youtubeUrl               String?
+  tiktokUrl                String?
+  pinterestUrl             String?
+  snapchatUrl              String?
+  whatsappChannelUrl       String? // Modonty WhatsApp Channel link
+  telegramChannelUrl       String? // Modonty Telegram Channel link
   googleBusinessProfileUrl String? // Modonty/JBR Google Business Profile (Maps) URL — feeds Organization sameAs; team pastes it after creating + verifying the profile
 
   // Content-responsibility disclaimer (admin-edited central text; clients accept it in console)
@@ -3476,57 +3485,57 @@ model Settings {
   adPlatformAccounts Json?
 
   // Site & Organization (from .env defaults, editable in Settings UI)
-  siteUrl             String?
-  siteName            String?
+  siteUrl                         String?
+  siteName                        String?
   // الاسم الثاني للماركة على الكيان نفسه — schema.org `alternateName`، وجوجل تسمّيه
   // "another common name that your organization goes by" وتوصي باستعماله على `Organization`
   // و`WebSite` معاً. سببه المقيس (٢٨ أغسطس ٢٠٢٦): الاسم العربي هو ما يراه الزائر ٢٣ مرّة
   // على الرئيسية، واللاتيني هو ما يكتبه من يبحث بالإنجليزية — وبعمود واحد كان لا بدّ من
   // خسارة أحدهما. الاسم الأساسي يبقى `siteName`، وهذا يجاوره ولا ينافسه.
-  alternateName       String?
-  brandDescription    String?
-  siteAuthor          String?
-  inLanguage            String?  // Default language code (e.g., "ar", "en") for hreflang
-  defaultMetaRobots     String?  // Default meta robots (e.g. "index, follow")
-  defaultGooglebot      String?  // Default meta googlebot (e.g. "index, follow")
-  defaultOgType         String?  // Default og:type (e.g. "website")
-  defaultOgLocale       String?  // Default og:locale (e.g. "ar_SA")
-  defaultOgDeterminer   String?  // Default og:determiner (e.g. "auto")
-  defaultTwitterCard    String?  // Default twitter:card (e.g. "summary_large_image")
-  defaultSitemapPriority Float?  // Default sitemap priority (0.5)
-  defaultSitemapChangeFreq String? // Default sitemap changefreq (e.g. "monthly")
+  alternateName                   String?
+  brandDescription                String?
+  siteAuthor                      String?
+  inLanguage                      String? // Default language code (e.g., "ar", "en") for hreflang
+  defaultMetaRobots               String? // Default meta robots (e.g. "index, follow")
+  defaultGooglebot                String? // Default meta googlebot (e.g. "index, follow")
+  defaultOgType                   String? // Default og:type (e.g. "website")
+  defaultOgLocale                 String? // Default og:locale (e.g. "ar_SA")
+  defaultOgDeterminer             String? // Default og:determiner (e.g. "auto")
+  defaultTwitterCard              String? // Default twitter:card (e.g. "summary_large_image")
+  defaultSitemapPriority          Float? // Default sitemap priority (0.5)
+  defaultSitemapChangeFreq        String? // Default sitemap changefreq (e.g. "monthly")
   articleDefaultSitemapChangeFreq String? // Default sitemap changefreq for articles (e.g. "weekly")
-  articleDefaultSitemapPriority  Float?  // Default sitemap priority for articles (e.g. 0.5)
-  defaultLicense                 String? // Default license URL for articles (e.g. CC-BY)
+  articleDefaultSitemapPriority   Float? // Default sitemap priority for articles (e.g. 0.5)
+  defaultLicense                  String? // Default license URL for articles (e.g. CC-BY)
   // Image licensing defaults (schema.org ImageObject → Google Licensable badge).
   // Used for Modonty-PRODUCED images (HERO/POST/OGIMAGE/TWITTER_IMAGE/CLIENT_MINI/GENERAL);
   // LOGO/GALLERY are attributed to the owning client at generation time instead.
-  imageOwnerName             String? // creator/creditText/copyrightHolder name (e.g. "مدوّنتي")
-  imageLicenseUrl            String? // URL to a page describing the licence (e.g. "/legal/copyright-policy")
-  imageAcquireLicensePageUrl String? // URL where users can acquire a licence / contact
-  defaultIsAccessibleForFree     Boolean  @default(true) // Default for articles: free to access (structured data)
-  defaultAlternateLanguages     Json?    // Default for articles: array of {hreflang, url} for hreflang
-  defaultContentFormat         String?  // Default for articles: "markdown" | "html" | "rich_text"
-  defaultCharset         String?  // Meta charset (e.g. "UTF-8")
-  defaultOgImageType     String?  // og:image type (e.g. "image/jpeg")
-  defaultOgImageWidth    Int?     // og:image width (e.g. 1200)
-  defaultOgImageHeight   Int?     // og:image height (e.g. 630)
-  defaultHreflang        String?  // hreflang default (e.g. "x-default")
-  defaultPathname        String?  // URL pathname fallback (e.g. "/")
-  defaultTruncationSuffix String? // Suffix when truncating title/description (e.g. "...")
-  defaultReferrerPolicy  String?  // Referrer policy (e.g. "strict-origin-when-cross-origin")
-  defaultNotranslate     Boolean? // Prevent Chrome translate prompt for Arabic
-  twitterSite            String?
-  twitterCreator      String?
-  twitterSiteId       String?
-  twitterCreatorId    String?
-  orgContactType             String?
-  orgContactEmail            String?
-  orgContactTelephone        String?
-  orgContactAvailableLanguage String?  // ContactPoint.availableLanguage (e.g. "ar"); falls back to inLanguage
-  orgContactOption           String?   // ContactPoint.contactOption (e.g. toll-free)
-  orgContactHoursAvailable   String?   // ContactPoint.hoursAvailable (e.g. "Mo-Fr 09:00-17:00")
-  orgAreaServed              String?
+  imageOwnerName                  String? // creator/creditText/copyrightHolder name (e.g. "مدوّنتي")
+  imageLicenseUrl                 String? // URL to a page describing the licence (e.g. "/legal/copyright-policy")
+  imageAcquireLicensePageUrl      String? // URL where users can acquire a licence / contact
+  defaultIsAccessibleForFree      Boolean  @default(true) // Default for articles: free to access (structured data)
+  defaultAlternateLanguages       Json? // Default for articles: array of {hreflang, url} for hreflang
+  defaultContentFormat            String? // Default for articles: "markdown" | "html" | "rich_text"
+  defaultCharset                  String? // Meta charset (e.g. "UTF-8")
+  defaultOgImageType              String? // og:image type (e.g. "image/jpeg")
+  defaultOgImageWidth             Int? // og:image width (e.g. 1200)
+  defaultOgImageHeight            Int? // og:image height (e.g. 630)
+  defaultHreflang                 String? // hreflang default (e.g. "x-default")
+  defaultPathname                 String? // URL pathname fallback (e.g. "/")
+  defaultTruncationSuffix         String? // Suffix when truncating title/description (e.g. "...")
+  defaultReferrerPolicy           String? // Referrer policy (e.g. "strict-origin-when-cross-origin")
+  defaultNotranslate              Boolean? // Prevent Chrome translate prompt for Arabic
+  twitterSite                     String?
+  twitterCreator                  String?
+  twitterSiteId                   String?
+  twitterCreatorId                String?
+  orgContactType                  String?
+  orgContactEmail                 String?
+  orgContactTelephone             String?
+  orgContactAvailableLanguage     String? // ContactPoint.availableLanguage (e.g. "ar"); falls back to inLanguage
+  orgContactOption                String? // ContactPoint.contactOption (e.g. toll-free)
+  orgContactHoursAvailable        String? // ContactPoint.hoursAvailable (e.g. "Mo-Fr 09:00-17:00")
+  orgAreaServed                   String?
 
   /// تواصلُ المبيعات — يُطبع على الفاتورة في سطر «سؤال عن الفاتورة؟».
   ///
@@ -3537,17 +3546,17 @@ model Settings {
   /// ومنفصلٌ عن `orgContactTelephone`: ذاك تواصلُ المنشأة في البيانات المنظَّمة ويُنشر
   /// للزوّار كافّة، وهذا يذهب لمن بيده فاتورةٌ ويسأل عن مبلغ — وقد يكون خطّاً آخر.
   /// وفارغاً يرجع إلى تواصل المنشأة، فلا يخرج مستندٌ ماليّ بلا جهةٍ تُسأل.
-  salesPhone                 String?
-  salesEmail                 String?
-  orgStreetAddress    String?
-  orgAddressLocality  String?
-  orgAddressRegion    String?
-  orgAddressCountry   String?
+  salesPhone             String?
+  salesEmail             String?
+  orgStreetAddress       String?
+  orgAddressLocality     String?
+  orgAddressRegion       String?
+  orgAddressCountry      String?
   orgAddressNeighborhood String? // الحيّ — جزء من العنوان الوطني، يظهر في /trust مع الشارع
-  orgPostalCode       String?
-  orgGeoLatitude      Float?
-  orgGeoLongitude     Float?
-  orgSearchUrlTemplate String?
+  orgPostalCode          String?
+  orgGeoLatitude         Float?
+  orgGeoLongitude        Float?
+  orgSearchUrlTemplate   String?
 
   // السجل التجاري لمدونتي نفسها — تُدخَل من الأدمن وتُعرض في /trust و/story و JSON-LD.
   // مكانها هنا لأن Settings تخصّ المشروع؛ جدول Client للعملاء.
@@ -3563,91 +3572,91 @@ model Settings {
   orgFoundingDate                 DateTime? // تاريخ القيد في السجل
 
   // Media Settings (Cloudinary URLs)
-  logoUrl     String? // Wide wordmark logo — desktop navbar
-  logoIconUrl String? // Small icon/mark logo — mobile navbar (falls back to logoUrl if empty)
-  ogImageUrl  String?
-  altImage    String?  // Default alt text for logo/OG image when none set
+  logoUrl             String? // Wide wordmark logo — desktop navbar
+  logoIconUrl         String? // Small icon/mark logo — mobile navbar (falls back to logoUrl if empty)
+  ogImageUrl          String?
+  altImage            String? // Default alt text for logo/OG image when none set
   certificateImageUrl String? // CR certificate shown on /trust — picked from the Modonty library; static /public file stays as fallback
 
   // Modonty app defaults (fallback when page has no SEO title/description)
   modontySeoTitle       String?
-  modontySeoDescription  String?
+  modontySeoDescription String?
 
   // List pages defaults (fallback when generating meta/JSON-LD)
-  clientsSeoTitle       String?
-  clientsSeoDescription String?
-  categoriesSeoTitle    String?
+  clientsSeoTitle          String?
+  clientsSeoDescription    String?
+  categoriesSeoTitle       String?
   categoriesSeoDescription String?
-  trendingSeoTitle      String?
-  trendingSeoDescription  String?
-  tagsSeoTitle          String?
-  tagsSeoDescription    String?
-  industriesSeoTitle    String?
+  trendingSeoTitle         String?
+  trendingSeoDescription   String?
+  tagsSeoTitle             String?
+  tagsSeoDescription       String?
+  industriesSeoTitle       String?
   industriesSeoDescription String?
   // Article archive (/articles) — a master page like its sisters: its own editable SEO copy.
-  articlesSeoTitle      String?
-  articlesSeoDescription String?
+  articlesSeoTitle         String?
+  articlesSeoDescription   String?
 
   // Cached site-level JSON-LD (optional; same pattern as Client/Modonty)
   jsonLdStructuredData   String?   @db.String // Cached @graph JSON string
-  jsonLdLastGenerated   DateTime?
-  jsonLdValidationReport Json?     // { adobe, custom, richResults }
+  jsonLdLastGenerated    DateTime?
+  jsonLdValidationReport Json? // { adobe, custom, richResults }
 
   // Home page meta (PRD: generate once, store, read from DB)
   homeMetaTags Json?
 
   // Clients list page meta + JSON-LD
-  clientsPageMetaTags              Json?
-  clientsPageJsonLdStructuredData  String?   @db.String
-  clientsPageJsonLdLastGenerated   DateTime?
+  clientsPageMetaTags               Json?
+  clientsPageJsonLdStructuredData   String?   @db.String
+  clientsPageJsonLdLastGenerated    DateTime?
   clientsPageJsonLdValidationReport Json?
 
   // Categories list page meta + JSON-LD
-  categoriesPageMetaTags              Json?
-  categoriesPageJsonLdStructuredData  String?   @db.String
-  categoriesPageJsonLdLastGenerated   DateTime?
+  categoriesPageMetaTags               Json?
+  categoriesPageJsonLdStructuredData   String?   @db.String
+  categoriesPageJsonLdLastGenerated    DateTime?
   categoriesPageJsonLdValidationReport Json?
 
   // Article archive (/articles) meta + JSON-LD — same cached pattern as every listing page.
   // The page exists (modonty/app/(site)/articles/page.tsx) and was the ONLY listing without a
   // cached blob, so it hand-rolled four OpenGraph fields and inherited none of the defaults.
   // Filtered views derive their own canonical from this base at request time.
-  articlesPageMetaTags              Json?
-  articlesPageJsonLdStructuredData  String?   @db.String
-  articlesPageJsonLdLastGenerated   DateTime?
+  articlesPageMetaTags               Json?
+  articlesPageJsonLdStructuredData   String?   @db.String
+  articlesPageJsonLdLastGenerated    DateTime?
   articlesPageJsonLdValidationReport Json?
 
   // Trending list page meta + JSON-LD
-  trendingPageMetaTags              Json?
-  trendingPageJsonLdStructuredData  String?   @db.String
-  trendingPageJsonLdLastGenerated   DateTime?
+  trendingPageMetaTags               Json?
+  trendingPageJsonLdStructuredData   String?   @db.String
+  trendingPageJsonLdLastGenerated    DateTime?
   trendingPageJsonLdValidationReport Json?
 
   // Tags list page meta + JSON-LD
-  tagsPageMetaTags              Json?
-  tagsPageJsonLdStructuredData  String?   @db.String
-  tagsPageJsonLdLastGenerated   DateTime?
+  tagsPageMetaTags               Json?
+  tagsPageJsonLdStructuredData   String?   @db.String
+  tagsPageJsonLdLastGenerated    DateTime?
   tagsPageJsonLdValidationReport Json?
 
   // Industries list page meta + JSON-LD
-  industriesPageMetaTags              Json?
-  industriesPageJsonLdStructuredData  String?   @db.String
-  industriesPageJsonLdLastGenerated   DateTime?
+  industriesPageMetaTags               Json?
+  industriesPageJsonLdStructuredData   String?   @db.String
+  industriesPageJsonLdLastGenerated    DateTime?
   industriesPageJsonLdValidationReport Json?
 
   // Articles list page meta + JSON-LD
 
   // FAQ page meta + JSON-LD
-  faqPageMetaTags              Json?
-  faqPageJsonLdStructuredData  String?   @db.String
-  faqPageJsonLdLastGenerated   DateTime?
+  faqPageMetaTags               Json?
+  faqPageJsonLdStructuredData   String?   @db.String
+  faqPageJsonLdLastGenerated    DateTime?
   faqPageJsonLdValidationReport Json?
-  faqSeoTitle                  String?
-  faqSeoDescription            String?
+  faqSeoTitle                   String?
+  faqSeoDescription             String?
 
   // Homepage feed banner (JBRSEO-ADMIN-2)
-  platformTagline     String?  // e.g. "مرحباً بك في مودونتي"
-  platformDescription String?  // e.g. "منصة المحتوى العربي — اكتشف مقالات..."
+  platformTagline     String? // e.g. "مرحباً بك في مودونتي"
+  platformDescription String? // e.g. "منصة المحتوى العربي — اكتشف مقالات..."
 
   // Per-listing-page hero image (visible hero background + og:image). Empty → falls back
   // to the global ogImageUrl. Cloudinary URL + alt, mirroring ogImageUrl/altImage.
@@ -3675,31 +3684,31 @@ model Settings {
 
 model Modonty {
   id String @id @default(auto()) @map("_id") @db.ObjectId
-  
+
   // Page identification
-  slug String @unique // e.g., "about", "terms", "privacy-policy"
+  slug  String @unique // e.g., "about", "terms", "privacy-policy"
   title String // Page title
-  
+
   // Content (TipTap HTML format)
   content String // Rich text content from TipTap editor
-  
+
   // Hero Image (for page display)
-  heroImage                String? // Cloudinary URL
-  heroImageAlt             String? // Alt text
+  heroImage                   String? // Cloudinary URL
+  heroImageAlt                String? // Alt text
   // Modonty Core (T2): additive Media relation — the raw string stays (dual-field, zero-loss)
-  heroImageMediaId String? @db.ObjectId
-  heroImageMedia   Media?  @relation("ModontyHeroImageMedia", fields: [heroImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  heroImageMediaId            String? @db.ObjectId
+  heroImageMedia              Media?  @relation("ModontyHeroImageMedia", fields: [heroImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   heroImageCloudinaryPublicId String? // Cloudinary public_id for direct deletion
-  
+
   // ============================================
   // SEO FIELDS (Following codebase pattern)
   // ============================================
-  
+
   // Basic SEO (Category/Tag/Industry/Author pattern)
   seoTitle       String?
   seoDescription String? // 155-160 chars optimal
   metaRobots     String? // index, noindex, follow, nofollow
-  
+
   // Social Images (Category/Tag/Industry pattern)
   socialImage        String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
   socialImageAlt     String? // Alt text
@@ -3707,51 +3716,51 @@ model Modonty {
   socialImageMediaId String? @db.ObjectId
   socialImageMedia   Media?  @relation("ModontySocialImageMedia", fields: [socialImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
-  
+
   // Open Graph (Article pattern)
   ogTitle       String?
   ogDescription String?
-  ogType        String?   @default("website")
+  ogType        String? @default("website")
   ogUrl         String?
   ogSiteName    String?
   ogLocale      String?
   ogImage       String? // Open Graph image URL
-  
+
   // Twitter Cards (Client/Article pattern)
   twitterCard        String? // summary_large_image, summary
   twitterTitle       String?
   twitterDescription String?
   twitterSite        String? // @username
   twitterCreator     String?
-  
+
   // Technical SEO
   canonicalUrl       String?
   alternateLanguages Json? // Array of {hreflang, url} objects
   sitemapPriority    Float?  @default(0.5) // 0.0 to 1.0
   sitemapChangeFreq  String? @default("monthly") // always, hourly, daily, weekly, monthly, yearly, never
-  
+
   // Language
   inLanguage String @default("ar") // For hreflang
-  
+
   // Cached SEO (meta tags + JSON-LD, generated on save)
-  metaTags              Json?    // Client-shaped meta object
+  metaTags               Json? // Client-shaped meta object
   // The cached Next.js Metadata object, written by the admin and read RAW by modonty — the
   // same contract every listing page and every client page already follows. `metaTags` above
   // is NOT this: it holds organizationSeo/ogLocaleAlternate, which is why these pages were
   // still building their metadata per request while everything else read a blob.
-  nextjsMetadata        Json?
-  metaLastGenerated     DateTime?
-  jsonLdStructuredData  String?  // WebPage @graph JSON-LD string
-  jsonLdLastGenerated   DateTime?
-  jsonLdValidationReport Json?   // { adobe, ajv, custom }
-  
+  nextjsMetadata         Json?
+  metaLastGenerated      DateTime?
+  jsonLdStructuredData   String? // WebPage @graph JSON-LD string
+  jsonLdLastGenerated    DateTime?
+  jsonLdValidationReport Json? // { adobe, ajv, custom }
+
   // ============================================
   // METADATA
   // ============================================
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   lastModifiedBy String?  @db.ObjectId // User ID who last edited
-  
+
   @@map("modonty")
 }
 
@@ -3788,8 +3797,8 @@ model ContactMessage {
   referrer  String?
 
   // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   readAt    DateTime? // When message was read
   repliedAt DateTime? // When reply was sent
 
@@ -3802,22 +3811,22 @@ model ContactMessage {
 }
 
 model Notification {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
   // Recipient is EITHER a reader (userId) OR a staff member (staffId). Readers
   // keep userId; staff notifications (e.g. booking alerts) use staffId so they
   // survive after staff are moved out of the users collection.
-  userId    String?  @db.ObjectId
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  staffId   String?  @db.ObjectId
-  staff     Staff?   @relation("StaffNotifications", fields: [staffId], references: [id], onDelete: Cascade)
-  clientId  String?  @db.ObjectId
-  client    Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  type      String   // e.g. "contact_reply"
+  userId    String?   @db.ObjectId
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  staffId   String?   @db.ObjectId
+  staff     Staff?    @relation("StaffNotifications", fields: [staffId], references: [id], onDelete: Cascade)
+  clientId  String?   @db.ObjectId
+  client    Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  type      String // e.g. "contact_reply"
   title     String
   body      String
   readAt    DateTime?
-  relatedId String?  @db.ObjectId // e.g. ContactMessage id
-  createdAt DateTime @default(now())
+  relatedId String?   @db.ObjectId // e.g. ContactMessage id
+  createdAt DateTime  @default(now())
   /// When the reader-app push dispatcher (`modonty/app/api/mobile/v1/internal/push-dispatch`)
   /// handled this row — sent to the reader's phones, or skipped because it was already read /
   /// had no phone. Unset = not handled yet. Staff rows (staffId) never get one.
@@ -3840,24 +3849,24 @@ model FAQ {
   // Basic content
   question String // The question text
   answer   String // The answer text (can be HTML/rich text)
-  position Int    @default(0) // For ordering
+  position Int     @default(0) // For ordering
   isActive Boolean @default(true) // To show/hide FAQs
 
   // SEO Fields (following Schema.org FAQPage best practices)
   seoTitle       String? // SEO-optimized title for the question (for meta tags, 50-60 chars optimal)
   seoDescription String? // SEO description/preview text (155-160 chars optimal)
   lastReviewed   DateTime? // When this FAQ was last reviewed/updated (Schema.org lastReviewed)
-  reviewedBy     String? @db.ObjectId // User ID who last reviewed (Schema.org reviewedBy)
-  author         String? @db.ObjectId // Author/creator of this FAQ (Schema.org author - Person/Organization)
-  upvoteCount    Int? @default(0) // Community upvotes (Schema.org upvoteCount)
-  downvoteCount  Int? @default(0) // Track "not helpful" feedback
+  reviewedBy     String?   @db.ObjectId // User ID who last reviewed (Schema.org reviewedBy)
+  author         String?   @db.ObjectId // Author/creator of this FAQ (Schema.org author - Person/Organization)
+  upvoteCount    Int?      @default(0) // Community upvotes (Schema.org upvoteCount)
+  downvoteCount  Int?      @default(0) // Track "not helpful" feedback
   answerCount    Int? // Number of alternative answers (if multiple answers supported)
   dateCreated    DateTime? // Original creation date (Schema.org dateCreated)
   datePublished  DateTime? // Publication date (Schema.org datePublished)
-  inLanguage     String  @default("ar") // Language code (for hreflang)
+  inLanguage     String    @default("ar") // Language code (for hreflang)
 
   // Structured Data Enhancement
-  speakable Json? // Speakable content for voice search (Schema.org SpeakableSpecification)
+  speakable  Json? // Speakable content for voice search (Schema.org SpeakableSpecification)
   // Format: { "@type": "SpeakableSpecification", "cssSelector": ["#question-1", "#answer-1"] }
   mainEntity Json? // Additional structured data context
 
@@ -3888,7 +3897,7 @@ model FAQFeedback {
   // User/Session tracking
   userId    String? @db.ObjectId // User ID if logged in
   user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-  sessionId String?  // Browser session ID for anonymous users
+  sessionId String? // Browser session ID for anonymous users
 
   // Feedback data
   isHelpful Boolean // true = helpful, false = not helpful
@@ -3899,7 +3908,7 @@ model FAQFeedback {
   createdAt DateTime @default(now())
 
   @@unique([faqId, sessionId]) // Prevent duplicate feedback from same session
-  @@unique([faqId, userId])    // Prevent duplicate feedback from same user
+  @@unique([faqId, userId]) // Prevent duplicate feedback from same user
   @@index([faqId, createdAt])
   @@index([userId])
   @@index([sessionId])
@@ -3915,7 +3924,7 @@ model Changelog {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   version   String
   title     String
-  items     Json     // [{type: "fix"|"feature"|"improve", text: "..."}]
+  items     Json // [{type: "fix"|"feature"|"improve", text: "..."}]
   createdAt DateTime @default(now())
 
   @@index([createdAt])
@@ -3925,14 +3934,14 @@ model Changelog {
 model AdminNote {
   id           String           @id @default(auto()) @map("_id") @db.ObjectId
   author       String
-  type         String?          // "bug" | "idea" | "other"
-  app          String?          // "modonty" | "console" | "admin" | "general"
-  whereExactly String?          // human description: "Article edit page", "Comments list", etc.
-  message      String           // what happened / the idea / the comment
-  steps        String?          // bug-only: reproduction steps
-  severity     String?          // bug-only: "critical" | "bug" | "minor"
-  benefit      String?          // idea-only: why it would help
-  page         String?          // auto-captured URL pathname (technical reference)
+  type         String? // "bug" | "idea" | "other"
+  app          String? // "modonty" | "console" | "admin" | "general"
+  whereExactly String? // human description: "Article edit page", "Comments list", etc.
+  message      String // what happened / the idea / the comment
+  steps        String? // bug-only: reproduction steps
+  severity     String? // bug-only: "critical" | "bug" | "minor"
+  benefit      String? // idea-only: why it would help
+  page         String? // auto-captured URL pathname (technical reference)
   replies      AdminNoteReply[]
   createdAt    DateTime         @default(now())
 
@@ -3986,13 +3995,13 @@ model SystemError {
   routeType  String
   source     String
   // Tracing enrichment (Khalid 2026-07-22) — turns the log from noise into triage.
-  category   String?  // "framework" (Next/React internals, not our bug) | "app" (ours)
-  renderType String?  // Next context.renderType: "dynamic" | "dynamic-resume" (PPR resume)
-  device     String?  // "mobile" | "tablet" | "desktop" | "bot"
-  botName    String?  // e.g. "Googlebot" when the UA is a known crawler
-  country    String?  // Vercel geo (x-vercel-ip-country)
-  city       String?  // Vercel geo (x-vercel-ip-city)
-  userAgent  String?  // raw UA — the ground truth for tracing
+  category   String? // "framework" (Next/React internals, not our bug) | "app" (ours)
+  renderType String? // Next context.renderType: "dynamic" | "dynamic-resume" (PPR resume)
+  device     String? // "mobile" | "tablet" | "desktop" | "bot"
+  botName    String? // e.g. "Googlebot" when the UA is a known crawler
+  country    String? // Vercel geo (x-vercel-ip-country)
+  city       String? // Vercel geo (x-vercel-ip-city)
+  userAgent  String? // raw UA — the ground truth for tracing
   createdAt  DateTime @default(now())
 
   @@index([createdAt])
@@ -4058,8 +4067,8 @@ model AuditLog {
 // Cache table for Google Search Console URL Inspection results.
 // Avoids hitting the 2,000/day API quota — refresh on demand or every 7 days.
 model GscUrlInspection {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  url             String   @unique
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  url             String    @unique
   verdict         String? // PASS · FAIL · NEUTRAL · PARTIAL
   coverageState   String? // e.g. "Submitted and indexed"
   robotsTxtState  String? // ALLOWED · DISALLOWED
@@ -4073,7 +4082,7 @@ model GscUrlInspection {
   crawledAs       String? // DESKTOP · MOBILE
   sitemap         String[] // sitemap URLs that include this URL
   rawJson         Json?
-  inspectedAt     DateTime @default(now())
+  inspectedAt     DateTime  @default(now())
   expiresAt       DateTime
 
   @@index([expiresAt])
@@ -4104,15 +4113,15 @@ model GscManualRequest {
 // BILLING — Invoices issued from the Accounts page
 // ============================================
 model Invoice {
-  id                String           @id @default(auto()) @map("_id") @db.ObjectId
-  number            String           @unique // human invoice number e.g. MOD-2026-00042
-  clientId          String           @db.ObjectId
+  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
+  number             String               @unique // human invoice number e.g. MOD-2026-00042
+  clientId           String               @db.ObjectId
   // Restrict, never Cascade (2026-09-16): this used to delete a client's invoices along with
   // the client — the accounting ledger vanishing on one button press. The client is ARCHIVED
   // now, never deleted (Client.archivedAt), so nothing should cascade here at all; the
   // constraint stays as a floor under that decision. Same rule the invoice already applies to
   // itself: «Voiding an invoice, never deleting it — the ledger has to stay whole».
-  client            Client           @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  client             Client               @relation(fields: [clientId], references: [id], onDelete: Restrict)
   /// لقطة هويّة المشتري وقت الإصدار — كما يفعل `CheckoutOrder` بالضبط، ولنفس السبب.
   ///
   /// الفاتورة اليوم تحمل **رقم العميل فقط**، فلو انفصلت عن كرته صارت ورقةً فيها مبلغ بلا
@@ -4123,49 +4132,49 @@ model Invoice {
   /// مستندٌ يجب أن يقول من صدرت له **يومها**، لا من صار اليوم. نفس سبب تجميد السعر.
   ///
   /// اختياريّة: كل فاتورةٍ صدرت قبل هذا الحقل تبقى صحيحة، وتُقرأ هويّتها من الكرت كما كانت.
-  buyerName         String?
-  buyerEmail        String?
-  buyerLegalName    String?
-  buyerVatID        String?
+  buyerName          String?
+  buyerEmail         String?
+  buyerLegalName     String?
+  buyerVatID         String?
   /// سقط `tier` (١٧ سبتمبر ٢٠٢٦): كان يُكتب في ثلاثة مواضع ويُقرأ في **صفر**.
   /// كفّت المواضعُ الثلاثة عن كتابته أوّلاً، ثمّ سقط. و`tierName` تحته هي المصدر —
   /// لقطةُ اسمٍ مجمَّدةٌ لحظةَ الإصدار، لا تتغيّر لو تغيّر الكتالوج بعدها.
-  tierName          String // display-name snapshot at issue time (e.g. "الزخم") — هذه هي المصدر
-  period            String // "monthly" | "annual"
-  currency          String // "SAR" | "EGP"
-  amount            Float
-  paymentMethod     String? // deprecated — kept for old rows; not captured on new invoices
-  paymentStatus     InvoicePaymentStatus
-  subscriptionStart DateTime?
-  subscriptionEnd   DateTime?
-  issuedAt          DateTime         @default(now())
-  issuedByUserId    String?          @db.ObjectId
-  emailSentAt       DateTime?
-  paidAt            DateTime? // settlement date entered by admin at «تحديد مدفوعة»
-  paidByUserId      String?          @db.ObjectId
+  tierName           String // display-name snapshot at issue time (e.g. "الزخم") — هذه هي المصدر
+  period             String // "monthly" | "annual"
+  currency           String // "SAR" | "EGP"
+  amount             Float
+  paymentMethod      String? // deprecated — kept for old rows; not captured on new invoices
+  paymentStatus      InvoicePaymentStatus
+  subscriptionStart  DateTime?
+  subscriptionEnd    DateTime?
+  issuedAt           DateTime             @default(now())
+  issuedByUserId     String?              @db.ObjectId
+  emailSentAt        DateTime?
+  paidAt             DateTime? // settlement date entered by admin at «تحديد مدفوعة»
+  paidByUserId       String?              @db.ObjectId
   // Voiding an invoice, never deleting it — the ledger has to stay whole for accounting.
   // Only an UNPAID invoice can be archived; it then leaves every unpaid total, stops
   // blocking the next issuance, and its period stops counting toward the client's end date.
-  archivedAt        DateTime?
-  archivedReason    String?
-  archivedByUserId  String?          @db.ObjectId
+  archivedAt         DateTime?
+  archivedReason     String?
+  archivedByUserId   String?              @db.ObjectId
   // Marks the invoice that embodies the client's opening balance (see Client.openingBalance).
   // The founding payment is already counted in the sales report as the opening balance, so
   // an invoice generated from it MUST be excluded from report revenue — it is a document,
   // not new money. Default false = a normal renewal invoice that DOES count.
-  fromOpeningBalance Boolean         @default(false)
+  fromOpeningBalance Boolean              @default(false)
   // ── Tax-invoice detail (PAY-Q14). Optional so every invoice issued before the checkout
   // flow stays valid; an invoice born from a CheckoutOrder fills all of them from the
   // order's snapshot — never from today's catalog price. Minor units, Int.
-  orderId            String?          @db.ObjectId
+  orderId            String?              @db.ObjectId
   subtotalMinor      Int?
   vatRateBp          Int? // 1500 = 15%
   vatMinor           Int?
   totalMinor         Int?
   paidMonths         Int?
   bonusServiceMonths Int?
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
 
   @@index([clientId, issuedAt])
   @@index([orderId])
@@ -4390,14 +4399,14 @@ model SalesCommissionRate {
 /// اليوم وتُعرض للمندوب بسعرها. سجلٌّ كالنسبة: كلّ صفٍّ يسري من `effectiveFrom`، فتغييرُه لا يعيد
 /// كتابة شهرٍ مضى. وهو قياسٌ للمندوب لا شرطٌ للعمولة — لا يغيّر نسبةً ولا مبلغاً.
 model SalesTarget {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  staffId       String   @db.ObjectId
-  staff         Staff    @relation("StaffSalesTargets", fields: [staffId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  staffId         String   @db.ObjectId
+  staff           Staff    @relation("StaffSalesTargets", fields: [staffId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   /// بالهللة، قبل الضريبة — نفسُ أساس العمولة (`subtotalMinor`).
   monthlySarMinor Int
-  effectiveFrom DateTime
-  createdById   String?  @db.ObjectId
-  createdAt     DateTime @default(now())
+  effectiveFrom   DateTime
+  createdById     String?  @db.ObjectId
+  createdAt       DateTime @default(now())
 
   @@index([staffId, effectiveFrom])
   @@map("sales_targets")
@@ -4415,16 +4424,16 @@ type SalesCommissionPayoutItem {
 /// المندوب… جدول فيه كل الأوردرات اللي لسه ما انصرفت عمولاتها… سيلكت وبعدين صرف»). المبلغ =
 /// مجموع `items`، لكلّ عملةٍ على حدة (ريال وجنيه لا يُحوَّلان). حذفُها يعيد طلباتها للجدول.
 model SalesCommissionPayout {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  staffId     String   @db.ObjectId
-  staff       Staff    @relation("StaffCommissionPayouts", fields: [staffId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          String                      @id @default(auto()) @map("_id") @db.ObjectId
+  staffId     String                      @db.ObjectId
+  staff       Staff                       @relation("StaffCommissionPayouts", fields: [staffId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   currency    String // SAR | EGP
   amountMinor Int
   items       SalesCommissionPayoutItem[]
   paidOn      DateTime
   note        String?
-  createdById String?  @db.ObjectId
-  createdAt   DateTime @default(now())
+  createdById String?                     @db.ObjectId
+  createdAt   DateTime                    @default(now())
 
   @@index([staffId, paidOn])
   @@map("sales_commission_payouts")
@@ -4483,10 +4492,10 @@ model ReferralLead {
   status ReferralLeadStatus @default(NEW)
 
   /// السجلّ الزمني — كلٌّ منها يُكتب مرّة واحدة عند دخول حالته، ويبقى بعدها.
-  contactedAt   DateTime?
-  subscribedAt  DateTime?
-  paidAt        DateTime?
-  rewardedAt    DateTime?
+  contactedAt  DateTime?
+  subscribedAt DateTime?
+  paidAt       DateTime?
+  rewardedAt   DateTime?
 
   /// الفاتورة التي أثبتت السداد. هي مصدر `paidAt` ومفتاح عدم التكرار: منح المكافأة
   /// يشترط `rewardedAt == null`، فلا تُمنح مرّتين مهما أُعيد تشغيل العملية.
@@ -4620,8 +4629,8 @@ model SalesLead {
   /// until a year in — without it "we lost 40 deals" is a number, with it it is a decision.
   /// جودة العميل بعد أوّل تواصل — يختارها المندوب بضغطة (خالد ٢٩ سبتمبر ٢٠٢٦). هي فيدباك المبيعات
   /// للميديا باير: كم عميلاً «مناسباً» جاب كلّ بريف، لا كم رقماً فقط. فارغة = لم تُقيَّم بعد.
-  quality   LeadQuality?
-  qualityAt DateTime?
+  quality    LeadQuality?
+  qualityAt  DateTime?
   lostReason SalesLostReason?
   lostNote   String?
   lostAt     DateTime?
@@ -4860,22 +4869,22 @@ model AdCampaign {
   // وبه تُجمع حملات ميتا تحت بريفها، وينبَّه عمّا يعمل بلا موافقة أو يتجاوز ما وُوفق عليه.
 
   /// `B-012` — يُكتب في اسم الحملة في المنصّة. فريدٌ بالكود لا بفهرس القاعدة (لا `db push`).
-  code String?
+  code              String?
   /// ما الذي يقوله الإعلان: العرض أو الرسالة — ما يُوافَق عليه.
-  brief String?
-  approval AdApproval @default(PENDING)
-  approvedById String? @db.ObjectId
-  decidedAt    DateTime?
+  brief             String?
+  approval          AdApproval @default(PENDING)
+  approvedById      String?    @db.ObjectId
+  decidedAt         DateTime?
   /// سبب الرفض، أو ملاحظة الموافقة.
-  decisionNote String?
+  decisionNote      String?
   /// الرقم المستهدف — معناه يتبع الهدف: تكلفة العميل (عملاء/مبيعات)، تكلفة النقرة (زيارات)،
   /// تكلفة الألف ظهور (وعي/تفاعل). اسمه التاريخيّ باقٍ؛ التنبيه على العملاء والمبيعات وحدهما.
   targetCostPerLead Float?
   /// وين يروح العميل بعد الضغط: "WEBSITE" | "WHATSAPP" | "PLATFORM_FORM" — نصٌّ لا تعداد (بلا
   /// ترحيل). واتساب ونموذج المنصّة لا يحملان كود الحملة في رابط، فالمبيعات تنسب العميل يدوياً.
-  destination String?
+  destination       String?
   /// رابط التصاميم (Drive/Figma) — يراه الأدمن قبل الموافقة. اختياريّ.
-  creativeUrl String?
+  creativeUrl       String?
 
   /// مَن جاءنا منها. علاقةٌ لا نصّ — وهي كلّ الغرض من هذا الجدول.
   leads SalesLead[]
@@ -4973,11 +4982,11 @@ model ModontyPlan {
 
   // Core content
   name          String
-  tagline       String  @default("")
-  priceMonthly  Int     @default(0)
-  priceYearly   Int     @default(0)
-  articlesLabel String  @default("")
-  ctaText       String  @default("")
+  tagline       String   @default("")
+  priceMonthly  Int      @default(0)
+  priceYearly   Int      @default(0)
+  articlesLabel String   @default("")
+  ctaText       String   @default("")
   /// السطر المميّز الذي يُعرض قرب السعر — «الميزة التي تصطاد».
   hook          String?
   highlights    String[]
@@ -5193,7 +5202,6 @@ enum NotificationPriority {
   URGENT /// شغل واقف — اليوم
 }
 
-
 /// A note the operations manager sent to the content team's Telegram about one client.
 ///
 /// The row is the record, the Telegram message is just its delivery. Which is why
@@ -5223,7 +5231,7 @@ model ClientNotification {
   recipientNames String[]
 
   // Who sent it — the signed-in staff member, never a value the browser supplies.
-  sentById    String  @db.ObjectId
+  sentById    String @db.ObjectId
   sentByName  String
   sentByEmail String
 
@@ -5248,17 +5256,17 @@ model MobileDevice {
 
   /// ExpoPushToken[...] or ExponentPushToken[...]. Unique so a re-login moves the
   /// token to the current authenticated client rather than creating a duplicate.
-  expoPushToken String @unique
+  expoPushToken String  @unique
   platform      String // "android" | "ios"
   deviceName    String?
   appVersion    String?
 
-  enabled      Boolean  @default(true)
-  lastSeenAt   DateTime @default(now())
-  disabledAt   DateTime?
+  enabled        Boolean   @default(true)
+  lastSeenAt     DateTime  @default(now())
+  disabledAt     DateTime?
   disabledReason String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@index([clientId, enabled])
   @@map("mobile_devices")
@@ -5332,9 +5340,9 @@ model ReaderSession {
 model ReaderDevice {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  userId        String   @db.ObjectId
+  userId        String  @db.ObjectId
   /// ExpoPushToken[...] or ExponentPushToken[...]
-  expoPushToken String   @unique
+  expoPushToken String  @unique
   /// X-Device-Id the app generates once and keeps — lets logout disable THIS phone's row.
   deviceId      String
   platform      String // "ios" | "android"
@@ -5869,15 +5877,15 @@ model IdeaBankItem {
   /// مفتاح الموضوع المطبَّع (sha1 مختصر) — نفس الموضوع من مصادر عدّة = صفّ واحد.
   key String @unique
 
-  topic          String
-  sourceTitle    String?
-  sourceUrl      String?
+  topic            String
+  sourceTitle      String?
+  sourceUrl        String?
   /// google_trends · google_news · youtube · x
-  sourcePlatform String
+  sourcePlatform   String
   /// SA · AE · KW · QA · BH · OM
-  market         String
-  engagement     String?
-  crossSourceCount Int @default(1)
+  market           String
+  engagement       String?
+  crossSourceCount Int     @default(1)
 
   sector           String?
   /// المجال الذي رُصدت تحته — من القاعدة لا من الكود، فمجالٌ يُضاف في الأدمن يُرصد تلقائياً:
@@ -5892,9 +5900,9 @@ model IdeaBankItem {
   /// evergreen (يُبحث عنه شهوراً) · trend (موجة) — حكم النموذج، والقرار للفريق.
   intent           String?
   /// 0–100: صلته بالقارئ في السعودية.
-  saudiRelevance   Int     @default(0)
+  saudiRelevance   Int      @default(0)
   /// 0–100: قيمة مقالٍ أصليّ عنه الآن.
-  opportunityScore Int     @default(0)
+  opportunityScore Int      @default(0)
   whyItMatters     String?
   suggestedAngle   String?
 
@@ -5930,15 +5938,15 @@ enum IdeaBankStatus {
 /// طلب «ابحث الآن» لمجالٍ واحد من صفحة بنك الأفكار. الرادار على Contabo يسأل عن المعلّق كل ٥ دقائق
 /// (`GET /api/idea-bank/requests`) ويشغّله — السيرفر هو من يسأل، فلا يُفتح له منفذ وارد.
 model IdeaBankRequest {
-  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  id            String                @id @default(auto()) @map("_id") @db.ObjectId
   fieldType     String
   fieldKey      String
   fieldName     String
   status        IdeaBankRequestStatus @default(PENDING)
-  requestedById String?              @db.ObjectId
+  requestedById String?               @db.ObjectId
   created       Int?
   error         String?
-  createdAt     DateTime             @default(now())
+  createdAt     DateTime              @default(now())
   startedAt     DateTime?
   doneAt        DateTime?
 
@@ -5949,13 +5957,13 @@ model IdeaBankRequest {
 /// آخر رصدٍ لكل مجال — ليفرّق «بنك الأفكار» بين «لم يُرصد بعد» و«رُصد ولا جديد». الصفر وحده كان يقول
 /// الاثنين معاً، فبدا مجالٌ لم يصله الدور بعد كأنه بلا أي شيء (خالد ١٥ أكتوبر ٢٠٢٦: «في حاجة غلط»).
 model IdeaBankFieldScan {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   fieldType  String
   fieldKey   String
   fieldName  String
   lastScanAt DateTime
   /// عدد الأفكار التي خرجت من آخر رصد (قد يكون صفراً بحق).
-  lastIdeas  Int       @default(0)
+  lastIdeas  Int      @default(0)
   /// سبب فشل آخر رصد بعد استنفاد إعادة المحاولة — null حين نجح.
   lastError  String?
 

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { logAction } from "@/lib/audit/log-action";
 
 // التحكّم بما بعد النشر — وهو ما كان مفقوداً كلّه: الاعتماد والرفض قرارٌ يُتّخذ مرّة على
 // ما ينتظر، ولا شيء بعده. فريلٌ منشور يزعج العميل أو يحمل خطأً كان يبقى حيّاً حتى يفتح
@@ -17,7 +18,9 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 type Result = { success: true } | { success: false; error: string };
 
 /**
- * سحب ريل منشور من الواجهة العامّة.
+ * سحب ريل منشور من الواجهة — قرار الفريق، مثل أرشفة المقال (خالد ١٦ أكتوبر ٢٠٢٦: «زي المقالات»).
+ * رابطه يرجع 410، والصفّ وتفاعله يبقيان ويرجعان بـ«رجّعه للواجهة». الحذف النهائي بعده للأدمن
+ * وحده من System ← Deletion (`lib/deletion/delete-reel.ts`).
  *
  * `revalidateModontyTag` قبل كل شيء آخر: الأرشفة تترك صفحةً حيّة تردّ ٢٠٠ طوال نافذة
  * الكاش إن لم تُبطَل — وهو بالضبط ما قيس في ٢٥ أغسطس على ريل مرفوض.
@@ -30,17 +33,16 @@ export async function archiveReel(mediaId: string): Promise<Result> {
   try {
     const reel = await db.media.findFirst({
       where: { id: mediaId, inReels: true, reelStatus: "PUBLISHED" },
-      select: { id: true },
+      select: { id: true, title: true },
     });
     if (!reel) return { success: false, error: "الريل غير موجود أو ما هو منشور أصلاً" };
 
-    await db.media.update({
-      where: { id: reel.id },
-      data: { reelStatus: "ARCHIVED" },
-    });
+    await db.media.update({ where: { id: reel.id }, data: { reelStatus: "ARCHIVED" } });
 
     await revalidateModontyTag("reels").catch(() => {});
     revalidatePath("/reels", "layout");
+    revalidatePath("/deletion");
+    await logAction("reel.archive", { entity: "Media", entityId: reel.id, summary: reel.title?.trim() || "ريل بلا عنوان" });
     return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "فشل سحب الريل" };

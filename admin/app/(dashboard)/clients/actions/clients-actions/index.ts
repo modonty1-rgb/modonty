@@ -3,7 +3,6 @@ export { getClients } from "./get-clients";
 export { getClientById } from "./get-client-by-id";
 export { createClient } from "./create-client";
 export { updateClient } from "./update-client";
-export { deleteClient } from "./delete-client";
 export { getClientsStats } from "./get-clients-stats";
 export { getClientArticles } from "./get-client-articles";
 export { getClientAnalytics } from "./get-client-analytics";

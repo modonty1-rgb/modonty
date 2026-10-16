@@ -25,8 +25,11 @@ const n = (v: number) => v.toLocaleString("ar-EG");
  * (`/orders/new?renewFrom=`) ببياناته مقفولة.
  *
  * الحالة من `getClientSubscriptions` — نفسُ ما يلوّن الجدول ويعدّ «منتهٍ» — فلا رقمٌ ثانٍ.
- * والترتيب بالأولويّة: المنتهي (الأقدمُ أوّلاً)، ثمّ الأقربُ انتهاءً، ثمّ مَن لم تبدأ خدمتُه
- * (لا نهايةَ يُبنى عليها التجديد حتى يصله أوّلُ مقال).
+ * والترتيب بالأولويّة: المنتهي (الأقدمُ أوّلاً)، ثمّ الأقربُ انتهاءً.
+ *
+ * **مَن لم تبدأ خدمتُه لا يظهر** (خالد ١٦ أكتوبر ٢٠٢٦: «كيف تجدد العميل ما تفعل؟ وكيف تجدد العميل
+ * ما له أرتكل؟ حسابه يبدأ مع أول أرتكل»): الاشتراك يُحسب من أوّل مقالٍ منشور (`startedAt`)، فعميلٌ
+ * بلا بداية لا نهايةَ له يُجدَّد منها — والفلترة قبل عدّادات المندوبين فلا يختلف الرقم عن الجدول.
  */
 export default async function RenewalsPage({ searchParams }: { searchParams: Promise<{ rep?: string }> }) {
   const desk = await checkSalesDesk();
@@ -46,7 +49,9 @@ export default async function RenewalsPage({ searchParams }: { searchParams: Pro
       take: 5000,
     }),
   ]);
-  const repIds = [...new Set(allClients.flatMap((c) => (c.salesRepId ? [c.salesRepId] : [])))];
+  // فُعِّل وبدأت خدمته بأوّل مقال — غيرُه لا تجديد له بعد
+  const started = allClients.filter((c) => subs.get(c.id)?.hasOrder && subs.get(c.id)?.startedAt);
+  const repIds = [...new Set(started.flatMap((c) => (c.salesRepId ? [c.salesRepId] : [])))];
   const reps = repIds.length ? await db.staff.findMany({ where: { id: { in: repIds } }, select: { id: true, name: true } }) : [];
   const repName = new Map(reps.map((r) => [r.id, r.name ?? "—"]));
 
@@ -56,12 +61,12 @@ export default async function RenewalsPage({ searchParams }: { searchParams: Pro
    * (مقيسٌ على dev: ٢١ من ٤٥) — الفلترُ يُظهرهم ليُوزَّعوا.
    */
   const counts = new Map<string, number>();
-  for (const c of allClients) counts.set(c.salesRepId ?? NO_REP, (counts.get(c.salesRepId ?? NO_REP) ?? 0) + 1);
+  for (const c of started) counts.set(c.salesRepId ?? NO_REP, (counts.get(c.salesRepId ?? NO_REP) ?? 0) + 1);
   const activeRep = isAdmin ? (repParam === NO_REP || repName.has(repParam ?? "") ? repParam : undefined) : viewerId;
-  const clients = activeRep ? allClients.filter((c) => (c.salesRepId ?? NO_REP) === activeRep) : allClients;
+  const clients = activeRep ? started.filter((c) => (c.salesRepId ?? NO_REP) === activeRep) : started;
   const repPills = isAdmin
     ? [
-        { id: undefined, name: "الكل", count: allClients.length },
+        { id: undefined, name: "الكل", count: started.length },
         ...[...repName].map(([id, name]) => ({ id, name, count: counts.get(id) ?? 0 })).sort((a, b) => b.count - a.count),
         ...(counts.has(NO_REP) ? [{ id: NO_REP, name: "بلا مندوب", count: counts.get(NO_REP)! }] : []),
       ]
@@ -73,7 +78,7 @@ export default async function RenewalsPage({ searchParams }: { searchParams: Pro
       if (!s?.hasOrder || !c.activeOrderId) return [];
       return [{ id: c.id, name: c.name, orderId: c.activeOrderId, plan: s.planName, endsAt: s.endsAt, daysLeft: s.daysLeft, rep: c.salesRepId ? repName.get(c.salesRepId) ?? null : null }];
     })
-    // Expired first (oldest end first), then the nearest end, then not started.
+    // Expired first (oldest end first), then the nearest end.
     .sort((a, b) => (a.daysLeft ?? Infinity) - (b.daysLeft ?? Infinity));
 
   const expired = rows.filter((r) => r.daysLeft !== null && r.daysLeft < 0).length;

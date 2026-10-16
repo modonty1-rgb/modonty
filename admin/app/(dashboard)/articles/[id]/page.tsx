@@ -87,6 +87,7 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
                 Edit
               </Link>
             </Button>
+            {/* الأرشفة قرار الكاتب (خالد ١٦ أكتوبر ٢٠٢٦)، والحذف النهائي للمؤرشف من System ← Deletion. */}
             <ArchiveArticleButton
               articleId={a.id}
               isArchived={a.status === ArticleStatus.ARCHIVED}

@@ -2,18 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Settings, LayoutDashboard, BarChart3, HelpCircle, MessageSquare, Bell, BookOpen } from "lucide-react";
+import { Menu, Settings, LayoutDashboard, BarChart3, HelpCircle, MessageSquare, LifeBuoy, BookOpen } from "lucide-react";
 import { ar } from "@/lib/ar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
 import { findSitePage } from "./site-pages";
+import { NotificationBell } from "./notification-bell";
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;
   pendingCommentsCount?: number;
   pendingQuestionsCount?: number;
   pendingSupportCount?: number;
+  unreadNotificationsCount?: number;
 }
 
 const routeLabels: Record<string, string> = {
@@ -65,6 +67,7 @@ export function DashboardHeader({
   pendingCommentsCount = 0,
   pendingQuestionsCount = 0,
   pendingSupportCount = 0,
+  unreadNotificationsCount = 0,
 }: DashboardHeaderProps) {
   const pathname = usePathname();
   const navTitle = getNavTitle(pathname);
@@ -175,6 +178,8 @@ export function DashboardHeader({
               </span>
             )}
           </Link>
+          {/* الجرس للتنبيهات (مثل تطبيق الجوّال)، والدعم صار بأيقونة طوق النجاة — كان الجرس للدعم فيلتبسان. */}
+          <NotificationBell initialUnread={unreadNotificationsCount} />
           <Link
             href="/dashboard/support"
             title={ar.nav.support}
@@ -186,7 +191,7 @@ export function DashboardHeader({
               size="icon"
               className={cn("relative h-10 w-10 max-md:size-10 after:absolute after:-inset-0.5 after:content-['']", isSupport && "bg-primary/10 text-primary")}
             >
-              <Bell className="h-4 w-4" />
+              <LifeBuoy className="h-4 w-4" />
             </Button>
             {pendingSupportCount > 0 && (
               <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-xs font-semibold leading-none text-destructive-foreground tabular-nums">

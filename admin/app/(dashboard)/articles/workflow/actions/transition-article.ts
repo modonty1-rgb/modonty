@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
 import { isValidTransition } from "../../helpers/article-status-machine";
+import { guardLeavingPublished } from "@/lib/deletion/guard-leaving-published";
 import { logAction } from "@/lib/audit/log-action";
 import { publishArticle } from "@/lib/articles/publish-article";
 
@@ -77,6 +78,9 @@ export async function transitionArticleAction(
         error: `Transition ${expectedFrom} → ${toStatus} is not allowed.`,
       };
     }
+
+    const leaving = await guardLeavingPublished(expectedFrom, toStatus);
+    if (leaving) return { success: false, error: leaving };
 
     const isGoingLive =
       toStatus === ArticleStatus.PUBLISHED || toStatus === ArticleStatus.PUBLISHED_ON_CLIENT_SITE;

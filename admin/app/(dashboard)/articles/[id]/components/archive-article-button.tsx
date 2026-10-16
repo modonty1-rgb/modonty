@@ -32,7 +32,7 @@ export function ArchiveArticleButton({ articleId, isArchived }: ArchiveArticleBu
     setLoading(true);
     const result = await archiveArticle(articleId);
     if (result.success) {
-      toast({ title: 'تم أرشفة المقال', description: 'لن يظهر في المدونة — يمكنك إلغاء الأرشفة في أي وقت.' });
+      toast({ title: 'تم أرشفة المقال', description: 'اختفى من مدونتي ورابطه يرجع لجوجل 410 — تقدر ترجّعه بـ«Unarchive».' });
       router.refresh();
     } else {
       setLoading(false);
@@ -73,7 +73,7 @@ export function ArchiveArticleButton({ articleId, isArchived }: ArchiveArticleBu
         <AlertDialogHeader>
           <AlertDialogTitle>أرشفة المقال</AlertDialogTitle>
           <AlertDialogDescription>
-            هذا المقال لن يظهر في المدونة بعد الأرشفة. يمكنك إلغاء الأرشفة في أي وقت.
+            يختفي من مدونتي، ورابطه يرجع لجوجل «410 محذوف» خلال ٥ دقايق. تقدر ترجّعه وقت ما تبغى، والحذف النهائي يكون من الأدمن.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

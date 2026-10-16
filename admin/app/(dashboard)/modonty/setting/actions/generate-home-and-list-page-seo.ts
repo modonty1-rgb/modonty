@@ -30,6 +30,7 @@ import {
 } from "../helpers/build-taxonomy-page-jsonld";
 import { buildFaqPageJsonLd, type FaqForJsonLd } from "../helpers/build-faq-page-jsonld";
 import { validateHomeOrListPageJsonLd } from "../helpers/modonty-jsonld-validator";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 /** The seven modonty pages that actually exist. `/articles` is deliberately a 404 — see next.config.ts. */
 export type PageKey =
@@ -308,14 +309,14 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
       };
     } else if (page === "categories") {
       const [categories, total] = await Promise.all([
-        db.category.findMany({
+        db.category.findMany({ where: NOT_ARCHIVED,
           orderBy: { name: "asc" },
           take: 20,
           include: {
             parent: { select: { slug: true } },
           },
         }),
-        db.category.count(),
+        db.category.count({ where: NOT_ARCHIVED }),
       ]);
       const maxUpdatedAt = categories.reduce<Date | null>(
         (acc, c) => (!acc || c.updatedAt > acc ? c.updatedAt : acc),
@@ -591,9 +592,9 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
     } else if (page === "tags" || page === "industries") {
       const [rows, total] = await Promise.all([
         page === "tags"
-          ? db.tag.findMany({ orderBy: { name: "asc" }, take: 20, select: TAXONOMY_SELECT })
-          : db.industry.findMany({ orderBy: { name: "asc" }, take: 20, select: TAXONOMY_SELECT }),
-        page === "tags" ? db.tag.count() : db.industry.count(),
+          ? db.tag.findMany({ where: NOT_ARCHIVED, orderBy: { name: "asc" }, take: 20, select: TAXONOMY_SELECT })
+          : db.industry.findMany({ where: NOT_ARCHIVED, orderBy: { name: "asc" }, take: 20, select: TAXONOMY_SELECT }),
+        page === "tags" ? db.tag.count({ where: NOT_ARCHIVED }) : db.industry.count({ where: NOT_ARCHIVED }),
       ]);
       const maxUpdatedAt = rows.reduce<Date | null>(
         (acc, r) => (!acc || r.updatedAt > acc ? r.updatedAt : acc),

@@ -12,8 +12,11 @@ export function LinkColumn({ title, links, limit }: { title: string; links: Foot
     <div>
       <p className="text-sm font-medium text-foreground">{title}</p>
       <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-        {(limit ? links.slice(0, limit) : links).map((l) => (
-          <li key={l.href + l.label}>
+        {(limit ? links.slice(0, limit) : links).map((l, i) => (
+          // مفتاح React يُطبع في حمولة الصفحة، وجوجل يقرأ أي نصّ يشبه مساراً ويزحف له. كان
+          // «href + label» فخرج «/clients/x/articlesمقالاتنا» — ٥٥ رابطاً 404 في Search Console
+          // (١٦ أكتوبر ٢٠٢٦). لا مسار في المفتاح أبداً.
+          <li key={`${i}-${l.label}`}>
             {/* On a phone the row becomes the target, not the word: `flex` + `min-h-11` gives a
                 44px tap area across the column instead of a 41×19 sliver. Desktop keeps the
                 inline anchor exactly as it was. */}

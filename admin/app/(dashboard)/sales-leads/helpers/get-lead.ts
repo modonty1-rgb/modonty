@@ -1,5 +1,6 @@
 import "server-only";
 import { db } from "@/lib/db";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 export async function getLead(id: string) {
   return db.salesLead.findUnique({
@@ -35,7 +36,7 @@ export type LeadDetail = NonNullable<Awaited<ReturnType<typeof getLead>>>;
 
 /** The dropdown's options — the same table the id is validated against on save. */
 export async function getIndustryOptions() {
-  return db.industry.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } });
+  return db.industry.findMany({ where: NOT_ARCHIVED, select: { id: true, name: true }, orderBy: { name: "asc" } });
 }
 
 /** Just the name — what the breadcrumb needs, without pulling the whole row for one string. */

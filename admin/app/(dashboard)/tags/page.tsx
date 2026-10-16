@@ -17,6 +17,7 @@ export default async function TagsPage({
 }) {
   const params = await searchParams;
   const filters: TagFilters = {
+    includeArchived: true,
     hasArticles: params.hasArticles === "yes" ? true : params.hasArticles === "no" ? false : undefined,
     createdFrom: params.createdFrom ? new Date(params.createdFrom) : undefined,
     createdTo: params.createdTo ? new Date(params.createdTo) : undefined,

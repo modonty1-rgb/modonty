@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 /**
  * In-memory caches of live public slugs for fast proxy lookup
@@ -83,9 +84,9 @@ const caches = {
   articles: createSlugCache(async () =>
     toSlugSet(await db.article.findMany({ where: { status: "PUBLISHED" }, select: { slug: true } })),
   ),
-  categories: createSlugCache(async () => toSlugSet(await db.category.findMany({ select: { slug: true } }))),
-  tags: createSlugCache(async () => toSlugSet(await db.tag.findMany({ select: { slug: true } }))),
-  industries: createSlugCache(async () => toSlugSet(await db.industry.findMany({ select: { slug: true } }))),
+  categories: createSlugCache(async () => toSlugSet(await db.category.findMany({ where: NOT_ARCHIVED, select: { slug: true } }))),
+  tags: createSlugCache(async () => toSlugSet(await db.tag.findMany({ where: NOT_ARCHIVED, select: { slug: true } }))),
+  industries: createSlugCache(async () => toSlugSet(await db.industry.findMany({ where: NOT_ARCHIVED, select: { slug: true } }))),
   authors: createSlugCache(async () => toSlugSet(await db.author.findMany({ select: { slug: true } }))),
   clients: createSlugCache(async () =>
     toSlugSet(

@@ -24,6 +24,7 @@ import { ApprovalDeadlineBanner } from "./components/approval-deadline-banner";
 import { AccountNotice } from "./dashboard/components/account-notice";
 import { NpsSurvey } from "./components/nps-survey";
 import { getNpsDue } from "@/lib/nps/get-nps-due";
+import { countClientUnread } from "@/lib/mobile-api/client-inbox";
 import {
   getPendingArticlesCount,
   canSeeSiteArticles,
@@ -64,6 +65,8 @@ export default async function DashboardLayout({
 
   // استبيان الرضا — يُحسب هنا مع الباقي فلا يضيف رحلةً للقاعدة بعد الرسم
   const npsDuePromise = getNpsDue(clientId, impersonated).catch(() => false);
+  // عدّاد جرس التنبيهات — نفس صندوق تطبيق الجوّال (clientUnreadWhere).
+  const unreadNotificationsPromise = countClientUnread(clientId).catch(() => 0);
 
   const [client, sub, outstanding, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount, mediaCounts, clientCanSeeSiteArticles, oldestPendingArticleAt] =
     await Promise.all([
@@ -151,6 +154,7 @@ export default async function DashboardLayout({
   };
 
   const npsDue = await npsDuePromise;
+  const unreadNotificationsCount = await unreadNotificationsPromise;
 
   return (
     <>
@@ -178,6 +182,7 @@ export default async function DashboardLayout({
       leadsCount={leadsCount}
       newBookingsCount={newBookingsCount}
       pendingSupportCount={pendingSupportCount}
+      unreadNotificationsCount={unreadNotificationsCount}
       pendingFaqsCount={pendingFaqsCount}
       pendingPageFaqsCount={pendingPageFaqsCount}
       pendingClientCommentsCount={pendingClientCommentsCount}

@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { getTagById } from "../../actions/tags-actions";
 import { TagForm } from "../../components/tag-form";
-import { DeleteTagButton } from "../components/delete-tag-button";
 import { RevalidateSEOButton } from "../components/revalidate-seo-button";
 import { SeoCachePreview } from "@/components/shared/seo-cache-preview";
 
@@ -23,7 +22,6 @@ export default async function EditTagPage({ params }: { params: Promise<{ id: st
         </div>
         <div className="flex items-center gap-2">
           <RevalidateSEOButton tagId={id} />
-          <DeleteTagButton tagId={id} />
         </div>
       </div>
       <SeoCachePreview

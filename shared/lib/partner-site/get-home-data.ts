@@ -208,7 +208,8 @@ export async function getHomeData(db: PrismaClient, where: { id: string } | { sl
     reviewsHref: `/clients/${client.slug}/reviews`,
     photosHref: `/clients/${client.slug}/photos`,
     faqHref: `/clients/${client.slug}/faq`,
-    reels: reels.map((r) => ({
+    // `not: null` في الاستعلام لا يستبعد الفارغ "" — وهذا يعطي «/reels/» رابطاً ميتاً.
+    reels: reels.filter((r) => r.reelSlug?.trim()).map((r) => ({
       title: r.title ?? "",
       href: `/reels/${encodeURIComponent(r.reelSlug ?? "")}`,
       // A video reel's still is its Bunny thumbnail; an image reel is its own picture.

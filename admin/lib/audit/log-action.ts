@@ -30,6 +30,18 @@ export type AuditAction =
   | "client.delete"
   | "category.delete"
   | "tag.delete"
+  | "reel.delete"
+  // 🔴 Taken off Google (URL → 410) but the row stays — the team's call, reversible
+  | "reel.archive"
+  | "category.archive"
+  | "category.unarchive"
+  | "tag.archive"
+  | "tag.unarchive"
+  | "industry.archive"
+  | "industry.unarchive"
+  // الأرشفة قرار الكاتب، وصفحة الحذف تعرض مَن أرشف ومتى قبل الحذف النهائي
+  | "article.archive"
+  | "article.unarchive"
   // 🔴 Merge/reassign — moves all links to another entity, then empties the source
   | "tag.merge"
   | "category.merge"

@@ -103,11 +103,12 @@ export async function prepareCategoryMerge(input: {
 
     const [source, target] = await Promise.all([
       db.category.findUnique({ where: { id: sourceId }, select: { id: true, name: true, slug: true } }),
-      db.category.findUnique({ where: { id: targetId }, select: { id: true, name: true, slug: true } }),
+      db.category.findUnique({ where: { id: targetId }, select: { id: true, name: true, slug: true, archivedAt: true } }),
     ]);
 
     if (!source) return { success: false, error: "Source category not found." };
     if (!target) return { success: false, error: "Target category not found." };
+    if (target.archivedAt) return { success: false, error: `«${target.name}» مؤرشف — رجّعه للموقع أولاً أو اختر هدفاً غيره.` };
 
     if (confirmName.trim() !== source.name.trim()) {
       return { success: false, error: "Confirmation text does not match the source category name." };

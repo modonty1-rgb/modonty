@@ -307,7 +307,9 @@ export function ReelCard({ reel, onRemoved }: { reel: ClientReel; onRemoved: () 
         </span>
         {/* A reel that also lives in the gallery is managed from the gallery tick — the
             row is the same file, so deleting it here would delete the page image too. */}
-        {!reel.inGallery && (
+        {/* والمنشور ما يُحذف من هنا (خالد ١٦ أكتوبر ٢٠٢٦): رابطه عند جوجل، وسحبه قرار فريق مدونتي.
+            الخادم يرفضه أيضاً (`LIVE_REEL_LOCK_MESSAGE`) — الإخفاء هنا كي لا يُعرض زرّ يُرفض. */}
+        {!reel.inGallery && reel.status !== "PUBLISHED" && (
           <ConfirmDeleteButton
             onConfirm={remove}
             disabled={pending}
@@ -396,7 +398,8 @@ export function ReelCard({ reel, onRemoved }: { reel: ClientReel; onRemoved: () 
           <input
             type="checkbox"
             checked
-            disabled={pending}
+            // ريل منشور ما تشيل علامته من هنا — سحبه قرار فريق مدونتي، والخادم يرفضه أيضاً.
+            disabled={pending || reel.status === "PUBLISHED"}
             onChange={unpinFromGallery}
             className="mt-0.5 size-4 shrink-0 accent-emerald-600"
           />

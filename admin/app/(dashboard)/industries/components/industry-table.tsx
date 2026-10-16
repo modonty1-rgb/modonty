@@ -14,6 +14,8 @@ import { IndustryRowActions } from "./industry-row-actions";
 const isTestSlug = (slug: string) => slug.toLowerCase().split("-").includes("test");
 
 interface Industry {
+  /** مؤرشف = مخفيّ من الموقع (رابطه 410)؛ يُرجَع من صفحته، ويُحذف من System ← Deletion. */
+  archivedAt?: Date | string | null;
   id: string;
   name: string;
   slug: string;
@@ -29,7 +31,8 @@ export function IndustryTable({ industries }: { industries: Industry[] }) {
   const router = useRouter();
 
   // Lightweight list every row's merge dialog uses as its target candidates.
-  const candidates = industries.map((i) => ({ id: i.id, name: i.name, slug: i.slug, count: i._count.clients }));
+  // المؤرشف ما يكون هدف دمج: الدمج فيه ينقل العملاء لصناعة مخفيّة من الموقع.
+  const candidates = industries.filter((i) => !i.archivedAt).map((i) => ({ id: i.id, name: i.name, slug: i.slug, count: i._count.clients }));
 
   const columns: Column<Industry>[] = [
     {
@@ -39,6 +42,9 @@ export function IndustryTable({ industries }: { industries: Industry[] }) {
       render: (i) => (
         <span className="flex items-center gap-1.5">
           <span className="text-sm font-medium">{i.name}</span>
+          {i.archivedAt ? (
+            <span className="rounded-full bg-slate-500/15 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">مؤرشف</span>
+          ) : null}
           {isTestSlug(i.slug) && (
             <span title={`Slug «${i.slug}» — likely a dev artifact, review`} className="inline-flex">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-500" aria-label="Test slug" />

@@ -101,7 +101,6 @@ export default async function StoryPage() {
       />
       <StoryClientLoader
         manifestUrl="/help/audio/general-pitch/manifest.json"
-        audioBase="/help/audio/general-pitch"
         legal={toLegalEntityDisplay(entity)}
         siteName={siteName}
         offer={offer}

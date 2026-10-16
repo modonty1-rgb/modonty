@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { SubscriptionStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import type { IndustryListItem, IndustryQueryOptions } from "@/lib/types";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 /**
  * Listing-page data. Industries relate to clients DIRECTLY (Client.industryId), so a
@@ -25,7 +26,7 @@ export const getIndustriesEnhanced = unstable_cache(
       ...(coreClientId ? { id: { not: coreClientId } } : {}),
     };
 
-    const industries = await db.industry.findMany({
+    const industries = await db.industry.findMany({ where: NOT_ARCHIVED,
       select: {
         id: true,
         name: true,

@@ -26,8 +26,8 @@ import { archiveReel, republishReel } from "../actions/reel-lifecycle";
  * القائمة نفسها تبقى مكوّن سيرفر، وهذا الزرّ وحده يحمل `"use client"` — فبطاقةٌ فيها فعل
  * لا تجرّ عشرين بطاقةً أخرى إلى المتصفّح.
  *
- * والفعلان كلاهما خلف تأكيد: كلاهما يغيّر ما يراه الزائر على مودونتي فوراً، والقاعدة
- * «Confirm destructive actions» لا تسأل هل الفعل يحذف، بل هل يصعب التراجع عنه أمام جمهور.
+ * فعلان: سحب المنشور وإرجاع المسحوب — قرار الفريق، مثل أرشفة المقال. الحذف النهائي للمسحوب
+ * للأدمن وحده من System ← Deletion (خالد ١٦ أكتوبر ٢٠٢٦).
  */
 export function ReelLifecycleButton({
   id,
@@ -51,16 +51,12 @@ export function ReelLifecycleButton({
       if (result.success) {
         toast(
           isArchive
-            ? { title: "انسحب من الواجهة", description: `«${name}» ما عاد يشوفه الزائر. صفّه وتفاعله محفوظان، وتقدر ترجّعه من «مؤرشف».` }
+            ? { title: "انأرشف الريل", description: `«${name}» ما عاد يشوفه الزائر، ورابطه يرجع لجوجل 410. صفّه وتفاعله محفوظان، وتقدر ترجّعه من «مؤرشف».` }
             : { title: "رجع للواجهة", description: `«${name}» صار حيّاً في الطلّات من جديد.` },
         );
         router.refresh();
       } else {
-        toast({
-          title: isArchive ? "ما انسحب" : "ما رجع",
-          description: result.error,
-          variant: "destructive",
-        });
+        toast({ title: isArchive ? "ما انأرشف" : "ما رجع", description: result.error, variant: "destructive" });
       }
     });
   };
@@ -72,7 +68,7 @@ export function ReelLifecycleButton({
           {isArchive ? (
             <>
               <Archive className="h-3.5 w-3.5" aria-hidden />
-              اسحبه من الواجهة
+              أرشفه
             </>
           ) : (
             <>
@@ -84,20 +80,16 @@ export function ReelLifecycleButton({
       </AlertDialogTrigger>
       <AlertDialogContent dir="rtl">
         <AlertDialogHeader className="text-start">
-          <AlertDialogTitle>
-            {isArchive ? `تسحب «${name}» من مودونتي؟` : `ترجّع «${name}» لمودونتي؟`}
-          </AlertDialogTitle>
+          <AlertDialogTitle>{isArchive ? `تأرشف «${name}»؟` : `ترجّع «${name}» لمودونتي؟`}</AlertDialogTitle>
           <AlertDialogDescription>
             {isArchive
-              ? "بيختفي من الطلّات ومن صفحته الخاصة على طول. الصفّ والتعليقات والمشاهدات تبقى، وتقدر ترجّعه في أي وقت من «مؤرشف»."
+              ? "بيختفي من الطلّات ومن صفحته الخاصة، ورابطه يرجع لجوجل 410. الصفّ والتعليقات والمشاهدات تبقى، وتقدر ترجّعه في أي وقت من «مؤرشف»."
               : "بيظهر للزوار من جديد بنفس عنوانه ووصفه. لو ناقصه عنوان أو وصف، ما بيرجع — والرسالة بتقول لك أي حقل."}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>إلغاء</AlertDialogCancel>
-          <AlertDialogAction onClick={run}>
-            {isArchive ? "نعم، اسحبه" : "نعم، رجّعه"}
-          </AlertDialogAction>
+          <AlertDialogAction onClick={run}>{isArchive ? "نعم، أرشفه" : "نعم، رجّعه"}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

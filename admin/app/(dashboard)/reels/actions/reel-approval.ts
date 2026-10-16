@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { fireClientEvent } from "@modonty/shared/lib/mobile-push";
 
 // The Modonty decision on a client's reel (أ٥). Approve goes straight to PUBLISHED —
 // the promise on the console side is «بعد اعتماد مُدَوَّنَتِي يظهر», and an APPROVED
@@ -151,6 +152,8 @@ export async function approveReel(mediaId: string): Promise<Result> {
     // The public feed caches per page under this tag — without the hit, the approved
     // reel waits out the cache window instead of appearing "فوراً" as promised.
     await revalidateModontyTag("reels").catch(() => {});
+    // العميل يُبلَّغ: صفّ في صندوق التطبيق + دفعة لجواله (مثل «نُشر مقالك»).
+    fireClientEvent(reel.clientId, { kind: "reel_published", mediaId: reel.id, reelTitle: reel.title.trim() });
     // `"layout"` لا الافتراضيّ: الاعتماد ينقل الصفّ من `/reels/pending` إلى
     // `/reels/published`، فالشاشتان تتغيّران معاً — والافتراضيّ يُبطل `/reels` وحدها،
     // وهي اليوم تحويل لا شاشة. الرسمي: «Invalidates the layout … and all pages beneath».
@@ -174,13 +177,20 @@ export async function rejectReel(mediaId: string, reason: string): Promise<Resul
   try {
     const reel = await db.media.findFirst({
       where: { id: mediaId, inReels: true, reelStatus: "PENDING_APPROVAL" },
-      select: { id: true },
+      select: { id: true, title: true, clientId: true },
     });
     if (!reel) return { success: false, error: "الريل غير موجود أو خرج من قائمة الانتظار" };
 
     await db.media.update({
       where: { id: reel.id },
       data: { reelStatus: "REJECTED", reelRejectionReason: cleanReason.slice(0, 500) },
+    });
+    // العميل يُبلَّغ بالسبب نفسه الذي على بطاقته — صفّ في صندوق التطبيق + دفعة لجواله.
+    fireClientEvent(reel.clientId, {
+      kind: "reel_rejected",
+      mediaId: reel.id,
+      reelTitle: reel.title?.trim() || "ريلك",
+      reason: cleanReason,
     });
 
     // The same cache hit approval fires, and for a stronger reason: approval only makes a

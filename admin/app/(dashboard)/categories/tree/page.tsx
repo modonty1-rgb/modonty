@@ -2,7 +2,7 @@ import { getCategories } from "../actions/categories-actions";
 import { CategoriesTreeClient } from "../components/categories-tree-client";
 
 export default async function CategoriesTreePage() {
-  const categories = await getCategories();
+  const categories = await getCategories({ includeArchived: true });
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-6">

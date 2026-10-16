@@ -7,6 +7,7 @@ import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import type { CategoryResponse, CategoryQueryOptions } from "@/lib/types";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 export const getCategoriesEnhanced = unstable_cache(
   async (
@@ -16,7 +17,7 @@ export const getCategoriesEnhanced = unstable_cache(
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const categories = await db.category.findMany({
+    const categories = await db.category.findMany({ where: NOT_ARCHIVED,
       include: {
         _count: {
           select: {

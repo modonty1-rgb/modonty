@@ -4,8 +4,9 @@ import { db } from "@/lib/db";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { ArticleStatus } from "@prisma/client";
-import { hasLeftForClientSite, CLIENT_SITE_LOCK_MESSAGE } from "../../../helpers/client-site-guard";
+import { hasLeftForClientSite, CLIENT_SITE_LOCK_MESSAGE } from "@/lib/client-site-guard";
 
 export async function archiveArticle(id: string): Promise<{ success: boolean; error?: string }> {
   try {
@@ -14,7 +15,7 @@ export async function archiveArticle(id: string): Promise<{ success: boolean; er
 
     const article = await db.article.findUnique({
       where: { id },
-      select: { status: true, isClientSiteArticle: true, lastFetchedAt: true },
+      select: { title: true, status: true, isClientSiteArticle: true, lastFetchedAt: true },
     });
 
     if (!article) return { success: false, error: "المقال غير موجود" };
@@ -29,6 +30,9 @@ export async function archiveArticle(id: string): Promise<{ success: boolean; er
       where: { id },
       data: { status: ArticleStatus.ARCHIVED },
     });
+
+    // مَن أرشف ومتى ومن أي حالة — صفحة الحذف تعرضها قبل الحذف النهائي (خالد ١٦ أكتوبر ٢٠٢٦).
+    await logAction("article.archive", { entity: "Article", entityId: id, summary: article.title, metadata: { from: article.status } });
 
     revalidatePath(`/articles/${id}`);
     revalidatePath("/articles");
@@ -49,6 +53,8 @@ export async function unarchiveArticle(id: string): Promise<{ success: boolean; 
       where: { id },
       data: { status: ArticleStatus.WRITING },
     });
+
+    await logAction("article.unarchive", { entity: "Article", entityId: id });
 
     revalidatePath(`/articles/${id}`);
     revalidatePath("/articles");

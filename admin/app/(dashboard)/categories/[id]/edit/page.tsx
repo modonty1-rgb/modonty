@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { getCategoryById, getCategories } from "../../actions/categories-actions";
 import { CategoryForm } from "../../components/category-form";
-import { DeleteCategoryButton } from "../components/delete-category-button";
 import { RevalidateSEOButton } from "../components/revalidate-seo-button";
 import { SeoCachePreview } from "@/components/shared/seo-cache-preview";
 
@@ -27,7 +26,6 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
         </div>
         <div className="flex items-center gap-2">
           <RevalidateSEOButton categoryId={id} />
-          <DeleteCategoryButton categoryId={id} />
         </div>
       </div>
       <SeoCachePreview

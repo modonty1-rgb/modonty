@@ -7,6 +7,7 @@ import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import { TagListItem, TagQueryOptions } from "./tag-types";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 /**
  * Tag listing for /tags — same shape as getCategoriesEnhanced, previews fetched
@@ -21,7 +22,7 @@ export const getTagsEnhanced = unstable_cache(
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const tags = await db.tag.findMany({
+    const tags = await db.tag.findMany({ where: NOT_ARCHIVED,
       select: {
         id: true,
         name: true,

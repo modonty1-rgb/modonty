@@ -10,8 +10,11 @@ import { Prisma, ArticleStatus } from "@prisma/client";
 import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
 import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 import { buildTaxonomyCanonical } from "@/lib/seo/build-taxonomy-canonical";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 export interface TagFilters {
+  /** صفحة القائمة تمرّره لتعرض المؤرشف (وتُرجعه منها)؛ الاختيارات تتركه فيختفي. */
+  includeArchived?: boolean;
   createdFrom?: Date;
   createdTo?: Date;
   minArticleCount?: number;
@@ -23,6 +26,8 @@ export interface TagFilters {
 export async function getTags(filters?: TagFilters) {
   try {
     const where: Prisma.TagWhereInput = {};
+    // المؤرشف مخفيّ من الموقع (رابطه 410) — يظهر هنا فقط لصفحة القائمة كي يُرجَع منها.
+    if (!filters?.includeArchived) where.AND = [NOT_ARCHIVED];
 
     if (filters?.createdFrom || filters?.createdTo) {
       where.createdAt = {};
@@ -57,6 +62,7 @@ export async function getTags(filters?: TagFilters) {
       where,
       select: {
         id: true,
+        archivedAt: true,
         name: true,
         slug: true,
         createdAt: true,
@@ -339,67 +345,6 @@ export async function updateTag(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update tag";
-    return { success: false, error: message };
-  }
-}
-
-export async function deleteTag(id: string) {
-  try {
-    const session = await auth();
-    if (!session) return { success: false, error: "Unauthorized" };
-
-    const tag = await db.tag.findUnique({
-      where: { id },
-      include: {
-        _count: {
-          select: {
-            articles: true,
-          },
-        },
-      },
-    });
-
-    if (!tag) {
-      return { success: false, error: "Tag not found" };
-    }
-
-    if (tag._count.articles > 0) {
-      return {
-        success: false,
-        error: `Cannot delete tag. This tag has ${tag._count.articles} article(s). Please delete or reassign the articles first.`,
-      };
-    }
-
-    await db.tag.delete({ where: { id } });
-
-    await logAction("tag.delete", {
-      entity: "Tag",
-      entityId: id,
-      summary: tag.name,
-      metadata: { slug: tag.slug },
-    });
-
-    revalidatePath("/tags");
-    // Rebuild the listing blob BEFORE revalidating modonty — it renders the stored blob,
-    // and regenerateTagsListingCache RETURNS { success, error } instead of throwing.
-    let listingError: string | undefined;
-    try {
-      const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator");
-      const result = await regenerateTagsListingCache();
-      if (!result.success) listingError = result.error || "سبب غير معروف";
-    } catch (e) { listingError = e instanceof Error ? e.message : String(e); }
-    if (listingError) console.error("Tags listing cache failed:", id, listingError);
-    else await revalidateModontyTag("tags");
-
-    return {
-      success: true,
-      seoWarning: listingError
-        ? `الوسم انحذف، لكن صفحة الوسوم ما تجدّدت — جوجل بيبقى يشوفه في القائمة. (${listingError})`
-        : undefined,
-    };
-  } catch (error) {
-    console.error("Error deleting tag:", error);
-    const message = error instanceof Error ? error.message : "Failed to delete tag";
     return { success: false, error: message };
   }
 }

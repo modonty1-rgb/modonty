@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { getTagById, getTagArticles } from "../actions/tags-actions";
 import { TagView } from "./components/tag-view";
 import { TagArticles } from "./components/tag-articles";
-import { DeleteTagButton } from "./components/delete-tag-button";
 import { RevalidateSEOButton } from "./components/revalidate-seo-button";
+import { ArchiveTaxonomyControl } from "@/components/shared/taxonomy-archive/archive-taxonomy-control";
 
 export default async function TagViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -26,7 +26,7 @@ export default async function TagViewPage({ params }: { params: Promise<{ id: st
         </div>
         <div className="flex items-center gap-2">
           <RevalidateSEOButton tagId={id} />
-          <DeleteTagButton tagId={id} />
+          <ArchiveTaxonomyControl kind="tag" id={id} />
         </div>
       </div>
       <div className="space-y-6">

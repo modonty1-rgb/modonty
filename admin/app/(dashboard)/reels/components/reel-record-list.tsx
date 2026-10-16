@@ -152,15 +152,11 @@ function ReelRecordCard({
           </p>
         ) : null}
 
-        {/* صفّ الأفعال — لكل حالةٍ فعلها الواحد: المنشور يُسحب، والمؤرشف يرجع.
-            والمرفوض بلا فعل هنا عن قصد: كرته عند العميل، يعدّل ويعيد الرفع فيرجع للطابور. */}
+        {/* صفّ الأفعال — المنشور يُسحب، والمسحوب يرجع (قرار الفريق، مثل أرشفة المقال). الحذف
+            النهائي للمسحوب من System ← Deletion للأدمن. والمرفوض بلا فعل عن قصد: كرته عند العميل. */}
         {view === "published" || view === "archived" ? (
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <ReelLifecycleButton
-              id={reel.id}
-              title={reel.title}
-              action={view === "published" ? "archive" : "republish"}
-            />
+            <ReelLifecycleButton id={reel.id} title={reel.title} action={view === "published" ? "archive" : "republish"} />
             {liveUrl ? <LiveLink href={liveUrl} /> : null}
           </div>
         ) : null}

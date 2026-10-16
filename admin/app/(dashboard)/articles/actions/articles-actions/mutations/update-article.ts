@@ -24,6 +24,7 @@ import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
 import { isValidTransition } from "../../../helpers/article-status-machine";
+import { guardLeavingPublished } from "@/lib/deletion/guard-leaving-published";
 import { checkArticleCtaUrl } from "../../../helpers/check-article-cta-url";
 
 export async function updateArticle(articleId: string, data: ArticleFormData) {
@@ -108,6 +109,8 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
           error: `لا يمكن تغيير الحالة من "${existingArticle.status}" إلى "${data.status}" — تأكد من اتباع تسلسل الحالات الصحيح`,
         };
       }
+      const leaving = await guardLeavingPublished(existingArticle.status, data.status);
+      if (leaving) return { success: false, error: leaving };
     }
 
     // Slug unique across ALL articles when it changes — same rule and reason as create-article.ts

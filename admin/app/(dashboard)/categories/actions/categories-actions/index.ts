@@ -4,5 +4,4 @@ export { getCategoryById } from "./get-category-by-id";
 export { getCategoryArticles } from "./get-category-articles";
 export { createCategory } from "./create-category";
 export { updateCategory } from "./update-category";
-export { deleteCategory } from "./delete-category";
 

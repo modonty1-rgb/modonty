@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { messages } from "@/lib/messages";
+import { LIVE_REEL_LOCK_MESSAGE } from "@/lib/media/live-reel-lock";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import {
   bestRendition,
@@ -262,9 +263,10 @@ export async function removeVideoReel(mediaId: string): Promise<Result> {
       },
     });
     if (!owned) return { success: false, error: messages.error.notFound };
+    if (owned.reelStatus === "PUBLISHED") return { success: false, error: LIVE_REEL_LOCK_MESSAGE };
 
     const seenByVisitors =
-      owned.reelStatus === "APPROVED" || owned.reelStatus === "PUBLISHED";
+      owned.reelStatus === "APPROVED"; // المنشور رجع قبل هذا (LIVE_REEL_LOCK_MESSAGE)
     const hasEngagement = owned.commentsCount > 0 || owned.likesCount > 0;
 
     if (seenByVisitors || hasEngagement) {

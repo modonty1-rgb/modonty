@@ -4,8 +4,11 @@ import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
 import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 export interface CategoryFilters {
+  /** صفحة القائمة تمرّره لتعرض المؤرشف (وتُرجعه منها)؛ الاختيارات تتركه فيختفي. */
+  includeArchived?: boolean;
   createdFrom?: Date;
   createdTo?: Date;
   minArticleCount?: number;
@@ -18,6 +21,8 @@ export interface CategoryFilters {
 export async function getCategories(filters?: CategoryFilters) {
   try {
     const where: Prisma.CategoryWhereInput = {};
+    // المؤرشف مخفيّ من الموقع (رابطه 410) — يظهر هنا فقط لصفحة القائمة كي يُرجَع منها.
+    if (!filters?.includeArchived) where.AND = [NOT_ARCHIVED];
 
     if (filters?.createdFrom || filters?.createdTo) {
       where.createdAt = {};
@@ -58,6 +63,7 @@ export async function getCategories(filters?: CategoryFilters) {
       where,
       select: {
         id: true,
+        archivedAt: true,
         name: true,
         slug: true,
         parentId: true,

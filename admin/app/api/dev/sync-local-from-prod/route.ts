@@ -90,13 +90,20 @@ async function findSkipListConflicts(): Promise<string[]> {
 
 // Recreate PROD indexes locally (minus the auto _id index). MongoDB rejects null for
 // unique/sparse — only bool or undefined — so those are set only when explicitly true.
-function buildIndexSpecs(prodIndexes: { name?: string; key: Record<string, number>; unique?: boolean; sparse?: boolean; expireAfterSeconds?: number | null }[]): IndexDescription[] {
+//
+// `partialFilterExpression` is copied too (Khalid, 16 Oct 2026 — the sync failed on one table):
+// PROD's `social_calendar_posts_legacyEntryId_key` is unique ONLY for string values
+// (`{ legacyEntryId: { $type: "string" } }`), so its 23 rows without a legacy id are allowed
+// there. Copied without the filter, the index became unique over ALL rows and the build died
+// on `E11000 dup key: { legacyEntryId: null }` — the data was copied, the index was not.
+function buildIndexSpecs(prodIndexes: { name?: string; key: Record<string, number>; unique?: boolean; sparse?: boolean; expireAfterSeconds?: number | null; partialFilterExpression?: Record<string, unknown> }[]): IndexDescription[] {
   return prodIndexes
     .filter((idx) => idx.name !== "_id_")
     .map((idx) => {
       const spec: IndexDescription = { key: idx.key, name: idx.name, background: true };
       if (idx.unique === true) spec.unique = true;
       if (idx.sparse === true) spec.sparse = true;
+      if (idx.partialFilterExpression) spec.partialFilterExpression = idx.partialFilterExpression;
       if (idx.expireAfterSeconds !== undefined && idx.expireAfterSeconds !== null) {
         spec.expireAfterSeconds = idx.expireAfterSeconds;
       }

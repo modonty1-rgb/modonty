@@ -89,7 +89,6 @@ function formatTime(t: number): string {
 
 export interface SalesPitchProps {
   manifestUrl: string;
-  audioBase: string;
   /** Read from Settings by the server page — the trust strip below renders it as-is. */
   legal: LegalEntityDisplay;
   /**
@@ -110,7 +109,10 @@ const PLANS_COUNTED: CountedForms = {
   many: "باقةً شفافة",
 };
 
-export function SalesPitchPage({ manifestUrl, audioBase, legal, siteName, offer }: SalesPitchProps) {
+export function SalesPitchPage({ manifestUrl, legal, siteName, offer }: SalesPitchProps) {
+  // مجلّد الصوت يُشتقّ هنا ولا يُمرَّر من الصفحة: كلّ prop يُطبع في حمولة الصفحة، وجوجل زحف
+  // لـ«/help/audio/general-pitch» (مجلّد لا صفحة) فسجّله 404 (Search Console، ١٦ أكتوبر ٢٠٢٦).
+  const audioBase = manifestUrl.slice(0, manifestUrl.lastIndexOf("/"));
   /**
    * أرقام العرض والباقات تأتي من القاعدة؛ وغيابها يُقال بجملةٍ بلا رقم، لا برقمٍ قديم.
    * ٢٣ سبتمبر ٢٠٢٦ — خالد: مصدرٌ واحد.

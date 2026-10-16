@@ -13,6 +13,5 @@ export { getCategories } from "./queries/get-articles-categories";
 export { getAuthors } from "./queries/get-articles-authors";
 export { createArticle } from "./mutations/create-article";
 export { updateArticle } from "./mutations/update-article";
-export { deleteArticle } from "./mutations/delete-article";
 export { archiveArticle, unarchiveArticle } from "./mutations/archive-article";
 

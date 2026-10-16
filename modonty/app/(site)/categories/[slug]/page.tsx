@@ -13,6 +13,7 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ClientCard } from "@/components/client/client-card";
 import { ReadArticlesLink } from "@/components/shared/read-articles-link/ReadArticlesLink";
 import { FEED_ALTERNATE_TYPES } from "@/lib/seo/feed-alternate-types";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 interface CategoryDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -20,7 +21,7 @@ interface CategoryDetailPageProps {
 
 export async function generateStaticParams() {
   try {
-    const categories = await db.category.findMany({ select: { slug: true } });
+    const categories = await db.category.findMany({ where: NOT_ARCHIVED, select: { slug: true } });
     if (!categories || categories.length === 0) return [{ slug: "__no_categories__" }];
     return categories.map((c) => ({ slug: c.slug }));
   } catch {

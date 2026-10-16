@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ export function StatusSelect({ id, status }: { id: string; status: ContactReques
   const [value, setValue] = useState<ContactRequestStatus>(status);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const router = useRouter();
 
   const onChange = (next: string) => {
     const previous = value;
@@ -34,7 +36,10 @@ export function StatusSelect({ id, status }: { id: string; status: ContactReques
       if (!result.ok) {
         setValue(previous);
         setError(result.error ?? "ما انحفظت، جرّب مرّة ثانية");
+        return;
       }
+      // عدّادات الكروت وحالات صفّ العميل تُحسب من البيانات — تُعاد قراءتها بعد الحفظ
+      router.refresh();
     });
   };
 

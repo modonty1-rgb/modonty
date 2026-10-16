@@ -14,6 +14,8 @@ function getResendClient(): Resend {
 
 export interface SendEmailParams {
   to: string;
+  /** نسخة مخفية لا يراها المستلم — مثل نسخة مدونتي من طلب الحجز. */
+  bcc?: string;
   subject: string;
   html: string;
   text: string;
@@ -27,6 +29,7 @@ export async function sendEmail(params: SendEmailParams): Promise<{ success: boo
     const { error } = await resend.emails.send({
       from,
       to: params.to,
+      ...(params.bcc ? { bcc: params.bcc } : {}),
       subject: params.subject,
       html: params.html,
       text: params.text,

@@ -14,6 +14,7 @@ import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { SITE_URL } from "@/constants";
 import { getPageSeoDefaults } from "@/lib/settings/get-page-seo-defaults";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 /** Markdown link labels break on square brackets — swap them, keep everything else. */
 function mdText(s: string): string {
@@ -32,8 +33,8 @@ export async function GET() {
       orderBy: { datePublished: "desc" },
       take: 20,
     }),
-    db.category.findMany({ select: { name: true, slug: true }, orderBy: { name: "asc" }, take: 50 }),
-    db.industry.findMany({ select: { name: true, slug: true }, orderBy: { name: "asc" }, take: 50 }),
+    db.category.findMany({ where: NOT_ARCHIVED, select: { name: true, slug: true }, orderBy: { name: "asc" }, take: 50 }),
+    db.industry.findMany({ where: NOT_ARCHIVED, select: { name: true, slug: true }, orderBy: { name: "asc" }, take: 50 }),
     db.client.findMany({
       where: { subscriptionStatus: SubscriptionStatus.ACTIVE },
       select: { name: true, slug: true },

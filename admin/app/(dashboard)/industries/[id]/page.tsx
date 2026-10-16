@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { getIndustryById, getIndustryClients } from "../actions/industries-actions";
 import { IndustryView } from "./components/industry-view";
 import { IndustryClients } from "./components/industry-clients";
-import { DeleteIndustryButton } from "./components/delete-industry-button";
 import { RevalidateSEOButton } from "./components/revalidate-seo-button";
+import { ArchiveTaxonomyControl } from "@/components/shared/taxonomy-archive/archive-taxonomy-control";
 
 export default async function IndustryViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -26,7 +26,7 @@ export default async function IndustryViewPage({ params }: { params: Promise<{ i
         </div>
         <div className="flex items-center gap-2">
           <RevalidateSEOButton industryId={id} />
-          <DeleteIndustryButton industryId={id} />
+          <ArchiveTaxonomyControl kind="industry" id={id} />
         </div>
       </div>
       <div className="space-y-6">

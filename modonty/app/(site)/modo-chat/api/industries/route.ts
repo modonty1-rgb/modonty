@@ -4,6 +4,7 @@ import { SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 
 import type { ApiResponse } from "@/lib/types";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 /**
  * The industries Modo can actually serve, newest-first by how many partners stand behind them.
@@ -14,7 +15,7 @@ import type { ApiResponse } from "@/lib/types";
  */
 export async function GET() {
   try {
-    const industries = await db.industry.findMany({
+    const industries = await db.industry.findMany({ where: NOT_ARCHIVED,
       select: {
         name: true,
         slug: true,

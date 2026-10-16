@@ -273,7 +273,8 @@ function GalleryCard({
           <input
             type="checkbox"
             checked={inReels}
-            disabled={reelPending}
+            // ريل منشور ما تشيل علامته من هنا — سحبه قرار فريق مدونتي، والخادم يرفضه أيضاً.
+            disabled={reelPending || (inReels && image.reelStatus === "PUBLISHED")}
             onChange={(e) => toggleReel(e.target.checked)}
             className="mt-0.5 size-4 shrink-0 accent-emerald-600"
           />

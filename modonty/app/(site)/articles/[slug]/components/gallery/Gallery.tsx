@@ -65,7 +65,8 @@ export function Gallery({ images, fallbackText, clientName }: GalleryProps) {
           <div className="mt-2 flex flex-wrap gap-1.5">
             {images.map((img, i) => (
               <button
-                key={(img.media.bunnyUrl ?? img.media.url ?? "") + i}
+                // لا رابط في المفتاح: يُطبع في حمولة الصفحة، و«…jpg0» يقرأه جوجل رابطاً ميتاً (انظر link-column.tsx).
+                key={i}
                 type="button"
                 onClick={() => setActive(i)}
                 aria-label={`صورة ${i + 1}`}

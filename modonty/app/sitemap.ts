@@ -5,6 +5,7 @@ import { mediaSrc } from "@modonty/shared/lib/media-src";
 import { LIVE_SECTORS, isSectorPaused } from "@modonty/shared/lib/sectors/live-sectors";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { SITE_URL } from "@/constants";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 /**
  * Main sitemap (Google's primary trust signal).
@@ -189,7 +190,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // Articles were the one type the fixture filter never reached, on the biggest set of
       // URLs in the file.
     }).then((rows) => rows.filter(notTestSlug)),
-    db.category.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
+    db.category.findMany({ where: NOT_ARCHIVED, select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     // An ACTIVE subscription is not the same as a page worth indexing. A partner with no
     // description and no published article renders the "قيد التجهيز" panel and serves
     // noindex (see `resolveClientPageState` — clients/[slug]/page.tsx). Listing those in the
@@ -230,8 +231,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           }),
       ),
     db.author.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
-    db.tag.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
-    db.industry.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
+    db.tag.findMany({ where: NOT_ARCHIVED, select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
+    db.industry.findMany({ where: NOT_ARCHIVED, select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     // Published reels carry a standalone, indexable watch page each. Only rows with a slug
     // are listed — a reel without one has no URL to point at. (The feed at /reels was noindex
     // while it had no content; it is indexable since 25 Aug 2026 — card 83c.)

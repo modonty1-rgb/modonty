@@ -6,6 +6,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { ArticleStatus } from "@prisma/client";
 import type { FormSubmitResult } from "@/lib/types/form-types";
 import { auth } from "@/lib/auth";
+import { guardLeavingPublished } from "@/lib/deletion/guard-leaving-published";
 
 export async function requestChanges(articleId: string): Promise<FormSubmitResult> {
   try {
@@ -20,6 +21,9 @@ export async function requestChanges(articleId: string): Promise<FormSubmitResul
         error: "Article not found",
       };
     }
+
+    const leaving = await guardLeavingPublished(article.status, ArticleStatus.WRITING);
+    if (leaving) return { success: false, error: leaving };
 
     await db.article.update({
       where: { id: articleId },

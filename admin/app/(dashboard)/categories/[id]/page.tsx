@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { getCategoryById, getCategoryArticles } from "../actions/categories-actions";
 import { CategoryView } from "./components/category-view";
 import { CategoryArticles } from "./components/category-articles";
-import { DeleteCategoryButton } from "./components/delete-category-button";
 import { RevalidateSEOButton } from "./components/revalidate-seo-button";
+import { ArchiveTaxonomyControl } from "@/components/shared/taxonomy-archive/archive-taxonomy-control";
 
 export default async function CategoryViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -26,7 +26,7 @@ export default async function CategoryViewPage({ params }: { params: Promise<{ i
         </div>
         <div className="flex items-center gap-2">
           <RevalidateSEOButton categoryId={id} />
-          <DeleteCategoryButton categoryId={id} />
+          <ArchiveTaxonomyControl kind="category" id={id} />
         </div>
       </div>
       <div className="space-y-6">

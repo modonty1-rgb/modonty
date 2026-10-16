@@ -20,6 +20,8 @@ interface DashboardLayoutClientProps {
   leadsCount: number;
   newBookingsCount: number;
   pendingSupportCount: number;
+  /** جرس التنبيهات في الرأس — يُحسب في الخادم مع الصفحة. */
+  unreadNotificationsCount: number;
   pendingFaqsCount: number;
   pendingPageFaqsCount: number;
   pendingClientCommentsCount: number;
@@ -47,6 +49,7 @@ export function DashboardLayoutClient({
   leadsCount,
   newBookingsCount,
   pendingSupportCount,
+  unreadNotificationsCount,
   pendingFaqsCount,
   pendingPageFaqsCount,
   pendingClientCommentsCount,
@@ -121,6 +124,7 @@ export function DashboardLayoutClient({
           pendingCommentsCount={pendingCommentsCount}
           pendingQuestionsCount={pendingQuestionsCount}
           pendingSupportCount={pendingSupportCount}
+          unreadNotificationsCount={unreadNotificationsCount}
         />
         {/* «موقعي» يعرض جهازين حقيقيَّين جنب بعض (١٢٨٠ + ٣٩٠)، فحدّ ١١٢٨ يخنق الجوّال
             ويخفيه. هذه الشاشة وحدها تأخذ العرض كلّه؛ الباقي يبقى على عمود القراءة. */}

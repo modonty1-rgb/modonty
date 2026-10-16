@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { LIVE_SECTORS, isSectorPaused } from "@modonty/shared/lib/sectors/live-sectors";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 export type RadarField = { type: "sector" | "category" | "industry" | "competitor"; key: string; name: string };
 
@@ -11,8 +12,8 @@ export type RadarField = { type: "sector" | "category" | "industry" | "competito
  */
 export async function getRadarFields(): Promise<RadarField[]> {
   const [categories, industries, competitors] = await Promise.all([
-    db.category.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } }),
-    db.industry.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } }),
+    db.category.findMany({ where: NOT_ARCHIVED, select: { id: true, name: true }, orderBy: { name: "asc" } }),
+    db.industry.findMany({ where: NOT_ARCHIVED, select: { id: true, name: true }, orderBy: { name: "asc" } }),
     db.ideaCompetitor.findMany({ where: { active: true }, select: { domain: true, name: true }, orderBy: { name: "asc" }, take: 50 }),
   ]);
   return [

@@ -5,10 +5,13 @@ import { Prisma } from "@prisma/client";
 import { computeReferenceSeoScore } from "@modonty/shared/lib/seo/reference/seo-score";
 import type { JsonLdValidationReport } from "@modonty/shared/lib/seo/client/types";
 import type { IndustryFilters } from "./types";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 export async function getIndustries(filters?: IndustryFilters) {
   try {
     const where: Prisma.IndustryWhereInput = {};
+    // المؤرشف مخفيّ من الموقع (رابطه 410) — يظهر هنا فقط لصفحة القائمة كي يُرجَع منها.
+    if (!filters?.includeArchived) where.AND = [NOT_ARCHIVED];
 
     if (filters?.createdFrom || filters?.createdTo) {
       where.createdAt = {};
@@ -43,6 +46,7 @@ export async function getIndustries(filters?: IndustryFilters) {
       where,
       select: {
         id: true,
+        archivedAt: true,
         name: true,
         slug: true,
         createdAt: true,

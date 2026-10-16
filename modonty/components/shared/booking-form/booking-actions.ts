@@ -140,6 +140,7 @@ export async function submitBookingRequest(
       name: true,
       slug: true,
       userId: true,
+      email: true,
       ctaMode: true,
       isYmyl: true,
       user: { select: { email: true, name: true } },
@@ -250,16 +251,18 @@ export async function submitBookingRequest(
   }
 
   // 6b. Email the provider (doctor / business owner) — standard backup channel,
-  //     always sent. Falls back to an admin address if the owner has no email.
+  //     always sent. The client's own registered email first (Khalid 2026-10-16: all 48
+  //     active clients had no linked user, so every booking landed only in our inbox).
+  //     Modonty keeps a hidden copy (BCC); with no client email, ours is the recipient.
   try {
-    let recipientEmail = client.user?.email ?? null;
-    if (!recipientEmail) {
-      const admin = await db.staff.findFirst({
-        where: { role: "ADMIN", email: { not: null } },
-        select: { email: true },
-      });
-      recipientEmail = admin?.email ?? null;
-    }
+    const admin = await db.staff.findFirst({
+      where: { role: "ADMIN", email: { not: null } },
+      select: { email: true },
+    });
+    const adminEmail = admin?.email ?? null;
+    const clientEmail = client.user?.email ?? client.email ?? null;
+    const recipientEmail = clientEmail ?? adminEmail;
+    const bcc = clientEmail && adminEmail && adminEmail !== clientEmail ? adminEmail : undefined;
     if (recipientEmail) {
       const mail = await bookingNotificationEmail({
         providerName: client.name,
@@ -270,7 +273,7 @@ export async function submitBookingRequest(
         message,
         bookingsUrl: "https://console.modonty.com/dashboard/bookings",
       });
-      await sendEmail({ to: recipientEmail, ...mail });
+      await sendEmail({ to: recipientEmail, bcc, ...mail });
     }
   } catch {
     // email must never block the lead

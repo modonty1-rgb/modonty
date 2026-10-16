@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { getIndustryById } from "../../actions/industries-actions";
 import { IndustryForm } from "../../components/industry-form";
-import { DeleteIndustryButton } from "../components/delete-industry-button";
 import { RevalidateSEOButton } from "../components/revalidate-seo-button";
 import { SeoCachePreview } from "@/components/shared/seo-cache-preview";
 
@@ -23,7 +22,6 @@ export default async function EditIndustryPage({ params }: { params: Promise<{ i
         </div>
         <div className="flex items-center gap-2">
           <RevalidateSEOButton industryId={id} />
-          <DeleteIndustryButton industryId={id} />
         </div>
       </div>
       <SeoCachePreview

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ImageIcon, Camera, ExternalLink, Pencil } from "lucide-react";
 import { SeoScoreBadge } from "@/components/shared/seo-score-badge";
-import { DeleteClientButton } from "./delete-client-button";
 import { OpenClientConsoleButton } from "../../components/edit-workspace/open-client-console-button";
 import { ClientLogoModal } from "../../components/client-logo-modal";
 import { ClientHeroModal } from "../../components/client-hero-modal";
@@ -183,7 +182,6 @@ export function ClientHeader({ client, publicBaseUrl, seoScore }: ClientHeaderPr
               <Pencil className="h-4 w-4 me-1.5" /> Edit
             </Link>
           </Button>
-          <DeleteClientButton clientId={client.id} />
         </div>
       </div>
 

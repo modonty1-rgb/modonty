@@ -11,6 +11,7 @@ import { DisclaimerAcceptance } from "./components/disclaimer-acceptance";
 import { ProfileCompletenessButton } from "./components/profile-completeness-button";
 import { YmylSection } from "./components/ymyl-section";
 import { isYmylClientComplete } from "@/lib/seo/ymyl-helpers";
+import { NOT_ARCHIVED } from "@modonty/shared/lib/taxonomy/not-archived";
 
 export const dynamic = "force-dynamic";
 
@@ -115,7 +116,7 @@ export default async function ProfilePage() {
         ymylData: true,
       },
     }),
-    db.industry.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } }),
+    db.industry.findMany({ where: NOT_ARCHIVED, select: { id: true, name: true }, orderBy: { name: "asc" } }),
     db.settings.findUnique({
       where: SETTINGS_SINGLETON_WHERE,
       select: { disclaimerText: true, disclaimerVersion: true },

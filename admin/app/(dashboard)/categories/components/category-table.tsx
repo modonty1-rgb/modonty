@@ -14,6 +14,8 @@ import { CategoryRowActions } from "./category-row-actions";
 const isTestSlug = (slug: string) => slug.toLowerCase().split("-").includes("test");
 
 interface Category {
+  /** مؤرشف = مخفيّ من الموقع (رابطه 410)؛ يُرجَع من صفحته، ويُحذف من System ← Deletion. */
+  archivedAt?: Date | string | null;
   id: string;
   name: string;
   slug: string;
@@ -31,7 +33,8 @@ export function CategoryTable({ categories }: { categories: Category[] }) {
   const router = useRouter();
 
   // Lightweight list every row's merge dialog uses as its target candidates.
-  const candidates = categories.map((c) => ({ id: c.id, name: c.name, slug: c.slug, count: c._count.articles }));
+  // المؤرشف ما يكون هدف دمج: الدمج فيه ينقل المقالات لتصنيف مخفيّ من الموقع.
+  const candidates = categories.filter((c) => !c.archivedAt).map((c) => ({ id: c.id, name: c.name, slug: c.slug, count: c._count.articles }));
 
   const columns: Column<Category>[] = [
     {
@@ -41,6 +44,9 @@ export function CategoryTable({ categories }: { categories: Category[] }) {
       render: (c) => (
         <span className="flex items-center gap-1.5">
           <span className="text-sm font-medium">{c.name}</span>
+          {c.archivedAt ? (
+            <span className="rounded-full bg-slate-500/15 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">مؤرشف</span>
+          ) : null}
           {isTestSlug(c.slug) && (
             <span title={`Slug «${c.slug}» — likely a dev artifact, review`} className="inline-flex">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-500" aria-label="Test slug" />

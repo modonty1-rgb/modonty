@@ -31,7 +31,10 @@ export type ClientEvent =
   | { kind: "whatsapp_contact"; articleId: string | null }
   | { kind: "article_view"; articleId: string; articleTitle: string }
   | { kind: "page_view" }
-  | { kind: "reel_view"; mediaId: string };
+  | { kind: "reel_view"; mediaId: string }
+  // قرار مدونتي على ريل العميل (خالد ١٦ أكتوبر ٢٠٢٦: «لما نعتمد الريل هل العميل بيوصل له تنبيه؟» — ما كان يوصله).
+  | { kind: "reel_published"; mediaId: string; reelTitle: string }
+  | { kind: "reel_rejected"; mediaId: string; reelTitle: string; reason: string };
 
 export type ClientEventMessage = {
   /** يُكتب في `Notification.type` ويُرسل في `data.type`. */
@@ -97,5 +100,10 @@ export function describeClientEvent(event: ClientEvent): ClientEventMessage {
       return { type: "page_view", title: "زائر على صفحتك الآن", body: "قارئ فتح صفحتك على مدونتي.", relatedId: null, articleId: null, group: "activity", pushOnly: true };
     case "reel_view":
       return { type: "reel_view", title: "مشاهدة جديدة لفيديو", body: "قارئ يشاهد أحد مقاطعك على مدونتي.", relatedId: event.mediaId, articleId: null, group: "activity", pushOnly: true };
+    // `reel*` يفتح تبويب الفيديوهات في التطبيق (`tapTabOf` · `targetOf`) — بلا تعديل هناك.
+    case "reel_published":
+      return { type: "reel_published", title: "نُشر الريل", body: `${quote(event.reelTitle)} صار منشوراً على مدونتي.`, relatedId: event.mediaId, articleId: null, group: "activity" };
+    case "reel_rejected":
+      return { type: "reel_rejected", title: "الريل يحتاج تعديل", body: `${quote(event.reelTitle)}: ${event.reason.trim().slice(0, 140)}`, relatedId: event.mediaId, articleId: null, group: "actionable" };
   }
 }
