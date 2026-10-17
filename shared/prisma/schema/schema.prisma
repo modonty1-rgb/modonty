@@ -3733,6 +3733,12 @@ model Settings {
   altImage            String? // Default alt text for logo/OG image when none set
   certificateImageUrl String? // CR certificate shown on /trust — picked from the Modonty library; static /public file stays as fallback
 
+  /// صور مودو الرسمية — خالد ١٧ أكتوبر ٢٠٢٦: «مودو من ضمن الأصول اللي تترفع في الكور كلاينت… ما في هارد كودد نهائي».
+  /// كل رابط يُختار من مكتبة العميل الأساسي «مدونتي» في الأدمن (/modonty/modo) — لا رابط مكتوب في أي كود.
+  /// الشكل: { avatar, wave, front, thinking, point, thumbs, phone, reading, surprised, laptop, original } → رابط صورة.
+  /// يقرؤه الموقع (الشات بوضعيات مختلفة) وتطبيقا الجوال عبر الـ API. القراءة/الكتابة: shared/lib/modo-images/
+  modoImages Json?
+
   // Modonty app defaults (fallback when page has no SEO title/description)
   modontySeoTitle       String?
   modontySeoDescription String?

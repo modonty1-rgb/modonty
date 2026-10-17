@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
+import { ModoFace } from "@/components/shared/modo-face";
 
 import { IconChevronLeft } from "@/lib/icons";
 
@@ -25,7 +25,7 @@ export function AskModoCard({ slug }: AskModoCardProps) {
       className="group mb-6 flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 transition-colors hover:border-primary/40 hover:bg-primary/10"
     >
       <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg ring-1 ring-primary/20">
-        <ModoCharacter sizes="36px" decorative />
+        <ModoFace sizes="36px" decorative />
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-bold text-foreground">

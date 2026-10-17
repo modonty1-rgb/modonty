@@ -1,7 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Bot } from "lucide-react";
 
+import { getCoreClientId } from "@modonty/shared/lib/core-client";
 import { getPromptsForApp } from "./actions/modo-prompt-actions";
+import { getModoImages } from "./actions/get-modo-images";
+import { ModoImagesForm } from "./components/modo-images-form";
 import { PromptCard } from "./components/prompt-card";
 
 /**
@@ -11,7 +14,11 @@ import { PromptCard } from "./components/prompt-card";
  * داخل مقال. تعديل كلمة هنا يغيّر ما يقوله لكل زائر — بلا نشر.
  */
 export default async function ModoPromptsPage() {
-  const prompts = await getPromptsForApp("modonty");
+  const [prompts, modoImages, coreClientId] = await Promise.all([
+    getPromptsForApp("modonty"),
+    getModoImages(),
+    getCoreClientId(),
+  ]);
   const inDb = prompts.filter((p) => p.source === "db").length;
 
   return (
@@ -32,6 +39,8 @@ export default async function ModoPromptsPage() {
           {inDb < prompts.length && " «من الكود» يعني أن الصفّ لم يُكتب بعد: شغّل «AI Prompts» في صفحة الصيانة، أو احفظ البطاقة مباشرةً."}
         </p>
       </header>
+
+      <ModoImagesForm initial={modoImages} coreClientId={coreClientId} />
 
       <div className="space-y-4">
         {prompts.map((p) => (

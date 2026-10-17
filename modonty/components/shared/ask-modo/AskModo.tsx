@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
+import { ModoFace } from "@/components/shared/modo-face";
 import { IconArrowRight } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +27,7 @@ export function AskModo({ className }: AskModoProps) {
       )}
     >
       <span className="relative flex size-11 shrink-0 overflow-hidden rounded-full ring-1 ring-primary/15 sm:size-12">
-        <ModoCharacter sizes="(min-width:640px) 48px, 44px" decorative />
+        <ModoFace sizes="(min-width:640px) 48px, 44px" decorative />
       </span>
       {/* The "field": muted placeholder text, brand ring on hover — reads as "type here",
           without being one. */}

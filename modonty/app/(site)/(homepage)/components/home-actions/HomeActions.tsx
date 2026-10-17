@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
+import { ModoFace } from "@/components/shared/modo-face";
 import { IconArrowRight } from "@/lib/icons";
 
 // Top of the desktop feed — Modo's LinkedIn "Start a post"-style prompt.
@@ -15,7 +15,7 @@ export function HomeActions() {
         className="group flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card lg:gap-3"
       >
         <span className="relative flex size-10 shrink-0 overflow-hidden rounded-full ring-1 ring-primary/15 lg:size-11">
-          <ModoCharacter sizes="(min-width: 1024px) 44px, 40px" decorative />
+          <ModoFace sizes="(min-width: 1024px) 44px, 40px" decorative />
         </span>
         {/* Drawn like a text field, but it is a link — typing happens on /modo-chat. */}
         <span className="flex h-10 min-w-0 flex-1 items-center justify-between gap-2 rounded-full bg-muted/50 px-3 text-sm text-muted-foreground ring-1 ring-inset ring-border transition-colors sm:group-hover:bg-muted sm:group-hover:text-foreground lg:h-11 lg:gap-3 lg:px-4">

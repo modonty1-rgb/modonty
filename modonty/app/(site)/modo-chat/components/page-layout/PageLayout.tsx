@@ -1,5 +1,5 @@
 "use client";
-import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
+import { ModoFace } from "@/components/shared/modo-face";
 
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -106,7 +106,7 @@ export function PageLayout() {
       >
         <div className="mx-auto flex min-h-[56px] w-full max-w-3xl flex-row items-center gap-3 px-4 py-3">
           <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg ring-1 ring-border/50 shadow-sm">
-            <ModoCharacter sizes="32px" decorative />
+            <ModoFace sizes="32px" decorative />
           </div>
           <h1 className="flex-1 min-w-0 text-title text-foreground">
             <ChatHeading articleSlug={articleSlug} selectedIndustry={selectedIndustry} />

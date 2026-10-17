@@ -14,7 +14,6 @@ export {
   MODONTY_AUTHOR_SLUG,
   SITE_URL,
   LOGO_URL,
-  CHARACTER_URL,
   BRAND_AVATAR_RADIUS,
 } from "./brand";
 

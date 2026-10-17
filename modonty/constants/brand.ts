@@ -11,7 +11,7 @@
  * silently the day someone changes it in admin.
  */
 
-import { BRAND_LOGO_URL, BRAND_CHARACTER_URL } from "@modonty/shared/lib/brand-assets";
+import { BRAND_LOGO_URL } from "@modonty/shared/lib/brand-assets";
 
 // `BRAND_AR` و`BRAND_EN` حُذفا في ٢٨ أغسطس ٢٠٢٦، بعد أن سقط آخر مستهلك لهما.
 //
@@ -30,11 +30,9 @@ export const MODONTY_AUTHOR_SLUG = "modonty";
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com").replace(/\/+$/, "");
 
 // Brand logo (square PNG) — used in nav, email, JSON-LD logo.
-// Brand character/avatar (used in feed fallback + some OG contexts).
-// Both live on Bunny and are defined ONCE in shared so the admin and console email
+// Lives on Bunny and is defined ONCE in shared so the admin and console email
 // templates read the same value instead of re-hardcoding it (2026-07-30).
 export const LOGO_URL = BRAND_LOGO_URL;
-export const CHARACTER_URL = BRAND_CHARACTER_URL;
 
 /**
  * Client/partner logos & marks use a SQUIRCLE (rounded square), matching the modonty "m"

@@ -3,7 +3,7 @@
 import { signIn } from "next-auth/react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
+import { ModoFace } from "@/components/shared/modo-face";
 import { ModontyLoginMark } from "@/components/icons/modonty-login-mark";
 import { Button } from "@/components/ui/button";
 
@@ -28,8 +28,8 @@ export function TrialWall() {
       className="mx-auto w-full max-w-md rounded-2xl border border-primary/25 bg-gradient-to-b from-primary/10 to-primary/5 p-5 text-center"
       role="status"
     >
-      <span className="mx-auto mb-3 block h-12 w-12 overflow-hidden rounded-xl ring-1 ring-primary/20">
-        <ModoCharacter sizes="48px" decorative />
+      <span className="mx-auto mb-3 block h-12 w-12 overflow-hidden rounded-xl bg-primary/5 ring-1 ring-primary/20">
+        <ModoFace pose="phone" framing="bust" sizes="48px" decorative />
       </span>
 
       <p className="text-base font-bold text-foreground">خلّصت أسئلتك المجّانية</p>

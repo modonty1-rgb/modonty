@@ -1,12 +1,10 @@
 "use client";
 
-import { CHARACTER_URL } from "@/constants";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { IconAi, IconArticle } from "@/lib/icons";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { IconArticle } from "@/lib/icons";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,7 +15,9 @@ import { TypingDots } from "../shared/TypingDots";
 import { TrialWall } from "../login-card/TrialWall";
 import { AiDisclaimer } from "@/components/shared/ai-disclaimer/AiDisclaimer";
 import { RateAnswer } from "../shared/RateAnswer";
-import { ModoCharacter } from "@modonty/shared/components/modo-character/ModoCharacter";
+import { ModoFace } from "@/components/shared/modo-face";
+import { ModoReplyAvatar } from "./ModoReplyAvatar";
+import { replyPose } from "./reply-pose";
 import { getScopeIcon } from "../../helpers/get-scope-icon";
 import { cn } from "@/lib/utils";
 import { SITE_LOCALE } from "@modonty/shared/lib/constants/locale";
@@ -597,8 +597,8 @@ export function ChatList({
             {/* Modo greets with ITS OWN face, not the visitor's. The old avatar showed
                 `userImage`, so an anonymous visitor — the exact person we are trying to win —
                 was welcomed by an empty circle. */}
-            <span className="mb-4 block h-14 w-14 overflow-hidden rounded-2xl ring-2 ring-primary/10">
-              <ModoCharacter sizes="56px" decorative />
+            <span className="mb-4 block h-16 w-16 overflow-hidden rounded-2xl bg-primary/5 ring-2 ring-primary/10">
+              <ModoFace pose="wave" sizes="64px" framing="bust" decorative />
             </span>
             <h2 className="text-xl font-bold text-foreground">
               {memory.recentScopes.length > 0 ? "أهلاً من جديد " : "أهلاً "}
@@ -669,12 +669,7 @@ export function ChatList({
             {/* Industry guess bot message */}
             {m.role === "assistant" && m.industrySuggestion ? (
               <div className="flex gap-2 flex-row-reverse">
-                <Avatar className="h-8 w-8 shrink-0 ring-1 ring-primary/10">
-                  <AvatarImage src={CHARACTER_URL} alt="مدونتي الذكية" />
-                  <AvatarFallback className="bg-primary/10">
-                    <IconAi className="h-4 w-4 text-primary" />
-                  </AvatarFallback>
-                </Avatar>
+                <ModoReplyAvatar pose={replyPose(m, i, hasArticle)} />
                 <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 p-4 space-y-3 min-w-0">
                   <p className="text-sm text-foreground font-medium">سؤالك يبدو في مجال:</p>
                   <div className="flex items-center gap-2 rounded-lg bg-background/80 border border-primary/20 px-3 py-2">
@@ -720,12 +715,7 @@ export function ChatList({
             ) : m.role === "assistant" && m.noSources ? (
               /* No trusted sources message */
               <div className="flex gap-2 flex-row-reverse">
-                <Avatar className="h-8 w-8 shrink-0 ring-1 ring-primary/10">
-                  <AvatarImage src={CHARACTER_URL} alt="مدونتي الذكية" />
-                  <AvatarFallback className="bg-primary/10">
-                    <IconAi className="h-4 w-4 text-primary" />
-                  </AvatarFallback>
-                </Avatar>
+                <ModoReplyAvatar pose={replyPose(m, i, hasArticle)} />
                 {/* The server's own sentence, not a second one written here: it names the scope
                     and tells the visitor their question was recorded. The old fixed copy hid both
                     (measured live 2026-08-19). */}
@@ -739,12 +729,7 @@ export function ChatList({
                  Modo answers as plain text on the page — a bubble around long prose hurts reading. */
               <div className={cn("flex gap-3", m.role === "assistant" && "flex-row-reverse")}>
                 {m.role === "assistant" && (
-                  <Avatar className="h-8 w-8 shrink-0 ring-1 ring-primary/10">
-                    <AvatarImage src={CHARACTER_URL} alt="مدونتي الذكية" />
-                    <AvatarFallback className="bg-primary/10">
-                      <IconAi className="h-4 w-4 text-primary" />
-                    </AvatarFallback>
-                  </Avatar>
+                  <ModoReplyAvatar pose={replyPose(m, i, hasArticle)} />
                 )}
                 <div
                   className={cn(
@@ -797,12 +782,7 @@ export function ChatList({
         {/* Loading typing indicator */}
         {loading && messages[messages.length - 1]?.role === "user" && (
           <div className="me-auto flex max-w-[90%] flex-row-reverse gap-3" aria-live="polite">
-            <Avatar className="h-8 w-8 shrink-0 ring-1 ring-primary/10">
-              <AvatarImage src={CHARACTER_URL} alt="مدونتي الذكية" />
-              <AvatarFallback className="bg-primary/10">
-                <IconAi className="h-4 w-4 text-primary" />
-              </AvatarFallback>
-            </Avatar>
+            <ModoReplyAvatar pose="thinking" />
             <div className="flex items-center gap-3 pt-2">
               <TypingDots />
               <Button
