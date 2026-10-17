@@ -79,11 +79,22 @@ _last_call = [0.0]
 STATS = {"tts_requests": 0, "tts_429": 0, "group_fallbacks": 0}
 
 
+# VF_SILENT=1 — a captions-only render with no Gemini call: each sentence becomes silence of its estimated
+# spoken length, so titles and captions keep a natural pace (Khalid, 17 Oct 2026, after the daily voice quota ran
+# out: «اشتغلها بدون صوت… بس تايتل كابشن»). Silent clips are cached under their own names and never reused as voice.
+SILENT = os.environ.get("VF_SILENT") == "1"
+SILENT_WORDS_PER_S = 2.4          # Saudi narration pace, ~145 words a minute
+
+
 def beat_path(text):
-    return f"build/voice-gemini/{hashlib.md5((VOICE_ID + text).encode()).hexdigest()[:12]}.wav"
+    key = ("silent:" if SILENT else "") + VOICE_ID + text
+    return f"build/voice-gemini/{hashlib.md5(key.encode()).hexdigest()[:12]}.wav"
 
 
 def tts(text, out):
+    if SILENT:
+        ff("-f", "lavfi", "-i", "anullsrc=r=24000:cl=mono", "-t", f"{max(1.2, len(text.split()) / SILENT_WORDS_PER_S):.2f}", out)
+        return
     for attempt in range(8):
         wait = MIN_GAP_S - (time.time() - _last_call[0])
         if wait > 0: time.sleep(wait)
@@ -140,6 +151,9 @@ def prevoice(texts):
 
 def _prevoice(texts):
     todo = [t for t in dict.fromkeys(texts) if t and not os.path.exists(beat_path(t))]
+    if SILENT:                                   # nothing to group or split — each sentence is its own silence
+        for t in todo: tts(t, beat_path(t))
+        return
     groups, cur = [], []
     for t in todo:
         if cur and (len(cur) >= GROUP_MAX_TEXTS or sum(len(x.split()) for x in cur) + len(t.split()) > GROUP_MAX_WORDS):
